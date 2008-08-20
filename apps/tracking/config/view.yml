@@ -1,0 +1,17 @@
+default:
+  http_metas:
+    content-type: text/html
+
+  metas:
+    title:        Coltrans S.A - Colmas LTDA.
+    robots:       index, follow
+    description:  sistema de tracking 
+    keywords:     tracking, cargo
+    language:     es
+
+  stylesheets:    [tracking, modalbox/modalbox]
+
+  javascripts:    [tracking, prototype/prototype, prototype/effects, prototype/controls  ,prototype/scriptaculous, modalbox/modalbox]
+
+  has_layout:     on
+  layout:         layout

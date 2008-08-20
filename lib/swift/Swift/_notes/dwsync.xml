@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="Address.php" local="128256502200000000" remote="128256498070000000" testing="0" />
+<file name="AddressContainer.php" local="128168259600000000" remote="128168257970000000" testing="0" />
+<file name="Authenticator.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="BadResponseException.php" local="128316234000000000" remote="128316232480000000" testing="0" />
+<file name="BatchMailer.php" local="128259912000000000" remote="128259908280000000" testing="0" />
+<file name="Cache.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="CacheFactory.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="ClassLoader.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="Connection.php" local="128265723000000000" remote="128265719370000000" testing="0" />
+<file name="ConnectionBase.php" local="128316234000000000" remote="128316232480000000" testing="0" />
+<file name="ConnectionException.php" local="128316234000000000" remote="128316232480000000" testing="0" />
+<file name="Events.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="Exception.php" local="128316556800000000" remote="128316554600000000" testing="0" />
+<file name="File.php" local="128213173800000000" remote="128213170440000000" testing="0" />
+<file name="FileException.php" local="128316234000000000" remote="128316232480000000" testing="0" />
+<file name="Iterator.php" local="128232012000000000" remote="128232008170000000" testing="0" />
+<file name="Log.php" local="128316234000000000" remote="128316232480000000" testing="0" />
+<file name="LogContainer.php" local="128316234000000000" remote="128316232480000000" testing="0" />
+<file name="Message.php" local="128299498800000000" remote="128299494990000000" testing="0" />
+<file name="RecipientList.php" local="128231945400000000" remote="128231943740000000" testing="0" />
+</dwsync>

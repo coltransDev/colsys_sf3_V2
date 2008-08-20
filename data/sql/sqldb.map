@@ -1,0 +1,13 @@
+# Sqlfile -> Database map
+lib.model.expo.schema.sql=propel
+lib.model.public.schema.sql=propel
+lib.model.aduana.schema.sql=propel
+lib.model.air.schema.sql=propel
+lib.model.control.schema.sql=propel
+lib.model.reportes.schema.sql=propel
+lib.model.sea.schema.sql=propel
+lib.model.tarifario.schema.sql=propel
+lib.model.cotizaciones.schema.sql=propel
+lib.model.dataimport.schema.sql=propel
+lib.model.falabella.schema.sql=propel
+lib.model.pricing.schema.sql=propel

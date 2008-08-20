@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.control">
+	
+	<table name="control.tb_usuarios" phpName="Usuario">
+		<column name="ca_login" type="varchar" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_nombre" type="varchar" />		
+		<column name="ca_cargo" type="varchar" size="10" />	
+		<column name="ca_departamento" type="varchar" />
+		<column name="ca_sucursal" type="varchar" />						
+		<column name="ca_email" type="varchar" />
+		<column name="ca_rutinas" type="varchar" />
+		<column name="ca_extension" type="varchar" />	
+		<foreign-key foreignTable="control.tb_sucursales">
+			<reference local="ca_sucursal" foreign="ca_nombre"/>
+		</foreign-key>		
+	</table>
+	
+	<table name="control.tb_niveles" phpName="NivelesAcceso">
+		<column name="ca_login" type="varchar" required="true" primaryKey="true"  />			
+		<column name="ca_basededatos" type="varchar" primaryKey="true" />				
+		<column name="ca_nivel" type="varchar" />	
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>			
+	</table>
+	
+	<table name="control.tb_sucursales" phpName="Sucursal">
+		<column name="ca_nombre" type="VARCHAR" size="50" required="true" primaryKey="true"/>
+		<column name="ca_telefono" type="VARCHAR" size="50"/>
+		<column name="ca_fax" type="VARCHAR" size="100"/>
+		<column name="ca_direccion" type="VARCHAR" size="100"/>
+	</table>
+	
+	<table name="control.tb_log" phpName="LogUsuario">
+		<column name="ca_idlog" type="integer" required="true" primaryKey="true"/>
+		<column name="ca_login" type="VARCHAR" size="50"/>
+		<column name="ca_event" type="VARCHAR" />
+		<column name="ca_module" type="VARCHAR" size="100"/>
+		<column name="ca_action" type="VARCHAR" size="100"/>
+	</table>
+	
+	
+  
+	<!--
+	<table name="tb_basededatos">
+    <column name="ca_basededatos" type="VARCHAR" size="250" required="true" primaryKey="true"/>
+    <column name="ca_descripcion" type="VARCHAR" size="250" required="true"/>
+    <column name="ca_servidor" type="VARCHAR" size="250" required="true"/>
+  </table>
+  
+  <table name="tb_rutinas">
+    <column name="ca_rutina" type="VARCHAR" size="15" required="true" primaryKey="true"/>
+    <column name="ca_opcion" type="VARCHAR" size="30" required="true"/>
+    <column name="ca_descripcion" type="VARCHAR" size="250" required="true"/>
+    <column name="ca_programa" type="VARCHAR" size="100" required="true"/>
+    <column name="ca_grupo" type="VARCHAR" size="20"/>
+  </table>
+  
+ 
+	-->
+
+		
+</database>

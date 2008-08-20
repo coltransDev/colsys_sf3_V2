@@ -1,0 +1,20 @@
+rendering: ~
+security:  ~
+
+loginValidation:                 # Filters need a unique name
+  class: loginValidationFilter
+  param:
+    cookie_name: coltranscookie
+# generally, you will want to insert your own filters here
+#poka_yoke:
+#  class: sfPokaYokeFilter
+  
+cache:     ~
+common:    ~
+
+
+execution: ~
+
+
+    
+

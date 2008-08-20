@@ -1,0 +1,55 @@
+fillin:
+  enabled: true  # Enable the form repopulation
+fields:
+  neta_tar:
+    required:
+      msg:       requerido
+    sfNumberValidator:
+      nan_error:    no valido
+      min:          0
+      min_error:    no valido
+
+  neta_min:
+    required:
+      msg:       requerido
+    sfNumberValidator:
+      nan_error:    no valido
+      min:          0
+      min_error:    no valido
+  
+  reportar_tar:
+    required:
+      msg:       requerido
+    sfNumberValidator:
+      nan_error:    no valido
+      min:          0
+      min_error:    no valido
+  
+  reportar_min:
+    required:
+      msg:       requerido
+    sfNumberValidator:
+      nan_error:    no valido
+      min:          0
+      min_error:    no valido
+   
+  cobrar_tar:
+    required:
+      msg:       requerido
+    sfNumberValidator:
+      nan_error:    no valido
+      min:          0
+      min_error:    no valido
+  
+  cobrar_min:
+    required:
+      msg:       requerido
+    sfNumberValidator:
+      nan_error:    no valido
+      min:          0
+      min_error:    no valido
+    
+
+
+  
+ 

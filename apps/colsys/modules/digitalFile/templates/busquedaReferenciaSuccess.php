@@ -1,0 +1,1 @@
+<?=include_partial("digitalFile/verDirectorios",array( "referencias"=>$referencias ))?>

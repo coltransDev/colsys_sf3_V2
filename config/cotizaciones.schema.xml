@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.cotizaciones">
+	
+	<table name="tb_cotizaciones" phpName="Cotizacion">				
+		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true"  />			
+		<column name="ca_fchcotizacion" type="date" required="true"  />	
+		<column name="ca_fchpresentacion" type="date" required="true"  />	
+		<column name="ca_idcontacto" type="integer" required="true"  />			
+		<column name="ca_asunto" type="varchar"    />			
+		<column name="ca_saludo" type="varchar"   />	
+		<column name="ca_entrada" type="varchar"   />	
+		<column name="ca_despedida" type="varchar"   />	
+		<column name="ca_usuario" type="varchar"   />	
+		<column name="ca_anexos" type="varchar"   />		
+		<column name="ca_fchcreado" type="date"   />	
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_fchactualizado" type="date"   />	
+		<column name="ca_usuactualizado" type="varchar"   />	
+		<column name="ca_fchsolicitud" type="date"   />	
+		<column name="ca_horasolicitud" type="time"   />
+		<column name="ca_fchanulado" type="date"   />	
+		<column name="ca_usuanulado" type="varchar"   />	
+		<foreign-key foreignTable="tb_concliente">
+			<reference local="ca_idcontacto" foreign="ca_idcontacto"/>
+		</foreign-key>	
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_usuario" foreign="ca_login"/>
+		</foreign-key>	
+				
+	</table>
+	
+	<table name="tb_cotproductos" phpName="CotProducto">						
+		<column name="ca_idproducto" type="integer" required="true" primaryKey="true"  />
+		<column name="ca_idcotizacion" type="integer" required="true"  />
+		<column name="ca_transporte" type="varchar"    />			
+		<column name="ca_modalidad" type="varchar"   />	
+		<column name="ca_origen" type="varchar"   />	
+		<column name="ca_destino" type="varchar"   />
+		<column name="ca_impoexpo" type="varchar"   />
+		<column name="ca_imprimir" type="varchar"   />
+		<column name="ca_producto" type="varchar"   />
+		<column name="ca_incoterms" type="varchar"   />
+		<column name="ca_frecuencia" type="varchar"   />
+		<column name="ca_tiempotransito" type="varchar"   />
+		<column name="ca_locrecargos" type="varchar"   />
+		<column name="ca_observaciones" type="varchar"   />
+		<column name="ca_fchcreado" type="timestamp"   />
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />	
+		<column name="ca_datosag" type="varchar"   />
+		
+		<foreign-key foreignTable="tb_cotizaciones">
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
+		</foreign-key>	
+	</table>
+	
+	
+	<table name="tb_cotopciones" phpName="CotOpcion">			
+		<column name="ca_idopcion" type="varchar" required="true"  primaryKey="true"  autoIncrement="true"  />			
+		<column name="ca_idproducto" type="integer" required="true"  />
+		<column name="ca_idconcepto" type="integer"   />	
+		<column name="ca_idmoneda" type="varchar"   />	
+		<column name="ca_tarifa" type="varchar"   />
+		<column name="ca_oferta" type="varchar"   />
+		<column name="ca_recargos" type="varchar"   />
+		<column name="ca_observaciones" type="varchar"   />		
+		<column name="ca_fchcreado" type="timestamp"   />
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />	
+			
+		<foreign-key foreignTable="tb_cotproductos">
+			<reference local="ca_idproducto" foreign="ca_idproducto"/>
+		</foreign-key>	
+		
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>
+	</table>
+	
+	<table name="tb_cotrecargos" phpName="CotRecargo">					
+		<column name="ca_idopcion" type="integer" required="true" primaryKey="true" />
+		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"  />	
+		<column name="ca_tipo" type="varchar"   />	
+		<column name="ca_valor_tar" type="numeric"   />
+		<column name="ca_aplica_tar" type="varchar"   />
+		<column name="ca_valor_min" type="numeric"   />
+		<column name="ca_aplica_min" type="varchar"   />
+		<column name="ca_idmoneda" type="varchar"   />		
+		<column name="ca_modalidad" type="varchar"   />
+		<column name="ca_observaciones" type="varchar"   />		
+		<column name="ca_fchcreado" type="timestamp"   />
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />	
+			
+		<foreign-key foreignTable="tb_cotopciones">
+			<reference local="ca_idopcion" foreign="ca_idopcion"/>
+		</foreign-key>
+		
+		<foreign-key foreignTable="tb_tiporecargo">
+			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
+		</foreign-key>			
+	</table>
+	
+	<table name="tb_cotcontinuacion" phpName="CotContinuacion">					
+		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" />
+		<column name="ca_tipo" type="varchar" required="true" primaryKey="true"  />	
+		<column name="ca_modalidad" type="varchar"   />	
+		<column name="ca_origen" type="varchar"   primaryKey="true" />
+		<column name="ca_destino" type="varchar"   primaryKey="true" />
+		<column name="ca_idconcepto" type="integer"   primaryKey="true" />
+		<column name="ca_idmoneda" type="varchar"  />
+		<column name="ca_idequipo" type="integer"   />
+		<column name="ca_tarifa" type="varchar"   />
+		<column name="ca_frecuencia" type="varchar"   />
+		<column name="ca_tiempotransito" type="varchar"   />
+		<column name="ca_observaciones" type="varchar"   />
+		<column name="ca_fchcreado" type="timestamp"   />
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />	
+		<foreign-key foreignTable="tb_cotizaciones">
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
+		</foreign-key>			
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>			
+	</table>
+	
+	
+	<table name="tb_cotseguro" phpName="CotSeguro">					
+		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true"  />
+		<column name="ca_idmoneda" type="varchar" required="true"  />	
+		<column name="ca_prima" type="varchar"   />	
+		<column name="ca_obtencion" type="varchar"   />
+		<column name="ca_observaciones" type="varchar"   />	
+		<column name="ca_fchcreado" type="timestamp"   />
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />	
+		<foreign-key foreignTable="tb_cotizaciones">
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
+		</foreign-key>			
+		<foreign-key foreignTable="tb_monedas">
+			<reference local="ca_idmoneda" foreign="ca_idmoneda"/>
+		</foreign-key>			
+	</table>
+	
+	
+		
+</database>

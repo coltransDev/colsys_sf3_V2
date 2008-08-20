@@ -1,0 +1,12 @@
+#!/usr/bin/expect -f
+#author Andres Botero
+set file [lindex $argv 0]
+set database [lindex $argv 1]
+set username [lindex $argv 2]
+set password [lindex $argv 3]
+send "Backing up database $database to file $file\n\r"
+spawn /usr/bin/pg_dump -h localhost -U $username -F c -b -W -f $file $database -T tb_emails -T tb_attachments
+expect "Password: "
+sleep 1
+send "$password\r"
+wait

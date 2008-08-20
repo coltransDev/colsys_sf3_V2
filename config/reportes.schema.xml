@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.reportes">
+	<table name="tb_reportes" phpName="Reporte">
+		<column name="ca_idreporte" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_fchreporte" type="date" />	
+		<column name="ca_consecutivo" type="varchar" size="10" />	
+		<column name="ca_version" type="integer" />
+		<column name="ca_idcotizacion" type="integer" />
+		<column name="ca_origen" type="varchar" />	
+		<column name="ca_destino" type="varchar" />	
+		<column name="ca_impoexpo" type="varchar" />	
+		<column name="ca_fchdespacho" type="date" />	
+		<column name="ca_idagente" type="integer" />
+		<column name="ca_incoterms" type="varchar" />	
+		<column name="ca_mercancia_desc" type="varchar" />
+		<column name="ca_idproveedor" type="varchar" />
+		<column name="ca_orden_prov" type="varchar" />		
+		<column name="ca_idconcliente" type="integer" />		
+		<column name="ca_orden_clie" type="varchar" />
+		<column name="ca_confirmar_clie" type="varchar" />
+		<column name="ca_idrepresentante" type="integer" />
+		<column name="ca_informar_repr" type="varchar" />
+		<column name="ca_idconsignatario" type="integer" />
+		<column name="ca_informar_cons" type="varchar" />
+		<column name="ca_idnotify" type="integer" />
+		<column name="ca_informar_noti" type="varchar" />
+		<column name="ca_notify" type="integer" />
+		<column name="ca_transporte" type="varchar" />
+		<column name="ca_modalidad" type="varchar" />
+		<column name="ca_seguro" type="varchar" />
+		<column name="ca_liberacion" type="varchar" />
+		<column name="ca_tiempocredito" type="varchar" />
+		<column name="ca_preferencias_clie" type="varchar" />
+		<column name="ca_instrucciones" type="varchar" />
+		<column name="ca_idlinea" type="integer" />
+		<column name="ca_idconsignar" type="integer" />
+		<column name="ca_idconsignarmaster" type="integer" />
+		<column name="ca_idbodega" type="integer" />
+		<column name="ca_mastersame" type="varchar" />
+		<column name="ca_continuacion" type="varchar" />
+		<column name="ca_continuacion_dest" type="varchar" />	
+		<column name="ca_continuacion_conf" type="varchar" />			
+		<column name="ca_etapa_actual" type="varchar" />
+		<column name="ca_login" type="varchar" />	
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" />			
+		<column name="ca_fchactualizado" type="timestamp" />	
+		<column name="ca_usuactualizado" type="varchar" />
+		<column name="ca_fchanulado" type="timestamp" />	
+		<column name="ca_usuanulado" type="varchar" />
+		<column name="ca_fchcerrado" type="timestamp" />	
+		<column name="ca_usucerrado" type="varchar" />
+		<column name="ca_colmas" type="varchar" />
+		<column name="ca_propiedades" type="varchar" />
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>	
+				
+		<foreign-key foreignTable="tb_transporlineas">
+			<reference local="ca_idlinea" foreign="ca_idlinea"/>
+		</foreign-key>	
+			
+		<foreign-key foreignTable="tb_terceros">
+			<reference local="ca_idproveedor" foreign="ca_idtercero"/>
+		</foreign-key>
+		
+		<foreign-key foreignTable="tb_agentes">
+			<reference local="ca_idagente" foreign="ca_idagente"/>
+		</foreign-key>
+	</table>
+	
+		
+	<table name="tb_repavisos" phpName="RepAviso">
+		<column name="ca_idreporte" type="integer" required="true" primaryKey="true"  />			
+		<column name="ca_idemail" type="integer" required="true" primaryKey="true" />		
+		<column name="ca_introduccion" type="varchar"  />	
+		<column name="ca_fchsalida" type="date" />
+		<column name="ca_fchllegada" type="date" />	
+		<column name="ca_fchcontinuacion" type="varchar" />				
+		<column name="ca_piezas" type="varchar" />
+		<column name="ca_peso" type="varchar" />	
+		<column name="ca_volumen" type="varchar" />
+		<column name="ca_fchenvio" type="timestamp" />								
+		<column name="ca_usuenvio" type="varchar" />
+		<column name="ca_doctransporte" type="varchar" />	
+		<column name="ca_idnave" type="varchar" />	
+		<column name="ca_notas" type="varchar" />
+		<column name="ca_etapa" type="varchar" />
+		<column name="ca_docmaster" type="varchar" />	
+		<column name="ca_equipos" type="varchar" />	
+		<column name="ca_horasalida" type="time" />	
+		<column name="ca_tipo" type="varchar" />	
+		<foreign-key foreignTable="tb_reportes">
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>	
+		<foreign-key foreignTable="tb_emails">
+			<reference local="ca_idemail" foreign="ca_idemail"/>
+		</foreign-key>
+	</table>
+	
+	<table name="tb_repstatus" phpName="RepStatus">
+		<column name="ca_idreporte" type="integer" required="true" primaryKey="true"  />			
+		<column name="ca_idemail" type="integer" required="true" primaryKey="true" />	
+		<column name="ca_fchstatus" type="date" />
+		<column name="ca_status" type="varchar" />
+		<column name="ca_comentarios" type="varchar" />
+		<column name="ca_fchrecibo" type="timestamp" />
+		<column name="ca_fchenvio" type="timestamp" />
+		<column name="ca_usuenvio" type="varchar" />
+		<column name="ca_etapa" type="varchar" />
+		<column name="ca_introduccion" type="varchar"  />	
+		<column name="ca_fchsalida" type="date" />
+		<column name="ca_fchllegada" type="date" />	
+		<column name="ca_fchcontinuacion" type="varchar" />				
+		<column name="ca_piezas" type="varchar" />
+		<column name="ca_peso" type="varchar" />	
+		<column name="ca_volumen" type="varchar" />
+		<column name="ca_doctransporte" type="varchar" />	
+		<column name="ca_idnave" type="varchar" />
+		<column name="ca_docmaster" type="varchar" />	
+		<column name="ca_fchreserva" type="date" />
+		<column name="ca_fchcierrereserva" type="date" />
+		<column name="ca_equipos" type="varchar" />	
+		<column name="ca_horasalida" type="time" />	
+		<column name="ca_horallegada" type="time" />	
+		<foreign-key foreignTable="tb_reportes">		
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>
+  		<foreign-key foreignTable="tb_emails">
+			<reference local="ca_idemail" foreign="ca_idemail"/>
+		</foreign-key>	
+	</table>
+	
+	
+	<table name="tb_repequipos" phpName="RepEquipo">
+		<column name="ca_idreporte" type="integer" required="true" primaryKey="true"  />			
+		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true" />	
+		<column name="ca_cantidad" type="numeric" />
+		<column name="ca_idequipo" type="varchar" size="12" />
+		<column name="ca_observaciones" type="varchar" />
+		
+		
+		<foreign-key foreignTable="tb_reportes">		
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>
+		
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>	
+  	
+	</table>
+	
+	
+		
+	<table name="tb_repgastos" phpName="RepGasto">		
+		<column name="oid" type="integer"  primaryKey="true" />	
+		<column name="ca_idreporte" type="integer" required="true" />	
+		<column name="ca_idrecargo" type="integer" required="true"   />	
+		<column name="ca_aplicacion" type="varchar" required="true"  />	
+		<column name="ca_tipo" type="varchar" required="true"  />				
+		<column name="ca_neta_tar" type="numeric" required="true"  />			
+		<column name="ca_neta_min" type="numeric" required="true"  />			
+		<column name="ca_reportar_tar" type="numeric" required="true"  />			
+		<column name="ca_reportar_min" type="numeric" required="true"  />			
+		<column name="ca_cobrar_tar" type="numeric" required="true"  />			
+		<column name="ca_cobrar_min" type="numeric" required="true"  />	
+		<column name="ca_idmoneda" type="varchar" size="3" required="true"  />
+		<column name="ca_detalles" type="varchar" size="3" required="true"  />
+		<column name="ca_idconcepto" type="integer" required="true"   />	
+		<foreign-key foreignTable="tb_reportes">
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>	
+		
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>	
+		
+		<foreign-key foreignTable="tb_tiporecargo">
+			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
+		</foreign-key>			
+	</table>
+	
+	<table name="tb_repseguro" phpName="RepSeguro">		
+		<column name="ca_idreporte" type="integer"  primaryKey="true" />	
+		<column name="ca_vlrasegurado" type="numeric" required="true"  />	
+		<column name="ca_idmoneda_vlr" type="varchar" required="true"  />
+		<column name="ca_primaventa" type="numeric" required="true"  />			
+		<column name="ca_minimaventa" type="numeric" required="true"  />			
+		<column name="ca_idmoneda_vta" type="varchar" required="true"  />				
+		<column name="ca_obtencionpoliza" type="numeric" required="true"  />			
+		<column name="ca_idmoneda_pol" type="varchar" required="true"  />			
+		<column name="ca_seguro_conf" type="numeric" required="true"  />	
+		
+		<foreign-key foreignTable="tb_reportes">
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>				
+	</table>
+		
+	<table name="tb_repaduanadet" phpName="RepCosto">				
+		<column name="oid" type="integer" primaryKey="true"/>	
+		<column name="ca_idreporte" type="integer" required="true"   />	
+		<column name="ca_idcosto" type="integer" required="true"  />	
+		<column name="ca_tipo" type="varchar" required="true"/>
+		<column name="ca_vlrcosto" type="numeric" required="true"  />	
+		<column name="ca_mincosto" type="numeric"   />
+		<column name="ca_netcosto" type="numeric"   />
+		<column name="ca_idmoneda" type="varchar" />	
+		<column name="ca_detalles" type="varchar" />
+		<column name="ca_fchcreado" type="date"  />
+		<column name="ca_usucreado" type="varchar"  />
+		<column name="ca_fchactualizado" type="date"  />
+		<column name="ca_usuactualizado" type="varchar"  />
+				
+		<foreign-key foreignTable="tb_reportes">
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>		
+		<foreign-key foreignTable="tb_costos">
+			<reference local="ca_idcosto" foreign="ca_idcosto"/>
+		</foreign-key>		
+	</table>
+	
+	
+	<table name="tb_reptarifas" phpName="RepTarifa" defaultIdMethod="none">	
+		<column name="oid" type="integer" primaryKey="true"/>
+		<column name="ca_idreporte" type="integer" required="true" />	
+		<column name="ca_idconcepto" type="integer" required="true"   />	
+		<column name="ca_cantidad" type="numeric" required="true"  />	
+		<column name="ca_neta_tar" type="numeric" required="true"  />			
+		<column name="ca_neta_min" type="numeric" required="true"  />	
+		<column name="ca_neta_idm" type="varchar" size="3" required="true"  />
+		<column name="ca_reportar_tar" type="numeric" required="true"  />			
+		<column name="ca_reportar_min" type="numeric" required="true"  />	
+		<column name="ca_reportar_idm" type="varchar" size="3" required="true"  />
+		<column name="ca_cobrar_tar" type="numeric" required="true"  />			
+		<column name="ca_cobrar_min" type="numeric" required="true"  />	
+		<column name="ca_cobrar_idm" type="varchar" size="3" required="true"  />	
+		<column name="ca_observaciones" type="varchar" size="255" required="true"  />	
+			
+		<foreign-key foreignTable="tb_reportes">
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>	
+				
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>	
+	</table>
+			
+	<table name="tb_repaduana" phpName="RepAduana" defaultIdMethod="none">	
+		
+		<column name="ca_idreporte" type="integer" required="true" primaryKey="true" />	
+		<column name="ca_coordinador" type="varchar" required="true"  />				
+		<column name="ca_transnacarga" type="varchar" required="true"  />			
+		<column name="ca_transnatipo" type="varchar" required="true"  />	
+		<column name="ca_instrucciones" type="varchar"  />
+		<column name="ca_fchcreado" type="timestamp"  />			
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_fchactualizado" type="timestamp"  />	
+		<column name="ca_usuactualizado" type="varchar"   />	
+		<foreign-key foreignTable="tb_reportes">
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>			
+	</table>
+	
+	<table name="tb_repexpo" phpName="RepExpo" defaultIdMethod="none">	
+		
+		<column name="ca_idreporte" type="integer" required="true" primaryKey="true" />	
+		<column name="ca_peso" type="numeric"   />				
+		<column name="ca_volumen" type="numeric"   />			
+		<column name="ca_piezas" type="varchar"   />	
+		<column name="ca_dimensiones" type="varchar"  />
+		<column name="ca_valorcarga" type="numeric"  />			
+		<column name="ca_anticipo" type="varchar"   />	
+		<column name="ca_idsia" type="integer"  />	
+		<column name="ca_tipoexpo" type="integer"   />
+		<column name="ca_idlineaterrestre" type="integer"   />	
+		<column name="ca_motonave" type="varchar"   />
+		<column name="ca_emisionbl" type="varchar"   />
+		<column name="ca_datosbl" type="varchar"   />
+		<column name="ca_numbl" type="integer"   />
+		<foreign-key foreignTable="tb_reportes">
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>			
+	</table>
+</database>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="BeforeCommandListener.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="BeforeSendListener.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="CommandEvent.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="CommandListener.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="ConnectEvent.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="ConnectListener.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="DisconnectEvent.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="DisconnectListener.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="Listener.php" local="128168259600000000" remote="128168257970000000" testing="0" />
+<file name="ListenerMapper.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="ResponseEvent.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="ResponseListener.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="SendEvent.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+<file name="SendListener.php" local="128207686200000000" remote="128207685770000000" testing="0" />
+</dwsync>

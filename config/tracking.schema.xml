@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.public">
+	<table name="tb_tracking_users" phpName="TrackingUser">
+		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_email" type="varchar" />	
+		<column name="ca_blocked" type="boolean" />		
+		<column name="ca_activation_code" type="varchar" />
+		<column name="ca_passwd" type="varchar" />
+		<column name="ca_password_expiry" type="date" />
+		<column name="ca_activated" type="boolean" />
+		<column name="ca_idcontacto" type="integer" />
+		<foreign-key foreignTable="tb_concliente">
+			<reference local="ca_idcontacto" foreign="ca_idcontacto"/>
+		</foreign-key>	
+	</table>
+</database>

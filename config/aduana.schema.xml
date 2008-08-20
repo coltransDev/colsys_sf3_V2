@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.aduana">
+	<table name="tb_brk_maestra" phpName="AduanaMaestra">
+		<column name="ca_fchreferencia" type="date" required="true"  />
+		<column name="ca_referencia" type="varchar" required="true" primaryKey="true"  />				
+		<column name="ca_origen" type="varchar"  />		
+		<column name="ca_destino" type="varchar" />		
+		<column name="ca_idcliente" type="integer"  />
+		<column name="ca_vendedor" type="varchar"  />
+		<column name="ca_coordinador" type="varchar"  />
+		<column name="ca_proveedor" type="varchar"  />
+		<column name="ca_pedido" type="varchar"  />
+		<column name="ca_piezas" type="integer"  />		
+		<column name="ca_peso" type="numeric"  />
+		<column name="ca_mercancia" type="varchar"  />
+		<column name="ca_deposito" type="varchar"  />
+		<column name="ca_fcharribo" type="date"  />
+		<column name="ca_modalidad" type="integer"  />
+		<column name="ca_fchcreado" type="date"  />
+		<column name="ca_usucreado" type="varchar"  />
+		<column name="ca_fchactualizado" type="date"  />
+		<column name="ca_usuactualizado" type="varchar"  />
+		<column name="ca_fchliquidado" type="date"  />
+		<column name="ca_usuliquidado" type="varchar"  />
+		<column name="ca_fchcerrado" type="date"  />
+		<column name="ca_usucerrado" type="varchar"  />
+		<column name="ca_nombrecontacto" type="varchar"  />
+		<column name="ca_email" type="varchar"  />
+		<column name="ca_analista" type="varchar"  />
+		<column name="ca_trackingcode" type="varchar"  />				
+		<foreign-key foreignTable="tb_clientes">
+			<reference local="ca_idcliente" foreign="ca_idcliente"/>
+		</foreign-key>				
+	</table>	
+	
+	<table name="tb_brk_evento" phpName="AduanaEvento">		
+		<column name="ca_referencia" type="varchar" required="true" primaryKey="true"  />				
+		<column name="ca_realizado" type="integer"  />	
+		<column name="ca_idevento" type="integer"  primaryKey="true" required="true"/>	
+		<column name="ca_usuario" type="varchar" />		
+		<column name="ca_fchevento" type="timestamp" />
+		<column name="ca_notas" type="varchar" />		
+		<foreign-key foreignTable="tb_brk_maestra">
+			<reference local="ca_referencia" foreign="ca_referencia"/>
+		</foreign-key>	
+	</table>
+	
+	<table name="tb_brk_eventoextras" phpName="AduanaEventoExtra">		
+		<column name="ca_referencia" type="varchar" required="true"  />							
+		<column name="ca_idevento" type="integer"  primaryKey="true" required="true"/>	
+		<column name="ca_usucreado" type="varchar" />				
+		<column name="ca_fchcreado" type="timestamp" />
+		<column name="ca_fchactualizado" type="date" />		
+		<column name="ca_usuactualizado" type="varchar" />
+		<column name="ca_texto" type="varchar" />
+		<foreign-key foreignTable="tb_brk_maestra">
+			<reference local="ca_referencia" foreign="ca_referencia"/>
+		</foreign-key>	
+	</table>
+		
+</database>
