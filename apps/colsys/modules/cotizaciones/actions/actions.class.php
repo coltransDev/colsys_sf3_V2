@@ -155,12 +155,12 @@ class cotizacionesActions extends sfActions
 	public function executeObserveProductos(){
 		$producto = CotProductoPeer::retrieveByPk( $this->getrequestparameter("cotizacionId"), $this->getrequestparameter("productoId") );
 		$this->forward404Unless($producto);	
-
+/*
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		if( $this->getRequestParameter("impoexpo") ){
 			$producto->setCaImpoexpo( $impoexpo );				
 		}
-		
+		*/
 		$producto->save();	
 		return sfView::NONE;	
 	}
