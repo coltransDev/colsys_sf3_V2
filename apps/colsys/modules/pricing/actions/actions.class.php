@@ -82,6 +82,8 @@ class pricingActions extends sfActions
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;
+		
+		
 	}
 
 	/*
@@ -125,7 +127,26 @@ class pricingActions extends sfActions
 			
 
 		$data=array();
+		$transportador_id = null;
 		foreach( $trayectos as $trayecto ){
+			$transportador = $trayecto->getTransportador();
+			
+			
+			if( $transportador_id != $transportador->getCaIdLinea() ){
+				$row = array (
+					'idtrayecto' => $transportador->getCaIdLinea(),
+					'origen' => $transportador?utf8_encode($transportador->getCaNombre()):"",
+					'_id' => $transportador->getCaIdLinea()+10000,
+					'_parent' => null,
+					'_level' => 1,				
+					'_is_leaf' => false, //En aéreo los recargo se despliegan en columnas
+					//'observaciones' => utf8_encode($trayecto->getCaObservaciones())
+				);	
+				$data[] = $row;			
+				
+				$transportador_id = $transportador->getCaIdLinea();
+			}
+			
 				
 			/*
 			 * Determina cuales conceptos deberian mostrarse de acuerdo al trafico
@@ -140,10 +161,10 @@ class pricingActions extends sfActions
 			 */
 			$recargos = $trafico->getTipoRecargos( $transporte );
 								
-			$transportador = $trayecto->getTransportador();
+			
 			$row = array (
 				'idtrayecto' => $trayecto->getCaIdtrayecto(),
-				'linea' => $transportador?utf8_encode($transportador->getCaNombre()):"",
+				'linea' => "",
 				'origen' => utf8_encode($trayecto->getOrigen()->getCaCiudad()),
 				'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
 				'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
@@ -151,7 +172,7 @@ class pricingActions extends sfActions
 				'moneda' => $trayecto->getCaIdMoneda(),
 				'aplicacion' => $trayecto->getCaAplicacion(),
 				'_id' => $trayecto->getCaIdtrayecto(),
-				'_parent' => null,
+				'_parent' => $transportador_id+10000,
 				'_level' => 1,				
 				'_is_leaf' => count($recargos)==0, //En aéreo los recargo se despliegan en columnas
 				'observaciones' => utf8_encode($trayecto->getCaObservaciones())
@@ -188,7 +209,7 @@ class pricingActions extends sfActions
 				
 				$row = array (
 					'idtrayecto' => $trayecto->getCaIdtrayecto(),
-					'linea' => utf8_encode($tipoRecargo->getCaRecargo()),										
+					'origen' => utf8_encode($tipoRecargo->getCaRecargo()),										
 					'_id' => $trayecto->getCaIdtrayecto().$tipoRecargo->getCaidrecargo(),
 					'_parent' => $trayecto->getCaIdtrayecto(),
 					'_level' => 2,				
@@ -302,6 +323,7 @@ class pricingActions extends sfActions
 				$recargo->save( );
 			}
 		}
+		
 		return sfView::NONE;
 	}
 	
@@ -320,17 +342,11 @@ class pricingActions extends sfActions
 	*/
 	public function executeDetallesTrafico(){
 		$this->trafico = TraficoPeer::retrieveByPK($this->getRequestParameter("id_trafico"));
-		$this->forward404Unless($this->trafico);				
-	}
-	
-	
-	/*
-	 * Permite realizar una parametrización de recargos fijos 
-	*/
-	public function executeParametrizacionRecargosFijos(){
+		$this->forward404Unless($this->trafico);
 		
-		//$this->setLayout("ajax");
+
 	}
+	
 	
 
 	/*
