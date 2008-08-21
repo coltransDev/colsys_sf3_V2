@@ -154,24 +154,15 @@ Controller = function()
 	var colModel = new Ext.grid.ColumnModel({
 	
 	  columns: [
-	  		expander,		
-				
-			{				
-                id: 'linea',
-                header: "Línea",
+	  		expander,				
+			{
+				id: 'origen',
+                header: "Origen",
                 width: 200,
                 sortable: true,
-                dataIndex: 'linea',
-                summaryType: 'count',
-                renderer: renderRowTooltip,				
-                hideable: false				
-            },
-			{
-                header: "Origen",
-                width: 100,
-                sortable: true,
                 renderer: renderRowTooltip,	
-                dataIndex: 'origen'
+                dataIndex: 'origen',
+				hideable: false				
             },			
             {
                 id: 'destino',
@@ -276,14 +267,15 @@ Controller = function()
     // create the Grid
     var grid = new Ext.ux.maximgb.treegrid.GridPanel({
       store: store,
-      master_column_id : 'linea',
+      master_column_id : 'origen',
       cm: colModel,
 	  clicksToEdit: 1,
       stripeRows: true,
-      autoExpandColumn: 'linea',
+      autoExpandColumn: 'origen',
       title: 'Administrador del tarifario.',
       root_title: 'Trayectos',
 	  sm: new Ext.grid.CellSelectionModel(),
+	  renderTo: 'pricingManagementGrid',
 	  plugins: [expander,checkColumn],
 	 
 	  tbar: [
@@ -488,3 +480,4 @@ Controller = function()
 Ext.onReady(Controller.init);
 
 </script>
+<div id="pricingManagementGrid" class="noprint"></div>
