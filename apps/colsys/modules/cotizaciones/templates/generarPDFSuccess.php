@@ -104,14 +104,14 @@ foreach( $productos as $producto ):
 			$textoRecargos = $opcion->getTextoRecargos();		
 			$concepto = $opcion->getConcepto();					
 						
-			$tabla[$opcion->getCaIdOpcion()][0] = $concepto->getCaConcepto();
-			$tabla[$opcion->getCaIdOpcion()][1] = $opcion->getTextoFlete()."\n"; 
+			$tabla[$opcion->getCaIdOpcion()]["flete"] = $concepto->getCaConcepto();
+			$tabla[$opcion->getCaIdOpcion()]["tarifas"] = $opcion->getTextoFlete()."\n"; 
 			if( $textoRecargos ){
-				$tabla[$opcion->getCaIdOpcion()][2] = $textoRecargos;				
+				$tabla[$opcion->getCaIdOpcion()]["recargos"] = $textoRecargos;				
 				$imprimirRecargos = true;				
 			}
 			if( $opcion->getCaObservaciones() ){
-				$tabla[$opcion->getCaIdOpcion()][3] = $opcion->getCaObservaciones();
+				$tabla[$opcion->getCaIdOpcion()]["observaciones"] = $opcion->getCaObservaciones();
 				$imprimirObservaciones = true;
 			}
 		}				
@@ -146,18 +146,17 @@ foreach( $productos as $producto ):
 			$pdf->Row($titulos);
 			
 			foreach( $tabla as $item ){
-				if( $imprimirRecargos && !isset($item[2]) ){ //Evita que queden huecos en la impresion
-					$item[2]=" ";
+				if( $imprimirRecargos && !isset($item["recargos"]) ){ //Evita que queden huecos en la impresion
+					$item["recargos"]=" ";
 				}		
-				if( $imprimirObservaciones && !isset($item[3]) ){ //Evita que queden huecos en la impresion
-					$item[3]=" ";
+				if( $imprimirObservaciones && !isset($item["observaciones"]) ){ //Evita que queden huecos en la impresion
+					$item["observaciones"]=" ";
 				}
 				
 				$pdf->SetWidths($widths);
 				$pdf->SetAligns(array_fill(0, 4, "L"));
 				$pdf->SetStyles(array_fill(0, 4, ""));
 				$pdf->SetFills(array_fill(0, 4, 0));
-				ksort( $item );
 				$pdf->Row($item);
 			}
 		}

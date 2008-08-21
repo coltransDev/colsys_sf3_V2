@@ -8,7 +8,7 @@ use_helper("Javascript");
 <h3>Sistema de Cotizaciones</h3>
 <?=form_tag( "cotizaciones/busquedaCotizacion" )?>
 
-<table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" id="mainTable">		
+<table class="tableForm" width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" id="mainTable">		
 	<tr>	
 		<th colspan="6" style='font-size: 12px; font-weight:bold;'><b><strong>Ingrese un criterio para realizar las busqueda</strong></b></th>		
 	</tr>
@@ -26,4 +26,4 @@ use_helper("Javascript");
 		<td class="captura" colspan="6"></td>
 	</tr>
 </table>
-</form>
+<?="</form>";?>

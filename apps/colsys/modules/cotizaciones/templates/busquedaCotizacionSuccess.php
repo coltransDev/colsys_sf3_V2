@@ -4,7 +4,7 @@
 * @author Carlos G. López
 */	
 ?>
-<table width="800px" border="1" id="mainTable">
+<table class="tableForm" width="800px" border="1" id="mainTable">
 	<tr>
 		<th width="57" scope="col">ID</th>
 		<th width="668" scope="col">Cotizaci&oacute;n</th>
@@ -15,8 +15,8 @@
 		$cliente = $contacto->getCliente();
 	?>
 	<tr >
-		<td class="listar" ><?=link_to($cotizacion->getCaIdcotizacion(), "cotizaciones/consultaCotizacion?cotizacionId=".$cotizacion->getCaIdcotizacion())?></td>
-		<td class="invertir" ><table width="100%" border=0>
+	<td class="listar" ><?=link_to($cotizacion->getCaIdcotizacion(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
+	<td class="invertir" ><table class="tableForm" width="100%" border="0">
 				<tbody>
 					<tr>
 						<td width="10%" class="listar"><b>Fch.Cotizacion:</b><br /><?=$cotizacion->getCaFchCotizacion()?></td>
@@ -30,9 +30,10 @@
 					</tr>
 
 					<tr>
-						<td class="listar" colspan=5><table width="100%" border=0>
+						<td class="listar" colspan="5"><table class="tableForm" width="100%" border="0">
+						
 						<? 
-							foreach( $cotizacion->getCotProductos() as $producto ){
+						foreach( $cotizacion->getCotProductos() as $producto ){
 							$origen = $producto->getOrigen();
 							$destino = $producto->getDestino();
 						?>
