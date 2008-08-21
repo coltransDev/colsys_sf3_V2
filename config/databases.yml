@@ -16,8 +16,8 @@ all:
     class:                sfPropelDatabase
     param:
       phptype:            pgsql     # Database vendor
-      hostspec:           10.192.1.127
+      hostspec:           localhost
       database:           Pruebas
       username:           postgres
-      password:           sistemassrv
+      password:           Codigo0
       port:               5432
