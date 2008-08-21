@@ -10,6 +10,7 @@
  */ 
 class cotizacionesActions extends sfActions
 {
+
 	/**
 	* Pantalla de bienvenida para el modulo de Cotizaciones 
 	* @author Carlos López
@@ -59,7 +60,111 @@ class cotizacionesActions extends sfActions
 		$c->setLimit( 200 );
 		$this->cotizaciones = CotizacionPeer::doSelect( $c );	
 	}
+
+	/*
+	* Si ocurre un error reenvia a la pagina original y muestra los mensajes 
+	* de error
+	* @author: Carlos G. López M.
+	*/
+	public function handleErrorFormCotizacionGuardar()
+	{
+		$this->forward("cotizaciones", "formCotizacion");
+	}
+
+	/*
+	* Permite crear y editar el encabezado de una cotizacion 
+	* @author Carlos López
+	*/
+	public function executeFormCotizacion(){
+		if( $this->getRequestParameter("cotizacionId") ){
+			$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("cotizacionId") );
+			$this->forward404Unless( $cotizacion );
+			
+		}else{		
+			$cotizacion = new Cotizacion();
+		}
+		$this->cotizacion=$cotizacion;
+
+		$c = new Criteria();
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );
+		$criterion = $c->getNewCriterion( UsuarioPeer::CA_CARGO ,'Gerente Sucursal' );								
+		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_CARGO , '%Ventas%', Criteria::LIKE ));			
+		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_DEPARTAMENTO , '%Ventas%', Criteria::LIKE ));			
+		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_DEPARTAMENTO , '%Comercial%', Criteria::LIKE ));
+		$c->add($criterion);
+		$this->comerciales = UsuarioPeer::doSelect( $c );	
+		
+		$this->user = $this->getUser();
+	}
 	
+	/*
+	* Guarda los cambios realizados  
+	* @author Carlos G. López M.
+	*/
+	public function executeFormCotizacionGuardar(){
+		$user_id = $this->getUser()->getUserId();
+		
+		if( $this->getRequestParameter("cotizacionId") ){
+			$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("cotizacionId") );
+			$this->forward404Unless( $cotizacion );
+		}else{		
+			$cotizacion = new Cotizacion();
+			$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
+			$cotizacion->setCaConsecutivo( $sig ); 
+		}
+		$cotizacion->setCaFchCotizacion( $this->getRequestParameter( "fchCotizacion" ) );
+		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
+		$cotizacion->setCaAsunto( $this->getRequestParameter( "asunto" ) );
+		$cotizacion->setCaSaludo( $this->getRequestParameter( "saludo" ) );
+		$cotizacion->setCaEntrada( $this->getRequestParameter( "entrada" ) );
+		$cotizacion->setCaDespedida( $this->getRequestParameter( "despedida" ) );
+		$cotizacion->setCaAnexos( $this->getRequestParameter( "anexos" ) );
+		$cotizacion->setCaUsuario( $this->getRequestParameter( "login" ) );
+		$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
+		$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
+		if( !$cotizacion->getCaIdCotizacion() ){ 
+			$cotizacion->setCaFchcreado( time() );	
+			$cotizacion->setCaUsucreado( $user_id );			
+		}else{
+			$cotizacion->setCaFchactualizado( time() );	
+			$cotizacion->setCaUsuactualizado( $user_id );							
+		}
+		$cotizacion->save();
+		
+		$this->redirect( "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaidcotizacion()."&token=".md5(time()) );		
+					
+		exit;	
+	}
+
+	/**
+	* Permite consultar una cotizacion ya creada y permite 
+	* agregar nuevas  
+	* @author Carlos G. López M.
+	*/
+	public function executeConsultaCotizacion(){
+		$id_cotizacion = $this->getRequestParameter("id");	
+		$cotizacion = CotizacionPeer::retrieveByPk( $id_cotizacion );
+		$this->forward404Unless( $cotizacion );					
+		$this->editable = $this->getRequestParameter("editable");	
+		$this->option = $this->getRequestParameter("option");
+		$this->cotizacion = $cotizacion;
+	
+		$response = sfContext::getInstance()->getResponse();
+	}		
+
+	public function executeObserveProductos(){
+		$producto = CotProductoPeer::retrieveByPk( $this->getrequestparameter("cotizacionId"), $this->getrequestparameter("productoId") );
+		$this->forward404Unless($producto);	
+
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+		if( $this->getRequestParameter("impoexpo") ){
+			$producto->setCaImpoexpo( $impoexpo );				
+		}
+		
+		$producto->save();	
+		return sfView::NONE;	
+	}
+
 	/*
 	* Permite ver una cotización en formato PDF
 	*/
