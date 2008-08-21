@@ -1,0 +1,346 @@
+/* 
+
+*/
+
+
+body{
+   margin-top:0px;
+   margin-bottom:0px;
+   margin-left:0px;
+   margin-right:0px;
+   background:#FFFFFF;   
+   font-family:verdana, arial, helvetica, serif;
+   font-size:10px;
+  
+}
+
+input, select, textarea {
+	font-family:verdana, arial, helvetica, serif;
+   	font-size:10px;	
+	padding:1px 3px;background:#fff url(../images/text-bg.gif) repeat-x 0 0;
+	border:1px solid #B5B8C8;
+}
+
+
+input:focus, select:focus, textarea:focus {
+	border:1px solid #7eadd9;
+}
+
+
+
+
+
+input.button, input.submit, input.reset{
+   border: solid 1px #CCCCBB;
+
+}
+
+
+img{
+	border: 0px;
+}
+
+/*
+* Por lo menos debe estar definido para que los tooltips funcionen
+*/
+a{
+
+}
+
+a:link {
+   text-decoration:none;
+   color:#0000FF;
+}
+a:active {
+   text-decoration:none;
+   color:#0000FF;
+}
+a:visited {
+   text-decoration: none;
+   color: #990033;
+}
+
+.form_error
+{  
+  color: #d8732f;
+}
+
+
+form fieldset{
+	border-width:1px;
+	border-style:solid;
+	border-color:#B5B8C8;
+	background-color:#EEEEEE;	
+}
+
+
+
+
+/*
+* Estilos estandar para mostrar informacion en listas mediante una tabla
+*/
+
+table.tableList{
+	border: 1px solid #C9C9C0 ;
+	border-spacing: 0px;	
+	border-collapse: collapse; 
+}
+
+table.tableList th{
+	margin: 0px;
+	padding: 6px 4px 2px 4px;
+	height: 22px;
+	background:url(../images/bgthblack.jpg);
+	
+	background-repeat: repeat;
+	font-size: 11px;
+	/*color: #ffffff;*/
+}
+
+
+table.tableList td {
+	border-bottom: 1px solid #C9C9C0;
+	padding: 4px;
+	vertical-align:top;
+}
+
+/*
+* Colores que puede tomar una fila de acuerdo al status en que se encuentre
+*/
+
+table.tableList tr.yellow{
+	background-color:#FFFFCC;	
+}
+
+table.tableList tr.green{
+	background-color:#CEFFCE;	
+}
+
+table.tableList tr.blue{
+	background-color:#CEE7FF;	
+}
+
+table.tableList tr.orange{
+	background-color:#FFCC66;	
+}
+
+table.tableList tr.pink{
+	background-color:#FFCCCC;	
+}
+
+
+/*
+* Estilos estandar para mostrar información en formularios mediante una tabla
+*/
+
+table.tableForm{
+	border: 1px solid #C9C9C0 ;
+	border-spacing: 0px;	
+	border-collapse: collapse; 
+}
+
+table.tableForm th{
+   text-align:center;
+   background:#1D3F99;
+   color:#FFFFFF;
+   padding-top: 5px;
+   padding-bottom: 3px;
+}
+table.tableForm td {
+	/*border-bottom: 1px solid #C9C9C0;
+	padding: 4px;
+	vertical-align:top;*/
+}
+table.tableForm td.captura {
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+   padding: 4px;
+}
+table.tableForm td.destacar {
+   text-align:left;
+   background:#FFFFC0;
+   color:#1D3F99;
+   vertical-align:top;
+   padding: 4px;
+}
+table.tableForm td.divisor {
+   text-align:center;
+   background:#000000;
+   color:#FFFFFF;
+   padding: 4px;
+}
+table.tableForm td.imprimir {
+   text-align:left;
+   background:#FFFFFF;
+   color:#000000;
+   padding: 4px;
+}
+table.tableForm td.invertir {
+   text-align:left;
+   background:#D2D2D2;
+   color:#000000;   
+   vertical-align:top;
+   padding: 4px;
+}
+table.tableForm td.listar {
+   text-align:left;
+   vertical-align:top;
+   background:#F0F0F0;
+   color:#000000;
+   padding: 4px;
+}
+table.tableForm td.mostrar {
+   text-align: left;
+   background: #F0F0F0;
+   color: #000000;
+   padding: 4px;
+}
+table.tableForm td.partir {
+   font-weight:bold;
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+   padding: 4px;
+}
+table.tableForm td.periodo {
+   text-align:left;
+   background:#CCCCCC;
+   color:#000000;
+   vertical-align:top;
+   padding: 4px;
+}
+table.tableForm td.resaltar {
+   text-align:left;
+   background:#9999CC;
+   color:#000000;
+   vertical-align:top;
+   padding: 4px;
+}
+table.tableForm td.titulo {
+   text-align:center;
+   background:#1D3F99;
+   color:#FFFFFF;
+   padding: 4px;
+}
+table.tableForm td.valores {
+   text-align: right;
+   vertical-align: top;
+   background: #F0F0F0;
+   color: #000000;
+   padding: 4px;
+}
+table.tableForm th.imprimir {
+   text-align:center;
+   background:#FFFFFF;
+   color:#000000;
+}
+
+
+
+
+/*
+* Estilos para colocar colores a DIV
+*/
+
+div.grey{
+	background:#F6F6F6;
+}
+
+/*
+* Estilos para la barra de herramientas
+*/
+
+.toolbar {
+	margin-right: 10px;
+}
+
+.toolbar a.toolbar {
+	color: #333333;
+	text-decoration : none;
+	text-align:center;
+	font-size:10px;
+	display: block;
+	border: 1px solid #DDD;
+	width: 80px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	
+	
+
+	
+	
+}
+.toolbar a.toolbar:hover {
+	color : #C64934;
+	border: 1px solid #c24733;
+	background-color: #f1e8e6;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+.toolbar a.toolbar:active {
+	color : #FF9900;
+}
+
+.toolbar td{
+	vertical-align:top;
+	padding-left: 3px;
+	background-color: #F6F6F6;
+} 
+.toolbar tr{
+	border-color: #CCCCBB;		
+}
+
+a.toolbar {
+	color : #808080;
+	text-decoration : none;
+}
+a.toolbar:hover {
+	color : #FF6600;
+}
+a.toolbar:active {
+	color : #FF9900;
+}
+
+
+
+/*
+* Combos 
+*/
+.search-item {
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
+    padding:3px 3px 3px 3px;
+    border:1px solid #fff;
+    border-bottom:1px solid #eeeeee;
+    white-space:normal;
+    color:#555;
+	background:#FFFFFF;
+}
+.search-item h3 {
+    display:block;
+    font:inherit;
+    font-weight:bold;
+    color:#222;
+}
+
+.search-item h3 span {
+    float: right;
+    font-weight:normal;
+    margin-left: 5px;
+    width:100px;
+    display:block;
+    clear:none;
+}
+
+#ext-gen9{
+	display:none;
+}
+
+
+
+
+
+
+	
