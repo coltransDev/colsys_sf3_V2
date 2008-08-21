@@ -32,7 +32,7 @@ class Trafico extends BaseTrafico
 		$c = new Criteria();
 		$c->add( TipoRecargoPeer::CA_IDRECARGO, $recargosArr , Criteria::IN );
 		$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte );
-		$recargos = TipoRecargoPeer::doSelect( $c );
+		return TipoRecargoPeer::doSelect( $c );
 	}
 	
 
