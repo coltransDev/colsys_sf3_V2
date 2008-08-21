@@ -4,29 +4,20 @@
 #    param:
 #      dsn:          mysql://root:@localhost/dbname
 
-all:
-  propel:
-    class:          sfPropelDatabase
-    param:
-      dsn:          pgsql://postgres:Codigo0@localhost/Pruebas
+#all:
+#  propel:
+#    class:          sfPropelDatabase
+#    param:
+#      dsn:          pgsql://postgres:Codigo0@localhost/Pruebas
 #      dsn:          pgsql://Administrador:sistemassrv@10.192.1.127/Pruebas
 
-# Propel 1.3
-#dev:
-#  propel:
-#    param: 
-#      classname: DebugPDO
- 
-#all:
- # propel:
- #   class: sfPropelDatabase
- #   param:
- #     dsn: pgsql:dbname=Pruebas;host=localhost 
-#      username: postgres
-#      password: Codigo0
-#      encoding: iso88591
-#      encoding: utf8
-#      persistent: true
-#      pooling: false
-#      classname: PropelPDO
-
+all:
+  propel:
+    class:                sfPropelDatabase
+    param:
+      phptype:            pgsql     # Database vendor
+      hostspec:           10.192.1.127
+      database:           Pruebas
+      username:           postgres
+      password:           sistemassrv
+      port:               5432
