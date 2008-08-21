@@ -1,0 +1,19 @@
+fillin:
+  enabled: true  # Enable the form repopulation  
+fields:
+
+  horaSolicitud:
+    required:
+      msg:       Por favor ingrese la hora de solicitud
+
+  idconcliente:
+    required:
+      msg:       El cliente es requerido
+
+  asunto:
+    required:
+      msg:       El asunto es requerido
+
+  saludo:
+    required:
+      msg:       El saludo es requerido
