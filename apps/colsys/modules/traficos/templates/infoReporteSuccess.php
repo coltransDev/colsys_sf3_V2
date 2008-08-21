@@ -17,6 +17,10 @@ $avisos = $reporte->getRepAvisos();
 					if( $reporte->getEsAG() ){
 						echo "<strong>Reporte AG<br /></strong>";
 					}
+										
+					if( $reporte->getCaUsuAnulado() ){
+						echo "<strong>Anulado por:</strong> ".$reporte->getCaUsuAnulado()." ".$reporte->getCaFchAnulado();
+					}
 					?>
 				     <?=!$reporte->getEsAG()&&$reporte->getCaImpoExpo()=="Importación"&&!$reporte->getReporteExterior()?"<strong>No se ha creado reporte al exterior<br /></strong>":""?>					
 					<strong>Transporte:</strong> <?=$reporte->getCaTransporte()?><br />
