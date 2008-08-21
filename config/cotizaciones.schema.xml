@@ -30,8 +30,8 @@
 	</table>
 	
 	<table name="tb_cotproductos" phpName="CotProducto">						
-		<column name="ca_idproducto" type="integer" required="true" primaryKey="true"  />
-		<column name="ca_idcotizacion" type="integer" required="true"  />
+		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" />
+		<column name="ca_idproducto" type="integer" required="true" primaryKey="true"  />		
 		<column name="ca_transporte" type="varchar"    />			
 		<column name="ca_modalidad" type="varchar"   />	
 		<column name="ca_origen" type="varchar"   />	
