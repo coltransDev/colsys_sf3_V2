@@ -1,6 +1,8 @@
 <?
 use_helper("Javascript", "Object", "Validation");
 ?>
+
+
 <h3>Sistema de Cotizaciones</h3>
 <table class="tableForm" width="700px" border="1" id="mainTable">
 	<tr>

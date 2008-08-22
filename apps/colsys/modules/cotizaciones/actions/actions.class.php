@@ -157,8 +157,6 @@ class cotizacionesActions extends sfActions
 		}else {
 			$this->modalidades = ParametroPeer::retrieveByCaso( "CU052" );
 		}
-
-		//$response = sfContext::getInstance()->getResponse();
 	}		
 
 	/**
@@ -188,14 +186,6 @@ class cotizacionesActions extends sfActions
 		return sfView::NONE;	
 	}
 
-	/*
-	* Permite ver una cotización en formato PDF
-	*/
-	public function executeVerCotizacion(){
-		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
-		$this->forward404Unless( $this->cotizacion );		
-	}
-	
 	/*
 	* Genera un archivo PDF a partir de una cotización
 	*/

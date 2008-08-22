@@ -22,7 +22,7 @@ class cotizacionesComponents extends sfComponents
 
 		$this->incoterms =  ParametroPeer::retrieveByCaso( "CU062" );
 		$this->transporte = ParametroPeer::retrieveByCaso( "CU063" );
-
+		
 		if ($this->getRequestParameter("transporte") == 'Marítimo') {
 			$this->modalidades = ParametroPeer::retrieveByCaso( "CU051" );
 		}else {

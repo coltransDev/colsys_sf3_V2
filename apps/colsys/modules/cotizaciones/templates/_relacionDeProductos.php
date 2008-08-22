@@ -1,6 +1,18 @@
 <?
 if( count($productos)>0 || $editable ){
 ?>
+<script type="text/javascript">
+	function editarTransporte(id){
+		editarGrilla('transporte_'+id);
+		editarGrilla('modalidad_'+id);
+	}
+
+	function soltarTransporte(id){
+		actualizarGrilla('transporte_'+id);
+		actualizarGrilla('modalidad_'+id);
+	}
+
+</script>
 <div id="result"></div>
 <table width="100%" border="0" id="mainTable">
 	<tr>
@@ -58,13 +70,15 @@ if( count($productos)>0 || $editable ){
 		<td >
 			<div id="transporte_<?=$producto->getCaIdproducto()?>_div" align="center" style="display:inline" 
 				<? if( $editable ){ ?>
-					onclick="editarGrilla('transporte_<?=$producto->getCaIdproducto()?>')"
+					onclick="editarTransporte('<?=$producto->getCaIdproducto()?>')"
 				<? } ?>
 				> <?=$producto->getCaTransporte()?>
 			</div>
 			<? if( $editable ){	?>
 				<div id="transporte_<?=$producto->getCaIdproducto()?>_div_hd" align="center" style="display:none">
-					<?=select_tag("transporte_".$producto->getCaIdproducto(), objects_for_select($transporte, "getCavalor", "getCavalor", $producto->getCaTransporte()), "onBlur=actualizarGrilla('transporte_".$producto->getCaIdproducto()."')" ); ?>
+				
+					
+					<?=select_tag("transporte_".$producto->getCaIdproducto(), objects_for_select($transporte, "getCavalor", "getCavalor", $producto->getCaTransporte()), "onBlur=getElementById('modalidad_".$producto->getCaIdproducto()."').focus;" ); ?>
 				</div>
 				<?  echo observe_field("transporte_".$producto->getCaIdproducto(), array('update' => 'result',
 															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
@@ -84,7 +98,7 @@ if( count($productos)>0 || $editable ){
 			</div>
 			<? if( $editable ){	?>
 				<div id="modalidad_<?=$producto->getCaIdproducto()?>_div_hd" align="center" style="display:none">
-					<?=select_tag("modalidad_".$producto->getCaIdproducto(), objects_for_select($modalidades, "getCavalor", "getCavalor", $producto->getCaModalidad()), "onBlur=actualizarGrilla('modalidad_".$producto->getCaIdproducto()."')" ); ?>
+					<?=select_tag("modalidad_".$producto->getCaIdproducto(), objects_for_select($modalidades, "getCavalor", "getCavalor", $producto->getCaModalidad()), "onBlur=soltarTransporte('".$producto->getCaIdproducto()."')" ); ?>
 				</div>
 				<?  echo observe_field("modalidad_".$producto->getCaIdproducto(), array('update' => 'result',
 															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
@@ -133,13 +147,19 @@ if( count($productos)>0 || $editable ){
 			<td >
 				<div align="left">
 					<?=form_error("transporte");?>
-					<?=select_tag("transporte", objects_for_select($transporte, "getCavalor", "getCavalor"), "", "include_blank=true"); ?>
+					<?
+					include_component("general", "comboTransporte");
+					?>
+					<input type="text" id="transporte" size="8"/>
+					<?
+					//select_tag("transporte", objects_for_select($transporte, "getCavalor", "getCavalor"), "", "include_blank=true"); ?>
 				</div>
 			</td>
 			<td >
 				<div align="left">
+					<input type="text" id="modalidad" size="8"/>
 					<?=form_error("modalidad");?>
-					<?=select_tag("modalidad", objects_for_select($modalidades, "getCavalor", "getCavalor"), "", "include_blank=true"); ?>
+					<?//=select_tag("modalidad", objects_for_select($modalidades, "getCavalor", "getCavalor"), "", "include_blank=true"); ?>
 				</div>
 			</td>
 			<td >
@@ -152,6 +172,8 @@ if( count($productos)>0 || $editable ){
 	}
 	?>
 </table>  
+
+
 <?
 }else{
 ?>
