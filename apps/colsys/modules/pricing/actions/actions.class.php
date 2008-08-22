@@ -10,7 +10,7 @@
  */
 class pricingActions extends sfActions
 {
-
+ 
 
 	/**
 	 * Executes index action
