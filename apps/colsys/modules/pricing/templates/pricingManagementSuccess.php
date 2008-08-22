@@ -17,7 +17,7 @@
 <script language="javascript">
 
 
-
+ 
 var monedas = [
 		<?
 		$i=0;
@@ -318,6 +318,10 @@ Controller = function()
 		if( record.data._parent ){
 			var parent = store.getById(record.data._parent);
 			store.expandNode(parent);
+			if( parent.data._parent ){
+				var parent = store.getById(parent.data._parent);
+				store.expandNode(parent);
+			}
 		}
     }); 
 	
