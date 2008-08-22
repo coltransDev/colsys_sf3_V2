@@ -66,9 +66,23 @@ class generalComponents extends sfComponents
 	* Muestra un formulario standar para enviar un correo
 	*/
 	public function executeFormEmail(){
-		$this->user = $this->getUser();
+		$this->user = $this->getUser();		
+	}
+	
+	/*
+	* 
+	* */
+	public function executeComboTransporte(){
+		$this->transportes = ParametroPeer::retrieveByCaso( "CU063" );
+		
+		
+		$this->modalidadMaritima = ParametroPeer::retrieveByCaso( "CU051" );
+		$this->modalidadAerea = ParametroPeer::retrieveByCaso( "CU052" );
+		
 		
 	}
+	
+	
 	
 }
 ?>
