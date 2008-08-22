@@ -18,7 +18,17 @@ class cotizacionesComponents extends sfComponents
 	public function executeRelacionDeProductos()
 	{
 		$this->productos = $this->cotizacion->getCotProductos();
-		$this->editable = $this->getRequestParameter("editable");	
+		$this->editable = $this->getRequestParameter("editable");
+
+		$this->incoterms =  ParametroPeer::retrieveByCaso( "CU062" );
+		$this->transporte = ParametroPeer::retrieveByCaso( "CU063" );
+
+		if ($this->getRequestParameter("transporte") == 'Marítimo') {
+			$this->modalidades = ParametroPeer::retrieveByCaso( "CU051" );
+		}else {
+			$this->modalidades = ParametroPeer::retrieveByCaso( "CU052" );
+		}
+		
 	}
 }
 ?>

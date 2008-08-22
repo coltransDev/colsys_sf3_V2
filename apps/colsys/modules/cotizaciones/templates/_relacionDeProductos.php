@@ -1,6 +1,7 @@
 <?
 if( count($productos)>0 || $editable ){
 ?>
+<div id="result"></div>
 <table width="100%" border="0" id="mainTable">
 	<tr>
 		<th scope="col">Producto</th>
@@ -19,33 +20,81 @@ if( count($productos)>0 || $editable ){
 	<tr style='background:#F0F0F0' >
 		<td ><strong><?=$producto->getCaProducto()?></strong></td>	
 		<td >
-			<div id="result"></div>
 			<div id="impoexpo_<?=$producto->getCaIdproducto()?>_div" align="center" style="display:inline" 
-				<?
-				if( $editable ){
-				?>
+				<? if( $editable ){ ?>
 					onclick="editarGrilla('impoexpo_<?=$producto->getCaIdproducto()?>')"
-				<?
-				}
-				?>
-				>
-				<?=$producto->getCaImpoexpo()?>
+				<? } ?>
+				> <?=$producto->getCaImpoexpo()?>
 			</div>
-			
-			<?
-			if( $editable ){			
-				?>
+			<? if( $editable ){	?>
 				<div id="impoexpo_<?=$producto->getCaIdproducto()?>_div_hd" align="center" style="display:none">
-					<?=select_tag("impoexpo_".$producto->getCaIdproducto(), options_for_select(array("Importaci&oacute;n"=>"Importaci&oacute;n","Exportaci&oacute;n"=>"Exportaci&oacute;n"), $producto->getCaImpoexpo(), "include_blank=true") ); ?>
+					<?=select_tag("impoexpo_".$producto->getCaIdproducto(), options_for_select(array("Importación"=>"Importaci&oacute;n","Exportación"=>"Exportaci&oacute;n"), $producto->getCaImpoexpo(), "include_blank=true"), "onBlur=actualizarGrilla('impoexpo_".$producto->getCaIdproducto()."')" ); ?>
 				</div>
-				<?
-				echo observe_field("impoexpo_".$producto->getCaIdproducto(), array('update' => 'result',
+				<?  echo observe_field("impoexpo_".$producto->getCaIdproducto(), array('update' => 'result',
 															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
 															'with' => "'impoexpo='+value",
 															) );
-			}											
+				}
 			?>	
 		</td>
+		<td >
+			<div id="incoterms_<?=$producto->getCaIdproducto()?>_div" align="center" style="display:inline" 
+				<? if( $editable ){ ?>
+					onclick="editarGrilla('incoterms_<?=$producto->getCaIdproducto()?>')"
+				<? } ?>
+				> <?=$producto->getCaIncoterms()?>
+			</div>
+			<? if( $editable ){	?>
+				<div id="incoterms_<?=$producto->getCaIdproducto()?>_div_hd" align="center" style="display:none">
+					<?=select_tag("incoterms_".$producto->getCaIdproducto(), objects_for_select($incoterms, "getCavalor", "getCavalor", $producto->getCaIncoterms()), "onBlur=actualizarGrilla('incoterms_".$producto->getCaIdproducto()."')" ); ?>
+				</div>
+				<?  echo observe_field("incoterms_".$producto->getCaIdproducto(), array('update' => 'result',
+															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
+															'with' => "'incoterms='+value",
+															) );
+				}
+			?>	
+		</td>
+		<td >
+			<div id="transporte_<?=$producto->getCaIdproducto()?>_div" align="center" style="display:inline" 
+				<? if( $editable ){ ?>
+					onclick="editarGrilla('transporte_<?=$producto->getCaIdproducto()?>')"
+				<? } ?>
+				> <?=$producto->getCaTransporte()?>
+			</div>
+			<? if( $editable ){	?>
+				<div id="transporte_<?=$producto->getCaIdproducto()?>_div_hd" align="center" style="display:none">
+					<?=select_tag("transporte_".$producto->getCaIdproducto(), objects_for_select($transporte, "getCavalor", "getCavalor", $producto->getCaTransporte()), "onBlur=actualizarGrilla('transporte_".$producto->getCaIdproducto()."')" ); ?>
+				</div>
+				<?  echo observe_field("transporte_".$producto->getCaIdproducto(), array('update' => 'result',
+															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
+															'with' => "'transporte='+value",
+															) );
+				}
+			?>	
+		</td>
+
+
+		<td >
+			<div id="modalidad_<?=$producto->getCaIdproducto()?>_div" align="center" style="display:inline" 
+				<? if( $editable ){ ?>
+					onclick="editarGrilla('modalidad_<?=$producto->getCaIdproducto()?>')"
+				<? } ?>
+				> <?=$producto->getCaModalidad()?>
+			</div>
+			<? if( $editable ){	?>
+				<div id="modalidad_<?=$producto->getCaIdproducto()?>_div_hd" align="center" style="display:none">
+					<?=select_tag("modalidad_".$producto->getCaIdproducto(), objects_for_select($modalidades, "getCavalor", "getCavalor", $producto->getCaModalidad()), "onBlur=actualizarGrilla('modalidad_".$producto->getCaIdproducto()."')" ); ?>
+				</div>
+				<?  echo observe_field("modalidad_".$producto->getCaIdproducto(), array('update' => 'result',
+															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
+															'with' => "'modalidad='+value",
+															) );
+				}
+			?>	
+		</td>
+
+
 		<td>
 			<?
 			if( $editable ){					
@@ -76,6 +125,24 @@ if( count($productos)>0 || $editable ){
 				</div>
 			</td>
 			<td >
+				<div align="left">
+					<?=form_error("incoterms");?>
+					<?=select_tag("incoterms", objects_for_select($incoterms, "getCavalor", "getCavalor"), "", "include_blank=true"); ?>
+				</div>
+			</td>
+			<td >
+				<div align="left">
+					<?=form_error("transporte");?>
+					<?=select_tag("transporte", objects_for_select($transporte, "getCavalor", "getCavalor"), "", "include_blank=true"); ?>
+				</div>
+			</td>
+			<td >
+				<div align="left">
+					<?=form_error("modalidad");?>
+					<?=select_tag("modalidad", objects_for_select($modalidades, "getCavalor", "getCavalor"), "", "include_blank=true"); ?>
+				</div>
+			</td>
+			<td >
 				<?				
 				echo submit_tag("Guardar");
 				?>
@@ -89,7 +156,7 @@ if( count($productos)>0 || $editable ){
 }else{
 ?>
 	<div align="center">
-		No se han definido productos para la cotizaci&oacuoten
+		No se han definido productos para la cotizaci&oacute;n
 	</div>
 <?
 }

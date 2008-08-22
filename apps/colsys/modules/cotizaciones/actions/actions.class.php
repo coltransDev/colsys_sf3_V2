@@ -148,19 +148,42 @@ class cotizacionesActions extends sfActions
 		$this->editable = $this->getRequestParameter("editable");	
 		$this->option = $this->getRequestParameter("option");
 		$this->cotizacion = $cotizacion;
-	
-		$response = sfContext::getInstance()->getResponse();
+
+		$this->incoterms =  ParametroPeer::retrieveByCaso( "CU062" );
+		$this->transporte = ParametroPeer::retrieveByCaso( "CU063" );
+
+		if ($this->getRequestParameter("transporte") == 'Marítimo') {
+			$this->modalidades = ParametroPeer::retrieveByCaso( "CU051" );
+		}else {
+			$this->modalidades = ParametroPeer::retrieveByCaso( "CU052" );
+		}
+
+		//$response = sfContext::getInstance()->getResponse();
 	}		
 
+	/**
+	* Permite actualizar en linea los cambios en los campos de productos 
+	* de una cotización
+	* @author Carlos G. López M.
+	*/
 	public function executeObserveProductos(){
 		$producto = CotProductoPeer::retrieveByPk( $this->getrequestparameter("cotizacionId"), $this->getrequestparameter("productoId") );
 		$this->forward404Unless($producto);	
-/*
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+		$transporte= utf8_decode($this->getRequestParameter("transporte"));
+
 		if( $this->getRequestParameter("impoexpo") ){
-			$producto->setCaImpoexpo( $impoexpo );				
+			$producto->setCaImpoexpo( $impoexpo );
+
+		}else if($this->getRequestParameter("incoterms")) {
+			$producto->setCaIncoterms( $this->getRequestParameter("incoterms") );
+
+		}else if($this->getRequestParameter("transporte")) {
+			$producto->setCaTransporte( $transporte );
+
+		}else if($this->getRequestParameter("modalidad")) {
+			$producto->setCaModalidad( $this->getRequestParameter("modalidad") );
 		}
-		*/
 		$producto->save();	
 		return sfView::NONE;	
 	}
