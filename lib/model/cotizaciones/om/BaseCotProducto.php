@@ -20,17 +20,17 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 
 	/**
-	 * The value for the ca_idproducto field.
-	 * @var        int
-	 */
-	protected $ca_idproducto;
-
-
-	/**
 	 * The value for the ca_idcotizacion field.
 	 * @var        int
 	 */
 	protected $ca_idcotizacion;
+
+
+	/**
+	 * The value for the ca_idproducto field.
+	 * @var        int
+	 */
+	protected $ca_idproducto;
 
 
 	/**
@@ -183,17 +183,6 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
-	 * Get the [ca_idproducto] column value.
-	 * 
-	 * @return     int
-	 */
-	public function getCaIdproducto()
-	{
-
-		return $this->ca_idproducto;
-	}
-
-	/**
 	 * Get the [ca_idcotizacion] column value.
 	 * 
 	 * @return     int
@@ -202,6 +191,17 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idcotizacion;
+	}
+
+	/**
+	 * Get the [ca_idproducto] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdproducto()
+	{
+
+		return $this->ca_idproducto;
 	}
 
 	/**
@@ -432,28 +432,6 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Set the value of [ca_idproducto] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     void
-	 */
-	public function setCaIdproducto($v)
-	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
-			$v = (int) $v;
-		}
-
-		if ($this->ca_idproducto !== $v) {
-			$this->ca_idproducto = $v;
-			$this->modifiedColumns[] = CotProductoPeer::CA_IDPRODUCTO;
-		}
-
-	} // setCaIdproducto()
-
-	/**
 	 * Set the value of [ca_idcotizacion] column.
 	 * 
 	 * @param      int $v new value
@@ -478,6 +456,28 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		}
 
 	} // setCaIdcotizacion()
+
+	/**
+	 * Set the value of [ca_idproducto] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaIdproducto($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idproducto !== $v) {
+			$this->ca_idproducto = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_IDPRODUCTO;
+		}
+
+	} // setCaIdproducto()
 
 	/**
 	 * Set the value of [ca_transporte] column.
@@ -874,9 +874,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_idproducto = $rs->getInt($startcol + 0);
+			$this->ca_idcotizacion = $rs->getInt($startcol + 0);
 
-			$this->ca_idcotizacion = $rs->getInt($startcol + 1);
+			$this->ca_idproducto = $rs->getInt($startcol + 1);
 
 			$this->ca_transporte = $rs->getString($startcol + 2);
 
@@ -1162,10 +1162,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdproducto();
+				return $this->getCaIdcotizacion();
 				break;
 			case 1:
-				return $this->getCaIdcotizacion();
+				return $this->getCaIdproducto();
 				break;
 			case 2:
 				return $this->getCaTransporte();
@@ -1238,8 +1238,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$keys = CotProductoPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdproducto(),
-			$keys[1] => $this->getCaIdcotizacion(),
+			$keys[0] => $this->getCaIdcotizacion(),
+			$keys[1] => $this->getCaIdproducto(),
 			$keys[2] => $this->getCaTransporte(),
 			$keys[3] => $this->getCaModalidad(),
 			$keys[4] => $this->getCaOrigen(),
@@ -1289,10 +1289,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdproducto($value);
+				$this->setCaIdcotizacion($value);
 				break;
 			case 1:
-				$this->setCaIdcotizacion($value);
+				$this->setCaIdproducto($value);
 				break;
 			case 2:
 				$this->setCaTransporte($value);
@@ -1368,8 +1368,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$keys = CotProductoPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdproducto($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaIdcotizacion($arr[$keys[1]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdcotizacion($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdproducto($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaTransporte($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaModalidad($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaOrigen($arr[$keys[4]]);
@@ -1398,8 +1398,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(CotProductoPeer::CA_IDPRODUCTO)) $criteria->add(CotProductoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
 		if ($this->isColumnModified(CotProductoPeer::CA_IDCOTIZACION)) $criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+		if ($this->isColumnModified(CotProductoPeer::CA_IDPRODUCTO)) $criteria->add(CotProductoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
 		if ($this->isColumnModified(CotProductoPeer::CA_TRANSPORTE)) $criteria->add(CotProductoPeer::CA_TRANSPORTE, $this->ca_transporte);
 		if ($this->isColumnModified(CotProductoPeer::CA_MODALIDAD)) $criteria->add(CotProductoPeer::CA_MODALIDAD, $this->ca_modalidad);
 		if ($this->isColumnModified(CotProductoPeer::CA_ORIGEN)) $criteria->add(CotProductoPeer::CA_ORIGEN, $this->ca_origen);
@@ -1433,29 +1433,41 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
 
+		$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		$criteria->add(CotProductoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
 
 		return $criteria;
 	}
 
 	/**
-	 * Returns the primary key for this object (row).
-	 * @return     int
+	 * Returns the composite primary key for this object.
+	 * The array elements will be in same order as specified in XML.
+	 * @return     array
 	 */
 	public function getPrimaryKey()
 	{
-		return $this->getCaIdproducto();
+		$pks = array();
+
+		$pks[0] = $this->getCaIdcotizacion();
+
+		$pks[1] = $this->getCaIdproducto();
+
+		return $pks;
 	}
 
 	/**
-	 * Generic method to set the primary key (ca_idproducto column).
+	 * Set the [composite] primary key.
 	 *
-	 * @param      int $key Primary key.
+	 * @param      array $keys The elements of the composite key (order must match the order in XML file).
 	 * @return     void
 	 */
-	public function setPrimaryKey($key)
+	public function setPrimaryKey($keys)
 	{
-		$this->setCaIdproducto($key);
+
+		$this->setCaIdcotizacion($keys[0]);
+
+		$this->setCaIdproducto($keys[1]);
+
 	}
 
 	/**
@@ -1470,8 +1482,6 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	 */
 	public function copyInto($copyObj, $deepCopy = false)
 	{
-
-		$copyObj->setCaIdcotizacion($this->ca_idcotizacion);
 
 		$copyObj->setCaTransporte($this->ca_transporte);
 
@@ -1521,6 +1531,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
+
+		$copyObj->setCaIdcotizacion(NULL); // this is a pkey column, so set to default value
 
 		$copyObj->setCaIdproducto(NULL); // this is a pkey column, so set to default value
 

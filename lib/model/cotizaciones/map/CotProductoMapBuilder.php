@@ -61,9 +61,9 @@ class CotProductoMapBuilder {
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_IDPRODUCTO', 'CaIdproducto', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addForeignPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int' , CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', true, null);
 
-		$tMap->addForeignKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int', CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', true, null);
+		$tMap->addPrimaryKey('CA_IDPRODUCTO', 'CaIdproducto', 'int', CreoleTypes::INTEGER, true, null);
 
 		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, false, null);
 

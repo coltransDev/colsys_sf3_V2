@@ -25,11 +25,11 @@ abstract class BaseCotProductoPeer {
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-	/** the column name for the CA_IDPRODUCTO field */
-	const CA_IDPRODUCTO = 'tb_cotproductos.CA_IDPRODUCTO';
-
 	/** the column name for the CA_IDCOTIZACION field */
 	const CA_IDCOTIZACION = 'tb_cotproductos.CA_IDCOTIZACION';
+
+	/** the column name for the CA_IDPRODUCTO field */
+	const CA_IDPRODUCTO = 'tb_cotproductos.CA_IDPRODUCTO';
 
 	/** the column name for the CA_TRANSPORTE field */
 	const CA_TRANSPORTE = 'tb_cotproductos.CA_TRANSPORTE';
@@ -93,9 +93,9 @@ abstract class BaseCotProductoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdproducto', 'CaIdcotizacion', 'CaTransporte', 'CaModalidad', 'CaOrigen', 'CaDestino', 'CaImpoexpo', 'CaImprimir', 'CaProducto', 'CaIncoterms', 'CaFrecuencia', 'CaTiempotransito', 'CaLocrecargos', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaDatosag', ),
-		BasePeer::TYPE_COLNAME => array (CotProductoPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDCOTIZACION, CotProductoPeer::CA_TRANSPORTE, CotProductoPeer::CA_MODALIDAD, CotProductoPeer::CA_ORIGEN, CotProductoPeer::CA_DESTINO, CotProductoPeer::CA_IMPOEXPO, CotProductoPeer::CA_IMPRIMIR, CotProductoPeer::CA_PRODUCTO, CotProductoPeer::CA_INCOTERMS, CotProductoPeer::CA_FRECUENCIA, CotProductoPeer::CA_TIEMPOTRANSITO, CotProductoPeer::CA_LOCRECARGOS, CotProductoPeer::CA_OBSERVACIONES, CotProductoPeer::CA_FCHCREADO, CotProductoPeer::CA_USUCREADO, CotProductoPeer::CA_FCHACTUALIZADO, CotProductoPeer::CA_USUACTUALIZADO, CotProductoPeer::CA_DATOSAG, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idproducto', 'ca_idcotizacion', 'ca_transporte', 'ca_modalidad', 'ca_origen', 'ca_destino', 'ca_impoexpo', 'ca_imprimir', 'ca_producto', 'ca_incoterms', 'ca_frecuencia', 'ca_tiempotransito', 'ca_locrecargos', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_datosag', ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdproducto', 'CaTransporte', 'CaModalidad', 'CaOrigen', 'CaDestino', 'CaImpoexpo', 'CaImprimir', 'CaProducto', 'CaIncoterms', 'CaFrecuencia', 'CaTiempotransito', 'CaLocrecargos', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaDatosag', ),
+		BasePeer::TYPE_COLNAME => array (CotProductoPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDPRODUCTO, CotProductoPeer::CA_TRANSPORTE, CotProductoPeer::CA_MODALIDAD, CotProductoPeer::CA_ORIGEN, CotProductoPeer::CA_DESTINO, CotProductoPeer::CA_IMPOEXPO, CotProductoPeer::CA_IMPRIMIR, CotProductoPeer::CA_PRODUCTO, CotProductoPeer::CA_INCOTERMS, CotProductoPeer::CA_FRECUENCIA, CotProductoPeer::CA_TIEMPOTRANSITO, CotProductoPeer::CA_LOCRECARGOS, CotProductoPeer::CA_OBSERVACIONES, CotProductoPeer::CA_FCHCREADO, CotProductoPeer::CA_USUCREADO, CotProductoPeer::CA_FCHACTUALIZADO, CotProductoPeer::CA_USUACTUALIZADO, CotProductoPeer::CA_DATOSAG, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idproducto', 'ca_transporte', 'ca_modalidad', 'ca_origen', 'ca_destino', 'ca_impoexpo', 'ca_imprimir', 'ca_producto', 'ca_incoterms', 'ca_frecuencia', 'ca_tiempotransito', 'ca_locrecargos', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_datosag', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
@@ -106,9 +106,9 @@ abstract class BaseCotProductoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdproducto' => 0, 'CaIdcotizacion' => 1, 'CaTransporte' => 2, 'CaModalidad' => 3, 'CaOrigen' => 4, 'CaDestino' => 5, 'CaImpoexpo' => 6, 'CaImprimir' => 7, 'CaProducto' => 8, 'CaIncoterms' => 9, 'CaFrecuencia' => 10, 'CaTiempotransito' => 11, 'CaLocrecargos' => 12, 'CaObservaciones' => 13, 'CaFchcreado' => 14, 'CaUsucreado' => 15, 'CaFchactualizado' => 16, 'CaUsuactualizado' => 17, 'CaDatosag' => 18, ),
-		BasePeer::TYPE_COLNAME => array (CotProductoPeer::CA_IDPRODUCTO => 0, CotProductoPeer::CA_IDCOTIZACION => 1, CotProductoPeer::CA_TRANSPORTE => 2, CotProductoPeer::CA_MODALIDAD => 3, CotProductoPeer::CA_ORIGEN => 4, CotProductoPeer::CA_DESTINO => 5, CotProductoPeer::CA_IMPOEXPO => 6, CotProductoPeer::CA_IMPRIMIR => 7, CotProductoPeer::CA_PRODUCTO => 8, CotProductoPeer::CA_INCOTERMS => 9, CotProductoPeer::CA_FRECUENCIA => 10, CotProductoPeer::CA_TIEMPOTRANSITO => 11, CotProductoPeer::CA_LOCRECARGOS => 12, CotProductoPeer::CA_OBSERVACIONES => 13, CotProductoPeer::CA_FCHCREADO => 14, CotProductoPeer::CA_USUCREADO => 15, CotProductoPeer::CA_FCHACTUALIZADO => 16, CotProductoPeer::CA_USUACTUALIZADO => 17, CotProductoPeer::CA_DATOSAG => 18, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idproducto' => 0, 'ca_idcotizacion' => 1, 'ca_transporte' => 2, 'ca_modalidad' => 3, 'ca_origen' => 4, 'ca_destino' => 5, 'ca_impoexpo' => 6, 'ca_imprimir' => 7, 'ca_producto' => 8, 'ca_incoterms' => 9, 'ca_frecuencia' => 10, 'ca_tiempotransito' => 11, 'ca_locrecargos' => 12, 'ca_observaciones' => 13, 'ca_fchcreado' => 14, 'ca_usucreado' => 15, 'ca_fchactualizado' => 16, 'ca_usuactualizado' => 17, 'ca_datosag' => 18, ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdproducto' => 1, 'CaTransporte' => 2, 'CaModalidad' => 3, 'CaOrigen' => 4, 'CaDestino' => 5, 'CaImpoexpo' => 6, 'CaImprimir' => 7, 'CaProducto' => 8, 'CaIncoterms' => 9, 'CaFrecuencia' => 10, 'CaTiempotransito' => 11, 'CaLocrecargos' => 12, 'CaObservaciones' => 13, 'CaFchcreado' => 14, 'CaUsucreado' => 15, 'CaFchactualizado' => 16, 'CaUsuactualizado' => 17, 'CaDatosag' => 18, ),
+		BasePeer::TYPE_COLNAME => array (CotProductoPeer::CA_IDCOTIZACION => 0, CotProductoPeer::CA_IDPRODUCTO => 1, CotProductoPeer::CA_TRANSPORTE => 2, CotProductoPeer::CA_MODALIDAD => 3, CotProductoPeer::CA_ORIGEN => 4, CotProductoPeer::CA_DESTINO => 5, CotProductoPeer::CA_IMPOEXPO => 6, CotProductoPeer::CA_IMPRIMIR => 7, CotProductoPeer::CA_PRODUCTO => 8, CotProductoPeer::CA_INCOTERMS => 9, CotProductoPeer::CA_FRECUENCIA => 10, CotProductoPeer::CA_TIEMPOTRANSITO => 11, CotProductoPeer::CA_LOCRECARGOS => 12, CotProductoPeer::CA_OBSERVACIONES => 13, CotProductoPeer::CA_FCHCREADO => 14, CotProductoPeer::CA_USUCREADO => 15, CotProductoPeer::CA_FCHACTUALIZADO => 16, CotProductoPeer::CA_USUACTUALIZADO => 17, CotProductoPeer::CA_DATOSAG => 18, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idproducto' => 1, 'ca_transporte' => 2, 'ca_modalidad' => 3, 'ca_origen' => 4, 'ca_destino' => 5, 'ca_impoexpo' => 6, 'ca_imprimir' => 7, 'ca_producto' => 8, 'ca_incoterms' => 9, 'ca_frecuencia' => 10, 'ca_tiempotransito' => 11, 'ca_locrecargos' => 12, 'ca_observaciones' => 13, 'ca_fchcreado' => 14, 'ca_usucreado' => 15, 'ca_fchactualizado' => 16, 'ca_usuactualizado' => 17, 'ca_datosag' => 18, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
@@ -209,9 +209,9 @@ abstract class BaseCotProductoPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_IDPRODUCTO);
-
 		$criteria->addSelectColumn(CotProductoPeer::CA_IDCOTIZACION);
+
+		$criteria->addSelectColumn(CotProductoPeer::CA_IDPRODUCTO);
 
 		$criteria->addSelectColumn(CotProductoPeer::CA_TRANSPORTE);
 
@@ -249,8 +249,8 @@ abstract class BaseCotProductoPeer {
 
 	}
 
-	const COUNT = 'COUNT(tb_cotproductos.CA_IDPRODUCTO)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotproductos.CA_IDPRODUCTO)';
+	const COUNT = 'COUNT(tb_cotproductos.CA_IDCOTIZACION)';
+	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotproductos.CA_IDCOTIZACION)';
 
 	/**
 	 * Returns the number of rows matching criteria.
@@ -668,6 +668,9 @@ abstract class BaseCotProductoPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
+			$comparison = $criteria->getComparison(CotProductoPeer::CA_IDCOTIZACION);
+			$selectCriteria->add(CotProductoPeer::CA_IDCOTIZACION, $criteria->remove(CotProductoPeer::CA_IDCOTIZACION), $comparison);
+
 			$comparison = $criteria->getComparison(CotProductoPeer::CA_IDPRODUCTO);
 			$selectCriteria->add(CotProductoPeer::CA_IDPRODUCTO, $criteria->remove(CotProductoPeer::CA_IDPRODUCTO), $comparison);
 
@@ -731,7 +734,24 @@ abstract class BaseCotProductoPeer {
 		} else {
 			// it must be the primary key
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(CotProductoPeer::CA_IDPRODUCTO, (array) $values, Criteria::IN);
+			// primary key is composite; we therefore, expect
+			// the primary key passed to be an array of pkey
+			// values
+			if(count($values) == count($values, COUNT_RECURSIVE))
+			{
+				// array is not multi-dimensional
+				$values = array($values);
+			}
+			$vals = array();
+			foreach($values as $value)
+			{
+
+				$vals[0][] = $value[0];
+				$vals[1][] = $value[1];
+			}
+
+			$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $vals[0], Criteria::IN);
+			$criteria->add(CotProductoPeer::CA_IDPRODUCTO, $vals[1], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -800,53 +820,24 @@ abstract class BaseCotProductoPeer {
 	}
 
 	/**
-	 * Retrieve a single object by pkey.
-	 *
-	 * @param      mixed $pk the primary key.
-	 * @param      Connection $con the connection to use
+	 * Retrieve object using using composite pkey values.
+	 * @param int $ca_idcotizacion
+	   @param int $ca_idproducto
+	   
+	 * @param      Connection $con
 	 * @return     CotProducto
 	 */
-	public static function retrieveByPK($pk, $con = null)
-	{
+	public static function retrieveByPK( $ca_idcotizacion, $ca_idproducto, $con = null) {
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
-
-		$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
-
-		$criteria->add(CotProductoPeer::CA_IDPRODUCTO, $pk);
-
-
+		$criteria = new Criteria();
+		$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $ca_idcotizacion);
+		$criteria->add(CotProductoPeer::CA_IDPRODUCTO, $ca_idproducto);
 		$v = CotProductoPeer::doSelect($criteria, $con);
 
-		return !empty($v) > 0 ? $v[0] : null;
+		return !empty($v) ? $v[0] : null;
 	}
-
-	/**
-	 * Retrieve multiple objects by pkey.
-	 *
-	 * @param      array $pks List of primary keys
-	 * @param      Connection $con the connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function retrieveByPKs($pks, $con = null)
-	{
-		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
-		}
-
-		$objs = null;
-		if (empty($pks)) {
-			$objs = array();
-		} else {
-			$criteria = new Criteria();
-			$criteria->add(CotProductoPeer::CA_IDPRODUCTO, $pks, Criteria::IN);
-			$objs = CotProductoPeer::doSelect($criteria, $con);
-		}
-		return $objs;
-	}
-
 } // BaseCotProductoPeer
 
 // static code to register the map builder for this Peer with the main Propel class
