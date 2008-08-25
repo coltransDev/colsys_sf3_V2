@@ -40,7 +40,7 @@ class pricingActions extends sfActions
 				$modalidad = $this->getRequestParameter( "modalidad_mar" );
 				$this->linea = $this->getRequestParameter( "idnaviera" );
 				break;
-		}
+		} 
 
 		$c = new Criteria();
 		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
