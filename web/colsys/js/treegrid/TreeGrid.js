@@ -1665,12 +1665,19 @@ Ext.ux.maximgb.treegrid.PagingToolbar = Ext.extend(Ext.PagingToolbar,
 		}
 	},
 	
-	onClick : function(which)
-	{
+	onClick : function(which)		
+	{		
 		var store = this.store,
 				cursor = store ? store.getActiveNodePageOffset() : 0,
 				total = store ? store.getActiveNodeTotalCount() : 0;
+		
+		var records = store.getModifiedRecords();
 				
+		if( records.length>0 ){
+			if(!confirm("Si cambia de pagina sin guardar los cambios estos se perderan, desea continuar?")){
+				return 0;
+			}	
+		}
 		switch(which){
 			case "first":
 				this.doLoad(0);

@@ -61,14 +61,8 @@ Ext.extend(Ext.grid.myRowExpander, Ext.grid.RowExpander, {
         //}
         return content;
     },
-
     
-    renderer : function(v, p, record){        
-		if(!record.data.recargo_id){
-			p.cellAttr = 'rowspan="2"';		
-        	return '<div class="x-grid3-row-expander">&#160;</div>';
-		}
-    }
+  
 
     
 });
