@@ -230,13 +230,32 @@ Controller = function()
                 header: "<?=$concepto->getCaConcepto()?>",
                 width: 80,
                 sortable: true,
-                groupable: false,			
-				renderer: rendererMin,							
+                groupable: false,	
+				<?
+				switch( $modalidad ){
+					case "FCL":
+						?>
+						renderer: rendererSug,
+						<?
+						break;
+					case "COLOADING":
+						?>
+						renderer: rendererMinSug,
+						<?
+						break;
+					default:
+						?>
+						renderer: rendererMin,								
+						<?
+						break;
+				}
+				?>				
                 dataIndex: 'concepto_<?=$concepto->getCaIdconcepto()?>',               
                 editor: new Ext.form.NumberFieldMin({
                     allowBlank: false ,
 					allowNegative: false,
-					style: 'text-align:left'                                      
+					style: 'text-align:left',
+					modalidad: '<?=$modalidad?>'                                      
                 })
             }
 			<?
@@ -295,7 +314,7 @@ Controller = function()
       	}else{
       		echo "pageSize: 100"; //Puede ser mas grande ya que las filas no se expanden
       	}
-      	?>
+      	?>		
       	
       })		
 	
@@ -307,8 +326,7 @@ Controller = function()
     	items : grid
     });
  	//grid.getSelectionModel().selectFirstRow();
-	
-	
+			
 	/**
 	* Expande las ramas cuando se seleccionan si el padre no esta expandido lo expande
 	**/
@@ -324,6 +342,9 @@ Controller = function()
 			}
 		}
     }); 
+	
+	
+	
 	
 	/**
 	* Copia los datos a las columnas seleccionadas 
@@ -442,13 +463,13 @@ Controller = function()
 					//the function to be called upon failure of the request
 					//(404 error etc, ***NOT*** success=false)
 					failure:function(response,options){							
-						//alert( response.responseText );						
+						alert( response.responseText );						
 						success = false;
 					},//end failure block      
 					
 					//The function to be called upon success of the request                                
 					success:function(response,options){							
-						//alert( response.responseText );						
+						alert( response.responseText );						
 						//commit changes (removes the red triangle which
 						//indicates a 'dirty' field)
 						//r.commit();										
@@ -473,9 +494,12 @@ Controller = function()
 	return {
 		init : function()
 		{
+			//Ext.MessageBox.alert('Warning','Por favor lea las observaciones: ');
 			createGrid();
 		}
 	}
+	
+	
 }();
 
 

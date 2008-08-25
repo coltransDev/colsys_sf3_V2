@@ -45,8 +45,9 @@ class pricingActions extends sfActions
 		$c = new Criteria();
 		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
-		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
-		$c->setLimit(20);
+		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );		
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
+		//$c->setLimit(20);
 		$trayectos = TrayectoPeer::doSelect( $c );
 
 		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
@@ -170,37 +171,17 @@ class pricingActions extends sfActions
 				'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
 				'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
 				'moneda' => $trayecto->getCaIdMoneda(),
-				'aplicacion' => $trayecto->getCaAplicacion(),
+				'aplicacion' => $trayecto->getCaAplicacion(),				
 				'_id' => $trayecto->getCaIdtrayecto(),
 				'_parent' => $transportador_id+10000,
 				'_level' => 1,				
-				'_is_leaf' => count($recargos)==0, //En aéreo los recargo se despliegan en columnas
-				'observaciones' => utf8_encode($trayecto->getCaObservaciones())
-			);			
-
+				'_is_leaf' => count($recargos)==0, 
+				'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones()))
+			);
+			
 			$pricFletes = $trayecto->getPricFletes();			
 				
 			$recAr=array();
-				
-			foreach( $pricFletes as $flete ){
-
-				$val = $flete->getCavlrneto();
-				if( $flete->getCaVlrminimo() ){
-					$val.="/".$flete->getCaVlrminimo();
-				}
-					
-				$row["concepto_".$flete->getCaIdconcepto()]=$val;
-
-				$pricRecargos = $flete->getPricRecargos();
-				foreach( $pricRecargos as $recargo){
-					$val = $recargo->getCaVlrrecargo();
-					if( $recargo->getCaVlrminimo() ){
-						$val.="/".$recargo->getCaVlrminimo();
-					}
-					$recAr[$recargo->getCaIdconcepto()][$recargo->getCaIdrecargo()]['valor'] = $val;
-					$recAr[$recargo->getCaIdconcepto()][$recargo->getCaIdrecargo()]['moneda'] = $recargo->getCaIdmoneda();
-				}
-			}				
 				
 			$data[] = $row;				
 
@@ -209,23 +190,43 @@ class pricingActions extends sfActions
 				
 				$row = array (
 					'idtrayecto' => $trayecto->getCaIdtrayecto(),
-					'origen' => utf8_encode($tipoRecargo->getCaRecargo()),										
+					'origen' => utf8_encode($tipoRecargo->getCaRecargo().($tipoRecargo->getCaAplicacion()?" (".$tipoRecargo->getCaAplicacion().")":"") ),										
 					'_id' => $trayecto->getCaIdtrayecto().$tipoRecargo->getCaidrecargo(),
 					'_parent' => $trayecto->getCaIdtrayecto(),
 					'_level' => 2,				
 					'_is_leaf' => true,
 					'recargo_id' => $tipoRecargo->getCaIdrecargo(),
-				    'aplicacion' => utf8_encode($tipoRecargo->getCaAplicacion())
-					
-
+				    
 				);
+				
+				$pricRecargo = PricRecargoPeer::retrieveByPk($trayecto->getCaIdtrayecto(), $tipoRecargo->getCaIdRecargo());
+				if( $pricRecargo ){
+					if( $pricRecargo->getCaIdmoneda() ){
+						$row["moneda"]=$pricRecargo->getCaIdmoneda();
+					}
+					
+					if( $pricRecargo->getCaObservaciones() ){
+						$row["observaciones"]=utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones()));
+					}	
+				}				
 				 
 				foreach( $this->conceptos as $concepto ){
 					//echo "----> ".$recAr[$concepto->getCaIdConcepto()][$recargo->getCaIdrecargo()]['moneda'];
-					if( isset($recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]) ){
-						$row['concepto_'.$concepto->getCaIdconcepto()]=$recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]['valor'];
-						$row['moneda']=$recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]['moneda'];
+					$pricRecargoxConcepto = PricRecargoxConceptoPeer::retrieveByPk($trayecto->getCaIdtrayecto(), $concepto->getCaidConcepto(), $tipoRecargo->getCaIdRecargo());		
+							
+					if($pricRecargoxConcepto){
+						$val = $pricRecargoxConcepto->getCaVlrrecargo();
+						if( $pricRecargoxConcepto->getCaVlrminimo() ){
+							$val.="/".$pricRecargoxConcepto->getCaVlrminimo();
+						}
+						$row['concepto_'.$concepto->getCaIdconcepto()] = $val;
 					}
+										
+					
+					/*if( isset($recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]) ){
+						$row['concepto_'.$concepto->getCaIdconcepto()]=$recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]['valor'];
+						//$row['moneda']=$recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]['moneda'];
+					}*/
 				}
 				$data[]=$row;
 			}				
@@ -265,7 +266,6 @@ class pricingActions extends sfActions
 		$trayecto->save();
 		print_r( $_POST );
 
-
 		// Las columnas vienen en parametros de la forma concepto_{$id}
 		foreach( $_POST as $key=>$value ){
 			if( substr( $key, 0,8 )=="concepto" && $value && !$recargo_id ){//se envió un concepto
@@ -289,38 +289,49 @@ class pricingActions extends sfActions
 					$flete->setCaVlrneto( $neto );
 					$flete->setCaVlrminimo( $minimo );
 				}
-
-
 				$flete->save();
 			}
-
+			
+			if( $recargo_id ){
+				$pricRecargo = PricRecargoPeer::retrieveByPk( $trayecto->getCaIdTrayecto() , $recargo_id);
 				
-			//se envió un recargo de un concepto
-			if( substr( $key, 0,8 )=="concepto"  && $value && $recargo_id ){
-				$concepto_id = substr( $key, 9, 10 );
-				$recargo = PricRecargoPeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $concepto_id , $recargo_id);
-
-				if( !$recargo ){
-					$recargo = new PricRecargo();
-					$recargo->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
-					$recargo->setCaIdconcepto( $concepto_id );
-					$recargo->setCaIdrecargo( $recargo_id );
+				if( !$pricRecargo ){
+					$pricRecargo = new PricRecargo();
+					$pricRecargo->setCaIdTrayecto( $trayecto->getCaIdTrayecto() );
+					$pricRecargo->setCaIdRecargo( $recargo_id );					
 				}
-				echo "Moneda--->>   ".$this->getRequestParameter("moneda");
-				if( $this->getRequestParameter("moneda")){
-					$recargo->setCaIdmoneda( $this->getRequestParameter("moneda") );
+						
+				if( $key=="moneda" && $value  ){					
+					$pricRecargo->setCaIdmoneda( $value );
 				}
-
-				$index = strpos($value,"/");
-				if( $index===false){
-					$recargo->setCaVlrrecargo( $value );
-				}else{
-					$neto = substr( $value, 0, $index );
-					$minimo= substr( $value , $index+1, 10);
-					$recargo->setCaVlrrecargo( $neto );
-					$recargo->setCaVlrminimo( $minimo );
+						
+				if( $key=="observaciones" && $value  ){
+					$pricRecargo->setCaObservaciones( $value );					
 				}
-				$recargo->save( );
+				$pricRecargo->save();
+							
+				//se envió un recargo de un concepto
+				if( substr( $key, 0,8 )=="concepto"  && $value ){
+					$concepto_id = substr( $key, 9, 10 );
+					$recargo = PricRecargoxConceptoPeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $concepto_id , $recargo_id);
+					if( !$recargo ){
+						$recargo = new PricRecargoxConcepto();
+						$recargo->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
+						$recargo->setCaIdconcepto( $concepto_id );
+						$recargo->setCaIdrecargo( $recargo_id );
+					}
+						
+					$index = strpos($value,"/");
+					if( $index===false){
+						$recargo->setCaVlrrecargo( $value );
+					}else{
+						$neto = substr( $value, 0, $index );
+						$minimo= substr( $value , $index+1, 10);
+						$recargo->setCaVlrrecargo( $neto );
+						$recargo->setCaVlrminimo( $minimo );
+					}
+					$recargo->save();
+				}
 			}
 		}
 		
