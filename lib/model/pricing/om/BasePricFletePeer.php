@@ -19,7 +19,7 @@ abstract class BasePricFletePeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.PricFlete';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 9;
+	const NUM_COLUMNS = 4;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -37,21 +37,6 @@ abstract class BasePricFletePeer {
 	/** the column name for the CA_VLRMINIMO field */
 	const CA_VLRMINIMO = 'tb_pricfletes.CA_VLRMINIMO';
 
-	/** the column name for the CA_FCHINICIO field */
-	const CA_FCHINICIO = 'tb_pricfletes.CA_FCHINICIO';
-
-	/** the column name for the CA_FCHVENCIMIENTO field */
-	const CA_FCHVENCIMIENTO = 'tb_pricfletes.CA_FCHVENCIMIENTO';
-
-	/** the column name for the CA_IDMONEDA field */
-	const CA_IDMONEDA = 'tb_pricfletes.CA_IDMONEDA';
-
-	/** the column name for the CA_OBSERVACIONES field */
-	const CA_OBSERVACIONES = 'tb_pricfletes.CA_OBSERVACIONES';
-
-	/** the column name for the CA_FCHCREADO field */
-	const CA_FCHCREADO = 'tb_pricfletes.CA_FCHCREADO';
-
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -63,10 +48,10 @@ abstract class BasePricFletePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaVlrneto', 'CaVlrminimo', 'CaFchinicio', 'CaFchvencimiento', 'CaIdmoneda', 'CaObservaciones', 'CaFchcreado', ),
-		BasePeer::TYPE_COLNAME => array (PricFletePeer::CA_IDTRAYECTO, PricFletePeer::CA_IDCONCEPTO, PricFletePeer::CA_VLRNETO, PricFletePeer::CA_VLRMINIMO, PricFletePeer::CA_FCHINICIO, PricFletePeer::CA_FCHVENCIMIENTO, PricFletePeer::CA_IDMONEDA, PricFletePeer::CA_OBSERVACIONES, PricFletePeer::CA_FCHCREADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_vlrneto', 'ca_vlrminimo', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_idmoneda', 'ca_observaciones', 'ca_fchcreado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaVlrneto', 'CaVlrminimo', ),
+		BasePeer::TYPE_COLNAME => array (PricFletePeer::CA_IDTRAYECTO, PricFletePeer::CA_IDCONCEPTO, PricFletePeer::CA_VLRNETO, PricFletePeer::CA_VLRMINIMO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_vlrneto', 'ca_vlrminimo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
 	);
 
 	/**
@@ -76,10 +61,10 @@ abstract class BasePricFletePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaVlrneto' => 2, 'CaVlrminimo' => 3, 'CaFchinicio' => 4, 'CaFchvencimiento' => 5, 'CaIdmoneda' => 6, 'CaObservaciones' => 7, 'CaFchcreado' => 8, ),
-		BasePeer::TYPE_COLNAME => array (PricFletePeer::CA_IDTRAYECTO => 0, PricFletePeer::CA_IDCONCEPTO => 1, PricFletePeer::CA_VLRNETO => 2, PricFletePeer::CA_VLRMINIMO => 3, PricFletePeer::CA_FCHINICIO => 4, PricFletePeer::CA_FCHVENCIMIENTO => 5, PricFletePeer::CA_IDMONEDA => 6, PricFletePeer::CA_OBSERVACIONES => 7, PricFletePeer::CA_FCHCREADO => 8, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_vlrneto' => 2, 'ca_vlrminimo' => 3, 'ca_fchinicio' => 4, 'ca_fchvencimiento' => 5, 'ca_idmoneda' => 6, 'ca_observaciones' => 7, 'ca_fchcreado' => 8, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaVlrneto' => 2, 'CaVlrminimo' => 3, ),
+		BasePeer::TYPE_COLNAME => array (PricFletePeer::CA_IDTRAYECTO => 0, PricFletePeer::CA_IDCONCEPTO => 1, PricFletePeer::CA_VLRNETO => 2, PricFletePeer::CA_VLRMINIMO => 3, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_vlrneto' => 2, 'ca_vlrminimo' => 3, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
 	);
 
 	/**
@@ -186,16 +171,6 @@ abstract class BasePricFletePeer {
 		$criteria->addSelectColumn(PricFletePeer::CA_VLRNETO);
 
 		$criteria->addSelectColumn(PricFletePeer::CA_VLRMINIMO);
-
-		$criteria->addSelectColumn(PricFletePeer::CA_FCHINICIO);
-
-		$criteria->addSelectColumn(PricFletePeer::CA_FCHVENCIMIENTO);
-
-		$criteria->addSelectColumn(PricFletePeer::CA_IDMONEDA);
-
-		$criteria->addSelectColumn(PricFletePeer::CA_OBSERVACIONES);
-
-		$criteria->addSelectColumn(PricFletePeer::CA_FCHCREADO);
 
 	}
 

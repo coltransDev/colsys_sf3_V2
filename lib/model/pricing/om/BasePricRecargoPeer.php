@@ -28,9 +28,6 @@ abstract class BasePricRecargoPeer {
 	/** the column name for the CA_IDTRAYECTO field */
 	const CA_IDTRAYECTO = 'tb_pricrecargos.CA_IDTRAYECTO';
 
-	/** the column name for the CA_IDCONCEPTO field */
-	const CA_IDCONCEPTO = 'tb_pricrecargos.CA_IDCONCEPTO';
-
 	/** the column name for the CA_IDRECARGO field */
 	const CA_IDRECARGO = 'tb_pricrecargos.CA_IDRECARGO';
 
@@ -40,11 +37,14 @@ abstract class BasePricRecargoPeer {
 	/** the column name for the CA_VLRMINIMO field */
 	const CA_VLRMINIMO = 'tb_pricrecargos.CA_VLRMINIMO';
 
-	/** the column name for the CA_FCHCREADO field */
-	const CA_FCHCREADO = 'tb_pricrecargos.CA_FCHCREADO';
-
 	/** the column name for the CA_IDMONEDA field */
 	const CA_IDMONEDA = 'tb_pricrecargos.CA_IDMONEDA';
+
+	/** the column name for the CA_APLICACION field */
+	const CA_APLICACION = 'tb_pricrecargos.CA_APLICACION';
+
+	/** the column name for the CA_OBSERVACIONES field */
+	const CA_OBSERVACIONES = 'tb_pricrecargos.CA_OBSERVACIONES';
 
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
@@ -57,9 +57,9 @@ abstract class BasePricRecargoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaIdrecargo', 'CaVlrrecargo', 'CaVlrminimo', 'CaFchcreado', 'CaIdmoneda', ),
-		BasePeer::TYPE_COLNAME => array (PricRecargoPeer::CA_IDTRAYECTO, PricRecargoPeer::CA_IDCONCEPTO, PricRecargoPeer::CA_IDRECARGO, PricRecargoPeer::CA_VLRRECARGO, PricRecargoPeer::CA_VLRMINIMO, PricRecargoPeer::CA_FCHCREADO, PricRecargoPeer::CA_IDMONEDA, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_idrecargo', 'ca_vlrrecargo', 'ca_vlrminimo', 'ca_fchcreado', 'ca_idmoneda', ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdrecargo', 'CaVlrrecargo', 'CaVlrminimo', 'CaIdmoneda', 'CaAplicacion', 'CaObservaciones', ),
+		BasePeer::TYPE_COLNAME => array (PricRecargoPeer::CA_IDTRAYECTO, PricRecargoPeer::CA_IDRECARGO, PricRecargoPeer::CA_VLRRECARGO, PricRecargoPeer::CA_VLRMINIMO, PricRecargoPeer::CA_IDMONEDA, PricRecargoPeer::CA_APLICACION, PricRecargoPeer::CA_OBSERVACIONES, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idrecargo', 'ca_vlrrecargo', 'ca_vlrminimo', 'ca_idmoneda', 'ca_aplicacion', 'ca_observaciones', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
@@ -70,9 +70,9 @@ abstract class BasePricRecargoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaIdrecargo' => 2, 'CaVlrrecargo' => 3, 'CaVlrminimo' => 4, 'CaFchcreado' => 5, 'CaIdmoneda' => 6, ),
-		BasePeer::TYPE_COLNAME => array (PricRecargoPeer::CA_IDTRAYECTO => 0, PricRecargoPeer::CA_IDCONCEPTO => 1, PricRecargoPeer::CA_IDRECARGO => 2, PricRecargoPeer::CA_VLRRECARGO => 3, PricRecargoPeer::CA_VLRMINIMO => 4, PricRecargoPeer::CA_FCHCREADO => 5, PricRecargoPeer::CA_IDMONEDA => 6, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_idrecargo' => 2, 'ca_vlrrecargo' => 3, 'ca_vlrminimo' => 4, 'ca_fchcreado' => 5, 'ca_idmoneda' => 6, ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdrecargo' => 1, 'CaVlrrecargo' => 2, 'CaVlrminimo' => 3, 'CaIdmoneda' => 4, 'CaAplicacion' => 5, 'CaObservaciones' => 6, ),
+		BasePeer::TYPE_COLNAME => array (PricRecargoPeer::CA_IDTRAYECTO => 0, PricRecargoPeer::CA_IDRECARGO => 1, PricRecargoPeer::CA_VLRRECARGO => 2, PricRecargoPeer::CA_VLRMINIMO => 3, PricRecargoPeer::CA_IDMONEDA => 4, PricRecargoPeer::CA_APLICACION => 5, PricRecargoPeer::CA_OBSERVACIONES => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idrecargo' => 1, 'ca_vlrrecargo' => 2, 'ca_vlrminimo' => 3, 'ca_idmoneda' => 4, 'ca_aplicacion' => 5, 'ca_observaciones' => 6, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
@@ -175,17 +175,17 @@ abstract class BasePricRecargoPeer {
 
 		$criteria->addSelectColumn(PricRecargoPeer::CA_IDTRAYECTO);
 
-		$criteria->addSelectColumn(PricRecargoPeer::CA_IDCONCEPTO);
-
 		$criteria->addSelectColumn(PricRecargoPeer::CA_IDRECARGO);
 
 		$criteria->addSelectColumn(PricRecargoPeer::CA_VLRRECARGO);
 
 		$criteria->addSelectColumn(PricRecargoPeer::CA_VLRMINIMO);
 
-		$criteria->addSelectColumn(PricRecargoPeer::CA_FCHCREADO);
-
 		$criteria->addSelectColumn(PricRecargoPeer::CA_IDMONEDA);
+
+		$criteria->addSelectColumn(PricRecargoPeer::CA_APLICACION);
+
+		$criteria->addSelectColumn(PricRecargoPeer::CA_OBSERVACIONES);
 
 	}
 
@@ -356,45 +356,6 @@ abstract class BasePricRecargoPeer {
 
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related Concepto table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinConcepto(Criteria $criteria, $distinct = false, $con = null)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargoPeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(PricRecargoPeer::COUNT);
-		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(PricRecargoPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
-
-		$rs = PricRecargoPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
-	}
-
-
-	/**
 	 * Selects a collection of PricRecargo objects pre-filled with their Trayecto objects.
 	 *
 	 * @return     array Array of PricRecargo objects.
@@ -453,64 +414,6 @@ abstract class BasePricRecargoPeer {
 
 
 	/**
-	 * Selects a collection of PricRecargo objects pre-filled with their Concepto objects.
-	 *
-	 * @return     array Array of PricRecargo objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function doSelectJoinConcepto(Criteria $c, $con = null)
-	{
-		$c = clone $c;
-
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
-			$c->setDbName(self::DATABASE_NAME);
-		}
-
-		PricRecargoPeer::addSelectColumns($c);
-		$startcol = (PricRecargoPeer::NUM_COLUMNS - PricRecargoPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
-		ConceptoPeer::addSelectColumns($c);
-
-		$c->addJoin(PricRecargoPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
-		$rs = BasePeer::doSelect($c, $con);
-		$results = array();
-
-		while($rs->next()) {
-
-			$omClass = PricRecargoPeer::getOMClass();
-
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
-
-			$omClass = ConceptoPeer::getOMClass();
-
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
-
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getConcepto(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addPricRecargo($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initPricRecargos();
-				$obj2->addPricRecargo($obj1); //CHECKME
-			}
-			$results[] = $obj1;
-		}
-		return $results;
-	}
-
-
-	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
@@ -537,8 +440,6 @@ abstract class BasePricRecargoPeer {
 		}
 
 		$criteria->addJoin(PricRecargoPeer::CA_IDTRAYECTO, TrayectoPeer::CA_IDTRAYECTO);
-
-		$criteria->addJoin(PricRecargoPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
 
 		$rs = PricRecargoPeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
@@ -572,12 +473,7 @@ abstract class BasePricRecargoPeer {
 		TrayectoPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + TrayectoPeer::NUM_COLUMNS;
 
-		ConceptoPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + ConceptoPeer::NUM_COLUMNS;
-
 		$c->addJoin(PricRecargoPeer::CA_IDTRAYECTO, TrayectoPeer::CA_IDTRAYECTO);
-
-		$c->addJoin(PricRecargoPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
 
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -608,244 +504,6 @@ abstract class BasePricRecargoPeer {
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
 					$temp_obj2->addPricRecargo($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initPricRecargos();
-				$obj2->addPricRecargo($obj1);
-			}
-
-
-				// Add objects for joined Concepto rows
-	
-			$omClass = ConceptoPeer::getOMClass();
-
-
-			$cls = Propel::import($omClass);
-			$obj3 = new $cls();
-			$obj3->hydrate($rs, $startcol3);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj3 = $temp_obj1->getConcepto(); // CHECKME
-				if ($temp_obj3->getPrimaryKey() === $obj3->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj3->addPricRecargo($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj3->initPricRecargos();
-				$obj3->addPricRecargo($obj1);
-			}
-
-			$results[] = $obj1;
-		}
-		return $results;
-	}
-
-
-	/**
-	 * Returns the number of rows matching criteria, joining the related Trayecto table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinAllExceptTrayecto(Criteria $criteria, $distinct = false, $con = null)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargoPeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(PricRecargoPeer::COUNT);
-		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(PricRecargoPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
-
-		$rs = PricRecargoPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
-	}
-
-
-	/**
-	 * Returns the number of rows matching criteria, joining the related Concepto table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinAllExceptConcepto(Criteria $criteria, $distinct = false, $con = null)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargoPeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(PricRecargoPeer::COUNT);
-		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(PricRecargoPeer::CA_IDTRAYECTO, TrayectoPeer::CA_IDTRAYECTO);
-
-		$rs = PricRecargoPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
-	}
-
-
-	/**
-	 * Selects a collection of PricRecargo objects pre-filled with all related objects except Trayecto.
-	 *
-	 * @return     array Array of PricRecargo objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function doSelectJoinAllExceptTrayecto(Criteria $c, $con = null)
-	{
-		$c = clone $c;
-
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
-			$c->setDbName(self::DATABASE_NAME);
-		}
-
-		PricRecargoPeer::addSelectColumns($c);
-		$startcol2 = (PricRecargoPeer::NUM_COLUMNS - PricRecargoPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
-
-		ConceptoPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + ConceptoPeer::NUM_COLUMNS;
-
-		$c->addJoin(PricRecargoPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
-
-
-		$rs = BasePeer::doSelect($c, $con);
-		$results = array();
-
-		while($rs->next()) {
-
-			$omClass = PricRecargoPeer::getOMClass();
-
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
-
-			$omClass = ConceptoPeer::getOMClass();
-
-
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getConcepto(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addPricRecargo($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initPricRecargos();
-				$obj2->addPricRecargo($obj1);
-			}
-
-			$results[] = $obj1;
-		}
-		return $results;
-	}
-
-
-	/**
-	 * Selects a collection of PricRecargo objects pre-filled with all related objects except Concepto.
-	 *
-	 * @return     array Array of PricRecargo objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function doSelectJoinAllExceptConcepto(Criteria $c, $con = null)
-	{
-		$c = clone $c;
-
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
-			$c->setDbName(self::DATABASE_NAME);
-		}
-
-		PricRecargoPeer::addSelectColumns($c);
-		$startcol2 = (PricRecargoPeer::NUM_COLUMNS - PricRecargoPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
-
-		TrayectoPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + TrayectoPeer::NUM_COLUMNS;
-
-		$c->addJoin(PricRecargoPeer::CA_IDTRAYECTO, TrayectoPeer::CA_IDTRAYECTO);
-
-
-		$rs = BasePeer::doSelect($c, $con);
-		$results = array();
-
-		while($rs->next()) {
-
-			$omClass = PricRecargoPeer::getOMClass();
-
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
-
-			$omClass = TrayectoPeer::getOMClass();
-
-
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getTrayecto(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addPricRecargo($obj1);
 					break;
 				}
 			}
@@ -953,9 +611,6 @@ abstract class BasePricRecargoPeer {
 			$comparison = $criteria->getComparison(PricRecargoPeer::CA_IDTRAYECTO);
 			$selectCriteria->add(PricRecargoPeer::CA_IDTRAYECTO, $criteria->remove(PricRecargoPeer::CA_IDTRAYECTO), $comparison);
 
-			$comparison = $criteria->getComparison(PricRecargoPeer::CA_IDCONCEPTO);
-			$selectCriteria->add(PricRecargoPeer::CA_IDCONCEPTO, $criteria->remove(PricRecargoPeer::CA_IDCONCEPTO), $comparison);
-
 			$comparison = $criteria->getComparison(PricRecargoPeer::CA_IDRECARGO);
 			$selectCriteria->add(PricRecargoPeer::CA_IDRECARGO, $criteria->remove(PricRecargoPeer::CA_IDRECARGO), $comparison);
 
@@ -1033,12 +688,10 @@ abstract class BasePricRecargoPeer {
 
 				$vals[0][] = $value[0];
 				$vals[1][] = $value[1];
-				$vals[2][] = $value[2];
 			}
 
 			$criteria->add(PricRecargoPeer::CA_IDTRAYECTO, $vals[0], Criteria::IN);
-			$criteria->add(PricRecargoPeer::CA_IDCONCEPTO, $vals[1], Criteria::IN);
-			$criteria->add(PricRecargoPeer::CA_IDRECARGO, $vals[2], Criteria::IN);
+			$criteria->add(PricRecargoPeer::CA_IDRECARGO, $vals[1], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -1109,19 +762,17 @@ abstract class BasePricRecargoPeer {
 	/**
 	 * Retrieve object using using composite pkey values.
 	 * @param int $ca_idtrayecto
-	   @param int $ca_idconcepto
 	   @param int $ca_idrecargo
 	   
 	 * @param      Connection $con
 	 * @return     PricRecargo
 	 */
-	public static function retrieveByPK( $ca_idtrayecto, $ca_idconcepto, $ca_idrecargo, $con = null) {
+	public static function retrieveByPK( $ca_idtrayecto, $ca_idrecargo, $con = null) {
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
 		$criteria = new Criteria();
 		$criteria->add(PricRecargoPeer::CA_IDTRAYECTO, $ca_idtrayecto);
-		$criteria->add(PricRecargoPeer::CA_IDCONCEPTO, $ca_idconcepto);
 		$criteria->add(PricRecargoPeer::CA_IDRECARGO, $ca_idrecargo);
 		$v = PricRecargoPeer::doSelect($criteria, $con);
 
