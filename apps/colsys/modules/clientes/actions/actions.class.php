@@ -265,7 +265,7 @@ class clientesActions extends sfActions
 		$c->addSelectColumn(ClientePeer::CA_CONFIRMAR );
 		
 		
-					
+	 $c->setDistinct();			
 		$c->add( ClientePeer::CA_COMPANIA , "lower(".ClientePeer::CA_COMPANIA.") LIKE '%".strtolower( $criterio )."%'", Criteria::CUSTOM );	
 		
 		
@@ -277,8 +277,9 @@ class clientesActions extends sfActions
  
    		while ( $rs->next() ) {
       		$this->clientes[] = array('ca_idcliente'=>$rs->getString(1),
-                                      'ca_compania'=>utf8_encode($rs->getString(2)),					  
-									  'ca_preferencias'=>utf8_encode($rs->getString(3)),                                  	  'ca_confirmar'=>utf8_encode($rs->getString(4)),
+                                      'ca_compania'=>utf8_encode($rs->getString(2)),
+									  'ca_preferencias'=>utf8_encode($rs->getString(3)),
+									  'ca_confirmar'=>utf8_encode($rs->getString(4)),
                                  );
 		}					
 		$this->setLayout("none");

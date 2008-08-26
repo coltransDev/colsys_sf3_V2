@@ -19,16 +19,26 @@ class cotizacionesComponents extends sfComponents
 	{
 		$this->productos = $this->cotizacion->getCotProductos();
 		$this->editable = $this->getRequestParameter("editable");
+	}
 
-		$this->incoterms =  ParametroPeer::retrieveByCaso( "CU062" );
-		$this->transporte = ParametroPeer::retrieveByCaso( "CU063" );
+	/*
+	* 
+	* */
+	public function executeComboProductos(){
+		$id = $this->cotizacion->getCaIdcotizacion();
+		$c = new Criteria();
+		$c->addSelectColumn(CotProductoPeer::CA_PRODUCTO );
+		$c->setDistinct();
+		$c->add( CotProductoPeer::CA_IDCOTIZACION , $id );
 		
-		if ($this->getRequestParameter("transporte") == 'Marítimo') {
-			$this->modalidades = ParametroPeer::retrieveByCaso( "CU051" );
-		}else {
-			$this->modalidades = ParametroPeer::retrieveByCaso( "CU052" );
+		$rs = CotProductoPeer::doSelectRS( $c );
+		
+		$this->productos = array();
+		
+   		while ( $rs->next() ) {
+      		$this->productos = array('ca_producto'=>$rs->getString(1),
+      		);
 		}
-		
 	}
 }
 ?>

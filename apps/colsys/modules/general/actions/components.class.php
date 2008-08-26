@@ -19,11 +19,9 @@ class generalComponents extends sfComponents
 			$this->fieldName="idCiudad";
 		}
 		
-		
 		if( !$this->selected ){
 			$this->selected="";
 		}
-		
 	
 		$trafico_id = $this->trafico_id;		
 		$c = new Criteria();
@@ -72,17 +70,25 @@ class generalComponents extends sfComponents
 	/*
 	* 
 	* */
+	public function executeComboImpoexpo(){
+		$this->impoexpo =  array("Importación"=>"Importación","Exportación"=>"Exportación");
+	}
+	
+	/*
+	* 
+	* */
+	public function executeComboIncoterms(){
+		$this->incoterms =  ParametroPeer::retrieveByCaso( "CU062" );
+	}
+	
+	/*
+	* 
+	* */
 	public function executeComboTransporte(){
 		$this->transportes = ParametroPeer::retrieveByCaso( "CU063" );
 		
-		
 		$this->modalidadMaritima = ParametroPeer::retrieveByCaso( "CU051" );
 		$this->modalidadAerea = ParametroPeer::retrieveByCaso( "CU052" );
-		
-		
 	}
-	
-	
-	
 }
 ?>

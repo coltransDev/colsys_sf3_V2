@@ -77,7 +77,7 @@ function editarGrilla( fieldname){
 					
 	field1.style.display = 'none';
 	field2.style.display = 'inline';		
-	document.getElementById(fieldname).focus();
+	//document.getElementById(fieldname).focus();
 }
 
 /*

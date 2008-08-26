@@ -148,15 +148,6 @@ class cotizacionesActions extends sfActions
 		$this->editable = $this->getRequestParameter("editable");	
 		$this->option = $this->getRequestParameter("option");
 		$this->cotizacion = $cotizacion;
-
-		$this->incoterms =  ParametroPeer::retrieveByCaso( "CU062" );
-		$this->transporte = ParametroPeer::retrieveByCaso( "CU063" );
-
-		if ($this->getRequestParameter("transporte") == 'Marítimo') {
-			$this->modalidades = ParametroPeer::retrieveByCaso( "CU051" );
-		}else {
-			$this->modalidades = ParametroPeer::retrieveByCaso( "CU052" );
-		}
 	}		
 
 	/**

@@ -4,14 +4,17 @@
 
 
 body{
-   margin-top:0px;
-   margin-bottom:0px;
-   margin-left:0px;
-   margin-right:0px;
-   background:#FFFFFF;   
+   margin-top:4px;
+   margin-bottom:4px;
+   margin-left:4px;
+   margin-right:4px;
+   background:#FFFFFF;
+  
+}
+
+body{
    font-family:verdana, arial, helvetica, serif;
    font-size:10px;
-  
 }
 
 input, select, textarea {
@@ -28,7 +31,10 @@ input:focus, select:focus, textarea:focus {
 
 
 
-
+p{
+   font-family:verdana, arial, helvetica, serif;
+   font-size:8px;
+}
 
 input.button, input.submit, input.reset{
    border: solid 1px #CCCCBB;
@@ -40,12 +46,7 @@ img{
 	border: 0px;
 }
 
-/*
-* Por lo menos debe estar definido para que los tooltips funcionen
-*/
-a{
 
-}
 
 a:link {
    text-decoration:none;
@@ -128,9 +129,8 @@ table.tableList tr.pink{
 	background-color:#FFCCCC;	
 }
 
-
 /*
-* Estilos estandar para mostrar información en formularios mediante una tabla
+* Estilos estandar para mostrar informacion en formularios mediante una tabla
 */
 
 table.tableForm{
@@ -143,59 +143,50 @@ table.tableForm th{
    text-align:center;
    background:#1D3F99;
    color:#FFFFFF;
-   padding-top: 5px;
-   padding-bottom: 3px;
 }
 table.tableForm td {
-	/*border-bottom: 1px solid #C9C9C0;
+	border-bottom: 1px solid #C9C9C0;
 	padding: 4px;
-	vertical-align:top;*/
+	vertical-align:top;
 }
 table.tableForm td.captura {
    text-align:left;
    vertical-align:top;
    background:#1D3F99;
    color:#FFFFFF;
-   padding: 4px;
 }
 table.tableForm td.destacar {
    text-align:left;
    background:#FFFFC0;
    color:#1D3F99;
    vertical-align:top;
-   padding: 4px;
 }
 table.tableForm td.divisor {
    text-align:center;
    background:#000000;
    color:#FFFFFF;
-   padding: 4px;
 }
 table.tableForm td.imprimir {
    text-align:left;
    background:#FFFFFF;
    color:#000000;
-   padding: 4px;
 }
 table.tableForm td.invertir {
    text-align:left;
    background:#D2D2D2;
-   color:#000000;   
+   color:#000000;
    vertical-align:top;
-   padding: 4px;
 }
 table.tableForm td.listar {
    text-align:left;
    vertical-align:top;
    background:#F0F0F0;
    color:#000000;
-   padding: 4px;
 }
 table.tableForm td.mostrar {
    text-align: left;
    background: #F0F0F0;
    color: #000000;
-   padding: 4px;
 }
 table.tableForm td.partir {
    font-weight:bold;
@@ -203,42 +194,35 @@ table.tableForm td.partir {
    vertical-align:top;
    background:#1D3F99;
    color:#FFFFFF;
-   padding: 4px;
 }
 table.tableForm td.periodo {
    text-align:left;
    background:#CCCCCC;
    color:#000000;
    vertical-align:top;
-   padding: 4px;
 }
 table.tableForm td.resaltar {
    text-align:left;
    background:#9999CC;
    color:#000000;
    vertical-align:top;
-   padding: 4px;
 }
 table.tableForm td.titulo {
    text-align:center;
    background:#1D3F99;
    color:#FFFFFF;
-   padding: 4px;
 }
 table.tableForm td.valores {
    text-align: right;
    vertical-align: top;
    background: #F0F0F0;
    color: #000000;
-   padding: 4px;
 }
 table.tableForm th.imprimir {
    text-align:center;
    background:#FFFFFF;
    color:#000000;
 }
-
-
 
 
 /*
