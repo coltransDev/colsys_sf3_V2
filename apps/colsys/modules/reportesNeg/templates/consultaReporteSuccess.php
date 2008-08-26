@@ -24,7 +24,7 @@ use_helper("Javascript", "Object", "Validation");
 							<?=$reporteNegocio->getCaVersion()."/".$reporteNegocio->numVersiones()?>
 			</div></td>
 			<td width="85" class="mostrar"><div align="left"><strong>Cotizaci&oacute;n</strong><br /><?=$reporteNegocio->getCaIdCotizacion()?>
-</div></td>
+			</div></td>
 			<?
 		/*$cotProducto = $reporteNegocio->getCotProducto();
 		if( $cotProducto ){

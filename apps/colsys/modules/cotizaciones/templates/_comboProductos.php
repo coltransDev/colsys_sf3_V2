@@ -20,8 +20,13 @@ Ext.onReady(function(){
 	    emptyText:'Seleccione',
 	    selectOnFocus: true,
 	    applyTo: 'combo_productos',
-	    hiddenName: 'productos'
+	    hiddenName: 'productos',
+	    
 	});
+	
+	
+	
+	
 	
     }
   );
