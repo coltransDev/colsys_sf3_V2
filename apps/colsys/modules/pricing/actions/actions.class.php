@@ -83,6 +83,7 @@ class pricingActions extends sfActions
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;
+		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);
 		
 		
 	}
@@ -188,7 +189,7 @@ class pricingActions extends sfActions
 			foreach( $recargos as $tipoRecargo){
 				
 				
-				$row = array (
+				$row = array ( 
 					'idtrayecto' => $trayecto->getCaIdtrayecto(),
 					'origen' => utf8_encode($tipoRecargo->getCaRecargo().($tipoRecargo->getCaAplicacion()?" (".$tipoRecargo->getCaAplicacion().")":"") ),										
 					'_id' => $trayecto->getCaIdtrayecto().$tipoRecargo->getCaidrecargo(),

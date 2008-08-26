@@ -292,7 +292,7 @@ Controller = function()
       stripeRows: true,
       autoExpandColumn: 'origen',
       title: 'Administrador del tarifario.',
-      root_title: 'Trayectos',
+      root_title: '<?=$trafico->getCaNombre()?>',
 	  sm: new Ext.grid.CellSelectionModel(),
 	  renderTo: 'pricingManagementGrid',
 	  plugins: [expander,checkColumn],
