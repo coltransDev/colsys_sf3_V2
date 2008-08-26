@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * FileColumn form.
+ *
+ * @package    form
+ * @subpackage tb_filecolumns
+ * @version    SVN: $Id: sfPropelFormTemplate.php 6174 2007-11-27 06:22:40Z fabien $
+ */
+class FileColumnForm extends BaseFileColumnForm
+{
+  public function configure()
+  {
+  }
+}
