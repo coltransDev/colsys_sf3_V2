@@ -189,7 +189,7 @@
 		<column name="ca_idmoneda_vta" type="varchar" required="true"  />				
 		<column name="ca_obtencionpoliza" type="numeric" required="true"  />			
 		<column name="ca_idmoneda_pol" type="varchar" required="true"  />			
-		<column name="ca_seguro_conf" type="numeric" required="true"  />	
+		<column name="ca_seguro_conf" type="varchar" required="true"  />	
 		
 		<foreign-key foreignTable="tb_reportes">
 			<reference local="ca_idreporte" foreign="ca_idreporte"/>
