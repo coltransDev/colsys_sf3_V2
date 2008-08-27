@@ -178,6 +178,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeObserveProductos(){
 		echo "--->".$this->getrequestparameter("productoId");
+		echo "asdasd";
 		$producto = CotProductoPeer::retrieveByPk( $this->getrequestparameter("cotizacionId"), $this->getrequestparameter("productoId") );
 		$this->forward404Unless($producto);	
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
