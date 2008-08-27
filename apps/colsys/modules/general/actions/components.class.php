@@ -72,6 +72,9 @@ class generalComponents extends sfComponents
 	* */
 	public function executeComboImpoexpo(){
 		$this->impoexpo =  array("Importación"=>"Importación","Exportación"=>"Exportación");
+		if(!isset($this->events)){
+			$this->events=array();
+		}
 	}
 	
 	/*

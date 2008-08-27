@@ -2,14 +2,38 @@
 if( count($productos)>0 || $editable ){
 ?>
 <script type="text/javascript">
-	function editarTransporte(id){
-		editarGrilla('transporte_'+id);
-		editarGrilla('modalidad_'+id);
-	}
+	function actualizar( field ){
+		var index = field.name.lastIndexOf("_");
+		var name = field.name.substring(0,index);
+		var id = field.name.substring(index+1 ,20);
+	
+		Ext.Ajax.request(  
+			{   //Specify options (note success/failure below that
+				//receives these same options)
+				waitMsg: 'Guardando cambios...', 
 
-	function soltarTransporte(id){
-		actualizarGrilla('transporte_'+id);
-		actualizarGrilla('modalidad_'+id);
+				//url where to send request (url to server side script) 
+				url: '<?=url_for("cotizaciones/observeProductos")?>/'+name+'/'+id, 
+				
+				//If specify params default is 'POST' instead of 'GET'
+				//method: 'POST', 
+				
+				//params will be available server side via $_POST or $_REQUEST:
+				//params :	changes,
+										
+				//the function to be called upon failure of the request
+				//(404 error etc, ***NOT*** success=false)
+				failure:function(response,options){							
+					alert( response.responseText );						
+					success = false;
+				},
+				
+				//The function to be called upon success of the request                                
+				success:function(response,options){							
+					alert( response.responseText );
+				}                                      
+			 }//end request config
+		); //end request*
 	}
 
 </script>
@@ -35,7 +59,7 @@ if( count($productos)>0 || $editable ){
 				<? if( $editable ){ ?>
 					<?=form_error("producto");?>
 					<?include_component("cotizaciones", "comboProductos", array("cotizacion"=>$cotizacion, "id"=>$producto->getCaIdproducto()));?>
-					<input type="text" id="combo_productos_<?=$producto->getCaIdproducto();?>" size="20" value="<?=$producto->getCaProducto();?>" />
+					<input type="text" id="combo_productos_<?=$producto->getCaIdproducto();?>" size="20" value="<?=$producto->getCaProducto();?>"/>
 				<? } else { ?>
 					<?=$producto->getCaProducto()?>
 				<? } ?>
@@ -45,8 +69,13 @@ if( count($productos)>0 || $editable ){
 			<div align="left">
 				<? if( $editable ){ ?>
 					<?=form_error("impoexpo");?>
-					<?include_component("general", "comboImpoexpo", array("id"=>$producto->getCaIdproducto()));?>
-					<input type="text" id="combo_impoexpo_<?=$producto->getCaIdproducto();?>" size="10" value="<?=$producto->getCaImpoexpo();?>" />
+					<?include_component("general", "comboImpoexpo", array("id"=>$producto->getCaIdproducto()) );?>
+					<input type="text" id="combo_impoexpo_<?=$producto->getCaIdproducto();?>" size="10" value="<?=$producto->getCaImpoexpo();?>"/>
+					<? echo observe_field("combo_impoexpo_".$producto->getCaIdproducto(), array('update' => 'result',
+											'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
+											'with' => "'impoexpo='+value",
+											) );
+					?>
 				<? } else { ?>
 					<?=$producto->getCaImpoexpo()?>
 				<? } ?>
@@ -153,7 +182,7 @@ if( count($productos)>0 || $editable ){
 
 			<td >
 				<?				
-				echo submit_tag("Guardar");
+				// echo submit_tag("Guardar");
 				?>
 			</td>
 		</tr>

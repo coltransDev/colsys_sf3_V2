@@ -22,8 +22,17 @@ Ext.onReady(function(){
 	    emptyText:'Seleccione',
 	    selectOnFocus: true,
 	    applyTo: 'combo_impoexpo'+index,
-	    hiddenName: 'impoexpo'+index
+	    hiddenName: 'impoexpo'+index,
+	  	name: 'impoexpo'+index
 	});
+	
+	<?	
+	foreach( $events as $key=>$value ){		
+	?>	
+	comboImpoexpo.on("<?=$key?>", <?=$value?> );
+	<?
+	}
+	?>
 	
     }
   );

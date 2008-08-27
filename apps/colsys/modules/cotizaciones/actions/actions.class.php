@@ -177,6 +177,7 @@ class cotizacionesActions extends sfActions
 	* @author Carlos G. López M.
 	*/
 	public function executeObserveProductos(){
+		echo "--->".$this->getrequestparameter("productoId");
 		$producto = CotProductoPeer::retrieveByPk( $this->getrequestparameter("cotizacionId"), $this->getrequestparameter("productoId") );
 		$this->forward404Unless($producto);	
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
