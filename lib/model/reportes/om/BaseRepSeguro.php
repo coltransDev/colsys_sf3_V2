@@ -77,7 +77,7 @@ abstract class BaseRepSeguro extends BaseObject  implements Persistent {
 
 	/**
 	 * The value for the ca_seguro_conf field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_seguro_conf;
 
@@ -191,7 +191,7 @@ abstract class BaseRepSeguro extends BaseObject  implements Persistent {
 	/**
 	 * Get the [ca_seguro_conf] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaSeguroConf()
 	{
@@ -358,11 +358,17 @@ abstract class BaseRepSeguro extends BaseObject  implements Persistent {
 	/**
 	 * Set the value of [ca_seguro_conf] column.
 	 * 
-	 * @param      double $v new value
+	 * @param      string $v new value
 	 * @return     void
 	 */
 	public function setCaSeguroConf($v)
 	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
 
 		if ($this->ca_seguro_conf !== $v) {
 			$this->ca_seguro_conf = $v;
@@ -404,7 +410,7 @@ abstract class BaseRepSeguro extends BaseObject  implements Persistent {
 
 			$this->ca_idmoneda_pol = $rs->getString($startcol + 7);
 
-			$this->ca_seguro_conf = $rs->getFloat($startcol + 8);
+			$this->ca_seguro_conf = $rs->getString($startcol + 8);
 
 			$this->resetModified();
 

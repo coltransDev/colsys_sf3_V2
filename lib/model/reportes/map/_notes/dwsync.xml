@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="RepAduanaMapBuilder.php" local="128619910580625000" remote="128619908140000000" testing="0" />
-<file name="RepAvisoMapBuilder.php" local="128619910572968750" remote="128619908140000000" testing="0" />
-<file name="RepCostoMapBuilder.php" local="128619910578750000" remote="128619908140000000" testing="0" />
-<file name="RepExpoMapBuilder.php" local="128619910581718750" remote="128619908140000000" testing="0" />
-<file name="RepGastoMapBuilder.php" local="128619910576718750" remote="128619908140000000" testing="0" />
-<file name="ReporteConceptoAirMapBuilder.php" local="128533692356250000" remote="128533690970000000" testing="0" />
-<file name="ReporteConceptoSeaMapBuilder.php" local="128532800034843750" remote="128532797610000000" testing="0" />
-<file name="ReporteMapBuilder.php" local="128619910571718750" remote="128619908140000000" testing="0" />
-<file name="RepSeguroMapBuilder.php" local="128619910577500000" remote="128619908140000000" testing="0" />
-<file name="RepStatusMapBuilder.php" local="128619910574375000" remote="128619908140000000" testing="0" />
-<file name="RepTarifaMapBuilder.php" local="128619910579843750" remote="128619908140000000" testing="0" />
-<file name="RepTarifasMapBuilder.php" local="128533693283281250" remote="128533690970000000" testing="0" />
-<file name="RepEquipoMapBuilder.php" local="128619910575312500" remote="128619908140000000" testing="0" />
+<file name="RepAduanaMapBuilder.php" local="128642597401175162" remote="128642594160000000" testing="0" />
+<file name="RepAvisoMapBuilder.php" local="128642597392893912" remote="128642594160000000" testing="0" />
+<file name="RepCostoMapBuilder.php" local="128642597398987662" remote="128642594160000000" testing="0" />
+<file name="RepExpoMapBuilder.php" local="128642597401956412" remote="128642594160000000" testing="0" />
+<file name="RepGastoMapBuilder.php" local="128642597397112662" remote="128642594160000000" testing="0" />
+<file name="ReporteMapBuilder.php" local="128642597391175162" remote="128642594160000000" testing="0" />
+<file name="RepSeguroMapBuilder.php" local="128642597397893912" remote="128642594160000000" testing="0" />
+<file name="RepStatusMapBuilder.php" local="128642597394143912" remote="128642594160000000" testing="0" />
+<file name="RepTarifaMapBuilder.php" local="128642597400550162" remote="128642594160000000" testing="0" />
+<file name="RepEquipoMapBuilder.php" local="128642597395550162" remote="128642594160000000" testing="0" />
 </dwsync>

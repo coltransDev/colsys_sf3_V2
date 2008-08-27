@@ -77,7 +77,7 @@ class RepSeguroMapBuilder {
 
 		$tMap->addColumn('CA_IDMONEDA_POL', 'CaIdmonedaPol', 'string', CreoleTypes::VARCHAR, true, null);
 
-		$tMap->addColumn('CA_SEGURO_CONF', 'CaSeguroConf', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addColumn('CA_SEGURO_CONF', 'CaSeguroConf', 'string', CreoleTypes::VARCHAR, true, null);
 
 	} // doBuild()
 
