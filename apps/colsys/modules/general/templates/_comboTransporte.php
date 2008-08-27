@@ -11,6 +11,8 @@ Ext.onReady(function(){
         }
         ?>       
      ];    
+
+    var index = <?=isset($id)?"'_".$id."'":"''"; ?>;
    	
   	var comboTransporte = new Ext.form.ComboBox({
 	    store: transportes,
@@ -19,8 +21,8 @@ Ext.onReady(function(){
 	    triggerAction: 'all',
 	    emptyText:'Seleccione',
 	    selectOnFocus: true,
-	    applyTo: 'combo_transporte',
-	    hiddenName: 'transporte'
+	    applyTo: 'combo_transporte'+index,
+	    hiddenName: 'transporte'+index
 	});
 	
 	var modalidadAerea = [
@@ -56,10 +58,10 @@ Ext.onReady(function(){
 	    triggerAction: 'all',
 	    emptyText:'Seleccione',
 	    selectOnFocus: true,
-	    applyTo: 'combo_modalidad',
+	    applyTo: 'combo_modalidad'+index,
 	    mode: 'local',
 	    displayField:'valor',
-	    hiddenName: 'modalidad'
+	    hiddenName: 'modalidad'+index
 	    
 	});
 	

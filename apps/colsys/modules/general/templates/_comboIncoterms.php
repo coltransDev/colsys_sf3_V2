@@ -11,6 +11,8 @@ Ext.onReady(function(){
         }
         ?>       
      ];    
+    
+    var index = <?=isset($id)?"'_".$id."'":"''"; ?>;
    	
   	var comboIncoterms = new Ext.form.ComboBox({
 	    store: incoterms,
@@ -19,8 +21,8 @@ Ext.onReady(function(){
 	    triggerAction: 'all',
 	    emptyText:'Seleccione',
 	    selectOnFocus: true,
-	    applyTo: 'combo_incoterms',
-	    hiddenName: 'incoterms'
+	    applyTo: 'combo_incoterms'+index,
+	    hiddenName: 'incoterms'+index
 	});
 	
     }

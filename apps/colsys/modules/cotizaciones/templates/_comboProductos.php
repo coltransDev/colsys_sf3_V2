@@ -12,6 +12,8 @@ Ext.onReady(function(){
         ?>       
      ];    
    	
+    var index = <?=isset($id)?"'_".$id."'":"''"; ?>;
+
   	var comboProductos = new Ext.form.ComboBox({
 	    store: productos,
 	    typeAhead: true,
@@ -19,14 +21,9 @@ Ext.onReady(function(){
 	    triggerAction: 'all',
 	    emptyText:'Seleccione',
 	    selectOnFocus: true,
-	    applyTo: 'combo_productos',
-	    hiddenName: 'productos',
-	    
+	    applyTo: 'combo_productos'+index,
+	    hiddenName: 'productos'+index
 	});
-	
-	
-	
-	
 	
     }
   );

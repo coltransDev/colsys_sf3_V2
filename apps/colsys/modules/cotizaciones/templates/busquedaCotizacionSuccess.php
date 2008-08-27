@@ -12,11 +12,12 @@
 	<?
 	foreach( $cotizaciones as $cotizacion ){
 		$contacto = $cotizacion->getContacto();
-		$cliente = $contacto->getCliente();
+		$cliente = $contacto->getCliente(); 
 	?>
 	<tr >
-	<td class="listar" ><?=link_to($cotizacion->getCaIdcotizacion(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
-	<td class="invertir" ><table class="tableForm" width="100%" border="0">
+		<td class="listar" ><?=link_to($cotizacion->getCaIdcotizacion(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
+		<td class="invertir" >
+			<table class="tableForm" width="100%" border="0">
 				<tbody>
 					<tr>
 						<td width="10%" class="listar"><b>Fch.Cotizacion:</b><br /><?=$cotizacion->getCaFchCotizacion()?></td>
@@ -31,7 +32,6 @@
 
 					<tr>
 						<td class="listar" colspan="5"><table class="tableForm" width="100%" border="0">
-						
 						<? 
 						foreach( $cotizacion->getCotProductos() as $producto ){
 							$origen = $producto->getOrigen();

@@ -30,86 +30,60 @@ if( count($productos)>0 || $editable ){
 	foreach( $productos as $producto ){
 	?>
 	<tr style='background:#F0F0F0' >
-		<td ><strong><?=$producto->getCaProducto()?></strong></td>	
 		<td >
-			<div id="impoexpo_<?=$producto->getCaIdproducto()?>_div" align="left" style="display:inline" 
+			<div align="left">
 				<? if( $editable ){ ?>
-					onclick="editarGrilla('impoexpo_<?=$producto->getCaIdproducto()?>')"
+					<?=form_error("producto");?>
+					<?include_component("cotizaciones", "comboProductos", array("cotizacion"=>$cotizacion, "id"=>$producto->getCaIdproducto()));?>
+					<input type="text" id="combo_productos_<?=$producto->getCaIdproducto();?>" size="20" value="<?=$producto->getCaProducto();?>" />
+				<? } else { ?>
+					<?=$producto->getCaProducto()?>
 				<? } ?>
-				> <?=$producto->getCaImpoexpo()?>
 			</div>
-			<? if( $editable ){	?>
-				<div id="impoexpo_<?=$producto->getCaIdproducto()?>_div_hd" align="left" style="display:none">
+		</td>
+		<td >
+			<div align="left">
+				<? if( $editable ){ ?>
 					<?=form_error("impoexpo");?>
 					<?include_component("general", "comboImpoexpo", array("id"=>$producto->getCaIdproducto()));?>
-					<input type="text" id="combo_impoexpo_<?=$producto->getCaIdproducto();?>" size="10" value="<?=$producto->getCaImpoexpo();?>" onBlur="actualizarGrilla('impoexpo_<?=$producto->getCaIdproducto();?>')"/>
-				</div>
-				<?  echo observe_field("impoexpo_".$producto->getCaIdproducto(), array('update' => 'result',
-															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
-															'with' => "'impoexpo='+value",
-															) );
-				}
-			?>	
+					<input type="text" id="combo_impoexpo_<?=$producto->getCaIdproducto();?>" size="10" value="<?=$producto->getCaImpoexpo();?>" />
+				<? } else { ?>
+					<?=$producto->getCaImpoexpo()?>
+				<? } ?>
+			</div>
 		</td>
 		<td >
-			<div id="incoterms_<?=$producto->getCaIdproducto()?>_div" align="left" style="display:inline" 
+			<div align="left">
 				<? if( $editable ){ ?>
-					onclick="editarGrilla('incoterms_<?=$producto->getCaIdproducto()?>')"
+					<?=form_error("incoterms");?>
+					<?include_component("general", "comboIncoterms", array("id"=>$producto->getCaIdproducto()));?>
+					<input type="text" id="combo_incoterms_<?=$producto->getCaIdproducto();?>" size="25" value="<?=$producto->getCaIncoterms();?>" />
+				<? } else { ?>
+					<?=$producto->getCaIncoterms()?>
 				<? } ?>
-				> <?=$producto->getCaIncoterms()?>
 			</div>
-			<? if( $editable ){	?>
-				<div id="incoterms_<?=$producto->getCaIdproducto()?>_div_hd" align="center" style="display:none">
-					<?//=select_tag("incoterms_".$producto->getCaIdproducto(), objects_for_select($incoterms, "getCavalor", "getCavalor", $producto->getCaIncoterms()), "onBlur=actualizarGrilla('incoterms_".$producto->getCaIdproducto()."')" ); ?>
-				</div>
-				<?  /*echo observe_field("incoterms_".$producto->getCaIdproducto(), array('update' => 'result',
-															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
-															'with' => "'incoterms='+value",
-															) );*/
-				}
-			?>	
 		</td>
 		<td >
-			<div id="transporte_<?=$producto->getCaIdproducto()?>_div" align="left" style="display:inline" 
+			<div align="left">
 				<? if( $editable ){ ?>
-					onclick="editarTransporte('<?=$producto->getCaIdproducto()?>')"
+					<?=form_error("transporte");?>
+					<?include_component("general", "comboTransporte", array("id"=>$producto->getCaIdproducto()));?>
+					<input type="text" id="combo_transporte_<?=$producto->getCaIdproducto();?>" size="8" value="<?=$producto->getCaTransporte();?>" />
+				<? } else { ?>
+					<?=$producto->getCaTransporte()?>
 				<? } ?>
-				> <?=$producto->getCaTransporte()?>
 			</div>
-			<? if( $editable ){	?>
-				<div id="transporte_<?=$producto->getCaIdproducto()?>_div_hd" align="left" style="display:none">
-				
-					
-					<?//=select_tag("transporte_".$producto->getCaIdproducto(), objects_for_select($transporte, "getCavalor", "getCavalor", $producto->getCaTransporte()), "onBlur=getElementById('modalidad_".$producto->getCaIdproducto()."').focus;" ); ?>
-				</div>
-				<?  /*echo observe_field("transporte_".$producto->getCaIdproducto(), array('update' => 'result',
-															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
-															'with' => "'transporte='+value",
-															) );*/
-				}
-			?>	
 		</td>
-
-
 		<td >
-			<div id="modalidad_<?=$producto->getCaIdproducto()?>_div" align="left" style="display:inline" 
+			<div align="left">
 				<? if( $editable ){ ?>
-					onclick="editarGrilla('modalidad_<?=$producto->getCaIdproducto()?>')"
+					<?=form_error("modalidad");?>
+					<input type="text" id="combo_modalidad_<?=$producto->getCaIdproducto();?>" size="8" value="<?=$producto->getCaModalidad();?>" />
+				<? } else { ?>
+					<?=$producto->getCaModalidad()?>
 				<? } ?>
-				> <?=$producto->getCaModalidad()?>
 			</div>
-			<? if( $editable ){	?>
-				<div id="modalidad_<?=$producto->getCaIdproducto()?>_div_hd" align="left" style="display:none">
-					<?//=select_tag("modalidad_".$producto->getCaIdproducto(), objects_for_select($modalidades, "getCavalor", "getCavalor", $producto->getCaModalidad()), "onBlur=soltarTransporte('".$producto->getCaIdproducto()."')" ); ?>
-				</div>
-				<?  /*echo observe_field("modalidad_".$producto->getCaIdproducto(), array('update' => 'result',
-															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
-															'with' => "'modalidad='+value",
-															) );*/
-				}
-			?>	
 		</td>
-
 
 		<td>
 			<?
@@ -162,6 +136,21 @@ if( count($productos)>0 || $editable ){
 					<input type="text" id="combo_modalidad" size="8"/>
 				</div>
 			</td>
+
+			<td >
+				<div align="left">
+					<?=form_error("TraOrigen");?>
+					<?//include_component("general", "comboTraOrigen", array("modo"=>"importacion"));?>
+					<input type="text" id="combo_traorigen" size="10"/>
+				</div>
+			</td>
+			<td >
+				<div align="left">
+					<?=form_error("CiuOrigen");?>
+					<input type="text" id="combo_ciuorigen" size="10"/>
+				</div>
+			</td>
+
 			<td >
 				<?				
 				echo submit_tag("Guardar");

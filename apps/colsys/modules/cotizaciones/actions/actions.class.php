@@ -150,6 +150,27 @@ class cotizacionesActions extends sfActions
 		$this->cotizacion = $cotizacion;
 	}		
 
+
+	/**
+	* Permite actualizar en linea los cambios en los campos de productos 
+	* de una cotización
+	* @author Carlos G. López M.
+	*/
+	public function executeGuardarProducto(){
+		$id_cotizacion = $this->getRequestParameter("id");
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+		$transporte= utf8_decode($this->getRequestParameter("transporte"));
+		
+		$producto = new CotProducto();
+		
+		$producto->setCaProducto( $this->getRequestParameter("producto") );
+		$producto->setCaImpoexpo( $impoexpo );
+		$producto->setCaIncoterms( $this->getRequestParameter("incoterms") );
+		$producto->setCaTransporte( $transporte );
+		$producto->setCaModalidad( $this->getRequestParameter("modalidad") );
+		
+	}
+	
 	/**
 	* Permite actualizar en linea los cambios en los campos de productos 
 	* de una cotización
