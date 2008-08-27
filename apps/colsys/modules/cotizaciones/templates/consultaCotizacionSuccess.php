@@ -32,7 +32,7 @@ use_helper("Javascript", "Object", "Validation");
 	<tr>
 	  <td class="titulo" style="text-align:left; vertical-align:top;">Cliente:<br></td>
 	  <td class="invertir">
-		<table width="100%" cellspacing="1" width="425">
+		<table width="100%" cellspacing="1" >
 		  <tr>
 		    <td class="mostrar"><b>Nombre:</b><br><?=$cliente->getCaCompania()?></td>
 		    <td class="mostrar"><b>Nit:</b><br><?=$cliente->getCaIdCliente()?></td>

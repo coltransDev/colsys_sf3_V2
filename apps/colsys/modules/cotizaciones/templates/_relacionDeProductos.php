@@ -80,6 +80,16 @@ if( count($productos)>0 || $editable ){
 					<?=$producto->getCaImpoexpo()?>
 				<? } ?>
 			</div>
+					<?include_component("general", "comboImpoexpo", array("id"=>$producto->getCaIdproducto()));?>
+					<input type="text" id="combo_impoexpo_<?=$producto->getCaIdproducto();?>" size="10" value="<?=$producto->getCaImpoexpo();?>" onBlur="actualizarGrilla('impoexpo_<?=$producto->getCaIdproducto();?>')"/>
+				</div>
+				<?  echo observe_field("combo_impoexpo_".$producto->getCaIdproducto(), array('update' => 'result',
+															'url' => 'cotizaciones/observeProductos?cotizacionId='.$cotizacion->getCaIdcotizacion().'&productoId='.$producto->getCaIdproducto()."&token=".md5(time()),
+															'with' => "'impoexpo='+value",
+															) );
+				}
+			?>
+			
 		</td>
 		<td >
 			<div align="left">
