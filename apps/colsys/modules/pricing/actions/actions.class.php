@@ -18,18 +18,20 @@ class pricingActions extends sfActions
 	 */
 	public function executeIndex()
 	{
-		$this->form = new IndexForm();
+		
 	}
 
 	/*
 	 * Muestra una grilla en la que se pueden agregar, editar tarifas
 	 */
 	public function executePricingManagement(){
+		
+		/*		
 		$transporte = $this->getRequestParameter( "transporte" );
 		$idtrafico = $this->getRequestParameter( "trafico_id" );
 
-		/*$idtrafico ="DE-049";
-		 $transporte = "Marítimo";*/
+		//$idtrafico ="DE-049";
+		//$transporte = "Marítimo";
 
 		switch($transporte){
 			case "Aéreo":
@@ -49,10 +51,10 @@ class pricingActions extends sfActions
 		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
 		//$c->setLimit(20);
 		$trayectos = TrayectoPeer::doSelect( $c );
-
+		
 		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
 		$conceptosArr = explode("|",$this->trafico->getCaConceptos());
-
+		
 		$c=new Criteria();
 		$c->add( ConceptoPeer::CA_TRANSPORTE, $transporte );
 		$c->add( ConceptoPeer::CA_MODALIDAD, $modalidad );
@@ -60,10 +62,7 @@ class pricingActions extends sfActions
 		$c->addAscendingOrderByColumn( ConceptoPeer::CA_IDCONCEPTO );
 		$this->conceptos = ConceptoPeer::doSelect( $c );
 			
-		//Select para las monedas
-		$c=new Criteria();
-		$c->addAscendingOrderByColumn( MonedaPeer::CA_IDMONEDA );
-		$this->monedas = MonedaPeer::doSelect( $c );
+		
 
 		//En el caso de los recargos aéreo los recargos son generales y se colocan en las columnas
 		if( $transporte=="Aéreo"){
@@ -76,14 +75,18 @@ class pricingActions extends sfActions
 				
 		}else{
 			$this->recargos=array();
-		}
+		}*/
 
-		$this->aplicaciones = ParametroPeer::retrieveByCaso( "CU060", null, $transporte );
+		//$this->aplicaciones = ParametroPeer::retrieveByCaso( "CU060", null, $transporte );
 
+		/*	
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;
 		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);
+		*/
+		
+		//Select para las monedas
 		
 		
 	}
@@ -96,7 +99,7 @@ class pricingActions extends sfActions
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		$linea = $this->getRequestParameter( "linea" );
-
+$modalidad = "FCL";
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
 			
@@ -104,7 +107,7 @@ class pricingActions extends sfActions
 		//$idtrafico ="US-001";
 		//$transporte = "Marítimo";
 		//$modalidad = "FCL";
-
+		
 		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
 		$conceptosArr = explode("|",$this->trafico->getCaConceptos());
 					
@@ -437,11 +440,81 @@ class pricingActions extends sfActions
 		}
 	}
 
-
-	public function executeTable(){
-
+	/*
+	* Muestra las ciudades y las devuelve en forma de arbol, el cliente 
+	* toma los datos y los coloca en un objeto Ext.tree.TreePanel
+	* @author: Andres Botero
+	*/
+	public function executeDatosCiudades( $request ){
+		
+		$this->transporte = $this->getRequestParameter("transporte");
+		$c = new Criteria();
+		$c->addAscendingOrderByColumn( TraficoGrupoPeer::CA_DESCRIPCION );
+		$this->grupos = TraficoGrupoPeer::doSelect( $c );
+		
+		$this->setLayout("ajax");
+		
 	}
+	
+	/*
+	* Esta acción se ejecuta cuando un usuario hace click sobre la hoja del arbol 
+	* seleccionando un pais, esta accion devuelve una grilla donde se colocan
+	* los valores de los conceptos 
+	* @author: Andres Botero
+	*/
+	public function executeGrillaPorTrafico( $request ){
+		$transporte = $this->getRequestParameter( "transporte" );
+		$idtrafico = $this->getRequestParameter( "trafico_id" );
+		$modalidad = $this->getRequestParameter( "modalidad" );
+		
+		//$idtrafico ="DE-049";
+		//$transporte = "Marítimo";
+			
+		switch($transporte){
+			case "Aéreo":
+				$modalidad = $this->getRequestParameter( "modalidad_aer" );
+				$this->linea = $this->getRequestParameter( "idaerolinea" );
+				break;
+			case "Marítimo":
+				$modalidad = $this->getRequestParameter( "modalidad_mar" );
+				$this->linea = $this->getRequestParameter( "idnaviera" );
+				break;
+		} 
 
+		$c = new Criteria();
+		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
+		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );		
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
+		//$c->setLimit(20);
+		$trayectos = TrayectoPeer::doSelect( $c );
+		
+		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+		$conceptosArr = explode("|",$this->trafico->getCaConceptos());
+		
+		$c=new Criteria();
+		$c->add( ConceptoPeer::CA_TRANSPORTE, $transporte );
+		$c->add( ConceptoPeer::CA_MODALIDAD, $modalidad );
+		$c->add( ConceptoPeer::CA_IDCONCEPTO, $conceptosArr, Criteria::IN );
+		$c->addAscendingOrderByColumn( ConceptoPeer::CA_IDCONCEPTO );
+		$this->conceptos = ConceptoPeer::doSelect( $c );
+			
+		//$this->aplicaciones = ParametroPeer::retrieveByCaso( "CU060", null, $transporte );
+					
+		$this->modalidad = $modalidad;
+		$this->transporte = $transporte;
+		$this->idtrafico = $idtrafico;
+		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
+		$this->linea = "";		
+	}
+	
+	public function executePruebagrouping(){
+	
+	}
+	
+	public function executeGroupingData(){
+		
+	}
 
 }
 ?>
