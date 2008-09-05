@@ -316,8 +316,10 @@ class reportesNegActions extends sfActions
 				}
 			}
 			
-			$cliente->setCaConfirmar( $reporteNegocio->getCaConfirmarClie() );					
-			$cliente->save();
+			if( is_array($contactos) ){
+				$cliente->setCaConfirmar( implode(",", $contactos) );					
+				$cliente->save();
+			}
 
 			
 			
@@ -1015,6 +1017,10 @@ class reportesNegActions extends sfActions
 			$concepto->setCaCobrarTar(  $this->getRequestParameter("cobrar_tar") );
 			$concepto->setCaCobrarMin(  $this->getRequestParameter("cobrar_min") );
 			$concepto->setCaCobraridm(  $this->getRequestParameter("cobrar_idm") );
+			
+			$user = $this->getUser();
+			$concepto->setCaUsucreado( $user->getuserId() );
+			$concepto->setCaFchcreado( date("Y-m-d H:i:s") );
 			$concepto->save();		
 			
 		}
@@ -1067,6 +1073,10 @@ class reportesNegActions extends sfActions
 		if( $this->getRequestParameter("observaciones") ){
 			$concepto->setCaObservaciones(  $this->getRequestParameter("observaciones") );
 		}
+		
+		$user = $this->getUser();
+		$concepto->setCaUsuactualizado( $user->getuserId() );
+		$concepto->setCaFchactualizado( date("Y-m-d H:i:s") );
 		
 		$concepto->save();	
 		
@@ -1161,6 +1171,10 @@ class reportesNegActions extends sfActions
 		
 		
 	}
+	
+	
+	
+	
 
 }
 

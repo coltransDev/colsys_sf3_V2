@@ -5,7 +5,7 @@ use_helper('Modalbox');
 use_helper('Javascript');
 use_helper('YUICalendar');
 
-
+$cliente = $reporteNegocio->getCliente();
 ?>
 <script language="JavaScript" type="text/javascript">
 	
@@ -395,12 +395,16 @@ use_helper('YUICalendar');
 						}else{
 							$confirmar = explode(",",$reporteNegocio->getCaConfirmarClie());
 						}
-						
+						if( $cliente ){
+							$correos = explode(",", $cliente->getCaConfirmar());
+						}else{
+							$correos = array();
+						}
 						for( $i=0; $i<10; $i++ ){							
 						?>
 						<tr>
-							<td width="160" class="invertir"><?=input_tag("contactos[]", isset($confirmar[$i])&&$confirmar[$i]?$confirmar[$i]:"", "size=40 maxlength=50 class=field id=contactos_{$i}");?></td>
-							<td width="40" class="invertir"><?=checkbox_tag("confirmar[]", $i, isset($confirmar[$i])&&$confirmar[$i]?true:false, "id=confirmar_{$i}")?></td>
+							<td width="160" class="invertir"><?=input_tag("contactos[]", isset($correos[$i])&&$correos[$i]?$correos[$i]:"", "size=40 maxlength=50 class=field id=contactos_{$i}");?></td>
+							<td width="40" class="invertir"><?=checkbox_tag("confirmar[]", $i, isset($correos[$i])&&in_array($correos[$i], $confirmar )?true:false, "id=confirmar_{$i}")?></td>
 						</tr>
 						<?
 						}
@@ -471,7 +475,7 @@ use_helper('YUICalendar');
 		<tr>
 			<td colspan="2" class="listar">Rep. Comercial: <span class="invertir">
 				<?
-		$cliente = $reporteNegocio->getCliente();
+		
 		
 		if( $cliente ){
 			$vendedor = $cliente->getCaVendedor();
