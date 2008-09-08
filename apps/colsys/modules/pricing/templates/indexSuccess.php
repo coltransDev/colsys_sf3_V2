@@ -68,7 +68,7 @@
 	   
        Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
        
-	   var treePanelAereoOnclickHandler = function(n){
+	   var treePanelOnclickHandler = function(n){
 			
 			var sn = this.selModel.selNode || {}; // selNode is null on initial selection
 			
@@ -80,7 +80,7 @@
 					params: {						
 						trafico_id : n.id.substr( index+1, 10 ),
 						transporte : n.id.substr( 0, index ),
-						modalidad: 'Consolidado'
+						modalidad: 'FCL'
 					},
 					success: function(xhr) {						
 						var newComponent = eval(xhr.responseText);
@@ -203,7 +203,7 @@
 							
 							root: new Ext.tree.AsyncTreeNode(),
 							listeners:  {
-								 click : treePanelAereoOnclickHandler
+								 click : treePanelOnclickHandler
 							}
 						})
 
@@ -225,7 +225,10 @@
 								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Marítimo")?>'
 							}),
 							
-							root: new Ext.tree.AsyncTreeNode()
+							root: new Ext.tree.AsyncTreeNode(),
+							listeners:  {
+								 click : treePanelOnclickHandler
+							}
 						})
 						
 					]

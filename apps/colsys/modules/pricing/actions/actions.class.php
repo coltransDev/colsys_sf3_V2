@@ -95,14 +95,16 @@ class pricingActions extends sfActions
 	 * Muestra los trayectos
 	 */
 	public function executePagerData(){
-		$transporte = $this->getRequestParameter( "transporte" );
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		$linea = $this->getRequestParameter( "linea" );
-$modalidad = "FCL";
+
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
-			
+		
+		
+	
 		//$idtrafico ="DE-049";
 		//$idtrafico ="US-001";
 		//$transporte = "Marítimo";
@@ -118,6 +120,7 @@ $modalidad = "FCL";
 		$c->addJoin( TrayectoPeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA );
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
+		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
 
 		if($linea){
 			$c->add( TrayectoPeer::CA_IDLINEA, $linea );
@@ -463,41 +466,39 @@ $modalidad = "FCL";
 	* @author: Andres Botero
 	*/
 	public function executeGrillaPorTrafico( $request ){
-		$transporte = $this->getRequestParameter( "transporte" );
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "trafico_id" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		
 		//$idtrafico ="DE-049";
 		//$transporte = "Marítimo";
-			
+		/*	
 		switch($transporte){
 			case "Aéreo":
-				$modalidad = $this->getRequestParameter( "modalidad_aer" );
+				//$modalidad = $this->getRequestParameter( "modalidad_aer" );
 				$this->linea = $this->getRequestParameter( "idaerolinea" );
 				break;
 			case "Marítimo":
-				$modalidad = $this->getRequestParameter( "modalidad_mar" );
+				//$modalidad = $this->getRequestParameter( "modalidad_mar" );
 				$this->linea = $this->getRequestParameter( "idnaviera" );
 				break;
-		} 
+		} */
 
 		$c = new Criteria();
 		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
-		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );		
+		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );	
+		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );	
 		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
 		//$c->setLimit(20);
 		$trayectos = TrayectoPeer::doSelect( $c );
 		
 		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
-		$conceptosArr = explode("|",$this->trafico->getCaConceptos());
+		$this->forward404Unless( $this->trafico );
+		$this->conceptos = $this->trafico->getConceptos( $transporte, $modalidad );
 		
-		$c=new Criteria();
-		$c->add( ConceptoPeer::CA_TRANSPORTE, $transporte );
-		$c->add( ConceptoPeer::CA_MODALIDAD, $modalidad );
-		$c->add( ConceptoPeer::CA_IDCONCEPTO, $conceptosArr, Criteria::IN );
-		$c->addAscendingOrderByColumn( ConceptoPeer::CA_IDCONCEPTO );
-		$this->conceptos = ConceptoPeer::doSelect( $c );
+		
+		//print_r( $this->conceptos );
 			
 		//$this->aplicaciones = ParametroPeer::retrieveByCaso( "CU060", null, $transporte );
 					
@@ -506,6 +507,8 @@ $modalidad = "FCL";
 		$this->idtrafico = $idtrafico;
 		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
 		$this->linea = "";		
+		
+		$this->setLayout("ajax");
 	}
 	
 	public function executePruebagrouping(){

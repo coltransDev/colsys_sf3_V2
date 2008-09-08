@@ -32,10 +32,10 @@ var record = Ext.data.Record.create([
 /*
 * Crea el store
 */
-alert( '<?=url_for("pricing/pagerData?modalidad=".$modalidad."&transporte=".$transporte."&idtrafico=".$idtrafico."&linea=".$linea)?>' );
+
 var store = new Ext.ux.maximgb.treegrid.AdjacencyListStore({
-	autoLoad : false,			
-	url: '<?=url_for("pricing/pagerData?modalidad=".$modalidad."&transporte=".$transporte."&idtrafico=".$idtrafico."&linea=".$linea)?>',
+	autoLoad : true,			
+	url: '<?=url_for("pricing/pagerData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico."&linea=".$linea)?>',
 	reader: new Ext.data.JsonReader(
 		{
 			id: '_id',
@@ -173,79 +173,42 @@ var colModel = new Ext.grid.ColumnModel({
 		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
 	}
 });
-		
-/*
-* Crea la grilla 
-*/    
-new Ext.ux.maximgb.treegrid.GridPanel({
-	store: store,
-	master_column_id : 'origen',
-	cm: colModel,
-	clicksToEdit: 1,
-	stripeRows: true,
-	autoExpandColumn: 'origen',
-	title: '<?=$trafico->getCaNombre()?>',
-	root_title: '<?=$trafico->getCaNombre()?>',
-	sm: new Ext.grid.CellSelectionModel(),			
-	plugins: [expander,checkColumn],
-	closable: true,
-	
-	tbar: [
-	{
-		text: 'Cambiar parametros',
-		tooltip: 'Guarda los cambios realizados en el tarifario',
-		iconCls:'add',                      // reference to our css
-		handler: updateModel
-	},			  
-	{
-		text: 'Guardar Cambios',
-		tooltip: 'Guarda los cambios realizados en el tarifario',
-		iconCls:'add',                      // reference to our css
-		handler: updateModel
-	}],
 
-	bbar: new Ext.ux.maximgb.treegrid.PagingToolbar({
-		store: store,
-		displayInfo: true,
-		pageSize: 100
-		<?
-		/*if( $transporte=="Marítimo" ){
-			echo "pageSize: 25"; //Un tamaño mayor impacta en el rendimiento
-		}else{
-			echo "pageSize: 100"; //Puede ser mas grande ya que las filas no se expanden
-		}*/
-		?>		
-	})		
-
-});
-	
- 	
 /*
-* Eventos de la grilla 
+* Configura el modo de seleccion de la grilla 
 */
-
-/**
-* Expande las ramas cuando se seleccionan si el padre no esta expandido lo expande
-**/
-/*
-grid.getSelectionModel().on('cellselect', function(sm, rowIndex, columnIndex) {	
-	var record = store.getAt(rowIndex);
-	store.expandNode(record);
-	if( record.data._parent ){
-		var parent = store.getById(record.data._parent);
-		store.expandNode(parent);
-		if( parent.data._parent ){
-			var parent = store.getById(parent.data._parent);
-			store.expandNode(parent);
+var selModel = new  Ext.grid.CellSelectionModel({
+	listeners:{
+		/**
+		* Expande las ramas cuando se seleccionan si el padre no esta 
+		* expandido lo expande
+		**/
+		cellselect: function(sm, rowIndex, columnIndex) {	
+			var record = store.getAt(rowIndex);
+			store.expandNode(record);
+			if( record.data._parent ){
+				var parent = store.getById(record.data._parent);
+				store.expandNode(parent);
+				if( parent.data._parent ){
+					var parent = store.getById(parent.data._parent);
+					store.expandNode(parent);
+				}
+			}
 		}
 	}
-}); */
+});
+
+
+
+ 	
+/*
+* Handlers de los eventos y botones de la grilla 
+*/
 
 /**
 * Copia los datos a las columnas seleccionadas 
 **/
-/*grid.on('afteredit', function(e) {	
-	
+var gridAfterEditHandler = function(e) {		
 	if(e.record.data.sel){
 		var records = store.getModifiedRecords();				
 		var lenght = records.length;				
@@ -260,15 +223,16 @@ grid.getSelectionModel().on('cellselect', function(sm, rowIndex, columnIndex) {
 				r.set(field,e.value);
 			}
 		}
-	}
-	
-}); 
-*/
+	}	
+}
+
+
+
 
 /**
 * Muestra una ventana donde se pueden editar las observaciones
 **/
-/*grid.on('click', function(e) {	
+var gridOnclickHandler =  function(e) {	
 	var btn = e.getTarget('.btnComentarios');        
 	if (btn) {			
 		var t = e.getTarget();
@@ -288,11 +252,9 @@ grid.getSelectionModel().on('cellselect', function(sm, rowIndex, columnIndex) {
 		   value: record.get("observaciones")
 	   });	
 	}
-}, grid); 
-*/		
-/*
-* Handlers de los eventos y botones de la grilla 
-*/
+}
+		
+
 
 /*
 * Coloca las observaciones en pantalla y actualiza el datastore 
@@ -365,18 +327,49 @@ function updateModel(){
 		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
 	}	
 }
-  	
-
-
-
-
+		
 /*
-new Ext.TabPanel({
-	region:'center',
-	deferredRender:false,
-	enableTabScroll:true,
-	activeTab:0,
-	title:'asddd',
+* Crea la grilla 
+*/    
+new Ext.ux.maximgb.treegrid.GridPanel({
+	store: store,
+	master_column_id : 'origen',
+	cm: colModel,
+	sm: selModel,	
+	clicksToEdit: 1,
+	stripeRows: true,
+	autoExpandColumn: 'origen',
+	title: '<?=$trafico->getCaNombre()?>',
+	root_title: '<?=$trafico->getCaNombre()?>',	
+	plugins: [expander,checkColumn],
 	closable: true,
-	items:[grid]
-})*/
+	
+	tbar: [			  
+	{
+		text: 'Guardar Cambios',
+		tooltip: 'Guarda los cambios realizados en el tarifario',
+		iconCls:'add',                      // reference to our css
+		handler: updateModel
+	}],
+
+	bbar: new Ext.ux.maximgb.treegrid.PagingToolbar({
+		store: store,
+		displayInfo: true,
+		pageSize: 25
+		<?
+		/*if( $transporte=="Marítimo" ){
+			echo "pageSize: 25"; //Un tamaño mayor impacta en el rendimiento
+		}else{
+			echo "pageSize: 100"; //Puede ser mas grande ya que las filas no se expanden
+		}*/
+		?>		
+	}),	
+	listeners:{
+		afteredit: gridAfterEditHandler,
+		click: gridOnclickHandler
+	}	
+
+});
+	
+
+ 	

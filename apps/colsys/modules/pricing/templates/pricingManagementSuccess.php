@@ -346,7 +346,7 @@ Controller = function()
 				var records = store.getModifiedRecords();				
 				var lenght = records.length;				
 				var field = e.field;
-						
+										
 				for( var i=0; i<lenght; i++){
 					r = records[i];			
 					if(r.data.sel){
@@ -356,8 +356,7 @@ Controller = function()
 						r.set(field,e.value);
 					}
 				}
-			}
-			
+			}			
 		}); 
 		
 		/**
