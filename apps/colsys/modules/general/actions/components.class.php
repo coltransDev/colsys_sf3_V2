@@ -30,7 +30,6 @@ class generalComponents extends sfComponents
 		$this->ciudades = CiudadPeer::doSelect( $c );			
 	}
 	
-	
 	/*
 	* Muestra un cuadro de seleccion con los traficos disponibles, cuando se actualiza cambia la ciudad
 	* por medio de AJAX
