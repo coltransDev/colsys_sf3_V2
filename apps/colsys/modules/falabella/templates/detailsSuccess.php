@@ -53,10 +53,10 @@ function update_record(sku , part1 , part2, sell, cont){
 function export_file(){
 	if (Math.round(document.getElementById('por_diferencia').value) >= 20) {
 		if (confirm('¿Desea generar una nueva order de pedido con la cantidad de productos faltantes?')) {
-			document.location='<?=url_for("falabella/generarNuevaOrden?iddoc=".urlencode(trim($fala_header->getCaIddoc())) )?>';
-		}else {
-			document.location='<?=url_for("falabella/generarArchivo?iddoc=".urlencode(trim($fala_header->getCaIddoc())) )?>';
+			document.location='<?=url_for("falabella/generarNuevaOrden?iddoc=".base64_encode(trim($fala_header->getCaIddoc())) )?>';
 		}
+	}else {
+		document.location='<?=url_for("falabella/generarArchivo?iddoc=".base64_encode(trim($fala_header->getCaIddoc())) )?>';
 	}
 }
 </script>
@@ -98,7 +98,7 @@ function export_file(){
 												)?></td>
 
 		<td><strong>Container Mode:</strong><br /><?
-			echo input_tag("container_mode", $fala_header->getCaContainerMode(), "size=5");
+			echo select_tag("container_mode", options_for_select(array("LCL","CY/CY","CFS/CFS","CFS/CY"), $fala_header->getCaContainerMode(), "include_blank=true") );
 			echo observe_field("container_mode", array("url"=>"falabella/observeHeader",
 												"update"=>"result",
 												"with"=>"'iddoc=".$fala_header->getCaIddoc()."&container_mode='+document.getElementById('container_mode').value",

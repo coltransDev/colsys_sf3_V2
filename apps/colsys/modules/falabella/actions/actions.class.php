@@ -30,7 +30,7 @@ class falabellaActions extends sfActions {
 	* Permite ver las intrucciones de embarque 
 	*/
 	public function executeShippingInstructions(){
-		$this->header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
+		$this->header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($this->header);
 		$this->instructions = $this->header->getFalaInstructions();
 		$this->info = $this->header->getFalaShipmentInfo();
@@ -42,7 +42,7 @@ class falabellaActions extends sfActions {
 	*/
 	public function executeDetails(){
 		
-		$this->fala_header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
+		$this->fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($this->fala_header);
 		$c = new Criteria();
 		$c->addAscendingOrderByColumn( FalaDetailPeer::CA_SKU );
@@ -195,7 +195,7 @@ class falabellaActions extends sfActions {
 		$new_faladetail->setCaCantidadPedido(0);
 		$new_faladetail->setCaCantidadMiles(0);
 		$new_faladetail->save();
-		$this->redirect("falabella/details?iddoc=".urlencode($doc_mem));
+		$this->redirect("falabella/details?iddoc=".base64_encode($doc_mem));
 		return sfView::NONE;
 	}
 	
@@ -203,7 +203,7 @@ class falabellaActions extends sfActions {
 	* Generar una Nueva Orden con los productos faltantes
 	*/
 	public function executeGenerarNuevaOrden(){
-		$doc_mem = $this->getRequestParameter ( 'iddoc' );
+		$doc_mem = base64_decode($this->getRequestParameter ( 'iddoc' ));
 		$fala_header = FalaHeaderPeer::retrieveByPk ( $doc_mem );
 		$this->forward404Unless($fala_header);
 		
@@ -238,7 +238,7 @@ class falabellaActions extends sfActions {
 			$new_shipping->save();
 		}
 		
-		$this->redirect("falabella/generarArchivo?iddoc=".urlencode($this->getRequestParameter ( 'iddoc' )));
+		$this->redirect("falabella/generarArchivo?iddoc=".$this->getRequestParameter ( 'iddoc' ));
 		return sfView::NONE;
 	}
 
@@ -246,7 +246,7 @@ class falabellaActions extends sfActions {
 	* Genera el archivo de salida
 	*/
 	public function executeGenerarArchivo(){
-		$fala_header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
+		$fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($fala_header);
 		$c = new Criteria();
 		$c->addAscendingOrderByColumn( FalaDetailPeer::CA_SKU );
@@ -258,8 +258,7 @@ class falabellaActions extends sfActions {
 		$ultimoAviso = $reporte->getUltimoAviso();
 		$salida = '';
 		foreach( $details as $detail ){
-			
-			$salida.= $fala_header->getCaIddoc()."|"; // 1
+			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 1
 			$salida.= $fala_header->getCaArchivoOrigen()."|"; // Archivo de Origen 2
 			$salida.= "ASN|"; // 3
 			$salida.= "COL|"; // 4
@@ -271,7 +270,7 @@ class falabellaActions extends sfActions {
 			$salida.= "|"; // Lloyd  10
 			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"AIR":$reporte->getIdnave() )."|"; // Vessel 11
 			$salida.= "|"; // Número de Viaje 12
-			$salida.= "|"; // Carrier 13
+			$salida.= "COLT|"; // Carrier 13
 			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"L":"")."|"; // Vessel 14
 			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"A":"S")."|"; // Vessel 15
 			$salida.= "UN|"; // Vessel 16
@@ -282,22 +281,22 @@ class falabellaActions extends sfActions {
 			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 21
 			$salida.= "UN|"; // Vessel 22
 			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 23
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchsalida():"")."|"; // 24
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchsalida():"")."|"; // 25
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchllegada():"")."|"; // 26
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchllegada():"")."|"; // 27
-			$salida.= $detail->getCaNumContPart1()."|"; // Id Cont 4 Car  28
-			$salida.= $detail->getCaNumContPart2()."|"; // Id Cont 10 Car  29
+			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchsalida("Ymd"):"")."|"; // 24
+			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchsalida("Ymd"):"")."|"; // 25
+			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchllegada("Ymd"):"")."|"; // 26
+			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchllegada("Ymd"):"")."|"; // 27
+			$salida.= str_replace("-","",$detail->getCaNumContPart1())."|"; // Id Cont 4 Car  28
+			$salida.= str_replace("-","",$detail->getCaNumContPart2())."|"; // Id Cont 10 Car  29
 			$salida.= $detail->getCaNumContSell()."|"; // Sello de Cont Car  30
 			$salida.= $detail->getCaContainerIso()."|"; // Cod ISO 31
 			$salida.= $fala_header->getCaContainerMode()."|"; //  32
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"AIR":$reporte->getCaTransporte())."|"; // Vessel 33
+			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"AIR":"")."|"; // Vessel 33
 			$salida.= "|"; // 34
 			$salida.= "|"; // 35
 			$salida.= "|"; // 36
-			$salida.= $fala_header->getCaIddoc()."|"; // 37
-			$salida.= $fala_header->getCaFechaCarpeta()."|"; // 38
-			$salida.= $detail->getCaSku()."|"; // 39
+			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 37
+			$salida.= $fala_header->getCaFechaCarpeta("Ymd")."|"; // 38
+			$salida.= $detail->getSkuNeto()."|"; // 39
 			$salida.= $detail->getCaVpn()."|"; // 40
 			$salida.= $detail->getCaCantidadMiles()."|"; // 41
 			$salida.= $detail->getCaUnidadMedidadCantidad()."|"; // 42
@@ -325,10 +324,8 @@ class falabellaActions extends sfActions {
 			$salida.= $fala_header->getCaProformaNumber();// 64
 			$salida.= "\r\n";			
 		}	
-		
-		
 		$directory=sfConfig::get('app_falabella_output');
-		$filename = $directory.DIRECTORY_SEPARATOR.$fala_header->getCaArchivoOrigen();
+		$filename = $directory.DIRECTORY_SEPARATOR.'ASN'.date('ymdHis').'.txt';
 		$handle = fopen($filename , 'w');	
 		
 		if (fwrite($handle, $salida) === FALSE) {

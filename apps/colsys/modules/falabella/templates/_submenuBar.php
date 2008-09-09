@@ -22,7 +22,7 @@ switch($action){
 		$button[2]["name"]="Anular";
 		$button[2]["tooltip"]="Anular la Orden de Pedido";
 		$button[2]["image"]="22x22/cancel.gif"; 			
-		$button[2]["link"]= "falabella/anularOrden?iddoc=".urlencode(trim($this->getRequestParameter("iddoc")));				
+		$button[2]["link"]= "falabella/anularOrden?iddoc=".base64_encode(trim($this->getRequestParameter("iddoc")));				
 		
 		break;	
 	case "shippingInstructions":	
@@ -34,7 +34,7 @@ switch($action){
 		$button[1]["name"]="Detalles";
 		$button[1]["tooltip"]="Exportar la informaci&oacute;n a la carpeta IN";
 		$button[1]["image"]="22x22/kexi_kexi.gif"; 			
-		$button[1]["link"]= "falabella/details?iddoc=".urlencode(trim($this->getRequestParameter("iddoc")));
+		$button[1]["link"]= "falabella/details?iddoc=".base64_encode(trim($this->getRequestParameter("iddoc")));
 		
 		$button[2]["name"]="e-mail";
 		$button[2]["tooltip"]="Enviar por e-mail";
