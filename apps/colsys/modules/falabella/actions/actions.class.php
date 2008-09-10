@@ -255,7 +255,6 @@ class falabellaActions extends sfActions {
 		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
 		$this->forward404unless( $reporte );
 		
-		$ultimoAviso = $reporte->getUltimoAviso();
 		$salida = '';
 		foreach( $details as $detail ){
 			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 1
@@ -264,7 +263,7 @@ class falabellaActions extends sfActions {
 			$salida.= "COL|"; // 4
 			$salida.= "|"; // Correlativo Coltrans 5
 			$salida.= (($reporte->getCaTransporte() != 'Aéreo')?"MB":"AW")."|"; // 6
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaDocmaster():"")."|"; // 7
+			$salida.= $reporte->getDoctransporte()."|"; // 7
 			$salida.= "|"; // Contact 8  /blanco
 			$salida.= "|"; // Contact Number 9
 			$salida.= "|"; // Lloyd  10
@@ -281,10 +280,10 @@ class falabellaActions extends sfActions {
 			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 21
 			$salida.= "UN|"; // Vessel 22
 			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 23
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchsalida("Ymd"):"")."|"; // 24
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchsalida("Ymd"):"")."|"; // 25
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchllegada("Ymd"):"")."|"; // 26
-			$salida.= (($ultimoAviso)?$ultimoAviso->getCaFchllegada("Ymd"):"")."|"; // 27
+			$salida.= $reporte->getETS("Ymd")."|"; // 24
+			$salida.= $reporte->getETS("Ymd")."|"; // 25
+			$salida.= $reporte->getETA("Ymd")."|"; // 26
+			$salida.= $reporte->getETA("Ymd")."|"; // 27
 			$salida.= str_replace("-","",$detail->getCaNumContPart1())."|"; // Id Cont 4 Car  28
 			$salida.= str_replace("-","",$detail->getCaNumContPart2())."|"; // Id Cont 10 Car  29
 			$salida.= $detail->getCaNumContSell()."|"; // Sello de Cont Car  30

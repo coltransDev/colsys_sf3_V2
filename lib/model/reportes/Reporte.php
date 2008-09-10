@@ -425,14 +425,10 @@ class Reporte extends BaseReporte
 	* @author Andres Botero
 	*/
 	public function getNombreBodega(){	
-
 		$bodega = BodegaPeer::retrieveByPk( $this->getCaIdBodega() );
-		
-		
 		if( $bodega ){
 			return $bodega->getCaNombre();
 		}
-		
 	}
 	
 	/*
@@ -460,9 +456,6 @@ class Reporte extends BaseReporte
 			}
 			
 		}
-		
-	
-		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaPiezas());
@@ -488,8 +481,6 @@ class Reporte extends BaseReporte
 			}
 			
 		}
-		
-		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaPeso());
@@ -512,9 +503,6 @@ class Reporte extends BaseReporte
 				}				
 			}			
 		}
-		
-		
-		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaVolumen());
@@ -523,7 +511,7 @@ class Reporte extends BaseReporte
 	}
 	
 	/*
-	* Devuelve el peso del reporte, en caso de que se haya enlazado con una referencia devuelve 
+	* Devuelve el Documento de transporte del reporte, en caso de que se haya enlazado con una referencia devuelve 
 	* los valores de la referencia y omite los del reporte
 	* @author Andres Botero	
 	*/
@@ -538,9 +526,6 @@ class Reporte extends BaseReporte
 				
 			}
 		}
-				
-		
-		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return $status->getCaDoctransporte();
@@ -559,8 +544,6 @@ class Reporte extends BaseReporte
 				return $inoclientesSea->getCaReferencia();
 			}
 		}
-		
-		
 	}
 	
 	
@@ -579,9 +562,6 @@ class Reporte extends BaseReporte
 				}
 			}
 		}
-		
-		
-						
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return $status->getCaFchsalida( $format );
@@ -605,9 +585,6 @@ class Reporte extends BaseReporte
 				}
 			}
 		}
-		
-		
-		
 		$status = $this->getUltimoStatus();
 		
 		if( $status ){		
@@ -616,6 +593,7 @@ class Reporte extends BaseReporte
 		return null;	
 	}
 	
+
 	/*
 	* Retorna la fecha de continuacion del ultimo status enviado
 	* Author: Andres Botero
@@ -627,6 +605,7 @@ class Reporte extends BaseReporte
 		}			
 		return null;	
 	}
+
 	
 	/*
 	* Retorna la fecha de continuacion del ultimo status enviado
@@ -646,8 +625,6 @@ class Reporte extends BaseReporte
 				}
 			}
 		}
-		
-		
 		$status = $this->getUltimoStatus();
 		
 		if( $status ){		
@@ -669,8 +646,6 @@ class Reporte extends BaseReporte
 				return $refSea->getCaFchEmbarque( $format );
 			}
 		}
-		
-	
 	}
 	
 	
@@ -686,8 +661,6 @@ class Reporte extends BaseReporte
 				return $refSea->getCaFcharribo( $format );
 			}
 		}
-		
-		
 	}
 	
 	/*
@@ -709,9 +682,6 @@ class Reporte extends BaseReporte
 				}
 			}
 		}
-		
-		
-		
 		$aviso = $this->getUltimoAviso();		
 		$status = $this->getUltimoStatus();
 				
