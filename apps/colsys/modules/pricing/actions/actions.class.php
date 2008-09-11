@@ -103,8 +103,6 @@ class pricingActions extends sfActions
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
 		
-		
-	
 		//$idtrafico ="DE-049";
 		//$idtrafico ="US-001";
 		//$transporte = "Marítimo";
@@ -138,29 +136,11 @@ class pricingActions extends sfActions
 		$transportador_id = null;
 		foreach( $trayectos as $trayecto ){
 			$transportador = $trayecto->getTransportador();
-			
-			
-			if( $transportador_id != $transportador->getCaIdLinea() ){
-				$row = array (
-					'idtrayecto' => $transportador->getCaIdLinea(),
-					'origen' => $transportador?utf8_encode($transportador->getCaNombre()):"",
-					'_id' => $transportador->getCaIdLinea()+10000,
-					'_parent' => null,
-					'_level' => 1,				
-					'_is_leaf' => false, //En aéreo los recargo se despliegan en columnas
-					//'observaciones' => utf8_encode($trayecto->getCaObservaciones())
-				);	
-				$data[] = $row;			
-				
-				$transportador_id = $transportador->getCaIdLinea();
-			}
-			
 				
 			/*
 			 * Determina cuales conceptos deberian mostrarse de acuerdo al trafico
 			 * seleccionado.
 			 */
-
 			$trafico = TraficoPeer::retrieveByPk( $trayecto->getOrigen()->getCaIdTrafico() );
 				
 				
@@ -172,9 +152,9 @@ class pricingActions extends sfActions
 			
 			$row = array (
 				'idtrayecto' => $trayecto->getCaIdtrayecto(),
-				'linea' => "",
-				'origen' => utf8_encode($trayecto->getOrigen()->getCaCiudad()),
-				'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+				'trayecto' =>utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."->".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()))." - ".($transportador?utf8_encode($transportador->getCaNombre()):""),
+				'origen' => "FLETE",
+			//	'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
 				'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
 				'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
 				'moneda' => $trayecto->getCaIdMoneda(),
@@ -187,6 +167,14 @@ class pricingActions extends sfActions
 			);
 			
 			$pricFletes = $trayecto->getPricFletes();			
+			
+			foreach( $pricFletes as $flete ){
+				$val = $flete->getCavlrneto();
+				if( $flete->getCaVlrminimo() ){
+					$val.="/".$flete->getCaVlrminimo();
+				}					
+				$row["concepto_".$flete->getCaIdconcepto()]=$val;				
+			}
 				
 			$recAr=array();
 				
@@ -203,6 +191,7 @@ class pricingActions extends sfActions
 					'_level' => 2,				
 					'_is_leaf' => true,
 					'recargo_id' => $tipoRecargo->getCaIdrecargo(),
+					'trayecto' =>utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."->".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()))." - ".($transportador?utf8_encode($transportador->getCaNombre()):"")
 				    
 				);
 				
@@ -508,7 +497,7 @@ class pricingActions extends sfActions
 		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
 		$this->linea = "";		
 		
-		$this->setLayout("ajax");
+		//$this->setLayout("ajax");
 	}
 	
 	public function executePruebagrouping(){
