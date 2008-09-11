@@ -15,6 +15,7 @@
 	language="javascript" src="/colsys_sf/js/treegrid/CheckColumn.js"></script>  
   
 <script type="text/javascript">
+	
     Ext.onReady(function(){
        
 	   /* Inicializa los tooltips
@@ -40,6 +41,7 @@
 		* @param {Object} cell
 		* @param {Ext.data.Record} record
 		*/
+		
 		var renderRowTooltip=function(val, cell, record) {
 			//alert("asdasd");
 			// get data
