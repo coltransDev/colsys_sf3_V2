@@ -1,3 +1,6 @@
+<?
+use_helper( "Ext2" );
+?>
 <link rel="stylesheet" type="text/css"
 	href="/colsys_sf/css/treegrid/css/TreeGrid.css" />
 <link
@@ -17,7 +20,16 @@
 <script type="text/javascript">
 	
     Ext.onReady(function(){
-       
+       /*
+	   * Se crea un record para almacenar los datos d elos recargos 
+	   */
+	   
+	   /*
+	   * Se crea un combo para los recargos 
+	   */
+	   	   
+	   
+	   
 	   /* Inicializa los tooltips
 		*/
 		Ext.QuickTips.init();	

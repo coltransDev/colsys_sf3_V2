@@ -7,7 +7,7 @@ use_helper("Ext2");
 */
 var record = Ext.data.Record.create([   		
 	{name: 'idtrayecto', type: 'int'},
-	{name: 'origen', type: 'string'},
+	{name: 'nconcepto', type: 'string'},
 	{name: 'destino', type: 'string'},
 	{name: 'trayecto', type: 'string'},			
 	{name: 'inicio', type: 'date', dateFormat:'m/d/Y'},
@@ -65,18 +65,20 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 /*
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
+
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [
 		expander,	
 		checkColumn,			
 		{
-			id: 'origen',
-			header: "Origen",
+			id: 'nconcepto',
+			header: "Concepto",
 			width: 200,
 			sortable: true,
 			renderer: renderRowTooltip,	
-			dataIndex: 'origen',
-			hideable: false				
+			dataIndex: 'nconcepto',
+			hideable: false,
+			editor: <?=extRecargos( $modalidad,$transporte )?>	
 		},	
 		{
 			id: 'trayecto',
@@ -110,6 +112,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Aplicacion",
 			width: 100,
 			sortable: false,
+			
 			dataIndex: 'aplicacion'//,              
 			/*editor: new Ext.form.ComboBox({
 				typeAhead: true,
@@ -171,7 +174,7 @@ var colModel = new Ext.grid.ColumnModel({
 	isCellEditable: function(colIndex, rowIndex) {	
 		var record = store.getAt(rowIndex);
 		var field = this.getDataIndex(colIndex);
-		if (record.data.recargo_id && (field == 'aplicacion'||field == 'inicio'||field == 'vencimiento')) {			
+		if (record.data.recargo_id && (field == 'aplicacion'||field == 'inicio'||field == 'vencimiento'|| field == 'nconcepto')) {			
 			return false;
 		}			
 		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
@@ -210,6 +213,97 @@ var selModel = new  Ext.grid.CellSelectionModel(/*{
 /*
 * Actualiza los datos de la base de datos usando Ajax.
 */
+
+	
+/*
+* Handlers de los eventos y botones de la grilla 
+*/
+
+/*
+* Handler que se dispara despues de editar una celda
+*/
+var gridAfterEditHandler = function(e) {	
+   	
+	/**
+	* Copia los datos a las columnas seleccionadas 
+	**/
+	if(e.record.data.sel){
+		var records = store.getModifiedRecords();				
+		var lenght = records.length;				
+		var field = e.field;
+				
+		for( var i=0; i< lenght; i++){
+			r = records[i];			
+			if(r.data.sel){
+				if (r.data.recargo_id && (field == 'aplicacion'||field == 'inicio'||field == 'vencimiento')) {			
+					continue;
+				}	
+				r.set(field,e.value);
+			}
+		}
+	}	
+}
+
+/*
+* Handler que se encarga de colocar el dato recargo_id en el Record 
+* cuando se inserta un nuevo recargo
+*/
+var gridOnvalidateedit = function(e){
+	
+	if( e.field == "nconcepto"){
+		var rec = e.record;		   
+		var ed = this.colModel.getCellEditor(e.column, e.row);
+		
+		var store = ed.field.store;
+	    store.each( function( r ){				
+				if( r.data.idrecargo==e.value ){				
+					e.value = r.data.recargo;
+					rec.set("recargo_id", r.data.idrecargo);									
+					return true;
+				}
+			}
+		)		
+	}
+}
+
+
+/**
+* Muestra una ventana donde se pueden editar las observaciones
+**/
+var gridOnclickHandler =  function(e) {	
+	var btn = e.getTarget('.btnComentarios');        
+	if (btn) {			
+		var t = e.getTarget();
+		var v = this.view;	
+		var rowIdx = v.findRowIndex(t);
+		var record = this.getStore().getAt(rowIdx);           
+						
+		activeRow = rowIdx;				
+		Ext.MessageBox.show({
+		   title: 'Observaciones',
+		   msg: 'Por favor coloque las observaciones:',
+		   width:300,
+		   buttons: Ext.MessageBox.OKCANCEL,
+		   multiline: true,
+		   fn: actualizarObservaciones,
+		   animEl: 'mb3',
+		   value: record.get("observaciones")
+	   });	
+	}
+}
+	
+/*
+* Coloca las observaciones en pantalla y actualiza el datastore 
+*/
+var actualizarObservaciones=function( btn, text ){		
+	if( btn=="ok" ){			
+		var record = store.getAt(activeRow); 
+		record.set("observaciones", text);
+		
+		document.getElementById("obs_"+record.get("_id")).innerHTML  = "<strong>Observaciones:</strong> "+text;		
+	}
+}	
+
 function updateModel(){
 	var success = true;
 	var records = store.getModifiedRecords();
@@ -228,7 +322,7 @@ function updateModel(){
 		if(changes['vencimiento']){
 			changes['vencimiento']=Ext.util.Format.date(changes['vencimiento'],'Y-m-d');									
 		}	
-		
+				
 		//Si es un recargo y lo envia como parametro
 		if(r.data.recargo_id){
 			changes['recargo_id']=r.data.recargo_id;
@@ -267,22 +361,70 @@ function updateModel(){
 	}	
 }
 
+
+var gridOnRowcontextmenu =  function(grid, index, e){
+		
+  //  if(!this.menu){ // create context menu on first right click
+		this.menu = new Ext.menu.Menu({
+			id:'grid-ctx',
+			items: [{
+				text: 'Nuevo recargo',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   
+					agregarFila(this.ctxRecord, index);					
+				}
+			}]
+		});
+		this.menu.on('hide', this.onContextHide, this);
+   // }
+	e.stopEvent();
+	if(this.ctxRow){
+		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+		this.ctxRow = null;
+	}
+	this.ctxRow = this.view.getRow(index);
+	this.ctxRecord = this.store.getAt(index);
+	Ext.fly(this.ctxRow).addClass('x-node-ctx');
+	this.menu.showAt(e.getXY());
+}
+
+function agregarFila(ctxRecord, index){		
+	//ctxRecord = store.getAt(index);
+	ctxRecord.set("_is_leaf", false);
+	//var index =  store.indexOf(ctxRecord);	
+	
+	//alert(ctxRecord.get("_id")+" "+ctxRecord.get("_parent"));
+	var rec = new record({trayecto:ctxRecord.get("trayecto"),
+						  nconcepto:'',
+						  idtrayecto:ctxRecord.get("idtrayecto")	
+						});
+	
+	records = [];
+	records.push( rec );
+	store.insert( index+1, records );
+	//store.expandNode(ctxRecord);
+	store.each(function(r){
+		//alert(r.index+" "+r.data.origen);
+	})
+}
 		
 /*
 * Crea la grilla 
 */    
 new Ext.grid.EditorGridPanel({
 	store: store,
-	master_column_id : 'origen',
+	master_column_id : 'nconcepto',
 	cm: colModel,
 	sm: selModel,	
 	clicksToEdit: 1,
 	stripeRows: true,
-	autoExpandColumn: 'origen',
+	autoExpandColumn: 'nconcepto',
 	title: '<?=$trafico->getCaNombre()?>',
 	root_title: '<?=$trafico->getCaNombre()?>',	
 	plugins: [expander,checkColumn],
 	closable: true,
+	
 	tbar: [			  
 	{
 		text: 'Guardar Cambios',
@@ -293,8 +435,8 @@ new Ext.grid.EditorGridPanel({
 	
 	view: new Ext.grid.GroupingView({
 		forceFit:true
-		
 	}),	
+	
 	bbar: new Ext.PagingToolbar({
 		store: store,
 		displayInfo: true,
@@ -306,13 +448,13 @@ new Ext.grid.EditorGridPanel({
 			echo "pageSize: 100"; //Puede ser mas grande ya que las filas no se expanden
 		}*/
 		?>		
-	})
-	/*
-	,	
+	}),
 	listeners:{
+		rowcontextmenu: gridOnRowcontextmenu,
 		afteredit: gridAfterEditHandler,
-		click: gridOnclickHandler
-	}	*/
+		click: gridOnclickHandler,
+		validateedit: gridOnvalidateedit
+	}	
 	
 
 });

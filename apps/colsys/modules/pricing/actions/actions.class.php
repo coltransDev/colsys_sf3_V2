@@ -142,27 +142,18 @@ class pricingActions extends sfActions
 			 * seleccionado.
 			 */
 			$trafico = TraficoPeer::retrieveByPk( $trayecto->getOrigen()->getCaIdTrafico() );
-				
-				
-			/*
-			 * De la misma manera que con los conceptos se sacan los recargos
-			 */
-			$recargos = $trafico->getTipoRecargos( $transporte );
-								
 			
 			$row = array (
 				'idtrayecto' => $trayecto->getCaIdtrayecto(),
 				'trayecto' =>utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."->".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()))." - ".($transportador?utf8_encode($transportador->getCaNombre()):""),
-				'origen' => "FLETE",
+				'nconcepto' => "FLETE",
 			//	'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
 				'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
 				'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
 				'moneda' => $trayecto->getCaIdMoneda(),
 				'aplicacion' => $trayecto->getCaAplicacion(),				
 				'_id' => $trayecto->getCaIdtrayecto(),
-				'_parent' => $transportador_id+10000,
-				'_level' => 1,				
-				'_is_leaf' => count($recargos)==0, 
+			
 				'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones()))
 			);
 			
@@ -179,17 +170,20 @@ class pricingActions extends sfActions
 			$recAr=array();
 				
 			$data[] = $row;				
-
-			foreach( $recargos as $tipoRecargo){
-				
+			
+			
+			/*
+			 * De la misma manera que con los conceptos se sacan los recargos
+			 */
+			$pricRecargos = $trayecto->getPricRecargos( );
+			
+			foreach( $pricRecargos as $pricRecargo ){
+				$tipoRecargo = $pricRecargo->getTipoRecargo();
 				
 				$row = array ( 
 					'idtrayecto' => $trayecto->getCaIdtrayecto(),
-					'origen' => utf8_encode($tipoRecargo->getCaRecargo().($tipoRecargo->getCaAplicacion()?" (".$tipoRecargo->getCaAplicacion().")":"") ),										
-					'_id' => $trayecto->getCaIdtrayecto().$tipoRecargo->getCaidrecargo(),
-					'_parent' => $trayecto->getCaIdtrayecto(),
-					'_level' => 2,				
-					'_is_leaf' => true,
+					'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo().($tipoRecargo->getCaAplicacion()?" (".$tipoRecargo->getCaAplicacion().")":"") ),										
+					'_id' => $trayecto->getCaIdtrayecto().$tipoRecargo->getCaidrecargo(),					
 					'recargo_id' => $tipoRecargo->getCaIdrecargo(),
 					'trayecto' =>utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."->".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()))." - ".($transportador?utf8_encode($transportador->getCaNombre()):"")
 				    
@@ -500,13 +494,27 @@ class pricingActions extends sfActions
 		//$this->setLayout("ajax");
 	}
 	
-	public function executePruebagrouping(){
 	
-	}
-	
-	public function executeGroupingData(){
+	/*
+	* Datos de los recargos para ser mostrados en un combobox
+	*/
+	public function executeDatosRecargos(){
+		$c = new Criteria();
+		//$c->add( TipoRecargoPeer::CA );
+		$c->setLimit(3);
+		$recargos = TipoRecargoPeer::doSelect( $c );
+		$this->recargos = array();
+		foreach( $recargos as $recargo ){
+			$row = array("idrecargo"=>$recargo->getCaIdRecargo(),
+						 "recargo"=>$recargo->getCaRecargo()	
+						);
+			$this->recargos[]=$row;
+			
+		}
 		
+		$this->setLayout("ajax");
 	}
+	
 
 }
 ?>
