@@ -34,7 +34,7 @@ switch($action){
 		$button[1]["name"]="Detalles";
 		$button[1]["tooltip"]="Exportar la informaci&oacute;n a la carpeta IN";
 		$button[1]["image"]="22x22/kexi_kexi.gif"; 			
-		$button[1]["link"]= "falabella/details?iddoc=".base64_encode(trim($this->getRequestParameter("iddoc")));
+		$button[1]["link"]= "falabella/details?iddoc=".$this->getRequestParameter("iddoc");
 		
 		$button[2]["name"]="e-mail";
 		$button[2]["tooltip"]="Enviar por e-mail";
