@@ -22,7 +22,7 @@ switch($action){
 		$button[2]["name"]="Anular";
 		$button[2]["tooltip"]="Anular la Orden de Pedido";
 		$button[2]["image"]="22x22/cancel.gif"; 			
-		$button[2]["link"]= "falabella/anularOrden?iddoc=".base64_encode(trim($this->getRequestParameter("iddoc")));				
+		$button[2]["link"]= "falabella/anularOrden?iddoc=".$this->getRequestParameter("iddoc");				
 		
 		break;	
 	case "shippingInstructions":	
