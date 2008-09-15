@@ -161,7 +161,7 @@ class pricingActions extends sfActions
 				'moneda' => $trayecto->getCaIdMoneda(),
 				'aplicacion' => $trayecto->getCaAplicacion(),				
 				'_id' => $trayecto->getCaIdtrayecto(),
-			
+				'style' => $trayecto->getEstilo(),
 				'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones()))
 			);
 			
@@ -246,6 +246,7 @@ class pricingActions extends sfActions
 		if( $this->getRequestParameter("inicio")){
 			$trayecto->setCaFchinicio($this->getRequestParameter("inicio"));
 		}
+			
 		if( $this->getRequestParameter("vencimiento")){
 			$trayecto->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
 		}
@@ -260,9 +261,14 @@ class pricingActions extends sfActions
 		if( $this->getRequestParameter("aplicacion")){
 			$trayecto->setCaAplicacion($this->getRequestParameter("aplicacion"));
 		}
-
+		
+		if( $this->getRequestParameter("style")!==null){
+			$trayecto->setEstilo($this->getRequestParameter("style"));
+		}
+		
 		$trayecto->save();
-		print_r( $_POST );
+		
+		//print_r( $_POST );
 
 		// Las columnas vienen en parametros de la forma concepto_{$id}
 		foreach( $_POST as $key=>$value ){
@@ -464,7 +470,7 @@ class pricingActions extends sfActions
 		
 		$idciudad = $this->getRequestParameter( "idciudad" );
 		$idlinea = $this->getRequestParameter( "idlinea" );
-		
+		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
 		//$idtrafico ="DE-049";
 		//$transporte = "Marítimo";
 		/*	
@@ -481,11 +487,17 @@ class pricingActions extends sfActions
 
 		$c = new Criteria();
 		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
-		if( $idciudad ){
+		
+		if( $idciudad ){			
 			$c->add( TrayectoPeer::CA_ORIGEN, $idciudad );	
+			$ciudad = CiudadPeer::retrieveByPk( $idciudad );
+			$this->titulo = $ciudad->getCaCiudad();
 		}
-		if( $idlinea ){
+		
+		if( $idlinea ){			
 			$c->add( TrayectoPeer::CA_IDLINEA, $idlinea );	
+			$linea = TransportadorPeer::retrieveByPk( $idlinea );
+			$this->titulo = ($linea->getCaSigla()?$linea->getCaSigla():$linea->getCaNombre())." ".$this->trafico->getCaNombre();
 		}
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );	
@@ -506,7 +518,7 @@ class pricingActions extends sfActions
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;
-		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
+		
 		$this->idciudad = $idciudad;
 		$this->idlinea = $idlinea;
 		$this->linea = "";		

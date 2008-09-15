@@ -2,8 +2,11 @@
 use_helper( "Ext2" );
 ?>
 <style type="text/css">
-.row_FLETE{	
-	background-color: #DFE7FF;	
+.row_yellow{	
+	background-color: #FFFFCC;	
+}
+.row_pink{	
+	background-color: #FFCCCC;	
 }
 </style>
 
@@ -119,21 +122,13 @@ use_helper( "Ext2" );
 					success: function(xhr) {						
 						var newComponent = eval(xhr.responseText);
 						Ext.getCmp('tab-panel').add(newComponent);
-						//Ext.getCmp('tab-panel').setActiveTab(newComponent);
-						Ext.getCmp('tab-panel').show();
+						Ext.getCmp('tab-panel').setActiveTab(newComponent);
+						//Ext.getCmp('tab-panel').show();
 					},
 					failure: function() {
 						Ext.Msg.alert("Grid create failed", "Server communication failure");
 					}
 				});
-			
-				/*
-				Ext.getCmp('tab-panel').add({
-					id: 'panel1',
-					title: n.text ,
-					iconCls: 'tabs',					
-					closable:true					
-				}).show();*/
 				
 				
 				/*
@@ -150,7 +145,11 @@ use_helper( "Ext2" );
 			}
 		}
 	    
-       var viewport = new Ext.Viewport({
+		var tabPanelOnTabchangeHandler = function( p ){
+			//alert("asdasd"+p);
+		}
+		
+		var viewport = new Ext.Viewport({
             layout:'border',
             items:[
                 new Ext.BoxComponent({ // raw
@@ -182,8 +181,7 @@ use_helper( "Ext2" );
                         new Ext.TabPanel({
                             border:false,
                             activeTab:1,
-                            tabPosition:'bottom',
-							
+                            tabPosition:'bottom',							
                             items:[{
                                 html:'<p>A TabPanel component can be a region.</p>',
                                 title: 'A Tab',
@@ -329,7 +327,10 @@ use_helper( "Ext2" );
                         title: 'Acerca de',
                         closable:false,
                         autoScroll:true
-                    }]
+                    }],
+					listeners:{ 
+						 tabchange : tabPanelOnTabchangeHandler 
+					} 
                 })
              ]
         });

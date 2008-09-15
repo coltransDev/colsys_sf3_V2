@@ -21,7 +21,10 @@ var record = Ext.data.Record.create([
 	{name: '_parent', type: 'auto'},
 	{name: '_is_leaf', type: 'bool'},
 	{name: 'sel', type: 'bool'},
-	{name: 'style', type: 'string'}		
+	{name: 'ttransito', type: 'string'},
+	{name: 'frecuencia', type: 'string'},				
+	{name: 'style', type: 'string'}	,
+	
 	<?
 	foreach( $conceptos as $concepto ){			
 	?>
@@ -379,17 +382,48 @@ function updateModel(){
 
 var gridOnRowcontextmenu =  function(grid, index, e){
 		
+	record = this.store.getAt(index);
   //  if(!this.menu){ // create context menu on first right click
 		this.menu = new Ext.menu.Menu({
 			id:'grid-ctx',
 			items: [{
-				text: 'Nuevo recargo',
-				iconCls: 'new-tab',
-				scope:this,
-				handler: function(){    					                   
-					agregarFila(this.ctxRecord, index);					
-				}
-			}]
+					text: 'Nuevo recargo',
+					iconCls: 'new-tab',
+					scope:this,
+					handler: function(){    					                   
+						agregarFila(this.ctxRecord, index);					
+					}
+				},					
+				{
+					text: 'Estado',	
+					menu: {       
+						items: [							
+							{
+								text: 'Normal',
+								checked: record.get("style")==""?true:false,
+								group: 'theme',								
+								handler: function(){    					                   
+									record.set("style", "");
+								}
+							}, {
+								text: 'Sugerida',
+								checked: record.get("style")=="yellow"?true:false,								
+								group: 'theme',								
+								handler: function(){   									               
+									record.set("style", "yellow");
+								}
+							}, {
+								text: 'Mantenimiento',
+								checked: record.get("style")=="pink"?true:false,									
+								group: 'theme',								
+								handler: function(){    					                   
+									record.set("style", "pink");
+								}
+							}
+						]
+					}
+                }			
+			]
 		});
 		this.menu.on('hide', this.onContextHide, this);
    // }
@@ -398,8 +432,8 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
 		this.ctxRow = null;
 	}
+	this.ctxRecord = record;
 	this.ctxRow = this.view.getRow(index);
-	this.ctxRecord = this.store.getAt(index);
 	Ext.fly(this.ctxRow).addClass('x-node-ctx');
 	this.menu.showAt(e.getXY());
 }
@@ -435,7 +469,7 @@ new Ext.grid.EditorGridPanel({
 	clicksToEdit: 1,
 	stripeRows: true,
 	autoExpandColumn: 'nconcepto',
-	title: '<?=$trafico->getCaNombre()?>',
+	title: '<?=$titulo?>',
 	root_title: '<?=$trafico->getCaNombre()?>',	
 	plugins: [checkColumn], //expander,
 	closable: true,
@@ -452,25 +486,26 @@ new Ext.grid.EditorGridPanel({
 		forceFit:true,
 		enableRowBody:true, 
 		getRowClass: function(  record,  index,  rowParams,  store ){			
-			
-			if( record.data.nconcepto=="FLETE" ){ 				
-				return "row_FLETE";
+			switch( record.data.style ){
+				case "yellow":
+					return "row_yellow";
+					break;
+				case "pink":
+					return "row_pink";
+					break;
+				default:
+					return "";
+					break;
 			}
 		} 
 	}),	
-	
+	/*
 	bbar: new Ext.PagingToolbar({
 		store: store,
 		displayInfo: true,
-		pageSize: 25
-		<?
-		/*if( $transporte=="Marítimo" ){
-			echo "pageSize: 25"; //Un tamaño mayor impacta en el rendimiento
-		}else{
-			echo "pageSize: 100"; //Puede ser mas grande ya que las filas no se expanden
-		}*/
-		?>		
-	}),
+		pageSize: 80
+		
+	}),*/
 	listeners:{
 		rowcontextmenu: gridOnRowcontextmenu,
 		afteredit: gridAfterEditHandler,
