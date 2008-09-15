@@ -20,7 +20,8 @@ var record = Ext.data.Record.create([
 	{name: '_id', type: 'int'},
 	{name: '_parent', type: 'auto'},
 	{name: '_is_leaf', type: 'bool'},
-	{name: 'sel', type: 'bool'}	
+	{name: 'sel', type: 'bool'},
+	{name: 'style', type: 'string'}		
 	<?
 	foreach( $conceptos as $concepto ){			
 	?>
@@ -33,10 +34,19 @@ var record = Ext.data.Record.create([
 /*
 * Crea el store
 */
+<?
+$url = "pricing/pagerData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
+if( $idlinea ){
+	$url .= "&idlinea=".$idlinea;
+}
+if( $idciudad ){
+	$url .= "&idciudad=".$idciudad;
+}
 
+?>
 var store = new Ext.data.GroupingStore({
 	autoLoad : true,			
-	url: '<?=url_for("pricing/pagerData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico."&linea=".$linea)?>',
+	url: '<?=url_for($url)?>',
 	reader: new Ext.data.JsonReader(
 		{
 			id: '_id',
@@ -68,7 +78,7 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [
-		expander,	
+		//expander,	
 		checkColumn,			
 		{
 			id: 'nconcepto',
@@ -94,20 +104,20 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 80,
 			sortable: true,
 			dataIndex: 'inicio',               
-			renderer: Ext.util.Format.dateRenderer('m/d/Y'),
+			renderer: Ext.util.Format.dateRenderer('d/m/Y'),
 			editor: new Ext.form.DateField({
-				format: 'm/d/Y'
+				format: 'd/m/Y'
 			})
 		},{
 			header: "Venc.",
 			width: 80,
 			sortable: true,
 			dataIndex: 'vencimiento',               
-			renderer: Ext.util.Format.dateRenderer('m/d/Y'),
+			renderer: Ext.util.Format.dateRenderer('d/m/Y'),
 			editor: new Ext.form.DateField({
-				format: 'm/d/Y'
+				format: 'd/m/Y'
 			})
-		}
+		} 
 		,{
 			header: "Aplicacion",
 			width: 100,
@@ -174,6 +184,11 @@ var colModel = new Ext.grid.ColumnModel({
 	isCellEditable: function(colIndex, rowIndex) {	
 		var record = store.getAt(rowIndex);
 		var field = this.getDataIndex(colIndex);
+		
+		if( record.data.nconcepto=="FLETE" && field == 'nconcepto' ){
+			return false;
+		}
+		
 		if (record.data.recargo_id && (field == 'aplicacion'||field == 'inicio'||field == 'vencimiento'|| field == 'nconcepto')) {			
 			return false;
 		}			
@@ -422,7 +437,7 @@ new Ext.grid.EditorGridPanel({
 	autoExpandColumn: 'nconcepto',
 	title: '<?=$trafico->getCaNombre()?>',
 	root_title: '<?=$trafico->getCaNombre()?>',	
-	plugins: [expander,checkColumn],
+	plugins: [checkColumn], //expander,
 	closable: true,
 	
 	tbar: [			  
@@ -434,7 +449,14 @@ new Ext.grid.EditorGridPanel({
 	}],
 	
 	view: new Ext.grid.GroupingView({
-		forceFit:true
+		forceFit:true,
+		enableRowBody:true, 
+		getRowClass: function(  record,  index,  rowParams,  store ){			
+			
+			if( record.data.nconcepto=="FLETE" ){ 				
+				return "row_FLETE";
+			}
+		} 
 	}),	
 	
 	bbar: new Ext.PagingToolbar({

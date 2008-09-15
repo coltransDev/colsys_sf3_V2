@@ -18,6 +18,10 @@ class pricingActions extends sfActions
 	 */
 	public function executeIndex()
 	{
+		$this->modalidades_mar = ParametroPeer::retrieveByCaso( "CU051" );
+		$this->modalidades_aer = ParametroPeer::retrieveByCaso( "CU052" );
+		$this->modalidades_ter = ParametroPeer::retrieveByCaso( "CU053" );
+		
 		
 	}
 
@@ -98,7 +102,8 @@ class pricingActions extends sfActions
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
-		$linea = $this->getRequestParameter( "linea" );
+		$idlinea = $this->getRequestParameter( "idlinea" );
+		$idciudad = $this->getRequestParameter( "idciudad" );
 
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
@@ -119,9 +124,12 @@ class pricingActions extends sfActions
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
-
-		if($linea){
-			$c->add( TrayectoPeer::CA_IDLINEA, $linea );
+		
+		if( $idciudad ){
+			$c->add( TrayectoPeer::CA_ORIGEN, $idciudad );	
+		}
+		if( $idlinea ){
+			$c->add( TrayectoPeer::CA_IDLINEA, $idlinea );	
 		}
 
 		$c->addAscendingOrderByColumn( TransportadorPeer::CA_NOMBRE );
@@ -434,6 +442,7 @@ class pricingActions extends sfActions
 	public function executeDatosCiudades( $request ){
 		
 		$this->transporte = $this->getRequestParameter("transporte");
+		$this->modalidad = $this->getRequestParameter("modalidad");
 		$c = new Criteria();
 		$c->addAscendingOrderByColumn( TraficoGrupoPeer::CA_DESCRIPCION );
 		$this->grupos = TraficoGrupoPeer::doSelect( $c );
@@ -453,6 +462,9 @@ class pricingActions extends sfActions
 		$idtrafico = $this->getRequestParameter( "trafico_id" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		
+		$idciudad = $this->getRequestParameter( "idciudad" );
+		$idlinea = $this->getRequestParameter( "idlinea" );
+		
 		//$idtrafico ="DE-049";
 		//$transporte = "Marítimo";
 		/*	
@@ -469,6 +481,12 @@ class pricingActions extends sfActions
 
 		$c = new Criteria();
 		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		if( $idciudad ){
+			$c->add( TrayectoPeer::CA_ORIGEN, $idciudad );	
+		}
+		if( $idlinea ){
+			$c->add( TrayectoPeer::CA_IDLINEA, $idlinea );	
+		}
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );	
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );	
@@ -489,6 +507,8 @@ class pricingActions extends sfActions
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;
 		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
+		$this->idciudad = $idciudad;
+		$this->idlinea = $idlinea;
 		$this->linea = "";		
 		
 		//$this->setLayout("ajax");

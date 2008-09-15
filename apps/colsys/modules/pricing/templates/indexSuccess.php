@@ -1,6 +1,12 @@
 <?
 use_helper( "Ext2" );
 ?>
+<style type="text/css">
+.row_FLETE{	
+	background-color: #DFE7FF;	
+}
+</style>
+
 <link rel="stylesheet" type="text/css"
 	href="/colsys_sf/css/treegrid/css/TreeGrid.css" />
 <link
@@ -84,17 +90,31 @@ use_helper( "Ext2" );
        
 	   var treePanelOnclickHandler = function(n){
 			
-			var sn = this.selModel.selNode || {}; // selNode is null on initial selection
-			
-			var index = n.id.indexOf("_");
-			//if(n.leaf && n.id != sn.id){  // ignore clicks on folders and currently selected node	
+			//var sn = this.selModel.selNode || {}; // selNode is null on initial selection
+							
+			if( n.leaf ){  // ignore clicks on folders 
+				var nodeoptions = n.id.split("_");
+				
+				if( nodeoptions[3]=="ciudad" ){
+					var idciudad = nodeoptions[4]; 				
+				}else{
+					var idciudad = "";
+				}
+				
+				if( nodeoptions[3]=="linea" ){
+					var idlinea = nodeoptions[4]; 					
+				}else{
+					var idlinea = "";
+				}
 				
 				Ext.Ajax.request({
 					url: '<?=url_for("pricing/grillaPorTrafico")?>',
 					params: {						
-						trafico_id : n.id.substr( index+1, 10 ),
-						transporte : n.id.substr( 0, index ),
-						modalidad: 'FCL'
+						trafico_id: nodeoptions[2],
+						transporte: nodeoptions[0],
+						modalidad: nodeoptions[1],
+						idciudad: idciudad,
+						idlinea: idlinea
 					},
 					success: function(xhr) {						
 						var newComponent = eval(xhr.responseText);
@@ -125,7 +145,9 @@ use_helper( "Ext2" );
 				}
 				detailEl.hide().update(Ext.getDom(n.id+'-details').innerHTML).slideIn('l', {stopFx:true,duration:.2});
 				*/
-    	//	}
+    		}else{
+				n.expand();
+			}
 		}
 	    
        var viewport = new Ext.Viewport({
@@ -148,7 +170,7 @@ use_helper( "Ext2" );
                     margins:'0 0 0 0'
                 }, {
                     region:'east',
-                    title: 'East Side',
+                    title: 'Información adicional',
                     collapsible: true,
                     split:true,
                     width: 225,
@@ -197,8 +219,49 @@ use_helper( "Ext2" );
                         animate:true
                     },
                     items: [
+						<?
+						$i=0;
+						foreach( $modalidades_mar as $modalidad){
+							if( $i++!=0 ){
+								echo ",";
+							} 
+
+						?>
 						new Ext.tree.TreePanel({							
-							title: 'Aéreo',							
+							title: 'Marítimo <?=$modalidad->getCaValor()?>',							
+							split: true,
+							height: 300,
+							minSize: 150,
+							autoScroll: true,
+							
+							// tree-specific configs:
+							rootVisible: false,
+							lines: false,
+							singleExpand: true,
+							useArrows: true,
+							iconCls:'settings',
+							animate:true,
+
+														
+							loader: new Ext.tree.TreeLoader({
+								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Marítimo&modalidad=".$modalidad->getCaValor())?>'
+							}),
+							
+							root: new Ext.tree.AsyncTreeNode(),
+							listeners:  {
+								 click : treePanelOnclickHandler
+							}
+						})
+						<?
+						}
+						
+						foreach( $modalidades_aer as $modalidad){
+							if( $i++!=0 ){
+								echo ",";
+							} 
+						?>
+						new Ext.tree.TreePanel({							
+							title: 'Aéreo <?=$modalidad->getCaValor()?>',							
 							split: true,
 							height: 300,
 							minSize: 150,
@@ -212,7 +275,7 @@ use_helper( "Ext2" );
 							iconCls:'settings',
 														
 							loader: new Ext.tree.TreeLoader({
-								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Aéreo")?>'
+								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Aéreo&modalidad=".$modalidad->getCaValor())?>'
 							}),
 							
 							root: new Ext.tree.AsyncTreeNode(),
@@ -220,10 +283,15 @@ use_helper( "Ext2" );
 								 click : treePanelOnclickHandler
 							}
 						})
-
-						,
+						<?
+						}
+						foreach( $modalidades_ter as $modalidad){
+							if( $i++!=0 ){
+								echo ",";
+							} 
+						?>						
 						new Ext.tree.TreePanel({							
-							title: 'Marítimo',							
+							title: 'Terrestre <?=$modalidad->getCaValor()?>',							
 							split: true,
 							height: 300,
 							minSize: 150,
@@ -236,7 +304,7 @@ use_helper( "Ext2" );
 							useArrows: true,
 							iconCls:'settings',
 							loader: new Ext.tree.TreeLoader({
-								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Marítimo")?>'
+								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Terrestre&modalidad=".$modalidad->getCaValor())?>'
 							}),
 							
 							root: new Ext.tree.AsyncTreeNode(),
@@ -244,6 +312,9 @@ use_helper( "Ext2" );
 								 click : treePanelOnclickHandler
 							}
 						})
+						<?
+						}
+						?>
 						
 					]
                 },
