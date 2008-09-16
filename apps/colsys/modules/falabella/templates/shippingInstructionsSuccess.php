@@ -17,7 +17,7 @@ use_helper("Javascript", "Validation");
 </script>
 <div id="emailForm" align="left" style="display:none;">
 	<?
-	echo form_remote_tag(array("url"=>"falabella/enviarEmail?iddoc=".urlencode($header->getCaIdDoc()), 
+	echo form_remote_tag(array("url"=>"falabella/enviarEmail?iddoc=".base64_encode($header->getCaIdDoc()), 
 								"update"=>"emailForm",
 								 'loading'  => visual_effect('appear', 'indicator'),
 							    'complete' => visual_effect('fade', 'indicator')							
