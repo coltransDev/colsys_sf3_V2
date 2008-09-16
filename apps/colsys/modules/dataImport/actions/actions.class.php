@@ -56,7 +56,6 @@ class dataImportActions extends sfActions
 			}
 		}
 		
-		
 		$this->redirect("falabella/list");
 		
 		
