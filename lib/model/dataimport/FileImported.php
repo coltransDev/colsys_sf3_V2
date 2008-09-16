@@ -163,6 +163,7 @@ class FileImported extends BaseFileImported
 				$falaDetail->setCaIdDoc( trim($this->row['po_number']) );
 				$falaDetail->setCaSku( trim($this->row['sku']) );	
 				$falaDetail->setCaDescripcionItem( trim($this->row['item_description']) );
+				$falaDetail->setCaCantidadPedido( $this->row['order_quantity'] );
 				$falaDetail->setCaCantidadMiles( $this->row['order_quantity'] );
 				$falaDetail->setCaUnidadMedidadCantidad( "PC" );
 				$falaDetail->setCaCantidadPaquetesMiles( $this->row['ctns'] );
