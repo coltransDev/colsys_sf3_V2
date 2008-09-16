@@ -53,10 +53,10 @@ function update_record(sku , part1 , part2, sell, cont){
 function export_file(){
 	if (Math.round(document.getElementById('por_diferencia').value) >= 20) {
 		if (confirm('¿Desea generar una nueva order de pedido con la cantidad de productos faltantes?')) {
-			document.location='<?=url_for("falabella/generarNuevaOrden?iddoc=".base64_encode(trim($fala_header->getCaIddoc())) )?>';
+			document.location='<?=url_for("falabella/generarNuevaOrden?iddoc=".$fala_header->getCaIddoc())?>';
 		}
 	}else {
-		document.location='<?=url_for("falabella/generarArchivo?iddoc=".base64_encode(trim($fala_header->getCaIddoc())) )?>';
+		document.location='<?=url_for("falabella/generarArchivo?iddoc=".$fala_header->getCaIddoc())?>';
 	}
 }
 </script>
