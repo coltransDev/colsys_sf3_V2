@@ -1,38 +1,197 @@
 <?
 use_helper( "Ext2" );
 ?>
-<style type="text/css">
-.row_yellow{	
-	background-color: #FFFFCC;	
-}
-.row_pink{	
-	background-color: #FFCCCC;	
-}
-</style>
-
-<link rel="stylesheet" type="text/css"
-	href="/colsys_sf/css/treegrid/css/TreeGrid.css" />
-<link
-	rel="stylesheet" type="text/css"
-	href="/colsys_sf/css/treegrid/css/TreeGridLevels.css" />
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/TreeGrid.js"></script>
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/RowExpander.js"></script>
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/myRowExpander.js"></script>
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/NumberFieldMin.js"></script>
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/CheckColumn.js"></script>  
-  
 <script type="text/javascript">
 	
     Ext.onReady(function(){
        /*
-	   * Se crea un record para almacenar los datos d elos recargos 
+	   * Panel de administracion de archivos del cada trafico
 	   */
-	   
+	   var store = new Ext.data.JsonStore({
+			url: '<?=url_for("pricing/archivosPaisDatos")?>',
+			root: 'files',
+			fields: ['idarchivo','name', 'descripcion', 'icon',{name:'size', type: 'float'}, {name:'lastmod', type:'date', dateFormat:'timestamp'}],
+			//proxy: new Ext.data.MemoryProxy(data)
+		});
+		//store.load();
+		
+		var tpl = new Ext.XTemplate(
+			'<tpl for=".">',
+				
+				'<div class="thumb-wrap" id="{name}">',
+				'<div class="thumb">{icon}</div>',
+				'<span class="x-editable">{name}</span></div>',
+				
+			'</tpl>',
+			'<div class="x-clear"></div>'
+		);
+		
+		var nuevoBtnHandler = function(){
+			win = new Ext.Window({
+				//applyTo     : 'hello-win',
+				//layout      : 'fit',
+				width       : 400,
+				height      : 200,
+				closeAction :'close',
+				plain       : true,		
+				
+				items       : new Ext.FormPanel({
+					fileUpload: true,
+					enctype:  'multipart/form-data',			
+					id: 'file-panel-form',
+					//width: 500,
+					frame: true,
+					title: 'Por favor seleccione un archivo',
+					autoHeight: true,
+					bodyStyle: 'padding: 10px 10px 0 10px;',
+					labelWidth: 50, 
+					
+					/*
+					defaults: {
+						anchor: '95%',
+						allowBlank: false,
+						msgTarget: 'side'
+					},*/
+					items: [{
+						xtype: 'fileuploadfield',
+						id: 'form-file',
+						emptyText: 'Seleccione un archivo',
+						fieldLabel: 'Archivo',
+						//hiddenName: 'file',
+						name: 'file',
+						buttonCfg: {
+							text: '',
+							iconCls: 'upload-icon'
+						}
+					}]
+					
+				}),
+		
+				buttons: [{
+					text     : 'Guardar',
+					handler: function(){
+						var fp = Ext.getCmp("file-panel-form");					
+						if(fp.getForm().isValid()){
+							fp.getForm().submit({
+								url: '<?=url_for("pricing/subirArchivo?idtrafico=")?>',
+								waitMsg: 'Cargando el archivo...',
+								success: function(fp, o){	
+									store.reload();								
+									win.close();						
+									Ext.Msg.alert('Success', 'El archivo "'+o.result.file+'" se ha guardado en el servidor');																															
+											
+								},
+								failure: function(xhr){  
+									Ext.Msg.alert('Error', 'Ha ocurrido un error al guardar el archivo');					
+								}
+							});
+						}
+					}
+				},{
+					text     : 'Cancelar',
+					handler  : function(){
+						win.close();
+					}
+				}]
+			});
+			
+			win.show( );
+		
+		}
+		
+		var panelArchivos = new Ext.Panel({
+			id:'file-panel-view',
+			frame:false,
+			width:535,
+			autoHeight:true,
+			collapsible:true,
+			layout:'fit',
+			title:'Archivos',
+			
+			items: new Ext.DataView({
+				store: store,
+				tpl: tpl,
+				id: 'file-view',
+				autoHeight:true,
+				singleSelect : true,
+				overClass:'x-view-over',
+				itemSelector:'div.thumb-wrap',
+				emptyText: 'No hay archivos en este tr&aacute;fico',
+						
+				/*
+				plugins: [
+					new Ext.DataView.DragSelector(),
+					new Ext.DataView.LabelEditor({dataIndex: 'name'})
+				],
+				*/
+				prepareData: function(data){
+					data.shortName = Ext.util.Format.ellipsis(data.name, 15);
+					data.sizeString = Ext.util.Format.fileSize(data.size);
+					data.dateString = data.lastmod.format("m/d/Y g:i a");
+					return data;
+				},
+				
+				listeners: {
+					selectionchange: {
+						fn: function(dv,nodes){
+							/*var l = nodes.length;
+							var s = l != 1 ? 's' : '';
+							panel.setTitle('Simple DataView ('+l+' item'+s+' selected)');*/
+						}
+					}
+				}
+			}),
+			tbar: [			  
+			{
+				text: 'Nuevo',
+				tooltip: 'Sube un nuevo archivo',
+				iconCls:'add',
+				handler: nuevoBtnHandler
+			}
+			,
+			{
+				text: 'Abrir',
+				tooltip: 'Abre el archivo seleccionado',
+				iconCls:'folder',  // reference to our css
+				handler: function(){
+					var fv = Ext.getCmp("file-view");	
+					records =  fv.getSelectedRecords();			
+					for( var i=0;i<records.length; i++){				
+						popup( "<?=url_for("pricing/verArchivo")?>?idarchivo="+records[i].data.idarchivo );
+					}
+				}
+			},
+			{
+				text: 'Borrar',
+				tooltip: 'Elimina el archivo seleccionado',
+				iconCls:'delete',  // reference to our css
+				handler: function(){
+					var fv = Ext.getCmp("file-view");	
+					records =  fv.getSelectedRecords();			
+					for( var i=0;i<records.length; i++){				
+						if( confirm( 'Esta seguro que desea borrar el archivo seleccionado?') ){									
+		
+							Ext.Ajax.request({
+								url: '<?=url_for("pricing/borrarArchivo")?>',
+								params: {						
+									idarchivo: records[i].data.idarchivo						
+								},
+								success: function(xhr) {	
+									store.reload();	
+									Ext.Msg.alert("Success", "Se ha eliminado el archivo");							
+									
+								},
+								failure: function() {
+									Ext.Msg.alert("Error", "No se ha podido eliminar el archivo");
+								}
+							});
+						}
+					}
+						
+				}
+			}
+			],
+		});
 	   /*
 	   * Se crea un combo para los recargos 
 	   */
@@ -97,6 +256,24 @@ use_helper( "Ext2" );
 							
 			if( n.leaf ){  // ignore clicks on folders 
 				var nodeoptions = n.id.split("_");
+				switch( nodeoptions[0] ){
+					case "recgen":
+						/*
+						* Se muestran los recargos generales para el pais seleccionado
+						*/
+						var url = '<?=url_for("pricing/recargosGenerales")?>';
+						break;
+					case "ttransito":
+						var url = '<?=url_for("pricing/grillaTiempoTransito")?>';
+						break;						
+					default: 
+						/*
+						*  Se muestra una grilla con la información de fletes 
+						*  del trafico seleccionado
+						*/	
+						var url = '<?=url_for("pricing/grillaPorTrafico")?>';
+						break;						
+				}
 				
 				if( nodeoptions[3]=="ciudad" ){
 					var idciudad = nodeoptions[4]; 				
@@ -110,64 +287,78 @@ use_helper( "Ext2" );
 					var idlinea = "";
 				}
 				
+				
+					
 				Ext.Ajax.request({
-					url: '<?=url_for("pricing/grillaPorTrafico")?>',
+					url: url,
 					params: {						
-						trafico_id: nodeoptions[2],
-						transporte: nodeoptions[0],
-						modalidad: nodeoptions[1],
-						idciudad: idciudad,
-						idlinea: idlinea
+						idtrafico: nodeoptions[3],
+						transporte: nodeoptions[1],
+						modalidad: nodeoptions[2]
+						
 					},
-					success: function(xhr) {						
+					success: function(xhr) {			
+						//alert( xhr.responseText );			
 						var newComponent = eval(xhr.responseText);
 						Ext.getCmp('tab-panel').add(newComponent);
 						Ext.getCmp('tab-panel').setActiveTab(newComponent);
-						//Ext.getCmp('tab-panel').show();
+						
 					},
 					failure: function() {
-						Ext.Msg.alert("Grid create failed", "Server communication failure");
+						Ext.Msg.alert("Tab creation failed", "Server communication failure");
 					}
-				});
+				});				
 				
-				
-				/*
-				Ext.getCmp('content-panel').layout.setActiveItem(n.id + '-panel');
-				if(!detailEl){
-					var bd = Ext.getCmp('details-panel').body;
-					bd.update('').setStyle('background','#fff');
-					detailEl = bd.createChild(); //create default empty div
-				}
-				detailEl.hide().update(Ext.getDom(n.id+'-details').innerHTML).slideIn('l', {stopFx:true,duration:.2});
-				*/
     		}else{
 				n.expand();
 			}
 		}
 	    
-		var tabPanelOnTabchangeHandler = function( p ){
+		var tabPanelOnTabchangeHandler = function( panel , component ){
+			/*
+			* Se muestra panel con los archivos del pais
+			*/
+			
+			if(component.id.substr(0,4)=="grid"){
+				var str = component.id.substr(5);
+				var index = str.indexOf( "_" );
+				if( index!=-1 ){
+					var idtrafico = str.substr( 0, index );
+				}else{
+					var idtrafico = str;
+				}
+				//alert( idtrafico );				
+				store.reload( {params:{idtrafico:idtrafico}} );
+				
+				/*Ext.Ajax.request({
+					url: '<?=url_for("pricing/archivosPais")?>',
+					params: {						
+						trafico_id: idtrafico						
+					},
+					success: function(xhr) {						
+						var newComponent = eval(xhr.responseText);
+						//alert("asd");
+						//Ext.getCmp('panel-info').setActiveTab('panel-traficos');
+						 //
+												
+						//remove('panel-traficos');
+						Ext.getCmp('panel-info').add(newComponent);
+						Ext.getCmp('panel-info').setActiveTab(newComponent);
+						
+					},
+					failure: function() {
+						Ext.Msg.alert("File panel create failed", "Server communication failure");
+					}
+				});*/
+				
+			}
 			//alert("asdasd"+p);
 		}
 		
 		var viewport = new Ext.Viewport({
             layout:'border',
             items:[
-                new Ext.BoxComponent({ // raw
-                    region:'north',
-                    el: 'north',
-                    height:32
-                })
-				,{
-                    region:'south',
-                    contentEl: 'south',
-                    split:true,
-                    height: 100,
-                    minSize: 100,
-                    maxSize: 200,
-                    collapsible: true,
-                    title:'South',
-                    margins:'0 0 0 0'
-                }, {
+               {
                     region:'east',
                     title: 'Información adicional',
                     collapsible: true,
@@ -181,31 +372,14 @@ use_helper( "Ext2" );
                         new Ext.TabPanel({
                             border:false,
                             activeTab:1,
-                            tabPosition:'bottom',							
-                            items:[{
-                                html:'<p>A TabPanel component can be a region.</p>',
-                                title: 'A Tab',
-                                autoScroll:true
-                            },
-                            new Ext.grid.PropertyGrid({
-                                title: 'Property Grid',
-                                closable: true,
-                                source: {
-                                    "(name)": "Properties Grid",
-                                    "grouping": false,
-                                    "autoFitColumns": true,
-                                    "productionQuality": false,
-                                    "created": new Date(Date.parse('10/15/2006')),
-                                    "tested": false,
-                                    "version": .01,
-                                    "borderWidth": 1
-                                }
-                            })]
+                            tabPosition:'bottom',	
+							id: 'panel-info',						
+                            items:[ panelArchivos ]
                         })
                  },{
                     region:'west',
                     id:'west-panel',
-                    title:'Traficos',
+                    title:'Tr&aacute;ficos',
                     split:true,
                     width: 200,
                     minSize: 175,
@@ -215,7 +389,8 @@ use_helper( "Ext2" );
                     layout:'accordion',
                     layoutConfig:{
                         animate:true
-                    },
+                    }
+					,
                     items: [
 						<?
 						$i=0;
@@ -340,33 +515,83 @@ use_helper( "Ext2" );
            w.collapsed ? w.expand() : w.collapse(); 
         });*/
 		
-		
+		Ext.Ajax.request({
+				url: '<?=url_for("pricing/archivosPais")?>',
+				params: {						
+					idtrafico: "DE-049"						
+				},
+				success: function(xhr) {		
+					//alert( xhr.responseText );				
+					var newComponent = eval(xhr.responseText);
+					//alert("asd");
+					//Ext.getCmp('panel-info').setActiveTab('panel-traficos');
+					 //
+											
+					//remove('panel-traficos');
+					Ext.getCmp('panel-info').add(newComponent);
+					Ext.getCmp('panel-info').setActiveTab(newComponent);
+					
+				},
+				failure: function() {
+					Ext.Msg.alert("File panel create failed", "Server communication failure");
+				}
+			});
 		
     
     });
-	</script>
+	
+	
+</script>
+  <style>
 
-  
-  
-  <div id="traficos"></div>
-  <div id="north">
-    <h3>Sistema de administraci&oacute;n del tarifario</h3>
-  </div>
-  <div id="center2">
-       &nbsp;        
-  </div>
-  <div id="center1">
- 		<br />	 	
-        <h3>&nbsp;&nbsp;&nbsp;Bienvenido al sistema de administracion del tarifario. </h3><br />
-		<hr />
-		&nbsp;&nbsp;&nbsp;Para comenzar a trabajar por favor seleccione una ciudad del panel de traficos.
-		<br />
-		&nbsp;&nbsp;&nbsp;Por favor tenga en cuenta las observaciones.
-		
+#fi-button-msg {
+	border: 2px solid #ccc;
+	padding: 5px 10px;
+	background: #eee;
+	margin: 5px;
+	float: left;
+}
 
-  </div>
-  <div id="props-panel" style="width:200px;height:200px;overflow:hidden;">
-  </div>
-  <div id="south">
-    <p>south - generally for informational stuff, also could be for status bar</p>
-  </div>
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	-moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
+}
+</style>
+<div id="traficos"></div>
+
+<div id="center2">
+   &nbsp;        
+</div>
+<div id="center1">
+	<br />	 	
+	<h3>&nbsp;&nbsp;&nbsp;Bienvenido al sistema de administracion del tarifario. </h3><br />
+	<hr />
+	&nbsp;&nbsp;&nbsp;Para comenzar a trabajar por favor seleccione una ciudad del panel de traficos.
+	<br />
+	&nbsp;&nbsp;&nbsp;Por favor tenga en cuenta las observaciones.
+	
+
+</div>
+<div id="props-panel" style="width:200px;height:200px;overflow:hidden;">
+</div>
+ 

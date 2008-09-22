@@ -49,7 +49,7 @@ foreach($grupos as $grupo){
 		
 	{
         text:'<?=$trafico->getCaNombre()?>',
-        id:'<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>',		
+        id:'fletes_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>',		
         leaf:false,
 		children:[
 			
@@ -67,7 +67,7 @@ foreach($grupos as $grupo){
 					?>
 					{
 						text:'<?=$linea->getCaNombre()?>',
-						id:'<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>_linea_<?=$linea->getCaIdLinea()?>',		
+						id:'fletes_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>_linea_<?=$linea->getCaIdLinea()?>',		
 						leaf:true
 					}
 					<?
@@ -92,14 +92,29 @@ foreach($grupos as $grupo){
 					?>
 					{
 						text:'<?=$ciudad->getCaCiudad()?>',
-						id:'<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>_ciudad_<?=$ciudad->getCaIdCiudad()?>',		
+						id:'fletes_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>_ciudad_<?=$ciudad->getCaIdCiudad()?>',		
 						leaf:true
 					}
 					<?
 					}
 					?>
 				]
-			}			
+			},
+			{
+				text:'Todas las ciudades',
+				id:'fletes_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>',		
+				leaf:true
+			},
+			{
+				text:'Recargos generales',
+				id:'recgen_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>',		
+				leaf:true
+			},
+			{
+				text:'Tiempo de transito y frecuencia',
+				id:'ttransito_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>',		
+				leaf:true
+			}	
 		]
     }
 	<?	

@@ -91,7 +91,14 @@ var colModel = new Ext.grid.ColumnModel({
 			renderer: renderRowTooltip,	
 			dataIndex: 'nconcepto',
 			hideable: false,
-			editor: <?=extRecargos( $modalidad,$transporte )?>	
+			renderer: function(value, metaData){
+					if( value=="FLETE" ){					
+						return "<div style='font-weight:bold'>"+value+"</div>";
+					}else{
+						return value;
+					}
+				} ,
+			editor: <?=extRecargos( $transporte )?>	
 		},	
 		{
 			id: 'trayecto',
@@ -159,11 +166,7 @@ var colModel = new Ext.grid.ColumnModel({
 					renderer: rendererSug,
 					<?
 					break;
-				case "COLOADING":
-					?>
-					renderer: rendererMinSug,
-					<?
-					break;
+			
 				default:
 					?>
 					renderer: rendererMin,								
@@ -382,7 +385,7 @@ function updateModel(){
 
 var gridOnRowcontextmenu =  function(grid, index, e){
 		
-	record = this.store.getAt(index);
+	rec = this.store.getAt(index);
   //  if(!this.menu){ // create context menu on first right click
 		this.menu = new Ext.menu.Menu({
 			id:'grid-ctx',
@@ -400,24 +403,24 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 						items: [							
 							{
 								text: 'Normal',
-								checked: record.get("style")==""?true:false,
+								checked: rec.get("style")==""?true:false,
 								group: 'theme',								
 								handler: function(){    					                   
-									record.set("style", "");
+									rec.set("style", "");
 								}
 							}, {
 								text: 'Sugerida',
-								checked: record.get("style")=="yellow"?true:false,								
+								checked: rec.get("style")=="yellow"?true:false,								
 								group: 'theme',								
 								handler: function(){   									               
-									record.set("style", "yellow");
+									rec.set("style", "yellow");
 								}
 							}, {
 								text: 'Mantenimiento',
-								checked: record.get("style")=="pink"?true:false,									
+								checked: rec.get("style")=="pink"?true:false,									
 								group: 'theme',								
 								handler: function(){    					                   
-									record.set("style", "pink");
+									rec.set("style", "pink");
 								}
 							}
 						]
@@ -432,30 +435,33 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
 		this.ctxRow = null;
 	}
-	this.ctxRecord = record;
+	this.ctxRecord = rec;
 	this.ctxRow = this.view.getRow(index);
 	Ext.fly(this.ctxRow).addClass('x-node-ctx');
 	this.menu.showAt(e.getXY());
 }
 
-function agregarFila(ctxRecord, index){		
-	//ctxRecord = store.getAt(index);
-	ctxRecord.set("_is_leaf", false);
-	//var index =  store.indexOf(ctxRecord);	
+function agregarFila(ctxRecord, index){	
 	
-	//alert(ctxRecord.get("_id")+" "+ctxRecord.get("_parent"));
+	ctxRecord.set("_is_leaf", false);
+	
 	var rec = new record({trayecto:ctxRecord.get("trayecto"),
 						  nconcepto:'',
-						  idtrayecto:ctxRecord.get("idtrayecto")	
+						  idtrayecto:ctxRecord.get("idtrayecto"),
+						  moneda:''
+						  <?
+						foreach( $conceptos as $concepto ){			
+						?>
+						,concepto_<?=$concepto->getCaIdconcepto()?>:''			
+						<?			
+						}
+						?>		
 						});
 	
 	records = [];
 	records.push( rec );
 	store.insert( index+1, records );
-	//store.expandNode(ctxRecord);
-	store.each(function(r){
-		//alert(r.index+" "+r.data.origen);
-	})
+	
 }
 		
 /*
@@ -473,12 +479,13 @@ new Ext.grid.EditorGridPanel({
 	root_title: '<?=$trafico->getCaNombre()?>',	
 	plugins: [checkColumn], //expander,
 	closable: true,
+	id: 'grid_<?=$idcomponent?>',
 	
 	tbar: [			  
 	{
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el tarifario',
-		iconCls:'add',  // reference to our css
+		iconCls:'disk',  // reference to our css
 		handler: updateModel
 	}],
 	
