@@ -410,7 +410,7 @@ class pricingActions extends sfActions
 		$idciudad = $this->getRequestParameter( "idciudad" );
 		$idlinea = $this->getRequestParameter( "idlinea" );
 		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);		
-		$this->idcomponent = $this->trafico->getCaIdTrafico();
+		$this->idcomponent = $this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;
 		
 		$c = new Criteria();
 		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
@@ -488,26 +488,24 @@ class pricingActions extends sfActions
 	 
 	 
 	 
-	 /*
-	 * Genera la pestaña donde se muestran los archivos 
-	 * @author: Andres Botero 
-	 */
-	 public function executeArchivosPais(){
+	/*
+	* Genera la pestaña donde se muestran los archivos 
+	* @author: Andres Botero 
+	*/
+	public function executeArchivosPais(){
 		$this->setLayout("ajax");
-		//$idtrafico = $this->getRequestParameter("idtrafico");
-		$idtrafico = "DE-049";		
-		$this->idtrafico = $idtrafico;
-
-	} 
-	
+		$this->idtrafico = $this->getRequestParameter("idtrafico");		
+		$this->forward404Unless( $this->idtrafico );
+	}	
 	
 	/*
-	 * Genera la pestaña donde se muestran los archivos 
-	 * @author: Andres Botero 
-	 */
-	 public function executeArchivosPaisDatos(){
+	* Genera la pestaña donde se muestran los archivos 
+	* @author: Andres Botero 
+	*/
+	public function executeArchivosPaisDatos(){
 		$this->setLayout("ajax");
 		$idtrafico = $this->getRequestParameter("idtrafico");
+		$this->forward404Unless( $idtrafico );
 		
 		$c = new Criteria();
 		$c->add(PricArchivoPeer::CA_IDTRAFICO, $idtrafico );
@@ -538,8 +536,7 @@ class pricingActions extends sfActions
 	* Procesa el archivo que se ha subido en la accion ArchivosPais 
 	*/
 	public function executeSubirArchivo(){
-		$idtrafico = $this->getRequestParameter("idtrafico");
-		$idtrafico = "DE-049";		
+		$idtrafico = $this->getRequestParameter("idtrafico");		
 		$this->forward404Unless($idtrafico);			
 
 		$fileName = $this->getRequest()->getFileName('file');
@@ -571,11 +568,9 @@ class pricingActions extends sfActions
 	*/
 	public function executeVerArchivo(){
 		$this->archivo = PricArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
-		
-		$this->getResponse()->addHttpMeta('content-type', $this->archivo->getCaTipo());
-    	$this->getResponse()->addHttpMeta('content-length', $this->archivo->getCaTamano());
-		
 		$this->forward404Unless( $this->archivo );
+		$this->getResponse()->addHttpMeta('content-type', $this->archivo->getCaTipo());
+    	$this->getResponse()->addHttpMeta('content-length', $this->archivo->getCaTamano());		
 	}
 	
 	/*
@@ -596,40 +591,33 @@ class pricingActions extends sfActions
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		
-	
 		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);		
-		$this->idcomponent = $this->trafico->getCaIdTrafico();
-		
-		$c = new Criteria();
-		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
-		
-		
-		$this->titulo = "Recargos ".$this->trafico->getCaNombre();
-		
-		
-		
-		
-		
-		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
-		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );	
-		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );	
-		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
-		//$c->setLimit(20);
-		$trayectos = TrayectoPeer::doSelect( $c );
-		
-		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
-		$this->forward404Unless( $this->trafico );
-		$this->conceptos = $this->trafico->getConceptos( $transporte, $modalidad );
-		//print_r( $this->conceptos );			
-		//$this->aplicaciones = ParametroPeer::retrieveByCaso( "CU060", null, $transporte );
-					
+		$this->idcomponent = $this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;				
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;
+			
+		$c = new Criteria();
+		$c->addJoin( PricRecargosxCiudadPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );		
+		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );				 
+		$c->setDistinct();	
+		$recargosCiudad = PricRecargosxCiudadPeer::doSelect( $c );
+		$this->recargosArray=array();
+		foreach( $recargosCiudad as $rec ){
+			$this->recargosArray[]=$rec->getCaIdRecargo(); 	
+		}		
+		$this->setLayout("ajax");
+	}
 	
-	
-		$this->linea = "";		
-				
+	/*
+	* Provee datos para los recargos por ciudad
+	*/
+	public function executeRecargosGeneralesData(){
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$idtrafico = $this->getRequestParameter( "idtrafico" );
+		$modalidad = $this->getRequestParameter( "modalidad" );
+		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+			
 		$c = new Criteria();
 		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );		
 		$c->add( CiudadPeer::CA_IDTRAFICO, $this->trafico->getCaIdTrafico() );
@@ -637,50 +625,68 @@ class pricingActions extends sfActions
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
 		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );	 
 		$c->setDistinct();	
-		$this->ciudades = CiudadPeer::doSelect( $c );
+		$ciudades = CiudadPeer::doSelect( $c );
+		
+		$this->data = array();
+		
+		
+		
+		
+		foreach( $ciudades as $ciudad ){
+			$row = array("idciudad"=>$ciudad->getCaIdCiudad(),
+						 "ciudad"=>utf8_encode($ciudad->getCaCiudad()));
+			
+			$c = new Criteria();				
+			$c->add( PricRecargosxCiudadPeer::CA_IDCIUDAD, $ciudad->getCaIdCiudad());				
+			$recargosCiudad = PricRecargosxCiudadPeer::doSelect( $c );			 
+			foreach( $recargosCiudad as $recargoCiudad){
+				$row["recargo_".$recargoCiudad->getCaIdRecargo()]=$recargoCiudad->getCaVlrrecargo();
+				if( $recargoCiudad->getCaVlrminimo() ){
+					$row["recargo_".$recargoCiudad->getCaIdRecargo()].="/".$recargoCiudad->getCaVlrminimo();
+				}
+			}	
+						 	
+			$this->data[]= $row;
+		}		
+		$this->transporte = $transporte;
+		$this->modalidad = $modalidad;
 		
 		$this->setLayout("ajax");
 	}
 	
 	/*
-	* Provee datos para los recargos por ciudad
+	* Guarda los cambios realizados en los recargos generales
 	*/
-	public function executeRecargosXCiudadData(){
-		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
-		$idtrafico = $this->getRequestParameter( "idtrafico" );
-		$modalidad = $this->getRequestParameter( "modalidad" );
-		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+	public function executeObserveRecargosGenerales(){
+		
+		$idciudad = $this->getRequestParameter("idciudad");
+		$this->forward404Unless( $idciudad );
+		//print_r( $_POST  );
+		foreach( $_POST as $key=>$value ){
+			if( substr( $key, 0,7 )=="recargo" && $value ){
+				$idrecargo = substr($key, 8,10);
 			
-		$c = new Criteria();
-		$c->addJoin( PricRecargosxCiudadPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );		
-		$c->add( CiudadPeer::CA_IDTRAFICO, $this->trafico->getCaIdTrafico() );
-		//$c->add( PricRecargosxCiudadPeer::CA_TRANSPORTE, $transporte );
-		$c->add( PricRecargosxCiudadPeer::CA_MODALIDAD, $modalidad );
-		 
-		$c->setDistinct();	
-		$recargos = PricRecargosxCiudadPeer::doSelect( $c );
-		
-		$data = array();
-		
-		foreach( $recargos as $recargo ){
-			if( !isset($this->data[$recargo->getCaIdRecargo()]) ){
-				$data[$recargo->getCaIdRecargo()]=array();
+				$recargo = PricRecargosxCiudadPeer::retrieveByPk( $idciudad, $idrecargo );
+				if( !$recargo ){
+					$recargo = new PricRecargosxCiudad();
+					$recargo->setCaIdCiudad( $idciudad );
+					$recargo->setCaIdRecargo( $idrecargo );
+				}	
+				
+				$index = strpos($value,"/");
+				
+				if( $index===false){
+					$recargo->setCaVlrrecargo( $value );
+				}else{
+					$vlr = substr( $value, 0, $index );
+					$minimo= substr( $value , $index+1, 10);					
+					$recargo->setCaVlrrecargo( $vlr );
+					$recargo->setCaVlrminimo( $minimo );
+				}						
+				$recargo->save();
 			}	
-			$tipo = $recargo->getTipoRecargo();
-			$data[$recargo->getCaIdRecargo()]["recargo_".$recargo->getCaIdCiudad()]=$recargo->getCaVlrrecargo();	
-			$data[$recargo->getCaIdRecargo()]["nconcepto"]=utf8_encode($tipo->getCaRecargo());
-			$data[$recargo->getCaIdRecargo()]["recargo_id"]=$recargo->getCaIdRecargo();
 		}
-		
-		$this->data = array();
-		foreach( $data as $key=>$value){
-			$this->data[]= $value;
-		}
-		
-		
-		$this->setLayout("ajax");
+		return sfView::NONE;	
 	}
-	
-	
 }
 ?>

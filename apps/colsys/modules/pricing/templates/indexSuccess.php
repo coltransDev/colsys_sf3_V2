@@ -7,10 +7,10 @@ use_helper( "Ext2" );
        /*
 	   * Panel de administracion de archivos del cada trafico
 	   */
-	   var store = new Ext.data.JsonStore({
+	   var storeFileView = new Ext.data.JsonStore({
 			url: '<?=url_for("pricing/archivosPaisDatos")?>',
 			root: 'files',
-			fields: ['idarchivo','name', 'descripcion', 'icon',{name:'size', type: 'float'}, {name:'lastmod', type:'date', dateFormat:'timestamp'}],
+			fields: ['idarchivo','name', 'descripcion', 'icon',{name:'size', type: 'float'}, {name:'lastmod', type:'date', dateFormat:'timestamp'}]
 			//proxy: new Ext.data.MemoryProxy(data)
 		});
 		//store.load();
@@ -70,13 +70,16 @@ use_helper( "Ext2" );
 				buttons: [{
 					text     : 'Guardar',
 					handler: function(){
+						var panelactivoid = Ext.getCmp('tab-panel').getActiveTab().id;	
+						var nodeoptions = panelactivoid.split("_");						
 						var fp = Ext.getCmp("file-panel-form");					
 						if(fp.getForm().isValid()){
 							fp.getForm().submit({
-								url: '<?=url_for("pricing/subirArchivo?idtrafico=")?>',
+								url: '<?=url_for("pricing/subirArchivo")?>',
+								params: {idtrafico:nodeoptions[1]},
 								waitMsg: 'Cargando el archivo...',
 								success: function(fp, o){	
-									store.reload();								
+									storeFileView.reload();								
 									win.close();						
 									Ext.Msg.alert('Success', 'El archivo "'+o.result.file+'" se ha guardado en el servidor');																															
 											
@@ -109,7 +112,7 @@ use_helper( "Ext2" );
 			title:'Archivos',
 			
 			items: new Ext.DataView({
-				store: store,
+				store: storeFileView,
 				tpl: tpl,
 				id: 'file-view',
 				autoHeight:true,
@@ -177,7 +180,7 @@ use_helper( "Ext2" );
 									idarchivo: records[i].data.idarchivo						
 								},
 								success: function(xhr) {	
-									store.reload();	
+									storeFileView.reload();	
 									Ext.Msg.alert("Success", "Se ha eliminado el archivo");							
 									
 								},
@@ -190,7 +193,7 @@ use_helper( "Ext2" );
 						
 				}
 			}
-			],
+			]
 		});
 	   /*
 	   * Se crea un combo para los recargos 
@@ -255,13 +258,14 @@ use_helper( "Ext2" );
 			//var sn = this.selModel.selNode || {}; // selNode is null on initial selection
 							
 			if( n.leaf ){  // ignore clicks on folders 
+				
 				var nodeoptions = n.id.split("_");
 				switch( nodeoptions[0] ){
 					case "recgen":
 						/*
 						* Se muestran los recargos generales para el pais seleccionado
 						*/
-						var url = '<?=url_for("pricing/recargosGenerales")?>';
+						var url = '<?=url_for("pricing/recargosGenerales")?>';						
 						break;
 					case "ttransito":
 						var url = '<?=url_for("pricing/grillaTiempoTransito")?>';
@@ -275,27 +279,37 @@ use_helper( "Ext2" );
 						break;						
 				}
 				
-				if( nodeoptions[3]=="ciudad" ){
-					var idciudad = nodeoptions[4]; 				
+				var idcomponent = nodeoptions[0]+"_"+nodeoptions[1]+"_"+nodeoptions[2]+"_"+nodeoptions[3]
+								
+				if( nodeoptions[4]=="ciudad" ){
+					var idciudad = nodeoptions[5]; 	
+					idcomponent+="_ciudad_"+nodeoptions[5];			
 				}else{
 					var idciudad = "";
 				}
 				
-				if( nodeoptions[3]=="linea" ){
-					var idlinea = nodeoptions[4]; 					
+				if( nodeoptions[4]=="linea" ){
+					
+					var idlinea = nodeoptions[5]; 	
+					idcomponent+="_linea_"+nodeoptions[5];						
 				}else{
 					var idlinea = "";
 				}
 				
+				/*if( Ext.getCmp('tab-panel').findById(idcomponent)!=null ){
+					Ext.getCmp('tab-panel').setActiveTab(idcomponent);		
+					Ext.getCmp('tab-panel').show();			 
+					return 0;
+				}*/	
 				
-					
 				Ext.Ajax.request({
 					url: url,
 					params: {						
 						idtrafico: nodeoptions[3],
 						transporte: nodeoptions[1],
-						modalidad: nodeoptions[2]
-						
+						modalidad: nodeoptions[2],
+						idlinea: idlinea,
+						idciudad: idciudad
 					},
 					success: function(xhr) {			
 						//alert( xhr.responseText );			
@@ -317,7 +331,7 @@ use_helper( "Ext2" );
 		var tabPanelOnTabchangeHandler = function( panel , component ){
 			/*
 			* Se muestra panel con los archivos del pais
-			*/
+			*/			
 			
 			if(component.id.substr(0,4)=="grid"){
 				var str = component.id.substr(5);
@@ -327,30 +341,11 @@ use_helper( "Ext2" );
 				}else{
 					var idtrafico = str;
 				}
-				//alert( idtrafico );				
-				store.reload( {params:{idtrafico:idtrafico}} );
+								
+				storeFileView.reload( {params:{idtrafico:idtrafico}} );				
 				
-				/*Ext.Ajax.request({
-					url: '<?=url_for("pricing/archivosPais")?>',
-					params: {						
-						trafico_id: idtrafico						
-					},
-					success: function(xhr) {						
-						var newComponent = eval(xhr.responseText);
-						//alert("asd");
-						//Ext.getCmp('panel-info').setActiveTab('panel-traficos');
-						 //
-												
-						//remove('panel-traficos');
-						Ext.getCmp('panel-info').add(newComponent);
-						Ext.getCmp('panel-info').setActiveTab(newComponent);
-						
-					},
-					failure: function() {
-						Ext.Msg.alert("File panel create failed", "Server communication failure");
-					}
-				});*/
-				
+			}else{
+				storeFileView.removeAll();
 			}
 			//alert("asdasd"+p);
 		}
@@ -371,7 +366,7 @@ use_helper( "Ext2" );
                     items:
                         new Ext.TabPanel({
                             border:false,
-                            activeTab:1,
+                            activeTab:0,
                             tabPosition:'bottom',	
 							id: 'panel-info',						
                             items:[ panelArchivos ]
@@ -514,7 +509,7 @@ use_helper( "Ext2" );
            var w = Ext.getCmp('west-panel');
            w.collapsed ? w.expand() : w.collapse(); 
         });*/
-		
+		/*
 		Ext.Ajax.request({
 				url: '<?=url_for("pricing/archivosPais")?>',
 				params: {						
@@ -535,7 +530,7 @@ use_helper( "Ext2" );
 				failure: function() {
 					Ext.Msg.alert("File panel create failed", "Server communication failure");
 				}
-			});
+			});*/
 		
     
     });

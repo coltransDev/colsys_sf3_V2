@@ -1,5 +1,5 @@
 <? 
-
+//Este ya no se usa 
 
 ?>
 
@@ -23,7 +23,7 @@ var tpl = new Ext.XTemplate(
 	'</tpl>',
 	'<div class="x-clear"></div>'
 );
-
+alert( '<?=url_for("pricing/subirArchivo?idtrafico=".$idtrafico)?>' );
 var nuevoBtnHandler = function(){
 	win = new Ext.Window({
 		//applyTo     : 'hello-win',

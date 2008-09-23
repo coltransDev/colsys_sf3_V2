@@ -479,7 +479,7 @@ new Ext.grid.EditorGridPanel({
 	root_title: '<?=$trafico->getCaNombre()?>',	
 	plugins: [checkColumn], //expander,
 	closable: true,
-	id: 'grid_<?=$idcomponent?>',
+	id: 'fletes_<?=$idcomponent?>',
 	
 	tbar: [			  
 	{
