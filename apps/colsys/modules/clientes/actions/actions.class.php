@@ -224,11 +224,12 @@ class clientesActions extends sfActions
 		$c->addSelectColumn(ClientePeer::CA_PREFERENCIAS );
 		$c->addSelectColumn(ClientePeer::CA_CONFIRMAR );
 		$c->addSelectColumn(ClientePeer::CA_VENDEDOR );
+		$c->addSelectColumn(UsuarioPeer::CA_NOMBRE );
 		
 		$c->addJoin( ClientePeer::CA_IDCLIENTE, ContactoPeer::CA_IDCLIENTE );
-					
+		$c->addJoin( UsuarioPeer::CA_LOGIN, ClientePeer::CA_VENDEDOR );
+
 		$c->add( ClientePeer::CA_COMPANIA , "lower(".ClientePeer::CA_COMPANIA.") LIKE '%".strtolower( $criterio )."%'", Criteria::CUSTOM );	
-		
 		
 		$c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );
 		$c->addAscendingOrderByColumn( ContactoPeer::CA_NOMBRES );
@@ -244,8 +245,10 @@ class clientesActions extends sfActions
 									  'ca_papellido'=>utf8_encode($rs->getString(4)),
 									  'ca_sapellido'=>utf8_encode($rs->getString(5)),      
 									  'ca_cargo'=>utf8_encode($rs->getString(6)), 
-									  'ca_preferencias'=>utf8_encode($rs->getString(7)),                                  	  'ca_confirmar'=>utf8_encode($rs->getString(8)),
+									  'ca_preferencias'=>utf8_encode($rs->getString(7)),
+									  'ca_confirmar'=>utf8_encode($rs->getString(8)),
 									  'ca_vendedor'=>utf8_encode($rs->getString(9)),
+									  'ca_nombre'=>utf8_encode($rs->getString(10)),
                                  );
 		}					
 		$this->setLayout("none");
@@ -264,10 +267,8 @@ class clientesActions extends sfActions
 		$c->addSelectColumn(ClientePeer::CA_PREFERENCIAS );
 		$c->addSelectColumn(ClientePeer::CA_CONFIRMAR );
 		
-		
-	 $c->setDistinct();			
+		$c->setDistinct();			
 		$c->add( ClientePeer::CA_COMPANIA , "lower(".ClientePeer::CA_COMPANIA.") LIKE '%".strtolower( $criterio )."%'", Criteria::CUSTOM );	
-		
 		
 		$c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );		
 		$c->setLimit(40);

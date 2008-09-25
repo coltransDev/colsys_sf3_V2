@@ -14,9 +14,9 @@
 		$contacto = $cotizacion->getContacto();
 		$cliente = $contacto->getCliente(); 
 	?>
-	<tr >
-		<td class="listar" ><?=link_to($cotizacion->getCaIdcotizacion(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
-		<td class="invertir" >
+	<tr>
+		<td class="listar"><?=link_to($cotizacion->getCaIdcotizacion(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
+		<td class="invertir">
 			<table class="tableForm" width="100%" border="0">
 				<tbody>
 					<tr>

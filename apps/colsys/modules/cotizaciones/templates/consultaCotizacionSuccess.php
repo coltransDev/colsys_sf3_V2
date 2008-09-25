@@ -1,16 +1,3 @@
-<link rel="stylesheet" type="text/css" 	href="/colsys_sf/css/treegrid/css/TreeGrid.css" />
-<link rel="stylesheet" type="text/css"
-	href="/colsys_sf/css/treegrid/css/TreeGridLevels.css" />
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/TreeGrid.js"></script>
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/RowExpander.js"></script>
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/myRowExpander.js"></script>
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/NumberFieldMin.js"></script>
-<script
-	language="javascript" src="/colsys_sf/js/treegrid/CheckColumn.js"></script>
 
 <?
 	$contacto = $cotizacion->getContacto();
@@ -25,19 +12,17 @@
 	if (!$usuario) {
 		$usuario = new Usuario();
 	}
-	?>
+	/*$productos = $cotizacion->getProductos();
+	if (!$productos) {
+		$producto = new Producto();
+	}*/
+	
+?>
+
 <script language="javascript">
 
-Controller = function()
-{	
-	function createGrid()
-	{
-	Ext.QuickTips.init();
-	
-	Ext.apply(Ext.QuickTips.getQuickTip(), {	   
-	   dismissDelay: 200000 //permite que los tips permanezcan por mas tiempo. 
-	});
-	
+Ext.onReady(function(){
+
     var ds = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
             url: '/colsys_sf/index.php/clientes/listaContactosClientesJSON'
@@ -47,76 +32,47 @@ Controller = function()
             totalProperty: 'totalCount',
             id: 'id'
         }, [
-            {name: 'id', mapping: 'ca_idcontacto'},
+            {name: 'idcontacto', mapping: 'ca_idcontacto'},
             {name: 'compania', mapping: 'ca_compania'},
 			{name: 'cargo', mapping: 'ca_cargo'},
 			{name: 'nombre', mapping: 'ca_nombres'},
 			{name: 'papellido', mapping: 'ca_papellido'},
 			{name: 'sapellido', mapping: 'ca_sapellido'},
             {name: 'vendedor', mapping: 'ca_vendedor'},
+            {name: 'nombre_ven', mapping: 'ca_nombre'},
         ])
     });
 
-    var store = new Ext.data.SimpleStore({
-    	fields: [ 'valor'],
-    	data : []
-    });
-
-
+	//var data_productos = <?//json_encode();?>
+	
 	var resultTpl = new Ext.XTemplate( 
         '<tpl for="."><div class="search-item"><strong>{compania}</strong><br /><span>{nombre} {papellido} {sapellido} <br />{cargo}</span> </div></tpl>' 
     );
-    
-  	
-  	
-	//------ Formulario ------
-	
-	var actualizarEncabezado = function ( field ){
-			
-		Ext.Ajax.request(  
-			{   //Specify options (note success/failure below that
-				//receives these same options)
-				waitMsg: 'Guardando cambios...', 
 
-				//url where to send request (url to server side script) 
-				url: '<?=url_for("cotizaciones/observeEncabezadoCotizacion?cotizacionId=".$cotizacion->getCaIdCotizacion())?>/'+field.name+'/'+field.value, 
-				
-				//If specify params default is 'POST' instead of 'GET'
-				//method: 'POST', 
-				
-				//params will be available server side via $_POST or $_REQUEST:
-				//params :	changes,
-										
-				//the function to be called upon failure of the request
-				//(404 error etc, ***NOT*** success=false)
-				failure:function(response,options){							
-					alert( response.responseText );						
-					success = false;
-				},
-				
-				//The function to be called upon success of the request                                
-				success:function(response,options){							
-					alert( response.responseText );
-				}                                      
-			 }//end request config
-		); //end request*
-	}
 
-    var panel = new Ext.FormPanel({
+
+    Ext.QuickTips.init();
+
+    // turn on validation errors beside the field globally
+    Ext.form.Field.prototype.msgTarget = 'side';
+    /*
+     * ================  Main Form  =======================
+     */
+    var mainPanel = new Ext.FormPanel({
         labelAlign: 'top',
         title: 'Sistema de cotizaciones',
         bodyStyle:'padding:1px',
-        // width: '80%',
-        // anchor:'95%',
 
         items: [{
             xtype:'tabpanel',
+            buttonAlign: 'left',
             activeTab: 0,
-            defaults:{autoHeight:true, bodyStyle:'padding:10px'}, 
+            defaults:{autoHeight:true, bodyStyle:'padding:10px'},
+            deferredRender:false,
+	        
             items:[{
                 title:'Información General',
                 layout:'form',
-                // defaultType: 'textfield',
                 defaults: {width: 420},
 
                 items: [{
@@ -139,7 +95,6 @@ Controller = function()
 							name: 'fchCotizacion',
 							value: '<?=$cotizacion->getCaFchcotizacion()?>',
 							format: "Y-m-d", 
-							listeners : { "change":actualizarEncabezado },
 							allowBlank:false,
 							width: 120
 		                }]
@@ -148,10 +103,9 @@ Controller = function()
 		                items: [{
 							xtype:'timefield',
 							fieldLabel: 'Hora de Solicitud',
-							name: 'HoraSolicitud',
+							name: 'horaSolicitud',
 							value: '<?=$cotizacion->getCaHoraSolicitud()?>',
 							format: "H:i:s", 
-							listeners : { "change":actualizarEncabezado },
 							allowBlank:false,
 							width: 140
 		                }]
@@ -163,7 +117,6 @@ Controller = function()
 							name: 'fchSolicitud',
 							value: '<?=$cotizacion->getCaFchsolicitud()?>',
 							format: "Y-m-d", 
-							listeners : { "change":actualizarEncabezado },
 							allowBlank:false,
 							width: 120
 		                }]
@@ -192,10 +145,25 @@ Controller = function()
 								this.collapse();
 								this.fireEvent('select', this, record, index);
 							}
-							Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );							
+							Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
+							Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
+							Ext.getCmp("usuario").setValue(record.get("vendedor"));
+							Ext.getCmp("vendedor").setValue(record.get("nombre_ven"));
 						},
 					})
 				,{
+					id: 'cotizacionId',
+					xtype:'hidden',
+					name: 'cotizacionId',
+					value: '<?=$cotizacion->getCaIdcotizacion()?>',
+                    allowBlank:false
+				},{
+					id: 'idconcliente',
+					xtype:'hidden',
+					name: 'idconcliente',
+					value: '<?=$cotizacion->getCaIdcontacto()?>',
+                    allowBlank:false
+				},{
 					id: 'contacto',
 					xtype:'textfield',
 					fieldLabel: 'Persona de Contacto',
@@ -204,9 +172,15 @@ Controller = function()
                     allowBlank:false
 				},{
 					id: 'usuario',
+					xtype:'hidden',
+					name: 'usuario',
+					value: '<?=$cotizacion->getCaUsuario()?>',
+                    allowBlank:false
+				},{
+					id: 'vendedor',
 					xtype:'textfield',
 					fieldLabel: 'Representante Comercial',
-					name: 'usuario',
+					name: 'vendedor',
 					value: '<?=$usuario->getCaNombre()?>',
                     allowBlank:false
                 }]
@@ -222,7 +196,13 @@ Controller = function()
 					fieldLabel: 'Asunto',
 					name: 'asunto',
 					value: '<?=$cotizacion->getCaAsunto()?>',
-					listeners : { "change":actualizarEncabezado },
+                    allowBlank:false
+                }, {
+					xtype:'textfield',
+					width: 500,
+					fieldLabel: 'Saludo',
+					name: 'saludo',
+					value: '<?=$cotizacion->getCaSaludo()?>',
                     allowBlank:false
                 }, {
 					xtype: 'textarea',
@@ -230,7 +210,6 @@ Controller = function()
 					fieldLabel: 'Entrada',
 					name: 'entrada',
 					value: '<?=$cotizacion->getCaEntrada()?>',
-					listeners : { "change":actualizarEncabezado },
                     allowBlank:false
                 }]
             },{
@@ -245,7 +224,6 @@ Controller = function()
 					fieldLabel: 'Despedida',
 					name: 'despedida',
 					value: '<?=$cotizacion->getCaDespedida()?>',
-					listeners : { "change":actualizarEncabezado },
                     allowBlank:false
                 }]
             },{
@@ -260,31 +238,47 @@ Controller = function()
 					fieldLabel: 'Anexos',
 					name: 'anexos',
 					value: '<?=$cotizacion->getCaAnexos()?>',
-					listeners : { "change":actualizarEncabezado },
                     allowBlank:false
                 }]
             }],
 
 	        buttons: [{
-	            text: 'Save'
+	            text: 'Salvar',
+	            handler: function(){
+	            	if( mainPanel.getForm().isValid() ){
+	            		mainPanel.getForm().submit({url:'<?=url_for('cotizaciones/formCotizacionGuardar')?>', 
+	            							 	waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
+	            							 	// standardSubmit: false, 
+		            							failure:function(response,options){							
+													alert( "Error "+response.responseText );
+												},//end failure block      
+											});
+					}else{
+						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información básica de la cotización no es válida o está incompleta!');
+					}	            	
+	            	
+	            }
+	            
 	        },{
-	            text: 'Cancel'
+	            text: 'Cancelar'
 	        }]
-        	
-        },{
+        }],
+    });
+     <?
+     include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
+     ?>   	
+    var subPanel = new Ext.FormPanel({
+        labelAlign: 'top',
+        bodyStyle:'padding:1px',
+
+        items: [{
             xtype:'tabpanel',
             plain:true,
             activeTab: 0,
-            height:235,
+            height:250,
             defaults:{bodyStyle:'padding:10px'},
-            items:[{
-                title:'Información de fletes',
-                layout:'form',
-                defaults: {width: 800},
-                defaultType: 'textfield',
-
-                // items: [grid]
-            },{
+            items:[grid ,
+            	{
                 title:'OTM/DTA',
                 layout:'form',
                 defaults: {width: 230},
@@ -315,34 +309,9 @@ Controller = function()
                 }
             }]
         }],
-
-        buttons: [{
-            text: 'Save'
-        },{
-            text: 'Cancel'
-        }]
     });
-	
-	panel.render(document.body);
 
-    var vp = new Ext.Viewport({
-    	layout : 'fit',
-    	items : panel
-    });
-	}
-	return {
-		init : function()
-		{
-			//Ext.MessageBox.alert('Warning','Por favor lea las observaciones: ');
-			createGrid();
-		}
-	}
-	
-	
-}();
-
-
-
-
-Ext.onReady(Controller.init);
+    mainPanel.render(document.body);
+    subPanel.render(document.body);
+});
 </script>

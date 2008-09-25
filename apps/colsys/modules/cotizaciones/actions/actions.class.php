@@ -98,12 +98,11 @@ class cotizacionesActions extends sfActions
 	}
 	
 	/*
-	* Guarda los cambios realizados  
+	* Guarda los cambios realizados al Header de la Cotización  
 	* @author Carlos G. López M.
 	*/
 	public function executeFormCotizacionGuardar(){
 		$user_id = $this->getUser()->getUserId();
-		
 		if( $this->getRequestParameter("cotizacionId") ){
 			$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("cotizacionId") );
 			$this->forward404Unless( $cotizacion );
@@ -113,13 +112,13 @@ class cotizacionesActions extends sfActions
 			$cotizacion->setCaConsecutivo( $sig ); 
 		}
 		$cotizacion->setCaFchCotizacion( $this->getRequestParameter( "fchCotizacion" ) );
-		/*$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
+		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
 		$cotizacion->setCaAsunto( $this->getRequestParameter( "asunto" ) );
 		$cotizacion->setCaSaludo( $this->getRequestParameter( "saludo" ) );
 		$cotizacion->setCaEntrada( $this->getRequestParameter( "entrada" ) );
 		$cotizacion->setCaDespedida( $this->getRequestParameter( "despedida" ) );
 		$cotizacion->setCaAnexos( $this->getRequestParameter( "anexos" ) );
-		$cotizacion->setCaUsuario( $this->getRequestParameter( "login" ) );
+		$cotizacion->setCaUsuario( $this->getRequestParameter( "usuario" ) );
 		$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
 		$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
 		if( !$cotizacion->getCaIdCotizacion() ){ 
@@ -128,11 +127,28 @@ class cotizacionesActions extends sfActions
 		}else{
 			$cotizacion->setCaFchactualizado( time() );	
 			$cotizacion->setCaUsuactualizado( $user_id );							
-		}*/
+		}
 		$cotizacion->save();
-		
-		$this->redirect( "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaidcotizacion()."&token=".md5(time()) );		
-					
+		exit;	
+	}
+	
+	/*
+	* Guarda los cambios realizados a Productos  
+	* @author Carlos G. López M.
+	*/
+	public function executeFormProductoGuardar(){
+		$user_id = $this->getUser()->getUserId();
+
+		$producto->setCaProducto( $this->getRequestParameter( "producto" ) );
+
+		if( !$cotizacion->getCaIdCotizacion() ){ 
+			$cotizacion->setCaFchcreado( time() );	
+			$cotizacion->setCaUsucreado( $user_id );			
+		}else{
+			$cotizacion->setCaFchactualizado( time() );	
+			$cotizacion->setCaUsuactualizado( $user_id );							
+		}
+		$cotizacion->save();
 		exit;	
 	}
 	
@@ -153,9 +169,8 @@ class cotizacionesActions extends sfActions
 			$cotizacion->setCaConsecutivo( $sig ); 
 		}
 		
-		echo "->".$this->getRequestParameter( "fchCotizacion" );
 		$cotizacion->setCaFchCotizacion( $this->getRequestParameter( "fchCotizacion" ) );
-		/*$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
+		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
 		$cotizacion->setCaAsunto( $this->getRequestParameter( "asunto" ) );
 		$cotizacion->setCaSaludo( $this->getRequestParameter( "saludo" ) );
 		$cotizacion->setCaEntrada( $this->getRequestParameter( "entrada" ) );
@@ -170,7 +185,7 @@ class cotizacionesActions extends sfActions
 		}else{
 			$cotizacion->setCaFchactualizado( time() );	
 			$cotizacion->setCaUsuactualizado( $user_id );							
-		}*/
+		}
 		$cotizacion->save();
 		
 		$this->redirect( "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaidcotizacion()."&token=".md5(time()) );		
@@ -200,15 +215,8 @@ class cotizacionesActions extends sfActions
 			$row = array("origen"=>utf8_encode($producto->getOrigen()),
 						 "_is_leaf"=>true						
 						);	
-			
 			$this->data[] = $row;			
 		}
-		
-		
-		
-		
-		
-		
 	}		
 
 
@@ -238,8 +246,6 @@ class cotizacionesActions extends sfActions
 	* @author Carlos G. López M.
 	*/
 	public function executeObserveProductos(){
-		echo "--->".$this->getrequestparameter("productoId");
-		echo "asdasd";
 		$producto = CotProductoPeer::retrieveByPk( $this->getrequestparameter("cotizacionId"), $this->getrequestparameter("productoId") );
 		$this->forward404Unless($producto);	
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
@@ -261,6 +267,30 @@ class cotizacionesActions extends sfActions
 		return sfView::NONE;	
 	}
 
+	/*
+	* Datos de las modalidades según sea el medio de transporte
+	*/
+	public function executeDatosModalidades(){
+		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
+		$impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
+
+		if ( $transport_parameter == 'Marítimo')	{
+			$transportes = ParametroPeer::retrieveByCaso( "CU051",null, $impoexpo_parameter);
+		}else if ( $transport_parameter == 'Aéreo')	{
+			$transportes = ParametroPeer::retrieveByCaso( "CU052",null, $impoexpo_parameter);
+		}else if ( $transport_parameter == 'Terrestre')	{
+			$transportes = ParametroPeer::retrieveByCaso( "CU053",null, $impoexpo_parameter);
+		}
+		$this->modalidades = array();
+		
+		foreach($transportes as $transporte){
+			
+			$row = array("modalidad"=>$transporte->getCaValor());
+			$this->modalidades[]=$row;
+		}
+		$this->setLayout("ajax");
+	}
+	
 	/*
 	* Genera un archivo PDF a partir de una cotización
 	*/
@@ -336,6 +366,8 @@ class cotizacionesActions extends sfActions
 		}
 		@unlink( $fileName );
 	}
+	
+	
 	
 }
 ?>
