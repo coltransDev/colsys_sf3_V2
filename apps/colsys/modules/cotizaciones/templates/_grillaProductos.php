@@ -7,6 +7,8 @@ var data_productos = <?=json_encode( array("productos"=>$productos, "total"=>cou
 * Crea el Record 
 */
 var recordGrilla = Ext.data.Record.create([
+    {name: 'idcotizacion', type: 'string'},   		
+    {name: 'idproducto', type: 'string'},   		
     {name: 'trayecto', type: 'string'},   		
 	{name: 'producto', type: 'string'},
 	{name: 'impoexpo', type: 'string'},
@@ -14,7 +16,9 @@ var recordGrilla = Ext.data.Record.create([
 	{name: 'modalidad', type: 'string'},
 	{name: 'incoterms', type: 'string'},
 	{name: 'origen', type: 'string'},
+	{name: 'ciuorigen', type: 'string'},
 	{name: 'destino', type: 'string'},
+	{name: 'ciudestino', type: 'string'},
 	{name: 'frecuencia', type: 'string'},
 	{name: 'ttransito', type: 'string'},
 	{name: 'observaciones', type: 'string'},
@@ -48,7 +52,6 @@ var storeProductos = new Ext.data.GroupingStore({
 	sortInfo:{field: 'producto', direction: "ASC"},
 	proxy: new Ext.data.MemoryProxy(data_productos),
 	groupField: 'trayecto'		
-	
 });
 	
 storeProductos.load();	
@@ -62,6 +65,9 @@ storeProductos.load();
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
 
+// turn on validation errors beside the field globally
+Ext.form.Field.prototype.msgTarget = 'side';
+
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [
 		{
@@ -72,7 +78,6 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'trayecto',
 			hideable: false,
 			hidden: true
-			
 		},
 		{
 			id: 'producto',
@@ -81,13 +86,6 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,			
 			dataIndex: 'producto',
 			hideable: false,
-//			renderer: function(value, metaData){
-//					if( value=="FLETE" ){					
-//						return "<div style='font-weight:bold'>"+value+"</div>";
-//					}else{
-//						return value;
-//					}
-//				} 
 		},	
 	
 		{
@@ -121,8 +119,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,
 			dataIndex: 'imprimir',
 			hideable: false 
-		},
-		
+		}
 	]
 });
 
@@ -144,42 +141,49 @@ var selModel = new  Ext.grid.CellSelectionModel();
 * Handlers de los eventos y botones de la grilla 
 */
 
-
 var productoHandler = function(){
 	//crea una ventana 
 	win = new Ext.Window({		
-		width       : 450,
-		height      : 400,
+		width       : 500,
+		height      : 470,
 		closeAction :'hide',
 		plain       : true,		
 		
-		items       : new Ext.FormPanel({					
-			id: 'recargo-form',			
+		items       : new Ext.FormPanel({
+			id: 'producto-form',
+			layout: 'form',
 			frame: true,
 			title: 'Ingrese los datos del Producto',
 			autoHeight: true,
 			bodyStyle: 'padding: 5px 5px 0 5px;',
-			labelWidth: 80, 			
+			labelWidth: 100,
 			
 			items: [{
+						id: 'cotizacionId',
+						xtype:'hidden',
+						name: 'cotizacionId',
+						value: '<?=$cotizacion->getCaIdcotizacion()?>',
+			            allowBlank:false
+					},{
+						id: 'productoId',
+						xtype:'hidden',
+						name: 'productoId',
+						value: '',
+			            allowBlank:false
+					},{
 						xtype:'textfield',
 						fieldLabel: 'Producto',
 						name: 'producto',
 						value: '',						 
 						allowBlank:false,
 						width: 300
-	                },
-					<?=extImpoExpo()?>
-					,
-					<?=extIncoterms()?>
-					,
-					<?=extTransporte()?>
-					,
-					<?=extModalidad()?>
-					,
-					<?=extOrigen()?>
-					,
-					<?=extDestino()?>
+	                }
+	                ,<?=extImpoExpo()?>
+					,<?=extIncoterms()?>
+					,<?=extTransporte()?>
+					,<?=extModalidad()?>
+					,<?=extTraficos("origen")?>
+					,<?=extTraficos("destino")?>
 					,{
 						xtype: 'textarea',
 						width: 310,
@@ -187,37 +191,51 @@ var productoHandler = function(){
 						name: 'observaciones',
 						value: '',
 	                    allowBlank:true
-					},
-					<?=extImprimir()?>
+					}
+					,{
+						xtype: 'textfield',
+						width: 100,
+						fieldLabel: 'Frecuencia',
+						name: 'frecuencia',
+						value: '',
+	                    allowBlank:false
+					}
+					,{
+						xtype: 'textfield',
+						width: 100,
+						fieldLabel: 'T/Transito',
+						name: 'ttransito',
+						value: '',
+	                    allowBlank:false
+					}
+					,<?=extImprimir()?>
 					]
 			
 		}),
 
 		buttons: [{
-			text     : 'Crear',
+			text     : 'Guardar',
 			handler: function(){
-				
-				var fp = Ext.getCmp("recargo-form");	
+				var fp = Ext.getCmp("producto-form");	
 												
-				if(fp.getForm().isValid()){
-					fp.getForm().submit({url:'<?=url_for('cotizaciones/formCotizacionGuardar')?>', 
+				if( fp.getForm().isValid() ){
+					fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>', 
 	            							 	waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
 	            							 	// standardSubmit: false,
+	            							 	
 	            							 	success:function(response,options){
+	            							 		Ext.Msg.alert( "Success "+response.responseText );
 	            							 		win.close();
 	            							 	},
-		            							failure:function(response,options){							
-													Ext.msg.alert( "Error "+response.responseText );
+		            							failure:function(response,options){
+													Ext.Msg.alert( "Error "+response.responseText );
 													win.close();
 												}//end failure block      
 											});
-					
-					
-					win.close();	
-					
-					
+					}else{
+						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del producto no es válida o está incompleta!');
+					}	            	
 				}
-			}
 		},{
 			text     : 'Cancelar',
 			handler  : function(){
@@ -225,9 +243,7 @@ var productoHandler = function(){
 			}
 		}]
 	});
-	
 	win.show( );	
-	
 }
 
 

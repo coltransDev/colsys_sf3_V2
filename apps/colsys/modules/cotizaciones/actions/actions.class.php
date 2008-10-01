@@ -139,17 +139,37 @@ class cotizacionesActions extends sfActions
 	public function executeFormProductoGuardar(){
 		$user_id = $this->getUser()->getUserId();
 
-		$producto->setCaProducto( $this->getRequestParameter( "producto" ) );
-
-		if( !$cotizacion->getCaIdCotizacion() ){ 
-			$cotizacion->setCaFchcreado( time() );	
-			$cotizacion->setCaUsucreado( $user_id );			
-		}else{
-			$cotizacion->setCaFchactualizado( time() );	
-			$cotizacion->setCaUsuactualizado( $user_id );							
+		if( $this->getRequestParameter("productoId") ){
+			$producto = CotProductoPeer::retrieveByPk( $this->getRequestParameter("productoId") );
+			$this->forward404Unless( $producto );
+		}else{		
+			$producto = new CotProducto();
+			$producto->setCaIdcotizacion( $this->getRequestParameter("cotizacionId") );
 		}
-		$cotizacion->save();
-		exit;	
+
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+		$transporte= utf8_decode($this->getRequestParameter("transporte"));
+	
+		$producto->setCaProducto( $this->getRequestParameter("producto") );
+		$producto->setCaImpoexpo( $impoexpo );
+		$producto->setCaTransporte( $transporte );
+		$producto->setCaModalidad( $this->getRequestParameter("modalidad") );
+		$producto->setCaIncoterms( $this->getRequestParameter("incoterms") );
+		$producto->setCaOrigen( $this->getRequestParameter("ciu_origen") );
+		$producto->setCaDestino( $this->getRequestParameter("ciu_destino") );
+		$producto->setCaFrecuencia( $this->getRequestParameter("frecuencia") );
+		$producto->setCaTiempotransito( $this->getRequestParameter("ttransito") );
+		$producto->setCaObservaciones( $this->getRequestParameter("observaciones") );
+		$producto->setCaImprimir( $this->getRequestParameter("imprimir") );
+		if( !$producto->getCaIdProducto() ){ 
+			$producto->setCaFchcreado( time() );	
+			$producto->setCaUsucreado( $user_id );			
+		}else{
+			$producto->setCaFchactualizado( time() );	
+			$producto->setCaUsuactualizado( $user_id );							
+		}
+		$producto->save();
+		exit;
 	}
 	
 	
@@ -168,7 +188,6 @@ class cotizacionesActions extends sfActions
 			$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
 			$cotizacion->setCaConsecutivo( $sig ); 
 		}
-		
 		$cotizacion->setCaFchCotizacion( $this->getRequestParameter( "fchCotizacion" ) );
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
 		$cotizacion->setCaAsunto( $this->getRequestParameter( "asunto" ) );
@@ -189,7 +208,6 @@ class cotizacionesActions extends sfActions
 		$cotizacion->save();
 		
 		$this->redirect( "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaidcotizacion()."&token=".md5(time()) );		
-					
 		exit;	
 	}
 
@@ -225,26 +243,6 @@ class cotizacionesActions extends sfActions
 	* de una cotización
 	* @author Carlos G. López M.
 	*/
-	public function executeGuardarProducto(){
-		$id_cotizacion = $this->getRequestParameter("id");
-		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
-		$transporte= utf8_decode($this->getRequestParameter("transporte"));
-		
-		$producto = new CotProducto();
-		
-		$producto->setCaProducto( $this->getRequestParameter("producto") );
-		$producto->setCaImpoexpo( $impoexpo );
-		$producto->setCaIncoterms( $this->getRequestParameter("incoterms") );
-		$producto->setCaTransporte( $transporte );
-		$producto->setCaModalidad( $this->getRequestParameter("modalidad") );
-		
-	}
-	
-	/**
-	* Permite actualizar en linea los cambios en los campos de productos 
-	* de una cotización
-	* @author Carlos G. López M.
-	*/
 	public function executeObserveProductos(){
 		$producto = CotProductoPeer::retrieveByPk( $this->getrequestparameter("cotizacionId"), $this->getrequestparameter("productoId") );
 		$this->forward404Unless($producto);	
@@ -273,7 +271,7 @@ class cotizacionesActions extends sfActions
 	public function executeDatosModalidades(){
 		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
 		$impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
-
+		
 		if ( $transport_parameter == 'Marítimo')	{
 			$transportes = ParametroPeer::retrieveByCaso( "CU051",null, $impoexpo_parameter);
 		}else if ( $transport_parameter == 'Aéreo')	{
@@ -284,9 +282,58 @@ class cotizacionesActions extends sfActions
 		$this->modalidades = array();
 		
 		foreach($transportes as $transporte){
-			
 			$row = array("modalidad"=>$transporte->getCaValor());
 			$this->modalidades[]=$row;
+		}
+		$this->setLayout("ajax");
+	}
+	
+	/*
+	* Carga el contendo de la tabla Tráficos y según sea una Importación o Exportación
+	*/
+	public function executeDatosTraficos(){
+		$impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
+		$lugar_parameter = $this->getRequestParameter("lugar");
+		
+		$c=new Criteria();
+		$c->add( TraficoPeer::CA_IDTRAFICO, '99-999', Criteria::NOT_EQUAL );
+
+		if (($impoexpo_parameter == 'Importación' and $lugar_parameter == 'origen') or ($impoexpo_parameter == 'Exportación' and $lugar_parameter == 'destino')) { 
+			$c->add( TraficoPeer::CA_IDTRAFICO, 'CO-057', Criteria::NOT_EQUAL );
+		} else {
+			$c->add( TraficoPeer::CA_IDTRAFICO, 'CO-057', Criteria::EQUAL ); 
+		}
+		
+		$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
+		$traficos_rs = TraficoPeer::doSelect( $c );
+		
+		$this->traficos = array();
+		
+		foreach($traficos_rs as $trafico){
+			$row = array("idtrafico"=>$trafico->getCaIdTrafico(),"trafico"=>utf8_encode($trafico->getCaNombre()));
+			$this->traficos[]=$row;
+		}
+		$this->setLayout("ajax");
+
+	}
+	
+	/*
+	* Carga el contenido de la tabla Ciudades según sea el Tráfico seleccionado
+	*/
+	public function executeDatosCiudades(){
+		$trafico_parameter = utf8_decode($this->getRequestParameter("trafico"));
+		$lugar_parameter = utf8_decode($this->getRequestParameter("lugar"));
+		
+		$c=new Criteria();
+		$c->add( CiudadPeer::CA_IDTRAFICO, $trafico_parameter, Criteria::EQUAL );
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
+		$ciudades_rs = CiudadPeer::doSelect( $c );
+		
+		$this->ciudades = array();
+		
+		foreach($ciudades_rs as $ciudad){
+			$row = array('idciudad'=>$ciudad->getCaIdCiudad(),"ciudad"=>utf8_encode($ciudad->getCaCiudad()));
+			$this->ciudades[]=$row;
 		}
 		$this->setLayout("ajax");
 	}
@@ -366,7 +413,6 @@ class cotizacionesActions extends sfActions
 		}
 		@unlink( $fileName );
 	}
-	
 	
 	
 }

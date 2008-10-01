@@ -250,15 +250,13 @@ Ext.onReady(function(){
 	            							 	waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
 	            							 	// standardSubmit: false, 
 		            							failure:function(response,options){							
-													alert( "Error "+response.responseText );
+													Ext.Msg.alert( "Error "+response.responseText );
 												},//end failure block      
 											});
 					}else{
 						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información básica de la cotización no es válida o está incompleta!');
 					}	            	
-	            	
 	            }
-	            
 	        },{
 	            text: 'Cancelar'
 	        }]

@@ -44,6 +44,13 @@ class cotizacionesComponents extends sfComponents
 	public function executeGrillaProductos(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		$c = new Criteria();
+
+		$c->addAlias('c_org', CiudadPeer::TABLE_NAME);
+		$c->addAlias('c_dst', CiudadPeer::TABLE_NAME);
+		$c->addAlias('t_org', TraficoPeer::TABLE_NAME);
+		$c->addAlias('t_dst', TraficoPeer::TABLE_NAME);
+		
+		$c->addSelectColumn(CotProductoPeer::CA_IDCOTIZACION );
 		$c->addSelectColumn(CotProductoPeer::CA_IDPRODUCTO );
 		$c->addSelectColumn(CotProductoPeer::CA_PRODUCTO );
 		$c->addSelectColumn(CotProductoPeer::CA_IMPOEXPO );
@@ -51,11 +58,22 @@ class cotizacionesComponents extends sfComponents
 		$c->addSelectColumn(CotProductoPeer::CA_MODALIDAD );
 		$c->addSelectColumn(CotProductoPeer::CA_INCOTERMS );
 		$c->addSelectColumn(CotProductoPeer::CA_ORIGEN );
+		$c->addSelectColumn("c_org.ca_ciudad");
+		$c->addSelectColumn("t_org.ca_nombre");
 		$c->addSelectColumn(CotProductoPeer::CA_DESTINO );
+		$c->addSelectColumn("c_dst.ca_ciudad");
+		$c->addSelectColumn("t_dst.ca_nombre");
 		$c->addSelectColumn(CotProductoPeer::CA_FRECUENCIA );
 		$c->addSelectColumn(CotProductoPeer::CA_TIEMPOTRANSITO );
 		$c->addSelectColumn(CotProductoPeer::CA_OBSERVACIONES );
 		$c->addSelectColumn(CotProductoPeer::CA_IMPRIMIR );
+		
+		$c->addJoin( CotProductoPeer::CA_ORIGEN, "c_org.ca_idciudad", Criteria::LEFT_JOIN );
+		$c->addJoin( CotProductoPeer::CA_DESTINO, "c_dst.ca_idciudad", Criteria::LEFT_JOIN );
+
+		$c->addJoin( "c_org.ca_idtrafico", "t_org.ca_idtrafico", Criteria::LEFT_JOIN );
+		$c->addJoin( "c_dst.ca_idtrafico", "t_dst.ca_idtrafico", Criteria::LEFT_JOIN );
+		
 		$c->setDistinct();
 		$c->add( CotProductoPeer::CA_IDCOTIZACION , $id );
 		
@@ -64,19 +82,24 @@ class cotizacionesComponents extends sfComponents
 		$this->productos = array();
 		
    		while ( $rs->next() ) {
-      		$this->productos[] = array(	'trayecto'=>$rs->getString(7)." ".$rs->getString(8),
-      									'idproducto'=>$rs->getString(1),
-										'producto'=>$rs->getString(2),
-										'impoexpo'=>utf8_encode($rs->getString(3)),
-										'transporte'=>utf8_encode($rs->getString(4)),
-										'modalidad'=>$rs->getString(5),
-										'incoterms'=>$rs->getString(6),      		
-										'origen'=>$rs->getString(7),
-										'destino'=>$rs->getString(8),
-										'frecuencia'=>$rs->getString(9),
-										'ttransito'=>$rs->getString(10),
-										'observaciones'=>$rs->getString(11),
-										'imprimir'=>$rs->getString(12)
+      		$this->productos[] = array(	'idcotizacion'=>$rs->getString(1),
+      									'idproducto'=>$rs->getString(2),
+										'producto'=>$rs->getString(3),
+      									'trayecto'=>utf8_encode($rs->getString(5))." [".utf8_encode($rs->getString(10))." - ".utf8_encode($rs->getString(9)." » ").utf8_encode($rs->getString(12))." - ".utf8_encode($rs->getString(13))."] ",
+      									'impoexpo'=>utf8_encode($rs->getString(4)),
+										'transporte'=>utf8_encode($rs->getString(5)),
+										'modalidad'=>$rs->getString(6),
+										'incoterms'=>$rs->getString(7),      		
+										'origen'=>$rs->getString(8),
+										'ciuorigen'=>$rs->getString(9),
+      									'traorigen'=>$rs->getString(10),
+      									'destino'=>$rs->getString(11),
+      									'ciudestino'=>$rs->getString(12),
+      									'tradestino'=>$rs->getString(13),
+										'frecuencia'=>$rs->getString(14),
+										'ttransito'=>$rs->getString(15),
+										'observaciones'=>$rs->getString(16),
+										'imprimir'=>$rs->getString(17)
       		);
 		}		
 	}
