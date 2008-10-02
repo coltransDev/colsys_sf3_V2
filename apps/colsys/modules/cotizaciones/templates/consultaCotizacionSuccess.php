@@ -264,6 +264,7 @@ Ext.onReady(function(){
     });
      <?
      include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
+     include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
      ?>   	
     var subPanel = new Ext.FormPanel({
         labelAlign: 'top',
@@ -275,7 +276,8 @@ Ext.onReady(function(){
             activeTab: 0,
             height:250,
             defaults:{bodyStyle:'padding:10px'},
-            items:[grid ,
+            items:[grid_productos,
+            	   grid_recargos,
             	{
                 title:'OTM/DTA',
                 layout:'form',

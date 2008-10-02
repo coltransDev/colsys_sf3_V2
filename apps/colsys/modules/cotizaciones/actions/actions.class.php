@@ -172,6 +172,56 @@ class cotizacionesActions extends sfActions
 		exit;
 	}
 	
+	/*
+	* Guarda los cambios realizados a Recargos  
+	* @author Carlos G. López M.
+	*/
+	public function executeFormRecargoGuardar(){
+		$user_id = $this->getUser()->getUserId();
+		$update = true;
+		if( $this->getRequestParameter("productoId") ){			// Se trata de un Recargo en Origen
+			
+		}else{													// Se trata de un recargo local
+			$idproducto = '99';
+			$idopcion = '999';
+			$idconcepto = '9999';
+			
+			$recargo = CotRecargoPeer::retrieveByPk( $this->getRequestParameter("cotizacionId"), $idproducto, $idopcion, $idconcepto, $this->getRequestParameter("idrecargo"), $this->getRequestParameter("modalidad") );
+			
+			if( !$recargo ){
+/*
+				$update = false;
+				$recargo = new CotRecargo();
+				$recargo->setCaIdCotizacion( $this->getRequestParameter("cotizacionId") );
+				$recargo->setCaIdProducto( $idproducto );
+				$recargo->setCaIdOpcion( $idopcion );
+				$recargo->setCaIdConcepto( $idconcepto );
+				$recargo->setCaModalidad( $this->getRequestParameter("modalidad") );
+*/
+			}
+		}
+/*
+		
+		$recargo->setCaIdRecargo( $this->getRequestParameter("idrecargo") );
+		$recargo->setCaTipo( $this->getRequestParameter("tipo") );
+		$recargo->setCaValorTar( $this->getRequestParameter("valor_tar") );
+		$recargo->setCaAplicaTar( $this->getRequestParameter("aplica_tar") );
+		$recargo->setCaValorTar( $this->getRequestParameter("valor_min") );
+		$recargo->setCaAplicaTar( $this->getRequestParameter("aplica_min") );
+		$recargo->setCaIdMoneda( $this->getRequestParameter("idmoneda") );
+		$recargo->setCaObservaciones( $this->getRequestParameter("observaciones") );
+		if( !$update ){ 
+			$recargo->setCaFchcreado( time() );	
+			$recargo->setCaUsucreado( $user_id );			
+		}else{
+			$recargo->setCaFchactualizado( time() );	
+			$recargo->setCaUsuactualizado( $user_id );							
+		}
+		$recargo->save();
+*/
+		exit;
+	}
+	
 	
 	/*
 	* Guarda los cambios realizados  
@@ -287,6 +337,23 @@ class cotizacionesActions extends sfActions
 		}
 		$this->setLayout("ajax");
 	}
+
+	/*
+	* Formas de Aplicación de una Tarifa o un Recargo
+	*/
+	public function executeDatosAplicacion(){
+		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
+		$aplic = array("Aéreo" => array("x Kg ó 6 Dm³", "x Lb ó 166 Pul³", "x HAWB", "Sobre Flete"), "Marítimo" => array("x T/M³", "x Contenedor", "x HBL", "x Pieza", "Sobre Flete"));
+
+		$this->aplicaciones = array();
+
+		while (list ($clave, $val) = each ($aplic[$transport_parameter])) {
+			$row = array("aplicacion"=>$val);
+			$this->aplicaciones[]=$row;
+		}
+		$this->setLayout("ajax");
+	}
+	
 	
 	/*
 	* Carga el contendo de la tabla Tráficos y según sea una Importación o Exportación

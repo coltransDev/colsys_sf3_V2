@@ -2,27 +2,26 @@
 use_helper("Ext2");
 ?>
 
-var data_productos = <?=json_encode( array("productos"=>$productos, "total"=>count($productos)) )?>;
+var data_recargos = <?=json_encode( array("recargos"=>$recargos, "total"=>count($recargos)) )?>;
 /*
 * Crea el Record 
 */
 var recordGrilla = Ext.data.Record.create([
-    {name: 'idcotizacion', type: 'string'},   		
-    {name: 'idproducto', type: 'string'},   		
-    {name: 'trayecto', type: 'string'},   		
-	{name: 'producto', type: 'string'},
-	{name: 'impoexpo', type: 'string'},
-	{name: 'transporte', type: 'string'},
-	{name: 'modalidad', type: 'string'},
-	{name: 'incoterms', type: 'string'},
-	{name: 'origen', type: 'string'},
-	{name: 'ciuorigen', type: 'string'},
-	{name: 'destino', type: 'string'},
-	{name: 'ciudestino', type: 'string'},
-	{name: 'frecuencia', type: 'string'},
-	{name: 'ttransito', type: 'string'},
-	{name: 'observaciones', type: 'string'},
-	{name: 'imprimir', type: 'string'}
+    {name: 'idcotizacion', type: 'string'},
+    {name: 'idproducto', type: 'string'},
+    {name: 'idopcion', type: 'string'},
+    {name: 'idconcepto', type: 'string'},
+    {name: 'idrecargo', type: 'string'},
+    {name: 'agrupamiento', type: 'string'},
+    {name: 'recargo', type: 'string'},
+    {name: 'tipo', type: 'string'},
+    {name: 'valor_tar', type: 'string'},
+    {name: 'aplica_tar', type: 'string'},
+    {name: 'valor_min', type: 'string'},
+    {name: 'aplica_min', type: 'string'},
+    {name: 'idmoneda', type: 'string'},
+    {name: 'modalidad', type: 'string'},
+    {name: 'observaciones', type: 'string'},
 ]);
    		
 /*
@@ -39,22 +38,22 @@ if( $idciudad ){
 }*/
 
 ?>
-var storeProductos = new Ext.data.GroupingStore({
+var storerecargos = new Ext.data.GroupingStore({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
 		{
-			id: 'producto',
-			root: 'productos',
+			id: 'recargo',
+			root: 'recargos',
 			totalProperty: 'total'
 		}, 
 		recordGrilla
 	),
-	sortInfo:{field: 'producto', direction: "ASC"},
-	proxy: new Ext.data.MemoryProxy(data_productos),
-	groupField: 'trayecto'		
+	sortInfo:{field: 'recargo', direction: "ASC"},
+	proxy: new Ext.data.MemoryProxy(data_recargos),
+	groupField: 'agrupamiento'		
 });
 	
-storeProductos.load();	
+storerecargos.load();	
 		
 /*
 * Crea la columna de chequeo
@@ -71,37 +70,68 @@ Ext.form.Field.prototype.msgTarget = 'side';
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [
 		{
-			id: 'trayecto',
-			header: "Trayecto",
+			id: 'agrupamiento',
+			header: "Recargos",
 			width: 100,
 			sortable: true,
-			dataIndex: 'trayecto',
+			dataIndex: 'agrupamiento',
 			hideable: false,
 			hidden: true
 		},
 		{
-			id: 'producto',
-			header: "Producto",
+			id: 'recargo',
+			header: "Recargo",
 			width: 200,
 			sortable: true,			
-			dataIndex: 'producto',
+			dataIndex: 'recargo',
 			hideable: false,
 		},	
-	
 		{
-			id: 'frecuencia',
-			header: "Frecuencia",
+			id: 'tipo',
+			header: "Tipo",
 			width: 100,
 			sortable: true,
-			dataIndex: 'frecuencia',
+			dataIndex: 'tipo',
 			hideable: false 
 		},
 		{
-			id: 'ttransito',
-			header: "Tiempo/Transito",
+			id: 'valor_tar',
+			header: "Valor Recargo",
 			width: 100,
 			sortable: true,
-			dataIndex: 'ttransito',
+			dataIndex: 'valor_tar',
+			hideable: false 
+		},
+		{
+			id: 'aplica_tar',
+			header: "Aplicación Rec.",
+			width: 100,
+			sortable: true,
+			dataIndex: 'aplica_tar',
+			hideable: false 
+		},
+		{
+			id: 'valor_min',
+			header: "Mínimo",
+			width: 100,
+			sortable: true,
+			dataIndex: 'valor_tar',
+			hideable: false 
+		},
+		{
+			id: 'aplica_min',
+			header: "Aplicación Min.",
+			width: 100,
+			sortable: true,
+			dataIndex: 'aplica_min',
+			hideable: false 
+		},
+		{
+			id: 'idmoneda',
+			header: "Moneda",
+			width: 100,
+			sortable: true,
+			dataIndex: 'idmoneda',
 			hideable: false 
 		},
 		{
@@ -110,14 +140,6 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 100,
 			sortable: true,
 			dataIndex: 'observaciones',
-			hideable: false 
-		},
-		{
-			id: 'imprimir',
-			header: "Imprimir",
-			width: 100,
-			sortable: true,
-			dataIndex: 'imprimir',
 			hideable: false 
 		}
 	]
@@ -141,22 +163,22 @@ var selModel = new  Ext.grid.CellSelectionModel();
 * Handlers de los eventos y botones de la grilla 
 */
 
-var productoHandler = function(){
+var recargoHandler = function(){
 	//crea una ventana 
 	win = new Ext.Window({		
-		width       : 500,
-		height      : 470,
+		width       : 430,
+		height      : 380,
 		closeAction :'hide',
 		plain       : true,		
 		
 		items       : new Ext.FormPanel({
-			id: 'producto-form',
+			id: 'recargo-form',
 			layout: 'form',
 			frame: true,
-			title: 'Ingrese los datos del Producto',
+			title: 'Ingrese los datos del Recargo Local',
 			autoHeight: true,
 			bodyStyle: 'padding: 5px 5px 0 5px;',
-			labelWidth: 100,
+			labelWidth: 80,
 			
 			items: [{
 						id: 'cotizacionId',
@@ -164,51 +186,44 @@ var productoHandler = function(){
 						name: 'cotizacionId',
 						value: '<?=$cotizacion->getCaIdcotizacion()?>',
 			            allowBlank:false
-					},{
-						id: 'productoId',
-						xtype:'hidden',
-						name: 'productoId',
-						value: '',
+					},
+					new Ext.form.Hidden({
+						id: 'impoexpo',						
+						name: 'impoexpo',
+						value: '%',
 			            allowBlank:false
-					},{
-						xtype:'textfield',
-						fieldLabel: 'Producto',
-						name: 'producto',
-						value: '',						 
-						allowBlank:false,
-						width: 300
-	                }
-	                ,<?=extImpoExpo()?>
-					,<?=extIncoterms()?>
+			        })
 					,<?=extTransporte()?>
 					,<?=extModalidad()?>
-					,<?=extTraficos("origen")?>
-					,<?=extTraficos("destino")?>
+	                ,<?=extRecargos()?>
+	                ,<?=extTipoRecargo()?>
+	                ,<?=extMonedas()?>
 					,{
-						xtype: 'textarea',
-						width: 310,
-						fieldLabel: 'Observaciones',
-						name: 'observaciones',
+						xtype:'textfield',
+						fieldLabel: 'Valor',
+						name: 'valor_tar',
+						value: '',						 
+						allowBlank:false,
+						width: 120
+	                }
+					,<?=extAplicaciones("aplica_tar")?>
+					,{
+						xtype:'textfield',
+						fieldLabel: 'Mínimo',
+						name: 'valor_min',
+						value: '',						 
+						allowBlank:false,
+						width: 120
+	                }
+					,<?=extAplicaciones("aplica_min")?>
+					,{
+						xtype: 'textfield',
+						width: 300,
+						fieldLabel: 'Detalles',
+						name: 'Detalles',
 						value: '',
 	                    allowBlank:true
 					}
-					,{
-						xtype: 'textfield',
-						width: 100,
-						fieldLabel: 'Frecuencia',
-						name: 'frecuencia',
-						value: '',
-	                    allowBlank:false
-					}
-					,{
-						xtype: 'textfield',
-						width: 100,
-						fieldLabel: 'T/Transito',
-						name: 'ttransito',
-						value: '',
-	                    allowBlank:false
-					}
-					,<?=extImprimir()?>
 					]
 			
 		}),
@@ -216,11 +231,11 @@ var productoHandler = function(){
 		buttons: [{
 			text     : 'Guardar',
 			handler: function(){
-				var fp = Ext.getCmp("producto-form");	
+				var fp = Ext.getCmp("recargo-form");	
 												
 				if( fp.getForm().isValid() ){
-					fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>', 
-	            							 	waitMsg:'Salvando Datos de Productos...',
+					fp.getForm().submit({url:'<?=url_for('cotizaciones/formRecargoGuardar')?>', 
+	            							 	waitMsg:'Salvando Recargos Locales...',
 	            							 	// standardSubmit: false,
 	            							 	
 	            							 	success:function(response,options){
@@ -233,7 +248,7 @@ var productoHandler = function(){
 												}//end failure block      
 											});
 					}else{
-						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Producto no es válida o está incompleta!');
+						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Recargo no es válida o está incompleta!');
 					}	            	
 				}
 		},{
@@ -264,20 +279,20 @@ function agregarFila(ctxRecord, index){
 /*
 * Crea la grilla 
 */    
-var grid_productos = new Ext.grid.EditorGridPanel({
-	store: storeProductos,
-	master_column_id : 'producto',
+var grid_recargos = new Ext.grid.EditorGridPanel({
+	store: storerecargos,
+	master_column_id : 'recargo',
 	cm: colModel,
 	sm: selModel,	
 	clicksToEdit: 1,
 	stripeRows: true,
-	autoExpandColumn: 'producto',
-	title: 'Productos/Tarifas',
+	autoExpandColumn: 'recargo',
+	title: 'Recargos Locales',
 
 	root_title: 'impoexpo',	
 	// plugins: [checkColumn], //expander,
 	closable: true,
-	id: 'grid_productos',
+	id: 'grid_recargos',
 	
 	tbar: [			  
 	{
@@ -287,10 +302,10 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 		handler: updateModel
 	},
 	{
-		text: 'Agregar producto',
-		tooltip: '...',
+		text: 'Agregar Recargo',
+		tooltip: 'Opción para Crear un recargo nuevo',
 		iconCls:'disk',  // reference to our css
-		handler: productoHandler
+		handler: recargoHandler
 	}
 	
 	],
@@ -298,7 +313,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 	view: new Ext.grid.GroupingView({
 		forceFit:true,
 		enableRowBody:true, 
-		getRowClass: function(  record,  index,  rowParams,  storeProductos ){			
+		getRowClass: function(  record,  index,  rowParams,  storerecargos ){			
 			switch( record.data.style ){
 				case "yellow":
 					return "row_yellow";

@@ -1,5 +1,4 @@
 <?
-$arr = array( "totalCount"=>count( $recargos ), "recargos"=>$recargos  );
-echo json_encode($arr);
-exit;
+echo json_encode(array("root"=>$recargos, "totalCount"=>count($recargos), "success"=>true) );
+exit();
 ?>
