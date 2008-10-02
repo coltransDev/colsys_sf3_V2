@@ -69,8 +69,10 @@ function extModalidad($id="modalidad"){
 					valueField: 'modalidad',
 					lazyRender:true,
 					listClass: 'x-combo-list-small',
-					listeners:{focus:function( modalidad ){
-											modalidad.store.reload({params:{transporte:Ext.getCmp('transporte').getValue()}})					
+					listeners:{focus:function( field, newVal, oldVal ){
+											modalidad = Ext.getCmp('$id');
+											modalidad.store.baseParams = {transporte:Ext.getCmp('transporte').getValue(),impoexpo:Ext.getCmp('impoexpo').getValue()};
+											modalidad.store.reload();
 									  }
 					},
 					store : new Ext.data.Store({
@@ -86,7 +88,8 @@ function extModalidad($id="modalidad"){
 							Ext.data.Record.create([
 								{name: 'modalidad'}  
 							])
-						)
+						),
+						baseParams:{transporte:Ext.getCmp('transporte').getValue(),impoexpo:Ext.getCmp('impoexpo').getValue()}
 					}),
 				})";
 	return $html;					
@@ -207,16 +210,19 @@ function extImprimir($id="imprimir"){
 	return $html;					
 }
 
-function extMonedas($selected=""){
+function extMonedas($id="tiporecargo", $selected="USD"){
 	$c=new Criteria();
 	$c->addAscendingOrderByColumn( MonedaPeer::CA_IDMONEDA );
 	$monedas = MonedaPeer::doSelect( $c );
 	$html = "new Ext.form.ComboBox({
+					name: '$id',
+					id: '$id',
+					fieldLabel: 'Moneda',			
 					typeAhead: true,
 					triggerAction: 'all',
 					//transform:'light',
 					lazyRender:true,
-					}{21234567listClass: 'x-combo-list-small',
+					listClass: 'x-combo-list-small',
 					store : [";
 	$i=0;				
 	foreach( $monedas as $moneda ){
@@ -228,37 +234,107 @@ function extMonedas($selected=""){
 	}
 	
 	$html .=" ]})";
-	
 	return $html;
 }
 
-function extRecargos($transporte, $selected=""){
+function extRecargos($tipo="Recargo Local",$selected=""){
 	$html = "new Ext.form.ComboBox({
+		fieldLabel: 'Recargo',			
 		typeAhead: true,
+		forceSelection: true,
 		triggerAction: 'all',
-		//transform:'light',
-		lazyRender:true,
-		listClass: 'x-combo-list-small',
+		emptyText:'Seleccione',
+		selectOnFocus: true,					
+		name: 'recargo',
+		id: 'recargo',
 		displayField: 'recargo',
 		valueField: 'idrecargo',
+		lazyRender:true,
+		listClass: 'x-combo-list-small',
+		listeners:{focus:function( field, newVal, oldVal ){
+								recargo = Ext.getCmp('recargo');
+								recargo.store.baseParams = {transporte:Ext.getCmp('transporte').getValue(),tipo:'$tipo'};
+								recargo.store.reload();
+						  }
+		},
 		store : new Ext.data.Store({
-			autoLoad : true,			
-			url: '".url_for("pricing/datosRecargos?transporte=".utf8_encode($transporte))."',
+			autoLoad : false,
+			url: '".url_for("pricing/datosRecargos")."',
 			reader: new Ext.data.JsonReader(
 				{
 					id: 'idrecargo',
-					root: 'recargos',
+					root: 'root',
 					totalProperty: 'total',
 					successProperty: 'success'
 				}, 
 				Ext.data.Record.create([
-					{name: 'idrecargo'},            
-					{name: 'recargo'}  
+					{name: 'idrecargo'},
+					{name: 'recargo'}
 				])
-			)
-		})		
+			),
+			baseParams:{transporte:Ext.getCmp('transporte').getValue(),tipo:'$tipo'}
+		})
 	})";
 	return $html;
+}
+
+function extTipoRecargo($id="tiporecargo"){	
+	$html = "new Ext.form.ComboBox({		
+					fieldLabel: 'Tipo Recargo',			
+					typeAhead: true,
+					forceSelection: true,
+					triggerAction: 'all',
+					emptyText:'Seleccione',
+					selectOnFocus: true,				
+					name: '$id',
+					id: '$id',
+					lazyRender:true,
+					listClass: 'x-combo-list-small',
+					store: [['$', '$'],['%', '%']]
+				})";
+	return $html;					
+}
+
+function extAplicaciones($id="aplicacion"){	
+	$html = "new Ext.form.ComboBox({		
+					fieldLabel: 'Aplicación',			
+					typeAhead: true,
+					forceSelection: true,
+					triggerAction: 'all',
+					emptyText:'Seleccione',
+					selectOnFocus: true,				
+					name: '$id',
+					id: '$id',
+					displayField: 'aplicacion',
+					valueField: 'aplicacion',
+					lazyRender:true,
+					listClass: 'x-combo-list-small',
+					
+					listeners:{focus:function( field, newVal, oldVal ){
+											aplicacion = Ext.getCmp('$id');
+											aplicacion.store.baseParams = {transporte:Ext.getCmp('transporte').getValue()};
+											aplicacion.store.reload();
+									  }
+					},
+					store : new Ext.data.Store({
+						autoLoad : false,
+						url: '".url_for("cotizaciones/datosAplicacion")."',
+						reader: new Ext.data.JsonReader(
+							{
+								id: 'aplicacion',
+								root: 'root',
+								totalProperty: 'total',
+								successProperty: 'success'
+							}, 
+							Ext.data.Record.create([
+								{name: 'aplicacion'}
+							])
+						),
+						baseParams:{transporte:Ext.getCmp('transporte').getValue()}
+					})
+					
+				})";
+	return $html;					
 }
 
 ?>

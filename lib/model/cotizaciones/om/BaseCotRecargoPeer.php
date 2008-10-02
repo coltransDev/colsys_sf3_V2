@@ -19,14 +19,23 @@ abstract class BaseCotRecargoPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotRecargo';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 14;
+	const NUM_COLUMNS = 17;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
+	/** the column name for the CA_IDCOTIZACION field */
+	const CA_IDCOTIZACION = 'tb_cotrecargos.CA_IDCOTIZACION';
+
+	/** the column name for the CA_IDPRODUCTO field */
+	const CA_IDPRODUCTO = 'tb_cotrecargos.CA_IDPRODUCTO';
+
 	/** the column name for the CA_IDOPCION field */
 	const CA_IDOPCION = 'tb_cotrecargos.CA_IDOPCION';
+
+	/** the column name for the CA_IDCONCEPTO field */
+	const CA_IDCONCEPTO = 'tb_cotrecargos.CA_IDCONCEPTO';
 
 	/** the column name for the CA_IDRECARGO field */
 	const CA_IDRECARGO = 'tb_cotrecargos.CA_IDRECARGO';
@@ -78,10 +87,10 @@ abstract class BaseCotRecargoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdopcion', 'CaIdrecargo', 'CaTipo', 'CaValorTar', 'CaAplicaTar', 'CaValorMin', 'CaAplicaMin', 'CaIdmoneda', 'CaModalidad', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
-		BasePeer::TYPE_COLNAME => array (CotRecargoPeer::CA_IDOPCION, CotRecargoPeer::CA_IDRECARGO, CotRecargoPeer::CA_TIPO, CotRecargoPeer::CA_VALOR_TAR, CotRecargoPeer::CA_APLICA_TAR, CotRecargoPeer::CA_VALOR_MIN, CotRecargoPeer::CA_APLICA_MIN, CotRecargoPeer::CA_IDMONEDA, CotRecargoPeer::CA_MODALIDAD, CotRecargoPeer::CA_OBSERVACIONES, CotRecargoPeer::CA_FCHCREADO, CotRecargoPeer::CA_USUCREADO, CotRecargoPeer::CA_FCHACTUALIZADO, CotRecargoPeer::CA_USUACTUALIZADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idopcion', 'ca_idrecargo', 'ca_tipo', 'ca_valor_tar', 'ca_aplica_tar', 'ca_valor_min', 'ca_aplica_min', 'ca_idmoneda', 'ca_modalidad', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdproducto', 'CaIdopcion', 'CaIdconcepto', 'CaIdrecargo', 'CaTipo', 'CaValorTar', 'CaAplicaTar', 'CaValorMin', 'CaAplicaMin', 'CaIdmoneda', 'CaModalidad', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
+		BasePeer::TYPE_COLNAME => array (CotRecargoPeer::CA_IDCOTIZACION, CotRecargoPeer::CA_IDPRODUCTO, CotRecargoPeer::CA_IDOPCION, CotRecargoPeer::CA_IDCONCEPTO, CotRecargoPeer::CA_IDRECARGO, CotRecargoPeer::CA_TIPO, CotRecargoPeer::CA_VALOR_TAR, CotRecargoPeer::CA_APLICA_TAR, CotRecargoPeer::CA_VALOR_MIN, CotRecargoPeer::CA_APLICA_MIN, CotRecargoPeer::CA_IDMONEDA, CotRecargoPeer::CA_MODALIDAD, CotRecargoPeer::CA_OBSERVACIONES, CotRecargoPeer::CA_FCHCREADO, CotRecargoPeer::CA_USUCREADO, CotRecargoPeer::CA_FCHACTUALIZADO, CotRecargoPeer::CA_USUACTUALIZADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idproducto', 'ca_idopcion', 'ca_idconcepto', 'ca_idrecargo', 'ca_tipo', 'ca_valor_tar', 'ca_aplica_tar', 'ca_valor_min', 'ca_aplica_min', 'ca_idmoneda', 'ca_modalidad', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
 	);
 
 	/**
@@ -91,10 +100,10 @@ abstract class BaseCotRecargoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdopcion' => 0, 'CaIdrecargo' => 1, 'CaTipo' => 2, 'CaValorTar' => 3, 'CaAplicaTar' => 4, 'CaValorMin' => 5, 'CaAplicaMin' => 6, 'CaIdmoneda' => 7, 'CaModalidad' => 8, 'CaObservaciones' => 9, 'CaFchcreado' => 10, 'CaUsucreado' => 11, 'CaFchactualizado' => 12, 'CaUsuactualizado' => 13, ),
-		BasePeer::TYPE_COLNAME => array (CotRecargoPeer::CA_IDOPCION => 0, CotRecargoPeer::CA_IDRECARGO => 1, CotRecargoPeer::CA_TIPO => 2, CotRecargoPeer::CA_VALOR_TAR => 3, CotRecargoPeer::CA_APLICA_TAR => 4, CotRecargoPeer::CA_VALOR_MIN => 5, CotRecargoPeer::CA_APLICA_MIN => 6, CotRecargoPeer::CA_IDMONEDA => 7, CotRecargoPeer::CA_MODALIDAD => 8, CotRecargoPeer::CA_OBSERVACIONES => 9, CotRecargoPeer::CA_FCHCREADO => 10, CotRecargoPeer::CA_USUCREADO => 11, CotRecargoPeer::CA_FCHACTUALIZADO => 12, CotRecargoPeer::CA_USUACTUALIZADO => 13, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idopcion' => 0, 'ca_idrecargo' => 1, 'ca_tipo' => 2, 'ca_valor_tar' => 3, 'ca_aplica_tar' => 4, 'ca_valor_min' => 5, 'ca_aplica_min' => 6, 'ca_idmoneda' => 7, 'ca_modalidad' => 8, 'ca_observaciones' => 9, 'ca_fchcreado' => 10, 'ca_usucreado' => 11, 'ca_fchactualizado' => 12, 'ca_usuactualizado' => 13, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdproducto' => 1, 'CaIdopcion' => 2, 'CaIdconcepto' => 3, 'CaIdrecargo' => 4, 'CaTipo' => 5, 'CaValorTar' => 6, 'CaAplicaTar' => 7, 'CaValorMin' => 8, 'CaAplicaMin' => 9, 'CaIdmoneda' => 10, 'CaModalidad' => 11, 'CaObservaciones' => 12, 'CaFchcreado' => 13, 'CaUsucreado' => 14, 'CaFchactualizado' => 15, 'CaUsuactualizado' => 16, ),
+		BasePeer::TYPE_COLNAME => array (CotRecargoPeer::CA_IDCOTIZACION => 0, CotRecargoPeer::CA_IDPRODUCTO => 1, CotRecargoPeer::CA_IDOPCION => 2, CotRecargoPeer::CA_IDCONCEPTO => 3, CotRecargoPeer::CA_IDRECARGO => 4, CotRecargoPeer::CA_TIPO => 5, CotRecargoPeer::CA_VALOR_TAR => 6, CotRecargoPeer::CA_APLICA_TAR => 7, CotRecargoPeer::CA_VALOR_MIN => 8, CotRecargoPeer::CA_APLICA_MIN => 9, CotRecargoPeer::CA_IDMONEDA => 10, CotRecargoPeer::CA_MODALIDAD => 11, CotRecargoPeer::CA_OBSERVACIONES => 12, CotRecargoPeer::CA_FCHCREADO => 13, CotRecargoPeer::CA_USUCREADO => 14, CotRecargoPeer::CA_FCHACTUALIZADO => 15, CotRecargoPeer::CA_USUACTUALIZADO => 16, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idproducto' => 1, 'ca_idopcion' => 2, 'ca_idconcepto' => 3, 'ca_idrecargo' => 4, 'ca_tipo' => 5, 'ca_valor_tar' => 6, 'ca_aplica_tar' => 7, 'ca_valor_min' => 8, 'ca_aplica_min' => 9, 'ca_idmoneda' => 10, 'ca_modalidad' => 11, 'ca_observaciones' => 12, 'ca_fchcreado' => 13, 'ca_usucreado' => 14, 'ca_fchactualizado' => 15, 'ca_usuactualizado' => 16, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
 	);
 
 	/**
@@ -194,7 +203,13 @@ abstract class BaseCotRecargoPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
+		$criteria->addSelectColumn(CotRecargoPeer::CA_IDCOTIZACION);
+
+		$criteria->addSelectColumn(CotRecargoPeer::CA_IDPRODUCTO);
+
 		$criteria->addSelectColumn(CotRecargoPeer::CA_IDOPCION);
+
+		$criteria->addSelectColumn(CotRecargoPeer::CA_IDCONCEPTO);
 
 		$criteria->addSelectColumn(CotRecargoPeer::CA_IDRECARGO);
 
@@ -224,8 +239,8 @@ abstract class BaseCotRecargoPeer {
 
 	}
 
-	const COUNT = 'COUNT(tb_cotrecargos.CA_IDOPCION)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotrecargos.CA_IDOPCION)';
+	const COUNT = 'COUNT(tb_cotrecargos.CA_IDCOTIZACION)';
+	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotrecargos.CA_IDCOTIZACION)';
 
 	/**
 	 * Returns the number of rows matching criteria.
@@ -985,8 +1000,17 @@ abstract class BaseCotRecargoPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
+			$comparison = $criteria->getComparison(CotRecargoPeer::CA_IDCOTIZACION);
+			$selectCriteria->add(CotRecargoPeer::CA_IDCOTIZACION, $criteria->remove(CotRecargoPeer::CA_IDCOTIZACION), $comparison);
+
+			$comparison = $criteria->getComparison(CotRecargoPeer::CA_IDPRODUCTO);
+			$selectCriteria->add(CotRecargoPeer::CA_IDPRODUCTO, $criteria->remove(CotRecargoPeer::CA_IDPRODUCTO), $comparison);
+
 			$comparison = $criteria->getComparison(CotRecargoPeer::CA_IDOPCION);
 			$selectCriteria->add(CotRecargoPeer::CA_IDOPCION, $criteria->remove(CotRecargoPeer::CA_IDOPCION), $comparison);
+
+			$comparison = $criteria->getComparison(CotRecargoPeer::CA_IDCONCEPTO);
+			$selectCriteria->add(CotRecargoPeer::CA_IDCONCEPTO, $criteria->remove(CotRecargoPeer::CA_IDCONCEPTO), $comparison);
 
 			$comparison = $criteria->getComparison(CotRecargoPeer::CA_IDRECARGO);
 			$selectCriteria->add(CotRecargoPeer::CA_IDRECARGO, $criteria->remove(CotRecargoPeer::CA_IDRECARGO), $comparison);
@@ -1065,10 +1089,16 @@ abstract class BaseCotRecargoPeer {
 
 				$vals[0][] = $value[0];
 				$vals[1][] = $value[1];
+				$vals[2][] = $value[2];
+				$vals[3][] = $value[3];
+				$vals[4][] = $value[4];
 			}
 
-			$criteria->add(CotRecargoPeer::CA_IDOPCION, $vals[0], Criteria::IN);
-			$criteria->add(CotRecargoPeer::CA_IDRECARGO, $vals[1], Criteria::IN);
+			$criteria->add(CotRecargoPeer::CA_IDCOTIZACION, $vals[0], Criteria::IN);
+			$criteria->add(CotRecargoPeer::CA_IDPRODUCTO, $vals[1], Criteria::IN);
+			$criteria->add(CotRecargoPeer::CA_IDOPCION, $vals[2], Criteria::IN);
+			$criteria->add(CotRecargoPeer::CA_IDCONCEPTO, $vals[3], Criteria::IN);
+			$criteria->add(CotRecargoPeer::CA_IDRECARGO, $vals[4], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -1138,18 +1168,24 @@ abstract class BaseCotRecargoPeer {
 
 	/**
 	 * Retrieve object using using composite pkey values.
-	 * @param int $ca_idopcion
+	 * @param int $ca_idcotizacion
+	   @param int $ca_idproducto
+	   @param int $ca_idopcion
+	   @param int $ca_idconcepto
 	   @param int $ca_idrecargo
 	   
 	 * @param      Connection $con
 	 * @return     CotRecargo
 	 */
-	public static function retrieveByPK( $ca_idopcion, $ca_idrecargo, $con = null) {
+	public static function retrieveByPK( $ca_idcotizacion, $ca_idproducto, $ca_idopcion, $ca_idconcepto, $ca_idrecargo, $con = null) {
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
 		$criteria = new Criteria();
+		$criteria->add(CotRecargoPeer::CA_IDCOTIZACION, $ca_idcotizacion);
+		$criteria->add(CotRecargoPeer::CA_IDPRODUCTO, $ca_idproducto);
 		$criteria->add(CotRecargoPeer::CA_IDOPCION, $ca_idopcion);
+		$criteria->add(CotRecargoPeer::CA_IDCONCEPTO, $ca_idconcepto);
 		$criteria->add(CotRecargoPeer::CA_IDRECARGO, $ca_idrecargo);
 		$v = CotRecargoPeer::doSelect($criteria, $con);
 

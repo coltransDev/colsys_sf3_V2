@@ -20,10 +20,31 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the ca_idcotizacion field.
+	 * @var        int
+	 */
+	protected $ca_idcotizacion;
+
+
+	/**
+	 * The value for the ca_idproducto field.
+	 * @var        int
+	 */
+	protected $ca_idproducto;
+
+
+	/**
 	 * The value for the ca_idopcion field.
 	 * @var        int
 	 */
 	protected $ca_idopcion;
+
+
+	/**
+	 * The value for the ca_idconcepto field.
+	 * @var        int
+	 */
+	protected $ca_idconcepto;
 
 
 	/**
@@ -141,6 +162,28 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Get the [ca_idcotizacion] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdcotizacion()
+	{
+
+		return $this->ca_idcotizacion;
+	}
+
+	/**
+	 * Get the [ca_idproducto] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdproducto()
+	{
+
+		return $this->ca_idproducto;
+	}
+
+	/**
 	 * Get the [ca_idopcion] column value.
 	 * 
 	 * @return     int
@@ -149,6 +192,17 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idopcion;
+	}
+
+	/**
+	 * Get the [ca_idconcepto] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdconcepto()
+	{
+
+		return $this->ca_idconcepto;
 	}
 
 	/**
@@ -335,6 +389,50 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Set the value of [ca_idcotizacion] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaIdcotizacion($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idcotizacion !== $v) {
+			$this->ca_idcotizacion = $v;
+			$this->modifiedColumns[] = CotRecargoPeer::CA_IDCOTIZACION;
+		}
+
+	} // setCaIdcotizacion()
+
+	/**
+	 * Set the value of [ca_idproducto] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaIdproducto($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idproducto !== $v) {
+			$this->ca_idproducto = $v;
+			$this->modifiedColumns[] = CotRecargoPeer::CA_IDPRODUCTO;
+		}
+
+	} // setCaIdproducto()
+
+	/**
 	 * Set the value of [ca_idopcion] column.
 	 * 
 	 * @param      int $v new value
@@ -359,6 +457,28 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 		}
 
 	} // setCaIdopcion()
+
+	/**
+	 * Set the value of [ca_idconcepto] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaIdconcepto($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idconcepto !== $v) {
+			$this->ca_idconcepto = $v;
+			$this->modifiedColumns[] = CotRecargoPeer::CA_IDCONCEPTO;
+		}
+
+	} // setCaIdconcepto()
 
 	/**
 	 * Set the value of [ca_idrecargo] column.
@@ -659,40 +779,46 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_idopcion = $rs->getInt($startcol + 0);
+			$this->ca_idcotizacion = $rs->getInt($startcol + 0);
 
-			$this->ca_idrecargo = $rs->getInt($startcol + 1);
+			$this->ca_idproducto = $rs->getInt($startcol + 1);
 
-			$this->ca_tipo = $rs->getString($startcol + 2);
+			$this->ca_idopcion = $rs->getInt($startcol + 2);
 
-			$this->ca_valor_tar = $rs->getFloat($startcol + 3);
+			$this->ca_idconcepto = $rs->getInt($startcol + 3);
 
-			$this->ca_aplica_tar = $rs->getString($startcol + 4);
+			$this->ca_idrecargo = $rs->getInt($startcol + 4);
 
-			$this->ca_valor_min = $rs->getFloat($startcol + 5);
+			$this->ca_tipo = $rs->getString($startcol + 5);
 
-			$this->ca_aplica_min = $rs->getString($startcol + 6);
+			$this->ca_valor_tar = $rs->getFloat($startcol + 6);
 
-			$this->ca_idmoneda = $rs->getString($startcol + 7);
+			$this->ca_aplica_tar = $rs->getString($startcol + 7);
 
-			$this->ca_modalidad = $rs->getString($startcol + 8);
+			$this->ca_valor_min = $rs->getFloat($startcol + 8);
 
-			$this->ca_observaciones = $rs->getString($startcol + 9);
+			$this->ca_aplica_min = $rs->getString($startcol + 9);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 10, null);
+			$this->ca_idmoneda = $rs->getString($startcol + 10);
 
-			$this->ca_usucreado = $rs->getString($startcol + 11);
+			$this->ca_modalidad = $rs->getString($startcol + 11);
 
-			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 12, null);
+			$this->ca_observaciones = $rs->getString($startcol + 12);
 
-			$this->ca_usuactualizado = $rs->getString($startcol + 13);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 13, null);
+
+			$this->ca_usucreado = $rs->getString($startcol + 14);
+
+			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 15, null);
+
+			$this->ca_usuactualizado = $rs->getString($startcol + 16);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 14; // 14 = CotRecargoPeer::NUM_COLUMNS - CotRecargoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 17; // 17 = CotRecargoPeer::NUM_COLUMNS - CotRecargoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotRecargo object", $e);
@@ -934,45 +1060,54 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdopcion();
+				return $this->getCaIdcotizacion();
 				break;
 			case 1:
-				return $this->getCaIdrecargo();
+				return $this->getCaIdproducto();
 				break;
 			case 2:
-				return $this->getCaTipo();
+				return $this->getCaIdopcion();
 				break;
 			case 3:
-				return $this->getCaValorTar();
+				return $this->getCaIdconcepto();
 				break;
 			case 4:
-				return $this->getCaAplicaTar();
+				return $this->getCaIdrecargo();
 				break;
 			case 5:
-				return $this->getCaValorMin();
+				return $this->getCaTipo();
 				break;
 			case 6:
-				return $this->getCaAplicaMin();
+				return $this->getCaValorTar();
 				break;
 			case 7:
-				return $this->getCaIdmoneda();
+				return $this->getCaAplicaTar();
 				break;
 			case 8:
-				return $this->getCaModalidad();
+				return $this->getCaValorMin();
 				break;
 			case 9:
-				return $this->getCaObservaciones();
+				return $this->getCaAplicaMin();
 				break;
 			case 10:
-				return $this->getCaFchcreado();
+				return $this->getCaIdmoneda();
 				break;
 			case 11:
-				return $this->getCaUsucreado();
+				return $this->getCaModalidad();
 				break;
 			case 12:
-				return $this->getCaFchactualizado();
+				return $this->getCaObservaciones();
 				break;
 			case 13:
+				return $this->getCaFchcreado();
+				break;
+			case 14:
+				return $this->getCaUsucreado();
+				break;
+			case 15:
+				return $this->getCaFchactualizado();
+				break;
+			case 16:
 				return $this->getCaUsuactualizado();
 				break;
 			default:
@@ -995,20 +1130,23 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 		$keys = CotRecargoPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdopcion(),
-			$keys[1] => $this->getCaIdrecargo(),
-			$keys[2] => $this->getCaTipo(),
-			$keys[3] => $this->getCaValorTar(),
-			$keys[4] => $this->getCaAplicaTar(),
-			$keys[5] => $this->getCaValorMin(),
-			$keys[6] => $this->getCaAplicaMin(),
-			$keys[7] => $this->getCaIdmoneda(),
-			$keys[8] => $this->getCaModalidad(),
-			$keys[9] => $this->getCaObservaciones(),
-			$keys[10] => $this->getCaFchcreado(),
-			$keys[11] => $this->getCaUsucreado(),
-			$keys[12] => $this->getCaFchactualizado(),
-			$keys[13] => $this->getCaUsuactualizado(),
+			$keys[0] => $this->getCaIdcotizacion(),
+			$keys[1] => $this->getCaIdproducto(),
+			$keys[2] => $this->getCaIdopcion(),
+			$keys[3] => $this->getCaIdconcepto(),
+			$keys[4] => $this->getCaIdrecargo(),
+			$keys[5] => $this->getCaTipo(),
+			$keys[6] => $this->getCaValorTar(),
+			$keys[7] => $this->getCaAplicaTar(),
+			$keys[8] => $this->getCaValorMin(),
+			$keys[9] => $this->getCaAplicaMin(),
+			$keys[10] => $this->getCaIdmoneda(),
+			$keys[11] => $this->getCaModalidad(),
+			$keys[12] => $this->getCaObservaciones(),
+			$keys[13] => $this->getCaFchcreado(),
+			$keys[14] => $this->getCaUsucreado(),
+			$keys[15] => $this->getCaFchactualizado(),
+			$keys[16] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1041,45 +1179,54 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdopcion($value);
+				$this->setCaIdcotizacion($value);
 				break;
 			case 1:
-				$this->setCaIdrecargo($value);
+				$this->setCaIdproducto($value);
 				break;
 			case 2:
-				$this->setCaTipo($value);
+				$this->setCaIdopcion($value);
 				break;
 			case 3:
-				$this->setCaValorTar($value);
+				$this->setCaIdconcepto($value);
 				break;
 			case 4:
-				$this->setCaAplicaTar($value);
+				$this->setCaIdrecargo($value);
 				break;
 			case 5:
-				$this->setCaValorMin($value);
+				$this->setCaTipo($value);
 				break;
 			case 6:
-				$this->setCaAplicaMin($value);
+				$this->setCaValorTar($value);
 				break;
 			case 7:
-				$this->setCaIdmoneda($value);
+				$this->setCaAplicaTar($value);
 				break;
 			case 8:
-				$this->setCaModalidad($value);
+				$this->setCaValorMin($value);
 				break;
 			case 9:
-				$this->setCaObservaciones($value);
+				$this->setCaAplicaMin($value);
 				break;
 			case 10:
-				$this->setCaFchcreado($value);
+				$this->setCaIdmoneda($value);
 				break;
 			case 11:
-				$this->setCaUsucreado($value);
+				$this->setCaModalidad($value);
 				break;
 			case 12:
-				$this->setCaFchactualizado($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 13:
+				$this->setCaFchcreado($value);
+				break;
+			case 14:
+				$this->setCaUsucreado($value);
+				break;
+			case 15:
+				$this->setCaFchactualizado($value);
+				break;
+			case 16:
 				$this->setCaUsuactualizado($value);
 				break;
 		} // switch()
@@ -1105,20 +1252,23 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 		$keys = CotRecargoPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdopcion($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaIdrecargo($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaTipo($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaValorTar($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaAplicaTar($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaValorMin($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaAplicaMin($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaIdmoneda($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaModalidad($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaObservaciones($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaFchcreado($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaUsucreado($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaFchactualizado($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaUsuactualizado($arr[$keys[13]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdcotizacion($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdproducto($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaIdopcion($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaIdconcepto($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaIdrecargo($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaTipo($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaValorTar($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaAplicaTar($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaValorMin($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaAplicaMin($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaIdmoneda($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaModalidad($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaObservaciones($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaFchcreado($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaUsucreado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaFchactualizado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaUsuactualizado($arr[$keys[16]]);
 	}
 
 	/**
@@ -1130,7 +1280,10 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotRecargoPeer::DATABASE_NAME);
 
+		if ($this->isColumnModified(CotRecargoPeer::CA_IDCOTIZACION)) $criteria->add(CotRecargoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+		if ($this->isColumnModified(CotRecargoPeer::CA_IDPRODUCTO)) $criteria->add(CotRecargoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
 		if ($this->isColumnModified(CotRecargoPeer::CA_IDOPCION)) $criteria->add(CotRecargoPeer::CA_IDOPCION, $this->ca_idopcion);
+		if ($this->isColumnModified(CotRecargoPeer::CA_IDCONCEPTO)) $criteria->add(CotRecargoPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		if ($this->isColumnModified(CotRecargoPeer::CA_IDRECARGO)) $criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 		if ($this->isColumnModified(CotRecargoPeer::CA_TIPO)) $criteria->add(CotRecargoPeer::CA_TIPO, $this->ca_tipo);
 		if ($this->isColumnModified(CotRecargoPeer::CA_VALOR_TAR)) $criteria->add(CotRecargoPeer::CA_VALOR_TAR, $this->ca_valor_tar);
@@ -1160,7 +1313,10 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotRecargoPeer::DATABASE_NAME);
 
+		$criteria->add(CotRecargoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+		$criteria->add(CotRecargoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
 		$criteria->add(CotRecargoPeer::CA_IDOPCION, $this->ca_idopcion);
+		$criteria->add(CotRecargoPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 		return $criteria;
@@ -1175,9 +1331,15 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	{
 		$pks = array();
 
-		$pks[0] = $this->getCaIdopcion();
+		$pks[0] = $this->getCaIdcotizacion();
 
-		$pks[1] = $this->getCaIdrecargo();
+		$pks[1] = $this->getCaIdproducto();
+
+		$pks[2] = $this->getCaIdopcion();
+
+		$pks[3] = $this->getCaIdconcepto();
+
+		$pks[4] = $this->getCaIdrecargo();
 
 		return $pks;
 	}
@@ -1191,9 +1353,15 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 	public function setPrimaryKey($keys)
 	{
 
-		$this->setCaIdopcion($keys[0]);
+		$this->setCaIdcotizacion($keys[0]);
 
-		$this->setCaIdrecargo($keys[1]);
+		$this->setCaIdproducto($keys[1]);
+
+		$this->setCaIdopcion($keys[2]);
+
+		$this->setCaIdconcepto($keys[3]);
+
+		$this->setCaIdrecargo($keys[4]);
 
 	}
 
@@ -1237,7 +1405,13 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
+		$copyObj->setCaIdcotizacion(NULL); // this is a pkey column, so set to default value
+
+		$copyObj->setCaIdproducto(NULL); // this is a pkey column, so set to default value
+
 		$copyObj->setCaIdopcion(NULL); // this is a pkey column, so set to default value
+
+		$copyObj->setCaIdconcepto(NULL); // this is a pkey column, so set to default value
 
 		$copyObj->setCaIdrecargo(NULL); // this is a pkey column, so set to default value
 

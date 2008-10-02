@@ -61,7 +61,13 @@ class CotRecargoMapBuilder {
 
 		$tMap->setUseIdGenerator(false);
 
+		$tMap->addPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int', CreoleTypes::INTEGER, true, null);
+
+		$tMap->addPrimaryKey('CA_IDPRODUCTO', 'CaIdproducto', 'int', CreoleTypes::INTEGER, true, null);
+
 		$tMap->addForeignPrimaryKey('CA_IDOPCION', 'CaIdopcion', 'int' , CreoleTypes::INTEGER, 'tb_cotopciones', 'CA_IDOPCION', true, null);
+
+		$tMap->addPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int', CreoleTypes::INTEGER, true, null);
 
 		$tMap->addForeignPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'int' , CreoleTypes::INTEGER, 'tb_tiporecargo', 'CA_IDRECARGO', true, null);
 
