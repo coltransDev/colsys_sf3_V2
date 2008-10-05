@@ -60,6 +60,10 @@
 		<column name="ca_idopcion" type="varchar" required="true"  primaryKey="true"  autoIncrement="true"  />			
 		<column name="ca_idproducto" type="integer" required="true"  />
 		<column name="ca_idconcepto" type="integer"   />	
+		<column name="ca_valor_tar" type="numeric"   />
+		<column name="ca_aplica_tar" type="varchar"   />
+		<column name="ca_valor_min" type="numeric"   />
+		<column name="ca_aplica_min" type="varchar"   />
 		<column name="ca_idmoneda" type="varchar"   />	
 		<column name="ca_tarifa" type="varchar"   />
 		<column name="ca_oferta" type="varchar"   />
@@ -117,6 +121,8 @@
 		<column name="ca_idmoneda" type="varchar"  />
 		<column name="ca_idequipo" type="integer"   />
 		<column name="ca_tarifa" type="varchar"   />
+		<column name="ca_valor_tar" type="numeric"   />
+		<column name="ca_valor_min" type="numeric"   />
 		<column name="ca_frecuencia" type="varchar"   />
 		<column name="ca_tiempotransito" type="varchar"   />
 		<column name="ca_observaciones" type="varchar"   />
