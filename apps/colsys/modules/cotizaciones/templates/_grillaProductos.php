@@ -279,7 +279,7 @@ var productoHandler = function(){
 	                ,<?=extImpoExpo()?>
 					,<?=extIncoterms()?>
 					,<?=extTransporte()?>
-					,<?=extModalidad()?>
+					,<?=extModalidad("modalidad", "Ext.getCmp('transporte')", "%")?>
 					,<?=extTraficos("origen")?>
 					,<?=extTraficos("destino")?>
 					,{
