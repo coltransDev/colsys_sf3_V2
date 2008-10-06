@@ -9,47 +9,35 @@ var data_productos = <?=json_encode( array("productos"=>$productos, "total"=>cou
 var recordGrilla = Ext.data.Record.create([
     {name: 'idcotizacion', type: 'string'},   		
     {name: 'idproducto', type: 'string'},   		
-    {name: 'trayecto', type: 'string'},   		
-	{name: 'producto', type: 'string'},
-	{name: 'impoexpo', type: 'string'},
-	{name: 'transporte', type: 'string'},
-	{name: 'modalidad', type: 'string'},
-	{name: 'incoterms', type: 'string'},
-	{name: 'origen', type: 'string'},
-	{name: 'ciuorigen', type: 'string'},
-	{name: 'destino', type: 'string'},
-	{name: 'ciudestino', type: 'string'},
-	{name: 'frecuencia', type: 'string'},
-	{name: 'ttransito', type: 'string'},
-	{name: 'observaciones', type: 'string'},
-	{name: 'imprimir', type: 'string'}
+    {name: 'trayecto', type: 'string'},   
+				
+	{name: 'item', type: 'string'},  //Texto de concepto o recargo 
+	{name: 'iditem', type: 'string'}, //Concepto o recargo  	 
+	
+	{name: 'moneda', type: 'string'},
+	{name: 'detalles', type: 'string'}
+	
 ]);
    		
 /*
 * Crea el store
 */
 <?
-$url ="cotizaciones/asd";
-/*$url = "pricing/pagerData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
-if( $idlinea ){
-	$url .= "&idlinea=".$idlinea;
-}
-if( $idciudad ){
-	$url .= "&idciudad=".$idciudad;
-}*/
+
+
 
 ?>
 var storeProductos = new Ext.data.GroupingStore({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
 		{
-			id: 'producto',
+			id: 'id',
 			root: 'productos',
 			totalProperty: 'total'
 		}, 
 		recordGrilla
 	),
-	sortInfo:{field: 'producto', direction: "ASC"},
+	sortInfo:{field: 'idproducto', direction: "ASC"},
 	proxy: new Ext.data.MemoryProxy(data_productos),
 	groupField: 'trayecto'		
 });
@@ -74,51 +62,114 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'trayecto',
 			header: "Trayecto",
 			width: 100,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'trayecto',
 			hideable: false,
-			hidden: true
+			hidden: true			
 		},
 		{
-			id: 'producto',
-			header: "Producto",
+			id: 'concepto',
+			header: "Concepto",
 			width: 200,
-			sortable: true,			
-			dataIndex: 'producto',
+			sortable: false,			
+			dataIndex: 'item',
 			hideable: false,
+			editor: new Ext.form.ComboBox({
+				fieldLabel: 'Concepto',			
+				typeAhead: true,
+				forceSelection: true,
+				triggerAction: 'all',
+				emptyText:'Seleccione',
+				selectOnFocus: true,					
+				name: 'recargo',
+				id: 'recargo',
+				displayField: 'concepto',
+				valueField: 'idconcepto',
+				lazyRender:true,
+				listClass: 'x-combo-list-small',
+				
+				store : new Ext.data.Store({
+					autoLoad : false,
+					url: '<?=url_for("pricing/datosConceptos")?>',
+					reader: new Ext.data.JsonReader(
+						{
+							id: 'idconcepto',
+							root: 'root',
+							totalProperty: 'total',
+							successProperty: 'success'
+						}, 
+						Ext.data.Record.create([
+							{name: 'idconcepto'},
+							{name: 'concepto'}
+						])
+					),
+					baseParams:{transporte:'Marítimo',modalidad:'FCL'}
+				})
+			})
 		},	
 	
 		{
-			id: 'frecuencia',
-			header: "Frecuencia",
+			id: 'valor_tar',
+			header: "Valor",
 			width: 100,
-			sortable: true,
-			dataIndex: 'frecuencia',
+			sortable: false,
+			dataIndex: 'valor_tar',
+			hideable: false ,
+			editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left'
+			})
+		},
+		{
+			id: 'aplica_tar',
+			header: "Aplicacion",
+			width: 100,
+			sortable: false,
+			dataIndex: 'aplica_tar',
 			hideable: false 
 		},
 		{
-			id: 'ttransito',
-			header: "Tiempo/Transito",
+			id: 'valor_min',
+			header: "Minimo",
 			width: 100,
-			sortable: true,
-			dataIndex: 'ttransito',
+			sortable: false,
+			dataIndex: 'valor_min',
+			hideable: false ,
+			editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left'
+			})
+		},
+		{
+			id: 'aplica_min',
+			header: "Aplicacion",
+			width: 100,
+			sortable: false,
+			dataIndex: 'aplica_min',
 			hideable: false 
 		},
 		{
-			id: 'observaciones',
-			header: "Observaciones",
+			id: 'moneda',
+			header: "Moneda",
 			width: 100,
-			sortable: true,
-			dataIndex: 'observaciones',
-			hideable: false 
+			sortable: false,
+			dataIndex: 'moneda',
+			hideable: false ,
+			editor: <?=extMonedas()?>
 		},
 		{
-			id: 'imprimir',
-			header: "Imprimir",
+			id: 'detalles',
+			header: "Detalles",
 			width: 100,
-			sortable: true,
-			dataIndex: 'imprimir',
-			hideable: false 
+			sortable: false,
+			dataIndex: 'detalles',
+			hideable: false ,
+			editor: new Ext.form.TextField({
+				allowBlank: false ,				
+				style: 'text-align:left'
+			})
 		}
 	]
 });
@@ -140,6 +191,45 @@ var selModel = new  Ext.grid.CellSelectionModel();
 /*
 * Handlers de los eventos y botones de la grilla 
 */
+
+/*
+* Cambia el valor que se toma de los combobox y copia el valor em otra columna, 
+* tambien inserta otra columna en blanco para que el usuario continue digitando 
+*/
+var grid_productosOnvalidateedit = function(e){	
+	if( e.field == "item"){		
+		var rec = e.record;		   
+		var ed = this.colModel.getCellEditor(e.column, e.row);		
+		var store = ed.field.store;
+		
+	    store.each( function( r ){				
+				if( r.data.idconcepto==e.value ){				
+					rec.set("iditem", r.data.idconcepto);
+					e.value = r.data.concepto;
+					
+					
+					var newRec = rec.copy();
+					newRec.data.concepto = "";
+						
+					//Inserta la una columna igual 
+					//alert( storeProductos.getTotalCount() );
+					records = [];
+					records.push( newRec );
+					index = storeProductos.indexOf(rec);
+					//if(index < storeProductos.getTotalCount()-1){
+						storeProductos.insert( index+1 , records );					
+					/*}else{						
+						storeProductos.add(  records );
+					}*/
+					
+					return true;
+				}
+			}
+		)		
+	}
+}
+
+
 
 var productoHandler = function(){
 	//crea una ventana 
@@ -289,7 +379,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 	{
 		text: 'Agregar producto',
 		tooltip: '...',
-		iconCls:'disk',  // reference to our css
+		iconCls:'add',  // reference to our css
 		handler: productoHandler
 	}
 	
@@ -311,5 +401,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 					break;
 			}
 		} 
-	})	
+	})	,
+	
+	listeners:{ validateedit: grid_productosOnvalidateedit }
 });
