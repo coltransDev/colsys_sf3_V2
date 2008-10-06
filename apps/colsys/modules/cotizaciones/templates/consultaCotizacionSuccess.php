@@ -265,6 +265,8 @@ Ext.onReady(function(){
      <?
      include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
      include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
+     include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
+     include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
      ?>   	
     var subPanel = new Ext.FormPanel({
         labelAlign: 'top',
@@ -278,36 +280,9 @@ Ext.onReady(function(){
             defaults:{bodyStyle:'padding:10px'},
             items:[grid_productos,
             	   grid_recargos,
-            	{
-                title:'OTM/DTA',
-                layout:'form',
-                defaults: {width: 230},
-                defaultType: 'textfield',
-
-                items: [{
-                    fieldLabel: 'Home',
-                    name: 'home',
-                    value: '(888) 555-1212'
-                },{
-                    fieldLabel: 'Business',
-                    name: 'business'
-                },{
-                    fieldLabel: 'Mobile',
-                    name: 'mobile'
-                },{
-                    fieldLabel: 'Fax',
-                    name: 'fax'
-                }]
-            },{
-                cls:'x-plain',
-                title:'Biography',
-                layout:'fit',
-                items: {
-                    xtype:'htmleditor',
-                    id:'bio2',
-                    fieldLabel:'Biography'
-                }
-            }]
+            	   grid_contviajes,
+            	   grid_seguros
+			]
         }],
     });
 
