@@ -50,7 +50,9 @@ class cotizacionesComponents extends sfComponents
 				
 		$this->productos = array();
 		foreach( $cotProductos as $producto ){
-			$trayecto = " [".utf8_encode($producto->getCaOrigen())." - ".utf8_encode($producto->getCaOrigen()." » ").utf8_encode($producto->getCaDestino())." - ".utf8_encode($producto->getCaDestino())."] ";
+			$origen = $producto->getOrigen();
+			$destino = $producto->getDestino();
+			$trayecto = " [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ").utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."] ";
 			
 			//Se envian las opciones existentes
 			$c = new Criteria();
