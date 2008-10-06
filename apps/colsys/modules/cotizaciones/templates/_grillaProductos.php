@@ -97,6 +97,22 @@ storeProductos.load();
 // turn on validation errors beside the field globally
 Ext.form.Field.prototype.msgTarget = 'side';
 
+
+var formatItem = function(value, p, record) {
+		
+		if( record.data.tipo == "recargo" ){
+			return String.format(
+				'<div class="recargo"><b>{0}</b></div>',
+				value
+			);
+		}else{
+			return String.format(
+				'<b>{0}</b>',
+				value
+			);
+		}
+}
+
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [
 		{
@@ -115,7 +131,8 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: false,			
 			dataIndex: 'item',
 			hideable: false,
-			editor: editorConceptos
+			editor: editorConceptos,
+			renderer: formatItem
 		},	
 	
 		{
@@ -478,8 +495,7 @@ grid_productosOnBeforeedit = function( e ){
 }
 				
 
-function agregarFila(ctxRecord, index){	
-}
+
 
 /*
 * Crea la grilla 
