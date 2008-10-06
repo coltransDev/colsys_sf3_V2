@@ -55,116 +55,182 @@ function extTransporte($id="transporte"){
 	return $html;
 }
 
-function extModalidad($id="modalidad"){	
+function extModalidad($id="modalidad", $transporte, $impoexpo){	
+	$transporte_val = ((strpos($transporte, 'Ext.getCmp') === false)?"'".$transporte."'":$transporte.".getValue()");
+	$impoexpo_val = ((strpos($impoexpo, 'Ext.getCmp') === false)?"'".$impoexpo."'":$impoexpo.".getValue()");
+	
+	$listeners = "listeners:{focus:function( field, newVal, oldVal ){
+							modalidad = Ext.getCmp('$id');
+							modalidad.store.baseParams = {transporte:$transporte_val,impoexpo:$impoexpo_val};
+							modalidad.store.reload();
+					  }
+				 },"; 
+	
+    $baseparams = "baseParams:{transporte:$transporte_val,impoexpo:$impoexpo_val}";
+	
 	$html = "new Ext.form.ComboBox({
-					fieldLabel: 'Modalidad',			
-					typeAhead: true,
-					forceSelection: true,
-					triggerAction: 'all',
-					emptyText:'Seleccione',
-					selectOnFocus: true,	
-					name: '$id',
-					id: '$id',
-					displayField: 'modalidad',
-					valueField: 'modalidad',
-					lazyRender:true,
-					listClass: 'x-combo-list-small',
-					listeners:{focus:function( field, newVal, oldVal ){
-											modalidad = Ext.getCmp('$id');
-											modalidad.store.baseParams = {transporte:Ext.getCmp('transporte').getValue(),impoexpo:Ext.getCmp('impoexpo').getValue()};
-											modalidad.store.reload();
-									  }
-					},
-					store : new Ext.data.Store({
-						autoLoad : false,
-						url: '".url_for("cotizaciones/datosModalidades")."',
-						reader: new Ext.data.JsonReader(
-							{
-								id: 'modalidad',
-								root: 'root',
-								totalProperty: 'total',
-								successProperty: 'success'
-							}, 
-							Ext.data.Record.create([
-								{name: 'modalidad'}  
-							])
-						),
-						baseParams:{transporte:Ext.getCmp('transporte').getValue(),impoexpo:Ext.getCmp('impoexpo').getValue()}
-					}),
-				})";
+		fieldLabel: 'Modalidad',			
+		typeAhead: true,
+		forceSelection: true,
+		triggerAction: 'all',
+		emptyText:'Seleccione',
+		selectOnFocus: true,	
+		name: '$id',
+		id: '$id',
+		displayField: 'modalidad',
+		valueField: 'modalidad',
+		lazyRender:true,
+		listClass: 'x-combo-list-small',
+		$listeners
+		store : new Ext.data.Store({
+			autoLoad : false,
+			url: '".url_for("cotizaciones/datosModalidades")."',
+			reader: new Ext.data.JsonReader(
+				{
+					id: 'modalidad',
+					root: 'root',
+					totalProperty: 'total',
+					successProperty: 'success'
+				}, 
+				Ext.data.Record.create([
+					{name: 'modalidad'}  
+				])
+			),
+			$baseparams
+		}),
+	})";
 	return $html;					
 }
 
-function extTraficos($lugar){
-	$html = "new Ext.form.ComboBox({		
-					fieldLabel: 'Tráfico ".ucfirst($lugar)."',
-					typeAhead: true,
-					forceSelection: true,
-					triggerAction: 'all',
-					emptyText:'Seleccione',
-					selectOnFocus: true,					
-					name: 'tra_$lugar',
-					id: 'tra_$lugar',
-					displayField: 'trafico',
-					valueField: 'idtrafico',
-					lazyRender:true,
-					listClass: 'x-combo-list-small',
-					store : new Ext.data.Store({
-						autoLoad : false,
-						url: '".url_for("cotizaciones/datosTraficos")."',
-						reader: new Ext.data.JsonReader(
-							{
-								id: 'idtrafico',
-								root: 'root',
-								totalProperty: 'total',
-								successProperty: 'success'
-							},
-							Ext.data.Record.create([
-								{name: 'idtrafico'}, 
-								{name: 'trafico'}
-							])
-						),
-						baseParams:{impoexpo:Ext.getCmp('impoexpo').getValue(),lugar:'$lugar'}
-					})
-					
-				}),";
-	$html.= "new Ext.form.ComboBox({		
-					fieldLabel: 'Ciudad ".ucfirst($lugar)."',
-					typeAhead: true,
-					forceSelection: true,
-					triggerAction: 'all',
-					emptyText:'Seleccione',
-					selectOnFocus: true,					
-					name: 'ciu_$lugar',
-					id: 'ciu_$lugar',
-					displayField: 'ciudad',
-					valueField: 'idciudad',
-					lazyRender:true,
-					listClass: 'x-combo-list-small',
-					listeners:{focus:function( field, newVal, oldVal ){
-											ciudad = Ext.getCmp('ciu_$lugar');
-											ciudad.store.baseParams = {trafico:Ext.getCmp('tra_$lugar').getValue(),lugar:'$lugar'};
-											ciudad.store.reload();
-									  }
+
+
+function extConcepto($id="concepto", $transporte, $modalidad=null){
+	$transporte_val = ((strpos($transporte, 'Ext.getCmp') === false)?"'".$transporte."'":$transporte.".getValue()");
+	$modalidad_val = ((strpos($modalidad, 'Ext.getCmp') === false)?"'".$modalidad."'":$modalidad.".getValue()");
+	
+	if (!is_null($modalidad)) {
+		$listeners = "listeners:{focus:function( field, newVal, oldVal ){
+								concepto = Ext.getCmp('$id');
+								concepto.store.baseParams = {transporte:$transporte_val,modalidad:$modalidad_val};
+								concepto.store.reload();
+						  }
+					 },"; 
+	}else{
+		$listeners = "";
+	}
+	
+    $baseparams = "baseParams:{transporte:$transporte_val,modalidad:$modalidad_val}";
+	
+	$html = "new Ext.form.ComboBox({
+		fieldLabel: '".ucfirst($id)."',			
+		typeAhead: true,
+		forceSelection: true,
+		triggerAction: 'all',
+		emptyText:'Seleccione',
+		selectOnFocus: true,					
+		hiddenName:'id$id',
+		id: '$id',
+		displayField: 'concepto',
+		valueField: 'idconcepto',
+		lazyRender:true,
+		listClass: 'x-combo-list-small',
+		$listeners
+		store : new Ext.data.Store({
+			autoLoad : false,
+			url: '".url_for("cotizaciones/datosConceptos")."',
+			reader: new Ext.data.JsonReader(
+				{
+					id: 'idconcepto',
+					root: 'root',
+					totalProperty: 'total',
+					successProperty: 'success'
+				}, 
+				Ext.data.Record.create([
+					{name: 'idconcepto'},
+					{name: 'concepto'}
+				])
+			),
+			$baseparams
+		})
+	})";
+	return $html;
+}
+
+function extTraficos($lugar, $nacional=false){
+	if ($nacional) {
+		$baseParams = "trafico:'CO-057',lugar:'$lugar'";
+		$html = "";
+	} else {
+		$baseParams = "trafico:Ext.getCmp('tra_$lugar').getValue(),lugar:'$lugar'";
+		$html = "new Ext.form.ComboBox({		
+			fieldLabel: 'Tráfico ".ucfirst($lugar)."',
+			typeAhead: true,
+			forceSelection: true,
+			triggerAction: 'all',
+			emptyText:'Seleccione',
+			selectOnFocus: true,					
+			hiddenName: 'idtra_$lugar',
+			id: 'tra_$lugar',
+			displayField: 'trafico',
+			valueField: 'idtrafico',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			store : new Ext.data.Store({
+				autoLoad : false,
+				url: '".url_for("cotizaciones/datosTraficos")."',
+				reader: new Ext.data.JsonReader(
+					{
+						id: 'idtrafico',
+						root: 'root',
+						totalProperty: 'total',
+						successProperty: 'success'
 					},
-					store : new Ext.data.Store({
-						autoLoad : false,
-						url: '".url_for("cotizaciones/datosCiudades")."',
-						reader: new Ext.data.JsonReader(
-							{
-								id: 'idciudad',
-								root: 'root',
-								totalProperty: 'total',
-								successProperty: 'success'
-							}, 
-							Ext.data.Record.create([
-								{name: 'idciudad'},
-								{name: 'ciudad'}
-							])
-						),
-						baseParams:{trafico:Ext.getCmp('tra_$lugar').getValue(),lugar:'$lugar'}
-					})
-				})";
+					Ext.data.Record.create([
+						{name: 'idtrafico'}, 
+						{name: 'trafico'}
+					])
+				),
+				baseParams:{impoexpo:Ext.getCmp('impoexpo').getValue(),lugar:'$lugar'}
+			})
+		}),";
+	}
+	$html.= "new Ext.form.ComboBox({		
+		fieldLabel: 'Ciudad ".ucfirst($lugar)."',
+		typeAhead: true,
+		forceSelection: true,
+		triggerAction: 'all',
+		emptyText:'Seleccione',
+		selectOnFocus: true,					
+		hiddenName: 'idciu_$lugar',
+		id: 'ciu_$lugar',
+		displayField: 'ciudad',
+		valueField: 'idciudad',
+		lazyRender:true,
+		listClass: 'x-combo-list-small',
+		listeners:{focus:function( field, newVal, oldVal ){
+								ciudad = Ext.getCmp('ciu_$lugar');
+								ciudad.store.baseParams = {{$baseParams}};
+								ciudad.store.reload();
+						  }
+		},
+		store : new Ext.data.Store({
+			autoLoad : false,
+			url: '".url_for("cotizaciones/datosCiudades")."',
+			reader: new Ext.data.JsonReader(
+				{
+					id: 'idciudad',
+					root: 'root',
+					totalProperty: 'total',
+					successProperty: 'success'
+				}, 
+				Ext.data.Record.create([
+					{name: 'idciudad'},
+					{name: 'ciudad'}
+				])
+			),
+			baseParams:{{$baseParams}}
+		})
+	})";
 	return $html;					
 }
 
@@ -210,17 +276,32 @@ function extImprimir($id="imprimir"){
 	return $html;					
 }
 
-function extMonedas($id="tiporecargo", $selected="USD"){
+function extOtmDta($id="otmdta"){	
+	$html = "new Ext.form.ComboBox({		
+					fieldLabel: 'OTM/DTA',			
+					typeAhead: true,
+					forceSelection: true,
+					triggerAction: 'all',
+					emptyText:'Seleccione',
+					selectOnFocus: true,					
+					name: '$id',
+					id: '$id',
+					lazyRender:true,
+					listClass: 'x-combo-list-small',
+					store: [['OTM', 'OTM'],['DTA', 'DTA']]
+				})";
+	return $html;					
+}
+
+function extMonedas($id="idmoneda", $selected="USD"){
 	$c=new Criteria();
 	$c->addAscendingOrderByColumn( MonedaPeer::CA_IDMONEDA );
 	$monedas = MonedaPeer::doSelect( $c );
 	$html = "new Ext.form.ComboBox({
-					name: '$id',
 					id: '$id',
 					fieldLabel: 'Moneda',			
 					typeAhead: true,
 					triggerAction: 'all',
-					//transform:'light',
 					lazyRender:true,
 					listClass: 'x-combo-list-small',
 					store : [";
@@ -230,7 +311,6 @@ function extMonedas($id="tiporecargo", $selected="USD"){
 			$html .= ",";
 		}
 		$html .= "['".$moneda->getCaIdMoneda()."','".$moneda->getCaIdMoneda()."']";
-	
 	}
 	
 	$html .=" ]})";
@@ -245,7 +325,7 @@ function extRecargos($tipo="Recargo Local",$selected=""){
 		triggerAction: 'all',
 		emptyText:'Seleccione',
 		selectOnFocus: true,					
-		name: 'recargo',
+		hiddenName:'idrecargo',
 		id: 'recargo',
 		displayField: 'recargo',
 		valueField: 'idrecargo',
