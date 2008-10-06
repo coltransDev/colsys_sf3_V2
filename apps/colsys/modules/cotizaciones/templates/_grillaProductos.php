@@ -3,30 +3,71 @@ use_helper("Ext2");
 ?>
 
 var data_productos = <?=json_encode( array("productos"=>$productos, "total"=>count($productos)) )?>;
+
+
+/*
+*Store que carga los conceptos
+*/
+var storeConceptos = new Ext.data.Store({
+	autoLoad : false,
+	url: '<?=url_for("pricing/datosConceptos")?>',
+	reader: new Ext.data.JsonReader(
+		{
+			id: 'idconcepto',
+			root: 'root',
+			totalProperty: 'total',
+			successProperty: 'success'
+		}, 
+		Ext.data.Record.create([
+			{name: 'idconcepto'},
+			{name: 'concepto'}
+		])
+	)
+});
+
+editorConceptos = new Ext.form.ComboBox({
+	fieldLabel: 'Concepto',			
+	typeAhead: true,
+	forceSelection: true,
+	triggerAction: 'all',
+	emptyText:'Seleccione',
+	selectOnFocus: true,					
+	name: 'recargo',
+	id: 'recargo',
+	displayField: 'concepto',
+	valueField: 'idconcepto',
+	lazyRender:true,
+	listClass: 'x-combo-list-small',	
+	store : storeConceptos	
+})
+
+
 /*
 * Crea el Record 
 */
-var recordGrilla = Ext.data.Record.create([
+var recordProductos = Ext.data.Record.create([
     {name: 'idcotizacion', type: 'string'},   		
-    {name: 'idproducto', type: 'string'},   		
-    {name: 'trayecto', type: 'string'},   
-				
+    {name: 'idproducto', type: 'string'},   
+	{name: 'idopcion', type: 'string'}, 		
+    {name: 'trayecto', type: 'string'},   				
 	{name: 'item', type: 'string'},  //Texto de concepto o recargo 
 	{name: 'iditem', type: 'string'}, //Concepto o recargo  	 
-	
-	{name: 'moneda', type: 'string'},
-	{name: 'detalles', type: 'string'}
+	{name: 'idconcepto', type: 'string'}, //Concepto al cual pertenece el recargo	
+	{name: 'valor_tar', type: 'float'}, 
+	{name: 'valor_min', type: 'float'}, 
+	{name: 'aplica_tar', type: 'string'}, 
+	{name: 'aplica_min', type: 'string'}, 
+	{name: 'idmoneda', type: 'string'},
+	{name: 'detalles', type: 'string'},
+	{name: 'tipo', type: 'string'},
+	{name: 'transporte', type: 'string'},
+	{name: 'modalidad', type: 'string'}
 	
 ]);
    		
 /*
 * Crea el store
 */
-<?
-
-
-
-?>
 var storeProductos = new Ext.data.GroupingStore({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
@@ -35,7 +76,7 @@ var storeProductos = new Ext.data.GroupingStore({
 			root: 'productos',
 			totalProperty: 'total'
 		}, 
-		recordGrilla
+		recordProductos
 	),
 	sortInfo:{field: 'idproducto', direction: "ASC"},
 	proxy: new Ext.data.MemoryProxy(data_productos),
@@ -74,38 +115,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: false,			
 			dataIndex: 'item',
 			hideable: false,
-			editor: new Ext.form.ComboBox({
-				fieldLabel: 'Concepto',			
-				typeAhead: true,
-				forceSelection: true,
-				triggerAction: 'all',
-				emptyText:'Seleccione',
-				selectOnFocus: true,					
-				name: 'recargo',
-				id: 'recargo',
-				displayField: 'concepto',
-				valueField: 'idconcepto',
-				lazyRender:true,
-				listClass: 'x-combo-list-small',
-				
-				store : new Ext.data.Store({
-					autoLoad : false,
-					url: '<?=url_for("pricing/datosConceptos")?>',
-					reader: new Ext.data.JsonReader(
-						{
-							id: 'idconcepto',
-							root: 'root',
-							totalProperty: 'total',
-							successProperty: 'success'
-						}, 
-						Ext.data.Record.create([
-							{name: 'idconcepto'},
-							{name: 'concepto'}
-						])
-					),
-					baseParams:{transporte:'Marítimo',modalidad:'FCL'}
-				})
-			})
+			editor: editorConceptos
 		},	
 	
 		{
@@ -151,11 +161,11 @@ var colModel = new Ext.grid.ColumnModel({
 			hideable: false 
 		},
 		{
-			id: 'moneda',
+			id: 'idmoneda',
 			header: "Moneda",
 			width: 100,
 			sortable: false,
-			dataIndex: 'moneda',
+			dataIndex: 'idmoneda',
 			hideable: false ,
 			editor: <?=extMonedas()?>
 		},
@@ -203,25 +213,23 @@ var grid_productosOnvalidateedit = function(e){
 		var store = ed.field.store;
 		
 	    store.each( function( r ){				
-				if( r.data.idconcepto==e.value ){				
+				if( r.data.idconcepto==e.value ){									
+					if( !rec.data.iditem && rec.data.tipo=="concepto" ){					
+						var newRec = rec.copy();
+						newRec.data.concepto = "";							
+						//Inserta la una columna igual 
+						//alert( storeProductos.getTotalCount() );
+						records = [];
+						records.push( newRec );
+						index = storeProductos.indexOf(rec);
+						//if(index < storeProductos.getTotalCount()-1){
+							storeProductos.insert( index+1 , records );					
+						/*}else{						
+							storeProductos.add(  records );
+						}*/	
+					}
 					rec.set("iditem", r.data.idconcepto);
-					e.value = r.data.concepto;
-					
-					
-					var newRec = rec.copy();
-					newRec.data.concepto = "";
-						
-					//Inserta la una columna igual 
-					//alert( storeProductos.getTotalCount() );
-					records = [];
-					records.push( newRec );
-					index = storeProductos.indexOf(rec);
-					//if(index < storeProductos.getTotalCount()-1){
-						storeProductos.insert( index+1 , records );					
-					/*}else{						
-						storeProductos.add(  records );
-					}*/
-					
+					e.value = r.data.concepto;				
 					return true;
 				}
 			}
@@ -336,6 +344,60 @@ var productoHandler = function(){
 	win.show( );	
 }
 
+/*
+* Menu contextual que se despliega sobre una fila con el boton derecho
+*/
+
+var grid_productosOnRowcontextmenu =  function(grid, index, e){
+		
+	rec = this.store.getAt(index);
+
+		this.menu = new Ext.menu.Menu({
+		id:'grid_productos-ctx',
+		items: [{
+				text: 'Nuevo recargo',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   
+					if( this.ctxRecord.data.idopcion ){					
+						var newRec = new recordProductos({
+						   idcotizacion: this.ctxRecord.data.idcotizacion,  
+						   idproducto: this.ctxRecord.data.idproducto,  
+						   trayecto: this.ctxRecord.data.trayecto,   
+						   transporte: this.ctxRecord.data.transporte,  
+						   modalidad: this.ctxRecord.data.modalidad,   
+						   idconcepto: this.ctxRecord.data.iditem,
+						   idopcion: this.ctxRecord.data.idopcion,
+						   item: '',
+						   iditem: '',	
+						   tipo: 'recargo',
+						   valor_tar: '',
+						   valor_min: '',
+						   aplica_tar: '',
+						   aplica_min: '',
+						   idmoneda: '',
+						   detalles: ''
+						});					
+						records = [];
+						records.push( newRec );
+						storeProductos.insert( index+1 , records );
+					}						
+				}
+			}		
+		]
+	});
+	this.menu.on('hide', this.onContextHide, this);
+   
+	e.stopEvent();
+	if(this.ctxRow){
+		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+		this.ctxRow = null;
+	}
+	this.ctxRecord = rec;
+	this.ctxRow = this.view.getRow(index);
+	Ext.fly(this.ctxRow).addClass('x-node-ctx');
+	this.menu.showAt(e.getXY());
+}
 
 /*
 * Coloca las observaciones en pantalla y actualiza el datastore 
@@ -343,10 +405,78 @@ var productoHandler = function(){
 var actualizarObservaciones=function( btn, text ){		
 }	
 
-function updateModel(){
+function guardarGridProductos(){
+	
+	
+	var success = true;
+	var records = storeProductos.getModifiedRecords();
+			
+	var lenght = records.length;
+	for( var i=0; i< lenght; i++){
+		r = records[i];
+					
+		var changes = r.getChanges();
+		
+		changes['idproducto']=r.data.idproducto;	
+		changes['tipo']=r.data.tipo;	
+		changes['idopcion']=r.data.idopcion;				
+		changes['idconcepto']=r.data.idconcepto;
+		changes['iditem']=r.data.iditem;
+		changes['modalidad']=r.data.modalidad;										
+		//envia los datos al servidor 
+		Ext.Ajax.request( 
+			{   
+				waitMsg: 'Guardando cambios...',						
+				url: '<?=url_for("cotizaciones/observeItemsOpciones?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
+				//method: 'POST', 
+				//Solamente se envian los cambios 						
+				params :	changes,
+										
+				//Ejecuta esta accion en caso de fallo
+				//(404 error etc, ***NOT*** success=false)
+				failure:function(response,options){							
+					alert( response.responseText );						
+					success = false;
+				},
+				//Ejecuta esta accion cuando el resultado es exitoso
+				success:function(response,options){							
+					//alert( response.responseText );						
+					//r.commit();
+				}
+			 }
+		); 
+		//r.set("sel", false);//Quita la seleccion de todas las columnas 
+	}
+	
+	if( success ){
+		storeProductos.commitChanges();
+		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
+	}else{
+		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
+	}	
 }
 
-
+/*
+* Determina que store se debe utilizar dependiendo si es un concepto o recargo
+*/
+grid_productosOnBeforeedit = function( e ){						
+	if(e.field=="item"){
+		var rec = e.record;
+		var ed = this.colModel.getCellEditor(e.column, e.row);			
+		if( rec.data.tipo == "concepto" ){
+			storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad};			
+		}
+		
+		if( rec.data.tipo == "recargo" ){			
+			storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad, tipo:'Recargo en Origen', modo:'recargos'};				
+		}	
+		
+		storeConceptos.load();	
+		
+	}	
+		
+}
+				
 
 function agregarFila(ctxRecord, index){	
 }
@@ -374,7 +504,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el tarifario',
 		iconCls:'disk',  // reference to our css
-		handler: updateModel
+		handler: guardarGridProductos
 	},
 	{
 		text: 'Agregar producto',
@@ -403,5 +533,8 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 		} 
 	})	,
 	
-	listeners:{ validateedit: grid_productosOnvalidateedit }
+	listeners:{ validateedit: grid_productosOnvalidateedit,
+				rowcontextmenu:grid_productosOnRowcontextmenu,
+				beforeedit:grid_productosOnBeforeedit
+				 }
 });
