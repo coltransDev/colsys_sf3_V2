@@ -454,7 +454,7 @@ var grid_contviajes = new Ext.grid.EditorGridPanel({
 
 	root_title: 'impoexpo',	
 	// plugins: [checkColumn], //expander,
-	closable: true,
+	closable: false,
 	id: 'grid_contviajes',
 	
 	tbar: [			  

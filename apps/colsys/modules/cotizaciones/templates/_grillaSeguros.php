@@ -229,7 +229,7 @@ var grid_seguros = new Ext.grid.EditorGridPanel({
 
 	root_title: 'prima_tip',	
 	// plugins: [checkColumn], //expander,
-	closable: true,
+	closable: false,
 	id: 'grid_seguros',
 	
 	tbar: [			  
