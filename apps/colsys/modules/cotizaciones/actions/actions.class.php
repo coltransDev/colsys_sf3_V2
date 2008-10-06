@@ -457,7 +457,121 @@ class cotizacionesActions extends sfActions
 		$producto->save();	
 		return sfView::NONE;
 	}
-
+	
+	/**
+	* Permite actualizar en linea los cambios en los campos de opciones y
+	* recargos en origen de una cotización
+	* @author Andres Botero
+	*/
+	public function executeObserveItemsOpciones(){
+		
+		$idcotizacion = $this->getRequestParameter("idcotizacion");
+		$idproducto = $this->getRequestParameter("idproducto");
+		$idcotizacion = $this->getRequestParameter("idcotizacion");
+		$idopcion = $this->getRequestParameter("idopcion");
+		$idmoneda = $this->getRequestParameter("idmoneda");
+		$valor_tar = $this->getRequestParameter("valor_tar");
+		$valor_min = $this->getRequestParameter("valor_min");
+		$aplicar_tar = $this->getRequestParameter("aplicar_tar");
+		$aplicar_min = $this->getRequestParameter("aplicar_min");
+		$observaciones = $this->getRequestParameter("detalles");
+		
+		$tipo = $this->getRequestParameter("tipo");
+				
+		
+		if( $tipo=="concepto" ){
+			$iditem = $this->getRequestParameter("iditem");
+			$opcion = CotOpcionPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion );
+			if( !$opcion ){				
+				$opcion = new CotOpcion();
+				$opcion->setCaIdCotizacion( $idcotizacion );
+				$opcion->setCaIdProducto( $idproducto );
+				$opcion->setCaFchcreado( time() );
+				$opcion->setCaUsucreado( $this->getUser()->getUserId() );	
+			}else{
+				$opcion->setCaFchactualizado( time() );
+				$opcion->setCaUsuactualizado( $this->getUser()->getUserId() );		
+			}			
+			
+			if( $iditem ){	
+				$opcion->setCaIdConcepto( $iditem );
+			}				
+			
+			if( $idmoneda ){	
+				$opcion->setCaIdMoneda( $idmoneda );
+			}
+			if( $valor_tar ){
+				$opcion->setCaValorTar( $valor_tar );
+			}
+			
+			if( $valor_min ){
+				$opcion->setCaValorMin( $valor_min );
+			}
+			
+			if( $aplicar_tar ){
+				$opcion->setCaAplicarTar( $aplicar_tar );
+			}
+			
+			if( $aplicar_min ){
+				$opcion->setCaAplicarMin( $aplicar_min );
+			}
+			if( $observaciones ){
+				$opcion->setCaObservaciones( $observaciones );
+			}	
+			$opcion->save();			
+		}
+		if( $tipo=="recargo" ){
+			$iditem = $this->getRequestParameter("iditem");			
+			$idconcepto = $this->getRequestParameter("idconcepto");			
+			$modalidad = $this->getRequestParameter("modalidad");
+					
+			$opcion = CotRecargoPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion, $idconcepto, $iditem, $modalidad );
+									
+			if( !$opcion ){			
+				$opcion = new CotRecargo();			
+				$opcion->setCaFchcreado( time() );
+				$opcion->setCaUsucreado( $this->getUser()->getUserId() );			
+				$opcion->setCaIdCotizacion( $idcotizacion );
+				$opcion->setCaIdProducto( $idproducto );	
+				$opcion->setCaIdOpcion( $idopcion );	
+				$opcion->setCaIdConcepto( $idconcepto );
+				$opcion->setCaIdRecargo( $iditem );
+				$opcion->setCaModalidad( $modalidad );
+				$opcion->setCaValorTar( 0 );
+				$opcion->setCaValorMin( 0 );
+			}else{
+				$opcion->setCaFchactualizado( time() );
+				$opcion->setCaUsuactualizado( $this->getUser()->getUserId() );		
+			}		
+				
+			$opcion->setCaTipo( "$" ); //FIX-ME
+			if( $idmoneda ){	
+				$opcion->setCaIdMoneda( $idmoneda );
+			}
+			if( $valor_tar ){
+				$opcion->setCaValorTar( $valor_tar );
+			}
+			
+			if( $valor_min ){
+				$opcion->setCaValorMin( $valor_min );
+			}
+			
+			if( $aplicar_tar ){
+				$opcion->setCaAplicarTar( $aplicar_tar );
+			}
+			
+			if( $aplicar_min ){
+				$opcion->setCaAplicarMin( $aplicar_min );
+			}	
+			
+			if( $observaciones ){
+				$opcion->setCaObservaciones( $observaciones );
+			}									
+			$opcion->save();	
+		}
+		
+		return sfView::NONE;
+	}
 	/*
 	* Datos de las modalidades según sea el medio de transporte
 	*/
