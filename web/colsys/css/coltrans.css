@@ -317,3 +317,101 @@ a.toolbar:active {
     display:block;
     clear:none;
 }
+/*
+* Colores diferentes para las flias de una grilla
+*/
+.row_yellow{	
+	background-color: #FFFFCC;
+	
+}
+.row_pink{	
+	background-color: #FFCCCC;	
+
+}
+
+
+/*
+* Thumbnails 
+*/
+#file-view .x-panel-body{
+	background: white;
+	font: 11px Arial, Helvetica, sans-serif;
+}
+#file-view .thumb{
+	/*background: #dddddd;*/
+	padding: 3px;
+}
+#file-view .thumb img{
+	height: 32px;
+	width: 40px;
+}
+#file-view .thumb-wrap{
+	float: left;
+	margin: 4px;
+	margin-right: 0;
+	padding: 5px;
+}
+#file-view .thumb-wrap span{
+	display: block;
+	overflow: hidden;
+	text-align: center;
+}
+
+#file-view .x-view-over{
+    border:1px solid #dddddd;
+    background: #efefef url(../../resources/images/default/grid/row-over.gif) repeat-x left top;
+	padding: 4px;
+}
+
+#file-view .x-view-selected{
+	background: #eff5fb url(images/selected.gif) no-repeat right bottom;
+	border:1px solid #99bbe8;
+	padding: 4px;
+}
+#file-view .x-view-selected .thumb{
+	background:transparent;
+}
+
+#file-view .loading-indicator {
+	font-size:11px;
+	background-image:url('../../resources/images/default/grid/loading.gif');
+	background-repeat: no-repeat;
+	background-position: left;
+	padding-left:20px;
+	margin:10px;
+}
+
+
+/*
+* Iconos usados en toolbars 
+*/
+
+.add{
+	background-image:url('../images/fam/add.png') !important;
+}
+
+.folder{
+	background-image:url('../images/fam/folder.png') !important;
+}
+
+.delete{
+	background-image:url('../images/fam/delete.png') !important;
+}
+
+.disk{
+	background-image:url('../images/fam/disk.png') !important;
+}
+
+.upload-icon {
+	background: url('../images/fam/image_add.png') no-repeat 0 0 !important;
+}
+
+.x-grid3-td-titulo .topic {
+    padding-left:20px;	
+    background:transparent url('../images/16x16/post.gif') no-repeat 0 2px !important;
+}
+
+.x-grid3-td-concepto .recargo {
+    padding-left:20px;	
+    background:transparent url('../images/16x16/elbow-end.gif') no-repeat 0 2px !important;
+}
