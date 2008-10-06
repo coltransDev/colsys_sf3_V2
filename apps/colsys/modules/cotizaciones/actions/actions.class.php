@@ -155,8 +155,8 @@ class cotizacionesActions extends sfActions
 		$producto->setCaTransporte( $transporte );
 		$producto->setCaModalidad( $this->getRequestParameter("modalidad") );
 		$producto->setCaIncoterms( $this->getRequestParameter("incoterms") );
-		$producto->setCaOrigen( $this->getRequestParameter("ciu_origen") );
-		$producto->setCaDestino( $this->getRequestParameter("ciu_destino") );
+		$producto->setCaOrigen( $this->getRequestParameter("idciu_origen") );
+		$producto->setCaDestino( $this->getRequestParameter("idciu_destino") );
 		$producto->setCaFrecuencia( $this->getRequestParameter("frecuencia") );
 		$producto->setCaTiempotransito( $this->getRequestParameter("ttransito") );
 		$producto->setCaObservaciones( $this->getRequestParameter("observaciones") );
@@ -172,57 +172,7 @@ class cotizacionesActions extends sfActions
 		exit;
 	}
 	
-	/*
-	* Guarda los cambios realizados a Recargos  
-	* @author Carlos G. López M.
-	*/
-	public function executeFormRecargoGuardar(){
-		$user_id = $this->getUser()->getUserId();
-		$update = true;
-		if( $this->getRequestParameter("productoId") ){			// Se trata de un Recargo en Origen
-			
-		}else{													// Se trata de un recargo local
-			$idproducto = '99';
-			$idopcion = '999';
-			$idconcepto = '9999';
-			
-			$recargo = CotRecargoPeer::retrieveByPk( $this->getRequestParameter("cotizacionId"), $idproducto, $idopcion, $idconcepto, $this->getRequestParameter("idrecargo"), $this->getRequestParameter("modalidad") );
-			
-			if( !$recargo ){
-/*
-				$update = false;
-				$recargo = new CotRecargo();
-				$recargo->setCaIdCotizacion( $this->getRequestParameter("cotizacionId") );
-				$recargo->setCaIdProducto( $idproducto );
-				$recargo->setCaIdOpcion( $idopcion );
-				$recargo->setCaIdConcepto( $idconcepto );
-				$recargo->setCaModalidad( $this->getRequestParameter("modalidad") );
-*/
-			}
-		}
-/*
-		
-		$recargo->setCaIdRecargo( $this->getRequestParameter("idrecargo") );
-		$recargo->setCaTipo( $this->getRequestParameter("tipo") );
-		$recargo->setCaValorTar( $this->getRequestParameter("valor_tar") );
-		$recargo->setCaAplicaTar( $this->getRequestParameter("aplica_tar") );
-		$recargo->setCaValorTar( $this->getRequestParameter("valor_min") );
-		$recargo->setCaAplicaTar( $this->getRequestParameter("aplica_min") );
-		$recargo->setCaIdMoneda( $this->getRequestParameter("idmoneda") );
-		$recargo->setCaObservaciones( $this->getRequestParameter("observaciones") );
-		if( !$update ){ 
-			$recargo->setCaFchcreado( time() );	
-			$recargo->setCaUsucreado( $user_id );			
-		}else{
-			$recargo->setCaFchactualizado( time() );	
-			$recargo->setCaUsuactualizado( $user_id );							
-		}
-		$recargo->save();
-*/
-		exit;
-	}
-	
-	
+
 	/*
 	* Guarda los cambios realizados  
 	* @author Carlos G. López M.
@@ -261,6 +211,199 @@ class cotizacionesActions extends sfActions
 		exit;	
 	}
 
+	
+	/*
+	* Guarda los cambios realizados a Recargos  
+	* @author Carlos G. López M.
+	*/
+	public function executeFormRecargoGuardar(){
+		$user_id = $this->getUser()->getUserId();
+		$update = true;
+		if( $this->getRequestParameter("productoId") ){			// Se trata de un Recargo en Origen
+			
+		}else{													// Se trata de un recargo local
+			$idproducto = '99';
+			$idopcion = '999';
+			$idconcepto = '9999';
+			
+			$recargo = CotRecargoPeer::retrieveByPk( $this->getRequestParameter("cotizacionId"), $idproducto, $idopcion, $idconcepto, $this->getRequestParameter("idrecargo"), $this->getRequestParameter("modalidad") );
+			
+			if( !$recargo ){
+				$update = false;
+				$recargo = new CotRecargo();
+				$recargo->setCaIdCotizacion( $this->getRequestParameter("cotizacionId") );
+				$recargo->setCaIdProducto( $idproducto );
+				$recargo->setCaIdOpcion( $idopcion );
+				$recargo->setCaIdConcepto( $idconcepto );
+				$recargo->setCaModalidad( $this->getRequestParameter("modalidad") );
+			}
+		}
+
+		if( $this->getRequestParameter("idrecargo") ){
+			$recargo->setCaIdRecargo( $this->getRequestParameter("idrecargo") );
+		}
+		
+		if( $this->getRequestParameter("tiporecargo") ){
+			$recargo->setCaTipo( $this->getRequestParameter("tiporecargo") );
+		}
+		
+		if( $this->getRequestParameter("valor_tar") ){
+			$recargo->setCaValorTar( $this->getRequestParameter("valor_tar") );
+		}
+		
+		if( $this->getRequestParameter("aplica_tar") ){
+			$recargo->setCaAplicaTar( $this->getRequestParameter("aplica_tar") );
+		}
+		
+		if( $this->getRequestParameter("valor_min") ){
+			$recargo->setCaValorMin( $this->getRequestParameter("valor_min") );
+		}
+		
+		if( $this->getRequestParameter("aplica_min") ){
+			$recargo->setCaAplicaMin( $this->getRequestParameter("aplica_min") );
+		}
+		
+		if( $this->getRequestParameter("idmoneda") ){
+			$recargo->setCaIdMoneda( $this->getRequestParameter("idmoneda") );
+		}
+		
+		if( $this->getRequestParameter("observaciones") ){
+			$recargo->setCaObservaciones( $this->getRequestParameter("observaciones") );
+		}
+		
+		if( !$update ){ 
+			$recargo->setCaFchcreado( time() );	
+			$recargo->setCaUsucreado( $user_id );			
+		}else{
+			$recargo->setCaFchactualizado( time() );	
+			$recargo->setCaUsuactualizado( $user_id );							
+		}
+
+		$recargo->save();
+		return sfView::NONE;
+	}
+
+	
+	/*
+	* Guarda los cambios realizados a Continuación de Viaje  
+	* @author Carlos G. López M.
+	*/
+	public function executeFormContViajeGuardar(){
+		$user_id = $this->getUser()->getUserId();
+		$update = true;
+
+		$c = new Criteria();
+		$c->add( CotContinuacionPeer::CA_IDCOTIZACION , $this->getRequestParameter("cotizacionId") );
+		$c->add( CotContinuacionPeer::CA_TIPO , $this->getRequestParameter("tipo") );
+		$c->add( CotContinuacionPeer::CA_MODALIDAD , $this->getRequestParameter("modalidad") );
+		$c->add( CotContinuacionPeer::CA_ORIGEN , $this->getRequestParameter("origen") );
+		$c->add( CotContinuacionPeer::CA_DESTINO, $this->getRequestParameter("destino") );
+		$c->add( CotContinuacionPeer::CA_IDCONCEPTO, $this->getRequestParameter("idconcepto") );
+		$c->add( CotContinuacionPeer::CA_IDEQUIPO, $this->getRequestParameter("idequipo") );
+		
+		$continuacion = CotContinuacionPeer::doSelectOne( $c );
+
+		if ( !$continuacion ) {
+				$update = false;
+				$continuacion = new CotContinuacion();
+				$continuacion->setCaIdCotizacion( $this->getRequestParameter("cotizacionId") );
+				$continuacion->setCaTipo( $this->getRequestParameter("otmdta") );
+				$continuacion->setCaModalidad( $this->getRequestParameter("modalidad") );
+				$continuacion->setCaOrigen( $this->getRequestParameter("idciu_origen") );
+				$continuacion->setCaDestino( $this->getRequestParameter("idciu_destino") );
+				$continuacion->setCaIdConcepto( $this->getRequestParameter("idconceptoOtmDta") );
+				$continuacion->setCaIdEquipo( $this->getRequestParameter("idequipo") );
+		}
+
+		if( $this->getRequestParameter("valor_tar") ){
+			$continuacion->setCaValorTar( $this->getRequestParameter("valor_tar") );
+		}
+
+		if( $this->getRequestParameter("valor_min") ){
+			$continuacion->setCaValorMin( $this->getRequestParameter("valor_min") );
+		}
+		
+		if( $this->getRequestParameter("idmoneda") ){
+			$continuacion->setCaIdMoneda( $this->getRequestParameter("idmoneda") );
+		}
+		
+		if( $this->getRequestParameter("frecuencia") ){
+			$continuacion->setCaFrecuencia( $this->getRequestParameter("frecuencia") );
+		}
+		
+		if( $this->getRequestParameter("ttransito") ){
+			$continuacion->setCaTiempoTransito( $this->getRequestParameter("ttransito") );
+		}
+		
+		if( $this->getRequestParameter("observaciones") ){
+			$continuacion->setCaObservaciones( $this->getRequestParameter("observaciones") );
+		}
+		
+		if( !$update ){ 
+			$continuacion->setCaFchcreado( time() );
+			$continuacion->setCaUsucreado( $user_id );
+		}else{
+			$continuacion->setCaFchactualizado( time() );
+			$continuacion->setCaUsuactualizado( $user_id );		
+		}
+
+		$continuacion->save();
+		return sfView::NONE;
+	}
+	
+	
+	/*
+	* Guarda los cambios realizados en la Plantilla Seguros  
+	* @author Carlos G. López M.
+	*/
+	public function executeObserveSegurosManagement(){
+		$user_id = $this->getUser()->getUserId();
+
+		if( $this->getRequestParameter( "oid" ) ) {
+			$c = new Criteria();
+			$c->add( CotSeguroPeer::OID , $this->getRequestParameter("oid") );
+			$seguro = CotSeguroPeer::doSelectOne( $c );
+			$this->forward404Unless( $seguro );
+		}else{
+			$seguro = new CotSeguro();
+			$seguro->setCaIdcotizacion( $this->getRequestParameter("cotizacionId") );	
+		}
+
+		if( $this->getRequestParameter("prima_tip") ){
+			$seguro->setCaPrimaTip($this->getRequestParameter("prima_tip"));
+		}
+
+		if( $this->getRequestParameter("prima_vlr") ){
+			$seguro->setCaPrimaVlr($this->getRequestParameter("prima_vlr"));
+		}
+
+		if( $this->getRequestParameter("prima_min") ){
+			$seguro->setCaPrimaMin($this->getRequestParameter("prima_min"));
+		}
+		
+		if( $this->getRequestParameter("obtencion") ){
+			$seguro->setCaObtencion($this->getRequestParameter("obtencion"));
+		}
+		
+		if( $this->getRequestParameter("idmoneda") ){
+			$seguro->setCaIdMoneda($this->getRequestParameter("idmoneda"));
+		}
+
+		if( $this->getRequestParameter("observaciones")){
+			$seguro->setCaObservaciones($this->getRequestParameter("observaciones"));
+		}
+
+		if( !$this->getRequestParameter( "oid" ) ){ 
+			$seguro->setCaFchcreado( time() );	
+			$seguro->setCaUsucreado( $user_id );			
+		}else{
+			$seguro->setCaFchactualizado( time() );	
+			$seguro->setCaUsuactualizado( $user_id );							
+		}
+		
+		$seguro->save();
+		return sfView::NONE;
+	}
 	
 	/**
 	* Permite consultar una cotizacion ya creada y permite 
@@ -312,7 +455,7 @@ class cotizacionesActions extends sfActions
 			$producto->setCaModalidad( $this->getRequestParameter("modalidad") );
 		}
 		$producto->save();	
-		return sfView::NONE;	
+		return sfView::NONE;
 	}
 
 	/*
@@ -335,6 +478,33 @@ class cotizacionesActions extends sfActions
 			$row = array("modalidad"=>$transporte->getCaValor());
 			$this->modalidades[]=$row;
 		}
+		$this->setLayout("ajax");
+	}
+
+	/*
+	* Datos de los conceptos según sea el medio de transporte y la modalidad
+	*/
+	public function executeDatosConceptos(){
+		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
+		$modalidad_parameter = utf8_decode($this->getRequestParameter("modalidad"));
+		
+		$c = new Criteria();
+		
+		$c->addSelectColumn(ConceptoPeer::CA_IDCONCEPTO );
+		$c->addSelectColumn(ConceptoPeer::CA_CONCEPTO );
+		
+		$c->add( ConceptoPeer::CA_TRANSPORTE, $transport_parameter );
+		$c->add( ConceptoPeer::CA_MODALIDAD, $modalidad_parameter );
+		
+		$rs = ConceptoPeer::doSelectRS( $c );
+
+		$this->conceptos = array();
+		
+		while ( $rs->next() ) {
+			$row = array('idconcepto'=>$rs->getString(1), 'concepto'=>utf8_encode($rs->getString(2)));
+			$this->conceptos[]=$row;
+		}
+
 		$this->setLayout("ajax");
 	}
 
