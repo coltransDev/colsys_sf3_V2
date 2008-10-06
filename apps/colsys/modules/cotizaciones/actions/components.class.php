@@ -43,64 +43,89 @@ class cotizacionesComponents extends sfComponents
 	
 	public function executeGrillaProductos(){
 		$id = $this->cotizacion->getCaIdcotizacion();
-		$c = new Criteria();
-
-		$c->addAlias('c_org', CiudadPeer::TABLE_NAME);
-		$c->addAlias('c_dst', CiudadPeer::TABLE_NAME);
-		$c->addAlias('t_org', TraficoPeer::TABLE_NAME);
-		$c->addAlias('t_dst', TraficoPeer::TABLE_NAME);
 		
-		$c->addSelectColumn(CotProductoPeer::CA_IDCOTIZACION );
-		$c->addSelectColumn(CotProductoPeer::CA_IDPRODUCTO );
-		$c->addSelectColumn(CotProductoPeer::CA_PRODUCTO );
-		$c->addSelectColumn(CotProductoPeer::CA_IMPOEXPO );
-		$c->addSelectColumn(CotProductoPeer::CA_TRANSPORTE );
-		$c->addSelectColumn(CotProductoPeer::CA_MODALIDAD );
-		$c->addSelectColumn(CotProductoPeer::CA_INCOTERMS );
-		$c->addSelectColumn(CotProductoPeer::CA_ORIGEN );
-		$c->addSelectColumn("c_org.ca_ciudad");
-		$c->addSelectColumn("t_org.ca_nombre");
-		$c->addSelectColumn(CotProductoPeer::CA_DESTINO );
-		$c->addSelectColumn("c_dst.ca_ciudad");
-		$c->addSelectColumn("t_dst.ca_nombre");
-		$c->addSelectColumn(CotProductoPeer::CA_FRECUENCIA );
-		$c->addSelectColumn(CotProductoPeer::CA_TIEMPOTRANSITO );
-		$c->addSelectColumn(CotProductoPeer::CA_OBSERVACIONES );
-		$c->addSelectColumn(CotProductoPeer::CA_IMPRIMIR );
-		
-		$c->addJoin( CotProductoPeer::CA_ORIGEN, "c_org.ca_idciudad", Criteria::LEFT_JOIN );
-		$c->addJoin( CotProductoPeer::CA_DESTINO, "c_dst.ca_idciudad", Criteria::LEFT_JOIN );
-
-		$c->addJoin( "c_org.ca_idtrafico", "t_org.ca_idtrafico", Criteria::LEFT_JOIN );
-		$c->addJoin( "c_dst.ca_idtrafico", "t_dst.ca_idtrafico", Criteria::LEFT_JOIN );
-		
+		$c = new Criteria();		
 		$c->add( CotProductoPeer::CA_IDCOTIZACION , $id );
-		
-		$rs = CotProductoPeer::doSelectRS( $c );
-		
+		$cotProductos = CotProductoPeer::doSelect($c);
+				
 		$this->productos = array();
-		
-   		while ( $rs->next() ) {
-      		$this->productos[] = array(	'idcotizacion'=>$rs->getString(1),
-      									'idproducto'=>$rs->getString(2),
-										'producto'=>$rs->getString(3),
-      									'trayecto'=>utf8_encode($rs->getString(5))." [".utf8_encode($rs->getString(10))." - ".utf8_encode($rs->getString(9)." » ").utf8_encode($rs->getString(12))." - ".utf8_encode($rs->getString(13))."] ",
-      									'impoexpo'=>utf8_encode($rs->getString(4)),
-										'transporte'=>utf8_encode($rs->getString(5)),
-										'modalidad'=>$rs->getString(6),
-										'incoterms'=>$rs->getString(7),      		
-										'origen'=>$rs->getString(8),
-										'ciuorigen'=>utf8_encode($rs->getString(9)),
-      									'traorigen'=>utf8_encode($rs->getString(10)),
-      									'destino'=>$rs->getString(11),
-      									'ciudestino'=>utf8_encode($rs->getString(12)),
-      									'tradestino'=>utf8_encode($rs->getString(13)),
-										'frecuencia'=>utf8_encode($rs->getString(14)),
-										'ttransito'=>utf8_encode($rs->getString(15)),
-										'observaciones'=>utf8_encode($rs->getString(16)),
-										'imprimir'=>$rs->getString(17)
-      		);
-		}		
+		foreach( $cotProductos as $producto ){
+			$trayecto = " [".utf8_encode($producto->getCaOrigen())." - ".utf8_encode($producto->getCaOrigen()." » ").utf8_encode($producto->getCaDestino())." - ".utf8_encode($producto->getCaDestino())."] ";
+			
+			//Se envian las opciones existentes
+			$c = new Criteria();
+			$c->add( CotOpcionPeer::CA_IDPRODUCTO, $producto->getCaIdProducto() );
+			$opciones = $producto->getCotOpciones( $c );
+			foreach( $opciones as $opcion ){
+				$concepto = $opcion->getConcepto();
+				$this->productos[] = array('id'=>"",
+						 'trayecto'=>$trayecto,
+						 'idopcion'=>$opcion->getCaIdOpcion(),
+						 'iditem'=>$opcion->getCaIdConcepto(),
+						 'item'=>$concepto->getCaConcepto(),
+						 'idproducto'=>$producto->getCaIdProducto(),
+						 'producto'=>$producto->getCaProducto(),
+						 'idcotizacion'=>$producto->getCaIdCotizacion(),			 
+						 'valor_tar'=>$opcion->getCaValorTar(),
+						 'aplica_tar'=>$opcion->getCaAplicaTar(),
+						 'valor_min'=>$opcion->getCaValorMin(),
+						 'aplica_min'=>$opcion->getCaAplicaMin(),
+						 'idmoneda'=>$opcion->getCaIdmoneda(),
+						 'detalles'=>$opcion->getCaObservaciones(),
+						 'transporte'=>utf8_encode($producto->getCaTransporte()),
+						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
+						 'tipo'=>"concepto"
+					);
+					 				 
+				 //Se muestran los recargos 
+				$recargos = $opcion->getCotRecargos();
+				foreach( $recargos as $recargo ){
+					$tipoRecargo = $recargo->getTipoRecargo();
+					$this->productos[] = array('id'=>"",
+						 'trayecto'=>$trayecto,
+						 'idopcion'=>$opcion->getCaIdOpcion(),
+						 'iditem'=>$tipoRecargo->getCaIdRecargo(),
+						 'item'=>$tipoRecargo->getCaRecargo() ,
+						 'idproducto'=>$producto->getCaIdProducto(),
+						 'producto'=>$producto->getCaProducto(),
+						 'idcotizacion'=>$producto->getCaIdCotizacion(),			 
+						 'idconcepto'=>$recargo->getCaIdConcepto(),
+						 'valor_tar'=>$recargo->getCaValorTar(),
+						 'aplica_tar'=>$recargo->getCaAplicaTar(),
+						 'valor_min'=>$recargo->getCaValorMin(),
+						 'aplica_min'=>$recargo->getCaAplicaMin(),
+						 'idmoneda'=>$recargo->getCaIdmoneda(),
+						 'detalles'=>$recargo->getCaObservaciones(),
+						 'transporte'=>utf8_encode($producto->getCaTransporte()),
+						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
+						 'tipo'=>"recargo"
+					);
+				}
+				 
+			}
+			
+			
+			//Se envia una fila vacia por cada grupo para agregar una nueva opción  
+			$row = array('id'=>"",
+						 'trayecto'=>$trayecto,						 
+						 'iditem'=>"",
+						 'item'=>"",
+						 'idproducto'=>$producto->getCaIdProducto(),
+						 'producto'=>$producto->getCaProducto(),
+						 'idcotizacion'=>$producto->getCaIdCotizacion(),	
+						 'valor_tar'=>"",
+						 'aplica_tar'=>"",
+						 'valor_min'=>"",
+						 'aplica_min'=>"",
+						 'idmoneda'=>"",
+						 'detalles'=>"",
+						 'transporte'=>utf8_encode($producto->getCaTransporte()),
+						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
+						 'tipo'=>"concepto",
+						 
+						); 
+			$this->productos[] = $row; 
+		}				
 	}
 
 	public function executeGrillaRecargos(){
