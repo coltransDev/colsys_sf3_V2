@@ -27,17 +27,6 @@ var recordGrilla = Ext.data.Record.create([
 /*
 * Crea el store
 */
-<?
-$url ="cotizaciones/asd";
-/*$url = "pricing/pagerData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
-if( $idlinea ){
-	$url .= "&idlinea=".$idlinea;
-}
-if( $idciudad ){
-	$url .= "&idciudad=".$idciudad;
-}*/
-
-?>
 var storerecargos = new Ext.data.GroupingStore({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
@@ -115,7 +104,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Mínimo",
 			width: 100,
 			sortable: true,
-			dataIndex: 'valor_tar',
+			dataIndex: 'valor_min',
 			hideable: false 
 		},
 		{
@@ -269,6 +258,60 @@ var actualizarObservaciones=function( btn, text ){
 }	
 
 function updateModel(){
+	var success = true;
+	var records = grid_recargos.store.getModifiedRecords();
+	alert( records.length );		
+	var lenght = records.length;
+	for( var i=0; i< lenght; i++){
+		r = records[i];
+					
+		var changes = r.getChanges();
+		
+		//Da formato a las fechas antes de enviarlas 
+		if(changes['inicio']){
+			changes['inicio']=Ext.util.Format.date(changes['inicio'],'Y-m-d');									
+		}	
+		
+		if(changes['vencimiento']){			changes['vencimiento']=Ext.util.Format.date(changes['vencimiento'],'Y-m-d');									
+		}	
+				
+		//Si es un recargo y lo envia como parametro
+		if(r.data.recargo_id){
+			changes['recargo_id']=r.data.recargo_id;
+			changes['concepto_id']=r.data.concepto_id;									
+		}
+												
+		//envia los datos al servidor 
+		Ext.Ajax.request( 
+			{   
+				waitMsg: 'Guardando cambios...',						
+				url: '<?=url_for("cotizaciones/observeItemsOpciones")?>',
+				//method: 'POST', 
+				//Solamente se envian los cambios 						
+				params :	changes,
+										
+				//Ejecuta esta accion en caso de fallo
+				//(404 error etc, ***NOT*** success=false)
+				failure:function(response,options){							
+					alert( response.responseText );						
+					success = false;
+				},
+				//Ejecuta esta accion cuando el resultado es exitoso
+				success:function(response,options){							
+					//alert( response.responseText );						
+					//r.commit();
+				}
+			 }
+		); 
+		//r.set("sel", false);//Quita la seleccion de todas las columnas 
+	}
+	
+	if( success ){
+		storerecargos.commitChanges();
+		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
+	}else{
+		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
+	}	
 }
 
 
