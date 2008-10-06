@@ -279,7 +279,7 @@ var productoHandler = function(){
 	                ,<?=extImpoExpo()?>
 					,<?=extIncoterms()?>
 					,<?=extTransporte()?>
-					<? //extModalidad()?>
+					,<?=extModalidad()?>
 					,<?=extTraficos("origen")?>
 					,<?=extTraficos("destino")?>
 					,{
@@ -508,7 +508,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 	},
 	{
 		text: 'Agregar producto',
-		tooltip: '...', 
+		tooltip: '...',
 		iconCls:'add',  // reference to our css
 		handler: productoHandler
 	}
