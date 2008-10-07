@@ -360,13 +360,13 @@ var grid_recargos = new Ext.grid.EditorGridPanel({
 	{
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en Recargos en Origen',
-		iconCls:'disk',  // reference to our css
+		iconCls: 'disk',  // reference to our css
 		handler: updateRecargosModel
 	},
 	{
 		text: 'Agregar Recargo',
 		tooltip: 'Opción para Crear un recargo nuevo',
-		iconCls:'disk',  // reference to our css
+		iconCls: 'add',  // reference to our css
 		handler: recargoHandler
 	}
 	],

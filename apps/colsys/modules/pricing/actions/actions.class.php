@@ -468,9 +468,11 @@ class pricingActions extends sfActions
 	public function executeDatosRecargos(){
 	
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
+		$tipo = utf8_decode($this->getRequestParameter("tipo"));
 		
 		$c = new Criteria();
 		$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte );
+		$c->add( TipoRecargoPeer::CA_TIPO, $tipo );
 		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
 		//$c->setLimit(3);
 		$recargos = TipoRecargoPeer::doSelect( $c );

@@ -519,13 +519,13 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 	{
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el tarifario',
-		iconCls:'disk',  // reference to our css
+		iconCls: 'disk',  // reference to our css
 		handler: guardarGridProductos
 	},
 	{
 		text: 'Agregar producto',
-		tooltip: '...',
-		iconCls:'add',  // reference to our css
+		tooltip: 'Agregar un nuevo producto a la Cotización',
+		iconCls: 'add',  // reference to our css
 		handler: productoHandler
 	}
 	

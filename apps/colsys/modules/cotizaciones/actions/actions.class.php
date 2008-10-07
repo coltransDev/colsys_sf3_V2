@@ -113,6 +113,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeFormCotizacionGuardar(){
 		$user_id = $this->getUser()->getUserId();
+
 		if( $this->getRequestParameter("cotizacionId") ){
 			$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("cotizacionId") );
 			$this->forward404Unless( $cotizacion );
@@ -123,11 +124,11 @@ class cotizacionesActions extends sfActions
 		}
 		$cotizacion->setCaFchCotizacion( $this->getRequestParameter( "fchCotizacion" ) );
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
-		$cotizacion->setCaAsunto( $this->getRequestParameter( "asunto" ) );
-		$cotizacion->setCaSaludo( $this->getRequestParameter( "saludo" ) );
-		$cotizacion->setCaEntrada( $this->getRequestParameter( "entrada" ) );
-		$cotizacion->setCaDespedida( $this->getRequestParameter( "despedida" ) );
-		$cotizacion->setCaAnexos( $this->getRequestParameter( "anexos" ) );
+		$cotizacion->setCaAsunto( utf8_encode($this->getRequestParameter( "asunto" )) );
+		$cotizacion->setCaSaludo( utf8_decode($this->getRequestParameter( "saludo" )) );
+		$cotizacion->setCaEntrada( utf8_decode($this->getRequestParameter( "entrada" )) );
+		$cotizacion->setCaDespedida( utf8_decode($this->getRequestParameter( "despedida" )) );
+		$cotizacion->setCaAnexos( utf8_decode($this->getRequestParameter( "anexos" )) );
 		$cotizacion->setCaUsuario( $this->getRequestParameter( "usuario" ) );
 		$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
 		$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
@@ -141,7 +142,7 @@ class cotizacionesActions extends sfActions
 		$cotizacion->save();
 		exit;	
 	}
-	
+		
 	/*
 	* Guarda los cambios realizados a Productos  
 	* @author Carlos G. López M.
@@ -183,45 +184,6 @@ class cotizacionesActions extends sfActions
 	}
 	
 
-	/*
-	* Guarda los cambios realizados  
-	* @author Carlos G. López M.
-	*/
-	public function executeObserveEncabezadoCotizacion(){
-		$user_id = $this->getUser()->getUserId();
-		
-		if( $this->getRequestParameter("cotizacionId") ){
-			$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("cotizacionId") );
-			$this->forward404Unless( $cotizacion );
-		}else{		
-			$cotizacion = new Cotizacion();
-			$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
-			$cotizacion->setCaConsecutivo( $sig ); 
-		}
-		$cotizacion->setCaFchCotizacion( $this->getRequestParameter( "fchCotizacion" ) );
-		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
-		$cotizacion->setCaAsunto( $this->getRequestParameter( "asunto" ) );
-		$cotizacion->setCaSaludo( $this->getRequestParameter( "saludo" ) );
-		$cotizacion->setCaEntrada( $this->getRequestParameter( "entrada" ) );
-		$cotizacion->setCaDespedida( $this->getRequestParameter( "despedida" ) );
-		$cotizacion->setCaAnexos( $this->getRequestParameter( "anexos" ) );
-		$cotizacion->setCaUsuario( $this->getRequestParameter( "login" ) );
-		$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
-		$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
-		if( !$cotizacion->getCaIdCotizacion() ){ 
-			$cotizacion->setCaFchcreado( time() );	
-			$cotizacion->setCaUsucreado( $user_id );			
-		}else{
-			$cotizacion->setCaFchactualizado( time() );	
-			$cotizacion->setCaUsuactualizado( $user_id );							
-		}
-		$cotizacion->save();
-		
-		$this->redirect( "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaidcotizacion()."&token=".md5(time()) );		
-		exit;	
-	}
-
-	
 	/*
 	* Guarda los cambios realizados a Recargos  
 	* @author Carlos G. López M.
@@ -486,7 +448,6 @@ class cotizacionesActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeObserveItemsOpciones(){
-		
 		$idcotizacion = $this->getRequestParameter("idcotizacion");
 		$idproducto = $this->getRequestParameter("idproducto");
 		$idcotizacion = $this->getRequestParameter("idcotizacion");

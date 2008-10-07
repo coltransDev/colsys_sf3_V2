@@ -1,1 +1,0 @@
-<h3> El encabezado de la cotización de almacenado correctamente.</h3>

@@ -461,7 +461,6 @@ function agregarFila(ctxRecord, index){
 	records = [];
 	records.push( rec );
 	store.insert( index+1, records );
-	
 }
 		
 /*
@@ -485,7 +484,7 @@ new Ext.grid.EditorGridPanel({
 	{
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el tarifario',
-		iconCls:'disk',  // reference to our css
+		iconCls: 'disk',  // reference to our css
 		handler: updateModel
 	}],
 	

@@ -236,12 +236,13 @@ var grid_seguros = new Ext.grid.EditorGridPanel({
 	{
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en Seguros',
-		iconCls:'disk',  // reference to our css
+		iconCls: 'disk',  // reference to our css
 		handler: updateSeguroModel
 	},
 	{
 		text: 'Agregar Seguro',
-		tooltip: '...',
+		tooltip: 'Opción para agregar opciones de Seguro',
+		iconCls: 'add',  // reference to our css
 		scope:this,
 		handler: function(){
 			agregarFila();

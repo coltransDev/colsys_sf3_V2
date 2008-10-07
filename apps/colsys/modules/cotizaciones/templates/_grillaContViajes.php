@@ -461,13 +461,13 @@ var grid_contviajes = new Ext.grid.EditorGridPanel({
 	{
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el Continuación de Viaje',
-		iconCls:'disk',  // reference to our css
+		iconCls: 'disk',  // reference to our css
 		handler: updateContViajeModel
 	},
 	{
 		text: 'Agregar Concepto',
-		tooltip: '...',
-		iconCls:'disk',  // reference to our css
+		tooltip: 'Agregar un Concepto de OTM o DTA',
+		iconCls: 'add',  // reference to our css
 		handler: contviajeHandler
 	}
 	
