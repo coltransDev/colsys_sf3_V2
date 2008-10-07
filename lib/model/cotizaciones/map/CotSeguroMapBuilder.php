@@ -61,11 +61,15 @@ class CotSeguroMapBuilder {
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int' , CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', true, null);
+		$tMap->addForeignKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int', CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', true, null);
 
 		$tMap->addForeignKey('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, 'tb_monedas', 'CA_IDMONEDA', true, null);
 
-		$tMap->addColumn('CA_PRIMA', 'CaPrima', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PRIMA_TIP', 'CaPrimaTip', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_PRIMA_VLR', 'CaPrimaVlr', 'double', CreoleTypes::NUMERIC, false, null);
+
+		$tMap->addColumn('CA_PRIMA_MIN', 'CaPrimaMin', 'double', CreoleTypes::NUMERIC, false, null);
 
 		$tMap->addColumn('CA_OBTENCION', 'CaObtencion', 'string', CreoleTypes::VARCHAR, false, null);
 
@@ -78,6 +82,8 @@ class CotSeguroMapBuilder {
 		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::TIMESTAMP, false, null);
 
 		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addPrimaryKey('OID', 'Oid', 'string', CreoleTypes::VARCHAR, true, null);
 
 	} // doBuild()
 

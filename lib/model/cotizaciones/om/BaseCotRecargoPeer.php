@@ -1015,6 +1015,9 @@ abstract class BaseCotRecargoPeer {
 			$comparison = $criteria->getComparison(CotRecargoPeer::CA_IDRECARGO);
 			$selectCriteria->add(CotRecargoPeer::CA_IDRECARGO, $criteria->remove(CotRecargoPeer::CA_IDRECARGO), $comparison);
 
+			$comparison = $criteria->getComparison(CotRecargoPeer::CA_MODALIDAD);
+			$selectCriteria->add(CotRecargoPeer::CA_MODALIDAD, $criteria->remove(CotRecargoPeer::CA_MODALIDAD), $comparison);
+
 		} else { // $values is CotRecargo object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -1092,6 +1095,7 @@ abstract class BaseCotRecargoPeer {
 				$vals[2][] = $value[2];
 				$vals[3][] = $value[3];
 				$vals[4][] = $value[4];
+				$vals[5][] = $value[5];
 			}
 
 			$criteria->add(CotRecargoPeer::CA_IDCOTIZACION, $vals[0], Criteria::IN);
@@ -1099,6 +1103,7 @@ abstract class BaseCotRecargoPeer {
 			$criteria->add(CotRecargoPeer::CA_IDOPCION, $vals[2], Criteria::IN);
 			$criteria->add(CotRecargoPeer::CA_IDCONCEPTO, $vals[3], Criteria::IN);
 			$criteria->add(CotRecargoPeer::CA_IDRECARGO, $vals[4], Criteria::IN);
+			$criteria->add(CotRecargoPeer::CA_MODALIDAD, $vals[5], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -1173,11 +1178,12 @@ abstract class BaseCotRecargoPeer {
 	   @param int $ca_idopcion
 	   @param int $ca_idconcepto
 	   @param int $ca_idrecargo
+	   @param string $ca_modalidad
 	   
 	 * @param      Connection $con
 	 * @return     CotRecargo
 	 */
-	public static function retrieveByPK( $ca_idcotizacion, $ca_idproducto, $ca_idopcion, $ca_idconcepto, $ca_idrecargo, $con = null) {
+	public static function retrieveByPK( $ca_idcotizacion, $ca_idproducto, $ca_idopcion, $ca_idconcepto, $ca_idrecargo, $ca_modalidad, $con = null) {
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
@@ -1187,6 +1193,7 @@ abstract class BaseCotRecargoPeer {
 		$criteria->add(CotRecargoPeer::CA_IDOPCION, $ca_idopcion);
 		$criteria->add(CotRecargoPeer::CA_IDCONCEPTO, $ca_idconcepto);
 		$criteria->add(CotRecargoPeer::CA_IDRECARGO, $ca_idrecargo);
+		$criteria->add(CotRecargoPeer::CA_MODALIDAD, $ca_modalidad);
 		$v = CotRecargoPeer::doSelect($criteria, $con);
 
 		return !empty($v) ? $v[0] : null;

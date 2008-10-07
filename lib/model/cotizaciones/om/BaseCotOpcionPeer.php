@@ -19,11 +19,14 @@ abstract class BaseCotOpcionPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotOpcion';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 12;
+	const NUM_COLUMNS = 17;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
+
+	/** the column name for the CA_IDCOTIZACION field */
+	const CA_IDCOTIZACION = 'tb_cotopciones.CA_IDCOTIZACION';
 
 	/** the column name for the CA_IDOPCION field */
 	const CA_IDOPCION = 'tb_cotopciones.CA_IDOPCION';
@@ -33,6 +36,18 @@ abstract class BaseCotOpcionPeer {
 
 	/** the column name for the CA_IDCONCEPTO field */
 	const CA_IDCONCEPTO = 'tb_cotopciones.CA_IDCONCEPTO';
+
+	/** the column name for the CA_VALOR_TAR field */
+	const CA_VALOR_TAR = 'tb_cotopciones.CA_VALOR_TAR';
+
+	/** the column name for the CA_APLICA_TAR field */
+	const CA_APLICA_TAR = 'tb_cotopciones.CA_APLICA_TAR';
+
+	/** the column name for the CA_VALOR_MIN field */
+	const CA_VALOR_MIN = 'tb_cotopciones.CA_VALOR_MIN';
+
+	/** the column name for the CA_APLICA_MIN field */
+	const CA_APLICA_MIN = 'tb_cotopciones.CA_APLICA_MIN';
 
 	/** the column name for the CA_IDMONEDA field */
 	const CA_IDMONEDA = 'tb_cotopciones.CA_IDMONEDA';
@@ -72,10 +87,10 @@ abstract class BaseCotOpcionPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdopcion', 'CaIdproducto', 'CaIdconcepto', 'CaIdmoneda', 'CaTarifa', 'CaOferta', 'CaRecargos', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
-		BasePeer::TYPE_COLNAME => array (CotOpcionPeer::CA_IDOPCION, CotOpcionPeer::CA_IDPRODUCTO, CotOpcionPeer::CA_IDCONCEPTO, CotOpcionPeer::CA_IDMONEDA, CotOpcionPeer::CA_TARIFA, CotOpcionPeer::CA_OFERTA, CotOpcionPeer::CA_RECARGOS, CotOpcionPeer::CA_OBSERVACIONES, CotOpcionPeer::CA_FCHCREADO, CotOpcionPeer::CA_USUCREADO, CotOpcionPeer::CA_FCHACTUALIZADO, CotOpcionPeer::CA_USUACTUALIZADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idopcion', 'ca_idproducto', 'ca_idconcepto', 'ca_idmoneda', 'ca_tarifa', 'ca_oferta', 'ca_recargos', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdopcion', 'CaIdproducto', 'CaIdconcepto', 'CaValorTar', 'CaAplicaTar', 'CaValorMin', 'CaAplicaMin', 'CaIdmoneda', 'CaTarifa', 'CaOferta', 'CaRecargos', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
+		BasePeer::TYPE_COLNAME => array (CotOpcionPeer::CA_IDCOTIZACION, CotOpcionPeer::CA_IDOPCION, CotOpcionPeer::CA_IDPRODUCTO, CotOpcionPeer::CA_IDCONCEPTO, CotOpcionPeer::CA_VALOR_TAR, CotOpcionPeer::CA_APLICA_TAR, CotOpcionPeer::CA_VALOR_MIN, CotOpcionPeer::CA_APLICA_MIN, CotOpcionPeer::CA_IDMONEDA, CotOpcionPeer::CA_TARIFA, CotOpcionPeer::CA_OFERTA, CotOpcionPeer::CA_RECARGOS, CotOpcionPeer::CA_OBSERVACIONES, CotOpcionPeer::CA_FCHCREADO, CotOpcionPeer::CA_USUCREADO, CotOpcionPeer::CA_FCHACTUALIZADO, CotOpcionPeer::CA_USUACTUALIZADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idopcion', 'ca_idproducto', 'ca_idconcepto', 'ca_valor_tar', 'ca_aplica_tar', 'ca_valor_min', 'ca_aplica_min', 'ca_idmoneda', 'ca_tarifa', 'ca_oferta', 'ca_recargos', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
 	);
 
 	/**
@@ -85,10 +100,10 @@ abstract class BaseCotOpcionPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdopcion' => 0, 'CaIdproducto' => 1, 'CaIdconcepto' => 2, 'CaIdmoneda' => 3, 'CaTarifa' => 4, 'CaOferta' => 5, 'CaRecargos' => 6, 'CaObservaciones' => 7, 'CaFchcreado' => 8, 'CaUsucreado' => 9, 'CaFchactualizado' => 10, 'CaUsuactualizado' => 11, ),
-		BasePeer::TYPE_COLNAME => array (CotOpcionPeer::CA_IDOPCION => 0, CotOpcionPeer::CA_IDPRODUCTO => 1, CotOpcionPeer::CA_IDCONCEPTO => 2, CotOpcionPeer::CA_IDMONEDA => 3, CotOpcionPeer::CA_TARIFA => 4, CotOpcionPeer::CA_OFERTA => 5, CotOpcionPeer::CA_RECARGOS => 6, CotOpcionPeer::CA_OBSERVACIONES => 7, CotOpcionPeer::CA_FCHCREADO => 8, CotOpcionPeer::CA_USUCREADO => 9, CotOpcionPeer::CA_FCHACTUALIZADO => 10, CotOpcionPeer::CA_USUACTUALIZADO => 11, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idopcion' => 0, 'ca_idproducto' => 1, 'ca_idconcepto' => 2, 'ca_idmoneda' => 3, 'ca_tarifa' => 4, 'ca_oferta' => 5, 'ca_recargos' => 6, 'ca_observaciones' => 7, 'ca_fchcreado' => 8, 'ca_usucreado' => 9, 'ca_fchactualizado' => 10, 'ca_usuactualizado' => 11, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdopcion' => 1, 'CaIdproducto' => 2, 'CaIdconcepto' => 3, 'CaValorTar' => 4, 'CaAplicaTar' => 5, 'CaValorMin' => 6, 'CaAplicaMin' => 7, 'CaIdmoneda' => 8, 'CaTarifa' => 9, 'CaOferta' => 10, 'CaRecargos' => 11, 'CaObservaciones' => 12, 'CaFchcreado' => 13, 'CaUsucreado' => 14, 'CaFchactualizado' => 15, 'CaUsuactualizado' => 16, ),
+		BasePeer::TYPE_COLNAME => array (CotOpcionPeer::CA_IDCOTIZACION => 0, CotOpcionPeer::CA_IDOPCION => 1, CotOpcionPeer::CA_IDPRODUCTO => 2, CotOpcionPeer::CA_IDCONCEPTO => 3, CotOpcionPeer::CA_VALOR_TAR => 4, CotOpcionPeer::CA_APLICA_TAR => 5, CotOpcionPeer::CA_VALOR_MIN => 6, CotOpcionPeer::CA_APLICA_MIN => 7, CotOpcionPeer::CA_IDMONEDA => 8, CotOpcionPeer::CA_TARIFA => 9, CotOpcionPeer::CA_OFERTA => 10, CotOpcionPeer::CA_RECARGOS => 11, CotOpcionPeer::CA_OBSERVACIONES => 12, CotOpcionPeer::CA_FCHCREADO => 13, CotOpcionPeer::CA_USUCREADO => 14, CotOpcionPeer::CA_FCHACTUALIZADO => 15, CotOpcionPeer::CA_USUACTUALIZADO => 16, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idopcion' => 1, 'ca_idproducto' => 2, 'ca_idconcepto' => 3, 'ca_valor_tar' => 4, 'ca_aplica_tar' => 5, 'ca_valor_min' => 6, 'ca_aplica_min' => 7, 'ca_idmoneda' => 8, 'ca_tarifa' => 9, 'ca_oferta' => 10, 'ca_recargos' => 11, 'ca_observaciones' => 12, 'ca_fchcreado' => 13, 'ca_usucreado' => 14, 'ca_fchactualizado' => 15, 'ca_usuactualizado' => 16, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
 	);
 
 	/**
@@ -188,11 +203,21 @@ abstract class BaseCotOpcionPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
+		$criteria->addSelectColumn(CotOpcionPeer::CA_IDCOTIZACION);
+
 		$criteria->addSelectColumn(CotOpcionPeer::CA_IDOPCION);
 
 		$criteria->addSelectColumn(CotOpcionPeer::CA_IDPRODUCTO);
 
 		$criteria->addSelectColumn(CotOpcionPeer::CA_IDCONCEPTO);
+
+		$criteria->addSelectColumn(CotOpcionPeer::CA_VALOR_TAR);
+
+		$criteria->addSelectColumn(CotOpcionPeer::CA_APLICA_TAR);
+
+		$criteria->addSelectColumn(CotOpcionPeer::CA_VALOR_MIN);
+
+		$criteria->addSelectColumn(CotOpcionPeer::CA_APLICA_MIN);
 
 		$criteria->addSelectColumn(CotOpcionPeer::CA_IDMONEDA);
 
@@ -214,8 +239,8 @@ abstract class BaseCotOpcionPeer {
 
 	}
 
-	const COUNT = 'COUNT(tb_cotopciones.CA_IDOPCION)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotopciones.CA_IDOPCION)';
+	const COUNT = 'COUNT(tb_cotopciones.CA_IDCOTIZACION)';
+	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotopciones.CA_IDCOTIZACION)';
 
 	/**
 	 * Returns the number of rows matching criteria.
@@ -368,6 +393,8 @@ abstract class BaseCotOpcionPeer {
 			$criteria->addSelectColumn($column);
 		}
 
+		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
+
 		$criteria->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
 
 		$rs = CotOpcionPeer::doSelectRS($criteria, $con);
@@ -439,6 +466,7 @@ abstract class BaseCotOpcionPeer {
 		$startcol = (CotOpcionPeer::NUM_COLUMNS - CotOpcionPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
 		CotProductoPeer::addSelectColumns($c);
 
+		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 		$c->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -561,6 +589,8 @@ abstract class BaseCotOpcionPeer {
 			$criteria->addSelectColumn($column);
 		}
 
+		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
+
 		$criteria->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
 
 		$criteria->addJoin(CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
@@ -599,6 +629,8 @@ abstract class BaseCotOpcionPeer {
 
 		ConceptoPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + ConceptoPeer::NUM_COLUMNS;
+
+		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 
 		$c->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
 
@@ -740,6 +772,8 @@ abstract class BaseCotOpcionPeer {
 			$criteria->addSelectColumn($column);
 		}
 
+		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
+
 		$criteria->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
 
 		$rs = CotOpcionPeer::doSelectRS($criteria, $con);
@@ -842,6 +876,8 @@ abstract class BaseCotOpcionPeer {
 
 		CotProductoPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + CotProductoPeer::NUM_COLUMNS;
+
+		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 
 		$c->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
 
@@ -977,6 +1013,9 @@ abstract class BaseCotOpcionPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
+			$comparison = $criteria->getComparison(CotOpcionPeer::CA_IDCOTIZACION);
+			$selectCriteria->add(CotOpcionPeer::CA_IDCOTIZACION, $criteria->remove(CotOpcionPeer::CA_IDCOTIZACION), $comparison);
+
 			$comparison = $criteria->getComparison(CotOpcionPeer::CA_IDOPCION);
 			$selectCriteria->add(CotOpcionPeer::CA_IDOPCION, $criteria->remove(CotOpcionPeer::CA_IDOPCION), $comparison);
 
@@ -1040,7 +1079,24 @@ abstract class BaseCotOpcionPeer {
 		} else {
 			// it must be the primary key
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(CotOpcionPeer::CA_IDOPCION, (array) $values, Criteria::IN);
+			// primary key is composite; we therefore, expect
+			// the primary key passed to be an array of pkey
+			// values
+			if(count($values) == count($values, COUNT_RECURSIVE))
+			{
+				// array is not multi-dimensional
+				$values = array($values);
+			}
+			$vals = array();
+			foreach($values as $value)
+			{
+
+				$vals[0][] = $value[0];
+				$vals[1][] = $value[1];
+			}
+
+			$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $vals[0], Criteria::IN);
+			$criteria->add(CotOpcionPeer::CA_IDOPCION, $vals[1], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -1109,53 +1165,24 @@ abstract class BaseCotOpcionPeer {
 	}
 
 	/**
-	 * Retrieve a single object by pkey.
-	 *
-	 * @param      mixed $pk the primary key.
-	 * @param      Connection $con the connection to use
+	 * Retrieve object using using composite pkey values.
+	 * @param int $ca_idcotizacion
+	   @param string $ca_idopcion
+	   
+	 * @param      Connection $con
 	 * @return     CotOpcion
 	 */
-	public static function retrieveByPK($pk, $con = null)
-	{
+	public static function retrieveByPK( $ca_idcotizacion, $ca_idopcion, $con = null) {
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
-
-		$criteria = new Criteria(CotOpcionPeer::DATABASE_NAME);
-
-		$criteria->add(CotOpcionPeer::CA_IDOPCION, $pk);
-
-
+		$criteria = new Criteria();
+		$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $ca_idcotizacion);
+		$criteria->add(CotOpcionPeer::CA_IDOPCION, $ca_idopcion);
 		$v = CotOpcionPeer::doSelect($criteria, $con);
 
-		return !empty($v) > 0 ? $v[0] : null;
+		return !empty($v) ? $v[0] : null;
 	}
-
-	/**
-	 * Retrieve multiple objects by pkey.
-	 *
-	 * @param      array $pks List of primary keys
-	 * @param      Connection $con the connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function retrieveByPKs($pks, $con = null)
-	{
-		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
-		}
-
-		$objs = null;
-		if (empty($pks)) {
-			$objs = array();
-		} else {
-			$criteria = new Criteria();
-			$criteria->add(CotOpcionPeer::CA_IDOPCION, $pks, Criteria::IN);
-			$objs = CotOpcionPeer::doSelect($criteria, $con);
-		}
-		return $objs;
-	}
-
 } // BaseCotOpcionPeer
 
 // static code to register the map builder for this Peer with the main Propel class

@@ -19,7 +19,7 @@ abstract class BaseCotContinuacionPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotContinuacion';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 16;
+	const NUM_COLUMNS = 18;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -51,6 +51,12 @@ abstract class BaseCotContinuacionPeer {
 
 	/** the column name for the CA_TARIFA field */
 	const CA_TARIFA = 'tb_cotcontinuacion.CA_TARIFA';
+
+	/** the column name for the CA_VALOR_TAR field */
+	const CA_VALOR_TAR = 'tb_cotcontinuacion.CA_VALOR_TAR';
+
+	/** the column name for the CA_VALOR_MIN field */
+	const CA_VALOR_MIN = 'tb_cotcontinuacion.CA_VALOR_MIN';
 
 	/** the column name for the CA_FRECUENCIA field */
 	const CA_FRECUENCIA = 'tb_cotcontinuacion.CA_FRECUENCIA';
@@ -84,10 +90,10 @@ abstract class BaseCotContinuacionPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaTipo', 'CaModalidad', 'CaOrigen', 'CaDestino', 'CaIdconcepto', 'CaIdmoneda', 'CaIdequipo', 'CaTarifa', 'CaFrecuencia', 'CaTiempotransito', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
-		BasePeer::TYPE_COLNAME => array (CotContinuacionPeer::CA_IDCOTIZACION, CotContinuacionPeer::CA_TIPO, CotContinuacionPeer::CA_MODALIDAD, CotContinuacionPeer::CA_ORIGEN, CotContinuacionPeer::CA_DESTINO, CotContinuacionPeer::CA_IDCONCEPTO, CotContinuacionPeer::CA_IDMONEDA, CotContinuacionPeer::CA_IDEQUIPO, CotContinuacionPeer::CA_TARIFA, CotContinuacionPeer::CA_FRECUENCIA, CotContinuacionPeer::CA_TIEMPOTRANSITO, CotContinuacionPeer::CA_OBSERVACIONES, CotContinuacionPeer::CA_FCHCREADO, CotContinuacionPeer::CA_USUCREADO, CotContinuacionPeer::CA_FCHACTUALIZADO, CotContinuacionPeer::CA_USUACTUALIZADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_tipo', 'ca_modalidad', 'ca_origen', 'ca_destino', 'ca_idconcepto', 'ca_idmoneda', 'ca_idequipo', 'ca_tarifa', 'ca_frecuencia', 'ca_tiempotransito', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaTipo', 'CaModalidad', 'CaOrigen', 'CaDestino', 'CaIdconcepto', 'CaIdmoneda', 'CaIdequipo', 'CaTarifa', 'CaValorTar', 'CaValorMin', 'CaFrecuencia', 'CaTiempotransito', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
+		BasePeer::TYPE_COLNAME => array (CotContinuacionPeer::CA_IDCOTIZACION, CotContinuacionPeer::CA_TIPO, CotContinuacionPeer::CA_MODALIDAD, CotContinuacionPeer::CA_ORIGEN, CotContinuacionPeer::CA_DESTINO, CotContinuacionPeer::CA_IDCONCEPTO, CotContinuacionPeer::CA_IDMONEDA, CotContinuacionPeer::CA_IDEQUIPO, CotContinuacionPeer::CA_TARIFA, CotContinuacionPeer::CA_VALOR_TAR, CotContinuacionPeer::CA_VALOR_MIN, CotContinuacionPeer::CA_FRECUENCIA, CotContinuacionPeer::CA_TIEMPOTRANSITO, CotContinuacionPeer::CA_OBSERVACIONES, CotContinuacionPeer::CA_FCHCREADO, CotContinuacionPeer::CA_USUCREADO, CotContinuacionPeer::CA_FCHACTUALIZADO, CotContinuacionPeer::CA_USUACTUALIZADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_tipo', 'ca_modalidad', 'ca_origen', 'ca_destino', 'ca_idconcepto', 'ca_idmoneda', 'ca_idequipo', 'ca_tarifa', 'ca_valor_tar', 'ca_valor_min', 'ca_frecuencia', 'ca_tiempotransito', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	/**
@@ -97,10 +103,10 @@ abstract class BaseCotContinuacionPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaTipo' => 1, 'CaModalidad' => 2, 'CaOrigen' => 3, 'CaDestino' => 4, 'CaIdconcepto' => 5, 'CaIdmoneda' => 6, 'CaIdequipo' => 7, 'CaTarifa' => 8, 'CaFrecuencia' => 9, 'CaTiempotransito' => 10, 'CaObservaciones' => 11, 'CaFchcreado' => 12, 'CaUsucreado' => 13, 'CaFchactualizado' => 14, 'CaUsuactualizado' => 15, ),
-		BasePeer::TYPE_COLNAME => array (CotContinuacionPeer::CA_IDCOTIZACION => 0, CotContinuacionPeer::CA_TIPO => 1, CotContinuacionPeer::CA_MODALIDAD => 2, CotContinuacionPeer::CA_ORIGEN => 3, CotContinuacionPeer::CA_DESTINO => 4, CotContinuacionPeer::CA_IDCONCEPTO => 5, CotContinuacionPeer::CA_IDMONEDA => 6, CotContinuacionPeer::CA_IDEQUIPO => 7, CotContinuacionPeer::CA_TARIFA => 8, CotContinuacionPeer::CA_FRECUENCIA => 9, CotContinuacionPeer::CA_TIEMPOTRANSITO => 10, CotContinuacionPeer::CA_OBSERVACIONES => 11, CotContinuacionPeer::CA_FCHCREADO => 12, CotContinuacionPeer::CA_USUCREADO => 13, CotContinuacionPeer::CA_FCHACTUALIZADO => 14, CotContinuacionPeer::CA_USUACTUALIZADO => 15, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_tipo' => 1, 'ca_modalidad' => 2, 'ca_origen' => 3, 'ca_destino' => 4, 'ca_idconcepto' => 5, 'ca_idmoneda' => 6, 'ca_idequipo' => 7, 'ca_tarifa' => 8, 'ca_frecuencia' => 9, 'ca_tiempotransito' => 10, 'ca_observaciones' => 11, 'ca_fchcreado' => 12, 'ca_usucreado' => 13, 'ca_fchactualizado' => 14, 'ca_usuactualizado' => 15, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaTipo' => 1, 'CaModalidad' => 2, 'CaOrigen' => 3, 'CaDestino' => 4, 'CaIdconcepto' => 5, 'CaIdmoneda' => 6, 'CaIdequipo' => 7, 'CaTarifa' => 8, 'CaValorTar' => 9, 'CaValorMin' => 10, 'CaFrecuencia' => 11, 'CaTiempotransito' => 12, 'CaObservaciones' => 13, 'CaFchcreado' => 14, 'CaUsucreado' => 15, 'CaFchactualizado' => 16, 'CaUsuactualizado' => 17, ),
+		BasePeer::TYPE_COLNAME => array (CotContinuacionPeer::CA_IDCOTIZACION => 0, CotContinuacionPeer::CA_TIPO => 1, CotContinuacionPeer::CA_MODALIDAD => 2, CotContinuacionPeer::CA_ORIGEN => 3, CotContinuacionPeer::CA_DESTINO => 4, CotContinuacionPeer::CA_IDCONCEPTO => 5, CotContinuacionPeer::CA_IDMONEDA => 6, CotContinuacionPeer::CA_IDEQUIPO => 7, CotContinuacionPeer::CA_TARIFA => 8, CotContinuacionPeer::CA_VALOR_TAR => 9, CotContinuacionPeer::CA_VALOR_MIN => 10, CotContinuacionPeer::CA_FRECUENCIA => 11, CotContinuacionPeer::CA_TIEMPOTRANSITO => 12, CotContinuacionPeer::CA_OBSERVACIONES => 13, CotContinuacionPeer::CA_FCHCREADO => 14, CotContinuacionPeer::CA_USUCREADO => 15, CotContinuacionPeer::CA_FCHACTUALIZADO => 16, CotContinuacionPeer::CA_USUACTUALIZADO => 17, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_tipo' => 1, 'ca_modalidad' => 2, 'ca_origen' => 3, 'ca_destino' => 4, 'ca_idconcepto' => 5, 'ca_idmoneda' => 6, 'ca_idequipo' => 7, 'ca_tarifa' => 8, 'ca_valor_tar' => 9, 'ca_valor_min' => 10, 'ca_frecuencia' => 11, 'ca_tiempotransito' => 12, 'ca_observaciones' => 13, 'ca_fchcreado' => 14, 'ca_usucreado' => 15, 'ca_fchactualizado' => 16, 'ca_usuactualizado' => 17, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	/**
@@ -217,6 +223,10 @@ abstract class BaseCotContinuacionPeer {
 		$criteria->addSelectColumn(CotContinuacionPeer::CA_IDEQUIPO);
 
 		$criteria->addSelectColumn(CotContinuacionPeer::CA_TARIFA);
+
+		$criteria->addSelectColumn(CotContinuacionPeer::CA_VALOR_TAR);
+
+		$criteria->addSelectColumn(CotContinuacionPeer::CA_VALOR_MIN);
 
 		$criteria->addSelectColumn(CotContinuacionPeer::CA_FRECUENCIA);
 

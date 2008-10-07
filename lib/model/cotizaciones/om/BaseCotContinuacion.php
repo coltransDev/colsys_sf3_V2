@@ -83,6 +83,20 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the ca_valor_tar field.
+	 * @var        double
+	 */
+	protected $ca_valor_tar;
+
+
+	/**
+	 * The value for the ca_valor_min field.
+	 * @var        double
+	 */
+	protected $ca_valor_min;
+
+
+	/**
 	 * The value for the ca_frecuencia field.
 	 * @var        string
 	 */
@@ -251,6 +265,28 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_tarifa;
+	}
+
+	/**
+	 * Get the [ca_valor_tar] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaValorTar()
+	{
+
+		return $this->ca_valor_tar;
+	}
+
+	/**
+	 * Get the [ca_valor_min] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaValorMin()
+	{
+
+		return $this->ca_valor_min;
 	}
 
 	/**
@@ -577,6 +613,38 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	} // setCaTarifa()
 
 	/**
+	 * Set the value of [ca_valor_tar] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaValorTar($v)
+	{
+
+		if ($this->ca_valor_tar !== $v) {
+			$this->ca_valor_tar = $v;
+			$this->modifiedColumns[] = CotContinuacionPeer::CA_VALOR_TAR;
+		}
+
+	} // setCaValorTar()
+
+	/**
+	 * Set the value of [ca_valor_min] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaValorMin($v)
+	{
+
+		if ($this->ca_valor_min !== $v) {
+			$this->ca_valor_min = $v;
+			$this->modifiedColumns[] = CotContinuacionPeer::CA_VALOR_MIN;
+		}
+
+	} // setCaValorMin()
+
+	/**
 	 * Set the value of [ca_frecuencia] column.
 	 * 
 	 * @param      string $v new value
@@ -769,26 +837,30 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 
 			$this->ca_tarifa = $rs->getString($startcol + 8);
 
-			$this->ca_frecuencia = $rs->getString($startcol + 9);
+			$this->ca_valor_tar = $rs->getFloat($startcol + 9);
 
-			$this->ca_tiempotransito = $rs->getString($startcol + 10);
+			$this->ca_valor_min = $rs->getFloat($startcol + 10);
 
-			$this->ca_observaciones = $rs->getString($startcol + 11);
+			$this->ca_frecuencia = $rs->getString($startcol + 11);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 12, null);
+			$this->ca_tiempotransito = $rs->getString($startcol + 12);
 
-			$this->ca_usucreado = $rs->getString($startcol + 13);
+			$this->ca_observaciones = $rs->getString($startcol + 13);
 
-			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 14, null);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 14, null);
 
-			$this->ca_usuactualizado = $rs->getString($startcol + 15);
+			$this->ca_usucreado = $rs->getString($startcol + 15);
+
+			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 16, null);
+
+			$this->ca_usuactualizado = $rs->getString($startcol + 17);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 16; // 16 = CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 18; // 18 = CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotContinuacion object", $e);
@@ -1057,24 +1129,30 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 				return $this->getCaTarifa();
 				break;
 			case 9:
-				return $this->getCaFrecuencia();
+				return $this->getCaValorTar();
 				break;
 			case 10:
-				return $this->getCaTiempotransito();
+				return $this->getCaValorMin();
 				break;
 			case 11:
-				return $this->getCaObservaciones();
+				return $this->getCaFrecuencia();
 				break;
 			case 12:
-				return $this->getCaFchcreado();
+				return $this->getCaTiempotransito();
 				break;
 			case 13:
-				return $this->getCaUsucreado();
+				return $this->getCaObservaciones();
 				break;
 			case 14:
-				return $this->getCaFchactualizado();
+				return $this->getCaFchcreado();
 				break;
 			case 15:
+				return $this->getCaUsucreado();
+				break;
+			case 16:
+				return $this->getCaFchactualizado();
+				break;
+			case 17:
 				return $this->getCaUsuactualizado();
 				break;
 			default:
@@ -1106,13 +1184,15 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 			$keys[6] => $this->getCaIdmoneda(),
 			$keys[7] => $this->getCaIdequipo(),
 			$keys[8] => $this->getCaTarifa(),
-			$keys[9] => $this->getCaFrecuencia(),
-			$keys[10] => $this->getCaTiempotransito(),
-			$keys[11] => $this->getCaObservaciones(),
-			$keys[12] => $this->getCaFchcreado(),
-			$keys[13] => $this->getCaUsucreado(),
-			$keys[14] => $this->getCaFchactualizado(),
-			$keys[15] => $this->getCaUsuactualizado(),
+			$keys[9] => $this->getCaValorTar(),
+			$keys[10] => $this->getCaValorMin(),
+			$keys[11] => $this->getCaFrecuencia(),
+			$keys[12] => $this->getCaTiempotransito(),
+			$keys[13] => $this->getCaObservaciones(),
+			$keys[14] => $this->getCaFchcreado(),
+			$keys[15] => $this->getCaUsucreado(),
+			$keys[16] => $this->getCaFchactualizado(),
+			$keys[17] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1172,24 +1252,30 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 				$this->setCaTarifa($value);
 				break;
 			case 9:
-				$this->setCaFrecuencia($value);
+				$this->setCaValorTar($value);
 				break;
 			case 10:
-				$this->setCaTiempotransito($value);
+				$this->setCaValorMin($value);
 				break;
 			case 11:
-				$this->setCaObservaciones($value);
+				$this->setCaFrecuencia($value);
 				break;
 			case 12:
-				$this->setCaFchcreado($value);
+				$this->setCaTiempotransito($value);
 				break;
 			case 13:
-				$this->setCaUsucreado($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 14:
-				$this->setCaFchactualizado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 15:
+				$this->setCaUsucreado($value);
+				break;
+			case 16:
+				$this->setCaFchactualizado($value);
+				break;
+			case 17:
 				$this->setCaUsuactualizado($value);
 				break;
 		} // switch()
@@ -1224,13 +1310,15 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[6], $arr)) $this->setCaIdmoneda($arr[$keys[6]]);
 		if (array_key_exists($keys[7], $arr)) $this->setCaIdequipo($arr[$keys[7]]);
 		if (array_key_exists($keys[8], $arr)) $this->setCaTarifa($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaFrecuencia($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaTiempotransito($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaObservaciones($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaFchcreado($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaUsucreado($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaFchactualizado($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaUsuactualizado($arr[$keys[15]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaValorTar($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaValorMin($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFrecuencia($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaTiempotransito($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaObservaciones($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaFchcreado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaUsucreado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaFchactualizado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaUsuactualizado($arr[$keys[17]]);
 	}
 
 	/**
@@ -1251,6 +1339,8 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotContinuacionPeer::CA_IDMONEDA)) $criteria->add(CotContinuacionPeer::CA_IDMONEDA, $this->ca_idmoneda);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_IDEQUIPO)) $criteria->add(CotContinuacionPeer::CA_IDEQUIPO, $this->ca_idequipo);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_TARIFA)) $criteria->add(CotContinuacionPeer::CA_TARIFA, $this->ca_tarifa);
+		if ($this->isColumnModified(CotContinuacionPeer::CA_VALOR_TAR)) $criteria->add(CotContinuacionPeer::CA_VALOR_TAR, $this->ca_valor_tar);
+		if ($this->isColumnModified(CotContinuacionPeer::CA_VALOR_MIN)) $criteria->add(CotContinuacionPeer::CA_VALOR_MIN, $this->ca_valor_min);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_FRECUENCIA)) $criteria->add(CotContinuacionPeer::CA_FRECUENCIA, $this->ca_frecuencia);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_TIEMPOTRANSITO)) $criteria->add(CotContinuacionPeer::CA_TIEMPOTRANSITO, $this->ca_tiempotransito);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_OBSERVACIONES)) $criteria->add(CotContinuacionPeer::CA_OBSERVACIONES, $this->ca_observaciones);
@@ -1346,6 +1436,10 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 		$copyObj->setCaIdequipo($this->ca_idequipo);
 
 		$copyObj->setCaTarifa($this->ca_tarifa);
+
+		$copyObj->setCaValorTar($this->ca_valor_tar);
+
+		$copyObj->setCaValorMin($this->ca_valor_min);
 
 		$copyObj->setCaFrecuencia($this->ca_frecuencia);
 

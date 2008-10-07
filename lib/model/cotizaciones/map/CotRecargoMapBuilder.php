@@ -83,7 +83,7 @@ class CotRecargoMapBuilder {
 
 		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, null);
 
-		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addPrimaryKey('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, true, null);
 
 		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
 

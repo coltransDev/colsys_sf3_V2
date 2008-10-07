@@ -19,7 +19,7 @@ abstract class BaseCotSeguroPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotSeguro';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 9;
+	const NUM_COLUMNS = 12;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -31,8 +31,14 @@ abstract class BaseCotSeguroPeer {
 	/** the column name for the CA_IDMONEDA field */
 	const CA_IDMONEDA = 'tb_cotseguro.CA_IDMONEDA';
 
-	/** the column name for the CA_PRIMA field */
-	const CA_PRIMA = 'tb_cotseguro.CA_PRIMA';
+	/** the column name for the CA_PRIMA_TIP field */
+	const CA_PRIMA_TIP = 'tb_cotseguro.CA_PRIMA_TIP';
+
+	/** the column name for the CA_PRIMA_VLR field */
+	const CA_PRIMA_VLR = 'tb_cotseguro.CA_PRIMA_VLR';
+
+	/** the column name for the CA_PRIMA_MIN field */
+	const CA_PRIMA_MIN = 'tb_cotseguro.CA_PRIMA_MIN';
 
 	/** the column name for the CA_OBTENCION field */
 	const CA_OBTENCION = 'tb_cotseguro.CA_OBTENCION';
@@ -52,6 +58,9 @@ abstract class BaseCotSeguroPeer {
 	/** the column name for the CA_USUACTUALIZADO field */
 	const CA_USUACTUALIZADO = 'tb_cotseguro.CA_USUACTUALIZADO';
 
+	/** the column name for the OID field */
+	const OID = 'tb_cotseguro.OID';
+
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -63,10 +72,10 @@ abstract class BaseCotSeguroPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdmoneda', 'CaPrima', 'CaObtencion', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
-		BasePeer::TYPE_COLNAME => array (CotSeguroPeer::CA_IDCOTIZACION, CotSeguroPeer::CA_IDMONEDA, CotSeguroPeer::CA_PRIMA, CotSeguroPeer::CA_OBTENCION, CotSeguroPeer::CA_OBSERVACIONES, CotSeguroPeer::CA_FCHCREADO, CotSeguroPeer::CA_USUCREADO, CotSeguroPeer::CA_FCHACTUALIZADO, CotSeguroPeer::CA_USUACTUALIZADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idmoneda', 'ca_prima', 'ca_obtencion', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdmoneda', 'CaPrimaTip', 'CaPrimaVlr', 'CaPrimaMin', 'CaObtencion', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'Oid', ),
+		BasePeer::TYPE_COLNAME => array (CotSeguroPeer::CA_IDCOTIZACION, CotSeguroPeer::CA_IDMONEDA, CotSeguroPeer::CA_PRIMA_TIP, CotSeguroPeer::CA_PRIMA_VLR, CotSeguroPeer::CA_PRIMA_MIN, CotSeguroPeer::CA_OBTENCION, CotSeguroPeer::CA_OBSERVACIONES, CotSeguroPeer::CA_FCHCREADO, CotSeguroPeer::CA_USUCREADO, CotSeguroPeer::CA_FCHACTUALIZADO, CotSeguroPeer::CA_USUACTUALIZADO, CotSeguroPeer::OID, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idmoneda', 'ca_prima_tip', 'ca_prima_vlr', 'ca_prima_min', 'ca_obtencion', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'oid', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	/**
@@ -76,10 +85,10 @@ abstract class BaseCotSeguroPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdmoneda' => 1, 'CaPrima' => 2, 'CaObtencion' => 3, 'CaObservaciones' => 4, 'CaFchcreado' => 5, 'CaUsucreado' => 6, 'CaFchactualizado' => 7, 'CaUsuactualizado' => 8, ),
-		BasePeer::TYPE_COLNAME => array (CotSeguroPeer::CA_IDCOTIZACION => 0, CotSeguroPeer::CA_IDMONEDA => 1, CotSeguroPeer::CA_PRIMA => 2, CotSeguroPeer::CA_OBTENCION => 3, CotSeguroPeer::CA_OBSERVACIONES => 4, CotSeguroPeer::CA_FCHCREADO => 5, CotSeguroPeer::CA_USUCREADO => 6, CotSeguroPeer::CA_FCHACTUALIZADO => 7, CotSeguroPeer::CA_USUACTUALIZADO => 8, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idmoneda' => 1, 'ca_prima' => 2, 'ca_obtencion' => 3, 'ca_observaciones' => 4, 'ca_fchcreado' => 5, 'ca_usucreado' => 6, 'ca_fchactualizado' => 7, 'ca_usuactualizado' => 8, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdmoneda' => 1, 'CaPrimaTip' => 2, 'CaPrimaVlr' => 3, 'CaPrimaMin' => 4, 'CaObtencion' => 5, 'CaObservaciones' => 6, 'CaFchcreado' => 7, 'CaUsucreado' => 8, 'CaFchactualizado' => 9, 'CaUsuactualizado' => 10, 'Oid' => 11, ),
+		BasePeer::TYPE_COLNAME => array (CotSeguroPeer::CA_IDCOTIZACION => 0, CotSeguroPeer::CA_IDMONEDA => 1, CotSeguroPeer::CA_PRIMA_TIP => 2, CotSeguroPeer::CA_PRIMA_VLR => 3, CotSeguroPeer::CA_PRIMA_MIN => 4, CotSeguroPeer::CA_OBTENCION => 5, CotSeguroPeer::CA_OBSERVACIONES => 6, CotSeguroPeer::CA_FCHCREADO => 7, CotSeguroPeer::CA_USUCREADO => 8, CotSeguroPeer::CA_FCHACTUALIZADO => 9, CotSeguroPeer::CA_USUACTUALIZADO => 10, CotSeguroPeer::OID => 11, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idmoneda' => 1, 'ca_prima_tip' => 2, 'ca_prima_vlr' => 3, 'ca_prima_min' => 4, 'ca_obtencion' => 5, 'ca_observaciones' => 6, 'ca_fchcreado' => 7, 'ca_usucreado' => 8, 'ca_fchactualizado' => 9, 'ca_usuactualizado' => 10, 'oid' => 11, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	/**
@@ -183,7 +192,11 @@ abstract class BaseCotSeguroPeer {
 
 		$criteria->addSelectColumn(CotSeguroPeer::CA_IDMONEDA);
 
-		$criteria->addSelectColumn(CotSeguroPeer::CA_PRIMA);
+		$criteria->addSelectColumn(CotSeguroPeer::CA_PRIMA_TIP);
+
+		$criteria->addSelectColumn(CotSeguroPeer::CA_PRIMA_VLR);
+
+		$criteria->addSelectColumn(CotSeguroPeer::CA_PRIMA_MIN);
 
 		$criteria->addSelectColumn(CotSeguroPeer::CA_OBTENCION);
 
@@ -197,10 +210,12 @@ abstract class BaseCotSeguroPeer {
 
 		$criteria->addSelectColumn(CotSeguroPeer::CA_USUACTUALIZADO);
 
+		$criteria->addSelectColumn(CotSeguroPeer::OID);
+
 	}
 
-	const COUNT = 'COUNT(tb_cotseguro.CA_IDCOTIZACION)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotseguro.CA_IDCOTIZACION)';
+	const COUNT = 'COUNT(tb_cotseguro.OID)';
+	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotseguro.OID)';
 
 	/**
 	 * Returns the number of rows matching criteria.
@@ -960,8 +975,8 @@ abstract class BaseCotSeguroPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(CotSeguroPeer::CA_IDCOTIZACION);
-			$selectCriteria->add(CotSeguroPeer::CA_IDCOTIZACION, $criteria->remove(CotSeguroPeer::CA_IDCOTIZACION), $comparison);
+			$comparison = $criteria->getComparison(CotSeguroPeer::OID);
+			$selectCriteria->add(CotSeguroPeer::OID, $criteria->remove(CotSeguroPeer::OID), $comparison);
 
 		} else { // $values is CotSeguro object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -1023,7 +1038,7 @@ abstract class BaseCotSeguroPeer {
 		} else {
 			// it must be the primary key
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, (array) $values, Criteria::IN);
+			$criteria->add(CotSeguroPeer::OID, (array) $values, Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -1106,7 +1121,7 @@ abstract class BaseCotSeguroPeer {
 
 		$criteria = new Criteria(CotSeguroPeer::DATABASE_NAME);
 
-		$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $pk);
+		$criteria->add(CotSeguroPeer::OID, $pk);
 
 
 		$v = CotSeguroPeer::doSelect($criteria, $con);
@@ -1133,7 +1148,7 @@ abstract class BaseCotSeguroPeer {
 			$objs = array();
 		} else {
 			$criteria = new Criteria();
-			$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $pks, Criteria::IN);
+			$criteria->add(CotSeguroPeer::OID, $pks, Criteria::IN);
 			$objs = CotSeguroPeer::doSelect($criteria, $con);
 		}
 		return $objs;

@@ -1318,6 +1318,7 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 		$criteria->add(CotRecargoPeer::CA_IDOPCION, $this->ca_idopcion);
 		$criteria->add(CotRecargoPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
+		$criteria->add(CotRecargoPeer::CA_MODALIDAD, $this->ca_modalidad);
 
 		return $criteria;
 	}
@@ -1341,6 +1342,8 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 
 		$pks[4] = $this->getCaIdrecargo();
 
+		$pks[5] = $this->getCaModalidad();
+
 		return $pks;
 	}
 
@@ -1362,6 +1365,8 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 		$this->setCaIdconcepto($keys[3]);
 
 		$this->setCaIdrecargo($keys[4]);
+
+		$this->setCaModalidad($keys[5]);
 
 	}
 
@@ -1390,8 +1395,6 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 
 		$copyObj->setCaIdmoneda($this->ca_idmoneda);
 
-		$copyObj->setCaModalidad($this->ca_modalidad);
-
 		$copyObj->setCaObservaciones($this->ca_observaciones);
 
 		$copyObj->setCaFchcreado($this->ca_fchcreado);
@@ -1414,6 +1417,8 @@ abstract class BaseCotRecargo extends BaseObject  implements Persistent {
 		$copyObj->setCaIdconcepto(NULL); // this is a pkey column, so set to default value
 
 		$copyObj->setCaIdrecargo(NULL); // this is a pkey column, so set to default value
+
+		$copyObj->setCaModalidad(NULL); // this is a pkey column, so set to default value
 
 	}
 

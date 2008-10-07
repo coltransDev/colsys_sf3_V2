@@ -34,10 +34,24 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 
 
 	/**
-	 * The value for the ca_prima field.
+	 * The value for the ca_prima_tip field.
 	 * @var        string
 	 */
-	protected $ca_prima;
+	protected $ca_prima_tip;
+
+
+	/**
+	 * The value for the ca_prima_vlr field.
+	 * @var        double
+	 */
+	protected $ca_prima_vlr;
+
+
+	/**
+	 * The value for the ca_prima_min field.
+	 * @var        double
+	 */
+	protected $ca_prima_min;
 
 
 	/**
@@ -80,6 +94,13 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	 * @var        string
 	 */
 	protected $ca_usuactualizado;
+
+
+	/**
+	 * The value for the oid field.
+	 * @var        string
+	 */
+	protected $oid;
 
 	/**
 	 * @var        Cotizacion
@@ -128,14 +149,36 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [ca_prima] column value.
+	 * Get the [ca_prima_tip] column value.
 	 * 
 	 * @return     string
 	 */
-	public function getCaPrima()
+	public function getCaPrimaTip()
 	{
 
-		return $this->ca_prima;
+		return $this->ca_prima_tip;
+	}
+
+	/**
+	 * Get the [ca_prima_vlr] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaPrimaVlr()
+	{
+
+		return $this->ca_prima_vlr;
+	}
+
+	/**
+	 * Get the [ca_prima_min] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaPrimaMin()
+	{
+
+		return $this->ca_prima_min;
 	}
 
 	/**
@@ -245,6 +288,17 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [oid] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getOid()
+	{
+
+		return $this->oid;
+	}
+
+	/**
 	 * Set the value of [ca_idcotizacion] column.
 	 * 
 	 * @param      int $v new value
@@ -297,12 +351,12 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	} // setCaIdmoneda()
 
 	/**
-	 * Set the value of [ca_prima] column.
+	 * Set the value of [ca_prima_tip] column.
 	 * 
 	 * @param      string $v new value
 	 * @return     void
 	 */
-	public function setCaPrima($v)
+	public function setCaPrimaTip($v)
 	{
 
 		// Since the native PHP type for this column is string,
@@ -311,12 +365,44 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 			$v = (string) $v; 
 		}
 
-		if ($this->ca_prima !== $v) {
-			$this->ca_prima = $v;
-			$this->modifiedColumns[] = CotSeguroPeer::CA_PRIMA;
+		if ($this->ca_prima_tip !== $v) {
+			$this->ca_prima_tip = $v;
+			$this->modifiedColumns[] = CotSeguroPeer::CA_PRIMA_TIP;
 		}
 
-	} // setCaPrima()
+	} // setCaPrimaTip()
+
+	/**
+	 * Set the value of [ca_prima_vlr] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaPrimaVlr($v)
+	{
+
+		if ($this->ca_prima_vlr !== $v) {
+			$this->ca_prima_vlr = $v;
+			$this->modifiedColumns[] = CotSeguroPeer::CA_PRIMA_VLR;
+		}
+
+	} // setCaPrimaVlr()
+
+	/**
+	 * Set the value of [ca_prima_min] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaPrimaMin($v)
+	{
+
+		if ($this->ca_prima_min !== $v) {
+			$this->ca_prima_min = $v;
+			$this->modifiedColumns[] = CotSeguroPeer::CA_PRIMA_MIN;
+		}
+
+	} // setCaPrimaMin()
 
 	/**
 	 * Set the value of [ca_obtencion] column.
@@ -455,6 +541,28 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	} // setCaUsuactualizado()
 
 	/**
+	 * Set the value of [oid] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setOid($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->oid !== $v) {
+			$this->oid = $v;
+			$this->modifiedColumns[] = CotSeguroPeer::OID;
+		}
+
+	} // setOid()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -475,26 +583,32 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 
 			$this->ca_idmoneda = $rs->getString($startcol + 1);
 
-			$this->ca_prima = $rs->getString($startcol + 2);
+			$this->ca_prima_tip = $rs->getString($startcol + 2);
 
-			$this->ca_obtencion = $rs->getString($startcol + 3);
+			$this->ca_prima_vlr = $rs->getFloat($startcol + 3);
 
-			$this->ca_observaciones = $rs->getString($startcol + 4);
+			$this->ca_prima_min = $rs->getFloat($startcol + 4);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 5, null);
+			$this->ca_obtencion = $rs->getString($startcol + 5);
 
-			$this->ca_usucreado = $rs->getString($startcol + 6);
+			$this->ca_observaciones = $rs->getString($startcol + 6);
 
-			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 7, null);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 7, null);
 
-			$this->ca_usuactualizado = $rs->getString($startcol + 8);
+			$this->ca_usucreado = $rs->getString($startcol + 8);
+
+			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 9, null);
+
+			$this->ca_usuactualizado = $rs->getString($startcol + 10);
+
+			$this->oid = $rs->getString($startcol + 11);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 9; // 9 = CotSeguroPeer::NUM_COLUMNS - CotSeguroPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 12; // 12 = CotSeguroPeer::NUM_COLUMNS - CotSeguroPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotSeguro object", $e);
@@ -742,25 +856,34 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 				return $this->getCaIdmoneda();
 				break;
 			case 2:
-				return $this->getCaPrima();
+				return $this->getCaPrimaTip();
 				break;
 			case 3:
-				return $this->getCaObtencion();
+				return $this->getCaPrimaVlr();
 				break;
 			case 4:
-				return $this->getCaObservaciones();
+				return $this->getCaPrimaMin();
 				break;
 			case 5:
-				return $this->getCaFchcreado();
+				return $this->getCaObtencion();
 				break;
 			case 6:
-				return $this->getCaUsucreado();
+				return $this->getCaObservaciones();
 				break;
 			case 7:
-				return $this->getCaFchactualizado();
+				return $this->getCaFchcreado();
 				break;
 			case 8:
+				return $this->getCaUsucreado();
+				break;
+			case 9:
+				return $this->getCaFchactualizado();
+				break;
+			case 10:
 				return $this->getCaUsuactualizado();
+				break;
+			case 11:
+				return $this->getOid();
 				break;
 			default:
 				return null;
@@ -784,13 +907,16 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 		$result = array(
 			$keys[0] => $this->getCaIdcotizacion(),
 			$keys[1] => $this->getCaIdmoneda(),
-			$keys[2] => $this->getCaPrima(),
-			$keys[3] => $this->getCaObtencion(),
-			$keys[4] => $this->getCaObservaciones(),
-			$keys[5] => $this->getCaFchcreado(),
-			$keys[6] => $this->getCaUsucreado(),
-			$keys[7] => $this->getCaFchactualizado(),
-			$keys[8] => $this->getCaUsuactualizado(),
+			$keys[2] => $this->getCaPrimaTip(),
+			$keys[3] => $this->getCaPrimaVlr(),
+			$keys[4] => $this->getCaPrimaMin(),
+			$keys[5] => $this->getCaObtencion(),
+			$keys[6] => $this->getCaObservaciones(),
+			$keys[7] => $this->getCaFchcreado(),
+			$keys[8] => $this->getCaUsucreado(),
+			$keys[9] => $this->getCaFchactualizado(),
+			$keys[10] => $this->getCaUsuactualizado(),
+			$keys[11] => $this->getOid(),
 		);
 		return $result;
 	}
@@ -829,25 +955,34 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 				$this->setCaIdmoneda($value);
 				break;
 			case 2:
-				$this->setCaPrima($value);
+				$this->setCaPrimaTip($value);
 				break;
 			case 3:
-				$this->setCaObtencion($value);
+				$this->setCaPrimaVlr($value);
 				break;
 			case 4:
-				$this->setCaObservaciones($value);
+				$this->setCaPrimaMin($value);
 				break;
 			case 5:
-				$this->setCaFchcreado($value);
+				$this->setCaObtencion($value);
 				break;
 			case 6:
-				$this->setCaUsucreado($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 7:
-				$this->setCaFchactualizado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 8:
+				$this->setCaUsucreado($value);
+				break;
+			case 9:
+				$this->setCaFchactualizado($value);
+				break;
+			case 10:
 				$this->setCaUsuactualizado($value);
+				break;
+			case 11:
+				$this->setOid($value);
 				break;
 		} // switch()
 	}
@@ -874,13 +1009,16 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdcotizacion($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdmoneda($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaPrima($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaObtencion($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaObservaciones($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaFchcreado($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaUsucreado($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaFchactualizado($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaUsuactualizado($arr[$keys[8]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaPrimaTip($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaPrimaVlr($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaPrimaMin($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaObtencion($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaObservaciones($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaFchcreado($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaUsucreado($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaFchactualizado($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaUsuactualizado($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setOid($arr[$keys[11]]);
 	}
 
 	/**
@@ -894,13 +1032,16 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 
 		if ($this->isColumnModified(CotSeguroPeer::CA_IDCOTIZACION)) $criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		if ($this->isColumnModified(CotSeguroPeer::CA_IDMONEDA)) $criteria->add(CotSeguroPeer::CA_IDMONEDA, $this->ca_idmoneda);
-		if ($this->isColumnModified(CotSeguroPeer::CA_PRIMA)) $criteria->add(CotSeguroPeer::CA_PRIMA, $this->ca_prima);
+		if ($this->isColumnModified(CotSeguroPeer::CA_PRIMA_TIP)) $criteria->add(CotSeguroPeer::CA_PRIMA_TIP, $this->ca_prima_tip);
+		if ($this->isColumnModified(CotSeguroPeer::CA_PRIMA_VLR)) $criteria->add(CotSeguroPeer::CA_PRIMA_VLR, $this->ca_prima_vlr);
+		if ($this->isColumnModified(CotSeguroPeer::CA_PRIMA_MIN)) $criteria->add(CotSeguroPeer::CA_PRIMA_MIN, $this->ca_prima_min);
 		if ($this->isColumnModified(CotSeguroPeer::CA_OBTENCION)) $criteria->add(CotSeguroPeer::CA_OBTENCION, $this->ca_obtencion);
 		if ($this->isColumnModified(CotSeguroPeer::CA_OBSERVACIONES)) $criteria->add(CotSeguroPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(CotSeguroPeer::CA_FCHCREADO)) $criteria->add(CotSeguroPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(CotSeguroPeer::CA_USUCREADO)) $criteria->add(CotSeguroPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(CotSeguroPeer::CA_FCHACTUALIZADO)) $criteria->add(CotSeguroPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
 		if ($this->isColumnModified(CotSeguroPeer::CA_USUACTUALIZADO)) $criteria->add(CotSeguroPeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
+		if ($this->isColumnModified(CotSeguroPeer::OID)) $criteria->add(CotSeguroPeer::OID, $this->oid);
 
 		return $criteria;
 	}
@@ -917,29 +1058,29 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotSeguroPeer::DATABASE_NAME);
 
-		$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+		$criteria->add(CotSeguroPeer::OID, $this->oid);
 
 		return $criteria;
 	}
 
 	/**
 	 * Returns the primary key for this object (row).
-	 * @return     int
+	 * @return     string
 	 */
 	public function getPrimaryKey()
 	{
-		return $this->getCaIdcotizacion();
+		return $this->getOid();
 	}
 
 	/**
-	 * Generic method to set the primary key (ca_idcotizacion column).
+	 * Generic method to set the primary key (oid column).
 	 *
-	 * @param      int $key Primary key.
+	 * @param      string $key Primary key.
 	 * @return     void
 	 */
 	public function setPrimaryKey($key)
 	{
-		$this->setCaIdcotizacion($key);
+		$this->setOid($key);
 	}
 
 	/**
@@ -955,9 +1096,15 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIdcotizacion($this->ca_idcotizacion);
+
 		$copyObj->setCaIdmoneda($this->ca_idmoneda);
 
-		$copyObj->setCaPrima($this->ca_prima);
+		$copyObj->setCaPrimaTip($this->ca_prima_tip);
+
+		$copyObj->setCaPrimaVlr($this->ca_prima_vlr);
+
+		$copyObj->setCaPrimaMin($this->ca_prima_min);
 
 		$copyObj->setCaObtencion($this->ca_obtencion);
 
@@ -974,7 +1121,7 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdcotizacion(NULL); // this is a pkey column, so set to default value
+		$copyObj->setOid(NULL); // this is a pkey column, so set to default value
 
 	}
 

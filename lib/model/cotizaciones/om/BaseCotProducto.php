@@ -1666,6 +1666,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			   $this->collCotOpcions = array();
 			} else {
 
+				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+
 				$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
 
 				CotOpcionPeer::addSelectColumns($criteria);
@@ -1677,6 +1679,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				// the following code is to determine if a new query is
 				// called for.  If the criteria is the same as the last
 				// one, just return the collection.
+
+
+				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
 
 
 				$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
@@ -1709,6 +1714,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		{
 			$criteria = clone $criteria;
 		}
+
+		$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
 
 		$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
 
@@ -1757,6 +1764,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				$this->collCotOpcions = array();
 			} else {
 
+				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+
 				$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
 
 				$this->collCotOpcions = CotOpcionPeer::doSelectJoinConcepto($criteria, $con);
@@ -1765,6 +1774,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
+
+			$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
 
 			$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
 

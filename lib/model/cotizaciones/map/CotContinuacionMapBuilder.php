@@ -79,6 +79,10 @@ class CotContinuacionMapBuilder {
 
 		$tMap->addColumn('CA_TARIFA', 'CaTarifa', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_VALOR_TAR', 'CaValorTar', 'double', CreoleTypes::NUMERIC, false, null);
+
+		$tMap->addColumn('CA_VALOR_MIN', 'CaValorMin', 'double', CreoleTypes::NUMERIC, false, null);
+
 		$tMap->addColumn('CA_FRECUENCIA', 'CaFrecuencia', 'string', CreoleTypes::VARCHAR, false, null);
 
 		$tMap->addColumn('CA_TIEMPOTRANSITO', 'CaTiempotransito', 'string', CreoleTypes::VARCHAR, false, null);
