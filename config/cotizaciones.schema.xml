@@ -58,6 +58,7 @@
 	
 	
 	<table name="tb_cotopciones" phpName="CotOpcion">			
+		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" />
 		<column name="ca_idopcion" type="varchar" required="true"  primaryKey="true"  autoIncrement="true"  />			
 		<column name="ca_idproducto" type="integer" required="true"  />
 		<column name="ca_idconcepto" type="integer"   />	
@@ -76,6 +77,7 @@
 		<column name="ca_usuactualizado" type="varchar"   />	
 			
 		<foreign-key foreignTable="tb_cotproductos">
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
 			<reference local="ca_idproducto" foreign="ca_idproducto"/>
 		</foreign-key>	
 		
