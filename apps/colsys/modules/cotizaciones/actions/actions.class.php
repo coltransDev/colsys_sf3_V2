@@ -61,6 +61,16 @@ class cotizacionesActions extends sfActions
 		$this->cotizaciones = CotizacionPeer::doSelect( $c );	
 	}
 
+
+	/*
+	* Permite ver una cotización en formato PDF
+	*/
+	public function executeVerCotizacion(){
+		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
+		$this->forward404Unless( $this->cotizacion );		
+	}
+	
+	
 	/*
 	* Si ocurre un error reenvia a la pagina original y muestra los mensajes 
 	* de error
@@ -411,12 +421,24 @@ class cotizacionesActions extends sfActions
 	* @author Carlos G. López M.
 	*/
 	public function executeConsultaCotizacion(){
-		$id_cotizacion = $this->getRequestParameter("id");	
-		$cotizacion = CotizacionPeer::retrieveByPk( $id_cotizacion );
-		$this->forward404Unless( $cotizacion );					
-		$this->editable = $this->getRequestParameter("editable");	
-		$this->option = $this->getRequestParameter("option");
-		$this->cotizacion = $cotizacion;
+		if( !is_null($this->getRequestParameter("id")) ) {
+			$id_cotizacion = $this->getRequestParameter("id");	
+			$cotizacion = CotizacionPeer::retrieveByPk( $id_cotizacion );
+			$this->forward404Unless( $cotizacion );					
+			$this->editable = $this->getRequestParameter("editable");	
+			$this->option = $this->getRequestParameter("option");
+			$this->cotizacion = $cotizacion;
+		}else {
+			$user = $this->getUser()->getUserId();
+			$this->cotizacion = new Cotizacion();
+			$this->cotizacion->setCaFchCotizacion(date("Y-m-d"));
+			$this->cotizacion->setCaAsunto("COTIZACION");
+			$this->cotizacion->setCaSaludo("Respetados Señores:");
+			$this->cotizacion->setCaEntrada("Nos  complace  saludarlos,  nos permitimos presentar oferta para el transporte internacional de mercancía no peligrosa ni extradimensionada así :");
+			$this->cotizacion->setCaDespedida("Esperamos que esta cotización sea de su conveniencia y quedamos a su entera disposición para atender cualquier inquietud adicional.");
+			$this->cotizacion->setCaAnexos("Notas importantes para sus importaciones y/o exportaciones.");
+			$this->cotizacion->setCaUsuario($user);
+		}
 		
 		$this->data = array();
 				 
