@@ -343,9 +343,8 @@ if ( count($seguros)>0 ) {
 	$i = 1;
 	$linea = "";
 	foreach( $seguros as $seguro ){	
-		$aprima = explode('|',$seguro->getCaPrima());
 		$pdf->Ln(1);
-		$linea = "     $i) Prima sobre valor CIF de la mercancía ".(($aprima[0]=="%")?$aprima[1]." ".$aprima[0]:$seguro->getCaIdmoneda()." ".$aprima[1])." ".(($aprima[2]!=0)?" / Mínimo ".$seguro->getCaIdmoneda()." ".$aprima[2]:"").(($seguro->getCaObtencion()!=0)?" + Obtención de Póliza ".$seguro->getCaIdmoneda()." ".$seguro->getCaObtencion():"").((strlen($seguro->getCaObservaciones())!=0)?" ".$seguro->getCaObservaciones():".");
+		$linea = "     $i) Prima sobre valor CIF de la mercancía ".(($seguro->getCaPrimaTip()=="%")?$seguro->getCaPrimaVlr()." ".$seguro->getCaPrimaTip():$seguro->getCaIdmoneda()." ".$seguro->getCaPrimaVlr())." ".(($seguro->getCaPrimaMin()!=0)?" / Mínimo ".$seguro->getCaIdmoneda()." ".$seguro->getCaPrimaMin():"").(($seguro->getCaObtencion()!=0)?" + Obtención de Póliza ".$seguro->getCaIdmoneda()." ".$seguro->getCaObtencion():"").((strlen($seguro->getCaObservaciones())!=0)?" ".$seguro->getCaObservaciones():".");
 		$pdf->MultiCell(0, 4, $linea, 0, 1);
 		$i++;
 	}
