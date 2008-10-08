@@ -9,6 +9,9 @@
  */ 
 class Reporte extends BaseReporte
 {
+	private $ultimoAviso=null; 	
+	private $ultimoStatus=null;
+	
 	/*
 	* Retorna un array conteniendo los proovedores del reporte
 	* Author: Andres Botero
@@ -159,18 +162,25 @@ class Reporte extends BaseReporte
 	* Author: Andres Botero
 	*/	
 	public function getUltimoAviso(){
-		$c =new Criteria();
-		$c->add( RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte() );
-		$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
-		$c->add( RepStatusPeer::CA_ETAPA, "ETA");
-		
-		$c->setLimit(1);
-		
-		$aviso = RepStatusPeer::doSelectOne( $c );
-		if( $aviso ){
-			return $aviso;
-		}else{
-			return null;
+		if( $this->ultimoAviso ){
+			return $this->ultimoAviso;
+		}else{	
+			$c =new Criteria();
+			$c->add( RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte() );
+			$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
+			$c->add( RepStatusPeer::CA_ETAPA, "ETA");
+			
+			$c->setLimit(1);
+			
+			$aviso = RepStatusPeer::doSelectOne( $c );
+			
+			$this->ultimoAviso = $aviso;
+			
+			if( $this->ultimoAviso ){
+				return $this->ultimoAviso;
+			}else{
+				return null;
+			}
 		}
 	}
 	
@@ -179,19 +189,23 @@ class Reporte extends BaseReporte
 	* Author: Andres Botero
 	*/	
 	public function getUltimoStatus(){
-		$c =new Criteria();
-		
-		$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );	
-		$c->addJoin( RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
-		$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
-		$c->setLimit(1);
-		
-		$aviso = RepStatusPeer::doSelectOne( $c );
-
-		if( $aviso ){
-			return $aviso;
-		}else{
-			return null;
+		if( $this->ultimoStatus ){
+			return $this->ultimoStatus;
+		}else{	
+			$c =new Criteria();
+			
+			$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );	
+			$c->addJoin( RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
+			$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
+			$c->setLimit(1);
+			
+			$this->ultimoStatus = RepStatusPeer::doSelectOne( $c );
+	
+			if( $this->ultimoStatus ){
+				return $this->ultimoStatus;
+			}else{
+				return null;
+			}
 		}
 	}
 	
