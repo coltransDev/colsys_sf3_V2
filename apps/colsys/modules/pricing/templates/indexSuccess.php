@@ -1,13 +1,62 @@
 <?
 use_helper( "Ext2" );
 ?>
+<style>
+
+#fi-button-msg {
+	border: 2px solid #ccc;
+	padding: 5px 10px;
+	background: #eee;
+	margin: 5px;
+	float: left;
+}
+
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	-moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
+}
+
+#panel-noticias-wrap{
+	margin: 10px;
+
+}
+
+
+
+</style>
 <script type="text/javascript">
 	
     Ext.onReady(function(){
-       /*
-	   * Panel de administracion de archivos del cada trafico
-	   */
-	   var storeFileView = new Ext.data.JsonStore({
+		/*
+		* Se muestra el panel de notificaciones 
+		*/
+		<?
+		include_component("pricing", "panelNoticias");		
+		?>
+		/*
+		* Panel de administracion de archivos del cada trafico
+		*/
+		var storeFileView = new Ext.data.JsonStore({
 			url: '<?=url_for("pricing/archivosPaisDatos")?>',
 			root: 'files',
 			fields: ['idarchivo','name', 'descripcion', 'icon',{name:'size', type: 'float'}, {name:'lastmod', type:'date', dateFormat:'timestamp'}]
@@ -27,6 +76,7 @@ use_helper( "Ext2" );
 		);
 		
 		var nuevoBtnHandler = function(){
+			
 			win = new Ext.Window({
 				//applyTo     : 'hello-win',
 				//layout      : 'fit',
@@ -69,14 +119,14 @@ use_helper( "Ext2" );
 		
 				buttons: [{
 					text     : 'Guardar',
-					handler: function(){
+					handler: function(){						
 						var panelactivoid = Ext.getCmp('tab-panel').getActiveTab().id;	
-						var nodeoptions = panelactivoid.split("_");						
+						var nodeoptions = panelactivoid.split("_");												
 						var fp = Ext.getCmp("file-panel-form");					
 						if(fp.getForm().isValid()){
 							fp.getForm().submit({
 								url: '<?=url_for("pricing/subirArchivo")?>',
-								params: {idtrafico:nodeoptions[1]},
+								params: {idtrafico:nodeoptions[1], transporte:nodeoptions[2]},
 								waitMsg: 'Cargando el archivo...',
 								success: function(fp, o){	
 									storeFileView.reload();								
@@ -201,62 +251,13 @@ use_helper( "Ext2" );
 	   	   
 	   
 	   
-	   /* Inicializa los tooltips
-		*/
-		Ext.QuickTips.init();	
-		Ext.apply(Ext.QuickTips.getQuickTip(), {	   
-		   dismissDelay: 200000 //permite que los tips permanezcan por mas tiempo. 
-		});
-		
-		/*
-		* Cre un template para renderizar el tooltip
-		*/
-		var qtipTpl=new Ext.XTemplate(
-					 '<h3>Observaciones:</h3>'
-					,'<tpl for=".">'
-					,'<div>{observaciones}</div>'
-					,'</tpl>'
-				);
-		
-		/**
-		* Renderiza una celda incluyendo el tooltip de observaciones
-		* @param {Mixed} val Value to render
-		* @param {Object} cell
-		* @param {Ext.data.Record} record
-		*/
-		
-		var renderRowTooltip=function(val, cell, record) {
-			//alert("asdasd");
-			// get data
-			var data = record.data;
-	 
-			 
-			// create tooltip
-			var qtip = qtipTpl.apply(data);
-	 
-			// return markup
-			return '<div qtip="' + qtip +'">' + val + '</div>';
-		}	
 	   
-	   /*
-		* Crea el expander
-		*/
-		var expander = new Ext.grid.myRowExpander({  	  
-		  lazyRender : false, 
-		  width: 15,	
-		  tpl : new Ext.Template(
-			  '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class=\'btnComentarios\' id=\'obs_{_id}\'><strong>Observaciones:</strong> {observaciones}</div></p>' 
-			 
-		  )
-		});
 	   
 	   
        Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
        
-	   var treePanelOnclickHandler = function(n){
-			
-			//var sn = this.selModel.selNode || {}; // selNode is null on initial selection
-							
+	   var treePanelOnclickHandler = function(n){			
+			//var sn = this.selModel.selNode || {}; // selNode is null on initial selection							
 			if( n.leaf ){  // ignore clicks on folders 
 				
 				var nodeoptions = n.id.split("_");
@@ -276,6 +277,7 @@ use_helper( "Ext2" );
 						*  del trafico seleccionado
 						*/	
 						var url = '<?=url_for("pricing/grillaPorTrafico")?>';
+						//var url = '<?=url_for("pricing/grillaPorTrafico?opcion=consulta")?>';
 						break;						
 				}
 				
@@ -331,18 +333,10 @@ use_helper( "Ext2" );
 		var tabPanelOnTabchangeHandler = function( panel , component ){
 			/*
 			* Se muestra panel con los archivos del pais
-			*/			
-			
-			if(component.id.substr(0,4)=="grid"){
-				var str = component.id.substr(5);
-				var index = str.indexOf( "_" );
-				if( index!=-1 ){
-					var idtrafico = str.substr( 0, index );
-				}else{
-					var idtrafico = str;
-				}
-								
-				storeFileView.reload( {params:{idtrafico:idtrafico}} );				
+			*/						
+			var nodeoptions = component.id.split("_");		
+			if(nodeoptions[0]=="fletes"){							
+				storeFileView.reload( {params:{idtrafico:nodeoptions[1], transporte: nodeoptions[2]}} );				
 				
 			}else{
 				storeFileView.removeAll();
@@ -387,6 +381,7 @@ use_helper( "Ext2" );
                     }
 					,
                     items: [
+						
 						<?
 						$i=0;
 						foreach( $modalidades_mar as $modalidad){
@@ -537,41 +532,7 @@ use_helper( "Ext2" );
 	
 	
 </script>
-  <style>
-
-#fi-button-msg {
-	border: 2px solid #ccc;
-	padding: 5px 10px;
-	background: #eee;
-	margin: 5px;
-	float: left;
-}
-
-.x-form-file-wrap {
-    position: relative;
-    height: 22px;
-}
-.x-form-file-wrap .x-form-file {
-	position: absolute;
-	right: 0;
-	-moz-opacity: 0;
-	filter:alpha(opacity: 0);
-	opacity: 0;
-	z-index: 2;
-    height: 22px;
-}
-.x-form-file-wrap .x-form-file-btn {
-	position: absolute;
-	right: 0;
-	z-index: 1;
-}
-.x-form-file-wrap .x-form-file-text {
-    position: absolute;
-    left: 0;
-    z-index: 3;
-    color: #777;
-}
-</style>
+  
 <div id="traficos"></div>
 
 <div id="center2">
@@ -585,7 +546,11 @@ use_helper( "Ext2" );
 	<br />
 	&nbsp;&nbsp;&nbsp;Por favor tenga en cuenta las observaciones.
 	
+	<br /><br />
 
+	<div id="panel-noticias-wrap" >
+		<div id="panel-noticias" ></div>
+	</div>
 </div>
 <div id="props-panel" style="width:200px;height:200px;overflow:hidden;">
 </div>

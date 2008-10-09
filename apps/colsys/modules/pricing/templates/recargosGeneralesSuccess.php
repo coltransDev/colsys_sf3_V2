@@ -15,8 +15,8 @@ $recargos = TipoRecargoPeer::doSelect( $c );
 var record = Ext.data.Record.create([   		
 	{name: 'sel', type: 'string'},
 	{name: 'idciudad', type: 'string'},
-	{name: 'ciudad', type: 'string'},
-	{name: 'recargo_70', type: 'string'}	
+	{name: 'ciudad', type: 'string'}
+
 	<?
 	
 	foreach( $recargos as $recargo ){			
@@ -56,7 +56,7 @@ var store = new Ext.data.GroupingStore({
 /*
 * Crea la columna de chequeo
 */	
-var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30}); 
+var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, hideable: false}); 
 
 /*
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
@@ -69,7 +69,8 @@ var colModel = new Ext.grid.ColumnModel({
 		{
 			header: "Ciudad",
 			width: 100,
-			sortable: true,			
+			sortable: true,	
+			hideable: false,		
 			dataIndex: 'ciudad'  
 		}
 		
@@ -81,7 +82,8 @@ var colModel = new Ext.grid.ColumnModel({
 		{
 			header: "<?=$recargo->getCaRecargo()?>",
 			width: 100,
-			sortable: true,			
+			sortable: true,	
+			hideable: false,		
 			dataIndex: 'recargo_<?=$recargo->getCaIdrecargo()?>',
 			id: 'recargo_<?=$recargo->getCaIdrecargo()?>',
 			hidden: <?=in_array($recargo->getCaIdrecargo(),$recargosArray)?"false":"true"?>,		
@@ -293,7 +295,7 @@ function agregarRecargo(){
 			bodyStyle: 'padding: 10px 10px 0 10px;',
 			labelWidth: 50, 			
 			
-			items: [ <?=extRecargos($transporte)?>]
+			items: [ <?=extRecargosNoEnlazado($transporte)?>]
 			
 		}),
 
@@ -324,6 +326,13 @@ function agregarRecargo(){
 	});
 	
 	win.show( );	
+}
+
+var seleccionarTodo = function(){	
+	store.each( function(r){
+			r.set("sel", true);
+		} 
+	);
 }
 		
 /*
@@ -356,6 +365,12 @@ new Ext.grid.EditorGridPanel({
 		tooltip: 'Crea un nuevo recargo',
 		iconCls:'add',  // reference to our css
 		handler: agregarRecargo
+	},
+	{
+		text: 'Seleccionar todo',
+		tooltip: 'Selecciona todas las ciudades',
+		iconCls:'tick',  // reference to our css
+		handler: seleccionarTodo
 	}
 	],
 	
