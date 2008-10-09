@@ -13,9 +13,9 @@ class pricingActions extends sfActions
  
 
 	/**
-	 * Executes index action
-	 *
-	 */
+	* Executes index action
+	*
+	*/
 	public function executeIndex()
 	{		
 		$this->modalidades_mar = ParametroPeer::retrieveByCaso( "CU051" );
@@ -34,8 +34,8 @@ class pricingActions extends sfActions
 	}	
 
 	/*
-	 * Muestra los trayectos
-	 */
+	* Muestra los trayectos
+	*/
 	public function executePagerData(){
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
@@ -45,6 +45,9 @@ class pricingActions extends sfActions
 
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
+		
+		
+		$opcion = $this->getRequestParameter( "opcion" );
 		
 		//$idtrafico ="DE-049";
 		//$idtrafico ="US-001";
@@ -84,90 +87,149 @@ class pricingActions extends sfActions
 			$transportador = $trayecto->getTransportador();
 				
 			/*
-			 * Determina cuales conceptos deberian mostrarse de acuerdo al trafico
-			 * seleccionado.
-			 */
+			* Determina cuales conceptos deberian mostrarse de acuerdo al trafico
+			* seleccionado.
+			*/
 			$trafico = TraficoPeer::retrieveByPk( $trayecto->getOrigen()->getCaIdTrafico() );
 			
 			$trayectoStr = utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."->".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()))." - ".($transportador?utf8_encode($transportador->getCaSigla()?$transportador->getCaSigla():$transportador->getCaNombre()):"")." (TT ".utf8_encode($trayecto->getCaTiempotransito())." Freq. ".$trayecto->getCaFrecuencia().")";
-			$row = array (
-				'idtrayecto' => $trayecto->getCaIdtrayecto(),
-				'trayecto' =>$trayectoStr,
-				'nconcepto' => "FLETE",
-			//	'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
-				'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
-				'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
-				'moneda' => $trayecto->getCaIdMoneda(),
-				'aplicacion' => $trayecto->getCaAplicacion(),				
-				'_id' => $trayecto->getCaIdtrayecto(),
-				'style' => $trayecto->getEstilo(),
-				'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones()))
-			);
 			
-			$pricFletes = $trayecto->getPricFletes();			
-			
-			foreach( $pricFletes as $flete ){
-				$val = $flete->getCavlrneto();
-				if( $flete->getCaVlrminimo() ){
-					$val.="/".$flete->getCaVlrminimo();
-				}					
-				$row["concepto_".$flete->getCaIdconcepto()]=$val;				
-			}
+			if( $opcion=="consulta" ){ // En el modo de consulta los conceptos se muestran en filas seguidos de los recargos de lo contrario los conceptos se muestran en columnas.
 				
-			$recAr=array();
+				$pricConceptos = $trayecto->getPricFletes();
 				
-			$data[] = $row;				
-			
-			
-			/*
-			 * De la misma manera que con los conceptos se sacan los recargos
-			 */
-			$pricRecargos = $trayecto->getPricRecargos( );
-			
-			foreach( $pricRecargos as $pricRecargo ){
-				$tipoRecargo = $pricRecargo->getTipoRecargo();
+				foreach( $pricConceptos as $pricConcepto ){
+										
+					$row = array (
+						'idtrayecto' => $trayecto->getCaIdtrayecto(),
+						'trayecto' =>$trayectoStr,
+						'nconcepto' => $pricConcepto->getConcepto()->getcaConcepto(),
+						//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+						'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
+						'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
+						'moneda' => $trayecto->getCaIdMoneda(),
+						'aplicacion' => $trayecto->getCaAplicacion(),				
+						'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto(),
+						'style' => $trayecto->getEstilo(),
+						'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
+						'tipo'=>"concepto",
+						'neta'=>$pricConcepto->getCaVlrneto(),
+						'minima'=>$pricConcepto->getCaVlrminimo()
+						
+					);
+					$data[] = $row;	
+										
+					$pricRecargos = $pricConcepto->getPricRecargoxConceptos();
+					
+					foreach( $pricRecargos as $pricRecargo ){
+						$tipoRecargo = $pricRecargo->getTipoRecargo();
+											
+						$row = array (
+							'idtrayecto' => $trayecto->getCaIdtrayecto(),
+							'trayecto' =>$trayectoStr,
+							'nconcepto' => $tipoRecargo->getCaRecargo(),
+							//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+							'inicio' => "",
+							'vencimiento' => "",
+							'moneda' => $trayecto->getCaIdMoneda(),
+							'aplicacion' => "",				
+							'_id' => $trayecto->getCaIdtrayecto()."-".$pricRecargo->getCaIdrecargo(),
+							'style' => $trayecto->getEstilo(),
+							'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
+							'tipo'=>"recargo",
+							'neta'=>$pricRecargo->getCaVlrrecargo(),
+							'minima'=>$pricRecargo->getCaVlrminimo()	
+						);
+						
+						$data[] = $row;	
+					}
+					
+				}
 				
-				$row = array ( 
+				//print_r( $data );		
+				
+				
+							
+			}else{ // los conceptos se muestran en columnas.
+						
+				
+				$row = array (
 					'idtrayecto' => $trayecto->getCaIdtrayecto(),
-					'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo().($tipoRecargo->getCaAplicacion()?" (".$tipoRecargo->getCaAplicacion().")":"") ),										
-					'_id' => $trayecto->getCaIdtrayecto().$tipoRecargo->getCaidrecargo(),					
-					'recargo_id' => $tipoRecargo->getCaIdrecargo(),
-					'trayecto' =>$trayectoStr
-				    
+					'trayecto' =>$trayectoStr,
+					'nconcepto' => "FLETE",
+				//	'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+					'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
+					'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
+					'moneda' => $trayecto->getCaIdMoneda(),
+					'aplicacion' => $trayecto->getCaAplicacion(),				
+					'_id' => $trayecto->getCaIdtrayecto(),
+					'style' => $trayecto->getEstilo(),
+					'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
+					'tipo'=>"concepto"		
 				);
 				
-				$pricRecargo = PricRecargoPeer::retrieveByPk($trayecto->getCaIdtrayecto(), $tipoRecargo->getCaIdRecargo());
-				if( $pricRecargo ){
-					if( $pricRecargo->getCaIdmoneda() ){
-						$row["moneda"]=$pricRecargo->getCaIdmoneda();
-					}
-					
-					if( $pricRecargo->getCaObservaciones() ){
-						$row["observaciones"]=utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones()));
-					}	
-				}				
-				 
-				foreach( $this->conceptos as $concepto ){
-					//echo "----> ".$recAr[$concepto->getCaIdConcepto()][$recargo->getCaIdrecargo()]['moneda'];
-					$pricRecargoxConcepto = PricRecargoxConceptoPeer::retrieveByPk($trayecto->getCaIdtrayecto(), $concepto->getCaidConcepto(), $tipoRecargo->getCaIdRecargo());		
-							
-					if($pricRecargoxConcepto){
-						$val = $pricRecargoxConcepto->getCaVlrrecargo();
-						if( $pricRecargoxConcepto->getCaVlrminimo() ){
-							$val.="/".$pricRecargoxConcepto->getCaVlrminimo();
-						}
-						$row['concepto_'.$concepto->getCaIdconcepto()] = $val;
-					}
-										
-					
-					/*if( isset($recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]) ){
-						$row['concepto_'.$concepto->getCaIdconcepto()]=$recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]['valor'];
-						//$row['moneda']=$recAr[$concepto->getCaIdConcepto()][$tipoRecargo->getCaIdrecargo()]['moneda'];
-					}*/
+				$pricFletes = $trayecto->getPricFletes();			
+				
+				foreach( $pricFletes as $flete ){
+					$val = $flete->getCavlrneto();
+					if( $flete->getCaVlrminimo() ){
+						$val.="/".$flete->getCaVlrminimo();
+					}					
+					$row["concepto_".$flete->getCaIdconcepto()]=$val;				
 				}
-				$data[]=$row;
-			}				
+					
+				$recAr=array();
+					
+				$data[] = $row;				
+				
+				
+				/*
+				 * De la misma manera que con los conceptos se sacan los recargos
+				 */
+				$pricRecargos = $trayecto->getPricRecargos( );
+				
+				foreach( $pricRecargos as $pricRecargo ){
+					$tipoRecargo = $pricRecargo->getTipoRecargo();
+					
+					$row = array ( 
+						'idtrayecto' => $trayecto->getCaIdtrayecto(),
+						'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo().($tipoRecargo->getCaAplicacion()?" (".$tipoRecargo->getCaAplicacion().")":"") ),										
+						'_id' => $trayecto->getCaIdtrayecto().$tipoRecargo->getCaidrecargo(),					
+						'recargo_id' => $tipoRecargo->getCaIdrecargo(),
+						'trayecto' =>$trayectoStr,
+						'tipo'=>"recargo"	
+						
+					);
+					
+					$pricRecargo = PricRecargoPeer::retrieveByPk($trayecto->getCaIdtrayecto(), $tipoRecargo->getCaIdRecargo());
+					if( $pricRecargo ){
+						if( $pricRecargo->getCaIdmoneda() ){
+							$row["moneda"]=$pricRecargo->getCaIdmoneda();
+						}
+						
+						if( $pricRecargo->getCaObservaciones() ){
+							$row["observaciones"]=utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones()));
+						}	
+					}				
+					 
+					foreach( $this->conceptos as $concepto ){
+											
+						$pricRecargoxConcepto = PricRecargoxConceptoPeer::retrieveByPk($trayecto->getCaIdtrayecto(), $concepto->getCaidConcepto(), $tipoRecargo->getCaIdRecargo());		
+								
+						if($pricRecargoxConcepto){
+							$val = $pricRecargoxConcepto->getCaVlrrecargo();
+							if( $pricRecargoxConcepto->getCaVlrminimo() ){
+								$val.="/".$pricRecargoxConcepto->getCaVlrminimo();
+							}
+							$row['concepto_'.$concepto->getCaIdconcepto()] = $val;
+						}
+						
+					}
+					$data[]=$row;
+				}	
+			}			
 		}
+		
 		$this->data = $data;
 	}
 
@@ -409,6 +471,9 @@ class pricingActions extends sfActions
 		
 		$idciudad = $this->getRequestParameter( "idciudad" );
 		$idlinea = $this->getRequestParameter( "idlinea" );
+		$idciudad = $this->getRequestParameter( "idciudad" );
+		$opcion = $this->getRequestParameter( "opcion" );
+		
 		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);		
 		$this->idcomponent = $this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;
 		
@@ -458,6 +523,10 @@ class pricingActions extends sfActions
 		$this->idlinea = $idlinea;
 		$this->linea = "";		
 		
+		
+		if( $opcion=="consulta" ){
+			$this->setTemplate("grillaPorTraficoConsulta");
+		}
 		$this->setLayout("ajax");
 	}
 	
@@ -487,18 +556,56 @@ class pricingActions extends sfActions
 		
 		$this->setLayout("ajax");
 	}
-	 
-	 
-	 
+	
 	/*
-	* Genera la pestaña donde se muestran los archivos 
-	* @author: Andres Botero 
+	* Datos de los conceptos para ser mostrados en un combobox
 	*/
-	public function executeArchivosPais(){
+	public function executeDatosConceptos(){
+		
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));
+		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));
+		$tipo = utf8_decode($this->getRequestParameter("tipo"));
+		$modo = $this->getRequestParameter("modo");
+		
+		$this->forward404Unless( $transporte );
+		
+		if( $modo=="recargos" ){				
+			$c = new Criteria();
+			$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte );
+			$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
+			//$c->setLimit(3);
+			$recargos = TipoRecargoPeer::doSelect( $c );
+			$this->conceptos = array();
+			foreach( $recargos as $recargo ){
+				$row = array("idconcepto"=>$recargo->getCaIdRecargo(),
+							 "concepto"=>utf8_encode($recargo->getCaRecargo())	
+							);
+				$this->conceptos[]=$row;
+				
+			}
+		}else{
+			$this->forward404Unless( $modalidad );
+			$c = new Criteria();
+			$c->add( ConceptoPeer::CA_TRANSPORTE, $transporte );
+			$c->add( ConceptoPeer::CA_MODALIDAD, $modalidad );
+			$c->addAscendingOrderByColumn( ConceptoPeer::CA_CONCEPTO );
+			//$c->setLimit(3);
+			$conceptos = ConceptoPeer::doSelect( $c );
+			$this->conceptos = array();
+			foreach( $conceptos as $concepto ){
+				$row = array("idconcepto"=>$concepto->getCaIdConcepto(),
+							 "concepto"=>utf8_encode($concepto->getCaConcepto())	
+							);
+				$this->conceptos[]=$row;
+				
+			}
+		}		
+		
+		
 		$this->setLayout("ajax");
-		$this->idtrafico = $this->getRequestParameter("idtrafico");		
-		$this->forward404Unless( $this->idtrafico );
-	}	
+	}
+	 
+	
 	
 	/*
 	* Genera la pestaña donde se muestran los archivos 
@@ -507,11 +614,12 @@ class pricingActions extends sfActions
 	public function executeArchivosPaisDatos(){
 		$this->setLayout("ajax");
 		$idtrafico = $this->getRequestParameter("idtrafico");
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));	
 		$this->forward404Unless( $idtrafico );
 		
 		$c = new Criteria();
 		$c->add(PricArchivoPeer::CA_IDTRAFICO, $idtrafico );
-				
+		$c->add(PricArchivoPeer::CA_TRANSPORTE, $transporte );		
 		$c->addSelectColumn( PricArchivoPeer::CA_IDARCHIVO );
 		$c->addSelectColumn( PricArchivoPeer::CA_NOMBRE );
 		$c->addSelectColumn( PricArchivoPeer::CA_TAMANO );
@@ -538,7 +646,8 @@ class pricingActions extends sfActions
 	* Procesa el archivo que se ha subido en la accion ArchivosPais 
 	*/
 	public function executeSubirArchivo(){
-		$idtrafico = $this->getRequestParameter("idtrafico");		
+		$idtrafico = $this->getRequestParameter("idtrafico");	
+		$transporte = $this->getRequestParameter("transporte");		
 		$this->forward404Unless($idtrafico);			
 
 		$fileName = $this->getRequest()->getFileName('file');
@@ -551,6 +660,7 @@ class pricingActions extends sfActions
 		$fileObj->setCaNombre($fileName);
 		$fileObj->setCaIdTrafico($idtrafico);	
 		$fileObj->setCaTipo($type);
+		$fileObj->setCaTransporte($transporte);
 		$fp = fopen($path, "r");
 		$data = fread( $fp , $size);
 		fclose( $fp );
@@ -630,10 +740,7 @@ class pricingActions extends sfActions
 		$ciudades = CiudadPeer::doSelect( $c );
 		
 		$this->data = array();
-		
-		
-		
-		
+				
 		foreach( $ciudades as $ciudad ){
 			$row = array("idciudad"=>$ciudad->getCaIdCiudad(),
 						 "ciudad"=>utf8_encode($ciudad->getCaCiudad()));
@@ -690,5 +797,28 @@ class pricingActions extends sfActions
 		}
 		return sfView::NONE;	
 	}
+		
+	/*
+	* Acciones del panel de notificaciones
+	*/
+	public function executeGuardarNotificacion(){
+		$titulo=$this->getRequestParameter("titulo");
+		$mensaje=$this->getRequestParameter("mensaje");
+		$caducidad=$this->getRequestParameter("caducidad");
+		
+		$user = $this->getUser();
+		
+		$notificacion = new PricNotificacion();
+		$notificacion->setCaTitulo($titulo);
+		$notificacion->setCaMensaje($mensaje);
+		$notificacion->setCaCaducidad($caducidad);
+		$notificacion->setCaUsucreado($user->getUserId());
+		$this->usucreado = $user->getUserId();	
+		$this->fchcreado = date("Y-m-d H:i:s", time());
+		$notificacion->setCaFchcreado( $this->fchcreado );
+		$notificacion->save();
+		$this->idnotificacion = $notificacion->getCaIdNotificacion();		
+	}
+	
 }
 ?>
