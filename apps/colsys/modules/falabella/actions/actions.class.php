@@ -297,7 +297,7 @@ class falabellaActions extends sfActions {
 			$salida.= $fala_header->getCaFechaCarpeta("Ymd")."|"; // 38
 			$salida.= $detail->getSkuNeto()."|"; // 39
 			$salida.= $detail->getCaVpn()."|"; // 40
-			$salida.= $detail->getCaCantidadMiles()."|"; // 41
+			$salida.= number_format($detail->getCaCantidadMiles()*10000, 0, '', '')."|"; // 41
 			$salida.= $detail->getCaUnidadMedidadCantidad()."|"; // 42
 			$salida.= $detail->getCaDescripcionItem()."|"; // 43
 			$salida.= $detail->getCaCantidadPaquetesMiles()."|"; // 44
@@ -319,7 +319,7 @@ class falabellaActions extends sfActions {
 			$salida.= $fala_header->getCaCampo59()."|";// 60
 			$salida.= $fala_header->getCaCodigoProveedor()."|"; // 61
 			$salida.= $fala_header->getCaCampo61()."|";// 62
-			$salida.= $fala_header->getCaMontoInvoiceMiles()."|";// 63
+			$salida.= number_format($fala_header->getCaMontoInvoiceMiles()*10000, 0, '', '')."|";// 63
 			$salida.= $fala_header->getCaProformaNumber();// 64
 			$salida.= "\r\n";			
 		}	
