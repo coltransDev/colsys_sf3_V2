@@ -2,6 +2,56 @@
 use_helper("Ext2");
 ?>
 
+/* Inicializa los tooltips
+*/
+Ext.QuickTips.init();	
+Ext.apply(Ext.QuickTips.getQuickTip(), {	   
+   dismissDelay: 200000 //permite que los tips permanezcan por mas tiempo. 
+});
+
+/*
+* Cre un template para renderizar el tooltip
+*/
+var qtipTpl=new Ext.XTemplate(
+			 '<h3>Observaciones:</h3>'
+			,'<tpl for=".">'
+			,'<div>{observaciones}</div>'
+			,'</tpl>'
+		);
+
+/**
+* Renderiza una celda incluyendo el tooltip de observaciones
+* @param {Mixed} val Value to render
+* @param {Object} cell
+* @param {Ext.data.Record} record
+*/
+
+var renderRowTooltip=function(val, cell, record) {
+	//alert("asdasd");
+	// get data
+	var data = record.data;
+
+	 
+	// create tooltip
+	var qtip = qtipTpl.apply(data);
+
+	// return markup
+	return '<div qtip="' + qtip +'">' + val + '</div>';
+}	
+
+/*
+* Crea el expander
+*/
+var expander = new Ext.grid.myRowExpander({  	  
+  lazyRender : false, 
+  width: 15,	
+  tpl : new Ext.Template(
+	  '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class=\'btnComentarios\' id=\'obs_{_id}\'><strong>Observaciones:</strong> {observaciones}</div></p>' 
+	 
+  )
+});
+
+
 /*
 * Crea el Record 
 */
@@ -23,7 +73,8 @@ var record = Ext.data.Record.create([
 	{name: 'sel', type: 'bool'},
 	{name: 'ttransito', type: 'string'},
 	{name: 'frecuencia', type: 'string'},				
-	{name: 'style', type: 'string'}	,
+	{name: 'style', type: 'string'},
+	{name: 'tipo', type: 'string'},
 	
 	<?
 	foreach( $conceptos as $concepto ){			
@@ -75,30 +126,47 @@ var store = new Ext.data.GroupingStore({
 */	
 var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30}); 
 
+
+/*
+* Template to render tooltip
+*/
+var qtipTpl=new Ext.XTemplate(
+			 '<h3>Observaciones:</h3>'
+			,'<tpl for=".">'
+			,'<div>{observaciones}</div>'
+			,'</tpl>'
+		)
+
+
 /*
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
 
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [
-		//expander,	
+		expander,	
 		checkColumn,			
 		{
-			id: 'nconcepto',
+			id: 'concepto', //para aplicar estilos a esta columna
 			header: "Concepto",
 			width: 200,
 			sortable: true,
-			renderer: renderRowTooltip,	
+			
 			dataIndex: 'nconcepto',
 			hideable: false,
-			renderer: function(value, metaData){
-					if( value=="FLETE" ){					
-						return "<div style='font-weight:bold'>"+value+"</div>";
-					}else{
-						return value;
-					}
-				} ,
-			editor: <?=extRecargos( $transporte )?>	
+			renderer: function(value, metaData, record){
+				var data = record.data;
+				// create tooltip
+				var qtip = qtipTpl.apply(data);
+
+			
+				if( record.data.tipo == "concepto" ){					
+					return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
+				}else{
+					return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+				}
+			} ,
+			editor: <?=extRecargosNoEnlazado( $transporte )?>	
 		},	
 		{
 			id: 'trayecto',
@@ -476,10 +544,11 @@ new Ext.grid.EditorGridPanel({
 	autoExpandColumn: 'nconcepto',
 	title: '<?=$titulo?>',
 	root_title: '<?=$trafico->getCaNombre()?>',	
-	plugins: [checkColumn], //expander,
+	plugins: [checkColumn, expander], 
 	closable: true,
 	id: 'fletes_<?=$idcomponent?>',
-	
+	height: 400,
+	//autoHeight : true, 
 	tbar: [			  
 	{
 		text: 'Guardar Cambios',
