@@ -8,7 +8,9 @@
 				3.1 Nombre:<br />
 				<div style="display:none"><?=input_tag( "idconcliente",  isset($contacto)?$contacto->getCaIdcontacto():"", "size=11 readonly=readonly" )?></div>
 				<?php echo form_error('idconcliente') ?>
-				<?=input_tag( "cliente",  isset($contacto)?$contacto->getCliente():"", "size=50 " )?>						</td>
+				<?=input_tag( "cliente",  isset($contacto)?$contacto->getCliente():"", "size=50 " )?>	
+				<div id="cliente2"></div>
+				</td>
 		<td width="186">3.2 Contacto:<br />
 			<?=input_tag( "con_cliente", isset($contacto)?$contacto->getNombre():"", "size=50 readonly=readonly autocomplete=off" )?></td>					
 	</tr>

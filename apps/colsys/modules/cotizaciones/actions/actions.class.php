@@ -49,10 +49,14 @@ class cotizacionesActions extends sfActions
 				$c->add( CotizacionPeer::CA_ASUNTO, "lower(".CotizacionPeer::CA_ASUNTO.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
 			case "vendedor":
-				$c->add( CotizacionPeer::CA_LOGIN, "lower(".CotizacionPeer::CA_LOGIN.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
+				$c->add( CotizacionPeer::CA_USUARIO, "lower(".CotizacionPeer::CA_USUARIO.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
 			case "numero_de_cotizacion":
 				$c->add( CotizacionPeer::CA_IDCOTIZACION, "lower(".CotizacionPeer::CA_IDCOTIZACION.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
+				break;	
+			case "sucursal":
+				$c->addJoin( CotizacionPeer::CA_USUARIO , UsuarioPeer::CA_LOGIN );
+				$c->add( UsuarioPeer::CA_SUCURSAL, "lower(".UsuarioPeer::CA_SUCURSAL.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
 		}	
 		$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL );
@@ -150,8 +154,8 @@ class cotizacionesActions extends sfActions
 	public function executeFormProductoGuardar(){
 		$user_id = $this->getUser()->getUserId();
 
-		if( $this->getRequestParameter("productoId") ){
-			$producto = CotProductoPeer::retrieveByPk( $this->getRequestParameter("productoId") );
+		if( $this->getRequestParameter("idproducto") ){
+			$producto = CotProductoPeer::retrieveByPk( $this->getRequestParameter("cotizacionId") ,$this->getRequestParameter("idproducto") );
 			$this->forward404Unless( $producto );
 		}else{		
 			$producto = new CotProducto();
@@ -383,6 +387,14 @@ class cotizacionesActions extends sfActions
 	* @author Carlos G. López M.
 	*/
 	public function executeConsultaCotizacion(){
+		
+		$response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/FileUploadField",'last');
+		$response->addJavaScript("extExtras/RowExpander",'last');
+		$response->addJavaScript("extExtras/myRowExpander",'last');
+		$response->addJavaScript("extExtras/NumberFieldMin",'last');
+		$response->addJavaScript("extExtras/CheckColumn",'last');
+	
 		if( !is_null($this->getRequestParameter("id")) ) {
 			$id_cotizacion = $this->getRequestParameter("id");	
 			$cotizacion = CotizacionPeer::retrieveByPk( $id_cotizacion );
@@ -747,6 +759,149 @@ class cotizacionesActions extends sfActions
 		}
 		@unlink( $fileName );
 	}
+	
+	/*
+	* Muestra los datos de la grilla de prooductos del componente grillaProductos
+	*/
+	public function executeGrillaProductosData(){
+		$id = $this->getRequestParameter("idcotizacion");
+		$c = new Criteria();		
+		$c->add( CotProductoPeer::CA_IDCOTIZACION , $id );
+		$c->addAscendingOrderByColumn( CotProductoPeer::CA_IDPRODUCTO );
+		$cotProductos = CotProductoPeer::doSelect($c);
+				
+		$this->productos = array();
+		foreach( $cotProductos as $producto ){
+			$origen = $producto->getOrigen();
+			$destino = $producto->getDestino();
+			$trayecto = " [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ").utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."] ";
+			
+			//Se envian las opciones existentes
+			$c = new Criteria();
+			$c->add( CotOpcionPeer::CA_IDPRODUCTO, $producto->getCaIdProducto() );
+			$opciones = $producto->getCotOpciones( $c );
+			foreach( $opciones as $opcion ){
+				$concepto = $opcion->getConcepto();
+				$this->productos[] = array('id'=>"",
+						 'trayecto'=>$trayecto,
+						 'idopcion'=>$opcion->getCaIdOpcion(),
+						 'iditem'=>$opcion->getCaIdConcepto(),
+						 'item'=>$concepto->getCaConcepto(),
+						 'idproducto'=>$producto->getCaIdProducto(),
+						 'producto'=>$producto->getCaProducto(),
+						 'idcotizacion'=>$producto->getCaIdCotizacion(),		 							
+						 
+						 'tra_origen'=>$origen->getCaIdTrafico(),
+						 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
+						 'ciu_origen'=>$origen->getCaIdCiudad(),
+						 'ciu_origen_value'=>$origen->getCaCiudad(),
+						 'tra_destino'=>$destino->getCaIdTrafico(),
+						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
+						 'ciu_destino'=>$destino->getCaIdCiudad(),
+						 'ciu_destino_value'=>$destino->getCaCiudad(),
+						 
+						 'valor_tar'=>$opcion->getCaValorTar(),
+						 'aplica_tar'=>$opcion->getCaAplicaTar(),
+						 'valor_min'=>$opcion->getCaValorMin(),
+						 'aplica_min'=>$opcion->getCaAplicaMin(),
+						 'idmoneda'=>$opcion->getCaIdmoneda(),
+						 'detalles'=>$opcion->getCaObservaciones(),
+						 'transporte'=>utf8_encode($producto->getCaTransporte()),
+						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
+						 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
+						 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
+						 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
+						 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
+						 'imprimir'=>utf8_encode($producto->getCaImprimir()),
+						 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
+						 'tipo'=>"concepto"
+					);
+					 				 
+				 //Se muestran los recargos 
+				$recargos = $opcion->getCotRecargos();
+				foreach( $recargos as $recargo ){
+					$tipoRecargo = $recargo->getTipoRecargo();
+					$this->productos[] = array('id'=>"",
+						 'trayecto'=>$trayecto,
+						 'idopcion'=>$opcion->getCaIdOpcion(),
+						 'iditem'=>$tipoRecargo->getCaIdRecargo(),
+						 'item'=>$tipoRecargo->getCaRecargo() ,
+						 'idproducto'=>$producto->getCaIdProducto(),
+						 'producto'=>$producto->getCaProducto(),
+						 'idcotizacion'=>$producto->getCaIdCotizacion(),
+						 
+						 'tra_origen'=>$origen->getCaIdTrafico(),
+						 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
+						 'ciu_origen'=>$origen->getCaIdCiudad(),
+						 'ciu_origen_value'=>$origen->getCaCiudad(),
+						 'tra_destino'=>$destino->getCaIdTrafico(),
+						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
+						 'ciu_destino'=>$destino->getCaIdCiudad(),
+						 'ciu_destino_value'=>$destino->getCaCiudad(),
+						 	 
+						 'idconcepto'=>$recargo->getCaIdConcepto(),
+						 'valor_tar'=>$recargo->getCaValorTar(),
+						 'aplica_tar'=>$recargo->getCaAplicaTar(),
+						 'valor_min'=>$recargo->getCaValorMin(),
+						 'aplica_min'=>$recargo->getCaAplicaMin(),
+						 'idmoneda'=>$recargo->getCaIdmoneda(),
+						 'detalles'=>$recargo->getCaObservaciones(),
+						 
+						 'transporte'=>utf8_encode($producto->getCaTransporte()),
+						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
+						 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
+						 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
+						 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
+						 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
+						 'imprimir'=>utf8_encode($producto->getCaImprimir()),
+						 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
+						 'tipo'=>"recargo"
+					);
+				}
+				 
+			}
+			
+			
+			//Se envia una fila vacia por cada grupo para agregar una nueva opción  
+			$row = array('id'=>"",
+						 'trayecto'=>$trayecto,						 
+						 'iditem'=>"",
+						 'item'=>"",
+						 'idproducto'=>$producto->getCaIdProducto(),
+						 'producto'=>$producto->getCaProducto(),
+						 'idcotizacion'=>$producto->getCaIdCotizacion(),
+						 
+  					  	 'tra_origen'=>$origen->getCaIdTrafico(),
+						 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
+						 'ciu_origen'=>$origen->getCaIdCiudad(),
+						 'ciu_origen_value'=>$origen->getCaCiudad(),
+						 'tra_destino'=>$destino->getCaIdTrafico(),
+						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
+						 'ciu_destino'=>$destino->getCaIdCiudad(),
+						 'ciu_destino_value'=>$destino->getCaCiudad(),
+						 
+						 'valor_tar'=>"",
+						 'aplica_tar'=>"",
+						 'valor_min'=>"",
+						 'aplica_min'=>"",
+						 'idmoneda'=>"",
+						 'detalles'=>"",
+						 'transporte'=>utf8_encode($producto->getCaTransporte()),
+						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
+						 
+						 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
+						 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
+						 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
+						 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
+						 'imprimir'=>utf8_encode($producto->getCaImprimir()),
+						 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
+						 'tipo'=>"concepto",
+						 
+						); 
+			$this->productos[] = $row; 
+		}	
+	}
+	
 	
 	
 }

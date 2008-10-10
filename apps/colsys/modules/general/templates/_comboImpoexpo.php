@@ -29,7 +29,7 @@ Ext.onReady(function(){
 	<?	
 	foreach( $events as $key=>$value ){		
 	?>	
-	comboImpoexpo.on("<?=$key?>", <?=$value?> );
+	//comboImpoexpo.on("<?=$key?>", <?=$value?> );
 	<?
 	}
 	?>

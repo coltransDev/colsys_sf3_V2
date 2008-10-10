@@ -22,8 +22,6 @@ class pricingActions extends sfActions
 		$this->modalidades_aer = ParametroPeer::retrieveByCaso( "CU052" );
 		$this->modalidades_ter = ParametroPeer::retrieveByCaso( "CU053" );	
 		
-		$this->opcion = $this->getRequestParameter( "opcion" );
-		
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/FileUploadField",'last');
 		$response->addJavaScript("extExtras/RowExpander",'last');
@@ -44,9 +42,7 @@ class pricingActions extends sfActions
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		$idlinea = $this->getRequestParameter( "idlinea" );
 		$idciudad = $this->getRequestParameter( "idciudad" );
-		
-		$idciudaddestino = $this->getRequestParameter( "idciudaddestino" );
-		
+
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
 		
@@ -73,11 +69,6 @@ class pricingActions extends sfActions
 		if( $idciudad ){
 			$c->add( TrayectoPeer::CA_ORIGEN, $idciudad );	
 		}
-		
-		if( $idciudaddestino ){			
-			$c->add( TrayectoPeer::CA_DESTINO, $idciudaddestino );	
-		}
-		
 		if( $idlinea ){
 			$c->add( TrayectoPeer::CA_IDLINEA, $idlinea );	
 		}
@@ -121,7 +112,6 @@ class pricingActions extends sfActions
 						'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto(),
 						'style' => $trayecto->getEstilo(),
 						'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
-						'concepto_id'=>$pricConcepto->getCaIdConcepto(),
 						'tipo'=>"concepto",
 						'neta'=>$pricConcepto->getCaVlrneto(),
 						'minima'=>$pricConcepto->getCaVlrminimo()
@@ -145,8 +135,7 @@ class pricingActions extends sfActions
 							'aplicacion' => "",				
 							'_id' => $trayecto->getCaIdtrayecto()."-".$pricRecargo->getCaIdrecargo(),
 							'style' => $trayecto->getEstilo(),
-							'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
-							'recargo_id'=>$pricRecargo->getCaIdrecargo(),
+							'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
 							'tipo'=>"recargo",
 							'neta'=>$pricRecargo->getCaVlrrecargo(),
 							'minima'=>$pricRecargo->getCaVlrminimo()	
@@ -481,8 +470,6 @@ class pricingActions extends sfActions
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		
 		$idciudad = $this->getRequestParameter( "idciudad" );
-		$idciudaddestino = $this->getRequestParameter( "idciudaddestino" );
-		
 		$idlinea = $this->getRequestParameter( "idlinea" );
 		$idciudad = $this->getRequestParameter( "idciudad" );
 		$opcion = $this->getRequestParameter( "opcion" );
@@ -530,9 +517,9 @@ class pricingActions extends sfActions
 					
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
-		$this->idtrafico = $idtrafico;		
+		$this->idtrafico = $idtrafico;
+		
 		$this->idciudad = $idciudad;
-		$this->idciudaddestino = $idciudaddestino;
 		$this->idlinea = $idlinea;
 		$this->linea = "";		
 		
@@ -550,11 +537,9 @@ class pricingActions extends sfActions
 	public function executeDatosRecargos(){
 	
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
-		$tipo = utf8_decode($this->getRequestParameter("tipo"));
 		
 		$c = new Criteria();
 		$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte );
-		$c->add( TipoRecargoPeer::CA_TIPO, $tipo );
 		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
 		//$c->setLimit(3);
 		$recargos = TipoRecargoPeer::doSelect( $c );

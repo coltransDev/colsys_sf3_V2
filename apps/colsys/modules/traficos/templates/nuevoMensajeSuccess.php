@@ -252,26 +252,34 @@ if( $reporte->getCaImpoExpo()=="Importación" ){
 			<?		
 			
 			$contacto = $reporte->getContacto();	
-			echo checkbox_tag("destinatarios[]", $contacto->getCaEmail() , 0)." ".$contacto->getCaNombres()." ".$contacto->getCaPApellido()."<br />";	
+			//echo checkbox_tag("destinatarios[]", $contacto->getCaEmail() , 1)." &nbsp;".$contacto->getCaNombres()." ".$contacto->getCaPApellido()."<br />";	
 			if( $reporte->getCaConfirmarclie() ){
 				$contactosClie = explode(",",$reporte->getCaConfirmarclie());
 				
 				foreach( $contactosClie as $contacto ){
-					echo checkbox_tag("destinatarios[]", $contacto )." ".$contacto."<br />";
+					echo checkbox_tag("destinatarios[]", $contacto, 1 )." ".$contacto."<br />";
 				}
 			}
 						
 			
 			if ( $reporte->getCaContinuacion()!="N/A" ) {
-				echo checkbox_tag("copiar_cont", 1, 1  )." &nbsp; &nbsp;Coordinador OTM/DTA:<br />";		
+				echo checkbox_tag("copiar_cont", 1, 1  )." &nbsp;Coordinador OTM/DTA<br />";		
 			}
 			if ( $reporte->getCaSeguro()=="Sí" ) {
-				echo checkbox_tag("destinatarios[]", "seguros@coltrans.com.co" )." seguros@coltrans.com.co<br />";						
+				$repseguro = $reporte->getRepSeguro();
+				if( $repseguro ){
+					$segConf = explode(",", $repseguro->getCaSeguroConf() ); 
+					
+					foreach( $segConf as $dest ){
+						echo checkbox_tag("destinatarios[]", $dest, 1 )." &nbsp;Analista de Seguros<br />";						
+					}
+				}
+				
 			}
 			if ( $reporte->getCaColmas()=="Sí" ) {
 				$coordinador = $reporte->getCliente()->getCoordinador();
 				if( $coordinador ){				
-					echo checkbox_tag("copiar_adua", 1, 1  )." &nbsp; &nbsp;Coordinador Aduanas:<br />";		
+					echo checkbox_tag("copiar_adua", 1, 1  )." &nbsp;Coordinador Aduanas:<br />";		
 				}else{
 					echo "- No se ha definido coordinador de aduana en Maestra de Clientes<br />";
 				}
@@ -381,7 +389,7 @@ if( $reporte->getCaImpoExpo()=="Importación" ){
 							</div></td>
 							<td colspan="2"><div align="left"><strong>Fecha Estimada de Llegada:</strong><br />
 									<?=form_error("fchcontinuacion")?>
-									<?=yui_calendar("fchcontinuacion", $fchcont?$fchcont:date("Y-m-d"), null, "2008-03-01" )?>
+									<?=yui_calendar("fchcontinuacion", $fchcont?$fchcont:'', null, "2008-03-01" )?>
 									<?=image_tag("16x16/no.gif", array("onClick"=>"document.getElementById('fchcontinuacion').value=''") )?>
 							</div></td>
 						</tr>

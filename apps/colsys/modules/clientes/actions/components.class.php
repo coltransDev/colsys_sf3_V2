@@ -35,7 +35,6 @@ class clientesComponents extends sfComponents
 	public function executeComboClientes()
 	{
 		$response = sfContext::getInstance()->getResponse();
-
 		$response->addJavascript('components/comboClientes');		
 		
 		if($this->idcliente){
@@ -47,7 +46,6 @@ class clientesComponents extends sfComponents
 	public function executeComboConsignatario()
 	{
 		$response = sfContext::getInstance()->getResponse();
-
 		$response->addJavascript('components/comboConsignatario');		
 		
 		if($this->idtercero){
@@ -58,7 +56,6 @@ class clientesComponents extends sfComponents
 	public function executeComboNotify()
 	{
 		$response = sfContext::getInstance()->getResponse();
-
 		$response->addJavascript('components/comboNotify');		
 		
 		if($this->idtercero){

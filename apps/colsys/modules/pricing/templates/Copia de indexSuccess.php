@@ -1,54 +1,11 @@
 <?
 use_helper( "Ext2" );
 ?>
-<style>
-
-#fi-button-msg {
-	border: 2px solid #ccc;
-	padding: 5px 10px;
-	background: #eee;
-	margin: 5px;
-	float: left;
-}
-
-.x-form-file-wrap {
-    position: relative;
-    height: 22px;
-}
-.x-form-file-wrap .x-form-file {
-	position: absolute;
-	right: 0;
-	-moz-opacity: 0;
-	filter:alpha(opacity: 0);
-	opacity: 0;
-	z-index: 2;
-    height: 22px;
-}
-.x-form-file-wrap .x-form-file-btn {
-	position: absolute;
-	right: 0;
-	z-index: 1;
-}
-.x-form-file-wrap .x-form-file-text {
-    position: absolute;
-    left: 0;
-    z-index: 3;
-    color: #777;
-}
-
-#panel-noticias-wrap{
-	margin: 10px;
-
-}
-
-
-
-</style>
 <script type="text/javascript">
 	
     Ext.onReady(function(){
 		/*
-		* Se muestra el panel de notificaciones 
+
 		*/
 		<?
 		include_component("pricing", "panelNoticias");		
@@ -251,13 +208,62 @@ use_helper( "Ext2" );
 	   	   
 	   
 	   
+	   /* Inicializa los tooltips
+		*/
+		Ext.QuickTips.init();	
+		Ext.apply(Ext.QuickTips.getQuickTip(), {	   
+		   dismissDelay: 200000 //permite que los tips permanezcan por mas tiempo. 
+		});
+		
+		/*
+		* Cre un template para renderizar el tooltip
+		*/
+		var qtipTpl=new Ext.XTemplate(
+					 '<h3>Observaciones:</h3>'
+					,'<tpl for=".">'
+					,'<div>{observaciones}</div>'
+					,'</tpl>'
+				);
+		
+		/**
+		* Renderiza una celda incluyendo el tooltip de observaciones
+		* @param {Mixed} val Value to render
+		* @param {Object} cell
+		* @param {Ext.data.Record} record
+		*/
+		
+		var renderRowTooltip=function(val, cell, record) {
+			//alert("asdasd");
+			// get data
+			var data = record.data;
+	 
+			 
+			// create tooltip
+			var qtip = qtipTpl.apply(data);
+	 
+			// return markup
+			return '<div qtip="' + qtip +'">' + val + '</div>';
+		}	
 	   
+	   /*
+		* Crea el expander
+		*/
+		var expander = new Ext.grid.myRowExpander({  	  
+		  lazyRender : false, 
+		  width: 15,	
+		  tpl : new Ext.Template(
+			  '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class=\'btnComentarios\' id=\'obs_{_id}\'><strong>Observaciones:</strong> {observaciones}</div></p>' 
+			 
+		  )
+		});
 	   
 	   
        Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
        
-	   var treePanelOnclickHandler = function(n){			
-			//var sn = this.selModel.selNode || {}; // selNode is null on initial selection							
+	   var treePanelOnclickHandler = function(n){
+			
+			//var sn = this.selModel.selNode || {}; // selNode is null on initial selection
+							
 			if( n.leaf ){  // ignore clicks on folders 
 				
 				var nodeoptions = n.id.split("_");
@@ -276,18 +282,7 @@ use_helper( "Ext2" );
 						*  Se muestra una grilla con la información de fletes 
 						*  del trafico seleccionado
 						*/	
-						<?
-						if( $opcion=="consulta" ){
-						?>						
-							var url = '<?=url_for("pricing/grillaPorTrafico?opcion=consulta")?>';
-						<?
-						}else{
-						?>						
-							var url = '<?=url_for("pricing/grillaPorTrafico")?>';
-						<?
-						}
-						?>
-						
+						var url = '<?=url_for("pricing/grillaPorTrafico")?>';
 						break;						
 				}
 				
@@ -389,7 +384,7 @@ use_helper( "Ext2" );
                     layoutConfig:{
                         animate:true
                     }
-					,
+					/*,
                     items: [
 						
 						<?
@@ -489,7 +484,7 @@ use_helper( "Ext2" );
 						}
 						?>
 						
-					]
+					]*/
                 },
                 new Ext.TabPanel({
 					id:'tab-panel',
@@ -542,7 +537,46 @@ use_helper( "Ext2" );
 	
 	
 </script>
-  
+  <style>
+
+#fi-button-msg {
+	border: 2px solid #ccc;
+	padding: 5px 10px;
+	background: #eee;
+	margin: 5px;
+	float: left;
+}
+
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	-moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
+}
+
+#panel-noticias-wrap{
+	margin: 10px;
+
+}
+</style>
 <div id="traficos"></div>
 
 <div id="center2">

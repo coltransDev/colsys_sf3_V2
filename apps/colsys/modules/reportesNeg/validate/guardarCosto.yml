@@ -13,7 +13,7 @@ fields:
  
 
   vlrcosto:
-     required:
+    required:
       msg:       requerido
     sfNumberValidator:
       nan_error:    no valido

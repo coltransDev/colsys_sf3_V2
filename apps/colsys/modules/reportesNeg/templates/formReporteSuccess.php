@@ -4,6 +4,7 @@ use_helper('Validation');
 use_helper('Modalbox');
 use_helper('Javascript');
 use_helper('YUICalendar');
+use_helper('Ext2');
 
 $cliente = $reporteNegocio->getCliente();
 ?>
@@ -145,12 +146,123 @@ $cliente = $reporteNegocio->getCliente();
 			campo.style.display="none";
 		}
 	}
+	
+	
+	function nuevoTercero(tipo){	
+		//crea una ventana 
+		win = new Ext.Window({		
+			width       : 500,
+			//height      : 200,
+			closeAction :'hide',
+			plain       : true,		
+			
+			items       : new Ext.FormPanel({					
+				id: 'tercero-form',			
+				//frame: true,
+				title: 'Nuevo '+tipo,
+				//autoHeight: true,
+				//bodyStyle: 'padding: 10px 10px 0 10px;',
+				//labelWidth: 50, 			
+				defaultType: 'textfield',
+				
+				
+				items: [
+						new Ext.form.TextField({
+							fieldLabel: 'Nombre',
+							name: 'nombre',
+							width:300
+						})
+						,
+						{
+						fieldLabel: 'Identificación',
+						name: 'identificacion',
+						allowBlank:false,
+						width       : 300
+						}/*,
+						{
+						fieldLabel: 'Dirección',
+						name: 'direccion',
+						allowBlank:false,
+						width       : 300
+						},
+						{
+						fieldLabel: 'Telefono',
+						name: 'telefono',
+						allowBlank:false,
+						width       : 300
+						},
+						{
+						fieldLabel: 'Fax',
+						name: 'fax',
+						allowBlank:false,
+						width       : 300
+						},
+						{
+						fieldLabel: 'Email',
+						name: 'email',
+						allowBlank:false,
+						width       : 300
+						},						
+						{
+						fieldLabel: 'Contacto',
+						name: 'contacto',
+						allowBlank:false,
+						width       : 300
+						},						
+						{
+						fieldLabel: 'Ciudad',
+						name: 'ciudad',
+						allowBlank:false
+						}	*/							
+				]				
+			}),
+	
+			buttons: [{
+				text     : 'Crear',
+				handler: function(){
+					
+					var fp = Ext.getCmp("tercero-form");	
+					
+					//alert( idrecargo );				
+					//if(fp.getForm().isValid()){
+						fp.getForm().submit(
+							{
+								url: '<?=url_for("clientes/guardarTercero")?>/tipo/'+tipo,
+							//	method:'POST',
+								waitMsg: 'Creando el '+tipo,
+								success: function(fp, o){																
+									win.close();						
+									Ext.Msg.alert('Success', 'Se ha guardado');																															
+											
+								},
+								failure: function(xhr){  
+									Ext.Msg.alert('Error', 'Ha ocurrido un error al crear el '+tipo);					
+								}
+							}
+						);
+						
+						win.close();	
+						
+						
+					//}
+				}
+			},{
+				text     : 'Cancelar',
+				handler  : function(){
+					win.close();
+				}
+			}]
+		});
+		
+		win.show( );	
+	} 
 </script>
 <?php echo form_error('name') ?>
 <h3>Reporte de Negocio de <?=$modo=="expo"?"<strong>Exportaci&oacute;n</strong>":"<strong>Importaci&oacute;n</strong>"?></h3>
 <br>
 <br>
-<?=form_tag("reportesNeg/formReporteGuardar?modo=".$modo, "name=reporteForm id=reporteForm")?>
+<?
+//form_tag("reportesNeg/formReporteGuardar?modo=".$modo, "name=reporteForm id=reporteForm")?>
 <?=input_hidden_tag("reporteId", $reporteNegocio->getCaIdReporte() )?>
 <table cellspacing="1" width="90%" class="tableForm">
 	<tbody>
@@ -202,7 +314,10 @@ $cliente = $reporteNegocio->getCliente();
 						<?
 						include_component("clientes", "comboConsignatario", array( "id"=>"idconsignatario", "idtercero"=>$reporteNegocio->getCaIdconsignatario() ));
 						?>						</td>
-					<td width="116"><span class="listar"><?php echo m_link_to(image_tag("22x22/new.gif")." Nuevo", 'clientes/agregarTercero?tipo=consignatario&formName=expoReporteFormconsignatario', array("title"=>"Haga click aca para crear un nuevo consignatario") , array( "width"=>850 ) ) ?></span></td>
+					<td width="116">						
+					<span class="listar">
+					<?=image_tag("22x22/new.gif", "onClick=nuevoTercero('consignee')")." "?>
+					<?php //echo m_link_to(image_tag("22x22/new.gif")." Nuevo", 'clientes/agregarTercero?tipo=consignatario&formName=expoReporteFormconsignatario', array("title"=>"Haga click aca para crear un nuevo consignatario") , array( "width"=>850 ) ) ?></span></td>
 					<td width="294">
 						<?
 						if( $modo!="expo" ){ //Esta casilla solamente es util en el caso de la importaciones 
@@ -513,8 +628,9 @@ $cliente = $reporteNegocio->getCliente();
 		</tr>
 	</tbody>
 </table>
-</form>
+</forma>
 <script language="JavaScript" type="text/javascript">		
 	cambiarTransporte( document.getElementById('transporte').value );
 	seleccionAgente();
 </script>
+<script type="text/javascript" src="/colsys_sf/js/components/comboContactoClientes.js"></script>

@@ -76,15 +76,9 @@ var record = Ext.data.Record.create([
 	{name: 'style', type: 'string'}	,
 	{name: 'tipo', type: 'string'}	,
 	{name: 'neta', type: 'string'}	,
-	{name: 'minima', type: 'string'}	,
+	{name: 'minima', type: 'string'}	
 
-	<?
-	foreach( $conceptos as $concepto ){			
-	?>
-	,{name: 'concepto_<?=$concepto->getCaIdconcepto()?>', type: 'string'}			
-	<?			
-	}
-	?>		
+	
 ]);
    		
 /*
@@ -98,11 +92,14 @@ if( $idlinea ){
 if( $idciudad ){
 	$url .= "&idciudad=".$idciudad;
 }
+if( $idciudaddestino ){
+	$url .= "&idciudaddestino=".$idciudaddestino;
+}
 
 ?>
 var store = new Ext.data.GroupingStore({
 	autoLoad : true,			
-	url: '<?=url_for($url)?>',
+	url: '<?=url_for($url)?>',	
 	reader: new Ext.data.JsonReader(
 		{
 			id: '_id',

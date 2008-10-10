@@ -106,9 +106,11 @@ class clientesActions extends sfActions
 	* @author: Andres Botero
 	*/
 	public function executeGuardarTercero(){
-		$this->tipo=$this->getRequestParameter("tipo");
-		$this->formName  = $this->getRequestparameter("formName");		
-		
+		$this->tipo=$this->getRequestParameter("tipo");		
+		$this->forward404unless($this->tipo);
+		//echo "->".$this->getRequestParameter("nombre");
+		print_r( $_POST );
+		//$this->forward404unless($this->getRequestParameter("nombre"));
 		if($this->getRequestParameter("nombre")){
 			$id = $this->getRequestParameter("id");
 			if( !$id ){
@@ -133,9 +135,9 @@ class clientesActions extends sfActions
 				$tercero->setCaTipo( "Notify" );
 			}
 			
-			$tercero->save();		
-			$this->tercero = $tercero;
+			$tercero->save();					
 		}
+		exit;
 	}
 	
 	/*
@@ -197,11 +199,12 @@ class clientesActions extends sfActions
 		\n\n
 		Coltrans S.A.					
 		");	
-				
+		$user = $this->getUser();		
 		$from = "serclientebog@coltrans.com.co";
-		$fromName = "Servicio al cliente";
-		$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() ); //$contacto->getCaEmail()
-																																
+		$fromName = "Coltrans S.A., Servicio al cliente";
+		
+		$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail(), $user->getNombre()=>$user->getEmail()); //$contacto->getCaEmail()
+			//,																													
 		Utils::sendEmail( "CORREO DE ACTIVACION", $content, $from, $fromName, $to );		
 		
 		

@@ -225,20 +225,31 @@ foreach( $statuss as $timestamp=>$statusH ){
 }
 ?>
 </table>
-	<br /><br />
 	<?
+	if( $reporte->getCaImpoexpo()=="Importación"){
+	?>
+		<p><br />
+		 Apreciados Clientes:</p>
+		<p>Les informamos que a partir del 1&deg; de Septiembre  de 2008 nuestra sede en Cartagena estar&aacute; ubicada en La Matuna Edificio Concasa Of. 1405 Calle 32A No 8A-50. Tel. 6640873/6649870 / Sra. Yesika Guerra. </p>
+		<br />			
+	<?
+	}
 	echo nl2br($status->getCaComentarios());
 	?>
-	<br /><br />
+		<br />
+		<br />
 	
 	
-	Cordialmente,<br /><br />
+	Cordialmente,<br />
+	<br />
 	
 
-<?	
+	<?	
 if( $user ){
 	include_partial("traficos/firma", array( "user"=>$user ));
 }
 ?>
+	
 
+		</p>
 </div>

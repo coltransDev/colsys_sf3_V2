@@ -1,4 +1,2 @@
 <?php echo form_error('idcotizacion') ?>
-<?=input_tag( "idcotizacion",  $idcotizacion , "size=20 autocomplete=off" )?>
-<?
-//input_tag( "idproducto",  $selected , "size=20 " )?>
+<?=input_tag( "idcotizacion",  $idcotizacion , array("size"=>20, "autocomplete"=>"off") )?>

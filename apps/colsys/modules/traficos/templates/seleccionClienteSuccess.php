@@ -1,7 +1,9 @@
 <?
+
+
 use_helper("YUICalendar", "Modalbox","Javascript", "Validation");
+echo form_tag("traficos/verEstatusCarga?modo=".$modo, "name=cuadroStatusForm id=cuadroStatusForm" );
 ?>
-<form name="cuadroStatusForm" id="cuadroStatusForm" action="<?=url_for("traficos/verEstatusCarga?modo=".$modo)?>">
 <script language="JavaScript" type="text/javascript">
 	
 	function seleccionCliente( formName , sel) {

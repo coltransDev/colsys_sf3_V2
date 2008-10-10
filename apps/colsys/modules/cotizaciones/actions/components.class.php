@@ -41,95 +41,17 @@ class cotizacionesComponents extends sfComponents
 		}
 	}
 	
+	/*
+	* Grilla que muestra los trayectos y sus respectivos conceptos
+	* @author: Andres Botero
+	*/
 	public function executeGrillaProductos(){
-		$id = $this->cotizacion->getCaIdcotizacion();
 		
-		$c = new Criteria();		
-		$c->add( CotProductoPeer::CA_IDCOTIZACION , $id );
-		$cotProductos = CotProductoPeer::doSelect($c);
-				
-		$this->productos = array();
-		foreach( $cotProductos as $producto ){
-			$origen = $producto->getOrigen();
-			$destino = $producto->getDestino();
-			$trayecto = " [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ").utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."] ";
-			
-			//Se envian las opciones existentes
-			$c = new Criteria();
-			$c->add( CotOpcionPeer::CA_IDPRODUCTO, $producto->getCaIdProducto() );
-			$opciones = $producto->getCotOpciones( $c );
-			foreach( $opciones as $opcion ){
-				$concepto = $opcion->getConcepto();
-				$this->productos[] = array('id'=>"",
-						 'trayecto'=>$trayecto,
-						 'idopcion'=>$opcion->getCaIdOpcion(),
-						 'iditem'=>$opcion->getCaIdConcepto(),
-						 'item'=>$concepto->getCaConcepto(),
-						 'idproducto'=>$producto->getCaIdProducto(),
-						 'producto'=>$producto->getCaProducto(),
-						 'idcotizacion'=>$producto->getCaIdCotizacion(),			 
-						 'valor_tar'=>$opcion->getCaValorTar(),
-						 'aplica_tar'=>$opcion->getCaAplicaTar(),
-						 'valor_min'=>$opcion->getCaValorMin(),
-						 'aplica_min'=>$opcion->getCaAplicaMin(),
-						 'idmoneda'=>$opcion->getCaIdmoneda(),
-						 'detalles'=>$opcion->getCaObservaciones(),
-						 'transporte'=>utf8_encode($producto->getCaTransporte()),
-						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-						 'tipo'=>"concepto"
-					);
-					 				 
-				 //Se muestran los recargos 
-				$recargos = $opcion->getCotRecargos();
-				foreach( $recargos as $recargo ){
-					$tipoRecargo = $recargo->getTipoRecargo();
-					$this->productos[] = array('id'=>"",
-						 'trayecto'=>$trayecto,
-						 'idopcion'=>$opcion->getCaIdOpcion(),
-						 'iditem'=>$tipoRecargo->getCaIdRecargo(),
-						 'item'=>$tipoRecargo->getCaRecargo() ,
-						 'idproducto'=>$producto->getCaIdProducto(),
-						 'producto'=>$producto->getCaProducto(),
-						 'idcotizacion'=>$producto->getCaIdCotizacion(),			 
-						 'idconcepto'=>$recargo->getCaIdConcepto(),
-						 'valor_tar'=>$recargo->getCaValorTar(),
-						 'aplica_tar'=>$recargo->getCaAplicaTar(),
-						 'valor_min'=>$recargo->getCaValorMin(),
-						 'aplica_min'=>$recargo->getCaAplicaMin(),
-						 'idmoneda'=>$recargo->getCaIdmoneda(),
-						 'detalles'=>$recargo->getCaObservaciones(),
-						 'transporte'=>utf8_encode($producto->getCaTransporte()),
-						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-						 'tipo'=>"recargo"
-					);
-				}
-				 
-			}
-			
-			
-			//Se envia una fila vacia por cada grupo para agregar una nueva opción  
-			$row = array('id'=>"",
-						 'trayecto'=>$trayecto,						 
-						 'iditem'=>"",
-						 'item'=>"",
-						 'idproducto'=>$producto->getCaIdProducto(),
-						 'producto'=>$producto->getCaProducto(),
-						 'idcotizacion'=>$producto->getCaIdCotizacion(),	
-						 'valor_tar'=>"",
-						 'aplica_tar'=>"",
-						 'valor_min'=>"",
-						 'aplica_min'=>"",
-						 'idmoneda'=>"",
-						 'detalles'=>"",
-						 'transporte'=>utf8_encode($producto->getCaTransporte()),
-						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-						 'tipo'=>"concepto",
-						 
-						); 
-			$this->productos[] = $row; 
-		}				
 	}
-
+	
+	/*
+	* 
+	*/	
 	public function executeGrillaRecargos(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		$tipo = $this->tipo;
@@ -181,7 +103,9 @@ class cotizacionesComponents extends sfComponents
 		}		
 	}
 
-
+	/*
+	* 
+	*/	
 	public function executeGrillaContViajes(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		$c = new Criteria();
@@ -241,7 +165,10 @@ class cotizacionesComponents extends sfComponents
       		);
 		}		
 	}
-
+	
+	/*
+	* 
+	*/	
 	public function executeGrillaSeguros(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		
@@ -273,5 +200,13 @@ class cotizacionesComponents extends sfComponents
       		);
 		}
 	}
+	
+	/*
+	* 
+	*/	
+	public function executeVentanaTarifario(){
+			
+	}
+	
 }
 ?>

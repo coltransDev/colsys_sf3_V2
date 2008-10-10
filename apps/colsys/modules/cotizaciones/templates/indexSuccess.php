@@ -17,7 +17,7 @@ use_helper("Javascript");
 	<tr>
 		<th rowspan="2">&nbsp;</th>
 		<td width="123" class="listar"><b>Buscar por:</b> <br />
-			<?=select_tag("criterio", options_for_select( array("mis_cotizaciones"=>"Mis Cotizaciones", "nombre_del_cliente"=>"Nombre del Cliente", "nombre_del_contacto"=>"Nombre del Contacto", "asunto"=>"Asunto", "vendedor"=>"Vendedor", "numero_de_cotizacion"=>"N&uacute;mero de Cotizaci&oacute;n"), "mis_cotizaciones" ), "size=7" );?>		
+			<?=select_tag("criterio", options_for_select( array("mis_cotizaciones"=>"Mis Cotizaciones", "nombre_del_cliente"=>"Nombre del Cliente", "nombre_del_contacto"=>"Nombre del Contacto", "asunto"=>"Asunto", "vendedor"=>"Vendedor", "numero_de_cotizacion"=>"N&uacute;mero de Cotizaci&oacute;n", "sucursal"=>"Sucursal"), "mis_cotizaciones" ), "size=7" );?>		
 		</td>
 		<td class="listar"><div id="visible" style="visibility:visible"><b>Que contenga la cadena:</b><br />
 			<?=input_tag("cadena", "", "size=60")?>

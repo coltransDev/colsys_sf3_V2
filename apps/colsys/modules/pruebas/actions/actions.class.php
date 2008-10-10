@@ -157,30 +157,7 @@ class pruebasActions extends sfActions {
 		}
 		return sfView::NONE;
 	}
-	
-	/**
-	 * Executes index action
-	 *
-	 */
-	public function executeLdap() {
-		// La secuencia básica para trabajar con LDAP es conectar, autentificarse,
-		// buscar, interpretar el resultado de la búsqueda y cerrar la conexión.
 		
-
-		echo "<h3>Prueba de consulta LDAP</h3>";
-		
-		$auth_user = "cn=abotero,o=coltrans_bog";
-		$password = "abotero";
-		$ldap_server = "10.192.1.5";
-		echo $auth_user . "->";
-		if ($connect = ldap_connect ( $ldap_server )) {
-			echo "connection ($ldap_server): ";
-			if ($bind = ldap_bind ( $connect, $auth_user, $password )) {
-				echo "true <BR>";
-				ldap_close ( $connect );
-			} //if bound to ldap
-		} //if connected to ldap
-	}
 	
 	public function executeEncoding() {
 		//$sql =  "SET NAMES  'LATIN1'";
@@ -215,7 +192,7 @@ class pruebasActions extends sfActions {
 		$c = new Criteria ( );
 		//$c->add ( EmailPeer::CA_FCHENVIO, "2008-07-04 10:00:00", Criteria::GREATER_THAN );
 		//$c->addAnd ( EmailPeer::CA_FCHENVIO, "2008-07-04 10:25:00", Criteria::LESS_THAN );
-		$c->add( EmailPeer::CA_IDEMAIL, 116511);
+		$c->add( EmailPeer::CA_IDEMAIL, 134180);
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
 		
 		$i = 0;
@@ -520,6 +497,54 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		
 	}
 	
+	/*
+	* Se pretende corregir un error donde se coloco el numero del consecutivo sin el año en el ino aereo
+	*/
+	
+	public function executeFixReportesAereo(){
+		$c = new Criteria();
+		//$c->setLimit(10);
+		$c->add(InoClientesAirPeer::CA_IDREPORTE, NULL, Criteria::ISNOTNULL );
+		$c->addAnd(InoClientesAirPeer::CA_IDREPORTE, "%-%", Criteria::NOT_LIKE );
+		//$c->add(InoClientesAirPeer::CA_REFERENCIA, "%8", Criteria::LIKE );
+		
+		set_time_limit(0);
+		$inoairs  = InoClientesAirPeer::doSelect( $c );
+		
+		foreach( $inoairs as $inoair ){
+			echo $inoair->getCaReferencia()." ".$inoair->getCaIdReporte();
+			
+			$c = new Criteria();
+			$c->add( ReportePeer::CA_CONSECUTIVO,  $inoair->getCaIdReporte()."-%", Criteria::LIKE  );
+			$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO );
+			$c->add( ContactoPeer::CA_IDCLIENTE,  $inoair->getCaIdCliente() );
+			$reporte = reportePeer::doSelectOne( $c );
+			if( $reporte ){
+				$inoair->setCaIdReporte( $reporte->getCaConsecutivo() );
+				$inoair->save();
+				echo "<strong> OK</strong>".$reporte->getCaConsecutivo();
+			}else{
+				$c = new Criteria();
+				$c->add( ReportePeer::CA_IDREPORTE,  $inoair->getCaIdReporte() );
+				$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO );
+				$c->add( ContactoPeer::CA_IDCLIENTE,  $inoair->getCaIdCliente() );
+				$reporte = reportePeer::doSelectOne( $c );
+				if( $reporte ){
+					$inoair->setCaIdReporte( $reporte->getCaConsecutivo() );
+					$inoair->save();
+					echo "<strong> OK2</strong> ".$reporte->getCaConsecutivo();
+				}else{
+					$inoair->setCaIdReporte( null );
+					$inoair->save();
+				}
+			}
+			
+			
+			
+			echo "<br />";	
+		}
+		
+	}
 	
 }
 ?>

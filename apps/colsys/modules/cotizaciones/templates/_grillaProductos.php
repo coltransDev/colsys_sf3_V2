@@ -1,10 +1,6 @@
 <?
 use_helper("Ext2");
 ?>
-
-var data_productos = <?=json_encode( array("productos"=>$productos, "total"=>count($productos)) )?>;
-
-
 /*
 *Store que carga los conceptos
 */
@@ -48,11 +44,24 @@ editorConceptos = new Ext.form.ComboBox({
 var recordProductos = Ext.data.Record.create([
     {name: 'idcotizacion', type: 'string'},   		
     {name: 'idproducto', type: 'string'},   
+	{name: 'producto', type: 'string'}, 
 	{name: 'idopcion', type: 'string'}, 		
     {name: 'trayecto', type: 'string'},   				
 	{name: 'item', type: 'string'},  //Texto de concepto o recargo 
 	{name: 'iditem', type: 'string'}, //Concepto o recargo  	 
 	{name: 'idconcepto', type: 'string'}, //Concepto al cual pertenece el recargo	
+	
+	{name: 'tra_origen', type: 'string'}, 
+	{name: 'tra_origen_value', type: 'string'}, 
+	{name: 'ciu_origen', type: 'string'}, 
+	{name: 'ciu_origen_value', type: 'string'}, 
+	{name: 'tra_destino', type: 'string'}, 
+	{name: 'tra_destino_value', type: 'string'},
+	{name: 'ciu_destino', type: 'string'},
+	{name: 'ciu_destino_value', type: 'string'}, 
+	
+	
+	
 	{name: 'valor_tar', type: 'float'}, 
 	{name: 'valor_min', type: 'float'}, 
 	{name: 'aplica_tar', type: 'string'}, 
@@ -61,8 +70,13 @@ var recordProductos = Ext.data.Record.create([
 	{name: 'detalles', type: 'string'},
 	{name: 'tipo', type: 'string'},
 	{name: 'transporte', type: 'string'},
-	{name: 'modalidad', type: 'string'}
-	
+	{name: 'modalidad', type: 'string'},
+	{name: 'frecuencia', type: 'string'},
+	{name: 'ttransito', type: 'string'},
+	{name: 'imprimir', type: 'string'},
+	{name: 'impoexpo', type: 'string'},
+	{name: 'incoterms', type: 'string'},
+	{name: 'observaciones', type: 'string'}	
 ]);
    		
 /*
@@ -70,6 +84,7 @@ var recordProductos = Ext.data.Record.create([
 */
 var storeProductos = new Ext.data.GroupingStore({
 	autoLoad : true,
+	url: '<?=url_for("cotizaciones/grillaProductosData?idcotizacion=".$cotizacion->getCaIdCotizacion())?>',
 	reader: new Ext.data.JsonReader(
 		{
 			id: 'id',
@@ -78,8 +93,7 @@ var storeProductos = new Ext.data.GroupingStore({
 		}, 
 		recordProductos
 	),
-	sortInfo:{field: 'idproducto', direction: "ASC"},
-	proxy: new Ext.data.MemoryProxy(data_productos),
+	sortInfo:{field: 'idproducto', direction: "ASC"},	
 	groupField: 'trayecto'		
 });
 	
@@ -102,7 +116,7 @@ var formatItem = function(value, p, record) {
 		
 		if( record.data.tipo == "recargo" ){
 			return String.format(
-				'<div class="recargo"><b>{0}</b></div>',
+				'<div class="recargo">{0}</div>',
 				value
 			);
 		}else{
@@ -209,7 +223,6 @@ var colModel = new Ext.grid.ColumnModel({
 var selModel = new  Ext.grid.CellSelectionModel();
 
 
-
 /*
 * Actualiza los datos de la base de datos usando Ajax.
 */
@@ -254,9 +267,11 @@ var grid_productosOnvalidateedit = function(e){
 	}
 }
 
-
-
-var productoHandler = function(){
+/*
+* Muestra una ventana enla que se puede crear o editar un trayecto 
+*/
+var crearVentanaProducto=function( record ){
+	
 	//crea una ventana 
 	win = new Ext.Window({		
 		width       : 500,
@@ -280,23 +295,24 @@ var productoHandler = function(){
 						value: '<?=$cotizacion->getCaIdcotizacion()?>',
 			            allowBlank:false
 					},{
-						id: 'productoId',
+						id: 'idproducto',
 						xtype:'hidden',
-						name: 'productoId',
+						name: 'idproducto',
 						value: '',
 			            allowBlank:false
 					},{
 						xtype:'textfield',
 						fieldLabel: 'Producto',
+						id: 'producto',
 						name: 'producto',
 						value: '',						 
 						allowBlank:false,
 						width: 300
 	                }
-	                ,<?=extImpoExpo()?>
-					,<?=extIncoterms()?>
-					,<?=extTransporte()?>
-					,<?=extModalidad("modalidad", "Ext.getCmp('transporte')", "%")?>
+	                ,<?=extImpoExpo("impoexpo")?>
+					,<?=extIncoterms("incoterms")?>
+					,<?=extTransporte("transporte")?>
+					,<?=extModalidad("modalidad", "Ext.getCmp('transporte')", "Importación")?>
 					,<?=extTraficos("origen")?>
 					,<?=extTraficos("destino")?>
 					,{
@@ -323,8 +339,11 @@ var productoHandler = function(){
 						value: '',
 	                    allowBlank:false
 					}
-					,<?=extImprimir()?>
-					]
+					,<?=extImprimir("imprimir")?>
+				]
+				//aplica los valores 
+				//data.producto
+					
 			
 		}),
 
@@ -339,7 +358,8 @@ var productoHandler = function(){
 	            							 	// standardSubmit: false,
 	            							 	
 	            							 	success:function(response,options){
-	            							 		Ext.Msg.alert( "Success "+response.responseText );
+	            							 		//Ext.Msg.alert( "Success "+response.responseText );													
+													storeProductos.reload();
 	            							 		win.close();
 	            							 	},
 		            							failure:function(response,options){
@@ -358,7 +378,161 @@ var productoHandler = function(){
 			}
 		}]
 	});
-	win.show( );	
+	
+	win.show( );
+	
+	if(typeof(record)!="undefined"){ // Coloca los datos en la ventana 
+		var fp = Ext.getCmp("producto-form");
+		form = fp.getForm().loadRecord(record);	
+		
+		fp.getForm().findField("tra_origen").setRawValue(record.data.tra_origen_value);
+		fp.getForm().findField("tra_origen").hiddenField.value = record.data.tra_origen;
+		
+		fp.getForm().findField("ciu_origen").setRawValue(record.data.ciu_origen_value);
+		fp.getForm().findField("ciu_origen").hiddenField.value = record.data.ciu_origen;
+		
+		fp.getForm().findField("tra_destino").setRawValue(record.data.tra_destino_value);
+		fp.getForm().findField("tra_destino").hiddenField.value = record.data.tra_destino;
+		
+		fp.getForm().findField("ciu_destino").setRawValue(record.data.ciu_destino_value);
+		fp.getForm().findField("ciu_destino").hiddenField.value = record.data.ciu_destino;		
+	}	
+}
+
+
+
+/*
+* Crea una ventana con una vista del tarifario donde se pueden seleccionar 
+* e importar las tarifas dentro de la cotizacion
+*/
+
+
+var activeRecord = null;
+/*
+* Muestra una ventana con la informacion del tarifario y le permite al usuario 
+* seleccionar las tarifas a importar
+*/
+var ventanaTarifario = function( record ){
+	var url = '<?=url_for("pricing/grillaPorTrafico?opcion=consulta")?>';
+	
+	activeRecord = record;
+	
+	Ext.Ajax.request({
+		url: url,
+		params: {						
+			idtrafico: record.data.tra_origen, 
+			idciudad: record.data.ciu_origen,
+			idciudaddestino: record.data.ciu_destino,
+			transporte: record.data.transporte,
+			modalidad: record.data.modalidad
+		},
+		success: function(xhr) {			
+			//alert( xhr.responseText );			
+			var newComponent = eval(xhr.responseText);
+			
+			//Se crea la ventana
+			
+			win = new Ext.Window({		
+			width       : 800,
+			height      : 460,
+			closeAction :'close',
+			plain       : true,		
+			
+			items       : [newComponent],
+			
+	
+			buttons: [
+				{
+					text     : 'Importar',
+					handler  : function( ){						
+						storePricing = newComponent.store;
+						index =  storeProductos.indexOf(activeRecord);
+						records = [];
+						storePricing.each( function(r){
+							if( r.data.sel==true ){
+								if( r.data.tipo=="concepto" ){
+									var iditem = r.data.concepto_id;
+								}else{
+									var iditem = r.data.recargo_id;
+								}
+								
+								//Cuando se habla de LCL se colocan los minimos
+								if(activeRecord.data.modalidad == "LCL"){
+									var valor_tar = r.data.neta;
+									var valor_min = r.data.minima;
+								}else{
+									var valor_tar = r.data.minima; //Minima sugerida de venta
+									var valor_min = ''; //No aplica
+								}
+								
+								var newRec = new recordProductos({
+								   idcotizacion: '',  
+								   idproducto: '',  
+								   trayecto: '',   
+								   transporte: '',  
+								   modalidad: '',   
+								   idopcion: '',								   
+								   idconcepto: '',
+								   item: '',
+								   iditem: '',	
+								   tipo: '',
+								   valor_tar: '',
+								   valor_min: '',
+								   aplica_tar: '',
+								   aplica_min: '',
+								   idmoneda: '',
+								   detalles: ''
+								});		
+										
+								
+								newRec.set("idcotizacion", activeRecord.data.idcotizacion );
+								newRec.set("idproducto", activeRecord.data.idproducto );
+								newRec.set("trayecto", activeRecord.data.trayecto );
+								newRec.set("transporte", activeRecord.data.transporte );
+								newRec.set("modalidad", activeRecord.data.modalidad );
+								newRec.set("idopcion", activeRecord.data.idopcion );										
+								newRec.set("item", r.data.nconcepto );
+								newRec.set("iditem", iditem );
+								newRec.set("tipo", r.data.tipo );
+								newRec.set("valor_tar", valor_tar );								
+								newRec.set("valor_min", valor_min );
+								newRec.set("idmoneda", r.data.moneda );																								
+								records.unshift ( newRec ); //agrega al principio
+								
+							}
+						} );
+						
+						storeProductos.insert( index , records );
+						index++;
+						
+						win.close();
+						
+						
+					}
+				},
+				{
+					text     : 'Cancelar',
+					handler  : function(){
+						win.close();
+					}
+				}
+			]
+		});
+		
+		win.show( );
+			
+			
+		},
+		failure: function() {
+			Ext.Msg.alert("Tab creation failed", "Server communication failure");
+		}
+	});	
+}
+
+
+
+var productoHandler = function( ){
+	crearVentanaProducto( );		
 }
 
 /*
@@ -371,11 +545,33 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 
 		this.menu = new Ext.menu.Menu({
 		id:'grid_productos-ctx',
-		items: [{
-				text: 'Nuevo recargo',
-				iconCls: 'new-tab',
-				scope:this,
-				handler: function(){    					                   
+		items: [
+				{
+					text: 'Editar trayecto',
+					iconCls: 'new-tab',
+					scope:this,
+					handler: function(){    					                   
+						if( this.ctxRecord ){					
+							crearVentanaProducto( this.ctxRecord );
+						}						
+					}
+				},
+				{
+					text: 'Importar del tarifario',
+					iconCls: 'new-tab',
+					scope:this,
+					handler: function(){    					                   		
+						if( this.ctxRecord ){					
+							ventanaTarifario( this.ctxRecord );
+						}						
+					}
+				},
+		
+				{
+					text: 'Nuevo recargo',
+					iconCls: 'new-tab',
+					scope:this,
+					handler: function(){    					                   
 					if( this.ctxRecord.data.idopcion ){					
 						var newRec = new recordProductos({
 						   idcotizacion: this.ctxRecord.data.idcotizacion,  
@@ -426,8 +622,10 @@ function guardarGridProductos(){
 	
 	
 	var success = true;
-	var records = storeProductos.getModifiedRecords();
-			
+	//var records = storeProductos.getModifiedRecords();
+	var records = storeProductos.getRange();
+	 
+	alert( records.length );		
 	var lenght = records.length;
 	for( var i=0; i< lenght; i++){
 		r = records[i];
