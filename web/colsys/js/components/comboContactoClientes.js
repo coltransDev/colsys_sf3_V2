@@ -17,7 +17,7 @@
 			{name: 'sapellido', mapping: 'ca_sapellido'},
 			{name: 'preferencias', mapping: 'ca_preferencias'},
 			{name: 'confirmar', mapping: 'ca_confirmar'},
-            {name: 'vendedor', mapping: 'ca_vendedor'},
+           
         ])
     });
 	
@@ -42,13 +42,31 @@
 	    forceSelection:true,		
 		selectOnFocus:true,
 		
-		onSelect: function(record, index){ // override default onSelect to do redirect		
+		onSelect: function(record, index){ // override default onSelect to do redirect			
 			if(this.fireEvent('beforeselect', this, record, index) !== false){
 				this.setValue(record.data[this.valueField || this.displayField]);
 				this.collapse();
 				this.fireEvent('select', this, record, index);
 			}
-			handleSelectContacto(record, index);				
+			
+			document.getElementById("con_cliente").value=record.data.nombre+" "+record.data.papellido+" "+record.data.sapellido;
+			document.getElementById("cliente").value=record.data.compania;		
+			document.getElementById("idconcliente").value=record.data.id;				
+			document.getElementById("preferencias_clie").value=record.data.preferencias;		
+			
+			for(i=0; i<10; i++){				
+				document.getElementById("contactos_"+i).value="";
+				document.getElementById("confirmar_"+i).checked=false;
+			}
+			
+			
+			var confirmar =  record.data.confirmar ;						
+			var brokenconfirmar=confirmar.split(",");			
+			
+			for(i=0; i<brokenconfirmar.length; i++){				
+				document.getElementById("contactos_"+i).value=brokenconfirmar[i];
+				document.getElementById("confirmar_"+i).checked=true;
+			}				
 				
            
         }

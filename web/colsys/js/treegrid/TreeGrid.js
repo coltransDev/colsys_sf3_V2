@@ -170,6 +170,7 @@ Ext.ux.maximgb.treegrid.AbstractTreeStore = Ext.extend(Ext.data.Store,
 	 */
 	load : function(options)
 	{
+		
 		if (options) {
 			if (options.params) {
 				if (options.params[this.paramNames.active_node] === undefined) {
@@ -1104,7 +1105,7 @@ Ext.ux.maximgb.treegrid.GridView = Ext.extend(Ext.grid.GridView,
 	
 	// Private - Overriden
 	doRender : function(cs, rs, ds, startRow, colCount, stripe)
-	{
+	{		
 		var ts = this.templates, ct = ts.cell, rt = ts.row, last = colCount-1;
 		var tstyle = 'width:'+this.getTotalWidth()+';';
 		// buffers

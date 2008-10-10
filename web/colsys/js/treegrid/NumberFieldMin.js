@@ -17,8 +17,8 @@ Ext.form.NumberFieldMin = Ext.extend(Ext.form.NumberField,  {
 	
 	
     // private
-    validateValue : function(value){
-       
+    validateValue : function(value){  
+		
 		if(!Ext.form.NumberField.superclass.validateValue.call(this, value)){
             return false;
         }
@@ -60,7 +60,9 @@ Ext.form.NumberFieldMin = Ext.extend(Ext.form.NumberField,  {
 
 
 var rendererMin=function( value ){
-	
+	if( !value ){
+		return '';	
+	}
 	if( value == 0 ){
 		return '';
 	}
@@ -77,6 +79,9 @@ var rendererMin=function( value ){
 
 var rendererSug=function( value ){
 	
+	if( !value ){
+		return '';	
+	}
 	if( value == 0 ){
 		return '';
 	}
@@ -86,31 +91,6 @@ var rendererSug=function( value ){
 		var value1 = value.substring(0, index);
 		var value2 = value.substring(index+1, 20); 		
 		return formatNumber(value1)+"/Sug"+formatNumber(value2);
-	}else{
-		return formatNumber(value);
-	}	
-};
-
-var rendererSugMin=function( value ){
-	
-	if( value == 0 ){
-		return '';
-	}
-	
-	var index = value.indexOf("/");
-	if( index!=-1 ){			
-		var value1 = value.substring(0, index);
-		var value2 = value.substring(index+1, 20); 	
-		
-		var index = value2.indexOf("/");
-		
-		if( index!=-1 ){
-			var value2 = value.substring(0, index);
-			var value3 = value.substring(index+1, 20); 		
-			return formatNumber(value1)+"/Sug"+formatNumber(value2)+"/Min"+formatNumber(value3);
-		}else{		
-			return formatNumber(value1)+"/Sug"+formatNumber(value2);
-		}
 	}else{
 		return formatNumber(value);
 	}	

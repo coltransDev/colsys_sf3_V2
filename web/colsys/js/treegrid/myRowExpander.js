@@ -60,7 +60,7 @@ Ext.extend(Ext.grid.myRowExpander, Ext.grid.RowExpander, {
             this.bodyContent[record.id] = content;
         //}
         return content;
-    },
+    }
     
   
 
