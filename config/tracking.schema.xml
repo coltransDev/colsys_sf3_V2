@@ -13,4 +13,18 @@
 			<reference local="ca_idcontacto" foreign="ca_idcontacto"/>
 		</foreign-key>	
 	</table>
+	
+	<table name="tb_tracking_users_log" phpName="TrackingUserLog">
+		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_email" type="varchar" />	
+		<column name="ca_fchevento" type="timestamp" />		
+		<column name="ca_url" type="varchar" />
+		<column name="ca_evento" type="varchar" />
+		<column name="ca_ipaddress" type="varchar" />
+	
+		<foreign-key foreignTable="tb_tracking_users">
+			<reference local="ca_email" foreign="ca_email"/>
+		</foreign-key>	
+	</table>
+		
 </database>

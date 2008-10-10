@@ -99,9 +99,18 @@
 		<column name="ca_idgrupo" type="integer" />
 		<column name="ca_link" size="255" type="varchar" />
 		<column name="ca_conceptos" size="255" type="varchar" />
-		<column name="ca_recargos" size="255" type="varchar" />
+		<foreign-key foreignTable="tb_grupos">
+			<reference local="ca_idgrupo" foreign="ca_idgrupo"/>
+		</foreign-key>	
 		
 	</table>
+	
+	<table name="tb_grupos" phpName="TraficoGrupo" defaultIdMethod="native">
+		<column name="ca_idgrupo" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_descripcion" size="40" type="varchar" />			
+		
+	</table>
+
 	
 	<table name="tb_conceptos" phpName="Concepto">
 		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true" autoIncrement="true" />	

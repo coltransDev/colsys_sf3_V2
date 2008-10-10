@@ -20,7 +20,8 @@
 		<column name="ca_fchinicio" type="date"   />
 		<column name="ca_fchvencimiento" type="date"   />
 		<column name="ca_aplicacion" type="varchar"   />
-								
+		<column name="ca_estado" type="integer"   />
+									
 		<foreign-key foreignTable="tb_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>	
@@ -34,7 +35,7 @@
 		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true"/>	
 		<column name="ca_vlrneto" type="numeric" />		
 		<column name="ca_vlrminimo" type="numeric" />	
-		
+				
 		<foreign-key foreignTable="tb_trayectos">
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
 		</foreign-key>	
@@ -53,6 +54,9 @@
 		<column name="ca_observaciones" type="varchar" />	
 		<foreign-key foreignTable="tb_trayectos">
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
+		</foreign-key>	
+		<foreign-key foreignTable="tb_tiporecargo">
+			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
 		</foreign-key>		
 	</table>	
 	
@@ -62,15 +66,64 @@
 		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>	
 		<column name="ca_vlrrecargo" type="numeric" required="true"/>
 		<column name="ca_vlrminimo" type="numeric" />				
+		<column name="ca_observaciones" type="varchar"   />	
 		
-		<foreign-key foreignTable="tb_trayectos">
+		
+		<foreign-key foreignTable="tb_pricfletes">
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
-		</foreign-key>	
-		<foreign-key foreignTable="tb_conceptos">
 			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
-		</foreign-key>								
+		</foreign-key>
+		
+		<foreign-key foreignTable="tb_tiporecargo">
+			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
+		</foreign-key>	
+									
 	</table>	
 	
+	<table name="tb_pricarchivos" phpName="PricArchivo">		
+		<column name="ca_idarchivo" type="varchar" required="true"  primaryKey="true" autoIncrement="true"/>			
+		<column name="ca_idtrafico" type="varchar" required="true" />
+		<column name="ca_nombre" type="varchar" required="true" />	
+		<column name="ca_descripcion" type="varchar" required="true" />
+		<column name="ca_tamano" type="numeric" />
+		<column name="ca_tipo" type="varchar" />	
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" />		
+		<column name="ca_datos" type="blob" />				
+		<column name="ca_transporte" type="varchar" />				
+		
+		<foreign-key foreignTable="tb_traficos">
+			<reference local="ca_idtrafico" foreign="ca_idtrafico"/>
+		</foreign-key>	
+								
+	</table>
+	
+	<table name="tb_pricrecargosxciudad" phpName="PricRecargosxCiudad">		
+		<column name="ca_idciudad" type="varchar" required="true"  primaryKey="true"/>			
+		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>
+		<column name="ca_modalidad" type="varchar" required="true" />			
+		<column name="ca_vlrrecargo" type="numeric" />
+		<column name="ca_vlrminimo" type="numeric" />	
+		<column name="ca_idmoneda" type="varchar" size="3" />		
+		
+		<foreign-key foreignTable="tb_ciudades">
+			<reference local="ca_idciudad" foreign="ca_idciudad"/>
+		</foreign-key>			
+		<foreign-key foreignTable="tb_tiporecargo">
+			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
+		</foreign-key>								
+	</table>
+	
+	<table name="tb_pricnotificaciones" phpName="PricNotificacion">		
+		<column name="ca_idnotificacion" type="integer" required="true"  primaryKey="true" autoIncrement="true"/>					
+		<column name="ca_titulo" type="varchar" required="true" />	
+		<column name="ca_mensaje" type="varchar" required="true" />			
+		<column name="ca_caducidad" type="date" />
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" size="15" />				
+	</table>
+	
+
 </database>
 
  

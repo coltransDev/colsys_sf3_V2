@@ -235,6 +235,11 @@
 		<column name="ca_cobrar_min" type="numeric" required="true"  />	
 		<column name="ca_cobrar_idm" type="varchar" size="3" required="true"  />	
 		<column name="ca_observaciones" type="varchar" size="255" required="true"  />	
+		<column name="ca_fchcreado" type="date"  />
+		<column name="ca_usucreado" type="varchar"  />
+		<column name="ca_fchactualizado" type="date"  />
+		<column name="ca_usuactualizado" type="varchar"  />
+		
 			
 		<foreign-key foreignTable="tb_reportes">
 			<reference local="ca_idreporte" foreign="ca_idreporte"/>

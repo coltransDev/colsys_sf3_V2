@@ -6,6 +6,7 @@
 		<column name="ca_fchcotizacion" type="date" required="true"  />	
 		<column name="ca_fchpresentacion" type="date" required="true"  />	
 		<column name="ca_idcontacto" type="integer" required="true"  />			
+		<column name="ca_consecutivo" type="varchar" />	
 		<column name="ca_asunto" type="varchar"    />			
 		<column name="ca_saludo" type="varchar"   />	
 		<column name="ca_entrada" type="varchar"   />	

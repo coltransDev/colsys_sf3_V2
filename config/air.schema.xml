@@ -30,7 +30,7 @@
 		<column name="ca_referencia" type="varchar" required="true" primaryKey="true"  />			
 		<column name="ca_idcliente" type="integer" required="true" primaryKey="true" />	
 		<column name="ca_hawb" type="varchar" required="true" primaryKey="true"  />
-		<column name="ca_idreporte" type="integer"  />		
+		<column name="ca_idreporte" type="varchar"  />		
 		<column name="ca_idproveedor" type="integer" />
 		<column name="ca_proveedor" type="varchar" />
 		<column name="ca_numpiezas" type="integer" />
