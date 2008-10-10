@@ -115,8 +115,9 @@ class ReportePeer extends BaseReportePeer
 		$criterion = $c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, null, Criteria::ISNULL );								
 		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada", Criteria::NOT_EQUAL));
 		
-		if( $idCliente==860048626 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
+		if( $idCliente==860048626 ||$idCliente==830512518 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
 			$fecha =  date("Y-m-")."01";
+			
 		}else{
 			
 		

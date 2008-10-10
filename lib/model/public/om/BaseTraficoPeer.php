@@ -19,7 +19,7 @@ abstract class BaseTraficoPeer {
 	const CLASS_DEFAULT = 'lib.model.public.Trafico';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 8;
+	const NUM_COLUMNS = 7;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -46,9 +46,6 @@ abstract class BaseTraficoPeer {
 	/** the column name for the CA_CONCEPTOS field */
 	const CA_CONCEPTOS = 'tb_traficos.CA_CONCEPTOS';
 
-	/** the column name for the CA_RECARGOS field */
-	const CA_RECARGOS = 'tb_traficos.CA_RECARGOS';
-
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -60,10 +57,10 @@ abstract class BaseTraficoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaNombre', 'CaBandera', 'CaIdmoneda', 'CaIdgrupo', 'CaLink', 'CaConceptos', 'CaRecargos', ),
-		BasePeer::TYPE_COLNAME => array (TraficoPeer::CA_IDTRAFICO, TraficoPeer::CA_NOMBRE, TraficoPeer::CA_BANDERA, TraficoPeer::CA_IDMONEDA, TraficoPeer::CA_IDGRUPO, TraficoPeer::CA_LINK, TraficoPeer::CA_CONCEPTOS, TraficoPeer::CA_RECARGOS, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_nombre', 'ca_bandera', 'ca_idmoneda', 'ca_idgrupo', 'ca_link', 'ca_conceptos', 'ca_recargos', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaNombre', 'CaBandera', 'CaIdmoneda', 'CaIdgrupo', 'CaLink', 'CaConceptos', ),
+		BasePeer::TYPE_COLNAME => array (TraficoPeer::CA_IDTRAFICO, TraficoPeer::CA_NOMBRE, TraficoPeer::CA_BANDERA, TraficoPeer::CA_IDMONEDA, TraficoPeer::CA_IDGRUPO, TraficoPeer::CA_LINK, TraficoPeer::CA_CONCEPTOS, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_nombre', 'ca_bandera', 'ca_idmoneda', 'ca_idgrupo', 'ca_link', 'ca_conceptos', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -73,10 +70,10 @@ abstract class BaseTraficoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaNombre' => 1, 'CaBandera' => 2, 'CaIdmoneda' => 3, 'CaIdgrupo' => 4, 'CaLink' => 5, 'CaConceptos' => 6, 'CaRecargos' => 7, ),
-		BasePeer::TYPE_COLNAME => array (TraficoPeer::CA_IDTRAFICO => 0, TraficoPeer::CA_NOMBRE => 1, TraficoPeer::CA_BANDERA => 2, TraficoPeer::CA_IDMONEDA => 3, TraficoPeer::CA_IDGRUPO => 4, TraficoPeer::CA_LINK => 5, TraficoPeer::CA_CONCEPTOS => 6, TraficoPeer::CA_RECARGOS => 7, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_nombre' => 1, 'ca_bandera' => 2, 'ca_idmoneda' => 3, 'ca_idgrupo' => 4, 'ca_link' => 5, 'ca_conceptos' => 6, 'ca_recargos' => 7, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaNombre' => 1, 'CaBandera' => 2, 'CaIdmoneda' => 3, 'CaIdgrupo' => 4, 'CaLink' => 5, 'CaConceptos' => 6, ),
+		BasePeer::TYPE_COLNAME => array (TraficoPeer::CA_IDTRAFICO => 0, TraficoPeer::CA_NOMBRE => 1, TraficoPeer::CA_BANDERA => 2, TraficoPeer::CA_IDMONEDA => 3, TraficoPeer::CA_IDGRUPO => 4, TraficoPeer::CA_LINK => 5, TraficoPeer::CA_CONCEPTOS => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_nombre' => 1, 'ca_bandera' => 2, 'ca_idmoneda' => 3, 'ca_idgrupo' => 4, 'ca_link' => 5, 'ca_conceptos' => 6, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -189,8 +186,6 @@ abstract class BaseTraficoPeer {
 		$criteria->addSelectColumn(TraficoPeer::CA_LINK);
 
 		$criteria->addSelectColumn(TraficoPeer::CA_CONCEPTOS);
-
-		$criteria->addSelectColumn(TraficoPeer::CA_RECARGOS);
 
 	}
 
@@ -320,6 +315,209 @@ abstract class BaseTraficoPeer {
 		}
 		return $results;
 	}
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related TraficoGrupo table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      Connection $con
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinTraficoGrupo(Criteria $criteria, $distinct = false, $con = null)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// clear out anything that might confuse the ORDER BY clause
+		$criteria->clearSelectColumns()->clearOrderByColumns();
+		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->addSelectColumn(TraficoPeer::COUNT_DISTINCT);
+		} else {
+			$criteria->addSelectColumn(TraficoPeer::COUNT);
+		}
+
+		// just in case we're grouping: add those columns to the select statement
+		foreach($criteria->getGroupByColumns() as $column)
+		{
+			$criteria->addSelectColumn($column);
+		}
+
+		$criteria->addJoin(TraficoPeer::CA_IDGRUPO, TraficoGrupoPeer::CA_IDGRUPO);
+
+		$rs = TraficoPeer::doSelectRS($criteria, $con);
+		if ($rs->next()) {
+			return $rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
+	}
+
+
+	/**
+	 * Selects a collection of Trafico objects pre-filled with their TraficoGrupo objects.
+	 *
+	 * @return     array Array of Trafico objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinTraficoGrupo(Criteria $c, $con = null)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		TraficoPeer::addSelectColumns($c);
+		$startcol = (TraficoPeer::NUM_COLUMNS - TraficoPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		TraficoGrupoPeer::addSelectColumns($c);
+
+		$c->addJoin(TraficoPeer::CA_IDGRUPO, TraficoGrupoPeer::CA_IDGRUPO);
+		$rs = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while($rs->next()) {
+
+			$omClass = TraficoPeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj1 = new $cls();
+			$obj1->hydrate($rs);
+
+			$omClass = TraficoGrupoPeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj2 = new $cls();
+			$obj2->hydrate($rs, $startcol);
+
+			$newObject = true;
+			foreach($results as $temp_obj1) {
+				$temp_obj2 = $temp_obj1->getTraficoGrupo(); //CHECKME
+				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
+					$newObject = false;
+					// e.g. $author->addBookRelatedByBookId()
+					$temp_obj2->addTrafico($obj1); //CHECKME
+					break;
+				}
+			}
+			if ($newObject) {
+				$obj2->initTraficos();
+				$obj2->addTrafico($obj1); //CHECKME
+			}
+			$results[] = $obj1;
+		}
+		return $results;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining all related tables
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      Connection $con
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAll(Criteria $criteria, $distinct = false, $con = null)
+	{
+		$criteria = clone $criteria;
+
+		// clear out anything that might confuse the ORDER BY clause
+		$criteria->clearSelectColumns()->clearOrderByColumns();
+		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->addSelectColumn(TraficoPeer::COUNT_DISTINCT);
+		} else {
+			$criteria->addSelectColumn(TraficoPeer::COUNT);
+		}
+
+		// just in case we're grouping: add those columns to the select statement
+		foreach($criteria->getGroupByColumns() as $column)
+		{
+			$criteria->addSelectColumn($column);
+		}
+
+		$criteria->addJoin(TraficoPeer::CA_IDGRUPO, TraficoGrupoPeer::CA_IDGRUPO);
+
+		$rs = TraficoPeer::doSelectRS($criteria, $con);
+		if ($rs->next()) {
+			return $rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
+	}
+
+
+	/**
+	 * Selects a collection of Trafico objects pre-filled with all related objects.
+	 *
+	 * @return     array Array of Trafico objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAll(Criteria $c, $con = null)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		TraficoPeer::addSelectColumns($c);
+		$startcol2 = (TraficoPeer::NUM_COLUMNS - TraficoPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
+		TraficoGrupoPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + TraficoGrupoPeer::NUM_COLUMNS;
+
+		$c->addJoin(TraficoPeer::CA_IDGRUPO, TraficoGrupoPeer::CA_IDGRUPO);
+
+		$rs = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while($rs->next()) {
+
+			$omClass = TraficoPeer::getOMClass();
+
+
+			$cls = Propel::import($omClass);
+			$obj1 = new $cls();
+			$obj1->hydrate($rs);
+
+
+				// Add objects for joined TraficoGrupo rows
+	
+			$omClass = TraficoGrupoPeer::getOMClass();
+
+
+			$cls = Propel::import($omClass);
+			$obj2 = new $cls();
+			$obj2->hydrate($rs, $startcol2);
+
+			$newObject = true;
+			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+				$temp_obj1 = $results[$j];
+				$temp_obj2 = $temp_obj1->getTraficoGrupo(); // CHECKME
+				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
+					$newObject = false;
+					$temp_obj2->addTrafico($obj1); // CHECKME
+					break;
+				}
+			}
+
+			if ($newObject) {
+				$obj2->initTraficos();
+				$obj2->addTrafico($obj1);
+			}
+
+			$results[] = $obj1;
+		}
+		return $results;
+	}
+
 
   static public function getUniqueColumnNames()
   {

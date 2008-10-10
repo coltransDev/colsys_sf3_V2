@@ -57,6 +57,18 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 	protected $aConcepto;
 
 	/**
+	 * Collection to store aggregation of collPricRecargoxConceptos.
+	 * @var        array
+	 */
+	protected $collPricRecargoxConceptos;
+
+	/**
+	 * The criteria used to select the current contents of collPricRecargoxConceptos.
+	 * @var        Criteria
+	 */
+	protected $lastPricRecargoxConceptoCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -349,6 +361,14 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
+			if ($this->collPricRecargoxConceptos !== null) {
+				foreach($this->collPricRecargoxConceptos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 		}
 		return $affectedRows;
@@ -436,6 +456,14 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collPricRecargoxConceptos !== null) {
+					foreach($this->collPricRecargoxConceptos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -661,6 +689,18 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
 
 
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			foreach($this->getPricRecargoxConceptos() as $relObj) {
+				$copyObj->addPricRecargoxConcepto($relObj->copy($deepCopy));
+			}
+
+		} // if ($deepCopy)
+
+
 		$copyObj->setNew(true);
 
 		$copyObj->setCaIdtrayecto(NULL); // this is a pkey column, so set to default value
@@ -801,6 +841,170 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aConcepto;
+	}
+
+	/**
+	 * Temporary storage of collPricRecargoxConceptos to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initPricRecargoxConceptos()
+	{
+		if ($this->collPricRecargoxConceptos === null) {
+			$this->collPricRecargoxConceptos = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this PricFlete has previously
+	 * been saved, it will retrieve related PricRecargoxConceptos from storage.
+	 * If this PricFlete is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getPricRecargoxConceptos($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargoxConceptos === null) {
+			if ($this->isNew()) {
+			   $this->collPricRecargoxConceptos = array();
+			} else {
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+				PricRecargoxConceptoPeer::addSelectColumns($criteria);
+				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+				PricRecargoxConceptoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
+					$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricRecargoxConceptoCriteria = $criteria;
+		return $this->collPricRecargoxConceptos;
+	}
+
+	/**
+	 * Returns the number of related PricRecargoxConceptos.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countPricRecargoxConceptos($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+		$criteria->add(PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+		return PricRecargoxConceptoPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a PricRecargoxConcepto object to this object
+	 * through the PricRecargoxConcepto foreign key attribute
+	 *
+	 * @param      PricRecargoxConcepto $l PricRecargoxConcepto
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricRecargoxConcepto(PricRecargoxConcepto $l)
+	{
+		$this->collPricRecargoxConceptos[] = $l;
+		$l->setPricFlete($this);
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this PricFlete is new, it will return
+	 * an empty collection; or if this PricFlete has previously
+	 * been saved, it will retrieve related PricRecargoxConceptos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in PricFlete.
+	 */
+	public function getPricRecargoxConceptosJoinTipoRecargo($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargoxConceptos === null) {
+			if ($this->isNew()) {
+				$this->collPricRecargoxConceptos = array();
+			} else {
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinTipoRecargo($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+			$criteria->add(PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+			if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
+				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinTipoRecargo($criteria, $con);
+			}
+		}
+		$this->lastPricRecargoxConceptoCriteria = $criteria;
+
+		return $this->collPricRecargoxConceptos;
 	}
 
 } // BasePricFlete

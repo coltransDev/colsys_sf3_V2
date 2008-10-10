@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="PricFlete.php" local="128595947076093750" remote="128595946520000000" testing="0" />
-<file name="PricFletePeer.php" local="128595947075937500" remote="128595946520000000" testing="0" />
-<file name="Trayecto.php" local="128595951285000000" remote="128595950810000000" testing="0" />
-<file name="TrayectoPeer.php" local="128595947075000000" remote="128595946520000000" testing="0" />
+<file name="PricFlete.php" local="128641717313593750" remote="128641713690000000" testing="0" />
+<file name="PricFletePeer.php" local="128637410643437500" remote="128637410130000000" testing="0" />
+<file name="Trayecto.php" local="128659900558906250" remote="128659898580000000" testing="0" />
+<file name="TrayectoPeer.php" local="128637410644062500" remote="128637410130000000" testing="0" />
+<file name="Flete.php" local="128637410643906250" remote="128637410130000000" testing="0" />
+<file name="FletePeer.php" local="128637410643593750" remote="128637410130000000" testing="0" />
+<file name="PricRecargo.php" local="128637410643906250" remote="128637410130000000" testing="0" />
+<file name="PricRecargoPeer.php" local="128637410643593750" remote="128637410130000000" testing="0" />
+<file name="PricRecargoxConcepto.php" local="128641658794375000" remote="128641657850000000" testing="0" />
+<file name="PricRecargoxConceptoPeer.php" local="128641658794218750" remote="128641657850000000" testing="0" />
+<file name="RecargoFlete.php" local="128637410643906250" remote="128637410130000000" testing="0" />
+<file name="RecargoFletePeer.php" local="128637410643750000" remote="128637410130000000" testing="0" />
 </dwsync>

@@ -63,7 +63,7 @@ class PricRecargoMapBuilder {
 
 		$tMap->addForeignPrimaryKey('CA_IDTRAYECTO', 'CaIdtrayecto', 'int' , CreoleTypes::INTEGER, 'tb_trayectos', 'CA_IDTRAYECTO', true, null);
 
-		$tMap->addPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addForeignPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'int' , CreoleTypes::INTEGER, 'tb_tiporecargo', 'CA_IDRECARGO', true, null);
 
 		$tMap->addColumn('CA_VLRRECARGO', 'CaVlrrecargo', 'double', CreoleTypes::NUMERIC, true, null);
 

@@ -71,13 +71,11 @@ class TraficoMapBuilder {
 
 		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, 3);
 
-		$tMap->addColumn('CA_IDGRUPO', 'CaIdgrupo', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addForeignKey('CA_IDGRUPO', 'CaIdgrupo', 'int', CreoleTypes::INTEGER, 'tb_grupos', 'CA_IDGRUPO', false, null);
 
 		$tMap->addColumn('CA_LINK', 'CaLink', 'string', CreoleTypes::VARCHAR, false, 255);
 
 		$tMap->addColumn('CA_CONCEPTOS', 'CaConceptos', 'string', CreoleTypes::VARCHAR, false, 255);
-
-		$tMap->addColumn('CA_RECARGOS', 'CaRecargos', 'string', CreoleTypes::VARCHAR, false, 255);
 
 	} // doBuild()
 

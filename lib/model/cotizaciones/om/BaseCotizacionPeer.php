@@ -19,7 +19,7 @@ abstract class BaseCotizacionPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.Cotizacion';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 18;
+	const NUM_COLUMNS = 19;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -36,6 +36,9 @@ abstract class BaseCotizacionPeer {
 
 	/** the column name for the CA_IDCONTACTO field */
 	const CA_IDCONTACTO = 'tb_cotizaciones.CA_IDCONTACTO';
+
+	/** the column name for the CA_CONSECUTIVO field */
+	const CA_CONSECUTIVO = 'tb_cotizaciones.CA_CONSECUTIVO';
 
 	/** the column name for the CA_ASUNTO field */
 	const CA_ASUNTO = 'tb_cotizaciones.CA_ASUNTO';
@@ -90,10 +93,10 @@ abstract class BaseCotizacionPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaFchcotizacion', 'CaFchpresentacion', 'CaIdcontacto', 'CaAsunto', 'CaSaludo', 'CaEntrada', 'CaDespedida', 'CaUsuario', 'CaAnexos', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchsolicitud', 'CaHorasolicitud', 'CaFchanulado', 'CaUsuanulado', ),
-		BasePeer::TYPE_COLNAME => array (CotizacionPeer::CA_IDCOTIZACION, CotizacionPeer::CA_FCHCOTIZACION, CotizacionPeer::CA_FCHPRESENTACION, CotizacionPeer::CA_IDCONTACTO, CotizacionPeer::CA_ASUNTO, CotizacionPeer::CA_SALUDO, CotizacionPeer::CA_ENTRADA, CotizacionPeer::CA_DESPEDIDA, CotizacionPeer::CA_USUARIO, CotizacionPeer::CA_ANEXOS, CotizacionPeer::CA_FCHCREADO, CotizacionPeer::CA_USUCREADO, CotizacionPeer::CA_FCHACTUALIZADO, CotizacionPeer::CA_USUACTUALIZADO, CotizacionPeer::CA_FCHSOLICITUD, CotizacionPeer::CA_HORASOLICITUD, CotizacionPeer::CA_FCHANULADO, CotizacionPeer::CA_USUANULADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_fchcotizacion', 'ca_fchpresentacion', 'ca_idcontacto', 'ca_asunto', 'ca_saludo', 'ca_entrada', 'ca_despedida', 'ca_usuario', 'ca_anexos', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fchsolicitud', 'ca_horasolicitud', 'ca_fchanulado', 'ca_usuanulado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaFchcotizacion', 'CaFchpresentacion', 'CaIdcontacto', 'CaConsecutivo', 'CaAsunto', 'CaSaludo', 'CaEntrada', 'CaDespedida', 'CaUsuario', 'CaAnexos', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchsolicitud', 'CaHorasolicitud', 'CaFchanulado', 'CaUsuanulado', ),
+		BasePeer::TYPE_COLNAME => array (CotizacionPeer::CA_IDCOTIZACION, CotizacionPeer::CA_FCHCOTIZACION, CotizacionPeer::CA_FCHPRESENTACION, CotizacionPeer::CA_IDCONTACTO, CotizacionPeer::CA_CONSECUTIVO, CotizacionPeer::CA_ASUNTO, CotizacionPeer::CA_SALUDO, CotizacionPeer::CA_ENTRADA, CotizacionPeer::CA_DESPEDIDA, CotizacionPeer::CA_USUARIO, CotizacionPeer::CA_ANEXOS, CotizacionPeer::CA_FCHCREADO, CotizacionPeer::CA_USUCREADO, CotizacionPeer::CA_FCHACTUALIZADO, CotizacionPeer::CA_USUACTUALIZADO, CotizacionPeer::CA_FCHSOLICITUD, CotizacionPeer::CA_HORASOLICITUD, CotizacionPeer::CA_FCHANULADO, CotizacionPeer::CA_USUANULADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_fchcotizacion', 'ca_fchpresentacion', 'ca_idcontacto', 'ca_consecutivo', 'ca_asunto', 'ca_saludo', 'ca_entrada', 'ca_despedida', 'ca_usuario', 'ca_anexos', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fchsolicitud', 'ca_horasolicitud', 'ca_fchanulado', 'ca_usuanulado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
 	/**
@@ -103,10 +106,10 @@ abstract class BaseCotizacionPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaFchcotizacion' => 1, 'CaFchpresentacion' => 2, 'CaIdcontacto' => 3, 'CaAsunto' => 4, 'CaSaludo' => 5, 'CaEntrada' => 6, 'CaDespedida' => 7, 'CaUsuario' => 8, 'CaAnexos' => 9, 'CaFchcreado' => 10, 'CaUsucreado' => 11, 'CaFchactualizado' => 12, 'CaUsuactualizado' => 13, 'CaFchsolicitud' => 14, 'CaHorasolicitud' => 15, 'CaFchanulado' => 16, 'CaUsuanulado' => 17, ),
-		BasePeer::TYPE_COLNAME => array (CotizacionPeer::CA_IDCOTIZACION => 0, CotizacionPeer::CA_FCHCOTIZACION => 1, CotizacionPeer::CA_FCHPRESENTACION => 2, CotizacionPeer::CA_IDCONTACTO => 3, CotizacionPeer::CA_ASUNTO => 4, CotizacionPeer::CA_SALUDO => 5, CotizacionPeer::CA_ENTRADA => 6, CotizacionPeer::CA_DESPEDIDA => 7, CotizacionPeer::CA_USUARIO => 8, CotizacionPeer::CA_ANEXOS => 9, CotizacionPeer::CA_FCHCREADO => 10, CotizacionPeer::CA_USUCREADO => 11, CotizacionPeer::CA_FCHACTUALIZADO => 12, CotizacionPeer::CA_USUACTUALIZADO => 13, CotizacionPeer::CA_FCHSOLICITUD => 14, CotizacionPeer::CA_HORASOLICITUD => 15, CotizacionPeer::CA_FCHANULADO => 16, CotizacionPeer::CA_USUANULADO => 17, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_fchcotizacion' => 1, 'ca_fchpresentacion' => 2, 'ca_idcontacto' => 3, 'ca_asunto' => 4, 'ca_saludo' => 5, 'ca_entrada' => 6, 'ca_despedida' => 7, 'ca_usuario' => 8, 'ca_anexos' => 9, 'ca_fchcreado' => 10, 'ca_usucreado' => 11, 'ca_fchactualizado' => 12, 'ca_usuactualizado' => 13, 'ca_fchsolicitud' => 14, 'ca_horasolicitud' => 15, 'ca_fchanulado' => 16, 'ca_usuanulado' => 17, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaFchcotizacion' => 1, 'CaFchpresentacion' => 2, 'CaIdcontacto' => 3, 'CaConsecutivo' => 4, 'CaAsunto' => 5, 'CaSaludo' => 6, 'CaEntrada' => 7, 'CaDespedida' => 8, 'CaUsuario' => 9, 'CaAnexos' => 10, 'CaFchcreado' => 11, 'CaUsucreado' => 12, 'CaFchactualizado' => 13, 'CaUsuactualizado' => 14, 'CaFchsolicitud' => 15, 'CaHorasolicitud' => 16, 'CaFchanulado' => 17, 'CaUsuanulado' => 18, ),
+		BasePeer::TYPE_COLNAME => array (CotizacionPeer::CA_IDCOTIZACION => 0, CotizacionPeer::CA_FCHCOTIZACION => 1, CotizacionPeer::CA_FCHPRESENTACION => 2, CotizacionPeer::CA_IDCONTACTO => 3, CotizacionPeer::CA_CONSECUTIVO => 4, CotizacionPeer::CA_ASUNTO => 5, CotizacionPeer::CA_SALUDO => 6, CotizacionPeer::CA_ENTRADA => 7, CotizacionPeer::CA_DESPEDIDA => 8, CotizacionPeer::CA_USUARIO => 9, CotizacionPeer::CA_ANEXOS => 10, CotizacionPeer::CA_FCHCREADO => 11, CotizacionPeer::CA_USUCREADO => 12, CotizacionPeer::CA_FCHACTUALIZADO => 13, CotizacionPeer::CA_USUACTUALIZADO => 14, CotizacionPeer::CA_FCHSOLICITUD => 15, CotizacionPeer::CA_HORASOLICITUD => 16, CotizacionPeer::CA_FCHANULADO => 17, CotizacionPeer::CA_USUANULADO => 18, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_fchcotizacion' => 1, 'ca_fchpresentacion' => 2, 'ca_idcontacto' => 3, 'ca_consecutivo' => 4, 'ca_asunto' => 5, 'ca_saludo' => 6, 'ca_entrada' => 7, 'ca_despedida' => 8, 'ca_usuario' => 9, 'ca_anexos' => 10, 'ca_fchcreado' => 11, 'ca_usucreado' => 12, 'ca_fchactualizado' => 13, 'ca_usuactualizado' => 14, 'ca_fchsolicitud' => 15, 'ca_horasolicitud' => 16, 'ca_fchanulado' => 17, 'ca_usuanulado' => 18, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
 	/**
@@ -213,6 +216,8 @@ abstract class BaseCotizacionPeer {
 		$criteria->addSelectColumn(CotizacionPeer::CA_FCHPRESENTACION);
 
 		$criteria->addSelectColumn(CotizacionPeer::CA_IDCONTACTO);
+
+		$criteria->addSelectColumn(CotizacionPeer::CA_CONSECUTIVO);
 
 		$criteria->addSelectColumn(CotizacionPeer::CA_ASUNTO);
 

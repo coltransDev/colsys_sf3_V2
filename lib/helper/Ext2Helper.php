@@ -358,6 +358,38 @@ function extRecargos($tipo="Recargo Local",$selected=""){
 	return $html;
 }
 
+function extRecargosNoEnlazado($transporte, $selected=""){
+	$html = "new Ext.form.ComboBox({
+		fieldLabel: 'Recargo',
+		typeAhead: true,
+		triggerAction: 'all',
+		//transform:'light',
+		lazyRender:true,
+		listClass: 'x-combo-list-small',
+		displayField: 'recargo',
+		valueField: 'idrecargo',
+		id: 'idrecargo',
+		store : new Ext.data.Store({
+			autoLoad : true,			
+			url: '".url_for("pricing/datosRecargos?transporte=".utf8_encode($transporte))."',
+			reader: new Ext.data.JsonReader(
+				{
+					id: 'idrecargo',
+					root: 'recargos',
+					totalProperty: 'total',
+					successProperty: 'success'
+				}, 
+				Ext.data.Record.create([
+					{name: 'idrecargo'},            
+					{name: 'recargo'}  
+				])
+			)
+		})		
+	})";
+	return $html;
+}
+
+
 function extTipoRecargo($id="tiporecargo"){	
 	$html = "new Ext.form.ComboBox({		
 					fieldLabel: 'Tipo Recargo',			
@@ -374,6 +406,8 @@ function extTipoRecargo($id="tiporecargo"){
 				})";
 	return $html;					
 }
+
+
 
 function extAplicaciones($id="aplicacion"){	
 	$html = "new Ext.form.ComboBox({		
@@ -416,5 +450,7 @@ function extAplicaciones($id="aplicacion"){
 				})";
 	return $html;					
 }
+
+
 
 ?>

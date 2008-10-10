@@ -67,7 +67,7 @@ class InoClientesAirMapBuilder {
 
 		$tMap->addPrimaryKey('CA_HAWB', 'CaHawb', 'string', CreoleTypes::VARCHAR, true, null);
 
-		$tMap->addForeignKey('CA_IDREPORTE', 'CaIdreporte', 'int', CreoleTypes::INTEGER, 'tb_reportes', 'CA_IDREPORTE', false, null);
+		$tMap->addForeignKey('CA_IDREPORTE', 'CaIdreporte', 'string', CreoleTypes::VARCHAR, 'tb_reportes', 'CA_IDREPORTE', false, null);
 
 		$tMap->addForeignKey('CA_IDPROVEEDOR', 'CaIdproveedor', 'int', CreoleTypes::INTEGER, 'tb_terceros', 'CA_IDTERCERO', false, null);
 

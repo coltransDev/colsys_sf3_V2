@@ -87,6 +87,42 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	protected $lastCotRecargoCriteria = null;
 
 	/**
+	 * Collection to store aggregation of collPricRecargos.
+	 * @var        array
+	 */
+	protected $collPricRecargos;
+
+	/**
+	 * The criteria used to select the current contents of collPricRecargos.
+	 * @var        Criteria
+	 */
+	protected $lastPricRecargoCriteria = null;
+
+	/**
+	 * Collection to store aggregation of collPricRecargoxConceptos.
+	 * @var        array
+	 */
+	protected $collPricRecargoxConceptos;
+
+	/**
+	 * The criteria used to select the current contents of collPricRecargoxConceptos.
+	 * @var        Criteria
+	 */
+	protected $lastPricRecargoxConceptoCriteria = null;
+
+	/**
+	 * Collection to store aggregation of collPricRecargosxCiudads.
+	 * @var        array
+	 */
+	protected $collPricRecargosxCiudads;
+
+	/**
+	 * The criteria used to select the current contents of collPricRecargosxCiudads.
+	 * @var        Criteria
+	 */
+	protected $lastPricRecargosxCiudadCriteria = null;
+
+	/**
 	 * Collection to store aggregation of collRepGastos.
 	 * @var        array
 	 */
@@ -535,6 +571,30 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collPricRecargos !== null) {
+				foreach($this->collPricRecargos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collPricRecargoxConceptos !== null) {
+				foreach($this->collPricRecargoxConceptos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collPricRecargosxCiudads !== null) {
+				foreach($this->collPricRecargosxCiudads as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collRepGastos !== null) {
 				foreach($this->collRepGastos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -623,6 +683,30 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 
 				if ($this->collCotRecargos !== null) {
 					foreach($this->collCotRecargos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collPricRecargos !== null) {
+					foreach($this->collPricRecargos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collPricRecargoxConceptos !== null) {
+					foreach($this->collPricRecargoxConceptos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collPricRecargosxCiudads !== null) {
+					foreach($this->collPricRecargosxCiudads as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -912,6 +996,18 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$copyObj->addCotRecargo($relObj->copy($deepCopy));
 			}
 
+			foreach($this->getPricRecargos() as $relObj) {
+				$copyObj->addPricRecargo($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getPricRecargoxConceptos() as $relObj) {
+				$copyObj->addPricRecargoxConcepto($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getPricRecargosxCiudads() as $relObj) {
+				$copyObj->addPricRecargosxCiudad($relObj->copy($deepCopy));
+			}
+
 			foreach($this->getRepGastos() as $relObj) {
 				$copyObj->addRepGasto($relObj->copy($deepCopy));
 			}
@@ -1118,6 +1214,465 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 		$this->lastCotRecargoCriteria = $criteria;
 
 		return $this->collCotRecargos;
+	}
+
+	/**
+	 * Temporary storage of collPricRecargos to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initPricRecargos()
+	{
+		if ($this->collPricRecargos === null) {
+			$this->collPricRecargos = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously
+	 * been saved, it will retrieve related PricRecargos from storage.
+	 * If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getPricRecargos($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargos === null) {
+			if ($this->isNew()) {
+			   $this->collPricRecargos = array();
+			} else {
+
+				$criteria->add(PricRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				PricRecargoPeer::addSelectColumns($criteria);
+				$this->collPricRecargos = PricRecargoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				PricRecargoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricRecargoCriteria) || !$this->lastPricRecargoCriteria->equals($criteria)) {
+					$this->collPricRecargos = PricRecargoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricRecargoCriteria = $criteria;
+		return $this->collPricRecargos;
+	}
+
+	/**
+	 * Returns the number of related PricRecargos.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countPricRecargos($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(PricRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+		return PricRecargoPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a PricRecargo object to this object
+	 * through the PricRecargo foreign key attribute
+	 *
+	 * @param      PricRecargo $l PricRecargo
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricRecargo(PricRecargo $l)
+	{
+		$this->collPricRecargos[] = $l;
+		$l->setTipoRecargo($this);
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo is new, it will return
+	 * an empty collection; or if this TipoRecargo has previously
+	 * been saved, it will retrieve related PricRecargos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TipoRecargo.
+	 */
+	public function getPricRecargosJoinTrayecto($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargos === null) {
+			if ($this->isNew()) {
+				$this->collPricRecargos = array();
+			} else {
+
+				$criteria->add(PricRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				$this->collPricRecargos = PricRecargoPeer::doSelectJoinTrayecto($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(PricRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+			if (!isset($this->lastPricRecargoCriteria) || !$this->lastPricRecargoCriteria->equals($criteria)) {
+				$this->collPricRecargos = PricRecargoPeer::doSelectJoinTrayecto($criteria, $con);
+			}
+		}
+		$this->lastPricRecargoCriteria = $criteria;
+
+		return $this->collPricRecargos;
+	}
+
+	/**
+	 * Temporary storage of collPricRecargoxConceptos to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initPricRecargoxConceptos()
+	{
+		if ($this->collPricRecargoxConceptos === null) {
+			$this->collPricRecargoxConceptos = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously
+	 * been saved, it will retrieve related PricRecargoxConceptos from storage.
+	 * If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getPricRecargoxConceptos($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargoxConceptos === null) {
+			if ($this->isNew()) {
+			   $this->collPricRecargoxConceptos = array();
+			} else {
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				PricRecargoxConceptoPeer::addSelectColumns($criteria);
+				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				PricRecargoxConceptoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
+					$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricRecargoxConceptoCriteria = $criteria;
+		return $this->collPricRecargoxConceptos;
+	}
+
+	/**
+	 * Returns the number of related PricRecargoxConceptos.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countPricRecargoxConceptos($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+		return PricRecargoxConceptoPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a PricRecargoxConcepto object to this object
+	 * through the PricRecargoxConcepto foreign key attribute
+	 *
+	 * @param      PricRecargoxConcepto $l PricRecargoxConcepto
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricRecargoxConcepto(PricRecargoxConcepto $l)
+	{
+		$this->collPricRecargoxConceptos[] = $l;
+		$l->setTipoRecargo($this);
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo is new, it will return
+	 * an empty collection; or if this TipoRecargo has previously
+	 * been saved, it will retrieve related PricRecargoxConceptos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TipoRecargo.
+	 */
+	public function getPricRecargoxConceptosJoinPricFlete($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargoxConceptos === null) {
+			if ($this->isNew()) {
+				$this->collPricRecargoxConceptos = array();
+			} else {
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinPricFlete($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+			if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
+				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinPricFlete($criteria, $con);
+			}
+		}
+		$this->lastPricRecargoxConceptoCriteria = $criteria;
+
+		return $this->collPricRecargoxConceptos;
+	}
+
+	/**
+	 * Temporary storage of collPricRecargosxCiudads to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initPricRecargosxCiudads()
+	{
+		if ($this->collPricRecargosxCiudads === null) {
+			$this->collPricRecargosxCiudads = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously
+	 * been saved, it will retrieve related PricRecargosxCiudads from storage.
+	 * If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getPricRecargosxCiudads($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargosxCiudads === null) {
+			if ($this->isNew()) {
+			   $this->collPricRecargosxCiudads = array();
+			} else {
+
+				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				PricRecargosxCiudadPeer::addSelectColumns($criteria);
+				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				PricRecargosxCiudadPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricRecargosxCiudadCriteria) || !$this->lastPricRecargosxCiudadCriteria->equals($criteria)) {
+					$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricRecargosxCiudadCriteria = $criteria;
+		return $this->collPricRecargosxCiudads;
+	}
+
+	/**
+	 * Returns the number of related PricRecargosxCiudads.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countPricRecargosxCiudads($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+		return PricRecargosxCiudadPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a PricRecargosxCiudad object to this object
+	 * through the PricRecargosxCiudad foreign key attribute
+	 *
+	 * @param      PricRecargosxCiudad $l PricRecargosxCiudad
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricRecargosxCiudad(PricRecargosxCiudad $l)
+	{
+		$this->collPricRecargosxCiudads[] = $l;
+		$l->setTipoRecargo($this);
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo is new, it will return
+	 * an empty collection; or if this TipoRecargo has previously
+	 * been saved, it will retrieve related PricRecargosxCiudads from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TipoRecargo.
+	 */
+	public function getPricRecargosxCiudadsJoinCiudad($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargosxCiudads === null) {
+			if ($this->isNew()) {
+				$this->collPricRecargosxCiudads = array();
+			} else {
+
+				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelectJoinCiudad($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+			if (!isset($this->lastPricRecargosxCiudadCriteria) || !$this->lastPricRecargosxCiudadCriteria->equals($criteria)) {
+				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelectJoinCiudad($criteria, $con);
+			}
+		}
+		$this->lastPricRecargosxCiudadCriteria = $criteria;
+
+		return $this->collPricRecargosxCiudads;
 	}
 
 	/**

@@ -19,7 +19,7 @@ abstract class BaseRepTarifaPeer {
 	const CLASS_DEFAULT = 'lib.model.reportes.RepTarifa';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 14;
+	const NUM_COLUMNS = 18;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -67,6 +67,18 @@ abstract class BaseRepTarifaPeer {
 	/** the column name for the CA_OBSERVACIONES field */
 	const CA_OBSERVACIONES = 'tb_reptarifas.CA_OBSERVACIONES';
 
+	/** the column name for the CA_FCHCREADO field */
+	const CA_FCHCREADO = 'tb_reptarifas.CA_FCHCREADO';
+
+	/** the column name for the CA_USUCREADO field */
+	const CA_USUCREADO = 'tb_reptarifas.CA_USUCREADO';
+
+	/** the column name for the CA_FCHACTUALIZADO field */
+	const CA_FCHACTUALIZADO = 'tb_reptarifas.CA_FCHACTUALIZADO';
+
+	/** the column name for the CA_USUACTUALIZADO field */
+	const CA_USUACTUALIZADO = 'tb_reptarifas.CA_USUACTUALIZADO';
+
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -78,10 +90,10 @@ abstract class BaseRepTarifaPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Oid', 'CaIdreporte', 'CaIdconcepto', 'CaCantidad', 'CaNetaTar', 'CaNetaMin', 'CaNetaIdm', 'CaReportarTar', 'CaReportarMin', 'CaReportarIdm', 'CaCobrarTar', 'CaCobrarMin', 'CaCobrarIdm', 'CaObservaciones', ),
-		BasePeer::TYPE_COLNAME => array (RepTarifaPeer::OID, RepTarifaPeer::CA_IDREPORTE, RepTarifaPeer::CA_IDCONCEPTO, RepTarifaPeer::CA_CANTIDAD, RepTarifaPeer::CA_NETA_TAR, RepTarifaPeer::CA_NETA_MIN, RepTarifaPeer::CA_NETA_IDM, RepTarifaPeer::CA_REPORTAR_TAR, RepTarifaPeer::CA_REPORTAR_MIN, RepTarifaPeer::CA_REPORTAR_IDM, RepTarifaPeer::CA_COBRAR_TAR, RepTarifaPeer::CA_COBRAR_MIN, RepTarifaPeer::CA_COBRAR_IDM, RepTarifaPeer::CA_OBSERVACIONES, ),
-		BasePeer::TYPE_FIELDNAME => array ('oid', 'ca_idreporte', 'ca_idconcepto', 'ca_cantidad', 'ca_neta_tar', 'ca_neta_min', 'ca_neta_idm', 'ca_reportar_tar', 'ca_reportar_min', 'ca_reportar_idm', 'ca_cobrar_tar', 'ca_cobrar_min', 'ca_cobrar_idm', 'ca_observaciones', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+		BasePeer::TYPE_PHPNAME => array ('Oid', 'CaIdreporte', 'CaIdconcepto', 'CaCantidad', 'CaNetaTar', 'CaNetaMin', 'CaNetaIdm', 'CaReportarTar', 'CaReportarMin', 'CaReportarIdm', 'CaCobrarTar', 'CaCobrarMin', 'CaCobrarIdm', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
+		BasePeer::TYPE_COLNAME => array (RepTarifaPeer::OID, RepTarifaPeer::CA_IDREPORTE, RepTarifaPeer::CA_IDCONCEPTO, RepTarifaPeer::CA_CANTIDAD, RepTarifaPeer::CA_NETA_TAR, RepTarifaPeer::CA_NETA_MIN, RepTarifaPeer::CA_NETA_IDM, RepTarifaPeer::CA_REPORTAR_TAR, RepTarifaPeer::CA_REPORTAR_MIN, RepTarifaPeer::CA_REPORTAR_IDM, RepTarifaPeer::CA_COBRAR_TAR, RepTarifaPeer::CA_COBRAR_MIN, RepTarifaPeer::CA_COBRAR_IDM, RepTarifaPeer::CA_OBSERVACIONES, RepTarifaPeer::CA_FCHCREADO, RepTarifaPeer::CA_USUCREADO, RepTarifaPeer::CA_FCHACTUALIZADO, RepTarifaPeer::CA_USUACTUALIZADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('oid', 'ca_idreporte', 'ca_idconcepto', 'ca_cantidad', 'ca_neta_tar', 'ca_neta_min', 'ca_neta_idm', 'ca_reportar_tar', 'ca_reportar_min', 'ca_reportar_idm', 'ca_cobrar_tar', 'ca_cobrar_min', 'ca_cobrar_idm', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	/**
@@ -91,10 +103,10 @@ abstract class BaseRepTarifaPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Oid' => 0, 'CaIdreporte' => 1, 'CaIdconcepto' => 2, 'CaCantidad' => 3, 'CaNetaTar' => 4, 'CaNetaMin' => 5, 'CaNetaIdm' => 6, 'CaReportarTar' => 7, 'CaReportarMin' => 8, 'CaReportarIdm' => 9, 'CaCobrarTar' => 10, 'CaCobrarMin' => 11, 'CaCobrarIdm' => 12, 'CaObservaciones' => 13, ),
-		BasePeer::TYPE_COLNAME => array (RepTarifaPeer::OID => 0, RepTarifaPeer::CA_IDREPORTE => 1, RepTarifaPeer::CA_IDCONCEPTO => 2, RepTarifaPeer::CA_CANTIDAD => 3, RepTarifaPeer::CA_NETA_TAR => 4, RepTarifaPeer::CA_NETA_MIN => 5, RepTarifaPeer::CA_NETA_IDM => 6, RepTarifaPeer::CA_REPORTAR_TAR => 7, RepTarifaPeer::CA_REPORTAR_MIN => 8, RepTarifaPeer::CA_REPORTAR_IDM => 9, RepTarifaPeer::CA_COBRAR_TAR => 10, RepTarifaPeer::CA_COBRAR_MIN => 11, RepTarifaPeer::CA_COBRAR_IDM => 12, RepTarifaPeer::CA_OBSERVACIONES => 13, ),
-		BasePeer::TYPE_FIELDNAME => array ('oid' => 0, 'ca_idreporte' => 1, 'ca_idconcepto' => 2, 'ca_cantidad' => 3, 'ca_neta_tar' => 4, 'ca_neta_min' => 5, 'ca_neta_idm' => 6, 'ca_reportar_tar' => 7, 'ca_reportar_min' => 8, 'ca_reportar_idm' => 9, 'ca_cobrar_tar' => 10, 'ca_cobrar_min' => 11, 'ca_cobrar_idm' => 12, 'ca_observaciones' => 13, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+		BasePeer::TYPE_PHPNAME => array ('Oid' => 0, 'CaIdreporte' => 1, 'CaIdconcepto' => 2, 'CaCantidad' => 3, 'CaNetaTar' => 4, 'CaNetaMin' => 5, 'CaNetaIdm' => 6, 'CaReportarTar' => 7, 'CaReportarMin' => 8, 'CaReportarIdm' => 9, 'CaCobrarTar' => 10, 'CaCobrarMin' => 11, 'CaCobrarIdm' => 12, 'CaObservaciones' => 13, 'CaFchcreado' => 14, 'CaUsucreado' => 15, 'CaFchactualizado' => 16, 'CaUsuactualizado' => 17, ),
+		BasePeer::TYPE_COLNAME => array (RepTarifaPeer::OID => 0, RepTarifaPeer::CA_IDREPORTE => 1, RepTarifaPeer::CA_IDCONCEPTO => 2, RepTarifaPeer::CA_CANTIDAD => 3, RepTarifaPeer::CA_NETA_TAR => 4, RepTarifaPeer::CA_NETA_MIN => 5, RepTarifaPeer::CA_NETA_IDM => 6, RepTarifaPeer::CA_REPORTAR_TAR => 7, RepTarifaPeer::CA_REPORTAR_MIN => 8, RepTarifaPeer::CA_REPORTAR_IDM => 9, RepTarifaPeer::CA_COBRAR_TAR => 10, RepTarifaPeer::CA_COBRAR_MIN => 11, RepTarifaPeer::CA_COBRAR_IDM => 12, RepTarifaPeer::CA_OBSERVACIONES => 13, RepTarifaPeer::CA_FCHCREADO => 14, RepTarifaPeer::CA_USUCREADO => 15, RepTarifaPeer::CA_FCHACTUALIZADO => 16, RepTarifaPeer::CA_USUACTUALIZADO => 17, ),
+		BasePeer::TYPE_FIELDNAME => array ('oid' => 0, 'ca_idreporte' => 1, 'ca_idconcepto' => 2, 'ca_cantidad' => 3, 'ca_neta_tar' => 4, 'ca_neta_min' => 5, 'ca_neta_idm' => 6, 'ca_reportar_tar' => 7, 'ca_reportar_min' => 8, 'ca_reportar_idm' => 9, 'ca_cobrar_tar' => 10, 'ca_cobrar_min' => 11, 'ca_cobrar_idm' => 12, 'ca_observaciones' => 13, 'ca_fchcreado' => 14, 'ca_usucreado' => 15, 'ca_fchactualizado' => 16, 'ca_usuactualizado' => 17, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	/**
@@ -221,6 +233,14 @@ abstract class BaseRepTarifaPeer {
 		$criteria->addSelectColumn(RepTarifaPeer::CA_COBRAR_IDM);
 
 		$criteria->addSelectColumn(RepTarifaPeer::CA_OBSERVACIONES);
+
+		$criteria->addSelectColumn(RepTarifaPeer::CA_FCHCREADO);
+
+		$criteria->addSelectColumn(RepTarifaPeer::CA_USUCREADO);
+
+		$criteria->addSelectColumn(RepTarifaPeer::CA_FCHACTUALIZADO);
+
+		$criteria->addSelectColumn(RepTarifaPeer::CA_USUACTUALIZADO);
 
 	}
 

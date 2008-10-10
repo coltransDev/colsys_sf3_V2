@@ -282,8 +282,9 @@ class Reporte extends BaseReporte
 	* @author Andres Botero
 	*/
 	public function getInoClientesAir(){
+		
 		$c = new Criteria();
-		$c->add( InoClientesAirPeer::CA_IDREPORTE, $this->getCaIdreporte()  );
+		$c->add( InoClientesAirPeer::CA_IDREPORTE, $this->getCaConsecutivo()  );		
 		return InoClientesAirPeer::doSelectOne( $c );
 	}
 	

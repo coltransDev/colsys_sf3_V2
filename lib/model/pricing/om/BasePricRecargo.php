@@ -73,6 +73,11 @@ abstract class BasePricRecargo extends BaseObject  implements Persistent {
 	protected $aTrayecto;
 
 	/**
+	 * @var        TipoRecargo
+	 */
+	protected $aTipoRecargo;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -207,6 +212,10 @@ abstract class BasePricRecargo extends BaseObject  implements Persistent {
 		if ($this->ca_idrecargo !== $v) {
 			$this->ca_idrecargo = $v;
 			$this->modifiedColumns[] = PricRecargoPeer::CA_IDRECARGO;
+		}
+
+		if ($this->aTipoRecargo !== null && $this->aTipoRecargo->getCaIdrecargo() !== $v) {
+			$this->aTipoRecargo = null;
 		}
 
 	} // setCaIdrecargo()
@@ -443,6 +452,13 @@ abstract class BasePricRecargo extends BaseObject  implements Persistent {
 				$this->setTrayecto($this->aTrayecto);
 			}
 
+			if ($this->aTipoRecargo !== null) {
+				if ($this->aTipoRecargo->isModified()) {
+					$affectedRows += $this->aTipoRecargo->save($con);
+				}
+				$this->setTipoRecargo($this->aTipoRecargo);
+			}
+
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -532,6 +548,12 @@ abstract class BasePricRecargo extends BaseObject  implements Persistent {
 			if ($this->aTrayecto !== null) {
 				if (!$this->aTrayecto->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aTrayecto->getValidationFailures());
+				}
+			}
+
+			if ($this->aTipoRecargo !== null) {
+				if (!$this->aTipoRecargo->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTipoRecargo->getValidationFailures());
 				}
 			}
 
@@ -890,6 +912,54 @@ abstract class BasePricRecargo extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aTrayecto;
+	}
+
+	/**
+	 * Declares an association between this object and a TipoRecargo object.
+	 *
+	 * @param      TipoRecargo $v
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function setTipoRecargo($v)
+	{
+
+
+		if ($v === null) {
+			$this->setCaIdrecargo(NULL);
+		} else {
+			$this->setCaIdrecargo($v->getCaIdrecargo());
+		}
+
+
+		$this->aTipoRecargo = $v;
+	}
+
+
+	/**
+	 * Get the associated TipoRecargo object
+	 *
+	 * @param      Connection Optional Connection object.
+	 * @return     TipoRecargo The associated TipoRecargo object.
+	 * @throws     PropelException
+	 */
+	public function getTipoRecargo($con = null)
+	{
+		if ($this->aTipoRecargo === null && ($this->ca_idrecargo !== null)) {
+			// include the related Peer class
+			$this->aTipoRecargo = TipoRecargoPeer::retrieveByPK($this->ca_idrecargo, $con);
+
+			/* The following can be used instead of the line above to
+			   guarantee the related object contains a reference
+			   to this object, but this level of coupling
+			   may be undesirable in many circumstances.
+			   As it can lead to a db query with many results that may
+			   never be used.
+			   $obj = TipoRecargoPeer::retrieveByPK($this->ca_idrecargo, $con);
+			   $obj->addTipoRecargos($this);
+			 */
+		}
+		return $this->aTipoRecargo;
 	}
 
 } // BasePricRecargo

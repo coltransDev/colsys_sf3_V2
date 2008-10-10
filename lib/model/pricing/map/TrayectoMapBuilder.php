@@ -99,6 +99,8 @@ class TrayectoMapBuilder {
 
 		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'int', CreoleTypes::INTEGER, false, null);
+
 	} // doBuild()
 
 } // TrayectoMapBuilder

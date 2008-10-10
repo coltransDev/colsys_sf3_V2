@@ -42,7 +42,7 @@ abstract class BaseInoClientesAir extends BaseObject  implements Persistent {
 
 	/**
 	 * The value for the ca_idreporte field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_idreporte;
 
@@ -195,7 +195,7 @@ abstract class BaseInoClientesAir extends BaseObject  implements Persistent {
 	/**
 	 * Get the [ca_idreporte] column value.
 	 * 
-	 * @return     int
+	 * @return     string
 	 */
 	public function getCaIdreporte()
 	{
@@ -448,16 +448,16 @@ abstract class BaseInoClientesAir extends BaseObject  implements Persistent {
 	/**
 	 * Set the value of [ca_idreporte] column.
 	 * 
-	 * @param      int $v new value
+	 * @param      string $v new value
 	 * @return     void
 	 */
 	public function setCaIdreporte($v)
 	{
 
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
-			$v = (int) $v;
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
 		}
 
 		if ($this->ca_idreporte !== $v) {
@@ -766,7 +766,7 @@ abstract class BaseInoClientesAir extends BaseObject  implements Persistent {
 
 			$this->ca_hawb = $rs->getString($startcol + 2);
 
-			$this->ca_idreporte = $rs->getInt($startcol + 3);
+			$this->ca_idreporte = $rs->getString($startcol + 3);
 
 			$this->ca_idproveedor = $rs->getInt($startcol + 4);
 
@@ -1457,7 +1457,7 @@ abstract class BaseInoClientesAir extends BaseObject  implements Persistent {
 	 */
 	public function getReporte($con = null)
 	{
-		if ($this->aReporte === null && ($this->ca_idreporte !== null)) {
+		if ($this->aReporte === null && (($this->ca_idreporte !== "" && $this->ca_idreporte !== null))) {
 			// include the related Peer class
 			$this->aReporte = ReportePeer::retrieveByPK($this->ca_idreporte, $con);
 

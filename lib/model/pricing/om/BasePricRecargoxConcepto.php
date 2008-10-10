@@ -53,15 +53,22 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 */
 	protected $ca_vlrminimo;
 
-	/**
-	 * @var        Trayecto
-	 */
-	protected $aTrayecto;
 
 	/**
-	 * @var        Concepto
+	 * The value for the ca_observaciones field.
+	 * @var        string
 	 */
-	protected $aConcepto;
+	protected $ca_observaciones;
+
+	/**
+	 * @var        PricFlete
+	 */
+	protected $aPricFlete;
+
+	/**
+	 * @var        TipoRecargo
+	 */
+	protected $aTipoRecargo;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -133,6 +140,17 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	}
 
 	/**
+	 * Get the [ca_observaciones] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaObservaciones()
+	{
+
+		return $this->ca_observaciones;
+	}
+
+	/**
 	 * Set the value of [ca_idtrayecto] column.
 	 * 
 	 * @param      int $v new value
@@ -152,8 +170,8 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_IDTRAYECTO;
 		}
 
-		if ($this->aTrayecto !== null && $this->aTrayecto->getCaIdtrayecto() !== $v) {
-			$this->aTrayecto = null;
+		if ($this->aPricFlete !== null && $this->aPricFlete->getCaIdtrayecto() !== $v) {
+			$this->aPricFlete = null;
 		}
 
 	} // setCaIdtrayecto()
@@ -178,8 +196,8 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_IDCONCEPTO;
 		}
 
-		if ($this->aConcepto !== null && $this->aConcepto->getCaIdconcepto() !== $v) {
-			$this->aConcepto = null;
+		if ($this->aPricFlete !== null && $this->aPricFlete->getCaIdconcepto() !== $v) {
+			$this->aPricFlete = null;
 		}
 
 	} // setCaIdconcepto()
@@ -202,6 +220,10 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if ($this->ca_idrecargo !== $v) {
 			$this->ca_idrecargo = $v;
 			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_IDRECARGO;
+		}
+
+		if ($this->aTipoRecargo !== null && $this->aTipoRecargo->getCaIdrecargo() !== $v) {
+			$this->aTipoRecargo = null;
 		}
 
 	} // setCaIdrecargo()
@@ -239,6 +261,28 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	} // setCaVlrminimo()
 
 	/**
+	 * Set the value of [ca_observaciones] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaObservaciones($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_observaciones !== $v) {
+			$this->ca_observaciones = $v;
+			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_OBSERVACIONES;
+		}
+
+	} // setCaObservaciones()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -265,12 +309,14 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 			$this->ca_vlrminimo = $rs->getFloat($startcol + 4);
 
+			$this->ca_observaciones = $rs->getString($startcol + 5);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 5; // 5 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 6; // 6 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricRecargoxConcepto object", $e);
@@ -361,18 +407,18 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			// method.  This object relates to these object(s) by a
 			// foreign key reference.
 
-			if ($this->aTrayecto !== null) {
-				if ($this->aTrayecto->isModified()) {
-					$affectedRows += $this->aTrayecto->save($con);
+			if ($this->aPricFlete !== null) {
+				if ($this->aPricFlete->isModified()) {
+					$affectedRows += $this->aPricFlete->save($con);
 				}
-				$this->setTrayecto($this->aTrayecto);
+				$this->setPricFlete($this->aPricFlete);
 			}
 
-			if ($this->aConcepto !== null) {
-				if ($this->aConcepto->isModified()) {
-					$affectedRows += $this->aConcepto->save($con);
+			if ($this->aTipoRecargo !== null) {
+				if ($this->aTipoRecargo->isModified()) {
+					$affectedRows += $this->aTipoRecargo->save($con);
 				}
-				$this->setConcepto($this->aConcepto);
+				$this->setTipoRecargo($this->aTipoRecargo);
 			}
 
 
@@ -461,15 +507,15 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			// method.  This object relates to these object(s) by a
 			// foreign key reference.
 
-			if ($this->aTrayecto !== null) {
-				if (!$this->aTrayecto->validate($columns)) {
-					$failureMap = array_merge($failureMap, $this->aTrayecto->getValidationFailures());
+			if ($this->aPricFlete !== null) {
+				if (!$this->aPricFlete->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aPricFlete->getValidationFailures());
 				}
 			}
 
-			if ($this->aConcepto !== null) {
-				if (!$this->aConcepto->validate($columns)) {
-					$failureMap = array_merge($failureMap, $this->aConcepto->getValidationFailures());
+			if ($this->aTipoRecargo !== null) {
+				if (!$this->aTipoRecargo->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTipoRecargo->getValidationFailures());
 				}
 			}
 
@@ -526,6 +572,9 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			case 4:
 				return $this->getCaVlrminimo();
 				break;
+			case 5:
+				return $this->getCaObservaciones();
+				break;
 			default:
 				return null;
 				break;
@@ -551,6 +600,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			$keys[2] => $this->getCaIdrecargo(),
 			$keys[3] => $this->getCaVlrrecargo(),
 			$keys[4] => $this->getCaVlrminimo(),
+			$keys[5] => $this->getCaObservaciones(),
 		);
 		return $result;
 	}
@@ -597,6 +647,9 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			case 4:
 				$this->setCaVlrminimo($value);
 				break;
+			case 5:
+				$this->setCaObservaciones($value);
+				break;
 		} // switch()
 	}
 
@@ -625,6 +678,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if (array_key_exists($keys[2], $arr)) $this->setCaIdrecargo($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaVlrrecargo($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaVlrminimo($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaObservaciones($arr[$keys[5]]);
 	}
 
 	/**
@@ -641,6 +695,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRRECARGO, $this->ca_vlrrecargo);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRMINIMO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
+		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_OBSERVACIONES)) $criteria->add(PricRecargoxConceptoPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 
 		return $criteria;
 	}
@@ -716,6 +771,8 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
 
+		$copyObj->setCaObservaciones($this->ca_observaciones);
+
 
 		$copyObj->setNew(true);
 
@@ -766,13 +823,13 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	}
 
 	/**
-	 * Declares an association between this object and a Trayecto object.
+	 * Declares an association between this object and a PricFlete object.
 	 *
-	 * @param      Trayecto $v
+	 * @param      PricFlete $v
 	 * @return     void
 	 * @throws     PropelException
 	 */
-	public function setTrayecto($v)
+	public function setPricFlete($v)
 	{
 
 
@@ -783,47 +840,6 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		}
 
 
-		$this->aTrayecto = $v;
-	}
-
-
-	/**
-	 * Get the associated Trayecto object
-	 *
-	 * @param      Connection Optional Connection object.
-	 * @return     Trayecto The associated Trayecto object.
-	 * @throws     PropelException
-	 */
-	public function getTrayecto($con = null)
-	{
-		if ($this->aTrayecto === null && ($this->ca_idtrayecto !== null)) {
-			// include the related Peer class
-			$this->aTrayecto = TrayectoPeer::retrieveByPK($this->ca_idtrayecto, $con);
-
-			/* The following can be used instead of the line above to
-			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = TrayectoPeer::retrieveByPK($this->ca_idtrayecto, $con);
-			   $obj->addTrayectos($this);
-			 */
-		}
-		return $this->aTrayecto;
-	}
-
-	/**
-	 * Declares an association between this object and a Concepto object.
-	 *
-	 * @param      Concepto $v
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function setConcepto($v)
-	{
-
-
 		if ($v === null) {
 			$this->setCaIdconcepto(NULL);
 		} else {
@@ -831,22 +847,22 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		}
 
 
-		$this->aConcepto = $v;
+		$this->aPricFlete = $v;
 	}
 
 
 	/**
-	 * Get the associated Concepto object
+	 * Get the associated PricFlete object
 	 *
 	 * @param      Connection Optional Connection object.
-	 * @return     Concepto The associated Concepto object.
+	 * @return     PricFlete The associated PricFlete object.
 	 * @throws     PropelException
 	 */
-	public function getConcepto($con = null)
+	public function getPricFlete($con = null)
 	{
-		if ($this->aConcepto === null && ($this->ca_idconcepto !== null)) {
+		if ($this->aPricFlete === null && ($this->ca_idtrayecto !== null && $this->ca_idconcepto !== null)) {
 			// include the related Peer class
-			$this->aConcepto = ConceptoPeer::retrieveByPK($this->ca_idconcepto, $con);
+			$this->aPricFlete = PricFletePeer::retrieveByPK($this->ca_idtrayecto, $this->ca_idconcepto, $con);
 
 			/* The following can be used instead of the line above to
 			   guarantee the related object contains a reference
@@ -854,11 +870,59 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			   may be undesirable in many circumstances.
 			   As it can lead to a db query with many results that may
 			   never be used.
-			   $obj = ConceptoPeer::retrieveByPK($this->ca_idconcepto, $con);
-			   $obj->addConceptos($this);
+			   $obj = PricFletePeer::retrieveByPK($this->ca_idtrayecto, $this->ca_idconcepto, $con);
+			   $obj->addPricFletes($this);
 			 */
 		}
-		return $this->aConcepto;
+		return $this->aPricFlete;
+	}
+
+	/**
+	 * Declares an association between this object and a TipoRecargo object.
+	 *
+	 * @param      TipoRecargo $v
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function setTipoRecargo($v)
+	{
+
+
+		if ($v === null) {
+			$this->setCaIdrecargo(NULL);
+		} else {
+			$this->setCaIdrecargo($v->getCaIdrecargo());
+		}
+
+
+		$this->aTipoRecargo = $v;
+	}
+
+
+	/**
+	 * Get the associated TipoRecargo object
+	 *
+	 * @param      Connection Optional Connection object.
+	 * @return     TipoRecargo The associated TipoRecargo object.
+	 * @throws     PropelException
+	 */
+	public function getTipoRecargo($con = null)
+	{
+		if ($this->aTipoRecargo === null && ($this->ca_idrecargo !== null)) {
+			// include the related Peer class
+			$this->aTipoRecargo = TipoRecargoPeer::retrieveByPK($this->ca_idrecargo, $con);
+
+			/* The following can be used instead of the line above to
+			   guarantee the related object contains a reference
+			   to this object, but this level of coupling
+			   may be undesirable in many circumstances.
+			   As it can lead to a db query with many results that may
+			   never be used.
+			   $obj = TipoRecargoPeer::retrieveByPK($this->ca_idrecargo, $con);
+			   $obj->addTipoRecargos($this);
+			 */
+		}
+		return $this->aTipoRecargo;
 	}
 
 } // BasePricRecargoxConcepto

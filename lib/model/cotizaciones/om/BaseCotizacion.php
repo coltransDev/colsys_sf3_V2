@@ -48,6 +48,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the ca_consecutivo field.
+	 * @var        string
+	 */
+	protected $ca_consecutivo;
+
+
+	/**
 	 * The value for the ca_asunto field.
 	 * @var        string
 	 */
@@ -286,6 +293,17 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idcontacto;
+	}
+
+	/**
+	 * Get the [ca_consecutivo] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaConsecutivo()
+	{
+
+		return $this->ca_consecutivo;
 	}
 
 	/**
@@ -639,6 +657,28 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	} // setCaIdcontacto()
 
 	/**
+	 * Set the value of [ca_consecutivo] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaConsecutivo($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_consecutivo !== $v) {
+			$this->ca_consecutivo = $v;
+			$this->modifiedColumns[] = CotizacionPeer::CA_CONSECUTIVO;
+		}
+
+	} // setCaConsecutivo()
+
+	/**
 	 * Set the value of [ca_asunto] column.
 	 * 
 	 * @param      string $v new value
@@ -985,40 +1025,42 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 			$this->ca_idcontacto = $rs->getInt($startcol + 3);
 
-			$this->ca_asunto = $rs->getString($startcol + 4);
+			$this->ca_consecutivo = $rs->getString($startcol + 4);
 
-			$this->ca_saludo = $rs->getString($startcol + 5);
+			$this->ca_asunto = $rs->getString($startcol + 5);
 
-			$this->ca_entrada = $rs->getString($startcol + 6);
+			$this->ca_saludo = $rs->getString($startcol + 6);
 
-			$this->ca_despedida = $rs->getString($startcol + 7);
+			$this->ca_entrada = $rs->getString($startcol + 7);
 
-			$this->ca_usuario = $rs->getString($startcol + 8);
+			$this->ca_despedida = $rs->getString($startcol + 8);
 
-			$this->ca_anexos = $rs->getString($startcol + 9);
+			$this->ca_usuario = $rs->getString($startcol + 9);
 
-			$this->ca_fchcreado = $rs->getDate($startcol + 10, null);
+			$this->ca_anexos = $rs->getString($startcol + 10);
 
-			$this->ca_usucreado = $rs->getString($startcol + 11);
+			$this->ca_fchcreado = $rs->getDate($startcol + 11, null);
 
-			$this->ca_fchactualizado = $rs->getDate($startcol + 12, null);
+			$this->ca_usucreado = $rs->getString($startcol + 12);
 
-			$this->ca_usuactualizado = $rs->getString($startcol + 13);
+			$this->ca_fchactualizado = $rs->getDate($startcol + 13, null);
 
-			$this->ca_fchsolicitud = $rs->getDate($startcol + 14, null);
+			$this->ca_usuactualizado = $rs->getString($startcol + 14);
 
-			$this->ca_horasolicitud = $rs->getTime($startcol + 15, null);
+			$this->ca_fchsolicitud = $rs->getDate($startcol + 15, null);
 
-			$this->ca_fchanulado = $rs->getDate($startcol + 16, null);
+			$this->ca_horasolicitud = $rs->getTime($startcol + 16, null);
 
-			$this->ca_usuanulado = $rs->getString($startcol + 17);
+			$this->ca_fchanulado = $rs->getDate($startcol + 17, null);
+
+			$this->ca_usuanulado = $rs->getString($startcol + 18);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 18; // 18 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 19; // 19 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cotizacion object", $e);
@@ -1320,45 +1362,48 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				return $this->getCaIdcontacto();
 				break;
 			case 4:
-				return $this->getCaAsunto();
+				return $this->getCaConsecutivo();
 				break;
 			case 5:
-				return $this->getCaSaludo();
+				return $this->getCaAsunto();
 				break;
 			case 6:
-				return $this->getCaEntrada();
+				return $this->getCaSaludo();
 				break;
 			case 7:
-				return $this->getCaDespedida();
+				return $this->getCaEntrada();
 				break;
 			case 8:
-				return $this->getCaUsuario();
+				return $this->getCaDespedida();
 				break;
 			case 9:
-				return $this->getCaAnexos();
+				return $this->getCaUsuario();
 				break;
 			case 10:
-				return $this->getCaFchcreado();
+				return $this->getCaAnexos();
 				break;
 			case 11:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 12:
-				return $this->getCaFchactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 13:
-				return $this->getCaUsuactualizado();
+				return $this->getCaFchactualizado();
 				break;
 			case 14:
-				return $this->getCaFchsolicitud();
+				return $this->getCaUsuactualizado();
 				break;
 			case 15:
-				return $this->getCaHorasolicitud();
+				return $this->getCaFchsolicitud();
 				break;
 			case 16:
-				return $this->getCaFchanulado();
+				return $this->getCaHorasolicitud();
 				break;
 			case 17:
+				return $this->getCaFchanulado();
+				break;
+			case 18:
 				return $this->getCaUsuanulado();
 				break;
 			default:
@@ -1385,20 +1430,21 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$keys[1] => $this->getCaFchcotizacion(),
 			$keys[2] => $this->getCaFchpresentacion(),
 			$keys[3] => $this->getCaIdcontacto(),
-			$keys[4] => $this->getCaAsunto(),
-			$keys[5] => $this->getCaSaludo(),
-			$keys[6] => $this->getCaEntrada(),
-			$keys[7] => $this->getCaDespedida(),
-			$keys[8] => $this->getCaUsuario(),
-			$keys[9] => $this->getCaAnexos(),
-			$keys[10] => $this->getCaFchcreado(),
-			$keys[11] => $this->getCaUsucreado(),
-			$keys[12] => $this->getCaFchactualizado(),
-			$keys[13] => $this->getCaUsuactualizado(),
-			$keys[14] => $this->getCaFchsolicitud(),
-			$keys[15] => $this->getCaHorasolicitud(),
-			$keys[16] => $this->getCaFchanulado(),
-			$keys[17] => $this->getCaUsuanulado(),
+			$keys[4] => $this->getCaConsecutivo(),
+			$keys[5] => $this->getCaAsunto(),
+			$keys[6] => $this->getCaSaludo(),
+			$keys[7] => $this->getCaEntrada(),
+			$keys[8] => $this->getCaDespedida(),
+			$keys[9] => $this->getCaUsuario(),
+			$keys[10] => $this->getCaAnexos(),
+			$keys[11] => $this->getCaFchcreado(),
+			$keys[12] => $this->getCaUsucreado(),
+			$keys[13] => $this->getCaFchactualizado(),
+			$keys[14] => $this->getCaUsuactualizado(),
+			$keys[15] => $this->getCaFchsolicitud(),
+			$keys[16] => $this->getCaHorasolicitud(),
+			$keys[17] => $this->getCaFchanulado(),
+			$keys[18] => $this->getCaUsuanulado(),
 		);
 		return $result;
 	}
@@ -1443,45 +1489,48 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				$this->setCaIdcontacto($value);
 				break;
 			case 4:
-				$this->setCaAsunto($value);
+				$this->setCaConsecutivo($value);
 				break;
 			case 5:
-				$this->setCaSaludo($value);
+				$this->setCaAsunto($value);
 				break;
 			case 6:
-				$this->setCaEntrada($value);
+				$this->setCaSaludo($value);
 				break;
 			case 7:
-				$this->setCaDespedida($value);
+				$this->setCaEntrada($value);
 				break;
 			case 8:
-				$this->setCaUsuario($value);
+				$this->setCaDespedida($value);
 				break;
 			case 9:
-				$this->setCaAnexos($value);
+				$this->setCaUsuario($value);
 				break;
 			case 10:
-				$this->setCaFchcreado($value);
+				$this->setCaAnexos($value);
 				break;
 			case 11:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 12:
-				$this->setCaFchactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 13:
-				$this->setCaUsuactualizado($value);
+				$this->setCaFchactualizado($value);
 				break;
 			case 14:
-				$this->setCaFchsolicitud($value);
+				$this->setCaUsuactualizado($value);
 				break;
 			case 15:
-				$this->setCaHorasolicitud($value);
+				$this->setCaFchsolicitud($value);
 				break;
 			case 16:
-				$this->setCaFchanulado($value);
+				$this->setCaHorasolicitud($value);
 				break;
 			case 17:
+				$this->setCaFchanulado($value);
+				break;
+			case 18:
 				$this->setCaUsuanulado($value);
 				break;
 		} // switch()
@@ -1511,20 +1560,21 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[1], $arr)) $this->setCaFchcotizacion($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaFchpresentacion($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaIdcontacto($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaAsunto($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaSaludo($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaEntrada($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaDespedida($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaUsuario($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaAnexos($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaFchcreado($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaUsucreado($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaFchactualizado($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaUsuactualizado($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaFchsolicitud($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaHorasolicitud($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaFchanulado($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaUsuanulado($arr[$keys[17]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaConsecutivo($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaAsunto($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaSaludo($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaEntrada($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaDespedida($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaUsuario($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaAnexos($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFchcreado($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaUsucreado($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaFchactualizado($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaUsuactualizado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaFchsolicitud($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaHorasolicitud($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaFchanulado($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaUsuanulado($arr[$keys[18]]);
 	}
 
 	/**
@@ -1540,6 +1590,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotizacionPeer::CA_FCHCOTIZACION)) $criteria->add(CotizacionPeer::CA_FCHCOTIZACION, $this->ca_fchcotizacion);
 		if ($this->isColumnModified(CotizacionPeer::CA_FCHPRESENTACION)) $criteria->add(CotizacionPeer::CA_FCHPRESENTACION, $this->ca_fchpresentacion);
 		if ($this->isColumnModified(CotizacionPeer::CA_IDCONTACTO)) $criteria->add(CotizacionPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+		if ($this->isColumnModified(CotizacionPeer::CA_CONSECUTIVO)) $criteria->add(CotizacionPeer::CA_CONSECUTIVO, $this->ca_consecutivo);
 		if ($this->isColumnModified(CotizacionPeer::CA_ASUNTO)) $criteria->add(CotizacionPeer::CA_ASUNTO, $this->ca_asunto);
 		if ($this->isColumnModified(CotizacionPeer::CA_SALUDO)) $criteria->add(CotizacionPeer::CA_SALUDO, $this->ca_saludo);
 		if ($this->isColumnModified(CotizacionPeer::CA_ENTRADA)) $criteria->add(CotizacionPeer::CA_ENTRADA, $this->ca_entrada);
@@ -1613,6 +1664,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$copyObj->setCaFchpresentacion($this->ca_fchpresentacion);
 
 		$copyObj->setCaIdcontacto($this->ca_idcontacto);
+
+		$copyObj->setCaConsecutivo($this->ca_consecutivo);
 
 		$copyObj->setCaAsunto($this->ca_asunto);
 

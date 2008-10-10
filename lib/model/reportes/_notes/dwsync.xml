@@ -10,12 +10,12 @@
 <file name="RepExpoPeer.php" local="128637410560625000" remote="128637410130000000" testing="0" />
 <file name="RepGasto.php" local="128637410562187500" remote="128637410130000000" testing="0" />
 <file name="RepGastoPeer.php" local="128637410560781250" remote="128637410130000000" testing="0" />
-<file name="Reporte.php" local="128637410561562500" remote="128637410130000000" testing="0" />
+<file name="Reporte.php" local="128674289183125000" remote="128674286720000000" testing="0" />
 <file name="ReporteConceptoAir.php" local="128637410561093750" remote="128637410130000000" testing="0" />
 <file name="ReporteConceptoAirPeer.php" local="128637410562031250" remote="128637410130000000" testing="0" />
 <file name="ReporteConceptoSea.php" local="128637410560781250" remote="128637410130000000" testing="0" />
 <file name="ReporteConceptoSeaPeer.php" local="128637410561718750" remote="128637410130000000" testing="0" />
-<file name="ReportePeer.php" local="128637410560468750" remote="128637410130000000" testing="0" />
+<file name="ReportePeer.php" local="128655290935625000" remote="128655290080000000" testing="0" />
 <file name="RepSeguro.php" local="128637410561250000" remote="128637410130000000" testing="0" />
 <file name="RepSeguroPeer.php" local="128637410562343750" remote="128637410130000000" testing="0" />
 <file name="RepStatus.php" local="128637410560468750" remote="128637410130000000" testing="0" />

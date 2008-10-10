@@ -116,6 +116,34 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 	 */
 	protected $ca_observaciones;
 
+
+	/**
+	 * The value for the ca_fchcreado field.
+	 * @var        int
+	 */
+	protected $ca_fchcreado;
+
+
+	/**
+	 * The value for the ca_usucreado field.
+	 * @var        string
+	 */
+	protected $ca_usucreado;
+
+
+	/**
+	 * The value for the ca_fchactualizado field.
+	 * @var        int
+	 */
+	protected $ca_fchactualizado;
+
+
+	/**
+	 * The value for the ca_usuactualizado field.
+	 * @var        string
+	 */
+	protected $ca_usuactualizado;
+
 	/**
 	 * @var        Reporte
 	 */
@@ -292,6 +320,90 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_observaciones;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchcreado] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchcreado($format = 'Y-m-d')
+	{
+
+		if ($this->ca_fchcreado === null || $this->ca_fchcreado === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchcreado)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchcreado);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchcreado] as date/time value: " . var_export($this->ca_fchcreado, true));
+			}
+		} else {
+			$ts = $this->ca_fchcreado;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [ca_usucreado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsucreado()
+	{
+
+		return $this->ca_usucreado;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchactualizado] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchactualizado($format = 'Y-m-d')
+	{
+
+		if ($this->ca_fchactualizado === null || $this->ca_fchactualizado === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchactualizado)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchactualizado);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchactualizado] as date/time value: " . var_export($this->ca_fchactualizado, true));
+			}
+		} else {
+			$ts = $this->ca_fchactualizado;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [ca_usuactualizado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsuactualizado()
+	{
+
+		return $this->ca_usuactualizado;
 	}
 
 	/**
@@ -569,6 +681,98 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 	} // setCaObservaciones()
 
 	/**
+	 * Set the value of [ca_fchcreado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchcreado($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchcreado] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchcreado !== $ts) {
+			$this->ca_fchcreado = $ts;
+			$this->modifiedColumns[] = RepTarifaPeer::CA_FCHCREADO;
+		}
+
+	} // setCaFchcreado()
+
+	/**
+	 * Set the value of [ca_usucreado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaUsucreado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_usucreado !== $v) {
+			$this->ca_usucreado = $v;
+			$this->modifiedColumns[] = RepTarifaPeer::CA_USUCREADO;
+		}
+
+	} // setCaUsucreado()
+
+	/**
+	 * Set the value of [ca_fchactualizado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchactualizado($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchactualizado] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchactualizado !== $ts) {
+			$this->ca_fchactualizado = $ts;
+			$this->modifiedColumns[] = RepTarifaPeer::CA_FCHACTUALIZADO;
+		}
+
+	} // setCaFchactualizado()
+
+	/**
+	 * Set the value of [ca_usuactualizado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaUsuactualizado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_usuactualizado !== $v) {
+			$this->ca_usuactualizado = $v;
+			$this->modifiedColumns[] = RepTarifaPeer::CA_USUACTUALIZADO;
+		}
+
+	} // setCaUsuactualizado()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -613,12 +817,20 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 
 			$this->ca_observaciones = $rs->getString($startcol + 13);
 
+			$this->ca_fchcreado = $rs->getDate($startcol + 14, null);
+
+			$this->ca_usucreado = $rs->getString($startcol + 15);
+
+			$this->ca_fchactualizado = $rs->getDate($startcol + 16, null);
+
+			$this->ca_usuactualizado = $rs->getString($startcol + 17);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 14; // 14 = RepTarifaPeer::NUM_COLUMNS - RepTarifaPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 18; // 18 = RepTarifaPeer::NUM_COLUMNS - RepTarifaPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating RepTarifa object", $e);
@@ -901,6 +1113,18 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 			case 13:
 				return $this->getCaObservaciones();
 				break;
+			case 14:
+				return $this->getCaFchcreado();
+				break;
+			case 15:
+				return $this->getCaUsucreado();
+				break;
+			case 16:
+				return $this->getCaFchactualizado();
+				break;
+			case 17:
+				return $this->getCaUsuactualizado();
+				break;
 			default:
 				return null;
 				break;
@@ -935,6 +1159,10 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 			$keys[11] => $this->getCaCobrarMin(),
 			$keys[12] => $this->getCaCobrarIdm(),
 			$keys[13] => $this->getCaObservaciones(),
+			$keys[14] => $this->getCaFchcreado(),
+			$keys[15] => $this->getCaUsucreado(),
+			$keys[16] => $this->getCaFchactualizado(),
+			$keys[17] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1008,6 +1236,18 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 			case 13:
 				$this->setCaObservaciones($value);
 				break;
+			case 14:
+				$this->setCaFchcreado($value);
+				break;
+			case 15:
+				$this->setCaUsucreado($value);
+				break;
+			case 16:
+				$this->setCaFchactualizado($value);
+				break;
+			case 17:
+				$this->setCaUsuactualizado($value);
+				break;
 		} // switch()
 	}
 
@@ -1045,6 +1285,10 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[11], $arr)) $this->setCaCobrarMin($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setCaCobrarIdm($arr[$keys[12]]);
 		if (array_key_exists($keys[13], $arr)) $this->setCaObservaciones($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaFchcreado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaUsucreado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaFchactualizado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaUsuactualizado($arr[$keys[17]]);
 	}
 
 	/**
@@ -1070,6 +1314,10 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(RepTarifaPeer::CA_COBRAR_MIN)) $criteria->add(RepTarifaPeer::CA_COBRAR_MIN, $this->ca_cobrar_min);
 		if ($this->isColumnModified(RepTarifaPeer::CA_COBRAR_IDM)) $criteria->add(RepTarifaPeer::CA_COBRAR_IDM, $this->ca_cobrar_idm);
 		if ($this->isColumnModified(RepTarifaPeer::CA_OBSERVACIONES)) $criteria->add(RepTarifaPeer::CA_OBSERVACIONES, $this->ca_observaciones);
+		if ($this->isColumnModified(RepTarifaPeer::CA_FCHCREADO)) $criteria->add(RepTarifaPeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(RepTarifaPeer::CA_USUCREADO)) $criteria->add(RepTarifaPeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(RepTarifaPeer::CA_FCHACTUALIZADO)) $criteria->add(RepTarifaPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
+		if ($this->isColumnModified(RepTarifaPeer::CA_USUACTUALIZADO)) $criteria->add(RepTarifaPeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
 
 		return $criteria;
 	}
@@ -1149,6 +1397,14 @@ abstract class BaseRepTarifa extends BaseObject  implements Persistent {
 		$copyObj->setCaCobrarIdm($this->ca_cobrar_idm);
 
 		$copyObj->setCaObservaciones($this->ca_observaciones);
+
+		$copyObj->setCaFchcreado($this->ca_fchcreado);
+
+		$copyObj->setCaUsucreado($this->ca_usucreado);
+
+		$copyObj->setCaFchactualizado($this->ca_fchactualizado);
+
+		$copyObj->setCaUsuactualizado($this->ca_usuactualizado);
 
 
 		$copyObj->setNew(true);

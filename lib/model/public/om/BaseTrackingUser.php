@@ -80,6 +80,18 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	protected $aContacto;
 
 	/**
+	 * Collection to store aggregation of collTrackingUserLogs.
+	 * @var        array
+	 */
+	protected $collTrackingUserLogs;
+
+	/**
+	 * The criteria used to select the current contents of collTrackingUserLogs.
+	 * @var        Criteria
+	 */
+	protected $lastTrackingUserLogCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -525,6 +537,14 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
+			if ($this->collTrackingUserLogs !== null) {
+				foreach($this->collTrackingUserLogs as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 		}
 		return $affectedRows;
@@ -606,6 +626,14 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collTrackingUserLogs !== null) {
+					foreach($this->collTrackingUserLogs as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -865,6 +893,18 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 		$copyObj->setCaIdcontacto($this->ca_idcontacto);
 
 
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			foreach($this->getTrackingUserLogs() as $relObj) {
+				$copyObj->addTrackingUserLog($relObj->copy($deepCopy));
+			}
+
+		} // if ($deepCopy)
+
+
 		$copyObj->setNew(true);
 
 		$copyObj->setCaId(NULL); // this is a pkey column, so set to default value
@@ -955,6 +995,111 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aContacto;
+	}
+
+	/**
+	 * Temporary storage of collTrackingUserLogs to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initTrackingUserLogs()
+	{
+		if ($this->collTrackingUserLogs === null) {
+			$this->collTrackingUserLogs = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TrackingUser has previously
+	 * been saved, it will retrieve related TrackingUserLogs from storage.
+	 * If this TrackingUser is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getTrackingUserLogs($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collTrackingUserLogs === null) {
+			if ($this->isNew()) {
+			   $this->collTrackingUserLogs = array();
+			} else {
+
+				$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->getCaEmail());
+
+				TrackingUserLogPeer::addSelectColumns($criteria);
+				$this->collTrackingUserLogs = TrackingUserLogPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->getCaEmail());
+
+				TrackingUserLogPeer::addSelectColumns($criteria);
+				if (!isset($this->lastTrackingUserLogCriteria) || !$this->lastTrackingUserLogCriteria->equals($criteria)) {
+					$this->collTrackingUserLogs = TrackingUserLogPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastTrackingUserLogCriteria = $criteria;
+		return $this->collTrackingUserLogs;
+	}
+
+	/**
+	 * Returns the number of related TrackingUserLogs.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countTrackingUserLogs($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->getCaEmail());
+
+		return TrackingUserLogPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a TrackingUserLog object to this object
+	 * through the TrackingUserLog foreign key attribute
+	 *
+	 * @param      TrackingUserLog $l TrackingUserLog
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addTrackingUserLog(TrackingUserLog $l)
+	{
+		$this->collTrackingUserLogs[] = $l;
+		$l->setTrackingUser($this);
 	}
 
 } // BaseTrackingUser

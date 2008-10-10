@@ -151,6 +151,13 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	 */
 	protected $ca_aplicacion;
 
+
+	/**
+	 * The value for the ca_estado field.
+	 * @var        int
+	 */
+	protected $ca_estado;
+
 	/**
 	 * @var        Transportador
 	 */
@@ -184,18 +191,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	 * @var        Criteria
 	 */
 	protected $lastPricRecargoCriteria = null;
-
-	/**
-	 * Collection to store aggregation of collPricRecargoxConceptos.
-	 * @var        array
-	 */
-	protected $collPricRecargoxConceptos;
-
-	/**
-	 * The criteria used to select the current contents of collPricRecargoxConceptos.
-	 * @var        Criteria
-	 */
-	protected $lastPricRecargoxConceptoCriteria = null;
 
 	/**
 	 * Collection to store aggregation of collFletes.
@@ -490,6 +485,17 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_aplicacion;
+	}
+
+	/**
+	 * Get the [ca_estado] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaEstado()
+	{
+
+		return $this->ca_estado;
 	}
 
 	/**
@@ -925,6 +931,28 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	} // setCaAplicacion()
 
 	/**
+	 * Set the value of [ca_estado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaEstado($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_estado !== $v) {
+			$this->ca_estado = $v;
+			$this->modifiedColumns[] = TrayectoPeer::CA_ESTADO;
+		}
+
+	} // setCaEstado()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -979,12 +1007,14 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 
 			$this->ca_aplicacion = $rs->getString($startcol + 18);
 
+			$this->ca_estado = $rs->getInt($startcol + 19);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 19; // 19 = TrayectoPeer::NUM_COLUMNS - TrayectoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 20; // 20 = TrayectoPeer::NUM_COLUMNS - TrayectoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Trayecto object", $e);
@@ -1121,14 +1151,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 				}
 			}
 
-			if ($this->collPricRecargoxConceptos !== null) {
-				foreach($this->collPricRecargoxConceptos as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
-			}
-
 			if ($this->collFletes !== null) {
 				foreach($this->collFletes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -1241,14 +1263,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 					}
 				}
 
-				if ($this->collPricRecargoxConceptos !== null) {
-					foreach($this->collPricRecargoxConceptos as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
-
 				if ($this->collFletes !== null) {
 					foreach($this->collFletes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
@@ -1346,6 +1360,9 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			case 18:
 				return $this->getCaAplicacion();
 				break;
+			case 19:
+				return $this->getCaEstado();
+				break;
 			default:
 				return null;
 				break;
@@ -1385,6 +1402,7 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			$keys[16] => $this->getCaFchinicio(),
 			$keys[17] => $this->getCaFchvencimiento(),
 			$keys[18] => $this->getCaAplicacion(),
+			$keys[19] => $this->getCaEstado(),
 		);
 		return $result;
 	}
@@ -1473,6 +1491,9 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			case 18:
 				$this->setCaAplicacion($value);
 				break;
+			case 19:
+				$this->setCaEstado($value);
+				break;
 		} // switch()
 	}
 
@@ -1515,6 +1536,7 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[16], $arr)) $this->setCaFchinicio($arr[$keys[16]]);
 		if (array_key_exists($keys[17], $arr)) $this->setCaFchvencimiento($arr[$keys[17]]);
 		if (array_key_exists($keys[18], $arr)) $this->setCaAplicacion($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaEstado($arr[$keys[19]]);
 	}
 
 	/**
@@ -1545,6 +1567,7 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(TrayectoPeer::CA_FCHINICIO)) $criteria->add(TrayectoPeer::CA_FCHINICIO, $this->ca_fchinicio);
 		if ($this->isColumnModified(TrayectoPeer::CA_FCHVENCIMIENTO)) $criteria->add(TrayectoPeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
 		if ($this->isColumnModified(TrayectoPeer::CA_APLICACION)) $criteria->add(TrayectoPeer::CA_APLICACION, $this->ca_aplicacion);
+		if ($this->isColumnModified(TrayectoPeer::CA_ESTADO)) $criteria->add(TrayectoPeer::CA_ESTADO, $this->ca_estado);
 
 		return $criteria;
 	}
@@ -1635,6 +1658,8 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 
 		$copyObj->setCaAplicacion($this->ca_aplicacion);
 
+		$copyObj->setCaEstado($this->ca_estado);
+
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -1647,10 +1672,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 
 			foreach($this->getPricRecargos() as $relObj) {
 				$copyObj->addPricRecargo($relObj->copy($deepCopy));
-			}
-
-			foreach($this->getPricRecargoxConceptos() as $relObj) {
-				$copyObj->addPricRecargoxConcepto($relObj->copy($deepCopy));
 			}
 
 			foreach($this->getFletes() as $relObj) {
@@ -2058,124 +2079,19 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		$l->setTrayecto($this);
 	}
 
-	/**
-	 * Temporary storage of collPricRecargoxConceptos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initPricRecargoxConceptos()
-	{
-		if ($this->collPricRecargoxConceptos === null) {
-			$this->collPricRecargoxConceptos = array();
-		}
-	}
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Trayecto has previously
-	 * been saved, it will retrieve related PricRecargoxConceptos from storage.
-	 * If this Trayecto is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
-	 *
-	 * @param      Connection $con
-	 * @param      Criteria $criteria
-	 * @throws     PropelException
-	 */
-	public function getPricRecargoxConceptos($criteria = null, $con = null)
-	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collPricRecargoxConceptos === null) {
-			if ($this->isNew()) {
-			   $this->collPricRecargoxConceptos = array();
-			} else {
-
-				$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
-
-				PricRecargoxConceptoPeer::addSelectColumns($criteria);
-				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
-
-				PricRecargoxConceptoPeer::addSelectColumns($criteria);
-				if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
-					$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastPricRecargoxConceptoCriteria = $criteria;
-		return $this->collPricRecargoxConceptos;
-	}
-
-	/**
-	 * Returns the number of related PricRecargoxConceptos.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      Connection $con
-	 * @throws     PropelException
-	 */
-	public function countPricRecargoxConceptos($criteria = null, $distinct = false, $con = null)
-	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
-
-		return PricRecargoxConceptoPeer::doCount($criteria, $distinct, $con);
-	}
-
-	/**
-	 * Method called to associate a PricRecargoxConcepto object to this object
-	 * through the PricRecargoxConcepto foreign key attribute
-	 *
-	 * @param      PricRecargoxConcepto $l PricRecargoxConcepto
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addPricRecargoxConcepto(PricRecargoxConcepto $l)
-	{
-		$this->collPricRecargoxConceptos[] = $l;
-		$l->setTrayecto($this);
-	}
-
 
 	/**
 	 * If this collection has already been initialized with
 	 * an identical criteria, it returns the collection.
 	 * Otherwise if this Trayecto is new, it will return
 	 * an empty collection; or if this Trayecto has previously
-	 * been saved, it will retrieve related PricRecargoxConceptos from storage.
+	 * been saved, it will retrieve related PricRecargos from storage.
 	 *
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Trayecto.
 	 */
-	public function getPricRecargoxConceptosJoinConcepto($criteria = null, $con = null)
+	public function getPricRecargosJoinTipoRecargo($criteria = null, $con = null)
 	{
 		// include the Peer class
 		if ($criteria === null) {
@@ -2186,29 +2102,29 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			$criteria = clone $criteria;
 		}
 
-		if ($this->collPricRecargoxConceptos === null) {
+		if ($this->collPricRecargos === null) {
 			if ($this->isNew()) {
-				$this->collPricRecargoxConceptos = array();
+				$this->collPricRecargos = array();
 			} else {
 
-				$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+				$criteria->add(PricRecargoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
 
-				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collPricRecargos = PricRecargoPeer::doSelectJoinTipoRecargo($criteria, $con);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+			$criteria->add(PricRecargoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
 
-			if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
-				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinConcepto($criteria, $con);
+			if (!isset($this->lastPricRecargoCriteria) || !$this->lastPricRecargoCriteria->equals($criteria)) {
+				$this->collPricRecargos = PricRecargoPeer::doSelectJoinTipoRecargo($criteria, $con);
 			}
 		}
-		$this->lastPricRecargoxConceptoCriteria = $criteria;
+		$this->lastPricRecargoCriteria = $criteria;
 
-		return $this->collPricRecargoxConceptos;
+		return $this->collPricRecargos;
 	}
 
 	/**

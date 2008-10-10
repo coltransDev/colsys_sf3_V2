@@ -67,12 +67,22 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 	 */
 	protected $ca_conceptos;
 
+	/**
+	 * @var        TraficoGrupo
+	 */
+	protected $aTraficoGrupo;
 
 	/**
-	 * The value for the ca_recargos field.
-	 * @var        string
+	 * Collection to store aggregation of collPricArchivos.
+	 * @var        array
 	 */
-	protected $ca_recargos;
+	protected $collPricArchivos;
+
+	/**
+	 * The criteria used to select the current contents of collPricArchivos.
+	 * @var        Criteria
+	 */
+	protected $lastPricArchivoCriteria = null;
 
 	/**
 	 * Collection to store aggregation of collCiudads.
@@ -175,17 +185,6 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_conceptos;
-	}
-
-	/**
-	 * Get the [ca_recargos] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaRecargos()
-	{
-
-		return $this->ca_recargos;
 	}
 
 	/**
@@ -296,6 +295,10 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TraficoPeer::CA_IDGRUPO;
 		}
 
+		if ($this->aTraficoGrupo !== null && $this->aTraficoGrupo->getCaIdgrupo() !== $v) {
+			$this->aTraficoGrupo = null;
+		}
+
 	} // setCaIdgrupo()
 
 	/**
@@ -343,28 +346,6 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 	} // setCaConceptos()
 
 	/**
-	 * Set the value of [ca_recargos] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     void
-	 */
-	public function setCaRecargos($v)
-	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
-		}
-
-		if ($this->ca_recargos !== $v) {
-			$this->ca_recargos = $v;
-			$this->modifiedColumns[] = TraficoPeer::CA_RECARGOS;
-		}
-
-	} // setCaRecargos()
-
-	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -395,14 +376,12 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 
 			$this->ca_conceptos = $rs->getString($startcol + 6);
 
-			$this->ca_recargos = $rs->getString($startcol + 7);
-
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 8; // 8 = TraficoPeer::NUM_COLUMNS - TraficoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 7; // 7 = TraficoPeer::NUM_COLUMNS - TraficoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Trafico object", $e);
@@ -488,6 +467,19 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 			$this->alreadyInSave = true;
 
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aTraficoGrupo !== null) {
+				if ($this->aTraficoGrupo->isModified()) {
+					$affectedRows += $this->aTraficoGrupo->save($con);
+				}
+				$this->setTraficoGrupo($this->aTraficoGrupo);
+			}
+
+
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
@@ -503,6 +495,14 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 					$affectedRows += TraficoPeer::doUpdate($this, $con);
 				}
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			}
+
+			if ($this->collPricArchivos !== null) {
+				foreach($this->collPricArchivos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
 			}
 
 			if ($this->collCiudads !== null) {
@@ -578,10 +578,30 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 			$failureMap = array();
 
 
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aTraficoGrupo !== null) {
+				if (!$this->aTraficoGrupo->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTraficoGrupo->getValidationFailures());
+				}
+			}
+
+
 			if (($retval = TraficoPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collPricArchivos !== null) {
+					foreach($this->collPricArchivos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 				if ($this->collCiudads !== null) {
 					foreach($this->collCiudads as $referrerFK) {
@@ -644,9 +664,6 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 			case 6:
 				return $this->getCaConceptos();
 				break;
-			case 7:
-				return $this->getCaRecargos();
-				break;
 			default:
 				return null;
 				break;
@@ -674,7 +691,6 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 			$keys[4] => $this->getCaIdgrupo(),
 			$keys[5] => $this->getCaLink(),
 			$keys[6] => $this->getCaConceptos(),
-			$keys[7] => $this->getCaRecargos(),
 		);
 		return $result;
 	}
@@ -727,9 +743,6 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 			case 6:
 				$this->setCaConceptos($value);
 				break;
-			case 7:
-				$this->setCaRecargos($value);
-				break;
 		} // switch()
 	}
 
@@ -760,7 +773,6 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[4], $arr)) $this->setCaIdgrupo($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaLink($arr[$keys[5]]);
 		if (array_key_exists($keys[6], $arr)) $this->setCaConceptos($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaRecargos($arr[$keys[7]]);
 	}
 
 	/**
@@ -779,7 +791,6 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(TraficoPeer::CA_IDGRUPO)) $criteria->add(TraficoPeer::CA_IDGRUPO, $this->ca_idgrupo);
 		if ($this->isColumnModified(TraficoPeer::CA_LINK)) $criteria->add(TraficoPeer::CA_LINK, $this->ca_link);
 		if ($this->isColumnModified(TraficoPeer::CA_CONCEPTOS)) $criteria->add(TraficoPeer::CA_CONCEPTOS, $this->ca_conceptos);
-		if ($this->isColumnModified(TraficoPeer::CA_RECARGOS)) $criteria->add(TraficoPeer::CA_RECARGOS, $this->ca_recargos);
 
 		return $criteria;
 	}
@@ -846,13 +857,15 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 
 		$copyObj->setCaConceptos($this->ca_conceptos);
 
-		$copyObj->setCaRecargos($this->ca_recargos);
-
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
+
+			foreach($this->getPricArchivos() as $relObj) {
+				$copyObj->addPricArchivo($relObj->copy($deepCopy));
+			}
 
 			foreach($this->getCiudads() as $relObj) {
 				$copyObj->addCiudad($relObj->copy($deepCopy));
@@ -903,6 +916,159 @@ abstract class BaseTrafico extends BaseObject  implements Persistent {
 			self::$peer = new TraficoPeer();
 		}
 		return self::$peer;
+	}
+
+	/**
+	 * Declares an association between this object and a TraficoGrupo object.
+	 *
+	 * @param      TraficoGrupo $v
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function setTraficoGrupo($v)
+	{
+
+
+		if ($v === null) {
+			$this->setCaIdgrupo(NULL);
+		} else {
+			$this->setCaIdgrupo($v->getCaIdgrupo());
+		}
+
+
+		$this->aTraficoGrupo = $v;
+	}
+
+
+	/**
+	 * Get the associated TraficoGrupo object
+	 *
+	 * @param      Connection Optional Connection object.
+	 * @return     TraficoGrupo The associated TraficoGrupo object.
+	 * @throws     PropelException
+	 */
+	public function getTraficoGrupo($con = null)
+	{
+		if ($this->aTraficoGrupo === null && ($this->ca_idgrupo !== null)) {
+			// include the related Peer class
+			$this->aTraficoGrupo = TraficoGrupoPeer::retrieveByPK($this->ca_idgrupo, $con);
+
+			/* The following can be used instead of the line above to
+			   guarantee the related object contains a reference
+			   to this object, but this level of coupling
+			   may be undesirable in many circumstances.
+			   As it can lead to a db query with many results that may
+			   never be used.
+			   $obj = TraficoGrupoPeer::retrieveByPK($this->ca_idgrupo, $con);
+			   $obj->addTraficoGrupos($this);
+			 */
+		}
+		return $this->aTraficoGrupo;
+	}
+
+	/**
+	 * Temporary storage of collPricArchivos to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initPricArchivos()
+	{
+		if ($this->collPricArchivos === null) {
+			$this->collPricArchivos = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Trafico has previously
+	 * been saved, it will retrieve related PricArchivos from storage.
+	 * If this Trafico is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getPricArchivos($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricArchivos === null) {
+			if ($this->isNew()) {
+			   $this->collPricArchivos = array();
+			} else {
+
+				$criteria->add(PricArchivoPeer::CA_IDTRAFICO, $this->getCaIdtrafico());
+
+				PricArchivoPeer::addSelectColumns($criteria);
+				$this->collPricArchivos = PricArchivoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricArchivoPeer::CA_IDTRAFICO, $this->getCaIdtrafico());
+
+				PricArchivoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricArchivoCriteria) || !$this->lastPricArchivoCriteria->equals($criteria)) {
+					$this->collPricArchivos = PricArchivoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricArchivoCriteria = $criteria;
+		return $this->collPricArchivos;
+	}
+
+	/**
+	 * Returns the number of related PricArchivos.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countPricArchivos($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(PricArchivoPeer::CA_IDTRAFICO, $this->getCaIdtrafico());
+
+		return PricArchivoPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a PricArchivo object to this object
+	 * through the PricArchivo foreign key attribute
+	 *
+	 * @param      PricArchivo $l PricArchivo
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricArchivo(PricArchivo $l)
+	{
+		$this->collPricArchivos[] = $l;
+		$l->setTrafico($this);
 	}
 
 	/**

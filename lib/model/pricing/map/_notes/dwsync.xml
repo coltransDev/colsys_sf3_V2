@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="PricFleteMapBuilder.php" local="128605415642968750" remote="128605412620000000" testing="0" />
-<file name="TrayectoMapBuilder.php" local="128605415642031250" remote="128605412620000000" testing="0" />
+<file name="PricFleteMapBuilder.php" local="128659891308750000" remote="128659889990000000" testing="0" />
+<file name="TrayectoMapBuilder.php" local="128659891307968750" remote="128659889990000000" testing="0" />
+<file name="FleteMapBuilder.php" local="128659891341406250" remote="128659889990000000" testing="0" />
+<file name="PricRecargoMapBuilder.php" local="128659891309687500" remote="128659889990000000" testing="0" />
+<file name="PricRecargoxConceptoMapBuilder.php" local="128659891310625000" remote="128659889990000000" testing="0" />
+<file name="RecargoFleteMapBuilder.php" local="128659891342343750" remote="128659889990000000" testing="0" />
 </dwsync>
