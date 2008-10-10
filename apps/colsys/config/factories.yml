@@ -30,9 +30,19 @@ all:
 #    class: myUser
 #
   storage:
-    class: sfSessionStorage
+#    class: sfSessionStorage
+#    param:
+#      session_name: colsys
+  
+    class: mySessionStorage
     param:
-      session_name: colsys
+      db_table:    session_storage              # Name of the table storing the sessions
+      database:    session               # Name of the database connection to use
+      # Optional parameters
+#      db_id_col:   sess_id              # Name of the column storing the session id
+#      db_data_col: sess_data            # Name of the column storing the session data
+#      db_time_col: sess_time            # Name of the column storing the session timestamp
+
 #
 #  view_cache:
 #    class: sfFileCache
