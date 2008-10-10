@@ -58,7 +58,7 @@
 			<div align="left" class="info">
 				<?
 			$transportador = $reporte->getTransportador();		
-			if( $transportador && $reporte->getCaModalidad()!="LCL"){												
+			if( $transportador && $reporte->getCaModalidad()!="LCL"  && $reporte->getCaModalidad()!="COLOADING"){												
 				echo $transportador->getCaNombre()." ";
 			}	
 			?>
@@ -81,8 +81,9 @@
 				$referencia = $reporte->getInoClientesSea();
 			}
 			
-			if( $via=="Aéreo" ){
+			if( $via=="Aéreo" ){				
 				$referencia = $reporte->getInoClientesAir();	
+			
 			}
 			
 			echo $reporte->getCaConsecutivo();

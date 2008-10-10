@@ -65,7 +65,7 @@ $fileIdx = 0;
 	</tr>
 	<tr>
 		<td width="50%">
-		<div align="left"><strong>HBL</strong> <br />
+		<div align="left"><strong><?=$reporte->getCaTransporte()=="Aéreo"?"HAWB":"HBL"?></strong> <br />
 	      <?=$reporte->getDoctransporte ()?>
 		  </div>		</td>
 		<td width="50%">
@@ -86,7 +86,8 @@ $fileIdx = 0;
 	</tr>
 		<?
 	if ($referencia) {
-		if ($referencia->getCaFchLiberacion ()) {
+
+		if ($via =="Marítimo" &&$referencia->getCaFchLiberacion ()) {
 			?>
 	<tr>
 		<td>
@@ -100,7 +101,12 @@ $fileIdx = 0;
 	</tr>
 		<?
 		}
-		$ingresos = $referencia->getInoIngresosSeas ();
+		if( $via =="Marítimo" ){
+			$ingresos = $referencia->getInoIngresosSeas ();
+		}
+		if( $via =="Aéreo" ){
+			$ingresos = $referencia->getInoIngresosAirs ();
+		}
 		
 		foreach ( $ingresos as $ingreso ) {
 			?>	

@@ -9,18 +9,22 @@ class myUser extends sfBasicSecurityUser
 		$this->setAuthenticated(true);
 				
 		$c = new Criteria();
-		$c->add( ContactoPeer::CA_IDCONTACTO, $trackingUser->getCaIdcontacto() );
+		$c->add( ContactoPeer::CA_EMAIL, $trackingUser->getCaEmail() );
 		$contactos = ContactoPeer::doSelect( $c );
 		
 		$clientes = array();
 		foreach( $contactos as $contacto ){
 			$clientes[]=$contacto->getCaIdCliente();
 		}
+		
 		$this->setAttribute('clientes', $clientes );		
 		$this->addCredential('customer');				
 				
 //		$this->setAttribute('name', $employed->getName());		
 		$this->setCulture('es_CO');		
+		
+		$this->log("Inicio de sesion");
+		
 	}
 	
 	
@@ -120,6 +124,20 @@ class myUser extends sfBasicSecurityUser
 	public function clearFiles(){
 		$this->setAttribute('userFiles', array() );
 	}
+	
+	/*
+	* Registra un evento para el usuario
+	*/
+	public function log( $event ){	
+		$log = new TrackingUserLog();
+		$log->setCaEmail( $this->getAttribute('email') );
+		$log->setCaFchevento(time());	
+		$log->setCaUrl(  $_SERVER['PATH_INFO'] );
+		$log->setCaEvento($event);
+		$log->setCaIpaddress( $_SERVER['REMOTE_ADDR'] );	
+		$log->save();
+	}
+	
 	
 }
 ?>

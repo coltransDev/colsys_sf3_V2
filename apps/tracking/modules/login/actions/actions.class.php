@@ -50,8 +50,10 @@ class loginActions extends sfActions
 			if( $register == "login" ){	
 				if( $user ){ 										
 					$passwd = sha1($user->getCaActivationCode().$this->getRequestParameter("password"));	
-					if( $passwd == $user->getCaPasswd() ){		
+					if( $passwd == $user->getCaPasswd() ){			
+						//Se valido correctamente				
 						$this->getUser()->signIn( $user );	
+						$this->getUser()->log("Inicio de sesion");
 						$this->redirect("homepage/index");	
 					}else{
 						$this->getRequest()->setError("clave_invalida", "La clave es incorrecta");
@@ -100,7 +102,7 @@ class loginActions extends sfActions
 						$content = Utils::replace(" Apreciado/a ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()."\n
 		Gracias por utilizar el servicio de tracking and tracing de Coltrans S.A., hemos enviado este correo para activar la clave de su cuenta, por favor haga click en el enlace que se encuentra a continuación: \n");
 		
-						$content .= "<a href='https://".$_SERVER['HTTP_HOST'].$link."'>Haga click aca para activar su cuenta</a>";
+						$content .= "<a href='https://www.coltrans.com.co".$link."'>Haga click aca para activar su cuenta</a>";
 						$content .= Utils::replace("\n						
 						Si desea conocer más de este servicio por favor comuníquese con nuestro departamento de servicio al cliente\n
 						Cordialmente 
@@ -220,7 +222,7 @@ class loginActions extends sfActions
 				$content = Utils::replace(" Apreciado/a cliente:\n 
 Gracias por utilizar el servicio de tracking and tracing de Coltrans S.A., hemos enviado este correo para activar la clave de su cuenta, por favor haga click en el enlace que se encuentra a continuación: \n");
 
-				$content .= "<a href='https://".$_SERVER['HTTP_HOST'].$link."'>Haga click aca para activar su cuenta</a>";
+				$content .= "<a href='https://www.coltrans.com.co".$link."'>Haga click aca para activar su cuenta</a>";
 				$content .= Utils::replace("\n						
 				Si desea conocer más de este servicio por favor comuníquese con nuestro departamento de servicio al cliente\n
 				Cordialmente 
@@ -230,7 +232,7 @@ Gracias por utilizar el servicio de tracking and tracing de Coltrans S.A., hemos
 								
 				$from = "serclientebog@coltrans.com.co";
 				$fromName = "Servicio al cliente";
-				$to = array($user->getCaEmail()=>$contacto->getCaEmail()); 																													
+				$to = array($user->getCaEmail()=>$user->getCaEmail()); 																													
 				StaticEmail::sendEmail( "CORREO DE ACTIVACION", $content, $from, $fromName, $to );
 			}else{
 				// No se ha encontrado la cuenta<br />
