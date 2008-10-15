@@ -42,6 +42,7 @@ editorConceptos = new Ext.form.ComboBox({
 * Crea el Record 
 */
 var recordProductos = Ext.data.Record.create([
+	{name: 'id', type: 'string'},   
     {name: 'idcotizacion', type: 'string'},   		
     {name: 'idproducto', type: 'string'},   
 	{name: 'producto', type: 'string'}, 
@@ -59,9 +60,11 @@ var recordProductos = Ext.data.Record.create([
 	{name: 'tra_destino_value', type: 'string'},
 	{name: 'ciu_destino', type: 'string'},
 	{name: 'ciu_destino_value', type: 'string'}, 
-	
-	
-	
+	{name: 'tra_escala', type: 'string'}, 
+	{name: 'tra_escala_value', type: 'string'},
+	{name: 'ciu_escala', type: 'string'},
+	{name: 'ciu_escala_value', type: 'string'}, 
+		
 	{name: 'valor_tar', type: 'float'}, 
 	{name: 'valor_min', type: 'float'}, 
 	{name: 'aplica_tar', type: 'string'}, 
@@ -96,8 +99,6 @@ var storeProductos = new Ext.data.GroupingStore({
 	sortInfo:{field: 'idproducto', direction: "ASC"},	
 	groupField: 'trayecto'		
 });
-	
-storeProductos.load();	
 		
 /*
 * Crea la columna de chequeo
@@ -111,20 +112,19 @@ storeProductos.load();
 // turn on validation errors beside the field globally
 Ext.form.Field.prototype.msgTarget = 'side';
 
-
 var formatItem = function(value, p, record) {
-		
-		if( record.data.tipo == "recargo" ){
-			return String.format(
-				'<div class="recargo">{0}</div>',
-				value
-			);
-		}else{
-			return String.format(
-				'<b>{0}</b>',
-				value
-			);
-		}
+
+	if( record.data.tipo == "recargo" ){
+		return String.format(
+			'<div class="recargo">{0}</div>',
+			value
+		);
+	}else{
+		return String.format(
+			'<b>{0}</b>',
+			value
+		);
+	}
 }
 
 var colModel = new Ext.grid.ColumnModel({		
@@ -148,7 +148,6 @@ var colModel = new Ext.grid.ColumnModel({
 			editor: editorConceptos,
 			renderer: formatItem
 		},	
-	
 		{
 			id: 'valor_tar',
 			header: "Valor",
@@ -222,11 +221,9 @@ var colModel = new Ext.grid.ColumnModel({
 */
 var selModel = new  Ext.grid.CellSelectionModel();
 
-
 /*
 * Actualiza los datos de la base de datos usando Ajax.
 */
-
 	
 /*
 * Handlers de los eventos y botones de la grilla 
@@ -275,7 +272,7 @@ var crearVentanaProducto=function( record ){
 	//crea una ventana 
 	win = new Ext.Window({		
 		width       : 500,
-		height      : 470,
+		height      : 510,
 		closeAction :'hide',
 		plain       : true,		
 		
@@ -313,11 +310,18 @@ var crearVentanaProducto=function( record ){
 					,<?=extIncoterms("incoterms")?>
 					,<?=extTransporte("transporte")?>
 					,<?=extModalidad("modalidad", "Ext.getCmp('transporte')", "Importación")?>
-					,<?=extTraficos("origen")?>
-					,<?=extTraficos("destino")?>
+					
+					,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen"))?>										
+					,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen"))?>
+							
+					
+					,<?=include_component("widgets", "paises" ,array("id"=>"tra_destino", "label"=>" Pais Destino", "value"=>"C0-057"))?>									,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_destino", "label"=>"Ciudad Destino", "link"=>"tra_destino"))?>
+					,<?=include_component("widgets", "paises" ,array("id"=>"tra_escala", "label"=>"Pais Escala"))?>										
+					,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_escala", "label"=>"Ciudad Escala", "link"=>"tra_escala"))?>
 					,{
 						xtype: 'textarea',
 						width: 310,
+						height: 40,
 						fieldLabel: 'Observaciones',
 						name: 'observaciones',
 						value: '',
@@ -329,20 +333,19 @@ var crearVentanaProducto=function( record ){
 						fieldLabel: 'Frecuencia',
 						name: 'frecuencia',
 						value: '',
-	                    allowBlank:false
+	                    allowBlank:true
 					}
 					,{
 						xtype: 'textfield',
-						width: 100,
+						width: 100,						
 						fieldLabel: 'T/Transito',
 						name: 'ttransito',
 						value: '',
-	                    allowBlank:false
+	                    allowBlank:true
 					}
 					,<?=extImprimir("imprimir")?>
 				]
-				//aplica los valores 
-				//data.producto
+				
 					
 			
 		}),
@@ -350,52 +353,64 @@ var crearVentanaProducto=function( record ){
 		buttons: [{
 			text     : 'Guardar',
 			handler: function(){
-				var fp = Ext.getCmp("producto-form");	
-												
+				var fp = Ext.getCmp("producto-form");									
 				if( fp.getForm().isValid() ){
-					fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>', 
-	            							 	waitMsg:'Salvando Datos de Productos...',
-	            							 	// standardSubmit: false,
-	            							 	
-	            							 	success:function(response,options){
-	            							 		//Ext.Msg.alert( "Success "+response.responseText );													
+						
+					ttransito = fp.getForm().findField("ttransito").getValue();								
+					frecuencia = fp.getForm().findField("frecuencia").getValue();								
+					impoexpo = fp.getForm().findField("impoexpo").getValue();								
+					transporte = fp.getForm().findField("transporte").getValue();		
+					
+					if( ttransito=="" && frecuencia=="" && ((impoexpo=="Importación" && transporte!="Aéreo") || impoexpo=="Exportación" ) ){ // Solamente cuando es importación aérea se permite en blanco
+						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
+					}else{					
+					
+						fp.getForm().submit({url:'<?=url_for('cotizaciones/formProductoGuardar')?>', 
+												waitMsg:'Salvando Datos de Productos...',
+												// standardSubmit: false,
+												
+												success:function(response,options){
+													//Ext.Msg.alert( "Success "+response.responseText );													
 													storeProductos.reload();
-	            							 		win.close();
-	            							 	},
-		            							failure:function(response,options){
+													win.close();
+												},
+												failure:function(response,options){
 													Ext.Msg.alert( "Error "+response.responseText );
 													win.close();
 												}//end failure block      
 											});
-					}else{
-						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Producto no es válida o está incompleta!');
-					}	            	
-				}
+					}						
+				}else{
+					Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Producto no es válida o está incompleta!');
+				}	            	
+			}
 		},{
 			text     : 'Cancelar',
 			handler  : function(){
 				win.close();
 			}
 		}]
-	});
-	
+	});	
 	win.show( );
 	
-	if(typeof(record)!="undefined"){ // Coloca los datos en la ventana 
+	if(typeof(record)!="undefined"){ // Coloca los datos en la ventana 		
 		var fp = Ext.getCmp("producto-form");
 		form = fp.getForm().loadRecord(record);	
 		
-		fp.getForm().findField("tra_origen").setRawValue(record.data.tra_origen_value);
-		fp.getForm().findField("tra_origen").hiddenField.value = record.data.tra_origen;
+		fp.getForm().findField("tra_origen_id").setRawValue(record.data.tra_origen_value);
+		fp.getForm().findField("tra_origen_id").hiddenField.value = record.data.tra_origen;		
+		fp.getForm().findField("ciu_origen_id").setRawValue(record.data.ciu_origen_value);
+		fp.getForm().findField("ciu_origen_id").hiddenField.value = record.data.ciu_origen;
 		
-		fp.getForm().findField("ciu_origen").setRawValue(record.data.ciu_origen_value);
-		fp.getForm().findField("ciu_origen").hiddenField.value = record.data.ciu_origen;
+		fp.getForm().findField("tra_destino_id").setRawValue(record.data.tra_destino_value);
+		fp.getForm().findField("tra_destino_id").hiddenField.value = record.data.tra_destino;		
+		fp.getForm().findField("ciu_destino_id").setRawValue(record.data.ciu_destino_value);
+		fp.getForm().findField("ciu_destino_id").hiddenField.value = record.data.ciu_destino;	
 		
-		fp.getForm().findField("tra_destino").setRawValue(record.data.tra_destino_value);
-		fp.getForm().findField("tra_destino").hiddenField.value = record.data.tra_destino;
-		
-		fp.getForm().findField("ciu_destino").setRawValue(record.data.ciu_destino_value);
-		fp.getForm().findField("ciu_destino").hiddenField.value = record.data.ciu_destino;		
+		fp.getForm().findField("tra_escala_id").setRawValue(record.data.tra_escala_value);
+		fp.getForm().findField("tra_escala_id").hiddenField.value = record.data.tra_escala;		
+		fp.getForm().findField("ciu_escala_id").setRawValue(record.data.ciu_escala_value);
+		fp.getForm().findField("ciu_escala_id").hiddenField.value = record.data.ciu_escala;		
 	}	
 }
 
@@ -447,12 +462,13 @@ var ventanaTarifario = function( record ){
 					handler  : function( ){						
 						storePricing = newComponent.store;
 						index =  storeProductos.indexOf(activeRecord);
-						records = [];
+												
 						storePricing.each( function(r){
 							if( r.data.sel==true ){
 								if( r.data.tipo=="concepto" ){
 									var iditem = r.data.concepto_id;
 								}else{
+									return 0;
 									var iditem = r.data.recargo_id;
 								}
 								
@@ -483,31 +499,34 @@ var ventanaTarifario = function( record ){
 								   idmoneda: '',
 								   detalles: ''
 								});		
-										
 								
+								newRec.set("trayecto", activeRecord.data.trayecto );
+										
+								records = [];
+								records.push ( newRec ); //agrega al principio
+								storeProductos.insert( index , records );
+								
+								//Es necesario buscar de nuevo el record dentro del store
+								//para que se activen los eventos de edición del store																
+								var newRec = storeProductos.getAt( index ); 
 								newRec.set("idcotizacion", activeRecord.data.idcotizacion );
 								newRec.set("idproducto", activeRecord.data.idproducto );
 								newRec.set("trayecto", activeRecord.data.trayecto );
 								newRec.set("transporte", activeRecord.data.transporte );
 								newRec.set("modalidad", activeRecord.data.modalidad );
-								newRec.set("idopcion", activeRecord.data.idopcion );										
+								//newRec.set("idopcion", "" );										
 								newRec.set("item", r.data.nconcepto );
 								newRec.set("iditem", iditem );
 								newRec.set("tipo", r.data.tipo );
 								newRec.set("valor_tar", valor_tar );								
 								newRec.set("valor_min", valor_min );
 								newRec.set("idmoneda", r.data.moneda );																								
-								records.unshift ( newRec ); //agrega al principio
 								
 							}
 						} );
 						
-						storeProductos.insert( index , records );
-						index++;
-						
+						index++;						
 						win.close();
-						
-						
 					}
 				},
 				{
@@ -517,11 +536,8 @@ var ventanaTarifario = function( record ){
 					}
 				}
 			]
-		});
-		
-		win.show( );
-			
-			
+		});		
+		win.show( );		
 		},
 		failure: function() {
 			Ext.Msg.alert("Tab creation failed", "Server communication failure");
@@ -539,13 +555,11 @@ var productoHandler = function( ){
 * Menu contextual que se despliega sobre una fila con el boton derecho
 */
 
-var grid_productosOnRowcontextmenu =  function(grid, index, e){
-		
-	rec = this.store.getAt(index);
-
-		this.menu = new Ext.menu.Menu({
-		id:'grid_productos-ctx',
-		items: [
+var grid_productosOnRowcontextmenu =  function(grid, index, e){		
+	rec = this.store.getAt(index);	
+	this.menu = new Ext.menu.Menu({
+	id:'grid_productos-ctx',
+	items: [
 				{
 					text: 'Editar trayecto',
 					iconCls: 'new-tab',
@@ -593,7 +607,8 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						});					
 						records = [];
 						records.push( newRec );
-						storeProductos.insert( index+1 , records );
+						storeProductos.insert( index+1 , records );	
+											
 					}						
 				}
 			}		
@@ -620,12 +635,9 @@ var actualizarObservaciones=function( btn, text ){
 
 function guardarGridProductos(){
 	
+	var success = true;	
+	var records = storeProductos.getModifiedRecords();
 	
-	var success = true;
-	//var records = storeProductos.getModifiedRecords();
-	var records = storeProductos.getRange();
-	 
-	alert( records.length );		
 	var lenght = records.length;
 	for( var i=0; i< lenght; i++){
 		r = records[i];
@@ -657,6 +669,8 @@ function guardarGridProductos(){
 				success:function(response,options){							
 					//alert( response.responseText );						
 					//r.commit();
+					r.beginEdit();
+					r.endEdit();
 				}
 			 }
 		); 

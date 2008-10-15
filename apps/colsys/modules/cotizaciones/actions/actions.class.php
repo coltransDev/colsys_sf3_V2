@@ -126,7 +126,7 @@ class cotizacionesActions extends sfActions
 			$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
 			$cotizacion->setCaConsecutivo( $sig ); 
 		}
-		$cotizacion->setCaFchCotizacion( $this->getRequestParameter( "fchCotizacion" ) );
+				
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
 		$cotizacion->setCaAsunto( utf8_encode($this->getRequestParameter( "asunto" )) );
 		$cotizacion->setCaSaludo( utf8_decode($this->getRequestParameter( "saludo" )) );
@@ -155,7 +155,7 @@ class cotizacionesActions extends sfActions
 		$user_id = $this->getUser()->getUserId();
 
 		if( $this->getRequestParameter("idproducto") ){
-			$producto = CotProductoPeer::retrieveByPk( $this->getRequestParameter("cotizacionId") ,$this->getRequestParameter("idproducto") );
+			$producto = CotProductoPeer::retrieveByPk( $this->getRequestParameter("idproducto"), $this->getRequestParameter("cotizacionId") );
 			$this->forward404Unless( $producto );
 		}else{		
 			$producto = new CotProducto();
@@ -170,8 +170,11 @@ class cotizacionesActions extends sfActions
 		$producto->setCaTransporte( $transporte );
 		$producto->setCaModalidad( $this->getRequestParameter("modalidad") );
 		$producto->setCaIncoterms( $this->getRequestParameter("incoterms") );
-		$producto->setCaOrigen( $this->getRequestParameter("idciu_origen") );
-		$producto->setCaDestino( $this->getRequestParameter("idciu_destino") );
+		$producto->setCaOrigen( $this->getRequestParameter("ciu_origen") );
+		if( $this->getRequestParameter("ciu_escala") ){ 
+			$producto->setCaEscala( $this->getRequestParameter("ciu_escala") );
+		}		
+		$producto->setCaDestino( $this->getRequestParameter("ciu_destino") );
 		$producto->setCaFrecuencia( $this->getRequestParameter("frecuencia") );
 		$producto->setCaTiempotransito( $this->getRequestParameter("ttransito") );
 		$producto->setCaObservaciones( $this->getRequestParameter("observaciones") );
@@ -472,18 +475,20 @@ class cotizacionesActions extends sfActions
 		$observaciones = $this->getRequestParameter("detalles");
 		
 		$tipo = $this->getRequestParameter("tipo");
-				
-		
+			
 		if( $tipo=="concepto" ){
 			$iditem = $this->getRequestParameter("iditem");
-			$opcion = CotOpcionPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion );
-			if( !$opcion ){				
+			
+			if( !$idopcion ){						
 				$opcion = new CotOpcion();
 				$opcion->setCaIdCotizacion( $idcotizacion );
 				$opcion->setCaIdProducto( $idproducto );
 				$opcion->setCaFchcreado( time() );
 				$opcion->setCaUsucreado( $this->getUser()->getUserId() );	
-			}else{
+				
+			}else{		
+				$opcion = CotOpcionPeer::retrieveByPk( $idopcion, $idcotizacion, $idproducto );
+				$this->forward404Unless( $opcion );					
 				$opcion->setCaFchactualizado( time() );
 				$opcion->setCaUsuactualizado( $this->getUser()->getUserId() );		
 			}			
@@ -513,7 +518,8 @@ class cotizacionesActions extends sfActions
 			if( $observaciones ){
 				$opcion->setCaObservaciones( $observaciones );
 			}	
-			$opcion->save();			
+			$opcion->save();
+			echo "adasdasdadasdasd";			
 		}
 		if( $tipo=="recargo" ){
 			$iditem = $this->getRequestParameter("iditem");			
@@ -632,57 +638,7 @@ class cotizacionesActions extends sfActions
 		}
 		$this->setLayout("ajax");
 	}
-	
-	
-	/*
-	* Carga el contendo de la tabla Tráficos y según sea una Importación o Exportación
-	*/
-	public function executeDatosTraficos(){
-		$impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
-		$lugar_parameter = $this->getRequestParameter("lugar");
 		
-		$c=new Criteria();
-		$c->add( TraficoPeer::CA_IDTRAFICO, '99-999', Criteria::NOT_EQUAL );
-
-		if (($impoexpo_parameter == 'Importación' and $lugar_parameter == 'origen') or ($impoexpo_parameter == 'Exportación' and $lugar_parameter == 'destino')) { 
-			$c->add( TraficoPeer::CA_IDTRAFICO, 'CO-057', Criteria::NOT_EQUAL );
-		} else {
-			$c->add( TraficoPeer::CA_IDTRAFICO, 'CO-057', Criteria::EQUAL ); 
-		}
-		
-		$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
-		$traficos_rs = TraficoPeer::doSelect( $c );
-		
-		$this->traficos = array();
-		
-		foreach($traficos_rs as $trafico){
-			$row = array("idtrafico"=>$trafico->getCaIdTrafico(),"trafico"=>utf8_encode($trafico->getCaNombre()));
-			$this->traficos[]=$row;
-		}
-		$this->setLayout("ajax");
-
-	}
-	
-	/*
-	* Carga el contenido de la tabla Ciudades según sea el Tráfico seleccionado
-	*/
-	public function executeDatosCiudades(){
-		$trafico_parameter = utf8_decode($this->getRequestParameter("trafico"));
-		$lugar_parameter = utf8_decode($this->getRequestParameter("lugar"));
-		
-		$c=new Criteria();
-		$c->add( CiudadPeer::CA_IDTRAFICO, $trafico_parameter, Criteria::EQUAL );
-		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
-		$ciudades_rs = CiudadPeer::doSelect( $c );
-		
-		$this->ciudades = array();
-		
-		foreach($ciudades_rs as $ciudad){
-			$row = array('idciudad'=>$ciudad->getCaIdCiudad(),"ciudad"=>utf8_encode($ciudad->getCaCiudad()));
-			$this->ciudades[]=$row;
-		}
-		$this->setLayout("ajax");
-	}
 	
 	/*
 	* Genera un archivo PDF a partir de una cotización
@@ -774,7 +730,14 @@ class cotizacionesActions extends sfActions
 		foreach( $cotProductos as $producto ){
 			$origen = $producto->getOrigen();
 			$destino = $producto->getDestino();
-			$trayecto = " [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ").utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."] ";
+			$escala = $producto->getEscala();					
+			$trayecto = " [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
+			
+			if( $escala ){
+				$trayecto .= utf8_encode($escala->getCaCiudad())." - ".utf8_encode($escala->getTrafico()->getCaNombre()." » ");
+			}
+			
+			$trayecto .= utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."] ";
 			
 			//Se envian las opciones existentes
 			$c = new Criteria();
@@ -799,6 +762,10 @@ class cotizacionesActions extends sfActions
 						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
 						 'ciu_destino'=>$destino->getCaIdCiudad(),
 						 'ciu_destino_value'=>$destino->getCaCiudad(),
+						 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
+						 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
+						 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
+						 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",
 						 
 						 'valor_tar'=>$opcion->getCaValorTar(),
 						 'aplica_tar'=>$opcion->getCaAplicaTar(),
@@ -838,6 +805,10 @@ class cotizacionesActions extends sfActions
 						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
 						 'ciu_destino'=>$destino->getCaIdCiudad(),
 						 'ciu_destino_value'=>$destino->getCaCiudad(),
+						 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
+						 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
+						 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
+						 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",
 						 	 
 						 'idconcepto'=>$recargo->getCaIdConcepto(),
 						 'valor_tar'=>$recargo->getCaValorTar(),
@@ -879,6 +850,10 @@ class cotizacionesActions extends sfActions
 						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
 						 'ciu_destino'=>$destino->getCaIdCiudad(),
 						 'ciu_destino_value'=>$destino->getCaCiudad(),
+						 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
+						 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
+						 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
+						 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",	
 						 
 						 'valor_tar'=>"",
 						 'aplica_tar'=>"",
@@ -888,21 +863,77 @@ class cotizacionesActions extends sfActions
 						 'detalles'=>"",
 						 'transporte'=>utf8_encode($producto->getCaTransporte()),
 						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-						 
+						 					 
 						 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
 						 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
 						 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
 						 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
 						 'imprimir'=>utf8_encode($producto->getCaImprimir()),
 						 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
-						 'tipo'=>"concepto",
-						 
+						 'tipo'=>'concepto'
 						); 
 			$this->productos[] = $row; 
 		}	
 	}
 	
 	
-	
+	/*
+	* Copia una cotización existente en una nueva 
+	*/
+	public function executeCopiarCotizacion(){
+		$cotizacion = CotizacionPeer::retrieveByPk($this->getRequestParameter("idcotizacion"));
+		$this->forward404Unless($cotizacion);
+		
+		$newCotizacion = $cotizacion->copy( false ); //La copia recursiva se hace paso a paso por que las llaves son naturales 
+		$newCotizacion->save();
+		$productos = $cotizacion->getCotProductos();
+		foreach( $productos as $producto ){
+			$newProducto = $producto->copy( false );
+			$newProducto->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );			
+			$newProducto->save();
+						
+			$opciones = $producto->getCotOpciones();
+			foreach( $opciones as $opcion ){				
+				$newOpcion = $opcion->copy( false );
+				$newOpcion->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
+				$newOpcion->setCaIdProducto( $newProducto->getCaIdProducto() );
+				$newOpcion->save();
+				
+				$recargos = $opcion->getCotRecargos( );
+				foreach( $recargos as $recargo ){	
+					$newRecargo = $recargo->copy( false );
+					$newRecargo->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
+					$newRecargo->setCaIdProducto( $newProducto->getCaIdProducto() );
+					$newRecargo->setCaIdOpcion( $newOpcion->getCaIdOpcion() );
+					$newRecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
+					$newRecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
+					$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
+					$newRecargo->save();
+				}			
+			}
+			
+		}
+			
+		$seguros = $cotizacion->getCotSeguros();
+		foreach( $seguros as $seguro ){	
+			$newSeguro = $seguro->copy( false );
+			$newSeguro->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
+			$newSeguro->save();
+		}
+		
+		$continuaciones = $cotizacion->getCotContinuacions();
+		foreach( $continuaciones as $continuacion ){	
+			$newContinuacion = $continuacion->copy( false );
+			$newContinuacion->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
+			$newContinuacion->setCaTipo( $continuacion->getCaTipo() );
+			$newContinuacion->setCaOrigen( $continuacion->getCaOrigen() );
+			$newContinuacion->setCaDestino( $continuacion->getCaDestino() );
+			$newContinuacion->setCaIdconcepto( $continuacion->getCaIdconcepto() );
+			$newContinuacion->save();			
+		}
+		
+		
+		$this->redirect("cotizaciones/consultaCotizacion?id=".$newCotizacion->getCaIdCotizacion());				
+	}
 }
 ?>

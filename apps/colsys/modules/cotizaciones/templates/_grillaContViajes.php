@@ -94,8 +94,11 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 80,
 			sortable: true,
 			dataIndex: 'ciuorigen',
-			hideable: false,
-			editor: <?=extTraficos("origen", true)?>
+			hideable: false
+			/*,
+			editor: <? //extTraficos("origen", true)?>
+			*/
+			
 		},
 		{
 			id: 'ciudestino',
@@ -104,7 +107,9 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,
 			dataIndex: 'ciudestino',
 			hideable: false,
-			editor: <?=extTraficos("destino", true)?>
+			/*editor: <? //extTraficos("destino", true)?>
+			*/
+			
 		},
 		{
 			id: 'concepto',
@@ -244,8 +249,8 @@ var contviajeHandler = function(){
 			        }
 					,<?=extOtmDta()?>
 					,<?=extModalidad("modalidad", "Marítimo", "Exportación" )?>
-					,<?=extTraficos("origen", $nacional=true)?>
-					,<?=extTraficos("destino", $nacional=true)?>
+					//,<? //extTraficos("origen", $nacional=true)?>
+					//,<? //extTraficos("destino", $nacional=true)?>
 					,<?=extConcepto($id="conceptoOtmDta", $transporte="Terrestre", $modalidad="OTM-DTA")?>
 					,<?=extConcepto($id="equipo", $transporte="Marítimo", $modalidad="Ext.getCmp('modalidad')")?>
 					,{

@@ -20,7 +20,7 @@ $directorioAg = array();
 
 $sucursal = $usuario->getSucursal();
 $pdf->SetSucursal($sucursal->getCaNombre());
-$pdf->SetLineRepeat("Señores: ".strtoupper($cliente->getCaCompania()."    ".$cotizacion->getCaFchcotizacion()));
+$pdf->SetLineRepeat("Señores: ".strtoupper($cliente->getCaCompania()."    ".$cotizacion->getCaFchcreado()));
 $pdf->Ln(5);
 list($anno, $mes, $dia, $tiempo, $minuto, $segundo) = sscanf($cotizacion->getCaFchcotizacion(),"%d-%d-%d %d:%d:%d");
 

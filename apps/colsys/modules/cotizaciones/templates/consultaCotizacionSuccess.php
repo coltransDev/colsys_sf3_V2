@@ -1,4 +1,3 @@
-
 <?
 	$contacto = $cotizacion->getContacto();
 	if (!$contacto) {
@@ -91,9 +90,9 @@ Ext.onReady(function(){
 		                layout: 'form',
 		                items: [{
 							xtype:'datefield',
-							fieldLabel: 'Fecha Cotizacion',
-							name: 'fchCotizacion',
-							value: '<?=$cotizacion->getCaFchcotizacion()?>',
+							fieldLabel: 'Fecha de Solicitud',
+							name: 'fchSolicitud',
+							value: '<?=$cotizacion->getCaFchsolicitud()?>',
 							format: "Y-m-d", 
 							allowBlank:false,
 							width: 120
@@ -108,17 +107,6 @@ Ext.onReady(function(){
 							format: "H:i:s", 
 							allowBlank:false,
 							width: 140
-		                }]
-				    },{
-		                layout: 'form',
-		                items: [{
-							xtype:'datefield',
-							fieldLabel: 'Fecha de Solicitud',
-							name: 'fchSolicitud',
-							value: '<?=$cotizacion->getCaFchsolicitud()?>',
-							format: "Y-m-d", 
-							allowBlank:false,
-							width: 120
 		                }]
 				    }]
                 }, 
