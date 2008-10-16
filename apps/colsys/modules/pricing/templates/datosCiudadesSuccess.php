@@ -109,6 +109,11 @@ foreach($grupos as $grupo){
 				text:'Recargos generales',
 				id:'recgen_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>',		
 				leaf:true
+			},
+			{
+				text:'Tiempo de transito y frecuencia',
+				id:'admtraf_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>',		
+				leaf:true
 			}
 		]
     }

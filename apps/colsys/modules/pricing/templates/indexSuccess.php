@@ -261,16 +261,19 @@ use_helper( "Ext2" );
 			if( n.leaf ){  // ignore clicks on folders 
 				
 				var nodeoptions = n.id.split("_");
-				switch( nodeoptions[0] ){
+				switch( nodeoptions[0] ){					
 					case "recgen":
 						/*
 						* Se muestran los recargos generales para el pais seleccionado
 						*/
 						var url = '<?=url_for("pricing/recargosGenerales")?>';						
 						break;
-					case "ttransito":
-						var url = '<?=url_for("pricing/grillaTiempoTransito")?>';
-						break;						
+					case "admtraf":
+						/*
+						* Se muestran la administracion de trayectos para el pais seleccionado
+						*/
+						var url = '<?=url_for("pricing/adminTrayectos")?>';						
+						break;									
 					default: 
 						/*
 						*  Se muestra una grilla con la información de fletes 

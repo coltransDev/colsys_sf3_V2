@@ -657,6 +657,7 @@ class pricingActions extends sfActions
 	
 	/*
 	* Procesa el archivo que se ha subido en la accion ArchivosPais 
+	* @author: Andres Botero 
 	*/
 	public function executeSubirArchivo(){
 		$idtrafico = $this->getRequestParameter("idtrafico");	
@@ -690,6 +691,7 @@ class pricingActions extends sfActions
 	
 	/*
 	* Permite visualizar un archivo del panel 
+	* @author: Andres Botero 
 	*/
 	public function executeVerArchivo(){
 		$this->archivo = PricArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
@@ -700,6 +702,7 @@ class pricingActions extends sfActions
 	
 	/*
 	* Permite borrar el archivo  
+	* @author: Andres Botero 
 	*/
 	public function executeBorrarArchivo(){
 		$this->archivo = PricArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
@@ -710,6 +713,7 @@ class pricingActions extends sfActions
 	
 	/*
 	* Recargos generales de un pais 
+	* @author: Andres Botero 
 	*/
 	public function executeRecargosGenerales(){
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
@@ -736,6 +740,7 @@ class pricingActions extends sfActions
 	
 	/*
 	* Provee datos para los recargos por ciudad
+	* @author: Andres Botero 
 	*/
 	public function executeRecargosGeneralesData(){
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
@@ -778,6 +783,7 @@ class pricingActions extends sfActions
 	
 	/*
 	* Guarda los cambios realizados en los recargos generales
+	* @author: Andres Botero 
 	*/
 	public function executeObserveRecargosGenerales(){
 		
@@ -813,6 +819,7 @@ class pricingActions extends sfActions
 		
 	/*
 	* Acciones del panel de notificaciones
+	* @author: Andres Botero 
 	*/
 	public function executeGuardarNotificacion(){
 		$titulo=$this->getRequestParameter("titulo");
@@ -831,6 +838,132 @@ class pricingActions extends sfActions
 		$notificacion->setCaFchcreado( $this->fchcreado );
 		$notificacion->save();
 		$this->idnotificacion = $notificacion->getCaIdNotificacion();		
+	}
+	
+	/*
+	* Permite la administración y consulta de los trayectos (tiempos de transito 
+	* y frecuencia) 
+	* @author: Andres Botero
+	*/
+	public function executeAdminTrayectos( $request ){
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$idtrafico = $this->getRequestParameter( "idtrafico" );
+		$modalidad = $this->getRequestParameter( "modalidad" );
+		
+			
+		$opcion = $this->getRequestParameter( "opcion" );
+		
+		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);		
+		$this->idcomponent = "admtraf_".$this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;
+		
+		$c = new Criteria();
+		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		
+		$this->titulo = "T.T. Freq. ".$this->trafico->getCaNombre()." ".$modalidad;
+				
+		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
+		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );	
+		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );	
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
+		//$c->setLimit(20);
+		$trayectos = TrayectoPeer::doSelect( $c );
+		
+		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+		$this->forward404Unless( $this->trafico );
+		$this->conceptos = $this->trafico->getConceptos( $transporte, $modalidad );
+				
+		
+					
+		$this->modalidad = $modalidad;
+		$this->transporte = $transporte;
+		$this->idtrafico = $idtrafico;					
+		$this->linea = "";		
+		$this->opcion = $opcion;
+		
+		
+		$this->setLayout("ajax");
+	}
+	
+	/*
+	* Muestra los datos para la administración de trayectos
+	*/
+	public function executeDatosAdminTrayectos(){
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$idtrafico = $this->getRequestParameter( "idtrafico" );
+		$modalidad = $this->getRequestParameter( "modalidad" );		
+		$start = $this->getRequestParameter( "start" );
+		$limit = $this->getRequestParameter( "limit" );
+				
+		$opcion = $this->getRequestParameter( "opcion" );
+		
+		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+		
+		$c = new Criteria();
+		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		$c->addJoin( TrayectoPeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA );
+		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
+		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
+		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
+				
+
+		$c->addAscendingOrderByColumn( TransportadorPeer::CA_NOMBRE );
+		$this->total=TrayectoPeer::doCount( $c );
+		if( $limit ){ 
+			$c->setLimit( $limit );
+		}
+		if( $start ){
+			$c->setOffset( $start );
+		}	
+		$trayectos = TrayectoPeer::doSelect( $c );
+			
+
+		$data=array();
+		$transportador_id = null;
+		foreach( $trayectos as $trayecto ){
+			$transportador = $trayecto->getTransportador();
+			
+			$trafico = TraficoPeer::retrieveByPk( $trayecto->getOrigen()->getCaIdTrafico() );
+			
+			$trayectoStr = utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."->".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()));
+			
+			
+			$row = array(
+				'idtrayecto' => $trayecto->getCaIdtrayecto(),
+				'trayecto' =>$trayectoStr,
+				'origen'=>$trayecto->getOrigen()->getCaCiudad(),
+				'destino'=>$trayecto->getDestino()->getCaCiudad(), 
+				'linea'=> $transportador?$transportador->getCaNombre():"",
+				'ttransito'=>utf8_encode($trayecto->getCaTiempotransito()),
+				'frecuencia'=>$trayecto->getCaFrecuencia()
+			);
+						
+			
+			$data[] = $row;						
+			
+			$pricConceptos = $trayecto->getPricFletes();			
+		}
+		
+		$this->data = $data;
+	}
+	
+	
+	public function executeObserveAdminTrayectos(){
+		$idtrayecto = $this->getRequestParameter( "idtrayecto" );
+		$trayecto = TrayectoPeer::retrieveByPk( $idtrayecto );
+		$this->forward404Unless( $trayecto );		
+		
+		if( $this->getRequestParameter("ttransito") ){
+			$trayecto->setCaTiempotransito( utf8_decode($this->getRequestParameter("ttransito")) );
+		}		
+		
+		if( $this->getRequestParameter("frecuencia") ){
+			$trayecto->setCaFrecuencia( utf8_decode($this->getRequestParameter("frecuencia")) );
+		}		
+		
+		print_r( $trayecto );
+		
+		$trayecto->save();
+		return sfView::NONE;
 	}
 	
 }

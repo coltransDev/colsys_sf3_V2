@@ -1,12 +1,13 @@
 <?
 use_helper("Ext2");
 ?>
+  
 
-var data_contviajes = <?=json_encode( array("contviajes"=>$contviajes, "total"=>count($contviajes)) )?>;
 /*
 * Crea el Record 
 */
 var recordGrilla = Ext.data.Record.create([
+	{name: 'oid', type: 'int'},  
     {name: 'idcotizacion', type: 'string'},   		
     {name: 'tipo', type: 'string'},   		
     {name: 'modalidad', type: 'string'},   		
@@ -32,6 +33,7 @@ var recordGrilla = Ext.data.Record.create([
 */
 var storeContViajes = new Ext.data.GroupingStore({
 	autoLoad : true,
+	url: '<?=url_for("cotizaciones/datosContinuacionViaje?idcotizacion=".$cotizacion->getCaIdCotizacion() )?>',
 	reader: new Ext.data.JsonReader(
 		{
 			id: 'contviaje',
@@ -41,7 +43,7 @@ var storeContViajes = new Ext.data.GroupingStore({
 		recordGrilla
 	),
 	sortInfo:{field: 'modalidad', direction: "ASC"},
-	proxy: new Ext.data.MemoryProxy(data_contviajes),
+	//proxy: new Ext.data.MemoryProxy(data_contviajes),
 	groupField: 'tipo'		
 });
 	
@@ -68,7 +70,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,			
 			dataIndex: 'tipo',
 			hideable: false,
-			editor: <?=extOtmDta()?>
+			editor: <?=extOtmDta("tipo")?>
 		},	
 		{
 			id: 'cotizacionId',
@@ -94,11 +96,8 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 80,
 			sortable: true,
 			dataIndex: 'ciuorigen',
-			hideable: false
-			/*,
-			editor: <? //extTraficos("origen", true)?>
-			*/
-			
+			hideable: false,
+			editor: <?=include_component("widgets", "ciudades" ,array("id"=>"origen", "label"=>"Ciudad Origen", "idpais"=>"CO-057" ))?>
 		},
 		{
 			id: 'ciudestino',
@@ -107,9 +106,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,
 			dataIndex: 'ciudestino',
 			hideable: false,
-			/*editor: <? //extTraficos("destino", true)?>
-			*/
-			
+			editor: <?=include_component("widgets", "ciudades" ,array("id"=>"destino", "label"=>"Ciudad Destino", "idpais"=>"CO-057" ))?>
 		},
 		{
 			id: 'concepto',
@@ -247,10 +244,10 @@ var contviajeHandler = function(){
 						value: '<?=$cotizacion->getCaIdcotizacion()?>',
 			            allowBlank:false
 			        }
-					,<?=extOtmDta()?>
+					,<?=extOtmDta("tipo")?>
 					,<?=extModalidad("modalidad", "Marítimo", "Exportación" )?>
-					//,<? //extTraficos("origen", $nacional=true)?>
-					//,<? //extTraficos("destino", $nacional=true)?>
+					,<?=include_component("widgets", "ciudades" ,array("id"=>"origen", "label"=>"Ciudad Origen", "idpais"=>"CO-057" ))?>
+					,<?=include_component("widgets", "ciudades" ,array("id"=>"destino", "label"=>"Ciudad Destino", "idpais"=>"CO-057" ))?>
 					,<?=extConcepto($id="conceptoOtmDta", $transporte="Terrestre", $modalidad="OTM-DTA")?>
 					,<?=extConcepto($id="equipo", $transporte="Marítimo", $modalidad="Ext.getCmp('modalidad')")?>
 					,{
@@ -302,7 +299,7 @@ var contviajeHandler = function(){
 												
 				if( fp.getForm().isValid() ){
 					fp.getForm().submit({url:'<?=url_for('cotizaciones/formContViajeGuardar')?>', 
-	            							 	waitMsg:'Salvando Datos de Continuación de Viaje...',
+	            							 	waitMsg:'Salvando Datos de OTM/DTA...',
 	            							 	// standardSubmit: false,
 	            							 	
 	            							 	success:function(response,options){
@@ -343,12 +340,7 @@ function updateContViajeModel(){
 		var changes = r.getChanges();
 		
 		changes['cotizacionId']=r.data.idcotizacion;
-		changes['tipo']=r.data.tipo;
-		changes['modalidad']=r.data.modalidad;
-		changes['origen']=r.data.origen;
-		changes['destino']=r.data.destino;
-		changes['idconcepto']=r.data.idconcepto;
-		changes['idequipo']=r.data.idequipo;
+		changes['oid']=r.data.oid;	
 
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
@@ -375,7 +367,7 @@ function updateContViajeModel(){
 	}
 	
 	if( success ){
-		storeContViajes.commitChanges();
+		storeContViajes.commitChanges();			
 		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
 	}else{
 		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
@@ -455,7 +447,7 @@ var grid_contviajes = new Ext.grid.EditorGridPanel({
 	clicksToEdit: 1,
 	stripeRows: true,
 	autoExpandColumn: 'contviaje',
-	title: 'Tarifas para Continuación de Viaje',
+	title: 'Tarifas para OTM/DTA',
 
 	root_title: 'impoexpo',	
 	// plugins: [checkColumn], //expander,

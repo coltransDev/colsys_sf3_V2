@@ -108,62 +108,7 @@ class cotizacionesComponents extends sfComponents
 	*/	
 	public function executeGrillaContViajes(){
 		$id = $this->cotizacion->getCaIdcotizacion();
-		$c = new Criteria();
-
-		$c->addAlias('c_org', CiudadPeer::TABLE_NAME);
-		$c->addAlias('c_dst', CiudadPeer::TABLE_NAME);
-		$c->addAlias('concepto', ConceptoPeer::TABLE_NAME);
-		$c->addAlias('equipo', ConceptoPeer::TABLE_NAME);
 		
-		$c->addSelectColumn(CotContinuacionPeer::CA_IDCOTIZACION );
-		$c->addSelectColumn(CotContinuacionPeer::CA_TIPO );
-		$c->addSelectColumn(CotContinuacionPeer::CA_MODALIDAD );
-		$c->addSelectColumn(CotContinuacionPeer::CA_ORIGEN );
-		$c->addSelectColumn("c_org.ca_ciudad");
-		$c->addSelectColumn(CotContinuacionPeer::CA_DESTINO );
-		$c->addSelectColumn("c_dst.ca_ciudad");
-		$c->addSelectColumn(CotContinuacionPeer::CA_IDCONCEPTO );
-		$c->addSelectColumn("concepto.ca_concepto");
-		$c->addSelectColumn(CotContinuacionPeer::CA_IDEQUIPO );
-		$c->addSelectColumn("equipo.ca_concepto");
-		$c->addSelectColumn(CotContinuacionPeer::CA_VALOR_TAR );
-		$c->addSelectColumn(CotContinuacionPeer::CA_VALOR_MIN );
-		$c->addSelectColumn(CotContinuacionPeer::CA_IDMONEDA );
-		$c->addSelectColumn(CotContinuacionPeer::CA_FRECUENCIA );
-		$c->addSelectColumn(CotContinuacionPeer::CA_TIEMPOTRANSITO );
-		$c->addSelectColumn(CotContinuacionPeer::CA_OBSERVACIONES );
-
-		$c->addJoin( CotContinuacionPeer::CA_ORIGEN, "c_org.ca_idciudad", Criteria::LEFT_JOIN );
-		$c->addJoin( CotContinuacionPeer::CA_DESTINO, "c_dst.ca_idciudad", Criteria::LEFT_JOIN );
-		$c->addJoin( CotContinuacionPeer::CA_IDCONCEPTO, "concepto.ca_idconcepto", Criteria::LEFT_JOIN );
-		$c->addJoin( CotContinuacionPeer::CA_IDEQUIPO, "equipo.ca_idconcepto", Criteria::LEFT_JOIN );
-
-		$c->add( CotContinuacionPeer::CA_IDCOTIZACION , $id );
-		
-		$rs = CotContinuacionPeer::doSelectRS( $c );
-		
-		$this->contviajes = array();
-		
-   		while ( $rs->next() ) {
-      		$this->contviajes[] = array('idcotizacion'=>$rs->getString(1),
-      									'tipo'=>$rs->getString(2),
-      									'modalidad'=>$rs->getString(3),
-										'origen'=>$rs->getString(4),
-										'ciuorigen'=>utf8_encode($rs->getString(5)),
-      									'destino'=>$rs->getString(6),
-      									'ciudestino'=>utf8_encode($rs->getString(7)),
-      									'idconcepto'=>$rs->getString(8),
-      									'concepto'=>$rs->getString(9),
-      									'idequipo'=>$rs->getString(10),
-      									'equipo'=>$rs->getString(11),
-      									'valor_tar'=>$rs->getString(12),
-      									'valor_min'=>$rs->getString(13),
-      									'idmoneda'=>$rs->getString(14),
-										'frecuencia'=>utf8_encode($rs->getString(15)),
-										'ttransito'=>utf8_encode($rs->getString(16)),
-										'observaciones'=>utf8_encode($rs->getString(17)),
-      		);
-		}		
 	}
 	
 	/*
