@@ -30,14 +30,14 @@ all:
 #    class: myUser
 #
   storage:
-#    class: sfSessionStorage
-#    param:
-#      session_name: colsys
-  
-    class: mySessionStorage
+    class: sfSessionStorage
     param:
-      db_table:    session_storage              # Name of the table storing the sessions
-      database:    session               # Name of the database connection to use
+      session_name: colsys
+  
+#    class: mySessionStorage
+#    param:
+#      db_table:    session_storage              # Name of the table storing the sessions
+#      database:    session               # Name of the database connection to use
       # Optional parameters
 #      db_id_col:   sess_id              # Name of the column storing the session id
 #      db_data_col: sess_data            # Name of the column storing the session data
