@@ -352,8 +352,8 @@ class pricingActions extends sfActions
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
 		$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
 
-		$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
-		$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
+		/*$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
+		$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );*/
 		//$c->add( TrayectoPeer::CA_MODALIDAD, "LCL" );
 		//$c->setLimit(30);
 		$trayectos = TrayectoPeer::doSelect( $c );
@@ -372,7 +372,7 @@ class pricingActions extends sfActions
 			$conceptosStr = $trafico->getCaConceptos();
 			//$conceptosStr="";
 				
-			$recargosStr = $trafico->getCaRecargos();
+			//$recargosStr = $trafico->getCaRecargos();
 			//$recargosStr="";
 				
 			foreach($fletes as $flete ){
@@ -388,7 +388,7 @@ class pricingActions extends sfActions
 				$conceptosStr.=$flete->getCaIdConcepto();
 			}
 				
-			$c = new Criteria();
+		/*	$c = new Criteria();
 			$c->add( RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdTrayecto() );
 			$recargos = RecargoFletePeer::doSelect($c);
 
@@ -414,7 +414,7 @@ class pricingActions extends sfActions
 			$recargosStr=implode("|",$recargosArr);
 			echo "<br />Recargos -->".$recargosStr."<br />";
 			$trafico->setCaRecargos($recargosStr);
-			//$trafico->save();
+			//$trafico->save();*/
 				
 				
 		}
