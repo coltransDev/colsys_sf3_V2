@@ -20,17 +20,17 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 
 	/**
-	 * The value for the ca_idcotizacion field.
-	 * @var        int
-	 */
-	protected $ca_idcotizacion;
-
-
-	/**
 	 * The value for the ca_idproducto field.
 	 * @var        int
 	 */
 	protected $ca_idproducto;
+
+
+	/**
+	 * The value for the ca_idcotizacion field.
+	 * @var        int
+	 */
+	protected $ca_idcotizacion;
 
 
 	/**
@@ -59,6 +59,13 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	 * @var        string
 	 */
 	protected $ca_destino;
+
+
+	/**
+	 * The value for the ca_escala field.
+	 * @var        string
+	 */
+	protected $ca_escala;
 
 
 	/**
@@ -183,17 +190,6 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
-	 * Get the [ca_idcotizacion] column value.
-	 * 
-	 * @return     int
-	 */
-	public function getCaIdcotizacion()
-	{
-
-		return $this->ca_idcotizacion;
-	}
-
-	/**
 	 * Get the [ca_idproducto] column value.
 	 * 
 	 * @return     int
@@ -202,6 +198,17 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idproducto;
+	}
+
+	/**
+	 * Get the [ca_idcotizacion] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdcotizacion()
+	{
+
+		return $this->ca_idcotizacion;
 	}
 
 	/**
@@ -246,6 +253,17 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_destino;
+	}
+
+	/**
+	 * Get the [ca_escala] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaEscala()
+	{
+
+		return $this->ca_escala;
 	}
 
 	/**
@@ -432,6 +450,28 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Set the value of [ca_idproducto] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaIdproducto($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idproducto !== $v) {
+			$this->ca_idproducto = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_IDPRODUCTO;
+		}
+
+	} // setCaIdproducto()
+
+	/**
 	 * Set the value of [ca_idcotizacion] column.
 	 * 
 	 * @param      int $v new value
@@ -456,28 +496,6 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		}
 
 	} // setCaIdcotizacion()
-
-	/**
-	 * Set the value of [ca_idproducto] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     void
-	 */
-	public function setCaIdproducto($v)
-	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
-			$v = (int) $v;
-		}
-
-		if ($this->ca_idproducto !== $v) {
-			$this->ca_idproducto = $v;
-			$this->modifiedColumns[] = CotProductoPeer::CA_IDPRODUCTO;
-		}
-
-	} // setCaIdproducto()
 
 	/**
 	 * Set the value of [ca_transporte] column.
@@ -566,6 +584,28 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		}
 
 	} // setCaDestino()
+
+	/**
+	 * Set the value of [ca_escala] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaEscala($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_escala !== $v) {
+			$this->ca_escala = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_ESCALA;
+		}
+
+	} // setCaEscala()
 
 	/**
 	 * Set the value of [ca_impoexpo] column.
@@ -874,9 +914,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_idcotizacion = $rs->getInt($startcol + 0);
+			$this->ca_idproducto = $rs->getInt($startcol + 0);
 
-			$this->ca_idproducto = $rs->getInt($startcol + 1);
+			$this->ca_idcotizacion = $rs->getInt($startcol + 1);
 
 			$this->ca_transporte = $rs->getString($startcol + 2);
 
@@ -886,38 +926,40 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 			$this->ca_destino = $rs->getString($startcol + 5);
 
-			$this->ca_impoexpo = $rs->getString($startcol + 6);
+			$this->ca_escala = $rs->getString($startcol + 6);
 
-			$this->ca_imprimir = $rs->getString($startcol + 7);
+			$this->ca_impoexpo = $rs->getString($startcol + 7);
 
-			$this->ca_producto = $rs->getString($startcol + 8);
+			$this->ca_imprimir = $rs->getString($startcol + 8);
 
-			$this->ca_incoterms = $rs->getString($startcol + 9);
+			$this->ca_producto = $rs->getString($startcol + 9);
 
-			$this->ca_frecuencia = $rs->getString($startcol + 10);
+			$this->ca_incoterms = $rs->getString($startcol + 10);
 
-			$this->ca_tiempotransito = $rs->getString($startcol + 11);
+			$this->ca_frecuencia = $rs->getString($startcol + 11);
 
-			$this->ca_locrecargos = $rs->getString($startcol + 12);
+			$this->ca_tiempotransito = $rs->getString($startcol + 12);
 
-			$this->ca_observaciones = $rs->getString($startcol + 13);
+			$this->ca_locrecargos = $rs->getString($startcol + 13);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 14, null);
+			$this->ca_observaciones = $rs->getString($startcol + 14);
 
-			$this->ca_usucreado = $rs->getString($startcol + 15);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 15, null);
 
-			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 16, null);
+			$this->ca_usucreado = $rs->getString($startcol + 16);
 
-			$this->ca_usuactualizado = $rs->getString($startcol + 17);
+			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 17, null);
 
-			$this->ca_datosag = $rs->getString($startcol + 18);
+			$this->ca_usuactualizado = $rs->getString($startcol + 18);
+
+			$this->ca_datosag = $rs->getString($startcol + 19);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 19; // 19 = CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 20; // 20 = CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotProducto object", $e);
@@ -1023,6 +1065,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
+
+					$this->setCaIdproducto($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -1162,10 +1206,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdcotizacion();
+				return $this->getCaIdproducto();
 				break;
 			case 1:
-				return $this->getCaIdproducto();
+				return $this->getCaIdcotizacion();
 				break;
 			case 2:
 				return $this->getCaTransporte();
@@ -1180,42 +1224,45 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				return $this->getCaDestino();
 				break;
 			case 6:
-				return $this->getCaImpoexpo();
+				return $this->getCaEscala();
 				break;
 			case 7:
-				return $this->getCaImprimir();
+				return $this->getCaImpoexpo();
 				break;
 			case 8:
-				return $this->getCaProducto();
+				return $this->getCaImprimir();
 				break;
 			case 9:
-				return $this->getCaIncoterms();
+				return $this->getCaProducto();
 				break;
 			case 10:
-				return $this->getCaFrecuencia();
+				return $this->getCaIncoterms();
 				break;
 			case 11:
-				return $this->getCaTiempotransito();
+				return $this->getCaFrecuencia();
 				break;
 			case 12:
-				return $this->getCaLocrecargos();
+				return $this->getCaTiempotransito();
 				break;
 			case 13:
-				return $this->getCaObservaciones();
+				return $this->getCaLocrecargos();
 				break;
 			case 14:
-				return $this->getCaFchcreado();
+				return $this->getCaObservaciones();
 				break;
 			case 15:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 16:
-				return $this->getCaFchactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 17:
-				return $this->getCaUsuactualizado();
+				return $this->getCaFchactualizado();
 				break;
 			case 18:
+				return $this->getCaUsuactualizado();
+				break;
+			case 19:
 				return $this->getCaDatosag();
 				break;
 			default:
@@ -1238,25 +1285,26 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$keys = CotProductoPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdcotizacion(),
-			$keys[1] => $this->getCaIdproducto(),
+			$keys[0] => $this->getCaIdproducto(),
+			$keys[1] => $this->getCaIdcotizacion(),
 			$keys[2] => $this->getCaTransporte(),
 			$keys[3] => $this->getCaModalidad(),
 			$keys[4] => $this->getCaOrigen(),
 			$keys[5] => $this->getCaDestino(),
-			$keys[6] => $this->getCaImpoexpo(),
-			$keys[7] => $this->getCaImprimir(),
-			$keys[8] => $this->getCaProducto(),
-			$keys[9] => $this->getCaIncoterms(),
-			$keys[10] => $this->getCaFrecuencia(),
-			$keys[11] => $this->getCaTiempotransito(),
-			$keys[12] => $this->getCaLocrecargos(),
-			$keys[13] => $this->getCaObservaciones(),
-			$keys[14] => $this->getCaFchcreado(),
-			$keys[15] => $this->getCaUsucreado(),
-			$keys[16] => $this->getCaFchactualizado(),
-			$keys[17] => $this->getCaUsuactualizado(),
-			$keys[18] => $this->getCaDatosag(),
+			$keys[6] => $this->getCaEscala(),
+			$keys[7] => $this->getCaImpoexpo(),
+			$keys[8] => $this->getCaImprimir(),
+			$keys[9] => $this->getCaProducto(),
+			$keys[10] => $this->getCaIncoterms(),
+			$keys[11] => $this->getCaFrecuencia(),
+			$keys[12] => $this->getCaTiempotransito(),
+			$keys[13] => $this->getCaLocrecargos(),
+			$keys[14] => $this->getCaObservaciones(),
+			$keys[15] => $this->getCaFchcreado(),
+			$keys[16] => $this->getCaUsucreado(),
+			$keys[17] => $this->getCaFchactualizado(),
+			$keys[18] => $this->getCaUsuactualizado(),
+			$keys[19] => $this->getCaDatosag(),
 		);
 		return $result;
 	}
@@ -1289,10 +1337,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdcotizacion($value);
+				$this->setCaIdproducto($value);
 				break;
 			case 1:
-				$this->setCaIdproducto($value);
+				$this->setCaIdcotizacion($value);
 				break;
 			case 2:
 				$this->setCaTransporte($value);
@@ -1307,42 +1355,45 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				$this->setCaDestino($value);
 				break;
 			case 6:
-				$this->setCaImpoexpo($value);
+				$this->setCaEscala($value);
 				break;
 			case 7:
-				$this->setCaImprimir($value);
+				$this->setCaImpoexpo($value);
 				break;
 			case 8:
-				$this->setCaProducto($value);
+				$this->setCaImprimir($value);
 				break;
 			case 9:
-				$this->setCaIncoterms($value);
+				$this->setCaProducto($value);
 				break;
 			case 10:
-				$this->setCaFrecuencia($value);
+				$this->setCaIncoterms($value);
 				break;
 			case 11:
-				$this->setCaTiempotransito($value);
+				$this->setCaFrecuencia($value);
 				break;
 			case 12:
-				$this->setCaLocrecargos($value);
+				$this->setCaTiempotransito($value);
 				break;
 			case 13:
-				$this->setCaObservaciones($value);
+				$this->setCaLocrecargos($value);
 				break;
 			case 14:
-				$this->setCaFchcreado($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 15:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 16:
-				$this->setCaFchactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 17:
-				$this->setCaUsuactualizado($value);
+				$this->setCaFchactualizado($value);
 				break;
 			case 18:
+				$this->setCaUsuactualizado($value);
+				break;
+			case 19:
 				$this->setCaDatosag($value);
 				break;
 		} // switch()
@@ -1368,25 +1419,26 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$keys = CotProductoPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdcotizacion($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaIdproducto($arr[$keys[1]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdproducto($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdcotizacion($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaTransporte($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaModalidad($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaOrigen($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaDestino($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaImpoexpo($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaImprimir($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaProducto($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaIncoterms($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaFrecuencia($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaTiempotransito($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaLocrecargos($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaObservaciones($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaFchcreado($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaUsucreado($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaFchactualizado($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaUsuactualizado($arr[$keys[17]]);
-		if (array_key_exists($keys[18], $arr)) $this->setCaDatosag($arr[$keys[18]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaEscala($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaImpoexpo($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaImprimir($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaProducto($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaIncoterms($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFrecuencia($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaTiempotransito($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaLocrecargos($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaObservaciones($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaFchcreado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaUsucreado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaFchactualizado($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaUsuactualizado($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaDatosag($arr[$keys[19]]);
 	}
 
 	/**
@@ -1398,12 +1450,13 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(CotProductoPeer::CA_IDCOTIZACION)) $criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		if ($this->isColumnModified(CotProductoPeer::CA_IDPRODUCTO)) $criteria->add(CotProductoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+		if ($this->isColumnModified(CotProductoPeer::CA_IDCOTIZACION)) $criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		if ($this->isColumnModified(CotProductoPeer::CA_TRANSPORTE)) $criteria->add(CotProductoPeer::CA_TRANSPORTE, $this->ca_transporte);
 		if ($this->isColumnModified(CotProductoPeer::CA_MODALIDAD)) $criteria->add(CotProductoPeer::CA_MODALIDAD, $this->ca_modalidad);
 		if ($this->isColumnModified(CotProductoPeer::CA_ORIGEN)) $criteria->add(CotProductoPeer::CA_ORIGEN, $this->ca_origen);
 		if ($this->isColumnModified(CotProductoPeer::CA_DESTINO)) $criteria->add(CotProductoPeer::CA_DESTINO, $this->ca_destino);
+		if ($this->isColumnModified(CotProductoPeer::CA_ESCALA)) $criteria->add(CotProductoPeer::CA_ESCALA, $this->ca_escala);
 		if ($this->isColumnModified(CotProductoPeer::CA_IMPOEXPO)) $criteria->add(CotProductoPeer::CA_IMPOEXPO, $this->ca_impoexpo);
 		if ($this->isColumnModified(CotProductoPeer::CA_IMPRIMIR)) $criteria->add(CotProductoPeer::CA_IMPRIMIR, $this->ca_imprimir);
 		if ($this->isColumnModified(CotProductoPeer::CA_PRODUCTO)) $criteria->add(CotProductoPeer::CA_PRODUCTO, $this->ca_producto);
@@ -1433,8 +1486,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
 
-		$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		$criteria->add(CotProductoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+		$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 		return $criteria;
 	}
@@ -1448,9 +1501,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	{
 		$pks = array();
 
-		$pks[0] = $this->getCaIdcotizacion();
+		$pks[0] = $this->getCaIdproducto();
 
-		$pks[1] = $this->getCaIdproducto();
+		$pks[1] = $this->getCaIdcotizacion();
 
 		return $pks;
 	}
@@ -1464,9 +1517,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	public function setPrimaryKey($keys)
 	{
 
-		$this->setCaIdcotizacion($keys[0]);
+		$this->setCaIdproducto($keys[0]);
 
-		$this->setCaIdproducto($keys[1]);
+		$this->setCaIdcotizacion($keys[1]);
 
 	}
 
@@ -1490,6 +1543,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		$copyObj->setCaOrigen($this->ca_origen);
 
 		$copyObj->setCaDestino($this->ca_destino);
+
+		$copyObj->setCaEscala($this->ca_escala);
 
 		$copyObj->setCaImpoexpo($this->ca_impoexpo);
 
@@ -1532,9 +1587,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdcotizacion(NULL); // this is a pkey column, so set to default value
-
 		$copyObj->setCaIdproducto(NULL); // this is a pkey column, so set to default value
+
+		$copyObj->setCaIdcotizacion(NULL); // this is a pkey column, so set to default value
 
 	}
 

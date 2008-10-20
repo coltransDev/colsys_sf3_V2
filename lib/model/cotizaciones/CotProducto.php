@@ -34,6 +34,16 @@ class CotProducto extends BaseCotProducto
 	}
 	
 	/*
+	* Retorna el objeto ciudad asociado al campo ca_escala
+	* Author: Andres Botero
+	*/
+	public function getEscala(){
+		$c = new Criteria();
+		$c->add(  CiudadPeer::CA_IDCIUDAD, $this->getCaEscala() );
+		return CiudadPeer::doSelectOne( $c );		
+	}
+	
+	/*
 	*alias para getCotOpciones
 	* Author: Andres Botero
 	*/

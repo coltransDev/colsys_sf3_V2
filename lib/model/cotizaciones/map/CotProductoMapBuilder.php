@@ -59,11 +59,13 @@ class CotProductoMapBuilder {
 		$tMap = $this->dbMap->addTable('tb_cotproductos');
 		$tMap->setPhpName('CotProducto');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
 
-		$tMap->addForeignPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int' , CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', true, null);
+		$tMap->setPrimaryKeyMethodInfo('tb_cotproductos_SEQ');
 
 		$tMap->addPrimaryKey('CA_IDPRODUCTO', 'CaIdproducto', 'int', CreoleTypes::INTEGER, true, null);
+
+		$tMap->addForeignPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int' , CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', true, null);
 
 		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, false, null);
 
@@ -72,6 +74,8 @@ class CotProductoMapBuilder {
 		$tMap->addColumn('CA_ORIGEN', 'CaOrigen', 'string', CreoleTypes::VARCHAR, false, null);
 
 		$tMap->addColumn('CA_DESTINO', 'CaDestino', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_ESCALA', 'CaEscala', 'string', CreoleTypes::VARCHAR, false, null);
 
 		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'string', CreoleTypes::VARCHAR, false, null);
 

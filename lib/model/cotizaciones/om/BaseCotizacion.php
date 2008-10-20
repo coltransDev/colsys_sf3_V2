@@ -1174,6 +1174,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
 
+					$this->setCaIdcotizacion($pk);  //[IMV] update autoincrement primary key
+
 					$this->setNew(false);
 				} else {
 					$affectedRows += CotizacionPeer::doUpdate($this, $con);

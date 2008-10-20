@@ -61,17 +61,19 @@ class CotContinuacionMapBuilder {
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int' , CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', true, null);
+		$tMap->addPrimaryKey('OID', 'Oid', 'int', CreoleTypes::INTEGER, true, null);
 
-		$tMap->addPrimaryKey('CA_TIPO', 'CaTipo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addForeignKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int', CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', false, null);
+
+		$tMap->addColumn('CA_TIPO', 'CaTipo', 'string', CreoleTypes::VARCHAR, true, null);
 
 		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, false, null);
 
-		$tMap->addPrimaryKey('CA_ORIGEN', 'CaOrigen', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_ORIGEN', 'CaOrigen', 'string', CreoleTypes::VARCHAR, false, null);
 
-		$tMap->addPrimaryKey('CA_DESTINO', 'CaDestino', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_DESTINO', 'CaDestino', 'string', CreoleTypes::VARCHAR, false, null);
 
-		$tMap->addForeignPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int' , CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
+		$tMap->addForeignKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int', CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', false, null);
 
 		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, null);
 

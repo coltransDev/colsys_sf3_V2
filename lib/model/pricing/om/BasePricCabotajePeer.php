@@ -1,89 +1,53 @@
 <?php
 
 /**
- * Base static class for performing query and update operations on the 'tb_cotproductos' table.
+ * Base static class for performing query and update operations on the 'tb_priccabotajes' table.
  *
  * 
  *
- * @package    lib.model.cotizaciones.om
+ * @package    lib.model.pricing.om
  */
-abstract class BaseCotProductoPeer {
+abstract class BasePricCabotajePeer {
 
 	/** the default database name for this class */
 	const DATABASE_NAME = 'propel';
 
 	/** the table name for this class */
-	const TABLE_NAME = 'tb_cotproductos';
+	const TABLE_NAME = 'tb_priccabotajes';
 
 	/** A class that can be returned by this peer. */
-	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotProducto';
+	const CLASS_DEFAULT = 'lib.model.pricing.PricCabotaje';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 20;
+	const NUM_COLUMNS = 8;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-	/** the column name for the CA_IDPRODUCTO field */
-	const CA_IDPRODUCTO = 'tb_cotproductos.CA_IDPRODUCTO';
-
-	/** the column name for the CA_IDCOTIZACION field */
-	const CA_IDCOTIZACION = 'tb_cotproductos.CA_IDCOTIZACION';
-
-	/** the column name for the CA_TRANSPORTE field */
-	const CA_TRANSPORTE = 'tb_cotproductos.CA_TRANSPORTE';
-
-	/** the column name for the CA_MODALIDAD field */
-	const CA_MODALIDAD = 'tb_cotproductos.CA_MODALIDAD';
+	/** the column name for the OID field */
+	const OID = 'tb_priccabotajes.OID';
 
 	/** the column name for the CA_ORIGEN field */
-	const CA_ORIGEN = 'tb_cotproductos.CA_ORIGEN';
+	const CA_ORIGEN = 'tb_priccabotajes.CA_ORIGEN';
 
 	/** the column name for the CA_DESTINO field */
-	const CA_DESTINO = 'tb_cotproductos.CA_DESTINO';
+	const CA_DESTINO = 'tb_priccabotajes.CA_DESTINO';
 
-	/** the column name for the CA_ESCALA field */
-	const CA_ESCALA = 'tb_cotproductos.CA_ESCALA';
+	/** the column name for the CA_IDLINEA field */
+	const CA_IDLINEA = 'tb_priccabotajes.CA_IDLINEA';
 
-	/** the column name for the CA_IMPOEXPO field */
-	const CA_IMPOEXPO = 'tb_cotproductos.CA_IMPOEXPO';
+	/** the column name for the CA_VLRKILO field */
+	const CA_VLRKILO = 'tb_priccabotajes.CA_VLRKILO';
 
-	/** the column name for the CA_IMPRIMIR field */
-	const CA_IMPRIMIR = 'tb_cotproductos.CA_IMPRIMIR';
+	/** the column name for the CA_VLRMINIMO field */
+	const CA_VLRMINIMO = 'tb_priccabotajes.CA_VLRMINIMO';
 
-	/** the column name for the CA_PRODUCTO field */
-	const CA_PRODUCTO = 'tb_cotproductos.CA_PRODUCTO';
+	/** the column name for the CA_MAXPESO field */
+	const CA_MAXPESO = 'tb_priccabotajes.CA_MAXPESO';
 
-	/** the column name for the CA_INCOTERMS field */
-	const CA_INCOTERMS = 'tb_cotproductos.CA_INCOTERMS';
-
-	/** the column name for the CA_FRECUENCIA field */
-	const CA_FRECUENCIA = 'tb_cotproductos.CA_FRECUENCIA';
-
-	/** the column name for the CA_TIEMPOTRANSITO field */
-	const CA_TIEMPOTRANSITO = 'tb_cotproductos.CA_TIEMPOTRANSITO';
-
-	/** the column name for the CA_LOCRECARGOS field */
-	const CA_LOCRECARGOS = 'tb_cotproductos.CA_LOCRECARGOS';
-
-	/** the column name for the CA_OBSERVACIONES field */
-	const CA_OBSERVACIONES = 'tb_cotproductos.CA_OBSERVACIONES';
-
-	/** the column name for the CA_FCHCREADO field */
-	const CA_FCHCREADO = 'tb_cotproductos.CA_FCHCREADO';
-
-	/** the column name for the CA_USUCREADO field */
-	const CA_USUCREADO = 'tb_cotproductos.CA_USUCREADO';
-
-	/** the column name for the CA_FCHACTUALIZADO field */
-	const CA_FCHACTUALIZADO = 'tb_cotproductos.CA_FCHACTUALIZADO';
-
-	/** the column name for the CA_USUACTUALIZADO field */
-	const CA_USUACTUALIZADO = 'tb_cotproductos.CA_USUACTUALIZADO';
-
-	/** the column name for the CA_DATOSAG field */
-	const CA_DATOSAG = 'tb_cotproductos.CA_DATOSAG';
+	/** the column name for the CA_DIMENSIONES field */
+	const CA_DIMENSIONES = 'tb_priccabotajes.CA_DIMENSIONES';
 
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
@@ -96,10 +60,10 @@ abstract class BaseCotProductoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdproducto', 'CaIdcotizacion', 'CaTransporte', 'CaModalidad', 'CaOrigen', 'CaDestino', 'CaEscala', 'CaImpoexpo', 'CaImprimir', 'CaProducto', 'CaIncoterms', 'CaFrecuencia', 'CaTiempotransito', 'CaLocrecargos', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaDatosag', ),
-		BasePeer::TYPE_COLNAME => array (CotProductoPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDCOTIZACION, CotProductoPeer::CA_TRANSPORTE, CotProductoPeer::CA_MODALIDAD, CotProductoPeer::CA_ORIGEN, CotProductoPeer::CA_DESTINO, CotProductoPeer::CA_ESCALA, CotProductoPeer::CA_IMPOEXPO, CotProductoPeer::CA_IMPRIMIR, CotProductoPeer::CA_PRODUCTO, CotProductoPeer::CA_INCOTERMS, CotProductoPeer::CA_FRECUENCIA, CotProductoPeer::CA_TIEMPOTRANSITO, CotProductoPeer::CA_LOCRECARGOS, CotProductoPeer::CA_OBSERVACIONES, CotProductoPeer::CA_FCHCREADO, CotProductoPeer::CA_USUCREADO, CotProductoPeer::CA_FCHACTUALIZADO, CotProductoPeer::CA_USUACTUALIZADO, CotProductoPeer::CA_DATOSAG, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idproducto', 'ca_idcotizacion', 'ca_transporte', 'ca_modalidad', 'ca_origen', 'ca_destino', 'ca_escala', 'ca_impoexpo', 'ca_imprimir', 'ca_producto', 'ca_incoterms', 'ca_frecuencia', 'ca_tiempotransito', 'ca_locrecargos', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_datosag', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
+		BasePeer::TYPE_PHPNAME => array ('Oid', 'CaOrigen', 'CaDestino', 'CaIdlinea', 'CaVlrkilo', 'CaVlrminimo', 'CaMaxpeso', 'CaDimensiones', ),
+		BasePeer::TYPE_COLNAME => array (PricCabotajePeer::OID, PricCabotajePeer::CA_ORIGEN, PricCabotajePeer::CA_DESTINO, PricCabotajePeer::CA_IDLINEA, PricCabotajePeer::CA_VLRKILO, PricCabotajePeer::CA_VLRMINIMO, PricCabotajePeer::CA_MAXPESO, PricCabotajePeer::CA_DIMENSIONES, ),
+		BasePeer::TYPE_FIELDNAME => array ('oid', 'ca_origen', 'ca_destino', 'ca_idlinea', 'ca_vlrkilo', 'ca_vlrminimo', 'ca_maxpeso', 'ca_dimensiones', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
 	/**
@@ -109,10 +73,10 @@ abstract class BaseCotProductoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdproducto' => 0, 'CaIdcotizacion' => 1, 'CaTransporte' => 2, 'CaModalidad' => 3, 'CaOrigen' => 4, 'CaDestino' => 5, 'CaEscala' => 6, 'CaImpoexpo' => 7, 'CaImprimir' => 8, 'CaProducto' => 9, 'CaIncoterms' => 10, 'CaFrecuencia' => 11, 'CaTiempotransito' => 12, 'CaLocrecargos' => 13, 'CaObservaciones' => 14, 'CaFchcreado' => 15, 'CaUsucreado' => 16, 'CaFchactualizado' => 17, 'CaUsuactualizado' => 18, 'CaDatosag' => 19, ),
-		BasePeer::TYPE_COLNAME => array (CotProductoPeer::CA_IDPRODUCTO => 0, CotProductoPeer::CA_IDCOTIZACION => 1, CotProductoPeer::CA_TRANSPORTE => 2, CotProductoPeer::CA_MODALIDAD => 3, CotProductoPeer::CA_ORIGEN => 4, CotProductoPeer::CA_DESTINO => 5, CotProductoPeer::CA_ESCALA => 6, CotProductoPeer::CA_IMPOEXPO => 7, CotProductoPeer::CA_IMPRIMIR => 8, CotProductoPeer::CA_PRODUCTO => 9, CotProductoPeer::CA_INCOTERMS => 10, CotProductoPeer::CA_FRECUENCIA => 11, CotProductoPeer::CA_TIEMPOTRANSITO => 12, CotProductoPeer::CA_LOCRECARGOS => 13, CotProductoPeer::CA_OBSERVACIONES => 14, CotProductoPeer::CA_FCHCREADO => 15, CotProductoPeer::CA_USUCREADO => 16, CotProductoPeer::CA_FCHACTUALIZADO => 17, CotProductoPeer::CA_USUACTUALIZADO => 18, CotProductoPeer::CA_DATOSAG => 19, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idproducto' => 0, 'ca_idcotizacion' => 1, 'ca_transporte' => 2, 'ca_modalidad' => 3, 'ca_origen' => 4, 'ca_destino' => 5, 'ca_escala' => 6, 'ca_impoexpo' => 7, 'ca_imprimir' => 8, 'ca_producto' => 9, 'ca_incoterms' => 10, 'ca_frecuencia' => 11, 'ca_tiempotransito' => 12, 'ca_locrecargos' => 13, 'ca_observaciones' => 14, 'ca_fchcreado' => 15, 'ca_usucreado' => 16, 'ca_fchactualizado' => 17, 'ca_usuactualizado' => 18, 'ca_datosag' => 19, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
+		BasePeer::TYPE_PHPNAME => array ('Oid' => 0, 'CaOrigen' => 1, 'CaDestino' => 2, 'CaIdlinea' => 3, 'CaVlrkilo' => 4, 'CaVlrminimo' => 5, 'CaMaxpeso' => 6, 'CaDimensiones' => 7, ),
+		BasePeer::TYPE_COLNAME => array (PricCabotajePeer::OID => 0, PricCabotajePeer::CA_ORIGEN => 1, PricCabotajePeer::CA_DESTINO => 2, PricCabotajePeer::CA_IDLINEA => 3, PricCabotajePeer::CA_VLRKILO => 4, PricCabotajePeer::CA_VLRMINIMO => 5, PricCabotajePeer::CA_MAXPESO => 6, PricCabotajePeer::CA_DIMENSIONES => 7, ),
+		BasePeer::TYPE_FIELDNAME => array ('oid' => 0, 'ca_origen' => 1, 'ca_destino' => 2, 'ca_idlinea' => 3, 'ca_vlrkilo' => 4, 'ca_vlrminimo' => 5, 'ca_maxpeso' => 6, 'ca_dimensiones' => 7, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
 	/**
@@ -122,7 +86,7 @@ abstract class BaseCotProductoPeer {
 	 */
 	public static function getMapBuilder()
 	{
-		return BasePeer::getMapBuilder('lib.model.cotizaciones.map.CotProductoMapBuilder');
+		return BasePeer::getMapBuilder('lib.model.pricing.map.PricCabotajeMapBuilder');
 	}
 	/**
 	 * Gets a map (hash) of PHP names to DB column names.
@@ -135,7 +99,7 @@ abstract class BaseCotProductoPeer {
 	public static function getPhpNameMap()
 	{
 		if (self::$phpNameMap === null) {
-			$map = CotProductoPeer::getTableMap();
+			$map = PricCabotajePeer::getTableMap();
 			$columns = $map->getColumns();
 			$nameMap = array();
 			foreach ($columns as $column) {
@@ -190,12 +154,12 @@ abstract class BaseCotProductoPeer {
 	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
 	 * </code>
 	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. CotProductoPeer::COLUMN_NAME).
+	 * @param      string $column The column name for current table. (i.e. PricCabotajePeer::COLUMN_NAME).
 	 * @return     string
 	 */
 	public static function alias($alias, $column)
 	{
-		return str_replace(CotProductoPeer::TABLE_NAME.'.', $alias.'.', $column);
+		return str_replace(PricCabotajePeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
 	/**
@@ -212,50 +176,26 @@ abstract class BaseCotProductoPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_IDPRODUCTO);
+		$criteria->addSelectColumn(PricCabotajePeer::OID);
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_IDCOTIZACION);
+		$criteria->addSelectColumn(PricCabotajePeer::CA_ORIGEN);
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_TRANSPORTE);
+		$criteria->addSelectColumn(PricCabotajePeer::CA_DESTINO);
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_MODALIDAD);
+		$criteria->addSelectColumn(PricCabotajePeer::CA_IDLINEA);
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_ORIGEN);
+		$criteria->addSelectColumn(PricCabotajePeer::CA_VLRKILO);
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_DESTINO);
+		$criteria->addSelectColumn(PricCabotajePeer::CA_VLRMINIMO);
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_ESCALA);
+		$criteria->addSelectColumn(PricCabotajePeer::CA_MAXPESO);
 
-		$criteria->addSelectColumn(CotProductoPeer::CA_IMPOEXPO);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_IMPRIMIR);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_PRODUCTO);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_INCOTERMS);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_FRECUENCIA);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_TIEMPOTRANSITO);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_LOCRECARGOS);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_OBSERVACIONES);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_FCHCREADO);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_USUCREADO);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_FCHACTUALIZADO);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_USUACTUALIZADO);
-
-		$criteria->addSelectColumn(CotProductoPeer::CA_DATOSAG);
+		$criteria->addSelectColumn(PricCabotajePeer::CA_DIMENSIONES);
 
 	}
 
-	const COUNT = 'COUNT(tb_cotproductos.CA_IDPRODUCTO)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_cotproductos.CA_IDPRODUCTO)';
+	const COUNT = 'COUNT(tb_priccabotajes.CA_ORIGEN)';
+	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_priccabotajes.CA_ORIGEN)';
 
 	/**
 	 * Returns the number of rows matching criteria.
@@ -273,9 +213,9 @@ abstract class BaseCotProductoPeer {
 		// clear out anything that might confuse the ORDER BY clause
 		$criteria->clearSelectColumns()->clearOrderByColumns();
 		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(CotProductoPeer::COUNT_DISTINCT);
+			$criteria->addSelectColumn(PricCabotajePeer::COUNT_DISTINCT);
 		} else {
-			$criteria->addSelectColumn(CotProductoPeer::COUNT);
+			$criteria->addSelectColumn(PricCabotajePeer::COUNT);
 		}
 
 		// just in case we're grouping: add those columns to the select statement
@@ -284,7 +224,7 @@ abstract class BaseCotProductoPeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$rs = CotProductoPeer::doSelectRS($criteria, $con);
+		$rs = PricCabotajePeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
 			return $rs->getInt(1);
 		} else {
@@ -297,7 +237,7 @@ abstract class BaseCotProductoPeer {
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      Connection $con
-	 * @return     CotProducto
+	 * @return     PricCabotaje
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -305,7 +245,7 @@ abstract class BaseCotProductoPeer {
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
-		$objects = CotProductoPeer::doSelect($critcopy, $con);
+		$objects = PricCabotajePeer::doSelect($critcopy, $con);
 		if ($objects) {
 			return $objects[0];
 		}
@@ -322,7 +262,7 @@ abstract class BaseCotProductoPeer {
 	 */
 	public static function doSelect(Criteria $criteria, $con = null)
 	{
-		return CotProductoPeer::populateObjects(CotProductoPeer::doSelectRS($criteria, $con));
+		return PricCabotajePeer::populateObjects(PricCabotajePeer::doSelectRS($criteria, $con));
 	}
 	/**
 	 * Prepares the Criteria object and uses the parent doSelect()
@@ -346,7 +286,7 @@ abstract class BaseCotProductoPeer {
 
 		if (!$criteria->getSelectColumns()) {
 			$criteria = clone $criteria;
-			CotProductoPeer::addSelectColumns($criteria);
+			PricCabotajePeer::addSelectColumns($criteria);
 		}
 
 		// Set the correct dbName
@@ -368,7 +308,7 @@ abstract class BaseCotProductoPeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = CotProductoPeer::getOMClass();
+		$cls = PricCabotajePeer::getOMClass();
 		$cls = Propel::import($cls);
 		// populate the object(s)
 		while($rs->next()) {
@@ -382,14 +322,14 @@ abstract class BaseCotProductoPeer {
 	}
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related Cotizacion table
+	 * Returns the number of rows matching criteria, joining the related Transportador table
 	 *
 	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
 	 * @param      Connection $con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinCotizacion(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinTransportador(Criteria $criteria, $distinct = false, $con = null)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
@@ -397,9 +337,9 @@ abstract class BaseCotProductoPeer {
 		// clear out anything that might confuse the ORDER BY clause
 		$criteria->clearSelectColumns()->clearOrderByColumns();
 		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(CotProductoPeer::COUNT_DISTINCT);
+			$criteria->addSelectColumn(PricCabotajePeer::COUNT_DISTINCT);
 		} else {
-			$criteria->addSelectColumn(CotProductoPeer::COUNT);
+			$criteria->addSelectColumn(PricCabotajePeer::COUNT);
 		}
 
 		// just in case we're grouping: add those columns to the select statement
@@ -408,9 +348,9 @@ abstract class BaseCotProductoPeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(CotProductoPeer::CA_IDCOTIZACION, CotizacionPeer::CA_IDCOTIZACION);
+		$criteria->addJoin(PricCabotajePeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA);
 
-		$rs = CotProductoPeer::doSelectRS($criteria, $con);
+		$rs = PricCabotajePeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
 			return $rs->getInt(1);
 		} else {
@@ -421,13 +361,13 @@ abstract class BaseCotProductoPeer {
 
 
 	/**
-	 * Selects a collection of CotProducto objects pre-filled with their Cotizacion objects.
+	 * Selects a collection of PricCabotaje objects pre-filled with their Transportador objects.
 	 *
-	 * @return     array Array of CotProducto objects.
+	 * @return     array Array of PricCabotaje objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinCotizacion(Criteria $c, $con = null)
+	public static function doSelectJoinTransportador(Criteria $c, $con = null)
 	{
 		$c = clone $c;
 
@@ -436,23 +376,23 @@ abstract class BaseCotProductoPeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		CotProductoPeer::addSelectColumns($c);
-		$startcol = (CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
-		CotizacionPeer::addSelectColumns($c);
+		PricCabotajePeer::addSelectColumns($c);
+		$startcol = (PricCabotajePeer::NUM_COLUMNS - PricCabotajePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		TransportadorPeer::addSelectColumns($c);
 
-		$c->addJoin(CotProductoPeer::CA_IDCOTIZACION, CotizacionPeer::CA_IDCOTIZACION);
+		$c->addJoin(PricCabotajePeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while($rs->next()) {
 
-			$omClass = CotProductoPeer::getOMClass();
+			$omClass = PricCabotajePeer::getOMClass();
 
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
 			$obj1->hydrate($rs);
 
-			$omClass = CotizacionPeer::getOMClass();
+			$omClass = TransportadorPeer::getOMClass();
 
 			$cls = Propel::import($omClass);
 			$obj2 = new $cls();
@@ -460,17 +400,17 @@ abstract class BaseCotProductoPeer {
 
 			$newObject = true;
 			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getCotizacion(); //CHECKME
+				$temp_obj2 = $temp_obj1->getTransportador(); //CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
 					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addCotProducto($obj1); //CHECKME
+					$temp_obj2->addPricCabotaje($obj1); //CHECKME
 					break;
 				}
 			}
 			if ($newObject) {
-				$obj2->initCotProductos();
-				$obj2->addCotProducto($obj1); //CHECKME
+				$obj2->initPricCabotajes();
+				$obj2->addPricCabotaje($obj1); //CHECKME
 			}
 			$results[] = $obj1;
 		}
@@ -493,9 +433,9 @@ abstract class BaseCotProductoPeer {
 		// clear out anything that might confuse the ORDER BY clause
 		$criteria->clearSelectColumns()->clearOrderByColumns();
 		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(CotProductoPeer::COUNT_DISTINCT);
+			$criteria->addSelectColumn(PricCabotajePeer::COUNT_DISTINCT);
 		} else {
-			$criteria->addSelectColumn(CotProductoPeer::COUNT);
+			$criteria->addSelectColumn(PricCabotajePeer::COUNT);
 		}
 
 		// just in case we're grouping: add those columns to the select statement
@@ -504,9 +444,9 @@ abstract class BaseCotProductoPeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(CotProductoPeer::CA_IDCOTIZACION, CotizacionPeer::CA_IDCOTIZACION);
+		$criteria->addJoin(PricCabotajePeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA);
 
-		$rs = CotProductoPeer::doSelectRS($criteria, $con);
+		$rs = PricCabotajePeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
 			return $rs->getInt(1);
 		} else {
@@ -517,9 +457,9 @@ abstract class BaseCotProductoPeer {
 
 
 	/**
-	 * Selects a collection of CotProducto objects pre-filled with all related objects.
+	 * Selects a collection of PricCabotaje objects pre-filled with all related objects.
 	 *
-	 * @return     array Array of CotProducto objects.
+	 * @return     array Array of PricCabotaje objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -532,20 +472,20 @@ abstract class BaseCotProductoPeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		CotProductoPeer::addSelectColumns($c);
-		$startcol2 = (CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		PricCabotajePeer::addSelectColumns($c);
+		$startcol2 = (PricCabotajePeer::NUM_COLUMNS - PricCabotajePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
 
-		CotizacionPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + CotizacionPeer::NUM_COLUMNS;
+		TransportadorPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + TransportadorPeer::NUM_COLUMNS;
 
-		$c->addJoin(CotProductoPeer::CA_IDCOTIZACION, CotizacionPeer::CA_IDCOTIZACION);
+		$c->addJoin(PricCabotajePeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA);
 
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while($rs->next()) {
 
-			$omClass = CotProductoPeer::getOMClass();
+			$omClass = PricCabotajePeer::getOMClass();
 
 
 			$cls = Propel::import($omClass);
@@ -553,9 +493,9 @@ abstract class BaseCotProductoPeer {
 			$obj1->hydrate($rs);
 
 
-				// Add objects for joined Cotizacion rows
+				// Add objects for joined Transportador rows
 	
-			$omClass = CotizacionPeer::getOMClass();
+			$omClass = TransportadorPeer::getOMClass();
 
 
 			$cls = Propel::import($omClass);
@@ -565,17 +505,17 @@ abstract class BaseCotProductoPeer {
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
 				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getCotizacion(); // CHECKME
+				$temp_obj2 = $temp_obj1->getTransportador(); // CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
-					$temp_obj2->addCotProducto($obj1); // CHECKME
+					$temp_obj2->addPricCabotaje($obj1); // CHECKME
 					break;
 				}
 			}
 
 			if ($newObject) {
-				$obj2->initCotProductos();
-				$obj2->addCotProducto($obj1);
+				$obj2->initPricCabotajes();
+				$obj2->addPricCabotaje($obj1);
 			}
 
 			$results[] = $obj1;
@@ -611,13 +551,13 @@ abstract class BaseCotProductoPeer {
 	 */
 	public static function getOMClass()
 	{
-		return CotProductoPeer::CLASS_DEFAULT;
+		return PricCabotajePeer::CLASS_DEFAULT;
 	}
 
 	/**
-	 * Method perform an INSERT on the database, given a CotProducto or Criteria object.
+	 * Method perform an INSERT on the database, given a PricCabotaje or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or CotProducto object containing data that is used to create the INSERT statement.
+	 * @param      mixed $values Criteria or PricCabotaje object containing data that is used to create the INSERT statement.
 	 * @param      Connection $con the connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -632,10 +572,8 @@ abstract class BaseCotProductoPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from CotProducto object
+			$criteria = $values->buildCriteria(); // build Criteria from PricCabotaje object
 		}
-
-		$criteria->remove(CotProductoPeer::CA_IDPRODUCTO); // remove pkey col since this table uses auto-increment
 
 
 		// Set the correct dbName
@@ -656,9 +594,9 @@ abstract class BaseCotProductoPeer {
 	}
 
 	/**
-	 * Method perform an UPDATE on the database, given a CotProducto or Criteria object.
+	 * Method perform an UPDATE on the database, given a PricCabotaje or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or CotProducto object containing data that is used to create the UPDATE statement.
+	 * @param      mixed $values Criteria or PricCabotaje object containing data that is used to create the UPDATE statement.
 	 * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -675,13 +613,16 @@ abstract class BaseCotProductoPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(CotProductoPeer::CA_IDPRODUCTO);
-			$selectCriteria->add(CotProductoPeer::CA_IDPRODUCTO, $criteria->remove(CotProductoPeer::CA_IDPRODUCTO), $comparison);
+			$comparison = $criteria->getComparison(PricCabotajePeer::CA_ORIGEN);
+			$selectCriteria->add(PricCabotajePeer::CA_ORIGEN, $criteria->remove(PricCabotajePeer::CA_ORIGEN), $comparison);
 
-			$comparison = $criteria->getComparison(CotProductoPeer::CA_IDCOTIZACION);
-			$selectCriteria->add(CotProductoPeer::CA_IDCOTIZACION, $criteria->remove(CotProductoPeer::CA_IDCOTIZACION), $comparison);
+			$comparison = $criteria->getComparison(PricCabotajePeer::CA_DESTINO);
+			$selectCriteria->add(PricCabotajePeer::CA_DESTINO, $criteria->remove(PricCabotajePeer::CA_DESTINO), $comparison);
 
-		} else { // $values is CotProducto object
+			$comparison = $criteria->getComparison(PricCabotajePeer::CA_IDLINEA);
+			$selectCriteria->add(PricCabotajePeer::CA_IDLINEA, $criteria->remove(PricCabotajePeer::CA_IDLINEA), $comparison);
+
+		} else { // $values is PricCabotaje object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
 		}
@@ -693,7 +634,7 @@ abstract class BaseCotProductoPeer {
 	}
 
 	/**
-	 * Method to DELETE all rows from the tb_cotproductos table.
+	 * Method to DELETE all rows from the tb_priccabotajes table.
 	 *
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
@@ -707,7 +648,7 @@ abstract class BaseCotProductoPeer {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->begin();
-			$affectedRows += BasePeer::doDeleteAll(CotProductoPeer::TABLE_NAME, $con);
+			$affectedRows += BasePeer::doDeleteAll(PricCabotajePeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -717,9 +658,9 @@ abstract class BaseCotProductoPeer {
 	}
 
 	/**
-	 * Method perform a DELETE on the database, given a CotProducto or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a PricCabotaje or Criteria object OR a primary key value.
 	 *
-	 * @param      mixed $values Criteria or CotProducto object or primary key or array of primary keys
+	 * @param      mixed $values Criteria or PricCabotaje object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
 	 * @param      Connection $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -730,12 +671,12 @@ abstract class BaseCotProductoPeer {
 	 public static function doDelete($values, $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(CotProductoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(PricCabotajePeer::DATABASE_NAME);
 		}
 
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
-		} elseif ($values instanceof CotProducto) {
+		} elseif ($values instanceof PricCabotaje) {
 
 			$criteria = $values->buildPkeyCriteria();
 		} else {
@@ -755,10 +696,12 @@ abstract class BaseCotProductoPeer {
 
 				$vals[0][] = $value[0];
 				$vals[1][] = $value[1];
+				$vals[2][] = $value[2];
 			}
 
-			$criteria->add(CotProductoPeer::CA_IDPRODUCTO, $vals[0], Criteria::IN);
-			$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $vals[1], Criteria::IN);
+			$criteria->add(PricCabotajePeer::CA_ORIGEN, $vals[0], Criteria::IN);
+			$criteria->add(PricCabotajePeer::CA_DESTINO, $vals[1], Criteria::IN);
+			$criteria->add(PricCabotajePeer::CA_IDLINEA, $vals[2], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -781,24 +724,24 @@ abstract class BaseCotProductoPeer {
 	}
 
 	/**
-	 * Validates all modified columns of given CotProducto object.
+	 * Validates all modified columns of given PricCabotaje object.
 	 * If parameter $columns is either a single column name or an array of column names
 	 * than only those columns are validated.
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      CotProducto $obj The object to validate.
+	 * @param      PricCabotaje $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(CotProducto $obj, $cols = null)
+	public static function doValidate(PricCabotaje $obj, $cols = null)
 	{
 		$columns = array();
 
 		if ($cols) {
-			$dbMap = Propel::getDatabaseMap(CotProductoPeer::DATABASE_NAME);
-			$tableMap = $dbMap->getTable(CotProductoPeer::TABLE_NAME);
+			$dbMap = Propel::getDatabaseMap(PricCabotajePeer::DATABASE_NAME);
+			$tableMap = $dbMap->getTable(PricCabotajePeer::TABLE_NAME);
 
 			if (! is_array($cols)) {
 				$cols = array($cols);
@@ -814,11 +757,11 @@ abstract class BaseCotProductoPeer {
 
 		}
 
-		$res =  BasePeer::doValidate(CotProductoPeer::DATABASE_NAME, CotProductoPeer::TABLE_NAME, $columns);
+		$res =  BasePeer::doValidate(PricCabotajePeer::DATABASE_NAME, PricCabotajePeer::TABLE_NAME, $columns);
     if ($res !== true) {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
-            $col = CotProductoPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
+            $col = PricCabotajePeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
             $request->setError($col, $failed->getMessage());
         }
     }
@@ -828,36 +771,38 @@ abstract class BaseCotProductoPeer {
 
 	/**
 	 * Retrieve object using using composite pkey values.
-	 * @param int $ca_idproducto
-	   @param int $ca_idcotizacion
+	 * @param string $ca_origen
+	   @param string $ca_destino
+	   @param string $ca_idlinea
 	   
 	 * @param      Connection $con
-	 * @return     CotProducto
+	 * @return     PricCabotaje
 	 */
-	public static function retrieveByPK( $ca_idproducto, $ca_idcotizacion, $con = null) {
+	public static function retrieveByPK( $ca_origen, $ca_destino, $ca_idlinea, $con = null) {
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
 		$criteria = new Criteria();
-		$criteria->add(CotProductoPeer::CA_IDPRODUCTO, $ca_idproducto);
-		$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $ca_idcotizacion);
-		$v = CotProductoPeer::doSelect($criteria, $con);
+		$criteria->add(PricCabotajePeer::CA_ORIGEN, $ca_origen);
+		$criteria->add(PricCabotajePeer::CA_DESTINO, $ca_destino);
+		$criteria->add(PricCabotajePeer::CA_IDLINEA, $ca_idlinea);
+		$v = PricCabotajePeer::doSelect($criteria, $con);
 
 		return !empty($v) ? $v[0] : null;
 	}
-} // BaseCotProductoPeer
+} // BasePricCabotajePeer
 
 // static code to register the map builder for this Peer with the main Propel class
 if (Propel::isInit()) {
 	// the MapBuilder classes register themselves with Propel during initialization
 	// so we need to load them here.
 	try {
-		BaseCotProductoPeer::getMapBuilder();
+		BasePricCabotajePeer::getMapBuilder();
 	} catch (Exception $e) {
 		Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
 	}
 } else {
 	// even if Propel is not yet initialized, the map builder class can be registered
 	// now and then it will be loaded when Propel initializes.
-	Propel::registerMapBuilder('lib.model.cotizaciones.map.CotProductoMapBuilder');
+	Propel::registerMapBuilder('lib.model.pricing.map.PricCabotajeMapBuilder');
 }

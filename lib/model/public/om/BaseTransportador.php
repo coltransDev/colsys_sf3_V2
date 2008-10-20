@@ -78,6 +78,18 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 	protected $lastTrayectoCriteria = null;
 
 	/**
+	 * Collection to store aggregation of collPricCabotajes.
+	 * @var        array
+	 */
+	protected $collPricCabotajes;
+
+	/**
+	 * The criteria used to select the current contents of collPricCabotajes.
+	 * @var        Criteria
+	 */
+	protected $lastPricCabotajeCriteria = null;
+
+	/**
 	 * Collection to store aggregation of collReportes.
 	 * @var        array
 	 */
@@ -425,6 +437,14 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collPricCabotajes !== null) {
+				foreach($this->collPricCabotajes as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collReportes !== null) {
 				foreach($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -521,6 +541,14 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 
 				if ($this->collTrayectos !== null) {
 					foreach($this->collTrayectos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collPricCabotajes !== null) {
+					foreach($this->collPricCabotajes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -779,6 +807,10 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 
 			foreach($this->getTrayectos() as $relObj) {
 				$copyObj->addTrayecto($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getPricCabotajes() as $relObj) {
+				$copyObj->addPricCabotaje($relObj->copy($deepCopy));
 			}
 
 			foreach($this->getReportes() as $relObj) {
@@ -1092,6 +1124,111 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 		$this->lastTrayectoCriteria = $criteria;
 
 		return $this->collTrayectos;
+	}
+
+	/**
+	 * Temporary storage of collPricCabotajes to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initPricCabotajes()
+	{
+		if ($this->collPricCabotajes === null) {
+			$this->collPricCabotajes = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Transportador has previously
+	 * been saved, it will retrieve related PricCabotajes from storage.
+	 * If this Transportador is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getPricCabotajes($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricCabotajes === null) {
+			if ($this->isNew()) {
+			   $this->collPricCabotajes = array();
+			} else {
+
+				$criteria->add(PricCabotajePeer::CA_IDLINEA, $this->getCaIdlinea());
+
+				PricCabotajePeer::addSelectColumns($criteria);
+				$this->collPricCabotajes = PricCabotajePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricCabotajePeer::CA_IDLINEA, $this->getCaIdlinea());
+
+				PricCabotajePeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricCabotajeCriteria) || !$this->lastPricCabotajeCriteria->equals($criteria)) {
+					$this->collPricCabotajes = PricCabotajePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricCabotajeCriteria = $criteria;
+		return $this->collPricCabotajes;
+	}
+
+	/**
+	 * Returns the number of related PricCabotajes.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countPricCabotajes($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(PricCabotajePeer::CA_IDLINEA, $this->getCaIdlinea());
+
+		return PricCabotajePeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a PricCabotaje object to this object
+	 * through the PricCabotaje foreign key attribute
+	 *
+	 * @param      PricCabotaje $l PricCabotaje
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricCabotaje(PricCabotaje $l)
+	{
+		$this->collPricCabotajes[] = $l;
+		$l->setTransportador($this);
 	}
 
 	/**

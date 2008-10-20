@@ -20,6 +20,13 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the oid field.
+	 * @var        int
+	 */
+	protected $oid;
+
+
+	/**
 	 * The value for the ca_idcotizacion field.
 	 * @var        int
 	 */
@@ -167,6 +174,17 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	 * @var        boolean
 	 */
 	protected $alreadyInValidation = false;
+
+	/**
+	 * Get the [oid] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getOid()
+	{
+
+		return $this->oid;
+	}
 
 	/**
 	 * Get the [ca_idcotizacion] column value.
@@ -405,6 +423,28 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 
 		return $this->ca_usuactualizado;
 	}
+
+	/**
+	 * Set the value of [oid] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setOid($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->oid !== $v) {
+			$this->oid = $v;
+			$this->modifiedColumns[] = CotContinuacionPeer::OID;
+		}
+
+	} // setOid()
 
 	/**
 	 * Set the value of [ca_idcotizacion] column.
@@ -819,48 +859,50 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_idcotizacion = $rs->getInt($startcol + 0);
+			$this->oid = $rs->getInt($startcol + 0);
 
-			$this->ca_tipo = $rs->getString($startcol + 1);
+			$this->ca_idcotizacion = $rs->getInt($startcol + 1);
 
-			$this->ca_modalidad = $rs->getString($startcol + 2);
+			$this->ca_tipo = $rs->getString($startcol + 2);
 
-			$this->ca_origen = $rs->getString($startcol + 3);
+			$this->ca_modalidad = $rs->getString($startcol + 3);
 
-			$this->ca_destino = $rs->getString($startcol + 4);
+			$this->ca_origen = $rs->getString($startcol + 4);
 
-			$this->ca_idconcepto = $rs->getInt($startcol + 5);
+			$this->ca_destino = $rs->getString($startcol + 5);
 
-			$this->ca_idmoneda = $rs->getString($startcol + 6);
+			$this->ca_idconcepto = $rs->getInt($startcol + 6);
 
-			$this->ca_idequipo = $rs->getInt($startcol + 7);
+			$this->ca_idmoneda = $rs->getString($startcol + 7);
 
-			$this->ca_tarifa = $rs->getString($startcol + 8);
+			$this->ca_idequipo = $rs->getInt($startcol + 8);
 
-			$this->ca_valor_tar = $rs->getFloat($startcol + 9);
+			$this->ca_tarifa = $rs->getString($startcol + 9);
 
-			$this->ca_valor_min = $rs->getFloat($startcol + 10);
+			$this->ca_valor_tar = $rs->getFloat($startcol + 10);
 
-			$this->ca_frecuencia = $rs->getString($startcol + 11);
+			$this->ca_valor_min = $rs->getFloat($startcol + 11);
 
-			$this->ca_tiempotransito = $rs->getString($startcol + 12);
+			$this->ca_frecuencia = $rs->getString($startcol + 12);
 
-			$this->ca_observaciones = $rs->getString($startcol + 13);
+			$this->ca_tiempotransito = $rs->getString($startcol + 13);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 14, null);
+			$this->ca_observaciones = $rs->getString($startcol + 14);
 
-			$this->ca_usucreado = $rs->getString($startcol + 15);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 15, null);
 
-			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 16, null);
+			$this->ca_usucreado = $rs->getString($startcol + 16);
 
-			$this->ca_usuactualizado = $rs->getString($startcol + 17);
+			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 17, null);
+
+			$this->ca_usuactualizado = $rs->getString($startcol + 18);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 18; // 18 = CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 19; // 19 = CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotContinuacion object", $e);
@@ -1102,57 +1144,60 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdcotizacion();
+				return $this->getOid();
 				break;
 			case 1:
-				return $this->getCaTipo();
+				return $this->getCaIdcotizacion();
 				break;
 			case 2:
-				return $this->getCaModalidad();
+				return $this->getCaTipo();
 				break;
 			case 3:
-				return $this->getCaOrigen();
+				return $this->getCaModalidad();
 				break;
 			case 4:
-				return $this->getCaDestino();
+				return $this->getCaOrigen();
 				break;
 			case 5:
-				return $this->getCaIdconcepto();
+				return $this->getCaDestino();
 				break;
 			case 6:
-				return $this->getCaIdmoneda();
+				return $this->getCaIdconcepto();
 				break;
 			case 7:
-				return $this->getCaIdequipo();
+				return $this->getCaIdmoneda();
 				break;
 			case 8:
-				return $this->getCaTarifa();
+				return $this->getCaIdequipo();
 				break;
 			case 9:
-				return $this->getCaValorTar();
+				return $this->getCaTarifa();
 				break;
 			case 10:
-				return $this->getCaValorMin();
+				return $this->getCaValorTar();
 				break;
 			case 11:
-				return $this->getCaFrecuencia();
+				return $this->getCaValorMin();
 				break;
 			case 12:
-				return $this->getCaTiempotransito();
+				return $this->getCaFrecuencia();
 				break;
 			case 13:
-				return $this->getCaObservaciones();
+				return $this->getCaTiempotransito();
 				break;
 			case 14:
-				return $this->getCaFchcreado();
+				return $this->getCaObservaciones();
 				break;
 			case 15:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 16:
-				return $this->getCaFchactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 17:
+				return $this->getCaFchactualizado();
+				break;
+			case 18:
 				return $this->getCaUsuactualizado();
 				break;
 			default:
@@ -1175,24 +1220,25 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		$keys = CotContinuacionPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdcotizacion(),
-			$keys[1] => $this->getCaTipo(),
-			$keys[2] => $this->getCaModalidad(),
-			$keys[3] => $this->getCaOrigen(),
-			$keys[4] => $this->getCaDestino(),
-			$keys[5] => $this->getCaIdconcepto(),
-			$keys[6] => $this->getCaIdmoneda(),
-			$keys[7] => $this->getCaIdequipo(),
-			$keys[8] => $this->getCaTarifa(),
-			$keys[9] => $this->getCaValorTar(),
-			$keys[10] => $this->getCaValorMin(),
-			$keys[11] => $this->getCaFrecuencia(),
-			$keys[12] => $this->getCaTiempotransito(),
-			$keys[13] => $this->getCaObservaciones(),
-			$keys[14] => $this->getCaFchcreado(),
-			$keys[15] => $this->getCaUsucreado(),
-			$keys[16] => $this->getCaFchactualizado(),
-			$keys[17] => $this->getCaUsuactualizado(),
+			$keys[0] => $this->getOid(),
+			$keys[1] => $this->getCaIdcotizacion(),
+			$keys[2] => $this->getCaTipo(),
+			$keys[3] => $this->getCaModalidad(),
+			$keys[4] => $this->getCaOrigen(),
+			$keys[5] => $this->getCaDestino(),
+			$keys[6] => $this->getCaIdconcepto(),
+			$keys[7] => $this->getCaIdmoneda(),
+			$keys[8] => $this->getCaIdequipo(),
+			$keys[9] => $this->getCaTarifa(),
+			$keys[10] => $this->getCaValorTar(),
+			$keys[11] => $this->getCaValorMin(),
+			$keys[12] => $this->getCaFrecuencia(),
+			$keys[13] => $this->getCaTiempotransito(),
+			$keys[14] => $this->getCaObservaciones(),
+			$keys[15] => $this->getCaFchcreado(),
+			$keys[16] => $this->getCaUsucreado(),
+			$keys[17] => $this->getCaFchactualizado(),
+			$keys[18] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1225,57 +1271,60 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdcotizacion($value);
+				$this->setOid($value);
 				break;
 			case 1:
-				$this->setCaTipo($value);
+				$this->setCaIdcotizacion($value);
 				break;
 			case 2:
-				$this->setCaModalidad($value);
+				$this->setCaTipo($value);
 				break;
 			case 3:
-				$this->setCaOrigen($value);
+				$this->setCaModalidad($value);
 				break;
 			case 4:
-				$this->setCaDestino($value);
+				$this->setCaOrigen($value);
 				break;
 			case 5:
-				$this->setCaIdconcepto($value);
+				$this->setCaDestino($value);
 				break;
 			case 6:
-				$this->setCaIdmoneda($value);
+				$this->setCaIdconcepto($value);
 				break;
 			case 7:
-				$this->setCaIdequipo($value);
+				$this->setCaIdmoneda($value);
 				break;
 			case 8:
-				$this->setCaTarifa($value);
+				$this->setCaIdequipo($value);
 				break;
 			case 9:
-				$this->setCaValorTar($value);
+				$this->setCaTarifa($value);
 				break;
 			case 10:
-				$this->setCaValorMin($value);
+				$this->setCaValorTar($value);
 				break;
 			case 11:
-				$this->setCaFrecuencia($value);
+				$this->setCaValorMin($value);
 				break;
 			case 12:
-				$this->setCaTiempotransito($value);
+				$this->setCaFrecuencia($value);
 				break;
 			case 13:
-				$this->setCaObservaciones($value);
+				$this->setCaTiempotransito($value);
 				break;
 			case 14:
-				$this->setCaFchcreado($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 15:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 16:
-				$this->setCaFchactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 17:
+				$this->setCaFchactualizado($value);
+				break;
+			case 18:
 				$this->setCaUsuactualizado($value);
 				break;
 		} // switch()
@@ -1301,24 +1350,25 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		$keys = CotContinuacionPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdcotizacion($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaTipo($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaModalidad($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaOrigen($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaDestino($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaIdconcepto($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaIdmoneda($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaIdequipo($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaTarifa($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaValorTar($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaValorMin($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaFrecuencia($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaTiempotransito($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaObservaciones($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaFchcreado($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaUsucreado($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaFchactualizado($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaUsuactualizado($arr[$keys[17]]);
+		if (array_key_exists($keys[0], $arr)) $this->setOid($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdcotizacion($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaTipo($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaModalidad($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaOrigen($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaDestino($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaIdconcepto($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaIdmoneda($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaIdequipo($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaTarifa($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaValorTar($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaValorMin($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaFrecuencia($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaTiempotransito($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaObservaciones($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaFchcreado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaUsucreado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaFchactualizado($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaUsuactualizado($arr[$keys[18]]);
 	}
 
 	/**
@@ -1330,6 +1380,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotContinuacionPeer::DATABASE_NAME);
 
+		if ($this->isColumnModified(CotContinuacionPeer::OID)) $criteria->add(CotContinuacionPeer::OID, $this->oid);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_IDCOTIZACION)) $criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_TIPO)) $criteria->add(CotContinuacionPeer::CA_TIPO, $this->ca_tipo);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_MODALIDAD)) $criteria->add(CotContinuacionPeer::CA_MODALIDAD, $this->ca_modalidad);
@@ -1364,56 +1415,29 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotContinuacionPeer::DATABASE_NAME);
 
-		$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
-		$criteria->add(CotContinuacionPeer::CA_TIPO, $this->ca_tipo);
-		$criteria->add(CotContinuacionPeer::CA_ORIGEN, $this->ca_origen);
-		$criteria->add(CotContinuacionPeer::CA_DESTINO, $this->ca_destino);
-		$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+		$criteria->add(CotContinuacionPeer::OID, $this->oid);
 
 		return $criteria;
 	}
 
 	/**
-	 * Returns the composite primary key for this object.
-	 * The array elements will be in same order as specified in XML.
-	 * @return     array
+	 * Returns the primary key for this object (row).
+	 * @return     int
 	 */
 	public function getPrimaryKey()
 	{
-		$pks = array();
-
-		$pks[0] = $this->getCaIdcotizacion();
-
-		$pks[1] = $this->getCaTipo();
-
-		$pks[2] = $this->getCaOrigen();
-
-		$pks[3] = $this->getCaDestino();
-
-		$pks[4] = $this->getCaIdconcepto();
-
-		return $pks;
+		return $this->getOid();
 	}
 
 	/**
-	 * Set the [composite] primary key.
+	 * Generic method to set the primary key (oid column).
 	 *
-	 * @param      array $keys The elements of the composite key (order must match the order in XML file).
+	 * @param      int $key Primary key.
 	 * @return     void
 	 */
-	public function setPrimaryKey($keys)
+	public function setPrimaryKey($key)
 	{
-
-		$this->setCaIdcotizacion($keys[0]);
-
-		$this->setCaTipo($keys[1]);
-
-		$this->setCaOrigen($keys[2]);
-
-		$this->setCaDestino($keys[3]);
-
-		$this->setCaIdconcepto($keys[4]);
-
+		$this->setOid($key);
 	}
 
 	/**
@@ -1429,7 +1453,17 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIdcotizacion($this->ca_idcotizacion);
+
+		$copyObj->setCaTipo($this->ca_tipo);
+
 		$copyObj->setCaModalidad($this->ca_modalidad);
+
+		$copyObj->setCaOrigen($this->ca_origen);
+
+		$copyObj->setCaDestino($this->ca_destino);
+
+		$copyObj->setCaIdconcepto($this->ca_idconcepto);
 
 		$copyObj->setCaIdmoneda($this->ca_idmoneda);
 
@@ -1458,15 +1492,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdcotizacion(NULL); // this is a pkey column, so set to default value
-
-		$copyObj->setCaTipo(NULL); // this is a pkey column, so set to default value
-
-		$copyObj->setCaOrigen(NULL); // this is a pkey column, so set to default value
-
-		$copyObj->setCaDestino(NULL); // this is a pkey column, so set to default value
-
-		$copyObj->setCaIdconcepto(NULL); // this is a pkey column, so set to default value
+		$copyObj->setOid(NULL); // this is a pkey column, so set to default value
 
 	}
 

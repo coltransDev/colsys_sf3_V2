@@ -972,6 +972,8 @@ abstract class BaseCotizacionPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from Cotizacion object
 		}
 
+		$criteria->remove(CotizacionPeer::CA_IDCOTIZACION); // remove pkey col since this table uses auto-increment
+
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);

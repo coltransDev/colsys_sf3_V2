@@ -165,13 +165,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idciudad;
 
-
-	/**
-	 * The value for the ca_idgrupo field.
-	 * @var        string
-	 */
-	protected $ca_idgrupo;
-
 	/**
 	 * @var        Ciudad
 	 */
@@ -480,17 +473,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idciudad;
-	}
-
-	/**
-	 * Get the [ca_idgrupo] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaIdgrupo()
-	{
-
-		return $this->ca_idgrupo;
 	}
 
 	/**
@@ -960,28 +942,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	} // setCaIdciudad()
 
 	/**
-	 * Set the value of [ca_idgrupo] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     void
-	 */
-	public function setCaIdgrupo($v)
-	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
-		}
-
-		if ($this->ca_idgrupo !== $v) {
-			$this->ca_idgrupo = $v;
-			$this->modifiedColumns[] = ClientePeer::CA_IDGRUPO;
-		}
-
-	} // setCaIdgrupo()
-
-	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1040,14 +1000,12 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 
 			$this->ca_idciudad = $rs->getString($startcol + 20);
 
-			$this->ca_idgrupo = $rs->getString($startcol + 21);
-
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 22; // 22 = ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 21; // 21 = ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cliente object", $e);
@@ -1420,9 +1378,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			case 20:
 				return $this->getCaIdciudad();
 				break;
-			case 21:
-				return $this->getCaIdgrupo();
-				break;
 			default:
 				return null;
 				break;
@@ -1464,7 +1419,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			$keys[18] => $this->getCaPreferencias(),
 			$keys[19] => $this->getCaConfirmar(),
 			$keys[20] => $this->getCaIdciudad(),
-			$keys[21] => $this->getCaIdgrupo(),
 		);
 		return $result;
 	}
@@ -1559,9 +1513,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			case 20:
 				$this->setCaIdciudad($value);
 				break;
-			case 21:
-				$this->setCaIdgrupo($value);
-				break;
 		} // switch()
 	}
 
@@ -1606,7 +1557,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[18], $arr)) $this->setCaPreferencias($arr[$keys[18]]);
 		if (array_key_exists($keys[19], $arr)) $this->setCaConfirmar($arr[$keys[19]]);
 		if (array_key_exists($keys[20], $arr)) $this->setCaIdciudad($arr[$keys[20]]);
-		if (array_key_exists($keys[21], $arr)) $this->setCaIdgrupo($arr[$keys[21]]);
 	}
 
 	/**
@@ -1639,7 +1589,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ClientePeer::CA_PREFERENCIAS)) $criteria->add(ClientePeer::CA_PREFERENCIAS, $this->ca_preferencias);
 		if ($this->isColumnModified(ClientePeer::CA_CONFIRMAR)) $criteria->add(ClientePeer::CA_CONFIRMAR, $this->ca_confirmar);
 		if ($this->isColumnModified(ClientePeer::CA_IDCIUDAD)) $criteria->add(ClientePeer::CA_IDCIUDAD, $this->ca_idciudad);
-		if ($this->isColumnModified(ClientePeer::CA_IDGRUPO)) $criteria->add(ClientePeer::CA_IDGRUPO, $this->ca_idgrupo);
 
 		return $criteria;
 	}
@@ -1733,8 +1682,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		$copyObj->setCaConfirmar($this->ca_confirmar);
 
 		$copyObj->setCaIdciudad($this->ca_idciudad);
-
-		$copyObj->setCaIdgrupo($this->ca_idgrupo);
 
 
 		if ($deepCopy) {

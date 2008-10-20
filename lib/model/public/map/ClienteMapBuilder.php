@@ -105,8 +105,6 @@ class ClienteMapBuilder {
 
 		$tMap->addForeignKey('CA_IDCIUDAD', 'CaIdciudad', 'string', CreoleTypes::VARCHAR, 'tb_ciudades', 'CA_IDCIUDAD', false, null);
 
-		$tMap->addColumn('CA_IDGRUPO', 'CaIdgrupo', 'string', CreoleTypes::VARCHAR, false, null);
-
 	} // doBuild()
 
 } // ClienteMapBuilder

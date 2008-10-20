@@ -156,83 +156,6 @@ function extConcepto($id="concepto", $transporte, $modalidad=null){
 	return $html;
 }
 
-function extTraficos($lugar, $nacional=false){
-	if ($nacional) {
-		$baseParams = "trafico:'CO-057',lugar:'$lugar'";
-		$html = "";
-	} else {
-		$baseParams = "trafico:Ext.getCmp('tra_$lugar').getValue(),lugar:'$lugar'";
-		$html = "new Ext.form.ComboBox({		
-			fieldLabel: 'Tráfico ".ucfirst($lugar)."',
-			typeAhead: true,
-			forceSelection: true,
-			triggerAction: 'all',
-			emptyText:'Seleccione',
-			selectOnFocus: true,					
-			hiddenName: 'idtra_$lugar',
-			id: 'tra_$lugar',
-			displayField: 'trafico',
-			valueField: 'idtrafico',
-			lazyRender:true,
-			listClass: 'x-combo-list-small',
-			store : new Ext.data.Store({
-				autoLoad : false,
-				url: '".url_for("cotizaciones/datosTraficos")."',
-				reader: new Ext.data.JsonReader(
-					{
-						id: 'idtrafico',
-						root: 'root',
-						totalProperty: 'total',
-						successProperty: 'success'
-					},
-					Ext.data.Record.create([
-						{name: 'idtrafico'}, 
-						{name: 'trafico'}
-					])
-				),
-				baseParams:{impoexpo:Ext.getCmp('impoexpo').getValue(),lugar:'$lugar'}
-			})
-		}),";
-	}
-	$html.= "new Ext.form.ComboBox({		
-		fieldLabel: 'Ciudad ".ucfirst($lugar)."',
-		typeAhead: true,
-		forceSelection: true,
-		triggerAction: 'all',
-		emptyText:'Seleccione',
-		selectOnFocus: true,					
-		hiddenName: 'idciu_$lugar',
-		id: 'ciu_$lugar',
-		displayField: 'ciudad',
-		valueField: 'idciudad',
-		lazyRender:true,
-		listClass: 'x-combo-list-small',
-		listeners:{focus:function( field, newVal, oldVal ){
-								ciudad = Ext.getCmp('ciu_$lugar');
-								ciudad.store.baseParams = {{$baseParams}};
-								ciudad.store.reload();
-						  }
-		},
-		store : new Ext.data.Store({
-			autoLoad : false,
-			url: '".url_for("cotizaciones/datosCiudades")."',
-			reader: new Ext.data.JsonReader(
-				{
-					id: 'idciudad',
-					root: 'root',
-					totalProperty: 'total',
-					successProperty: 'success'
-				}, 
-				Ext.data.Record.create([
-					{name: 'idciudad'},
-					{name: 'ciudad'}
-				])
-			),
-			baseParams:{{$baseParams}}
-		})
-	})";
-	return $html;					
-}
 
 function extIncoterms($id="incoterms"){
 	$incoterms =  ParametroPeer::retrieveByCaso( "CU062" );
@@ -276,9 +199,9 @@ function extImprimir($id="imprimir"){
 	return $html;					
 }
 
-function extOtmDta($id="otmdta"){	
+function extOtmDta($id="otmdta"){		
 	$html = "new Ext.form.ComboBox({		
-					fieldLabel: 'OTM/DTA',			
+					fieldLabel: 'Tipo',			
 					typeAhead: true,
 					forceSelection: true,
 					triggerAction: 'all',
@@ -375,7 +298,7 @@ function extRecargosNoEnlazado($transporte, $selected=""){
 			reader: new Ext.data.JsonReader(
 				{
 					id: 'idrecargo',
-					root: 'recargos',
+					root: 'root',
 					totalProperty: 'total',
 					successProperty: 'success'
 				}, 

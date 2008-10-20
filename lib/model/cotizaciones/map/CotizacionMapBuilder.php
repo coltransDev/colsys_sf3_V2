@@ -59,7 +59,9 @@ class CotizacionMapBuilder {
 		$tMap = $this->dbMap->addTable('tb_cotizaciones');
 		$tMap->setPhpName('Cotizacion');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
+
+		$tMap->setPrimaryKeyMethodInfo('tb_cotizaciones_SEQ');
 
 		$tMap->addPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int', CreoleTypes::INTEGER, true, null);
 

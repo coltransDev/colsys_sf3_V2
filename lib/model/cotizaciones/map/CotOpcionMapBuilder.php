@@ -63,11 +63,11 @@ class CotOpcionMapBuilder {
 
 		$tMap->setPrimaryKeyMethodInfo('tb_cotopciones_SEQ');
 
-		$tMap->addForeignPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int' , CreoleTypes::INTEGER, 'tb_cotproductos', 'CA_IDCOTIZACION', true, null);
-
 		$tMap->addPrimaryKey('CA_IDOPCION', 'CaIdopcion', 'string', CreoleTypes::VARCHAR, true, null);
 
-		$tMap->addForeignKey('CA_IDPRODUCTO', 'CaIdproducto', 'int', CreoleTypes::INTEGER, 'tb_cotproductos', 'CA_IDPRODUCTO', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int' , CreoleTypes::INTEGER, 'tb_cotproductos', 'CA_IDCOTIZACION', true, null);
+
+		$tMap->addForeignPrimaryKey('CA_IDPRODUCTO', 'CaIdproducto', 'int' , CreoleTypes::INTEGER, 'tb_cotproductos', 'CA_IDPRODUCTO', true, null);
 
 		$tMap->addForeignKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int', CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', false, null);
 

@@ -20,17 +20,17 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 
 
 	/**
-	 * The value for the ca_idcotizacion field.
-	 * @var        int
-	 */
-	protected $ca_idcotizacion;
-
-
-	/**
 	 * The value for the ca_idopcion field.
 	 * @var        string
 	 */
 	protected $ca_idopcion;
+
+
+	/**
+	 * The value for the ca_idcotizacion field.
+	 * @var        int
+	 */
+	protected $ca_idcotizacion;
 
 
 	/**
@@ -174,17 +174,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
-	 * Get the [ca_idcotizacion] column value.
-	 * 
-	 * @return     int
-	 */
-	public function getCaIdcotizacion()
-	{
-
-		return $this->ca_idcotizacion;
-	}
-
-	/**
 	 * Get the [ca_idopcion] column value.
 	 * 
 	 * @return     string
@@ -193,6 +182,17 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idopcion;
+	}
+
+	/**
+	 * Get the [ca_idcotizacion] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdcotizacion()
+	{
+
+		return $this->ca_idcotizacion;
 	}
 
 	/**
@@ -401,6 +401,28 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Set the value of [ca_idopcion] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaIdopcion($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_idopcion !== $v) {
+			$this->ca_idopcion = $v;
+			$this->modifiedColumns[] = CotOpcionPeer::CA_IDOPCION;
+		}
+
+	} // setCaIdopcion()
+
+	/**
 	 * Set the value of [ca_idcotizacion] column.
 	 * 
 	 * @param      int $v new value
@@ -425,28 +447,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 		}
 
 	} // setCaIdcotizacion()
-
-	/**
-	 * Set the value of [ca_idopcion] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     void
-	 */
-	public function setCaIdopcion($v)
-	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
-		}
-
-		if ($this->ca_idopcion !== $v) {
-			$this->ca_idopcion = $v;
-			$this->modifiedColumns[] = CotOpcionPeer::CA_IDOPCION;
-		}
-
-	} // setCaIdopcion()
 
 	/**
 	 * Set the value of [ca_idproducto] column.
@@ -795,9 +795,9 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_idcotizacion = $rs->getInt($startcol + 0);
+			$this->ca_idopcion = $rs->getString($startcol + 0);
 
-			$this->ca_idopcion = $rs->getString($startcol + 1);
+			$this->ca_idcotizacion = $rs->getInt($startcol + 1);
 
 			$this->ca_idproducto = $rs->getInt($startcol + 2);
 
@@ -1094,10 +1094,10 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdcotizacion();
+				return $this->getCaIdopcion();
 				break;
 			case 1:
-				return $this->getCaIdopcion();
+				return $this->getCaIdcotizacion();
 				break;
 			case 2:
 				return $this->getCaIdproducto();
@@ -1164,8 +1164,8 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 		$keys = CotOpcionPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdcotizacion(),
-			$keys[1] => $this->getCaIdopcion(),
+			$keys[0] => $this->getCaIdopcion(),
+			$keys[1] => $this->getCaIdcotizacion(),
 			$keys[2] => $this->getCaIdproducto(),
 			$keys[3] => $this->getCaIdconcepto(),
 			$keys[4] => $this->getCaValorTar(),
@@ -1213,10 +1213,10 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdcotizacion($value);
+				$this->setCaIdopcion($value);
 				break;
 			case 1:
-				$this->setCaIdopcion($value);
+				$this->setCaIdcotizacion($value);
 				break;
 			case 2:
 				$this->setCaIdproducto($value);
@@ -1286,8 +1286,8 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 		$keys = CotOpcionPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdcotizacion($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaIdopcion($arr[$keys[1]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdopcion($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdcotizacion($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaIdproducto($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaIdconcepto($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaValorTar($arr[$keys[4]]);
@@ -1314,8 +1314,8 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotOpcionPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(CotOpcionPeer::CA_IDCOTIZACION)) $criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		if ($this->isColumnModified(CotOpcionPeer::CA_IDOPCION)) $criteria->add(CotOpcionPeer::CA_IDOPCION, $this->ca_idopcion);
+		if ($this->isColumnModified(CotOpcionPeer::CA_IDCOTIZACION)) $criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		if ($this->isColumnModified(CotOpcionPeer::CA_IDPRODUCTO)) $criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->ca_idproducto);
 		if ($this->isColumnModified(CotOpcionPeer::CA_IDCONCEPTO)) $criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		if ($this->isColumnModified(CotOpcionPeer::CA_VALOR_TAR)) $criteria->add(CotOpcionPeer::CA_VALOR_TAR, $this->ca_valor_tar);
@@ -1347,8 +1347,9 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotOpcionPeer::DATABASE_NAME);
 
-		$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		$criteria->add(CotOpcionPeer::CA_IDOPCION, $this->ca_idopcion);
+		$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+		$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->ca_idproducto);
 
 		return $criteria;
 	}
@@ -1362,9 +1363,11 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 		$pks = array();
 
-		$pks[0] = $this->getCaIdcotizacion();
+		$pks[0] = $this->getCaIdopcion();
 
-		$pks[1] = $this->getCaIdopcion();
+		$pks[1] = $this->getCaIdcotizacion();
+
+		$pks[2] = $this->getCaIdproducto();
 
 		return $pks;
 	}
@@ -1378,9 +1381,11 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	public function setPrimaryKey($keys)
 	{
 
-		$this->setCaIdcotizacion($keys[0]);
+		$this->setCaIdopcion($keys[0]);
 
-		$this->setCaIdopcion($keys[1]);
+		$this->setCaIdcotizacion($keys[1]);
+
+		$this->setCaIdproducto($keys[2]);
 
 	}
 
@@ -1396,8 +1401,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	 */
 	public function copyInto($copyObj, $deepCopy = false)
 	{
-
-		$copyObj->setCaIdproducto($this->ca_idproducto);
 
 		$copyObj->setCaIdconcepto($this->ca_idconcepto);
 
@@ -1442,9 +1445,11 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
+		$copyObj->setCaIdopcion(NULL); // this is a pkey column, so set to default value
+
 		$copyObj->setCaIdcotizacion(NULL); // this is a pkey column, so set to default value
 
-		$copyObj->setCaIdopcion(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaIdproducto(NULL); // this is a pkey column, so set to default value
 
 	}
 
