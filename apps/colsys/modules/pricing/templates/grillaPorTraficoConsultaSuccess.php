@@ -273,7 +273,7 @@ var selModel = new  Ext.grid.CellSelectionModel();
 /*
 * Crea la grilla 
 */    
-new Ext.grid.GridPanel({
+new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	store: store,
 	master_column_id : 'nconcepto',
 	cm: colModel,

@@ -63,40 +63,44 @@ var record = Ext.data.Record.create([
 	{name: 'inicio', type: 'date', dateFormat:'m/d/Y'},
 	{name: 'vencimiento', type: 'date', dateFormat:'m/d/Y'},		
 	{name: 'moneda', type: 'string'},		
-	{name: 'iditem', type: 'int'},
-	{name: 'idconcepto', type: 'int'},
+	{name: 'recargo_id', type: 'int'},
+	{name: 'concepto_id', type: 'int'},
 	{name: 'observaciones', type: 'string'},
-	{name: 'aplicacion', type: 'string'},			
+	{name: 'aplicacion', type: 'string'},		
+	{name: '_id', type: 'int'},
+	{name: '_parent', type: 'auto'},
+	{name: '_is_leaf', type: 'bool'},
 	{name: 'sel', type: 'bool'},
 	{name: 'ttransito', type: 'string'},
 	{name: 'frecuencia', type: 'string'},				
-	{name: 'style', type: 'string'}	,
-	{name: 'tipo', type: 'string'}	,
-	{name: 'neta', type: 'string'}	,
-	{name: 'minima', type: 'string'}	
-
+	{name: 'style', type: 'string'},
+	{name: 'tipo', type: 'string'},
 	
+	<?
+	foreach( $conceptos as $concepto ){			
+	?>
+	,{name: 'concepto_<?=$concepto->getCaIdconcepto()?>', type: 'string'}			
+	<?			
+	}
+	?>		
 ]);
    		
 /*
 * Crea el store
 */
 <?
-$url = "pricing/pagerData?opcion=consulta&modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
+$url = "pricing/pagerData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
 if( $idlinea ){
 	$url .= "&idlinea=".$idlinea;
 }
 if( $idciudad ){
 	$url .= "&idciudad=".$idciudad;
 }
-if( $idciudaddestino ){
-	$url .= "&idciudaddestino=".$idciudaddestino;
-}
 
 ?>
 var store = new Ext.data.GroupingStore({
 	autoLoad : true,			
-	url: '<?=url_for($url)?>',	
+	url: '<?=url_for($url)?>',
 	reader: new Ext.data.JsonReader(
 		{
 			id: '_id',
@@ -213,26 +217,42 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: false,
 			dataIndex: 'moneda',              
 			editor: <?=extMonedas("USD")?>
-		}		
-		,{
-			id: 'neta',
-			header: "Neta",
-			width: 80,
-			sortable: true,
-			groupable: false,								
-			dataIndex: 'neta',
-			editor: new Ext.form.NumberField()		
-		},		
-		{
-			id: 'minima',
-			header: "<?=(($transporte=="Aéreo"&&$modalidad!="CABOTAJE")||$modalidad=="FCL")?"Sugerida":"Minima"?>",
-			width: 80,
-			sortable: true,
-			groupable: false,								
-			dataIndex: 'minima',
-			editor: new Ext.form.NumberField()			
 		}
-		
+		<?
+		foreach( $conceptos as $concepto ){			
+		?>
+		,{
+			id: 'concepto_<?=$concepto->getCaIdconcepto()?>',
+			header: "<?=$concepto->getCaConcepto()?>",
+			width: 80,
+			sortable: true,
+			groupable: false,	
+			<?
+			switch( $modalidad ){
+				case "FCL":
+					?>
+					renderer: rendererSug,
+					<?
+					break;
+			
+				default:
+					?>
+					renderer: rendererMin,								
+					<?
+					break;
+			}
+			?>				
+			dataIndex: 'concepto_<?=$concepto->getCaIdconcepto()?>',               
+			editor: new Ext.form.NumberFieldMin({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left',
+				modalidad: '<?=$modalidad?>'                                      
+			})
+		}
+		<?
+		}
+		?>
 	]
 	,
 	isCellEditable: function(colIndex, rowIndex) {	
@@ -255,7 +275,27 @@ var colModel = new Ext.grid.ColumnModel({
 /*
 * Configura el modo de seleccion de la grilla 
 */
-var selModel = new  Ext.grid.CellSelectionModel();
+var selModel = new  Ext.grid.CellSelectionModel(/*{
+	listeners:{*/
+		/**
+		* Expande las ramas cuando se seleccionan si el padre no esta 
+		* expandido lo expande
+		**/
+		/*
+		cellselect: function(sm, rowIndex, columnIndex) {	
+			var record = store.getAt(rowIndex);
+			store.expandNode(record);
+			if( record.data._parent ){
+				var parent = store.getById(record.data._parent);
+				store.expandNode(parent);
+				if( parent.data._parent ){
+					var parent = store.getById(parent.data._parent);
+					store.expandNode(parent);
+				}
+			}
+		}
+	}
+}*/);
 
 
 
@@ -267,8 +307,6 @@ var selModel = new  Ext.grid.CellSelectionModel();
 /*
 * Handlers de los eventos y botones de la grilla 
 */
-
-
 
 /*
 * Handler que se dispara despues de editar una celda
@@ -309,7 +347,7 @@ var gridOnvalidateedit = function(e){
 	    store.each( function( r ){				
 				if( r.data.idrecargo==e.value ){				
 					e.value = r.data.recargo;
-					rec.set("iditem", r.data.idrecargo);									
+					rec.set("recargo_id", r.data.idrecargo);									
 					return true;
 				}
 			}
@@ -354,6 +392,64 @@ var actualizarObservaciones=function( btn, text ){
 		document.getElementById("obs_"+record.get("_id")).innerHTML  = "<strong>Observaciones:</strong> "+text;		
 	}
 }	
+
+function updateModel(){
+	var success = true;
+	var records = store.getModifiedRecords();
+			
+	var lenght = records.length;
+	for( var i=0; i< lenght; i++){
+		r = records[i];
+					
+		var changes = r.getChanges();
+		
+		//Da formato a las fechas antes de enviarlas 
+		if(changes['inicio']){
+			changes['inicio']=Ext.util.Format.date(changes['inicio'],'Y-m-d');									
+		}	
+		
+		if(changes['vencimiento']){
+			changes['vencimiento']=Ext.util.Format.date(changes['vencimiento'],'Y-m-d');									
+		}	
+				
+		//Si es un recargo y lo envia como parametro
+		if(r.data.recargo_id){
+			changes['recargo_id']=r.data.recargo_id;
+			changes['concepto_id']=r.data.concepto_id;									
+		}
+												
+		//envia los datos al servidor 
+		Ext.Ajax.request( 
+			{   
+				waitMsg: 'Guardando cambios...',						
+				url: '<?=url_for("pricing/observePricingManagement")?>/id/'+r.data.idtrayecto, 						//method: 'POST', 
+				//Solamente se envian los cambios 						
+				params :	changes,
+										
+				//Ejecuta esta accion en caso de fallo
+				//(404 error etc, ***NOT*** success=false)
+				failure:function(response,options){							
+					alert( response.responseText );						
+					success = false;
+				},
+				//Ejecuta esta accion cuando el resultado es exitoso
+				success:function(response,options){							
+					//alert( response.responseText );						
+					//r.commit();
+				}
+			 }
+		); 
+		r.set("sel", false);//Quita la seleccion de todas las columnas 
+	}
+	
+	if( success ){
+		store.commitChanges();
+		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
+	}else{
+		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
+	}	
+}
+
 
 var gridOnRowcontextmenu =  function(grid, index, e){
 		
@@ -414,11 +510,11 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 }
 
 function agregarFila(ctxRecord, index){	
-		
+	
+	ctxRecord.set("_is_leaf", false);
 	
 	var rec = new record({trayecto:ctxRecord.get("trayecto"),
 						  nconcepto:'',
-						  idconcepto: ctxRecord.get("iditem"),
 						  idtrayecto:ctxRecord.get("idtrayecto"),
 						  moneda:''
 						  <?
@@ -434,69 +530,11 @@ function agregarFila(ctxRecord, index){
 	records.push( rec );
 	store.insert( index+1, records );
 }
-	
-
-
-function updateModel(){
-	var success = true;
-	var records = store.getModifiedRecords();
-			
-	var lenght = records.length;
-	for( var i=0; i< lenght; i++){
-		r = records[i];
-					
-		var changes = r.getChanges();
-		
-		//Da formato a las fechas antes de enviarlas 
-		if(changes['inicio']){
-			changes['inicio']=Ext.util.Format.date(changes['inicio'],'Y-m-d');									
-		}	
-		
-		if(changes['vencimiento']){
-			changes['vencimiento']=Ext.util.Format.date(changes['vencimiento'],'Y-m-d');									
-		}	
-		
-		changes['tipo']=r.data.tipo;
-		changes['iditem']=r.data.iditem;	
-		changes['idconcepto']=r.data.idconcepto;	
-		
-												
-		//envia los datos al servidor 
-		Ext.Ajax.request( 
-			{   
-				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("pricing/observePricingManagement")?>/id/'+r.data.idtrayecto, 						//method: 'POST', 
-				//Solamente se envian los cambios 						
-				params :	changes,
-										
-				//Ejecuta esta accion en caso de fallo
-				//(404 error etc, ***NOT*** success=false)
-				failure:function(response,options){							
-					alert( response.responseText );						
-					success = false;
-				},
-				//Ejecuta esta accion cuando el resultado es exitoso
-				success:function(response,options){							
-					//alert( response.responseText );						
-					//r.commit();
-				}
-			 }
-		); 
-		r.set("sel", false);//Quita la seleccion de todas las columnas 
-	}
-	
-	if( success ){
-		store.commitChanges();
-		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
-	}else{
-		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
-	}	
-}
 		
 /*
 * Crea la grilla 
 */    
-new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
+new Ext.grid.EditorGridPanel({
 	store: store,
 	master_column_id : 'nconcepto',
 	cm: colModel,
@@ -511,9 +549,6 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	id: 'fletes_<?=$idcomponent?>',
 	height: 400,
 	//autoHeight : true, 
-	<?
-	if($opcion!="consulta"){
-	?>
 	tbar: [			  
 	{
 		text: 'Guardar Cambios',
@@ -521,9 +556,6 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 		iconCls: 'disk',  // reference to our css
 		handler: updateModel
 	}],
-	<?
-	}
-	?>
 	
 	view: new Ext.grid.GroupingView({
 		forceFit:true,
@@ -542,12 +574,6 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 			}
 		} 
 	}),	
-	listeners:{
-		rowcontextmenu: gridOnRowcontextmenu,
-		afteredit: gridAfterEditHandler,
-		click: gridOnclickHandler,
-		validateedit: gridOnvalidateedit
-	}	
 	/*
 	bbar: new Ext.PagingToolbar({
 		store: store,
@@ -555,6 +581,12 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 		pageSize: 80
 		
 	}),*/
+	listeners:{
+		rowcontextmenu: gridOnRowcontextmenu,
+		afteredit: gridAfterEditHandler,
+		click: gridOnclickHandler,
+		validateedit: gridOnvalidateedit
+	}	
 	
 
 });

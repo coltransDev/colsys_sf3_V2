@@ -6,7 +6,7 @@
 ?>
 <table class="tableForm" width="800px" border="1" id="mainTable">
 	<tr>
-		<th width="57" scope="col">ID</th>
+		<th width="57" scope="col">Consecutivo</th>
 		<th width="668" scope="col">Cotizaci&oacute;n</th>
 	</tr>
 	<?
@@ -15,12 +15,12 @@
 		$cliente = $contacto->getCliente(); 
 	?>
 	<tr>
-		<td class="listar"><?=link_to($cotizacion->getCaIdcotizacion(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
+		<td class="listar"><?=link_to("C".$cotizacion->getCaConsecutivo(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
 		<td class="invertir">
 			<table class="tableForm" width="100%" border="0">
 				<tbody>
 					<tr>
-						<td width="10%" class="listar"><b>Fch.Cotizacion:</b><br /><?=$cotizacion->getCaFchCotizacion()?></td>
+						<td width="10%" class="listar"><b>Fch.Cotizacion:</b><br /><?=$cotizacion->getCaFchCreado()?></td>
 						<td width="45%" class="listar" colspan=2><b>Cliente:</b><br /><?=$cliente?></td>
 						<td width="45%" class="listar" colspan=2><b>Contacto:</b><br /><?=$contacto->getNombre()?></td>
 					</tr>

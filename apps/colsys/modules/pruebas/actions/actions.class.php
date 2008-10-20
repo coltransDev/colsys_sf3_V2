@@ -546,5 +546,27 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		
 	}
 	
+	
+	/*
+	* Coloca el consecutivo de acuerdo a la fecha de creado
+	*/
+	public function executeAsignarConsecutivoCotizaciones(){
+		
+		set_time_limit(0);
+		
+		$c = new Criteria();
+		$c->add( CotizacionPeer::CA_CONSECUTIVO, null, Criteria::ISNULL);
+		$c->addAscendingOrderByColumn(CotizacionPeer::CA_FCHCREADO);
+		$cotizaciones  = CotizacionPeer::doSelect( $c );
+		$c->setLimit(8000);
+		foreach( $cotizaciones as $cotizacion ){
+			$sig = CotizacionPeer::siguienteConsecutivo($cotizacion->getCaFchCreado("Y"));
+			$cotizacion->setCaConsecutivo( $sig );
+			$cotizacion->save();			
+		}
+		
+		
+	}
+	
 }
 ?>

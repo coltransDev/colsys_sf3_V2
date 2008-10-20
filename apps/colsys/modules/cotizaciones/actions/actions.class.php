@@ -34,6 +34,9 @@ class cotizacionesActions extends sfActions
 			case "mis_cotizaciones":
 				$c->add( CotizacionPeer::CA_USUARIO, "%".$user->getUserId()."%", Criteria::LIKE );	
 				break;	
+			case "consecutivo":
+				$c->add( CotizacionPeer::CA_CONSECUTIVO, "%".$cadena."%", Criteria::LIKE );	
+				break;	
 			case "nombre_del_cliente":
 				$c->addJoin( CotizacionPeer::CA_IDCONTACTO, ContactoPeer::CA_IDCONTACTO );	
 				$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE );	
@@ -74,16 +77,6 @@ class cotizacionesActions extends sfActions
 		$this->forward404Unless( $this->cotizacion );		
 	}
 	
-	
-	/*
-	* Si ocurre un error reenvia a la pagina original y muestra los mensajes 
-	* de error
-	* @author: Carlos G. López M.
-	*/
-	public function handleErrorFormCotizacionGuardar()
-	{
-		$this->forward("cotizaciones", "formCotizacion");
-	}
 
 	/*
 	* Permite crear y editar el encabezado de una cotizacion 
@@ -111,6 +104,17 @@ class cotizacionesActions extends sfActions
 		$this->user = $this->getUser();
 	}
 	
+	
+	/*
+	* Si ocurre un error reenvia a la pagina original y muestra los mensajes 
+	* de error
+	* @author: Carlos G. López M.
+	*/
+	public function handleErrorFormCotizacionGuardar()
+	{
+		$this->forward("cotizaciones", "formCotizacion");
+	}
+	
 	/*
 	* Guarda los cambios realizados al Header de la Cotización  
 	* @author Carlos G. López M.
@@ -124,7 +128,7 @@ class cotizacionesActions extends sfActions
 		}else{		
 			$cotizacion = new Cotizacion();
 			$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
-			$cotizacion->setCaConsecutivo( $sig ); 
+			$cotizacion->setCaConsecutivo( $sig ); 			
 		}
 				
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
@@ -144,7 +148,11 @@ class cotizacionesActions extends sfActions
 			$cotizacion->setCaUsuactualizado( $user_id );							
 		}
 		$cotizacion->save();
-		exit;	
+		
+		$this->options = array();
+		$this->options['idcotizacion']=$cotizacion->getCaIdcotizacion();		
+		$this->options['success']=true;
+		$this->setLayout("ajax");
 	}
 		
 	/*
@@ -894,7 +902,16 @@ class cotizacionesActions extends sfActions
 		$this->forward404Unless($cotizacion);
 		
 		$newCotizacion = $cotizacion->copy( false ); //La copia recursiva se hace paso a paso por que las llaves son naturales 
+		$user = $this->getUser();		
+		$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
+		$newCotizacion->setCaConsecutivo( $sig ); 		
+		$newCotizacion->setCaFchcreado( time() );
+		$newCotizacion->setCaUsucreado( $user->getUserId() );
+		$newCotizacion->setCaFchactualizado( null );
+		$newCotizacion->setCaUsuactualizado( null );
+		
 		$newCotizacion->save();
+		
 		$productos = $cotizacion->getCotProductos();
 		foreach( $productos as $producto ){
 			$newProducto = $producto->copy( false );

@@ -391,6 +391,9 @@ var crearVentanaProducto=function( record ){
 			}
 		}]
 	});	
+	
+	
+	
 	win.show( );
 	
 	if(typeof(record)!="undefined"){ // Coloca los datos en la ventana 		
@@ -514,6 +517,7 @@ var ventanaTarifario = function( record ){
 								newRec.set("trayecto", activeRecord.data.trayecto );
 								newRec.set("transporte", activeRecord.data.transporte );
 								newRec.set("modalidad", activeRecord.data.modalidad );
+								
 								//newRec.set("idopcion", "" );										
 								newRec.set("item", r.data.nconcepto );
 								newRec.set("iditem", iditem );

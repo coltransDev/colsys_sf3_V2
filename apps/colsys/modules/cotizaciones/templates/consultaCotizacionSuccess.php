@@ -89,6 +89,18 @@ Ext.onReady(function(){
 				    items: [{
 		                layout: 'form',
 		                items: [{
+							xtype:'textfield',
+							fieldLabel: 'Consecutivo',
+							name: 'consecutivo',
+							value: 'C<?=$cotizacion->getCaConsecutivo()?>',
+							allowBlank:false,
+							readOnly: true, 
+							width: 120
+		                }]
+				    },
+					{
+		                layout: 'form',
+		                items: [{
 							xtype:'datefield',
 							fieldLabel: 'Fecha de Solicitud',
 							name: 'fchSolicitud',
@@ -157,7 +169,8 @@ Ext.onReady(function(){
 					fieldLabel: 'Persona de Contacto',
 					name: 'contacto',
 					value: '<?=$contacto->getCaNombres().' '.$contacto->getCaPapellido().' '.$contacto->getCaSapellido()?>',
-                    allowBlank:false
+                    allowBlank:false,
+					readOnly: true
 				},{
 					id: 'usuario',
 					xtype:'hidden',
@@ -170,7 +183,8 @@ Ext.onReady(function(){
 					fieldLabel: 'Representante Comercial',
 					name: 'vendedor',
 					value: '<?=$usuario->getCaNombre()?>',
-                    allowBlank:false
+                    allowBlank:false,
+					readOnly: true
                 }]
             },{
                 title:'Entrada',
@@ -234,12 +248,25 @@ Ext.onReady(function(){
 	            text: 'Salvar',
 	            handler: function(){
 	            	if( mainPanel.getForm().isValid() ){
+						
 	            		mainPanel.getForm().submit({url:'<?=url_for('cotizaciones/formCotizacionGuardar')?>', 
 	            							 	waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
-	            							 	// standardSubmit: false, 
+												success:function(response,options){														
+													<?
+													if( !$cotizacion->getCaIdcotizacion() ){
+													?>
+														document.location='<?=url_for("cotizaciones/consultaCotizacion?id=")?>'+options.result.idcotizacion;
+													<?
+													}
+													?>
+												},
+	            							 	// standardSubmit: false, 												
 		            							failure:function(response,options){							
 													Ext.Msg.alert( "Error "+response.responseText );
-												},//end failure block      
+												}//end failure block  
+												
+												
+												    
 											});
 					}else{
 						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información básica de la cotización no es válida o está incompleta!');
@@ -250,31 +277,36 @@ Ext.onReady(function(){
 	        }]
         }],
     });
+	mainPanel.render(document.body);
      <?
-     include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
-     include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
-     include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
-     include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
-     ?>   	
-    var subPanel = new Ext.FormPanel({
-        labelAlign: 'top',
-        bodyStyle:'padding:1px',
-
-        items: [{
-            xtype:'tabpanel',
-            plain:true,
-            activeTab: 0,
-            height:250,
-            defaults:{bodyStyle:'padding:10px'},
-            items:[grid_productos,
-            	   grid_recargos,
-            	   grid_contviajes,
-            	   grid_seguros
-			]
-        }],
-    });
-
-    mainPanel.render(document.body);
-    subPanel.render(document.body);
+	 if( $cotizacion->getCaIdcotizacion() ){
+		 include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
+		 include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
+		 include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
+		 include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
+		 ?>   	
+		var subPanel = new Ext.FormPanel({
+			labelAlign: 'top',
+			bodyStyle:'padding:1px',
+	
+			items: [{
+				xtype:'tabpanel',
+				plain:true,
+				activeTab: 0,
+				height:250,
+				defaults:{bodyStyle:'padding:10px'},
+				items:[grid_productos,
+					   grid_recargos,
+					   grid_contviajes,
+					   grid_seguros
+				]
+			}],
+		});
+		subPanel.render(document.body);
+	<?	
+	}
+	?>
+    
+    
 });
 </script>

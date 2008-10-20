@@ -363,19 +363,22 @@ $pdf->SetStyles ( array ("B", "B", "B", "B", "B" ) );
 $pdf->SetAligns ( array ("C", "C", "C", "C", "C" ) );
 $pdf->Row ( array ('Concepto:', 'Cant.', 'Neta / Min.', 'Reportar / Min.', 'Cobrar / Min' ) );
 
-$pdf->SetWidths ( array (40, 10, 25, 25, 25, 25, 25, 25 ) );
-$pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
-$pdf->SetStyles ( array ("B", "", "", "", "", "", "", "", "" ) );
-$pdf->SetAligns ( array ("L", "C", "R", "R", "R", "R", "R", "R" ) );
+
 
 $conceptos = $reporteNegocio->getRepTarifas ();
 foreach ( $conceptos as $concepto ) {
+	$pdf->SetWidths ( array (40, 10, 25, 25, 25, 25, 25, 25 ) );
+	$pdf->SetFills ( array (1, 0, 0, 0, 0, 0, 0, 0, 0 ) );
+	$pdf->SetStyles ( array ("B", "", "", "", "", "", "", "", "" ) );
+	$pdf->SetAligns ( array ("L", "C", "R", "R", "R", "R", "R", "R" ) );
 	$pdf->Row ( array ($concepto->getConcepto ()->getCaConcepto (), $concepto->getCaCantidad (), Utils::formatNumber($concepto->getCaNetatar ()) . " " . $concepto->getCaNetaidm (), $concepto->getCaNetamin () . " " . $concepto->getCaNetaidm (), Utils::formatNumber ( $concepto->getCaReportartar () ). " " . $concepto->getCaReportaridm (), $concepto->getCaReportarmin () . " " . $concepto->getCaReportaridm (), Utils::formatNumber ($concepto->getCaCobrartar ()) . " " . $concepto->getCaCobraridm (), $concepto->getCaCobrarmin () . " " . $concepto->getCaCobraridm () ) );
 	if ($concepto->getCaObservaciones ()) {
-		$pdf->SetWidths ( array (200 ) );
+		$pdf->SetWidths ( array (200 ) );		
 		$pdf->SetStyles ( array ("" ) );
-		$pdf->SetFills ( array (0 ) );
+		$pdf->SetFills ( array (0  ) );
+		
 		$pdf->Row ( array ("* Observaciones: " . $concepto->getCaObservaciones () ) );
+		
 	}
 }
 

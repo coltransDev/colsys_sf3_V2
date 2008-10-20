@@ -261,7 +261,13 @@ use_helper( "Ext2" );
 			if( n.leaf ){  // ignore clicks on folders 
 				
 				var nodeoptions = n.id.split("_");
-				switch( nodeoptions[0] ){					
+				switch( nodeoptions[0] ){		
+					case "cabota":
+						/*
+						* Se muestran los recargos generales para el pais seleccionado
+						*/
+						var url = '<?=url_for("pricing/cabotajes")?>';						
+						break;			
 					case "recgen":
 						/*
 						* Se muestran los recargos generales para el pais seleccionado

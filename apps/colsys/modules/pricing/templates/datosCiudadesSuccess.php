@@ -114,7 +114,7 @@ foreach($grupos as $grupo){
 				text:'Tiempo de transito y frecuencia',
 				id:'admtraf_<?=$transporte?>_<?=$modalidad?>_<?=$trafico->getCaIdTrafico()?>',		
 				leaf:true
-			}
+			}			
 		]
     }
 	<?	

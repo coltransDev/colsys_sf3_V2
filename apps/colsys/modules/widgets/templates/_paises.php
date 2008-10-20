@@ -30,6 +30,6 @@ new Ext.form.ComboBox({
 						{name: 'trafico'}
 					])
 				),
-				proxy: Ext.data.MemoryProxy( <?=json_encode(array("root"=>$traficos, "total"=>count($traficos), "success"=>true) )?> )
+				proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$traficos, "total"=>count($traficos), "success"=>true) )?> )
 			})
 		})
