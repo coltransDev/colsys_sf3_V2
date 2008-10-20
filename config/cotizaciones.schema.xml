@@ -2,7 +2,7 @@
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.cotizaciones">
 	
 	<table name="tb_cotizaciones" phpName="Cotizacion">				
-		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true"  />			
+		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" autoIncrement="true"  />			
 		<column name="ca_fchcotizacion" type="date" required="true"  />	
 		<column name="ca_fchpresentacion" type="date" required="true"  />	
 		<column name="ca_idcontacto" type="integer" required="true"  />			
@@ -32,12 +32,14 @@
 	</table>
 	
 	<table name="tb_cotproductos" phpName="CotProducto">						
+		<column name="ca_idproducto" type="integer" required="true" primaryKey="true" autoIncrement="true"  />
 		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" />
-		<column name="ca_idproducto" type="integer" required="true" primaryKey="true"  />		
+				
 		<column name="ca_transporte" type="varchar"    />			
 		<column name="ca_modalidad" type="varchar"   />	
 		<column name="ca_origen" type="varchar"   />	
 		<column name="ca_destino" type="varchar"   />
+		<column name="ca_escala" type="varchar"   />
 		<column name="ca_impoexpo" type="varchar"   />
 		<column name="ca_imprimir" type="varchar"   />
 		<column name="ca_producto" type="varchar"   />
@@ -59,9 +61,10 @@
 	
 	
 	<table name="tb_cotopciones" phpName="CotOpcion">			
+		<column name="ca_idopcion" type="varchar" required="true"  primaryKey="true"  autoIncrement="true"  />	
 		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" />
-		<column name="ca_idopcion" type="varchar" required="true"  primaryKey="true"  autoIncrement="true"  />			
-		<column name="ca_idproducto" type="integer" required="true"  />
+				
+		<column name="ca_idproducto" type="integer" required="true"  primaryKey="true" />
 		<column name="ca_idconcepto" type="integer"   />	
 		<column name="ca_valor_tar" type="numeric"   />
 		<column name="ca_aplica_tar" type="varchar"   />
@@ -115,13 +118,14 @@
 		</foreign-key>			
 	</table>
 	
-	<table name="tb_cotcontinuacion" phpName="CotContinuacion">					
-		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" />
-		<column name="ca_tipo" type="varchar" required="true" primaryKey="true"  />	
+	<table name="tb_cotcontinuacion" phpName="CotContinuacion">	
+		<column name="oid" type="integer" primaryKey="true" />						
+		<column name="ca_idcotizacion" type="integer"   />
+		<column name="ca_tipo" type="varchar" required="true"   />	
 		<column name="ca_modalidad" type="varchar"   />	
-		<column name="ca_origen" type="varchar"   primaryKey="true" />
-		<column name="ca_destino" type="varchar"   primaryKey="true" />
-		<column name="ca_idconcepto" type="integer"   primaryKey="true" />
+		<column name="ca_origen" type="varchar"   />
+		<column name="ca_destino" type="varchar"    />
+		<column name="ca_idconcepto" type="integer"   />
 		<column name="ca_idmoneda" type="varchar"  />
 		<column name="ca_idequipo" type="integer"   />
 		<column name="ca_tarifa" type="varchar"   />

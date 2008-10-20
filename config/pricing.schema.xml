@@ -123,6 +123,21 @@
 		<column name="ca_usucreado" type="varchar" size="15" />				
 	</table>
 	
+	<table name="tb_priccabotajes" phpName="PricCabotaje">		
+		<column name="oid" type="integer" />
+		<column name="ca_origen" type="varchar" required="true" primaryKey="true" />					
+		<column name="ca_destino" type="varchar" required="true" primaryKey="true"/>	
+		<column name="ca_idlinea" type="varchar" required="true" primaryKey="true"/>			
+		<column name="ca_vlrkilo" type="numeric" />
+		<column name="ca_vlrminimo" type="numeric" />	
+		<column name="ca_maxpeso" type="numeric" />	
+		<column name="ca_dimensiones" type="varchar" size="100" />	
+		
+		<foreign-key foreignTable="tb_transporlineas">
+			<reference local="ca_idlinea" foreign="ca_idlinea"/>
+		</foreign-key>
+					
+	</table>	
 
 </database>
 
