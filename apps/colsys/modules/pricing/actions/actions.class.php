@@ -11,7 +11,6 @@
 class pricingActions extends sfActions
 {
  
-
 	/**
 	* Executes index action
 	*
@@ -169,11 +168,9 @@ class pricingActions extends sfActions
 	 */
 	public function executeObservePricingManagement(){
 
-		$trayecto = TrayectoPeer::retrieveByPk( $this->getRequestParameter( "id" ) );
+		$trayecto = TrayectoPeer::retrieveByPk( $this->getRequestParameter( "idtrayecto" ) );
 		$this->forward404Unless( $trayecto );
-
 		
-
 		if( $this->getRequestParameter("inicio")){
 			$trayecto->setCaFchinicio($this->getRequestParameter("inicio"));
 		}
@@ -205,13 +202,14 @@ class pricingActions extends sfActions
 		$neta = $this->getRequestParameter("neta");
 		$minima = $this->getRequestParameter("minima");
 		
-		if( $tipo=="concepto" ){
-			
+		if( $tipo=="concepto" ){			
 			$idconcepto = $this->getRequestParameter("iditem");
 
 			$flete  = PricFletePeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $idconcepto );			
 			if( !$flete ){
 				$flete = new PricFlete();
+				$flete->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
+				$flete->setCaIdconcepto( $idconcepto );
 			}
 			
 			if( $neta ){
@@ -225,7 +223,7 @@ class pricingActions extends sfActions
 		}
 		
 		if( $tipo=="recargo" ){
-		
+			
 			$idconcepto = $this->getRequestParameter("idconcepto");
 			$idrecargo = $this->getRequestParameter("iditem");
 			
@@ -235,7 +233,8 @@ class pricingActions extends sfActions
 				$pricRecargo = new PricRecargoxConcepto();
 				$pricRecargo->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
 				$pricRecargo->setCaIdconcepto( $idconcepto );
-				$pricRecargo->setCaIdrecargo( $recargo_id );
+				$pricRecargo->setCaIdrecargo( $idrecargo );
+				
 			}
 			if( $neta ){
 				$pricRecargo->setCaVlrrecargo( $neta );

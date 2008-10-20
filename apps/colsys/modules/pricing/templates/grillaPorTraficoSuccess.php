@@ -420,15 +420,15 @@ function agregarFila(ctxRecord, index){
 						  nconcepto:'',
 						  idconcepto: ctxRecord.get("iditem"),
 						  idtrayecto:ctxRecord.get("idtrayecto"),
-						  moneda:''
-						  <?
-						foreach( $conceptos as $concepto ){			
-						?>
-						,concepto_<?=$concepto->getCaIdconcepto()?>:''			
-						<?			
-						}
-						?>		
+						  trayecto:ctxRecord.get("trayecto"),
+						  ttransito:ctxRecord.get("ttransito"),
+						  frecuencia:ctxRecord.get("frecuencia"),
+						  moneda:'',
+						  neta:'',
+						  minima:'',
+						  tipo:'recargo'							
 						});
+							
 	
 	records = [];
 	records.push( rec );
@@ -459,13 +459,13 @@ function updateModel(){
 		changes['tipo']=r.data.tipo;
 		changes['iditem']=r.data.iditem;	
 		changes['idconcepto']=r.data.idconcepto;	
-		
+		changes['idtrayecto']=r.data.idtrayecto;
 												
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
 				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("pricing/observePricingManagement")?>/id/'+r.data.idtrayecto, 						//method: 'POST', 
+				url: '<?=url_for("pricing/observePricingManagement")?>', 						//method: 'POST', 
 				//Solamente se envian los cambios 						
 				params :	changes,
 										
