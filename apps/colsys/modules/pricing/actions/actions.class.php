@@ -365,7 +365,7 @@ class pricingActions extends sfActions
 			$fletes = $trayecto->getFletes();
 				
 			//		$trayecto->getOrigen();
-			echo $ciudad."<br />";
+			
 			$ciudad = CiudadPeer::retrieveByPk( $trayecto->getCaOrigen() );
 			$trafico = $ciudad->getTrafico();
 				
