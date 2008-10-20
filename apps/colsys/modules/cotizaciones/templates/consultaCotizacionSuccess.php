@@ -60,7 +60,7 @@ Ext.onReady(function(){
     var mainPanel = new Ext.FormPanel({
         labelAlign: 'top',
         title: 'Sistema de cotizaciones',
-        bodyStyle:'padding:1px',
+        bodyStyle:'padding:1px',		
 
         items: [{
             xtype:'tabpanel',
@@ -149,7 +149,7 @@ Ext.onReady(function(){
 							Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 							Ext.getCmp("usuario").setValue(record.get("vendedor"));
 							Ext.getCmp("vendedor").setValue(record.get("nombre_ven"));
-						},
+						}
 					})
 				,{
 					id: 'cotizacionId',
@@ -275,7 +275,7 @@ Ext.onReady(function(){
 	        },{
 	            text: 'Cancelar'
 	        }]
-        }],
+        }]
     });
 	mainPanel.render(document.body);
      <?
@@ -285,7 +285,7 @@ Ext.onReady(function(){
 		 include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
 		 include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
 		 ?>   	
-		var subPanel = new Ext.FormPanel({
+		 var subPanel = new Ext.FormPanel({
 			labelAlign: 'top',
 			bodyStyle:'padding:1px',
 	
@@ -300,7 +300,7 @@ Ext.onReady(function(){
 					   grid_contviajes,
 					   grid_seguros
 				]
-			}],
+			}]
 		});
 		subPanel.render(document.body);
 	<?	

@@ -31,7 +31,7 @@ var storeSeguros = new Ext.data.GroupingStore({
 		}, 
 		recordGrilla
 	),
-	proxy: new Ext.data.MemoryProxy(data_seguros),
+	proxy: new Ext.data.MemoryProxy(data_seguros)
 });
 	
 storeSeguros.load();	

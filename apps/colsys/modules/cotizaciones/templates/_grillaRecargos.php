@@ -82,13 +82,7 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 80,
 			sortable: true,			
 			dataIndex: 'recargo',
-			hideable: false,
-/*			
-			renderer: function(v, params, record){
-                    return Ext.form.Hidden({id: 'transporte', name: 'transporte', value: 'Aéreo', allowBlank:false}); 
-            },
-			editor: <?=extRecargos()?>
-*/
+			hideable: false
 		},	
 		{
 			id: 'tipo',
@@ -119,8 +113,8 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 35,
 			sortable: true,
 			dataIndex: 'aplica_tar',
-			hideable: false,
-			/*editor: <?=extAplicaciones("aplica_tar")?>*/
+			hideable: false
+			
 		},
 		{
 			id: 'valor_min',
@@ -142,8 +136,8 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 35,
 			sortable: true,
 			dataIndex: 'aplica_min',
-			hideable: false,
-			/*editor: <?=extAplicaciones("aplica_min")?>*/
+			hideable: false
+			
 		},
 		{
 			id: 'idmoneda',
