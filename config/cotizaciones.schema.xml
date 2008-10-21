@@ -80,9 +80,9 @@
 		<column name="ca_fchactualizado" type="timestamp"   />
 		<column name="ca_usuactualizado" type="varchar"   />	
 			
-		<foreign-key foreignTable="tb_cotproductos">
-			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
+		<foreign-key foreignTable="tb_cotproductos">			
 			<reference local="ca_idproducto" foreign="ca_idproducto"/>
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
 		</foreign-key>	
 		
 		<foreign-key foreignTable="tb_conceptos">

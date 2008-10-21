@@ -43,23 +43,7 @@
 			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
 		</foreign-key>								
 	</table>	
-	
-	<table name="tb_pricrecargos" phpName="PricRecargo">		
-		<column name="ca_idtrayecto" type="integer" required="true"  primaryKey="true"/>					
-		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>	
-		<column name="ca_vlrrecargo" type="numeric" required="true"/>
-		<column name="ca_vlrminimo" type="numeric" />		
-		<column name="ca_idmoneda" type="varchar" required="true" size="3"/>	
-		<column name="ca_aplicacion" type="varchar" />			
-		<column name="ca_observaciones" type="varchar" />	
-		<foreign-key foreignTable="tb_trayectos">
-			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
-		</foreign-key>	
-		<foreign-key foreignTable="tb_tiporecargo">
-			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
-		</foreign-key>		
-	</table>	
-	
+		
 	<table name="tb_pricrecargosxconcepto" phpName="PricRecargoxConcepto">		
 		<column name="ca_idtrayecto" type="integer" required="true"  primaryKey="true"/>			
 		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true"/>
@@ -67,7 +51,7 @@
 		<column name="ca_vlrrecargo" type="numeric" required="true"/>
 		<column name="ca_vlrminimo" type="numeric" />				
 		<column name="ca_observaciones" type="varchar"   />	
-		
+		<column name="ca_idmoneda" type="varchar" size="3"   />	
 		
 		<foreign-key foreignTable="tb_pricfletes">
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
