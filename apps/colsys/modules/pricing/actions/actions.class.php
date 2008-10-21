@@ -34,7 +34,7 @@ class pricingActions extends sfActions
 	/*
 	* Muestra los trayectos
 	*/
-	public function executePagerData(){
+	public function executeDatosGrillaPorTrafico(){
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
@@ -45,15 +45,9 @@ class pricingActions extends sfActions
 		
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
-		
-		
+				
 		$this->opcion = $this->getRequestParameter( "opcion" );
-		
-		//$idtrafico ="DE-049";
-		//$idtrafico ="US-001";
-		//$transporte = "Marítimo";
-		//$modalidad = "FCL";
-		
+
 		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
 		$conceptosArr = explode("|",$this->trafico->getCaConceptos());
 					
@@ -85,9 +79,11 @@ class pricingActions extends sfActions
 		$c->setOffset( $start );
 		$trayectos = TrayectoPeer::doSelect( $c );
 			
-
 		$data=array();
 		$transportador_id = null;
+		
+		$i=0;
+		
 		foreach( $trayectos as $trayecto ){
 			$transportador = $trayecto->getTransportador();
 				
@@ -97,13 +93,45 @@ class pricingActions extends sfActions
 			*/
 			$trafico = TraficoPeer::retrieveByPk( $trayecto->getOrigen()->getCaIdTrafico() );
 			
-			$trayectoStr = utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."->".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()))." - ".($transportador?utf8_encode($transportador->getCaSigla()?$transportador->getCaSigla():$transportador->getCaNombre()):"")." (TT ".utf8_encode($trayecto->getCaTiempotransito())." Freq. ".$trayecto->getCaFrecuencia().")";
+			$trayectoStr = strtoupper($trayecto->getOrigen()->getCaCiudad())."->".strtoupper($trayecto->getDestino()->getCaCiudad())." - ";
 			
+			$trayectoStr.=($transportador?($transportador->getCaSigla()?$transportador->getCaSigla():$transportador->getCaNombre()):"");
+			
+			$agente = $trayecto->getAgente();
+			if( $agente ){
+				$trayectoStr.=" [".$agente->getCaNombre()."] ";	
+			}
+			
+			$trayectoStr.=" (TT ".$trayecto->getCaTiempotransito()." Freq. ".$trayecto->getCaFrecuencia().")";
+			
+			$trayectoStr = utf8_encode($trayectoStr);
 		 	// En el modo de consulta los conceptos se muestran en filas seguidos de los recargos de lo contrario los conceptos se muestran en columnas.
 				
 			$pricConceptos = $trayecto->getPricFletes();
 			
+			//Se incluye una fila antes de los conceptos que contiene las observaciones de to
+			$row = array (
+				'idtrayecto' => $trayecto->getCaIdtrayecto(),
+				'trayecto' =>$trayectoStr,
+				'nconcepto' => "General",
+				//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+				'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
+				'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
+				'moneda' => $trayecto->getCaIdMoneda(),
+				'aplicacion' => $trayecto->getCaAplicacion(),				
+				'_id' => $trayecto->getCaIdtrayecto()."-gen",
+				'style' => $trayecto->getEstilo(),
+				'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
+				'iditem'=>'',
+				'tipo'=>"trayecto_obs",
+				'neta'=>'',
+				'minima'=>'',
+				'minima'=>'',
+				'orden'=>$i++
+			);
+			$data[] = $row;		
 			
+			// Se incluyen las filas de cada concepto y sus respectivos recargos		
 			foreach( $this->conceptos as $concepto ){ 	
 				$pricConcepto = PricFletePeer::retrieveByPk( $trayecto->getCaIdtrayecto() ,$concepto->getCaidConcepto() );			
 				if( !$pricConcepto ){
@@ -115,11 +143,11 @@ class pricingActions extends sfActions
 				$row = array (
 					'idtrayecto' => $trayecto->getCaIdtrayecto(),
 					'trayecto' =>$trayectoStr,
-					'nconcepto' => $pricConcepto->getConcepto()->getcaConcepto(),
+					'nconcepto' => utf8_encode($pricConcepto->getConcepto()->getcaConcepto()),
 					//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
-					'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
-					'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
-					'moneda' => $trayecto->getCaIdMoneda(),
+					'inicio' => '',
+					'vencimiento' => '',
+					'moneda' => '', // consulta ? $trayecto->getCaIdMoneda()
 					'aplicacion' => $trayecto->getCaAplicacion(),				
 					'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto(),
 					'style' => $trayecto->getEstilo(),
@@ -127,7 +155,8 @@ class pricingActions extends sfActions
 					'iditem'=>$pricConcepto->getCaIdConcepto(),
 					'tipo'=>"concepto",
 					'neta'=>$pricConcepto->getCaVlrneto(),
-					'minima'=>$pricConcepto->getCaVlrminimo()
+					'minima'=>$pricConcepto->getCaVlrminimo(),
+					'orden'=>$i++
 					
 				);
 				$data[] = $row;	
@@ -140,67 +169,126 @@ class pricingActions extends sfActions
 					$row = array (
 						'idtrayecto' => $trayecto->getCaIdtrayecto(),
 						'trayecto' =>$trayectoStr,
-						'nconcepto' => $tipoRecargo->getCaRecargo(),
+						'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
 						//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
 						'inicio' => "",
 						'vencimiento' => "",
-						'moneda' => $trayecto->getCaIdMoneda(),
+						'moneda' => $pricRecargo->getCaIdMoneda(),
 						'aplicacion' => "",				
-						'_id' => $trayecto->getCaIdtrayecto()."-".$pricRecargo->getCaIdrecargo(),
+						'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto()."-".$pricRecargo->getCaIdrecargo(),
 						'style' => $trayecto->getEstilo(),
 						'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
 						'iditem'=>$pricRecargo->getCaIdrecargo(),
 						'idconcepto'=>$pricConcepto->getCaIdConcepto(),
 						'tipo'=>"recargo",
 						'neta'=>$pricRecargo->getCaVlrrecargo(),
-						'minima'=>$pricRecargo->getCaVlrminimo()	
+						'minima'=>$pricRecargo->getCaVlrminimo(),
+						'orden'=>$i++	
 					);									
 					$data[] = $row;						
 				}				
-			}						
+			}	
+			
+			
+			$pricRecargos = $trayecto->getRecargosGenerales();
+			
+			if( $this->opcion!="consulta" || count($pricRecargos)>0   ){
+				
+				//Se incluye una fila antes de los recargos generales del trayecto
+				$row = array (
+					'idtrayecto' => $trayecto->getCaIdtrayecto(),
+					'trayecto' =>$trayectoStr,
+					'nconcepto' => "Recargos generales del trayecto",
+					//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+					'inicio' => '',
+					'vencimiento' => '',
+					'moneda' => '',
+					'aplicacion' => $trayecto->getCaAplicacion(),				
+					'_id' => $trayecto->getCaIdtrayecto()."-recgen",
+					'style' => $trayecto->getEstilo(),
+					'observaciones' => '',
+					'iditem'=>'9999',				
+					'tipo'=>"concepto",
+					'neta'=>'',
+					'minima'=>'',
+					'orden'=>$i++
+				);
+				$data[] = $row;	
+			}			
+				
+			foreach( $pricRecargos as $pricRecargo ){
+				$tipoRecargo = $pricRecargo->getTipoRecargo();
+									
+				$row = array (
+					'idtrayecto' => $trayecto->getCaIdtrayecto(),
+					'trayecto' =>$trayectoStr,
+					'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
+					//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+					'inicio' => "",
+					'vencimiento' => "",
+					'moneda' => $pricRecargo->getCaIdMoneda(),
+					'aplicacion' => "",				
+					'_id' => $trayecto->getCaIdtrayecto()."-9999-".$pricRecargo->getCaIdrecargo(),
+					'style' => $trayecto->getEstilo(),
+					'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
+					'iditem'=>$pricRecargo->getCaIdrecargo(),
+					'idconcepto'=>'9999',
+					'tipo'=>"recargo",
+					'neta'=>$pricRecargo->getCaVlrrecargo(),
+					'minima'=>$pricRecargo->getCaVlrminimo(),
+					'orden'=>$i++	
+				);									
+				$data[] = $row;						
+			}
+			
+			
+			
+			
+									
 		}
 		$this->data = $data;
 	}
 
 
 	/*
-	 * Observa los cambios realizados en el pricingManagement
-	 */
-	public function executeObservePricingManagement(){
+	* Observa los cambios realizados en grillaPorTraficos
+	* @author: Andres Botero
+	*/
+	public function executeObserveGrillaPorTraficos(){
 
 		$trayecto = TrayectoPeer::retrieveByPk( $this->getRequestParameter( "idtrayecto" ) );
 		$this->forward404Unless( $trayecto );
 		
-		if( $this->getRequestParameter("inicio")){
-			$trayecto->setCaFchinicio($this->getRequestParameter("inicio"));
-		}
-			
-		if( $this->getRequestParameter("vencimiento")){
-			$trayecto->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
-		}
-		if( $this->getRequestParameter("moneda") && !$recargo_id ){
-			$trayecto->setCaIdMoneda($this->getRequestParameter("moneda"));
-		}
-
-		if( $this->getRequestParameter("observaciones")){
-			$trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));
-		}
-
-		if( $this->getRequestParameter("aplicacion")){
-			$trayecto->setCaAplicacion($this->getRequestParameter("aplicacion"));
-		}
-		
-		if( $this->getRequestParameter("style")!==null){
-			$trayecto->setEstilo($this->getRequestParameter("style"));
-		}
-		
-		$trayecto->save();
-		
-		
-		$tipo = $this->getRequestParameter("tipo");
-		
+		$tipo = $this->getRequestParameter("tipo");		
 		$neta = $this->getRequestParameter("neta");
 		$minima = $this->getRequestParameter("minima");
+				
+		if( $tipo=="trayecto_obs" ){			
+			if( $this->getRequestParameter("inicio")){
+				$trayecto->setCaFchinicio($this->getRequestParameter("inicio"));
+			}
+				
+			if( $this->getRequestParameter("vencimiento")){
+				$trayecto->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+			}
+			if( $this->getRequestParameter("moneda") ){
+				$trayecto->setCaIdMoneda($this->getRequestParameter("moneda"));
+			}
+	
+			if( $this->getRequestParameter("observaciones")){
+				$trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));
+			}
+	
+			if( $this->getRequestParameter("aplicacion")){
+				$trayecto->setCaAplicacion($this->getRequestParameter("aplicacion"));
+			}
+			
+			if( $this->getRequestParameter("style")!==null){
+				$trayecto->setEstilo($this->getRequestParameter("style"));
+			}
+			
+			$trayecto->save();
+		}
 		
 		if( $tipo=="concepto" ){			
 			$idconcepto = $this->getRequestParameter("iditem");
@@ -242,82 +330,15 @@ class pricingActions extends sfActions
 			
 			if( $minima ){
 				$pricRecargo->setCaVlrminimo( $minima );
-			} 			
+			} 		
+			
+			if( $this->getRequestParameter("moneda") ){
+				$pricRecargo->setCaIdMoneda($this->getRequestParameter("moneda"));
+			}	
 					
 			$pricRecargo->save();
 		}
-		
-		//print_r( $_POST );
-		/*
-		// Las columnas vienen en parametros de la forma concepto_{$id}
-		foreach( $_POST as $key=>$value ){
-			if( substr( $key, 0,8 )=="concepto" && $value && !$recargo_id ){//se envió un concepto
-				$concepto_id = substr( $key, 9, 10 );
-				$flete  = PricFletePeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $concepto_id );
-				//print_r( $flete );
-				if( !$flete ){
-					$flete = new PricFlete();
-				}
-
-				$flete->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
-				$flete->setCaIdconcepto( $concepto_id );
-				$index = strpos($value,"/");
-
-
-				if( $index===false){
-					$flete->setCaVlrneto( $value );
-				}else{
-					$neto = substr( $value, 0, $index );
-					$minimo= substr( $value , $index+1, 10);
-					$flete->setCaVlrneto( $neto );
-					$flete->setCaVlrminimo( $minimo );
-				}
-				$flete->save();
-			}
-			
-			if( $recargo_id ){
-				$pricRecargo = PricRecargoPeer::retrieveByPk( $trayecto->getCaIdTrayecto() , $recargo_id);
 				
-				if( !$pricRecargo ){
-					$pricRecargo = new PricRecargo();
-					$pricRecargo->setCaIdTrayecto( $trayecto->getCaIdTrayecto() );
-					$pricRecargo->setCaIdRecargo( $recargo_id );					
-				}
-						
-				if( $key=="moneda" && $value  ){					
-					$pricRecargo->setCaIdmoneda( $value );
-				}
-						
-				if( $key=="observaciones" && $value  ){
-					$pricRecargo->setCaObservaciones( $value );					
-				}
-				$pricRecargo->save();
-							
-				//se envió un recargo de un concepto
-				if( substr( $key, 0,8 )=="concepto"  && $value ){
-					$concepto_id = substr( $key, 9, 10 );
-					$recargo = PricRecargoxConceptoPeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $concepto_id , $recargo_id);
-					if( !$recargo ){
-						$recargo = new PricRecargoxConcepto();
-						$recargo->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
-						$recargo->setCaIdconcepto( $concepto_id );
-						$recargo->setCaIdrecargo( $recargo_id );
-					}
-						
-					$index = strpos($value,"/");
-					if( $index===false){
-						$recargo->setCaVlrrecargo( $value );
-					}else{
-						$neto = substr( $value, 0, $index );
-						$minimo= substr( $value , $index+1, 10);
-						$recargo->setCaVlrrecargo( $neto );
-						$recargo->setCaVlrminimo( $minimo );
-					}
-					$recargo->save();
-				}
-			}
-		}
-		*/
 		return sfView::NONE;
 	}
 	

@@ -30,7 +30,6 @@ var renderRowTooltip=function(val, cell, record) {
 	//alert("asdasd");
 	// get data
 	var data = record.data;
-
 	 
 	// create tooltip
 	var qtip = qtipTpl.apply(data);
@@ -43,12 +42,12 @@ var renderRowTooltip=function(val, cell, record) {
 * Crea el expander
 */
 var expander = new Ext.grid.myRowExpander({  	  
-  lazyRender : false, 
-  width: 15,	
-  tpl : new Ext.Template(
-	  '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class=\'btnComentarios\' id=\'obs_{_id}\'><strong>Observaciones:</strong> {observaciones}</div></p>' 
-	 
-  )
+	lazyRender : false, 
+	width: 15,	
+	tpl : new Ext.Template(  	
+	  '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'><b>Observaciones:</b> {observaciones}</div></p>'
+ 	
+  	) 
 });
 
 
@@ -73,16 +72,15 @@ var record = Ext.data.Record.create([
 	{name: 'style', type: 'string'}	,
 	{name: 'tipo', type: 'string'}	,
 	{name: 'neta', type: 'string'}	,
-	{name: 'minima', type: 'string'}	
-
-	
+	{name: 'minima', type: 'string'}, 
+	{name: 'orden', type: 'int'}		
 ]);
    		
 /*
 * Crea el store
 */
 <?
-$url = "pricing/pagerData?opcion=consulta&modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
+$url = "pricing/datosGrillaPorTrafico?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
 if( $idlinea ){
 	$url .= "&idlinea=".$idlinea;
 }
@@ -91,6 +89,10 @@ if( $idciudad ){
 }
 if( $idciudaddestino ){
 	$url .= "&idciudaddestino=".$idciudaddestino;
+}
+
+if( $opcion ){
+	$url .= "&opcion=".$opcion;
 }
 
 ?>
@@ -106,7 +108,7 @@ var store = new Ext.data.GroupingStore({
 		}, 
 		record
 	),
-	sortInfo:{field: 'destino', direction: "ASC"},
+	sortInfo:{field: 'orden', direction: "ASC"},
 	groupField: 'trayecto'		
 	/*
 	carga local
@@ -146,7 +148,8 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'concepto', //para aplicar estilos a esta columna
 			header: "Concepto",
 			width: 200,
-			sortable: true,
+			sortable: false,
+			groupable: false,
 			
 			dataIndex: 'nconcepto',
 			hideable: false,
@@ -154,13 +157,21 @@ var colModel = new Ext.grid.ColumnModel({
 				var data = record.data;
 				// create tooltip
 				var qtip = qtipTpl.apply(data);
-
-			
-				if( record.data.tipo == "concepto" ){					
-					return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
-				}else{
-					return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
-				}
+				
+				
+				
+				switch(  record.data.tipo ){
+					case 'trayecto_obs':
+						return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
+						break;		
+					case 'concepto':
+						return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
+						break;		
+					case 'recargo':	
+						return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+						break;	
+				}				
+				
 			} ,
 			editor: <?=extRecargosNoEnlazado( $transporte )?>	
 		},	
@@ -176,7 +187,8 @@ var colModel = new Ext.grid.ColumnModel({
 		{
 			header: "Inicio",
 			width: 80,
-			sortable: true,
+			sortable: false,
+			groupable: false,
 			dataIndex: 'inicio',               
 			renderer: Ext.util.Format.dateRenderer('d/m/Y'),
 			editor: new Ext.form.DateField({
@@ -185,7 +197,8 @@ var colModel = new Ext.grid.ColumnModel({
 		},{
 			header: "Venc.",
 			width: 80,
-			sortable: true,
+			sortable: false,
+			groupable: false,
 			dataIndex: 'vencimiento',               
 			renderer: Ext.util.Format.dateRenderer('d/m/Y'),
 			editor: new Ext.form.DateField({
@@ -196,6 +209,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Aplicacion",
 			width: 100,
 			sortable: false,
+			groupable: false,
 			
 			dataIndex: 'aplicacion'//,              
 			/*editor: new Ext.form.ComboBox({
@@ -211,6 +225,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Moneda",
 			width: 80,
 			sortable: false,
+			groupable: false,
 			dataIndex: 'moneda',              
 			editor: <?=extMonedas("USD")?>
 		}		
@@ -218,8 +233,8 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'neta',
 			header: "Neta",
 			width: 80,
-			sortable: true,
-			groupable: false,								
+			sortable: false,
+			groupable: false,							
 			dataIndex: 'neta',
 			editor: new Ext.form.NumberField()		
 		},		
@@ -227,8 +242,8 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'minima',
 			header: "<?=(($transporte=="Aéreo"&&$modalidad!="CABOTAJE")||$modalidad=="FCL")?"Sugerida":"Minima"?>",
 			width: 80,
-			sortable: true,
-			groupable: false,								
+			sortable: false,
+			groupable: false,							
 			dataIndex: 'minima',
 			editor: new Ext.form.NumberField()			
 		}
@@ -239,13 +254,21 @@ var colModel = new Ext.grid.ColumnModel({
 		var record = store.getAt(rowIndex);
 		var field = this.getDataIndex(colIndex);
 		
-		if( record.data.nconcepto=="FLETE" && field == 'nconcepto' ){
+		
+		if( record.data.tipo=="concepto" && !(field=='neta' || field=='minima')  ){
 			return false;
 		}
 		
-		if (record.data.recargo_id && (field == 'aplicacion'||field == 'inicio'||field == 'vencimiento'|| field == 'nconcepto')) {			
+		if( record.data.tipo=="recargo"){			
+			if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='neta' || field=='minima' || field=='moneda')  ){					
+				return false;								
+			}		
+		}
+		
+		if( record.data.tipo=="trayecto_obs" && !(field=='inicio' || field=='vencimiento' || field=='moneda')  ){		
 			return false;
-		}			
+		}
+		
 		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
 	}
 });
@@ -357,8 +380,9 @@ var actualizarObservaciones=function( btn, text ){
 
 var gridOnRowcontextmenu =  function(grid, index, e){
 		
-	rec = this.store.getAt(index);
-  //  if(!this.menu){ // create context menu on first right click
+	rec = this.store.getAt(index);	
+	e.stopEvent(); //Evita que se despliegue el menu con el boton izquierdo
+	if( rec.data.tipo=='concepto' ){
 		this.menu = new Ext.menu.Menu({
 			id:'grid-ctx',
 			items: [{
@@ -401,16 +425,16 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 			]
 		});
 		this.menu.on('hide', this.onContextHide, this);
-   // }
-	e.stopEvent();
-	if(this.ctxRow){
-		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
-		this.ctxRow = null;
+    		
+		if(this.ctxRow){
+			Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+			this.ctxRow = null;
+		}
+		this.ctxRecord = rec;
+		this.ctxRow = this.view.getRow(index);
+		Ext.fly(this.ctxRow).addClass('x-node-ctx');
+		this.menu.showAt(e.getXY());
 	}
-	this.ctxRecord = rec;
-	this.ctxRow = this.view.getRow(index);
-	Ext.fly(this.ctxRow).addClass('x-node-ctx');
-	this.menu.showAt(e.getXY());
 }
 
 function agregarFila(ctxRecord, index){	
@@ -465,7 +489,7 @@ function updateModel(){
 		Ext.Ajax.request( 
 			{   
 				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("pricing/observePricingManagement")?>', 						//method: 'POST', 
+				url: '<?=url_for("pricing/observeGrillaPorTraficos")?>', 						//method: 'POST', 
 				//Solamente se envian los cambios 						
 				params :	changes,
 										
@@ -504,10 +528,10 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	clicksToEdit: 1,
 	stripeRows: true,
 	autoExpandColumn: 'nconcepto',
-	title: '<?=$titulo?>',
-	root_title: '<?=$trafico->getCaNombre()?>',	
+	title: '<?=$titulo?>',	
 	plugins: [checkColumn, expander], 
 	closable: true,
+	
 	id: 'fletes_<?=$idcomponent?>',
 	height: 400,
 	//autoHeight : true, 
@@ -528,6 +552,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	view: new Ext.grid.GroupingView({
 		forceFit:true,
 		enableRowBody:true, 
+		enableGroupingMenu: false,		
 		getRowClass: function(  record,  index,  rowParams,  store ){			
 			switch( record.data.style ){
 				case "yellow":
