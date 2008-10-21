@@ -19,7 +19,7 @@ abstract class BasePricRecargoxConceptoPeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.PricRecargoxConcepto';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 6;
+	const NUM_COLUMNS = 7;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -43,6 +43,9 @@ abstract class BasePricRecargoxConceptoPeer {
 	/** the column name for the CA_OBSERVACIONES field */
 	const CA_OBSERVACIONES = 'tb_pricrecargosxconcepto.CA_OBSERVACIONES';
 
+	/** the column name for the CA_IDMONEDA field */
+	const CA_IDMONEDA = 'tb_pricrecargosxconcepto.CA_IDMONEDA';
+
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -54,10 +57,10 @@ abstract class BasePricRecargoxConceptoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaIdrecargo', 'CaVlrrecargo', 'CaVlrminimo', 'CaObservaciones', ),
-		BasePeer::TYPE_COLNAME => array (PricRecargoxConceptoPeer::CA_IDTRAYECTO, PricRecargoxConceptoPeer::CA_IDCONCEPTO, PricRecargoxConceptoPeer::CA_IDRECARGO, PricRecargoxConceptoPeer::CA_VLRRECARGO, PricRecargoxConceptoPeer::CA_VLRMINIMO, PricRecargoxConceptoPeer::CA_OBSERVACIONES, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_idrecargo', 'ca_vlrrecargo', 'ca_vlrminimo', 'ca_observaciones', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaIdrecargo', 'CaVlrrecargo', 'CaVlrminimo', 'CaObservaciones', 'CaIdmoneda', ),
+		BasePeer::TYPE_COLNAME => array (PricRecargoxConceptoPeer::CA_IDTRAYECTO, PricRecargoxConceptoPeer::CA_IDCONCEPTO, PricRecargoxConceptoPeer::CA_IDRECARGO, PricRecargoxConceptoPeer::CA_VLRRECARGO, PricRecargoxConceptoPeer::CA_VLRMINIMO, PricRecargoxConceptoPeer::CA_OBSERVACIONES, PricRecargoxConceptoPeer::CA_IDMONEDA, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_idrecargo', 'ca_vlrrecargo', 'ca_vlrminimo', 'ca_observaciones', 'ca_idmoneda', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -67,10 +70,10 @@ abstract class BasePricRecargoxConceptoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaIdrecargo' => 2, 'CaVlrrecargo' => 3, 'CaVlrminimo' => 4, 'CaObservaciones' => 5, ),
-		BasePeer::TYPE_COLNAME => array (PricRecargoxConceptoPeer::CA_IDTRAYECTO => 0, PricRecargoxConceptoPeer::CA_IDCONCEPTO => 1, PricRecargoxConceptoPeer::CA_IDRECARGO => 2, PricRecargoxConceptoPeer::CA_VLRRECARGO => 3, PricRecargoxConceptoPeer::CA_VLRMINIMO => 4, PricRecargoxConceptoPeer::CA_OBSERVACIONES => 5, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_idrecargo' => 2, 'ca_vlrrecargo' => 3, 'ca_vlrminimo' => 4, 'ca_observaciones' => 5, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaIdrecargo' => 2, 'CaVlrrecargo' => 3, 'CaVlrminimo' => 4, 'CaObservaciones' => 5, 'CaIdmoneda' => 6, ),
+		BasePeer::TYPE_COLNAME => array (PricRecargoxConceptoPeer::CA_IDTRAYECTO => 0, PricRecargoxConceptoPeer::CA_IDCONCEPTO => 1, PricRecargoxConceptoPeer::CA_IDRECARGO => 2, PricRecargoxConceptoPeer::CA_VLRRECARGO => 3, PricRecargoxConceptoPeer::CA_VLRMINIMO => 4, PricRecargoxConceptoPeer::CA_OBSERVACIONES => 5, PricRecargoxConceptoPeer::CA_IDMONEDA => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_idrecargo' => 2, 'ca_vlrrecargo' => 3, 'ca_vlrminimo' => 4, 'ca_observaciones' => 5, 'ca_idmoneda' => 6, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -181,6 +184,8 @@ abstract class BasePricRecargoxConceptoPeer {
 		$criteria->addSelectColumn(PricRecargoxConceptoPeer::CA_VLRMINIMO);
 
 		$criteria->addSelectColumn(PricRecargoxConceptoPeer::CA_OBSERVACIONES);
+
+		$criteria->addSelectColumn(PricRecargoxConceptoPeer::CA_IDMONEDA);
 
 	}
 

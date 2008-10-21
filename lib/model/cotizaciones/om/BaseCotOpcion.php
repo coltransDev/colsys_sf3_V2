@@ -1503,16 +1503,16 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 
 
 		if ($v === null) {
-			$this->setCaIdcotizacion(NULL);
+			$this->setCaIdproducto(NULL);
 		} else {
-			$this->setCaIdcotizacion($v->getCaIdcotizacion());
+			$this->setCaIdproducto($v->getCaIdproducto());
 		}
 
 
 		if ($v === null) {
-			$this->setCaIdproducto(NULL);
+			$this->setCaIdcotizacion(NULL);
 		} else {
-			$this->setCaIdproducto($v->getCaIdproducto());
+			$this->setCaIdcotizacion($v->getCaIdcotizacion());
 		}
 
 
@@ -1529,9 +1529,9 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	 */
 	public function getCotProducto($con = null)
 	{
-		if ($this->aCotProducto === null && ($this->ca_idcotizacion !== null && $this->ca_idproducto !== null)) {
+		if ($this->aCotProducto === null && ($this->ca_idproducto !== null && $this->ca_idcotizacion !== null)) {
 			// include the related Peer class
-			$this->aCotProducto = CotProductoPeer::retrieveByPK($this->ca_idcotizacion, $this->ca_idproducto, $con);
+			$this->aCotProducto = CotProductoPeer::retrieveByPK($this->ca_idproducto, $this->ca_idcotizacion, $con);
 
 			/* The following can be used instead of the line above to
 			   guarantee the related object contains a reference
@@ -1539,7 +1539,7 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 			   may be undesirable in many circumstances.
 			   As it can lead to a db query with many results that may
 			   never be used.
-			   $obj = CotProductoPeer::retrieveByPK($this->ca_idcotizacion, $this->ca_idproducto, $con);
+			   $obj = CotProductoPeer::retrieveByPK($this->ca_idproducto, $this->ca_idcotizacion, $con);
 			   $obj->addCotProductos($this);
 			 */
 		}

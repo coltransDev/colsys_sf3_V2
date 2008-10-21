@@ -1721,9 +1721,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			   $this->collCotOpcions = array();
 			} else {
 
-				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
-
 				$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
+
+				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
 
 				CotOpcionPeer::addSelectColumns($criteria);
 				$this->collCotOpcions = CotOpcionPeer::doSelect($criteria, $con);
@@ -1736,10 +1736,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
-
-
 				$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
+
+
+				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
 
 				CotOpcionPeer::addSelectColumns($criteria);
 				if (!isset($this->lastCotOpcionCriteria) || !$this->lastCotOpcionCriteria->equals($criteria)) {
@@ -1770,9 +1770,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
-
 		$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
+
+		$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
 
 		return CotOpcionPeer::doCount($criteria, $distinct, $con);
 	}
@@ -1819,9 +1819,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				$this->collCotOpcions = array();
 			} else {
 
-				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
-
 				$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
+
+				$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
 
 				$this->collCotOpcions = CotOpcionPeer::doSelectJoinConcepto($criteria, $con);
 			}
@@ -1830,9 +1830,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
-
 			$criteria->add(CotOpcionPeer::CA_IDPRODUCTO, $this->getCaIdproducto());
+
+			$criteria->add(CotOpcionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
 
 			if (!isset($this->lastCotOpcionCriteria) || !$this->lastCotOpcionCriteria->equals($criteria)) {
 				$this->collCotOpcions = CotOpcionPeer::doSelectJoinConcepto($criteria, $con);

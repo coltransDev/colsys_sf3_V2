@@ -68,5 +68,17 @@ class Trayecto extends BaseTrayecto
 		}
 	}
 	
+	/*
+	* Retorna los recargos generales del trayecto
+	* @author Andres Botero
+	*/
+	public function getRecargosGenerales(){
+		$c = new Criteria();
+		$c->add( PricRecargoxConceptoPeer::CA_IDCONCEPTO, '9999' ); 
+		$c->add( PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto() ); 
+		return PricRecargoxConceptoPeer::doSelect( $c );
+
+		
+	}
 	 
 }

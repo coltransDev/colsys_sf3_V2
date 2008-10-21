@@ -28,6 +28,7 @@ class CotOpcion extends BaseCotOpcion
 	* Retorna el valor que se coloco en la oferta en texto
 	*/
 	public function getTextoFlete(){
+		
 		$producto = $this->getCotProducto();
 		$aflete = explode('|',$this->getCaOferta());	
 		

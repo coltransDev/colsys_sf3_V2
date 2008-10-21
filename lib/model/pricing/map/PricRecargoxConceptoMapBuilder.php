@@ -73,6 +73,8 @@ class PricRecargoxConceptoMapBuilder {
 
 		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, 3);
+
 	} // doBuild()
 
 } // PricRecargoxConceptoMapBuilder

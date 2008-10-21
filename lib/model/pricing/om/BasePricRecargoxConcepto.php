@@ -60,6 +60,13 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 */
 	protected $ca_observaciones;
 
+
+	/**
+	 * The value for the ca_idmoneda field.
+	 * @var        string
+	 */
+	protected $ca_idmoneda;
+
 	/**
 	 * @var        PricFlete
 	 */
@@ -148,6 +155,17 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	{
 
 		return $this->ca_observaciones;
+	}
+
+	/**
+	 * Get the [ca_idmoneda] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIdmoneda()
+	{
+
+		return $this->ca_idmoneda;
 	}
 
 	/**
@@ -283,6 +301,28 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	} // setCaObservaciones()
 
 	/**
+	 * Set the value of [ca_idmoneda] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaIdmoneda($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_idmoneda !== $v) {
+			$this->ca_idmoneda = $v;
+			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_IDMONEDA;
+		}
+
+	} // setCaIdmoneda()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -311,12 +351,14 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 			$this->ca_observaciones = $rs->getString($startcol + 5);
 
+			$this->ca_idmoneda = $rs->getString($startcol + 6);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 6; // 6 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 7; // 7 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricRecargoxConcepto object", $e);
@@ -575,6 +617,9 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			case 5:
 				return $this->getCaObservaciones();
 				break;
+			case 6:
+				return $this->getCaIdmoneda();
+				break;
 			default:
 				return null;
 				break;
@@ -601,6 +646,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			$keys[3] => $this->getCaVlrrecargo(),
 			$keys[4] => $this->getCaVlrminimo(),
 			$keys[5] => $this->getCaObservaciones(),
+			$keys[6] => $this->getCaIdmoneda(),
 		);
 		return $result;
 	}
@@ -650,6 +696,9 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			case 5:
 				$this->setCaObservaciones($value);
 				break;
+			case 6:
+				$this->setCaIdmoneda($value);
+				break;
 		} // switch()
 	}
 
@@ -679,6 +728,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if (array_key_exists($keys[3], $arr)) $this->setCaVlrrecargo($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaVlrminimo($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaObservaciones($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaIdmoneda($arr[$keys[6]]);
 	}
 
 	/**
@@ -696,6 +746,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRRECARGO, $this->ca_vlrrecargo);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRMINIMO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_OBSERVACIONES)) $criteria->add(PricRecargoxConceptoPeer::CA_OBSERVACIONES, $this->ca_observaciones);
+		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDMONEDA)) $criteria->add(PricRecargoxConceptoPeer::CA_IDMONEDA, $this->ca_idmoneda);
 
 		return $criteria;
 	}
@@ -772,6 +823,8 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
 
 		$copyObj->setCaObservaciones($this->ca_observaciones);
+
+		$copyObj->setCaIdmoneda($this->ca_idmoneda);
 
 
 		$copyObj->setNew(true);

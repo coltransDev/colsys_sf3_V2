@@ -393,9 +393,9 @@ abstract class BaseCotOpcionPeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
-
 		$criteria->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
+
+		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 
 		$rs = CotOpcionPeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
@@ -466,8 +466,8 @@ abstract class BaseCotOpcionPeer {
 		$startcol = (CotOpcionPeer::NUM_COLUMNS - CotOpcionPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
 		CotProductoPeer::addSelectColumns($c);
 
-		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 		$c->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
+		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -589,9 +589,9 @@ abstract class BaseCotOpcionPeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
-
 		$criteria->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
+
+		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 
 		$criteria->addJoin(CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
 
@@ -630,9 +630,9 @@ abstract class BaseCotOpcionPeer {
 		ConceptoPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + ConceptoPeer::NUM_COLUMNS;
 
-		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
-
 		$c->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
+
+		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 
 		$c->addJoin(CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO);
 
@@ -772,9 +772,9 @@ abstract class BaseCotOpcionPeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
-
 		$criteria->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
+
+		$criteria->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 
 		$rs = CotOpcionPeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
@@ -877,9 +877,9 @@ abstract class BaseCotOpcionPeer {
 		CotProductoPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + CotProductoPeer::NUM_COLUMNS;
 
-		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
-
 		$c->addJoin(CotOpcionPeer::CA_IDPRODUCTO, CotProductoPeer::CA_IDPRODUCTO);
+
+		$c->addJoin(CotOpcionPeer::CA_IDCOTIZACION, CotProductoPeer::CA_IDCOTIZACION);
 
 
 		$rs = BasePeer::doSelect($c, $con);
