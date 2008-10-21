@@ -25,7 +25,7 @@ function extImpoExpo($id="impoexpo"){
 											tra_destino.store.reload();					
 									  }
 					},
-					store: [['Importación', 'Importación'],['Exportación', 'Exportación']],
+					store: [['Importación', 'Importación'],['Exportación', 'Exportación']]
 				})";
 	return $html;					
 }
@@ -97,7 +97,7 @@ function extModalidad($id="modalidad", $transporte, $impoexpo){
 				])
 			),
 			$baseparams
-		}),
+		})
 	})";
 	return $html;					
 }

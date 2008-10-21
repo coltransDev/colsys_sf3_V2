@@ -6,8 +6,6 @@
 <file name="TrayectoPeer.php" local="128637410644062500" remote="128637410130000000" testing="0" />
 <file name="Flete.php" local="128637410643906250" remote="128637410130000000" testing="0" />
 <file name="FletePeer.php" local="128637410643593750" remote="128637410130000000" testing="0" />
-<file name="PricRecargo.php" local="128637410643906250" remote="128637410130000000" testing="0" />
-<file name="PricRecargoPeer.php" local="128637410643593750" remote="128637410130000000" testing="0" />
 <file name="PricRecargoxConcepto.php" local="128641658794375000" remote="128641657850000000" testing="0" />
 <file name="PricRecargoxConceptoPeer.php" local="128641658794218750" remote="128641657850000000" testing="0" />
 <file name="RecargoFlete.php" local="128637410643906250" remote="128637410130000000" testing="0" />
