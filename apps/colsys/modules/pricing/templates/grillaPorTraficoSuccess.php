@@ -246,24 +246,7 @@ var colModel = new Ext.grid.ColumnModel({
 			groupable: false,							
 			dataIndex: 'minima',
 			editor: new Ext.form.NumberField()			
-		}
-		,{
-			header: "Aplicación",
-			width: 100,
-			sortable: false,
-			groupable: false,
-			
-			dataIndex: 'aplicacion'//,              
-			/*editor: new Ext.form.ComboBox({
-				typeAhead: true,
-				triggerAction: 'all',
-				//transform:'light',
-				lazyRender:true,
-				listClass: 'x-combo-list-small',
-				store : aplicaciones	
-			})*/
 		}	
-		
 	]
 	,
 	isCellEditable: function(colIndex, rowIndex) {	
