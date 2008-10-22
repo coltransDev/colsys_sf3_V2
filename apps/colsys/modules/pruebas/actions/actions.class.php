@@ -573,7 +573,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		$c = new Criteria();
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
 		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
-
+ 
 		//$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
 		//$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
 		//$c->add( TrayectoPeer::CA_MODALIDAD, "LCL" );
