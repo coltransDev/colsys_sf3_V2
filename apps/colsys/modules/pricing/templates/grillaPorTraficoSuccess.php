@@ -220,15 +220,7 @@ var colModel = new Ext.grid.ColumnModel({
 				listClass: 'x-combo-list-small',
 				store : aplicaciones	
 			})*/
-		}				
-		,{
-			header: "Moneda",
-			width: 80,
-			sortable: false,
-			groupable: false,
-			dataIndex: 'moneda',              
-			editor: <?=extMonedas("USD")?>
-		}		
+		}							
 		,{
 			id: 'neta',
 			header: "Neta",
@@ -247,6 +239,14 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'minima',
 			editor: new Ext.form.NumberField()			
 		}
+		,{
+			header: "Moneda",
+			width: 80,
+			sortable: false,
+			groupable: false,
+			dataIndex: 'moneda',              
+			editor: <?=extMonedas("USD")?>
+		}	
 		
 	]
 	,
