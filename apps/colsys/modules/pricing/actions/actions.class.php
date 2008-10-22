@@ -229,7 +229,7 @@ class pricingActions extends sfActions
 					'moneda' => $pricRecargo->getCaIdMoneda(),
 					'aplicacion' => "",				
 					'_id' => $trayecto->getCaIdtrayecto()."-9999-".$pricRecargo->getCaIdrecargo(),
-					'style' => $trayecto->getEstilo(),
+					'style' => '',
 					'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
 					'iditem'=>$pricRecargo->getCaIdrecargo(),
 					'idconcepto'=>'9999',
