@@ -205,7 +205,22 @@ var colModel = new Ext.grid.ColumnModel({
 				format: 'd/m/Y'
 			})
 		} 
-					
+		,{
+			header: "Aplicación",
+			width: 100,
+			sortable: false,
+			groupable: false,
+			
+			dataIndex: 'aplicacion'//,              
+			/*editor: new Ext.form.ComboBox({
+				typeAhead: true,
+				triggerAction: 'all',
+				//transform:'light',
+				lazyRender:true,
+				listClass: 'x-combo-list-small',
+				store : aplicaciones	
+			})*/
+		}				
 		,{
 			header: "Moneda",
 			width: 80,
@@ -222,22 +237,7 @@ var colModel = new Ext.grid.ColumnModel({
 			groupable: false,							
 			dataIndex: 'neta',
 			editor: new Ext.form.NumberField()		
-		},{
-			header: "Aplicación",
-			width: 100,
-			sortable: false,
-			groupable: false,
-			
-			dataIndex: 'aplicacion'//,              
-			/*editor: new Ext.form.ComboBox({
-				typeAhead: true,
-				triggerAction: 'all',
-				//transform:'light',
-				lazyRender:true,
-				listClass: 'x-combo-list-small',
-				store : aplicaciones	
-			})*/
-		},			
+		},		
 		{
 			id: 'minima',
 			header: "<?=(($transporte=="Aéreo"&&$modalidad!="CABOTAJE")||$modalidad=="FCL")?"Sugerida":"Minima"?>",
@@ -246,7 +246,8 @@ var colModel = new Ext.grid.ColumnModel({
 			groupable: false,							
 			dataIndex: 'minima',
 			editor: new Ext.form.NumberField()			
-		}	
+		}
+		
 	]
 	,
 	isCellEditable: function(colIndex, rowIndex) {	
