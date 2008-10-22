@@ -598,7 +598,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				$pricflete->save();
 				
 				$c = new Criteria();
-				$c->add( RecargoFletePeer::CA_IDCONCEPTO, '9999' ); 
+				//$c->add( RecargoFletePeer::CA_IDCONCEPTO, '9999' ); 
 				$c->add( RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto() ); 
 				$recargos = RecargoFletePeer::doSelect( $c );
 				
@@ -616,10 +616,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 					}else{
 						if( $recargo->getCaPorcentaje()!=0 ){
 							$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
-							$pricrecargo->setCaAplicacion( $recargo->getCaBaseporcentaje() );
+							//$pricrecargo->setCaAplicacion( $recargo->getCaBaseporcentaje() );
 						}else{
 							$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrunitario() );
-							$pricrecargo->setCaAplicacion( $recargo->getCaBaseunitario() );
+							//$pricrecargo->setCaAplicacion( $recargo->getCaBaseunitario() );
 						}
 					}
 									
@@ -629,7 +629,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 					$pricrecargo->save();
 				}
 				
-															
+				/*											
 				$recargos = $flete->getRecargoFletes();
 				foreach( $recargos as $recargo ){
 					$pricrecargo = PricRecargoxConceptoPeer::retrieveByPk( $recargo->getCaIdTrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo() ); 	
@@ -655,7 +655,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 					$pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
 					$pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );				
 					$pricrecargo->save();
-				}
+				}*/
 			}			
 		}		
 	}
