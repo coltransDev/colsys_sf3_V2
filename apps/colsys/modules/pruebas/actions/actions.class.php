@@ -600,11 +600,13 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				
 				$recargos = $flete->getRecargoFletes();
 				foreach( $recargos as $recargo ){
-					$pricrecargo = new PricRecargoxConcepto();
-					$pricrecargo->setCaIdTrayecto( $recargo->getCaIdTrayecto() );
-					$pricrecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
-					$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
-												
+					$pricrecargo = PricRecargoxConceptoPeer::retrieveByPk( $recargo->getCaIdTrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo() ); 	
+					if( !$pricrecargo ){
+						$pricrecargo = new PricRecargoxConcepto();
+						$pricrecargo->setCaIdTrayecto( $recargo->getCaIdTrayecto() );
+						$pricrecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
+						$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
+					}												
 					if( $recargo->getCaVlrfijo()!=0 ){
 						$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
 					}else{
