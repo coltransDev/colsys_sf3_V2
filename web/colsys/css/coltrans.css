@@ -321,11 +321,11 @@ a.toolbar:active {
 * Colores diferentes para las flias de una grilla
 */
 .row_yellow{	
-	background-color: #FFFFCC;
+	background-color: #FFFFCC !important;
 	
 }
 .row_pink{	
-	background-color: #FFCCCC;	
+	background-color: #FFCCCC !important;	
 
 }
 

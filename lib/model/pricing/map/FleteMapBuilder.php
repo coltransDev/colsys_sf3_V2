@@ -79,6 +79,10 @@ class FleteMapBuilder {
 
 		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
 
+		$tMap->addColumn('CA_SUGERIDA', 'CaSugerida', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_MANTENIMIENTO', 'CaMantenimiento', 'string', CreoleTypes::VARCHAR, false, null);
+
 	} // doBuild()
 
 } // FleteMapBuilder

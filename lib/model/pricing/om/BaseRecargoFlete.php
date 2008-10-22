@@ -39,6 +39,97 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idrecargo;
 
+
+	/**
+	 * The value for the ca_aplicacion field.
+	 * @var        string
+	 */
+	protected $ca_aplicacion;
+
+
+	/**
+	 * The value for the ca_vlrfijo field.
+	 * @var        double
+	 */
+	protected $ca_vlrfijo;
+
+
+	/**
+	 * The value for the ca_porcentaje field.
+	 * @var        double
+	 */
+	protected $ca_porcentaje;
+
+
+	/**
+	 * The value for the ca_baseporcentaje field.
+	 * @var        string
+	 */
+	protected $ca_baseporcentaje;
+
+
+	/**
+	 * The value for the ca_vlrunitario field.
+	 * @var        double
+	 */
+	protected $ca_vlrunitario;
+
+
+	/**
+	 * The value for the ca_baseunitario field.
+	 * @var        string
+	 */
+	protected $ca_baseunitario;
+
+
+	/**
+	 * The value for the ca_recargominimo field.
+	 * @var        double
+	 */
+	protected $ca_recargominimo;
+
+
+	/**
+	 * The value for the ca_idmoneda field.
+	 * @var        string
+	 */
+	protected $ca_idmoneda;
+
+
+	/**
+	 * The value for the ca_observaciones field.
+	 * @var        string
+	 */
+	protected $ca_observaciones;
+
+
+	/**
+	 * The value for the ca_fchcreado field.
+	 * @var        int
+	 */
+	protected $ca_fchcreado;
+
+
+	/**
+	 * The value for the ca_usucreado field.
+	 * @var        string
+	 */
+	protected $ca_usucreado;
+
+
+	/**
+	 * The value for the ca_fchactualizado field.
+	 * @var        int
+	 */
+	protected $ca_fchactualizado;
+
+
+	/**
+	 * The value for the ca_usuactualizado field.
+	 * @var        string
+	 */
+	protected $ca_usuactualizado;
+
 	/**
 	 * @var        Flete
 	 */
@@ -94,6 +185,189 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idrecargo;
+	}
+
+	/**
+	 * Get the [ca_aplicacion] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaAplicacion()
+	{
+
+		return $this->ca_aplicacion;
+	}
+
+	/**
+	 * Get the [ca_vlrfijo] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaVlrfijo()
+	{
+
+		return $this->ca_vlrfijo;
+	}
+
+	/**
+	 * Get the [ca_porcentaje] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaPorcentaje()
+	{
+
+		return $this->ca_porcentaje;
+	}
+
+	/**
+	 * Get the [ca_baseporcentaje] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaBaseporcentaje()
+	{
+
+		return $this->ca_baseporcentaje;
+	}
+
+	/**
+	 * Get the [ca_vlrunitario] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaVlrunitario()
+	{
+
+		return $this->ca_vlrunitario;
+	}
+
+	/**
+	 * Get the [ca_baseunitario] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaBaseunitario()
+	{
+
+		return $this->ca_baseunitario;
+	}
+
+	/**
+	 * Get the [ca_recargominimo] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaRecargominimo()
+	{
+
+		return $this->ca_recargominimo;
+	}
+
+	/**
+	 * Get the [ca_idmoneda] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIdmoneda()
+	{
+
+		return $this->ca_idmoneda;
+	}
+
+	/**
+	 * Get the [ca_observaciones] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaObservaciones()
+	{
+
+		return $this->ca_observaciones;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchcreado] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchcreado($format = 'Y-m-d H:i:s')
+	{
+
+		if ($this->ca_fchcreado === null || $this->ca_fchcreado === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchcreado)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchcreado);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchcreado] as date/time value: " . var_export($this->ca_fchcreado, true));
+			}
+		} else {
+			$ts = $this->ca_fchcreado;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [ca_usucreado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsucreado()
+	{
+
+		return $this->ca_usucreado;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchactualizado] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchactualizado($format = 'Y-m-d H:i:s')
+	{
+
+		if ($this->ca_fchactualizado === null || $this->ca_fchactualizado === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchactualizado)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchactualizado);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchactualizado] as date/time value: " . var_export($this->ca_fchactualizado, true));
+			}
+		} else {
+			$ts = $this->ca_fchactualizado;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [ca_usuactualizado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsuactualizado()
+	{
+
+		return $this->ca_usuactualizado;
 	}
 
 	/**
@@ -175,6 +449,272 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 	} // setCaIdrecargo()
 
 	/**
+	 * Set the value of [ca_aplicacion] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaAplicacion($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_aplicacion !== $v) {
+			$this->ca_aplicacion = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_APLICACION;
+		}
+
+	} // setCaAplicacion()
+
+	/**
+	 * Set the value of [ca_vlrfijo] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaVlrfijo($v)
+	{
+
+		if ($this->ca_vlrfijo !== $v) {
+			$this->ca_vlrfijo = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_VLRFIJO;
+		}
+
+	} // setCaVlrfijo()
+
+	/**
+	 * Set the value of [ca_porcentaje] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaPorcentaje($v)
+	{
+
+		if ($this->ca_porcentaje !== $v) {
+			$this->ca_porcentaje = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_PORCENTAJE;
+		}
+
+	} // setCaPorcentaje()
+
+	/**
+	 * Set the value of [ca_baseporcentaje] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaBaseporcentaje($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_baseporcentaje !== $v) {
+			$this->ca_baseporcentaje = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_BASEPORCENTAJE;
+		}
+
+	} // setCaBaseporcentaje()
+
+	/**
+	 * Set the value of [ca_vlrunitario] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaVlrunitario($v)
+	{
+
+		if ($this->ca_vlrunitario !== $v) {
+			$this->ca_vlrunitario = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_VLRUNITARIO;
+		}
+
+	} // setCaVlrunitario()
+
+	/**
+	 * Set the value of [ca_baseunitario] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaBaseunitario($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_baseunitario !== $v) {
+			$this->ca_baseunitario = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_BASEUNITARIO;
+		}
+
+	} // setCaBaseunitario()
+
+	/**
+	 * Set the value of [ca_recargominimo] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaRecargominimo($v)
+	{
+
+		if ($this->ca_recargominimo !== $v) {
+			$this->ca_recargominimo = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_RECARGOMINIMO;
+		}
+
+	} // setCaRecargominimo()
+
+	/**
+	 * Set the value of [ca_idmoneda] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaIdmoneda($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_idmoneda !== $v) {
+			$this->ca_idmoneda = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_IDMONEDA;
+		}
+
+	} // setCaIdmoneda()
+
+	/**
+	 * Set the value of [ca_observaciones] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaObservaciones($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_observaciones !== $v) {
+			$this->ca_observaciones = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_OBSERVACIONES;
+		}
+
+	} // setCaObservaciones()
+
+	/**
+	 * Set the value of [ca_fchcreado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchcreado($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchcreado] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchcreado !== $ts) {
+			$this->ca_fchcreado = $ts;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_FCHCREADO;
+		}
+
+	} // setCaFchcreado()
+
+	/**
+	 * Set the value of [ca_usucreado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaUsucreado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_usucreado !== $v) {
+			$this->ca_usucreado = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_USUCREADO;
+		}
+
+	} // setCaUsucreado()
+
+	/**
+	 * Set the value of [ca_fchactualizado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchactualizado($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchactualizado] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchactualizado !== $ts) {
+			$this->ca_fchactualizado = $ts;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_FCHACTUALIZADO;
+		}
+
+	} // setCaFchactualizado()
+
+	/**
+	 * Set the value of [ca_usuactualizado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaUsuactualizado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_usuactualizado !== $v) {
+			$this->ca_usuactualizado = $v;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_USUACTUALIZADO;
+		}
+
+	} // setCaUsuactualizado()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -197,12 +737,38 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 
 			$this->ca_idrecargo = $rs->getInt($startcol + 2);
 
+			$this->ca_aplicacion = $rs->getString($startcol + 3);
+
+			$this->ca_vlrfijo = $rs->getFloat($startcol + 4);
+
+			$this->ca_porcentaje = $rs->getFloat($startcol + 5);
+
+			$this->ca_baseporcentaje = $rs->getString($startcol + 6);
+
+			$this->ca_vlrunitario = $rs->getFloat($startcol + 7);
+
+			$this->ca_baseunitario = $rs->getString($startcol + 8);
+
+			$this->ca_recargominimo = $rs->getFloat($startcol + 9);
+
+			$this->ca_idmoneda = $rs->getString($startcol + 10);
+
+			$this->ca_observaciones = $rs->getString($startcol + 11);
+
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 12, null);
+
+			$this->ca_usucreado = $rs->getString($startcol + 13);
+
+			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 14, null);
+
+			$this->ca_usuactualizado = $rs->getString($startcol + 15);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 3; // 3 = RecargoFletePeer::NUM_COLUMNS - RecargoFletePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 16; // 16 = RecargoFletePeer::NUM_COLUMNS - RecargoFletePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating RecargoFlete object", $e);
@@ -452,6 +1018,45 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 			case 2:
 				return $this->getCaIdrecargo();
 				break;
+			case 3:
+				return $this->getCaAplicacion();
+				break;
+			case 4:
+				return $this->getCaVlrfijo();
+				break;
+			case 5:
+				return $this->getCaPorcentaje();
+				break;
+			case 6:
+				return $this->getCaBaseporcentaje();
+				break;
+			case 7:
+				return $this->getCaVlrunitario();
+				break;
+			case 8:
+				return $this->getCaBaseunitario();
+				break;
+			case 9:
+				return $this->getCaRecargominimo();
+				break;
+			case 10:
+				return $this->getCaIdmoneda();
+				break;
+			case 11:
+				return $this->getCaObservaciones();
+				break;
+			case 12:
+				return $this->getCaFchcreado();
+				break;
+			case 13:
+				return $this->getCaUsucreado();
+				break;
+			case 14:
+				return $this->getCaFchactualizado();
+				break;
+			case 15:
+				return $this->getCaUsuactualizado();
+				break;
 			default:
 				return null;
 				break;
@@ -475,6 +1080,19 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 			$keys[0] => $this->getCaIdtrayecto(),
 			$keys[1] => $this->getCaIdconcepto(),
 			$keys[2] => $this->getCaIdrecargo(),
+			$keys[3] => $this->getCaAplicacion(),
+			$keys[4] => $this->getCaVlrfijo(),
+			$keys[5] => $this->getCaPorcentaje(),
+			$keys[6] => $this->getCaBaseporcentaje(),
+			$keys[7] => $this->getCaVlrunitario(),
+			$keys[8] => $this->getCaBaseunitario(),
+			$keys[9] => $this->getCaRecargominimo(),
+			$keys[10] => $this->getCaIdmoneda(),
+			$keys[11] => $this->getCaObservaciones(),
+			$keys[12] => $this->getCaFchcreado(),
+			$keys[13] => $this->getCaUsucreado(),
+			$keys[14] => $this->getCaFchactualizado(),
+			$keys[15] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -515,6 +1133,45 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 			case 2:
 				$this->setCaIdrecargo($value);
 				break;
+			case 3:
+				$this->setCaAplicacion($value);
+				break;
+			case 4:
+				$this->setCaVlrfijo($value);
+				break;
+			case 5:
+				$this->setCaPorcentaje($value);
+				break;
+			case 6:
+				$this->setCaBaseporcentaje($value);
+				break;
+			case 7:
+				$this->setCaVlrunitario($value);
+				break;
+			case 8:
+				$this->setCaBaseunitario($value);
+				break;
+			case 9:
+				$this->setCaRecargominimo($value);
+				break;
+			case 10:
+				$this->setCaIdmoneda($value);
+				break;
+			case 11:
+				$this->setCaObservaciones($value);
+				break;
+			case 12:
+				$this->setCaFchcreado($value);
+				break;
+			case 13:
+				$this->setCaUsucreado($value);
+				break;
+			case 14:
+				$this->setCaFchactualizado($value);
+				break;
+			case 15:
+				$this->setCaUsuactualizado($value);
+				break;
 		} // switch()
 	}
 
@@ -541,6 +1198,19 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdtrayecto($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdconcepto($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaIdrecargo($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaAplicacion($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaVlrfijo($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaPorcentaje($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaBaseporcentaje($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaVlrunitario($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaBaseunitario($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaRecargominimo($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaIdmoneda($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaObservaciones($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaFchcreado($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaUsucreado($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaFchactualizado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaUsuactualizado($arr[$keys[15]]);
 	}
 
 	/**
@@ -555,6 +1225,19 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(RecargoFletePeer::CA_IDTRAYECTO)) $criteria->add(RecargoFletePeer::CA_IDTRAYECTO, $this->ca_idtrayecto);
 		if ($this->isColumnModified(RecargoFletePeer::CA_IDCONCEPTO)) $criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		if ($this->isColumnModified(RecargoFletePeer::CA_IDRECARGO)) $criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->ca_idrecargo);
+		if ($this->isColumnModified(RecargoFletePeer::CA_APLICACION)) $criteria->add(RecargoFletePeer::CA_APLICACION, $this->ca_aplicacion);
+		if ($this->isColumnModified(RecargoFletePeer::CA_VLRFIJO)) $criteria->add(RecargoFletePeer::CA_VLRFIJO, $this->ca_vlrfijo);
+		if ($this->isColumnModified(RecargoFletePeer::CA_PORCENTAJE)) $criteria->add(RecargoFletePeer::CA_PORCENTAJE, $this->ca_porcentaje);
+		if ($this->isColumnModified(RecargoFletePeer::CA_BASEPORCENTAJE)) $criteria->add(RecargoFletePeer::CA_BASEPORCENTAJE, $this->ca_baseporcentaje);
+		if ($this->isColumnModified(RecargoFletePeer::CA_VLRUNITARIO)) $criteria->add(RecargoFletePeer::CA_VLRUNITARIO, $this->ca_vlrunitario);
+		if ($this->isColumnModified(RecargoFletePeer::CA_BASEUNITARIO)) $criteria->add(RecargoFletePeer::CA_BASEUNITARIO, $this->ca_baseunitario);
+		if ($this->isColumnModified(RecargoFletePeer::CA_RECARGOMINIMO)) $criteria->add(RecargoFletePeer::CA_RECARGOMINIMO, $this->ca_recargominimo);
+		if ($this->isColumnModified(RecargoFletePeer::CA_IDMONEDA)) $criteria->add(RecargoFletePeer::CA_IDMONEDA, $this->ca_idmoneda);
+		if ($this->isColumnModified(RecargoFletePeer::CA_OBSERVACIONES)) $criteria->add(RecargoFletePeer::CA_OBSERVACIONES, $this->ca_observaciones);
+		if ($this->isColumnModified(RecargoFletePeer::CA_FCHCREADO)) $criteria->add(RecargoFletePeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(RecargoFletePeer::CA_USUCREADO)) $criteria->add(RecargoFletePeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(RecargoFletePeer::CA_FCHACTUALIZADO)) $criteria->add(RecargoFletePeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
+		if ($this->isColumnModified(RecargoFletePeer::CA_USUACTUALIZADO)) $criteria->add(RecargoFletePeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
 
 		return $criteria;
 	}
@@ -626,6 +1309,32 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaAplicacion($this->ca_aplicacion);
+
+		$copyObj->setCaVlrfijo($this->ca_vlrfijo);
+
+		$copyObj->setCaPorcentaje($this->ca_porcentaje);
+
+		$copyObj->setCaBaseporcentaje($this->ca_baseporcentaje);
+
+		$copyObj->setCaVlrunitario($this->ca_vlrunitario);
+
+		$copyObj->setCaBaseunitario($this->ca_baseunitario);
+
+		$copyObj->setCaRecargominimo($this->ca_recargominimo);
+
+		$copyObj->setCaIdmoneda($this->ca_idmoneda);
+
+		$copyObj->setCaObservaciones($this->ca_observaciones);
+
+		$copyObj->setCaFchcreado($this->ca_fchcreado);
+
+		$copyObj->setCaUsucreado($this->ca_usucreado);
+
+		$copyObj->setCaFchactualizado($this->ca_fchactualizado);
+
+		$copyObj->setCaUsuactualizado($this->ca_usuactualizado);
+
 
 		$copyObj->setNew(true);
 
@@ -687,16 +1396,16 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 
 
 		if ($v === null) {
-			$this->setCaIdconcepto(NULL);
+			$this->setCaIdtrayecto(NULL);
 		} else {
-			$this->setCaIdconcepto($v->getCaIdconcepto());
+			$this->setCaIdtrayecto($v->getCaIdtrayecto());
 		}
 
 
 		if ($v === null) {
-			$this->setCaIdtrayecto(NULL);
+			$this->setCaIdconcepto(NULL);
 		} else {
-			$this->setCaIdtrayecto($v->getCaIdtrayecto());
+			$this->setCaIdconcepto($v->getCaIdconcepto());
 		}
 
 
@@ -713,9 +1422,9 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 	 */
 	public function getFlete($con = null)
 	{
-		if ($this->aFlete === null && ($this->ca_idconcepto !== null && $this->ca_idtrayecto !== null)) {
+		if ($this->aFlete === null && ($this->ca_idtrayecto !== null && $this->ca_idconcepto !== null)) {
 			// include the related Peer class
-			$this->aFlete = FletePeer::retrieveByPK($this->ca_idconcepto, $this->ca_idtrayecto, $con);
+			$this->aFlete = FletePeer::retrieveByPK($this->ca_idtrayecto, $this->ca_idconcepto, $con);
 
 			/* The following can be used instead of the line above to
 			   guarantee the related object contains a reference
@@ -723,7 +1432,7 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 			   may be undesirable in many circumstances.
 			   As it can lead to a db query with many results that may
 			   never be used.
-			   $obj = FletePeer::retrieveByPK($this->ca_idconcepto, $this->ca_idtrayecto, $con);
+			   $obj = FletePeer::retrieveByPK($this->ca_idtrayecto, $this->ca_idconcepto, $con);
 			   $obj->addFletes($this);
 			 */
 		}

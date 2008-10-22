@@ -30,43 +30,9 @@ class Trayecto extends BaseTrayecto
 		return CiudadPeer::doSelectOne( $c );		
 	}
 	
+		
 	
 	
-	/*
-	* Retorna el estilo que se debe aplicar a las filas de acuerdoa al estado que se encuentre
-	* Author: Andres Botero
-	*/
-	public function getEstilo(){
-		switch( $this->getCaEstado() ){
-			case 2:
-				return "yellow";
-				break;
-			case 3:
-				return "pink";
-				break;
-			default:
-				return "";
-				break;
-		}
-	}
-	
-	/*
-	* Coloca el estilo que se debe aplicar a las filas de acuerdoa al estado que se encuentre
-	* Author: Andres Botero
-	*/
-	public function setEstilo( $estilo ){
-		switch( $estilo ){
-			case "yellow":				
-				$this->setCaEstado(2);
-				break;
-			case "pink":
-				$this->setCaEstado(3);
-				break;
-			default:
-				$this->setCaEstado(1);
-				break;
-		}
-	}
 	
 	/*
 	* Retorna los recargos generales del trayecto

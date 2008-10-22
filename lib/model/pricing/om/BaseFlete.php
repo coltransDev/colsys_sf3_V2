@@ -81,6 +81,20 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 	 */
 	protected $ca_fchcreado;
 
+
+	/**
+	 * The value for the ca_sugerida field.
+	 * @var        string
+	 */
+	protected $ca_sugerida;
+
+
+	/**
+	 * The value for the ca_mantenimiento field.
+	 * @var        string
+	 */
+	protected $ca_mantenimiento;
+
 	/**
 	 * @var        Trayecto
 	 */
@@ -274,6 +288,28 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 		} else {
 			return date($format, $ts);
 		}
+	}
+
+	/**
+	 * Get the [ca_sugerida] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaSugerida()
+	{
+
+		return $this->ca_sugerida;
+	}
+
+	/**
+	 * Get the [ca_mantenimiento] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaMantenimiento()
+	{
+
+		return $this->ca_mantenimiento;
 	}
 
 	/**
@@ -477,6 +513,50 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 	} // setCaFchcreado()
 
 	/**
+	 * Set the value of [ca_sugerida] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaSugerida($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_sugerida !== $v) {
+			$this->ca_sugerida = $v;
+			$this->modifiedColumns[] = FletePeer::CA_SUGERIDA;
+		}
+
+	} // setCaSugerida()
+
+	/**
+	 * Set the value of [ca_mantenimiento] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaMantenimiento($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_mantenimiento !== $v) {
+			$this->ca_mantenimiento = $v;
+			$this->modifiedColumns[] = FletePeer::CA_MANTENIMIENTO;
+		}
+
+	} // setCaMantenimiento()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -511,12 +591,16 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 
 			$this->ca_fchcreado = $rs->getTimestamp($startcol + 8, null);
 
+			$this->ca_sugerida = $rs->getString($startcol + 9);
+
+			$this->ca_mantenimiento = $rs->getString($startcol + 10);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 9; // 9 = FletePeer::NUM_COLUMNS - FletePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 11; // 11 = FletePeer::NUM_COLUMNS - FletePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Flete object", $e);
@@ -800,6 +884,12 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 			case 8:
 				return $this->getCaFchcreado();
 				break;
+			case 9:
+				return $this->getCaSugerida();
+				break;
+			case 10:
+				return $this->getCaMantenimiento();
+				break;
 			default:
 				return null;
 				break;
@@ -829,6 +919,8 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 			$keys[6] => $this->getCaIdmoneda(),
 			$keys[7] => $this->getCaObservaciones(),
 			$keys[8] => $this->getCaFchcreado(),
+			$keys[9] => $this->getCaSugerida(),
+			$keys[10] => $this->getCaMantenimiento(),
 		);
 		return $result;
 	}
@@ -887,6 +979,12 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 			case 8:
 				$this->setCaFchcreado($value);
 				break;
+			case 9:
+				$this->setCaSugerida($value);
+				break;
+			case 10:
+				$this->setCaMantenimiento($value);
+				break;
 		} // switch()
 	}
 
@@ -919,6 +1017,8 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[6], $arr)) $this->setCaIdmoneda($arr[$keys[6]]);
 		if (array_key_exists($keys[7], $arr)) $this->setCaObservaciones($arr[$keys[7]]);
 		if (array_key_exists($keys[8], $arr)) $this->setCaFchcreado($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaSugerida($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaMantenimiento($arr[$keys[10]]);
 	}
 
 	/**
@@ -939,6 +1039,8 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(FletePeer::CA_IDMONEDA)) $criteria->add(FletePeer::CA_IDMONEDA, $this->ca_idmoneda);
 		if ($this->isColumnModified(FletePeer::CA_OBSERVACIONES)) $criteria->add(FletePeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(FletePeer::CA_FCHCREADO)) $criteria->add(FletePeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(FletePeer::CA_SUGERIDA)) $criteria->add(FletePeer::CA_SUGERIDA, $this->ca_sugerida);
+		if ($this->isColumnModified(FletePeer::CA_MANTENIMIENTO)) $criteria->add(FletePeer::CA_MANTENIMIENTO, $this->ca_mantenimiento);
 
 		return $criteria;
 	}
@@ -1018,6 +1120,10 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 		$copyObj->setCaObservaciones($this->ca_observaciones);
 
 		$copyObj->setCaFchcreado($this->ca_fchcreado);
+
+		$copyObj->setCaSugerida($this->ca_sugerida);
+
+		$copyObj->setCaMantenimiento($this->ca_mantenimiento);
 
 
 		if ($deepCopy) {
@@ -1216,9 +1322,9 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 			   $this->collRecargoFletes = array();
 			} else {
 
-				$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
-
 				$criteria->add(RecargoFletePeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+				$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
 
 				RecargoFletePeer::addSelectColumns($criteria);
 				$this->collRecargoFletes = RecargoFletePeer::doSelect($criteria, $con);
@@ -1231,10 +1337,10 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
-
-
 				$criteria->add(RecargoFletePeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+
+				$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
 
 				RecargoFletePeer::addSelectColumns($criteria);
 				if (!isset($this->lastRecargoFleteCriteria) || !$this->lastRecargoFleteCriteria->equals($criteria)) {
@@ -1265,9 +1371,9 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
-
 		$criteria->add(RecargoFletePeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+		$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
 
 		return RecargoFletePeer::doCount($criteria, $distinct, $con);
 	}
@@ -1314,9 +1420,9 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 				$this->collRecargoFletes = array();
 			} else {
 
-				$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
-
 				$criteria->add(RecargoFletePeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+				$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
 
 				$this->collRecargoFletes = RecargoFletePeer::doSelectJoinTipoRecargo($criteria, $con);
 			}
@@ -1325,9 +1431,9 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
-
 			$criteria->add(RecargoFletePeer::CA_IDTRAYECTO, $this->getCaIdtrayecto());
+
+			$criteria->add(RecargoFletePeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
 
 			if (!isset($this->lastRecargoFleteCriteria) || !$this->lastRecargoFleteCriteria->equals($criteria)) {
 				$this->collRecargoFletes = RecargoFletePeer::doSelectJoinTipoRecargo($criteria, $con);

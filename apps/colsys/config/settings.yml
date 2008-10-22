@@ -7,6 +7,7 @@ dev:
   .settings:
     # E_ALL | E_STRICT = 4095
     error_reporting:        <?php echo (E_ALL | E_STRICT)."\n" ?>
+    logging_enabled: off
     web_debug:              on
     cache:                  off
     no_script_name:         on

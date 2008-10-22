@@ -19,7 +19,7 @@ abstract class BaseRecargoFletePeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.RecargoFlete';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 3;
+	const NUM_COLUMNS = 16;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -34,6 +34,45 @@ abstract class BaseRecargoFletePeer {
 	/** the column name for the CA_IDRECARGO field */
 	const CA_IDRECARGO = 'tb_recargos.CA_IDRECARGO';
 
+	/** the column name for the CA_APLICACION field */
+	const CA_APLICACION = 'tb_recargos.CA_APLICACION';
+
+	/** the column name for the CA_VLRFIJO field */
+	const CA_VLRFIJO = 'tb_recargos.CA_VLRFIJO';
+
+	/** the column name for the CA_PORCENTAJE field */
+	const CA_PORCENTAJE = 'tb_recargos.CA_PORCENTAJE';
+
+	/** the column name for the CA_BASEPORCENTAJE field */
+	const CA_BASEPORCENTAJE = 'tb_recargos.CA_BASEPORCENTAJE';
+
+	/** the column name for the CA_VLRUNITARIO field */
+	const CA_VLRUNITARIO = 'tb_recargos.CA_VLRUNITARIO';
+
+	/** the column name for the CA_BASEUNITARIO field */
+	const CA_BASEUNITARIO = 'tb_recargos.CA_BASEUNITARIO';
+
+	/** the column name for the CA_RECARGOMINIMO field */
+	const CA_RECARGOMINIMO = 'tb_recargos.CA_RECARGOMINIMO';
+
+	/** the column name for the CA_IDMONEDA field */
+	const CA_IDMONEDA = 'tb_recargos.CA_IDMONEDA';
+
+	/** the column name for the CA_OBSERVACIONES field */
+	const CA_OBSERVACIONES = 'tb_recargos.CA_OBSERVACIONES';
+
+	/** the column name for the CA_FCHCREADO field */
+	const CA_FCHCREADO = 'tb_recargos.CA_FCHCREADO';
+
+	/** the column name for the CA_USUCREADO field */
+	const CA_USUCREADO = 'tb_recargos.CA_USUCREADO';
+
+	/** the column name for the CA_FCHACTUALIZADO field */
+	const CA_FCHACTUALIZADO = 'tb_recargos.CA_FCHACTUALIZADO';
+
+	/** the column name for the CA_USUACTUALIZADO field */
+	const CA_USUACTUALIZADO = 'tb_recargos.CA_USUACTUALIZADO';
+
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -45,10 +84,10 @@ abstract class BaseRecargoFletePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaIdrecargo', ),
-		BasePeer::TYPE_COLNAME => array (RecargoFletePeer::CA_IDTRAYECTO, RecargoFletePeer::CA_IDCONCEPTO, RecargoFletePeer::CA_IDRECARGO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_idrecargo', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaIdrecargo', 'CaAplicacion', 'CaVlrfijo', 'CaPorcentaje', 'CaBaseporcentaje', 'CaVlrunitario', 'CaBaseunitario', 'CaRecargominimo', 'CaIdmoneda', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
+		BasePeer::TYPE_COLNAME => array (RecargoFletePeer::CA_IDTRAYECTO, RecargoFletePeer::CA_IDCONCEPTO, RecargoFletePeer::CA_IDRECARGO, RecargoFletePeer::CA_APLICACION, RecargoFletePeer::CA_VLRFIJO, RecargoFletePeer::CA_PORCENTAJE, RecargoFletePeer::CA_BASEPORCENTAJE, RecargoFletePeer::CA_VLRUNITARIO, RecargoFletePeer::CA_BASEUNITARIO, RecargoFletePeer::CA_RECARGOMINIMO, RecargoFletePeer::CA_IDMONEDA, RecargoFletePeer::CA_OBSERVACIONES, RecargoFletePeer::CA_FCHCREADO, RecargoFletePeer::CA_USUCREADO, RecargoFletePeer::CA_FCHACTUALIZADO, RecargoFletePeer::CA_USUACTUALIZADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_idrecargo', 'ca_aplicacion', 'ca_vlrfijo', 'ca_porcentaje', 'ca_baseporcentaje', 'ca_vlrunitario', 'ca_baseunitario', 'ca_recargominimo', 'ca_idmoneda', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
 
 	/**
@@ -58,10 +97,10 @@ abstract class BaseRecargoFletePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaIdrecargo' => 2, ),
-		BasePeer::TYPE_COLNAME => array (RecargoFletePeer::CA_IDTRAYECTO => 0, RecargoFletePeer::CA_IDCONCEPTO => 1, RecargoFletePeer::CA_IDRECARGO => 2, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_idrecargo' => 2, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaIdrecargo' => 2, 'CaAplicacion' => 3, 'CaVlrfijo' => 4, 'CaPorcentaje' => 5, 'CaBaseporcentaje' => 6, 'CaVlrunitario' => 7, 'CaBaseunitario' => 8, 'CaRecargominimo' => 9, 'CaIdmoneda' => 10, 'CaObservaciones' => 11, 'CaFchcreado' => 12, 'CaUsucreado' => 13, 'CaFchactualizado' => 14, 'CaUsuactualizado' => 15, ),
+		BasePeer::TYPE_COLNAME => array (RecargoFletePeer::CA_IDTRAYECTO => 0, RecargoFletePeer::CA_IDCONCEPTO => 1, RecargoFletePeer::CA_IDRECARGO => 2, RecargoFletePeer::CA_APLICACION => 3, RecargoFletePeer::CA_VLRFIJO => 4, RecargoFletePeer::CA_PORCENTAJE => 5, RecargoFletePeer::CA_BASEPORCENTAJE => 6, RecargoFletePeer::CA_VLRUNITARIO => 7, RecargoFletePeer::CA_BASEUNITARIO => 8, RecargoFletePeer::CA_RECARGOMINIMO => 9, RecargoFletePeer::CA_IDMONEDA => 10, RecargoFletePeer::CA_OBSERVACIONES => 11, RecargoFletePeer::CA_FCHCREADO => 12, RecargoFletePeer::CA_USUCREADO => 13, RecargoFletePeer::CA_FCHACTUALIZADO => 14, RecargoFletePeer::CA_USUACTUALIZADO => 15, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_idrecargo' => 2, 'ca_aplicacion' => 3, 'ca_vlrfijo' => 4, 'ca_porcentaje' => 5, 'ca_baseporcentaje' => 6, 'ca_vlrunitario' => 7, 'ca_baseunitario' => 8, 'ca_recargominimo' => 9, 'ca_idmoneda' => 10, 'ca_observaciones' => 11, 'ca_fchcreado' => 12, 'ca_usucreado' => 13, 'ca_fchactualizado' => 14, 'ca_usuactualizado' => 15, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
 
 	/**
@@ -166,6 +205,32 @@ abstract class BaseRecargoFletePeer {
 		$criteria->addSelectColumn(RecargoFletePeer::CA_IDCONCEPTO);
 
 		$criteria->addSelectColumn(RecargoFletePeer::CA_IDRECARGO);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_APLICACION);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_VLRFIJO);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_PORCENTAJE);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_BASEPORCENTAJE);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_VLRUNITARIO);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_BASEUNITARIO);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_RECARGOMINIMO);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_IDMONEDA);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_OBSERVACIONES);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_FCHCREADO);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_USUCREADO);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_FCHACTUALIZADO);
+
+		$criteria->addSelectColumn(RecargoFletePeer::CA_USUACTUALIZADO);
 
 	}
 
@@ -323,9 +388,9 @@ abstract class BaseRecargoFletePeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
-
 		$criteria->addJoin(RecargoFletePeer::CA_IDTRAYECTO, FletePeer::CA_IDTRAYECTO);
+
+		$criteria->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
 
 		$rs = RecargoFletePeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
@@ -396,8 +461,8 @@ abstract class BaseRecargoFletePeer {
 		$startcol = (RecargoFletePeer::NUM_COLUMNS - RecargoFletePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
 		FletePeer::addSelectColumns($c);
 
-		$c->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
 		$c->addJoin(RecargoFletePeer::CA_IDTRAYECTO, FletePeer::CA_IDTRAYECTO);
+		$c->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -519,9 +584,9 @@ abstract class BaseRecargoFletePeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
-
 		$criteria->addJoin(RecargoFletePeer::CA_IDTRAYECTO, FletePeer::CA_IDTRAYECTO);
+
+		$criteria->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
 
 		$criteria->addJoin(RecargoFletePeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
 
@@ -560,9 +625,9 @@ abstract class BaseRecargoFletePeer {
 		TipoRecargoPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + TipoRecargoPeer::NUM_COLUMNS;
 
-		$c->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
-
 		$c->addJoin(RecargoFletePeer::CA_IDTRAYECTO, FletePeer::CA_IDTRAYECTO);
+
+		$c->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
 
 		$c->addJoin(RecargoFletePeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
 
@@ -702,9 +767,9 @@ abstract class BaseRecargoFletePeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
-
 		$criteria->addJoin(RecargoFletePeer::CA_IDTRAYECTO, FletePeer::CA_IDTRAYECTO);
+
+		$criteria->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
 
 		$rs = RecargoFletePeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
@@ -807,9 +872,9 @@ abstract class BaseRecargoFletePeer {
 		FletePeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + FletePeer::NUM_COLUMNS;
 
-		$c->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
-
 		$c->addJoin(RecargoFletePeer::CA_IDTRAYECTO, FletePeer::CA_IDTRAYECTO);
+
+		$c->addJoin(RecargoFletePeer::CA_IDCONCEPTO, FletePeer::CA_IDCONCEPTO);
 
 
 		$rs = BasePeer::doSelect($c, $con);

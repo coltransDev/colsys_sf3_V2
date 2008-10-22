@@ -19,7 +19,7 @@ abstract class BasePricFletePeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.PricFlete';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 4;
+	const NUM_COLUMNS = 7;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -37,6 +37,15 @@ abstract class BasePricFletePeer {
 	/** the column name for the CA_VLRMINIMO field */
 	const CA_VLRMINIMO = 'tb_pricfletes.CA_VLRMINIMO';
 
+	/** the column name for the CA_FCHCREADO field */
+	const CA_FCHCREADO = 'tb_pricfletes.CA_FCHCREADO';
+
+	/** the column name for the CA_USUCREADO field */
+	const CA_USUCREADO = 'tb_pricfletes.CA_USUCREADO';
+
+	/** the column name for the CA_ESTADO field */
+	const CA_ESTADO = 'tb_pricfletes.CA_ESTADO';
+
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -48,10 +57,10 @@ abstract class BasePricFletePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaVlrneto', 'CaVlrminimo', ),
-		BasePeer::TYPE_COLNAME => array (PricFletePeer::CA_IDTRAYECTO, PricFletePeer::CA_IDCONCEPTO, PricFletePeer::CA_VLRNETO, PricFletePeer::CA_VLRMINIMO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_vlrneto', 'ca_vlrminimo', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaVlrneto', 'CaVlrminimo', 'CaFchcreado', 'CaUsucreado', 'CaEstado', ),
+		BasePeer::TYPE_COLNAME => array (PricFletePeer::CA_IDTRAYECTO, PricFletePeer::CA_IDCONCEPTO, PricFletePeer::CA_VLRNETO, PricFletePeer::CA_VLRMINIMO, PricFletePeer::CA_FCHCREADO, PricFletePeer::CA_USUCREADO, PricFletePeer::CA_ESTADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_vlrneto', 'ca_vlrminimo', 'ca_fchcreado', 'ca_usucreado', 'ca_estado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -61,10 +70,10 @@ abstract class BasePricFletePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaVlrneto' => 2, 'CaVlrminimo' => 3, ),
-		BasePeer::TYPE_COLNAME => array (PricFletePeer::CA_IDTRAYECTO => 0, PricFletePeer::CA_IDCONCEPTO => 1, PricFletePeer::CA_VLRNETO => 2, PricFletePeer::CA_VLRMINIMO => 3, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_vlrneto' => 2, 'ca_vlrminimo' => 3, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaVlrneto' => 2, 'CaVlrminimo' => 3, 'CaFchcreado' => 4, 'CaUsucreado' => 5, 'CaEstado' => 6, ),
+		BasePeer::TYPE_COLNAME => array (PricFletePeer::CA_IDTRAYECTO => 0, PricFletePeer::CA_IDCONCEPTO => 1, PricFletePeer::CA_VLRNETO => 2, PricFletePeer::CA_VLRMINIMO => 3, PricFletePeer::CA_FCHCREADO => 4, PricFletePeer::CA_USUCREADO => 5, PricFletePeer::CA_ESTADO => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_vlrneto' => 2, 'ca_vlrminimo' => 3, 'ca_fchcreado' => 4, 'ca_usucreado' => 5, 'ca_estado' => 6, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -171,6 +180,12 @@ abstract class BasePricFletePeer {
 		$criteria->addSelectColumn(PricFletePeer::CA_VLRNETO);
 
 		$criteria->addSelectColumn(PricFletePeer::CA_VLRMINIMO);
+
+		$criteria->addSelectColumn(PricFletePeer::CA_FCHCREADO);
+
+		$criteria->addSelectColumn(PricFletePeer::CA_USUCREADO);
+
+		$criteria->addSelectColumn(PricFletePeer::CA_ESTADO);
 
 	}
 

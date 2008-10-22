@@ -19,7 +19,7 @@ abstract class BaseTrayectoPeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.Trayecto';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 20;
+	const NUM_COLUMNS = 19;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -82,9 +82,6 @@ abstract class BaseTrayectoPeer {
 	/** the column name for the CA_APLICACION field */
 	const CA_APLICACION = 'tb_trayectos.CA_APLICACION';
 
-	/** the column name for the CA_ESTADO field */
-	const CA_ESTADO = 'tb_trayectos.CA_ESTADO';
-
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -96,10 +93,10 @@ abstract class BaseTrayectoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('Oid', 'CaIdtrayecto', 'CaOrigen', 'CaDestino', 'CaIdlinea', 'CaTransporte', 'CaTerminal', 'CaImpoexpo', 'CaFrecuencia', 'CaTiempotransito', 'CaModalidad', 'CaFchcreado', 'CaIdtarifas', 'CaObservaciones', 'CaIdagente', 'CaIdmoneda', 'CaFchinicio', 'CaFchvencimiento', 'CaAplicacion', 'CaEstado', ),
-		BasePeer::TYPE_COLNAME => array (TrayectoPeer::OID, TrayectoPeer::CA_IDTRAYECTO, TrayectoPeer::CA_ORIGEN, TrayectoPeer::CA_DESTINO, TrayectoPeer::CA_IDLINEA, TrayectoPeer::CA_TRANSPORTE, TrayectoPeer::CA_TERMINAL, TrayectoPeer::CA_IMPOEXPO, TrayectoPeer::CA_FRECUENCIA, TrayectoPeer::CA_TIEMPOTRANSITO, TrayectoPeer::CA_MODALIDAD, TrayectoPeer::CA_FCHCREADO, TrayectoPeer::CA_IDTARIFAS, TrayectoPeer::CA_OBSERVACIONES, TrayectoPeer::CA_IDAGENTE, TrayectoPeer::CA_IDMONEDA, TrayectoPeer::CA_FCHINICIO, TrayectoPeer::CA_FCHVENCIMIENTO, TrayectoPeer::CA_APLICACION, TrayectoPeer::CA_ESTADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('oid', 'ca_idtrayecto', 'ca_origen', 'ca_destino', 'ca_idlinea', 'ca_transporte', 'ca_terminal', 'ca_impoexpo', 'ca_frecuencia', 'ca_tiempotransito', 'ca_modalidad', 'ca_fchcreado', 'ca_idtarifas', 'ca_observaciones', 'ca_idagente', 'ca_idmoneda', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_aplicacion', 'ca_estado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
+		BasePeer::TYPE_PHPNAME => array ('Oid', 'CaIdtrayecto', 'CaOrigen', 'CaDestino', 'CaIdlinea', 'CaTransporte', 'CaTerminal', 'CaImpoexpo', 'CaFrecuencia', 'CaTiempotransito', 'CaModalidad', 'CaFchcreado', 'CaIdtarifas', 'CaObservaciones', 'CaIdagente', 'CaIdmoneda', 'CaFchinicio', 'CaFchvencimiento', 'CaAplicacion', ),
+		BasePeer::TYPE_COLNAME => array (TrayectoPeer::OID, TrayectoPeer::CA_IDTRAYECTO, TrayectoPeer::CA_ORIGEN, TrayectoPeer::CA_DESTINO, TrayectoPeer::CA_IDLINEA, TrayectoPeer::CA_TRANSPORTE, TrayectoPeer::CA_TERMINAL, TrayectoPeer::CA_IMPOEXPO, TrayectoPeer::CA_FRECUENCIA, TrayectoPeer::CA_TIEMPOTRANSITO, TrayectoPeer::CA_MODALIDAD, TrayectoPeer::CA_FCHCREADO, TrayectoPeer::CA_IDTARIFAS, TrayectoPeer::CA_OBSERVACIONES, TrayectoPeer::CA_IDAGENTE, TrayectoPeer::CA_IDMONEDA, TrayectoPeer::CA_FCHINICIO, TrayectoPeer::CA_FCHVENCIMIENTO, TrayectoPeer::CA_APLICACION, ),
+		BasePeer::TYPE_FIELDNAME => array ('oid', 'ca_idtrayecto', 'ca_origen', 'ca_destino', 'ca_idlinea', 'ca_transporte', 'ca_terminal', 'ca_impoexpo', 'ca_frecuencia', 'ca_tiempotransito', 'ca_modalidad', 'ca_fchcreado', 'ca_idtarifas', 'ca_observaciones', 'ca_idagente', 'ca_idmoneda', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_aplicacion', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
 	/**
@@ -109,10 +106,10 @@ abstract class BaseTrayectoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('Oid' => 0, 'CaIdtrayecto' => 1, 'CaOrigen' => 2, 'CaDestino' => 3, 'CaIdlinea' => 4, 'CaTransporte' => 5, 'CaTerminal' => 6, 'CaImpoexpo' => 7, 'CaFrecuencia' => 8, 'CaTiempotransito' => 9, 'CaModalidad' => 10, 'CaFchcreado' => 11, 'CaIdtarifas' => 12, 'CaObservaciones' => 13, 'CaIdagente' => 14, 'CaIdmoneda' => 15, 'CaFchinicio' => 16, 'CaFchvencimiento' => 17, 'CaAplicacion' => 18, 'CaEstado' => 19, ),
-		BasePeer::TYPE_COLNAME => array (TrayectoPeer::OID => 0, TrayectoPeer::CA_IDTRAYECTO => 1, TrayectoPeer::CA_ORIGEN => 2, TrayectoPeer::CA_DESTINO => 3, TrayectoPeer::CA_IDLINEA => 4, TrayectoPeer::CA_TRANSPORTE => 5, TrayectoPeer::CA_TERMINAL => 6, TrayectoPeer::CA_IMPOEXPO => 7, TrayectoPeer::CA_FRECUENCIA => 8, TrayectoPeer::CA_TIEMPOTRANSITO => 9, TrayectoPeer::CA_MODALIDAD => 10, TrayectoPeer::CA_FCHCREADO => 11, TrayectoPeer::CA_IDTARIFAS => 12, TrayectoPeer::CA_OBSERVACIONES => 13, TrayectoPeer::CA_IDAGENTE => 14, TrayectoPeer::CA_IDMONEDA => 15, TrayectoPeer::CA_FCHINICIO => 16, TrayectoPeer::CA_FCHVENCIMIENTO => 17, TrayectoPeer::CA_APLICACION => 18, TrayectoPeer::CA_ESTADO => 19, ),
-		BasePeer::TYPE_FIELDNAME => array ('oid' => 0, 'ca_idtrayecto' => 1, 'ca_origen' => 2, 'ca_destino' => 3, 'ca_idlinea' => 4, 'ca_transporte' => 5, 'ca_terminal' => 6, 'ca_impoexpo' => 7, 'ca_frecuencia' => 8, 'ca_tiempotransito' => 9, 'ca_modalidad' => 10, 'ca_fchcreado' => 11, 'ca_idtarifas' => 12, 'ca_observaciones' => 13, 'ca_idagente' => 14, 'ca_idmoneda' => 15, 'ca_fchinicio' => 16, 'ca_fchvencimiento' => 17, 'ca_aplicacion' => 18, 'ca_estado' => 19, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
+		BasePeer::TYPE_PHPNAME => array ('Oid' => 0, 'CaIdtrayecto' => 1, 'CaOrigen' => 2, 'CaDestino' => 3, 'CaIdlinea' => 4, 'CaTransporte' => 5, 'CaTerminal' => 6, 'CaImpoexpo' => 7, 'CaFrecuencia' => 8, 'CaTiempotransito' => 9, 'CaModalidad' => 10, 'CaFchcreado' => 11, 'CaIdtarifas' => 12, 'CaObservaciones' => 13, 'CaIdagente' => 14, 'CaIdmoneda' => 15, 'CaFchinicio' => 16, 'CaFchvencimiento' => 17, 'CaAplicacion' => 18, ),
+		BasePeer::TYPE_COLNAME => array (TrayectoPeer::OID => 0, TrayectoPeer::CA_IDTRAYECTO => 1, TrayectoPeer::CA_ORIGEN => 2, TrayectoPeer::CA_DESTINO => 3, TrayectoPeer::CA_IDLINEA => 4, TrayectoPeer::CA_TRANSPORTE => 5, TrayectoPeer::CA_TERMINAL => 6, TrayectoPeer::CA_IMPOEXPO => 7, TrayectoPeer::CA_FRECUENCIA => 8, TrayectoPeer::CA_TIEMPOTRANSITO => 9, TrayectoPeer::CA_MODALIDAD => 10, TrayectoPeer::CA_FCHCREADO => 11, TrayectoPeer::CA_IDTARIFAS => 12, TrayectoPeer::CA_OBSERVACIONES => 13, TrayectoPeer::CA_IDAGENTE => 14, TrayectoPeer::CA_IDMONEDA => 15, TrayectoPeer::CA_FCHINICIO => 16, TrayectoPeer::CA_FCHVENCIMIENTO => 17, TrayectoPeer::CA_APLICACION => 18, ),
+		BasePeer::TYPE_FIELDNAME => array ('oid' => 0, 'ca_idtrayecto' => 1, 'ca_origen' => 2, 'ca_destino' => 3, 'ca_idlinea' => 4, 'ca_transporte' => 5, 'ca_terminal' => 6, 'ca_impoexpo' => 7, 'ca_frecuencia' => 8, 'ca_tiempotransito' => 9, 'ca_modalidad' => 10, 'ca_fchcreado' => 11, 'ca_idtarifas' => 12, 'ca_observaciones' => 13, 'ca_idagente' => 14, 'ca_idmoneda' => 15, 'ca_fchinicio' => 16, 'ca_fchvencimiento' => 17, 'ca_aplicacion' => 18, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
 	/**
@@ -249,8 +246,6 @@ abstract class BaseTrayectoPeer {
 		$criteria->addSelectColumn(TrayectoPeer::CA_FCHVENCIMIENTO);
 
 		$criteria->addSelectColumn(TrayectoPeer::CA_APLICACION);
-
-		$criteria->addSelectColumn(TrayectoPeer::CA_ESTADO);
 
 	}
 

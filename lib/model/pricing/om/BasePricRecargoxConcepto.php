@@ -55,6 +55,13 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 
 	/**
+	 * The value for the ca_aplicacion field.
+	 * @var        string
+	 */
+	protected $ca_aplicacion;
+
+
+	/**
 	 * The value for the ca_observaciones field.
 	 * @var        string
 	 */
@@ -66,6 +73,20 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 * @var        string
 	 */
 	protected $ca_idmoneda;
+
+
+	/**
+	 * The value for the ca_fchcreado field.
+	 * @var        int
+	 */
+	protected $ca_fchcreado;
+
+
+	/**
+	 * The value for the ca_usucreado field.
+	 * @var        string
+	 */
+	protected $ca_usucreado;
 
 	/**
 	 * @var        PricFlete
@@ -147,6 +168,17 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	}
 
 	/**
+	 * Get the [ca_aplicacion] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaAplicacion()
+	{
+
+		return $this->ca_aplicacion;
+	}
+
+	/**
 	 * Get the [ca_observaciones] column value.
 	 * 
 	 * @return     string
@@ -166,6 +198,48 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	{
 
 		return $this->ca_idmoneda;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchcreado] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchcreado($format = 'Y-m-d H:i:s')
+	{
+
+		if ($this->ca_fchcreado === null || $this->ca_fchcreado === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchcreado)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchcreado);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchcreado] as date/time value: " . var_export($this->ca_fchcreado, true));
+			}
+		} else {
+			$ts = $this->ca_fchcreado;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [ca_usucreado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsucreado()
+	{
+
+		return $this->ca_usucreado;
 	}
 
 	/**
@@ -279,6 +353,28 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	} // setCaVlrminimo()
 
 	/**
+	 * Set the value of [ca_aplicacion] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaAplicacion($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_aplicacion !== $v) {
+			$this->ca_aplicacion = $v;
+			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_APLICACION;
+		}
+
+	} // setCaAplicacion()
+
+	/**
 	 * Set the value of [ca_observaciones] column.
 	 * 
 	 * @param      string $v new value
@@ -323,6 +419,52 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	} // setCaIdmoneda()
 
 	/**
+	 * Set the value of [ca_fchcreado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchcreado($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchcreado] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchcreado !== $ts) {
+			$this->ca_fchcreado = $ts;
+			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_FCHCREADO;
+		}
+
+	} // setCaFchcreado()
+
+	/**
+	 * Set the value of [ca_usucreado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaUsucreado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_usucreado !== $v) {
+			$this->ca_usucreado = $v;
+			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_USUCREADO;
+		}
+
+	} // setCaUsucreado()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -349,16 +491,22 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 			$this->ca_vlrminimo = $rs->getFloat($startcol + 4);
 
-			$this->ca_observaciones = $rs->getString($startcol + 5);
+			$this->ca_aplicacion = $rs->getString($startcol + 5);
 
-			$this->ca_idmoneda = $rs->getString($startcol + 6);
+			$this->ca_observaciones = $rs->getString($startcol + 6);
+
+			$this->ca_idmoneda = $rs->getString($startcol + 7);
+
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 8, null);
+
+			$this->ca_usucreado = $rs->getString($startcol + 9);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 7; // 7 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 10; // 10 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricRecargoxConcepto object", $e);
@@ -615,10 +763,19 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 				return $this->getCaVlrminimo();
 				break;
 			case 5:
-				return $this->getCaObservaciones();
+				return $this->getCaAplicacion();
 				break;
 			case 6:
+				return $this->getCaObservaciones();
+				break;
+			case 7:
 				return $this->getCaIdmoneda();
+				break;
+			case 8:
+				return $this->getCaFchcreado();
+				break;
+			case 9:
+				return $this->getCaUsucreado();
 				break;
 			default:
 				return null;
@@ -645,8 +802,11 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			$keys[2] => $this->getCaIdrecargo(),
 			$keys[3] => $this->getCaVlrrecargo(),
 			$keys[4] => $this->getCaVlrminimo(),
-			$keys[5] => $this->getCaObservaciones(),
-			$keys[6] => $this->getCaIdmoneda(),
+			$keys[5] => $this->getCaAplicacion(),
+			$keys[6] => $this->getCaObservaciones(),
+			$keys[7] => $this->getCaIdmoneda(),
+			$keys[8] => $this->getCaFchcreado(),
+			$keys[9] => $this->getCaUsucreado(),
 		);
 		return $result;
 	}
@@ -694,10 +854,19 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 				$this->setCaVlrminimo($value);
 				break;
 			case 5:
-				$this->setCaObservaciones($value);
+				$this->setCaAplicacion($value);
 				break;
 			case 6:
+				$this->setCaObservaciones($value);
+				break;
+			case 7:
 				$this->setCaIdmoneda($value);
+				break;
+			case 8:
+				$this->setCaFchcreado($value);
+				break;
+			case 9:
+				$this->setCaUsucreado($value);
 				break;
 		} // switch()
 	}
@@ -727,8 +896,11 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if (array_key_exists($keys[2], $arr)) $this->setCaIdrecargo($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaVlrrecargo($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaVlrminimo($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaObservaciones($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaIdmoneda($arr[$keys[6]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaAplicacion($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaObservaciones($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaIdmoneda($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaFchcreado($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaUsucreado($arr[$keys[9]]);
 	}
 
 	/**
@@ -745,8 +917,11 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRRECARGO, $this->ca_vlrrecargo);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRMINIMO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
+		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_APLICACION)) $criteria->add(PricRecargoxConceptoPeer::CA_APLICACION, $this->ca_aplicacion);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_OBSERVACIONES)) $criteria->add(PricRecargoxConceptoPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDMONEDA)) $criteria->add(PricRecargoxConceptoPeer::CA_IDMONEDA, $this->ca_idmoneda);
+		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_FCHCREADO)) $criteria->add(PricRecargoxConceptoPeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_USUCREADO)) $criteria->add(PricRecargoxConceptoPeer::CA_USUCREADO, $this->ca_usucreado);
 
 		return $criteria;
 	}
@@ -822,9 +997,15 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
 
+		$copyObj->setCaAplicacion($this->ca_aplicacion);
+
 		$copyObj->setCaObservaciones($this->ca_observaciones);
 
 		$copyObj->setCaIdmoneda($this->ca_idmoneda);
+
+		$copyObj->setCaFchcreado($this->ca_fchcreado);
+
+		$copyObj->setCaUsucreado($this->ca_usucreado);
 
 
 		$copyObj->setNew(true);

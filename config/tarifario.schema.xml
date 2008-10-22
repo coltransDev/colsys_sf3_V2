@@ -11,7 +11,9 @@
 		<column name="ca_idmoneda" type="varchar" size="3"  />
 		<column name="ca_observaciones" type="varchar"   />
 		<column name="ca_fchcreado" type="timestamp"   />
-				
+		<column name="ca_sugerida" type="varchar"   />
+		<column name="ca_mantenimiento" type="varchar"   />
+			
 		<foreign-key foreignTable="tb_trayectos">
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
 		</foreign-key>	
@@ -24,20 +26,29 @@
 		<column name="ca_idtrayecto" type="integer" required="true"  primaryKey="true"/>			
 		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true"/>	
 		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>	
-		
-				
-		
+		<column name="ca_aplicacion" type="varchar" />	
+		<column name="ca_vlrfijo" type="numeric" />	
+		<column name="ca_porcentaje" type="numeric" />	
+		<column name="ca_baseporcentaje" type="varchar" />		
+		<column name="ca_vlrunitario" type="numeric" />	
+		<column name="ca_baseunitario" type="varchar" />
+		<column name="ca_recargominimo" type="numeric" />
+		<column name="ca_idmoneda" type="varchar" />	
+		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_fchcreado" type="timestamp" />
+		<column name="ca_usucreado" type="varchar" />
+		<column name="ca_fchactualizado" type="timestamp" />
+		<column name="ca_usuactualizado" type="varchar" />	
+  			
 		<foreign-key foreignTable="tb_fletes">
-			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
 		</foreign-key>	
 		
 		<foreign-key foreignTable="tb_tiporecargo">
 			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
 		</foreign-key>							
 	</table>
-
-	
 	
 </database>
 

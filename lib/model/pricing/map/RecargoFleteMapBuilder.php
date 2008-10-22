@@ -67,6 +67,32 @@ class RecargoFleteMapBuilder {
 
 		$tMap->addForeignPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'int' , CreoleTypes::INTEGER, 'tb_tiporecargo', 'CA_IDRECARGO', true, null);
 
+		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_VLRFIJO', 'CaVlrfijo', 'double', CreoleTypes::NUMERIC, false, null);
+
+		$tMap->addColumn('CA_PORCENTAJE', 'CaPorcentaje', 'double', CreoleTypes::NUMERIC, false, null);
+
+		$tMap->addColumn('CA_BASEPORCENTAJE', 'CaBaseporcentaje', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_VLRUNITARIO', 'CaVlrunitario', 'double', CreoleTypes::NUMERIC, false, null);
+
+		$tMap->addColumn('CA_BASEUNITARIO', 'CaBaseunitario', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_RECARGOMINIMO', 'CaRecargominimo', 'double', CreoleTypes::NUMERIC, false, null);
+
+		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
+
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::TIMESTAMP, false, null);
+
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, false, null);
+
 	} // doBuild()
 
 } // RecargoFleteMapBuilder

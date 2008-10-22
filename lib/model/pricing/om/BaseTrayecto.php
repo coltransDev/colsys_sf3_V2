@@ -151,13 +151,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	 */
 	protected $ca_aplicacion;
 
-
-	/**
-	 * The value for the ca_estado field.
-	 * @var        int
-	 */
-	protected $ca_estado;
-
 	/**
 	 * @var        Transportador
 	 */
@@ -473,17 +466,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_aplicacion;
-	}
-
-	/**
-	 * Get the [ca_estado] column value.
-	 * 
-	 * @return     int
-	 */
-	public function getCaEstado()
-	{
-
-		return $this->ca_estado;
 	}
 
 	/**
@@ -919,28 +901,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	} // setCaAplicacion()
 
 	/**
-	 * Set the value of [ca_estado] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     void
-	 */
-	public function setCaEstado($v)
-	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
-			$v = (int) $v;
-		}
-
-		if ($this->ca_estado !== $v) {
-			$this->ca_estado = $v;
-			$this->modifiedColumns[] = TrayectoPeer::CA_ESTADO;
-		}
-
-	} // setCaEstado()
-
-	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -995,14 +955,12 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 
 			$this->ca_aplicacion = $rs->getString($startcol + 18);
 
-			$this->ca_estado = $rs->getInt($startcol + 19);
-
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 20; // 20 = TrayectoPeer::NUM_COLUMNS - TrayectoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 19; // 19 = TrayectoPeer::NUM_COLUMNS - TrayectoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Trayecto object", $e);
@@ -1332,9 +1290,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			case 18:
 				return $this->getCaAplicacion();
 				break;
-			case 19:
-				return $this->getCaEstado();
-				break;
 			default:
 				return null;
 				break;
@@ -1374,7 +1329,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			$keys[16] => $this->getCaFchinicio(),
 			$keys[17] => $this->getCaFchvencimiento(),
 			$keys[18] => $this->getCaAplicacion(),
-			$keys[19] => $this->getCaEstado(),
 		);
 		return $result;
 	}
@@ -1463,9 +1417,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			case 18:
 				$this->setCaAplicacion($value);
 				break;
-			case 19:
-				$this->setCaEstado($value);
-				break;
 		} // switch()
 	}
 
@@ -1508,7 +1459,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[16], $arr)) $this->setCaFchinicio($arr[$keys[16]]);
 		if (array_key_exists($keys[17], $arr)) $this->setCaFchvencimiento($arr[$keys[17]]);
 		if (array_key_exists($keys[18], $arr)) $this->setCaAplicacion($arr[$keys[18]]);
-		if (array_key_exists($keys[19], $arr)) $this->setCaEstado($arr[$keys[19]]);
 	}
 
 	/**
@@ -1539,7 +1489,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(TrayectoPeer::CA_FCHINICIO)) $criteria->add(TrayectoPeer::CA_FCHINICIO, $this->ca_fchinicio);
 		if ($this->isColumnModified(TrayectoPeer::CA_FCHVENCIMIENTO)) $criteria->add(TrayectoPeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
 		if ($this->isColumnModified(TrayectoPeer::CA_APLICACION)) $criteria->add(TrayectoPeer::CA_APLICACION, $this->ca_aplicacion);
-		if ($this->isColumnModified(TrayectoPeer::CA_ESTADO)) $criteria->add(TrayectoPeer::CA_ESTADO, $this->ca_estado);
 
 		return $criteria;
 	}
@@ -1629,8 +1578,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		$copyObj->setCaFchvencimiento($this->ca_fchvencimiento);
 
 		$copyObj->setCaAplicacion($this->ca_aplicacion);
-
-		$copyObj->setCaEstado($this->ca_estado);
 
 
 		if ($deepCopy) {

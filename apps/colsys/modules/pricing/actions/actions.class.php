@@ -120,7 +120,7 @@ class pricingActions extends sfActions
 				'moneda' => $trayecto->getCaIdMoneda(),
 				'aplicacion' => $trayecto->getCaAplicacion(),				
 				'_id' => $trayecto->getCaIdtrayecto()."-gen",
-				'style' => $trayecto->getEstilo(),
+				'style' => '',
 				'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
 				'iditem'=>'',
 				'tipo'=>"trayecto_obs",
@@ -150,7 +150,7 @@ class pricingActions extends sfActions
 					'moneda' => '', // consulta ? $trayecto->getCaIdMoneda()
 					'aplicacion' => $trayecto->getCaAplicacion(),				
 					'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto(),
-					'style' => $trayecto->getEstilo(),
+					'style' => $pricConcepto->getEstilo(),
 					'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
 					'iditem'=>$pricConcepto->getCaIdConcepto(),
 					'tipo'=>"concepto",
@@ -176,7 +176,7 @@ class pricingActions extends sfActions
 						'moneda' => $pricRecargo->getCaIdMoneda(),
 						'aplicacion' => "",				
 						'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto()."-".$pricRecargo->getCaIdrecargo(),
-						'style' => $trayecto->getEstilo(),
+						'style' => '',
 						'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
 						'iditem'=>$pricRecargo->getCaIdrecargo(),
 						'idconcepto'=>$pricConcepto->getCaIdConcepto(),
@@ -205,7 +205,7 @@ class pricingActions extends sfActions
 					'moneda' => '',
 					'aplicacion' => $trayecto->getCaAplicacion(),				
 					'_id' => $trayecto->getCaIdtrayecto()."-recgen",
-					'style' => $trayecto->getEstilo(),
+					'style' => '',
 					'observaciones' => '',
 					'iditem'=>'9999',				
 					'tipo'=>"concepto",
@@ -283,9 +283,7 @@ class pricingActions extends sfActions
 				$trayecto->setCaAplicacion($this->getRequestParameter("aplicacion"));
 			}
 			
-			if( $this->getRequestParameter("style")!==null){
-				$trayecto->setEstilo($this->getRequestParameter("style"));
-			}
+			
 			
 			$trayecto->save();
 		}
@@ -307,6 +305,10 @@ class pricingActions extends sfActions
 			if( $minima ){
 				$flete->setCaVlrminimo( $minima );
 			} 
+			
+			if( $this->getRequestParameter("style")!==null){
+				$flete->setEstilo($this->getRequestParameter("style"));
+			}
 			$flete->save();
 		}
 		
@@ -358,15 +360,11 @@ class pricingActions extends sfActions
 	public function executeDetallesTrafico(){
 		$this->trafico = TraficoPeer::retrieveByPK($this->getRequestParameter("id_trafico"));
 		$this->forward404Unless($this->trafico);
-		
-
 	}
 	
-	
-
 	/*
-	 * Esta funcion se va a borrar
-	 */
+	* Esta funcion se va a borrar
+	*/
 	public function executeParametrizarConceptos(){
 		$c = new Criteria();
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );

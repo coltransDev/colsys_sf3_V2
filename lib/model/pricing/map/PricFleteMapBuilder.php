@@ -69,6 +69,12 @@ class PricFleteMapBuilder {
 
 		$tMap->addColumn('CA_VLRMINIMO', 'CaVlrminimo', 'double', CreoleTypes::NUMERIC, false, null);
 
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
+
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'int', CreoleTypes::INTEGER, false, null);
+
 	} // doBuild()
 
 } // PricFleteMapBuilder

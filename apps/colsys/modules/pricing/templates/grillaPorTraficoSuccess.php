@@ -205,22 +205,7 @@ var colModel = new Ext.grid.ColumnModel({
 				format: 'd/m/Y'
 			})
 		} 
-		,{
-			header: "Aplicacion",
-			width: 100,
-			sortable: false,
-			groupable: false,
-			
-			dataIndex: 'aplicacion'//,              
-			/*editor: new Ext.form.ComboBox({
-				typeAhead: true,
-				triggerAction: 'all',
-				//transform:'light',
-				lazyRender:true,
-				listClass: 'x-combo-list-small',
-				store : aplicaciones	
-			})*/
-		}				
+					
 		,{
 			header: "Moneda",
 			width: 80,
@@ -237,7 +222,22 @@ var colModel = new Ext.grid.ColumnModel({
 			groupable: false,							
 			dataIndex: 'neta',
 			editor: new Ext.form.NumberField()		
-		},		
+		},{
+			header: "Aplicación",
+			width: 100,
+			sortable: false,
+			groupable: false,
+			
+			dataIndex: 'aplicacion'//,              
+			/*editor: new Ext.form.ComboBox({
+				typeAhead: true,
+				triggerAction: 'all',
+				//transform:'light',
+				lazyRender:true,
+				listClass: 'x-combo-list-small',
+				store : aplicaciones	
+			})*/
+		},			
 		{
 			id: 'minima',
 			header: "<?=(($transporte=="Aéreo"&&$modalidad!="CABOTAJE")||$modalidad=="FCL")?"Sugerida":"Minima"?>",
@@ -247,6 +247,22 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'minima',
 			editor: new Ext.form.NumberField()			
 		}
+		,{
+			header: "Aplicación",
+			width: 100,
+			sortable: false,
+			groupable: false,
+			
+			dataIndex: 'aplicacion'//,              
+			/*editor: new Ext.form.ComboBox({
+				typeAhead: true,
+				triggerAction: 'all',
+				//transform:'light',
+				lazyRender:true,
+				listClass: 'x-combo-list-small',
+				store : aplicaciones	
+			})*/
+		}	
 		
 	]
 	,
@@ -378,6 +394,30 @@ var actualizarObservaciones=function( btn, text ){
 	}
 }	
 
+
+/*
+* actualiza el estilo en una celda y en las celdas seleccionadas
+*/
+var colocarEstilo = function( rec,  val ){
+				
+	
+	rec.set("style", val);
+	
+	if( rec.data.sel ){
+		var records = store.getModifiedRecords();				
+		var lenght = records.length;	
+				
+		for( var i=0; i< lenght; i++){
+			r = records[i];			
+			if(r.data.sel && r.data.tipo=="concepto"){
+				r.set("style", val);
+			}
+		}
+	}
+}
+
+
+
 var gridOnRowcontextmenu =  function(grid, index, e){
 		
 	rec = this.store.getAt(index);	
@@ -401,22 +441,19 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 								text: 'Normal',
 								checked: rec.get("style")==""?true:false,
 								group: 'theme',								
-								handler: function(){    					                   
-									rec.set("style", "");
+								handler: function(){    					                   					colocarEstilo( rec , "");									
 								}
 							}, {
 								text: 'Sugerida',
 								checked: rec.get("style")=="yellow"?true:false,								
 								group: 'theme',								
-								handler: function(){   									               
-									rec.set("style", "yellow");
+								handler: function(){   									               						colocarEstilo( rec , "yellow");									
 								}
 							}, {
 								text: 'Mantenimiento',
 								checked: rec.get("style")=="pink"?true:false,									
 								group: 'theme',								
-								handler: function(){    					                   
-									rec.set("style", "pink");
+								handler: function(){    					                   					colocarEstilo( rec , "pink");									
 								}
 							}
 						]
@@ -554,17 +591,18 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 		enableRowBody:true, 
 		enableGroupingMenu: false,		
 		getRowClass: function(  record,  index,  rowParams,  store ){			
-			switch( record.data.style ){
-				case "yellow":
+			//definido en myRowExpander.js
+			/*switch( record.data.style ){
+				case "yellow":					
 					return "row_yellow";
 					break;
-				case "pink":
+				case "pink":					
 					return "row_pink";
 					break;
 				default:
 					return "";
 					break;
-			}
+			}*/
 		} 
 	}),	
 	listeners:{

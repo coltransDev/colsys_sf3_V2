@@ -46,6 +46,27 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 	 */
 	protected $ca_vlrminimo;
 
+
+	/**
+	 * The value for the ca_fchcreado field.
+	 * @var        int
+	 */
+	protected $ca_fchcreado;
+
+
+	/**
+	 * The value for the ca_usucreado field.
+	 * @var        string
+	 */
+	protected $ca_usucreado;
+
+
+	/**
+	 * The value for the ca_estado field.
+	 * @var        int
+	 */
+	protected $ca_estado;
+
 	/**
 	 * @var        Trayecto
 	 */
@@ -124,6 +145,59 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_vlrminimo;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchcreado] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchcreado($format = 'Y-m-d H:i:s')
+	{
+
+		if ($this->ca_fchcreado === null || $this->ca_fchcreado === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchcreado)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchcreado);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchcreado] as date/time value: " . var_export($this->ca_fchcreado, true));
+			}
+		} else {
+			$ts = $this->ca_fchcreado;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [ca_usucreado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsucreado()
+	{
+
+		return $this->ca_usucreado;
+	}
+
+	/**
+	 * Get the [ca_estado] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaEstado()
+	{
+
+		return $this->ca_estado;
 	}
 
 	/**
@@ -211,6 +285,74 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 	} // setCaVlrminimo()
 
 	/**
+	 * Set the value of [ca_fchcreado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchcreado($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchcreado] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchcreado !== $ts) {
+			$this->ca_fchcreado = $ts;
+			$this->modifiedColumns[] = PricFletePeer::CA_FCHCREADO;
+		}
+
+	} // setCaFchcreado()
+
+	/**
+	 * Set the value of [ca_usucreado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaUsucreado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_usucreado !== $v) {
+			$this->ca_usucreado = $v;
+			$this->modifiedColumns[] = PricFletePeer::CA_USUCREADO;
+		}
+
+	} // setCaUsucreado()
+
+	/**
+	 * Set the value of [ca_estado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaEstado($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_estado !== $v) {
+			$this->ca_estado = $v;
+			$this->modifiedColumns[] = PricFletePeer::CA_ESTADO;
+		}
+
+	} // setCaEstado()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -235,12 +377,18 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 
 			$this->ca_vlrminimo = $rs->getFloat($startcol + 3);
 
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 4, null);
+
+			$this->ca_usucreado = $rs->getString($startcol + 5);
+
+			$this->ca_estado = $rs->getInt($startcol + 6);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 4; // 4 = PricFletePeer::NUM_COLUMNS - PricFletePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 7; // 7 = PricFletePeer::NUM_COLUMNS - PricFletePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricFlete object", $e);
@@ -509,6 +657,15 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 			case 3:
 				return $this->getCaVlrminimo();
 				break;
+			case 4:
+				return $this->getCaFchcreado();
+				break;
+			case 5:
+				return $this->getCaUsucreado();
+				break;
+			case 6:
+				return $this->getCaEstado();
+				break;
 			default:
 				return null;
 				break;
@@ -533,6 +690,9 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 			$keys[1] => $this->getCaIdconcepto(),
 			$keys[2] => $this->getCaVlrneto(),
 			$keys[3] => $this->getCaVlrminimo(),
+			$keys[4] => $this->getCaFchcreado(),
+			$keys[5] => $this->getCaUsucreado(),
+			$keys[6] => $this->getCaEstado(),
 		);
 		return $result;
 	}
@@ -576,6 +736,15 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 			case 3:
 				$this->setCaVlrminimo($value);
 				break;
+			case 4:
+				$this->setCaFchcreado($value);
+				break;
+			case 5:
+				$this->setCaUsucreado($value);
+				break;
+			case 6:
+				$this->setCaEstado($value);
+				break;
 		} // switch()
 	}
 
@@ -603,6 +772,9 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdconcepto($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaVlrneto($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaVlrminimo($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaFchcreado($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaUsucreado($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaEstado($arr[$keys[6]]);
 	}
 
 	/**
@@ -618,6 +790,9 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(PricFletePeer::CA_IDCONCEPTO)) $criteria->add(PricFletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		if ($this->isColumnModified(PricFletePeer::CA_VLRNETO)) $criteria->add(PricFletePeer::CA_VLRNETO, $this->ca_vlrneto);
 		if ($this->isColumnModified(PricFletePeer::CA_VLRMINIMO)) $criteria->add(PricFletePeer::CA_VLRMINIMO, $this->ca_vlrminimo);
+		if ($this->isColumnModified(PricFletePeer::CA_FCHCREADO)) $criteria->add(PricFletePeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(PricFletePeer::CA_USUCREADO)) $criteria->add(PricFletePeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(PricFletePeer::CA_ESTADO)) $criteria->add(PricFletePeer::CA_ESTADO, $this->ca_estado);
 
 		return $criteria;
 	}
@@ -687,6 +862,12 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 		$copyObj->setCaVlrneto($this->ca_vlrneto);
 
 		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
+
+		$copyObj->setCaFchcreado($this->ca_fchcreado);
+
+		$copyObj->setCaUsucreado($this->ca_usucreado);
+
+		$copyObj->setCaEstado($this->ca_estado);
 
 
 		if ($deepCopy) {

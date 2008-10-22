@@ -46,7 +46,13 @@ Ext.extend(Ext.grid.myRowExpander, Ext.grid.RowExpander, {
         if(content){
            p.body = content;
         }
-        return this.state[record.id] ? 'x-grid3-row-expanded' : 'x-grid3-row-collapsed';
+		
+		var color;
+		if( record.data.style ){
+			color = "row_"+record.data.style;
+		}		
+		
+        return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
     },
 
     
