@@ -572,7 +572,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 	public function executeImportarTarifario(){
 		$c = new Criteria();
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
+		$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
  
 		//$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
 		//$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
@@ -594,10 +594,42 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				}
 				if( $flete->getCaMantenimiento()=="*" ){
 					$pricflete->setCaEstado( 2 );
-				}
-				
+				}				
 				$pricflete->save();
 				
+				$c = new Criteria();
+				$c->add( RecargoFletePeer::CA_IDCONCEPTO, '9999' ); 
+				$c->add( RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto() ); 
+				$recargos = RecargoFletePeer::doSelect( $c );
+				
+				
+				foreach( $recargos as $recargo ){
+					$pricrecargo = PricRecargoxConceptoPeer::retrieveByPk( $recargo->getCaIdTrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo() ); 	
+					if( !$pricrecargo ){
+						$pricrecargo = new PricRecargoxConcepto();
+						$pricrecargo->setCaIdTrayecto( $recargo->getCaIdTrayecto() );
+						$pricrecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
+						$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
+					}												
+					if( $recargo->getCaVlrfijo()!=0 ){
+						$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
+					}else{
+						if( $recargo->getCaPorcentaje()!=0 ){
+							$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
+							$pricrecargo->setCaAplicacion( $recargo->getCaBaseporcentaje() );
+						}else{
+							$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrunitario() );
+							$pricrecargo->setCaAplicacion( $recargo->getCaBaseunitario() );
+						}
+					}
+									
+					$pricrecargo->setCaVlrminimo( $recargo->getCaRecargominimo() );
+					$pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
+					$pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );				
+					$pricrecargo->save();
+				}
+				
+															
 				$recargos = $flete->getRecargoFletes();
 				foreach( $recargos as $recargo ){
 					$pricrecargo = PricRecargoxConceptoPeer::retrieveByPk( $recargo->getCaIdTrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo() ); 	
