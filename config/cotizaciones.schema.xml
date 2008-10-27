@@ -21,14 +21,13 @@
 		<column name="ca_horasolicitud" type="time"   />
 		<column name="ca_fchanulado" type="date"   />	
 		<column name="ca_usuanulado" type="varchar"   />	
-
+		
 		<foreign-key foreignTable="tb_concliente">
 			<reference local="ca_idcontacto" foreign="ca_idcontacto"/>
 		</foreign-key>	
 		<foreign-key foreignTable="control.tb_usuarios">
 			<reference local="ca_usuario" foreign="ca_login"/>
-		</foreign-key>	
-				
+		</foreign-key>					
 	</table>
 	
 	<table name="tb_cotproductos" phpName="CotProducto">						

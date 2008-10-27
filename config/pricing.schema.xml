@@ -88,12 +88,16 @@
 	</table>
 	
 	<table name="tb_pricrecargosxciudad" phpName="PricRecargosxCiudad">		
+		<column name="ca_idtrafico" type="varchar" required="true"  primaryKey="true"/>
 		<column name="ca_idciudad" type="varchar" required="true"  primaryKey="true"/>			
 		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>
-		<column name="ca_modalidad" type="varchar" required="true" />			
+		<column name="ca_modalidad" type="varchar" required="true" primaryKey="true"/>			
 		<column name="ca_vlrrecargo" type="numeric" />
 		<column name="ca_vlrminimo" type="numeric" />	
-		<column name="ca_idmoneda" type="varchar" size="3" />		
+		<column name="ca_aplicacion" type="varchar" />
+		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_idmoneda" type="varchar" size="3" />
+				
 		
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>

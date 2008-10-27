@@ -61,17 +61,21 @@ class PricRecargosxCiudadMapBuilder {
 
 		$tMap->setUseIdGenerator(false);
 
+		$tMap->addPrimaryKey('CA_IDTRAFICO', 'CaIdtrafico', 'string', CreoleTypes::VARCHAR, true, null);
+
 		$tMap->addForeignPrimaryKey('CA_IDCIUDAD', 'CaIdciudad', 'string' , CreoleTypes::VARCHAR, 'tb_ciudades', 'CA_IDCIUDAD', true, null);
 
 		$tMap->addForeignPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'int' , CreoleTypes::INTEGER, 'tb_tiporecargo', 'CA_IDRECARGO', true, null);
 
-		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, true, null);
 
 		$tMap->addColumn('CA_VLRRECARGO', 'CaVlrrecargo', 'double', CreoleTypes::NUMERIC, false, null);
 
 		$tMap->addColumn('CA_VLRMINIMO', 'CaVlrminimo', 'double', CreoleTypes::NUMERIC, false, null);
 
 		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, 3);
+
+		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'string', CreoleTypes::VARCHAR, false, null);
 
 	} // doBuild()
 

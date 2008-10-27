@@ -468,12 +468,8 @@ var ventanaTarifario = function( record ){
 												
 						storePricing.each( function(r){
 							if( r.data.sel==true ){
-								if( r.data.tipo=="concepto" ){
-									var iditem = r.data.concepto_id;
-								}else{
-									return 0;
-									var iditem = r.data.recargo_id;
-								}
+								
+								var iditem = r.data.iditem;
 								
 								//Cuando se habla de LCL se colocan los minimos
 								if(activeRecord.data.modalidad == "LCL"){
@@ -516,20 +512,22 @@ var ventanaTarifario = function( record ){
 								newRec.set("idproducto", activeRecord.data.idproducto );
 								newRec.set("trayecto", activeRecord.data.trayecto );
 								newRec.set("transporte", activeRecord.data.transporte );
-								newRec.set("modalidad", activeRecord.data.modalidad );
-								
-								//newRec.set("idopcion", "" );										
+								newRec.set("modalidad", activeRecord.data.modalidad );								
+								//newRec.set("idopcion", "" );	
+																	
 								newRec.set("item", r.data.nconcepto );
+								newRec.set("idconcepto", r.data.idconcepto )
+								
 								newRec.set("iditem", iditem );
 								newRec.set("tipo", r.data.tipo );
 								newRec.set("valor_tar", valor_tar );								
 								newRec.set("valor_min", valor_min );
 								newRec.set("idmoneda", r.data.moneda );																								
-								
+								index++;
 							}
 						} );
 						
-						index++;						
+												
 						win.close();
 					}
 				},
@@ -563,33 +561,31 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 	rec = this.store.getAt(index);	
 	this.menu = new Ext.menu.Menu({
 	id:'grid_productos-ctx',
-	items: [
-				{
-					text: 'Editar trayecto',
-					iconCls: 'new-tab',
-					scope:this,
-					handler: function(){    					                   
-						if( this.ctxRecord ){					
-							crearVentanaProducto( this.ctxRecord );
-						}						
-					}
-				},
-				{
-					text: 'Importar del tarifario',
-					iconCls: 'new-tab',
-					scope:this,
-					handler: function(){    					                   		
-						if( this.ctxRecord ){					
-							ventanaTarifario( this.ctxRecord );
-						}						
-					}
-				},
-		
-				{
-					text: 'Nuevo recargo',
-					iconCls: 'new-tab',
-					scope:this,
-					handler: function(){    					                   
+	items: [{
+				text: 'Editar trayecto',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   
+					if( this.ctxRecord ){					
+						crearVentanaProducto( this.ctxRecord );
+					}						
+				}
+			},
+			{
+				text: 'Importar del tarifario',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord ){					
+						ventanaTarifario( this.ctxRecord );
+					}						
+				}
+			},		
+			{
+				text: 'Nuevo recargo',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   
 					if( this.ctxRecord.data.idopcion ){					
 						var newRec = new recordProductos({
 						   idcotizacion: this.ctxRecord.data.idcotizacion,  
@@ -611,12 +607,112 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						});					
 						records = [];
 						records.push( newRec );
-						storeProductos.insert( index+1 , records );	
-											
+						storeProductos.insert( index+1 , records );													
+					}						
+				}				
+			},			
+			{
+				text: 'Eliminar item',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord && this.ctxRecord.data.iditem ){					
+						if( this.ctxRecord.data.tipo=="concepto" ){ 
+							var idconcepto = this.ctxRecord.data.iditem;
+							var idrecargo = "";						
+						}else{
+							var idconcepto = this.ctxRecord.data.idconcepto;
+							var idrecargo = this.ctxRecord.data.iditem;
+						}
+						
+						
+						
+						var tipo = this.ctxRecord.data.tipo;
+						var idopcion = this.ctxRecord.data.idopcion;
+						var idproducto = this.ctxRecord.data.idproducto;
+						var modalidad = this.ctxRecord.data.modalidad;
+						
+						Ext.Ajax.request( 
+						{   
+							waitMsg: 'Guardando cambios...',						
+							url: '<?=url_for("cotizaciones/eliminarItemsOpciones?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
+							//method: 'POST', 
+							//Solamente se envian los cambios 						
+							params :	{
+								idconcepto: idconcepto,
+								idrecargo: idrecargo, 
+								tipo: tipo,
+								idopcion: idopcion,
+								idproducto: idproducto,
+								modalidad: modalidad
+							},
+													
+							//Ejecuta esta accion en caso de fallo
+							//(404 error etc, ***NOT*** success=false)
+							failure:function(response,options){							
+								alert( response.responseText );						
+								success = false;
+							},
+							//Ejecuta esta accion cuando el resultado es exitoso
+							success:function(response,options){							
+								 storeProductos.each( function( record ){						 							 		
+										if(tipo=="concepto"){
+											if( record.data.tipo=="concepto"&&record.data.iditem==idconcepto ){
+												 storeProductos.remove(record);
+											}																																		
+											if( record.data.tipo=="recargo"&&record.data.idconcepto==idconcepto ){
+												 storeProductos.remove(record);
+											}
+										}										
+										if(tipo=="recargo"){											
+											if( record.data.tipo=="recargo"&&record.data.iditem==idrecargo ){
+												 storeProductos.remove(record);
+											}
+										}	
+								 });
+							}
+						 }
+					); 
+					}						
+				}
+			},
+			{
+				text: 'Eliminar trayecto',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord ){					
+						var idproducto = this.ctxRecord.data.idproducto;
+						
+						Ext.Ajax.request( 
+						{   
+							waitMsg: 'Guardando cambios...',						
+							url: '<?=url_for("cotizaciones/eliminarProducto?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
+							//method: 'POST', 
+							//Solamente se envian los cambios 						
+							params :	{								
+								idproducto: idproducto								
+							},
+													
+							//Ejecuta esta accion en caso de fallo
+							//(404 error etc, ***NOT*** success=false)
+							failure:function(response,options){							
+								alert( response.responseText );						
+								success = false;
+							},
+							//Ejecuta esta accion cuando el resultado es exitoso
+							success:function(response,options){							
+								 storeProductos.each( function( record ){						 							 									if( record.data.idproducto==idproducto ){
+										 storeProductos.remove(record);
+									}																																												
+								 });
+							}
+						 }
+					); 
 					}						
 				}
 			}		
-		]
+			]
 	});
 	this.menu.on('hide', this.onContextHide, this);
    
@@ -739,7 +835,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 		handler: guardarGridProductos
 	},
 	{
-		text: 'Agregar producto',
+		text: 'Agregar trayecto',
 		tooltip: 'Agregar un nuevo producto a la Cotización',
 		iconCls: 'add',  // reference to our css
 		handler: productoHandler
@@ -763,10 +859,11 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 					break;
 			}
 		} 
-	})	,
+	}),
 	
-	listeners:{ validateedit: grid_productosOnvalidateedit,
-				rowcontextmenu:grid_productosOnRowcontextmenu,
-				beforeedit:grid_productosOnBeforeedit
-				 }
+	listeners:{ 
+		validateedit: grid_productosOnvalidateedit,
+		rowcontextmenu:grid_productosOnRowcontextmenu,
+		beforeedit:grid_productosOnBeforeedit
+	}
 });

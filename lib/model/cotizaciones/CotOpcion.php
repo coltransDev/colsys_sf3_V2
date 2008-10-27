@@ -39,19 +39,5 @@ class CotOpcion extends BaseCotOpcion
 	}
 		
 	
-	/*
-	public function getCotRecargos( $tipo="" ){
-		$c = new Criteria();
-		$c->addJoin( CotRecargoPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO );
-		if( $tipo=="origen" ){
-			$c->add( TipoRecargoPeer::CA_TIPO, "Recargo en Origen" );
-		}
-		
-		if( $tipo=="local" ){
-			$c->add( TipoRecargoPeer::CA_TIPO, "Recargo Local" );
-		}
-		$c->add( CotRecargoPeer::CA_IDOPCION, $this->getcaIdOpcion() );
-		return CotRecargoPeer::doSelect( $c );		
-	}*/
 }
 ?>

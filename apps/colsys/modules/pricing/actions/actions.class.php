@@ -732,35 +732,28 @@ class pricingActions extends sfActions
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
-		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
-			
+		//$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+		
 		$c = new Criteria();
-		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );		
-		$c->add( CiudadPeer::CA_IDTRAFICO, $this->trafico->getCaIdTrafico() );
-		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
-		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
-		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );	 
-		$c->setDistinct();	
-		$ciudades = CiudadPeer::doSelect( $c );
+		$c->add( PricRecargosxCiudad::CA_IDTRAFICO, $idtrafico  );		
+		$recargos = PricRecargosxCiudad::doSelect( $c );
 		
 		$this->data = array();
-				
-		foreach( $ciudades as $ciudad ){
-			$row = array("idciudad"=>$ciudad->getCaIdCiudad(),
-						 "ciudad"=>utf8_encode($ciudad->getCaCiudad()));
-			
-			$c = new Criteria();				
-			$c->add( PricRecargosxCiudadPeer::CA_IDCIUDAD, $ciudad->getCaIdCiudad());				
-			$recargosCiudad = PricRecargosxCiudadPeer::doSelect( $c );			 
-			foreach( $recargosCiudad as $recargoCiudad){
-				$row["recargo_".$recargoCiudad->getCaIdRecargo()]=$recargoCiudad->getCaVlrrecargo();
-				if( $recargoCiudad->getCaVlrminimo() ){
-					$row["recargo_".$recargoCiudad->getCaIdRecargo()].="/".$recargoCiudad->getCaVlrminimo();
-				}
-			}	
-						 	
+		foreach( $recargos as $recargo ){
+			$row = array(
+				'idtrafico'=>$idtrafico,
+				'idciudad'=>$recargo->getCaIdciudad(),
+				'ciudad'=>$recargo->getCiudad()->getCaCiudad(),
+				'idrecargo'=>$recargo->getCaIdrecargo(),
+				'recargo'=>$recargo->getTipoRecargo()->getCaRecargo(),
+				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
+				'vlrminimo'=>$recargo->getCaVlrminimo(),
+				'aplicacion'=>$recargo->getCaAplicacion(),
+				'observaciones'=>$recargo->getCaObservaciones()								
+			);
 			$this->data[]= $row;
-		}		
+		}
+					
 		$this->transporte = $transporte;
 		$this->modalidad = $modalidad;
 		
@@ -825,6 +818,19 @@ class pricingActions extends sfActions
 		$notificacion->save();
 		$this->idnotificacion = $notificacion->getCaIdNotificacion();		
 	}
+	
+	/*
+	* Elimina una notificacion
+	* @author: Andres Botero 
+	*/
+	public function executeEliminarNotificacion(){
+		$notificacion = PricNotificacionPeer::retrieveByPk( $this->getRequestParameter("idnotificacion") );
+		if( $notificacion ){
+			$notificacion->delete();			
+		}
+		return sfView::NONE;
+	}
+	
 	
 	/*
 	* Permite la administración y consulta de los trayectos (tiempos de transito 

@@ -136,6 +136,53 @@ var actualizarObservaciones=function( btn, text ){
 
 
 var gridOnRowcontextmenu =  function(grid, index, e){
+	rec = grid.store.getAt(index);	
+	e.stopEvent(); //Evita que se despliegue el menu con el boton izquierdo
+	
+	this.menu = new Ext.menu.Menu({
+		id:'grid-ctx',
+		items: [{
+				text: 'Eliminar',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   
+					//envia los datos al servidor 
+					Ext.Ajax.request( 
+						{   
+							waitMsg: 'Eliminando...',						
+							url: '<?=url_for("pricing/eliminarNotificacion")?>', 						//method: 'POST', 
+							//Solamente se envian los cambios 						
+							params :	{
+								idnotificacion:rec.data.idnotificacion 
+							},
+													
+							//Ejecuta esta accion en caso de fallo
+							//(404 error etc, ***NOT*** success=false)
+							failure:function(response,options){							
+								alert( response.responseText );						
+								success = false;
+							},
+							//Ejecuta esta accion cuando el resultado es exitoso
+							success:function(response,options){															
+								grid.store.remove( rec );
+								Ext.MessageBox.alert("","Se ha eliminado correctamente");
+							}
+						 }
+					); 			
+				}
+			}		
+		]
+	});
+	this.menu.on('hide', this.onContextHide, this);
+		
+	if(this.ctxRow){
+		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+		this.ctxRow = null;
+	}
+	this.ctxRecord = rec;
+	this.ctxRow = this.view.getRow(index);
+	Ext.fly(this.ctxRow).addClass('x-node-ctx');
+	this.menu.showAt(e.getXY());
 		
 }
 

@@ -68,11 +68,9 @@ class CotProducto extends BaseCotProducto
 	* Retorna los recargos en origen generales del producto
 	*/
 	public function getRecargosGenerales(){
-		$c = new Criteria();
-		$c->addJoin( CotRecargoPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO );		
-		$c->add( TipoRecargoPeer::CA_TIPO, "Recargo en Origen" );		
+		$c = new Criteria();		
 		$c->add( CotRecargoPeer::CA_IDPRODUCTO, $this->getCaIdProducto() );
-		$c->add( CotRecargoPeer::CA_IDOPCION, "999" );		
+		$c->add( CotRecargoPeer::CA_IDOPCION, 999 );		
 		return  CotRecargoPeer::doSelect( $c );
 		
 		

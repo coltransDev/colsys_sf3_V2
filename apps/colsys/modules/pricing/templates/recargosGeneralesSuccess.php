@@ -5,8 +5,7 @@ $c = new Criteria();
 $c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte );
 $c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
 //$c->setLimit(3);
-$recargos = TipoRecargoPeer::doSelect( $c );
-		
+$recargos = TipoRecargoPeer::doSelect( $c );		
 ?>
 
 /*
@@ -14,17 +13,14 @@ $recargos = TipoRecargoPeer::doSelect( $c );
 */
 var record = Ext.data.Record.create([   		
 	{name: 'sel', type: 'string'},
-	{name: 'idciudad', type: 'string'},
-	{name: 'ciudad', type: 'string'}
-
-	<?
-	
-	foreach( $recargos as $recargo ){			
-	?>
-	,{name: 'recargo_<?=$recargo->getCaIdrecargo()?>', type: 'string'}			
-	<?			
-	}
-	?>		
+	{name: 'idtrafico', type: 'string'},	
+	{name: 'idciudad', type: 'string'},	
+	{name: 'ciudad', type: 'string'},
+	{name: 'idrecargo', type: 'string'},
+	{name: 'recargo', type: 'string'},
+	{name: 'vlrrecargo', type: 'float'},
+	{name: 'vlrminimo', type: 'float'},
+	{name: 'aplicacion', type: 'string'}			
 ]);
    		
 /*
@@ -47,12 +43,8 @@ var store = new Ext.data.GroupingStore({
 		record
 	),
 	sortInfo:{field: 'ciudad', direction: "ASC"}
-	
-	
 });
 	
-	
-		
 /*
 * Crea la columna de chequeo
 */	
@@ -61,11 +53,9 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 /*
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
-
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [		
-		checkColumn
-		,
+		checkColumn	, 	
 		{
 			header: "Ciudad",
 			width: 100,
@@ -73,69 +63,49 @@ var colModel = new Ext.grid.ColumnModel({
 			hideable: false,		
 			dataIndex: 'ciudad'  
 		}
-		
-		<?
-	
-		foreach( $recargos as $recargo ){			
-		?>
 		,
 		{
-			header: "<?=$recargo->getCaRecargo()?>",
+			header: "Recargo",
 			width: 100,
 			sortable: true,	
 			hideable: false,		
-			dataIndex: 'recargo_<?=$recargo->getCaIdrecargo()?>',
-			id: 'recargo_<?=$recargo->getCaIdrecargo()?>',
-			hidden: <?=in_array($recargo->getCaIdrecargo(),$recargosArray)?"false":"true"?>,		
-			
-			<?
-			switch( $modalidad ){
-				case "FCL":
-					?>
-					renderer: rendererSug,
-					<?
-					break;
-				case "COLOADING":
-					?>
-					renderer: rendererMinSug,
-					<?
-					break;
-				default:
-					?>
-					renderer: rendererMin,								
-					<?
-					break;
-			}
-			?>							          
-			editor: new Ext.form.NumberFieldMin({
-				allowBlank: false ,
-				allowNegative: false,
-				style: 'text-align:left',
-				modalidad: '<?=$modalidad?>'                                      
-			})  
-		}				
-		<?			
+			dataIndex: 'recargo'  
 		}
-		?>	
-						
-		
+		,
+		{
+			header: "Valor",
+			width: 100,
+			sortable: true,	
+			hideable: false,		
+			dataIndex: 'vlrrecargo'  
+		},
+		{
+			header: "Aplicacion",
+			width: 100,
+			sortable: true,	
+			hideable: false,		
+			dataIndex: 'aplicacion'  
+		},
+		{
+			header: "Minimo",
+			width: 100,
+			sortable: true,	
+			hideable: false,		
+			dataIndex: 'vlrminimo'  
+		}
+				
 	]	
 });
-
-
 
 /*
 * Configura el modo de seleccion de la grilla 
 */
 var selModel = new  Ext.grid.CellSelectionModel();
 
-
-
 /*
 * Actualiza los datos de la base de datos usando Ajax.
 */
 
-	
 /*
 * Handlers de los eventos y botones de la grilla 
 */
@@ -234,9 +204,7 @@ function updateModel(){
 		r = records[i];
 					
 		var changes = r.getChanges();
-		
-		
-				
+						
 		//envía la ciudad como parametro
 		if(r.data.idciudad){
 			changes['idciudad']=r.data.idciudad;								
