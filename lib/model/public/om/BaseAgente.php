@@ -1559,6 +1559,54 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 		return $this->collReportes;
 	}
 
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Agente is new, it will return
+	 * an empty collection; or if this Agente has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Agente.
+	 */
+	public function getReportesJoinBodega($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
 	/**
 	 * Temporary storage of collContactoAgentes to save a possible db hit in
 	 * the event objects are add to the collection, but the

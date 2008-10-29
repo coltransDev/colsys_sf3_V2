@@ -396,6 +396,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	protected $aAgente;
 
 	/**
+	 * @var        Bodega
+	 */
+	protected $aBodega;
+
+	/**
 	 * Collection to store aggregation of collInoClientesAirs.
 	 * @var        array
 	 */
@@ -2006,6 +2011,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDBODEGA;
 		}
 
+		if ($this->aBodega !== null && $this->aBodega->getCaIdbodega() !== $v) {
+			$this->aBodega = null;
+		}
+
 	} // setCaIdbodega()
 
 	/**
@@ -2615,6 +2624,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->setAgente($this->aAgente);
 			}
 
+			if ($this->aBodega !== null) {
+				if ($this->aBodega->isModified()) {
+					$affectedRows += $this->aBodega->save($con);
+				}
+				$this->setBodega($this->aBodega);
+			}
+
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -2812,6 +2828,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			if ($this->aAgente !== null) {
 				if (!$this->aAgente->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aAgente->getValidationFailures());
+				}
+			}
+
+			if ($this->aBodega !== null) {
+				if (!$this->aBodega->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aBodega->getValidationFailures());
 				}
 			}
 
@@ -3926,6 +3948,54 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aAgente;
+	}
+
+	/**
+	 * Declares an association between this object and a Bodega object.
+	 *
+	 * @param      Bodega $v
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function setBodega($v)
+	{
+
+
+		if ($v === null) {
+			$this->setCaIdbodega(NULL);
+		} else {
+			$this->setCaIdbodega($v->getCaIdbodega());
+		}
+
+
+		$this->aBodega = $v;
+	}
+
+
+	/**
+	 * Get the associated Bodega object
+	 *
+	 * @param      Connection Optional Connection object.
+	 * @return     Bodega The associated Bodega object.
+	 * @throws     PropelException
+	 */
+	public function getBodega($con = null)
+	{
+		if ($this->aBodega === null && ($this->ca_idbodega !== null)) {
+			// include the related Peer class
+			$this->aBodega = BodegaPeer::retrieveByPK($this->ca_idbodega, $con);
+
+			/* The following can be used instead of the line above to
+			   guarantee the related object contains a reference
+			   to this object, but this level of coupling
+			   may be undesirable in many circumstances.
+			   As it can lead to a db query with many results that may
+			   never be used.
+			   $obj = BodegaPeer::retrieveByPK($this->ca_idbodega, $con);
+			   $obj->addBodegas($this);
+			 */
+		}
+		return $this->aBodega;
 	}
 
 	/**

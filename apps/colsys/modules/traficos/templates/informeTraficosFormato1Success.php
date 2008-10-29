@@ -1,10 +1,10 @@
 <?
 if( $parametros ){	
 	$parametro = $parametros[0];			
-	$ultimaCol = "S";
+	$ultimaCol = "T";
 	
 }else{
-	$ultimaCol = "R";
+	$ultimaCol = "S";
 	$parametro = null;
 }
 
@@ -89,12 +89,15 @@ if( $modo=="maritimo" ){
 }else{
 	$objPHPExcel->getActiveSheet()->setCellValue('O'.$i, 'HAWB');
 }
-$objPHPExcel->getActiveSheet()->setCellValue('P'.$i, 'Status');
-$objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, 'Ref. Coltrans');
-$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, 'Consignatario');
+
+$objPHPExcel->getActiveSheet()->setCellValue('P'.$i, 'Consignatario');
+$objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, 'Status');
+$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, 'Actualizado');
+$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, 'Ref. Coltrans');
+
 
 if( $parametro ){			
-	$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, utf8_encode($parametro->getCaValor2()) );
+	$objPHPExcel->getActiveSheet()->setCellValue('T'.$i, utf8_encode($parametro->getCaValor2()) );
 }
 
 $i++;
@@ -203,17 +206,22 @@ foreach( $reportes as $reporte ){
 	
 	
 	$objPHPExcel->getActiveSheet()->setCellValue('O'.$i, utf8_encode(" ".$reporte->getDocTransporte()) );
-	$objPHPExcel->getActiveSheet()->setCellValue('P'.$i, utf8_encode(str_replace("\r", "", $reporte->getTextoStatus())));
+	
+	$objPHPExcel->getActiveSheet()->setCellValue('P'.$i, utf8_encode($reporte->getConsignedTo()));
+	
+	$objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, utf8_encode(str_replace("\r", "", $reporte->getTextoStatus())));
 	
 	$ref = $reporte->getNumReferencia()?" ".$reporte->getNumReferencia():"";
 	
-	$objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, $reporte->getCaConsecutivo().$ref );
 	
-	$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, utf8_encode($reporte->getConsignatario()));
+	$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, $reporte->getFchUltimoStatus("d.m.y" ).$ref );
+	$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, $reporte->getCaConsecutivo().$ref );
+	
+	
 	
 	if( $parametros ){
 		$parametro = $parametros[0];
-		$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, $reporte->getProperty($parametro->getCaValor()) );
+		$objPHPExcel->getActiveSheet()->setCellValue('T'.$i, $reporte->getProperty($parametro->getCaValor()) );
 	}
 	
 	
@@ -225,11 +233,14 @@ foreach( $reportes as $reporte ){
 	$objPHPExcel->getActiveSheet()->getStyle('J'.$i)->getFont()->setSize(8);
 	$objPHPExcel->getActiveSheet()->getStyle('N'.$i)->getAlignment()->setWrapText(true);
 	$objPHPExcel->getActiveSheet()->getStyle('P'.$i)->getAlignment()->setWrapText(true);
-	$objPHPExcel->getActiveSheet()->getStyle('P'.$i)->getFont()->setSize(8);
 	
-	$objPHPExcel->getActiveSheet()->getStyle('Q'.$i)->getAlignment()->setWrapText(true);
+	$objPHPExcel->getActiveSheet()->getStyle('Q'.$i)->getAlignment()->setWrapText(true);	
 	
-	$objPHPExcel->getActiveSheet()->getStyle('R'.$i)->getAlignment()->setWrapText(true);			
+	$objPHPExcel->getActiveSheet()->getStyle('Q'.$i)->getFont()->setSize(8);
+	
+	$objPHPExcel->getActiveSheet()->getStyle('S'.$i)->getAlignment()->setWrapText(true);
+	
+			
 	$objPHPExcel->getActiveSheet()->duplicateStyleArray(
 			array(
 				'alignment' => array(
@@ -334,11 +345,11 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(25);
 $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(20);
 $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
 
+$objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(21);
+$objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(45);
 
-$objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(45);
-$objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(13);		
-$objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(21);
-$objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(17);
+$objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(13);
+$objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(17);
 
 
 // Leyenda		
@@ -397,7 +408,6 @@ $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getBottom()->set
 $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getLeft()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, utf8_encode("Orden Anulada") );
-
 
 		
 

@@ -47,6 +47,18 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	protected $ca_transporte;
 
 	/**
+	 * Collection to store aggregation of collReportes.
+	 * @var        array
+	 */
+	protected $collReportes;
+
+	/**
+	 * The criteria used to select the current contents of collReportes.
+	 * @var        Criteria
+	 */
+	protected $lastReporteCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -325,6 +337,14 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
+			if ($this->collReportes !== null) {
+				foreach($this->collReportes as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 		}
 		return $affectedRows;
@@ -394,6 +414,14 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collReportes !== null) {
+					foreach($this->collReportes as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -609,6 +637,18 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 		$copyObj->setCaTransporte($this->ca_transporte);
 
 
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			foreach($this->getReportes() as $relObj) {
+				$copyObj->addReporte($relObj->copy($deepCopy));
+			}
+
+		} // if ($deepCopy)
+
+
 		$copyObj->setNew(true);
 
 		$copyObj->setCaIdbodega(NULL); // this is a pkey column, so set to default value
@@ -651,6 +691,303 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 			self::$peer = new BodegaPeer();
 		}
 		return self::$peer;
+	}
+
+	/**
+	 * Temporary storage of collReportes to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initReportes()
+	{
+		if ($this->collReportes === null) {
+			$this->collReportes = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Bodega has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 * If this Bodega is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getReportes($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+			   $this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+				ReportePeer::addSelectColumns($criteria);
+				$this->collReportes = ReportePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+				ReportePeer::addSelectColumns($criteria);
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$this->collReportes = ReportePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+		return $this->collReportes;
+	}
+
+	/**
+	 * Returns the number of related Reportes.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countReportes($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+		return ReportePeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a Reporte object to this object
+	 * through the Reporte foreign key attribute
+	 *
+	 * @param      Reporte $l Reporte
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addReporte(Reporte $l)
+	{
+		$this->collReportes[] = $l;
+		$l->setBodega($this);
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Bodega is new, it will return
+	 * an empty collection; or if this Bodega has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Bodega.
+	 */
+	public function getReportesJoinUsuario($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Bodega is new, it will return
+	 * an empty collection; or if this Bodega has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Bodega.
+	 */
+	public function getReportesJoinTransportador($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Bodega is new, it will return
+	 * an empty collection; or if this Bodega has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Bodega.
+	 */
+	public function getReportesJoinTercero($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Bodega is new, it will return
+	 * an empty collection; or if this Bodega has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Bodega.
+	 */
+	public function getReportesJoinAgente($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
 	}
 
 } // BaseBodega

@@ -131,7 +131,7 @@ class ReporteMapBuilder {
 
 		$tMap->addColumn('CA_IDCONSIGNARMASTER', 'CaIdconsignarmaster', 'int', CreoleTypes::INTEGER, false, null);
 
-		$tMap->addColumn('CA_IDBODEGA', 'CaIdbodega', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addForeignKey('CA_IDBODEGA', 'CaIdbodega', 'int', CreoleTypes::INTEGER, 'tb_bodegas', 'CA_IDBODEGA', false, null);
 
 		$tMap->addColumn('CA_MASTERSAME', 'CaMastersame', 'string', CreoleTypes::VARCHAR, false, null);
 

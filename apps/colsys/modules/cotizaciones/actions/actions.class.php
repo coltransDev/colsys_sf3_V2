@@ -420,17 +420,17 @@ class cotizacionesActions extends sfActions
 			$this->editable = $this->getRequestParameter("editable");	
 			$this->option = $this->getRequestParameter("option");
 			$this->cotizacion = $cotizacion;
-		}else {
+		}else {			
+			$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
+			$textos = sfYaml::load($config);			
 			$user = $this->getUser()->getUserId();
 			$this->cotizacion = new Cotizacion();
 			$this->cotizacion->setCaFchCotizacion(date("Y-m-d"));
-			$this->cotizacion->setCaAsunto("COTIZACION");
-			$this->cotizacion->setCaSaludo("Respetados Señores:");
-			$entrada = "Nos  complace  saludarlos,  nos permitimos presentar oferta para el transporte internacional de mercancía no peligrosa ni extradimensionada así :";
-			$this->cotizacion->setCaEntrada( utf8_encode($entrada) );
-			$despedida = "Esperamos que esta cotización sea de su conveniencia y quedamos a su entera disposición para atender cualquier inquietud adicional.";
-			$this->cotizacion->setCaDespedida( utf8_encode($despedida) );
-			$this->cotizacion->setCaAnexos("Notas importantes para sus importaciones y/o exportaciones.");
+			$this->cotizacion->setCaAsunto($textos['asunto']);
+			$this->cotizacion->setCaSaludo($textos['saludo']);
+			$this->cotizacion->setCaEntrada( $textos['entrada'] );
+			$this->cotizacion->setCaDespedida( $textos['despedida'] );
+			$this->cotizacion->setCaAnexos( $textos['anexos'] );
 			$this->cotizacion->setCaUsuario($user);
 		}
 		

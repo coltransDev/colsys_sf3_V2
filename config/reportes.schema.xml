@@ -67,6 +67,10 @@
 		<foreign-key foreignTable="tb_agentes">
 			<reference local="ca_idagente" foreign="ca_idagente"/>
 		</foreign-key>
+		
+		<foreign-key foreignTable="tb_bodegas">
+			<reference local="ca_idbodega" foreign="ca_idbodega"/>
+		</foreign-key>
 	</table>
 	
 		

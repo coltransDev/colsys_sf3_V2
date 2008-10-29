@@ -11,6 +11,7 @@ class Reporte extends BaseReporte
 {
 	private $ultimoAviso=null; 	
 	private $ultimoStatus=null;
+	private $historialStatus=null;
 	
 	/*
 	* Retorna un array conteniendo los proovedores del reporte
@@ -727,16 +728,30 @@ class Reporte extends BaseReporte
 	*/
 	public function getTextoStatus( ){
 		//Se puede mejorar sacando solamente el ultimo status
-		// la diversidad de las tablas haccen dificil un procedimiento estandar
-		$historial = $this->getHistorialStatus();
-		
-		if( count($historial)>0 ){
-			ksort($historial);
+		// la diversidad de las tablas hacen dificil un procedimiento estandar
+		$historial = $this->getHistorialStatus();		
+		if( count($historial)>0 ){	
+			ksort($historial);		
 			$ultimo = array_pop($historial);
 			return $ultimo['status'];
 		}
-		return "";		
-						
+		return "";								
+	}
+	
+	/*
+	* Retorna la fecha del ultimo status, avisos, referencia, otm, etc.
+	* @author Andres Botero	
+	*/
+	public function getFchUltimoStatus( $format="Y-m-d" ){
+		//Se puede mejorar sacando solamente el ultimo status
+		// la diversidad de las tablas hacen dificil un procedimiento estandar
+		$historial = $this->getHistorialStatus();
+		
+		if( count($historial)>0 ){			
+			reset($historial);			
+			return date( $format , key($historial) );
+		}
+		return "";								
 	}
 	
 	/*
@@ -815,57 +830,59 @@ class Reporte extends BaseReporte
 	* */
 	public function getHistorialStatus(){
 		
-		$resultados = array();
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo"  ){
-			
-			$inoclientesSea = $this->getInoClientesSea();
-			
-			if( $inoclientesSea ){
-										
-				$refSea = $inoclientesSea->getInoMaestraSea();											
-				if( $refSea->getCaFchconfirmado( ) ){	
-					$resultados[strtotime($refSea->getCaFchconfirmado( ))]["tipo"] = "status maritimo";
-					$resultados[strtotime($refSea->getCaFchconfirmado( ))]["status"] = $inoclientesSea->getStatus(); 						
-					$resultados[strtotime($refSea->getCaFchconfirmado( ))]["etapa"] = "Confirmacion de llegada";
-					$c = new Criteria();
-					$c->add( EmailPeer::CA_IDCASO , $inoclientesSea->getOid() );
-					$email = EmailPeer::doSelectOne( $c );
-					
-					if( $email ){
-						$resultados[strtotime($refSea->getCaFchconfirmado( ))]["emailid"] = $email->getCaIdEmail();				
+		if(!$this->historialStatus){
+			$this->historialStatus = array();
+			if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo"  ){
+				
+				$inoclientesSea = $this->getInoClientesSea();
+				
+				if( $inoclientesSea ){
+											
+					$refSea = $inoclientesSea->getInoMaestraSea();											
+					if( $refSea->getCaFchconfirmado( ) ){	
+						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["tipo"] = "status maritimo";
+						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["status"] = $inoclientesSea->getStatus(); 						
+						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["etapa"] = "Confirmacion de llegada";
+						$c = new Criteria();
+						$c->add( EmailPeer::CA_IDCASO , $inoclientesSea->getOid() );
+						$email = EmailPeer::doSelectOne( $c );
+						
+						if( $email ){
+							$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["emailid"] = $email->getCaIdEmail();				
+						}
+						
+					}						
+									
+					/*
+					* Status de OTM
+					*/
+					$statuss = $inoclientesSea->getStatuss();
+					foreach( $statuss as $status){			
+						if( $status->getCaAviso () ){
+							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
+							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status OTM";
+							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getCaAviso (); 
+							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = "";
+						}								 
 					}
-					
-				}						
-								
-				/*
-				* Status de OTM
-				*/
-				$statuss = $inoclientesSea->getStatuss();
-				foreach( $statuss as $status){			
-					if( $status->getCaAviso () ){
-						$resultados[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
-						$resultados[strtotime($status->getCaFchEnvio ())]["tipo"] = "status OTM";
-						$resultados[strtotime($status->getCaFchEnvio ())]["status"] = $status->getCaAviso (); 
-						$resultados[strtotime($status->getCaFchEnvio ())]["etapa"] = "";
-					}								 
 				}
 			}
-		}
+			
+			
+			$i=0; 					
+			$statuss = $this->getRepStatuss();		
+					
+			foreach( $statuss as $status){			
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status";
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getStatus (); 
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = $status->getCaEtapa ();
+							 
+			}		
 		
-		
-		$i=0; 					
-		$statuss = $this->getRepStatuss();		
-				
-		foreach( $statuss as $status){			
-			$resultados[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
-			$resultados[strtotime($status->getCaFchEnvio ())]["tipo"] = "status";
-			$resultados[strtotime($status->getCaFchEnvio ())]["status"] = $status->getStatus (); 
-			$resultados[strtotime($status->getCaFchEnvio ())]["etapa"] = $status->getCaEtapa ();
-						 
-		}		
-	
-		krsort ($resultados);
-		return $resultados;		
+			krsort ($this->historialStatus);
+		}	
+		return $this->historialStatus;		
 		
 	}		
 	
@@ -894,6 +911,33 @@ class Reporte extends BaseReporte
 		}
 	}
 	
+	/*
+	* Retorna la cadena que indica a quien se consigna el HBL
+	* Author: Andres Botero
+	*/
+	public function getConsignedTo(){
+		
+		if( $this->getCaIdconsignar()==1 ){
+			$consignatario_final = ($this->getCaIdconsignatario()!=0)?$this->getConsignatario()->getCaNombre():$this->getCliente()->getCaCompania();
+			return $consignatario_final;
+		}else{
+			$str = $this->getBodegaConsignar()->getCaNombre();
+			$bodega = $this->getBodega();
+			if( $bodega ){
+				if( $bodega->getCaTipo()!= "Coordinador Lógistico"){
+					$str.=$bodega->getCaTipo()." ".$bodega->getCaNombre();	
+				}
+			}
+			return $str;
+		}		 
+	}
+	
+	/*
+	*
+	*/
+	public function getBodegaConsignar(){
+		return BodegaPeer::retrieveByPk( $this->getCaIdconsignar() );
+	}
 	
 	/*
 	* Agrega una nueva propiedad en la columna ca_propiedades, según CU059 
