@@ -19,7 +19,7 @@ abstract class BaseClientePeer {
 	const CLASS_DEFAULT = 'lib.model.public.Cliente';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 21;
+	const NUM_COLUMNS = 22;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -88,6 +88,9 @@ abstract class BaseClientePeer {
 	/** the column name for the CA_IDCIUDAD field */
 	const CA_IDCIUDAD = 'tb_clientes.CA_IDCIUDAD';
 
+	/** the column name for the CA_IDGRUPO field */
+	const CA_IDGRUPO = 'tb_clientes.CA_IDGRUPO';
+
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
 
@@ -99,10 +102,10 @@ abstract class BaseClientePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcliente', 'CaDigito', 'CaCompania', 'CaPapellido', 'CaSapellido', 'CaNombres', 'CaSaludo', 'CaSexo', 'CaCumpleanos', 'CaOficina', 'CaVendedor', 'CaEmail', 'CaCoordinador', 'CaDireccion', 'CaLocalidad', 'CaComplemento', 'CaTelefonos', 'CaFax', 'CaPreferencias', 'CaConfirmar', 'CaIdciudad', ),
-		BasePeer::TYPE_COLNAME => array (ClientePeer::CA_IDCLIENTE, ClientePeer::CA_DIGITO, ClientePeer::CA_COMPANIA, ClientePeer::CA_PAPELLIDO, ClientePeer::CA_SAPELLIDO, ClientePeer::CA_NOMBRES, ClientePeer::CA_SALUDO, ClientePeer::CA_SEXO, ClientePeer::CA_CUMPLEANOS, ClientePeer::CA_OFICINA, ClientePeer::CA_VENDEDOR, ClientePeer::CA_EMAIL, ClientePeer::CA_COORDINADOR, ClientePeer::CA_DIRECCION, ClientePeer::CA_LOCALIDAD, ClientePeer::CA_COMPLEMENTO, ClientePeer::CA_TELEFONOS, ClientePeer::CA_FAX, ClientePeer::CA_PREFERENCIAS, ClientePeer::CA_CONFIRMAR, ClientePeer::CA_IDCIUDAD, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcliente', 'ca_digito', 'ca_compania', 'ca_papellido', 'ca_sapellido', 'ca_nombres', 'ca_saludo', 'ca_sexo', 'ca_cumpleanos', 'ca_oficina', 'ca_vendedor', 'ca_email', 'ca_coordinador', 'ca_direccion', 'ca_localidad', 'ca_complemento', 'ca_telefonos', 'ca_fax', 'ca_preferencias', 'ca_confirmar', 'ca_idciudad', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcliente', 'CaDigito', 'CaCompania', 'CaPapellido', 'CaSapellido', 'CaNombres', 'CaSaludo', 'CaSexo', 'CaCumpleanos', 'CaOficina', 'CaVendedor', 'CaEmail', 'CaCoordinador', 'CaDireccion', 'CaLocalidad', 'CaComplemento', 'CaTelefonos', 'CaFax', 'CaPreferencias', 'CaConfirmar', 'CaIdciudad', 'CaIdgrupo', ),
+		BasePeer::TYPE_COLNAME => array (ClientePeer::CA_IDCLIENTE, ClientePeer::CA_DIGITO, ClientePeer::CA_COMPANIA, ClientePeer::CA_PAPELLIDO, ClientePeer::CA_SAPELLIDO, ClientePeer::CA_NOMBRES, ClientePeer::CA_SALUDO, ClientePeer::CA_SEXO, ClientePeer::CA_CUMPLEANOS, ClientePeer::CA_OFICINA, ClientePeer::CA_VENDEDOR, ClientePeer::CA_EMAIL, ClientePeer::CA_COORDINADOR, ClientePeer::CA_DIRECCION, ClientePeer::CA_LOCALIDAD, ClientePeer::CA_COMPLEMENTO, ClientePeer::CA_TELEFONOS, ClientePeer::CA_FAX, ClientePeer::CA_PREFERENCIAS, ClientePeer::CA_CONFIRMAR, ClientePeer::CA_IDCIUDAD, ClientePeer::CA_IDGRUPO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcliente', 'ca_digito', 'ca_compania', 'ca_papellido', 'ca_sapellido', 'ca_nombres', 'ca_saludo', 'ca_sexo', 'ca_cumpleanos', 'ca_oficina', 'ca_vendedor', 'ca_email', 'ca_coordinador', 'ca_direccion', 'ca_localidad', 'ca_complemento', 'ca_telefonos', 'ca_fax', 'ca_preferencias', 'ca_confirmar', 'ca_idciudad', 'ca_idgrupo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, )
 	);
 
 	/**
@@ -112,10 +115,10 @@ abstract class BaseClientePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcliente' => 0, 'CaDigito' => 1, 'CaCompania' => 2, 'CaPapellido' => 3, 'CaSapellido' => 4, 'CaNombres' => 5, 'CaSaludo' => 6, 'CaSexo' => 7, 'CaCumpleanos' => 8, 'CaOficina' => 9, 'CaVendedor' => 10, 'CaEmail' => 11, 'CaCoordinador' => 12, 'CaDireccion' => 13, 'CaLocalidad' => 14, 'CaComplemento' => 15, 'CaTelefonos' => 16, 'CaFax' => 17, 'CaPreferencias' => 18, 'CaConfirmar' => 19, 'CaIdciudad' => 20, ),
-		BasePeer::TYPE_COLNAME => array (ClientePeer::CA_IDCLIENTE => 0, ClientePeer::CA_DIGITO => 1, ClientePeer::CA_COMPANIA => 2, ClientePeer::CA_PAPELLIDO => 3, ClientePeer::CA_SAPELLIDO => 4, ClientePeer::CA_NOMBRES => 5, ClientePeer::CA_SALUDO => 6, ClientePeer::CA_SEXO => 7, ClientePeer::CA_CUMPLEANOS => 8, ClientePeer::CA_OFICINA => 9, ClientePeer::CA_VENDEDOR => 10, ClientePeer::CA_EMAIL => 11, ClientePeer::CA_COORDINADOR => 12, ClientePeer::CA_DIRECCION => 13, ClientePeer::CA_LOCALIDAD => 14, ClientePeer::CA_COMPLEMENTO => 15, ClientePeer::CA_TELEFONOS => 16, ClientePeer::CA_FAX => 17, ClientePeer::CA_PREFERENCIAS => 18, ClientePeer::CA_CONFIRMAR => 19, ClientePeer::CA_IDCIUDAD => 20, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcliente' => 0, 'ca_digito' => 1, 'ca_compania' => 2, 'ca_papellido' => 3, 'ca_sapellido' => 4, 'ca_nombres' => 5, 'ca_saludo' => 6, 'ca_sexo' => 7, 'ca_cumpleanos' => 8, 'ca_oficina' => 9, 'ca_vendedor' => 10, 'ca_email' => 11, 'ca_coordinador' => 12, 'ca_direccion' => 13, 'ca_localidad' => 14, 'ca_complemento' => 15, 'ca_telefonos' => 16, 'ca_fax' => 17, 'ca_preferencias' => 18, 'ca_confirmar' => 19, 'ca_idciudad' => 20, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcliente' => 0, 'CaDigito' => 1, 'CaCompania' => 2, 'CaPapellido' => 3, 'CaSapellido' => 4, 'CaNombres' => 5, 'CaSaludo' => 6, 'CaSexo' => 7, 'CaCumpleanos' => 8, 'CaOficina' => 9, 'CaVendedor' => 10, 'CaEmail' => 11, 'CaCoordinador' => 12, 'CaDireccion' => 13, 'CaLocalidad' => 14, 'CaComplemento' => 15, 'CaTelefonos' => 16, 'CaFax' => 17, 'CaPreferencias' => 18, 'CaConfirmar' => 19, 'CaIdciudad' => 20, 'CaIdgrupo' => 21, ),
+		BasePeer::TYPE_COLNAME => array (ClientePeer::CA_IDCLIENTE => 0, ClientePeer::CA_DIGITO => 1, ClientePeer::CA_COMPANIA => 2, ClientePeer::CA_PAPELLIDO => 3, ClientePeer::CA_SAPELLIDO => 4, ClientePeer::CA_NOMBRES => 5, ClientePeer::CA_SALUDO => 6, ClientePeer::CA_SEXO => 7, ClientePeer::CA_CUMPLEANOS => 8, ClientePeer::CA_OFICINA => 9, ClientePeer::CA_VENDEDOR => 10, ClientePeer::CA_EMAIL => 11, ClientePeer::CA_COORDINADOR => 12, ClientePeer::CA_DIRECCION => 13, ClientePeer::CA_LOCALIDAD => 14, ClientePeer::CA_COMPLEMENTO => 15, ClientePeer::CA_TELEFONOS => 16, ClientePeer::CA_FAX => 17, ClientePeer::CA_PREFERENCIAS => 18, ClientePeer::CA_CONFIRMAR => 19, ClientePeer::CA_IDCIUDAD => 20, ClientePeer::CA_IDGRUPO => 21, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcliente' => 0, 'ca_digito' => 1, 'ca_compania' => 2, 'ca_papellido' => 3, 'ca_sapellido' => 4, 'ca_nombres' => 5, 'ca_saludo' => 6, 'ca_sexo' => 7, 'ca_cumpleanos' => 8, 'ca_oficina' => 9, 'ca_vendedor' => 10, 'ca_email' => 11, 'ca_coordinador' => 12, 'ca_direccion' => 13, 'ca_localidad' => 14, 'ca_complemento' => 15, 'ca_telefonos' => 16, 'ca_fax' => 17, 'ca_preferencias' => 18, 'ca_confirmar' => 19, 'ca_idciudad' => 20, 'ca_idgrupo' => 21, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, )
 	);
 
 	/**
@@ -256,6 +259,8 @@ abstract class BaseClientePeer {
 		$criteria->addSelectColumn(ClientePeer::CA_CONFIRMAR);
 
 		$criteria->addSelectColumn(ClientePeer::CA_IDCIUDAD);
+
+		$criteria->addSelectColumn(ClientePeer::CA_IDGRUPO);
 
 	}
 

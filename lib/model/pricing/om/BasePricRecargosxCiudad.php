@@ -62,17 +62,52 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 
 
 	/**
-	 * The value for the ca_idmoneda field.
-	 * @var        string
-	 */
-	protected $ca_idmoneda;
-
-
-	/**
 	 * The value for the ca_aplicacion field.
 	 * @var        string
 	 */
 	protected $ca_aplicacion;
+
+
+	/**
+	 * The value for the ca_observaciones field.
+	 * @var        string
+	 */
+	protected $ca_observaciones;
+
+
+	/**
+	 * The value for the ca_fchinicio field.
+	 * @var        int
+	 */
+	protected $ca_fchinicio;
+
+
+	/**
+	 * The value for the ca_fchvencimiento field.
+	 * @var        int
+	 */
+	protected $ca_fchvencimiento;
+
+
+	/**
+	 * The value for the ca_fchcreado field.
+	 * @var        int
+	 */
+	protected $ca_fchcreado;
+
+
+	/**
+	 * The value for the ca_usucreado field.
+	 * @var        string
+	 */
+	protected $ca_usucreado;
+
+
+	/**
+	 * The value for the ca_idmoneda field.
+	 * @var        string
+	 */
+	protected $ca_idmoneda;
 
 	/**
 	 * @var        Ciudad
@@ -165,17 +200,6 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Get the [ca_idmoneda] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaIdmoneda()
-	{
-
-		return $this->ca_idmoneda;
-	}
-
-	/**
 	 * Get the [ca_aplicacion] column value.
 	 * 
 	 * @return     string
@@ -184,6 +208,132 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 	{
 
 		return $this->ca_aplicacion;
+	}
+
+	/**
+	 * Get the [ca_observaciones] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaObservaciones()
+	{
+
+		return $this->ca_observaciones;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchinicio] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchinicio($format = 'Y-m-d')
+	{
+
+		if ($this->ca_fchinicio === null || $this->ca_fchinicio === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchinicio)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchinicio);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchinicio] as date/time value: " . var_export($this->ca_fchinicio, true));
+			}
+		} else {
+			$ts = $this->ca_fchinicio;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchvencimiento] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchvencimiento($format = 'Y-m-d')
+	{
+
+		if ($this->ca_fchvencimiento === null || $this->ca_fchvencimiento === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchvencimiento)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchvencimiento);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchvencimiento] as date/time value: " . var_export($this->ca_fchvencimiento, true));
+			}
+		} else {
+			$ts = $this->ca_fchvencimiento;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchcreado] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchcreado($format = 'Y-m-d H:i:s')
+	{
+
+		if ($this->ca_fchcreado === null || $this->ca_fchcreado === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchcreado)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchcreado);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchcreado] as date/time value: " . var_export($this->ca_fchcreado, true));
+			}
+		} else {
+			$ts = $this->ca_fchcreado;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [ca_usucreado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsucreado()
+	{
+
+		return $this->ca_usucreado;
+	}
+
+	/**
+	 * Get the [ca_idmoneda] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIdmoneda()
+	{
+
+		return $this->ca_idmoneda;
 	}
 
 	/**
@@ -315,28 +465,6 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 	} // setCaVlrminimo()
 
 	/**
-	 * Set the value of [ca_idmoneda] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     void
-	 */
-	public function setCaIdmoneda($v)
-	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
-		}
-
-		if ($this->ca_idmoneda !== $v) {
-			$this->ca_idmoneda = $v;
-			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_IDMONEDA;
-		}
-
-	} // setCaIdmoneda()
-
-	/**
 	 * Set the value of [ca_aplicacion] column.
 	 * 
 	 * @param      string $v new value
@@ -357,6 +485,144 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		}
 
 	} // setCaAplicacion()
+
+	/**
+	 * Set the value of [ca_observaciones] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaObservaciones($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_observaciones !== $v) {
+			$this->ca_observaciones = $v;
+			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_OBSERVACIONES;
+		}
+
+	} // setCaObservaciones()
+
+	/**
+	 * Set the value of [ca_fchinicio] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchinicio($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchinicio] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchinicio !== $ts) {
+			$this->ca_fchinicio = $ts;
+			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_FCHINICIO;
+		}
+
+	} // setCaFchinicio()
+
+	/**
+	 * Set the value of [ca_fchvencimiento] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchvencimiento($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchvencimiento] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchvencimiento !== $ts) {
+			$this->ca_fchvencimiento = $ts;
+			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_FCHVENCIMIENTO;
+		}
+
+	} // setCaFchvencimiento()
+
+	/**
+	 * Set the value of [ca_fchcreado] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchcreado($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchcreado] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchcreado !== $ts) {
+			$this->ca_fchcreado = $ts;
+			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_FCHCREADO;
+		}
+
+	} // setCaFchcreado()
+
+	/**
+	 * Set the value of [ca_usucreado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaUsucreado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_usucreado !== $v) {
+			$this->ca_usucreado = $v;
+			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_USUCREADO;
+		}
+
+	} // setCaUsucreado()
+
+	/**
+	 * Set the value of [ca_idmoneda] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaIdmoneda($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_idmoneda !== $v) {
+			$this->ca_idmoneda = $v;
+			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_IDMONEDA;
+		}
+
+	} // setCaIdmoneda()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
@@ -387,16 +653,26 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 
 			$this->ca_vlrminimo = $rs->getFloat($startcol + 5);
 
-			$this->ca_idmoneda = $rs->getString($startcol + 6);
+			$this->ca_aplicacion = $rs->getString($startcol + 6);
 
-			$this->ca_aplicacion = $rs->getString($startcol + 7);
+			$this->ca_observaciones = $rs->getString($startcol + 7);
+
+			$this->ca_fchinicio = $rs->getDate($startcol + 8, null);
+
+			$this->ca_fchvencimiento = $rs->getDate($startcol + 9, null);
+
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 10, null);
+
+			$this->ca_usucreado = $rs->getString($startcol + 11);
+
+			$this->ca_idmoneda = $rs->getString($startcol + 12);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 8; // 8 = PricRecargosxCiudadPeer::NUM_COLUMNS - PricRecargosxCiudadPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 13; // 13 = PricRecargosxCiudadPeer::NUM_COLUMNS - PricRecargosxCiudadPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricRecargosxCiudad object", $e);
@@ -656,10 +932,25 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 				return $this->getCaVlrminimo();
 				break;
 			case 6:
-				return $this->getCaIdmoneda();
+				return $this->getCaAplicacion();
 				break;
 			case 7:
-				return $this->getCaAplicacion();
+				return $this->getCaObservaciones();
+				break;
+			case 8:
+				return $this->getCaFchinicio();
+				break;
+			case 9:
+				return $this->getCaFchvencimiento();
+				break;
+			case 10:
+				return $this->getCaFchcreado();
+				break;
+			case 11:
+				return $this->getCaUsucreado();
+				break;
+			case 12:
+				return $this->getCaIdmoneda();
 				break;
 			default:
 				return null;
@@ -687,8 +978,13 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 			$keys[3] => $this->getCaModalidad(),
 			$keys[4] => $this->getCaVlrrecargo(),
 			$keys[5] => $this->getCaVlrminimo(),
-			$keys[6] => $this->getCaIdmoneda(),
-			$keys[7] => $this->getCaAplicacion(),
+			$keys[6] => $this->getCaAplicacion(),
+			$keys[7] => $this->getCaObservaciones(),
+			$keys[8] => $this->getCaFchinicio(),
+			$keys[9] => $this->getCaFchvencimiento(),
+			$keys[10] => $this->getCaFchcreado(),
+			$keys[11] => $this->getCaUsucreado(),
+			$keys[12] => $this->getCaIdmoneda(),
 		);
 		return $result;
 	}
@@ -739,10 +1035,25 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 				$this->setCaVlrminimo($value);
 				break;
 			case 6:
-				$this->setCaIdmoneda($value);
+				$this->setCaAplicacion($value);
 				break;
 			case 7:
-				$this->setCaAplicacion($value);
+				$this->setCaObservaciones($value);
+				break;
+			case 8:
+				$this->setCaFchinicio($value);
+				break;
+			case 9:
+				$this->setCaFchvencimiento($value);
+				break;
+			case 10:
+				$this->setCaFchcreado($value);
+				break;
+			case 11:
+				$this->setCaUsucreado($value);
+				break;
+			case 12:
+				$this->setCaIdmoneda($value);
 				break;
 		} // switch()
 	}
@@ -773,8 +1084,13 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		if (array_key_exists($keys[3], $arr)) $this->setCaModalidad($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaVlrrecargo($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaVlrminimo($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaIdmoneda($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaAplicacion($arr[$keys[7]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaAplicacion($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaObservaciones($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaFchinicio($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaFchvencimiento($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaFchcreado($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaUsucreado($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaIdmoneda($arr[$keys[12]]);
 	}
 
 	/**
@@ -792,8 +1108,13 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_MODALIDAD)) $criteria->add(PricRecargosxCiudadPeer::CA_MODALIDAD, $this->ca_modalidad);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_VLRRECARGO)) $criteria->add(PricRecargosxCiudadPeer::CA_VLRRECARGO, $this->ca_vlrrecargo);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_VLRMINIMO)) $criteria->add(PricRecargosxCiudadPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
-		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_IDMONEDA)) $criteria->add(PricRecargosxCiudadPeer::CA_IDMONEDA, $this->ca_idmoneda);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_APLICACION)) $criteria->add(PricRecargosxCiudadPeer::CA_APLICACION, $this->ca_aplicacion);
+		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_OBSERVACIONES)) $criteria->add(PricRecargosxCiudadPeer::CA_OBSERVACIONES, $this->ca_observaciones);
+		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_FCHINICIO)) $criteria->add(PricRecargosxCiudadPeer::CA_FCHINICIO, $this->ca_fchinicio);
+		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_FCHVENCIMIENTO)) $criteria->add(PricRecargosxCiudadPeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
+		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_FCHCREADO)) $criteria->add(PricRecargosxCiudadPeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_USUCREADO)) $criteria->add(PricRecargosxCiudadPeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_IDMONEDA)) $criteria->add(PricRecargosxCiudadPeer::CA_IDMONEDA, $this->ca_idmoneda);
 
 		return $criteria;
 	}
@@ -874,9 +1195,19 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 
 		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
 
-		$copyObj->setCaIdmoneda($this->ca_idmoneda);
-
 		$copyObj->setCaAplicacion($this->ca_aplicacion);
+
+		$copyObj->setCaObservaciones($this->ca_observaciones);
+
+		$copyObj->setCaFchinicio($this->ca_fchinicio);
+
+		$copyObj->setCaFchvencimiento($this->ca_fchvencimiento);
+
+		$copyObj->setCaFchcreado($this->ca_fchcreado);
+
+		$copyObj->setCaUsucreado($this->ca_usucreado);
+
+		$copyObj->setCaIdmoneda($this->ca_idmoneda);
 
 
 		$copyObj->setNew(true);

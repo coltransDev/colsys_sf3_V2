@@ -30,7 +30,7 @@
 <file name="TipoRecargoPeer.php" local="128637410692031250" remote="128637410130000000" testing="0" />
 <file name="TrackingUser.php" local="128637410688281250" remote="128637410130000000" testing="0" />
 <file name="TrackingUserPeer.php" local="128637410692812500" remote="128637410130000000" testing="0" />
-<file name="Trafico.php" local="128638264590468750" remote="128638260530000000" testing="0" />
+<file name="Trafico.php" local="128653571227031250" remote="128653567800000000" testing="0" />
 <file name="TraficoPeer.php" local="128637410688593750" remote="128637410130000000" testing="0" />
 <file name="Transportador.php" local="128637410692187500" remote="128637410130000000" testing="0" />
 <file name="TransportadorPeer.php" local="128637410689687500" remote="128637410130000000" testing="0" />
@@ -42,4 +42,6 @@
 <file name="BodegaPeer.php" local="128637410687968750" remote="128637410130000000" testing="0" />
 <file name="TrackingUserLogPeer.php" local="128673476939062500" remote="128673474970000000" testing="0" />
 <file name="TrackingUserLog.php" local="128673476939218750" remote="128673474970000000" testing="0" />
+<file name="TraficoGrupo.php" local="128649476454343871" remote="128649474690000000" testing="0" />
+<file name="TraficoGrupoPeer.php" local="128649476454343871" remote="128649474690000000" testing="0" />
 </dwsync>

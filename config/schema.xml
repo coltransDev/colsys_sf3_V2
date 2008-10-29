@@ -22,6 +22,7 @@
 		<column name="ca_preferencias" type="varchar" />
 		<column name="ca_confirmar" type="varchar" />
 		<column name="ca_idciudad" type="varchar" />
+		<column name="ca_idgrupo" type="integer" />
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>
 		</foreign-key>

@@ -572,7 +572,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 	public function executeImportarTarifario(){
 		$c = new Criteria();
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-		$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
+		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
  
 		//$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
 		//$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
@@ -589,6 +589,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				$pricflete->setCaIdConcepto( $flete->getCaIdConcepto() );
 				$pricflete->setCaVlrneto( $flete->getCaVlrneto() );
 				$pricflete->setCaVlrminimo( $flete->getCaVlrminimo() );
+				$pricflete->setCaFchinicio( $flete->getCaFchinicio() );
+				$pricflete->setCaFchvencimiento( $flete->getCaFchvencimiento() );
+				$pricflete->setCaIdmoneda( $flete->getCaIdmoneda() );				
 				if( $flete->getCaSugerida()=="*" ){
 					$pricflete->setCaEstado( 1 );
 				}
@@ -622,7 +625,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 							//$pricrecargo->setCaAplicacion( $recargo->getCaBaseunitario() );
 						}
 					}
-									
+					$pricrecargo->setCaFchinicio( $recargo->getCaFchinicio() );
+					$pricrecargo->setCaFchvencimiento( $recargo->getCaFchvencimiento() );
+								
 					$pricrecargo->setCaVlrminimo( $recargo->getCaRecargominimo() );
 					$pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
 					$pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );				

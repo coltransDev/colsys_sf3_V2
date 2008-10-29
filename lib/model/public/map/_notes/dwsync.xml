@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="AgenteMapBuilder.php" local="128649452467000121" remote="128649448920000000" testing="0" />
-<file name="CiudadMapBuilder.php" local="128649452468718871" remote="128649448920000000" testing="0" />
-<file name="ClienteMapBuilder.php" local="128649452465281371" remote="128649448920000000" testing="0" />
-<file name="ConceptoMapBuilder.php" local="128649452470281371" remote="128649448920000000" testing="0" />
-<file name="ContactoAgenteMapBuilder.php" local="128649452467937621" remote="128649448920000000" testing="0" />
-<file name="ContactoMapBuilder.php" local="128649452474968871" remote="128649448920000000" testing="0" />
-<file name="CostoMapBuilder.php" local="128649452471687621" remote="128649448920000000" testing="0" />
-<file name="EmailMapBuilder.php" local="128649452475750121" remote="128649448920000000" testing="0" />
-<file name="MonedaMapBuilder.php" local="128649452474031371" remote="128649448920000000" testing="0" />
-<file name="ParametroMapBuilder.php" local="128649452472781371" remote="128649448920000000" testing="0" />
-<file name="SiaMapBuilder.php" local="128649452472156371" remote="128649448920000000" testing="0" />
-<file name="TasaAlaicoMapBuilder.php" local="128649452477000121" remote="128649448920000000" testing="0" />
-<file name="TerceroMapBuilder.php" local="128649452466218871" remote="128649448920000000" testing="0" />
-<file name="TipoRecargoMapBuilder.php" local="128649452471062621" remote="128649448920000000" testing="0" />
-<file name="TrackingUserMapBuilder.php" local="128649452485750121" remote="128649448920000000" testing="0" />
-<file name="TraficoMapBuilder.php" local="128649452469343871" remote="128649448920000000" testing="0" />
-<file name="TransportadorMapBuilder.php" local="128649452473562621" remote="128649448920000000" testing="0" />
-<file name="TRMMapBuilder.php" local="128649452477625121" remote="128649448920000000" testing="0" />
-<file name="EmailAttachmentMapBuilder.php" local="128649452476531371" remote="128649448920000000" testing="0" />
-<file name="BodegaMapBuilder.php" local="128649452478093871" remote="128649448920000000" testing="0" />
-<file name="TrackingUserLogMapBuilder.php" local="128673476939062500" remote="128673474970000000" testing="0" />
+<file name="AgenteMapBuilder.php" local="128697725923281250" remote="128697724360000000" testing="0" />
+<file name="CiudadMapBuilder.php" local="128697725925312500" remote="128697724360000000" testing="0" />
+<file name="ClienteMapBuilder.php" local="128697725921562500" remote="128697724360000000" testing="0" />
+<file name="ConceptoMapBuilder.php" local="128697725927656250" remote="128697724360000000" testing="0" />
+<file name="ContactoAgenteMapBuilder.php" local="128697725924375000" remote="128697724360000000" testing="0" />
+<file name="ContactoMapBuilder.php" local="128697725936562500" remote="128697724360000000" testing="0" />
+<file name="CostoMapBuilder.php" local="128697725931250000" remote="128697724360000000" testing="0" />
+<file name="EmailMapBuilder.php" local="128697725937343750" remote="128697724360000000" testing="0" />
+<file name="MonedaMapBuilder.php" local="128697725935625000" remote="128697724360000000" testing="0" />
+<file name="ParametroMapBuilder.php" local="128697725933906250" remote="128697724360000000" testing="0" />
+<file name="SiaMapBuilder.php" local="128697725933125000" remote="128697724360000000" testing="0" />
+<file name="TasaAlaicoMapBuilder.php" local="128697725938750000" remote="128697724360000000" testing="0" />
+<file name="TerceroMapBuilder.php" local="128697725922500000" remote="128697724360000000" testing="0" />
+<file name="TipoRecargoMapBuilder.php" local="128697725929375000" remote="128697724360000000" testing="0" />
+<file name="TrackingUserMapBuilder.php" local="128697725956093750" remote="128697724360000000" testing="0" />
+<file name="TraficoMapBuilder.php" local="128697725926093750" remote="128697724360000000" testing="0" />
+<file name="TransportadorMapBuilder.php" local="128697725934843750" remote="128697724360000000" testing="0" />
+<file name="TRMMapBuilder.php" local="128697725940000000" remote="128697724360000000" testing="0" />
+<file name="EmailAttachmentMapBuilder.php" local="128697725938125000" remote="128697724360000000" testing="0" />
+<file name="BodegaMapBuilder.php" local="128697725940781250" remote="128697724360000000" testing="0" />
+<file name="TrackingUserLogMapBuilder.php" local="128697725957031250" remote="128697724360000000" testing="0" />
+<file name="TraficoGrupoMapBuilder.php" local="128697725926718750" remote="128697724360000000" testing="0" />
 </dwsync>

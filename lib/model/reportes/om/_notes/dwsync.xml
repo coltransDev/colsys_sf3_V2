@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="BaseRepAduana.php" local="128649452463406371" remote="128649448920000000" testing="0" />
-<file name="BaseRepAduanaPeer.php" local="128649452463250121" remote="128649448920000000" testing="0" />
-<file name="BaseRepAviso.php" local="128649452456531371" remote="128649448920000000" testing="0" />
-<file name="BaseRepAvisoPeer.php" local="128649452456375121" remote="128649448920000000" testing="0" />
-<file name="BaseRepCosto.php" local="128649452461687621" remote="128649448920000000" testing="0" />
-<file name="BaseRepCostoPeer.php" local="128649452461375121" remote="128649448920000000" testing="0" />
-<file name="BaseRepExpo.php" local="128649452464187621" remote="128649448920000000" testing="0" />
-<file name="BaseRepExpoPeer.php" local="128649452464031371" remote="128649448920000000" testing="0" />
-<file name="BaseRepGasto.php" local="128649452459812621" remote="128649448920000000" testing="0" />
-<file name="BaseRepGastoPeer.php" local="128649452459656371" remote="128649448920000000" testing="0" />
-<file name="BaseReporte.php" local="128649452455437621" remote="128649448920000000" testing="0" />
+<file name="BaseRepAduana.php" local="128697722886718750" remote="128697720060000000" testing="0" />
+<file name="BaseRepAduanaPeer.php" local="128697722886562500" remote="128697720060000000" testing="0" />
+<file name="BaseRepAviso.php" local="128697722877187500" remote="128697720060000000" testing="0" />
+<file name="BaseRepAvisoPeer.php" local="128697722876875000" remote="128697720060000000" testing="0" />
+<file name="BaseRepCosto.php" local="128697722884375000" remote="128697720060000000" testing="0" />
+<file name="BaseRepCostoPeer.php" local="128697722884062500" remote="128697720060000000" testing="0" />
+<file name="BaseRepExpo.php" local="128697722887656250" remote="128697720060000000" testing="0" />
+<file name="BaseRepExpoPeer.php" local="128697722887343750" remote="128697720060000000" testing="0" />
+<file name="BaseRepGasto.php" local="128697722881250000" remote="128697720060000000" testing="0" />
+<file name="BaseRepGastoPeer.php" local="128697722880937500" remote="128697720060000000" testing="0" />
+<file name="BaseReporte.php" local="128697725906562500" remote="128697724360000000" testing="0" />
 <file name="BaseReporteConceptoAir.php" local="128637410554375000" remote="128637410130000000" testing="0" />
 <file name="BaseReporteConceptoAirPeer.php" local="128637410554843750" remote="128637410130000000" testing="0" />
 <file name="BaseReporteConceptoSea.php" local="128637410554218750" remote="128637410130000000" testing="0" />
 <file name="BaseReporteConceptoSeaPeer.php" local="128637410554687500" remote="128637410130000000" testing="0" />
-<file name="BaseReportePeer.php" local="128649452454500121" remote="128649448920000000" testing="0" />
-<file name="BaseRepSeguro.php" local="128649452460593871" remote="128649448920000000" testing="0" />
-<file name="BaseRepSeguroPeer.php" local="128649452460437621" remote="128649448920000000" testing="0" />
-<file name="BaseRepStatus.php" local="128649452457625121" remote="128649448920000000" testing="0" />
-<file name="BaseRepStatusPeer.php" local="128649452457468871" remote="128649448920000000" testing="0" />
-<file name="BaseRepTarifa.php" local="128649452462625121" remote="128649448920000000" testing="0" />
-<file name="BaseRepTarifaPeer.php" local="128649452462468871" remote="128649448920000000" testing="0" />
-<file name="BaseRepEquipo.php" local="128649452458562621" remote="128649448920000000" testing="0" />
-<file name="BaseRepEquipoPeer.php" local="128649452458406371" remote="128649448920000000" testing="0" />
+<file name="BaseReportePeer.php" local="128697725905000000" remote="128697724360000000" testing="0" />
+<file name="BaseRepSeguro.php" local="128697722882343750" remote="128697720060000000" testing="0" />
+<file name="BaseRepSeguroPeer.php" local="128697722882187500" remote="128697720060000000" testing="0" />
+<file name="BaseRepStatus.php" local="128697722878437500" remote="128697720060000000" testing="0" />
+<file name="BaseRepStatusPeer.php" local="128697722878125000" remote="128697720060000000" testing="0" />
+<file name="BaseRepTarifa.php" local="128697722885625000" remote="128697720060000000" testing="0" />
+<file name="BaseRepTarifaPeer.php" local="128697722885312500" remote="128697720060000000" testing="0" />
+<file name="BaseRepEquipo.php" local="128697722879687500" remote="128697720060000000" testing="0" />
+<file name="BaseRepEquipoPeer.php" local="128697722879375000" remote="128697720060000000" testing="0" />
 </dwsync>

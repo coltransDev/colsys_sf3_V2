@@ -4,8 +4,8 @@
 <file name="infoReporteSuccess.php" local="128631365113437500" remote="128631362820000000" testing="0" />
 <file name="seleccionClienteSuccess.php" local="128607976720000000" remote="128607976720000000" testing="0" />
 <file name="verEstatusCargaSuccess.php" local="128608038904375000" remote="128608036850000000" testing="0" />
-<file name="nuevoMensajeSubmitSuccess.php" local="128547396210000000" remote="128547391910000000" testing="0" />
-<file name="nuevoMensajeSuccess.php" local="128657078498750000" remote="128657076790000000" testing="0" />
+<file name="nuevoMensajeSubmitSuccess.php" local="128637446350937500" remote="128637444490000000" testing="0" />
+<file name="nuevoMensajeSuccess.php" local="128696963966875000" remote="128696959850000000" testing="0" />
 <file name="_submenuBar.php" local="128608022009843750" remote="128608019670000000" testing="0" />
 <file name="correoTraficosSuccess.php" local="128608022958593750" remote="128608019670000000" testing="0" />
 <file name="enviarCorreoTraficosSuccess.php" local="128570027237229065" remote="128570026390000000" testing="0" />
@@ -16,5 +16,5 @@
 <file name="emailAvisoImpoAereoSuccess.php" local="128624403560937500" remote="128624400680000000" testing="0" />
 <file name="_firma.php" local="128608020417500000" remote="128608019670000000" testing="0" />
 <file name="_emailInfo.php" local="128607121320000000" remote="128607117730000000" testing="0" />
-<file name="informeTraficosFormato1Success.php" local="128623495877343750" remote="128623494440000000" testing="0" />
+<file name="informeTraficosFormato1Success.php" local="128697710676562500" remote="128697707180000000" testing="0" />
 </dwsync>

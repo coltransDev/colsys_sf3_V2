@@ -234,10 +234,14 @@ class Reporte extends BaseReporte
 	* @author Andres Botero
 	*/
 	public function getConsignatario(){
-		$c = new Criteria();
-		$c->add( TerceroPeer::CA_IDTERCERO, $this->getCaIdconsignatario() );		
-		$consignee = TerceroPeer::doSelectOne( $c );	
-		return $consignee;
+		if( $this->getCaIdconsignatario() ){
+			$c = new Criteria();
+			$c->add( TerceroPeer::CA_IDTERCERO, $this->getCaIdconsignatario() );		
+			$consignee = TerceroPeer::doSelectOne( $c );	
+			return $consignee;
+		}else{
+			return null;
+		}
 	}
 	
 	

@@ -31,9 +31,10 @@ class ReportePeer extends BaseReportePeer
 	* @author: Andres Botero
 	*/
 	public static function getReportesByDate( $modo , $fechaInicial, $fechaFinal,  $idCliente ){
-		$c = new Criteria();
-		$c->add( ContactoPeer::CA_IDCLIENTE, $idCliente );
-		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO );	
+		$c = new Criteria();		
+		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO );
+		$c->addJoin( ClientePeer::CA_IDCLIENTE, ContactoPeer::CA_IDCLIENTE );	
+		$c->add( ClientePeer::CA_IDGRUPO, $idCliente );
 		$c->addDescendingOrderByColumn(ReportePeer::CA_FCHREPORTE);	
 		$c->add( ReportePeer::CA_USUANULADO, null, Criteria::ISNULL );
 		
@@ -66,8 +67,10 @@ class ReportePeer extends BaseReportePeer
 	public static function getReportesActivos( $modo , $idCliente , $criteria=false, $order="" ){
 				
 		$c = new Criteria();
-		$c->add( ContactoPeer::CA_IDCLIENTE, $idCliente );
+			
+		$c->add( ClientePeer::CA_IDGRUPO, $idCliente );
 		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );	
+		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );
 		
 		$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE, Criteria::LEFT_JOIN );
 		$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA, Criteria::LEFT_JOIN );

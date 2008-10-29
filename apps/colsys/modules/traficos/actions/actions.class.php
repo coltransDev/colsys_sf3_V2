@@ -158,8 +158,8 @@ class traficosActions extends sfActions
 		
 		$this->cliente = $this->reporte->getCliente();
 		$this->user = $this->getUser();
-		//Busca los parametrus definidos en CU059 que sean tengan la propeiedad ordenreqdtno
-		$this->parametros = ParametroPeer::retrieveByCaso( "CU059", "ordenreqdtno" , null, $this->cliente->getCaIdCliente() );
+		//Busca los parametrus definidos en CU059 que sean tengan la propeiedad 
+		$this->parametros = ParametroPeer::retrieveByCaso( "CU059", null , null, $this->cliente->getCaIdCliente() );
 			
 	}
 
@@ -402,10 +402,15 @@ class traficosActions extends sfActions
 			}			
 		}
 		
+		$parametros = ParametroPeer::retrieveByCaso( "CU059", null , null, $reporte->getCliente()->getCaIdCliente() );
 		
-		if( $this->getRequestParameter("ordenreqdtno") ){			
-			$reporte->setProperty("ordenreqdtno", $this->getRequestParameter("ordenreqdtno"));
+		foreach( $parametros as $parametro ){
+			if( $this->getRequestParameter($parametro->getCaValor()) ){			
+				$reporte->setProperty($parametro->getCaValor(), $this->getRequestParameter($parametro->getCaValor()));
+			}
 		}
+		
+		
 		
 		
 		$reporte->save();
@@ -483,8 +488,7 @@ class traficosActions extends sfActions
 				break;			
 		}	
 		
-		$this->parametros = ParametroPeer::retrieveByCaso( "CU059", "ordenreqdtno" , null, $this->idCliente );
-		
+		$this->parametros = ParametroPeer::retrieveByCaso( "CU059", null , null, $this->idCliente );
 		
 		$this->filename = $this->getRequestParameter("filename");
 		

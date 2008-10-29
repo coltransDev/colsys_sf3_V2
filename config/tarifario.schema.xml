@@ -35,6 +35,8 @@
 		<column name="ca_recargominimo" type="numeric" />
 		<column name="ca_idmoneda" type="varchar" />	
 		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_fchinicio" type="date"   />
+		<column name="ca_fchvencimiento" type="date"   />
 		<column name="ca_fchcreado" type="timestamp" />
 		<column name="ca_usucreado" type="varchar" />
 		<column name="ca_fchactualizado" type="timestamp" />

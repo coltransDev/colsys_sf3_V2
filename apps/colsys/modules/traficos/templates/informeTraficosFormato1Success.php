@@ -1,18 +1,14 @@
 <?
-if( $parametros ){
+if( $parametros ){	
 	$parametro = $parametros[0];			
-	$ultimaCol = "R";
+	$ultimaCol = "S";
 	
 }else{
-	$ultimaCol = "Q";
+	$ultimaCol = "R";
 	$parametro = null;
 }
 
-
-
-
-
-error_reporting(E_ERROR ^ E_NOTICE);
+error_reporting( E_ERROR );
 
 $objPHPExcel = new sfPhpExcel();
 
@@ -58,10 +54,6 @@ $objPHPExcel->getActiveSheet()->duplicateStyleArray(
 				'alignment' => array(
 					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
 				),
-			
-
-				
-				
 			),
 			'A2:'.$ultimaCol.'2'
 	);
@@ -99,10 +91,10 @@ if( $modo=="maritimo" ){
 }
 $objPHPExcel->getActiveSheet()->setCellValue('P'.$i, 'Status');
 $objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, 'Ref. Coltrans');
-
+$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, 'Consignatario');
 
 if( $parametro ){			
-	$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, $parametro->getCaValor2() );
+	$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, utf8_encode($parametro->getCaValor2()) );
 }
 
 $i++;
@@ -217,10 +209,11 @@ foreach( $reportes as $reporte ){
 	
 	$objPHPExcel->getActiveSheet()->setCellValue('Q'.$i, $reporte->getCaConsecutivo().$ref );
 	
+	$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, utf8_encode($reporte->getConsignatario()));
 	
 	if( $parametros ){
 		$parametro = $parametros[0];
-		$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, $reporte->getProperty($parametro->getCaValor()) );
+		$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, $reporte->getProperty($parametro->getCaValor()) );
 	}
 	
 	
@@ -235,7 +228,8 @@ foreach( $reportes as $reporte ){
 	$objPHPExcel->getActiveSheet()->getStyle('P'.$i)->getFont()->setSize(8);
 	
 	$objPHPExcel->getActiveSheet()->getStyle('Q'.$i)->getAlignment()->setWrapText(true);
-				
+	
+	$objPHPExcel->getActiveSheet()->getStyle('R'.$i)->getAlignment()->setWrapText(true);			
 	$objPHPExcel->getActiveSheet()->duplicateStyleArray(
 			array(
 				'alignment' => array(
@@ -343,8 +337,8 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
 
 $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(45);
 $objPHPExcel->getActiveSheet()->getColumnDimension('Q')->setWidth(13);		
-
-$objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(17);
+$objPHPExcel->getActiveSheet()->getColumnDimension('R')->setWidth(21);
+$objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(17);
 
 
 // Leyenda		

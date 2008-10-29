@@ -442,8 +442,8 @@ if( $reporte->getCaImpoExpo()=="Importación" ){
 							<strong><?=$parametro->getCaValor2()?></strong><br />								
 							<?							
 							echo form_error($parametro->getCaValor());
-							$ordenreqdtno = $reporte->getProperty("ordenreqdtno");
-							echo yui_calendar($parametro->getCaValor(), $ordenreqdtno?$ordenreqdtno:date("Y-m-d"), null, "2008-03-01" ); 
+							$ordenreqdtno = $reporte->getProperty($parametro->getCaValor());
+							echo yui_calendar($parametro->getCaValor(), $ordenreqdtno?$ordenreqdtno:'', null, "2008-03-01" ); 
 							echo image_tag("16x16/no.gif", array("onClick"=>"document.getElementById('".$parametro->getCaValor()."').value=''") );	
 							?></td>
 						</tr>						

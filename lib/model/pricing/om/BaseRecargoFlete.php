@@ -104,6 +104,20 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the ca_fchinicio field.
+	 * @var        int
+	 */
+	protected $ca_fchinicio;
+
+
+	/**
+	 * The value for the ca_fchvencimiento field.
+	 * @var        int
+	 */
+	protected $ca_fchvencimiento;
+
+
+	/**
 	 * The value for the ca_fchcreado field.
 	 * @var        int
 	 */
@@ -284,6 +298,68 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_observaciones;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchinicio] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchinicio($format = 'Y-m-d')
+	{
+
+		if ($this->ca_fchinicio === null || $this->ca_fchinicio === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchinicio)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchinicio);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchinicio] as date/time value: " . var_export($this->ca_fchinicio, true));
+			}
+		} else {
+			$ts = $this->ca_fchinicio;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchvencimiento] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchvencimiento($format = 'Y-m-d')
+	{
+
+		if ($this->ca_fchvencimiento === null || $this->ca_fchvencimiento === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchvencimiento)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchvencimiento);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchvencimiento] as date/time value: " . var_export($this->ca_fchvencimiento, true));
+			}
+		} else {
+			$ts = $this->ca_fchvencimiento;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
 	}
 
 	/**
@@ -623,6 +699,54 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 	} // setCaObservaciones()
 
 	/**
+	 * Set the value of [ca_fchinicio] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchinicio($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchinicio] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchinicio !== $ts) {
+			$this->ca_fchinicio = $ts;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_FCHINICIO;
+		}
+
+	} // setCaFchinicio()
+
+	/**
+	 * Set the value of [ca_fchvencimiento] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchvencimiento($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchvencimiento] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchvencimiento !== $ts) {
+			$this->ca_fchvencimiento = $ts;
+			$this->modifiedColumns[] = RecargoFletePeer::CA_FCHVENCIMIENTO;
+		}
+
+	} // setCaFchvencimiento()
+
+	/**
 	 * Set the value of [ca_fchcreado] column.
 	 * 
 	 * @param      int $v new value
@@ -755,20 +879,24 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 
 			$this->ca_observaciones = $rs->getString($startcol + 11);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 12, null);
+			$this->ca_fchinicio = $rs->getDate($startcol + 12, null);
 
-			$this->ca_usucreado = $rs->getString($startcol + 13);
+			$this->ca_fchvencimiento = $rs->getDate($startcol + 13, null);
 
-			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 14, null);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 14, null);
 
-			$this->ca_usuactualizado = $rs->getString($startcol + 15);
+			$this->ca_usucreado = $rs->getString($startcol + 15);
+
+			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 16, null);
+
+			$this->ca_usuactualizado = $rs->getString($startcol + 17);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 16; // 16 = RecargoFletePeer::NUM_COLUMNS - RecargoFletePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 18; // 18 = RecargoFletePeer::NUM_COLUMNS - RecargoFletePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating RecargoFlete object", $e);
@@ -1046,15 +1174,21 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 				return $this->getCaObservaciones();
 				break;
 			case 12:
-				return $this->getCaFchcreado();
+				return $this->getCaFchinicio();
 				break;
 			case 13:
-				return $this->getCaUsucreado();
+				return $this->getCaFchvencimiento();
 				break;
 			case 14:
-				return $this->getCaFchactualizado();
+				return $this->getCaFchcreado();
 				break;
 			case 15:
+				return $this->getCaUsucreado();
+				break;
+			case 16:
+				return $this->getCaFchactualizado();
+				break;
+			case 17:
 				return $this->getCaUsuactualizado();
 				break;
 			default:
@@ -1089,10 +1223,12 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 			$keys[9] => $this->getCaRecargominimo(),
 			$keys[10] => $this->getCaIdmoneda(),
 			$keys[11] => $this->getCaObservaciones(),
-			$keys[12] => $this->getCaFchcreado(),
-			$keys[13] => $this->getCaUsucreado(),
-			$keys[14] => $this->getCaFchactualizado(),
-			$keys[15] => $this->getCaUsuactualizado(),
+			$keys[12] => $this->getCaFchinicio(),
+			$keys[13] => $this->getCaFchvencimiento(),
+			$keys[14] => $this->getCaFchcreado(),
+			$keys[15] => $this->getCaUsucreado(),
+			$keys[16] => $this->getCaFchactualizado(),
+			$keys[17] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1161,15 +1297,21 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 				$this->setCaObservaciones($value);
 				break;
 			case 12:
-				$this->setCaFchcreado($value);
+				$this->setCaFchinicio($value);
 				break;
 			case 13:
-				$this->setCaUsucreado($value);
+				$this->setCaFchvencimiento($value);
 				break;
 			case 14:
-				$this->setCaFchactualizado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 15:
+				$this->setCaUsucreado($value);
+				break;
+			case 16:
+				$this->setCaFchactualizado($value);
+				break;
+			case 17:
 				$this->setCaUsuactualizado($value);
 				break;
 		} // switch()
@@ -1207,10 +1349,12 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[9], $arr)) $this->setCaRecargominimo($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCaIdmoneda($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setCaObservaciones($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaFchcreado($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaUsucreado($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaFchactualizado($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaUsuactualizado($arr[$keys[15]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaFchinicio($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaFchvencimiento($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaFchcreado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaUsucreado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaFchactualizado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaUsuactualizado($arr[$keys[17]]);
 	}
 
 	/**
@@ -1234,6 +1378,8 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(RecargoFletePeer::CA_RECARGOMINIMO)) $criteria->add(RecargoFletePeer::CA_RECARGOMINIMO, $this->ca_recargominimo);
 		if ($this->isColumnModified(RecargoFletePeer::CA_IDMONEDA)) $criteria->add(RecargoFletePeer::CA_IDMONEDA, $this->ca_idmoneda);
 		if ($this->isColumnModified(RecargoFletePeer::CA_OBSERVACIONES)) $criteria->add(RecargoFletePeer::CA_OBSERVACIONES, $this->ca_observaciones);
+		if ($this->isColumnModified(RecargoFletePeer::CA_FCHINICIO)) $criteria->add(RecargoFletePeer::CA_FCHINICIO, $this->ca_fchinicio);
+		if ($this->isColumnModified(RecargoFletePeer::CA_FCHVENCIMIENTO)) $criteria->add(RecargoFletePeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
 		if ($this->isColumnModified(RecargoFletePeer::CA_FCHCREADO)) $criteria->add(RecargoFletePeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(RecargoFletePeer::CA_USUCREADO)) $criteria->add(RecargoFletePeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(RecargoFletePeer::CA_FCHACTUALIZADO)) $criteria->add(RecargoFletePeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
@@ -1326,6 +1472,10 @@ abstract class BaseRecargoFlete extends BaseObject  implements Persistent {
 		$copyObj->setCaIdmoneda($this->ca_idmoneda);
 
 		$copyObj->setCaObservaciones($this->ca_observaciones);
+
+		$copyObj->setCaFchinicio($this->ca_fchinicio);
+
+		$copyObj->setCaFchvencimiento($this->ca_fchvencimiento);
 
 		$copyObj->setCaFchcreado($this->ca_fchcreado);
 

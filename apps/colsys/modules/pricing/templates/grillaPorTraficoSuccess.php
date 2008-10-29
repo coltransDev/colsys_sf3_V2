@@ -255,7 +255,7 @@ var colModel = new Ext.grid.ColumnModel({
 		var field = this.getDataIndex(colIndex);
 		
 		
-		if( record.data.tipo=="concepto" && !(field=='neta' || field=='minima')  ){
+		if( record.data.tipo=="concepto" && !(field=='neta' || field=='minima'||field=='inicio' || field=='vencimiento' || field=='moneda')  ){
 			return false;
 		}
 		
@@ -265,7 +265,7 @@ var colModel = new Ext.grid.ColumnModel({
 			}		
 		}
 		
-		if( record.data.tipo=="trayecto_obs" && !(field=='inicio' || field=='vencimiento' || field=='moneda')  ){		
+		if( record.data.tipo=="trayecto_obs"   ){		
 			return false;
 		}
 		
@@ -442,7 +442,21 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 							}
 						]
 					}
-                }			
+                },
+				{
+					text: 'Seleccionar trayecto',
+					iconCls: 'new-tab',
+					scope:this,
+					handler: function(){ 
+						var trayecto = this.ctxRecord.data.trayecto;					
+						store.each(function(r){
+							if( r.data.trayecto==trayecto){
+								r.set('sel', true);
+							}
+						});   					                   
+						
+					}
+				}				
 			]
 		});
 		this.menu.on('hide', this.onContextHide, this);

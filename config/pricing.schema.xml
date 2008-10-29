@@ -35,9 +35,13 @@
 		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true"/>	
 		<column name="ca_vlrneto" type="numeric" />		
 		<column name="ca_vlrminimo" type="numeric" />	
-		<column name="ca_fchcreado" type="timestamp" />
+		<column name="ca_fchinicio" type="date"   />
+		<column name="ca_fchvencimiento" type="date"   />
+		<column name="ca_idmoneda" type="varchar" size="3" />
+		<column name="ca_fchcreado" type="timestamp" />		
 		<column name="ca_usucreado" type="varchar" />
-		<column name="ca_estado" type="integer"   />		
+		<column name="ca_estado" type="integer"   />	
+		<column name="ca_aplicacion" type="varchar" />						
 		<foreign-key foreignTable="tb_trayectos">
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
 		</foreign-key>	
@@ -55,6 +59,9 @@
 		<column name="ca_aplicacion" type="varchar" />				
 		<column name="ca_observaciones" type="varchar"   />	
 		<column name="ca_idmoneda" type="varchar" size="3"   />	
+		<column name="ca_fchinicio" type="date"   />
+		<column name="ca_fchvencimiento" type="date"   />
+
 		<column name="ca_fchcreado" type="timestamp" />
 		<column name="ca_usucreado" type="varchar" />
 		
@@ -93,9 +100,13 @@
 		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>
 		<column name="ca_modalidad" type="varchar" required="true" primaryKey="true"/>			
 		<column name="ca_vlrrecargo" type="numeric" />
-		<column name="ca_vlrminimo" type="numeric" />	
+		<column name="ca_vlrminimo" type="numeric" />			
 		<column name="ca_aplicacion" type="varchar" />
 		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_fchinicio" type="date"   />
+		<column name="ca_fchvencimiento" type="date"   />
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" />	
 		<column name="ca_idmoneda" type="varchar" size="3" />
 				
 		

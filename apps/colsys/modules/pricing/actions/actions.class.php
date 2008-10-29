@@ -113,11 +113,11 @@ class pricingActions extends sfActions
 			$row = array (
 				'idtrayecto' => $trayecto->getCaIdtrayecto(),
 				'trayecto' =>$trayectoStr,
-				'nconcepto' => "General",
+				'nconcepto' => "Observaciones",
 				//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
-				'inicio' => $trayecto->getCaFchinicio("d/m/Y"),
-				'vencimiento' => $trayecto->getCaFchvencimiento("d/m/Y"),
-				'moneda' => $trayecto->getCaIdMoneda(),
+				'inicio' => '',
+				'vencimiento' => '',
+				'moneda' => '',
 				'aplicacion' => $trayecto->getCaAplicacion(),				
 				'_id' => $trayecto->getCaIdtrayecto()."-gen",
 				'style' => '',
@@ -145,9 +145,9 @@ class pricingActions extends sfActions
 					'trayecto' =>$trayectoStr,
 					'nconcepto' => utf8_encode($pricConcepto->getConcepto()->getcaConcepto()),
 					//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
-					'inicio' => '',
-					'vencimiento' => '',
-					'moneda' => '', // consulta ? $trayecto->getCaIdMoneda()
+					'inicio' => $pricConcepto->getCaFchinicio("d/m/Y"),
+					'vencimiento' => $pricConcepto->getCaFchvencimiento("d/m/Y"),
+					'moneda' => $pricConcepto->getCaIdMoneda(), // consulta ? $trayecto->getCaIdMoneda()
 					'aplicacion' => $trayecto->getCaAplicacion(),				
 					'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto(),
 					'style' => $pricConcepto->getEstilo(),
@@ -171,8 +171,8 @@ class pricingActions extends sfActions
 						'trayecto' =>$trayectoStr,
 						'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
 						//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
-						'inicio' => "",
-						'vencimiento' => "",
+						'inicio' => $pricRecargo->getCaFchinicio("d/m/Y"),
+						'vencimiento' => $pricRecargo->getCaFchvencimiento("d/m/Y"),
 						'moneda' => $pricRecargo->getCaIdMoneda(),
 						'aplicacion' => "",				
 						'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto()."-".$pricRecargo->getCaIdrecargo(),
@@ -263,27 +263,10 @@ class pricingActions extends sfActions
 		$neta = $this->getRequestParameter("neta");
 		$minima = $this->getRequestParameter("minima");
 				
-		if( $tipo=="trayecto_obs" ){			
-			if( $this->getRequestParameter("inicio")){
-				$trayecto->setCaFchinicio($this->getRequestParameter("inicio"));
-			}
-				
-			if( $this->getRequestParameter("vencimiento")){
-				$trayecto->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
-			}
-			if( $this->getRequestParameter("moneda") ){
-				$trayecto->setCaIdMoneda($this->getRequestParameter("moneda"));
-			}
-	
+		if( $tipo=="trayecto_obs" ){									
 			if( $this->getRequestParameter("observaciones")){
 				$trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));
-			}
-	
-			if( $this->getRequestParameter("aplicacion")){
-				$trayecto->setCaAplicacion($this->getRequestParameter("aplicacion"));
-			}
-			
-			
+			}			
 			
 			$trayecto->save();
 		}
@@ -300,15 +283,35 @@ class pricingActions extends sfActions
 			
 			if( $neta ){
 				$flete->setCaVlrneto( $neta );
+			}else{
+				$flete->setCaVlrneto( 0 );
 			} 
 			
 			if( $minima ){
 				$flete->setCaVlrminimo( $minima );
+			}else{
+				$flete->setCaVlrminimo( 0 );
 			} 
 			
 			if( $this->getRequestParameter("style")!==null){
-				$flete->setEstilo($this->getRequestParameter("style"));
+				$flete->setEstilo($this->getRequestParameter("style"));			
 			}
+			
+			if( $this->getRequestParameter("inicio")){
+				$flete->setCaFchinicio($this->getRequestParameter("inicio"));
+			}
+				
+			if( $this->getRequestParameter("vencimiento")){
+				$flete->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+			}
+			if( $this->getRequestParameter("moneda") ){
+				$flete->setCaIdMoneda($this->getRequestParameter("moneda"));
+			}
+			
+			if( $this->getRequestParameter("aplicacion")){
+				$flete->setCaAplicacion($this->getRequestParameter("aplicacion"));
+			}
+			
 			$flete->save();
 		}
 		
@@ -328,10 +331,14 @@ class pricingActions extends sfActions
 			}
 			if( $neta ){
 				$pricRecargo->setCaVlrrecargo( $neta );
+			}else{
+				$pricRecargo->setCaVlrrecargo( 0 );
 			} 
 			
 			if( $minima ){
 				$pricRecargo->setCaVlrminimo( $minima );
+			}else{
+				$pricRecargo->setCaVlrminimo( 0 );
 			} 		
 			
 			if( $this->getRequestParameter("moneda") ){

@@ -19,7 +19,7 @@ abstract class BasePricRecargoxConceptoPeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.PricRecargoxConcepto';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 10;
+	const NUM_COLUMNS = 12;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -49,6 +49,12 @@ abstract class BasePricRecargoxConceptoPeer {
 	/** the column name for the CA_IDMONEDA field */
 	const CA_IDMONEDA = 'tb_pricrecargosxconcepto.CA_IDMONEDA';
 
+	/** the column name for the CA_FCHINICIO field */
+	const CA_FCHINICIO = 'tb_pricrecargosxconcepto.CA_FCHINICIO';
+
+	/** the column name for the CA_FCHVENCIMIENTO field */
+	const CA_FCHVENCIMIENTO = 'tb_pricrecargosxconcepto.CA_FCHVENCIMIENTO';
+
 	/** the column name for the CA_FCHCREADO field */
 	const CA_FCHCREADO = 'tb_pricrecargosxconcepto.CA_FCHCREADO';
 
@@ -66,10 +72,10 @@ abstract class BasePricRecargoxConceptoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaIdrecargo', 'CaVlrrecargo', 'CaVlrminimo', 'CaAplicacion', 'CaObservaciones', 'CaIdmoneda', 'CaFchcreado', 'CaUsucreado', ),
-		BasePeer::TYPE_COLNAME => array (PricRecargoxConceptoPeer::CA_IDTRAYECTO, PricRecargoxConceptoPeer::CA_IDCONCEPTO, PricRecargoxConceptoPeer::CA_IDRECARGO, PricRecargoxConceptoPeer::CA_VLRRECARGO, PricRecargoxConceptoPeer::CA_VLRMINIMO, PricRecargoxConceptoPeer::CA_APLICACION, PricRecargoxConceptoPeer::CA_OBSERVACIONES, PricRecargoxConceptoPeer::CA_IDMONEDA, PricRecargoxConceptoPeer::CA_FCHCREADO, PricRecargoxConceptoPeer::CA_USUCREADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_idrecargo', 'ca_vlrrecargo', 'ca_vlrminimo', 'ca_aplicacion', 'ca_observaciones', 'ca_idmoneda', 'ca_fchcreado', 'ca_usucreado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaIdrecargo', 'CaVlrrecargo', 'CaVlrminimo', 'CaAplicacion', 'CaObservaciones', 'CaIdmoneda', 'CaFchinicio', 'CaFchvencimiento', 'CaFchcreado', 'CaUsucreado', ),
+		BasePeer::TYPE_COLNAME => array (PricRecargoxConceptoPeer::CA_IDTRAYECTO, PricRecargoxConceptoPeer::CA_IDCONCEPTO, PricRecargoxConceptoPeer::CA_IDRECARGO, PricRecargoxConceptoPeer::CA_VLRRECARGO, PricRecargoxConceptoPeer::CA_VLRMINIMO, PricRecargoxConceptoPeer::CA_APLICACION, PricRecargoxConceptoPeer::CA_OBSERVACIONES, PricRecargoxConceptoPeer::CA_IDMONEDA, PricRecargoxConceptoPeer::CA_FCHINICIO, PricRecargoxConceptoPeer::CA_FCHVENCIMIENTO, PricRecargoxConceptoPeer::CA_FCHCREADO, PricRecargoxConceptoPeer::CA_USUCREADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_idrecargo', 'ca_vlrrecargo', 'ca_vlrminimo', 'ca_aplicacion', 'ca_observaciones', 'ca_idmoneda', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_fchcreado', 'ca_usucreado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	/**
@@ -79,10 +85,10 @@ abstract class BasePricRecargoxConceptoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaIdrecargo' => 2, 'CaVlrrecargo' => 3, 'CaVlrminimo' => 4, 'CaAplicacion' => 5, 'CaObservaciones' => 6, 'CaIdmoneda' => 7, 'CaFchcreado' => 8, 'CaUsucreado' => 9, ),
-		BasePeer::TYPE_COLNAME => array (PricRecargoxConceptoPeer::CA_IDTRAYECTO => 0, PricRecargoxConceptoPeer::CA_IDCONCEPTO => 1, PricRecargoxConceptoPeer::CA_IDRECARGO => 2, PricRecargoxConceptoPeer::CA_VLRRECARGO => 3, PricRecargoxConceptoPeer::CA_VLRMINIMO => 4, PricRecargoxConceptoPeer::CA_APLICACION => 5, PricRecargoxConceptoPeer::CA_OBSERVACIONES => 6, PricRecargoxConceptoPeer::CA_IDMONEDA => 7, PricRecargoxConceptoPeer::CA_FCHCREADO => 8, PricRecargoxConceptoPeer::CA_USUCREADO => 9, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_idrecargo' => 2, 'ca_vlrrecargo' => 3, 'ca_vlrminimo' => 4, 'ca_aplicacion' => 5, 'ca_observaciones' => 6, 'ca_idmoneda' => 7, 'ca_fchcreado' => 8, 'ca_usucreado' => 9, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaIdrecargo' => 2, 'CaVlrrecargo' => 3, 'CaVlrminimo' => 4, 'CaAplicacion' => 5, 'CaObservaciones' => 6, 'CaIdmoneda' => 7, 'CaFchinicio' => 8, 'CaFchvencimiento' => 9, 'CaFchcreado' => 10, 'CaUsucreado' => 11, ),
+		BasePeer::TYPE_COLNAME => array (PricRecargoxConceptoPeer::CA_IDTRAYECTO => 0, PricRecargoxConceptoPeer::CA_IDCONCEPTO => 1, PricRecargoxConceptoPeer::CA_IDRECARGO => 2, PricRecargoxConceptoPeer::CA_VLRRECARGO => 3, PricRecargoxConceptoPeer::CA_VLRMINIMO => 4, PricRecargoxConceptoPeer::CA_APLICACION => 5, PricRecargoxConceptoPeer::CA_OBSERVACIONES => 6, PricRecargoxConceptoPeer::CA_IDMONEDA => 7, PricRecargoxConceptoPeer::CA_FCHINICIO => 8, PricRecargoxConceptoPeer::CA_FCHVENCIMIENTO => 9, PricRecargoxConceptoPeer::CA_FCHCREADO => 10, PricRecargoxConceptoPeer::CA_USUCREADO => 11, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_idrecargo' => 2, 'ca_vlrrecargo' => 3, 'ca_vlrminimo' => 4, 'ca_aplicacion' => 5, 'ca_observaciones' => 6, 'ca_idmoneda' => 7, 'ca_fchinicio' => 8, 'ca_fchvencimiento' => 9, 'ca_fchcreado' => 10, 'ca_usucreado' => 11, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	/**
@@ -197,6 +203,10 @@ abstract class BasePricRecargoxConceptoPeer {
 		$criteria->addSelectColumn(PricRecargoxConceptoPeer::CA_OBSERVACIONES);
 
 		$criteria->addSelectColumn(PricRecargoxConceptoPeer::CA_IDMONEDA);
+
+		$criteria->addSelectColumn(PricRecargoxConceptoPeer::CA_FCHINICIO);
+
+		$criteria->addSelectColumn(PricRecargoxConceptoPeer::CA_FCHVENCIMIENTO);
 
 		$criteria->addSelectColumn(PricRecargoxConceptoPeer::CA_FCHCREADO);
 
