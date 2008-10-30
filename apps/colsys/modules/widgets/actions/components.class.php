@@ -67,9 +67,9 @@ class widgetsComponents extends sfComponents
 	}
 	
 	/**
-	* Muestra un select con las aplicaciones de una tarifa
+	* Muestra un select vacio cuyos datos son alimentados manualmente
 	*/
-	public function executeAplicaciones(){
+	public function executeEmptyCombo(){
 		if(!isset( $this->label )){
 			$this->label="";
 		}
@@ -78,7 +78,9 @@ class widgetsComponents extends sfComponents
 		}	
 		if(!isset( $this->allowBlank )){
 			$this->allowBlank="true";
-		}	
+		}
+		
+			
 	}	
 	
 }

@@ -46,7 +46,8 @@ class cotizacionesComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executeGrillaProductos(){
-		
+		$this->aplicacionesAereo = ParametroPeer::retrieveByCaso("CU064", null, "Aéreo" );
+		$this->aplicacionesMaritimo = ParametroPeer::retrieveByCaso("CU064", null, "Marítimo" );	
 	}
 	
 	/*
@@ -100,7 +101,9 @@ class cotizacionesComponents extends sfComponents
       									'modalidad'=>$rs->getString(13),
 										'observaciones'=>utf8_encode($rs->getString(14))
       		);
-		}		
+		}
+		
+			
 	}
 
 	/*

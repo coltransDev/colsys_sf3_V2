@@ -487,8 +487,8 @@ class cotizacionesActions extends sfActions
 		$idmoneda = $this->getRequestParameter("idmoneda");
 		$valor_tar = $this->getRequestParameter("valor_tar");
 		$valor_min = $this->getRequestParameter("valor_min");
-		$aplicar_tar = $this->getRequestParameter("aplicar_tar");
-		$aplicar_min = $this->getRequestParameter("aplicar_min");
+		$aplica_tar = $this->getRequestParameter("aplica_tar");
+		$aplica_min = $this->getRequestParameter("aplica_min");
 		$observaciones = $this->getRequestParameter("detalles");
 		
 		$tipo = $this->getRequestParameter("tipo");
@@ -525,12 +525,12 @@ class cotizacionesActions extends sfActions
 				$opcion->setCaValorMin( $valor_min );
 			}
 			
-			if( $aplicar_tar ){
-				$opcion->setCaAplicarTar( $aplicar_tar );
+			if( $aplica_tar ){
+				$opcion->setCaAplicaTar( $aplica_tar );
 			}
 			
-			if( $aplicar_min ){
-				$opcion->setCaAplicarMin( $aplicar_min );
+			if( $aplica_min ){
+				$opcion->setCaAplicaMin( $aplica_min );
 			}
 			if( $observaciones ){
 				$opcion->setCaObservaciones( $observaciones );
@@ -580,12 +580,12 @@ class cotizacionesActions extends sfActions
 				$recargo->setCaValorMin( $valor_min );
 			}
 			
-			if( $aplicar_tar ){
-				$recargo->setCaAplicarTar( $aplicar_tar );
+			if( $aplica_tar ){
+				$recargo->setCaAplicaTar( $aplica_tar );
 			}
 			
-			if( $aplicar_min ){
-				$recargo->setCaAplicarMin( $aplicar_min );
+			if( $aplica_min ){
+				$recargo->setCaAplicaMin( $aplica_min );
 			}	
 			
 			if( $observaciones ){
@@ -646,22 +646,6 @@ class cotizacionesActions extends sfActions
 		$this->setLayout("ajax");
 	}
 
-	/*
-	* Formas de Aplicación de una Tarifa o un Recargo
-	*/
-	public function executeDatosAplicacion(){
-		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
-		$aplic = array("Aéreo" => array("x Kg ó 6 Dm³", "x Lb ó 166 Pul³", "x HAWB", "Sobre Flete"), "Marítimo" => array("x T/M³", "x Contenedor", "x HBL", "x Pieza", "Sobre Flete"));
-
-		$this->aplicaciones = array();
-
-		while (list ($clave, $val) = each ($aplic[$transport_parameter])) {
-			$row = array("aplicacion"=>$val);
-			$this->aplicaciones[]=$row;
-		}
-		$this->setLayout("ajax");
-	}
-		
 	
 	/*
 	* Genera un archivo PDF a partir de una cotización

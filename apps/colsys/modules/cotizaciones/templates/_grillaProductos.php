@@ -168,7 +168,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: false,
 			dataIndex: 'aplica_tar',			
 			hideable: false,
-			editor: <?=include_component("widgets", "aplicaciones" ,array("id"=>""))?>	 
+			editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>	 
 		},
 		{
 			id: 'valor_min',
@@ -189,7 +189,8 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 100,
 			sortable: false,
 			dataIndex: 'aplica_min',
-			hideable: false 
+			hideable: false,
+			editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?> 
 		},
 		{
 			id: 'idmoneda',
@@ -862,11 +863,46 @@ grid_productosOnBeforeedit = function( e ){
 		
 		if( rec.data.tipo == "recargo" ){			
 			storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad, tipo:'Recargo en Origen', modo:'recargos'};				
-		}	
-		
-		storeConceptos.load();	
-		
+		}			
+		storeConceptos.load();		
 	}	
+	
+	if( e.field=="aplica_tar" || e.field=="aplica_min" ){						
+		var dataAereo = [
+			<?
+			$i=0;
+			foreach( $aplicacionesAereo as $aplicacion ){
+				if( $i++!=0){
+					echo ",";
+				}
+			?>
+				['<?=$aplicacion->getCaValor()?>']
+			<?
+			}
+			?>
+		];
+		
+		var dataMaritimo = [
+			<?
+			$i=0;
+			foreach( $aplicacionesMaritimo as $aplicacion ){
+				if( $i++!=0){
+					echo ",";
+				}
+			?>
+				['<?=$aplicacion->getCaValor()?>']
+			<?
+			}
+			?>
+		];
+		
+		var ed = this.colModel.getCellEditor(e.column, e.row);		
+		if( e.record.data.transporte=="Aéreo" ){
+			ed.field.store.loadData( dataAereo );
+		}else{
+			ed.field.store.loadData( dataMaritimo );
+		}
+	}
 		
 }
 				
