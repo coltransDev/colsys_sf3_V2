@@ -9,6 +9,7 @@ new Ext.form.ComboBox({
 		id: '<?=$id?>_id',
 		displayField: 'ciudad',
 		valueField: 'idciudad',
+		allowBlank: <?=$allowBlank?>,
 		lazyRender:true,
 		listClass: 'x-combo-list-small',
 		listeners:{focus:function( field, newVal, oldVal ){

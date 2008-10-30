@@ -26,13 +26,30 @@ class widgetsComponents extends sfComponents
 			$row = array("idtrafico"=>$trafico->getCaIdTrafico(),"trafico"=>utf8_encode($trafico->getCaNombre()));
 			$this->traficos[]=$row;
 		}
+		if(!isset( $this->label )){
+			$this->label="";
+		}
+		if(!isset( $this->id )){
+			$this->id="";
+		}	
+		if(!isset( $this->allowBlank )){
+			$this->allowBlank="true";
+		}	
 	}
 	
 	/**
 	* Muestra un select con todas las ciudades y las encadena con los paises
 	*/
 	public function executeCiudades(){
-		
+		if(!isset( $this->label )){
+			$this->label="";
+		}
+		if(!isset( $this->id )){
+			$this->id="";
+		}	
+		if(!isset( $this->allowBlank )){
+			$this->allowBlank="true";
+		}	
 	}
 	
 	/**
@@ -41,6 +58,28 @@ class widgetsComponents extends sfComponents
 	public function executeContinuaciones(){
 		
 	}
+	
+	/**
+	* Muestra un select con todas las ciudades y las encadena con los paises
+	*/
+	public function executeImpoexpo(){
+		
+	}
+	
+	/**
+	* Muestra un select con las aplicaciones de una tarifa
+	*/
+	public function executeAplicaciones(){
+		if(!isset( $this->label )){
+			$this->label="";
+		}
+		if(!isset( $this->id )){
+			$this->id="";
+		}	
+		if(!isset( $this->allowBlank )){
+			$this->allowBlank="true";
+		}	
+	}	
 	
 }
 ?>

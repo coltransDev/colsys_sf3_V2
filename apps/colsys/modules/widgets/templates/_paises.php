@@ -7,7 +7,7 @@ new Ext.form.ComboBox({
 			forceSelection: true,
 			triggerAction: 'all',
 			emptyText:'Seleccione',
-			//selectOnFocus: true,					
+			selectOnFocus: true,					
 			hiddenName: '<?=$id?>',
 			id: '<?=$id?>_id',
 			displayField: 'trafico',
@@ -15,6 +15,7 @@ new Ext.form.ComboBox({
 			lazyRender:true,
 			//allowBlank:false,
 			listClass: 'x-combo-list-small',
+			allowBlank: <?=$allowBlank?>,
 			store : new Ext.data.Store({
 				autoLoad : true,
 				//url: '<?=url_for("widgets/datosPaises")?>',
@@ -24,7 +25,7 @@ new Ext.form.ComboBox({
 						root: 'root',
 						totalProperty: 'total',
 						successProperty: 'success'
-					},
+					},					
 					Ext.data.Record.create([
 						{name: 'idtrafico'}, 
 						{name: 'trafico'}

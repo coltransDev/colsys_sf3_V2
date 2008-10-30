@@ -37,12 +37,11 @@ editorConceptos = new Ext.form.ComboBox({
 	store : storeConceptos	
 })
 
-
 /*
 * Crea el Record 
 */
 var recordProductos = Ext.data.Record.create([
-	{name: 'id', type: 'string'},   
+	{name: 'id', type: 'int'},   
     {name: 'idcotizacion', type: 'string'},   		
     {name: 'idproducto', type: 'string'},   
 	{name: 'producto', type: 'string'}, 
@@ -79,7 +78,8 @@ var recordProductos = Ext.data.Record.create([
 	{name: 'imprimir', type: 'string'},
 	{name: 'impoexpo', type: 'string'},
 	{name: 'incoterms', type: 'string'},
-	{name: 'observaciones', type: 'string'}	
+	{name: 'observaciones', type: 'string'},
+	{name: 'orden', type: 'int'}		
 ]);
    		
 /*
@@ -96,7 +96,7 @@ var storeProductos = new Ext.data.GroupingStore({
 		}, 
 		recordProductos
 	),
-	sortInfo:{field: 'idproducto', direction: "ASC"},	
+	sortInfo:{field: 'id', direction: "ASC"},	
 	groupField: 'trayecto'		
 });
 		
@@ -166,8 +166,9 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Aplicacion",
 			width: 100,
 			sortable: false,
-			dataIndex: 'aplica_tar',
-			hideable: false 
+			dataIndex: 'aplica_tar',			
+			hideable: false,
+			editor: <?=include_component("widgets", "aplicaciones" ,array("id"=>""))?>	 
 		},
 		{
 			id: 'valor_min',
@@ -241,19 +242,52 @@ var grid_productosOnvalidateedit = function(e){
 		
 	    store.each( function( r ){				
 				if( r.data.idconcepto==e.value ){									
-					if( !rec.data.iditem && rec.data.tipo=="concepto" ){					
-						var newRec = rec.copy();
-						newRec.data.concepto = "";							
-						//Inserta la una columna igual 
-						//alert( storeProductos.getTotalCount() );
-						records = [];
-						records.push( newRec );
-						index = storeProductos.indexOf(rec);
-						//if(index < storeProductos.getTotalCount()-1){
-							storeProductos.insert( index+1 , records );					
-						/*}else{						
-							storeProductos.add(  records );
-						}*/	
+					if( !rec.data.iditem && rec.data.tipo=="concepto" ){							
+						var newRec = new recordProductos({
+						   id: rec.data.id+20,  
+						   idcotizacion: rec.data.idcotizacion,  
+						   idproducto: rec.data.idproducto,  
+						   trayecto: rec.data.trayecto,   
+						   transporte: rec.data.transporte,  
+						   modalidad: rec.data.modalidad,   
+						   idconcepto: rec.data.iditem,
+						   idopcion: rec.data.idopcion,
+						   producto: rec.data.producto,
+						   tra_origen: rec.data.tra_origen,
+						   tra_origen_value: rec.data.tra_origen_value,
+						   ciu_origen: rec.data.ciu_origen,
+						   ciu_origen_value: rec.data.ciu_origen_value,
+						   tra_destino: rec.data.tra_destino,
+						   tra_destino_value: rec.data.tra_destino_value,
+						   ciu_destino: rec.data.ciu_destino,
+						   ciu_destino_value: rec.data.ciu_destino_value,
+						   tra_escala: rec.data.tra_escala,
+						   tra_escala_value: rec.data.tra_escala_value,
+						   ciu_escala: rec.data.ciu_escala,
+						   ciu_escala_value: rec.data.ciu_escala_value,
+						   impoexpo: rec.data.impoexpo,
+						   incoterms: rec.data.incoterms,
+						   frecuencia: rec.data.frecuencia,
+						   ttransito: rec.data.ttransito,
+						   imprimir: rec.data.imprimir,
+						   observaciones: rec.data.observaciones,				  
+						   
+						   item: '+',
+						   iditem: '',	
+						   tipo: 'concepto',
+						   valor_tar: '',
+						   valor_min: '',
+						   aplica_tar: '',
+						   aplica_min: '',
+						   idmoneda: '',
+						   detalles: ''
+						});	
+								
+						newRec.data.concepto = "";												
+						//Inserta una columna en blanco al final
+												
+						storeProductos.addSorted(newRec);
+						
 					}
 					rec.set("iditem", r.data.idconcepto);
 					e.value = r.data.concepto;				
@@ -280,7 +314,7 @@ var crearVentanaProducto=function( record ){
 			id: 'producto-form',
 			layout: 'form',
 			frame: true,
-			title: 'Ingrese los datos del Producto',
+			title: 'Ingrese los datos del trayecto',
 			autoHeight: true,
 			bodyStyle: 'padding: 5px 5px 0 5px;',
 			labelWidth: 100,
@@ -305,17 +339,17 @@ var crearVentanaProducto=function( record ){
 						value: '',						 
 						allowBlank:false,
 						width: 300
-	                }
-	                ,<?=extImpoExpo("impoexpo")?>
+	                }	                
+					,<?=include_component("widgets", "impoexpo" ,array("id"=>"impoexpo", "label"=>"Impo/Expo"))?>
 					,<?=extIncoterms("incoterms")?>
 					,<?=extTransporte("transporte")?>
 					,<?=extModalidad("modalidad", "Ext.getCmp('transporte')", "Importación")?>
 					
-					,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen"))?>										
-					,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen"))?>
+					,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen", "allowBlank"=>"false"))?>										
+					,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen", "allowBlank"=>"false"))?>
 							
 					
-					,<?=include_component("widgets", "paises" ,array("id"=>"tra_destino", "label"=>" Pais Destino", "value"=>"C0-057"))?>									,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_destino", "label"=>"Ciudad Destino", "link"=>"tra_destino"))?>
+					,<?=include_component("widgets", "paises" ,array("id"=>"tra_destino", "label"=>" Pais Destino", "value"=>"C0-057", "allowBlank"=>"false"))?>									,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_destino", "label"=>"Ciudad Destino", "link"=>"tra_destino", "allowBlank"=>"false"))?>
 					,<?=include_component("widgets", "paises" ,array("id"=>"tra_escala", "label"=>"Pais Escala"))?>										
 					,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_escala", "label"=>"Ciudad Escala", "link"=>"tra_escala"))?>
 					,{
@@ -586,16 +620,44 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 				iconCls: 'new-tab',
 				scope:this,
 				handler: function(){    					                   
-					if( this.ctxRecord.data.idopcion ){					
+					rec = this.ctxRecord;					
+					if( rec.data.iditem ){									
+						if( rec.data.tipo=="concepto"){
+							var idconcepto = rec.data.iditem;
+						}else{
+							var idconcepto = rec.data.idconcepto;
+						}
+						
 						var newRec = new recordProductos({
-						   idcotizacion: this.ctxRecord.data.idcotizacion,  
-						   idproducto: this.ctxRecord.data.idproducto,  
-						   trayecto: this.ctxRecord.data.trayecto,   
-						   transporte: this.ctxRecord.data.transporte,  
-						   modalidad: this.ctxRecord.data.modalidad,   
-						   idconcepto: this.ctxRecord.data.iditem,
-						   idopcion: this.ctxRecord.data.idopcion,
-						   item: '',
+						   id: rec.data.id+1,  
+						   idcotizacion: rec.data.idcotizacion,  
+						   idproducto: rec.data.idproducto,  
+						   trayecto: rec.data.trayecto,   
+						   transporte: rec.data.transporte,  
+						   modalidad: rec.data.modalidad,   
+						   idconcepto: idconcepto,
+						   idopcion: rec.data.idopcion,
+						   producto: rec.data.producto,
+						   tra_origen: rec.data.tra_origen,
+						   tra_origen_value: rec.data.tra_origen_value,
+						   ciu_origen: rec.data.ciu_origen,
+						   ciu_origen_value: rec.data.ciu_origen_value,
+						   tra_destino: rec.data.tra_destino,
+						   tra_destino_value: rec.data.tra_destino_value,
+						   ciu_destino: rec.data.ciu_destino,
+						   ciu_destino_value: rec.data.ciu_destino_value,
+						   tra_escala: rec.data.tra_escala,
+						   tra_escala_value: rec.data.tra_escala_value,
+						   ciu_escala: rec.data.ciu_escala,
+						   ciu_escala_value: rec.data.ciu_escala_value,
+						   impoexpo: rec.data.impoexpo,
+						   incoterms: rec.data.incoterms,
+						   frecuencia: rec.data.frecuencia,
+						   ttransito: rec.data.ttransito,
+						   imprimir: rec.data.imprimir,
+						   observaciones: rec.data.observaciones,				  
+						   
+						   item: '+',
 						   iditem: '',	
 						   tipo: 'recargo',
 						   valor_tar: '',
@@ -604,10 +666,12 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						   aplica_min: '',
 						   idmoneda: '',
 						   detalles: ''
-						});					
-						records = [];
+						});	
+										
+						/*records = [];
 						records.push( newRec );
-						storeProductos.insert( index+1 , records );													
+						storeProductos.insert( index+1 , records );*/
+						storeProductos.addSorted(newRec);
 					}						
 				}				
 			},			
@@ -846,6 +910,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 	view: new Ext.grid.GroupingView({
 		forceFit:true,
 		enableRowBody:true, 
+		enableGroupingMenu: false,	
 		getRowClass: function(  record,  index,  rowParams,  storeProductos ){			
 			switch( record.data.style ){
 				case "yellow":

@@ -3,32 +3,7 @@
 * Este archivo contiene helpers de uso comun como por ejemplo selección de clientes, impo/expo, modalidad, etc..
 */
 
-function extImpoExpo($id="impoexpo"){	
-	$html = "new Ext.form.ComboBox({		
-					fieldLabel: 'Impo/Expo',
-					typeAhead: true,
-					forceSelection: true,
-					triggerAction: 'all',
-					emptyText:'Seleccione',
-					selectOnFocus: true,
-					name: '$id',
-					id: '$id',
-					value: 'Importación',
-					lazyRender:true,
-					listClass: 'x-combo-list-small',
-					listeners:{change:function( field, newVal, oldVal ){
-											tra_origen = Ext.getCmp('tra_origen');
-											tra_origen.store.baseParams = {impoexpo:newVal,lugar:'origen'};
-											tra_origen.store.reload();
-											tra_destino = Ext.getCmp('tra_destino');
-											tra_destino.store.baseParams = {impoexpo:newVal,lugar:'destino'};
-											tra_destino.store.reload();					
-									  }
-					},
-					store: [['Importación', 'Importación'],['Exportación', 'Exportación']]
-				})";
-	return $html;					
-}
+
 
 function extTransporte($id="transporte"){	
 	$transportes =  ParametroPeer::retrieveByCaso( "CU063" );

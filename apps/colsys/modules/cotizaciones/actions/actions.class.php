@@ -750,11 +750,14 @@ class cotizacionesActions extends sfActions
 		$cotProductos = CotProductoPeer::doSelect($c);
 				
 		$this->productos = array();
+		
+		$i=1000;		
 		foreach( $cotProductos as $producto ){
+			$j=0;
 			$origen = $producto->getOrigen();
 			$destino = $producto->getDestino();
 			$escala = $producto->getEscala();					
-			$trayecto = " [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
+			$trayecto = utf8_encode($producto->getCaTransporte())." ".utf8_encode($producto->getCaModalidad())." [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
 			
 			if( $escala ){
 				$trayecto .= utf8_encode($escala->getCaCiudad())." - ".utf8_encode($escala->getTrafico()->getCaNombre()." » ");
@@ -767,227 +770,129 @@ class cotizacionesActions extends sfActions
 			$c->add( CotOpcionPeer::CA_IDPRODUCTO, $producto->getCaIdProducto() );
 			$opciones = $producto->getCotOpciones( $c );
 			
+			$baseRow = array(
+		 					 'trayecto'=>$trayecto,
+							 'idproducto'=>$producto->getCaIdProducto(),
+							 'producto'=>$producto->getCaProducto(),
+							 'idcotizacion'=>$producto->getCaIdCotizacion(),
+							 'tra_origen'=>$origen->getCaIdTrafico(),
+							 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
+							 'ciu_origen'=>$origen->getCaIdCiudad(),
+							 'ciu_origen_value'=>$origen->getCaCiudad(),
+							 'tra_destino'=>$destino->getCaIdTrafico(),
+							 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
+							 'ciu_destino'=>$destino->getCaIdCiudad(),
+							 'ciu_destino_value'=>$destino->getCaCiudad(),
+							 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
+							 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
+							 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
+							 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",
+							 'transporte'=>utf8_encode($producto->getCaTransporte()),
+							 'modalidad'=>utf8_encode($producto->getCaModalidad()),
+							 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
+							 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
+							 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
+							 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
+							 'imprimir'=>utf8_encode($producto->getCaImprimir()),
+							 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
+							 'id'=>$i
+						);
+						
 			foreach( $opciones as $opcion ){
 				$concepto = $opcion->getConcepto();
-				$this->productos[] = array('id'=>"",
-						 'trayecto'=>$trayecto,
-						 'idopcion'=>$opcion->getCaIdOpcion(),
-						 'iditem'=>$opcion->getCaIdConcepto(),
-						 'item'=>$concepto->getCaConcepto(),
-						 'idproducto'=>$producto->getCaIdProducto(),
-						 'producto'=>$producto->getCaProducto(),
-						 'idcotizacion'=>$producto->getCaIdCotizacion(),		 							
-						 
-						 'tra_origen'=>$origen->getCaIdTrafico(),
-						 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
-						 'ciu_origen'=>$origen->getCaIdCiudad(),
-						 'ciu_origen_value'=>$origen->getCaCiudad(),
-						 'tra_destino'=>$destino->getCaIdTrafico(),
-						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
-						 'ciu_destino'=>$destino->getCaIdCiudad(),
-						 'ciu_destino_value'=>$destino->getCaCiudad(),
-						 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
-						 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
-						 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
-						 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",
-						 
-						 'valor_tar'=>$opcion->getCaValorTar(),
-						 'aplica_tar'=>$opcion->getCaAplicaTar(),
-						 'valor_min'=>$opcion->getCaValorMin(),
-						 'aplica_min'=>$opcion->getCaAplicaMin(),
-						 'idmoneda'=>$opcion->getCaIdmoneda(),
-						 'detalles'=>$opcion->getCaObservaciones(),
-						 'transporte'=>utf8_encode($producto->getCaTransporte()),
-						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-						 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
-						 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
-						 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
-						 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
-						 'imprimir'=>utf8_encode($producto->getCaImprimir()),
-						 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
-						 'tipo'=>"concepto"
-					);
-					 				 
+				$row = $baseRow;
+				$row['idopcion']=$opcion->getCaIdOpcion();
+				$row['iditem']=$opcion->getCaIdConcepto();
+				$row['item']=$concepto->getCaConcepto();
+				$row['valor_tar']=$opcion->getCaValorTar();
+				$row['aplica_tar']=$opcion->getCaAplicaTar();
+				$row['valor_min']=$opcion->getCaValorMin();
+				$row['aplica_min']=$opcion->getCaAplicaMin();
+				$row['idmoneda']=$opcion->getCaIdmoneda();
+				$row['detalles']=$opcion->getCaObservaciones();
+				$row['tipo']="concepto";
+				$row['id']+=$j++;
+						
+				$this->productos[] = $row;
 				 //Se muestran los recargos 
 				$recargos = $opcion->getCotRecargos();
 				foreach( $recargos as $recargo ){
 					$tipoRecargo = $recargo->getTipoRecargo();
-					$this->productos[] = array('id'=>"",
-						 'trayecto'=>$trayecto,
-						 'idopcion'=>$opcion->getCaIdOpcion(),
-						 'iditem'=>$tipoRecargo->getCaIdRecargo(),
-						 'item'=>$tipoRecargo->getCaRecargo() ,
-						 'idproducto'=>$producto->getCaIdProducto(),
-						 'producto'=>$producto->getCaProducto(),
-						 'idcotizacion'=>$producto->getCaIdCotizacion(),
-						 
-						 'tra_origen'=>$origen->getCaIdTrafico(),
-						 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
-						 'ciu_origen'=>$origen->getCaIdCiudad(),
-						 'ciu_origen_value'=>$origen->getCaCiudad(),
-						 'tra_destino'=>$destino->getCaIdTrafico(),
-						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
-						 'ciu_destino'=>$destino->getCaIdCiudad(),
-						 'ciu_destino_value'=>$destino->getCaCiudad(),
-						 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
-						 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
-						 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
-						 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",
-						 	 
-						 'idconcepto'=>$recargo->getCaIdConcepto(),
-						 'valor_tar'=>$recargo->getCaValorTar(),
-						 'aplica_tar'=>$recargo->getCaAplicaTar(),
-						 'valor_min'=>$recargo->getCaValorMin(),
-						 'aplica_min'=>$recargo->getCaAplicaMin(),
-						 'idmoneda'=>$recargo->getCaIdmoneda(),
-						 'detalles'=>$recargo->getCaObservaciones(),
-						 
-						 'transporte'=>utf8_encode($producto->getCaTransporte()),
-						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-						 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
-						 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
-						 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
-						 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
-						 'imprimir'=>utf8_encode($producto->getCaImprimir()),
-						 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
-						 'tipo'=>"recargo"
-					);
-				}
-				 
+					
+					$row = $baseRow;
+					$row['idopcion']=$opcion->getCaIdOpcion();
+					$row['iditem']=$tipoRecargo->getCaIdRecargo();
+					$row['item']=$tipoRecargo->getCaRecargo();
+					$row['idconcepto']=$recargo->getCaIdConcepto();
+					$row['valor_tar']=$recargo->getCaValorTar();
+					$row['aplica_tar']=$recargo->getCaAplicaTar();
+					$row['valor_min']=$recargo->getCaValorMin();
+					$row['aplica_min']=$recargo->getCaAplicaMin();
+					$row['idmoneda']=$recargo->getCaIdmoneda();
+					$row['detalles']=$recargo->getCaObservaciones();
+					$row['tipo']="recargo";		
+					$row['id']+=$j++;					
+					$this->productos[] = $row;				
+				}	
+				$j+=20;			 
 			}
-			
-			
 			
 			$recargos = $producto->getRecargosGenerales();		
 			
 			if( count($recargos)>0 ){
-				$this->productos[] = array('id'=>"",
-					 'trayecto'=>$trayecto,
-					 'idopcion'=>999,
-					 'iditem'=>9999,
-					 'item'=>"Recargos Generales del trayecto" ,
-					 'idproducto'=>$producto->getCaIdProducto(),
-					 'producto'=>$producto->getCaProducto(),
-					 'idcotizacion'=>$producto->getCaIdCotizacion(),
-					 
-					 'tra_origen'=>$origen->getCaIdTrafico(),
-					 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
-					 'ciu_origen'=>$origen->getCaIdCiudad(),
-					 'ciu_origen_value'=>$origen->getCaCiudad(),
-					 'tra_destino'=>$destino->getCaIdTrafico(),
-					 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
-					 'ciu_destino'=>$destino->getCaIdCiudad(),
-					 'ciu_destino_value'=>$destino->getCaCiudad(),
-					 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
-					 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
-					 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
-					 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",
-						 
-					 'idconcepto'=>9999,
-					 'valor_tar'=>'',
-					 'aplica_tar'=>'',
-					 'valor_min'=>'',
-					 'aplica_min'=>'',
-					 'idmoneda'=>'',
-					 'detalles'=>'',
-					 
-					 'transporte'=>utf8_encode($producto->getCaTransporte()),
-					 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-					 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
-					 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
-					 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
-					 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
-					 'imprimir'=>utf8_encode($producto->getCaImprimir()),
-					 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
-					 'tipo'=>"concepto"
-				);
+				$row = $baseRow;
+				$row['idopcion']=999;
+				$row['iditem']=9999;
+				$row['item']="Recargos Generales del trayecto";
+				$row['idconcepto']=9999;
+				$row['valor_tar']='';
+				$row['aplica_tar']='';
+				$row['valor_min']='';
+				$row['aplica_min']='';
+				$row['idmoneda']='';
+				$row['detalles']='';
+				$row['tipo']="concepto";
+				$row['id']+=$j++;							
+				
+				$this->productos[] = $row;									
 			}
 				
 			foreach( $recargos as $recargo ){
-				$tipoRecargo = $recargo->getTipoRecargo();
-				$this->productos[] = array('id'=>"",
-					 'trayecto'=>$trayecto,
-					 'idopcion'=>$recargo->getCaIdOpcion(),
-					 'iditem'=>$tipoRecargo->getCaIdRecargo(),
-					 'item'=>$tipoRecargo->getCaRecargo() ,
-					 'idproducto'=>$producto->getCaIdProducto(),
-					 'producto'=>$producto->getCaProducto(),
-					 'idcotizacion'=>$producto->getCaIdCotizacion(),
-					 
-					 'tra_origen'=>$origen->getCaIdTrafico(),
-					 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
-					 'ciu_origen'=>$origen->getCaIdCiudad(),
-					 'ciu_origen_value'=>$origen->getCaCiudad(),
-					 'tra_destino'=>$destino->getCaIdTrafico(),
-					 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
-					 'ciu_destino'=>$destino->getCaIdCiudad(),
-					 'ciu_destino_value'=>$destino->getCaCiudad(),
-					 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
-					 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
-					 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
-					 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",
-						 
-					 'idconcepto'=>$recargo->getCaIdConcepto(),
-					 'valor_tar'=>$recargo->getCaValorTar(),
-					 'aplica_tar'=>$recargo->getCaAplicaTar(),
-					 'valor_min'=>$recargo->getCaValorMin(),
-					 'aplica_min'=>$recargo->getCaAplicaMin(),
-					 'idmoneda'=>$recargo->getCaIdmoneda(),
-					 'detalles'=>$recargo->getCaObservaciones(),
-					 
-					 'transporte'=>utf8_encode($producto->getCaTransporte()),
-					 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-					 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
-					 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
-					 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
-					 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
-					 'imprimir'=>utf8_encode($producto->getCaImprimir()),
-					 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
-					 'tipo'=>"recargo"
-				);
+				$tipoRecargo = $recargo->getTipoRecargo();				
+					
+				$row = $baseRow;
+				$row['idopcion']=$recargo->getCaIdOpcion();
+				$row['iditem']=$tipoRecargo->getCaIdRecargo();
+				$row['item']=$tipoRecargo->getCaRecargo();
+				$row['idconcepto']=$recargo->getCaIdConcepto();
+				$row['valor_tar']=$recargo->getCaValorTar();
+				$row['aplica_tar']=$recargo->getCaAplicaTar();
+				$row['valor_min']=$recargo->getCaValorMin();
+				$row['aplica_min']=$recargo->getCaAplicaMin();
+				$row['idmoneda']=$recargo->getCaIdmoneda();
+				$row['detalles']=$recargo->getCaObservaciones();
+				$row['tipo']="recargo";			
+				$row['id']+=$j++;				
+				$this->productos[] = $row;					
 			}
-			
+			$j+=20;
 			//Se envia una fila vacia por cada grupo para agregar una nueva opción  
-			$row = array('id'=>"",
-						 'trayecto'=>$trayecto,	
-						 'idopcion'=>"",					 
-						 'iditem'=>"",
-						 'item'=>"",
-						 'idproducto'=>$producto->getCaIdProducto(),
-						 'producto'=>$producto->getCaProducto(),
-						 'idcotizacion'=>$producto->getCaIdCotizacion(),
-						 
-  					  	 'tra_origen'=>$origen->getCaIdTrafico(),
-						 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
-						 'ciu_origen'=>$origen->getCaIdCiudad(),
-						 'ciu_origen_value'=>$origen->getCaCiudad(),
-						 'tra_destino'=>$destino->getCaIdTrafico(),
-						 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
-						 'ciu_destino'=>$destino->getCaIdCiudad(),
-						 'ciu_destino_value'=>$destino->getCaCiudad(),
-						 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
-						 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
-						 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
-						 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",	
-						 
-						 'valor_tar'=>"",
-						 'aplica_tar'=>"",
-						 'valor_min'=>"",
-						 'aplica_min'=>"",
-						 'idmoneda'=>"",
-						 'detalles'=>"",
-						 'transporte'=>utf8_encode($producto->getCaTransporte()),
-						 'modalidad'=>utf8_encode($producto->getCaModalidad()),
-						 					 
-						 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
-						 'incoterms'=>utf8_encode($producto->getCaIncoterms()),
-						 'frecuencia'=>utf8_encode($producto->getCaFrecuencia()),
-						 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
-						 'imprimir'=>utf8_encode($producto->getCaImprimir()),
-						 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
-						 'tipo'=>'concepto'
-						); 
-			$this->productos[] = $row; 
+			$row = $baseRow;
+			$row['idopcion']="";
+			$row['iditem']="";
+			$row['item']="+";
+			$row['idconcepto']="";
+			$row['valor_tar']="";
+			$row['aplica_tar']="";
+			$row['valor_min']="";
+			$row['aplica_min']="";
+			$row['idmoneda']="";
+			$row['detalles']="";
+			$row['tipo']="concepto";	
+			$row['id']+=$j++;						
+			$j+=20;
+			$this->productos[] = $row;
+			$i+=1000;
 		}	
 	}
 	
