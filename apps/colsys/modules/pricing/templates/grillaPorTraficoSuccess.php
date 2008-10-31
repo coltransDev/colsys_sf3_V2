@@ -205,22 +205,7 @@ var colModel = new Ext.grid.ColumnModel({
 				format: 'd/m/Y'
 			})
 		} 
-		,{
-			header: "Aplicación",
-			width: 100,
-			sortable: false,
-			groupable: false,
-			
-			dataIndex: 'aplicacion'//,              
-			/*editor: new Ext.form.ComboBox({
-				typeAhead: true,
-				triggerAction: 'all',
-				//transform:'light',
-				lazyRender:true,
-				listClass: 'x-combo-list-small',
-				store : aplicaciones	
-			})*/
-		}							
+								
 		,{
 			id: 'neta',
 			header: "Neta",
@@ -239,6 +224,48 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'minima',
 			editor: new Ext.form.NumberField()			
 		}
+		,{
+			header: "Aplicación",
+			width: 100,
+			sortable: false,
+			groupable: false,
+			
+			dataIndex: 'aplicacion'//,              
+			/*editor: new Ext.form.ComboBox({
+				typeAhead: true,
+				triggerAction: 'all',
+				//transform:'light',
+				lazyRender:true,
+				listClass: 'x-combo-list-small',
+				store : aplicaciones	
+			})*/
+		},		
+		{
+			id: 'minima',
+			header: "Minima",
+			width: 80,
+			sortable: false,
+			groupable: false,							
+			dataIndex: 'minima',
+			editor: new Ext.form.NumberField()			
+		},
+		{
+			header: "Aplicación",
+			width: 100,
+			sortable: false,
+			groupable: false,
+			
+			dataIndex: 'aplicacion'//,              
+			/*editor: new Ext.form.ComboBox({
+				typeAhead: true,
+				triggerAction: 'all',
+				//transform:'light',
+				lazyRender:true,
+				listClass: 'x-combo-list-small',
+				store : aplicaciones	
+			})*/
+		}	
+		
 		,{
 			header: "Moneda",
 			width: 80,

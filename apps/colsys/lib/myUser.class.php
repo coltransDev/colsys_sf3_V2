@@ -2,6 +2,13 @@
  
 class myUser extends sfBasicSecurityUser
 {
+	public function signIn( $login ){
+		$this->setAuthenticated( true );
+		$this->setAttribute('login', $login );					
+		
+	}
+		
+	
 	public function setUserId( $userId  ){
 		$this->setAttribute('user_id', $userId );
 		$user = UsuarioPeer::retrieveByPk( $userId );
@@ -55,6 +62,14 @@ class myUser extends sfBasicSecurityUser
 		return $this->getAttribute('nivel_acceso' );
 	}
 	
+	public function getGrupos( ){		
+		return $this->getAttribute('grupos');
+	}
+
+	
+	public function setGrupos( $grupos ){		
+		$this->setAttribute('grupos', $grupos );
+	}
 	
 	
 	/*
@@ -107,6 +122,19 @@ class myUser extends sfBasicSecurityUser
 		$log->setCaAction( $action );
 		$log->save();
 	}
+	
+	/*
+	* Registra un evento para el usuario
+	*/
+	/*public function log( $event ){	
+		$log = new TrackingUserLog();
+		$log->setCaEmail( $this->getAttribute('email') );
+		$log->setCaFchevento(time());	
+		$log->setCaUrl(  $_SERVER['PATH_INFO'] );
+		$log->setCaEvento($event);
+		$log->setCaIpaddress( $_SERVER['REMOTE_ADDR'] );	
+		$log->save();
+	}*/
 }
 
 ?>

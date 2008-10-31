@@ -9,13 +9,14 @@ use_helper("Validation");
 	<tr>
 		<td>Usuario:</td>
 		<td>
-		<?=form_error("user","No se ha podido iniciar sesion")?>
-		<input type="text" name="user" />
+		
+		<?=form_error("clave_invalida","No se ha podido iniciar sesion")?>
+		<input type="text" name="username" />
 		</td>
 	</tr>
 	<tr>
 		<td>Clave:</td>
-		<td><input type="password" name="passwd" /></td>
+		<td><input type="password" name="password" /></td>
 	</tr>
 	<tr>
 		<td colspan="2"><div align="center">

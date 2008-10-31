@@ -39,8 +39,22 @@
 		<column name="ca_action" type="VARCHAR" size="100"/>
 	</table>
 	
+	<table name="control.tb_accesos_grp" phpName="AccesoGrupo">
+		<column name="ca_idlog" type="integer" required="true" primaryKey="true"/>
+		<column name="ca_rutina" type="VARCHAR" />
+		<column name="ca_grupo" type="VARCHAR" />
+		<column name="ca_acceso" type="integer" />
+		
+	</table>
 	
-  
+	<table name="control.tb_rutinas" phpName="Rutina">
+		<column name="ca_rutina" type="integer" required="VARCHAR" primaryKey="true"/>
+		<column name="ca_opcion" type="VARCHAR" />
+		<column name="ca_descripcion" type="VARCHAR" />
+		<column name="ca_programa" type="VARCHAR" />
+		<column name="ca_grupo" type="VARCHAR" />		
+	</table>
+
 	<!--
 	<table name="tb_basededatos">
     <column name="ca_basededatos" type="VARCHAR" size="250" required="true" primaryKey="true"/>
@@ -48,13 +62,7 @@
     <column name="ca_servidor" type="VARCHAR" size="250" required="true"/>
   </table>
   
-  <table name="tb_rutinas">
-    <column name="ca_rutina" type="VARCHAR" size="15" required="true" primaryKey="true"/>
-    <column name="ca_opcion" type="VARCHAR" size="30" required="true"/>
-    <column name="ca_descripcion" type="VARCHAR" size="250" required="true"/>
-    <column name="ca_programa" type="VARCHAR" size="100" required="true"/>
-    <column name="ca_grupo" type="VARCHAR" size="20"/>
-  </table>
+  
   
  
 	-->
