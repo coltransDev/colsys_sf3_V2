@@ -101,9 +101,7 @@ class cotizacionesComponents extends sfComponents
       									'modalidad'=>$rs->getString(13),
 										'observaciones'=>utf8_encode($rs->getString(14))
       		);
-		}
-		
-			
+		}		
 	}
 
 	/*

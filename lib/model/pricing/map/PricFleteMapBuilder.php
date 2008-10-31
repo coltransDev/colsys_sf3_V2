@@ -67,7 +67,7 @@ class PricFleteMapBuilder {
 
 		$tMap->addColumn('CA_VLRNETO', 'CaVlrneto', 'double', CreoleTypes::NUMERIC, false, null);
 
-		$tMap->addColumn('CA_VLRMINIMO', 'CaVlrminimo', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VLRSUGERIDO', 'CaVlrsugerido', 'double', CreoleTypes::NUMERIC, false, null);
 
 		$tMap->addColumn('CA_FCHINICIO', 'CaFchinicio', 'int', CreoleTypes::DATE, false, null);
 

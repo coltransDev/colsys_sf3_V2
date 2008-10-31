@@ -65,14 +65,16 @@ var record = Ext.data.Record.create([
 	{name: 'iditem', type: 'int'},
 	{name: 'idconcepto', type: 'int'},
 	{name: 'observaciones', type: 'string'},
-	{name: 'aplicacion', type: 'string'},			
+	{name: 'aplicacion', type: 'string'},	
+	{name: 'aplicacion_min', type: 'string'},		
 	{name: 'sel', type: 'bool'},
 	{name: 'ttransito', type: 'string'},
 	{name: 'frecuencia', type: 'string'},				
 	{name: 'style', type: 'string'}	,
 	{name: 'tipo', type: 'string'}	,
-	{name: 'neta', type: 'string'}	,
-	{name: 'minima', type: 'string'}, 
+	{name: 'neta', type: 'float'}	,
+	{name: 'minima', type: 'float'}, 
+	{name: 'sugerida', type: 'float'},
 	{name: 'orden', type: 'int'}		
 ]);
    		
@@ -214,31 +216,33 @@ var colModel = new Ext.grid.ColumnModel({
 			groupable: false,							
 			dataIndex: 'neta',
 			editor: new Ext.form.NumberField()		
-		},		
+		},	
+		<?
+		if( $modalidad!="LCL" ){ 
+		?>	
 		{
-			id: 'minima',
-			header: "<?=(($transporte=="Aéreo"&&$modalidad!="CABOTAJE")||$modalidad=="FCL")?"Sugerida":"Minima"?>",
+			id: 'sugerida',
+			header: "Sugerida",
 			width: 80,
 			sortable: false,
 			groupable: false,							
-			dataIndex: 'minima',
+			dataIndex: 'sugerida',
 			editor: new Ext.form.NumberField()			
 		}
-		,{
+		,
+		<?
+		}
+		?>
+		{
 			header: "Aplicación",
 			width: 100,
 			sortable: false,
 			groupable: false,
 			
-			dataIndex: 'aplicacion'//,              
-			/*editor: new Ext.form.ComboBox({
-				typeAhead: true,
-				triggerAction: 'all',
-				//transform:'light',
-				lazyRender:true,
-				listClass: 'x-combo-list-small',
-				store : aplicaciones	
-			})*/
+			dataIndex: 'aplicacion',              
+			editor: <?=include_component("widgets", "aplicaciones" ,array("id"=>"", "transporte"=>$transporte ))?>
+			
+			
 		},		
 		{
 			id: 'minima',
@@ -250,20 +254,13 @@ var colModel = new Ext.grid.ColumnModel({
 			editor: new Ext.form.NumberField()			
 		},
 		{
-			header: "Aplicación",
+			header: "Aplicación Min.",
 			width: 100,
 			sortable: false,
 			groupable: false,
 			
-			dataIndex: 'aplicacion'//,              
-			/*editor: new Ext.form.ComboBox({
-				typeAhead: true,
-				triggerAction: 'all',
-				//transform:'light',
-				lazyRender:true,
-				listClass: 'x-combo-list-small',
-				store : aplicaciones	
-			})*/
+			dataIndex: 'aplicacion_min',              
+				editor: <?=include_component("widgets", "aplicaciones" ,array("id"=>"", "transporte"=>$transporte ))?>
 		}	
 		
 		,{
@@ -282,12 +279,12 @@ var colModel = new Ext.grid.ColumnModel({
 		var field = this.getDataIndex(colIndex);
 		
 		
-		if( record.data.tipo=="concepto" && !(field=='neta' || field=='minima'||field=='inicio' || field=='vencimiento' || field=='moneda')  ){
+		if( record.data.tipo=="concepto" && !(field=='neta' || field=='sugerida'||field=='inicio' || field=='vencimiento' || field=='moneda'|| field=='aplicacion')  ){
 			return false;
 		}
 		
 		if( record.data.tipo=="recargo"){			
-			if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='neta' || field=='minima' || field=='moneda')  ){					
+			if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='neta' || field=='minima' || field=='moneda'|| field=='aplicacion'|| field=='aplicacion_min')  ){					
 				return false;								
 			}		
 		}

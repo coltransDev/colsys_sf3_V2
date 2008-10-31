@@ -492,6 +492,8 @@ class cotizacionesActions extends sfActions
 		$observaciones = $this->getRequestParameter("detalles");
 		
 		$tipo = $this->getRequestParameter("tipo");
+		
+		$this->responseArray = array("id"=>$this->getRequestParameter("id"));
 			
 		if( $tipo=="concepto" && $this->getRequestParameter("iditem")!=9999 ){
 			$iditem = $this->getRequestParameter("iditem");
@@ -535,7 +537,8 @@ class cotizacionesActions extends sfActions
 			if( $observaciones ){
 				$opcion->setCaObservaciones( $observaciones );
 			}	
-			$opcion->save();
+			$opcion->save();			
+			$this->responseArray["idopcion"]=$opcion->getCaIdopcion();
 			
 		}
 		if( $tipo=="recargo" ){
@@ -548,9 +551,7 @@ class cotizacionesActions extends sfActions
 				$idopcion = 999;	
 			}
 					
-			$recargo = CotRecargoPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion, $idconcepto, $iditem, $modalidad );
-			
-			//echo "adasdasdadasdasd"+$idopcion;									
+			$recargo = CotRecargoPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion, $idconcepto, $iditem, $modalidad );										
 			if( !$recargo ){			
 				$recargo = new CotRecargo();			
 				$recargo->setCaFchcreado( time() );
@@ -594,7 +595,7 @@ class cotizacionesActions extends sfActions
 			$recargo->save();	
 		}
 		
-		return sfView::NONE;
+		$this->setLayout("ajax");
 	}
 	/*
 	* Datos de las modalidades según sea el medio de transporte

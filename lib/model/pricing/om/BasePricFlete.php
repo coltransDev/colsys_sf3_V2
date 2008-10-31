@@ -41,10 +41,10 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 
 
 	/**
-	 * The value for the ca_vlrminimo field.
+	 * The value for the ca_vlrsugerido field.
 	 * @var        double
 	 */
-	protected $ca_vlrminimo;
+	protected $ca_vlrsugerido;
 
 
 	/**
@@ -165,14 +165,14 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [ca_vlrminimo] column value.
+	 * Get the [ca_vlrsugerido] column value.
 	 * 
 	 * @return     double
 	 */
-	public function getCaVlrminimo()
+	public function getCaVlrsugerido()
 	{
 
-		return $this->ca_vlrminimo;
+		return $this->ca_vlrsugerido;
 	}
 
 	/**
@@ -381,20 +381,20 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 	} // setCaVlrneto()
 
 	/**
-	 * Set the value of [ca_vlrminimo] column.
+	 * Set the value of [ca_vlrsugerido] column.
 	 * 
 	 * @param      double $v new value
 	 * @return     void
 	 */
-	public function setCaVlrminimo($v)
+	public function setCaVlrsugerido($v)
 	{
 
-		if ($this->ca_vlrminimo !== $v) {
-			$this->ca_vlrminimo = $v;
-			$this->modifiedColumns[] = PricFletePeer::CA_VLRMINIMO;
+		if ($this->ca_vlrsugerido !== $v) {
+			$this->ca_vlrsugerido = $v;
+			$this->modifiedColumns[] = PricFletePeer::CA_VLRSUGERIDO;
 		}
 
-	} // setCaVlrminimo()
+	} // setCaVlrsugerido()
 
 	/**
 	 * Set the value of [ca_fchinicio] column.
@@ -579,7 +579,7 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 
 			$this->ca_vlrneto = $rs->getFloat($startcol + 2);
 
-			$this->ca_vlrminimo = $rs->getFloat($startcol + 3);
+			$this->ca_vlrsugerido = $rs->getFloat($startcol + 3);
 
 			$this->ca_fchinicio = $rs->getDate($startcol + 4, null);
 
@@ -867,7 +867,7 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 				return $this->getCaVlrneto();
 				break;
 			case 3:
-				return $this->getCaVlrminimo();
+				return $this->getCaVlrsugerido();
 				break;
 			case 4:
 				return $this->getCaFchinicio();
@@ -913,7 +913,7 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 			$keys[0] => $this->getCaIdtrayecto(),
 			$keys[1] => $this->getCaIdconcepto(),
 			$keys[2] => $this->getCaVlrneto(),
-			$keys[3] => $this->getCaVlrminimo(),
+			$keys[3] => $this->getCaVlrsugerido(),
 			$keys[4] => $this->getCaFchinicio(),
 			$keys[5] => $this->getCaFchvencimiento(),
 			$keys[6] => $this->getCaIdmoneda(),
@@ -962,7 +962,7 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 				$this->setCaVlrneto($value);
 				break;
 			case 3:
-				$this->setCaVlrminimo($value);
+				$this->setCaVlrsugerido($value);
 				break;
 			case 4:
 				$this->setCaFchinicio($value);
@@ -1011,7 +1011,7 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdtrayecto($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdconcepto($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaVlrneto($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaVlrminimo($arr[$keys[3]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaVlrsugerido($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaFchinicio($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaFchvencimiento($arr[$keys[5]]);
 		if (array_key_exists($keys[6], $arr)) $this->setCaIdmoneda($arr[$keys[6]]);
@@ -1033,7 +1033,7 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(PricFletePeer::CA_IDTRAYECTO)) $criteria->add(PricFletePeer::CA_IDTRAYECTO, $this->ca_idtrayecto);
 		if ($this->isColumnModified(PricFletePeer::CA_IDCONCEPTO)) $criteria->add(PricFletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		if ($this->isColumnModified(PricFletePeer::CA_VLRNETO)) $criteria->add(PricFletePeer::CA_VLRNETO, $this->ca_vlrneto);
-		if ($this->isColumnModified(PricFletePeer::CA_VLRMINIMO)) $criteria->add(PricFletePeer::CA_VLRMINIMO, $this->ca_vlrminimo);
+		if ($this->isColumnModified(PricFletePeer::CA_VLRSUGERIDO)) $criteria->add(PricFletePeer::CA_VLRSUGERIDO, $this->ca_vlrsugerido);
 		if ($this->isColumnModified(PricFletePeer::CA_FCHINICIO)) $criteria->add(PricFletePeer::CA_FCHINICIO, $this->ca_fchinicio);
 		if ($this->isColumnModified(PricFletePeer::CA_FCHVENCIMIENTO)) $criteria->add(PricFletePeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
 		if ($this->isColumnModified(PricFletePeer::CA_IDMONEDA)) $criteria->add(PricFletePeer::CA_IDMONEDA, $this->ca_idmoneda);
@@ -1109,7 +1109,7 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 
 		$copyObj->setCaVlrneto($this->ca_vlrneto);
 
-		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
+		$copyObj->setCaVlrsugerido($this->ca_vlrsugerido);
 
 		$copyObj->setCaFchinicio($this->ca_fchinicio);
 

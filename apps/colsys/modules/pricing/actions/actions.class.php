@@ -147,15 +147,15 @@ class pricingActions extends sfActions
 					//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
 					'inicio' => $pricConcepto->getCaFchinicio("d/m/Y"),
 					'vencimiento' => $pricConcepto->getCaFchvencimiento("d/m/Y"),
-					'moneda' => $pricConcepto->getCaIdMoneda(), // consulta ? $trayecto->getCaIdMoneda()
-					'aplicacion' => $trayecto->getCaAplicacion(),				
+					'moneda' => $pricConcepto->getCaIdMoneda(), // consulta ? $trayecto->getCaIdMoneda()								
 					'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto(),
 					'style' => $pricConcepto->getEstilo(),
 					'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
 					'iditem'=>$pricConcepto->getCaIdConcepto(),
-					'tipo'=>"concepto",
+					'tipo'=>"concepto",					
 					'neta'=>$pricConcepto->getCaVlrneto(),
-					'minima'=>$pricConcepto->getCaVlrminimo(),
+					'aplicacion' => $pricConcepto->getCaAplicacion(),	
+					'sugerida'=>$pricConcepto->getCaVlrsugerido(),
 					'orden'=>$i++
 					
 				);
@@ -174,7 +174,7 @@ class pricingActions extends sfActions
 						'inicio' => $pricRecargo->getCaFchinicio("d/m/Y"),
 						'vencimiento' => $pricRecargo->getCaFchvencimiento("d/m/Y"),
 						'moneda' => $pricRecargo->getCaIdMoneda(),
-						'aplicacion' => "",				
+								
 						'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto()."-".$pricRecargo->getCaIdrecargo(),
 						'style' => '',
 						'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
@@ -182,7 +182,9 @@ class pricingActions extends sfActions
 						'idconcepto'=>$pricConcepto->getCaIdConcepto(),
 						'tipo'=>"recargo",
 						'neta'=>$pricRecargo->getCaVlrrecargo(),
+						'aplicacion' => $pricRecargo->getCaAplicacion(),		
 						'minima'=>$pricRecargo->getCaVlrminimo(),
+						'aplicacion_min' => $pricRecargo->getCaAplicacionMin(),
 						'orden'=>$i++	
 					);									
 					$data[] = $row;						
@@ -203,7 +205,7 @@ class pricingActions extends sfActions
 					'inicio' => '',
 					'vencimiento' => '',
 					'moneda' => '',
-					'aplicacion' => $trayecto->getCaAplicacion(),				
+					'aplicacion' => '',				
 					'_id' => $trayecto->getCaIdtrayecto()."-recgen",
 					'style' => '',
 					'observaciones' => '',
@@ -226,8 +228,7 @@ class pricingActions extends sfActions
 					//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
 					'inicio' => "",
 					'vencimiento' => "",
-					'moneda' => $pricRecargo->getCaIdMoneda(),
-					'aplicacion' => "",				
+					'moneda' => $pricRecargo->getCaIdMoneda(),									
 					'_id' => $trayecto->getCaIdtrayecto()."-9999-".$pricRecargo->getCaIdrecargo(),
 					'style' => '',
 					'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
@@ -235,7 +236,9 @@ class pricingActions extends sfActions
 					'idconcepto'=>'9999',
 					'tipo'=>"recargo",
 					'neta'=>$pricRecargo->getCaVlrrecargo(),
+					'aplicacion' => $pricRecargo->getCaAplicacion(),
 					'minima'=>$pricRecargo->getCaVlrminimo(),
+					'aplicacion_min' => $pricRecargo->getCaAplicacionMin(),
 					'orden'=>$i++	
 				);									
 				$data[] = $row;						
@@ -260,9 +263,9 @@ class pricingActions extends sfActions
 		$this->forward404Unless( $trayecto );
 		
 		$tipo = $this->getRequestParameter("tipo");		
-		$neta = $this->getRequestParameter("neta");
-		$minima = $this->getRequestParameter("minima");
-				
+		$neta = $this->getRequestParameter("neta");		
+		
+		
 		if( $tipo=="trayecto_obs" ){									
 			if( $this->getRequestParameter("observaciones")){
 				$trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));
@@ -272,6 +275,7 @@ class pricingActions extends sfActions
 		}
 		
 		if( $tipo=="concepto" ){			
+			$sugerida = $this->getRequestParameter("sugerida");
 			$idconcepto = $this->getRequestParameter("iditem");
 
 			$flete  = PricFletePeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $idconcepto );			
@@ -279,19 +283,16 @@ class pricingActions extends sfActions
 				$flete = new PricFlete();
 				$flete->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
 				$flete->setCaIdconcepto( $idconcepto );
+				$flete->setCaVlrneto( 0 );
 			}
 			
 			if( $neta ){
 				$flete->setCaVlrneto( $neta );
-			}else{
-				$flete->setCaVlrneto( 0 );
 			} 
 			
-			if( $minima ){
-				$flete->setCaVlrminimo( $minima );
-			}else{
-				$flete->setCaVlrminimo( 0 );
-			} 
+			if( $sugerida ){
+				$flete->setCaVlrsugerido( $sugerida );
+			}
 			
 			if( $this->getRequestParameter("style")!==null){
 				$flete->setEstilo($this->getRequestParameter("style"));			
@@ -316,9 +317,10 @@ class pricingActions extends sfActions
 		}
 		
 		if( $tipo=="recargo" ){
-			
+			$minima = $this->getRequestParameter("minima");
 			$idconcepto = $this->getRequestParameter("idconcepto");
 			$idrecargo = $this->getRequestParameter("iditem");
+			
 			
 			$pricRecargo = PricRecargoxConceptoPeer::retrieveByPk( $trayecto->getCaIdTrayecto() , $idconcepto , $idrecargo);
 			
@@ -327,23 +329,33 @@ class pricingActions extends sfActions
 				$pricRecargo->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
 				$pricRecargo->setCaIdconcepto( $idconcepto );
 				$pricRecargo->setCaIdrecargo( $idrecargo );
+				$pricRecargo->setCaVlrrecargo( 0 );
+				$pricRecargo->setCaVlrminimo( 0 );
 				
 			}
 			if( $neta ){
 				$pricRecargo->setCaVlrrecargo( $neta );
-			}else{
-				$pricRecargo->setCaVlrrecargo( 0 );
-			} 
+			}
 			
 			if( $minima ){
 				$pricRecargo->setCaVlrminimo( $minima );
-			}else{
-				$pricRecargo->setCaVlrminimo( 0 );
-			} 		
+			}		
 			
 			if( $this->getRequestParameter("moneda") ){
 				$pricRecargo->setCaIdMoneda($this->getRequestParameter("moneda"));
 			}	
+			
+			if( $this->getRequestParameter("aplicacion")!==null){
+				$pricRecargo->setCaAplicacion($this->getRequestParameter("aplicacion"));
+			}else{
+				$pricRecargo->setCaAplicacion( null ); //en caso que el usuario quiera borrar
+			}
+			
+			if( $this->getRequestParameter("aplicacion_min")!==null){
+				$pricRecargo->setCaAplicacionMin($this->getRequestParameter("aplicacion_min"));
+			}else{
+				$pricRecargo->setCaAplicacionMin(null);
+			}
 					
 			$pricRecargo->save();
 		}
@@ -1003,30 +1015,7 @@ class pricingActions extends sfActions
 	}
 	
 	
-	/*
-	* Retorna los datos para la grilla de los cabotajes
-	*/
-	public function executeDatosCabotajes(){
-		$c = new Criteria();
-		$cabotajes  = PricCabotajePeer::doSelect( $c );
-		
-		$this->data = array();
-		foreach( $cabotajes as $cabotaje ){
-			$transportador = $cabotaje->getTransportador();
-			$row = array(
-				'oid'=> $cabotaje->getOid(),
-				'origen'=> $cabotaje->getOrigen()->getCaCiudad(), 
-				'destino'=> $cabotaje->getDestino()->getCaCiudad(), 
-				'idlinea'=> $cabotaje->getCaIdlinea(), 
-				'linea'=> $transportador->getCaNombre(),
-				'vlrkilo'=> $cabotaje->getCaVlrkilo(),
-				'vlrminimo'=> $cabotaje->getCaVlrminimo(),
-				'maxpeso'=> $cabotaje->getCaMaxpeso(),
-				'dimensiones'=> $cabotaje->getCaDimensiones()
-			);					
-			$this->data[]=$row;
-		} 		
-	}	
+	
 	
 }
 ?>

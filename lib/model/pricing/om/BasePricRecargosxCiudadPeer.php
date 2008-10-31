@@ -19,7 +19,7 @@ abstract class BasePricRecargosxCiudadPeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.PricRecargosxCiudad';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 13;
+	const NUM_COLUMNS = 14;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -40,11 +40,14 @@ abstract class BasePricRecargosxCiudadPeer {
 	/** the column name for the CA_VLRRECARGO field */
 	const CA_VLRRECARGO = 'tb_pricrecargosxciudad.CA_VLRRECARGO';
 
+	/** the column name for the CA_APLICACION field */
+	const CA_APLICACION = 'tb_pricrecargosxciudad.CA_APLICACION';
+
 	/** the column name for the CA_VLRMINIMO field */
 	const CA_VLRMINIMO = 'tb_pricrecargosxciudad.CA_VLRMINIMO';
 
-	/** the column name for the CA_APLICACION field */
-	const CA_APLICACION = 'tb_pricrecargosxciudad.CA_APLICACION';
+	/** the column name for the CA_APLICACION_MIN field */
+	const CA_APLICACION_MIN = 'tb_pricrecargosxciudad.CA_APLICACION_MIN';
 
 	/** the column name for the CA_OBSERVACIONES field */
 	const CA_OBSERVACIONES = 'tb_pricrecargosxciudad.CA_OBSERVACIONES';
@@ -75,10 +78,10 @@ abstract class BasePricRecargosxCiudadPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaIdciudad', 'CaIdrecargo', 'CaModalidad', 'CaVlrrecargo', 'CaVlrminimo', 'CaAplicacion', 'CaObservaciones', 'CaFchinicio', 'CaFchvencimiento', 'CaFchcreado', 'CaUsucreado', 'CaIdmoneda', ),
-		BasePeer::TYPE_COLNAME => array (PricRecargosxCiudadPeer::CA_IDTRAFICO, PricRecargosxCiudadPeer::CA_IDCIUDAD, PricRecargosxCiudadPeer::CA_IDRECARGO, PricRecargosxCiudadPeer::CA_MODALIDAD, PricRecargosxCiudadPeer::CA_VLRRECARGO, PricRecargosxCiudadPeer::CA_VLRMINIMO, PricRecargosxCiudadPeer::CA_APLICACION, PricRecargosxCiudadPeer::CA_OBSERVACIONES, PricRecargosxCiudadPeer::CA_FCHINICIO, PricRecargosxCiudadPeer::CA_FCHVENCIMIENTO, PricRecargosxCiudadPeer::CA_FCHCREADO, PricRecargosxCiudadPeer::CA_USUCREADO, PricRecargosxCiudadPeer::CA_IDMONEDA, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_idciudad', 'ca_idrecargo', 'ca_modalidad', 'ca_vlrrecargo', 'ca_vlrminimo', 'ca_aplicacion', 'ca_observaciones', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_fchcreado', 'ca_usucreado', 'ca_idmoneda', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaIdciudad', 'CaIdrecargo', 'CaModalidad', 'CaVlrrecargo', 'CaAplicacion', 'CaVlrminimo', 'CaAplicacionMin', 'CaObservaciones', 'CaFchinicio', 'CaFchvencimiento', 'CaFchcreado', 'CaUsucreado', 'CaIdmoneda', ),
+		BasePeer::TYPE_COLNAME => array (PricRecargosxCiudadPeer::CA_IDTRAFICO, PricRecargosxCiudadPeer::CA_IDCIUDAD, PricRecargosxCiudadPeer::CA_IDRECARGO, PricRecargosxCiudadPeer::CA_MODALIDAD, PricRecargosxCiudadPeer::CA_VLRRECARGO, PricRecargosxCiudadPeer::CA_APLICACION, PricRecargosxCiudadPeer::CA_VLRMINIMO, PricRecargosxCiudadPeer::CA_APLICACION_MIN, PricRecargosxCiudadPeer::CA_OBSERVACIONES, PricRecargosxCiudadPeer::CA_FCHINICIO, PricRecargosxCiudadPeer::CA_FCHVENCIMIENTO, PricRecargosxCiudadPeer::CA_FCHCREADO, PricRecargosxCiudadPeer::CA_USUCREADO, PricRecargosxCiudadPeer::CA_IDMONEDA, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_idciudad', 'ca_idrecargo', 'ca_modalidad', 'ca_vlrrecargo', 'ca_aplicacion', 'ca_vlrminimo', 'ca_aplicacion_min', 'ca_observaciones', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_fchcreado', 'ca_usucreado', 'ca_idmoneda', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
 	);
 
 	/**
@@ -88,10 +91,10 @@ abstract class BasePricRecargosxCiudadPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaIdciudad' => 1, 'CaIdrecargo' => 2, 'CaModalidad' => 3, 'CaVlrrecargo' => 4, 'CaVlrminimo' => 5, 'CaAplicacion' => 6, 'CaObservaciones' => 7, 'CaFchinicio' => 8, 'CaFchvencimiento' => 9, 'CaFchcreado' => 10, 'CaUsucreado' => 11, 'CaIdmoneda' => 12, ),
-		BasePeer::TYPE_COLNAME => array (PricRecargosxCiudadPeer::CA_IDTRAFICO => 0, PricRecargosxCiudadPeer::CA_IDCIUDAD => 1, PricRecargosxCiudadPeer::CA_IDRECARGO => 2, PricRecargosxCiudadPeer::CA_MODALIDAD => 3, PricRecargosxCiudadPeer::CA_VLRRECARGO => 4, PricRecargosxCiudadPeer::CA_VLRMINIMO => 5, PricRecargosxCiudadPeer::CA_APLICACION => 6, PricRecargosxCiudadPeer::CA_OBSERVACIONES => 7, PricRecargosxCiudadPeer::CA_FCHINICIO => 8, PricRecargosxCiudadPeer::CA_FCHVENCIMIENTO => 9, PricRecargosxCiudadPeer::CA_FCHCREADO => 10, PricRecargosxCiudadPeer::CA_USUCREADO => 11, PricRecargosxCiudadPeer::CA_IDMONEDA => 12, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_idciudad' => 1, 'ca_idrecargo' => 2, 'ca_modalidad' => 3, 'ca_vlrrecargo' => 4, 'ca_vlrminimo' => 5, 'ca_aplicacion' => 6, 'ca_observaciones' => 7, 'ca_fchinicio' => 8, 'ca_fchvencimiento' => 9, 'ca_fchcreado' => 10, 'ca_usucreado' => 11, 'ca_idmoneda' => 12, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaIdciudad' => 1, 'CaIdrecargo' => 2, 'CaModalidad' => 3, 'CaVlrrecargo' => 4, 'CaAplicacion' => 5, 'CaVlrminimo' => 6, 'CaAplicacionMin' => 7, 'CaObservaciones' => 8, 'CaFchinicio' => 9, 'CaFchvencimiento' => 10, 'CaFchcreado' => 11, 'CaUsucreado' => 12, 'CaIdmoneda' => 13, ),
+		BasePeer::TYPE_COLNAME => array (PricRecargosxCiudadPeer::CA_IDTRAFICO => 0, PricRecargosxCiudadPeer::CA_IDCIUDAD => 1, PricRecargosxCiudadPeer::CA_IDRECARGO => 2, PricRecargosxCiudadPeer::CA_MODALIDAD => 3, PricRecargosxCiudadPeer::CA_VLRRECARGO => 4, PricRecargosxCiudadPeer::CA_APLICACION => 5, PricRecargosxCiudadPeer::CA_VLRMINIMO => 6, PricRecargosxCiudadPeer::CA_APLICACION_MIN => 7, PricRecargosxCiudadPeer::CA_OBSERVACIONES => 8, PricRecargosxCiudadPeer::CA_FCHINICIO => 9, PricRecargosxCiudadPeer::CA_FCHVENCIMIENTO => 10, PricRecargosxCiudadPeer::CA_FCHCREADO => 11, PricRecargosxCiudadPeer::CA_USUCREADO => 12, PricRecargosxCiudadPeer::CA_IDMONEDA => 13, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_idciudad' => 1, 'ca_idrecargo' => 2, 'ca_modalidad' => 3, 'ca_vlrrecargo' => 4, 'ca_aplicacion' => 5, 'ca_vlrminimo' => 6, 'ca_aplicacion_min' => 7, 'ca_observaciones' => 8, 'ca_fchinicio' => 9, 'ca_fchvencimiento' => 10, 'ca_fchcreado' => 11, 'ca_usucreado' => 12, 'ca_idmoneda' => 13, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
 	);
 
 	/**
@@ -201,9 +204,11 @@ abstract class BasePricRecargosxCiudadPeer {
 
 		$criteria->addSelectColumn(PricRecargosxCiudadPeer::CA_VLRRECARGO);
 
+		$criteria->addSelectColumn(PricRecargosxCiudadPeer::CA_APLICACION);
+
 		$criteria->addSelectColumn(PricRecargosxCiudadPeer::CA_VLRMINIMO);
 
-		$criteria->addSelectColumn(PricRecargosxCiudadPeer::CA_APLICACION);
+		$criteria->addSelectColumn(PricRecargosxCiudadPeer::CA_APLICACION_MIN);
 
 		$criteria->addSelectColumn(PricRecargosxCiudadPeer::CA_OBSERVACIONES);
 

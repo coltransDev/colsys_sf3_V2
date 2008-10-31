@@ -79,9 +79,23 @@ class widgetsComponents extends sfComponents
 		if(!isset( $this->allowBlank )){
 			$this->allowBlank="true";
 		}
-		
-			
 	}	
+	
+	/**
+	* Muestra un select con los valores de laas aplicaciones 
+	*/
+	public function executeAplicaciones(){
+		if(!isset( $this->label )){
+			$this->label="";
+		}
+		if(!isset( $this->id )){
+			$this->id="";
+		}	
+		if(!isset( $this->allowBlank )){
+			$this->allowBlank="true";
+		}
+		$this->aplicaciones = ParametroPeer::retrieveByCaso("CU064", null, $this->transporte );
+	}
 	
 }
 ?>

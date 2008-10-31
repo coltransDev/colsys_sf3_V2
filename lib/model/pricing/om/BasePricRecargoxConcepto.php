@@ -48,6 +48,13 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 
 	/**
+	 * The value for the ca_aplicacion field.
+	 * @var        string
+	 */
+	protected $ca_aplicacion;
+
+
+	/**
 	 * The value for the ca_vlrminimo field.
 	 * @var        double
 	 */
@@ -55,10 +62,10 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 
 	/**
-	 * The value for the ca_aplicacion field.
+	 * The value for the ca_aplicacion_min field.
 	 * @var        string
 	 */
-	protected $ca_aplicacion;
+	protected $ca_aplicacion_min;
 
 
 	/**
@@ -171,6 +178,17 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	}
 
 	/**
+	 * Get the [ca_aplicacion] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaAplicacion()
+	{
+
+		return $this->ca_aplicacion;
+	}
+
+	/**
 	 * Get the [ca_vlrminimo] column value.
 	 * 
 	 * @return     double
@@ -182,14 +200,14 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	}
 
 	/**
-	 * Get the [ca_aplicacion] column value.
+	 * Get the [ca_aplicacion_min] column value.
 	 * 
 	 * @return     string
 	 */
-	public function getCaAplicacion()
+	public function getCaAplicacionMin()
 	{
 
-		return $this->ca_aplicacion;
+		return $this->ca_aplicacion_min;
 	}
 
 	/**
@@ -413,22 +431,6 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	} // setCaVlrrecargo()
 
 	/**
-	 * Set the value of [ca_vlrminimo] column.
-	 * 
-	 * @param      double $v new value
-	 * @return     void
-	 */
-	public function setCaVlrminimo($v)
-	{
-
-		if ($this->ca_vlrminimo !== $v) {
-			$this->ca_vlrminimo = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_VLRMINIMO;
-		}
-
-	} // setCaVlrminimo()
-
-	/**
 	 * Set the value of [ca_aplicacion] column.
 	 * 
 	 * @param      string $v new value
@@ -449,6 +451,44 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		}
 
 	} // setCaAplicacion()
+
+	/**
+	 * Set the value of [ca_vlrminimo] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaVlrminimo($v)
+	{
+
+		if ($this->ca_vlrminimo !== $v) {
+			$this->ca_vlrminimo = $v;
+			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_VLRMINIMO;
+		}
+
+	} // setCaVlrminimo()
+
+	/**
+	 * Set the value of [ca_aplicacion_min] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaAplicacionMin($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_aplicacion_min !== $v) {
+			$this->ca_aplicacion_min = $v;
+			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_APLICACION_MIN;
+		}
+
+	} // setCaAplicacionMin()
 
 	/**
 	 * Set the value of [ca_observaciones] column.
@@ -613,28 +653,30 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 			$this->ca_vlrrecargo = $rs->getFloat($startcol + 3);
 
-			$this->ca_vlrminimo = $rs->getFloat($startcol + 4);
+			$this->ca_aplicacion = $rs->getString($startcol + 4);
 
-			$this->ca_aplicacion = $rs->getString($startcol + 5);
+			$this->ca_vlrminimo = $rs->getFloat($startcol + 5);
 
-			$this->ca_observaciones = $rs->getString($startcol + 6);
+			$this->ca_aplicacion_min = $rs->getString($startcol + 6);
 
-			$this->ca_idmoneda = $rs->getString($startcol + 7);
+			$this->ca_observaciones = $rs->getString($startcol + 7);
 
-			$this->ca_fchinicio = $rs->getDate($startcol + 8, null);
+			$this->ca_idmoneda = $rs->getString($startcol + 8);
 
-			$this->ca_fchvencimiento = $rs->getDate($startcol + 9, null);
+			$this->ca_fchinicio = $rs->getDate($startcol + 9, null);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 10, null);
+			$this->ca_fchvencimiento = $rs->getDate($startcol + 10, null);
 
-			$this->ca_usucreado = $rs->getString($startcol + 11);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 11, null);
+
+			$this->ca_usucreado = $rs->getString($startcol + 12);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 12; // 12 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 13; // 13 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricRecargoxConcepto object", $e);
@@ -888,27 +930,30 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 				return $this->getCaVlrrecargo();
 				break;
 			case 4:
-				return $this->getCaVlrminimo();
-				break;
-			case 5:
 				return $this->getCaAplicacion();
 				break;
+			case 5:
+				return $this->getCaVlrminimo();
+				break;
 			case 6:
-				return $this->getCaObservaciones();
+				return $this->getCaAplicacionMin();
 				break;
 			case 7:
-				return $this->getCaIdmoneda();
+				return $this->getCaObservaciones();
 				break;
 			case 8:
-				return $this->getCaFchinicio();
+				return $this->getCaIdmoneda();
 				break;
 			case 9:
-				return $this->getCaFchvencimiento();
+				return $this->getCaFchinicio();
 				break;
 			case 10:
-				return $this->getCaFchcreado();
+				return $this->getCaFchvencimiento();
 				break;
 			case 11:
+				return $this->getCaFchcreado();
+				break;
+			case 12:
 				return $this->getCaUsucreado();
 				break;
 			default:
@@ -935,14 +980,15 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			$keys[1] => $this->getCaIdconcepto(),
 			$keys[2] => $this->getCaIdrecargo(),
 			$keys[3] => $this->getCaVlrrecargo(),
-			$keys[4] => $this->getCaVlrminimo(),
-			$keys[5] => $this->getCaAplicacion(),
-			$keys[6] => $this->getCaObservaciones(),
-			$keys[7] => $this->getCaIdmoneda(),
-			$keys[8] => $this->getCaFchinicio(),
-			$keys[9] => $this->getCaFchvencimiento(),
-			$keys[10] => $this->getCaFchcreado(),
-			$keys[11] => $this->getCaUsucreado(),
+			$keys[4] => $this->getCaAplicacion(),
+			$keys[5] => $this->getCaVlrminimo(),
+			$keys[6] => $this->getCaAplicacionMin(),
+			$keys[7] => $this->getCaObservaciones(),
+			$keys[8] => $this->getCaIdmoneda(),
+			$keys[9] => $this->getCaFchinicio(),
+			$keys[10] => $this->getCaFchvencimiento(),
+			$keys[11] => $this->getCaFchcreado(),
+			$keys[12] => $this->getCaUsucreado(),
 		);
 		return $result;
 	}
@@ -987,27 +1033,30 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 				$this->setCaVlrrecargo($value);
 				break;
 			case 4:
-				$this->setCaVlrminimo($value);
-				break;
-			case 5:
 				$this->setCaAplicacion($value);
 				break;
+			case 5:
+				$this->setCaVlrminimo($value);
+				break;
 			case 6:
-				$this->setCaObservaciones($value);
+				$this->setCaAplicacionMin($value);
 				break;
 			case 7:
-				$this->setCaIdmoneda($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 8:
-				$this->setCaFchinicio($value);
+				$this->setCaIdmoneda($value);
 				break;
 			case 9:
-				$this->setCaFchvencimiento($value);
+				$this->setCaFchinicio($value);
 				break;
 			case 10:
-				$this->setCaFchcreado($value);
+				$this->setCaFchvencimiento($value);
 				break;
 			case 11:
+				$this->setCaFchcreado($value);
+				break;
+			case 12:
 				$this->setCaUsucreado($value);
 				break;
 		} // switch()
@@ -1037,14 +1086,15 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdconcepto($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaIdrecargo($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaVlrrecargo($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaVlrminimo($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaAplicacion($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaObservaciones($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaIdmoneda($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaFchinicio($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaFchvencimiento($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaFchcreado($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaUsucreado($arr[$keys[11]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaAplicacion($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaVlrminimo($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaAplicacionMin($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaObservaciones($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaIdmoneda($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaFchinicio($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaFchvencimiento($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFchcreado($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaUsucreado($arr[$keys[12]]);
 	}
 
 	/**
@@ -1060,8 +1110,9 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDCONCEPTO)) $criteria->add(PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRRECARGO, $this->ca_vlrrecargo);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRMINIMO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_APLICACION)) $criteria->add(PricRecargoxConceptoPeer::CA_APLICACION, $this->ca_aplicacion);
+		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRMINIMO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
+		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_APLICACION_MIN)) $criteria->add(PricRecargoxConceptoPeer::CA_APLICACION_MIN, $this->ca_aplicacion_min);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_OBSERVACIONES)) $criteria->add(PricRecargoxConceptoPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDMONEDA)) $criteria->add(PricRecargoxConceptoPeer::CA_IDMONEDA, $this->ca_idmoneda);
 		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_FCHINICIO)) $criteria->add(PricRecargoxConceptoPeer::CA_FCHINICIO, $this->ca_fchinicio);
@@ -1141,9 +1192,11 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		$copyObj->setCaVlrrecargo($this->ca_vlrrecargo);
 
+		$copyObj->setCaAplicacion($this->ca_aplicacion);
+
 		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
 
-		$copyObj->setCaAplicacion($this->ca_aplicacion);
+		$copyObj->setCaAplicacionMin($this->ca_aplicacion_min);
 
 		$copyObj->setCaObservaciones($this->ca_observaciones);
 

@@ -206,7 +206,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Detalles",
 			width: 100,
 			sortable: false,
-			dataIndex: 'detalles',
+			dataIndex: 'id',
 			hideable: false ,
 			editor: new Ext.form.TextField({
 				allowBlank: false ,				
@@ -283,7 +283,7 @@ var grid_productosOnvalidateedit = function(e){
 						   idmoneda: '',
 						   detalles: ''
 						});	
-								
+						newRec.id = rec.data.id+20;		
 						newRec.data.concepto = "";												
 						//Inserta una columna en blanco al final
 												
@@ -515,14 +515,41 @@ var ventanaTarifario = function( record ){
 									var valor_min = ''; //No aplica
 								}
 								
+								if(r.data.tipo=="concepto"){
+									var k = 20;
+								}else{
+									var k = 1;
+								}
+								
 								var newRec = new recordProductos({
-								   idcotizacion: '',  
-								   idproducto: '',  
-								   trayecto: '',   
-								   transporte: '',  
-								   modalidad: '',   
-								   idopcion: '',								   
-								   idconcepto: '',
+								   id: activeRecord.data.id+k,  
+								   idcotizacion: activeRecord.data.idcotizacion,  
+								   idproducto: activeRecord.data.idproducto,  
+								   trayecto: activeRecord.data.trayecto,   
+								   transporte: activeRecord.data.transporte,  
+								   modalidad: activeRecord.data.modalidad,   
+								   idconcepto: activeRecord.data.iditem,
+								   idopcion: activeRecord.data.idopcion,
+								   producto: activeRecord.data.producto,
+								   tra_origen: activeRecord.data.tra_origen,
+								   tra_origen_value: activeRecord.data.tra_origen_value,
+								   ciu_origen: activeRecord.data.ciu_origen,
+								   ciu_origen_value: activeRecord.data.ciu_origen_value,
+								   tra_destino: activeRecord.data.tra_destino,
+								   tra_destino_value: activeRecord.data.tra_destino_value,
+								   ciu_destino: activeRecord.data.ciu_destino,
+								   ciu_destino_value: activeRecord.data.ciu_destino_value,
+								   tra_escala: activeRecord.data.tra_escala,
+								   tra_escala_value: activeRecord.data.tra_escala_value,
+								   ciu_escala: activeRecord.data.ciu_escala,
+								   ciu_escala_value: activeRecord.data.ciu_escala_value,
+								   impoexpo: activeRecord.data.impoexpo,
+								   incoterms: activeRecord.data.incoterms,
+								   frecuencia: activeRecord.data.frecuencia,
+								   ttransito: activeRecord.data.ttransito,
+								   imprimir: activeRecord.data.imprimir,
+								   observaciones: activeRecord.data.observaciones,				  
+								   
 								   item: '',
 								   iditem: '',	
 								   tipo: '',
@@ -532,7 +559,7 @@ var ventanaTarifario = function( record ){
 								   aplica_min: '',
 								   idmoneda: '',
 								   detalles: ''
-								});		
+								});	
 								
 								newRec.set("trayecto", activeRecord.data.trayecto );
 										
@@ -543,19 +570,16 @@ var ventanaTarifario = function( record ){
 								//Es necesario buscar de nuevo el record dentro del store
 								//para que se activen los eventos de edición del store																
 								var newRec = storeProductos.getAt( index ); 
-								newRec.set("idcotizacion", activeRecord.data.idcotizacion );
-								newRec.set("idproducto", activeRecord.data.idproducto );
-								newRec.set("trayecto", activeRecord.data.trayecto );
-								newRec.set("transporte", activeRecord.data.transporte );
-								newRec.set("modalidad", activeRecord.data.modalidad );								
-								//newRec.set("idopcion", "" );	
+								
 																	
 								newRec.set("item", r.data.nconcepto );
 								newRec.set("idconcepto", r.data.idconcepto )
 								
 								newRec.set("iditem", iditem );
-								newRec.set("tipo", r.data.tipo );
+								newRec.set("tipo", r.data.tipo );								
 								newRec.set("valor_tar", valor_tar );								
+								newRec.set("aplica_tar", r.data.aplicacion );
+								newRec.set("aplica_min", r.data.aplicacion_min );
 								newRec.set("valor_min", valor_min );
 								newRec.set("idmoneda", r.data.moneda );																								
 								index++;
@@ -581,7 +605,6 @@ var ventanaTarifario = function( record ){
 		}
 	});	
 }
-
 
 
 var productoHandler = function( ){
@@ -668,7 +691,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						   idmoneda: '',
 						   detalles: ''
 						});	
-										
+						newRec.id = rec.data.id+1; 				
 						/*records = [];
 						records.push( newRec );
 						storeProductos.insert( index+1 , records );*/
@@ -809,6 +832,7 @@ function guardarGridProductos(){
 					
 		var changes = r.getChanges();
 		
+		changes['id']=r.data.id;
 		changes['idproducto']=r.data.idproducto;	
 		changes['tipo']=r.data.tipo;	
 		changes['idopcion']=r.data.idopcion;				
@@ -831,11 +855,26 @@ function guardarGridProductos(){
 					success = false;
 				},
 				//Ejecuta esta accion cuando el resultado es exitoso
-				success:function(response,options){							
-					//alert( response.responseText );						
-					//r.commit();
-					r.beginEdit();
-					r.endEdit();
+				callback :function(options, success, response){	
+										
+					var res = Ext.util.JSON.decode( response.responseText );					
+					var rec = storeProductos.getById( res.id );
+										
+					rec.set("idopcion", res.idopcion );						
+					var index = storeProductos.indexOf( rec );									
+					
+					if( rec.data.tipo=="concepto" ){
+						rec.set("idopcion", res.idopcion );										
+						
+						/*var index = storeProductos.indexOf( r );
+						alert( r.data.id+" "+r.data.tipo+" idx "+index+" idopcion"+res.idopcion );*/
+						index++;
+						recRecargo = storeProductos.getAt( index );						
+						if( recRecargo.data.tipo=="recargo" ){							
+							recRecargo.set("idopcion", res.idopcion );	
+						}
+					}
+					//rec.commit();						
 				}
 			 }
 		); 
@@ -843,7 +882,7 @@ function guardarGridProductos(){
 	}
 	
 	if( success ){
-		storeProductos.commitChanges();
+		//storeProductos.commitChanges();
 		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
 	}else{
 		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');

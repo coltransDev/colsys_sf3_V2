@@ -144,7 +144,14 @@ foreach( $reportes as $reporte ){
 			break;
 	}
 	
-	$objPHPExcel->getActiveSheet()->setCellValue('A'.$i, utf8_encode($reporte->getProveedor()));
+	$proveedoresStr  ="";
+	$proveedores = $reporte->getProovedores();
+	foreach($proveedores as $proveedor ){
+		$proveedoresStr	.= (count($proveedores)>1?"* ":"").$proveedor->getCaNombre()."\n";
+	}
+	
+	
+	$objPHPExcel->getActiveSheet()->setCellValue('A'.$i, utf8_encode( $proveedoresStr ));
 	
 	$origen = $reporte->getOrigen();			
 	if( $origen ){							
