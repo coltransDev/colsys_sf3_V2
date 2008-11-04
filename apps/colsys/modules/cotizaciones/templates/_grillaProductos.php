@@ -874,7 +874,7 @@ function guardarGridProductos(){
 							recRecargo.set("idopcion", res.idopcion );	
 						}
 					}
-					//rec.commit();						
+					rec.commit();						
 				}
 			 }
 		); 
