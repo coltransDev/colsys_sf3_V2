@@ -492,8 +492,10 @@ class cotizacionesActions extends sfActions
 		$observaciones = $this->getRequestParameter("detalles");
 		
 		$tipo = $this->getRequestParameter("tipo");
+		$id = $this->getRequestParameter("id");
+		$parent = $this->getRequestParameter("parent");
 		
-		$this->responseArray = array("id"=>$this->getRequestParameter("id"));
+		$this->responseArray = array("id"=>$id);
 			
 		if( $tipo=="concepto" && $this->getRequestParameter("iditem")!=9999 ){
 			$iditem = $this->getRequestParameter("iditem");
@@ -503,7 +505,9 @@ class cotizacionesActions extends sfActions
 				$opcion->setCaIdCotizacion( $idcotizacion );
 				$opcion->setCaIdProducto( $idproducto );
 				$opcion->setCaFchcreado( time() );
-				$opcion->setCaUsucreado( $this->getUser()->getUserId() );	
+				$opcion->setCaUsucreado( $this->getUser()->getUserId() );
+				$opcion->setCaValorTar( 0 );
+				$opcion->setCaValorMin( 0 );	
 				
 			}else{		
 				$opcion = CotOpcionPeer::retrieveByPk( $idopcion, $idcotizacion, $idproducto );
@@ -539,6 +543,7 @@ class cotizacionesActions extends sfActions
 			}	
 			$opcion->save();			
 			$this->responseArray["idopcion"]=$opcion->getCaIdopcion();
+			$_SESSION['idopcion_'.$id] = $opcion->getCaIdopcion();
 			
 		}
 		if( $tipo=="recargo" ){
@@ -549,7 +554,21 @@ class cotizacionesActions extends sfActions
 			
 			if( $idconcepto==9999 ){
 				$idopcion = 999;	
+			}else{
+				if( !$idopcion ){
+					/*
+					* Se hace una peticion AJAX, se actualiza el campo idopcion del concepto, pero 
+					* como es asincronica idopcion en el recargo ya se ha enviado vacio, 
+					* luego se guarda en una variable de sesio n para saber a que concepto pertenece.
+					* Solo aplica cuando se esta creando un concepto nuevo.
+					*/					
+					if(!isset($_SESSION['idopcion_'.$parent])){ //es posible que llegue primero el recargo que el concepto.
+						sleep(5); 
+					}
+					$idopcion = $_SESSION['idopcion_'.$parent]; 					
+				}
 			}
+			$this->responseArray["idopcion"]=$idopcion;
 					
 			$recargo = CotRecargoPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion, $idconcepto, $iditem, $modalidad );										
 			if( !$recargo ){			
@@ -758,16 +777,16 @@ class cotizacionesActions extends sfActions
 			$baseRow = array(
 		 					 'trayecto'=>$trayecto,
 							 'idproducto'=>$producto->getCaIdProducto(),
-							 'producto'=>$producto->getCaProducto(),
+							 'producto'=>utf8_encode($producto->getCaProducto()),
 							 'idcotizacion'=>$producto->getCaIdCotizacion(),
 							 'tra_origen'=>$origen->getCaIdTrafico(),
-							 'tra_origen_value'=>$origen->getTrafico()->getCaNombre(),
+							 'tra_origen_value'=>utf8_encode($origen->getTrafico()->getCaNombre()),
 							 'ciu_origen'=>$origen->getCaIdCiudad(),
-							 'ciu_origen_value'=>$origen->getCaCiudad(),
+							 'ciu_origen_value'=>utf8_encode($origen->getCaCiudad()),
 							 'tra_destino'=>$destino->getCaIdTrafico(),
-							 'tra_destino_value'=>$destino->getTrafico()->getCaNombre(),
+							 'tra_destino_value'=>utf8_encode($destino->getTrafico()->getCaNombre()),
 							 'ciu_destino'=>$destino->getCaIdCiudad(),
-							 'ciu_destino_value'=>$destino->getCaCiudad(),
+							 'ciu_destino_value'=>utf8_encode($destino->getCaCiudad()),
 							 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
 							 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
 							 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
@@ -797,7 +816,8 @@ class cotizacionesActions extends sfActions
 				$row['detalles']=$opcion->getCaObservaciones();
 				$row['tipo']="concepto";
 				$row['id']+=$j++;
-						
+				
+				$parent = $row['id'];		
 				$this->productos[] = $row;
 				 //Se muestran los recargos 
 				$recargos = $opcion->getCotRecargos();
@@ -816,7 +836,8 @@ class cotizacionesActions extends sfActions
 					$row['idmoneda']=$recargo->getCaIdmoneda();
 					$row['detalles']=$recargo->getCaObservaciones();
 					$row['tipo']="recargo";		
-					$row['id']+=$j++;					
+					$row['id']+=$j++;	
+					$row['parent']=$parent;	
 					$this->productos[] = $row;				
 				}	
 				$j+=20;			 
@@ -838,7 +859,7 @@ class cotizacionesActions extends sfActions
 				$row['detalles']='';
 				$row['tipo']="concepto";
 				$row['id']+=$j++;							
-				
+				$parent = $row['id'];		
 				$this->productos[] = $row;									
 			}
 				
@@ -857,7 +878,8 @@ class cotizacionesActions extends sfActions
 				$row['idmoneda']=$recargo->getCaIdmoneda();
 				$row['detalles']=$recargo->getCaObservaciones();
 				$row['tipo']="recargo";			
-				$row['id']+=$j++;				
+				$row['id']+=$j++;	
+				$row['parent']=$parent;				
 				$this->productos[] = $row;					
 			}
 			$j+=20;

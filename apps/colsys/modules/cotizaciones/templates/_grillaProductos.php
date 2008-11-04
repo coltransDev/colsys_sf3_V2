@@ -79,7 +79,8 @@ var recordProductos = Ext.data.Record.create([
 	{name: 'impoexpo', type: 'string'},
 	{name: 'incoterms', type: 'string'},
 	{name: 'observaciones', type: 'string'},
-	{name: 'orden', type: 'int'}		
+	{name: 'parent', type: 'int'},
+			
 ]);
    		
 /*
@@ -206,14 +207,37 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Detalles",
 			width: 100,
 			sortable: false,
-			dataIndex: 'id',
+			dataIndex: 'detalles',
 			hideable: false ,
 			editor: new Ext.form.TextField({
 				allowBlank: false ,				
 				style: 'text-align:left'
 			})
 		}
+		/*		
+		,
+		{			
+			header: "Id",
+			width: 100,
+			dataIndex: 'id'
+		},
+		{			
+			header: "Parent",
+			width: 100,			
+			dataIndex: 'parent'
+			
+		}*/		
 	]
+	,
+	isCellEditable: function(colIndex, rowIndex) {	
+		var record = storeProductos.getAt(rowIndex);
+		var field = this.getDataIndex(colIndex);
+			
+		if( !record.data.iditem && field!="item" ){
+			return false;
+		}
+		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
+	}
 });
 
 
@@ -500,29 +524,35 @@ var ventanaTarifario = function( record ){
 					handler  : function( ){						
 						storePricing = newComponent.store;
 						index =  storeProductos.indexOf(activeRecord);
-												
+						var j = 0;	
+						var parent = null;					
 						storePricing.each( function(r){
 							if( r.data.sel==true ){
-								
-								var iditem = r.data.iditem;
-								
+							
+								var iditem = r.data.iditem;								
 								//Cuando se habla de LCL se colocan los minimos
-								if(activeRecord.data.modalidad == "LCL"){
-									var valor_tar = r.data.neta;
-									var valor_min = r.data.minima;
-								}else{
-									var valor_tar = r.data.minima; //Minima sugerida de venta
+								if( r.data.tipo=="concepto" && activeRecord.data.modalidad != "LCL" ){
+									var valor_tar = r.data.sugerida; //Minima sugerida de venta
 									var valor_min = ''; //No aplica
+								}else{	
+									var valor_tar = r.data.neta;
+									var valor_min = r.data.minima;									
 								}
 								
 								if(r.data.tipo=="concepto"){
-									var k = 20;
+									j+=20;
 								}else{
-									var k = 1;
+									j+=1;
+								}
+								
+								var newId = activeRecord.data.id+j;
+								
+								if(r.data.tipo=="concepto"){
+									parent = newId;
 								}
 								
 								var newRec = new recordProductos({
-								   id: activeRecord.data.id+k,  
+								   id: newId,  
 								   idcotizacion: activeRecord.data.idcotizacion,  
 								   idproducto: activeRecord.data.idproducto,  
 								   trayecto: activeRecord.data.trayecto,   
@@ -548,8 +578,7 @@ var ventanaTarifario = function( record ){
 								   frecuencia: activeRecord.data.frecuencia,
 								   ttransito: activeRecord.data.ttransito,
 								   imprimir: activeRecord.data.imprimir,
-								   observaciones: activeRecord.data.observaciones,				  
-								   
+								   observaciones: activeRecord.data.observaciones,		  
 								   item: '',
 								   iditem: '',	
 								   tipo: '',
@@ -558,9 +587,12 @@ var ventanaTarifario = function( record ){
 								   aplica_tar: '',
 								   aplica_min: '',
 								   idmoneda: '',
-								   detalles: ''
+								   detalles: '',
+								   parent: parent
 								});	
+								j++;
 								
+								newRec.id = newId;
 								newRec.set("trayecto", activeRecord.data.trayecto );
 										
 								records = [];
@@ -648,8 +680,10 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 					if( rec.data.iditem ){									
 						if( rec.data.tipo=="concepto"){
 							var idconcepto = rec.data.iditem;
+							var parent = rec.data.id;
 						}else{
 							var idconcepto = rec.data.idconcepto;
+							var parent = rec.data.parent;
 						}
 						
 						var newRec = new recordProductos({
@@ -689,7 +723,8 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						   aplica_tar: '',
 						   aplica_min: '',
 						   idmoneda: '',
-						   detalles: ''
+						   detalles: '',
+						   parent: parent
 						});	
 						newRec.id = rec.data.id+1; 				
 						/*records = [];
@@ -714,53 +749,65 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						}
 						
 						
-						
+						var id = this.ctxRecord.data.id;
 						var tipo = this.ctxRecord.data.tipo;
 						var idopcion = this.ctxRecord.data.idopcion;
 						var idproducto = this.ctxRecord.data.idproducto;
 						var modalidad = this.ctxRecord.data.modalidad;
-						
-						Ext.Ajax.request( 
-						{   
-							waitMsg: 'Guardando cambios...',						
-							url: '<?=url_for("cotizaciones/eliminarItemsOpciones?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
-							//method: 'POST', 
-							//Solamente se envian los cambios 						
-							params :	{
-								idconcepto: idconcepto,
-								idrecargo: idrecargo, 
-								tipo: tipo,
-								idopcion: idopcion,
-								idproducto: idproducto,
-								modalidad: modalidad
-							},
-													
-							//Ejecuta esta accion en caso de fallo
-							//(404 error etc, ***NOT*** success=false)
-							failure:function(response,options){							
-								alert( response.responseText );						
-								success = false;
-							},
-							//Ejecuta esta accion cuando el resultado es exitoso
-							success:function(response,options){							
-								 storeProductos.each( function( record ){						 							 		
-										if(tipo=="concepto"){
-											if( record.data.tipo=="concepto"&&record.data.iditem==idconcepto ){
-												 storeProductos.remove(record);
-											}																																		
-											if( record.data.tipo=="recargo"&&record.data.idconcepto==idconcepto ){
-												 storeProductos.remove(record);
-											}
-										}										
-										if(tipo=="recargo"){											
-											if( record.data.tipo=="recargo"&&record.data.iditem==idrecargo ){
-												 storeProductos.remove(record);
+						if( idopcion ){
+							Ext.Ajax.request( 
+							{   
+								waitMsg: 'Guardando cambios...',						
+								url: '<?=url_for("cotizaciones/eliminarItemsOpciones?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
+								//method: 'POST', 
+								//Solamente se envian los cambios 						
+								params :	{
+									idconcepto: idconcepto,
+									idrecargo: idrecargo, 
+									tipo: tipo,
+									idopcion: idopcion,
+									idproducto: idproducto,
+									modalidad: modalidad
+								},
+														
+								//Ejecuta esta accion en caso de fallo
+								//(404 error etc, ***NOT*** success=false)
+								failure:function(response,options){							
+									alert( response.responseText );						
+									success = false;
+								},
+								//Ejecuta esta accion cuando el resultado es exitoso
+								success:function(response,options){							
+									var flag = false;
+									storeProductos.each( function( record ){
+										if( record.data.tipo=="concepto" && flag ){
+											flag=false;
+										}
+										
+										if(tipo=="concepto"){																			
+											if( record.data.tipo=="concepto"&& record.data.id==id ){												
+												storeProductos.remove(record);
+												flag=true;																																																									
+											}												
+										}		
+										
+										/*
+										* Se deben eliminar los recargos del concepto que se elimino ya que al enviar la 
+										* petición son borrados de la base de datos. 
+										*/
+										if( flag==true && record.data.tipo=="recargo" ){											
+											storeProductos.remove(record);
+										}else{																		
+											if(tipo=="recargo"){											
+												if( record.data.tipo=="recargo"&&record.data.id==id ){
+													storeProductos.remove(record);
+												}
 											}
 										}	
-								 });
-							}
-						 }
-					); 
+									});
+								}
+							}); 
+						}
 					}						
 				}
 			},
@@ -825,14 +872,25 @@ function guardarGridProductos(){
 	
 	var success = true;	
 	var records = storeProductos.getModifiedRecords();
-	
 	var lenght = records.length;
+	
+	//Se hace la valida que se hayan colocado todos los datos
+	for( var i=0; i< lenght; i++){	
+		r = records[i];		
+		//alert( r.data.iditem );
+		if( !r.data.idmoneda && r.data.iditem!=9999 ){
+			Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
+			return 0;
+		}
+	}
+	
 	for( var i=0; i< lenght; i++){
 		r = records[i];
 					
 		var changes = r.getChanges();
-		
+		//alert( r.data.id );
 		changes['id']=r.data.id;
+		changes['parent']=r.data.parent;
 		changes['idproducto']=r.data.idproducto;	
 		changes['tipo']=r.data.tipo;	
 		changes['idopcion']=r.data.idopcion;				
@@ -851,42 +909,27 @@ function guardarGridProductos(){
 				//Ejecuta esta accion en caso de fallo
 				//(404 error etc, ***NOT*** success=false)
 				failure:function(response,options){							
-					alert( response.responseText );						
+					//alert( response.responseText );						
 					success = false;
 				},
 				//Ejecuta esta accion cuando el resultado es exitoso
 				callback :function(options, success, response){	
 										
 					var res = Ext.util.JSON.decode( response.responseText );					
-					var rec = storeProductos.getById( res.id );
-										
+					var rec = storeProductos.getById( res.id );										
 					rec.set("idopcion", res.idopcion );						
-					var index = storeProductos.indexOf( rec );									
-					
-					if( rec.data.tipo=="concepto" ){
-						rec.set("idopcion", res.idopcion );										
-						
-						/*var index = storeProductos.indexOf( r );
-						alert( r.data.id+" "+r.data.tipo+" idx "+index+" idopcion"+res.idopcion );*/
-						index++;
-						recRecargo = storeProductos.getAt( index );						
-						if( recRecargo.data.tipo=="recargo" ){							
-							recRecargo.set("idopcion", res.idopcion );	
-						}
-					}
+					var index = storeProductos.indexOf( rec );																								
 					rec.commit();						
 				}
 			 }
-		); 
-		//r.set("sel", false);//Quita la seleccion de todas las columnas 
+		); 		
 	}
 	
-	if( success ){
-		//storeProductos.commitChanges();
+	/*if( storeProductos.getModifiedRecords().lenght==0 ){
 		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
 	}else{
-		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
-	}	
+		Ext.MessageBox.alert('Warning','Algunos cambios no se han guardado: ');
+	}*/	
 }
 
 /*

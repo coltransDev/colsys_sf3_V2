@@ -160,8 +160,6 @@ var colModel = new Ext.grid.ColumnModel({
 				// create tooltip
 				var qtip = qtipTpl.apply(data);
 				
-				
-				
 				switch(  record.data.tipo ){
 					case 'trayecto_obs':
 						return '<div qtip="' + qtip +'"><b>'+value+'</b></div>';
@@ -509,6 +507,8 @@ function agregarFila(ctxRecord, index){
 						  moneda:'',
 						  neta:'',
 						  minima:'',
+						  aplicacion:'',
+						  aplicacion_min:'',
 						  tipo:'recargo'							
 						});
 							
