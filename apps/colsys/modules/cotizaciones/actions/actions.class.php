@@ -1079,13 +1079,26 @@ class cotizacionesActions extends sfActions
 		$modalidad = $this->getRequestParameter("modalidad");
 		if( $idopcion && $idcotizacion && $idproducto  ){				
 			if( $tipo=="concepto" ){
-				$opcion = CotOpcionPeer::retrieveByPk($idopcion, $idcotizacion, $idproducto );
-				if( $opcion ){
-					$recargos = $opcion->getCotRecargos();
+				if( $idopcion==999 ){
+					$c = new Criteria();
+					$c->add( CotRecargoPeer::CA_IDCOTIZACION, $idcotizacion );
+					$c->add( CotRecargoPeer::CA_IDPRODUCTO, $idproducto );
+					$c->add( CotRecargoPeer::CA_IDOPCION, $idopcion );
+					$c->add( CotRecargoPeer::CA_IDCONCEPTO, 9999 );
+					$c->add( CotRecargoPeer::CA_MODALIDAD, $modalidad );
+					$recargos = CotRecargoPeer::doSelect( $c );
 					foreach( $recargos as $recargo ){
-						$recargo->delete();				
+						$recargo->delete();
 					}
-					$opcion->delete();
+				}else{
+					$opcion = CotOpcionPeer::retrieveByPk($idopcion, $idcotizacion, $idproducto );
+					if( $opcion ){
+						$recargos = $opcion->getCotRecargos();
+						foreach( $recargos as $recargo ){
+							$recargo->delete();				
+						}
+						$opcion->delete();
+					}
 				}
 			}
 			

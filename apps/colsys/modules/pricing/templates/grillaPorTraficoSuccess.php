@@ -13,9 +13,9 @@ Ext.apply(Ext.QuickTips.getQuickTip(), {
 * Cre un template para renderizar el tooltip
 */
 var qtipTpl=new Ext.XTemplate(
-			 '<h3>Observaciones:</h3>'
+			 '<h3>Observaciones: </h3>'
 			,'<tpl for=".">'
-			,'<div>{observaciones}</div>'
+			,'<div >{observaciones}</div>'
 			,'</tpl>'
 		);
 

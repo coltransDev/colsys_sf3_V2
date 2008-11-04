@@ -50,7 +50,11 @@ Ext.extend(Ext.grid.myRowExpander, Ext.grid.RowExpander, {
 		var color;
 		if( record.data.style ){
 			color = "row_"+record.data.style;
-		}		
+		}	
+		
+		if( record.data.observaciones!='' && record.data.tipo!='concepto' ){
+			this.state[record.id]=true;
+		}
 		
         return this.state[record.id] ? 'x-grid3-row-expanded '+color : 'x-grid3-row-collapsed '+color;
     },

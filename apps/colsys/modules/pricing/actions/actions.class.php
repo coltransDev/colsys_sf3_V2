@@ -321,6 +321,14 @@ class pricingActions extends sfActions
 			$idconcepto = $this->getRequestParameter("idconcepto");
 			$idrecargo = $this->getRequestParameter("iditem");
 			
+			$flete  = PricFletePeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $idconcepto );			
+			if( !$flete ){
+				$flete = new PricFlete();
+				$flete->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
+				$flete->setCaIdconcepto( $idconcepto );
+				$flete->setCaVlrneto( 0 );
+				$flete->save();
+			}
 			
 			$pricRecargo = PricRecargoxConceptoPeer::retrieveByPk( $trayecto->getCaIdTrayecto() , $idconcepto , $idrecargo);
 			
@@ -347,16 +355,16 @@ class pricingActions extends sfActions
 			
 			if( $this->getRequestParameter("aplicacion")!==null){
 				$pricRecargo->setCaAplicacion($this->getRequestParameter("aplicacion"));
-			}else{
-				$pricRecargo->setCaAplicacion( null ); //en caso que el usuario quiera borrar
 			}
 			
 			if( $this->getRequestParameter("aplicacion_min")!==null){
 				$pricRecargo->setCaAplicacionMin($this->getRequestParameter("aplicacion_min"));
-			}else{
-				$pricRecargo->setCaAplicacionMin(null);
 			}
-					
+			
+			if( $this->getRequestParameter("observaciones")!==null){
+				$pricRecargo->setCaObservaciones($this->getRequestParameter("observaciones"));
+			}
+						
 			$pricRecargo->save();
 		}
 				
