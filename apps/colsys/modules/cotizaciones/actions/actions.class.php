@@ -788,9 +788,9 @@ class cotizacionesActions extends sfActions
 							 'ciu_destino'=>$destino->getCaIdCiudad(),
 							 'ciu_destino_value'=>utf8_encode($destino->getCaCiudad()),
 							 'tra_escala'=>$escala?$escala->getCaIdTrafico():"",
-							 'tra_escala_value'=>$escala?$escala->getTrafico()->getCaNombre():"",
+							 'tra_escala_value'=>$escala?utf8_encode($escala->getTrafico()->getCaNombre()):"",
 							 'ciu_escala'=>$escala?$escala->getCaIdCiudad():"",
-							 'ciu_escala_value'=>$escala?$escala->getCaCiudad():"",
+							 'ciu_escala_value'=>$escala?utf8_encode($escala->getCaCiudad()):"",
 							 'transporte'=>utf8_encode($producto->getCaTransporte()),
 							 'modalidad'=>utf8_encode($producto->getCaModalidad()),
 							 'impoexpo'=>utf8_encode($producto->getCaImpoexpo()),
@@ -807,13 +807,13 @@ class cotizacionesActions extends sfActions
 				$row = $baseRow;
 				$row['idopcion']=$opcion->getCaIdOpcion();
 				$row['iditem']=$opcion->getCaIdConcepto();
-				$row['item']=$concepto->getCaConcepto();
+				$row['item']=utf8_encode($concepto->getCaConcepto());
 				$row['valor_tar']=$opcion->getCaValorTar();
 				$row['aplica_tar']=$opcion->getCaAplicaTar();
 				$row['valor_min']=$opcion->getCaValorMin();
 				$row['aplica_min']=$opcion->getCaAplicaMin();
 				$row['idmoneda']=$opcion->getCaIdmoneda();
-				$row['detalles']=$opcion->getCaObservaciones();
+				$row['detalles']=utf8_encode($opcion->getCaObservaciones());
 				$row['tipo']="concepto";
 				$row['id']+=$j++;
 				
@@ -827,7 +827,7 @@ class cotizacionesActions extends sfActions
 					$row = $baseRow;
 					$row['idopcion']=$opcion->getCaIdOpcion();
 					$row['iditem']=$tipoRecargo->getCaIdRecargo();
-					$row['item']=$tipoRecargo->getCaRecargo();
+					$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
 					$row['idconcepto']=$recargo->getCaIdConcepto();
 					$row['valor_tar']=$recargo->getCaValorTar();
 					$row['aplica_tar']=$recargo->getCaAplicaTar();
@@ -869,7 +869,7 @@ class cotizacionesActions extends sfActions
 				$row = $baseRow;
 				$row['idopcion']=$recargo->getCaIdOpcion();
 				$row['iditem']=$tipoRecargo->getCaIdRecargo();
-				$row['item']=$tipoRecargo->getCaRecargo();
+				$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
 				$row['idconcepto']=$recargo->getCaIdConcepto();
 				$row['valor_tar']=$recargo->getCaValorTar();
 				$row['aplica_tar']=$recargo->getCaAplicaTar();
