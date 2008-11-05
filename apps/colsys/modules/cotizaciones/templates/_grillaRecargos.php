@@ -118,7 +118,7 @@ var colModel = new Ext.grid.ColumnModel({
 			renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_tar',
 			hideable: false,
-			editor: new Ext.form.TextField({
+			editor: new Ext.form.NumberField({
 						name: 'valor_tar',
 						allowBlank:false,
 						allowNegative: false
@@ -142,7 +142,7 @@ var colModel = new Ext.grid.ColumnModel({
 			renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_min',
 			hideable: false,
-			editor: new Ext.form.TextField({
+			editor: new Ext.form.NumberField({
 						name: 'valor_min',
 						allowBlank:false,
 						allowNegative: false

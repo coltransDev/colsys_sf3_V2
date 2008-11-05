@@ -740,14 +740,20 @@ class pricingActions extends sfActions
 		$this->idtrafico = $idtrafico;
 			
 		$c = new Criteria();
-		$c->addJoin( PricRecargosxCiudadPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );		
-		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );				 
-		$c->setDistinct();	
-		$recargosCiudad = PricRecargosxCiudadPeer::doSelect( $c );
-		$this->recargosArray=array();
-		foreach( $recargosCiudad as $rec ){
-			$this->recargosArray[]=$rec->getCaIdRecargo(); 	
-		}		
+		$c->add(CiudadPeer::CA_IDTRAFICO, $idtrafico );
+		$c->addAscendingOrderByColumn(CiudadPeer::CA_CIUDAD);
+		$this->ciudades = CiudadPeer::doSelect( $c );
+		
+		$tipo = "Recargo en Origen";		
+		
+		$c = new Criteria();
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte);	
+		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
+		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
+		$this->recargos = TipoRecargoPeer::doSelect( $c );
+		
+		$this->aplicaciones = ParametroPeer::retrieveByCaso("CU064", null, $transporte );
+					
 		$this->setLayout("ajax");
 	}
 	
@@ -759,15 +765,23 @@ class pricingActions extends sfActions
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
+		$this->forward404Unless( $idtrafico );
+		$this->forward404Unless( $transporte );
+		$this->forward404Unless( $modalidad );
+		
 		//$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
 		
 		$c = new Criteria();
-		$c->add( PricRecargosxCiudad::CA_IDTRAFICO, $idtrafico  );		
-		$recargos = PricRecargosxCiudad::doSelect( $c );
+		$c->add( PricRecargosxCiudadPeer::CA_IDTRAFICO, $idtrafico  );		
+		$recargos = PricRecargosxCiudadPeer::doSelect( $c );
+				
+		
 		
 		$this->data = array();
+		$i=0;
 		foreach( $recargos as $recargo ){
 			$row = array(
+				'id'=>$i++,
 				'idtrafico'=>$idtrafico,
 				'idciudad'=>$recargo->getCaIdciudad(),
 				'ciudad'=>$recargo->getCiudad()->getCaCiudad(),
@@ -776,10 +790,32 @@ class pricingActions extends sfActions
 				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
 				'vlrminimo'=>$recargo->getCaVlrminimo(),
 				'aplicacion'=>$recargo->getCaAplicacion(),
+				'aplicacion_min'=>$recargo->getCaAplicacionMin(),
+				'idmoneda'=>$recargo->getCaIdmoneda(),
 				'observaciones'=>$recargo->getCaObservaciones()								
 			);
 			$this->data[]= $row;
 		}
+		
+		/*
+		* Incluye una fila vacia que permite agregar datos
+		*/
+		$row = array(
+			'id'=>$i++,
+			'idtrafico'=>$idtrafico,
+			'idciudad'=>'',
+			'ciudad'=>'+',
+			'idrecargo'=>'',
+			'recargo'=>'',
+			'vlrrecargo'=>'',
+			'vlrminimo'=>'',
+			'aplicacion'=>'',
+			'aplicacion_min'=>'',
+			'idmoneda'=>'',
+			'observaciones'=>''								
+		);
+		$this->data[]= $row;
+		
 					
 		$this->transporte = $transporte;
 		$this->modalidad = $modalidad;
@@ -793,33 +829,72 @@ class pricingActions extends sfActions
 	*/
 	public function executeObserveRecargosGenerales(){
 		
-		$idciudad = $this->getRequestParameter("idciudad");
+		$idtrafico = $this->getRequestParameter("idtrafico");
+		$idciudad = $this->getRequestParameter("idciudad");		
+		$idrecargo = $this->getRequestParameter("idrecargo");
+		$modalidad = $this->getRequestParameter("modalidad");
+		
+		$this->forward404Unless( $idtrafico );
 		$this->forward404Unless( $idciudad );
-		//print_r( $_POST  );
-		foreach( $_POST as $key=>$value ){
-			if( substr( $key, 0,7 )=="recargo" && $value ){
-				$idrecargo = substr($key, 8,10);
-			
-				$recargo = PricRecargosxCiudadPeer::retrieveByPk( $idciudad, $idrecargo );
-				if( !$recargo ){
-					$recargo = new PricRecargosxCiudad();
-					$recargo->setCaIdCiudad( $idciudad );
-					$recargo->setCaIdRecargo( $idrecargo );
-				}	
-				
-				$index = strpos($value,"/");
-				
-				if( $index===false){
-					$recargo->setCaVlrrecargo( $value );
-				}else{
-					$vlr = substr( $value, 0, $index );
-					$minimo= substr( $value , $index+1, 10);					
-					$recargo->setCaVlrrecargo( $vlr );
-					$recargo->setCaVlrminimo( $minimo );
-				}						
-				$recargo->save();
-			}	
+		$this->forward404Unless( $modalidad );
+		
+		$recargo = PricRecargosxCiudadPeer::retrieveByPk($idtrafico, $idciudad, $idrecargo , $modalidad);
+		if( !$recargo ){
+			$recargo = new PricRecargosxCiudad();
+			$recargo->setCaIdTrafico( $idtrafico );
+			$recargo->setCaIdCiudad( $idciudad );
+			$recargo->setCaIdRecargo( $idrecargo );
+			$recargo->setCaModalidad( $modalidad );
+			$recargo->setCaVlrrecargo( 0 );
+			$recargo->setCaVlrminimo( 0 );
 		}
+					
+		if( $this->getRequestParameter("vlrrecargo") ){
+			$recargo->setCaVlrrecargo( $this->getRequestParameter("vlrrecargo") );
+		}
+		
+		if( $this->getRequestParameter("vlrminimo") ){
+			$recargo->setCaVlrminimo( $this->getRequestParameter("vlrminimo") );
+		}		
+		
+		if( $this->getRequestParameter("idmoneda") ){
+			$recargo->setCaIdMoneda($this->getRequestParameter("idmoneda"));
+		}	
+		
+		if( $this->getRequestParameter("aplicacion")!==null){
+			$recargo->setCaAplicacion($this->getRequestParameter("aplicacion"));
+		}
+		
+		if( $this->getRequestParameter("aplicacion_min")!==null){
+			$recargo->setCaAplicacionMin($this->getRequestParameter("aplicacion_min"));
+		}
+		
+		if( $this->getRequestParameter("observaciones")!==null){
+			$recargo->setCaObservaciones($this->getRequestParameter("observaciones"));
+		}
+								
+		$recargo->save();		
+		return sfView::NONE;	
+	}
+	
+	/*
+	* Elimina un recargo general
+	* @author: Andres Botero 
+	*/
+	public function executeEliminarRecargosGenerales(){
+		$idtrafico = $this->getRequestParameter("idtrafico");
+		$idciudad = $this->getRequestParameter("idciudad");		
+		$idrecargo = $this->getRequestParameter("idrecargo");
+		$modalidad = $this->getRequestParameter("modalidad");
+		
+		$this->forward404Unless( $idtrafico );
+		$this->forward404Unless( $idciudad );
+		$this->forward404Unless( $modalidad );
+		
+		$recargo = PricRecargosxCiudadPeer::retrieveByPk($idtrafico, $idciudad, $idrecargo , $modalidad);
+		if( $recargo ){
+			$recargo->delete();
+		}	
 		return sfView::NONE;	
 	}
 		
