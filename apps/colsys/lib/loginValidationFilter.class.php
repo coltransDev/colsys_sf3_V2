@@ -3,7 +3,7 @@ class loginValidationFilter extends sfFilter
 {
 	public function execute($filterChain)
 	{
-	
+		
 		$cookie = sfContext::getInstance()->getRequest()->getCookie($this->getParameter('cookie_name'));
 		if ($cookie)
 		{		
@@ -19,7 +19,7 @@ class loginValidationFilter extends sfFilter
 			exit();
 		}
 		
-		//$filterChain->execute();	
+		$filterChain->execute();	
 	}
 }
 ?>

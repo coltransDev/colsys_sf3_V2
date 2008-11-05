@@ -48,10 +48,11 @@ class usersActions extends sfActions
 							$grupos[]=$grupo;
 						}
 					}
+									
 										
 					$this->getUser()->setGrupos( $grupos );
 					
-					//$this->redirect("users/homepage");
+					$this->redirect("users/frame");
 				}else{					
 					$this->getRequest()->setError("clave_invalida", "El usuario o la clave es incorrecta");					
 				}
@@ -64,6 +65,17 @@ class usersActions extends sfActions
 		
 	}
 	
+	
+	/*
+	* Frameset de la aplicacion
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeFrame(){		
+		$this->setLayout("none");
+		
+	}
+	
 	/*
 	* Pagina inicial de la aplicacion
 	*
@@ -73,6 +85,17 @@ class usersActions extends sfActions
 		
 	}
 	
+	/*
+	* Titulo de la aplicacion
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeTitulo(){
+		$response = sfContext::getInstance()->getResponse();
+		$response->addStylesheet("top");
+		$this->setLayout("minimal");
+	}
+	
 	
 	/*
 	* Menú de la aplicacion
@@ -80,14 +103,27 @@ class usersActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeMenu(){
-		$this->user  = $this->getUser();
 		
-		$c = new Criteria();
-		$c->addJoin( AccesoGrupoPeer::CA_RUTINA, RutinaPeer::CA_RUTINA );
-		$c->add( AccesoGrupoPeer::CA_GRUPO, $this->user->getGrupos(), Criteria::IN );
+		$this->user  = $this->getUser();
+				
+		$c = new Criteria();		
+		$c->addJoin( RutinaPeer::CA_RUTINA, AccesoGrupoPeer::CA_RUTINA , Criteria::LEFT_JOIN );
+		$c->addJoin( RutinaPeer::CA_RUTINA, AccesoUsuarioPeer::CA_RUTINA,  Criteria::LEFT_JOIN );
+		
+		$criterion = $c->getNewCriterion( AccesoGrupoPeer::CA_GRUPO, $this->user->getGrupos(), Criteria::IN );								
+		$criterion->addOr($c->getNewCriterion( AccesoUsuarioPeer::CA_LOGIN, $this->user->getUserId() ));	
+		$c->add($criterion);	
+		
+		$c->setDistinct();
+		
+		
+		
+		
 		$c->addAscendingOrderByColumn( RutinaPeer::CA_GRUPO );
 		$c->addAscendingOrderByColumn( RutinaPeer::CA_OPCION );
 		$this->rutinas = RutinaPeer::doSelect( $c );
+		
+		$this->setLayout("minimal");
 		
 	}
 }

@@ -1,16 +1,39 @@
 <?
+/*
+* Permite crear recargos locales
+* @author: Carlos Lopez, Andres Botero
+*/
 use_helper("Ext2");
 ?>
 
-var data_recargos = <?=json_encode( array("recargos"=>$recargos, "total"=>count($recargos)) )?>;
+var comboRecargos = new Ext.form.ComboBox({			
+	typeAhead: true,
+	forceSelection: true,
+	triggerAction: 'all',
+	emptyText:'Seleccione',
+	selectOnFocus: true,					
+	lazyRender:true,
+	allowBlank: false,
+	listClass: 'x-combo-list-small',
+	valueField:'idrecargo',
+	displayField:'recargo',
+	mode: 'local',	
+	store :  new Ext.data.SimpleStore({
+				fields: ['idrecargo', 'recargo'],
+				data : []
+			})
+
+})
+
+
+
 /*
 * Crea el Record 
 */
 var recordGrilla = Ext.data.Record.create([
+	{name: 'id', type: 'int'},
     {name: 'idcotizacion', type: 'string'},
-    {name: 'idproducto', type: 'string'},
-    {name: 'idopcion', type: 'string'},
-    {name: 'idconcepto', type: 'string'},
+   
     {name: 'idrecargo', type: 'string'},
     {name: 'agrupamiento', type: 'string'},
     {name: 'transporte', type: 'string'},
@@ -22,24 +45,26 @@ var recordGrilla = Ext.data.Record.create([
     {name: 'aplica_min', type: 'string'},
     {name: 'idmoneda', type: 'string'},
     {name: 'modalidad', type: 'string'},
-    {name: 'observaciones', type: 'string'},
+    {name: 'observaciones', type: 'string'}
 ]);
-   		
+   	
+	
 /*
 * Crea el store
 */
 var storeRecargos = new Ext.data.GroupingStore({
+	url: '<?=url_for('cotizaciones/datosGrillaRecargos?idcotizacion='.$cotizacion->getCaIdcotizacion())?>',
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
 		{
-			id: 'recargo',
+			id: 'id',
 			root: 'recargos',
 			totalProperty: 'total'
 		}, 
 		recordGrilla
 	),
-	sortInfo:{field: 'recargo', direction: "ASC"},
-	proxy: new Ext.data.MemoryProxy(data_recargos),
+	sortInfo:{field: 'id', direction: "ASC"},
+	
 	groupField: 'agrupamiento'		
 });
 	
@@ -82,17 +107,9 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 80,
 			sortable: true,			
 			dataIndex: 'recargo',
-			hideable: false
-		},	
-		{
-			id: 'tipo',
-			header: "Tipo",
-			width: 10,
-			sortable: true,
-			dataIndex: 'tipo',
 			hideable: false,
-			editor: <?=extTipoRecargo()?>
-		},
+			editor: comboRecargos
+		},			
 		{
 			id: 'valor_tar',
 			header: "Valor Recargo",
@@ -113,7 +130,8 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 35,
 			sortable: true,
 			dataIndex: 'aplica_tar',
-			hideable: false
+			hideable: false,
+			editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
 			
 		},
 		{
@@ -136,7 +154,8 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 35,
 			sortable: true,
 			dataIndex: 'aplica_min',
-			hideable: false
+			hideable: false,
+			editor: <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>
 			
 		},
 		{
@@ -160,7 +179,21 @@ var colModel = new Ext.grid.ColumnModel({
 	                    allowBlank:true
 			})
 		}
-	]
+	],
+	isCellEditable: function(colIndex, rowIndex) {	
+		var record = storeRecargos.getAt(rowIndex);
+		var field = this.getDataIndex(colIndex);
+			
+		if( !record.data.idrecargo && field!="recargo" ){
+			return false;
+		}
+		
+		if( record.data.idrecargo && field=="recargo" ){
+			return false;
+		}
+		
+		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
+	}
 });
 
 
@@ -181,102 +214,207 @@ var selModel = new  Ext.grid.CellSelectionModel();
 * Handlers de los eventos y botones de la grilla 
 */
 
-var recargoHandler = function(){
-	//crea una ventana 
-	win = new Ext.Window({		
-		width       : 430,
-		height      : 380,
-		closeAction :'hide',
-		plain       : true,		
-		
-		items       : new Ext.FormPanel({
-			id: 'recargo-form',
-			layout: 'form',
-			frame: true,
-			title: 'Ingrese los datos del Recargo Local',
-			autoHeight: true,
-			bodyStyle: 'padding: 5px 5px 0 5px;',
-			labelWidth: 80,
-			
-			items: [{
-						id: 'cotizacionId',
-						xtype:'hidden',
-						name: 'cotizacionId',
-						value: '<?=$cotizacion->getCaIdcotizacion()?>',
-			            allowBlank:false
-					},
-					new Ext.form.Hidden({
-						id: 'impoexpo',						
-						name: 'impoexpo',
-						value: '%',
-			            allowBlank:false
-			        })
-					,<?=extTransporte()?>
-					,<?=extModalidad("modalidad", "Ext.getCmp('transporte')", "%")?>
-	                ,<?=extRecargos()?>
-	                ,<?=extTipoRecargo()?>
-	                ,<?=extMonedas()?>
-					,{
-						xtype:'textfield',
-						fieldLabel: 'Valor',
-						name: 'valor_tar',
-						value: '',						 
-						allowBlank:false,
-						width: 120
-	                }
-					,<?=extAplicaciones("aplica_tar")?>
-					,{
-						xtype:'textfield',
-						fieldLabel: 'Mínimo',
-						name: 'valor_min',
-						value: '',						 
-						allowBlank:false,
-						width: 120
-	                }
-					,<?=extAplicaciones("aplica_min")?>
-					,{
-						xtype: 'textfield',
-						width: 300,
-						fieldLabel: 'Detalles',
-						name: 'detalles',
-						value: '',
-	                    allowBlank:true
-					}
-					]
-			
-		}),
-
-		buttons: [{
-			text     : 'Guardar',
-			handler: function(){
-				var fp = Ext.getCmp("recargo-form");	
-												
-				if( fp.getForm().isValid() ){
-					fp.getForm().submit({url:'<?=url_for('cotizaciones/formRecargoGuardar')?>', 
-	            							 	waitMsg:'Salvando Recargos Locales...',
-	            							 	// standardSubmit: false,
-	            							 	
-	            							 	success:function(response,options){
-	            							 		win.close();
-	            							 	},
-		            							failure:function(response,options){
-													Ext.Msg.alert( "Error "+response.responseText );
-													win.close();
-												}//end failure block      
-											});
-					}else{
-						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información del Recargo no es válida o está incompleta!');
-					}	            	
+/*
+* Determina que store se debe utilizar dependiendo si es un concepto o recargo
+*/
+grid_recargosOnBeforeedit = function( e ){						
+	
+	if( e.field=="recargo" ){
+		var recargosMaritimo = [
+			<?
+			$i=0;
+			foreach( $recargosMaritimo as $recargo ){
+				if( $i++!=0){
+					echo ",";
 				}
-		},{
-			text     : 'Cancelar',
-			handler  : function(){
-				win.close();
+			?>
+				['<?=$recargo->getCaIdRecargo()?>','<?=$recargo->getCaRecargo()?>']
+			<?
 			}
-		}]
-	});
-	win.show( );	
+			?>
+		];
+		
+		var recargosAereo = [
+			<?
+			$i=0;
+			foreach( $recargosAereo as $recargo ){
+				if( $i++!=0){
+					echo ",";
+				}
+			?>
+				['<?=$recargo->getCaIdRecargo()?>','<?=$recargo->getCaRecargo()?>']
+			<?
+			}
+			?>
+		];
+		
+		var ed = this.colModel.getCellEditor(e.column, e.row);		
+		if( e.record.data.transporte=="Aéreo" ){
+			ed.field.store.loadData( recargosAereo );
+		}else{
+			ed.field.store.loadData( recargosMaritimo );
+		}
+	
+	}
+	
+	if( e.field=="aplica_tar" || e.field=="aplica_min" ){						
+		var dataAereo = [
+			<?
+			$i=0;
+			foreach( $aplicacionesAereo as $aplicacion ){
+				if( $i++!=0){
+					echo ",";
+				}
+			?>
+				['<?=$aplicacion->getCaValor()?>']
+			<?
+			}
+			?>
+		];
+		
+		var dataMaritimo = [
+			<?
+			$i=0;
+			foreach( $aplicacionesMaritimo as $aplicacion ){
+				if( $i++!=0){
+					echo ",";
+				}
+			?>
+				['<?=$aplicacion->getCaValor()?>']
+			<?
+			}
+			?>
+		];
+		
+		var ed = this.colModel.getCellEditor(e.column, e.row);		
+		if( e.record.data.transporte=="Aéreo" ){
+			ed.field.store.loadData( dataAereo );
+		}else{
+			ed.field.store.loadData( dataMaritimo );
+		}
+	}
+		
 }
+
+/*
+* Cambia el valor que se toma de los combobox y copia el valor em otra columna, 
+* tambien inserta otra columna en blanco para que el usuario continue digitando 
+*/
+var grid_recargosOnvalidateedit = function(e){	
+	
+	if( e.field == "recargo"){		
+		var rec = e.record;		   
+		var ed = this.colModel.getCellEditor(e.column, e.row);		
+		var store = ed.field.store;
+		
+	
+		
+	    store.each( function( r ){				
+				if( r.data.idrecargo==e.value ){									
+					if( !rec.data.idrecargo  ){							
+						var newRec = new recordGrilla({
+						   id: rec.data.id+1,  
+						   idcotizacion: rec.data.idcotizacion,
+						   agrupamiento: rec.data.agrupamiento,  
+						   transporte: rec.data.transporte, 
+						   modalidad: rec.data.modalidad,  
+						   idrecargo: '',   
+						   recargo: '+',
+						   iditem: '',							   
+						   valor_tar: '',
+						   valor_min: '',
+						   aplica_tar: '',
+						   aplica_min: '',
+						   idmoneda: '',
+						   observaciones: ''
+						});	
+						newRec.id = rec.data.id+1;								
+						//Inserta una columna en blanco al final
+												
+						storeRecargos.addSorted(newRec);
+						rec.set("idmoneda", "COP" );
+						
+					}
+					rec.set("idrecargo", r.data.idrecargo);
+					e.value = r.data.recargo;				
+					return true;
+				}
+			}
+		)		
+	}
+}
+
+
+
+/*
+* Menu contextual que se despliega sobre una fila con el boton derecho
+*/
+
+var grid_recargosOnRowcontextmenu =  function(grid, index, e){		
+	rec = this.store.getAt(index);	
+	this.menu = new Ext.menu.Menu({
+	id:'grid_recargos-ctx',
+	items: [		
+			{
+				text: 'Eliminar item',
+				iconCls: 'new-tab',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord && this.ctxRecord.data.idrecargo ){					
+											
+						
+						var id = this.ctxRecord.data.id;
+						
+						var idrecargo = this.ctxRecord.data.idrecargo;
+						var modalidad = this.ctxRecord.data.modalidad;
+						if( idrecargo ){
+							Ext.Ajax.request( 
+							{   
+								waitMsg: 'Guardando cambios...',						
+								url: '<?=url_for("cotizaciones/eliminarRecargo?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
+								//method: 'POST', 
+								//Solamente se envian los cambios 						
+								params :	{									
+									idrecargo: idrecargo,									
+									modalidad: modalidad
+								},
+														
+								//Ejecuta esta accion en caso de fallo
+								//(404 error etc, ***NOT*** success=false)
+								failure:function(response,options){							
+									alert( response.responseText );						
+									success = false;
+								},
+								//Ejecuta esta accion cuando el resultado es exitoso
+								success:function(response,options){							
+									
+									storeRecargos.each( function( record ){																					
+											if( record.data.id==id ){		
+																						
+												storeRecargos.remove(record);																																																																				
+											}										
+									});
+								}
+							}); 
+						}
+					}						
+				}
+			}	
+			]
+	});
+	this.menu.on('hide', this.onContextHide, this);
+   
+	e.stopEvent();
+	if(this.ctxRow){
+		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+		this.ctxRow = null;
+	}
+	this.ctxRecord = rec;
+	this.ctxRow = this.view.getRow(index);
+	Ext.fly(this.ctxRow).addClass('x-node-ctx');
+	this.menu.showAt(e.getXY());
+}
+
 
 
 /*
@@ -358,28 +496,23 @@ var grid_recargos = new Ext.grid.EditorGridPanel({
 		handler: updateRecargosModel
 	},
 	{
-		text: 'Agregar Recargo',
+		text: 'Recargar',
 		tooltip: 'Opción para Crear un recargo nuevo',
-		iconCls: 'add',  // reference to our css
-		handler: recargoHandler
+		iconCls: 'refresh',  // reference to our css
+		handler: function(){
+			storeRecargos.reload();
+		}
 	}
 	],
 
 	view: new Ext.grid.GroupingView({
 		forceFit:true,
-		enableRowBody:true, 
-		getRowClass: function(  record,  index,  rowParams,  storeRecargos ){			
-			switch( record.data.style ){
-				case "yellow":
-					return "row_yellow";
-					break;
-				case "pink":
-					return "row_pink";
-					break;
-				default:
-					return "";
-					break;
-			}
-		} 
-	})	
+		enableRowBody:true		
+	}),
+	
+	listeners:{ 		
+		rowcontextmenu:grid_recargosOnRowcontextmenu,
+		validateedit: grid_recargosOnvalidateedit,
+		beforeedit:grid_recargosOnBeforeedit
+	}	
 });

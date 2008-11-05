@@ -24,18 +24,18 @@
 
 <div id="contentMenuHide" >
 	<div id="menuUnhideBtn" onclick="mostrar()">
-		<img src="graficos/menu/button_unhide.jpg" alt="" />
+		<?=image_tag("menu/button_unhide.jpg")?>
 	</div>
 </div>
 
 <div id="contentMenu" >
 
 <div id="menuHideBtn" onclick="ocultar()">
-	<img src="graficos/menu/button_hide.jpg" alt="" />
+	<?=image_tag("menu/button_hide.jpg")?>
 </div>
 
 <div id="userInfo">
-	<img src="graficos/menu/user_male_r1_c1.gif" alt="" /><?=$user->getUserId()?>
+	<?=image_tag("menu/user_male_r1_c1.gif")?><?=$user->getUserId()?>
 </div>
 
 <?	
@@ -81,9 +81,8 @@
 	</div>
 </div>
 
-<div class="MGroup MEntry"><a href="#" onclick="javascript:parent.frames[2].location.href = 'salida.php';">Salida</a>
-	<div class="MGroupContent" id="MGroupContent2"></div>
-</div>
-</div>
-
+	<div class="MGroup MEntry"><a href="#" onclick="javascript:parent.frames[2].location.href = 'salida.php';">Salida</a>
+		<div class="MGroupContent" id="MGroupContent2"></div>
+	</div>
+	
 </div>

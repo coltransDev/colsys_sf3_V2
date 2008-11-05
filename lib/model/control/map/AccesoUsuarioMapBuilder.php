@@ -2,7 +2,7 @@
 
 
 /**
- * This class adds structure of 'control.tb_accesos_grp' table to 'propel' DatabaseMap object.
+ * This class adds structure of 'control.tb_accesos_user' table to 'propel' DatabaseMap object.
  *
  *
  *
@@ -13,12 +13,12 @@
  *
  * @package    lib.model.control.map
  */
-class AccesoGrupoMapBuilder {
+class AccesoUsuarioMapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = 'lib.model.control.map.AccesoGrupoMapBuilder';
+	const CLASS_NAME = 'lib.model.control.map.AccesoUsuarioMapBuilder';
 
 	/**
 	 * The database map.
@@ -56,17 +56,17 @@ class AccesoGrupoMapBuilder {
 	{
 		$this->dbMap = Propel::getDatabaseMap('propel');
 
-		$tMap = $this->dbMap->addTable('control.tb_accesos_grp');
-		$tMap->setPhpName('AccesoGrupo');
+		$tMap = $this->dbMap->addTable('control.tb_accesos_user');
+		$tMap->setPhpName('AccesoUsuario');
 
 		$tMap->setUseIdGenerator(false);
 
 		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'string', CreoleTypes::VARCHAR, true, null);
 
-		$tMap->addPrimaryKey('CA_GRUPO', 'CaGrupo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addForeignPrimaryKey('CA_LOGIN', 'CaLogin', 'string' , CreoleTypes::VARCHAR, 'control.tb_usuarios', 'CA_LOGIN', true, null);
 
 		$tMap->addColumn('CA_ACCESO', 'CaAcceso', 'int', CreoleTypes::INTEGER, false, null);
 
 	} // doBuild()
 
-} // AccesoGrupoMapBuilder
+} // AccesoUsuarioMapBuilder

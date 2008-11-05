@@ -1,22 +1,22 @@
 <?php
 
 /**
- * Base static class for performing query and update operations on the 'control.tb_accesos_grp' table.
+ * Base static class for performing query and update operations on the 'control.tb_accesos_user' table.
  *
  * 
  *
  * @package    lib.model.control.om
  */
-abstract class BaseAccesoGrupoPeer {
+abstract class BaseAccesoUsuarioPeer {
 
 	/** the default database name for this class */
 	const DATABASE_NAME = 'propel';
 
 	/** the table name for this class */
-	const TABLE_NAME = 'control.tb_accesos_grp';
+	const TABLE_NAME = 'control.tb_accesos_user';
 
 	/** A class that can be returned by this peer. */
-	const CLASS_DEFAULT = 'lib.model.control.AccesoGrupo';
+	const CLASS_DEFAULT = 'lib.model.control.AccesoUsuario';
 
 	/** The total number of columns. */
 	const NUM_COLUMNS = 3;
@@ -26,13 +26,13 @@ abstract class BaseAccesoGrupoPeer {
 
 
 	/** the column name for the CA_RUTINA field */
-	const CA_RUTINA = 'control.tb_accesos_grp.CA_RUTINA';
+	const CA_RUTINA = 'control.tb_accesos_user.CA_RUTINA';
 
-	/** the column name for the CA_GRUPO field */
-	const CA_GRUPO = 'control.tb_accesos_grp.CA_GRUPO';
+	/** the column name for the CA_LOGIN field */
+	const CA_LOGIN = 'control.tb_accesos_user.CA_LOGIN';
 
 	/** the column name for the CA_ACCESO field */
-	const CA_ACCESO = 'control.tb_accesos_grp.CA_ACCESO';
+	const CA_ACCESO = 'control.tb_accesos_user.CA_ACCESO';
 
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
@@ -45,9 +45,9 @@ abstract class BaseAccesoGrupoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaRutina', 'CaGrupo', 'CaAcceso', ),
-		BasePeer::TYPE_COLNAME => array (AccesoGrupoPeer::CA_RUTINA, AccesoGrupoPeer::CA_GRUPO, AccesoGrupoPeer::CA_ACCESO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_rutina', 'ca_grupo', 'ca_acceso', ),
+		BasePeer::TYPE_PHPNAME => array ('CaRutina', 'CaLogin', 'CaAcceso', ),
+		BasePeer::TYPE_COLNAME => array (AccesoUsuarioPeer::CA_RUTINA, AccesoUsuarioPeer::CA_LOGIN, AccesoUsuarioPeer::CA_ACCESO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_rutina', 'ca_login', 'ca_acceso', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, )
 	);
 
@@ -58,9 +58,9 @@ abstract class BaseAccesoGrupoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaRutina' => 0, 'CaGrupo' => 1, 'CaAcceso' => 2, ),
-		BasePeer::TYPE_COLNAME => array (AccesoGrupoPeer::CA_RUTINA => 0, AccesoGrupoPeer::CA_GRUPO => 1, AccesoGrupoPeer::CA_ACCESO => 2, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_rutina' => 0, 'ca_grupo' => 1, 'ca_acceso' => 2, ),
+		BasePeer::TYPE_PHPNAME => array ('CaRutina' => 0, 'CaLogin' => 1, 'CaAcceso' => 2, ),
+		BasePeer::TYPE_COLNAME => array (AccesoUsuarioPeer::CA_RUTINA => 0, AccesoUsuarioPeer::CA_LOGIN => 1, AccesoUsuarioPeer::CA_ACCESO => 2, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_rutina' => 0, 'ca_login' => 1, 'ca_acceso' => 2, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, )
 	);
 
@@ -71,7 +71,7 @@ abstract class BaseAccesoGrupoPeer {
 	 */
 	public static function getMapBuilder()
 	{
-		return BasePeer::getMapBuilder('lib.model.control.map.AccesoGrupoMapBuilder');
+		return BasePeer::getMapBuilder('lib.model.control.map.AccesoUsuarioMapBuilder');
 	}
 	/**
 	 * Gets a map (hash) of PHP names to DB column names.
@@ -84,7 +84,7 @@ abstract class BaseAccesoGrupoPeer {
 	public static function getPhpNameMap()
 	{
 		if (self::$phpNameMap === null) {
-			$map = AccesoGrupoPeer::getTableMap();
+			$map = AccesoUsuarioPeer::getTableMap();
 			$columns = $map->getColumns();
 			$nameMap = array();
 			foreach ($columns as $column) {
@@ -139,12 +139,12 @@ abstract class BaseAccesoGrupoPeer {
 	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
 	 * </code>
 	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. AccesoGrupoPeer::COLUMN_NAME).
+	 * @param      string $column The column name for current table. (i.e. AccesoUsuarioPeer::COLUMN_NAME).
 	 * @return     string
 	 */
 	public static function alias($alias, $column)
 	{
-		return str_replace(AccesoGrupoPeer::TABLE_NAME.'.', $alias.'.', $column);
+		return str_replace(AccesoUsuarioPeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
 	/**
@@ -161,16 +161,16 @@ abstract class BaseAccesoGrupoPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
-		$criteria->addSelectColumn(AccesoGrupoPeer::CA_RUTINA);
+		$criteria->addSelectColumn(AccesoUsuarioPeer::CA_RUTINA);
 
-		$criteria->addSelectColumn(AccesoGrupoPeer::CA_GRUPO);
+		$criteria->addSelectColumn(AccesoUsuarioPeer::CA_LOGIN);
 
-		$criteria->addSelectColumn(AccesoGrupoPeer::CA_ACCESO);
+		$criteria->addSelectColumn(AccesoUsuarioPeer::CA_ACCESO);
 
 	}
 
-	const COUNT = 'COUNT(control.tb_accesos_grp.CA_RUTINA)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT control.tb_accesos_grp.CA_RUTINA)';
+	const COUNT = 'COUNT(control.tb_accesos_user.CA_RUTINA)';
+	const COUNT_DISTINCT = 'COUNT(DISTINCT control.tb_accesos_user.CA_RUTINA)';
 
 	/**
 	 * Returns the number of rows matching criteria.
@@ -188,9 +188,9 @@ abstract class BaseAccesoGrupoPeer {
 		// clear out anything that might confuse the ORDER BY clause
 		$criteria->clearSelectColumns()->clearOrderByColumns();
 		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(AccesoGrupoPeer::COUNT_DISTINCT);
+			$criteria->addSelectColumn(AccesoUsuarioPeer::COUNT_DISTINCT);
 		} else {
-			$criteria->addSelectColumn(AccesoGrupoPeer::COUNT);
+			$criteria->addSelectColumn(AccesoUsuarioPeer::COUNT);
 		}
 
 		// just in case we're grouping: add those columns to the select statement
@@ -199,7 +199,7 @@ abstract class BaseAccesoGrupoPeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$rs = AccesoGrupoPeer::doSelectRS($criteria, $con);
+		$rs = AccesoUsuarioPeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
 			return $rs->getInt(1);
 		} else {
@@ -212,7 +212,7 @@ abstract class BaseAccesoGrupoPeer {
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      Connection $con
-	 * @return     AccesoGrupo
+	 * @return     AccesoUsuario
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -220,7 +220,7 @@ abstract class BaseAccesoGrupoPeer {
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
-		$objects = AccesoGrupoPeer::doSelect($critcopy, $con);
+		$objects = AccesoUsuarioPeer::doSelect($critcopy, $con);
 		if ($objects) {
 			return $objects[0];
 		}
@@ -237,7 +237,7 @@ abstract class BaseAccesoGrupoPeer {
 	 */
 	public static function doSelect(Criteria $criteria, $con = null)
 	{
-		return AccesoGrupoPeer::populateObjects(AccesoGrupoPeer::doSelectRS($criteria, $con));
+		return AccesoUsuarioPeer::populateObjects(AccesoUsuarioPeer::doSelectRS($criteria, $con));
 	}
 	/**
 	 * Prepares the Criteria object and uses the parent doSelect()
@@ -261,7 +261,7 @@ abstract class BaseAccesoGrupoPeer {
 
 		if (!$criteria->getSelectColumns()) {
 			$criteria = clone $criteria;
-			AccesoGrupoPeer::addSelectColumns($criteria);
+			AccesoUsuarioPeer::addSelectColumns($criteria);
 		}
 
 		// Set the correct dbName
@@ -283,7 +283,7 @@ abstract class BaseAccesoGrupoPeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = AccesoGrupoPeer::getOMClass();
+		$cls = AccesoUsuarioPeer::getOMClass();
 		$cls = Propel::import($cls);
 		// populate the object(s)
 		while($rs->next()) {
@@ -295,6 +295,209 @@ abstract class BaseAccesoGrupoPeer {
 		}
 		return $results;
 	}
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Usuario table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      Connection $con
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinUsuario(Criteria $criteria, $distinct = false, $con = null)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// clear out anything that might confuse the ORDER BY clause
+		$criteria->clearSelectColumns()->clearOrderByColumns();
+		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->addSelectColumn(AccesoUsuarioPeer::COUNT_DISTINCT);
+		} else {
+			$criteria->addSelectColumn(AccesoUsuarioPeer::COUNT);
+		}
+
+		// just in case we're grouping: add those columns to the select statement
+		foreach($criteria->getGroupByColumns() as $column)
+		{
+			$criteria->addSelectColumn($column);
+		}
+
+		$criteria->addJoin(AccesoUsuarioPeer::CA_LOGIN, UsuarioPeer::CA_LOGIN);
+
+		$rs = AccesoUsuarioPeer::doSelectRS($criteria, $con);
+		if ($rs->next()) {
+			return $rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
+	}
+
+
+	/**
+	 * Selects a collection of AccesoUsuario objects pre-filled with their Usuario objects.
+	 *
+	 * @return     array Array of AccesoUsuario objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinUsuario(Criteria $c, $con = null)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		AccesoUsuarioPeer::addSelectColumns($c);
+		$startcol = (AccesoUsuarioPeer::NUM_COLUMNS - AccesoUsuarioPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		UsuarioPeer::addSelectColumns($c);
+
+		$c->addJoin(AccesoUsuarioPeer::CA_LOGIN, UsuarioPeer::CA_LOGIN);
+		$rs = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while($rs->next()) {
+
+			$omClass = AccesoUsuarioPeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj1 = new $cls();
+			$obj1->hydrate($rs);
+
+			$omClass = UsuarioPeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj2 = new $cls();
+			$obj2->hydrate($rs, $startcol);
+
+			$newObject = true;
+			foreach($results as $temp_obj1) {
+				$temp_obj2 = $temp_obj1->getUsuario(); //CHECKME
+				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
+					$newObject = false;
+					// e.g. $author->addBookRelatedByBookId()
+					$temp_obj2->addAccesoUsuario($obj1); //CHECKME
+					break;
+				}
+			}
+			if ($newObject) {
+				$obj2->initAccesoUsuarios();
+				$obj2->addAccesoUsuario($obj1); //CHECKME
+			}
+			$results[] = $obj1;
+		}
+		return $results;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining all related tables
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      Connection $con
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAll(Criteria $criteria, $distinct = false, $con = null)
+	{
+		$criteria = clone $criteria;
+
+		// clear out anything that might confuse the ORDER BY clause
+		$criteria->clearSelectColumns()->clearOrderByColumns();
+		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->addSelectColumn(AccesoUsuarioPeer::COUNT_DISTINCT);
+		} else {
+			$criteria->addSelectColumn(AccesoUsuarioPeer::COUNT);
+		}
+
+		// just in case we're grouping: add those columns to the select statement
+		foreach($criteria->getGroupByColumns() as $column)
+		{
+			$criteria->addSelectColumn($column);
+		}
+
+		$criteria->addJoin(AccesoUsuarioPeer::CA_LOGIN, UsuarioPeer::CA_LOGIN);
+
+		$rs = AccesoUsuarioPeer::doSelectRS($criteria, $con);
+		if ($rs->next()) {
+			return $rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
+	}
+
+
+	/**
+	 * Selects a collection of AccesoUsuario objects pre-filled with all related objects.
+	 *
+	 * @return     array Array of AccesoUsuario objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAll(Criteria $c, $con = null)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		AccesoUsuarioPeer::addSelectColumns($c);
+		$startcol2 = (AccesoUsuarioPeer::NUM_COLUMNS - AccesoUsuarioPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
+		UsuarioPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + UsuarioPeer::NUM_COLUMNS;
+
+		$c->addJoin(AccesoUsuarioPeer::CA_LOGIN, UsuarioPeer::CA_LOGIN);
+
+		$rs = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while($rs->next()) {
+
+			$omClass = AccesoUsuarioPeer::getOMClass();
+
+
+			$cls = Propel::import($omClass);
+			$obj1 = new $cls();
+			$obj1->hydrate($rs);
+
+
+				// Add objects for joined Usuario rows
+	
+			$omClass = UsuarioPeer::getOMClass();
+
+
+			$cls = Propel::import($omClass);
+			$obj2 = new $cls();
+			$obj2->hydrate($rs, $startcol2);
+
+			$newObject = true;
+			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+				$temp_obj1 = $results[$j];
+				$temp_obj2 = $temp_obj1->getUsuario(); // CHECKME
+				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
+					$newObject = false;
+					$temp_obj2->addAccesoUsuario($obj1); // CHECKME
+					break;
+				}
+			}
+
+			if ($newObject) {
+				$obj2->initAccesoUsuarios();
+				$obj2->addAccesoUsuario($obj1);
+			}
+
+			$results[] = $obj1;
+		}
+		return $results;
+	}
+
 
   static public function getUniqueColumnNames()
   {
@@ -323,13 +526,13 @@ abstract class BaseAccesoGrupoPeer {
 	 */
 	public static function getOMClass()
 	{
-		return AccesoGrupoPeer::CLASS_DEFAULT;
+		return AccesoUsuarioPeer::CLASS_DEFAULT;
 	}
 
 	/**
-	 * Method perform an INSERT on the database, given a AccesoGrupo or Criteria object.
+	 * Method perform an INSERT on the database, given a AccesoUsuario or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or AccesoGrupo object containing data that is used to create the INSERT statement.
+	 * @param      mixed $values Criteria or AccesoUsuario object containing data that is used to create the INSERT statement.
 	 * @param      Connection $con the connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -344,7 +547,7 @@ abstract class BaseAccesoGrupoPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from AccesoGrupo object
+			$criteria = $values->buildCriteria(); // build Criteria from AccesoUsuario object
 		}
 
 
@@ -366,9 +569,9 @@ abstract class BaseAccesoGrupoPeer {
 	}
 
 	/**
-	 * Method perform an UPDATE on the database, given a AccesoGrupo or Criteria object.
+	 * Method perform an UPDATE on the database, given a AccesoUsuario or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or AccesoGrupo object containing data that is used to create the UPDATE statement.
+	 * @param      mixed $values Criteria or AccesoUsuario object containing data that is used to create the UPDATE statement.
 	 * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -385,13 +588,13 @@ abstract class BaseAccesoGrupoPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(AccesoGrupoPeer::CA_RUTINA);
-			$selectCriteria->add(AccesoGrupoPeer::CA_RUTINA, $criteria->remove(AccesoGrupoPeer::CA_RUTINA), $comparison);
+			$comparison = $criteria->getComparison(AccesoUsuarioPeer::CA_RUTINA);
+			$selectCriteria->add(AccesoUsuarioPeer::CA_RUTINA, $criteria->remove(AccesoUsuarioPeer::CA_RUTINA), $comparison);
 
-			$comparison = $criteria->getComparison(AccesoGrupoPeer::CA_GRUPO);
-			$selectCriteria->add(AccesoGrupoPeer::CA_GRUPO, $criteria->remove(AccesoGrupoPeer::CA_GRUPO), $comparison);
+			$comparison = $criteria->getComparison(AccesoUsuarioPeer::CA_LOGIN);
+			$selectCriteria->add(AccesoUsuarioPeer::CA_LOGIN, $criteria->remove(AccesoUsuarioPeer::CA_LOGIN), $comparison);
 
-		} else { // $values is AccesoGrupo object
+		} else { // $values is AccesoUsuario object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
 		}
@@ -403,7 +606,7 @@ abstract class BaseAccesoGrupoPeer {
 	}
 
 	/**
-	 * Method to DELETE all rows from the control.tb_accesos_grp table.
+	 * Method to DELETE all rows from the control.tb_accesos_user table.
 	 *
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
@@ -417,7 +620,7 @@ abstract class BaseAccesoGrupoPeer {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->begin();
-			$affectedRows += BasePeer::doDeleteAll(AccesoGrupoPeer::TABLE_NAME, $con);
+			$affectedRows += BasePeer::doDeleteAll(AccesoUsuarioPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -427,9 +630,9 @@ abstract class BaseAccesoGrupoPeer {
 	}
 
 	/**
-	 * Method perform a DELETE on the database, given a AccesoGrupo or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a AccesoUsuario or Criteria object OR a primary key value.
 	 *
-	 * @param      mixed $values Criteria or AccesoGrupo object or primary key or array of primary keys
+	 * @param      mixed $values Criteria or AccesoUsuario object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
 	 * @param      Connection $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -440,12 +643,12 @@ abstract class BaseAccesoGrupoPeer {
 	 public static function doDelete($values, $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(AccesoGrupoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(AccesoUsuarioPeer::DATABASE_NAME);
 		}
 
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
-		} elseif ($values instanceof AccesoGrupo) {
+		} elseif ($values instanceof AccesoUsuario) {
 
 			$criteria = $values->buildPkeyCriteria();
 		} else {
@@ -467,8 +670,8 @@ abstract class BaseAccesoGrupoPeer {
 				$vals[1][] = $value[1];
 			}
 
-			$criteria->add(AccesoGrupoPeer::CA_RUTINA, $vals[0], Criteria::IN);
-			$criteria->add(AccesoGrupoPeer::CA_GRUPO, $vals[1], Criteria::IN);
+			$criteria->add(AccesoUsuarioPeer::CA_RUTINA, $vals[0], Criteria::IN);
+			$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $vals[1], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -491,24 +694,24 @@ abstract class BaseAccesoGrupoPeer {
 	}
 
 	/**
-	 * Validates all modified columns of given AccesoGrupo object.
+	 * Validates all modified columns of given AccesoUsuario object.
 	 * If parameter $columns is either a single column name or an array of column names
 	 * than only those columns are validated.
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      AccesoGrupo $obj The object to validate.
+	 * @param      AccesoUsuario $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(AccesoGrupo $obj, $cols = null)
+	public static function doValidate(AccesoUsuario $obj, $cols = null)
 	{
 		$columns = array();
 
 		if ($cols) {
-			$dbMap = Propel::getDatabaseMap(AccesoGrupoPeer::DATABASE_NAME);
-			$tableMap = $dbMap->getTable(AccesoGrupoPeer::TABLE_NAME);
+			$dbMap = Propel::getDatabaseMap(AccesoUsuarioPeer::DATABASE_NAME);
+			$tableMap = $dbMap->getTable(AccesoUsuarioPeer::TABLE_NAME);
 
 			if (! is_array($cols)) {
 				$cols = array($cols);
@@ -524,11 +727,11 @@ abstract class BaseAccesoGrupoPeer {
 
 		}
 
-		$res =  BasePeer::doValidate(AccesoGrupoPeer::DATABASE_NAME, AccesoGrupoPeer::TABLE_NAME, $columns);
+		$res =  BasePeer::doValidate(AccesoUsuarioPeer::DATABASE_NAME, AccesoUsuarioPeer::TABLE_NAME, $columns);
     if ($res !== true) {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
-            $col = AccesoGrupoPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
+            $col = AccesoUsuarioPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
             $request->setError($col, $failed->getMessage());
         }
     }
@@ -539,35 +742,35 @@ abstract class BaseAccesoGrupoPeer {
 	/**
 	 * Retrieve object using using composite pkey values.
 	 * @param string $ca_rutina
-	   @param string $ca_grupo
+	   @param string $ca_login
 	   
 	 * @param      Connection $con
-	 * @return     AccesoGrupo
+	 * @return     AccesoUsuario
 	 */
-	public static function retrieveByPK( $ca_rutina, $ca_grupo, $con = null) {
+	public static function retrieveByPK( $ca_rutina, $ca_login, $con = null) {
 		if ($con === null) {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
 		$criteria = new Criteria();
-		$criteria->add(AccesoGrupoPeer::CA_RUTINA, $ca_rutina);
-		$criteria->add(AccesoGrupoPeer::CA_GRUPO, $ca_grupo);
-		$v = AccesoGrupoPeer::doSelect($criteria, $con);
+		$criteria->add(AccesoUsuarioPeer::CA_RUTINA, $ca_rutina);
+		$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $ca_login);
+		$v = AccesoUsuarioPeer::doSelect($criteria, $con);
 
 		return !empty($v) ? $v[0] : null;
 	}
-} // BaseAccesoGrupoPeer
+} // BaseAccesoUsuarioPeer
 
 // static code to register the map builder for this Peer with the main Propel class
 if (Propel::isInit()) {
 	// the MapBuilder classes register themselves with Propel during initialization
 	// so we need to load them here.
 	try {
-		BaseAccesoGrupoPeer::getMapBuilder();
+		BaseAccesoUsuarioPeer::getMapBuilder();
 	} catch (Exception $e) {
 		Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
 	}
 } else {
 	// even if Propel is not yet initialized, the map builder class can be registered
 	// now and then it will be loaded when Propel initializes.
-	Propel::registerMapBuilder('lib.model.control.map.AccesoGrupoMapBuilder');
+	Propel::registerMapBuilder('lib.model.control.map.AccesoUsuarioMapBuilder');
 }

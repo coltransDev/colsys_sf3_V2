@@ -51,13 +51,30 @@ class cotizacionesComponents extends sfComponents
 	}
 	
 	/*
-	* 
-	*/	
+	* Permite crear recargos locales
+	* @author: Carlos Lopez, Andres Botero
+	*/
 	public function executeGrillaRecargos(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		$tipo = $this->tipo;
+		
+		$this->aplicacionesAereo = ParametroPeer::retrieveByCaso("CU064", null, "Aéreo" );
+		$this->aplicacionesMaritimo = ParametroPeer::retrieveByCaso("CU064", null, "Marítimo" );
+		
 		$c = new Criteria();
-
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE, 'Marítimo');	
+		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
+		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
+		$this->recargosMaritimo = TipoRecargoPeer::doSelect( $c );
+		
+		$c = new Criteria();
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE, 'Aéreo');	
+		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
+		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
+		$this->recargosAereo = TipoRecargoPeer::doSelect( $c );
+		
+		
+		$c = new Criteria();
 		$c->addSelectColumn(CotRecargoPeer::CA_IDCOTIZACION );
 		$c->addSelectColumn(CotRecargoPeer::CA_IDPRODUCTO );
 		$c->addSelectColumn(CotRecargoPeer::CA_IDOPCION );

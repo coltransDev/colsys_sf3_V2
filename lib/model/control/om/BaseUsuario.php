@@ -92,6 +92,18 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	protected $lastNivelesAccesoCriteria = null;
 
 	/**
+	 * Collection to store aggregation of collAccesoUsuarios.
+	 * @var        array
+	 */
+	protected $collAccesoUsuarios;
+
+	/**
+	 * The criteria used to select the current contents of collAccesoUsuarios.
+	 * @var        Criteria
+	 */
+	protected $lastAccesoUsuarioCriteria = null;
+
+	/**
 	 * Collection to store aggregation of collCotizacions.
 	 * @var        array
 	 */
@@ -559,6 +571,14 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collAccesoUsuarios !== null) {
+				foreach($this->collAccesoUsuarios as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collCotizacions !== null) {
 				foreach($this->collCotizacions as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -659,6 +679,14 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 
 				if ($this->collNivelesAccesos !== null) {
 					foreach($this->collNivelesAccesos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collAccesoUsuarios !== null) {
+					foreach($this->collAccesoUsuarios as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -948,6 +976,10 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$copyObj->addNivelesAcceso($relObj->copy($deepCopy));
 			}
 
+			foreach($this->getAccesoUsuarios() as $relObj) {
+				$copyObj->addAccesoUsuario($relObj->copy($deepCopy));
+			}
+
 			foreach($this->getCotizacions() as $relObj) {
 				$copyObj->addCotizacion($relObj->copy($deepCopy));
 			}
@@ -1153,6 +1185,111 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	public function addNivelesAcceso(NivelesAcceso $l)
 	{
 		$this->collNivelesAccesos[] = $l;
+		$l->setUsuario($this);
+	}
+
+	/**
+	 * Temporary storage of collAccesoUsuarios to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initAccesoUsuarios()
+	{
+		if ($this->collAccesoUsuarios === null) {
+			$this->collAccesoUsuarios = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously
+	 * been saved, it will retrieve related AccesoUsuarios from storage.
+	 * If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getAccesoUsuarios($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collAccesoUsuarios === null) {
+			if ($this->isNew()) {
+			   $this->collAccesoUsuarios = array();
+			} else {
+
+				$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->getCaLogin());
+
+				AccesoUsuarioPeer::addSelectColumns($criteria);
+				$this->collAccesoUsuarios = AccesoUsuarioPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->getCaLogin());
+
+				AccesoUsuarioPeer::addSelectColumns($criteria);
+				if (!isset($this->lastAccesoUsuarioCriteria) || !$this->lastAccesoUsuarioCriteria->equals($criteria)) {
+					$this->collAccesoUsuarios = AccesoUsuarioPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastAccesoUsuarioCriteria = $criteria;
+		return $this->collAccesoUsuarios;
+	}
+
+	/**
+	 * Returns the number of related AccesoUsuarios.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countAccesoUsuarios($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->getCaLogin());
+
+		return AccesoUsuarioPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a AccesoUsuario object to this object
+	 * through the AccesoUsuario foreign key attribute
+	 *
+	 * @param      AccesoUsuario $l AccesoUsuario
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addAccesoUsuario(AccesoUsuario $l)
+	{
+		$this->collAccesoUsuarios[] = $l;
 		$l->setUsuario($this);
 	}
 

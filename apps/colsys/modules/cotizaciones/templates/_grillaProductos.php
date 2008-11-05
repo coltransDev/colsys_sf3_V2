@@ -1,4 +1,9 @@
 <?
+/*
+* Permite crear trayectos en la cotización e incluir diferentes 
+* opciones de fletes y recargos
+* @author: Andres Botero
+*/
 use_helper("Ext2");
 ?>
 /*
@@ -1002,7 +1007,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 	clicksToEdit: 1,
 	stripeRows: true,
 	autoExpandColumn: 'producto',
-	title: 'Productos/Tarifas',
+	title: 'Tarifas de trayectos',
 
 	root_title: 'impoexpo',	
 	// plugins: [checkColumn], //expander,

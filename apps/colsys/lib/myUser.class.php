@@ -4,8 +4,7 @@ class myUser extends sfBasicSecurityUser
 {
 	public function signIn( $login ){
 		$this->setAuthenticated( true );
-		$this->setAttribute('login', $login );					
-		
+		$this->setAttribute('user_id', $login );
 	}
 		
 	

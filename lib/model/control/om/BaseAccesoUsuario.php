@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Base class that represents a row from the 'control.tb_accesos_grp' table.
+ * Base class that represents a row from the 'control.tb_accesos_user' table.
  *
  * 
  *
  * @package    lib.model.control.om
  */
-abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
+abstract class BaseAccesoUsuario extends BaseObject  implements Persistent {
 
 
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
 	 * that calling code may not be able to identify.
-	 * @var        AccesoGrupoPeer
+	 * @var        AccesoUsuarioPeer
 	 */
 	protected static $peer;
 
@@ -27,10 +27,10 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 
 
 	/**
-	 * The value for the ca_grupo field.
+	 * The value for the ca_login field.
 	 * @var        string
 	 */
-	protected $ca_grupo;
+	protected $ca_login;
 
 
 	/**
@@ -38,6 +38,11 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 * @var        int
 	 */
 	protected $ca_acceso;
+
+	/**
+	 * @var        Usuario
+	 */
+	protected $aUsuario;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -65,14 +70,14 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [ca_grupo] column value.
+	 * Get the [ca_login] column value.
 	 * 
 	 * @return     string
 	 */
-	public function getCaGrupo()
+	public function getCaLogin()
 	{
 
-		return $this->ca_grupo;
+		return $this->ca_login;
 	}
 
 	/**
@@ -103,18 +108,18 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 
 		if ($this->ca_rutina !== $v) {
 			$this->ca_rutina = $v;
-			$this->modifiedColumns[] = AccesoGrupoPeer::CA_RUTINA;
+			$this->modifiedColumns[] = AccesoUsuarioPeer::CA_RUTINA;
 		}
 
 	} // setCaRutina()
 
 	/**
-	 * Set the value of [ca_grupo] column.
+	 * Set the value of [ca_login] column.
 	 * 
 	 * @param      string $v new value
 	 * @return     void
 	 */
-	public function setCaGrupo($v)
+	public function setCaLogin($v)
 	{
 
 		// Since the native PHP type for this column is string,
@@ -123,12 +128,16 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 			$v = (string) $v; 
 		}
 
-		if ($this->ca_grupo !== $v) {
-			$this->ca_grupo = $v;
-			$this->modifiedColumns[] = AccesoGrupoPeer::CA_GRUPO;
+		if ($this->ca_login !== $v) {
+			$this->ca_login = $v;
+			$this->modifiedColumns[] = AccesoUsuarioPeer::CA_LOGIN;
 		}
 
-	} // setCaGrupo()
+		if ($this->aUsuario !== null && $this->aUsuario->getCaLogin() !== $v) {
+			$this->aUsuario = null;
+		}
+
+	} // setCaLogin()
 
 	/**
 	 * Set the value of [ca_acceso] column.
@@ -147,7 +156,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 
 		if ($this->ca_acceso !== $v) {
 			$this->ca_acceso = $v;
-			$this->modifiedColumns[] = AccesoGrupoPeer::CA_ACCESO;
+			$this->modifiedColumns[] = AccesoUsuarioPeer::CA_ACCESO;
 		}
 
 	} // setCaAcceso()
@@ -171,7 +180,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 
 			$this->ca_rutina = $rs->getString($startcol + 0);
 
-			$this->ca_grupo = $rs->getString($startcol + 1);
+			$this->ca_login = $rs->getString($startcol + 1);
 
 			$this->ca_acceso = $rs->getInt($startcol + 2);
 
@@ -180,10 +189,10 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 3; // 3 = AccesoGrupoPeer::NUM_COLUMNS - AccesoGrupoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 3; // 3 = AccesoUsuarioPeer::NUM_COLUMNS - AccesoUsuarioPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
-			throw new PropelException("Error populating AccesoGrupo object", $e);
+			throw new PropelException("Error populating AccesoUsuario object", $e);
 		}
 	}
 
@@ -203,12 +212,12 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(AccesoGrupoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(AccesoUsuarioPeer::DATABASE_NAME);
 		}
 
 		try {
 			$con->begin();
-			AccesoGrupoPeer::doDelete($this, $con);
+			AccesoUsuarioPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
@@ -234,7 +243,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(AccesoGrupoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(AccesoUsuarioPeer::DATABASE_NAME);
 		}
 
 		try {
@@ -266,17 +275,30 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 			$this->alreadyInSave = true;
 
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aUsuario !== null) {
+				if ($this->aUsuario->isModified()) {
+					$affectedRows += $this->aUsuario->save($con);
+				}
+				$this->setUsuario($this->aUsuario);
+			}
+
+
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$pk = AccesoGrupoPeer::doInsert($this, $con);
+					$pk = AccesoUsuarioPeer::doInsert($this, $con);
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
 
 					$this->setNew(false);
 				} else {
-					$affectedRows += AccesoGrupoPeer::doUpdate($this, $con);
+					$affectedRows += AccesoUsuarioPeer::doUpdate($this, $con);
 				}
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
@@ -346,7 +368,19 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 			$failureMap = array();
 
 
-			if (($retval = AccesoGrupoPeer::doValidate($this, $columns)) !== true) {
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aUsuario !== null) {
+				if (!$this->aUsuario->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aUsuario->getValidationFailures());
+				}
+			}
+
+
+			if (($retval = AccesoUsuarioPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
@@ -369,7 +403,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = AccesoGrupoPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = AccesoUsuarioPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		return $this->getByPosition($pos);
 	}
 
@@ -387,7 +421,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 				return $this->getCaRutina();
 				break;
 			case 1:
-				return $this->getCaGrupo();
+				return $this->getCaLogin();
 				break;
 			case 2:
 				return $this->getCaAcceso();
@@ -410,10 +444,10 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 */
 	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
 	{
-		$keys = AccesoGrupoPeer::getFieldNames($keyType);
+		$keys = AccesoUsuarioPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getCaRutina(),
-			$keys[1] => $this->getCaGrupo(),
+			$keys[1] => $this->getCaLogin(),
 			$keys[2] => $this->getCaAcceso(),
 		);
 		return $result;
@@ -431,7 +465,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = AccesoGrupoPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = AccesoUsuarioPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		return $this->setByPosition($pos, $value);
 	}
 
@@ -450,7 +484,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 				$this->setCaRutina($value);
 				break;
 			case 1:
-				$this->setCaGrupo($value);
+				$this->setCaLogin($value);
 				break;
 			case 2:
 				$this->setCaAcceso($value);
@@ -476,10 +510,10 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 */
 	public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
 	{
-		$keys = AccesoGrupoPeer::getFieldNames($keyType);
+		$keys = AccesoUsuarioPeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setCaRutina($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaGrupo($arr[$keys[1]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaLogin($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaAcceso($arr[$keys[2]]);
 	}
 
@@ -490,11 +524,11 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 */
 	public function buildCriteria()
 	{
-		$criteria = new Criteria(AccesoGrupoPeer::DATABASE_NAME);
+		$criteria = new Criteria(AccesoUsuarioPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(AccesoGrupoPeer::CA_RUTINA)) $criteria->add(AccesoGrupoPeer::CA_RUTINA, $this->ca_rutina);
-		if ($this->isColumnModified(AccesoGrupoPeer::CA_GRUPO)) $criteria->add(AccesoGrupoPeer::CA_GRUPO, $this->ca_grupo);
-		if ($this->isColumnModified(AccesoGrupoPeer::CA_ACCESO)) $criteria->add(AccesoGrupoPeer::CA_ACCESO, $this->ca_acceso);
+		if ($this->isColumnModified(AccesoUsuarioPeer::CA_RUTINA)) $criteria->add(AccesoUsuarioPeer::CA_RUTINA, $this->ca_rutina);
+		if ($this->isColumnModified(AccesoUsuarioPeer::CA_LOGIN)) $criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->ca_login);
+		if ($this->isColumnModified(AccesoUsuarioPeer::CA_ACCESO)) $criteria->add(AccesoUsuarioPeer::CA_ACCESO, $this->ca_acceso);
 
 		return $criteria;
 	}
@@ -509,10 +543,10 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 */
 	public function buildPkeyCriteria()
 	{
-		$criteria = new Criteria(AccesoGrupoPeer::DATABASE_NAME);
+		$criteria = new Criteria(AccesoUsuarioPeer::DATABASE_NAME);
 
-		$criteria->add(AccesoGrupoPeer::CA_RUTINA, $this->ca_rutina);
-		$criteria->add(AccesoGrupoPeer::CA_GRUPO, $this->ca_grupo);
+		$criteria->add(AccesoUsuarioPeer::CA_RUTINA, $this->ca_rutina);
+		$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->ca_login);
 
 		return $criteria;
 	}
@@ -528,7 +562,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 
 		$pks[0] = $this->getCaRutina();
 
-		$pks[1] = $this->getCaGrupo();
+		$pks[1] = $this->getCaLogin();
 
 		return $pks;
 	}
@@ -544,7 +578,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 
 		$this->setCaRutina($keys[0]);
 
-		$this->setCaGrupo($keys[1]);
+		$this->setCaLogin($keys[1]);
 
 	}
 
@@ -554,7 +588,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 * If desired, this method can also make copies of all associated (fkey referrers)
 	 * objects.
 	 *
-	 * @param      object $copyObj An object of AccesoGrupo (or compatible) type.
+	 * @param      object $copyObj An object of AccesoUsuario (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
 	 * @throws     PropelException
 	 */
@@ -568,7 +602,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 
 		$copyObj->setCaRutina(NULL); // this is a pkey column, so set to default value
 
-		$copyObj->setCaGrupo(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaLogin(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -581,7 +615,7 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 * objects.
 	 *
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @return     AccesoGrupo Clone of current object.
+	 * @return     AccesoUsuario Clone of current object.
 	 * @throws     PropelException
 	 */
 	public function copy($deepCopy = false)
@@ -600,14 +634,62 @@ abstract class BaseAccesoGrupo extends BaseObject  implements Persistent {
 	 * same instance for all member of this class. The method could therefore
 	 * be static, but this would prevent one from overriding the behavior.
 	 *
-	 * @return     AccesoGrupoPeer
+	 * @return     AccesoUsuarioPeer
 	 */
 	public function getPeer()
 	{
 		if (self::$peer === null) {
-			self::$peer = new AccesoGrupoPeer();
+			self::$peer = new AccesoUsuarioPeer();
 		}
 		return self::$peer;
 	}
 
-} // BaseAccesoGrupo
+	/**
+	 * Declares an association between this object and a Usuario object.
+	 *
+	 * @param      Usuario $v
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function setUsuario($v)
+	{
+
+
+		if ($v === null) {
+			$this->setCaLogin(NULL);
+		} else {
+			$this->setCaLogin($v->getCaLogin());
+		}
+
+
+		$this->aUsuario = $v;
+	}
+
+
+	/**
+	 * Get the associated Usuario object
+	 *
+	 * @param      Connection Optional Connection object.
+	 * @return     Usuario The associated Usuario object.
+	 * @throws     PropelException
+	 */
+	public function getUsuario($con = null)
+	{
+		if ($this->aUsuario === null && (($this->ca_login !== "" && $this->ca_login !== null))) {
+			// include the related Peer class
+			$this->aUsuario = UsuarioPeer::retrieveByPK($this->ca_login, $con);
+
+			/* The following can be used instead of the line above to
+			   guarantee the related object contains a reference
+			   to this object, but this level of coupling
+			   may be undesirable in many circumstances.
+			   As it can lead to a db query with many results that may
+			   never be used.
+			   $obj = UsuarioPeer::retrieveByPK($this->ca_login, $con);
+			   $obj->addUsuarios($this);
+			 */
+		}
+		return $this->aUsuario;
+	}
+
+} // BaseAccesoUsuario

@@ -11,11 +11,6 @@
 
 </head>
 <body>
-<div style="height:32px">
-	<div id="indicator" style="display:none; height:32px"><?=image_tag("ajax-loader.gif")?></div>
-</div>
-<div align="center">
 	<?php echo $sf_content ?>
-</div>
 </body>
 </html>

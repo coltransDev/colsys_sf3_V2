@@ -40,11 +40,20 @@
 	</table>
 	
 	<table name="control.tb_accesos_grp" phpName="AccesoGrupo">
-		<column name="ca_idlog" type="integer" required="true" primaryKey="true"/>
-		<column name="ca_rutina" type="VARCHAR" />
-		<column name="ca_grupo" type="VARCHAR" />
+		
+		<column name="ca_rutina" type="VARCHAR"  primaryKey="true"/>
+		<column name="ca_grupo" type="VARCHAR"  primaryKey="true"/>
 		<column name="ca_acceso" type="integer" />
 		
+	</table>
+	
+	<table name="control.tb_accesos_user" phpName="AccesoUsuario">		
+		<column name="ca_rutina" type="VARCHAR"  primaryKey="true" />
+		<column name="ca_login" type="VARCHAR"  primaryKey="true"/>
+		<column name="ca_acceso" type="integer" />	
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>			
 	</table>
 	
 	<table name="control.tb_rutinas" phpName="Rutina">
