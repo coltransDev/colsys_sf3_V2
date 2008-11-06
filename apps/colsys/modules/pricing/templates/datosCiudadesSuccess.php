@@ -121,12 +121,18 @@ foreach($grupos as $grupo){
 		}
 	}
 	?>
+	
 	]
 }
 <?
 	$i++;
 }
 ?>
+	,{
+		text:'Recargos locales',
+		id:'recgen_<?=$transporte?>_<?=$modalidad?>',		
+		leaf:true
+	}
 ]
 <?
 exit;

@@ -52,6 +52,31 @@
 		</foreign-key>							
 	</table>
 	
+	<table name="tb_recargosxtraf" phpName="RecargoFleteTraf">		
+		<column name="ca_idtrafico" type="varchar" required="true"  primaryKey="true"/>			
+		<column name="ca_idciudad" type="varchar" required="true" primaryKey="true"/>	
+		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>	
+		<column name="ca_aplicacion" type="varchar" />	
+		<column name="ca_vlrfijo" type="numeric" />	
+		<column name="ca_porcentaje" type="numeric" />	
+		<column name="ca_baseporcentaje" type="varchar" />		
+		<column name="ca_vlrunitario" type="numeric" />	
+		<column name="ca_baseunitario" type="varchar" />
+		<column name="ca_recargominimo" type="numeric" />
+		<column name="ca_idmoneda" type="varchar" />	
+		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_fchinicio" type="date"   />
+		<column name="ca_fchvencimiento" type="date"   />
+		<column name="ca_modalidad" type="varchar" />
+		<column name="ca_impoexpo" type="varchar" />
+  		
+		<foreign-key foreignTable="tb_tiporecargo">
+			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
+		</foreign-key>							
+	</table>
+	
+ 
+ 
 </database>
 
  

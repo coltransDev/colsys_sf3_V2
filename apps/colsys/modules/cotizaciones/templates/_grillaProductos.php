@@ -613,7 +613,13 @@ var ventanaTarifario = function( record ){
 								newRec.set("idconcepto", r.data.idconcepto )
 								
 								newRec.set("iditem", iditem );
-								newRec.set("tipo", r.data.tipo );								
+								
+								if(r.data.tipo=="recargoxciudad"){
+									var tipo="recargo";
+								}else{
+									var tipo = r.data.tipo;
+								}								
+								newRec.set("tipo", tipo );								
 								newRec.set("valor_tar", valor_tar );								
 								newRec.set("aplica_tar", r.data.aplicacion );
 								newRec.set("aplica_min", r.data.aplicacion_min );
@@ -658,7 +664,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 	id:'grid_productos-ctx',
 	items: [{
 				text: 'Editar trayecto',
-				iconCls: 'new-tab',
+				iconCls: 'page_white_edit',
 				scope:this,
 				handler: function(){    					                   
 					if( this.ctxRecord ){					
@@ -668,7 +674,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 			},
 			{
 				text: 'Importar del tarifario',
-				iconCls: 'new-tab',
+				iconCls: 'import',
 				scope:this,
 				handler: function(){    					                   		
 					if( this.ctxRecord ){					
@@ -678,7 +684,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 			},		
 			{
 				text: 'Nuevo recargo',
-				iconCls: 'new-tab',
+				iconCls: 'textfield_add',
 				scope:this,
 				handler: function(){    					                   
 					rec = this.ctxRecord;					
@@ -741,7 +747,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 			},			
 			{
 				text: 'Eliminar item',
-				iconCls: 'new-tab',
+				iconCls: 'delete',
 				scope:this,
 				handler: function(){    					                   		
 					if( this.ctxRecord && this.ctxRecord.data.iditem ){					
@@ -818,7 +824,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 			},
 			{
 				text: 'Eliminar trayecto',
-				iconCls: 'new-tab',
+				iconCls: 'delete',
 				scope:this,
 				handler: function(){    					                   		
 					if( this.ctxRecord ){					

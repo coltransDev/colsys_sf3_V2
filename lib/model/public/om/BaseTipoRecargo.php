@@ -135,6 +135,18 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	protected $lastRecargoFleteCriteria = null;
 
 	/**
+	 * Collection to store aggregation of collRecargoFleteTrafs.
+	 * @var        array
+	 */
+	protected $collRecargoFleteTrafs;
+
+	/**
+	 * The criteria used to select the current contents of collRecargoFleteTrafs.
+	 * @var        Criteria
+	 */
+	protected $lastRecargoFleteTrafCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -591,6 +603,14 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collRecargoFleteTrafs !== null) {
+				foreach($this->collRecargoFleteTrafs as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 		}
 		return $affectedRows;
@@ -695,6 +715,14 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 
 				if ($this->collRecargoFletes !== null) {
 					foreach($this->collRecargoFletes as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collRecargoFleteTrafs !== null) {
+					foreach($this->collRecargoFleteTrafs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -982,6 +1010,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 
 			foreach($this->getRecargoFletes() as $relObj) {
 				$copyObj->addRecargoFlete($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getRecargoFleteTrafs() as $relObj) {
+				$copyObj->addRecargoFleteTraf($relObj->copy($deepCopy));
 			}
 
 		} // if ($deepCopy)
@@ -1842,6 +1874,111 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 		$this->lastRecargoFleteCriteria = $criteria;
 
 		return $this->collRecargoFletes;
+	}
+
+	/**
+	 * Temporary storage of collRecargoFleteTrafs to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initRecargoFleteTrafs()
+	{
+		if ($this->collRecargoFleteTrafs === null) {
+			$this->collRecargoFleteTrafs = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously
+	 * been saved, it will retrieve related RecargoFleteTrafs from storage.
+	 * If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getRecargoFleteTrafs($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRecargoFleteTrafs === null) {
+			if ($this->isNew()) {
+			   $this->collRecargoFleteTrafs = array();
+			} else {
+
+				$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				RecargoFleteTrafPeer::addSelectColumns($criteria);
+				$this->collRecargoFleteTrafs = RecargoFleteTrafPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+				RecargoFleteTrafPeer::addSelectColumns($criteria);
+				if (!isset($this->lastRecargoFleteTrafCriteria) || !$this->lastRecargoFleteTrafCriteria->equals($criteria)) {
+					$this->collRecargoFleteTrafs = RecargoFleteTrafPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastRecargoFleteTrafCriteria = $criteria;
+		return $this->collRecargoFleteTrafs;
+	}
+
+	/**
+	 * Returns the number of related RecargoFleteTrafs.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countRecargoFleteTrafs($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+
+		return RecargoFleteTrafPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a RecargoFleteTraf object to this object
+	 * through the RecargoFleteTraf foreign key attribute
+	 *
+	 * @param      RecargoFleteTraf $l RecargoFleteTraf
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addRecargoFleteTraf(RecargoFleteTraf $l)
+	{
+		$this->collRecargoFleteTrafs[] = $l;
+		$l->setTipoRecargo($this);
 	}
 
 } // BaseTipoRecargo

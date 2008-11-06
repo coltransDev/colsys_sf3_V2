@@ -783,7 +783,7 @@ class cotizacionesActions extends sfActions
 	
 		
 	/*
-	* Guarda los cambios realizados a Recargos  
+	* Guarda los cambios realizados a Recargos locales  
 	* @author Carlos G. López M., Andres Botero
 	*/
 	public function executeFormRecargoGuardar(){
@@ -794,12 +794,12 @@ class cotizacionesActions extends sfActions
 		$idopcion = '999';
 		$idconcepto = '9999';
 		
-		$recargo = CotRecargoPeer::retrieveByPk( $this->getRequestParameter("cotizacionId"), $idproducto, $idopcion, $idconcepto, $this->getRequestParameter("idrecargo"), $this->getRequestParameter("modalidad") );
+		$recargo = CotRecargoPeer::retrieveByPk( $this->getRequestParameter("idcotizacion"), $idproducto, $idopcion, $idconcepto, $this->getRequestParameter("idrecargo"), $this->getRequestParameter("modalidad") );
 		
 		if( !$recargo ){
 			$update = false;
 			$recargo = new CotRecargo();
-			$recargo->setCaIdCotizacion( $this->getRequestParameter("cotizacionId") );
+			$recargo->setCaIdCotizacion( $this->getRequestParameter("idcotizacion") );
 			$recargo->setCaIdProducto( $idproducto );
 			$recargo->setCaIdOpcion( $idopcion );
 			$recargo->setCaIdConcepto( $idconcepto );

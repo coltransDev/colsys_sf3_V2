@@ -261,24 +261,30 @@ use_helper( "Ext2" );
 			if( n.leaf ){  // ignore clicks on folders 
 				
 				var nodeoptions = n.id.split("_");
-				switch( nodeoptions[0] ){		
-					case "cabota":
-						/*
-						* Se muestran los recargos generales para el pais seleccionado
-						*/
-						var url = '<?=url_for("pricing/cabotajes")?>';						
-						break;			
+				switch( nodeoptions[0] ){										
 					case "recgen":
 						/*
 						* Se muestran los recargos generales para el pais seleccionado
 						*/
-						var url = '<?=url_for("pricing/recargosGenerales")?>';						
+						<?
+						$url = "pricing/recargosGenerales";
+						if( $opcion=="consulta" ){
+							$url.= "?opcion=consulta";
+						}
+						?>
+						var url = '<?=url_for( $url )?>';						
 						break;
 					case "admtraf":
 						/*
 						* Se muestran la administracion de trayectos para el pais seleccionado
 						*/
-						var url = '<?=url_for("pricing/adminTrayectos")?>';						
+						<?
+						$url = "pricing/adminTrayectos";
+						if( $opcion=="consulta" ){
+							$url.= "?opcion=consulta";
+						}						
+						?>
+						var url = '<?=url_for( $url )?>';						
 						break;									
 					default: 
 						/*
@@ -286,17 +292,12 @@ use_helper( "Ext2" );
 						*  del trafico seleccionado
 						*/	
 						<?
+						$url = "pricing/grillaPorTrafico";
 						if( $opcion=="consulta" ){
+							$url.= "?opcion=consulta";
+						}						
 						?>						
-							var url = '<?=url_for("pricing/grillaPorTrafico?opcion=consulta")?>';
-						<?
-						}else{
-						?>						
-							var url = '<?=url_for("pricing/grillaPorTrafico")?>';
-						<?
-						}
-						?>
-						
+						var url = '<?=url_for( $url )?>';
 						break;						
 				}
 				

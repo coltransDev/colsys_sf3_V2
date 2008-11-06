@@ -169,7 +169,11 @@ var colModel = new Ext.grid.ColumnModel({
 						break;		
 					case 'recargo':	
 						return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
-						break;	
+						break;
+					case 'recargoxciudad':	
+						return '<div qtip="' + qtip +'" class="recargo">'+value+'</div>';
+						break;
+							
 				}				
 				
 			} ,
@@ -275,6 +279,10 @@ var colModel = new Ext.grid.ColumnModel({
 	isCellEditable: function(colIndex, rowIndex) {	
 		var record = store.getAt(rowIndex);
 		var field = this.getDataIndex(colIndex);
+		
+		if( record.data.tipo=="recargoxciudad" ){
+			return false;
+		}
 		
 		
 		if( record.data.tipo=="concepto" && !(field=='neta' || field=='sugerida'||field=='inicio' || field=='vencimiento' || field=='moneda'|| field=='aplicacion')  ){

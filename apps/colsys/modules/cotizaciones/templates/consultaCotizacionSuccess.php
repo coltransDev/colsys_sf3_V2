@@ -295,9 +295,9 @@ Ext.onReady(function(){
 				activeTab: 0,
 				height:250,
 				defaults:{bodyStyle:'padding:10px'},
-				items:[
-					   grid_productos,
+				items:[					  
 					   grid_recargos,
+					   grid_productos,
 					   grid_contviajes,
 					   grid_seguros
 				]

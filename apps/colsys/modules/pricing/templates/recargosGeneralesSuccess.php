@@ -8,89 +8,97 @@ $c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
 $recargos = TipoRecargoPeer::doSelect( $c );		
 ?>
 
-
-var comboCiudades = new Ext.form.ComboBox({			
-	typeAhead: true,
-	forceSelection: true,
-	triggerAction: 'all',
-	emptyText:'Seleccione',
-	selectOnFocus: true,					
-	lazyRender:true,
-	allowBlank: false,
-	listClass: 'x-combo-list-small',
-	valueField:'idciudad',
-	displayField:'ciudad',
-	mode: 'local',	
-	store :  new Ext.data.SimpleStore({
-				fields: ['idciudad', 'ciudad'],
-				data : [
-					['999-9999','Todas las ciudades']
-					<?					
-					foreach( $ciudades as $ciudad ){
-						
-					?>
-						,['<?=$ciudad->getCaIdCiudad()?>','<?=$ciudad->getCaCiudad()?>']
-					<?
-					}
-					?>
-				]
-			})
-
-});
-
-
-var comboRecargos = new Ext.form.ComboBox({			
-	typeAhead: true,
-	forceSelection: true,
-	triggerAction: 'all',
-	emptyText:'Seleccione',
-	selectOnFocus: true,					
-	lazyRender:true,
-	allowBlank: false,
-	listClass: 'x-combo-list-small',
-	valueField:'idrecargo',
-	displayField:'recargo',
-	mode: 'local',	
-	store :  new Ext.data.SimpleStore({
-				fields: ['idrecargo', 'recargo'],
-				data : [
-					<?
-					$i=0;
-					foreach( $recargos as $recargo ){
-						if( $i++!=0){
-							echo ",";
+<?
+if( $opcion!="consulta" ){
+	if( $idtrafico!="99-999"  ){
+	?>
+	var comboCiudades = new Ext.form.ComboBox({			
+		typeAhead: true,
+		forceSelection: true,
+		triggerAction: 'all',
+		emptyText:'Seleccione',
+		selectOnFocus: true,					
+		lazyRender:true,
+		allowBlank: false,
+		listClass: 'x-combo-list-small',
+		valueField:'idciudad',
+		displayField:'ciudad',
+		mode: 'local',	
+		store :  new Ext.data.SimpleStore({
+					fields: ['idciudad', 'ciudad'],
+					data : [
+						['999-9999','Todas las ciudades']
+						<?					
+						foreach( $ciudades as $ciudad ){
+							
+						?>
+							,['<?=$ciudad->getCaIdCiudad()?>','<?=$ciudad->getCaCiudad()?>']
+						<?
 						}
-					?>
-						['<?=$recargo->getCaIdRecargo()?>','<?=$recargo->getCaRecargo()?>']
-					<?
-					}
-					?>
-				]
-			})
-
-});
-
-
-var datosAplicacion = [
-		<?
-		$i=0;
-		foreach( $aplicaciones as $aplicacion ){
-			if( $i++!=0){
-				echo ",";
+						?>
+					]
+				})
+	
+	});
+	<?
+	}
+	?>
+	
+	
+	var comboRecargos = new Ext.form.ComboBox({			
+		typeAhead: true,
+		forceSelection: true,
+		triggerAction: 'all',
+		emptyText:'Seleccione',
+		selectOnFocus: true,					
+		lazyRender:true,
+		allowBlank: false,
+		listClass: 'x-combo-list-small',
+		valueField:'idrecargo',
+		displayField:'recargo',
+		mode: 'local',	
+		store :  new Ext.data.SimpleStore({
+					fields: ['idrecargo', 'recargo'],
+					data : [
+						<?
+						$i=0;
+						foreach( $recargos as $recargo ){
+							if( $i++!=0){
+								echo ",";
+							}
+						?>
+							['<?=$recargo->getCaIdRecargo()?>','<?=$recargo->getCaRecargo()?>']
+						<?
+						}
+						?>
+					]
+				})
+	
+	});
+	
+	
+	var datosAplicacion = [
+			<?
+			$i=0;
+			foreach( $aplicaciones as $aplicacion ){
+				if( $i++!=0){
+					echo ",";
+				}
+			?>
+				['<?=$aplicacion->getCaValor()?>']
+			<?
 			}
-		?>
-			['<?=$aplicacion->getCaValor()?>']
-		<?
-		}
-		?>
-];
-
-var comboAplicaciones = <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>;
-var comboAplicaciones2 = <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>;
-
-comboAplicaciones.store.loadData( datosAplicacion );
-comboAplicaciones2.store.loadData( datosAplicacion );
-
+			?>
+	];
+	
+	var comboAplicaciones = <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>;
+	var comboAplicaciones2 = <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>;
+	
+	comboAplicaciones.store.loadData( datosAplicacion );
+	comboAplicaciones2.store.loadData( datosAplicacion );
+<?
+}
+?>
 /*
 * Crea el Record 
 */
@@ -115,7 +123,9 @@ var record = Ext.data.Record.create([
 */
 <?
 $url = "pricing/recargosGeneralesData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
-
+if( $opcion=="consulta" ){
+	$url.= "&opcion=consulta";
+}	
 ?>
 var storeRecargos = new Ext.data.GroupingStore({
 	autoLoad : true,			
@@ -142,23 +152,44 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 */
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [		
-		checkColumn	, 	
+		checkColumn	
+		<?
+		if( $idtrafico!="99-999" ){
+		?>
+		, 			
 		{
 			header: "Ciudad",
 			width: 100,
 			sortable: false,	
 			hideable: false,		
-			dataIndex: 'ciudad' ,
+			dataIndex: 'ciudad' 
+			<?
+			if( $opcion!="consulta" ){
+			?>
+			,
 			editor: comboCiudades 
+			<?
+			}
+			?>
 		}
+		<?
+		}
+		?>
 		,
 		{
 			header: "Recargo",
 			width: 100,
 			sortable: false,	
 			hideable: false,		
-			dataIndex: 'recargo' ,
+			dataIndex: 'recargo' 
+			<?
+			if( $opcion!="consulta" ){
+			?>
+			,
 			editor: comboRecargos 
+			<?
+			}
+			?>
 		}
 		,
 		{
@@ -178,8 +209,15 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 80,
 			sortable: false,	
 			hideable: false,		
-			dataIndex: 'aplicacion',
+			dataIndex: 'aplicacion'
+			<?
+			if( $opcion!="consulta" ){
+			?>
+			,
 			editor: comboAplicaciones  
+			<?
+			}
+			?>
 		},
 		{
 			header: "Mínimo",
@@ -198,8 +236,15 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 80,
 			sortable: false,	
 			hideable: false,		
-			dataIndex: 'aplicacion_min',
+			dataIndex: 'aplicacion_min'
+			<?
+			if( $opcion!="consulta" ){
+			?>
+			,
 			editor: comboAplicaciones2 
+			<?
+			}
+			?>
 		},
 		{
 			id: 'idmoneda',
@@ -207,8 +252,15 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 40,
 			sortable: false,
 			dataIndex: 'idmoneda',
-			hideable: false,
+			hideable: false
+			<?
+			if( $opcion!="consulta" ){
+			?>
+			,			
 			editor: <?=extMonedas()?>
+			<?
+			}
+			?>
 		},
 		{
 			id: 'observaciones',
@@ -227,7 +279,10 @@ var colModel = new Ext.grid.ColumnModel({
 	isCellEditable: function(colIndex, rowIndex) {	
 		var record = storeRecargos.getAt(rowIndex);
 		var field = this.getDataIndex(colIndex);
-			
+		
+		<?
+		if( $idtrafico!="99-999" ){
+		?>	
 		if( !record.data.idciudad && field!="ciudad" ){
 			return false;
 		}
@@ -235,6 +290,20 @@ var colModel = new Ext.grid.ColumnModel({
 		if( record.data.idciudad && field=="ciudad" ){
 			return false;
 		}
+		<?
+		}else{
+		?>
+		if( !record.data.idrecargo && field!="recargo" ){
+			return false;
+		}
+		
+		if( record.data.idrecargo && field=="recargo" ){
+			return false;
+		}
+		<?
+		}
+		?>
+		
 		
 		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
 	}	
@@ -298,7 +367,37 @@ var gridOnvalidateedit = function(e){
 		var store = ed.field.store;
 		
 	    store.each( function( r ){				
-				if( r.data.idrecargo==e.value ){														
+				if( r.data.idrecargo==e.value ){	
+					<?
+					if( $idtrafico=="99-999" ){
+					?>
+					if( !rec.data.idrecargo  ){	
+						/*
+						* Crea una columna en blanco adicional para permitir 
+						* agregar mas items
+						*/
+						var newRec = new record({
+							id: rec.data.id+1, 
+						   idtrafico: rec.data.idtrafico,  
+						   idciudad: '999-9999',
+						   ciudad: '', 
+						   idrecargo: '',  						   
+						   recargo: '+', 
+						   vlrrecargo: '',  
+						   vlrminimo: '',   
+						   aplicacion: '',
+						   aplicacion_min: '',							   
+						   idmoneda: '',
+						   observaciones: ''
+						});	
+						newRec.id = rec.data.id+1;								
+						//Inserta una columna en blanco al final												
+						storeRecargos.addSorted(newRec);										
+						
+					}
+					<?
+					}
+					?>													
 					rec.set("idrecargo", r.data.idrecargo);
 					e.value = r.data.recargo;				
 					return true;
@@ -314,6 +413,9 @@ var gridOnvalidateedit = function(e){
 		
 	    store.each( function( r ){						
 				if( r.data.idciudad==e.value ){									
+					<?
+					if( $idtrafico!="99-999" ){
+					?>
 					if( !rec.data.idciudad  ){	
 						/*
 						* Crea una columna en blanco adicional para permitir 
@@ -338,6 +440,9 @@ var gridOnvalidateedit = function(e){
 						storeRecargos.addSorted(newRec);										
 						
 					}
+					<?
+					}
+					?>
 					rec.set("idciudad", r.data.idciudad);
 					e.value = r.data.ciudad;				
 					return true;
@@ -517,7 +622,7 @@ var seleccionarTodo = function(){
 * Crea la grilla 
 */    
 
-new Ext.grid.EditorGridPanel({
+new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	store: storeRecargos,
 	//master_column_id : 'nconcepto',
 	cm: colModel,
@@ -525,26 +630,31 @@ new Ext.grid.EditorGridPanel({
 	clicksToEdit: 1,
 	stripeRows: true,
 	//autoExpandColumn: 'nconcepto',
-	title: 'Recargos <?=$trafico->getCaNombre()?>',
-	
+	title: 'Recargos <?=$idtrafico!="99-999"?$trafico->getCaNombre():"locales ".$modalidad?>',
+	height: 400,
 	plugins: [checkColumn], //expander,
 	closable: true,
 	id: 'recgen_<?=$idcomponent?>',
-	
+	<?
+	if( $opcion!="consulta" ){
+	?>
 	tbar: [			  
-	{
-		text: 'Guardar Cambios',
-		tooltip: 'Guarda los cambios realizados en el tarifario',
-		iconCls:'disk',  // reference to our css
-		handler: updateModel
-	},	
-	{
-		text: 'Seleccionar todo',
-		tooltip: 'Selecciona todas las ciudades',
-		iconCls:'tick',  // reference to our css
-		handler: seleccionarTodo
+		{
+			text: 'Guardar Cambios',
+			tooltip: 'Guarda los cambios realizados en el tarifario',
+			iconCls:'disk',  // reference to our css
+			handler: updateModel
+		},	
+		{
+			text: 'Seleccionar todo',
+			tooltip: 'Selecciona todas las ciudades',
+			iconCls:'tick',  // reference to our css
+			handler: seleccionarTodo
+		}
+	],
+	<?
 	}
-	],	
+	?>	
 	view: new Ext.grid.GridView({
 		 forceFit :true
 		

@@ -72,53 +72,7 @@ class cotizacionesComponents extends sfComponents
 		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
 		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
 		$this->recargosAereo = TipoRecargoPeer::doSelect( $c );
-		
-		
-		$c = new Criteria();
-		$c->addSelectColumn(CotRecargoPeer::CA_IDCOTIZACION );
-		$c->addSelectColumn(CotRecargoPeer::CA_IDPRODUCTO );
-		$c->addSelectColumn(CotRecargoPeer::CA_IDOPCION );
-		$c->addSelectColumn(CotRecargoPeer::CA_IDCONCEPTO );
-		$c->addSelectColumn(CotRecargoPeer::CA_IDRECARGO );
-		$c->addSelectColumn(TipoRecargoPeer::CA_RECARGO );
-		$c->addSelectColumn(CotRecargoPeer::CA_TIPO );
-		$c->addSelectColumn(CotRecargoPeer::CA_VALOR_TAR );
-		$c->addSelectColumn(CotRecargoPeer::CA_APLICA_TAR );
-		$c->addSelectColumn(CotRecargoPeer::CA_VALOR_MIN );
-		$c->addSelectColumn(CotRecargoPeer::CA_APLICA_MIN );
-		$c->addSelectColumn(CotRecargoPeer::CA_IDMONEDA );
-		$c->addSelectColumn(CotRecargoPeer::CA_MODALIDAD );
-		$c->addSelectColumn(CotRecargoPeer::CA_OBSERVACIONES );
-		$c->addSelectColumn(TipoRecargoPeer::CA_IMPOEXPO );
-		$c->addSelectColumn(TipoRecargoPeer::CA_TRANSPORTE );
-		
-		$c->addJoin( CotRecargoPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO, Criteria::LEFT_JOIN );
-
-		$c->add( CotRecargoPeer::CA_IDCOTIZACION , $id );
-		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
-		
-		$rs = CotRecargoPeer::doSelectRS( $c );
-		
-		$this->recargos = array();
-		
-   		while ( $rs->next() ) {
-      		$this->recargos[] = array( 'idcotizacion'=>$rs->getString(1),
-      									'idproducto'=>$rs->getString(2),
-      									'idopcion'=>$rs->getString(3),
-      									'idconcepto'=>$rs->getString(4),
-      									'idrecargo'=>$rs->getString(5),
-      									'agrupamiento'=>utf8_encode($rs->getString(15))." ".utf8_encode($rs->getString(16))." ".utf8_encode($rs->getString(13)),
-      									'recargo'=>utf8_encode($rs->getString(6)),
-      									'tipo'=>$rs->getString(7),
-      									'valor_tar'=>$rs->getString(8),
-      									'aplica_tar'=>$rs->getString(9),
-      									'valor_min'=>$rs->getString(10),
-      									'aplica_min'=>$rs->getString(11),
-      									'idmoneda'=>$rs->getString(12),
-      									'modalidad'=>$rs->getString(13),
-										'observaciones'=>utf8_encode($rs->getString(14))
-      		);
-		}		
+					
 	}
 
 	/*

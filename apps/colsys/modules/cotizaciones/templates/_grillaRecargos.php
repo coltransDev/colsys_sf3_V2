@@ -52,7 +52,7 @@ var recordGrilla = Ext.data.Record.create([
 /*
 * Crea el store
 */
-var storeRecargos = new Ext.data.GroupingStore({
+var storeRecargosCot = new Ext.data.GroupingStore({
 	url: '<?=url_for('cotizaciones/datosGrillaRecargos?idcotizacion='.$cotizacion->getCaIdcotizacion())?>',
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
@@ -68,7 +68,7 @@ var storeRecargos = new Ext.data.GroupingStore({
 	groupField: 'agrupamiento'		
 });
 	
-storeRecargos.load();	
+storeRecargosCot.load();	
 		
 /*
 * Crea la columna de chequeo
@@ -115,7 +115,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Valor Recargo",
 			width: 30,
 			sortable: true,
-			renderer: Ext.util.Format.usMoney,
+			//renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_tar',
 			hideable: false,
 			editor: new Ext.form.NumberField({
@@ -139,7 +139,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Mínimo",
 			width: 30,
 			sortable: true,
-			renderer: Ext.util.Format.usMoney,
+			//renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_min',
 			hideable: false,
 			editor: new Ext.form.NumberField({
@@ -173,6 +173,7 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 100,
 			sortable: true,
 			dataIndex: 'observaciones',
+			//dataIndex: 'id',
 			hideable: false,
 			editor: new Ext.form.TextField({
 						name: 'Detalles',
@@ -181,7 +182,7 @@ var colModel = new Ext.grid.ColumnModel({
 		}
 	],
 	isCellEditable: function(colIndex, rowIndex) {	
-		var record = storeRecargos.getAt(rowIndex);
+		var record = storeRecargosCot.getAt(rowIndex);
 		var field = this.getDataIndex(colIndex);
 			
 		if( !record.data.idrecargo && field!="recargo" ){
@@ -331,7 +332,7 @@ var grid_recargosOnvalidateedit = function(e){
 						newRec.id = rec.data.id+1;								
 						//Inserta una columna en blanco al final
 												
-						storeRecargos.addSorted(newRec);
+						storeRecargosCot.addSorted(newRec);
 						rec.set("idmoneda", "COP" );
 						
 					}
@@ -345,7 +346,6 @@ var grid_recargosOnvalidateedit = function(e){
 }
 
 
-
 /*
 * Menu contextual que se despliega sobre una fila con el boton derecho
 */
@@ -354,10 +354,21 @@ var grid_recargosOnRowcontextmenu =  function(grid, index, e){
 	rec = this.store.getAt(index);	
 	this.menu = new Ext.menu.Menu({
 	id:'grid_recargos-ctx',
-	items: [		
+	items: [
+	        
+			{
+				text: 'Importar del tarifario',
+				iconCls: 'import',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord ){					
+						ventanaTarifarioRecargos( this.ctxRecord );
+					}						
+				}
+			},		
 			{
 				text: 'Eliminar item',
-				iconCls: 'new-tab',
+				iconCls: 'delete',
 				scope:this,
 				handler: function(){    					                   		
 					if( this.ctxRecord && this.ctxRecord.data.idrecargo ){					
@@ -388,10 +399,10 @@ var grid_recargosOnRowcontextmenu =  function(grid, index, e){
 								//Ejecuta esta accion cuando el resultado es exitoso
 								success:function(response,options){							
 									
-									storeRecargos.each( function( record ){																					
+									storeRecargosCot.each( function( record ){																					
 											if( record.data.id==id ){		
 																						
-												storeRecargos.remove(record);																																																																				
+												storeRecargosCot.remove(record);																																																																				
 											}										
 									});
 								}
@@ -415,6 +426,108 @@ var grid_recargosOnRowcontextmenu =  function(grid, index, e){
 	this.menu.showAt(e.getXY());
 }
 
+var activeRecordRec = null;
+/*
+* Muestra una ventana con la informacion del tarifario y le permite al usuario 
+* seleccionar las tarifas a importar
+*/
+var ventanaTarifarioRecargos = function( record ){
+	var url = '<?=url_for("pricing/recargosGenerales?opcion=consulta")?>';
+	
+	activeRecordRec = record;
+	
+	Ext.Ajax.request({
+		url: url,
+		params: {						
+			transporte: record.data.transporte, 
+			modalidad: record.data.modalidad		
+		},
+		success: function(xhr) {			
+			//alert( xhr.responseText );			
+			var newComponent = eval(xhr.responseText);
+			
+			//Se crea la ventana
+			
+			win = new Ext.Window({		
+			width       : 800,
+			height      : 460,
+			closeAction :'close',
+			plain       : true,		
+			
+			items       : [newComponent],
+			
+	
+			buttons: [
+				{
+					text     : 'Importar',
+					handler  : function( ){						
+						storePricing = newComponent.store;
+						index =  storeRecargosCot.indexOf(activeRecordRec);
+						var j = 1;	
+						var parent = null;					
+						storeRecargos.each( function(r){
+							if( r.data.sel==true ){
+							
+								var newRec = new record({
+									id: activeRecordRec.data.id, 								  
+								   agrupamiento: activeRecordRec.data.agrupamiento, 
+								   recargo: '', 
+								   valor_tar: 0,  
+								   valor_min: 0,   
+								   aplica_tar: '',
+								   aplica_min: '',							   
+								   idmoneda: '',
+								   observaciones: '',
+								   transporte: activeRecordRec.data.transporte,  
+								   modalidad: activeRecordRec.data.modalidad, 
+								});	
+								newRec.id = activeRecordRec.data.id;	
+								activeRecordRec.data.id+=j;							
+								activeRecordRec.id+=j;
+								j++;
+										
+							
+										
+								records = [];
+								records.push ( newRec ); //agrega al principio
+								storeRecargosCot.insert( index , records );
+								
+								//Es necesario buscar de nuevo el record dentro del store
+								//para que se activen los eventos de edición del store																
+								var newRec = storeRecargosCot.getAt( index ); 
+								
+								newRec.set("idrecargo", r.data.idrecargo );
+								newRec.set("recargo", r.data.recargo );								
+								newRec.set("valor_tar", r.data.vlrrecargo );
+								newRec.set("valor_min", r.data.vlrminimo );
+								newRec.set("aplica_tar", r.data.aplicacion );
+								newRec.set("aplica_min", r.data.aplicacion_min );
+								newRec.set("idmoneda", r.data.idmoneda );
+								newRec.set("observaciones", r.data.observaciones );
+																													
+								index++;
+							}
+						} );
+						
+												
+						win.close();
+					}
+				},
+				{
+					text     : 'Cancelar',
+					handler  : function(){
+						win.close();
+					}
+				}
+			]
+		});		
+		win.show( );		
+		},
+		failure: function() {
+			Ext.Msg.alert("Tab creation failed", "Server communication failure");
+		}
+	});	
+}
 
 
 /*
@@ -422,15 +535,14 @@ var grid_recargosOnRowcontextmenu =  function(grid, index, e){
 */
 function updateRecargosModel(){
 	var success = true;
-	var records = storeRecargos.getModifiedRecords();
+	var records = storeRecargosCot.getModifiedRecords();
 			
 	var lenght = records.length;
 	for( var i=0; i< lenght; i++){
 		r = records[i];
 					
 		var changes = r.getChanges();
-		
-		changes['cotizacionId']=r.data.idcotizacion;
+				
 		changes['idrecargo']=r.data.idrecargo;
 		changes['modalidad']=r.data.modalidad;
 
@@ -438,7 +550,7 @@ function updateRecargosModel(){
 		Ext.Ajax.request( 
 			{   
 				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("cotizaciones/formRecargoGuardar")?>', 
+				url: '<?=url_for("cotizaciones/formRecargoGuardar?idcotizacion=".$cotizacion->getCaIdcotizacion() )?>', 
 				//Solamente se envian los cambios 						
 				params :	changes,
 										
@@ -459,7 +571,7 @@ function updateRecargosModel(){
 	}
 	
 	if( success ){
-		storeRecargos.commitChanges();
+		storeRecargosCot.commitChanges();
 		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
 	}else{
 		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
@@ -474,7 +586,7 @@ function agregarFila(ctxRecord, index){
 * Crea la grilla 
 */    
 var grid_recargos = new Ext.grid.EditorGridPanel({
-	store: storeRecargos,
+	store: storeRecargosCot,
 	master_column_id : 'recargo',
 	cm: colModel,
 	sm: selModel,	
@@ -500,7 +612,7 @@ var grid_recargos = new Ext.grid.EditorGridPanel({
 		tooltip: 'Opción para Crear un recargo nuevo',
 		iconCls: 'refresh',  // reference to our css
 		handler: function(){
-			storeRecargos.reload();
+			storeRecargosCot.reload();
 		}
 	}
 	],

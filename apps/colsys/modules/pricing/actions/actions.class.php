@@ -191,10 +191,20 @@ class pricingActions extends sfActions
 				}				
 			}	
 			
+			//Se determinan los recargos generales x ciudad
+			$c = new Criteria();
+			$c->add( PricRecargosxCiudadPeer::CA_IDTRAFICO, $trayecto->getOrigen()->getCaIdTrafico() );
+			
+			$c->add( PricRecargosxCiudadPeer::CA_IDCIUDAD, $trayecto->getCaOrigen() );
+			$c->addOr( PricRecargosxCiudadPeer::CA_IDCIUDAD, '999-9999' );
+			$c->add( PricRecargosxCiudadPeer::CA_MODALIDAD, $trayecto->getCaModalidad() );
+			
+			$pricRecargosxCiudad = PricRecargosxCiudadPeer::doSelect( $c );
 			
 			$pricRecargos = $trayecto->getRecargosGenerales();
-			
-			if( $this->opcion!="consulta" || count($pricRecargos)>0   ){
+			//$this->opcion!="consulta" se hace para que el usuario pueda 
+			// hacer click con el boton derecho y agregar un recargo general 
+			if( $this->opcion!="consulta" || count($pricRecargos)>0 || count($pricRecargosxCiudad)>0   ){ 
 				
 				//Se incluye una fila antes de los recargos generales del trayecto
 				$row = array (
@@ -217,7 +227,7 @@ class pricingActions extends sfActions
 				);
 				$data[] = $row;	
 			}			
-				
+			
 			foreach( $pricRecargos as $pricRecargo ){
 				$tipoRecargo = $pricRecargo->getTipoRecargo();
 									
@@ -244,6 +254,32 @@ class pricingActions extends sfActions
 				$data[] = $row;						
 			}
 			
+			foreach( $pricRecargosxCiudad as $pricRecargo ){
+				$tipoRecargo = $pricRecargo->getTipoRecargo();
+									
+				$row = array (
+					'idtrayecto' => $trayecto->getCaIdtrayecto(),
+					'trayecto' =>$trayectoStr,
+					'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
+					//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+					'inicio' => "",
+					'vencimiento' => "",
+					'moneda' => $pricRecargo->getCaIdMoneda(),									
+					'_id' => $trayecto->getCaIdtrayecto()."-9999-".$pricRecargo->getCaIdrecargo(),
+					'style' => '',
+					'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
+					'iditem'=>$pricRecargo->getCaIdrecargo(),
+					'idconcepto'=>'9999',
+					'tipo'=>"recargoxciudad",
+					'neta'=>$pricRecargo->getCaVlrrecargo(),
+					'aplicacion' => $pricRecargo->getCaAplicacion(),
+					'minima'=>$pricRecargo->getCaVlrminimo(),
+					'aplicacion_min' => $pricRecargo->getCaAplicacionMin(),
+					'orden'=>$i++	
+				);									
+				$data[] = $row;						
+			}
+				
 			
 			
 			
@@ -725,35 +761,49 @@ class pricingActions extends sfActions
 	}
 	
 	/*
-	* Recargos generales de un pais 
+	* Recargos generales de un pais ó los recargos locales de un
+	* transporte y una modalidad 
 	* @author: Andres Botero 
 	*/
 	public function executeRecargosGenerales(){
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
+		$this->opcion = $this->getRequestParameter( "opcion" );
 		
-		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);		
-		$this->idcomponent = $this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;				
+		if( $idtrafico ){
+			$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
+			
+			if( $this->opcion != "consulta" ){	
+				$c = new Criteria();
+				$c->add(CiudadPeer::CA_IDTRAFICO, $idtrafico );
+				$c->addAscendingOrderByColumn(CiudadPeer::CA_CIUDAD);
+				$this->ciudades = CiudadPeer::doSelect( $c );
+			}			
+			$tipo = "Recargo en Origen";
+			
+			$this->idcomponent = $this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;		
+					
+		}else{
+			$tipo = "Recargo local";	
+			$idtrafico = "99-999"; 
+			$this->idcomponent = "recargoslocales-".$transporte."_".$modalidad;		
+		}
+		
+				
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;
+		
+		if( $this->opcion != "consulta" ){				
+			$c = new Criteria();
+			$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte);	
+			$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
+			$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
+			$this->recargos = TipoRecargoPeer::doSelect( $c );
 			
-		$c = new Criteria();
-		$c->add(CiudadPeer::CA_IDTRAFICO, $idtrafico );
-		$c->addAscendingOrderByColumn(CiudadPeer::CA_CIUDAD);
-		$this->ciudades = CiudadPeer::doSelect( $c );
-		
-		$tipo = "Recargo en Origen";		
-		
-		$c = new Criteria();
-		$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte);	
-		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
-		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
-		$this->recargos = TipoRecargoPeer::doSelect( $c );
-		
-		$this->aplicaciones = ParametroPeer::retrieveByCaso("CU064", null, $transporte );
-					
+			$this->aplicaciones = ParametroPeer::retrieveByCaso("CU064", null, $transporte );
+		}			
 		$this->setLayout("ajax");
 	}
 	
@@ -764,18 +814,23 @@ class pricingActions extends sfActions
 	public function executeRecargosGeneralesData(){
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
-		$modalidad = $this->getRequestParameter( "modalidad" );
-		$this->forward404Unless( $idtrafico );
+		$modalidad = $this->getRequestParameter( "modalidad" );		
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $modalidad );
-		
+				
 		//$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+		$this->opcion = $this->getRequestParameter( "opcion" );
 		
 		$c = new Criteria();
-		$c->add( PricRecargosxCiudadPeer::CA_IDTRAFICO, $idtrafico  );		
+		$c->addJoin( PricRecargosxCiudadPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO  );	
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte  );	
+		$c->add( PricRecargosxCiudadPeer::CA_IDTRAFICO, $idtrafico  );	
+		$c->add( PricRecargosxCiudadPeer::CA_MODALIDAD, $modalidad  );	
 		$recargos = PricRecargosxCiudadPeer::doSelect( $c );
 				
-		
+		if( !$idtrafico ){
+			$idtrafico = "99-999"; 
+		}
 		
 		$this->data = array();
 		$i=0;
@@ -797,25 +852,27 @@ class pricingActions extends sfActions
 			$this->data[]= $row;
 		}
 		
-		/*
-		* Incluye una fila vacia que permite agregar datos
-		*/
-		$row = array(
-			'id'=>$i++,
-			'idtrafico'=>$idtrafico,
-			'idciudad'=>'',
-			'ciudad'=>'+',
-			'idrecargo'=>'',
-			'recargo'=>'',
-			'vlrrecargo'=>'',
-			'vlrminimo'=>'',
-			'aplicacion'=>'',
-			'aplicacion_min'=>'',
-			'idmoneda'=>'',
-			'observaciones'=>''								
-		);
-		$this->data[]= $row;
 		
+		if( $this->opcion!="consulta" ){
+			/*
+			* Incluye una fila vacia que permite agregar datos
+			*/
+			$row = array(
+				'id'=>$i++,
+				'idtrafico'=>$idtrafico,
+				'idciudad'=>$idtrafico=="99-999"?'999-9999':'',
+				'ciudad'=>'+',
+				'idrecargo'=>'',
+				'recargo'=>'',
+				'vlrrecargo'=>'',
+				'vlrminimo'=>'',
+				'aplicacion'=>'',
+				'aplicacion_min'=>'',
+				'idmoneda'=>'',
+				'observaciones'=>''								
+			);
+			$this->data[]= $row;
+		}
 					
 		$this->transporte = $transporte;
 		$this->modalidad = $modalidad;
