@@ -588,7 +588,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				$pricflete->setCaIdTrayecto( $flete->getCaIdTrayecto() );
 				$pricflete->setCaIdConcepto( $flete->getCaIdConcepto() );
 				$pricflete->setCaVlrneto( $flete->getCaVlrneto() );
-				$pricflete->setCaVlrminimo( $flete->getCaVlrminimo() );
+				$pricflete->setCaVlrsugerido( $flete->getCaSugerida() );
 				$pricflete->setCaFchinicio( $flete->getCaFchinicio() );
 				$pricflete->setCaFchvencimiento( $flete->getCaFchvencimiento() );
 				$pricflete->setCaIdmoneda( $flete->getCaIdmoneda() );				
