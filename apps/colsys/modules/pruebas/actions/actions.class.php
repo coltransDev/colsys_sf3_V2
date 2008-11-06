@@ -665,5 +665,49 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		}		
 	}
 	
+	
+	/*
+	* Importa el tarifario anterior dentro del nuevo taarifario
+	*/
+	public function executeImportarTarifarioRecargos(){
+		set_time_limit(0); 		
+		
+		$c = new Criteria();
+		//$c->add(  RecargoFleteTrafPeer:: );
+		//$c->setLimit(10);
+		$recargos = RecargoFleteTrafPeer::doSelect( $c );
+				
+		foreach( $recargos as $recargo ){
+			$pricrecargo = PricRecargosxCiudadPeer::retrieveByPk( $recargo->getCaIdTrafico(), $recargo->getCaIdCiudad(), $recargo->getCaIdRecargo(), $recargo->getCaModalidad() ); 	
+			if( !$pricrecargo ){
+				$pricrecargo = new PricRecargosxCiudad();
+				$pricrecargo->setCaIdTrafico( $recargo->getCaIdTrafico() );
+				$pricrecargo->setCaIdCiudad( $recargo->getCaIdCiudad() );
+				$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
+				$pricrecargo->setCaModalidad( $recargo->getCaModalidad() );
+			}												
+			if( $recargo->getCaVlrfijo()!=0 ){
+				$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
+			}else{
+				if( $recargo->getCaPorcentaje()!=0 ){
+					$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
+					//$pricrecargo->setCaAplicacion( $recargo->getCaBaseporcentaje() );
+				}else{
+					$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrunitario() );
+					//$pricrecargo->setCaAplicacion( $recargo->getCaBaseunitario() );
+				}
+			}
+			
+			$pricrecargo->setCaFchinicio( $recargo->getCaFchinicio() );
+			$pricrecargo->setCaFchvencimiento( $recargo->getCaFchvencimiento() );
+						
+			$pricrecargo->setCaVlrminimo( $recargo->getCaRecargominimo() );
+			$pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
+			$pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );				
+			$pricrecargo->save();
+		}	
+	}
+	
+	
 }
 ?>
