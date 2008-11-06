@@ -399,6 +399,7 @@ var gridOnvalidateedit = function(e){
 					}
 					?>													
 					rec.set("idrecargo", r.data.idrecargo);
+					rec.set("idmoneda", "COP");
 					e.value = r.data.recargo;				
 					return true;
 				}
@@ -444,6 +445,7 @@ var gridOnvalidateedit = function(e){
 					}
 					?>
 					rec.set("idciudad", r.data.idciudad);
+					rec.set("idmoneda", "USD");
 					e.value = r.data.ciudad;				
 					return true;
 				}

@@ -213,13 +213,14 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 100,
 			sortable: false,
 			dataIndex: 'detalles',
+			
 			hideable: false ,
 			editor: new Ext.form.TextField({
 				allowBlank: false ,				
 				style: 'text-align:left'
 			})
 		}
-		/*		
+		/*	
 		,
 		{			
 			header: "Id",
@@ -231,7 +232,7 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 100,			
 			dataIndex: 'parent'
 			
-		}*/		
+		}	*/	
 	]
 	,
 	isCellEditable: function(colIndex, rowIndex) {	
@@ -528,6 +529,24 @@ var ventanaTarifario = function( record ){
 					text     : 'Importar',
 					handler  : function( ){						
 						storePricing = newComponent.store;
+						
+						/*
+						* Busca el ultimo elemento para insertar al final del grupo
+						*/
+						var flag = false;						
+						storeProductos.each( function( record ){																					
+								if( record.data.id==activeRecord.id ){		
+									flag=true;
+								}									
+								if(flag){
+									if(!record.data.iditem){
+										activeRecord = record;
+										flag=false;
+										return 0;
+									}
+								}									
+						});						
+						
 						index =  storeProductos.indexOf(activeRecord);
 						var j = 0;	
 						var parent = null;					
@@ -599,14 +618,15 @@ var ventanaTarifario = function( record ){
 								
 								newRec.id = newId;
 								newRec.set("trayecto", activeRecord.data.trayecto );
-										
-								records = [];
-								records.push ( newRec ); //agrega al principio
-								storeProductos.insert( index , records );
+								
+								activeRecord.id=newId+20;
+								activeRecord.data.id=newId+20;
+																
+								storeProductos.addSorted( newRec );
 								
 								//Es necesario buscar de nuevo el record dentro del store
 								//para que se activen los eventos de edición del store																
-								var newRec = storeProductos.getAt( index ); 
+								var newRec = storeProductos.getById( newId ); 
 								
 																	
 								newRec.set("item", r.data.nconcepto );
@@ -628,8 +648,7 @@ var ventanaTarifario = function( record ){
 								index++;
 							}
 						} );
-						
-												
+										
 						win.close();
 					}
 				},
@@ -737,10 +756,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						   detalles: '',
 						   parent: parent
 						});	
-						newRec.id = rec.data.id+1; 				
-						/*records = [];
-						records.push( newRec );
-						storeProductos.insert( index+1 , records );*/
+						newRec.id = rec.data.id+1; 										
 						storeProductos.addSorted(newRec);
 					}						
 				}				
@@ -928,8 +944,7 @@ function guardarGridProductos(){
 										
 					var res = Ext.util.JSON.decode( response.responseText );					
 					var rec = storeProductos.getById( res.id );										
-					rec.set("idopcion", res.idopcion );						
-					var index = storeProductos.indexOf( rec );																								
+					rec.set("idopcion", res.idopcion );											
 					rec.commit();						
 				}
 			 }

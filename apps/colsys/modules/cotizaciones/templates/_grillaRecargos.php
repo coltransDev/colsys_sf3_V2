@@ -172,8 +172,8 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Observaciones",
 			width: 100,
 			sortable: true,
-			dataIndex: 'observaciones',
-			//dataIndex: 'id',
+			//dataIndex: 'observaciones',
+			dataIndex: 'id',
 			hideable: false,
 			editor: new Ext.form.TextField({
 						name: 'Detalles',
@@ -330,8 +330,7 @@ var grid_recargosOnvalidateedit = function(e){
 						   observaciones: ''
 						});	
 						newRec.id = rec.data.id+1;								
-						//Inserta una columna en blanco al final
-												
+																	
 						storeRecargosCot.addSorted(newRec);
 						rec.set("idmoneda", "COP" );
 						
@@ -462,39 +461,52 @@ var ventanaTarifarioRecargos = function( record ){
 					text     : 'Importar',
 					handler  : function( ){						
 						storePricing = newComponent.store;
-						index =  storeRecargosCot.indexOf(activeRecordRec);
-						var j = 1;	
-						var parent = null;					
+						//
+						
+						/*
+						* Busca el ultimo elemento para insertar al final del grupo
+						*/
+						var flag = false;	
+						storeRecargosCot.each( function( record ){																					
+								if( record.data.id==activeRecordRec.id ){		
+									flag=true;
+								}									
+								if(flag){
+									if(!record.data.idrecargo){
+										activeRecordRec = record;
+										flag=false;
+										return 0;
+									}
+								}									
+						});
+												
+						var id = activeRecordRec.data.id;	
+						var j = 0;	
 						storeRecargos.each( function(r){
-							if( r.data.sel==true ){
-							
+							if( r.data.sel==true ){		
+								j++;		
+								var newId = id+j;				
 								var newRec = new record({
-									id: activeRecordRec.data.id, 								  
-								   agrupamiento: activeRecordRec.data.agrupamiento, 
-								   recargo: '', 
-								   valor_tar: 0,  
-								   valor_min: 0,   
-								   aplica_tar: '',
-								   aplica_min: '',							   
-								   idmoneda: '',
-								   observaciones: '',
-								   transporte: activeRecordRec.data.transporte,  
-								   modalidad: activeRecordRec.data.modalidad, 
-								});	
-								newRec.id = activeRecordRec.data.id;	
-								activeRecordRec.data.id+=j;							
-								activeRecordRec.id+=j;
-								j++;
-										
-							
-										
-								records = [];
-								records.push ( newRec ); //agrega al principio
-								storeRecargosCot.insert( index , records );
+									id: newId,
+									agrupamiento: activeRecordRec.data.agrupamiento, 
+									recargo: '', 
+									valor_tar: 0,  
+									valor_min: 0,   
+									aplica_tar: '',
+									aplica_min: '',							   
+									idmoneda: '',
+									observaciones: '',
+									transporte: activeRecordRec.data.transporte,  
+									modalidad: activeRecordRec.data.modalidad, 
+								});											
+								newRec.id = newId;		
+								activeRecordRec.id=newId+1;
+								activeRecordRec.data.id=newId+1;
+								storeRecargosCot.addSorted( newRec );
 								
 								//Es necesario buscar de nuevo el record dentro del store
 								//para que se activen los eventos de edición del store																
-								var newRec = storeRecargosCot.getAt( index ); 
+								var newRec = storeRecargosCot.getById( newId ); 
 								
 								newRec.set("idrecargo", r.data.idrecargo );
 								newRec.set("recargo", r.data.recargo );								
@@ -503,9 +515,8 @@ var ventanaTarifarioRecargos = function( record ){
 								newRec.set("aplica_tar", r.data.aplicacion );
 								newRec.set("aplica_min", r.data.aplicacion_min );
 								newRec.set("idmoneda", r.data.idmoneda );
-								newRec.set("observaciones", r.data.observaciones );
-																													
-								index++;
+								newRec.set("observaciones", r.data.observaciones );																													
+								
 							}
 						} );
 						
@@ -603,13 +614,13 @@ var grid_recargos = new Ext.grid.EditorGridPanel({
 	tbar: [			  
 	{
 		text: 'Guardar Cambios',
-		tooltip: 'Guarda los cambios realizados en Recargos en Origen',
+		tooltip: 'Guarda los cambios realizados en Recargos',
 		iconCls: 'disk',  // reference to our css
 		handler: updateRecargosModel
 	},
 	{
 		text: 'Recargar',
-		tooltip: 'Opción para Crear un recargo nuevo',
+		tooltip: 'Recarga los datos de la base de datos',
 		iconCls: 'refresh',  // reference to our css
 		handler: function(){
 			storeRecargosCot.reload();
