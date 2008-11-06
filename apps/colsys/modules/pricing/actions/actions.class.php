@@ -841,7 +841,7 @@ class pricingActions extends sfActions
 				'idciudad'=>$recargo->getCaIdciudad(),
 				'ciudad'=>$recargo->getCiudad()->getCaCiudad(),
 				'idrecargo'=>$recargo->getCaIdrecargo(),
-				'recargo'=>$recargo->getTipoRecargo()->getCaRecargo(),
+				'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
 				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
 				'vlrminimo'=>$recargo->getCaVlrminimo(),
 				'aplicacion'=>$recargo->getCaAplicacion(),
