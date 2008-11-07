@@ -83,20 +83,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 
 
 	/**
-	 * The value for the ca_tarifa field.
-	 * @var        string
-	 */
-	protected $ca_tarifa;
-
-
-	/**
-	 * The value for the ca_oferta field.
-	 * @var        string
-	 */
-	protected $ca_oferta;
-
-
-	/**
 	 * The value for the ca_recargos field.
 	 * @var        string
 	 */
@@ -270,28 +256,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idmoneda;
-	}
-
-	/**
-	 * Get the [ca_tarifa] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaTarifa()
-	{
-
-		return $this->ca_tarifa;
-	}
-
-	/**
-	 * Get the [ca_oferta] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaOferta()
-	{
-
-		return $this->ca_oferta;
 	}
 
 	/**
@@ -599,50 +563,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	} // setCaIdmoneda()
 
 	/**
-	 * Set the value of [ca_tarifa] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     void
-	 */
-	public function setCaTarifa($v)
-	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
-		}
-
-		if ($this->ca_tarifa !== $v) {
-			$this->ca_tarifa = $v;
-			$this->modifiedColumns[] = CotOpcionPeer::CA_TARIFA;
-		}
-
-	} // setCaTarifa()
-
-	/**
-	 * Set the value of [ca_oferta] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     void
-	 */
-	public function setCaOferta($v)
-	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
-		}
-
-		if ($this->ca_oferta !== $v) {
-			$this->ca_oferta = $v;
-			$this->modifiedColumns[] = CotOpcionPeer::CA_OFERTA;
-		}
-
-	} // setCaOferta()
-
-	/**
 	 * Set the value of [ca_recargos] column.
 	 * 
 	 * @param      string $v new value
@@ -813,28 +733,24 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 
 			$this->ca_idmoneda = $rs->getString($startcol + 8);
 
-			$this->ca_tarifa = $rs->getString($startcol + 9);
+			$this->ca_recargos = $rs->getString($startcol + 9);
 
-			$this->ca_oferta = $rs->getString($startcol + 10);
+			$this->ca_observaciones = $rs->getString($startcol + 10);
 
-			$this->ca_recargos = $rs->getString($startcol + 11);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 11, null);
 
-			$this->ca_observaciones = $rs->getString($startcol + 12);
+			$this->ca_usucreado = $rs->getString($startcol + 12);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 13, null);
+			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 13, null);
 
-			$this->ca_usucreado = $rs->getString($startcol + 14);
-
-			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 15, null);
-
-			$this->ca_usuactualizado = $rs->getString($startcol + 16);
+			$this->ca_usuactualizado = $rs->getString($startcol + 14);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 17; // 17 = CotOpcionPeer::NUM_COLUMNS - CotOpcionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 15; // 15 = CotOpcionPeer::NUM_COLUMNS - CotOpcionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotOpcion object", $e);
@@ -1121,27 +1037,21 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 				return $this->getCaIdmoneda();
 				break;
 			case 9:
-				return $this->getCaTarifa();
-				break;
-			case 10:
-				return $this->getCaOferta();
-				break;
-			case 11:
 				return $this->getCaRecargos();
 				break;
-			case 12:
+			case 10:
 				return $this->getCaObservaciones();
 				break;
-			case 13:
+			case 11:
 				return $this->getCaFchcreado();
 				break;
-			case 14:
+			case 12:
 				return $this->getCaUsucreado();
 				break;
-			case 15:
+			case 13:
 				return $this->getCaFchactualizado();
 				break;
-			case 16:
+			case 14:
 				return $this->getCaUsuactualizado();
 				break;
 			default:
@@ -1173,14 +1083,12 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 			$keys[6] => $this->getCaValorMin(),
 			$keys[7] => $this->getCaAplicaMin(),
 			$keys[8] => $this->getCaIdmoneda(),
-			$keys[9] => $this->getCaTarifa(),
-			$keys[10] => $this->getCaOferta(),
-			$keys[11] => $this->getCaRecargos(),
-			$keys[12] => $this->getCaObservaciones(),
-			$keys[13] => $this->getCaFchcreado(),
-			$keys[14] => $this->getCaUsucreado(),
-			$keys[15] => $this->getCaFchactualizado(),
-			$keys[16] => $this->getCaUsuactualizado(),
+			$keys[9] => $this->getCaRecargos(),
+			$keys[10] => $this->getCaObservaciones(),
+			$keys[11] => $this->getCaFchcreado(),
+			$keys[12] => $this->getCaUsucreado(),
+			$keys[13] => $this->getCaFchactualizado(),
+			$keys[14] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1240,27 +1148,21 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 				$this->setCaIdmoneda($value);
 				break;
 			case 9:
-				$this->setCaTarifa($value);
-				break;
-			case 10:
-				$this->setCaOferta($value);
-				break;
-			case 11:
 				$this->setCaRecargos($value);
 				break;
-			case 12:
+			case 10:
 				$this->setCaObservaciones($value);
 				break;
-			case 13:
+			case 11:
 				$this->setCaFchcreado($value);
 				break;
-			case 14:
+			case 12:
 				$this->setCaUsucreado($value);
 				break;
-			case 15:
+			case 13:
 				$this->setCaFchactualizado($value);
 				break;
-			case 16:
+			case 14:
 				$this->setCaUsuactualizado($value);
 				break;
 		} // switch()
@@ -1295,14 +1197,12 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[6], $arr)) $this->setCaValorMin($arr[$keys[6]]);
 		if (array_key_exists($keys[7], $arr)) $this->setCaAplicaMin($arr[$keys[7]]);
 		if (array_key_exists($keys[8], $arr)) $this->setCaIdmoneda($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaTarifa($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaOferta($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaRecargos($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaObservaciones($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaFchcreado($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaUsucreado($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaFchactualizado($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaUsuactualizado($arr[$keys[16]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaRecargos($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaObservaciones($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFchcreado($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaUsucreado($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaFchactualizado($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaUsuactualizado($arr[$keys[14]]);
 	}
 
 	/**
@@ -1323,8 +1223,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotOpcionPeer::CA_VALOR_MIN)) $criteria->add(CotOpcionPeer::CA_VALOR_MIN, $this->ca_valor_min);
 		if ($this->isColumnModified(CotOpcionPeer::CA_APLICA_MIN)) $criteria->add(CotOpcionPeer::CA_APLICA_MIN, $this->ca_aplica_min);
 		if ($this->isColumnModified(CotOpcionPeer::CA_IDMONEDA)) $criteria->add(CotOpcionPeer::CA_IDMONEDA, $this->ca_idmoneda);
-		if ($this->isColumnModified(CotOpcionPeer::CA_TARIFA)) $criteria->add(CotOpcionPeer::CA_TARIFA, $this->ca_tarifa);
-		if ($this->isColumnModified(CotOpcionPeer::CA_OFERTA)) $criteria->add(CotOpcionPeer::CA_OFERTA, $this->ca_oferta);
 		if ($this->isColumnModified(CotOpcionPeer::CA_RECARGOS)) $criteria->add(CotOpcionPeer::CA_RECARGOS, $this->ca_recargos);
 		if ($this->isColumnModified(CotOpcionPeer::CA_OBSERVACIONES)) $criteria->add(CotOpcionPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(CotOpcionPeer::CA_FCHCREADO)) $criteria->add(CotOpcionPeer::CA_FCHCREADO, $this->ca_fchcreado);
@@ -1413,10 +1311,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 		$copyObj->setCaAplicaMin($this->ca_aplica_min);
 
 		$copyObj->setCaIdmoneda($this->ca_idmoneda);
-
-		$copyObj->setCaTarifa($this->ca_tarifa);
-
-		$copyObj->setCaOferta($this->ca_oferta);
 
 		$copyObj->setCaRecargos($this->ca_recargos);
 

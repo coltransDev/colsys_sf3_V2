@@ -1,7 +1,6 @@
 <?
 
 $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
-$trans = array("Aéreo" => "Aérea", "Marítimo" => "Marítima", "Terrestre" => "Terrestre");
 
 
 $pdf = new PDF (  );
@@ -17,12 +16,13 @@ $pdf->SetFont('Arial','',10);
 
 $directorioAg = array();
 
+$imprimirNotas = array();
 
 $sucursal = $usuario->getSucursal();
 $pdf->SetSucursal($sucursal->getCaNombre());
 $pdf->SetLineRepeat("Señores: ".strtoupper($cliente->getCaCompania()."    ".$cotizacion->getCaFchcreado()));
 $pdf->Ln(5);
-list($anno, $mes, $dia, $tiempo, $minuto, $segundo) = sscanf($cotizacion->getCaFchcotizacion(),"%d-%d-%d %d:%d:%d");
+list($anno, $mes, $dia, $tiempo, $minuto, $segundo) = sscanf($cotizacion->getCaFchcreado(),"%d-%d-%d %d:%d:%d");
 
 $pdf->Cell(0, 4, str_replace(' D.C.','',$usuario->getCaSucursal()).', '.$dia.' de '.$meses[$mes-1].' de '.$anno,0,1);
 
@@ -78,7 +78,20 @@ $tabla = array();
 $imprimirObservaciones = false;
 $imprimirRecargos = false;
 
+$datosAg = array();
+
 foreach( $productos as $producto ):
+	if ($producto->getCaImpoExpo()=="Importación"){	
+		$imprimirNotas[]="anexoImpo";
+	}
+	if ($producto->getCaImpoExpo()=="Exportación"){	
+		$imprimirNotas[]="anexoExpo";
+	}
+	
+	if( $producto->getCaDatosag() ){		
+		$datosAg = array_merge( $datosAg , explode("|",$producto->getCaDatosag()) );
+	}
+	
 	
 	if ($producto->getCaImprimir() == 'Por Item'):
 	
@@ -238,7 +251,7 @@ if( count($tabla)>0 ){
 	$pdf->Row( $titulos );	
 	
 	$pdf->SetStyles( array_merge(array("B"), array_fill(0, count($destinos), "")));
-	$pdf->SetFills( array_merge(array(1), array_fill(0, count($destinos), 0)));	
+	$pdf->SetFills( array_merge( array_fill(0, count($destinos)+1, 0)));	
 	$pdf->SetWidths( $widths );
 	$pdf->SetAligns(array_fill(0, count($destinos)+1, "C"));
 	foreach( $origenes as $origen  ){
@@ -256,33 +269,59 @@ if( count($tabla)>0 ){
 
 // ======================== Impresión por Concepto o Trayecto ======================== //
 $tablaConceptos = array();
+$tablaTrayectos = array();
 $conceptos1 = array();
 $trayectos1  = array();
+
+$conceptos2 = array();
+$trayectos2  = array();
+
+
+
 foreach( $productos as $producto ):	
 	if ($producto->getCaImprimir() == 'Concepto' or $producto->getCaImprimir() == 'Trayecto'  ):
 		$opciones = $producto->getCotOpciones();		
 		$trayecto = $producto->getOrigen()->getCaCiudad()."\n".$producto->getDestino()->getCaCiudad();
-		$trayectos1[] = $trayecto;
+		if ($producto->getCaImprimir() == 'Concepto' ){		
+			$trayectos1[] = $trayecto;
+		}else{
+			$trayectos2[] = $trayecto;
+		}
 		foreach( $opciones as $opcion ){
 			$concepto = $opcion->getConcepto();	
-			$conceptos1[] = $concepto->getCaConcepto();
+			if ($producto->getCaImprimir() == 'Concepto' ){		
+				$conceptos1[] = $concepto->getCaConcepto();
+			}else{
+				$conceptos2[] = $concepto->getCaConcepto();
+			}
 			$contenido="";
 			
 			$concepto = $opcion->getConcepto();		
-			if ( isset($tablaConceptos[ $trayecto ][ $concepto->getCaConcepto() ]) ){
-				$tablaConceptos[ $trayecto ][ $concepto->getCaConcepto() ].= str_repeat("..-..", 12)."\n";
-			}else{
-				$tablaConceptos[ $trayecto ][ $concepto->getCaConcepto() ]="";
+			if ($producto->getCaImprimir() == 'Concepto' ){	
+				if ( isset($tablaConceptos[ $trayecto ][ $concepto->getCaConcepto() ]) ){
+					$tablaConceptos[ $trayecto ][ $concepto->getCaConcepto() ].= str_repeat("..-..", 12)."\n";
+				}else{
+					$tablaConceptos[ $trayecto ][ $concepto->getCaConcepto() ]="";
+				}
+			}else{			
+				if ( isset($tablaTrayectos[ $concepto->getCaConcepto() ][ $trayecto ]) ){
+					$tablaTrayectos[ $concepto->getCaConcepto() ][ $trayecto ].= str_repeat("..-..", 12)."\n";
+				}else{
+					$tablaTrayectos[ $concepto->getCaConcepto() ][ $trayecto ]="";
+				}
 			}
 			
-			$contenido.=$concepto->getCaConcepto()." - ".substr($producto->getCaIncoterms(),0,3);
+			$contenido.=$concepto->getCaConcepto()." - ".substr($producto->getCaIncoterms(),0,3)."\n";
 			
 			$contenido.=$opcion->getTextoFlete()."\n";
 			
 			$textoRecargos = $opcion->getTextoRecargos();		
 			$contenido.=$textoRecargos;
-			
-			$tablaConceptos[ $trayecto ][ $concepto->getCaConcepto() ] .= $contenido;
+			if ($producto->getCaImprimir() == 'Concepto' ){	
+				$tablaConceptos[ $trayecto ][ $concepto->getCaConcepto() ] .= $contenido;
+			}else{
+				$tablaTrayectos[ $concepto->getCaConcepto() ][ $trayecto ] .= $contenido;
+			}
 		}
 				
 	endif; 
@@ -292,10 +331,12 @@ endforeach;
 
 array_unique( $conceptos1 );
 array_unique( $trayectos1 );
-
+array_unique( $conceptos2 );
+array_unique( $trayectos2 );
+$pdf->SetFont('Arial','',7);
 if( count($tablaConceptos)>0 ){
 	$pdf->Ln(2);
-	$titulos = array_merge( array("Trayecto\\Concepto"),   $conceptos1);
+	$titulos = array_merge( array("Trayecto"),   $conceptos1);
 	$width = 145/count($conceptos1);	
 	$widths = array_merge(array(25), array_fill(0, count($conceptos1), $width) );
 	
@@ -306,7 +347,7 @@ if( count($tablaConceptos)>0 ){
 	$pdf->Row( $titulos );	
 	
 	$pdf->SetStyles( array_merge(array("B"), array_fill(0, count($conceptos1), "")));
-	$pdf->SetFills( array_merge(array(1), array_fill(0, count($conceptos1), 0)));	
+	$pdf->SetFills( array_merge( array_fill(0, count($conceptos1)+1, 0)));	
 	$pdf->SetWidths( $widths );
 	$pdf->SetAligns(array_fill(0, count($conceptos1)+1, "C"));
 	foreach( $trayectos1 as $trayecto  ){
@@ -323,18 +364,99 @@ if( count($tablaConceptos)>0 ){
 }	
 
 
+if( count($tablaTrayectos)>0 ){
+	$pdf->Ln(2);
+	$titulos = array_merge( array("Concepto\n "),   $trayectos2);
+	$width = 145/count($trayectos2);	
+	$widths = array_merge(array(25), array_fill(0, count($trayectos2), $width) );
+	
+	$pdf->SetStyles(array_fill(0, count($trayectos2)+1, "B"));
+	$pdf->SetFills(array_fill(0, count($trayectos2)+1, 1));	
+	$pdf->SetWidths( $widths );
+	$pdf->SetAligns(array_fill(0, count($trayectos2)+1, "C"));
+	$pdf->Row( $titulos );	
+	
+	$pdf->SetStyles( array_merge(array("B"), array_fill(0, count($trayectos2), "")));
+	$pdf->SetFills( array_merge( array_fill(0, count($trayectos2)+1, 0)));	
+	$pdf->SetWidths( $widths );
+	$pdf->SetAligns(array_fill(0, count($trayectos2)+1, "C"));
+	foreach( $conceptos2 as $concepto  ){
+		$row = array($concepto);
+		foreach( $trayectos2 as $trayecto){
+			if( isset($tablaTrayectos[$concepto][$trayecto]) ){
+				$row[$concepto]=	$tablaTrayectos[$concepto][$trayecto];		
+			}else{
+				$row[$concepto]=	" ";		
+			}
+		}	
+		$pdf->Row($row);	
+	}
+}	
 
 
 // ======================== Continuación de viaje ======================== //
+$c = new Criteria();
+$c->addAscendingOrderByColumn( CotContinuacionPeer::CA_TIPO );
+$continuaciones = $cotizacion->getCotContinuacions( $c );
+if(count($continuaciones)>0){
+	$pdf->Ln(4);
+	$pdf->SetFont('Arial','B',9);
+	$pdf->Cell(0, 4, 'SERVICIO DE CONTINUACIÓN DE VIAJE', 0, 1, 'L', 0);	
+	$pdf->SetFont('Arial','',7);
+	
+	$tipo = "";
+	foreach( $continuaciones as $continuacion ){
+		$imprimirNotas[]="OTM_".$continuacion->getCaModalidad();
+		if( $tipo!=$continuacion->getCaTipo() ){			
+			
+			$pdf->Ln(4);
+			$pdf->SetFont('Arial','B',8);
+			if( $continuacion->getCaTipo()=="OTM" ){
+				$pdf->Cell(0, 4, ' 	OTM – OPERACIÓN DE TRANSPORTE MULTIMODAL', 0, 1, 'L', 0);			
+			}	
+			
+			if( $continuacion->getCaTipo()=="DTA" ){
+				$pdf->Cell(0, 4, ' 	DTA – DECLARACIÓN DE TRÁNSITO ADUANERO', 0, 1, 'L', 0);			
+			}	
+			$pdf->SetFont('Arial','',7);
+			$pdf->Ln(4);
+			
+			$titu_mem= array('Origen', 'Destino','Mod.', 'Concepto', 'Tarifa','Observaciones');
+			$width_mem= array(20,20, 10, 50, 35, 35);
+			$pdf->SetWidths($width_mem);
+			$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
+			$pdf->SetStyles(array_fill(0, count($width_mem), "B"));
+			$pdf->SetFills(array_fill(0, count($width_mem), 1));
+			$pdf->Row($titu_mem);
+			
+			$pdf->SetWidths($width_mem);
+			$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+			$pdf->SetStyles(array_fill(0, count($width_mem), ""));
+			$pdf->SetFills(array_fill(0, count($width_mem), 0));
+			
+			$tipo=$continuacion->getCaTipo();
+	
+		}
+		
+		$pdf->Row(	array($continuacion->getOrigen()->getCaCiudad(),
+						  $continuacion->getDestino()->getCaCiudad(),
+						  $continuacion->getCaModalidad(),
+						  $continuacion->getTexto(),
+						  $continuacion->getTextoTarifa(),
+						  $continuacion->getCaObservaciones()
+						 					  
+				));
+	}
 
 
-
+}
 
 // ======================== Seguros ======================== //
 $seguros = $cotizacion->getCotSeguros();
 
 
 if ( count($seguros)>0 ) {
+	$imprimirNotas[]="seguro";
 	$pdf->Ln(4);
 	$pdf->SetFont('Arial','B',9);
 	$pdf->Cell(0, 4, 'SEGURO INTERNACIONAL', 0, 1, 'L', 0);
@@ -348,20 +470,6 @@ if ( count($seguros)>0 ) {
 		$pdf->MultiCell(0, 4, $linea, 0, 1);
 		$i++;
 	}
-
-	/*if ($imp_mem) {
-	   $filename = "./links/Notas_Segu.txt";
-	   $handle = fopen($filename, "r");
-	   $contents = fread($handle, filesize($filename));
-	   fclose($handle);
-	
-	   $pdf->Ln(4);
-	   $pdf->SetFont('Arial','B',9);
-	   $pdf->MultiCell(0, 4, "NOTAS IMPORTANTES SOBRE EL SEGURO", 0,'C',0);
-	   $pdf->Ln(1);
-	   $pdf->SetFont('Arial','',9);
-	   $pdf->MultiCell(0, 4, $contents, 0,'J',0);
-	}*/
 }
 
 $pdf->SetFont('Arial','',10);
@@ -385,45 +493,94 @@ $pdf->MultiCell(0, 4, $sucursal->getCaNombre()." - Colombia",0,1);
 $pdf->MultiCell(0, 4, $usuario->getCaEmail(),0,1);
 $pdf->MultiCell(0, 4, "www.coltrans.com.co",0,1);
 
-// ======================== Directori de agentes ======================== //
+
        
 if ($cotizacion->getCaAnexos() != '') {
 	$pdf->Ln(6);
 	$pdf->MultiCell(0, 4, "Anexo: ".$cotizacion->getCaAnexos(),0,1);
 }
 
-$imp_mem="";
-if ($imp_mem) {
-   $pdf->AddPage();
- /*  $filename = "./links/Notas_Impo.txt";
-   $handle = fopen($filename, "r");
-   $contents = fread($handle, filesize($filename));
-   fclose($handle);
-*/
+$imprimirNotas = array_unique( $imprimirNotas );
+
+$nuevaPagina = false;
+
+foreach($imprimirNotas as $val ) {
+	if(!$nuevaPagina){
+   		$pdf->AddPage();
+		$nuevaPagina=true;
+	}
    $pdf->Ln(2);
    $pdf->SetFont('Arial','B',9);
-   $pdf->MultiCell(0, 4, "NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA"."\n"."EN SUS IMPORTACIONES", 0,'C',0);
+   $pdf->MultiCell(0, 4, $notas[$val."Titulo"], 0,'C',0);
    $pdf->Ln(1);
-   $pdf->SetFont('Arial','',10);
-  // $pdf->MultiCell(0, 4, $contents, 0,'J',0);
-}
-$exp_mem="";
-if ($exp_mem) {
-   $pdf->AddPage();
-  /* $filename = "./links/Notas_Expo.txt";
-   $handle = fopen($filename, "r");
-   $contents = fread($handle, filesize($filename));
-   fclose($handle);
-*/
-   $pdf->Ln(2);
-   $pdf->SetFont('Arial','B',9);
-   $pdf->MultiCell(0, 4, "NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA"."\n"."EN SUS EXPORTACIONES", 0,'C',0);
-   $pdf->Ln(1);
-   $pdf->SetFont('Arial','',10);
-  // $pdf->MultiCell(0, 4, $contents, 0,'J',0);
+   $pdf->SetFont('Arial','',8);
+   $pdf->MultiCell(0, 4, $notas[$val], 0,'J',0);
 }
 
+// ======================== Directorio de agentes ======================== //
 
+
+$datosAg = array_unique( $datosAg );
+$c = new Criteria();
+$c->addJoin( ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE );
+$c->addJoin( AgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
+$c->addJoin( CiudadPeer::CA_IDTRAFICO, TraficoPeer::CA_IDTRAFICO );
+$c->add( ContactoAgentePeer::CA_IDCONTACTO, $datosAg, Criteria::IN );
+$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
+$c->addAscendingOrderByColumn( AgentePeer::CA_NOMBRE );
+$c->addAscendingOrderByColumn( ContactoAgentePeer::CA_NOMBRE );
+
+$contactosAgente = ContactoAgentePeer::doSelect( $c );
+
+if( count($contactosAgente)>0 ){	
+	
+	 $pdf->Ln(2);
+	$pdf->SetFont('Arial','B',9);
+	$pdf->MultiCell(0, 4, "DIRECTORIO DE AGENTES", 0,'C',0);
+	
+	$pdf->Ln(4);
+	$pdf->SetFont('Arial','',9);
+	$pdf->MultiCell(0, 4, 'A continuación relacionamos los datos de nuestro agente encargado de coordinar los despachos:',0,1);
+	$pdf->Ln(2);
+	$idagente = "";
+	$idtrafico = "";
+	foreach( $contactosAgente as $contacto ){
+				
+		$agente = $contacto->getAgente();
+		$ciudad = $contacto->getCiudad();
+		
+		if( $idtrafico!=$ciudad->getCaIdtrafico() ){
+			$idtrafico=$ciudad->getCaIdtrafico();
+			$trafico = $ciudad->getTrafico();
+			$pdf->Ln(1);
+			$pdf->SetFont('Arial','B',10);
+			$pdf->MultiCell(0, 3, '» '.$trafico->getCaNombre().' «',0,1);
+			$pdf->Ln(2);
+		}
+		
+		if( $idagente != $agente->getCaidAgente() ){
+			$idagente = $agente->getCaidAgente();
+			
+			$pdf->SetFont('Arial','B',8);
+			$pdf->MultiCell(0, 3,$agente->getCaNombre(),0,1);
+			$pdf->SetFont('Arial','',8);
+			$pdf->MultiCell(0, 3,"Página Web :".$agente->getCaWebsite(),0,1);
+			$pdf->MultiCell(0, 3,"Correo Electrónico :".$agente->getCaEmail(),0,1);
+			$pdf->Ln(2);
+			$pdf->MultiCell(0, 3,"Contactos :",0,1);
+		   
+		}
+				
+		$pdf->SetFont('Arial','B',8);
+		$pdf->MultiCell(0, 3,$contacto->getCaNombre(),0,1);
+		$pdf->SetFont('Arial','',8);
+		$pdf->MultiCell(0, 3,$contacto->getCaDireccion()." - ".$ciudad->getCaCiudad(),0,1);
+		$pdf->MultiCell(0, 3,"Teléfonos (".substr(strtoupper($ciudad->getCaIdtrafico()),3,3)." - ".substr(strtoupper($contacto->getCaIdciudad() ),4,4).") : ".$contacto->getCaTelefonos()." - Fax : ".$contacto->getCaFax(),0,1);
+		$pdf->MultiCell(0, 3,"Correo Electrónico :".$contacto->getCaEmail(),0,1);
+		$pdf->Ln(2);
+	}
+}
+	
 $pdf->Output ( $filename);
 if( !$filename ){ //Para evitar que salga la barra de depuracion
 	exit();

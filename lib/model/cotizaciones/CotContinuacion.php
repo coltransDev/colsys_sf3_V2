@@ -35,4 +35,25 @@ class CotContinuacion extends BaseCotContinuacion
 			return $concepto->getCaConcepto();
 		}
 	}
+	
+	public function getTexto(){
+		
+		$concepto = $this->getConcepto();
+		$equipo = $this->getEquipo();
+		
+		if( $concepto->getCaConcepto()!=$equipo ){
+			$str= $concepto->getCaConcepto()." en ".$equipo;			
+		}else{
+			$str= $concepto->getCaConcepto();			
+		}
+		return $str;		
+	}
+	
+	public function getTextoTarifa(){
+		$str = $this->getCaIdMoneda()." ".$this->getCaValorTar();
+		if( $this->getCaValorMin() ){
+			$str .= " /Min. ". $this->getCaIdMoneda()." ".$this->getCaValorMin();
+		}
+		return $str;
+	}
 }

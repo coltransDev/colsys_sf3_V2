@@ -2,9 +2,7 @@
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.cotizaciones">
 	
 	<table name="tb_cotizaciones" phpName="Cotizacion">				
-		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" autoIncrement="true"  />			
-		<column name="ca_fchcotizacion" type="date" required="true"  />	
-		<column name="ca_fchpresentacion" type="date" required="true"  />	
+		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" autoIncrement="true"  />							
 		<column name="ca_idcontacto" type="integer" required="true"  />			
 		<column name="ca_consecutivo" type="varchar" />	
 		<column name="ca_asunto" type="varchar"    />			
@@ -70,8 +68,10 @@
 		<column name="ca_valor_min" type="numeric"   />
 		<column name="ca_aplica_min" type="varchar"   />
 		<column name="ca_idmoneda" type="varchar"   />	
+		<!--
 		<column name="ca_tarifa" type="varchar"   />
 		<column name="ca_oferta" type="varchar"   />
+		-->
 		<column name="ca_recargos" type="varchar"   />
 		<column name="ca_observaciones" type="varchar"   />		
 		<column name="ca_fchcreado" type="timestamp"   />

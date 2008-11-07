@@ -21,17 +21,16 @@
 				<tbody>
 					<tr>
 						<td width="10%" class="listar"><b>Fch.Cotizacion:</b><br /><?=$cotizacion->getCaFchCreado()?></td>
-						<td width="45%" class="listar" colspan=2><b>Cliente:</b><br /><?=$cliente?></td>
-						<td width="45%" class="listar" colspan=2><b>Contacto:</b><br /><?=$contacto->getNombre()?></td>
+						<td width="45%" class="listar"><b>Cliente:</b><br /><?=$cliente?></td>
+						<td width="45%" class="listar"><b>Contacto:</b><br /><?=$contacto->getNombre()?></td>
 					</tr>
 					<tr>
 						<td class="listar"><b>Solicitud:</b><br /><?=$cotizacion->getCaFchSolicitud()."<br />".$cotizacion->getCaHoraSolicitud()?></td>
 						<td class="listar" colspan=3><b>Asunto:</b><br /><?=$cotizacion->getCaAsunto()?></td>
-						<td class="listar"><b>Presentacion:</b><br /><?=$cotizacion->getCaFchPresentacion()?></td>
 					</tr>
 
 					<tr>
-						<td class="listar" colspan="5"><table class="tableForm" width="100%" border="0">
+						<td class="listar" colspan="4"><table class="tableForm" width="100%" border="0">
 						<? 
 						foreach( $cotizacion->getCotProductos() as $producto ){
 							$origen = $producto->getOrigen();

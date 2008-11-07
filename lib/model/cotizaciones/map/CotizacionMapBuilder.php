@@ -65,10 +65,6 @@ class CotizacionMapBuilder {
 
 		$tMap->addPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int', CreoleTypes::INTEGER, true, null);
 
-		$tMap->addColumn('CA_FCHCOTIZACION', 'CaFchcotizacion', 'int', CreoleTypes::DATE, true, null);
-
-		$tMap->addColumn('CA_FCHPRESENTACION', 'CaFchpresentacion', 'int', CreoleTypes::DATE, true, null);
-
 		$tMap->addForeignKey('CA_IDCONTACTO', 'CaIdcontacto', 'int', CreoleTypes::INTEGER, 'tb_concliente', 'CA_IDCONTACTO', true, null);
 
 		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'string', CreoleTypes::VARCHAR, false, null);

@@ -29,13 +29,19 @@ class CotOpcion extends BaseCotOpcion
 	*/
 	public function getTextoFlete(){
 		
-		$producto = $this->getCotProducto();
+		/*$producto = $this->getCotProducto();
 		$aflete = explode('|',$this->getCaOferta());	
 		
 		@$apl_mem = ((strlen($aflete[2])!=0)?" ".$aflete[2]:"");
 		$min_mem = (($producto->getCaTransporte()=='Aéreo')?' x HAWB':' x HBL');
+		return @$this->getCaIdmoneda()." ".$aflete[0].$apl_mem.((@$aflete[1]!=0)?" / Min. ".$this->getCaIdmoneda().$aflete[1].$min_mem:"");*/
 		
-		return @$this->getCaIdmoneda()." ".$aflete[0].$apl_mem.((@$aflete[1]!=0)?" / Min. ".$this->getCaIdmoneda().$aflete[1].$min_mem:"");
+		$texto = $this->getCaIdmoneda()." ".$this->getCaValorTar()." ".$this->getCaAplicaTar();
+		if( $this->getCaValorMin() ){
+			$texto .= " / Min. ".$this->getCaValorMin()." ".$this->getCaAplicaMin();
+		}
+		return $texto;
+		
 	}
 		
 	

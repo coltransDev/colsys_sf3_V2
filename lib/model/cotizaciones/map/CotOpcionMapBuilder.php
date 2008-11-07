@@ -81,10 +81,6 @@ class CotOpcionMapBuilder {
 
 		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, null);
 
-		$tMap->addColumn('CA_TARIFA', 'CaTarifa', 'string', CreoleTypes::VARCHAR, false, null);
-
-		$tMap->addColumn('CA_OFERTA', 'CaOferta', 'string', CreoleTypes::VARCHAR, false, null);
-
 		$tMap->addColumn('CA_RECARGOS', 'CaRecargos', 'string', CreoleTypes::VARCHAR, false, null);
 
 		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
