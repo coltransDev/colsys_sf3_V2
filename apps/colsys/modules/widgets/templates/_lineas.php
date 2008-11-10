@@ -7,47 +7,49 @@ new Ext.form.ComboBox({
 		selectOnFocus: true,					
 		hiddenName: '<?=$id?>',
 		id: '<?=$id?>_id',
-		displayField: 'ciudad',
-		valueField: 'idciudad',
+		displayField: 'linea',
+		valueField: 'idlinea',
 		allowBlank: <?=$allowBlank?>,
 		minChars : 2,
+		mode : 'local',
 		lazyRender:true,
 		listClass: 'x-combo-list-small',
 		listeners:{focus:function( field, newVal, oldVal ){
 							<?
 							if( isset($link) ){
 							?>	
-								ciudad = Ext.getCmp('<?=$id?>_id');
-								var idpais = Ext.getCmp('<?=$link?>_id').getValue();
-								ciudad.store.baseParams = {
-									idpais: idpais
+								linea = Ext.getCmp('<?=$id?>_id');
+								var transporte = Ext.getCmp('<?=$link?>').getValue();
+								
+								linea.store.baseParams = {
+									transporte: transporte
 								};
-								ciudad.store.reload();
+								linea.store.reload();
 							<?
 							}
 							?>
 						  }
 		},
 		store : new Ext.data.Store({
-			autoLoad : <?=isset( $idpais )?"true":"false"?>,
-			url: '<?=url_for("widgets/datosCiudades")?>',
+			autoLoad : <?=isset( $idlinea )?"true":"false"?>,
+			url: '<?=url_for("widgets/datosLineas")?>',
 			reader: new Ext.data.JsonReader(
 				{
-					id: 'idciudad',
+					id: 'idlinea',
 					root: 'root',
 					totalProperty: 'total',
 					successProperty: 'success'
 				}, 
 				Ext.data.Record.create([
-					{name: 'idciudad'},
-					{name: 'ciudad'}
+					{name: 'idlinea'},
+					{name: 'linea'}
 				])
 			)
 			<?
-			if(isset( $idpais )){
+			if(isset( $idlinea )){
 			?>			
 			,
-			baseParams: {	idpais: '<?=$idpais?>'	}
+			baseParams: {	idlinea: '<?=$idlinea?>'	}
 			<?
 			}
 			?>

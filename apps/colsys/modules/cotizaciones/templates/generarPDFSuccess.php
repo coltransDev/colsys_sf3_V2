@@ -5,6 +5,8 @@ $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "
 
 $pdf = new PDF (  );
 $pdf->Open ();  
+$pdf->setColtransHeader ( true );
+$pdf->setColtransFooter ( true );
 $pdf->AliasNbPages();
 $pdf->SetTopMargin(14);
 $pdf->SetLeftMargin(18);
@@ -26,8 +28,7 @@ list($anno, $mes, $dia, $tiempo, $minuto, $segundo) = sscanf($cotizacion->getCaF
 
 $pdf->Cell(0, 4, str_replace(' D.C.','',$usuario->getCaSucursal()).', '.$dia.' de '.$meses[$mes-1].' de '.$anno,0,1);
 
-$pdf->setColtransHeader ( true );
-$pdf->setColtransFooter ( true );
+
 
 $pdf->Ln(8);
 $pdf->Cell(0, 4,$contacto->getCaSaludo(),0,1);
@@ -577,6 +578,7 @@ if( count($contactosAgente)>0 ){
 		$pdf->MultiCell(0, 3,$contacto->getCaDireccion()." - ".$ciudad->getCaCiudad(),0,1);
 		$pdf->MultiCell(0, 3,"Teléfonos (".substr(strtoupper($ciudad->getCaIdtrafico()),3,3)." - ".substr(strtoupper($contacto->getCaIdciudad() ),4,4).") : ".$contacto->getCaTelefonos()." - Fax : ".$contacto->getCaFax(),0,1);
 		$pdf->MultiCell(0, 3,"Correo Electrónico :".$contacto->getCaEmail(),0,1);
+		$pdf->MultiCell(0, 3,"Operación :".str_replace("|",", ", $contacto->getCaTransporte()),0,1);
 		$pdf->Ln(2);
 	}
 }

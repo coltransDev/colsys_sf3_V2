@@ -39,10 +39,14 @@ class widgetsActions extends sfActions
 	public function executeDatosCiudades($request)
 	{		
 		$idpais = utf8_decode($this->getRequestParameter("idpais"));
-	
+		$query = utf8_decode($this->getRequestParameter("query"));
 		$c=new Criteria();
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idpais );
 		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
+		if( $query ){
+			$c->add( CiudadPeer::CA_CIUDAD, "LOWER(".CiudadPeer::CA_CIUDAD.") LIKE '".strtolower($query)."%'", Criteria::CUSTOM );
+		}
+		
 		$ciudades_rs = CiudadPeer::doSelect( $c );
 		
 		$this->ciudades = array();		
@@ -50,6 +54,28 @@ class widgetsActions extends sfActions
 			$row = array('idciudad'=>$ciudad->getCaIdCiudad(),"ciudad"=>utf8_encode($ciudad->getCaCiudad()));
 			$this->ciudades[]=$row;
 		}
+		$this->setLayout("ajax");		
+	}
+	
+	/**
+	* Retorna un objeto JSON con la información de todas las lineas
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeDatosLineas($request)
+	{		
+		$idlinea = utf8_decode($this->getRequestParameter("idlinea"));
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));
+		$query = utf8_decode($this->getRequestParameter("query"));
+		
+		$lineas = TransportadorPeer::retrieveByTransporte( $transporte, $query );			
+		$this->lineas = array();	
+		foreach( $lineas as $linea ){
+			$this->lineas[] = array(  "idlinea"=>$linea->getCaIdLinea(),
+									"linea"=>$linea->getCaNombre()
+								);	
+		}						
+		
 		$this->setLayout("ajax");		
 	}
 }

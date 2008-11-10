@@ -50,6 +50,41 @@ var expander = new Ext.grid.myRowExpander({
   	) 
 });
 
+/*
+* editor de recargos 
+*/
+
+var comboRecargos = new Ext.form.ComboBox({			
+	typeAhead: true,
+	forceSelection: true,
+	triggerAction: 'all',
+	emptyText:'Seleccione',
+	selectOnFocus: true,					
+	lazyRender:true,
+	allowBlank: false,
+	listClass: 'x-combo-list-small',
+	valueField:'idrecargo',
+	displayField:'recargo',
+	mode: 'local',	
+	store :  new Ext.data.SimpleStore({
+				fields: ['idrecargo', 'recargo'],
+				data : [
+					<?
+					$i=0;
+					foreach( $recargos as $recargo ){
+						if( $i++!=0){
+							echo ",";
+						}
+						?>
+						['<?=$recargo->getCaIdRecargo()?>','<?=$recargo->getCaRecargo()?>']						
+					<?	
+					}	
+					?>
+				]
+			})
+
+});
+
 
 /*
 * Crea el Record 
@@ -82,7 +117,7 @@ var record = Ext.data.Record.create([
 * Crea el store
 */
 <?
-$url = "pricing/datosGrillaPorTrafico?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
+$url = "pricing/datosGrillaPorTrafico?impoexpo=".$impoexpo."&modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
 if( $idlinea ){
 	$url .= "&idlinea=".$idlinea;
 }
@@ -177,7 +212,7 @@ var colModel = new Ext.grid.ColumnModel({
 				}				
 				
 			} ,
-			editor: <?=extRecargosNoEnlazado( $transporte )?>	
+			editor: comboRecargos
 		},	
 		{
 			id: 'trayecto',

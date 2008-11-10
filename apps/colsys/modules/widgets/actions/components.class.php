@@ -82,7 +82,7 @@ class widgetsComponents extends sfComponents
 	}	
 	
 	/**
-	* Muestra un select con los valores de laas aplicaciones 
+	* Muestra un select con los valores de las aplicaciones 
 	*/
 	public function executeAplicaciones(){
 		if(!isset( $this->label )){
@@ -95,6 +95,21 @@ class widgetsComponents extends sfComponents
 			$this->allowBlank="true";
 		}
 		$this->aplicaciones = ParametroPeer::retrieveByCaso("CU064", null, $this->transporte );
+	}
+	
+	/**
+	* Muestra un select con las lineas de transporte 
+	*/
+	public function executeLineas(){
+		if(!isset( $this->label )){
+			$this->label="";
+		}
+		if(!isset( $this->id )){
+			$this->id="";
+		}	
+		if(!isset( $this->allowBlank )){
+			$this->allowBlank="true";
+		}
 	}
 	
 }

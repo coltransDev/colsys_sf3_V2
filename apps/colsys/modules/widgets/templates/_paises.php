@@ -13,6 +13,7 @@ new Ext.form.ComboBox({
 			displayField: 'trafico',
 			valueField: 'idtrafico',
 			lazyRender:true,
+			mode:'local',
 			//allowBlank:false,
 			listClass: 'x-combo-list-small',
 			allowBlank: <?=$allowBlank?>,

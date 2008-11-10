@@ -401,17 +401,21 @@ use_helper( "Ext2" );
                     }
 					,
                     items: [
-						
 						<?
+						include_partial("formConsulta", array("opcion"=>$opcion));						?>
+						
+						
+												
+						/*<?
 						$i=0;
 						foreach( $modalidades_mar as $modalidad){
-							if( $i++!=0 ){
+							if( $i!=0 ){
 								echo ",";
 							} 
 
 						?>
 						new Ext.tree.TreePanel({							
-							title: 'Marítimo <?=$modalidad->getCaValor()?>',							
+							title: '<?=$i==0?"Importaciones Maritimas":""?> Marítimo <?=$modalidad->getCaValor()?>',							
 							split: true,
 							height: 300,
 							minSize: 150,
@@ -436,6 +440,7 @@ use_helper( "Ext2" );
 							}
 						})
 						<?
+							$i++;
 						}
 						
 						foreach( $modalidades_aer as $modalidad){
@@ -497,7 +502,7 @@ use_helper( "Ext2" );
 						})
 						<?
 						}
-						?>
+						?>*/
 						
 					]
                 },
