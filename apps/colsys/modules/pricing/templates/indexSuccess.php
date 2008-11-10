@@ -388,7 +388,7 @@ use_helper( "Ext2" );
                  },{
                     region:'west',
                     id:'west-panel',
-                    title:'Tr&aacute;ficos',
+                    title:'Consultas',
                     split:true,
                     width: 200,
                     minSize: 175,
@@ -403,9 +403,15 @@ use_helper( "Ext2" );
                     items: [
 						<?
 						include_partial("formConsulta", array("opcion"=>$opcion));						?>
-						
-						
-												
+						,
+						<?
+						include_partial("formSeguros", array("opcion"=>$opcion));						?>								
+						,
+						<?
+						include_partial("formOTMDTA", array("opcion"=>$opcion));						?>			
+							,
+						<?
+						include_partial("formAduana", array("opcion"=>$opcion));						?>			
 						/*<?
 						$i=0;
 						foreach( $modalidades_mar as $modalidad){

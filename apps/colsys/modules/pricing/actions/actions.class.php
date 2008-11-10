@@ -920,6 +920,78 @@ class pricingActions extends sfActions
 	}
 	
 	/*********************************************************************
+	* Seguros
+	*	
+	*********************************************************************/
+	public function executeGrillaSeguros(){
+		$this->transporte = utf8_decode($this->getRequestParameter("transporte"));
+		$this->forward404Unless( $this->transporte );
+		$this->opcion = $this->getRequestParameter("opcion");
+		$this->idcomponent = "seguros_".$this->transporte;
+		$c = new Criteria();		
+		$c->addAscendingorderByColumn( TraficoGrupoPeer::CA_DESCRIPCION );		
+		$grupos = TraficoGrupoPeer::doSelect( $c );
+		
+		$this->data = array();
+		foreach( $grupos as $grupo ){
+			$row = array(
+						'idgrupo'=>$grupo->getCaIdGrupo(),
+						'grupo'=>utf8_encode($grupo->getCaDescripcion())
+					);
+			$seguro = PricSeguroPeer::retrieveByPk( $grupo->getCaIdGrupo(), $this->transporte );				
+			if( $seguro ){
+				$row['vlrprima']=$seguro->getCaVlrprima();
+				$row['vlrminima']=$seguro->getCaVlrminima();
+				$row['vlrobtencionpoliza']=$seguro->getCaVlrobtencionpoliza();
+				$row['idmoneda']=$seguro->getCaIdmoneda();
+				$row['observaciones']=$seguro->getCaObservaciones();
+				
+			}
+			$this->data[] = $row;		
+		}
+		
+		
+		$this->setLayout("ajax");
+	}
+	
+	public function executeObserveGrillaSeguros(){
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));
+		$idgrupo = utf8_decode($this->getRequestParameter("idgrupo"));
+		$this->forward404Unless( $transporte );
+		$this->forward404Unless( $idgrupo );
+		
+		$seguro = PricSeguroPeer::retrieveByPk( $idgrupo, $transporte );
+		if(!$seguro){
+			$seguro = new PricSeguro();
+			$seguro->setCaIdGrupo( $idgrupo );
+			$seguro->setCaTransporte( $transporte );			
+		}
+		
+		if( $this->getRequestParameter("vlrprima") ){
+			$seguro->setCaVlrprima( $this->getRequestParameter("vlrprima") );
+		}
+		
+		if( $this->getRequestParameter("vlrminima") ){
+			$seguro->setCaVlrminima( $this->getRequestParameter("vlrminima") );
+		}
+				
+		if( $this->getRequestParameter("vlrobtencionpoliza") ){
+			$seguro->setCaVlrobtencionpoliza( $this->getRequestParameter("vlrobtencionpoliza") );
+		}
+		
+		if( $this->getRequestParameter("idmoneda") ){
+			$seguro->setCaIdmoneda( $this->getRequestParameter("idmoneda") );
+		}
+		
+		if( $this->getRequestParameter("observaciones") ){
+			$seguro->setCaObservaciones( $this->getRequestParameter("observaciones") );
+		}		
+		$seguro->save();
+		return sfView::NONE;
+		
+	}
+	
+	/*********************************************************************
 	* Administrador de archivos
 	*	
 	*********************************************************************/

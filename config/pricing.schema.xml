@@ -129,20 +129,21 @@
 		<column name="ca_usucreado" type="varchar" size="15" />				
 	</table>
 	
-	<table name="tb_priccabotajes" phpName="PricCabotaje">		
-		<column name="oid" type="integer" />
-		<column name="ca_origen" type="varchar" required="true" primaryKey="true" />					
-		<column name="ca_destino" type="varchar" required="true" primaryKey="true"/>	
-		<column name="ca_idlinea" type="varchar" required="true" primaryKey="true"/>			
-		<column name="ca_vlrkilo" type="numeric" />
-		<column name="ca_vlrminimo" type="numeric" />	
-		<column name="ca_maxpeso" type="numeric" />	
-		<column name="ca_dimensiones" type="varchar" size="100" />	
+	<table name="tb_pricseguros" phpName="PricSeguro">		
+		<column name="ca_idgrupo" type="integer" required="true" primaryKey="true"/>
+		<column name="ca_transporte" type="varchar" required="true" primaryKey="true" />					
 		
-		<foreign-key foreignTable="tb_transporlineas">
-			<reference local="ca_idlinea" foreign="ca_idlinea"/>
-		</foreign-key>
+		<column name="ca_vlrprima" type="numeric" />
+		<column name="ca_vlrminima" type="numeric" />	
+		<column name="ca_vlrobtencionpoliza" type="numeric" />	
+		<column name="ca_idmoneda" type="varchar" size="3" />
+		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_fchcreado" type="timestamp" />
+		<column name="ca_usucreado" type="varchar" />
 					
+		<foreign-key foreignTable="tb_grupos">
+			<reference local="ca_idgrupo" foreign="ca_idgrupo"/>
+		</foreign-key>
 	</table>	
 
 </database>

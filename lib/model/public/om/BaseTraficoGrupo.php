@@ -33,6 +33,18 @@ abstract class BaseTraficoGrupo extends BaseObject  implements Persistent {
 	protected $ca_descripcion;
 
 	/**
+	 * Collection to store aggregation of collPricSeguros.
+	 * @var        array
+	 */
+	protected $collPricSeguros;
+
+	/**
+	 * The criteria used to select the current contents of collPricSeguros.
+	 * @var        Criteria
+	 */
+	protected $lastPricSeguroCriteria = null;
+
+	/**
 	 * Collection to store aggregation of collTraficos.
 	 * @var        array
 	 */
@@ -253,6 +265,14 @@ abstract class BaseTraficoGrupo extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
+			if ($this->collPricSeguros !== null) {
+				foreach($this->collPricSeguros as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collTraficos !== null) {
 				foreach($this->collTraficos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -330,6 +350,14 @@ abstract class BaseTraficoGrupo extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collPricSeguros !== null) {
+					foreach($this->collPricSeguros as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 				if ($this->collTraficos !== null) {
 					foreach($this->collTraficos as $referrerFK) {
@@ -536,6 +564,10 @@ abstract class BaseTraficoGrupo extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
+			foreach($this->getPricSeguros() as $relObj) {
+				$copyObj->addPricSeguro($relObj->copy($deepCopy));
+			}
+
 			foreach($this->getTraficos() as $relObj) {
 				$copyObj->addTrafico($relObj->copy($deepCopy));
 			}
@@ -585,6 +617,111 @@ abstract class BaseTraficoGrupo extends BaseObject  implements Persistent {
 			self::$peer = new TraficoGrupoPeer();
 		}
 		return self::$peer;
+	}
+
+	/**
+	 * Temporary storage of collPricSeguros to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initPricSeguros()
+	{
+		if ($this->collPricSeguros === null) {
+			$this->collPricSeguros = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TraficoGrupo has previously
+	 * been saved, it will retrieve related PricSeguros from storage.
+	 * If this TraficoGrupo is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getPricSeguros($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricSeguros === null) {
+			if ($this->isNew()) {
+			   $this->collPricSeguros = array();
+			} else {
+
+				$criteria->add(PricSeguroPeer::CA_IDGRUPO, $this->getCaIdgrupo());
+
+				PricSeguroPeer::addSelectColumns($criteria);
+				$this->collPricSeguros = PricSeguroPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricSeguroPeer::CA_IDGRUPO, $this->getCaIdgrupo());
+
+				PricSeguroPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricSeguroCriteria) || !$this->lastPricSeguroCriteria->equals($criteria)) {
+					$this->collPricSeguros = PricSeguroPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricSeguroCriteria = $criteria;
+		return $this->collPricSeguros;
+	}
+
+	/**
+	 * Returns the number of related PricSeguros.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countPricSeguros($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(PricSeguroPeer::CA_IDGRUPO, $this->getCaIdgrupo());
+
+		return PricSeguroPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a PricSeguro object to this object
+	 * through the PricSeguro foreign key attribute
+	 *
+	 * @param      PricSeguro $l PricSeguro
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricSeguro(PricSeguro $l)
+	{
+		$this->collPricSeguros[] = $l;
+		$l->setTraficoGrupo($this);
 	}
 
 	/**
