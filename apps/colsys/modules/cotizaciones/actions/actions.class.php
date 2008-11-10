@@ -96,8 +96,7 @@ class cotizacionesActions extends sfActions
 			$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
 			$textos = sfYaml::load($config);			
 			$user = $this->getUser()->getUserId();
-			$this->cotizacion = new Cotizacion();
-			$this->cotizacion->setCaFchCotizacion(date("Y-m-d"));
+			$this->cotizacion = new Cotizacion();			
 			$this->cotizacion->setCaAsunto($textos['asunto']);
 			$this->cotizacion->setCaSaludo($textos['saludo']);
 			$this->cotizacion->setCaEntrada( $textos['entrada'] );
@@ -1206,7 +1205,7 @@ class cotizacionesActions extends sfActions
 			}else{
 				$grupo = $destino->getTrafico()->getTraficoGrupo();
 			}
-			$row = array(
+			$row = array(			 
 				'idgrupo'=>$grupo->getCaIdGrupo(),
 				'grupo'=>utf8_encode($grupo->getCaDescripcion()),
 				'trayecto'=>utf8_encode($origen->getCaCiudad()."»".$destino->getCaCiudad()),
@@ -1224,18 +1223,7 @@ class cotizacionesActions extends sfActions
 			}
 			$this->data[] = $row;
 		}
-				
-		
-		
-		$c = new Criteria();		
-		$c->addAscendingorderByColumn( TraficoGrupoPeer::CA_DESCRIPCION );		
-		$grupos = TraficoGrupoPeer::doSelect( $c );
-		
-		
-		foreach( $grupos as $grupo ){
 			
-					
-		}	
 		$this->setLayout("ajax");
 		
 	}

@@ -35,6 +35,7 @@ editorConceptos = new Ext.form.ComboBox({
 	selectOnFocus: true,					
 	name: 'recargo',
 	id: 'recargo',
+	mode: 'local',
 	displayField: 'concepto',
 	valueField: 'idconcepto',
 	lazyRender:true,
@@ -507,6 +508,7 @@ var ventanaTarifario = function( record ){
 			idciudad: record.data.ciu_origen,
 			idciudaddestino: record.data.ciu_destino,
 			transporte: record.data.transporte,
+			impoexpo: record.data.impoexpo,
 			modalidad: record.data.modalidad
 		},
 		success: function(xhr) {			

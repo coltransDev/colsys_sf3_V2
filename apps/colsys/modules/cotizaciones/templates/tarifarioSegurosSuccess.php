@@ -24,8 +24,7 @@ var recordSeguros = Ext.data.Record.create([
 var storeSeguros = new Ext.data.Store({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
-		{
-			id: 'idgrupo',
+		{			
 			root: 'data',
 			totalProperty: 'total',
 			successProperty: 'success'

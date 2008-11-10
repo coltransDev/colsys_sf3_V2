@@ -198,7 +198,7 @@ function updateSeguroModel(){
 }
 
 
-function agregarFila(){
+function agregarFilaSeguros(){
 	
 	
 	var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
@@ -219,7 +219,7 @@ function agregarFila(){
 * Muestra una ventana con la informacion del tarifario y le permite al usuario 
 * seleccionar las tarifas a importar
 */
-var ventanaTarifario = function( ){
+var ventanaTarifarioSeguros = function( ){
 	var url = '<?=url_for("cotizaciones/tarifarioSeguros?idcotizacion=".$cotizacion->getcaIdcotizacion())?>';
 	
 	
@@ -235,7 +235,7 @@ var ventanaTarifario = function( ){
 			
 			//Se crea la ventana
 			
-			win = new Ext.Window({		
+			winSeguros = new Ext.Window({		
 			width       : 800,
 			height      : 460,
 			closeAction :'close',
@@ -266,7 +266,7 @@ var ventanaTarifario = function( ){
 								records.push( rec );
 								//storeSegurosCot.insert( index, records );
 								storeSegurosCot.insert( 0, records );
-								rec = storeSegurosCot.getAt(index);	
+								rec = storeSegurosCot.getAt(0);	
 								rec.set("prima_tip", '%' );																							
 								rec.set("prima_vlr", r.data.vlrprima );
 								rec.set("prima_min", r.data.vlrminima );
@@ -276,18 +276,18 @@ var ventanaTarifario = function( ){
 							}
 						} );
 										
-						win.close();
+						winSeguros.close();
 					}
 				},
 				{
 					text     : 'Cancelar',
 					handler  : function(){
-						win.close();
+						winSeguros.close();
 					}
 				}
 			]
 		});		
-		win.show( );		
+		winSeguros.show( );		
 		},
 		failure: function() {
 			Ext.Msg.alert("Tab creation failed", "Server communication failure");
@@ -327,7 +327,7 @@ var grid_seguros = new Ext.grid.EditorGridPanel({
 		tooltip: 'Opción para agregar opciones de Seguro',
 		iconCls: 'import',  // reference to our css
 		scope:this,
-		handler: ventanaTarifario
+		handler: ventanaTarifarioSeguros
 	}
 	,
 	{
@@ -335,7 +335,7 @@ var grid_seguros = new Ext.grid.EditorGridPanel({
 		tooltip: 'Opción para agregar opciones de Seguro',
 		iconCls: 'add',  // reference to our css
 		scope:this,
-		handler: agregarFila
+		handler: agregarFilaSeguros
 	}
 	
 	],
