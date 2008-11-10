@@ -72,7 +72,7 @@ class pricingActions extends sfActions
 			if( $idciudaddestino ){	
 			
 				$ciudad = CiudadPeer::retrieveByPk( $idciudaddestino );
-				$this->titulo .= "->".$ciudad->getCaCiudad();
+				$this->titulo .= "»".$ciudad->getCaCiudad();
 				$this->idcomponent.= "_ciudaddestino_".$idciudaddestino;
 			}
 		}
@@ -179,7 +179,7 @@ class pricingActions extends sfActions
 			*/
 			$trafico = TraficoPeer::retrieveByPk( $trayecto->getOrigen()->getCaIdTrafico() );
 			
-			$trayectoStr = strtoupper($trayecto->getOrigen()->getCaCiudad())."->".strtoupper($trayecto->getDestino()->getCaCiudad())." - ";
+			$trayectoStr = strtoupper($trayecto->getOrigen()->getCaCiudad())."»".strtoupper($trayecto->getDestino()->getCaCiudad())." - ";
 			
 			$trayectoStr.=($transportador?($transportador->getCaSigla()?$transportador->getCaSigla():$transportador->getCaNombre()):"");
 			
@@ -877,7 +877,7 @@ class pricingActions extends sfActions
 			
 			$trafico = TraficoPeer::retrieveByPk( $trayecto->getOrigen()->getCaIdTrafico() );
 			
-			$trayectoStr = utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."->".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()));
+			$trayectoStr = utf8_encode(strtoupper($trayecto->getOrigen()->getCaCiudad()))."»".utf8_encode(strtoupper($trayecto->getDestino()->getCaCiudad()));
 			
 			
 			$row = array(
@@ -948,9 +948,7 @@ class pricingActions extends sfActions
 				
 			}
 			$this->data[] = $row;		
-		}
-		
-		
+		}		
 		$this->setLayout("ajax");
 	}
 	
@@ -1146,8 +1144,7 @@ class pricingActions extends sfActions
 	
 	/*
 	* Datos de los conceptos para ser mostrados en un combobox
-	*/
-	/*
+	*/	
 	public function executeDatosConceptos(){
 		
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
@@ -1192,7 +1189,8 @@ class pricingActions extends sfActions
 		
 		$this->setLayout("ajax");
 	}
-	 */
+	
+	
 				
 	
 }

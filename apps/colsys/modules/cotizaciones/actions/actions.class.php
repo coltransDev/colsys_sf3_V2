@@ -118,17 +118,6 @@ class cotizacionesActions extends sfActions
 		}
 	}		
 
-	
-	/*
-	* Permite ver una cotización en formato PDF
-	*/
-	public function executeVerCotizacion(){
-		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
-		$this->forward404Unless( $this->cotizacion );
-				
-	}
-
-	
 	/*
 	* Guarda los cambios realizados al Header de la Cotización  
 	* @author Carlos G. López M.
@@ -169,6 +158,14 @@ class cotizacionesActions extends sfActions
 		$this->setLayout("ajax");
 	}
 	
+	/*
+	* Permite ver una cotización en formato PDF
+	*/
+	public function executeVerCotizacion(){
+		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
+		$this->forward404Unless( $this->cotizacion );
+				
+	}
 	/*
 	* Genera un archivo PDF a partir de una cotización
 	*/
@@ -1189,6 +1186,60 @@ class cotizacionesActions extends sfActions
 		$seguro->save();
 		return sfView::NONE;
 	}
+	
+	/*
+	* Muestra las tarifas de seguros de acuerdo a los productos cotizados 
+	*/	
+	public function executeTarifarioSeguros(){
+
+		$idcotizacion = $this->getRequestParameter("idcotizacion");		
+		$this->idcomponent = "seguros_".$idcotizacion;
+		$cotizacion = CotizacionPeer::retrieveByPk( $idcotizacion );
+		$productos = $cotizacion->getCotProductos();
+		
+		$this->data = array();
+		foreach(  $productos as $producto ){
+			$origen = $producto->getOrigen();
+			$destino = $producto->getDestino();
+			if( $producto->getCaImpoExpo()=="Importación" ){
+				$grupo = $origen->getTrafico()->getTraficoGrupo(); 
+			}else{
+				$grupo = $destino->getTrafico()->getTraficoGrupo();
+			}
+			$row = array(
+				'idgrupo'=>$grupo->getCaIdGrupo(),
+				'grupo'=>utf8_encode($grupo->getCaDescripcion()),
+				'trayecto'=>utf8_encode($origen->getCaCiudad()."»".$destino->getCaCiudad()),
+				'producto'=>utf8_encode($producto->getCaProducto())
+			);
+			
+			$seguro = PricSeguroPeer::retrieveByPk( $grupo->getCaIdGrupo(), $producto->getCaTransporte() );				
+			if( $seguro ){
+				$row['vlrprima']=$seguro->getCaVlrprima();
+				$row['vlrminima']=$seguro->getCaVlrminima();
+				$row['vlrobtencionpoliza']=$seguro->getCaVlrobtencionpoliza();
+				$row['idmoneda']=$seguro->getCaIdmoneda();
+				$row['observaciones']=$seguro->getCaObservaciones();
+				
+			}
+			$this->data[] = $row;
+		}
+				
+		
+		
+		$c = new Criteria();		
+		$c->addAscendingorderByColumn( TraficoGrupoPeer::CA_DESCRIPCION );		
+		$grupos = TraficoGrupoPeer::doSelect( $c );
+		
+		
+		foreach( $grupos as $grupo ){
+			
+					
+		}	
+		$this->setLayout("ajax");
+		
+	}
+	
 	
 	/*************************************************************************
 	* OTROS

@@ -239,7 +239,7 @@ function updateModel(){
 
 
 var seleccionarTodo = function(){	
-	storeRecargos.each( function(r){
+	storeSeguros.each( function(r){
 			r.set("sel", true);
 		} 
 	);

@@ -21,7 +21,7 @@ var recordGrilla = Ext.data.Record.create([
 /*
 * Crea el store
 */
-var storeSeguros = new Ext.data.GroupingStore({
+var storeSegurosCot = new Ext.data.Store({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
 		{
@@ -34,7 +34,7 @@ var storeSeguros = new Ext.data.GroupingStore({
 	proxy: new Ext.data.MemoryProxy(data_seguros)
 });
 	
-storeSeguros.load();	
+storeSegurosCot.load();	
 		
 /*
 * Crea la columna de chequeo
@@ -154,7 +154,7 @@ var selModel = new  Ext.grid.CellSelectionModel();
 */
 function updateSeguroModel(){
 	var success = true;
-	var records = storeSeguros.getModifiedRecords();
+	var records = storeSegurosCot.getModifiedRecords();
 			
 	var lenght = records.length;
 	for( var i=0; i< lenght; i++){
@@ -190,7 +190,7 @@ function updateSeguroModel(){
 	}
 	
 	if( success ){
-		storeSeguros.commitChanges();
+		storeSegurosCot.commitChanges();
 		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
 	}else{
 		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
@@ -199,7 +199,8 @@ function updateSeguroModel(){
 
 
 function agregarFila(){
-	index = 0;
+	
+	
 	var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
 						  prima_tip:'',
 						  prima_vlr:0,
@@ -210,15 +211,96 @@ function agregarFila(){
 						});
 	records = [];
 	records.push( rec );
-	storeSeguros.insert( index+1, records );
+	storeSegurosCot.insert( 0, records );
 	
 }
+
+/*
+* Muestra una ventana con la informacion del tarifario y le permite al usuario 
+* seleccionar las tarifas a importar
+*/
+var ventanaTarifario = function( ){
+	var url = '<?=url_for("cotizaciones/tarifarioSeguros?idcotizacion=".$cotizacion->getcaIdcotizacion())?>';
+	
+	
+	
+	Ext.Ajax.request({
+		url: url,
+		params: {						
+			
+		},
+		success: function(xhr) {			
+			//alert( xhr.responseText );			
+			var newComponent = eval(xhr.responseText);
+			
+			//Se crea la ventana
+			
+			win = new Ext.Window({		
+			width       : 800,
+			height      : 460,
+			closeAction :'close',
+			plain       : true,		
+			
+			items       : [newComponent],
+			
+	
+			buttons: [
+				{
+					text     : 'Importar',
+					handler  : function( ){						
+						storeSeguroPric = newComponent.store;
+						var index = 0;				
+						
+						storeSeguroPric.each( function(r){
+							if( r.data.sel==true ){
+								
+								var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
+													  prima_tip:'',
+													  prima_vlr:0,
+													  prima_min:0,
+													  obtencion:'',
+													  idmoneda:'',
+													  observaciones:''
+													});
+								records = [];
+								records.push( rec );
+								//storeSegurosCot.insert( index, records );
+								storeSegurosCot.insert( 0, records );
+								rec = storeSegurosCot.getAt(index);	
+								rec.set("prima_tip", '%' );																							
+								rec.set("prima_vlr", r.data.vlrprima );
+								rec.set("prima_min", r.data.vlrminima );
+								rec.set("obtencion", r.data.vlrobtencionpoliza );
+								rec.set("idmoneda", r.data.idmoneda );
+								index++;
+							}
+						} );
+										
+						win.close();
+					}
+				},
+				{
+					text     : 'Cancelar',
+					handler  : function(){
+						win.close();
+					}
+				}
+			]
+		});		
+		win.show( );		
+		},
+		failure: function() {
+			Ext.Msg.alert("Tab creation failed", "Server communication failure");
+		}
+	});	
+}
+
 
 /*
 * Crea la grilla 
 */    
 var grid_seguros = new Ext.grid.EditorGridPanel({
-	store: storeSeguros,
+	store: storeSegurosCot,
 	master_column_id : 'seguro',
 	cm: colModel,
 	sm: selModel,	
@@ -238,34 +320,28 @@ var grid_seguros = new Ext.grid.EditorGridPanel({
 		tooltip: 'Guarda los cambios realizados en Seguros',
 		iconCls: 'disk',  // reference to our css
 		handler: updateSeguroModel
-	},
+	}
+	,
+	{
+		text: 'Importar del tarifario',
+		tooltip: 'Opción para agregar opciones de Seguro',
+		iconCls: 'import',  // reference to our css
+		scope:this,
+		handler: ventanaTarifario
+	}
+	,
 	{
 		text: 'Agregar Seguro',
 		tooltip: 'Opción para agregar opciones de Seguro',
 		iconCls: 'add',  // reference to our css
 		scope:this,
-		handler: function(){
-			agregarFila();
-		}
+		handler: agregarFila
 	}
 	
 	],
 	
-	view: new Ext.grid.GroupingView({
+	view: new Ext.grid.GridView({
 		forceFit:true,
-		enableRowBody:true, 
-		getRowClass: function(  record,  index,  rowParams,  storeSeguros ){			
-			switch( record.data.style ){
-				case "yellow":
-					return "row_yellow";
-					break;
-				case "pink":
-					return "row_pink";
-					break;
-				default:
-					return "";
-					break;
-			}
-		} 
+		enableRowBody:false
 	})	
 });
