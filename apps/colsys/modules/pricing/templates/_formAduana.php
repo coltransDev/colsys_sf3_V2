@@ -8,11 +8,11 @@ new Ext.FormPanel({
 		labelWidth: 100,
 		
 		items: [			
-				<?=extTransporte("transporteA")?>								
+				new Ext.form.Hidden()										
 			]
 			,
 
-		buttons: [{
+		/*buttons: [{
 			text     : 'Consultar',
 			handler: function(){
 				var fp = Ext.getCmp("consultaseguros-form");									
@@ -49,7 +49,7 @@ new Ext.FormPanel({
 					Ext.MessageBox.alert('Tarifario', '¡Por favor coloque los valores requeridos!');
 				}	            	
 			}
-		}]
+		}]*/
 				
 		
 	})

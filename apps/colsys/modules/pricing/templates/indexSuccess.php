@@ -390,7 +390,7 @@ use_helper( "Ext2" );
                     id:'west-panel',
                     title:'Consultas',
                     split:true,
-                    width: 200,
+                    width: 290,
                     minSize: 175,
                     maxSize: 400,
                     collapsible: true,

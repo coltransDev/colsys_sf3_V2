@@ -8,9 +8,9 @@ new Ext.FormPanel({
 		labelWidth: 100,
 		
 		items: [			
-				<?=extTransporte("transporteD")?>								
+				new Ext.form.Hidden()							
 			]
-			,
+		/*	,
 
 		buttons: [{
 			text     : 'Consultar',
@@ -49,7 +49,7 @@ new Ext.FormPanel({
 					Ext.MessageBox.alert('Tarifario', '¡Por favor coloque los valores requeridos!');
 				}	            	
 			}
-		}]
+		}]*/
 				
 		
 	})
