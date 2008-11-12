@@ -1,5 +1,0 @@
-<?php
-
-// symfony directories
-$sf_symfony_lib_dir  = 'D:\Desarrollo\symfony\lib';
-$sf_symfony_data_dir = 'D:\Desarrollo\symfony\data';

@@ -44,9 +44,12 @@ class pricingActions extends sfActions
 	*/
 	public function executeGrillaPorTrafico( $request ){
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
-		$this->impoexpo = $this->getRequestParameter( "impoexpo" );
+		$this->impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
 		$this->forward404Unless( $this->impoexpo );
-		$idtrafico = $this->getRequestParameter( "idtrafico" );
+		
+		
+		
+		
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		
 		$idciudad = $this->getRequestParameter( "idciudad" );
@@ -56,25 +59,37 @@ class pricingActions extends sfActions
 		$idciudad = $this->getRequestParameter( "idciudad" );
 		$this->opcion = $this->getRequestParameter( "opcion" );
 		
-		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);		
+		$idtrafico = $this->getRequestParameter( "idtrafico" );
+		$idtraficodestino = $this->getRequestParameter( "idtraficodestino" );
+		
+		if( $this->impoexpo=="Importación" ){
+			
+			$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
+		}else{
+			
+			$this->trafico = TraficoPeer::retrieveByPk($idtraficodestino);	
+		}
+		$this->forward404Unless( $this->trafico );
+			
 		$this->idcomponent = substr($this->impoexpo,0,1)."_".$this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;
 				
-		if( !$idciudad && !$idlinea ){
-			$this->titulo = $this->trafico->getCaNombre();
-		}
+		
+		$this->titulo = substr($this->impoexpo,0,4)."»".$this->trafico->getCaNombre();
+		
 		
 		if( $idciudad ){			
 			
 			$ciudad = CiudadPeer::retrieveByPk( $idciudad );
 			$this->titulo = $ciudad->getCaCiudad();
 			$this->idcomponent.= "_ciudad_".$idciudad;
+						
+		}
+		
+		if( $idciudaddestino ){	
 			
-			if( $idciudaddestino ){	
-			
-				$ciudad = CiudadPeer::retrieveByPk( $idciudaddestino );
-				$this->titulo .= "»".$ciudad->getCaCiudad();
-				$this->idcomponent.= "_ciudaddestino_".$idciudaddestino;
-			}
+			$ciudad = CiudadPeer::retrieveByPk( $idciudaddestino );
+			$this->titulo .= "»".$ciudad->getCaCiudad();
+			$this->idcomponent.= "_ciudaddestino_".$idciudaddestino;
 		}
 		
 		if( $idlinea ){			
@@ -84,18 +99,16 @@ class pricingActions extends sfActions
 			$this->idcomponent.= "_linea_".$idlinea;
 		}
 				
-		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
-		$this->forward404Unless( $this->trafico );
 		$this->conceptos = $this->trafico->getConceptos( $transporte, $modalidad );
-		
-		
+				
 		//print_r( $this->conceptos );
 			
 		//$this->aplicaciones = ParametroPeer::retrieveByCaso( "CU060", null, $transporte );
-					
+		$this->impoexpo = utf8_encode($this->impoexpo);			
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;		
+		$this->idtraficodestino = $idtraficodestino;
 		$this->idciudad = $idciudad;
 		$this->idciudaddestino = $idciudaddestino;
 		$this->idlinea = $idlinea;
@@ -127,21 +140,29 @@ class pricingActions extends sfActions
 		$this->forward404Unless( $impoexpo );
 		
 		$idciudaddestino = $this->getRequestParameter( "idciudaddestino" );
+		$idtraficodestino = $this->getRequestParameter( "idtraficodestino" );
 		
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
 				
 		$this->opcion = $this->getRequestParameter( "opcion" );
-
-		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+		if( $impoexpo=="Importación" ){
+			$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+		}else{						
+			$this->trafico = TraficoPeer::retrieveByPk( $idtraficodestino );
+		}
 		$conceptosArr = explode("|",$this->trafico->getCaConceptos());
 					
 		$this->conceptos = $this->trafico->getConceptos( $transporte, $modalidad );
 		
 		$c = new Criteria();		
-		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		if( $impoexpo=="Importación" ){
+			$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		}else{
+			$c->addJoin( TrayectoPeer::CA_DESTINO, CiudadPeer::CA_IDCIUDAD );
+		}	
 		$c->addJoin( TrayectoPeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA );
-		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
+		$c->add( CiudadPeer::CA_IDTRAFICO, $this->trafico->getCaIdTrafico() );
 		$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
@@ -149,7 +170,7 @@ class pricingActions extends sfActions
 		if( $idciudad ){
 			$c->add( TrayectoPeer::CA_ORIGEN, $idciudad );	
 		}
-		
+		//$idtraficodestino		
 		if( $idciudaddestino ){			
 			$c->add( TrayectoPeer::CA_DESTINO, $idciudaddestino );	
 		}
@@ -177,7 +198,12 @@ class pricingActions extends sfActions
 			* Determina cuales conceptos deberian mostrarse de acuerdo al trafico
 			* seleccionado.
 			*/
-			$trafico = TraficoPeer::retrieveByPk( $trayecto->getOrigen()->getCaIdTrafico() );
+			if( $impoexpo=="Importación" ){
+				$idtraficoConcepto =  $trayecto->getOrigen()->getCaIdTrafico();
+			}else{
+				$idtraficoConcepto =  $trayecto->getDestino()->getCaIdTrafico();
+			}
+			$trafico = TraficoPeer::retrieveByPk( $idtraficoConcepto );
 			
 			$trayectoStr = strtoupper($trayecto->getOrigen()->getCaCiudad())."»".strtoupper($trayecto->getDestino()->getCaCiudad())." - ";
 			
@@ -204,7 +230,7 @@ class pricingActions extends sfActions
 				'inicio' => '',
 				'vencimiento' => '',
 				'moneda' => '',
-				'aplicacion' => $trayecto->getCaAplicacion(),				
+				'aplicacion' => '',				
 				'_id' => $trayecto->getCaIdtrayecto()."-gen",
 				'style' => '',
 				'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),

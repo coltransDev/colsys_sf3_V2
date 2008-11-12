@@ -15,11 +15,8 @@
 		<column name="ca_fchcreado" type="date"   />
 		<column name="ca_idtarifas" type="integer"   />
 		<column name="ca_observaciones" type="varchar"   />
-		<column name="ca_idagente" type="integer"   />			
-		<column name="ca_idmoneda" type="varchar" size="3"  />
-		<column name="ca_fchinicio" type="date"   />
-		<column name="ca_fchvencimiento" type="date"   />
-		<column name="ca_aplicacion" type="varchar"   />
+		<column name="ca_idagente" type="integer"   />				
+	
 		
 									
 		<foreign-key foreignTable="tb_transporlineas">

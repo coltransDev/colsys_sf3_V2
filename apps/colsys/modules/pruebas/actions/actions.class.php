@@ -572,7 +572,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 	public function executeImportarTarifario(){
 		$c = new Criteria();
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
+		$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" );
  
 		//$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
 		//$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );

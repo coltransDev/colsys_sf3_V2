@@ -21,7 +21,7 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 
 	/**
 	 * The value for the ca_rutina field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_rutina;
 
@@ -70,7 +70,7 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 	/**
 	 * Get the [ca_rutina] column value.
 	 * 
-	 * @return     int
+	 * @return     string
 	 */
 	public function getCaRutina()
 	{
@@ -125,16 +125,16 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 	/**
 	 * Set the value of [ca_rutina] column.
 	 * 
-	 * @param      int $v new value
+	 * @param      string $v new value
 	 * @return     void
 	 */
 	public function setCaRutina($v)
 	{
 
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
-			$v = (int) $v;
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
 		}
 
 		if ($this->ca_rutina !== $v) {
@@ -249,7 +249,7 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_rutina = $rs->getInt($startcol + 0);
+			$this->ca_rutina = $rs->getString($startcol + 0);
 
 			$this->ca_opcion = $rs->getString($startcol + 1);
 
@@ -620,7 +620,7 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 
 	/**
 	 * Returns the primary key for this object (row).
-	 * @return     int
+	 * @return     string
 	 */
 	public function getPrimaryKey()
 	{
@@ -630,7 +630,7 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 	/**
 	 * Generic method to set the primary key (ca_rutina column).
 	 *
-	 * @param      int $key Primary key.
+	 * @param      string $key Primary key.
 	 * @return     void
 	 */
 	public function setPrimaryKey($key)

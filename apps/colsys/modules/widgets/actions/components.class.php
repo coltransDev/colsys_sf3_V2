@@ -46,7 +46,8 @@ class widgetsComponents extends sfComponents
 		}
 		if(!isset( $this->id )){
 			$this->id="";
-		}	
+		}
+				
 		if(!isset( $this->allowBlank )){
 			$this->allowBlank="true";
 		}	

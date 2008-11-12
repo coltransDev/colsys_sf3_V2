@@ -123,34 +123,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idagente;
 
-
-	/**
-	 * The value for the ca_idmoneda field.
-	 * @var        string
-	 */
-	protected $ca_idmoneda;
-
-
-	/**
-	 * The value for the ca_fchinicio field.
-	 * @var        int
-	 */
-	protected $ca_fchinicio;
-
-
-	/**
-	 * The value for the ca_fchvencimiento field.
-	 * @var        int
-	 */
-	protected $ca_fchvencimiento;
-
-
-	/**
-	 * The value for the ca_aplicacion field.
-	 * @var        string
-	 */
-	protected $ca_aplicacion;
-
 	/**
 	 * @var        Transportador
 	 */
@@ -382,90 +354,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idagente;
-	}
-
-	/**
-	 * Get the [ca_idmoneda] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaIdmoneda()
-	{
-
-		return $this->ca_idmoneda;
-	}
-
-	/**
-	 * Get the [optionally formatted] [ca_fchinicio] column value.
-	 * 
-	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
-	 */
-	public function getCaFchinicio($format = 'Y-m-d')
-	{
-
-		if ($this->ca_fchinicio === null || $this->ca_fchinicio === '') {
-			return null;
-		} elseif (!is_int($this->ca_fchinicio)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchinicio);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchinicio] as date/time value: " . var_export($this->ca_fchinicio, true));
-			}
-		} else {
-			$ts = $this->ca_fchinicio;
-		}
-		if ($format === null) {
-			return $ts;
-		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
-		} else {
-			return date($format, $ts);
-		}
-	}
-
-	/**
-	 * Get the [optionally formatted] [ca_fchvencimiento] column value.
-	 * 
-	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
-	 */
-	public function getCaFchvencimiento($format = 'Y-m-d')
-	{
-
-		if ($this->ca_fchvencimiento === null || $this->ca_fchvencimiento === '') {
-			return null;
-		} elseif (!is_int($this->ca_fchvencimiento)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchvencimiento);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchvencimiento] as date/time value: " . var_export($this->ca_fchvencimiento, true));
-			}
-		} else {
-			$ts = $this->ca_fchvencimiento;
-		}
-		if ($format === null) {
-			return $ts;
-		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
-		} else {
-			return date($format, $ts);
-		}
-	}
-
-	/**
-	 * Get the [ca_aplicacion] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaAplicacion()
-	{
-
-		return $this->ca_aplicacion;
 	}
 
 	/**
@@ -809,98 +697,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	} // setCaIdagente()
 
 	/**
-	 * Set the value of [ca_idmoneda] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     void
-	 */
-	public function setCaIdmoneda($v)
-	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
-		}
-
-		if ($this->ca_idmoneda !== $v) {
-			$this->ca_idmoneda = $v;
-			$this->modifiedColumns[] = TrayectoPeer::CA_IDMONEDA;
-		}
-
-	} // setCaIdmoneda()
-
-	/**
-	 * Set the value of [ca_fchinicio] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     void
-	 */
-	public function setCaFchinicio($v)
-	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchinicio] from input: " . var_export($v, true));
-			}
-		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchinicio !== $ts) {
-			$this->ca_fchinicio = $ts;
-			$this->modifiedColumns[] = TrayectoPeer::CA_FCHINICIO;
-		}
-
-	} // setCaFchinicio()
-
-	/**
-	 * Set the value of [ca_fchvencimiento] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     void
-	 */
-	public function setCaFchvencimiento($v)
-	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchvencimiento] from input: " . var_export($v, true));
-			}
-		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchvencimiento !== $ts) {
-			$this->ca_fchvencimiento = $ts;
-			$this->modifiedColumns[] = TrayectoPeer::CA_FCHVENCIMIENTO;
-		}
-
-	} // setCaFchvencimiento()
-
-	/**
-	 * Set the value of [ca_aplicacion] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     void
-	 */
-	public function setCaAplicacion($v)
-	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
-		}
-
-		if ($this->ca_aplicacion !== $v) {
-			$this->ca_aplicacion = $v;
-			$this->modifiedColumns[] = TrayectoPeer::CA_APLICACION;
-		}
-
-	} // setCaAplicacion()
-
-	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -947,20 +743,12 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 
 			$this->ca_idagente = $rs->getInt($startcol + 14);
 
-			$this->ca_idmoneda = $rs->getString($startcol + 15);
-
-			$this->ca_fchinicio = $rs->getDate($startcol + 16, null);
-
-			$this->ca_fchvencimiento = $rs->getDate($startcol + 17, null);
-
-			$this->ca_aplicacion = $rs->getString($startcol + 18);
-
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 19; // 19 = TrayectoPeer::NUM_COLUMNS - TrayectoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 15; // 15 = TrayectoPeer::NUM_COLUMNS - TrayectoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Trayecto object", $e);
@@ -1278,18 +1066,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			case 14:
 				return $this->getCaIdagente();
 				break;
-			case 15:
-				return $this->getCaIdmoneda();
-				break;
-			case 16:
-				return $this->getCaFchinicio();
-				break;
-			case 17:
-				return $this->getCaFchvencimiento();
-				break;
-			case 18:
-				return $this->getCaAplicacion();
-				break;
 			default:
 				return null;
 				break;
@@ -1325,10 +1101,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			$keys[12] => $this->getCaIdtarifas(),
 			$keys[13] => $this->getCaObservaciones(),
 			$keys[14] => $this->getCaIdagente(),
-			$keys[15] => $this->getCaIdmoneda(),
-			$keys[16] => $this->getCaFchinicio(),
-			$keys[17] => $this->getCaFchvencimiento(),
-			$keys[18] => $this->getCaAplicacion(),
 		);
 		return $result;
 	}
@@ -1405,18 +1177,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			case 14:
 				$this->setCaIdagente($value);
 				break;
-			case 15:
-				$this->setCaIdmoneda($value);
-				break;
-			case 16:
-				$this->setCaFchinicio($value);
-				break;
-			case 17:
-				$this->setCaFchvencimiento($value);
-				break;
-			case 18:
-				$this->setCaAplicacion($value);
-				break;
 		} // switch()
 	}
 
@@ -1455,10 +1215,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[12], $arr)) $this->setCaIdtarifas($arr[$keys[12]]);
 		if (array_key_exists($keys[13], $arr)) $this->setCaObservaciones($arr[$keys[13]]);
 		if (array_key_exists($keys[14], $arr)) $this->setCaIdagente($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaIdmoneda($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaFchinicio($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaFchvencimiento($arr[$keys[17]]);
-		if (array_key_exists($keys[18], $arr)) $this->setCaAplicacion($arr[$keys[18]]);
 	}
 
 	/**
@@ -1485,10 +1241,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(TrayectoPeer::CA_IDTARIFAS)) $criteria->add(TrayectoPeer::CA_IDTARIFAS, $this->ca_idtarifas);
 		if ($this->isColumnModified(TrayectoPeer::CA_OBSERVACIONES)) $criteria->add(TrayectoPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(TrayectoPeer::CA_IDAGENTE)) $criteria->add(TrayectoPeer::CA_IDAGENTE, $this->ca_idagente);
-		if ($this->isColumnModified(TrayectoPeer::CA_IDMONEDA)) $criteria->add(TrayectoPeer::CA_IDMONEDA, $this->ca_idmoneda);
-		if ($this->isColumnModified(TrayectoPeer::CA_FCHINICIO)) $criteria->add(TrayectoPeer::CA_FCHINICIO, $this->ca_fchinicio);
-		if ($this->isColumnModified(TrayectoPeer::CA_FCHVENCIMIENTO)) $criteria->add(TrayectoPeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
-		if ($this->isColumnModified(TrayectoPeer::CA_APLICACION)) $criteria->add(TrayectoPeer::CA_APLICACION, $this->ca_aplicacion);
 
 		return $criteria;
 	}
@@ -1570,14 +1322,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		$copyObj->setCaObservaciones($this->ca_observaciones);
 
 		$copyObj->setCaIdagente($this->ca_idagente);
-
-		$copyObj->setCaIdmoneda($this->ca_idmoneda);
-
-		$copyObj->setCaFchinicio($this->ca_fchinicio);
-
-		$copyObj->setCaFchvencimiento($this->ca_fchvencimiento);
-
-		$copyObj->setCaAplicacion($this->ca_aplicacion);
 
 
 		if ($deepCopy) {

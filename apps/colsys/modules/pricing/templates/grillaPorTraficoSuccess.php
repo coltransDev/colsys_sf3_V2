@@ -117,7 +117,16 @@ var record = Ext.data.Record.create([
 * Crea el store
 */
 <?
-$url = "pricing/datosGrillaPorTrafico?impoexpo=".$impoexpo."&modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
+$url = "pricing/datosGrillaPorTrafico?impoexpo=".$impoexpo."&modalidad=".$modalidad."&transporte=".utf8_encode($transporte);
+
+if( $idtrafico ){
+	$url .= "&idtrafico=".$idtrafico;
+}
+
+if( $idtraficodestino ){
+	$url .= "&idtraficodestino=".$idtraficodestino;
+}
+
 if( $idlinea ){
 	$url .= "&idlinea=".$idlinea;
 }

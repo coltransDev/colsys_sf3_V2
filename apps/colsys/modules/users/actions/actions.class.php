@@ -112,19 +112,86 @@ class usersActions extends sfActions
 		
 		$criterion = $c->getNewCriterion( AccesoGrupoPeer::CA_GRUPO, $this->user->getGrupos(), Criteria::IN );								
 		$criterion->addOr($c->getNewCriterion( AccesoUsuarioPeer::CA_LOGIN, $this->user->getUserId() ));	
-		$c->add($criterion);	
-		
+		$c->add($criterion);			
 		$c->setDistinct();
-		
-		
-		
-		
+				
 		$c->addAscendingOrderByColumn( RutinaPeer::CA_GRUPO );
 		$c->addAscendingOrderByColumn( RutinaPeer::CA_OPCION );
 		$this->rutinas = RutinaPeer::doSelect( $c );
 		
-		$this->setLayout("minimal");
+		$this->setLayout("minimal");		
+	}
+	
+	/*
+	* Administración de rutinas
+	*/
+	public function executeAdminRutinas(){
 		
+		$this->data = array();
+		
+		$c = new Criteria();
+		$c->addAscendingOrderByColumn( RutinaPeer::CA_GRUPO );
+		$c->addAscendingOrderByColumn( RutinaPeer::CA_OPCION );
+		$rutinas = RutinaPeer::doSelect( $c );
+		foreach(  $rutinas as $rutina ){
+			
+			$row = array(			 
+				'rutina'=>"".$rutina->getCaRutina(),
+				'grupo'=>utf8_encode($rutina->getCaGrupo()),
+				'opcion'=>utf8_encode($rutina->getCaOpcion()),
+				'programa'=>utf8_encode($rutina->getCaPrograma()),
+				'descripcion'=>utf8_encode($rutina->getCaDescripcion())
+			);
+			
+			$this->data[] = $row;
+		}		
+	}
+	
+	/*
+	* guarda los cambios en las rutinas 
+	*/
+	public function executeObserveAdminRutinas(){
+		$rutina = $this->getRequestParameter( 'rutina' );
+		$grupo = $this->getRequestParameter( 'grupo' );
+		$opcion = $this->getRequestParameter( 'opcion' );
+		$programa = $this->getRequestParameter( 'programa' );
+		$descripcion = $this->getRequestParameter( 'descripcion' );
+		$id = $this->getRequestParameter( 'id' );
+		
+		$rutinaObj = RutinaPeer::retrieveByPk( $rutina );
+		
+		if( !$rutinaObj ){
+			$rutinaObj = new Rutina();	
+			$rutinaObj->setCaRutina( RutinaPeer::getConsecutivo() );
+		}	
+		
+		if( $grupo ){
+			$rutinaObj->setCaGrupo( $grupo );
+		}
+		
+		if( $opcion ){
+			$rutinaObj->setCaOpcion( $opcion );
+		}
+		
+		if( $programa ){
+			$rutinaObj->setCaPrograma( $programa );
+		}
+		
+		if( $descripcion ){
+			$rutinaObj->setCaDescripcion( $descripcion );
+		}
+		$rutinaObj->save();
+		$this->responseArray = array("id"=>$id, "rutina"=>$rutinaObj->getCaRutina());
+		
+	}
+	
+	public function executeEliminarAdminRutina(){
+		$rutina = $this->getRequestParameter( 'rutina' );	
+		$rutinaObj = RutinaPeer::retrieveByPk( $rutina );
+		if( $rutinaObj ){
+			$rutinaObj->delete(); 
+		}
+		return sfView::NONE;
 	}
 }
 ?>

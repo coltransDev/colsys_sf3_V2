@@ -61,7 +61,7 @@ class RutinaMapBuilder {
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'string', CreoleTypes::VARCHAR, true, null);
 
 		$tMap->addColumn('CA_OPCION', 'CaOpcion', 'string', CreoleTypes::VARCHAR, false, null);
 

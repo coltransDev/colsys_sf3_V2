@@ -12,8 +12,8 @@ new Ext.FormPanel({
 				,<?=extTransporte("transporte")?>
 				,<?=extModalidad("modalidad", "Ext.getCmp('transporte')", "Importación")?>
 				
-				,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen", "allowBlank"=>"false"))?>										
-				,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen", "allowBlank"=>"false"))?>
+				,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen", "allowBlank"=>"true"))?>										
+				,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen", "allowBlank"=>"true"))?>
 						
 				
 				,<?=include_component("widgets", "paises" ,array("id"=>"tra_destino", "label"=>" Pais Destino", "value"=>"C0-057", "allowBlank"=>"true"))?>									
@@ -51,7 +51,8 @@ new Ext.FormPanel({
 				var fp = Ext.getCmp("consulta-form");									
 				if( fp.getForm().isValid() ){
 						
-					idtrafico = fp.getForm().findField("tra_origen").getValue();								
+					idtrafico = fp.getForm().findField("tra_origen").getValue();
+					idtraficodestino = fp.getForm().findField("tra_destino").getValue();								
 					transporte = fp.getForm().findField("transporte").getValue();								
 					impoexpo = fp.getForm().findField("impoexpo").getValue();								
 					modalidad = fp.getForm().findField("modalidad").getValue();								
@@ -119,6 +120,7 @@ new Ext.FormPanel({
 						params: {	
 							impoexpo: impoexpo,					
 							idtrafico: idtrafico,
+							idtraficodestino: idtraficodestino, 
 							transporte: transporte,
 							modalidad: modalidad,
 							idlinea: idlinea,

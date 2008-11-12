@@ -4,7 +4,7 @@ class loginValidationFilter extends sfFilter
 	public function execute($filterChain)
 	{
 		
-		$cookie = sfContext::getInstance()->getRequest()->getCookie($this->getParameter('cookie_name'));
+	/*	$cookie = sfContext::getInstance()->getRequest()->getCookie($this->getParameter('cookie_name'));
 		if ($cookie)
 		{		
 			sfContext::getInstance()->getUser()->setUserId( $cookie );
@@ -18,7 +18,7 @@ class loginValidationFilter extends sfFilter
 			header("Location: /index.html");
 			exit();
 		}
-		
+		*/
 		$filterChain->execute();	
 	}
 }

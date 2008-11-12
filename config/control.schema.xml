@@ -57,7 +57,7 @@
 	</table>
 	
 	<table name="control.tb_rutinas" phpName="Rutina">
-		<column name="ca_rutina" type="integer" required="VARCHAR" primaryKey="true"/>
+		<column name="ca_rutina" type="VARCHAR" required="VARCHAR" primaryKey="true"/>
 		<column name="ca_opcion" type="VARCHAR" />
 		<column name="ca_descripcion" type="VARCHAR" />
 		<column name="ca_programa" type="VARCHAR" />

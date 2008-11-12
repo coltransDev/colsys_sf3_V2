@@ -10,9 +10,9 @@ new Ext.FormPanel({
 		items: [			
 				new Ext.form.Hidden()										
 			]
-			,
+			
 
-		/*buttons: [{
+		/*,buttons: [{
 			text     : 'Consultar',
 			handler: function(){
 				var fp = Ext.getCmp("consultaseguros-form");									
