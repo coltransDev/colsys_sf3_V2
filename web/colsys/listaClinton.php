@@ -8,6 +8,7 @@ sfContext::createInstance($configuration)->dispatch();
 $databaseManager = new sfDatabaseManager($configuration);
 $databaseManager->loadConfiguration();
 
+set_time_limit(0);
 
 /*
 
@@ -17,16 +18,13 @@ require_once(SF_ROOT_DIR.DIRECTORY_SEPARATOR.'apps'.DIRECTORY_SEPARATOR.SF_APP.D
 
 $con_bog = sfContext::getInstance()->getDatabaseManager()->getDatabase(ClientePeer::DATABASE_NAME)->getConnection();
 
-
 $file = "../../data/downloads/clinton.xml";
 /*
 $url = "http://www.treas.gov/offices/enforcement/ofac/sdn/sdn.xml";
 
-
 unlink($file);
 $handleLocal = fopen($file, 'x');
 //Descarga el archivo
-set_time_limit(0);
 
 $handle = fopen($url, 'r');
 while (!feof($handle))
@@ -43,23 +41,33 @@ while (!feof($handle))
 }
 fclose($handle); 
 exit;*/
-//fclose($handleHandle); 
-/*Extrae los datos y los coloca*/
 
+/*Extrae los datos y los coloca*/
+/*
 $doc = new DOMDocument();
-// echo $file;
+
 $doc->load( $file );		
 
-//echo file_get_contents( $file );
-
-//print_r($doc);
-	
 foreach( $doc->childNodes as $sdnEntryTag ){
 	if ( $sdnEntryTag->nodeName != '#text' )
 	{
 		foreach( $sdnEntryTag->childNodes as $item ){
 			$colombia = false;								// Bandera para determinar si el elemento tiene que ver con Colombia
 			$nuevo = false;
+			if ( $item->nodeName == 'publshInformation' )
+			{	
+				foreach( $item->childNodes as $element ){
+					if ( $element->nodeName == 'Publish_Date' ){		// Captura la Fecha de Publicación del Archivo
+						$ultimo = ParametroPeer::retrieveByPK("CU065",1,"publishInformation");
+						if ($ultimo->getCaValor2() == $element->nodeValue){ // Compara con el Caso de Uso
+							die('Finaliza sin Actualizaciones');							
+						}else{							
+							SdnPeer::eliminarRegistros();				// Crea objeto Sdn solo para invocar método que limpia las tablas
+							$nueva_fecha = $element->nodeValue;
+						} 
+					}
+				}
+			}
 			if ( $item->nodeName == 'sdnEntry' )
 			{
 				$nuevo = true;
@@ -68,7 +76,6 @@ foreach( $doc->childNodes as $sdnEntryTag ){
 				$sdnAkaList = array();
 				$sdnAddressList = array();
 				foreach( $item->childNodes as $element ){
-
 					if ( $element->nodeName == 'uid' ){					// Toma el uid del registro a evaluar
 						$sdnEntry['uid'] = $element->nodeValue;
 					}else if ( $element->nodeName == 'firstName' ){		// Evalua por el Apellidos de la Persona o Nombre de Empresa
@@ -234,31 +241,78 @@ foreach( $doc->childNodes as $sdnEntryTag ){
 				}
 				$nuevo = false; 
 			}
+			
 		}
 	}	
 	else{
 		print_r($sdnEntryTag);
 	}
-	echo "<br /><br />Fin del Proceso de Importación<br />";
 }
 
+*/
 
+$rs = SdnPeer::evaluaClientes();
+$ven_mem = 'none';
+$msn_mem = '';
+$tit_mem = array("ca_idcliente","ca_compania","ca_nombres","ca_papellido","ca_sapellido","ca_vendedor","ca_uid","ca_firstname","ca_lastname","ca_title","ca_sdntype","ca_remarks","ca_uid","ca_uid_id","ca_idtype","ca_idnumber","ca_idcountry","ca_issuedate","ca_expirationdate","ca_uid","ca_uid_aka","ca_type","ca_category","ca_firstname","ca_lastname","ca_uid","ca_uid_aka","ca_type","ca_category","ca_firstname","ca_lastname");
 
- 
-/* Guarda en la base de datos la tasa representativa del mercado. */
+while($rs->next()) {
+	if ($rs->getString("ca_vendedor") != $ven_mem) {
+		if ($msn_mem != ''){
+			$msn_mem.= "</table>";
+			echo "Body Mail: <br />".$msn_mem."<br />"."<br />";
+			$email->addCc( "" );
+			$email->setCaSubject( "Verificación Clientes en Lista Clinton" );		
+			$email->setCaBody( $msn_mem );
+			//$email->save(); //guarda el cuerpo del mensaje	
+		}
+		if ($rs->getString("ca_vendedor") != '') {
+			$user = UsuarioPeer::retrieveByPk($rs->getString("ca_vendedor"));	
+		}else{
+			$user = new Usuario();
+			$user->setCaEmail("clopez@coltrans.com.co");
+		}
+		
 
-//$con_bog = sfContext::getInstance()->getDatabaseManager()->getDatabase("propel")->getConnection();
+		//Crea el correo electronico
+		$email = new Email();
+		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email->setCaUsuenvio( "Administrador" );
+		$email->setCaTipo( "SDNList Compair" ); 		
+		$email->setCaIdcaso( "1" );
+		$email->setCaFrom( "admin@coltrans.com.co" );
+		$email->setCaFromname( "Administrador Sistema Colsys" );
+		$email->setCaReplyto( "admin@coltrans.com.co" );
 
-
-
-
+		$email->addTo( $user->getCaEmail() );
+		
+		$ven_mem = $rs->getString("ca_vendedor");
+		$msn_mem = "El sistema ha encontrado algunas similitudes en su listado de Clientes, comparado con la Lista Clinton del día $nueva_fecha. Favor hacer la respectivas verificaciones y tomar acción en caso de que un cliente haya sido reportado.";
+		$msn_mem.= "<br />";
+		$msn_mem.= "<table width='90%' cellspacing='1' border='1'>"; 
+		$msn_mem.= "	<tr>";
+		for($i=0; $i<count($tit_mem); $i++) {
+			$msn_mem.= "	<th>".$tit_mem[$i]."</th>";
+		}
+		$msn_mem.= "	</tr>";
+	}
+	$msn_mem.= "	<tr>";
+	for($i=0; $i<31; $i++) {
+		$msn_mem.= "	<td>".$rs->getString($tit_mem[$i])."</td>";
+	}
+	$msn_mem.= "	</tr>";
+}
+$msn_mem.= "</table>";
+echo $msn_mem."<br />"."<br />";
+$email->addCc( '' );
+$email->setCaSubject( "Verificación Clientes en Lista Clinton" );		
+$email->setCaBody( $msn_mem );
+//$email->save(); //guarda el cuerpo del mensaje	
 
 /*
-<?php
-##IP_CHECK##
-require_once(dirname(__FILE__).'/../config/ProjectConfiguration.class.php');
-
-$configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'dev', true);
-sfContext::createInstance($configuration)->dispatch();
-
+if (isset($ultimo)){
+	$ultimo->setCaValor2($nueva_fecha);
+	$ultimo->save();
+}
 */
+echo "<br /><br />Fin del Proceso de Importación<br />";
