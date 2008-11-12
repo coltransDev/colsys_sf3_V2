@@ -572,7 +572,7 @@ function agregarFila(ctxRecord, index){
 	
 
 
-function updateModel(){
+function guardarGrillaPorTrafico(){
 	var success = true;
 	var records = store.getModifiedRecords();
 			
@@ -654,7 +654,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el tarifario',
 		iconCls: 'disk',  // reference to our css
-		handler: updateModel
+		handler: guardarGrillaPorTrafico
 	}],
 	<?
 	}
