@@ -43,8 +43,7 @@ class reportesActions extends sfActions
 	public function executeVerEmail(){
 		$email_id = $this->getRequestParameter( "email" );	
 		$this->email = EmailPeer::retrieveByPk( $email_id );
-		
-		$this->setLayout("popup");
+				
 		//$this->forward404Unless( $this->email );
 		
 		

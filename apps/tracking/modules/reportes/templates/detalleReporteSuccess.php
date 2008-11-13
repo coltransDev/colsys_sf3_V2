@@ -199,7 +199,7 @@ $statuss = $reporte->getHistorialStatus ();
 		</td>
 		<td width="11%"><?php
 			if( isset($status["emailid"]) ){
-				echo m_link_to ( image_tag ( "24x24/mail_foward.png" ), 'reportes/verEmail?email=' .$status["emailid"] , array ("title" => "Vista previa del correo electronico" ), array ("width" => 850 ) );
+				echo link_to ( image_tag ( "24x24/mail_foward.png" ), 'reportes/verEmail?email=' .$status["emailid"]  );
 				
 				
 			}

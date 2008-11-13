@@ -19,7 +19,7 @@
 	</tr>
 	<tr>
 		<td ><div align="left"><strong>Destinatarios</strong>:<br />
-				<?=$email->getCaAddress()?>
+				<?=str_replace(",", ", ",$email->getCaAddress())?>
 		</div></td>
 	</tr>
 	<tr>
@@ -37,10 +37,16 @@
 	<tr>
 		<td ><div align="left"><strong>Mensaje:</strong><br />
 		</div>
-			<div style="max-height: 350px; overflow:auto ">
+			
 			<?=$email->getCaBody()?>
-			</div>
+			
 		</td>
 	</tr>
 	
 </table>
+
+<br />
+<div align="center"><a onclick="history.go(-1)">Regresar</a></div>
+<br />
+<br />
+

@@ -113,6 +113,16 @@ class RepStatus extends BaseRepStatus
 			case "Carga en Puerto de Destino":	
 				if( strlen( $this->getCaStatus())>6  ){
 					$resultado = $this->getCaStatus();
+				}else{					
+					if( $reporte->getCaTransporte()=="Marítimo" ){						
+						$resultado = $this->getCaStatus();
+					}
+				}
+				
+				break;	
+			case "Carga en Aeropuerto de Destino":	
+				if( strlen( $this->getCaStatus())>6  ){
+					$resultado = $this->getCaStatus();
 				}else{
 					if( $reporte->getCaTransporte()=="Aéreo" ){
 						$resultado = "Nuestra oficina nos informa que el vuelo " . $this->getCaIdnave () . " llegó ";
@@ -122,12 +132,10 @@ class RepStatus extends BaseRepStatus
 						$resultado.= " con la orden en referencia a bordo ";
 						
 					}
-					if( $reporte->getCaTransporte()=="Marítimo" ){						
-						$resultado = $this->getCaStatus();
-					}
+					
 				}
 				
-				break;		
+				break;			
 						
 			default:			
 				$resultado = $this->getCaStatus();
