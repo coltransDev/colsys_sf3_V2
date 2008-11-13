@@ -151,12 +151,20 @@ class pricingActions extends sfActions
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
 		
-		if( $idciudad ){
-			$c->add( TrayectoPeer::CA_ORIGEN, $idciudad );	
-		}
-		
-		if( $idciudad2 ){			
-			$c->add( TrayectoPeer::CA_DESTINO, $idciudad2 );	
+		if( $impoexpo=="Importación" ){
+			if( $idciudad ){
+				$c->add( TrayectoPeer::CA_ORIGEN, $idciudad );	
+			}		
+			if( $idciudad2 ){			
+				$c->add( TrayectoPeer::CA_DESTINO, $idciudad2 );	
+			}
+		}else{
+			if( $idciudad ){
+				$c->add( TrayectoPeer::CA_DESTINO, $idciudad );	
+			}		
+			if( $idciudad2 ){			
+				$c->add( TrayectoPeer::CA_ORIGEN, $idciudad2 );	
+			}
 		}
 		
 		if( $idlinea ){
@@ -533,6 +541,8 @@ class pricingActions extends sfActions
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
 		$this->opcion = $this->getRequestParameter( "opcion" );
+		$this->forward404Unless( $transporte );
+		$this->forward404Unless( $modalidad );
 		
 		if( $idtrafico ){
 			$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
@@ -749,8 +759,13 @@ class pricingActions extends sfActions
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
+		$impoexpo = $this->getRequestParameter( "impoexpo" );
 		
-			
+		$this->forward404Unless( $modalidad );	
+		$this->forward404Unless( $impoexpo );
+		$this->forward404Unless( $idtrafico );	
+		$this->forward404Unless( $transporte );	
+		
 		$opcion = $this->getRequestParameter( "opcion" );
 		
 		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);		
@@ -759,11 +774,12 @@ class pricingActions extends sfActions
 		$c = new Criteria();
 		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
 		
-		$this->titulo = "T.T. Freq. ".$this->trafico->getCaNombre()." ".$modalidad;
+		$this->titulo = "T.T. Freq. ".$this->trafico->getCaNombre()." ".$modalidad." ".substr($impoexpo,0,4);
 				
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );	
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );	
+		$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );	
 		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
 		//$c->setLimit(20);
 		$trayectos = TrayectoPeer::doSelect( $c );
@@ -899,6 +915,9 @@ class pricingActions extends sfActions
 		$this->setLayout("ajax");
 	}
 	
+	/*
+	* Guarda los datos de los seguros
+	*/
 	public function executeObserveGrillaSeguros(){
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
 		$idgrupo = utf8_decode($this->getRequestParameter("idgrupo"));
@@ -935,24 +954,41 @@ class pricingActions extends sfActions
 		return sfView::NONE;
 		
 	}
-	
+		
 	/*********************************************************************
 	* Administrador de archivos
 	*	
 	*********************************************************************/
+	
 	/*
 	* Genera la pestaña donde se muestran los archivos 
 	* @author: Andres Botero 
 	*/
-	public function executeArchivosPaisDatos(){
+	public function executeArchivosPais(){
 		$this->setLayout("ajax");
 		$idtrafico = $this->getRequestParameter("idtrafico");
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));	
+		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));	
+				
+		$this->impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
+		$this->forward404Unless( $this->impoexpo );
+				
+		$modalidad = $this->getRequestParameter( "modalidad" );					
+		$idtrafico = $this->getRequestParameter( "idtrafico" );
+		$this->opcion = $this->getRequestParameter( "opcion" );		
+		$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
+		$this->forward404Unless( $this->trafico );
+			
+		$this->idcomponent = substr($this->impoexpo,0,1)."_".$this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;
+						
 		$this->forward404Unless( $idtrafico );
 		
 		$c = new Criteria();
 		$c->add(PricArchivoPeer::CA_IDTRAFICO, $idtrafico );
-		$c->add(PricArchivoPeer::CA_TRANSPORTE, $transporte );		
+		$c->add(PricArchivoPeer::CA_TRANSPORTE, $transporte );
+		$c->add(PricArchivoPeer::CA_IMPOEXPO, $impoexpo );
+		$c->add(PricArchivoPeer::CA_MODALIDAD, $modalidad );		
 		$c->addSelectColumn( PricArchivoPeer::CA_IDARCHIVO );
 		$c->addSelectColumn( PricArchivoPeer::CA_NOMBRE );
 		$c->addSelectColumn( PricArchivoPeer::CA_TAMANO );
@@ -973,8 +1009,11 @@ class pricingActions extends sfActions
 							 );
 		}	
 		
-	} 
-	
+		$this->impoexpo = utf8_encode($impoexpo);
+		$this->transporte = utf8_encode($transporte);
+		$this->modalidad = $modalidad;
+	}
+		
 	/*
 	* Procesa el archivo que se ha subido en la accion ArchivosPais 
 	* @author: Andres Botero 
@@ -982,8 +1021,12 @@ class pricingActions extends sfActions
 	public function executeSubirArchivo(){
 		$idtrafico = $this->getRequestParameter("idtrafico");	
 		$transporte = $this->getRequestParameter("transporte");		
-		$this->forward404Unless($idtrafico);			
-
+		$this->forward404Unless($idtrafico);	
+		echo "file-----><br />";		
+		print_r( $this->getRequest()->getFileName('file') );
+		echo "fileObj-----><br />";
+		print_r( $this->getRequest()->getFileName('fileObj') );
+		exit();
 		$fileName = $this->getRequest()->getFileName('file');
  		$path = $this->getRequest()->getFilePath('file');
 		$size = $this->getRequest()->getFileSize('file');
@@ -1003,7 +1046,6 @@ class pricingActions extends sfActions
 		$user = $this->getUser();
 		$fileObj->setCaUsucreado($user->getUserid());
 		$fileObj->save();	
-
 		
 		echo "{success:true, file:'".$fileName."', id:".$fileObj->getCaIdArchivo()."}";
 		exit();		
@@ -1025,10 +1067,12 @@ class pricingActions extends sfActions
 	* @author: Andres Botero 
 	*/
 	public function executeBorrarArchivo(){
+		$id = $this->getRequestParameter("id");
 		$this->archivo = PricArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
 		$this->forward404Unless( $this->archivo );
 		$this->archivo->delete(); 
-		return sfView::NONE;
+		$this->responseArray = array("id"=>$id, "success"=>true);	
+		$this->setTemplate("responseTemplate");		
 	}
 	
 	/*

@@ -19,7 +19,7 @@ abstract class BasePricArchivoPeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.PricArchivo';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 10;
+	const NUM_COLUMNS = 12;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -52,8 +52,14 @@ abstract class BasePricArchivoPeer {
 	/** the column name for the CA_DATOS field */
 	const CA_DATOS = 'tb_pricarchivos.CA_DATOS';
 
+	/** the column name for the CA_IMPOEXPO field */
+	const CA_IMPOEXPO = 'tb_pricarchivos.CA_IMPOEXPO';
+
 	/** the column name for the CA_TRANSPORTE field */
 	const CA_TRANSPORTE = 'tb_pricarchivos.CA_TRANSPORTE';
+
+	/** the column name for the CA_MODALIDAD field */
+	const CA_MODALIDAD = 'tb_pricarchivos.CA_MODALIDAD';
 
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
@@ -66,10 +72,10 @@ abstract class BasePricArchivoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdarchivo', 'CaIdtrafico', 'CaNombre', 'CaDescripcion', 'CaTamano', 'CaTipo', 'CaFchcreado', 'CaUsucreado', 'CaDatos', 'CaTransporte', ),
-		BasePeer::TYPE_COLNAME => array (PricArchivoPeer::CA_IDARCHIVO, PricArchivoPeer::CA_IDTRAFICO, PricArchivoPeer::CA_NOMBRE, PricArchivoPeer::CA_DESCRIPCION, PricArchivoPeer::CA_TAMANO, PricArchivoPeer::CA_TIPO, PricArchivoPeer::CA_FCHCREADO, PricArchivoPeer::CA_USUCREADO, PricArchivoPeer::CA_DATOS, PricArchivoPeer::CA_TRANSPORTE, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idarchivo', 'ca_idtrafico', 'ca_nombre', 'ca_descripcion', 'ca_tamano', 'ca_tipo', 'ca_fchcreado', 'ca_usucreado', 'ca_datos', 'ca_transporte', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdarchivo', 'CaIdtrafico', 'CaNombre', 'CaDescripcion', 'CaTamano', 'CaTipo', 'CaFchcreado', 'CaUsucreado', 'CaDatos', 'CaImpoexpo', 'CaTransporte', 'CaModalidad', ),
+		BasePeer::TYPE_COLNAME => array (PricArchivoPeer::CA_IDARCHIVO, PricArchivoPeer::CA_IDTRAFICO, PricArchivoPeer::CA_NOMBRE, PricArchivoPeer::CA_DESCRIPCION, PricArchivoPeer::CA_TAMANO, PricArchivoPeer::CA_TIPO, PricArchivoPeer::CA_FCHCREADO, PricArchivoPeer::CA_USUCREADO, PricArchivoPeer::CA_DATOS, PricArchivoPeer::CA_IMPOEXPO, PricArchivoPeer::CA_TRANSPORTE, PricArchivoPeer::CA_MODALIDAD, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idarchivo', 'ca_idtrafico', 'ca_nombre', 'ca_descripcion', 'ca_tamano', 'ca_tipo', 'ca_fchcreado', 'ca_usucreado', 'ca_datos', 'ca_impoexpo', 'ca_transporte', 'ca_modalidad', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	/**
@@ -79,10 +85,10 @@ abstract class BasePricArchivoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdarchivo' => 0, 'CaIdtrafico' => 1, 'CaNombre' => 2, 'CaDescripcion' => 3, 'CaTamano' => 4, 'CaTipo' => 5, 'CaFchcreado' => 6, 'CaUsucreado' => 7, 'CaDatos' => 8, 'CaTransporte' => 9, ),
-		BasePeer::TYPE_COLNAME => array (PricArchivoPeer::CA_IDARCHIVO => 0, PricArchivoPeer::CA_IDTRAFICO => 1, PricArchivoPeer::CA_NOMBRE => 2, PricArchivoPeer::CA_DESCRIPCION => 3, PricArchivoPeer::CA_TAMANO => 4, PricArchivoPeer::CA_TIPO => 5, PricArchivoPeer::CA_FCHCREADO => 6, PricArchivoPeer::CA_USUCREADO => 7, PricArchivoPeer::CA_DATOS => 8, PricArchivoPeer::CA_TRANSPORTE => 9, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idarchivo' => 0, 'ca_idtrafico' => 1, 'ca_nombre' => 2, 'ca_descripcion' => 3, 'ca_tamano' => 4, 'ca_tipo' => 5, 'ca_fchcreado' => 6, 'ca_usucreado' => 7, 'ca_datos' => 8, 'ca_transporte' => 9, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdarchivo' => 0, 'CaIdtrafico' => 1, 'CaNombre' => 2, 'CaDescripcion' => 3, 'CaTamano' => 4, 'CaTipo' => 5, 'CaFchcreado' => 6, 'CaUsucreado' => 7, 'CaDatos' => 8, 'CaImpoexpo' => 9, 'CaTransporte' => 10, 'CaModalidad' => 11, ),
+		BasePeer::TYPE_COLNAME => array (PricArchivoPeer::CA_IDARCHIVO => 0, PricArchivoPeer::CA_IDTRAFICO => 1, PricArchivoPeer::CA_NOMBRE => 2, PricArchivoPeer::CA_DESCRIPCION => 3, PricArchivoPeer::CA_TAMANO => 4, PricArchivoPeer::CA_TIPO => 5, PricArchivoPeer::CA_FCHCREADO => 6, PricArchivoPeer::CA_USUCREADO => 7, PricArchivoPeer::CA_DATOS => 8, PricArchivoPeer::CA_IMPOEXPO => 9, PricArchivoPeer::CA_TRANSPORTE => 10, PricArchivoPeer::CA_MODALIDAD => 11, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idarchivo' => 0, 'ca_idtrafico' => 1, 'ca_nombre' => 2, 'ca_descripcion' => 3, 'ca_tamano' => 4, 'ca_tipo' => 5, 'ca_fchcreado' => 6, 'ca_usucreado' => 7, 'ca_datos' => 8, 'ca_impoexpo' => 9, 'ca_transporte' => 10, 'ca_modalidad' => 11, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	/**
@@ -200,7 +206,11 @@ abstract class BasePricArchivoPeer {
 
 		$criteria->addSelectColumn(PricArchivoPeer::CA_DATOS);
 
+		$criteria->addSelectColumn(PricArchivoPeer::CA_IMPOEXPO);
+
 		$criteria->addSelectColumn(PricArchivoPeer::CA_TRANSPORTE);
+
+		$criteria->addSelectColumn(PricArchivoPeer::CA_MODALIDAD);
 
 	}
 

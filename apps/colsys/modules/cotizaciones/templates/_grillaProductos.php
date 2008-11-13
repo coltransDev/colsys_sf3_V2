@@ -500,13 +500,24 @@ var ventanaTarifario = function( record ){
 	var url = '<?=url_for("pricing/grillaPorTrafico?opcion=consulta")?>';
 	
 	activeRecord = record;
+	if(record.data.impoexpo=="Importación"){
+		idciudad = record.data.ciu_origen;
+		idciudad2 = record.data.ciu_destino;		
+		idtrafico = record.data.tra_origen;
+	}
+	
+	if(record.data.impoexpo=="Exportación"){
+		idciudad2 = record.data.ciu_origen;
+		idciudad = record.data.ciu_destino;
+		idtrafico = record.data.tra_destino; 
+	}
 	
 	Ext.Ajax.request({
 		url: url,
 		params: {						
-			idtrafico: record.data.tra_origen, 
-			idciudad: record.data.ciu_origen,
-			idciudaddestino: record.data.ciu_destino,
+			idtrafico: idtrafico, 
+			idciudad: idciudad,
+			idciudad2: idciudad2,
 			transporte: record.data.transporte,
 			impoexpo: record.data.impoexpo,
 			modalidad: record.data.modalidad
@@ -768,7 +779,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 				iconCls: 'delete',
 				scope:this,
 				handler: function(){    					                   		
-					if( this.ctxRecord && this.ctxRecord.data.iditem ){					
+					if( this.ctxRecord && this.ctxRecord.data.iditem && confirm("Desea continuar?") ){					
 						if( this.ctxRecord.data.tipo=="concepto" ){ 
 							var idconcepto = this.ctxRecord.data.iditem;
 							var idrecargo = "";						
@@ -845,7 +856,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 				iconCls: 'delete',
 				scope:this,
 				handler: function(){    					                   		
-					if( this.ctxRecord ){					
+					if( this.ctxRecord && confirm("Desea continuar?") ){					
 						var idproducto = this.ctxRecord.data.idproducto;
 						
 						Ext.Ajax.request( 

@@ -24,8 +24,7 @@ var recordGrilla = Ext.data.Record.create([
 var storeSegurosCot = new Ext.data.Store({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
-		{
-			id: 'seguro',
+		{			
 			root: 'seguros',
 			totalProperty: 'total'
 		}, 
@@ -157,6 +156,37 @@ function updateSeguroModel(){
 	var records = storeSegurosCot.getModifiedRecords();
 			
 	var lenght = records.length;
+	
+	//Validacion
+	for( var i=0; i< lenght; i++){
+		r = records[i];
+		if( !r.data.idmoneda ){
+			Ext.Msg.alert( "","Por favor coloque la moneda en todos los items " );	
+			return 0;						
+		}
+		
+		if( !r.data.prima_tip ){
+			Ext.Msg.alert( "","Por favor coloque el tipo de seguro" );	
+			return 0;						
+		}
+		
+		if( !r.data.prima_vlr ){
+			Ext.Msg.alert( "","Por favor coloque el valor de la prima" );	
+			return 0;						
+		}
+		
+		if( !r.data.prima_min ){
+			Ext.Msg.alert( "","Por favor coloque el valor minimo" );	
+			return 0;						
+		}
+		
+		if( !r.data.obtencion ){
+			Ext.Msg.alert( "","Por favor coloque el valor de obtención de la poliza" );	
+			return 0;						
+		}		
+		
+	}
+	
 	for( var i=0; i< lenght; i++){
 		r = records[i];
 					
@@ -164,7 +194,7 @@ function updateSeguroModel(){
 		
 		changes['cotizacionId']=r.data.idcotizacion;
 		changes['oid']=r.data.oid;
-
+		changes['id']=r.id;
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
@@ -173,34 +203,22 @@ function updateSeguroModel(){
 				//Solamente se envian los cambios 						
 				params :	changes,
 										
-				//Ejecuta esta accion en caso de fallo
-				//(404 error etc, ***NOT*** success=false)
-				failure:function(response,options){
-					alert( response.responseText );
-					success = false;
-				},
-				//Ejecuta esta accion cuando el resultado es exitoso
-				success:function(response,options){
-					//alert( response.responseText );
-					//r.commit();
-				}
+				callback :function(options, success, response){	
+											
+					var res = Ext.util.JSON.decode( response.responseText );					
+					var rec = storeSegurosCot.getById( res.id );																										
+					rec.commit();						
+				}		
 			 }
 		);
 		r.set("sel", false);//Quita la seleccion de todas las columnas 
 	}
 	
-	if( success ){
-		storeSegurosCot.commitChanges();
-		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
-	}else{
-		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
-	}	
+	
 }
 
 
-function agregarFilaSeguros(){
-	
-	
+function agregarFilaSeguros(){	
 	var rec = new recordGrilla({idcotizacion:'<?=$cotizacion->getCaIdcotizacion()?>',
 						  prima_tip:'',
 						  prima_vlr:0,
@@ -211,7 +229,9 @@ function agregarFilaSeguros(){
 						});
 	records = [];
 	records.push( rec );
-	storeSegurosCot.insert( 0, records );
+	storeSegurosCot.insert( 0, records );	
+	rec = storeSegurosCot.getAt(0);
+	rec.set("prima_tip", "%");
 	
 }
 
@@ -296,6 +316,64 @@ var ventanaTarifarioSeguros = function( ){
 }
 
 
+
+var grid_segurosOnRowcontextmenu =  function(grid, index, e){		
+	rec = this.store.getAt(index);	
+	this.menu = new Ext.menu.Menu({
+	id:'grid_recargos-ctx',
+	items: [		
+			{
+				text: 'Eliminar item',
+				iconCls: 'delete',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord && confirm("Desea continuar?") ){					
+											
+						
+						var id = this.ctxRecord.id;						
+						var oid = this.ctxRecord.data.oid;
+						
+						if( oid ){
+							Ext.Ajax.request( 
+							{   
+								waitMsg: 'Guardando cambios...',						
+								url: '<?=url_for("cotizaciones/eliminarGrillaSeguros?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
+								//method: 'POST', 
+								//Solamente se envian los cambios 						
+								params :	{									
+									oid: oid,
+									id: id
+								},
+														
+								callback :function(options, success, response){	
+											
+									var res = Ext.util.JSON.decode( response.responseText );									
+									storeSegurosCot.each( function( record ){																					
+											if( record.id==res.id ){																						
+												storeSegurosCot.remove(record);																																																																				
+											}										
+									});														
+								}										
+							}); 
+						}
+					}						
+				}
+			}	
+			]
+	});
+	this.menu.on('hide', this.onContextHide, this);
+   
+	e.stopEvent();
+	if(this.ctxRow){
+		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+		this.ctxRow = null;
+	}
+	this.ctxRecord = rec;
+	this.ctxRow = this.view.getRow(index);
+	Ext.fly(this.ctxRow).addClass('x-node-ctx');
+	this.menu.showAt(e.getXY());
+}
+
 /*
 * Crea la grilla 
 */    
@@ -343,5 +421,9 @@ var grid_seguros = new Ext.grid.EditorGridPanel({
 	view: new Ext.grid.GridView({
 		forceFit:true,
 		enableRowBody:false
-	})	
+	})	,
+	
+	listeners:{ 		
+		rowcontextmenu:grid_segurosOnRowcontextmenu	
+	}	
 });

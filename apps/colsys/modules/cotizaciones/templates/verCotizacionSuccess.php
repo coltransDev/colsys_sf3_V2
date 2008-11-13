@@ -28,5 +28,38 @@ use_helper("Javascript", "Validation");
 	<div align="left"><?=submit_tag("Enviar");?></div><br /><br />
 
 </div>
+
+
+
 	
 <iframe src="<?=url_for("cotizaciones/generarPDF?id=".$cotizacion->getCaIdcotizacion())."&token=".md5(time())?>" width="830px" height="650px"></iframe>
+
+<?
+if( count($emails)>0 ){
+?>
+<br />
+<br />
+
+<table class="tableList">
+	<tr >
+		<th>Fecha Envio</th>			
+		<th>Asunto</th>			
+		<th>Destinatarios</th>			
+	</tr>
+<?
+	foreach( $emails as $email ){
+		?>
+		<tr >
+			<td><?=$email->getCaFchEnvio()?></td>			
+			<td><?=$email->getCaSubject()?></td>			
+			<td><?=$email->getCaAddress()?></td>			
+		</tr>
+		<?
+	}
+?>
+</table>
+<?
+
+}
+?>
+<br />

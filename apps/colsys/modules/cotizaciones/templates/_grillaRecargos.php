@@ -172,8 +172,8 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Observaciones",
 			width: 100,
 			sortable: true,
-			//dataIndex: 'observaciones',
-			dataIndex: 'id',
+			dataIndex: 'observaciones',
+			//dataIndex: 'id',
 			hideable: false,
 			editor: new Ext.form.TextField({
 						name: 'Detalles',
@@ -370,7 +370,7 @@ var grid_recargosOnRowcontextmenu =  function(grid, index, e){
 				iconCls: 'delete',
 				scope:this,
 				handler: function(){    					                   		
-					if( this.ctxRecord && this.ctxRecord.data.idrecargo ){					
+					if( this.ctxRecord && this.ctxRecord.data.idrecargo && confirm("Desea continuar?") ){					
 											
 						
 						var id = this.ctxRecord.data.id;
@@ -549,44 +549,45 @@ function updateRecargosModel(){
 	var records = storeRecargosCot.getModifiedRecords();
 			
 	var lenght = records.length;
+	
+	//Validacion
 	for( var i=0; i< lenght; i++){
 		r = records[i];
-					
-		var changes = r.getChanges();
-				
-		changes['idrecargo']=r.data.idrecargo;
-		changes['modalidad']=r.data.modalidad;
-
-		//envia los datos al servidor 
-		Ext.Ajax.request( 
-			{   
-				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("cotizaciones/formRecargoGuardar?idcotizacion=".$cotizacion->getCaIdcotizacion() )?>', 
-				//Solamente se envian los cambios 						
-				params :	changes,
-										
-				//Ejecuta esta accion en caso de fallo
-				//(404 error etc, ***NOT*** success=false)
-				failure:function(response,options){
-					alert( response.responseText );
-					success = false;
-				},
-				//Ejecuta esta accion cuando el resultado es exitoso
-				success:function(response,options){
-					//alert( response.responseText );
-					//r.commit();
-				}
-			 }
-		);
-		r.set("sel", false);//Quita la seleccion de todas las columnas 
+		if(!r.data.idmoneda&&r.data.idrecargo){
+			Ext.Msg.alert( "","Por favor coloque la moneda en todos los items " );	
+			return 0;						
+		}
 	}
 	
-	if( success ){
-		storeRecargosCot.commitChanges();
-		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
-	}else{
-		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
+	for( var i=0; i< lenght; i++){
+		r = records[i];
+		if( r.data.idrecargo ){			
+			var changes = r.getChanges();
+			changes['id']=r.id;	
+			changes['idrecargo']=r.data.idrecargo;
+			changes['modalidad']=r.data.modalidad;
+	
+			//envia los datos al servidor 
+			Ext.Ajax.request( 
+				{   
+					waitMsg: 'Guardando cambios...',						
+					url: '<?=url_for("cotizaciones/formRecargoGuardar?idcotizacion=".$cotizacion->getCaIdcotizacion() )?>', 
+					//Solamente se envian los cambios 						
+					params :	changes,
+					
+					callback :function(options, success, response){	
+											
+						var res = Ext.util.JSON.decode( response.responseText );					
+						var rec = storeRecargosCot.getById( res.id );																										
+						rec.commit();						
+					}										
+					
+				 }
+			);
+			r.set("sel", false);//Quita la seleccion de todas las columnas 
+		}
 	}	
+	
 }
 
 

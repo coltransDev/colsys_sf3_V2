@@ -632,7 +632,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	clicksToEdit: 1,
 	stripeRows: true,
 	//autoExpandColumn: 'nconcepto',
-	title: 'Recargos <?=$idtrafico!="99-999"?$trafico->getCaNombre():"locales ".$modalidad?>',
+	title: 'Recargos <?=($idtrafico!="99-999"?$trafico->getCaNombre():"locales")." ".$modalidad?>',
 	height: 400,
 	plugins: [checkColumn], //expander,
 	closable: true,

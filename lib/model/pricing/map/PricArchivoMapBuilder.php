@@ -81,7 +81,11 @@ class PricArchivoMapBuilder {
 
 		$tMap->addColumn('CA_DATOS', 'CaDatos', 'string', CreoleTypes::BLOB, false, null);
 
+		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'string', CreoleTypes::VARCHAR, false, null);
+
 		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, false, null);
 
 	} // doBuild()
 

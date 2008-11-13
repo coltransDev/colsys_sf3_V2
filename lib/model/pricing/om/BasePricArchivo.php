@@ -83,10 +83,24 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the ca_impoexpo field.
+	 * @var        string
+	 */
+	protected $ca_impoexpo;
+
+
+	/**
 	 * The value for the ca_transporte field.
 	 * @var        string
 	 */
 	protected $ca_transporte;
+
+
+	/**
+	 * The value for the ca_modalidad field.
+	 * @var        string
+	 */
+	protected $ca_modalidad;
 
 	/**
 	 * @var        Trafico
@@ -227,6 +241,17 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [ca_impoexpo] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaImpoexpo()
+	{
+
+		return $this->ca_impoexpo;
+	}
+
+	/**
 	 * Get the [ca_transporte] column value.
 	 * 
 	 * @return     string
@@ -235,6 +260,17 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_transporte;
+	}
+
+	/**
+	 * Get the [ca_modalidad] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaModalidad()
+	{
+
+		return $this->ca_modalidad;
 	}
 
 	/**
@@ -444,6 +480,28 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 	} // setCaDatos()
 
 	/**
+	 * Set the value of [ca_impoexpo] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaImpoexpo($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_impoexpo !== $v) {
+			$this->ca_impoexpo = $v;
+			$this->modifiedColumns[] = PricArchivoPeer::CA_IMPOEXPO;
+		}
+
+	} // setCaImpoexpo()
+
+	/**
 	 * Set the value of [ca_transporte] column.
 	 * 
 	 * @param      string $v new value
@@ -464,6 +522,28 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 		}
 
 	} // setCaTransporte()
+
+	/**
+	 * Set the value of [ca_modalidad] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaModalidad($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_modalidad !== $v) {
+			$this->ca_modalidad = $v;
+			$this->modifiedColumns[] = PricArchivoPeer::CA_MODALIDAD;
+		}
+
+	} // setCaModalidad()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
@@ -500,14 +580,18 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 
 			$this->ca_datos = $rs->getBlob($startcol + 8);
 
-			$this->ca_transporte = $rs->getString($startcol + 9);
+			$this->ca_impoexpo = $rs->getString($startcol + 9);
+
+			$this->ca_transporte = $rs->getString($startcol + 10);
+
+			$this->ca_modalidad = $rs->getString($startcol + 11);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 10; // 10 = PricArchivoPeer::NUM_COLUMNS - PricArchivoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 12; // 12 = PricArchivoPeer::NUM_COLUMNS - PricArchivoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricArchivo object", $e);
@@ -765,7 +849,13 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 				return $this->getCaDatos();
 				break;
 			case 9:
+				return $this->getCaImpoexpo();
+				break;
+			case 10:
 				return $this->getCaTransporte();
+				break;
+			case 11:
+				return $this->getCaModalidad();
 				break;
 			default:
 				return null;
@@ -796,7 +886,9 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 			$keys[6] => $this->getCaFchcreado(),
 			$keys[7] => $this->getCaUsucreado(),
 			$keys[8] => $this->getCaDatos(),
-			$keys[9] => $this->getCaTransporte(),
+			$keys[9] => $this->getCaImpoexpo(),
+			$keys[10] => $this->getCaTransporte(),
+			$keys[11] => $this->getCaModalidad(),
 		);
 		return $result;
 	}
@@ -856,7 +948,13 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 				$this->setCaDatos($value);
 				break;
 			case 9:
+				$this->setCaImpoexpo($value);
+				break;
+			case 10:
 				$this->setCaTransporte($value);
+				break;
+			case 11:
+				$this->setCaModalidad($value);
 				break;
 		} // switch()
 	}
@@ -890,7 +988,9 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[6], $arr)) $this->setCaFchcreado($arr[$keys[6]]);
 		if (array_key_exists($keys[7], $arr)) $this->setCaUsucreado($arr[$keys[7]]);
 		if (array_key_exists($keys[8], $arr)) $this->setCaDatos($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaTransporte($arr[$keys[9]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaImpoexpo($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaTransporte($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaModalidad($arr[$keys[11]]);
 	}
 
 	/**
@@ -911,7 +1011,9 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(PricArchivoPeer::CA_FCHCREADO)) $criteria->add(PricArchivoPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(PricArchivoPeer::CA_USUCREADO)) $criteria->add(PricArchivoPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(PricArchivoPeer::CA_DATOS)) $criteria->add(PricArchivoPeer::CA_DATOS, $this->ca_datos);
+		if ($this->isColumnModified(PricArchivoPeer::CA_IMPOEXPO)) $criteria->add(PricArchivoPeer::CA_IMPOEXPO, $this->ca_impoexpo);
 		if ($this->isColumnModified(PricArchivoPeer::CA_TRANSPORTE)) $criteria->add(PricArchivoPeer::CA_TRANSPORTE, $this->ca_transporte);
+		if ($this->isColumnModified(PricArchivoPeer::CA_MODALIDAD)) $criteria->add(PricArchivoPeer::CA_MODALIDAD, $this->ca_modalidad);
 
 		return $criteria;
 	}
@@ -982,7 +1084,11 @@ abstract class BasePricArchivo extends BaseObject  implements Persistent {
 
 		$copyObj->setCaDatos($this->ca_datos);
 
+		$copyObj->setCaImpoexpo($this->ca_impoexpo);
+
 		$copyObj->setCaTransporte($this->ca_transporte);
+
+		$copyObj->setCaModalidad($this->ca_modalidad);
 
 
 		$copyObj->setNew(true);

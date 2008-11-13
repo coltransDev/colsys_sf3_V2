@@ -33,6 +33,8 @@ class cotizacionesActions extends sfActions
 		$user = $this->getUser();
 		$criterio = $this->getRequestParameter("criterio");
 		$cadena = $this->getRequestParameter("cadena");
+		
+		
 				
 		$c = new Criteria();		
 		switch( $criterio ){
@@ -56,8 +58,9 @@ class cotizacionesActions extends sfActions
 			case "asunto":
 				$c->add( CotizacionPeer::CA_ASUNTO, "lower(".CotizacionPeer::CA_ASUNTO.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
-			case "vendedor":
-				$c->add( CotizacionPeer::CA_USUARIO, "lower(".CotizacionPeer::CA_USUARIO.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
+			case "vendedor":				
+				$c->addJoin( CotizacionPeer::CA_USUARIO, UsuarioPeer::CA_LOGIN );
+				$c->add( UsuarioPeer::CA_NOMBRE, "lower(".UsuarioPeer::CA_NOMBRE.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
 			case "numero_de_cotizacion":
 				$c->add( CotizacionPeer::CA_IDCOTIZACION, "lower(".CotizacionPeer::CA_IDCOTIZACION.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
@@ -70,7 +73,19 @@ class cotizacionesActions extends sfActions
 		$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL );
 		$c->addDescendingOrderByColumn( CotizacionPeer::CA_IDCOTIZACION );	
 		$c->setLimit( 200 );
-		$this->cotizaciones = CotizacionPeer::doSelect( $c );	
+		
+		$this->pager = new sfPropelPager('Cotizacion', 30);		
+		$this->pager->setCriteria($c);	
+		$this->pager->setPage($this->getRequestParameter('page', 1));			
+		$this->pager->init();
+		
+		$this->criterio = $criterio;
+		$this->cadena = $cadena;
+		
+		
+		
+		
+			
 	}
 
 	/**
@@ -159,14 +174,21 @@ class cotizacionesActions extends sfActions
 	
 	/*
 	* Permite ver una cotización en formato PDF
+	* @author Andres Botero
 	*/
 	public function executeVerCotizacion(){
 		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
+		$c = new Criteria();
+		$c->add(EmailPeer::CA_TIPO, "Envío de cotización");
+		$c->add(EmailPeer::CA_IDCASO,$this->cotizacion->getCaIdCotizacion()); 
+		$c->addAscendingOrderByColumn(EmailPeer::CA_FCHENVIO);
+		$this->emails = EmailPeer::doSelect( $c );
 				
 	}
 	/*
 	* Genera un archivo PDF a partir de una cotización
+	* @author Andres Botero
 	*/
 	public function executeGenerarPDF(){
 		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
@@ -529,7 +551,7 @@ class cotizacionesActions extends sfActions
 			}									
 			$recargo->save();	
 		}
-		
+		$this->setTemplate("responseTemplate");	
 		$this->setLayout("ajax");
 	}
 	
@@ -551,7 +573,7 @@ class cotizacionesActions extends sfActions
 			$origen = $producto->getOrigen();
 			$destino = $producto->getDestino();
 			$escala = $producto->getEscala();					
-			$trayecto = utf8_encode($producto->getCaTransporte())." ".utf8_encode($producto->getCaModalidad())." [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
+			$trayecto = utf8_encode($producto->getCaImpoExpo())." ".utf8_encode($producto->getCaTransporte())." ".utf8_encode($producto->getCaModalidad())." [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
 			
 			if( $escala ){
 				$trayecto .= utf8_encode($escala->getCaCiudad())." - ".utf8_encode($escala->getTrafico()->getCaNombre()." » ");
@@ -788,6 +810,8 @@ class cotizacionesActions extends sfActions
 	public function executeFormRecargoGuardar(){
 		$user_id = $this->getUser()->getUserId();
 		$update = true;
+		
+		$id = $this->getRequestParameter("id");
 														
 		$idproducto = '99';
 		$idopcion = '999';
@@ -849,7 +873,10 @@ class cotizacionesActions extends sfActions
 		}
 
 		$recargo->save();
-		return sfView::NONE;
+		
+		$this->responseArray = array("id"=>$id);
+		$this->setTemplate("responseTemplate");
+		$this->setLayout("ajax");	
 	}
 	
 	/*
@@ -1139,7 +1166,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeObserveSegurosManagement(){
 		$user_id = $this->getUser()->getUserId();
-
+		$id = $this->getRequestParameter( "id" );
 		if( $this->getRequestParameter( "oid" ) ) {
 			$c = new Criteria();
 			$c->add( CotSeguroPeer::OID , $this->getRequestParameter("oid") );
@@ -1183,8 +1210,28 @@ class cotizacionesActions extends sfActions
 		}
 		
 		$seguro->save();
-		return sfView::NONE;
+		$this->responseArray = array("id"=>$id);
+		$this->setTemplate("responseTemplate");
+		$this->setLayout("ajax");	
 	}
+	
+	public function executeEliminarGrillaSeguros(){
+		$user_id = $this->getUser()->getUserId();
+		$id = $this->getRequestParameter( "id" );
+		if( $this->getRequestParameter( "oid" ) ) {
+			$c = new Criteria();
+			$c->add( CotSeguroPeer::OID , $this->getRequestParameter("oid") );
+			$seguro = CotSeguroPeer::doSelectOne( $c );
+			if( $seguro ){
+				$seguro->delete();
+				$this->responseArray = array("id"=>$id);
+			}
+		}
+		
+		$this->setTemplate("responseTemplate");
+		$this->setLayout("ajax");
+	}
+	
 	
 	/*
 	* Muestra las tarifas de seguros de acuerdo a los productos cotizados 

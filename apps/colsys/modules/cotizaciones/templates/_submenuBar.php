@@ -25,9 +25,9 @@ switch($action){
 		break;	
 
 	case "consultaCotizacion":		
-		$button[1]["name"]="Email ";
-		$button[1]["tooltip"]="Enviar la cotizaci&oacute;n por e-mail";
-		$button[1]["image"]="22x22/email.gif"; 			
+		$button[1]["name"]="PDF ";
+		$button[1]["tooltip"]="Genera un archivo PDF para la impresión de la cotización";
+		$button[1]["image"]="22x22/pdf.gif"; 			
 		$button[1]["link"]= "cotizaciones/verCotizacion?id=".$this->getRequestParameter("id");
 		
 		$button[2]["name"]="Copiar ";

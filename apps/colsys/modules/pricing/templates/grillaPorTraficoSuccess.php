@@ -286,7 +286,10 @@ var colModel = new Ext.grid.ColumnModel({
 			editor: <?=include_component("widgets", "aplicaciones" ,array("id"=>"", "transporte"=>$transporte ))?>
 			
 			
-		},		
+		},	
+		<?
+		if( $modalidad!="FCL" ){ 
+		?>		
 		{
 			id: 'minima',
 			header: "Minima",
@@ -304,9 +307,12 @@ var colModel = new Ext.grid.ColumnModel({
 			
 			dataIndex: 'aplicacion_min',              
 				editor: <?=include_component("widgets", "aplicaciones" ,array("id"=>"", "transporte"=>$transporte ))?>
-		}	
+		},	
+		<?
+		}
+		?>
 		
-		,{
+		{
 			header: "Moneda",
 			width: 80,
 			sortable: false,

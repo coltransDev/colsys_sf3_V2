@@ -58,6 +58,11 @@
 	text:'Tiempo de transito y frecuencia',
 	id:'admtraf_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
 	leaf:true
+},
+{
+	text:'Archivos del trafico',
+	id:'files_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
+	leaf:true
 }	
 ]
 <?
