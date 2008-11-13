@@ -188,8 +188,7 @@ function guardarCambios(){
 	success = true;		
 	var lenght = records.length;
 	for( var i=0; i< lenght; i++){
-		r = records[i];
-					
+		r = records[i];					
 		var changes = r.getChanges();
 		
 		changes['rutina']=r.data.rutina;
@@ -205,10 +204,12 @@ function guardarCambios(){
 				
 				callback :function(options, success, response){	
 										
-					var res = Ext.util.JSON.decode( response.responseText );					
-					var rec = store.getById( res.id );										
-					rec.set("rutina", res.rutina );											
-					rec.commit();						
+					var res = Ext.util.JSON.decode( response.responseText );	
+					if( res.id ){				
+						var rec = store.getById( res.id );										
+						rec.set("rutina", res.rutina );											
+						rec.commit();						
+					}
 				}			
 			 }
 		); 

@@ -30,5 +30,15 @@ class pricingComponents extends sfComponents
 		}
 	}
 	
+	/*
+	* Muestra un arbol con la información de los traficos donde el usuario 
+	* puede seleccionar una ciudad
+	* @author: Andres Botero 
+	*/
+	public function executePanelConsultaCiudades(){
+		
+	}
+	
+	
 }
 ?>

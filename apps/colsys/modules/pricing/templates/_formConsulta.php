@@ -6,7 +6,8 @@ new Ext.FormPanel({
 		autoHeight: true,
 		bodyStyle: 'padding: 5px 5px 0 5px;',
 		labelWidth: 100,
-		
+		frame: false,
+			
 		items: [	                
 				<?=include_component("widgets", "impoexpo" ,array("id"=>"impoexpo", "label"=>"Impo/Expo"))?>				
 				,<?=extTransporte("transporte")?>

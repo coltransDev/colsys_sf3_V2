@@ -45,7 +45,7 @@ var expander = new Ext.grid.myRowExpander({
 	lazyRender : false, 
 	width: 15,	
 	tpl : new Ext.Template(  	
-	  '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'><b>Observaciones:</b> {observaciones}</div></p>'
+	  '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
  	
   	) 
 });
@@ -123,9 +123,6 @@ if( $idtrafico ){
 	$url .= "&idtrafico=".$idtrafico;
 }
 
-if( $idtraficodestino ){
-	$url .= "&idtraficodestino=".$idtraficodestino;
-}
 
 if( $idlinea ){
 	$url .= "&idlinea=".$idlinea;
@@ -133,8 +130,8 @@ if( $idlinea ){
 if( $idciudad ){
 	$url .= "&idciudad=".$idciudad;
 }
-if( $idciudaddestino ){
-	$url .= "&idciudaddestino=".$idciudaddestino;
+if( $idciudad2 ){
+	$url .= "&idciudad2=".$idciudad2;
 }
 
 if( $opcion ){
@@ -386,6 +383,10 @@ var gridAfterEditHandler = function(e) {
 				if (r.data.recargo_id && (field == 'aplicacion'||field == 'inicio'||field == 'vencimiento')) {			
 					continue;
 				}	
+				
+				if(field == 'nconcepto'){					
+					r.set("iditem",e.record.data.iditem);
+				}	
 				r.set(field,e.value);
 			}
 		}
@@ -485,7 +486,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 			id:'grid-ctx',
 			items: [{
 					text: 'Nuevo recargo',
-					iconCls: 'new-tab',
+					iconCls: 'add',
 					scope:this,
 					handler: function(){    					                   
 						agregarFila(this.ctxRecord, index);					
@@ -544,7 +545,69 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 		Ext.fly(this.ctxRow).addClass('x-node-ctx');
 		this.menu.showAt(e.getXY());
 	}
+	
+	if( rec.data.tipo=='recargo' ){
+		this.menu = new Ext.menu.Menu({
+			id:'grid-ctx',
+			items: [{
+					text: 'Eliminar',
+					iconCls: 'delete',
+					scope:this,
+					handler: function(){    					                   
+						eliminarFila(this.ctxRecord, index);					
+					}
+				}				
+			]
+		});
+				
+		this.menu.on('hide', this.onContextHide, this);
+    		
+		if(this.ctxRow){
+			Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+			this.ctxRow = null;
+		}
+		this.ctxRecord = rec;
+		this.ctxRow = this.view.getRow(index);
+		Ext.fly(this.ctxRow).addClass('x-node-ctx');
+		this.menu.showAt(e.getXY());
+	}
 }
+
+
+function eliminarFila(ctxRecord, index){	
+	if( confirm("Esta seguro?") ){
+		var params = [];
+		params['idtrayecto'] = ctxRecord.data.idtrayecto;
+		params['idconcepto'] = ctxRecord.data.idconcepto;
+		params['idrecargo'] = ctxRecord.data.iditem;	
+		params['id'] = ctxRecord.id;	
+		Ext.Ajax.request( 
+			{   
+				waitMsg: 'Eliminando...',						
+				url: '<?=url_for("pricing/eliminarRecargoGrillaPorTraficos")?>', 						//method: 'POST', 
+				//Solamente se envian los cambios 						
+				params :	params,
+										
+				callback :function(options, success, response){	
+										
+					var res = Ext.util.JSON.decode( response.responseText );	
+					if( res.success ){	
+						store.each(
+							function(r){
+								if(r.id == res.id){									
+									store.remove( r );
+								}
+							}
+						);		
+					
+					}
+				}	
+			 }
+		); 
+		
+	}
+}
+
 
 function agregarFila(ctxRecord, index){	
 		
@@ -573,7 +636,7 @@ function agregarFila(ctxRecord, index){
 
 
 function guardarGrillaPorTrafico(){
-	var success = true;
+	
 	var records = store.getModifiedRecords();
 			
 	var lenght = records.length;
@@ -591,6 +654,7 @@ function guardarGrillaPorTrafico(){
 			changes['vencimiento']=Ext.util.Format.date(changes['vencimiento'],'Y-m-d');									
 		}	
 		
+		changes['id']=r.id;
 		changes['tipo']=r.data.tipo;
 		changes['iditem']=r.data.iditem;	
 		changes['idconcepto']=r.data.idconcepto;	
@@ -604,28 +668,22 @@ function guardarGrillaPorTrafico(){
 				//Solamente se envian los cambios 						
 				params :	changes,
 										
-				//Ejecuta esta accion en caso de fallo
-				//(404 error etc, ***NOT*** success=false)
-				failure:function(response,options){							
-					alert( response.responseText );						
-					success = false;
-				},
-				//Ejecuta esta accion cuando el resultado es exitoso
-				success:function(response,options){							
-					//alert( response.responseText );						
-					//r.commit();
-				}
+				callback :function(options, success, response){	
+										
+					var res = Ext.util.JSON.decode( response.responseText );	
+					if( res.id ){				
+						var rec = store.getById( res.id );
+						
+						rec.set("sel", false); //Quita la seleccion de todas las columnas				
+						rec.commit();		
+					}
+				}	
 			 }
 		); 
-		r.set("sel", false);//Quita la seleccion de todas las columnas 
+		 
 	}
 	
-	if( success ){
-		store.commitChanges();
-		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
-	}else{
-		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
-	}	
+	
 }
 		
 /*

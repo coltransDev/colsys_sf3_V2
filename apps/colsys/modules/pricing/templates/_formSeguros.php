@@ -6,7 +6,7 @@ new Ext.FormPanel({
 		autoHeight: true,
 		bodyStyle: 'padding: 5px 5px 0 5px;',
 		labelWidth: 100,
-		
+		frame: false,
 		items: [			
 				<?=extTransporte("transporteSeguros")?>								
 			]

@@ -1,49 +1,6 @@
 <?
 use_helper( "Ext2" );
 ?>
-<style>
-
-#fi-button-msg {
-	border: 2px solid #ccc;
-	padding: 5px 10px;
-	background: #eee;
-	margin: 5px;
-	float: left;
-}
-
-.x-form-file-wrap {
-    position: relative;
-    height: 22px;
-}
-.x-form-file-wrap .x-form-file {
-	position: absolute;
-	right: 0;
-	-moz-opacity: 0;
-	filter:alpha(opacity: 0);
-	opacity: 0;
-	z-index: 2;
-    height: 22px;
-}
-.x-form-file-wrap .x-form-file-btn {
-	position: absolute;
-	right: 0;
-	z-index: 1;
-}
-.x-form-file-wrap .x-form-file-text {
-    position: absolute;
-    left: 0;
-    z-index: 3;
-    color: #777;
-}
-
-#panel-noticias-wrap{
-	margin: 10px;
-
-}
-
-
-
-</style>
 <script type="text/javascript">
 	
     Ext.onReady(function(){
@@ -258,10 +215,23 @@ use_helper( "Ext2" );
        
 	   var treePanelOnclickHandler = function(n){			
 			//var sn = this.selModel.selNode || {}; // selNode is null on initial selection							
-			if( n.leaf ){  // ignore clicks on folders 
-				
+			if( n.leaf ){  // ignore clicks on folders 				
 				var nodeoptions = n.id.split("_");
-				switch( nodeoptions[0] ){										
+				var opcion = nodeoptions[0];
+				var impoexpo = nodeoptions[1];
+				var transporte = nodeoptions[2];
+				var modalidad = nodeoptions[3];
+				
+				if( impoexpo=="impo" ){
+					impoexpo = "Importación";
+				}
+				
+				if( impoexpo=="expo" ){
+					impoexpo = "Exportación";
+				}
+				
+				
+				switch( opcion ){										
 					case "recgen":
 						/*
 						* Se muestran los recargos generales para el pais seleccionado
@@ -301,35 +271,42 @@ use_helper( "Ext2" );
 						break;						
 				}
 				
-				var idcomponent = nodeoptions[0]+"_"+nodeoptions[1]+"_"+nodeoptions[2]+"_"+nodeoptions[3]
+				var idcomponent = opcion+"_"+impoexpo+"_"+transporte+"_"+modalidad
+				
+				if( nodeoptions[4] ){
+					idtrafico = nodeoptions[4];
+					idcomponent+="_"+idtrafico;	
+				}
 								
-				if( nodeoptions[4]=="ciudad" ){
-					var idciudad = nodeoptions[5]; 	
-					idcomponent+="_ciudad_"+nodeoptions[5];			
-				}else{
-					var idciudad = "";
-				}
-				
-				if( nodeoptions[4]=="linea" ){
+				if( nodeoptions[5] ){
+					if( opcion=="fletesciudad" ){
+						var idciudad = nodeoptions[5]; 
+						var idlinea = "";							
+					}
 					
-					var idlinea = nodeoptions[5]; 	
-					idcomponent+="_linea_"+nodeoptions[5];						
-				}else{
-					var idlinea = "";
+					if( opcion=="fleteslinea" ){
+						var idciudad = ""; 
+						var idlinea = nodeoptions[5];							
+					}
+					
+					idcomponent+="_"+nodeoptions[5];
+								
 				}
 				
-				/*if( Ext.getCmp('tab-panel').findById(idcomponent)!=null ){
-					Ext.getCmp('tab-panel').setActiveTab(idcomponent);		
-					Ext.getCmp('tab-panel').show();			 
+				
+				if( Ext.getCmp('tab-panel').findById(idcomponent)!=null ){
+					Ext.getCmp('tab-panel').activate(idcomponent);		
+					//Ext.getCmp('tab-panel').show();			 
 					return 0;
-				}*/	
+				}	
 				
 				Ext.Ajax.request({
 					url: url,
-					params: {						
-						idtrafico: nodeoptions[3],
-						transporte: nodeoptions[1],
-						modalidad: nodeoptions[2],
+					params: {			
+						impoexpo: impoexpo,			
+						idtrafico: idtrafico,
+						transporte:transporte,
+						modalidad: modalidad,
 						idlinea: idlinea,
 						idciudad: idciudad
 					},
@@ -401,121 +378,39 @@ use_helper( "Ext2" );
                     }
 					,
                     items: [
-						<?
-						include_partial("formConsulta", array("opcion"=>$opcion));						?>
+						<?						
+						include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>"Importación", "transporte"=>"Marítimo", "titulo"=>"Importaciones Marítimas"));						
+						?>								
 						,
+						<?						
+						include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>"Importación", "transporte"=>"Aéreo", "titulo"=>"Importaciones Aéreas"));						
+						?>								
+						,
+						<?						
+						include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>"Exportación", "transporte"=>"Marítimo", "titulo"=>"Exportaciones Marítimas"));						
+						?>								
+						,
+						<?						
+						include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>"Exportación", "transporte"=>"Aéreo", "titulo"=>"Exportaciones Aéreas"));						
+						?>								
+						,
+						<?				
+						//include_partial("formConsulta", array("opcion"=>$opcion));						?>						
 						<?
 						include_partial("formSeguros", array("opcion"=>$opcion));						?>								
-						,
-						<?
-						include_partial("formOTMDTA", array("opcion"=>$opcion));						?>			
-							,
-						<?
-						include_partial("formAduana", array("opcion"=>$opcion));						?>			
-						/*<?
-						$i=0;
-						foreach( $modalidades_mar as $modalidad){
-							if( $i!=0 ){
-								echo ",";
-							} 
-
-						?>
-						new Ext.tree.TreePanel({							
-							title: '<?=$i==0?"Importaciones Maritimas":""?> Marítimo <?=$modalidad->getCaValor()?>',							
-							split: true,
-							height: 300,
-							minSize: 150,
-							autoScroll: true,
-							
-							// tree-specific configs:
-							rootVisible: false,
-							lines: false,
-							singleExpand: true,
-							useArrows: true,
-							iconCls:'settings',
-							animate:true,
-
-														
-							loader: new Ext.tree.TreeLoader({
-								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Marítimo&modalidad=".$modalidad->getCaValor())?>'
-							}),
-							
-							root: new Ext.tree.AsyncTreeNode(),
-							listeners:  {
-								 click : treePanelOnclickHandler
-							}
-						})
-						<?
-							$i++;
-						}
 						
-						foreach( $modalidades_aer as $modalidad){
-							if( $i++!=0 ){
-								echo ",";
-							} 
-						?>
-						new Ext.tree.TreePanel({							
-							title: 'Aéreo <?=$modalidad->getCaValor()?>',							
-							split: true,
-							height: 300,
-							minSize: 150,
-							autoScroll: true,
-							
-							// tree-specific configs:
-							rootVisible: false,
-							lines: false,
-							singleExpand: true,
-							useArrows: true,
-							iconCls:'settings',
-														
-							loader: new Ext.tree.TreeLoader({
-								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Aéreo&modalidad=".$modalidad->getCaValor())?>'
-							}),
-							
-							root: new Ext.tree.AsyncTreeNode(),
-							listeners:  {
-								 click : treePanelOnclickHandler
-							}
-						})
 						<?
-						}
-						foreach( $modalidades_ter as $modalidad){
-							if( $i++!=0 ){
-								echo ",";
-							} 
-						?>						
-						new Ext.tree.TreePanel({							
-							title: 'Terrestre <?=$modalidad->getCaValor()?>',							
-							split: true,
-							height: 300,
-							minSize: 150,
-							autoScroll: true,
+						//include_partial("formOTMDTA", array("opcion"=>$opcion));						?>			
 							
-							// tree-specific configs:
-							rootVisible: false,
-							lines: false,
-							singleExpand: true,
-							useArrows: true,
-							iconCls:'settings',
-							loader: new Ext.tree.TreeLoader({
-								dataUrl:'<?=url_for("pricing/datosCiudades?transporte=Terrestre&modalidad=".$modalidad->getCaValor())?>'
-							}),
-							
-							root: new Ext.tree.AsyncTreeNode(),
-							listeners:  {
-								 click : treePanelOnclickHandler
-							}
-						})
 						<?
-						}
-						?>*/
+						//include_partial("formAduana", array("opcion"=>$opcion));						?>									
 						
 					]
                 },
                 new Ext.TabPanel({
 					id:'tab-panel',
                     region:'center',
-                    deferredRender:false,
+                    //deferredRender:false,
 					enableTabScroll:true,
                     activeTab:0,
                     items:[{
@@ -531,34 +426,6 @@ use_helper( "Ext2" );
              ]
         });
         
-		/*Ext.get("hideit").on('click', function() {
-           var w = Ext.getCmp('west-panel');
-           w.collapsed ? w.expand() : w.collapse(); 
-        });*/
-		/*
-		Ext.Ajax.request({
-				url: '<?=url_for("pricing/archivosPais")?>',
-				params: {						
-					idtrafico: "DE-049"						
-				},
-				success: function(xhr) {		
-					//alert( xhr.responseText );				
-					var newComponent = eval(xhr.responseText);
-					//alert("asd");
-					//Ext.getCmp('panel-info').setActiveTab('panel-traficos');
-					 //
-											
-					//remove('panel-traficos');
-					Ext.getCmp('panel-info').add(newComponent);
-					Ext.getCmp('panel-info').setActiveTab(newComponent);
-					
-				},
-				failure: function() {
-					Ext.Msg.alert("File panel create failed", "Server communication failure");
-				}
-			});*/
-		
-    
     });
 	
 	
