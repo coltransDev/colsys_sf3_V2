@@ -46,8 +46,8 @@ class cotizacionesComponents extends sfComponents
 	* @author: Andres Botero
 	*/
 	public function executeGrillaProductos(){
-		$this->aplicacionesAereo = ParametroPeer::retrieveByCaso("CU064", null, "Aéreo" );
-		$this->aplicacionesMaritimo = ParametroPeer::retrieveByCaso("CU064", null, "Marítimo" );	
+		$this->aplicacionesAereo = ParametroPeer::retrieveByCaso("CU064", null, Constantes::AEREO );
+		$this->aplicacionesMaritimo = ParametroPeer::retrieveByCaso("CU064", null, Constantes::MARITIMO );	
 	}
 	
 	/*
@@ -58,17 +58,17 @@ class cotizacionesComponents extends sfComponents
 		$id = $this->cotizacion->getCaIdcotizacion();
 		$tipo = $this->tipo;
 		
-		$this->aplicacionesAereo = ParametroPeer::retrieveByCaso("CU064", null, "Aéreo" );
-		$this->aplicacionesMaritimo = ParametroPeer::retrieveByCaso("CU064", null, "Marítimo" );
+		$this->aplicacionesAereo = ParametroPeer::retrieveByCaso("CU064", null, Constantes::AEREO );
+		$this->aplicacionesMaritimo = ParametroPeer::retrieveByCaso("CU064", null, Constantes::MARITIMO );
 		
 		$c = new Criteria();
-		$c->add( TipoRecargoPeer::CA_TRANSPORTE, 'Marítimo');	
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE, Constantes::MARITIMO );	
 		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
 		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
 		$this->recargosMaritimo = TipoRecargoPeer::doSelect( $c );
 		
 		$c = new Criteria();
-		$c->add( TipoRecargoPeer::CA_TRANSPORTE, 'Aéreo');	
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE, Constantes::AEREO);	
 		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
 		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
 		$this->recargosAereo = TipoRecargoPeer::doSelect( $c );

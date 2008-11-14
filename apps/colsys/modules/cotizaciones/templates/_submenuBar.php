@@ -25,15 +25,17 @@ switch($action){
 		break;	
 
 	case "consultaCotizacion":		
-		$button[1]["name"]="PDF ";
-		$button[1]["tooltip"]="Genera un archivo PDF para la impresión de la cotización";
-		$button[1]["image"]="22x22/pdf.gif"; 			
-		$button[1]["link"]= "cotizaciones/verCotizacion?id=".$this->getRequestParameter("id");
-		
-		$button[2]["name"]="Copiar ";
-		$button[2]["tooltip"]="Copia la cotizaci&oacute;n en una nueva cotizaci&oacute;n";
-		$button[2]["image"]="22x22/copy.gif"; 		
-		$button[2]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
+		if( $this->getRequestParameter("id") ){
+			$button[1]["name"]="PDF ";
+			$button[1]["tooltip"]="Genera un archivo PDF para la impresión de la cotización";
+			$button[1]["image"]="22x22/pdf.gif"; 			
+			$button[1]["link"]= "cotizaciones/verCotizacion?id=".$this->getRequestParameter("id");
+			
+			$button[2]["name"]="Copiar ";
+			$button[2]["tooltip"]="Copia la cotizaci&oacute;n en una nueva cotizaci&oacute;n";
+			$button[2]["image"]="22x22/copy.gif"; 		
+			$button[2]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
+		}
 		break;			
 }
 ?>

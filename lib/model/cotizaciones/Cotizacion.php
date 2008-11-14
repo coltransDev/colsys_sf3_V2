@@ -8,7 +8,7 @@
  * @package lib.model.public
  */ 
 class Cotizacion extends BaseCotizacion
-{
+{	
 	public function getId(){
 		return $this->getCaIdcotizacion();
 	}	

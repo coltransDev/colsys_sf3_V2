@@ -375,7 +375,8 @@ var crearVentanaProducto=function( record ){
 					,<?=include_component("widgets", "impoexpo" ,array("id"=>"impoexpo", "label"=>"Impo/Expo"))?>
 					,<?=extIncoterms("incoterms")?>
 					,<?=extTransporte("transporte")?>
-					,<?=extModalidad("modalidad", "Ext.getCmp('transporte')", "Importación")?>
+					
+					,<?=include_component("widgets", "modalidades" ,array("id"=>"modalidad", "label"=>"Modalidad", "allowBlank"=>"false", "transporte"=>"transporte", "impoexpo"=>"impoexpo"))?>			
 					
 					,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen", "allowBlank"=>"false"))?>										
 					,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen", "allowBlank"=>"false"))?>
@@ -427,7 +428,7 @@ var crearVentanaProducto=function( record ){
 					impoexpo = fp.getForm().findField("impoexpo").getValue();								
 					transporte = fp.getForm().findField("transporte").getValue();		
 					
-					if( ttransito=="" && frecuencia=="" && ((impoexpo=="Importación" && transporte!="Aéreo") || impoexpo=="Exportación" ) ){ // Solamente cuando es importación aérea se permite en blanco
+					if( ttransito=="" && frecuencia=="" && ((impoexpo=="<?=Constantes::IMPO?>" && transporte!="<?=Constantes::AEREO?>") || impoexpo=="<?=Constantes::EXPO?>" ) ){ // Solamente cuando es importación aérea se permite en blanco
 						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', 'Por favor indique el tiempo de transito y la frecuencia');
 					}else{					
 					
@@ -500,13 +501,13 @@ var ventanaTarifario = function( record ){
 	var url = '<?=url_for("pricing/grillaPorTrafico?opcion=consulta")?>';
 	
 	activeRecord = record;
-	if(record.data.impoexpo=="Importación"){
+	if(record.data.impoexpo=="<?=Constantes::IMPO?>"){
 		idciudad = record.data.ciu_origen;
 		idciudad2 = record.data.ciu_destino;		
 		idtrafico = record.data.tra_origen;
 	}
 	
-	if(record.data.impoexpo=="Exportación"){
+	if(record.data.impoexpo=="<?=Constantes::EXPO?>"){
 		idciudad2 = record.data.ciu_origen;
 		idciudad = record.data.ciu_destino;
 		idtrafico = record.data.tra_destino; 
@@ -1018,7 +1019,7 @@ grid_productosOnBeforeedit = function( e ){
 		];
 		
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
-		if( e.record.data.transporte=="Aéreo" ){
+		if( e.record.data.transporte==Constantes::AEREO ){
 			ed.field.store.loadData( dataAereo );
 		}else{
 			ed.field.store.loadData( dataMaritimo );

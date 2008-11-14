@@ -6,7 +6,10 @@
 ?>
 
 <?
-$url = "cotizaciones/busquedaCotizacion?criterio=".$criterio."&cadena=".$cadena;
+$url = "cotizaciones/busquedaCotizacion?criterio=".$criterio;
+if( $cadena ){
+	$url.="&cadena=".$cadena;
+}
 
 if ($pager->haveToPaginate()):   
 	if ($pager->getPage() != 1):				

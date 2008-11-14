@@ -137,6 +137,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuanulado;
 
+
+	/**
+	 * The value for the ca_empresa field.
+	 * @var        string
+	 */
+	protected $ca_empresa;
+
 	/**
 	 * @var        Contacto
 	 */
@@ -482,6 +489,17 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_usuanulado;
+	}
+
+	/**
+	 * Get the [ca_empresa] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaEmpresa()
+	{
+
+		return $this->ca_empresa;
 	}
 
 	/**
@@ -877,6 +895,28 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	} // setCaUsuanulado()
 
 	/**
+	 * Set the value of [ca_empresa] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaEmpresa($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_empresa !== $v) {
+			$this->ca_empresa = $v;
+			$this->modifiedColumns[] = CotizacionPeer::CA_EMPRESA;
+		}
+
+	} // setCaEmpresa()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -927,12 +967,14 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 			$this->ca_usuanulado = $rs->getString($startcol + 16);
 
+			$this->ca_empresa = $rs->getString($startcol + 17);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 17; // 17 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 18; // 18 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cotizacion object", $e);
@@ -1274,6 +1316,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 16:
 				return $this->getCaUsuanulado();
 				break;
+			case 17:
+				return $this->getCaEmpresa();
+				break;
 			default:
 				return null;
 				break;
@@ -1311,6 +1356,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$keys[14] => $this->getCaHorasolicitud(),
 			$keys[15] => $this->getCaFchanulado(),
 			$keys[16] => $this->getCaUsuanulado(),
+			$keys[17] => $this->getCaEmpresa(),
 		);
 		return $result;
 	}
@@ -1393,6 +1439,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 16:
 				$this->setCaUsuanulado($value);
 				break;
+			case 17:
+				$this->setCaEmpresa($value);
+				break;
 		} // switch()
 	}
 
@@ -1433,6 +1482,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[14], $arr)) $this->setCaHorasolicitud($arr[$keys[14]]);
 		if (array_key_exists($keys[15], $arr)) $this->setCaFchanulado($arr[$keys[15]]);
 		if (array_key_exists($keys[16], $arr)) $this->setCaUsuanulado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaEmpresa($arr[$keys[17]]);
 	}
 
 	/**
@@ -1461,6 +1511,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotizacionPeer::CA_HORASOLICITUD)) $criteria->add(CotizacionPeer::CA_HORASOLICITUD, $this->ca_horasolicitud);
 		if ($this->isColumnModified(CotizacionPeer::CA_FCHANULADO)) $criteria->add(CotizacionPeer::CA_FCHANULADO, $this->ca_fchanulado);
 		if ($this->isColumnModified(CotizacionPeer::CA_USUANULADO)) $criteria->add(CotizacionPeer::CA_USUANULADO, $this->ca_usuanulado);
+		if ($this->isColumnModified(CotizacionPeer::CA_EMPRESA)) $criteria->add(CotizacionPeer::CA_EMPRESA, $this->ca_empresa);
 
 		return $criteria;
 	}
@@ -1546,6 +1597,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$copyObj->setCaFchanulado($this->ca_fchanulado);
 
 		$copyObj->setCaUsuanulado($this->ca_usuanulado);
+
+		$copyObj->setCaEmpresa($this->ca_empresa);
 
 
 		if ($deepCopy) {

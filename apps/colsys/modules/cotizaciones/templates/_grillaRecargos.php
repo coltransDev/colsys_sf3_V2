@@ -250,7 +250,7 @@ grid_recargosOnBeforeedit = function( e ){
 		];
 		
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
-		if( e.record.data.transporte=="Aéreo" ){
+		if( e.record.data.transporte==Constantes::AEREO ){
 			ed.field.store.loadData( recargosAereo );
 		}else{
 			ed.field.store.loadData( recargosMaritimo );
@@ -288,7 +288,7 @@ grid_recargosOnBeforeedit = function( e ){
 		];
 		
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
-		if( e.record.data.transporte=="Aéreo" ){
+		if( e.record.data.transporte==Constantes::AEREO ){
 			ed.field.store.loadData( dataAereo );
 		}else{
 			ed.field.store.loadData( dataMaritimo );

@@ -9,7 +9,7 @@
  */ 
 class CotProducto extends BaseCotProducto
 {
-
+	
 	public function getId(){
 		return $this->getCaIdProducto();
 	}

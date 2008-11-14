@@ -147,7 +147,7 @@ class cotizacionesActions extends sfActions
 			$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
 			$cotizacion->setCaConsecutivo( $sig ); 			
 		}
-				
+		$cotizacion->setCaEmpresa( $this->getRequestParameter( "empresa" ) );		
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
 		$cotizacion->setCaAsunto( utf8_encode($this->getRequestParameter( "asunto" )) );
 		$cotizacion->setCaSaludo( utf8_decode($this->getRequestParameter( "saludo" )) );
@@ -1247,7 +1247,7 @@ class cotizacionesActions extends sfActions
 		foreach(  $productos as $producto ){
 			$origen = $producto->getOrigen();
 			$destino = $producto->getDestino();
-			if( $producto->getCaImpoExpo()=="Importación" ){
+			if( $producto->getCaImpoExpo()==Constantes::IMPO ){
 				$grupo = $origen->getTrafico()->getTraficoGrupo(); 
 			}else{
 				$grupo = $destino->getTrafico()->getTraficoGrupo();
@@ -1289,11 +1289,11 @@ class cotizacionesActions extends sfActions
 		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
 		$impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
 		
-		if ( $transport_parameter == 'Marítimo')	{
+		if ( $transport_parameter == Constantes::MARITIMO)	{
 			$transportes = ParametroPeer::retrieveByCaso( "CU051",null, $impoexpo_parameter);
-		}else if ( $transport_parameter == 'Aéreo')	{
+		}else if ( $transport_parameter == Constantes::AEREO )	{
 			$transportes = ParametroPeer::retrieveByCaso( "CU052",null, $impoexpo_parameter);
-		}else if ( $transport_parameter == 'Terrestre')	{
+		}else if ( $transport_parameter ==  Constantes::TERRESTRE )	{
 			$transportes = ParametroPeer::retrieveByCaso( "CU053",null, $impoexpo_parameter);
 		}
 		$this->modalidades = array();

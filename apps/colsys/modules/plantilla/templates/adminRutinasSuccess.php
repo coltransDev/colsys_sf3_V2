@@ -42,7 +42,7 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 			width: 90,
 			sortable: true,	
 			hideable: false,		
-			dataIndex: 'grupo',			
+			dataIndex: 'grupo',
 			editor: new Ext.form.TextField() 			
 		}
 		,
@@ -78,59 +78,6 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 
 
 
-var activeRecord = null;
-/*
-* Muestra una ventana con la informacion del tarifario y le permite al usuario 
-* seleccionar las tarifas a importar
-*/
-var ventanaPermisos = function( record ){
-	var url = '<?=url_for("users/permisosRutinas")?>';
-	
-	
-	Ext.Ajax.request({
-		url: url,
-		params: {						
-			rutina: record.data.rutina 		
-		},
-		success: function(xhr) {			
-			//alert( xhr.responseText );			
-			var newComponent = eval(xhr.responseText);
-			
-			//Se crea la ventana
-			
-			win = new Ext.Window({		
-			width       : 800,
-			height      : 460,
-			closeAction :'close',
-			plain       : true,		
-			
-			items       : [newComponent],
-			
-	
-			buttons: [
-				{
-					text     : 'Guardar',
-					handler  : function( ){	
-						win.close();
-					}
-				},
-				{
-					text     : 'Cancelar',
-					handler  : function(){
-						win.close();
-					}
-				}
-			]
-		});		
-		win.show( );		
-		},
-		failure: function() {
-			Ext.Msg.alert("Win creation failed", "Server communication failure");
-		}
-	});	
-}
-
-
 
 /*
 * Menu contextual que se despliega sobre una fila con el boton derecho
@@ -146,7 +93,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 				iconCls: 'delete',
 				scope:this,
 				handler: function(){    					                   		
-					if( this.ctxRecord &&confirm("Desea continuar?") ){					
+					if( this.ctxRecord ){					
 						
 						if( this.ctxRecord.data.rutina ){
 							var rutina = this.ctxRecord.data.rutina;
@@ -178,17 +125,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 						}
 					}						
 				}
-			},
-			{
-				text: 'Permisos',
-				iconCls: '',
-				scope:this,
-				handler: function(){    					                   		
-					if( this.ctxRecord ){					
-						ventanaPermisos( this.ctxRecord );
-					}							
-				}
-			}		
+			}	
 			]
 	});
 	this.menu.on('hide', this.onContextHide, this);
@@ -290,7 +227,7 @@ var panel = new Ext.grid.EditorGridPanel({
 	store: store,	
 	cm: colModelSeguros,
 	sm: new  Ext.grid.CellSelectionModel(),	
-	clicksToEdit: 2,
+	clicksToEdit: 1,
 	stripeRows: true,	
 	title: 'Administración de rutinas',
 	height: 400,	
@@ -309,7 +246,6 @@ var panel = new Ext.grid.EditorGridPanel({
 			iconCls:'disk',  // reference to our css
 			handler: guardarCambios
 		}
-		
 	],		
 	view: new Ext.grid.GridView({
 		 forceFit :true

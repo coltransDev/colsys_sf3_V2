@@ -68,6 +68,14 @@ class widgetsComponents extends sfComponents
 	}
 	
 	/**
+	* Muestra un select con las empresas Coltrans, Colmas  
+	*/
+	public function executeEmpresa(){
+		
+	}
+	
+	
+	/**
 	* Muestra un select vacio cuyos datos son alimentados manualmente
 	*/
 	public function executeEmptyCombo(){
@@ -102,6 +110,21 @@ class widgetsComponents extends sfComponents
 	* Muestra un select con las lineas de transporte 
 	*/
 	public function executeLineas(){
+		if(!isset( $this->label )){
+			$this->label="";
+		}
+		if(!isset( $this->id )){
+			$this->id="";
+		}	
+		if(!isset( $this->allowBlank )){
+			$this->allowBlank="true";
+		}
+	}
+	
+	/**
+	* Muestra un select con las modalidades
+	*/
+	public function executeModalidades(){
 		if(!isset( $this->label )){
 			$this->label="";
 		}

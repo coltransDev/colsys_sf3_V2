@@ -198,13 +198,30 @@ class usersActions extends sfActions
 	* Administración de usuarios y grupos
 	*
 	*******************************************************************/
-		
-	/*
-	* Muestra una lista de usuarios y grupos con un checkbox 
-	* para seleccionar los permisos
-	*/
-	public function executePermisosRutinas(){
-		$this->setLayout("ajax");
+	
+	public function executeAdminGrupos(){
+		$username = sfConfig::get("app_ldap_user");;
+		$passwd = sfConfig::get("app_ldap_passwd");;		
+		if( $username && $passwd ){
+			$auth_user="cn=".$username.",o=coltrans_bog";			
+			$ldap_server=sfConfig::get("app_ldap_host");
+			
+			if($connect=ldap_connect($ldap_server)){
+				
+				if(@$bind=ldap_bind($connect, $auth_user, $passwd)){
+									
+					$sr = ldap_search($connect,"o=coltrans_bog" , "(&(objectclass=group)(!(equivalentToMe=cn=admin,o=coltrans_bog)))" );
+ 					$this->grupos = ldap_get_entries($connect, $sr);
+										
+					
+				}else{					
+				 	echo "No se puede conectar al servidor";					
+				}
+				ldap_close($connect);           
+			}else{
+				echo "sin conexion";
+			}
+		}
 	}
 	
 }

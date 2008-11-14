@@ -3,18 +3,20 @@ all:
   digitalFile:
 #    root:  /srv/www/digitalFile/
      root:  C:\Desarrollo\digitalFile\
-  # Example app.yml config for sfPokaYoke
+
   smtp:
     host: 10.192.1.30
 #    user:  tasas_cambios
 #    passwd:  tasas_cambios
     port: 25
     public_ip: 200.14.235.62
-  
-#used by modalbox
-  params_to_escape:
-    list: ['loadingString', 'closeString']
-    
+
+  ldap:
+    host: 10.192.1.15
+    user: abotero
+    passwd: krxo4578
+
+
 #archivos de falabella
   falabella:
 #    input:  /home/falabella/OUT  

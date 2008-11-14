@@ -82,10 +82,10 @@ $imprimirRecargos = false;
 $datosAg = array();
 
 foreach( $productos as $producto ):
-	if ($producto->getCaImpoExpo()=="Importación"){	
+	if ($producto->getCaImpoExpo()==Constantes::IMPO){	
 		$imprimirNotas[]="anexoImpo";
 	}
-	if ($producto->getCaImpoExpo()=="Exportación"){	
+	if ($producto->getCaImpoExpo()==Constantes::EXPO){	
 		$imprimirNotas[]="anexoExpo";
 	}
 	

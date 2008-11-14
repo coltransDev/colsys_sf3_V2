@@ -88,7 +88,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,			
 			dataIndex: 'modalidad',
 			hideable: false,
-			editor: <?=extModalidad("modalidad", "Marítimo", "Exportación" )?>
+			editor: <?=extModalidad("modalidad", Constantes::MARITIMO, Constantes::IMPO )?>
 		},
 		{
 			id: 'ciuorigen',
@@ -115,7 +115,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,
 			dataIndex: 'concepto',
 			hideable: false,
-			editor: <?=extConcepto($id="conceptoOtmDta", $transporte="Terrestre", $modalidad="OTM-DTA")?>
+			editor: <?=extConcepto($id="conceptoOtmDta", Constantes::TERRESTRE, $modalidad="OTM-DTA")?>
 		},
 		{
 			id: 'equipo',
@@ -124,7 +124,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,
 			dataIndex: 'equipo',
 			hideable: false,
-			editor: <?=extConcepto($id="equipo", $transporte="Marítimo")?>
+			editor: <?=extConcepto($id="equipo", Constantes::MARITIMO)?>
 		},
 		{
 			id: 'valor_tar',
@@ -245,11 +245,11 @@ var contviajeHandler = function(){
 			            allowBlank:false
 			        }
 					,<?=extOtmDta("tipo")?>
-					,<?=extModalidad("modalidad", "Marítimo", "Exportación" )?>
+					,<?=extModalidad("modalidad", Constantes::MARITIMO, Constantes::IMPO )?>
 					,<?=include_component("widgets", "ciudades" ,array("id"=>"origen", "label"=>"Ciudad Origen", "idpais"=>"CO-057" ))?>
 					,<?=include_component("widgets", "ciudades" ,array("id"=>"destino", "label"=>"Ciudad Destino", "idpais"=>"CO-057" ))?>
-					,<?=extConcepto($id="conceptoOtmDta", $transporte="Terrestre", $modalidad="OTM-DTA")?>
-					,<?=extConcepto($id="equipo", $transporte="Marítimo", $modalidad="Ext.getCmp('modalidad')")?>
+					,<?=extConcepto($id="conceptoOtmDta", Constantes::TERRESTRE , $modalidad="OTM-DTA")?>
+					,<?=extConcepto($id="equipo", Constantes::MARITIMO , $modalidad="Ext.getCmp('modalidad')")?>
 					,{
 						xtype:'textfield',
 						fieldLabel: 'Valor',
@@ -430,7 +430,7 @@ var grid_contOnBeforeedit = function( e ){
 	
 	if( e.field == "equipo"){	
 		 ed = this.colModel.getCellEditor(e.column, e.row );		
-		 ed.field.store.baseParams = {transporte:"Marítimo",modalidad:e.record.data.modalidad ,impoexpo:"Exportación"};
+		 ed.field.store.baseParams = {transporte:"<?=Constantes::MARITIMO?>",modalidad:e.record.data.modalidad ,impoexpo:"Exportación"};
 		 ed.field.store.reload();
 	}
 		

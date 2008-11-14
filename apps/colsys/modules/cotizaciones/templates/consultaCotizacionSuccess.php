@@ -59,7 +59,7 @@ Ext.onReady(function(){
      */
     var mainPanel = new Ext.FormPanel({
         labelAlign: 'top',
-        title: 'Sistema de cotizaciones',
+        title: 'Sistema de cotizaciones <?=$cotizacion->getCaEmpresa()?>',
         bodyStyle:'padding:1px',		
 
         items: [{
@@ -129,8 +129,7 @@ Ext.onReady(function(){
 				        typeAhead: false,
 				        loadingText: 'Buscando...',
 				        valueNotFoundText: 'No encontrado' ,
-						minChars: 1,
-				        hideTrigger:true,
+						minChars: 1,				        
 				        tpl: resultTpl,
 				        itemSelector: 'div.search-item',		
 					    emptyText:'Escriba el nombre del cliente...',
@@ -185,7 +184,14 @@ Ext.onReady(function(){
 					value: '<?=$usuario->getCaNombre()?>',
                     allowBlank:false,
 					readOnly: true
-                }]
+                }
+				<?
+				if( !$cotizacion->getCaIdCotizacion() ){
+					echo ",";
+					include_component("widgets", "empresa" ,array("id"=>"empresa", "label"=>"Empresa", "allowBlank"=>"false"));
+				}
+				
+				?>	]
             },{
                 title:'Entrada',
                 layout:'form',
@@ -227,22 +233,39 @@ Ext.onReady(function(){
 					name: 'despedida',
 					value: '<?=$cotizacion->getCaDespedida()?>',
                     allowBlank:false
-                }]
-            },{
-                title:'Anexos',
-                layout:'form',
-                defaults: {width: 230},
-                defaultType: 'textfield',
-
-                items: [{
+                },
+				{
 					xtype: 'textarea',
 					width: 500,
 					fieldLabel: 'Anexos',
 					name: 'anexos',
 					value: '<?=$cotizacion->getCaAnexos()?>',
                     allowBlank:false
+                }
+				]
+            }
+			<?
+			if( $cotizacion->getCaIdCotizacion() ){
+			?>
+			,{
+                title:'Adjuntos',
+                layout:'form',
+                defaults: {width: 230},
+                defaultType: 'textfield',
+
+                items: [{
+					xtype: 'hidden',
+					width: 500,
+					fieldLabel: 'Anexos',
+					name: 'anexosaasdasd',
+					value: '--',
+                    allowBlank:true
                 }]
-            }],
+            }
+			<?
+			}
+			?>
+			],
 
 	        buttons: [{
 	            text: 'Salvar',
@@ -280,10 +303,14 @@ Ext.onReady(function(){
 	mainPanel.render(document.body);
      <?
 	 if( $cotizacion->getCaIdcotizacion() ){
-		 include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
-		 include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
-		 include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
-		 include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
+	 	
+		 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
+			 include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
+			 include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
+			 include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
+		}
+		include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
+		 
 		 ?>   	
 		 var subPanel = new Ext.FormPanel({
 			labelAlign: 'top',
@@ -296,10 +323,15 @@ Ext.onReady(function(){
 				height:250,
 				defaults:{bodyStyle:'padding:10px'},
 				items:[			
-						
+					<?
+					if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
+					?>	
 					   grid_productos,
 					   grid_recargos,
 					   grid_contviajes,
+					<?
+					}
+					?>   
 					   grid_seguros
 					   
 				]

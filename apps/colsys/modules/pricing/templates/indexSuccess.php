@@ -207,7 +207,7 @@ use_helper( "Ext2" );
                 new Ext.TabPanel({
 					id:'tab-panel',
                     region:'center',
-                    //deferredRender:false,
+                    deferredRender:false,
 					enableTabScroll:true,
                     activeTab:0,
                     items:[{
@@ -226,10 +226,10 @@ use_helper( "Ext2" );
 </script>
   
 <div id="traficos"></div>
-
+<!--
 <div id="center2">
    &nbsp;        
-</div>
+</div>-->
 <div id="center1">
 	<br />	 	
 	<h3>&nbsp;&nbsp;&nbsp;Bienvenido al sistema de administracion del tarifario. </h3><br />
@@ -244,6 +244,7 @@ use_helper( "Ext2" );
 		<div id="panel-noticias" ></div>
 	</div>
 </div>
-<div id="props-panel" style="width:200px;height:200px;overflow:hidden;">
-</div>
+
+<!--<div id="props-panel" style="width:200px;height:200px;overflow:hidden;">
+</div>-->
  
