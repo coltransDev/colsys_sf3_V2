@@ -252,16 +252,34 @@ foreach( $doc->childNodes as $sdnEntryTag ){
 */
 
 $rs = SdnPeer::evaluaClientes();
-$ven_mem = 'none';
+$ven_mem = null;
 $msn_mem = '';
-$tit_mem = array("ca_idcliente","ca_compania","ca_nombres","ca_papellido","ca_sapellido","ca_vendedor","ca_uid","ca_firstname","ca_lastname","ca_title","ca_sdntype","ca_remarks","ca_uid","ca_uid_id","ca_idtype","ca_idnumber","ca_idcountry","ca_issuedate","ca_expirationdate","ca_uid","ca_uid_aka","ca_type","ca_category","ca_firstname","ca_lastname","ca_uid","ca_uid_aka","ca_type","ca_category","ca_firstname","ca_lastname");
+$tit_mem = array("ca_idcliente","ca_compania","ca_nombres","ca_papellido","ca_sapellido","ca_vendedor", "sdnm_uid","sdnm_firstname","sdnm_lastname","sdnm_title","sdnm_sdntype","sdnm_remarks","sdid_uid_id","sdid_idtype","sdid_idnumber","sdid_idcountry","sdid_issuedate","sdid_expirationdate","sdal_uid_aka","sdal_type","sdal_category","sdal_firstname","sdal_lastname","sdak_uid_aka","sdak_type","sdak_category","sdak_firstname","sdak_lastname");
 
+
+$parametro = ParametroPeer::retrieveByPK("CU065",2,"defaultEmails");
+if (stripos($parametro->getCaValor2(), ',') !== false) {
+	$defaultEmail = explode(",", $parametro->getCaValor2());
+}else{
+	$defaultEmail = array($parametro->getCaValor2());
+}
+$parametro = ParametroPeer::retrieveByPK("CU065",3,"ccEmails");
+if (stripos($parametro->getCaValor2(), ',') !== false) {
+	$ccEmails = explode(",", $parametro->getCaValor2());
+}else{
+	$ccEmails = array($parametro->getCaValor2());
+}
+
+$x = 0;
+$nueva_fecha = '2008-01-01';
 while($rs->next()) {
-	if ($rs->getString("ca_vendedor") != $ven_mem) {
+	if ($rs->getString("ca_vendedor") !== $ven_mem) {
 		if ($msn_mem != ''){
 			$msn_mem.= "</table>";
 			echo "Body Mail: <br />".$msn_mem."<br />"."<br />";
-			$email->addCc( "" );
+			while (list ($clave, $val) = each ($ccEmails)) {
+				$email->addCc( $val );
+			}
 			$email->setCaSubject( "Verificación Clientes en Lista Clinton" );		
 			$email->setCaBody( $msn_mem );
 			//$email->save(); //guarda el cuerpo del mensaje	
@@ -270,9 +288,7 @@ while($rs->next()) {
 			$user = UsuarioPeer::retrieveByPk($rs->getString("ca_vendedor"));	
 		}else{
 			$user = new Usuario();
-			$user->setCaEmail("clopez@coltrans.com.co");
 		}
-		
 
 		//Crea el correo electronico
 		$email = new Email();
@@ -284,8 +300,11 @@ while($rs->next()) {
 		$email->setCaFromname( "Administrador Sistema Colsys" );
 		$email->setCaReplyto( "admin@coltrans.com.co" );
 
-		$email->addTo( $user->getCaEmail() );
-		
+		if ( !$user->getCaEmail() ){
+			while (list ($clave, $val) = each ($defaultEmail)) {
+				$email->addTo( $val );
+			}
+		}
 		$ven_mem = $rs->getString("ca_vendedor");
 		$msn_mem = "El sistema ha encontrado algunas similitudes en su listado de Clientes, comparado con la Lista Clinton del día $nueva_fecha. Favor hacer la respectivas verificaciones y tomar acción en caso de que un cliente haya sido reportado.";
 		$msn_mem.= "<br />";
@@ -297,14 +316,14 @@ while($rs->next()) {
 		$msn_mem.= "	</tr>";
 	}
 	$msn_mem.= "	<tr>";
-	for($i=0; $i<31; $i++) {
+	for($i=0; $i<count($tit_mem); $i++) {
 		$msn_mem.= "	<td>".$rs->getString($tit_mem[$i])."</td>";
 	}
 	$msn_mem.= "	</tr>";
 }
 $msn_mem.= "</table>";
 echo $msn_mem."<br />"."<br />";
-$email->addCc( '' );
+
 $email->setCaSubject( "Verificación Clientes en Lista Clinton" );		
 $email->setCaBody( $msn_mem );
 //$email->save(); //guarda el cuerpo del mensaje	
