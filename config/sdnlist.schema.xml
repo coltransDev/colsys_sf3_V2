@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.sdnlist">
+	<table name="tb_sdn" phpName="Sdn" >
+		<column name="ca_uid" type="numeric" required="true" primaryKey="true" />
+		<column name="ca_firstName" type="varchar" />
+		<column name="ca_lastName" type="varchar" />
+		<column name="ca_title" type="varchar" />
+		<column name="ca_sdnType" type="varchar" />
+		<column name="ca_remarks" type="varchar" />
+	</table>
+
+	<table name="tb_sdnid" phpName="SdnId">
+		<column name="ca_uid" type="numeric" required="true" primaryKey="true" />
+		<column name="ca_uid_id" type="numeric" required="true" primaryKey="true" />
+		<column name="ca_idType" type="varchar" />
+		<column name="ca_idNumber" type="varchar" />
+		<column name="ca_idCountry" type="varchar" />
+		<column name="ca_issueDate" type="varchar" />
+		<column name="ca_expirationDate" type="varchar" />
+
+		<foreign-key foreignTable="tb_sdn">
+			<reference local="ca_uid" foreign="ca_uid"/>
+		</foreign-key>	
+	</table>	
+	
+	<table name="tb_sdnaka" phpName="SdnAka">
+		<column name="ca_uid" type="numeric" required="true" primaryKey="true" />
+		<column name="ca_uid_aka" type="numeric" required="true" primaryKey="true" />
+		<column name="ca_type" type="varchar" />
+		<column name="ca_category" type="varchar" />
+		<column name="ca_firstName" type="varchar" />
+		<column name="ca_lastName" type="varchar" />
+
+		<foreign-key foreignTable="tb_sdn">
+			<reference local="ca_uid" foreign="ca_uid"/>
+		</foreign-key>	
+	</table>	
+
+	<table name="tb_sdnaddress" phpName="SdnAddress">
+		<column name="ca_uid" type="numeric" required="true" primaryKey="true" />
+		<column name="ca_uid_address" type="numeric" required="true" primaryKey="true" />
+		<column name="ca_address1" type="varchar" />
+		<column name="ca_address2" type="varchar" />
+		<column name="ca_address3" type="varchar" />
+		<column name="ca_city" type="varchar" />
+		<column name="ca_state" type="varchar" />
+		<column name="ca_postal" type="varchar" />
+		<column name="ca_country" type="varchar" />
+
+		<foreign-key foreignTable="tb_sdn">
+			<reference local="ca_uid" foreign="ca_uid"/>
+		</foreign-key>	
+	</table>	
+</database>
