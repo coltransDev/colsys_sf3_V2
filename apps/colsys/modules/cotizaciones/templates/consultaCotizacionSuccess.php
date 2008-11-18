@@ -338,11 +338,12 @@ Ext.onReady(function(){
 					<?
 					if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
 					?>	
-						grid_agentes, 
+						
 					   grid_productos,
 					   grid_recargos,
 					   grid_contviajes,					
-					   grid_seguros
+					   grid_seguros,
+					   grid_agentes
 					   
 					 <?
 					}
