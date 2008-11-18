@@ -13,16 +13,7 @@ use_helper( "Ext2" );
 		
 		//store.load();
 		
-		var tpl = new Ext.XTemplate(
-			'<tpl for=".">',
-				
-				'<div class="thumb-wrap" id="{name}">',
-				'<div class="thumb">{icon}</div>',
-				'<span class="x-editable">{name}</span></div>',
-				
-			'</tpl>',
-			'<div class="x-clear"></div>'
-		);
+		
 		
 		
 					   

@@ -11,6 +11,7 @@ var recordNoticias = Ext.data.Record.create([
 	{name: 'idnotificacion', type: 'string'},
 	{name: 'titulo', type: 'string'},
 	{name: 'mensaje', type: 'string'},
+	{name: 'caducidad', type: 'string'},
 	{name: 'usucreado', type: 'string'},					
 	{name: 'fchcreado', type: 'date', dateFormat:'Y-m-d h:i:s'}
 	
@@ -51,10 +52,11 @@ var formatTitle = function(value, p, record) {
 		);
 }
 
-var formatDate = function(date) {
+var formatDate = function(date) {	
 	if (!date) {
 		return '';
-	}
+	}	
+	
 	var now = new Date();
 	var d = now.clearTime(true);
 	var notime = date.clearTime(true).getTime();
@@ -65,7 +67,7 @@ var formatDate = function(date) {
 	if (d.getTime() <= notime) {
 		return date.dateFormat('D g:i a');
 	}
-	return date.dateFormat('n/j g:i a');
+	return date.dateFormat('m/d/y g:i a');
 }
 
 
@@ -136,39 +138,50 @@ var actualizarObservaciones=function( btn, text ){
 
 
 var gridOnRowcontextmenu =  function(grid, index, e){
-	rec = grid.store.getAt(index);	
+	var r = grid.store.getAt(index);	
 	e.stopEvent(); //Evita que se despliegue el menu con el boton izquierdo
 	
 	this.menu = new Ext.menu.Menu({
 		id:'grid-ctx',
-		items: [{
+		items: [
+				{
+					text: 'Editar',
+					iconCls: 'page_white_edit',
+					scope:this,
+					handler: function(){   					                   		
+						editarNoticia( r );									
+					}
+				},	
+				{
 				text: 'Eliminar',
-				iconCls: 'new-tab',
+				iconCls: 'delete',
 				scope:this,
 				handler: function(){    					                   
 					//envia los datos al servidor 
-					Ext.Ajax.request( 
-						{   
-							waitMsg: 'Eliminando...',						
-							url: '<?=url_for("pricing/eliminarNotificacion")?>', 						//method: 'POST', 
-							//Solamente se envian los cambios 						
-							params :	{
-								idnotificacion:rec.data.idnotificacion 
-							},
-													
-							//Ejecuta esta accion en caso de fallo
-							//(404 error etc, ***NOT*** success=false)
-							failure:function(response,options){							
-								alert( response.responseText );						
-								success = false;
-							},
-							//Ejecuta esta accion cuando el resultado es exitoso
-							success:function(response,options){															
-								grid.store.remove( rec );
-								Ext.MessageBox.alert("","Se ha eliminado correctamente");
-							}
-						 }
-					); 			
+					if( confirm("Desea continuar?") ){
+						Ext.Ajax.request( 
+							{   
+								waitMsg: 'Eliminando...',						
+								url: '<?=url_for("pricing/eliminarNotificacion")?>', 						//method: 'POST', 
+								//Solamente se envian los cambios 						
+								params :	{
+									idnotificacion:r.data.idnotificacion 
+								},
+														
+								//Ejecuta esta accion en caso de fallo
+								//(404 error etc, ***NOT*** success=false)
+								failure:function(response,options){							
+									alert( response.responseText );						
+									success = false;
+								},
+								//Ejecuta esta accion cuando el resultado es exitoso
+								success:function(response,options){															
+									grid.store.remove( r );
+									Ext.MessageBox.alert("","Se ha eliminado correctamente");
+								}
+							 }
+						); 	
+					}		
 				}
 			}		
 		]
@@ -179,16 +192,14 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
 		this.ctxRow = null;
 	}
-	this.ctxRecord = rec;
+	this.ctxRecord = r;
 	this.ctxRow = this.view.getRow(index);
 	Ext.fly(this.ctxRow).addClass('x-node-ctx');
 	this.menu.showAt(e.getXY());
 		
 }
 
-
-function agregarRecargo(){	
-	//crea una ventana 
+function ventanaEdicion( record ){
 	win = new Ext.Window({		
 		width       : 400,
 		height      : 250,
@@ -203,6 +214,10 @@ function agregarRecargo(){
 			bodyStyle: 'padding: 10px 10px 0 10px;',
 			labelWidth: 55, 			
 			items: [  
+				{
+					xtype: 'hidden',					
+					name: 'idnotificacion'					
+				},
 				{
 					xtype: 'textfield',
 					fieldLabel: 'Titulo',
@@ -231,6 +246,7 @@ function agregarRecargo(){
 			handler: function(){
 				
 				var fp = Ext.getCmp("noticias-form");	
+				var idnotificacion = fp.getForm().findField("idnotificacion").getValue();
 				var titulo = fp.getForm().findField("titulo").getValue();
 				var mensaje = fp.getForm().findField("mensaje").getValue();
 				var caducidad = Ext.util.Format.date( fp.getForm().findField("caducidad").getValue(), 'Y-m-d');
@@ -243,7 +259,10 @@ function agregarRecargo(){
 							waitMsg: 'Guardando cambios...',						
 							url: '<?=url_for("pricing/guardarNotificacion")?>', 						//method: 'POST', 
 							//Solamente se envian los cambios 						
-							params :	{titulo:titulo, mensaje:mensaje, caducidad:caducidad},
+							params :	{ idnotificacion:idnotificacion,
+										  titulo:titulo, 
+										  mensaje:mensaje, 
+										  caducidad:caducidad},
 													
 							//Ejecuta esta accion en caso de fallo
 							//(404 error etc, ***NOT*** success=false)
@@ -253,16 +272,34 @@ function agregarRecargo(){
 							},
 							//Ejecuta esta accion cuando el resultado es exitoso
 							success:function(response,options){	
-								eval( response.responseText   );						
-								var rec = new recordNoticias(
-									{titulo:titulo, mensaje:mensaje, caducidad:caducidad, idnotificacion:idnotificacion, fchcreado:fchcreado, usucreado:usucreado}
-								);
-			
-								records = [];
-								records.push( rec );
-								storeNoticias.insert( 0, records );
-
+								var res = Ext.util.JSON.decode( response.responseText );	
+								
 								win.close();
+								
+								var rec = new recordNoticias(
+									{titulo:res.titulo, mensaje:res.mensaje, caducidad:res.caducidad, idnotificacion:res.idnotificacion, fchcreado:res.fchcreado, usucreado:res.usucreado}
+								);		
+								
+								var caducidad = Ext.util.Format.date( fp.getForm().findField("caducidad").getValue(), 'Y-m-d');
+								
+								rec = storeNoticias.getById(res.idnotificacion);
+								if( !rec ){									
+									var rec = new recordNoticias(
+										{titulo:res.titulo, mensaje:res.mensaje, caducidad:res.caducidad, idnotificacion:res.idnotificacion, fchcreado:res.fchcreado, usucreado:res.usucreado}
+									);
+									rec.id = res.idnotificacion;
+									records = [];
+									records.push( rec );
+									storeNoticias.insert( 0, records );
+								}else{
+									rec.set("titulo" , res.titulo);
+									rec.set("mensaje" , res.mensaje);
+									rec.set("caducidad" , res.caducidad);
+									rec.set("titulo" , res.titulo);
+									//rec.set("fchcreado" , res.fchcreado);
+									rec.set("usucreado" , res.usucreado);	
+									rec.commit();								
+								}																	
 							}
 						 }
 					); 
@@ -281,7 +318,29 @@ function agregarRecargo(){
 	});
 	
 	win.show( );	
+	
+	if(typeof(record)!='undefined'){		
+		var fp = Ext.getCmp("noticias-form");	
+		fp.getForm().findField("idnotificacion").setValue(record.data.idnotificacion);
+		fp.getForm().findField("titulo").setValue(record.data.titulo);
+		fp.getForm().findField("mensaje").setValue(record.data.mensaje);
+		fp.getForm().findField("caducidad").setValue(record.data.caducidad);
+		
+	}
+	
+	
 }
+
+function agregarNoticia(){	
+	//crea una ventana 
+	ventanaEdicion( );
+}
+
+function editarNoticia( rec ){	
+	//crea una ventana 
+	ventanaEdicion( rec );
+}
+
 
 
 var applyRowClass =  function(record, rowIndex, p, ds) {
@@ -315,7 +374,7 @@ var gridNoticias = new Ext.grid.GridPanel({
 		text: 'Agregar',
 		tooltip: 'Crea un nueva notificación',
 		iconCls:'add',  // reference to our css
-		handler: agregarRecargo
+		handler: agregarNoticia
 	}
 	],
 	

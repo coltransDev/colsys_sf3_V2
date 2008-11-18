@@ -78,4 +78,29 @@ class widgetsActions extends sfActions
 		
 		$this->setLayout("ajax");		
 	}
+	
+	/*
+	* Datos de las modalidades según sea el medio de transporte
+	*/
+	public function executeDatosModalidades(){
+		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
+		$impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
+		
+		if ( $transport_parameter == Constantes::MARITIMO)	{
+			$transportes = ParametroPeer::retrieveByCaso( "CU051",null, $impoexpo_parameter);
+		}else if ( $transport_parameter == Constantes::AEREO )	{
+			$transportes = ParametroPeer::retrieveByCaso( "CU052",null, $impoexpo_parameter);
+		}else if ( $transport_parameter ==  Constantes::TERRESTRE )	{
+			$transportes = ParametroPeer::retrieveByCaso( "CU053",null, $impoexpo_parameter);
+		}
+		$this->modalidades = array();
+		
+		foreach($transportes as $transporte){
+			$row = array("modalidad"=>$transporte->getCaValor());
+			$this->modalidades[]=$row;
+		}
+		$this->setLayout("ajax");
+	}
+
 }
+?>

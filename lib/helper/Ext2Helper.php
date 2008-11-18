@@ -59,7 +59,7 @@ function extModalidad($id="modalidad", $transporte, $impoexpo){
 		$listeners
 		store : new Ext.data.Store({
 			autoLoad : false,
-			url: '".url_for("cotizaciones/datosModalidades")."',
+			url: '".url_for("widgets/datosModalidades")."',
 			reader: new Ext.data.JsonReader(
 				{
 					id: 'modalidad',

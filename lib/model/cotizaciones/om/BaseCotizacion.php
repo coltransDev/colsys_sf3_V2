@@ -191,6 +191,18 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	protected $lastCotSeguroCriteria = null;
 
 	/**
+	 * Collection to store aggregation of collCotArchivos.
+	 * @var        array
+	 */
+	protected $collCotArchivos;
+
+	/**
+	 * The criteria used to select the current contents of collCotArchivos.
+	 * @var        Criteria
+	 */
+	protected $lastCotArchivoCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -1121,6 +1133,14 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collCotArchivos !== null) {
+				foreach($this->collCotArchivos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 		}
 		return $affectedRows;
@@ -1227,6 +1247,14 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 				if ($this->collCotSeguros !== null) {
 					foreach($this->collCotSeguros as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collCotArchivos !== null) {
+					foreach($this->collCotArchivos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1616,6 +1644,10 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 			foreach($this->getCotSeguros() as $relObj) {
 				$copyObj->addCotSeguro($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getCotArchivos() as $relObj) {
+				$copyObj->addCotArchivo($relObj->copy($deepCopy));
 			}
 
 		} // if ($deepCopy)
@@ -2170,6 +2202,111 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$this->lastCotSeguroCriteria = $criteria;
 
 		return $this->collCotSeguros;
+	}
+
+	/**
+	 * Temporary storage of collCotArchivos to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initCotArchivos()
+	{
+		if ($this->collCotArchivos === null) {
+			$this->collCotArchivos = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cotizacion has previously
+	 * been saved, it will retrieve related CotArchivos from storage.
+	 * If this Cotizacion is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getCotArchivos($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotArchivos === null) {
+			if ($this->isNew()) {
+			   $this->collCotArchivos = array();
+			} else {
+
+				$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+
+				CotArchivoPeer::addSelectColumns($criteria);
+				$this->collCotArchivos = CotArchivoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+
+				CotArchivoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastCotArchivoCriteria) || !$this->lastCotArchivoCriteria->equals($criteria)) {
+					$this->collCotArchivos = CotArchivoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastCotArchivoCriteria = $criteria;
+		return $this->collCotArchivos;
+	}
+
+	/**
+	 * Returns the number of related CotArchivos.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countCotArchivos($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+
+		return CotArchivoPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a CotArchivo object to this object
+	 * through the CotArchivo foreign key attribute
+	 *
+	 * @param      CotArchivo $l CotArchivo
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addCotArchivo(CotArchivo $l)
+	{
+		$this->collCotArchivos[] = $l;
+		$l->setCotizacion($this);
 	}
 
 } // BaseCotizacion

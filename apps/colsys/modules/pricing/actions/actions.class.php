@@ -984,6 +984,19 @@ class pricingActions extends sfActions
 						
 		$this->forward404Unless( $idtrafico );
 		
+		
+		$this->impoexpo = utf8_encode($impoexpo);
+		$this->transporte = utf8_encode($transporte);
+		$this->modalidad = $modalidad;
+	}
+	//Datos para el administrador de archivos
+	public function executeDataArchivosPais(){
+		$this->setLayout("ajax");
+		$idtrafico = $this->getRequestParameter("idtrafico");
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));	
+		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));	
+		
 		$c = new Criteria();
 		$c->add(PricArchivoPeer::CA_IDTRAFICO, $idtrafico );
 		$c->add(PricArchivoPeer::CA_TRANSPORTE, $transporte );
@@ -997,10 +1010,10 @@ class pricingActions extends sfActions
 		$c->addSelectColumn( PricArchivoPeer::CA_USUCREADO );
 		$rs= PricArchivoPeer::doSelectRS( $c );
 		
-		$this->data = array();
+		$this->files = array();
 		
 		while ( $rs->next() ) {
-      		$this->data[] = array('idarchivo'=>$rs->getString(1),
+      		$this->files[] = array('idarchivo'=>$rs->getString(1),
 							   	  'name'=>utf8_encode($rs->getString(2)),
 								  'size'=>utf8_encode($rs->getString(3)),
 								  'descripcion'=>utf8_encode($rs->getString(4)),
@@ -1009,9 +1022,6 @@ class pricingActions extends sfActions
 							 );
 		}	
 		
-		$this->impoexpo = utf8_encode($impoexpo);
-		$this->transporte = utf8_encode($transporte);
-		$this->modalidad = $modalidad;
 	}
 		
 	/*
@@ -1020,13 +1030,12 @@ class pricingActions extends sfActions
 	*/
 	public function executeSubirArchivo(){
 		$idtrafico = $this->getRequestParameter("idtrafico");	
-		$transporte = $this->getRequestParameter("transporte");		
+		$transporte = utf8_decode($this->getRequestParameter("transporte"));	
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));	
+		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));	
+			
 		$this->forward404Unless($idtrafico);	
-		echo "file-----><br />";		
-		print_r( $this->getRequest()->getFileName('file') );
-		echo "fileObj-----><br />";
-		print_r( $this->getRequest()->getFileName('fileObj') );
-		exit();
+		
 		$fileName = $this->getRequest()->getFileName('file');
  		$path = $this->getRequest()->getFilePath('file');
 		$size = $this->getRequest()->getFileSize('file');
@@ -1038,6 +1047,8 @@ class pricingActions extends sfActions
 		$fileObj->setCaIdTrafico($idtrafico);	
 		$fileObj->setCaTipo($type);
 		$fileObj->setCaTransporte($transporte);
+		$fileObj->setCaModalidad($modalidad);
+		$fileObj->setCaImpoExpo($impoexpo);
 		$fp = fopen($path, "r");
 		$data = fread( $fp , $size);
 		fclose( $fp );
@@ -1047,8 +1058,8 @@ class pricingActions extends sfActions
 		$fileObj->setCaUsucreado($user->getUserid());
 		$fileObj->save();	
 		
-		echo "{success:true, file:'".$fileName."', id:".$fileObj->getCaIdArchivo()."}";
-		exit();		
+		$this->responseArray = array("id"=>$fileObj->getCaIdArchivo(),"filename"=>$fileName, "success"=>true);	
+		$this->setTemplate("responseTemplate");				
 	}	
 	
 	/*
@@ -1057,9 +1068,8 @@ class pricingActions extends sfActions
 	*/
 	public function executeVerArchivo(){
 		$this->archivo = PricArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
-		$this->forward404Unless( $this->archivo );
-		$this->getResponse()->addHttpMeta('content-type', $this->archivo->getCaTipo());
-    	$this->getResponse()->addHttpMeta('content-length', $this->archivo->getCaTamano());		
+		$this->forward404Unless( $this->archivo );				
+    	
 	}
 	
 	/*
@@ -1211,17 +1221,30 @@ class pricingActions extends sfActions
 		$caducidad=$this->getRequestParameter("caducidad");
 		
 		$user = $this->getUser();
-		
-		$notificacion = new PricNotificacion();
+		$notificacion = PricNotificacionPeer::retrieveByPk( $this->getRequestParameter("idnotificacion") );
+		if( !$notificacion ){
+			$notificacion = new PricNotificacion();
+		}
 		$notificacion->setCaTitulo($titulo);
 		$notificacion->setCaMensaje($mensaje);
 		$notificacion->setCaCaducidad($caducidad);
 		$notificacion->setCaUsucreado($user->getUserId());
-		$this->usucreado = $user->getUserId();	
-		$this->fchcreado = date("Y-m-d H:i:s", time());
+		
+		$this->fchcreado = date("Y-m-d h:i:s", time());
 		$notificacion->setCaFchcreado( $this->fchcreado );
 		$notificacion->save();
-		$this->idnotificacion = $notificacion->getCaIdNotificacion();		
+		$this->idnotificacion = $notificacion->getCaIdNotificacion();	
+		
+		$this->responseArray = array("idnotificacion"=>$this->idnotificacion, 
+									"fchcreado"=>$this->fchcreado,
+									"mensaje"=>$mensaje,
+									"titulo"=>$titulo,
+									"caducidad"=>$caducidad, 
+									"usucreado"=>$user->getUserId(),
+									"success"=>true);	
+		$this->setTemplate("responseTemplate");
+		$this->setLayout("ajax");
+			
 	}
 	
 	/*

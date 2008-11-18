@@ -16,7 +16,15 @@ class gestDocumentalActions extends sfActions
 	*/
 	public function executeIndex()
 	{
-		$this->forward('default', 'module');
+		$response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/FileUploadField",'last');
+	}
+	
+	public function executeGuardarPrueba(){
+		print_r( $_FILES );
+		
+		print_r( $_POST );
+		exit;
 	}
 	
 	/*

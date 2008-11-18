@@ -21,7 +21,26 @@
 <script language="javascript">
 
 Ext.onReady(function(){
-
+	
+	
+	/*
+	* ================  Panel de archivos adjuntos  =======================
+	* Crea el objeto $object que contine el panel solicitado
+	*/
+	<?	
+	include_component("gestDocumental", "panelArchivos", 
+						array("dataUrl"=>"cotizaciones/dataArchivosCotizacion?idcotizacion=".$cotizacion->getCaIdcotizacion(),
+							"viewUrl"=>"cotizaciones/verArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion(),
+							"deleteUrl"=>"cotizaciones/eliminarArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion(),
+							"object"=>"panelArchivos", 
+							"closable"=>false, 
+							"uploadURL"=>"cotizaciones/adjuntarArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion() 
+						));
+	?>
+	/*
+	* ================  Panel de archivos adjuntos  =======================
+	*/
+	
     var ds = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
             url: '/colsys_sf/index.php/clientes/listaContactosClientesJSON'
@@ -60,7 +79,8 @@ Ext.onReady(function(){
     var mainPanel = new Ext.FormPanel({
         labelAlign: 'top',
         title: 'Sistema de cotizaciones <?=$cotizacion->getCaEmpresa()?>',
-        bodyStyle:'padding:1px',		
+        bodyStyle:'padding:1px',	
+		//fileUpload: true,			
 
         items: [{
             xtype:'tabpanel',
@@ -242,26 +262,13 @@ Ext.onReady(function(){
 					value: '<?=$cotizacion->getCaAnexos()?>',
                     allowBlank:false
                 }
+
 				]
             }
 			<?
 			if( $cotizacion->getCaIdCotizacion() ){
 			?>
-			,{
-                title:'Adjuntos',
-                layout:'form',
-                defaults: {width: 230},
-                defaultType: 'textfield',
-
-                items: [{
-					xtype: 'hidden',
-					width: 500,
-					fieldLabel: 'Anexos',
-					name: 'anexosaasdasd',
-					value: '--',
-                    allowBlank:true
-                }]
-            }
+			,panelArchivos
 			<?
 			}
 			?>
@@ -302,7 +309,7 @@ Ext.onReady(function(){
     });
 	mainPanel.render(document.body);
      <?
-	 if( $cotizacion->getCaIdcotizacion() ){
+	 if( $cotizacion->getCaIdcotizacion() && $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
 	 	
 		 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
 			 include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
@@ -328,11 +335,11 @@ Ext.onReady(function(){
 					?>	
 					   grid_productos,
 					   grid_recargos,
-					   grid_contviajes,
-					<?
+					   grid_contviajes,					
+					   grid_seguros
+					 <?
 					}
 					?>   
-					   grid_seguros
 					   
 				]
 			}]

@@ -169,5 +169,20 @@
 			<reference local="ca_idmoneda" foreign="ca_idmoneda"/>
 		</foreign-key>			
 	</table>
-
+	
+	<table name="tb_cotarchivos" phpName="CotArchivo">		
+		<column name="ca_idarchivo" type="varchar" required="true"  primaryKey="true" autoIncrement="true"/>			
+		<column name="ca_idcotizacion" type="integer" required="true" />
+		<column name="ca_nombre" type="varchar" required="true" />			
+		<column name="ca_tamano" type="numeric" />
+		<column name="ca_tipo" type="varchar" />	
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" />		
+		<column name="ca_datos" type="blob" />			
+					
+		<foreign-key foreignTable="tb_cotizaciones">
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
+		</foreign-key>	
+								
+	</table>
 </database>

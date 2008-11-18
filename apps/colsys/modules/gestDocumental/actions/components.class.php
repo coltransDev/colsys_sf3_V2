@@ -24,7 +24,12 @@ class gestDocumentalComponents extends sfComponents
 	* Muestra un panel con los archivos seleccionados 
 	*/
 	public function executePanelArchivos(){
+		$response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/FileUploadField",'last');
 		
+		if(!isset( $this->id )){
+			$this->id="";
+		}				
 	}
 	
 	

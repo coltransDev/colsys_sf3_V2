@@ -120,7 +120,8 @@ class cotizacionesActions extends sfActions
 			$this->cotizacion->setCaUsuario($user);
 		}
 		
-		$this->data = array();
+		
+		/*$this->data = array();
 				 
 		$productos = $this->cotizacion->getCotProductos();
 		
@@ -129,7 +130,7 @@ class cotizacionesActions extends sfActions
 						 "_is_leaf"=>true						
 						);	
 			$this->data[] = $row;			
-		}
+		}*/
 	}		
 
 	/*
@@ -138,7 +139,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeFormCotizacionGuardar(){
 		$user_id = $this->getUser()->getUserId();
-
+				
 		if( $this->getRequestParameter("cotizacionId") ){
 			$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("cotizacionId") );
 			$this->forward404Unless( $cotizacion );
@@ -1275,13 +1276,93 @@ class cotizacionesActions extends sfActions
 		
 	}
 	
+	/*************************************************************************
+	* Administración de archivos adjuntos
+	*
+	**************************************************************************/	
+	
+	/*
+	* Guarda un archivo en la base de datos
+	*/	
+	public function executeDataArchivosCotizacion(){						
+		$idcotizacion = $this->getRequestParameter( "idcotizacion" );
+		$this->forward404Unless( $idcotizacion );
+		
+		$c = new Criteria();
+		$c->add( CotArchivoPeer::CA_IDCOTIZACION, $idcotizacion );
+		$cotArchivos = CotArchivoPeer::doSelect( $c );
+		
+		$this->files = array();
+		foreach($cotArchivos as $archivo ){
+			$this->files[]=array("idarchivo"=>$archivo->getCaIdarchivo(),
+							"name"=>utf8_encode($archivo->getCaNombre()),
+							"lastmod"=>$archivo->getCaFchcreado()
+					);
+		}		
+	}
+			
+	/*
+	* Guarda un archivo en la base de datos
+	*/	
+	public function executeAdjuntarArchivo(){						
+		$idcotizacion = $this->getRequestParameter( "idcotizacion" );
+		$this->forward404Unless( $idcotizacion );
+		$fileName = $this->getRequest()->getFileName('file');
+ 		$path = $this->getRequest()->getFilePath('file');
+		$size = $this->getRequest()->getFileSize('file');
+		$type = $this->getRequest()->getFileType('file');
+				
+		$fileObj = new CotArchivo();
+		$fileObj->setCaTamano($size);
+		$fileObj->setCaNombre($fileName);
+		$fileObj->setCaIdCotizacion($idcotizacion);	
+		$fileObj->setCaTipo($type);
+		
+		$fp = fopen($path, "r");
+		$data = fread( $fp , $size);
+		fclose( $fp );
+    	$fileObj->setCaDatos($data);
+		$fileObj->setCaFchcreado(time());
+		$user = $this->getUser();
+		$fileObj->setCaUsucreado($user->getUserid());
+		$fileObj->save();	
+		$id = $fileObj->getCaIdArchivo();
+		
+		$this->responseArray = array("id"=>$id, "filename"=>$fileName, "success"=>true);	
+		$this->setTemplate("responseTemplate");
+	
+	}
+	
+	/*
+	* Elimina un archivo de la base de datos
+	*/	
+	public function executeEliminarArchivo(){
+		$id = $this->getRequestParameter( "id" );
+		$idarchivo = $this->getRequestParameter( "idarchivo" );
+		
+		$this->forward404Unless( $id );
+		$cotArchivo = CotArchivoPeer::retrieveByPk( $idarchivo );
+		$cotArchivo->delete();					
+		$this->responseArray = array("id"=>$id);	
+		$this->setTemplate("responseTemplate");
+	}
+	
+	
+	/*
+	* Permite visualizar un archivo del panel 
+	* @author: Andres Botero 
+	*/
+	public function executeVerArchivo(){
+		$this->archivo = CotArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
+		$this->forward404Unless( $this->archivo );
+		$this->getResponse()->addHttpMeta('content-type', $this->archivo->getCaTipo());
+    	$this->getResponse()->addHttpMeta('content-length', $this->archivo->getCaTamano());		
+	}
 	
 	/*************************************************************************
 	* OTROS
 	*
 	**************************************************************************/
-	
-
 	/*
 	* Datos de las modalidades según sea el medio de transporte
 	*/
