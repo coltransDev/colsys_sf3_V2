@@ -144,6 +144,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_empresa;
 
+
+	/**
+	 * The value for the ca_datosag field.
+	 * @var        string
+	 */
+	protected $ca_datosag;
+
 	/**
 	 * @var        Contacto
 	 */
@@ -512,6 +519,17 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_empresa;
+	}
+
+	/**
+	 * Get the [ca_datosag] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaDatosag()
+	{
+
+		return $this->ca_datosag;
 	}
 
 	/**
@@ -929,6 +947,28 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	} // setCaEmpresa()
 
 	/**
+	 * Set the value of [ca_datosag] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaDatosag($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_datosag !== $v) {
+			$this->ca_datosag = $v;
+			$this->modifiedColumns[] = CotizacionPeer::CA_DATOSAG;
+		}
+
+	} // setCaDatosag()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -981,12 +1021,14 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 			$this->ca_empresa = $rs->getString($startcol + 17);
 
+			$this->ca_datosag = $rs->getString($startcol + 18);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 18; // 18 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 19; // 19 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cotizacion object", $e);
@@ -1347,6 +1389,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 17:
 				return $this->getCaEmpresa();
 				break;
+			case 18:
+				return $this->getCaDatosag();
+				break;
 			default:
 				return null;
 				break;
@@ -1385,6 +1430,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$keys[15] => $this->getCaFchanulado(),
 			$keys[16] => $this->getCaUsuanulado(),
 			$keys[17] => $this->getCaEmpresa(),
+			$keys[18] => $this->getCaDatosag(),
 		);
 		return $result;
 	}
@@ -1470,6 +1516,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 17:
 				$this->setCaEmpresa($value);
 				break;
+			case 18:
+				$this->setCaDatosag($value);
+				break;
 		} // switch()
 	}
 
@@ -1511,6 +1560,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[15], $arr)) $this->setCaFchanulado($arr[$keys[15]]);
 		if (array_key_exists($keys[16], $arr)) $this->setCaUsuanulado($arr[$keys[16]]);
 		if (array_key_exists($keys[17], $arr)) $this->setCaEmpresa($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaDatosag($arr[$keys[18]]);
 	}
 
 	/**
@@ -1540,6 +1590,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotizacionPeer::CA_FCHANULADO)) $criteria->add(CotizacionPeer::CA_FCHANULADO, $this->ca_fchanulado);
 		if ($this->isColumnModified(CotizacionPeer::CA_USUANULADO)) $criteria->add(CotizacionPeer::CA_USUANULADO, $this->ca_usuanulado);
 		if ($this->isColumnModified(CotizacionPeer::CA_EMPRESA)) $criteria->add(CotizacionPeer::CA_EMPRESA, $this->ca_empresa);
+		if ($this->isColumnModified(CotizacionPeer::CA_DATOSAG)) $criteria->add(CotizacionPeer::CA_DATOSAG, $this->ca_datosag);
 
 		return $criteria;
 	}
@@ -1627,6 +1678,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$copyObj->setCaUsuanulado($this->ca_usuanulado);
 
 		$copyObj->setCaEmpresa($this->ca_empresa);
+
+		$copyObj->setCaDatosag($this->ca_datosag);
 
 
 		if ($deepCopy) {

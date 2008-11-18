@@ -368,7 +368,7 @@ function updateContViajeModel(){
 	
 	if( success ){
 		storeContViajes.commitChanges();			
-		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
+		//Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
 	}else{
 		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
 	}	
@@ -459,7 +459,7 @@ var grid_contviajes = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el Continuación de Viaje',
 		iconCls: 'disk',  // reference to our css
-		handler: updateContViajeModel
+		handler: guardarItems
 	},
 	{
 		text: 'Agregar Concepto',

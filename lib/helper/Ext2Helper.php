@@ -167,6 +167,7 @@ function extImprimir($id="imprimir"){
 					selectOnFocus: true,					
 					name: '$id',
 					id: '$id',
+					value: 'Por Item', 
 					lazyRender:true,
 					listClass: 'x-combo-list-small',
 					store: [['Por Item', 'Por Item'],['Puerto', 'Puerto'],['Concepto', 'Concepto'],['Trayecto', 'Trayecto']]

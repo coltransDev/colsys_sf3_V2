@@ -22,7 +22,13 @@
 
 Ext.onReady(function(){
 	
-	
+	function guardarItems(){		
+		guardarGridProductos();
+		updateRecargosModel();
+		updateContViajeModel();		
+		updateSeguroModel();
+		
+	}
 	/*
 	* ================  Panel de archivos adjuntos  =======================
 	* Crea el objeto $object que contine el panel solicitado
@@ -76,6 +82,10 @@ Ext.onReady(function(){
     /*
      * ================  Main Form  =======================
      */
+	 
+	 var despedida = '<?=str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaDespedida()))?>';
+	 despedida = despedida.split("<br />").join("\n");
+	 
     var mainPanel = new Ext.FormPanel({
         labelAlign: 'top',
         title: 'Sistema de cotizaciones <?=$cotizacion->getCaEmpresa()?>',
@@ -251,7 +261,7 @@ Ext.onReady(function(){
 					width: 500,
 					fieldLabel: 'Despedida',
 					name: 'despedida',
-					value: '<?=$cotizacion->getCaDespedida()?>',
+					value: despedida,
                     allowBlank:false
                 },
 				{
@@ -265,13 +275,7 @@ Ext.onReady(function(){
 
 				]
             }
-			<?
-			if( $cotizacion->getCaIdCotizacion() ){
-			?>
-			,panelArchivos
-			<?
-			}
-			?>
+			
 			],
 
 	        buttons: [{
@@ -315,6 +319,7 @@ Ext.onReady(function(){
 			 include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
 			 include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
 			 include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
+			  include_component("cotizaciones","grillaAgentes",array("cotizacion"=>$cotizacion));
 		}
 		include_component("cotizaciones","grillaSeguros",array("cotizacion"=>$cotizacion));
 		 
@@ -333,13 +338,18 @@ Ext.onReady(function(){
 					<?
 					if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
 					?>	
+						grid_agentes, 
 					   grid_productos,
 					   grid_recargos,
 					   grid_contviajes,					
 					   grid_seguros
+					   
 					 <?
 					}
-					?>   
+					?>   					
+					,panelArchivos
+			
+					
 					   
 				]
 			}]

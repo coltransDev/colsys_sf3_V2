@@ -397,7 +397,7 @@ var grid_seguros = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en Seguros',
 		iconCls: 'disk',  // reference to our css
-		handler: updateSeguroModel
+		handler: guardarItems
 	}
 	,
 	{

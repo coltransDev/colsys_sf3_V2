@@ -79,7 +79,7 @@ $tabla = array();
 $imprimirObservaciones = false;
 $imprimirRecargos = false;
 
-$datosAg = array();
+
 
 foreach( $productos as $producto ):
 	if ($producto->getCaImpoExpo()==Constantes::IMPO){	
@@ -88,12 +88,7 @@ foreach( $productos as $producto ):
 	if ($producto->getCaImpoExpo()==Constantes::EXPO){	
 		$imprimirNotas[]="anexoExpo";
 	}
-	
-	if( $producto->getCaDatosag() ){		
-		$datosAg = array_merge( $datosAg , explode("|",$producto->getCaDatosag()) );
-	}
-	
-	
+		
 	if ($producto->getCaImprimir() == 'Por Item'):
 	
 		$pdf->Ln(2);
@@ -521,7 +516,8 @@ foreach($imprimirNotas as $val ) {
 // ======================== Directorio de agentes ======================== //
 
 
-$datosAg = array_unique( $datosAg );
+//$datosAg = array_unique( $datosAg );
+$datosAg = explode("|", $cotizacion->getCaDatosag() );
 $c = new Criteria();
 $c->addJoin( ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE );
 $c->addJoin( AgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );

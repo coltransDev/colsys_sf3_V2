@@ -22,6 +22,14 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeIndex()
 	{	
+		$c = new Criteria();
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );
+		$criterion = $c->getNewCriterion( UsuarioPeer::CA_CARGO ,'Gerente Sucursal' );								
+		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_CARGO , '%Ventas%', Criteria::LIKE ));			
+		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_DEPARTAMENTO , '%Ventas%', Criteria::LIKE ));			
+		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_DEPARTAMENTO , '%Comercial%', Criteria::LIKE ));
+		$c->add($criterion);
+		$this->comerciales = UsuarioPeer::doSelect( $c );	
 	}
 		
 	/*
@@ -33,7 +41,7 @@ class cotizacionesActions extends sfActions
 		$user = $this->getUser();
 		$criterio = $this->getRequestParameter("criterio");
 		$cadena = $this->getRequestParameter("cadena");
-		
+		$login = $this->getRequestParameter("login");
 		
 				
 		$c = new Criteria();		
@@ -58,9 +66,11 @@ class cotizacionesActions extends sfActions
 			case "asunto":
 				$c->add( CotizacionPeer::CA_ASUNTO, "lower(".CotizacionPeer::CA_ASUNTO.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
-			case "vendedor":				
-				$c->addJoin( CotizacionPeer::CA_USUARIO, UsuarioPeer::CA_LOGIN );
-				$c->add( UsuarioPeer::CA_NOMBRE, "lower(".UsuarioPeer::CA_NOMBRE.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
+			case "vendedor":	
+				$c->add( CotizacionPeer::CA_USUARIO, $login );			
+				
+				/*$c->addJoin( CotizacionPeer::CA_USUARIO, UsuarioPeer::CA_LOGIN );
+				$c->add( UsuarioPeer::CA_NOMBRE, "lower(".UsuarioPeer::CA_NOMBRE.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	*/
 				break;	
 			case "numero_de_cotizacion":
 				$c->add( CotizacionPeer::CA_IDCOTIZACION, "lower(".CotizacionPeer::CA_IDCOTIZACION.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
@@ -81,7 +91,7 @@ class cotizacionesActions extends sfActions
 		
 		$this->criterio = $criterio;
 		$this->cadena = $cadena;
-		
+		$this->login = $login;
 		
 		
 		
@@ -173,6 +183,23 @@ class cotizacionesActions extends sfActions
 		$this->setLayout("ajax");
 	}
 	
+	
+	/*
+	* Guarda los agentes del directorio de agentes 
+	* @author Andres Botero
+	*/
+	public function executeGuardarAgentes(){
+		$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("idcotizacion") );
+		$this->forward404Unless($cotizacion);
+		$datosag = $this->getRequestParameter( "datosag" );
+		$this->forward404Unless($datosag);
+		$cotizacion->setCaDatosAg( $datosag );
+		$cotizacion->save();
+		$this->responseArray = array("success"=>true);	
+		$this->setTemplate("responseTemplate");		
+		$this->setLayout("ajax");
+	}
+		
 	/*
 	* Permite ver una cotización en formato PDF
 	* @author Andres Botero

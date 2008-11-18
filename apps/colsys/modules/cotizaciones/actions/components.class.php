@@ -121,8 +121,43 @@ class cotizacionesComponents extends sfComponents
 	/*
 	* 
 	*/	
-	public function executeVentanaTarifario(){
+	public function executeGrillaAgentes(){
+		
+		$response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/CheckColumn",'last');
+	
+		$id = $this->cotizacion->getCaIdcotizacion();
+		
+		$c = new Criteria();
+		$c->setLimit(10);		
+		$contactos = ContactoAgentePeer::doSelect( $c );
+		
+		$this->agentes = array();
+		
+		$datosag  = explode("|",$this->cotizacion->getCaDatosag());
+		
+   		foreach ( $contactos as $contacto ) {
+			$agente = $contacto->getAgente();
+			$ciudad = $contacto->getCiudad();
 			
+			if( in_array( $contacto->getCaIdContacto(),  $datosag ) ){
+				$sel = true;
+			}else{
+				$sel = false;
+			}
+			
+      		$this->agentes[] = array( 'sel'=>$sel,
+									'idcontacto'=>$contacto->getCaIdContacto(),
+      								 'contacto'=>utf8_encode($contacto->getCaNombre()),
+									 'agente'=>utf8_encode($agente->getCaNombre()),
+									 'cargo'=>utf8_encode($contacto->getCaCargo()),
+									 'telefonos'=>$contacto->getCaTelefonos(),
+									 'operacion'=>utf8_encode(str_replace("|", " ", $contacto->getCaTransporte())),
+									 /*'ciudad'=>$ciudad->getCaCiudad(),
+									 'pais'=>$ciudad->getTrafico()->getCaNombre()*/
+      									
+      		);
+		}	
 	}
 	
 }

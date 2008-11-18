@@ -909,8 +909,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 var actualizarObservaciones=function( btn, text ){		
 }	
 
-function guardarGridProductos(){
-	
+function guardarGridProductos(){	
 	var success = true;	
 	var records = storeProductos.getModifiedRecords();
 	var lenght = records.length;
@@ -963,13 +962,8 @@ function guardarGridProductos(){
 				}
 			 }
 		); 		
-	}
+	}	
 	
-	/*if( storeProductos.getModifiedRecords().lenght==0 ){
-		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
-	}else{
-		Ext.MessageBox.alert('Warning','Algunos cambios no se han guardado: ');
-	}*/	
 }
 
 /*
@@ -1054,7 +1048,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el tarifario',
 		iconCls: 'disk',  // reference to our css
-		handler: guardarGridProductos
+		handler: guardarItems
 	},
 	{
 		text: 'Agregar trayecto',

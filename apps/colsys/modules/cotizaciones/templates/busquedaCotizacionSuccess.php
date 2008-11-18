@@ -11,6 +11,10 @@ if( $cadena ){
 	$url.="&cadena=".$cadena;
 }
 
+if( $login ){
+	$url.="&login=".$login;
+}
+
 if ($pager->haveToPaginate()):   
 	if ($pager->getPage() != 1):				
 		 echo link_to(image_tag("first.png"), $url.'&page=1',"border=0 ") ;	

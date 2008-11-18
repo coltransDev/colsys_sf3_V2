@@ -250,7 +250,7 @@ grid_recargosOnBeforeedit = function( e ){
 		];
 		
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
-		if( e.record.data.transporte==Constantes::AEREO ){
+		if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
 			ed.field.store.loadData( recargosAereo );
 		}else{
 			ed.field.store.loadData( recargosMaritimo );
@@ -332,7 +332,7 @@ var grid_recargosOnvalidateedit = function(e){
 						newRec.id = rec.data.id+1;								
 																	
 						storeRecargosCot.addSorted(newRec);
-						rec.set("idmoneda", "COP" );
+						rec.set("idmoneda", "USD" );
 						
 					}
 					rec.set("idrecargo", r.data.idrecargo);
@@ -617,7 +617,7 @@ var grid_recargos = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en Recargos',
 		iconCls: 'disk',  // reference to our css
-		handler: updateRecargosModel
+		handler: guardarItems
 	},
 	{
 		text: 'Recargar',

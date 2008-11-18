@@ -99,6 +99,8 @@ class CotizacionMapBuilder {
 
 		$tMap->addColumn('CA_EMPRESA', 'CaEmpresa', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_DATOSAG', 'CaDatosag', 'string', CreoleTypes::VARCHAR, false, null);
+
 	} // doBuild()
 
 } // CotizacionMapBuilder
