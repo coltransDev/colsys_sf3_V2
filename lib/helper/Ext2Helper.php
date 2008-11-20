@@ -192,7 +192,7 @@ function extOtmDta($id="otmdta"){
 	return $html;					
 }
 
-function extMonedas($id="idmoneda", $selected="USD"){
+function extMonedas($id="", $selected="USD"){
 	$c=new Criteria();
 	$c->addAscendingOrderByColumn( MonedaPeer::CA_IDMONEDA );
 	$monedas = MonedaPeer::doSelect( $c );

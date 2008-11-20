@@ -8,7 +8,6 @@ use_helper("Ext2");
 */	
 var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30}); 
 
-var data_agentes = <?=json_encode( array("agentes"=>$agentes, "total"=>count($agentes)) )?>;
 /*
 * Crea el Record 
 */
@@ -19,7 +18,7 @@ var recordGrillaAgentes = Ext.data.Record.create([
     {name: 'agente', type: 'string'},
     {name: 'ciudad', type: 'string'},
     {name: 'pais', type: 'string'},
-    {name: 'telefono', type: 'string'},
+    {name: 'telefonos', type: 'string'},
 	{name: 'cargo', type: 'string'},
     {name: 'detalle', type: 'string'},
 	{name: 'operacion', type: 'string'}
@@ -31,6 +30,7 @@ var recordGrillaAgentes = Ext.data.Record.create([
 */
 var storeAgentes = new Ext.data.GroupingStore({
 	autoLoad : true,
+	url: '<?=url_for("cotizaciones/datosAgentes?idcotizacion=".$cotizacion->getCaidcotizacion() )?>',
 	reader: new Ext.data.JsonReader(
 		{			
 			root: 'agentes',
@@ -38,8 +38,9 @@ var storeAgentes = new Ext.data.GroupingStore({
 		}, 
 		recordGrillaAgentes
 	),
-	groupField: 'agente',		
-	proxy: new Ext.data.MemoryProxy(data_agentes)
+	groupField: 'agente',
+	sortInfo:{field: 'agente', direction: "ASC"}
+	
 });
 	
 	
@@ -96,7 +97,7 @@ var colModelAgentes = new Ext.grid.ColumnModel({
 			header: "Teléfonos",
 			width: 25,
 			sortable: true,			
-			dataIndex: 'ciudad',
+			dataIndex: 'telefonos',
 			hideable: false
 		},
 		{
@@ -129,7 +130,7 @@ var selModelAgentes = new  Ext.grid.CellSelectionModel();
 */
 function guardarGridAgentes(){
 	var success = true;
-	var records = storeAgentes.getModifiedRecords();
+	var records = storeAgentes.getRange();
 			
 	var lenght = records.length;
 	
@@ -148,25 +149,25 @@ function guardarGridAgentes(){
 		}	
 	}
 	
-	if( result!="" ){	
-		Ext.Ajax.request( 
-			{   
-				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("cotizaciones/guardarAgentes?idcotizacion=".$cotizacion->getCaIdcotizacion())?>', 
-				//Solamente se envian los cambios 						
-				params :	{datosag: result},
-										
-				callback :function(options, success, response){	
-											
-					var res = Ext.util.JSON.decode( response.responseText );					
-					if( res.success ){
-						storeAgentes.commitChanges();
-					}					
-				}		
-			 }
-		);
 	
-	}
+	Ext.Ajax.request( 
+		{   
+			waitMsg: 'Guardando cambios...',						
+			url: '<?=url_for("cotizaciones/guardarAgentes?idcotizacion=".$cotizacion->getCaIdcotizacion())?>', 
+			//Solamente se envian los cambios 						
+			params :	{datosag: result},
+									
+			callback :function(options, success, response){	
+										
+				var res = Ext.util.JSON.decode( response.responseText );						
+				if( res.success ){
+					storeAgentes.commitChanges();
+				}					
+			}		
+		 }
+	);
+	
+	
 	
 }
 
@@ -198,7 +199,44 @@ var grid_agentes = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en Seguros',
 		iconCls: 'disk',  // reference to our css
-		handler: guardarGridAgentes
+		handler: guardarItems
+	}
+	,
+	{
+		text: 'Recargar',
+		tooltip: 'Actualiza los agentes de acuerdo a los trayectos seleccionados',
+		iconCls: 'refresh',  // reference to our css
+		handler: function(){
+			if(storeAgentes.getModifiedRecords().length>0){
+				if(!confirm("Se perderan los cambios no guardados en el directorio de agentes unicamente, desea continuar?")){
+					return 0;
+				}
+			}
+			storeAgentes.reload();
+		}
+	},	
+	{
+		text: 'Mostrar todos',
+		tooltip: 'Muestra todos los',
+		iconCls: 'refresh',  // reference to our css
+		id: 'mostrartodos-btn',
+		handler: function(){
+			if(storeAgentes.getModifiedRecords().length>0){
+				if(!confirm("Se perderan los cambios no guardados en el directorio de agentes unicamente, desea continuar?")){
+					return 0;
+				}
+			}
+			var btn = Ext.getCmp('mostrartodos-btn');
+			if( btn.getText()=='Mostrar todos'){			
+				btn.setText( "Mostrar pertinetes" );
+				storeAgentes.baseParams = {mostrarTodos:true};
+			}else{
+				btn.setText( "Mostrar todos" );
+				storeAgentes.baseParams = {};
+			}
+			storeAgentes.reload();
+			
+		}
 	}
 	
 	

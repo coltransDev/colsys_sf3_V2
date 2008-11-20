@@ -1,7 +1,7 @@
 <?php
 $page_data = array(
 		'success' => true,
-		'total' => $total,
+		'total' => count( $data ),
 		'data' => $data
 	);
 

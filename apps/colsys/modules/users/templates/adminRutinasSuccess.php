@@ -86,7 +86,7 @@ var activeRecord = null;
 var ventanaPermisos = function( record ){
 	var url = '<?=url_for("users/permisosRutinas")?>';
 	
-	
+	activeRecord = record;
 	Ext.Ajax.request({
 		url: url,
 		params: {						
@@ -102,8 +102,8 @@ var ventanaPermisos = function( record ){
 			width       : 800,
 			height      : 460,
 			closeAction :'close',
-			plain       : true,		
-			
+			plain       : true,	
+			title       : activeRecord.data.opcion,			
 			items       : [newComponent],
 			
 	
@@ -111,7 +111,7 @@ var ventanaPermisos = function( record ){
 				{
 					text     : 'Guardar',
 					handler  : function( ){	
-						win.close();
+						//win.close();
 					}
 				},
 				{
@@ -140,7 +140,16 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 	rec = this.store.getAt(index);	
 	this.menu = new Ext.menu.Menu({
 	
-	items: [		
+	items: [{
+				text: 'Permisos',
+				iconCls: '',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord ){								
+						ventanaPermisos( this.ctxRecord );
+					}							
+				}
+			},			
 			{
 				text: 'Eliminar item',
 				iconCls: 'delete',
@@ -178,17 +187,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 						}
 					}						
 				}
-			},
-			{
-				text: 'Permisos',
-				iconCls: '',
-				scope:this,
-				handler: function(){    					                   		
-					if( this.ctxRecord ){					
-						ventanaPermisos( this.ctxRecord );
-					}							
-				}
-			}		
+			}				
 			]
 	});
 	this.menu.on('hide', this.onContextHide, this);

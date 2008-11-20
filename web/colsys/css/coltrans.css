@@ -425,6 +425,10 @@ a.toolbar:active {
 	background: url('../images/fam/page_white_edit.png') no-repeat 0 0 !important;
 }
 
+.information {
+	background: url('../images/fam/information.png') no-repeat 0 0 !important;
+}
+
 
 
 .x-grid3-td-titulo .topic {

@@ -85,7 +85,7 @@ var recordProductos = Ext.data.Record.create([
 	{name: 'impoexpo', type: 'string'},
 	{name: 'incoterms', type: 'string'},
 	{name: 'observaciones', type: 'string'},
-	{name: 'parent', type: 'int'},
+	{name: 'parent', type: 'int'}
 			
 ]);
    		
@@ -682,10 +682,22 @@ var ventanaTarifario = function( record ){
 	});	
 }
 
+var mostrarCabotajes = function( rec ){
+	var rec = rec.copy();
+	rec.data.modalidad="CABOTAJE"; 
+	rec.data.tra_origen=""; 
+	rec.data.tra_destino=""; 
+	rec.data.impoexpo="<?=Constantes::IMPO?>"; 
+	rec.data.transporte="<?=Constantes::AEREO?>";	
+	ventanaTarifario( rec );
+	
+}
 
 var productoHandler = function( ){
 	crearVentanaProducto( );		
 }
+
+
 
 /*
 * Menu contextual que se despliega sobre una fila con el boton derecho
@@ -714,7 +726,18 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						ventanaTarifario( this.ctxRecord );
 					}						
 				}
-			},		
+			},
+			{
+				text: 'Informacion de cabotajes',
+				iconCls: 'information',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord ){					
+						mostrarCabotajes( this.ctxRecord );
+					}						
+				}
+			}			
+			,		
 			{
 				text: 'Nuevo recargo',
 				iconCls: 'textfield_add',
@@ -1013,7 +1036,7 @@ grid_productosOnBeforeedit = function( e ){
 		];
 		
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
-		if( e.record.data.transporte==Constantes::AEREO ){
+		if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
 			ed.field.store.loadData( dataAereo );
 		}else{
 			ed.field.store.loadData( dataMaritimo );
@@ -1055,8 +1078,7 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 		tooltip: 'Agregar un nuevo producto a la Cotización',
 		iconCls: 'add',  // reference to our css
 		handler: productoHandler
-	}
-	
+	}	
 	],
 	
 	view: new Ext.grid.GroupingView({

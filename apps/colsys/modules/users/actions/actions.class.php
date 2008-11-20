@@ -127,6 +127,10 @@ class usersActions extends sfActions
 	*/
 	public function executeAdminRutinas(){
 		
+		
+		$response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/CheckColumn",'last');
+		
 		$this->data = array();
 		
 		$c = new Criteria();
@@ -205,7 +209,46 @@ class usersActions extends sfActions
 	*/
 	public function executePermisosRutinas(){
 		$this->setLayout("ajax");
+		
+		$this->rutina = RutinaPeer::retrieveByPk($this->getRequestParameter("rutina"));
+		$this->forward404Unless( $this->rutina );
+		
+		
+		
+		
 	}
 	
+	/*
+	* Guarda los accesos de un grupo y su nivel de acceso a cada opción
+	*/
+	public function executeObserveRutinasGrupos(){
+		$grupos=$this->getRequestParameter("grupos");
+		$this->forward404Unless( $grupos );
+		
+		$rutina=$this->getRequestParameter("rutina");
+		$this->forward404Unless( $rutina );
+		
+		$c = new Criteria();
+		$c->add( AccesoGrupoPeer::CA_RUTINA, $rutina );
+		$accesoGrupos = AccesoGrupoPeer::doSelect( $c );
+		foreach( $accesoGrupos as $accesoGrupo ){
+			$accesoGrupo->delete();
+		}
+		
+		$opciones = explode( "|", $grupos );
+		foreach( $opciones as $opcion ){
+			$op = explode(",", $opcion );
+			$accesoGrupo = new AccesoGrupo();
+			$accesoGrupo->setCaRutina($rutina);
+			$accesoGrupo->setCaGrupo($op[0]);
+			$accesoGrupo->setCaAcceso($op[1]);
+			$accesoGrupo->save();			
+		}
+		
+		$this->setLayout("ajax");
+		$this->responseArray = array("success"=>true);	
+		$this->setTemplate("responseTemplate");				
+	}
+		
 }
 ?>

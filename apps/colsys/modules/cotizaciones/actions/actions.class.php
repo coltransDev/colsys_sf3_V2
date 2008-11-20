@@ -192,13 +192,100 @@ class cotizacionesActions extends sfActions
 		$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("idcotizacion") );
 		$this->forward404Unless($cotizacion);
 		$datosag = $this->getRequestParameter( "datosag" );
-		$this->forward404Unless($datosag);
-		$cotizacion->setCaDatosAg( $datosag );
+		$this->forward404Unless($datosag!==null);
+		if( $datosag ){
+			$cotizacion->setCaDatosAg( $datosag );
+		}else{			
+			$cotizacion->setCaDatosAg( null );	
+		}
 		$cotizacion->save();
 		$this->responseArray = array("success"=>true);	
 		$this->setTemplate("responseTemplate");		
 		$this->setLayout("ajax");
 	}
+	
+	/*
+	* Lista de agentes para la grilla
+	* @author Andres Botero
+	*/
+	public function executeDatosAgentes(){
+		
+		
+		$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("idcotizacion") );
+		$this->forward404Unless( $cotizacion );
+		
+		
+		$mostrarTodos = $this->getRequestParameter("mostrarTodos");
+		
+		$productos = $cotizacion->getCotproductos();
+		
+		if( $mostrarTodos ){
+			$paises = array();
+			foreach( $productos as $producto ){				
+				if( $producto->getCaImpoexpo() == Constantes::IMPO ){
+					$paises[] = $producto->getOrigen()->getCaIdtrafico();
+				}else{
+					$paises[] = $producto->getDestino()->getCaIdtrafico();
+				}
+			}
+			$paises=array_unique($paises);
+		}else{
+			$ciudades = array();
+			
+			foreach( $productos as $producto ){				
+				if( $producto->getCaImpoexpo() == Constantes::IMPO ){
+					$ciudades[] = $producto->getCaOrigen();
+				}else{
+					$ciudades[] = $producto->getCaDestino();
+				}
+			}
+			$ciudades=array_unique($ciudades);
+		}
+				
+		$datosag  = explode("|",$cotizacion->getCaDatosag());
+		
+		$c = new Criteria();	
+		if( $mostrarTodos ){
+			$c->addJoin( ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
+			$criterion = $c->getNewCriterion( CiudadPeer::CA_IDTRAFICO, $paises, Criteria::IN );
+		}else{		
+			$criterion = $c->getNewCriterion( ContactoAgentePeer::CA_IDCIUDAD, $ciudades, Criteria::IN );
+		}								
+		$criterion->addOr($c->getNewCriterion( ContactoAgentePeer::CA_IDCONTACTO, $datosag, Criteria::IN ));			
+		$c->add($criterion);		
+		$contactos = ContactoAgentePeer::doSelect( $c );
+				
+		$agentes = array();
+		
+		
+		
+   		foreach ( $contactos as $contacto ) {
+			$agente = $contacto->getAgente();
+			$ciudad = $contacto->getCiudad();
+			
+			if( in_array( $contacto->getCaIdContacto(),  $datosag ) ){
+				$sel = true;
+			}else{
+				$sel = false;
+			}
+			
+      		$agentes[] = array( 'sel'=>$sel,
+									'idcontacto'=>$contacto->getCaIdContacto(),
+      								 'contacto'=>utf8_encode($contacto->getCaNombre()),
+									 'agente'=>utf8_encode($agente->getCaNombre()." » ".$ciudad->getTrafico()->getCaNombre()),
+									 'cargo'=>utf8_encode($contacto->getCaCargo()),
+									 'telefonos'=>$contacto->getCaTelefonos(),
+									 'operacion'=>utf8_encode(str_replace("|", " ", $contacto->getCaTransporte())),
+									 'ciudad'=>utf8_encode($ciudad->getCaCiudad())
+									
+      									
+      		);
+			
+			$this->responseArray = array("agentes"=>$agentes, "total"=>count($this->agentes), "success"=>true);
+			$this->setTemplate("responseTemplate");
+			$this->setLayout("ajax");
+		}
+	}		
 		
 	/*
 	* Permite ver una cotización en formato PDF
@@ -1439,6 +1526,8 @@ class cotizacionesActions extends sfActions
 
 		$this->setLayout("ajax");
 	}
+	
+	
 	
 }
 ?>

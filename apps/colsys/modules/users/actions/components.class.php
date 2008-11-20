@@ -16,6 +16,16 @@ class usersComponents extends sfComponents
 	*/
 	public function executeGrillaRutinaGrupos()
 	{	
+		
+		$c = new Criteria();
+		$c->add( AccesoGrupoPeer::CA_RUTINA, $this->rutina->getCaRutina() );
+		$accesoGrupos = AccesoGrupoPeer::doSelect( $c );
+		$accesos =array();
+		foreach( $accesoGrupos as $accesoGrupo ){
+			$accesos[]=$accesoGrupo->getCaGrupo();
+		}
+				
+				
 		$username = sfConfig::get("app_ldap_user");
 		$passwd = sfConfig::get("app_ldap_passwd");
 		$grupos=array();
@@ -40,8 +50,19 @@ class usersComponents extends sfComponents
 		}
 		
 		$this->data=array();		
+		$gruposLdap = array();
+		
+		
 		for($i=0; $i<$grupos['count'] ;$i++){
-			$this->data[]=array('grupo'=>$grupos[$i]["cn"][0]);			
+			$grupo = $grupos[$i]["cn"][0];
+			if( in_array( $grupo, $accesos ) ){
+				$sel = true;
+			}else{
+				$sel = false;
+			}			
+						
+			$this->data[]=array('grupo'=>$grupo,
+								'sel'=>$sel);			
 		}		
 	}
   

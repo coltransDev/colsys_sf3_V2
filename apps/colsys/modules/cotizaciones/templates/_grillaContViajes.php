@@ -265,7 +265,7 @@ var contviajeHandler = function(){
 						allowBlank:false,
 						width: 120
 	                }
-	                ,<?=extMonedas()?>
+	                ,<?=extMonedas("idmoneda")?>
 					,{
 						xtype: 'textfield',
 						width: 100,

@@ -1,12 +1,18 @@
 <?
 
 ?>
+
+/*
+* Crea la columna de chequeo
+*/	
+var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30}); 
+
 /*
 * Crea el Record 
 */
 var record = Ext.data.Record.create([   			
 	{name: 'rutina', type: 'string'},
-	{name: 'sel', type: 'string'},
+	{name: 'sel', type: 'bool'},
 	{name: 'grupo', type: 'string'},
 	{name: 'nivel', type: 'string'}
 ]);
@@ -33,7 +39,8 @@ var store = new Ext.data.Store({
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
 var colModelSeguros = new Ext.grid.ColumnModel({		
-	columns: [				
+	columns: [	
+		checkColumn,			
 		{
 			header: "Grupo",
 			width: 90,
@@ -48,7 +55,13 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 			sortable: true,	
 			hideable: false,		
 			dataIndex: 'nivel',
-			editor: new Ext.form.NumberField({ minValue:-1, maxValue:3 }) 	 			
+			editor: new Ext.form.ComboBox({ value: "0",
+											forceSelection: true,  
+											store:[["-1", "Sin acceso"],
+													["0", "Consulta"],
+													["1", "Modificación"],
+													["2", "Eliminación"],
+													["3", "Ejecución"]] }) 	 			
 		}
 				
 	]	
@@ -63,37 +76,44 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 */
 
 function guardarCambios(){	
-	var records = store.getModifiedRecords();
-	success = true;		
+	var records = store.getRange();
+	
 	var lenght = records.length;
+	
+	var grupos="";
+	
 	for( var i=0; i< lenght; i++){
 		r = records[i];					
-		var changes = r.getChanges();
-		
-		changes['rutina']=r.data.rutina;
-		changes['id']=r.id;		
-												
-		//envia los datos al servidor 
-		Ext.Ajax.request( 
+		if( r.data.sel ){
+			if(grupos!=""){
+				grupos+="|";
+			}
+			grupos+=r.data.grupo+","+r.data.nivel;
+		}
+	}
+	
+	
+	Ext.Ajax.request( 
 			{   
 				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("users/observeAdminRutinas")?>', 						//method: 'POST', 
+				url: '<?=url_for("users/observeRutinasGrupos")?>', 						//method: 'POST', 
 				//Solamente se envian los cambios 						
-				params :	changes,
+				params :	{grupos:grupos,
+							 rutina: '<?=$rutina->getCaRutina()?>'
+							},
 				
 				callback :function(options, success, response){	
 										
 					var res = Ext.util.JSON.decode( response.responseText );	
-					if( res.id ){				
-						var rec = store.getById( res.id );										
-						rec.set("rutina", res.rutina );											
-						rec.commit();						
+					if( res.success ){										
+						store.commitChanges();							
+						win.close();				
 					}
 				}			
 			 }
 		); 
 		
-	}
+		
 	
 }
 
@@ -108,10 +128,10 @@ grillaRutinaGrupos = new Ext.grid.EditorGridPanel({
 	sm: new  Ext.grid.CellSelectionModel(),	
 	clicksToEdit: 1,
 	stripeRows: true,	
-	title: 'Administración de rutinas',
+	title: 'Grupos',
 	height: 400,	
-	closable: true,	
-	//renderTo: 'panelRutinas',
+	closable: false,	
+	plugins: [checkColumn],
 	tbar: [					
 		{
 			text: 'Guardar',

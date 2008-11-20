@@ -52,8 +52,7 @@ $pdf->Cell(0, 4, strtoupper($cliente->getCaCompania()),0,1);
 $pdf->SetFont('Arial','',10);
 $pdf->Cell(0, 4, strtoupper($cliente->getCiudad()->getCaCiudad()) ,0,1);
 $pdf->Ln(8);
-
-$pdf->Cell(0, 4, 'Asunto : '.$cotizacion->getCaAsunto(),0,1);
+$pdf->Cell(0, 4, 'Asunto : '.$cotizacion->getCaAsunto()." ".$cotizacion->getCaConsecutivo(),0,1);
 //    $pdf->Cell(0, 0, 'Comunicación No. '.$rs->Value('ca_idcotizacion').'/'.$rs->Value('ca_usuario').str_pad(" ",7),0,0,'R');
 
 $pdf->Ln(4);
@@ -74,12 +73,12 @@ if( count($productos)>0 ){
 }
 // ======================== Impresión por Item ======================== //
 
-$tabla = array();
+
 
 $imprimirObservaciones = false;
 $imprimirRecargos = false;
 
-
+$tabla = array();
 
 foreach( $productos as $producto ):
 	if ($producto->getCaImpoExpo()==Constantes::IMPO){	
@@ -90,7 +89,7 @@ foreach( $productos as $producto ):
 	}
 		
 	if ($producto->getCaImprimir() == 'Por Item'):
-	
+		$tabla = array();
 		$pdf->Ln(2);
 		$pdf->SetWidths(array(170));
 		$pdf->SetAligns(array("L"));

@@ -288,7 +288,7 @@ grid_recargosOnBeforeedit = function( e ){
 		];
 		
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
-		if( e.record.data.transporte==Constantes::AEREO ){
+		if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
 			ed.field.store.loadData( dataAereo );
 		}else{
 			ed.field.store.loadData( dataMaritimo );
@@ -307,9 +307,7 @@ var grid_recargosOnvalidateedit = function(e){
 		var rec = e.record;		   
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
 		var store = ed.field.store;
-		
-	
-		
+							
 	    store.each( function( r ){				
 				if( r.data.idrecargo==e.value ){									
 					if( !rec.data.idrecargo  ){							
@@ -624,6 +622,12 @@ var grid_recargos = new Ext.grid.EditorGridPanel({
 		tooltip: 'Recarga los datos de la base de datos',
 		iconCls: 'refresh',  // reference to our css
 		handler: function(){
+			if(storeRecargosCot.getModifiedRecords().length>0){
+				if(!confirm("Se perderan los cambios no guardados en los recargos locales unicamente, desea continuar?")){
+					return 0;
+				}
+			}
+		
 			storeRecargosCot.reload();
 		}
 	}

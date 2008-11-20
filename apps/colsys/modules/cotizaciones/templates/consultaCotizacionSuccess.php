@@ -27,6 +27,7 @@ Ext.onReady(function(){
 		updateRecargosModel();
 		updateContViajeModel();		
 		updateSeguroModel();
+		guardarGridAgentes();
 		
 	}
 	/*
@@ -337,13 +338,13 @@ Ext.onReady(function(){
 				items:[			
 					<?
 					if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
-					?>	
-						
+					?>							
 					   grid_productos,
 					   grid_recargos,
 					   grid_contviajes,					
 					   grid_seguros,
 					   grid_agentes
+					   
 					   
 					 <?
 					}
