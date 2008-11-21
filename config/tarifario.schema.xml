@@ -6,6 +6,7 @@
 		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true"/>	
 		<column name="ca_vlrneto" type="numeric" required="true"/>		
 		<column name="ca_vlrminimo" type="numeric" />	
+		<column name="ca_fleteminimo" type="numeric" />	
 		<column name="ca_fchinicio" type="date"   />
 		<column name="ca_fchvencimiento" type="date"   />
 		<column name="ca_idmoneda" type="varchar" size="3"  />

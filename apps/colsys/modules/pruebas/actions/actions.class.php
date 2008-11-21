@@ -574,10 +574,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
 		$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" );
  
-		//$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
+		$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
 		//$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
 		//$c->add( TrayectoPeer::CA_MODALIDAD, "LCL" );
-		//$c->setLimit(30);
+		$c->setLimit(30);
 		$trayectos = TrayectoPeer::doSelect( $c );	
 		set_time_limit(0); 
 		
@@ -588,7 +588,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				$pricflete->setCaIdTrayecto( $flete->getCaIdTrayecto() );
 				$pricflete->setCaIdConcepto( $flete->getCaIdConcepto() );
 				$pricflete->setCaVlrneto( $flete->getCaVlrneto() );
-				$pricflete->setCaVlrsugerido( $flete->getCaSugerida() );
+				$pricflete->setCaVlrsugerido( $flete->getCaVlrminimo() );
 				$pricflete->setCaFchinicio( $flete->getCaFchinicio() );
 				$pricflete->setCaFchvencimiento( $flete->getCaFchvencimiento() );
 				$pricflete->setCaIdmoneda( $flete->getCaIdmoneda() );				
@@ -600,39 +600,25 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				}				
 				$pricflete->save();
 				
-				$c = new Criteria();
-				//$c->add( RecargoFletePeer::CA_IDCONCEPTO, '9999' ); 
-				$c->add( RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto() ); 
-				$recargos = RecargoFletePeer::doSelect( $c );
-				
-				
-				foreach( $recargos as $recargo ){
-					$pricrecargo = PricRecargoxConceptoPeer::retrieveByPk( $recargo->getCaIdTrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo() ); 	
-					if( !$pricrecargo ){
-						$pricrecargo = new PricRecargoxConcepto();
-						$pricrecargo->setCaIdTrayecto( $recargo->getCaIdTrayecto() );
-						$pricrecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
-						$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
-					}												
-					if( $recargo->getCaVlrfijo()!=0 ){
-						$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
-					}else{
-						if( $recargo->getCaPorcentaje()!=0 ){
-							$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
-							//$pricrecargo->setCaAplicacion( $recargo->getCaBaseporcentaje() );
-						}else{
-							$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrunitario() );
-							//$pricrecargo->setCaAplicacion( $recargo->getCaBaseunitario() );
-						}
+				if( $trayecto->getCaModalidad()=="LCL" && $flete->getCaFleteminimo()>0 && $flete->getCaVlrminimo()!=$flete->getCaFleteminimo() ){
+					$pricflete = new PricFlete();
+					$pricflete->setCaIdTrayecto( $flete->getCaIdTrayecto() );
+					$pricflete->setCaIdConcepto( 88 );
+					$pricflete->setCaVlrneto( $flete->getCaFleteminimo() );
+					$pricflete->setCaVlrsugerido( $flete->getCaFleteminimo() );
+					$pricflete->setCaFchinicio( $flete->getCaFchinicio() );
+					$pricflete->setCaFchvencimiento( $flete->getCaFchvencimiento() );
+					$pricflete->setCaIdmoneda( $flete->getCaIdmoneda() );				
+					if( $flete->getCaSugerida()=="*" ){
+						$pricflete->setCaEstado( 1 );
 					}
-					$pricrecargo->setCaFchinicio( $recargo->getCaFchinicio() );
-					$pricrecargo->setCaFchvencimiento( $recargo->getCaFchvencimiento() );
-								
-					$pricrecargo->setCaVlrminimo( $recargo->getCaRecargominimo() );
-					$pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
-					$pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );				
-					$pricrecargo->save();
+					if( $flete->getCaMantenimiento()=="*" ){
+						$pricflete->setCaEstado( 2 );
+					}				
+					$pricflete->save();	
 				}
+				
+				
 				
 				/*											
 				$recargos = $flete->getRecargoFletes();
@@ -665,11 +651,53 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		}		
 	}
 	
-	
 	/*
-	* Importa el tarifario anterior dentro del nuevo taarifario
+	* Importa el tarifario anterior dentro del nuevo tarifario
 	*/
 	public function executeImportarTarifarioRecargos(){
+		set_time_limit(0); 		
+		
+		$c = new Criteria();
+		//$c->add( RecargoFletePeer::CA_IDCONCEPTO, '9999' ); 
+		$c->add( RecargoFletePeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto() ); 
+		$recargos = RecargoFletePeer::doSelect( $c );
+		
+		
+		foreach( $recargos as $recargo ){
+			$pricrecargo = PricRecargoxConceptoPeer::retrieveByPk( $recargo->getCaIdTrayecto(), $recargo->getCaIdConcepto(), $recargo->getCaIdRecargo() ); 	
+			if( !$pricrecargo ){
+				$pricrecargo = new PricRecargoxConcepto();
+				$pricrecargo->setCaIdTrayecto( $recargo->getCaIdTrayecto() );
+				$pricrecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
+				$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
+			}												
+			if( $recargo->getCaVlrfijo()!=0 ){
+				$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
+			}else{
+				if( $recargo->getCaPorcentaje()!=0 ){
+					$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
+					//$pricrecargo->setCaAplicacion( $recargo->getCaBaseporcentaje() );
+				}else{
+					$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrunitario() );
+					//$pricrecargo->setCaAplicacion( $recargo->getCaBaseunitario() );
+				}
+			}
+			$pricrecargo->setCaFchinicio( $recargo->getCaFchinicio() );
+			$pricrecargo->setCaFchvencimiento( $recargo->getCaFchvencimiento() );
+						
+			$pricrecargo->setCaVlrminimo( $recargo->getCaRecargominimo() );
+			$pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
+			$pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );				
+			$pricrecargo->save();
+		}
+		
+	}
+	
+	
+	/*
+	* Importa el tarifario anterior dentro del nuevo tarifario
+	*/
+	public function executeImportarTarifarioRecargosGrales(){
 		set_time_limit(0); 		
 		
 		$c = new Criteria();

@@ -69,6 +69,8 @@ class FleteMapBuilder {
 
 		$tMap->addColumn('CA_VLRMINIMO', 'CaVlrminimo', 'double', CreoleTypes::NUMERIC, false, null);
 
+		$tMap->addColumn('CA_FLETEMINIMO', 'CaFleteminimo', 'double', CreoleTypes::NUMERIC, false, null);
+
 		$tMap->addColumn('CA_FCHINICIO', 'CaFchinicio', 'int', CreoleTypes::DATE, false, null);
 
 		$tMap->addColumn('CA_FCHVENCIMIENTO', 'CaFchvencimiento', 'int', CreoleTypes::DATE, false, null);

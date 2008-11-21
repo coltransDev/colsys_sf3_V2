@@ -19,7 +19,7 @@ abstract class BaseFletePeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.Flete';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 11;
+	const NUM_COLUMNS = 12;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -36,6 +36,9 @@ abstract class BaseFletePeer {
 
 	/** the column name for the CA_VLRMINIMO field */
 	const CA_VLRMINIMO = 'tb_fletes.CA_VLRMINIMO';
+
+	/** the column name for the CA_FLETEMINIMO field */
+	const CA_FLETEMINIMO = 'tb_fletes.CA_FLETEMINIMO';
 
 	/** the column name for the CA_FCHINICIO field */
 	const CA_FCHINICIO = 'tb_fletes.CA_FCHINICIO';
@@ -69,10 +72,10 @@ abstract class BaseFletePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaVlrneto', 'CaVlrminimo', 'CaFchinicio', 'CaFchvencimiento', 'CaIdmoneda', 'CaObservaciones', 'CaFchcreado', 'CaSugerida', 'CaMantenimiento', ),
-		BasePeer::TYPE_COLNAME => array (FletePeer::CA_IDTRAYECTO, FletePeer::CA_IDCONCEPTO, FletePeer::CA_VLRNETO, FletePeer::CA_VLRMINIMO, FletePeer::CA_FCHINICIO, FletePeer::CA_FCHVENCIMIENTO, FletePeer::CA_IDMONEDA, FletePeer::CA_OBSERVACIONES, FletePeer::CA_FCHCREADO, FletePeer::CA_SUGERIDA, FletePeer::CA_MANTENIMIENTO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_vlrneto', 'ca_vlrminimo', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_idmoneda', 'ca_observaciones', 'ca_fchcreado', 'ca_sugerida', 'ca_mantenimiento', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto', 'CaIdconcepto', 'CaVlrneto', 'CaVlrminimo', 'CaFleteminimo', 'CaFchinicio', 'CaFchvencimiento', 'CaIdmoneda', 'CaObservaciones', 'CaFchcreado', 'CaSugerida', 'CaMantenimiento', ),
+		BasePeer::TYPE_COLNAME => array (FletePeer::CA_IDTRAYECTO, FletePeer::CA_IDCONCEPTO, FletePeer::CA_VLRNETO, FletePeer::CA_VLRMINIMO, FletePeer::CA_FLETEMINIMO, FletePeer::CA_FCHINICIO, FletePeer::CA_FCHVENCIMIENTO, FletePeer::CA_IDMONEDA, FletePeer::CA_OBSERVACIONES, FletePeer::CA_FCHCREADO, FletePeer::CA_SUGERIDA, FletePeer::CA_MANTENIMIENTO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto', 'ca_idconcepto', 'ca_vlrneto', 'ca_vlrminimo', 'ca_fleteminimo', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_idmoneda', 'ca_observaciones', 'ca_fchcreado', 'ca_sugerida', 'ca_mantenimiento', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	/**
@@ -82,10 +85,10 @@ abstract class BaseFletePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaVlrneto' => 2, 'CaVlrminimo' => 3, 'CaFchinicio' => 4, 'CaFchvencimiento' => 5, 'CaIdmoneda' => 6, 'CaObservaciones' => 7, 'CaFchcreado' => 8, 'CaSugerida' => 9, 'CaMantenimiento' => 10, ),
-		BasePeer::TYPE_COLNAME => array (FletePeer::CA_IDTRAYECTO => 0, FletePeer::CA_IDCONCEPTO => 1, FletePeer::CA_VLRNETO => 2, FletePeer::CA_VLRMINIMO => 3, FletePeer::CA_FCHINICIO => 4, FletePeer::CA_FCHVENCIMIENTO => 5, FletePeer::CA_IDMONEDA => 6, FletePeer::CA_OBSERVACIONES => 7, FletePeer::CA_FCHCREADO => 8, FletePeer::CA_SUGERIDA => 9, FletePeer::CA_MANTENIMIENTO => 10, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_vlrneto' => 2, 'ca_vlrminimo' => 3, 'ca_fchinicio' => 4, 'ca_fchvencimiento' => 5, 'ca_idmoneda' => 6, 'ca_observaciones' => 7, 'ca_fchcreado' => 8, 'ca_sugerida' => 9, 'ca_mantenimiento' => 10, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrayecto' => 0, 'CaIdconcepto' => 1, 'CaVlrneto' => 2, 'CaVlrminimo' => 3, 'CaFleteminimo' => 4, 'CaFchinicio' => 5, 'CaFchvencimiento' => 6, 'CaIdmoneda' => 7, 'CaObservaciones' => 8, 'CaFchcreado' => 9, 'CaSugerida' => 10, 'CaMantenimiento' => 11, ),
+		BasePeer::TYPE_COLNAME => array (FletePeer::CA_IDTRAYECTO => 0, FletePeer::CA_IDCONCEPTO => 1, FletePeer::CA_VLRNETO => 2, FletePeer::CA_VLRMINIMO => 3, FletePeer::CA_FLETEMINIMO => 4, FletePeer::CA_FCHINICIO => 5, FletePeer::CA_FCHVENCIMIENTO => 6, FletePeer::CA_IDMONEDA => 7, FletePeer::CA_OBSERVACIONES => 8, FletePeer::CA_FCHCREADO => 9, FletePeer::CA_SUGERIDA => 10, FletePeer::CA_MANTENIMIENTO => 11, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrayecto' => 0, 'ca_idconcepto' => 1, 'ca_vlrneto' => 2, 'ca_vlrminimo' => 3, 'ca_fleteminimo' => 4, 'ca_fchinicio' => 5, 'ca_fchvencimiento' => 6, 'ca_idmoneda' => 7, 'ca_observaciones' => 8, 'ca_fchcreado' => 9, 'ca_sugerida' => 10, 'ca_mantenimiento' => 11, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
 	);
 
 	/**
@@ -192,6 +195,8 @@ abstract class BaseFletePeer {
 		$criteria->addSelectColumn(FletePeer::CA_VLRNETO);
 
 		$criteria->addSelectColumn(FletePeer::CA_VLRMINIMO);
+
+		$criteria->addSelectColumn(FletePeer::CA_FLETEMINIMO);
 
 		$criteria->addSelectColumn(FletePeer::CA_FCHINICIO);
 

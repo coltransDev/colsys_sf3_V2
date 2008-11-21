@@ -48,6 +48,13 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the ca_fleteminimo field.
+	 * @var        double
+	 */
+	protected $ca_fleteminimo;
+
+
+	/**
 	 * The value for the ca_fchinicio field.
 	 * @var        int
 	 */
@@ -173,6 +180,17 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_vlrminimo;
+	}
+
+	/**
+	 * Get the [ca_fleteminimo] column value.
+	 * 
+	 * @return     double
+	 */
+	public function getCaFleteminimo()
+	{
+
+		return $this->ca_fleteminimo;
 	}
 
 	/**
@@ -397,6 +415,22 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 	} // setCaVlrminimo()
 
 	/**
+	 * Set the value of [ca_fleteminimo] column.
+	 * 
+	 * @param      double $v new value
+	 * @return     void
+	 */
+	public function setCaFleteminimo($v)
+	{
+
+		if ($this->ca_fleteminimo !== $v) {
+			$this->ca_fleteminimo = $v;
+			$this->modifiedColumns[] = FletePeer::CA_FLETEMINIMO;
+		}
+
+	} // setCaFleteminimo()
+
+	/**
 	 * Set the value of [ca_fchinicio] column.
 	 * 
 	 * @param      int $v new value
@@ -581,26 +615,28 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 
 			$this->ca_vlrminimo = $rs->getFloat($startcol + 3);
 
-			$this->ca_fchinicio = $rs->getDate($startcol + 4, null);
+			$this->ca_fleteminimo = $rs->getFloat($startcol + 4);
 
-			$this->ca_fchvencimiento = $rs->getDate($startcol + 5, null);
+			$this->ca_fchinicio = $rs->getDate($startcol + 5, null);
 
-			$this->ca_idmoneda = $rs->getString($startcol + 6);
+			$this->ca_fchvencimiento = $rs->getDate($startcol + 6, null);
 
-			$this->ca_observaciones = $rs->getString($startcol + 7);
+			$this->ca_idmoneda = $rs->getString($startcol + 7);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 8, null);
+			$this->ca_observaciones = $rs->getString($startcol + 8);
 
-			$this->ca_sugerida = $rs->getString($startcol + 9);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 9, null);
 
-			$this->ca_mantenimiento = $rs->getString($startcol + 10);
+			$this->ca_sugerida = $rs->getString($startcol + 10);
+
+			$this->ca_mantenimiento = $rs->getString($startcol + 11);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 11; // 11 = FletePeer::NUM_COLUMNS - FletePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 12; // 12 = FletePeer::NUM_COLUMNS - FletePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Flete object", $e);
@@ -870,24 +906,27 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 				return $this->getCaVlrminimo();
 				break;
 			case 4:
-				return $this->getCaFchinicio();
+				return $this->getCaFleteminimo();
 				break;
 			case 5:
-				return $this->getCaFchvencimiento();
+				return $this->getCaFchinicio();
 				break;
 			case 6:
-				return $this->getCaIdmoneda();
+				return $this->getCaFchvencimiento();
 				break;
 			case 7:
-				return $this->getCaObservaciones();
+				return $this->getCaIdmoneda();
 				break;
 			case 8:
-				return $this->getCaFchcreado();
+				return $this->getCaObservaciones();
 				break;
 			case 9:
-				return $this->getCaSugerida();
+				return $this->getCaFchcreado();
 				break;
 			case 10:
+				return $this->getCaSugerida();
+				break;
+			case 11:
 				return $this->getCaMantenimiento();
 				break;
 			default:
@@ -914,13 +953,14 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 			$keys[1] => $this->getCaIdconcepto(),
 			$keys[2] => $this->getCaVlrneto(),
 			$keys[3] => $this->getCaVlrminimo(),
-			$keys[4] => $this->getCaFchinicio(),
-			$keys[5] => $this->getCaFchvencimiento(),
-			$keys[6] => $this->getCaIdmoneda(),
-			$keys[7] => $this->getCaObservaciones(),
-			$keys[8] => $this->getCaFchcreado(),
-			$keys[9] => $this->getCaSugerida(),
-			$keys[10] => $this->getCaMantenimiento(),
+			$keys[4] => $this->getCaFleteminimo(),
+			$keys[5] => $this->getCaFchinicio(),
+			$keys[6] => $this->getCaFchvencimiento(),
+			$keys[7] => $this->getCaIdmoneda(),
+			$keys[8] => $this->getCaObservaciones(),
+			$keys[9] => $this->getCaFchcreado(),
+			$keys[10] => $this->getCaSugerida(),
+			$keys[11] => $this->getCaMantenimiento(),
 		);
 		return $result;
 	}
@@ -965,24 +1005,27 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 				$this->setCaVlrminimo($value);
 				break;
 			case 4:
-				$this->setCaFchinicio($value);
+				$this->setCaFleteminimo($value);
 				break;
 			case 5:
-				$this->setCaFchvencimiento($value);
+				$this->setCaFchinicio($value);
 				break;
 			case 6:
-				$this->setCaIdmoneda($value);
+				$this->setCaFchvencimiento($value);
 				break;
 			case 7:
-				$this->setCaObservaciones($value);
+				$this->setCaIdmoneda($value);
 				break;
 			case 8:
-				$this->setCaFchcreado($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 9:
-				$this->setCaSugerida($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 10:
+				$this->setCaSugerida($value);
+				break;
+			case 11:
 				$this->setCaMantenimiento($value);
 				break;
 		} // switch()
@@ -1012,13 +1055,14 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdconcepto($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaVlrneto($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaVlrminimo($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaFchinicio($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaFchvencimiento($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaIdmoneda($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaObservaciones($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaFchcreado($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaSugerida($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaMantenimiento($arr[$keys[10]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaFleteminimo($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaFchinicio($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaFchvencimiento($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaIdmoneda($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaObservaciones($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaFchcreado($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaSugerida($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaMantenimiento($arr[$keys[11]]);
 	}
 
 	/**
@@ -1034,6 +1078,7 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(FletePeer::CA_IDCONCEPTO)) $criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
 		if ($this->isColumnModified(FletePeer::CA_VLRNETO)) $criteria->add(FletePeer::CA_VLRNETO, $this->ca_vlrneto);
 		if ($this->isColumnModified(FletePeer::CA_VLRMINIMO)) $criteria->add(FletePeer::CA_VLRMINIMO, $this->ca_vlrminimo);
+		if ($this->isColumnModified(FletePeer::CA_FLETEMINIMO)) $criteria->add(FletePeer::CA_FLETEMINIMO, $this->ca_fleteminimo);
 		if ($this->isColumnModified(FletePeer::CA_FCHINICIO)) $criteria->add(FletePeer::CA_FCHINICIO, $this->ca_fchinicio);
 		if ($this->isColumnModified(FletePeer::CA_FCHVENCIMIENTO)) $criteria->add(FletePeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
 		if ($this->isColumnModified(FletePeer::CA_IDMONEDA)) $criteria->add(FletePeer::CA_IDMONEDA, $this->ca_idmoneda);
@@ -1110,6 +1155,8 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 		$copyObj->setCaVlrneto($this->ca_vlrneto);
 
 		$copyObj->setCaVlrminimo($this->ca_vlrminimo);
+
+		$copyObj->setCaFleteminimo($this->ca_fleteminimo);
 
 		$copyObj->setCaFchinicio($this->ca_fchinicio);
 
