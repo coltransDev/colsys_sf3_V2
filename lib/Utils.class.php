@@ -51,9 +51,16 @@ class Utils{
 	   return number_format($number, ($decimals - $i +1), $dec_point, $thousands_sep);
 	}
 	
-	
 	public static function parseDate( $fecha , $format="Y-m-d"){
 		return date( $format ,strtotime( $fecha  ) );
+	}
+	
+	public static function transformDate( $fecha , $format="Y-m-d"){
+		if ( !$fecha ){
+			return "";
+		}
+		list( $year, $month, $day ) = sscanf($fecha, "%d-%d-%d");
+		return date($format, mktime(0, 0, 0, $month, $day, $year));
 	}
 	
 	public static function fechaMes($fecha){
