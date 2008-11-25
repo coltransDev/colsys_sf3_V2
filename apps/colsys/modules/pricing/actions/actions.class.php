@@ -1293,6 +1293,7 @@ class pricingActions extends sfActions
 		
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
 		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		$tipo = utf8_decode($this->getRequestParameter("tipo"));
 		$modo = $this->getRequestParameter("modo");
 		
@@ -1301,7 +1302,10 @@ class pricingActions extends sfActions
 		if( $modo=="recargos" ){				
 			$c = new Criteria();
 			$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte );
+			$c->add( TipoRecargoPeer::CA_TIPO, $tipo );		
+			$c->add( TipoRecargoPeer::CA_IMPOEXPO, "%".$impoexpo."%", Criteria::LIKE );		
 			$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
+			
 			//$c->setLimit(3);
 			$recargos = TipoRecargoPeer::doSelect( $c );
 			$this->conceptos = array();

@@ -137,7 +137,7 @@
 		<column name="ca_vlrminima" type="numeric" />	
 		<column name="ca_vlrobtencionpoliza" type="numeric" />	
 		<column name="ca_idmoneda" type="varchar" size="3" />
-		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_observaciones" type="varchar" />		
 		<column name="ca_fchcreado" type="timestamp" />
 		<column name="ca_usucreado" type="varchar" />
 					

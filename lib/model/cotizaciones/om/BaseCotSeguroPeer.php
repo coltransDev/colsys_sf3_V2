@@ -19,7 +19,7 @@ abstract class BaseCotSeguroPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotSeguro';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 12;
+	const NUM_COLUMNS = 13;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -58,6 +58,9 @@ abstract class BaseCotSeguroPeer {
 	/** the column name for the CA_USUACTUALIZADO field */
 	const CA_USUACTUALIZADO = 'tb_cotseguro.CA_USUACTUALIZADO';
 
+	/** the column name for the CA_TRANSPORTE field */
+	const CA_TRANSPORTE = 'tb_cotseguro.CA_TRANSPORTE';
+
 	/** the column name for the OID field */
 	const OID = 'tb_cotseguro.OID';
 
@@ -72,10 +75,10 @@ abstract class BaseCotSeguroPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdmoneda', 'CaPrimaTip', 'CaPrimaVlr', 'CaPrimaMin', 'CaObtencion', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'Oid', ),
-		BasePeer::TYPE_COLNAME => array (CotSeguroPeer::CA_IDCOTIZACION, CotSeguroPeer::CA_IDMONEDA, CotSeguroPeer::CA_PRIMA_TIP, CotSeguroPeer::CA_PRIMA_VLR, CotSeguroPeer::CA_PRIMA_MIN, CotSeguroPeer::CA_OBTENCION, CotSeguroPeer::CA_OBSERVACIONES, CotSeguroPeer::CA_FCHCREADO, CotSeguroPeer::CA_USUCREADO, CotSeguroPeer::CA_FCHACTUALIZADO, CotSeguroPeer::CA_USUACTUALIZADO, CotSeguroPeer::OID, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idmoneda', 'ca_prima_tip', 'ca_prima_vlr', 'ca_prima_min', 'ca_obtencion', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'oid', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdmoneda', 'CaPrimaTip', 'CaPrimaVlr', 'CaPrimaMin', 'CaObtencion', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaTransporte', 'Oid', ),
+		BasePeer::TYPE_COLNAME => array (CotSeguroPeer::CA_IDCOTIZACION, CotSeguroPeer::CA_IDMONEDA, CotSeguroPeer::CA_PRIMA_TIP, CotSeguroPeer::CA_PRIMA_VLR, CotSeguroPeer::CA_PRIMA_MIN, CotSeguroPeer::CA_OBTENCION, CotSeguroPeer::CA_OBSERVACIONES, CotSeguroPeer::CA_FCHCREADO, CotSeguroPeer::CA_USUCREADO, CotSeguroPeer::CA_FCHACTUALIZADO, CotSeguroPeer::CA_USUACTUALIZADO, CotSeguroPeer::CA_TRANSPORTE, CotSeguroPeer::OID, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idmoneda', 'ca_prima_tip', 'ca_prima_vlr', 'ca_prima_min', 'ca_obtencion', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_transporte', 'oid', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
 	/**
@@ -85,10 +88,10 @@ abstract class BaseCotSeguroPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdmoneda' => 1, 'CaPrimaTip' => 2, 'CaPrimaVlr' => 3, 'CaPrimaMin' => 4, 'CaObtencion' => 5, 'CaObservaciones' => 6, 'CaFchcreado' => 7, 'CaUsucreado' => 8, 'CaFchactualizado' => 9, 'CaUsuactualizado' => 10, 'Oid' => 11, ),
-		BasePeer::TYPE_COLNAME => array (CotSeguroPeer::CA_IDCOTIZACION => 0, CotSeguroPeer::CA_IDMONEDA => 1, CotSeguroPeer::CA_PRIMA_TIP => 2, CotSeguroPeer::CA_PRIMA_VLR => 3, CotSeguroPeer::CA_PRIMA_MIN => 4, CotSeguroPeer::CA_OBTENCION => 5, CotSeguroPeer::CA_OBSERVACIONES => 6, CotSeguroPeer::CA_FCHCREADO => 7, CotSeguroPeer::CA_USUCREADO => 8, CotSeguroPeer::CA_FCHACTUALIZADO => 9, CotSeguroPeer::CA_USUACTUALIZADO => 10, CotSeguroPeer::OID => 11, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idmoneda' => 1, 'ca_prima_tip' => 2, 'ca_prima_vlr' => 3, 'ca_prima_min' => 4, 'ca_obtencion' => 5, 'ca_observaciones' => 6, 'ca_fchcreado' => 7, 'ca_usucreado' => 8, 'ca_fchactualizado' => 9, 'ca_usuactualizado' => 10, 'oid' => 11, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdmoneda' => 1, 'CaPrimaTip' => 2, 'CaPrimaVlr' => 3, 'CaPrimaMin' => 4, 'CaObtencion' => 5, 'CaObservaciones' => 6, 'CaFchcreado' => 7, 'CaUsucreado' => 8, 'CaFchactualizado' => 9, 'CaUsuactualizado' => 10, 'CaTransporte' => 11, 'Oid' => 12, ),
+		BasePeer::TYPE_COLNAME => array (CotSeguroPeer::CA_IDCOTIZACION => 0, CotSeguroPeer::CA_IDMONEDA => 1, CotSeguroPeer::CA_PRIMA_TIP => 2, CotSeguroPeer::CA_PRIMA_VLR => 3, CotSeguroPeer::CA_PRIMA_MIN => 4, CotSeguroPeer::CA_OBTENCION => 5, CotSeguroPeer::CA_OBSERVACIONES => 6, CotSeguroPeer::CA_FCHCREADO => 7, CotSeguroPeer::CA_USUCREADO => 8, CotSeguroPeer::CA_FCHACTUALIZADO => 9, CotSeguroPeer::CA_USUACTUALIZADO => 10, CotSeguroPeer::CA_TRANSPORTE => 11, CotSeguroPeer::OID => 12, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idmoneda' => 1, 'ca_prima_tip' => 2, 'ca_prima_vlr' => 3, 'ca_prima_min' => 4, 'ca_obtencion' => 5, 'ca_observaciones' => 6, 'ca_fchcreado' => 7, 'ca_usucreado' => 8, 'ca_fchactualizado' => 9, 'ca_usuactualizado' => 10, 'ca_transporte' => 11, 'oid' => 12, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
 	/**
@@ -209,6 +212,8 @@ abstract class BaseCotSeguroPeer {
 		$criteria->addSelectColumn(CotSeguroPeer::CA_FCHACTUALIZADO);
 
 		$criteria->addSelectColumn(CotSeguroPeer::CA_USUACTUALIZADO);
+
+		$criteria->addSelectColumn(CotSeguroPeer::CA_TRANSPORTE);
 
 		$criteria->addSelectColumn(CotSeguroPeer::OID);
 

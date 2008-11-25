@@ -573,8 +573,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		sfConfig::set('sf_web_debug', false) ;	
 		
 		$c = new Criteria();
-		$c->add( TrayectoPeer::CA_IDTRAYECTO, 1294, Criteria::NOT_EQUAL );
-		$c->addAnd( TrayectoPeer::CA_IDTRAYECTO, 1297, Criteria::NOT_EQUAL );
+		//$c->add( TrayectoPeer::CA_IDTRAYECTO, 1294, Criteria::NOT_EQUAL );
+		//$c->addAnd( TrayectoPeer::CA_IDTRAYECTO, 1297, Criteria::NOT_EQUAL );
 		
 		//$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
 		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" ); 
@@ -586,11 +586,18 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		$trayectos = TrayectoPeer::doSelect( $c );	
 		set_time_limit(0); 
 		
-		foreach( $trayectos as $trayecto ){				
-			$fletes = $trayecto->getFletes();
+		foreach( $trayectos as $trayecto ){	
+			if( $trayecto->getCaIdtarifas()!=$trayecto->getCaIdTrayecto() ){
+				$trayecto2 = trayectoPeer::retrieveByPk( $trayecto->getCaIdtarifas() );
+				$fletes = $trayecto2->getFletes();
+			}else{
+				$fletes = $trayecto->getFletes();
+			}			
+			
+			
 			foreach( $fletes as $flete ){
 				$pricflete = new PricFlete();
-				$pricflete->setCaIdTrayecto( $flete->getCaIdTrayecto() );
+				$pricflete->setCaIdTrayecto( $trayecto->getCaIdTrayecto() );
 				$pricflete->setCaIdConcepto( $flete->getCaIdConcepto() );
 				$pricflete->setCaVlrneto( $flete->getCaVlrneto() );
 				$pricflete->setCaVlrsugerido( $flete->getCaVlrminimo() );
@@ -606,10 +613,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				$pricflete->save();
 				
 				if( $trayecto->getCaModalidad()=="LCL" && $flete->getCaFleteminimo()>0 && ($flete->getCaVlrminimo()!=$flete->getCaFleteminimo() || $flete->getCaFleteminimo()!=0 ) ){	
-					$pricflete = PricFletePeer::retrieveByPk( $flete->getCaIdTrayecto(), 88 );
+					$pricflete = PricFletePeer::retrieveByPk( $trayecto->getCaIdTrayecto(), 88 );
 					if(!$pricflete){
 						$pricflete = new PricFlete();
-						$pricflete->setCaIdTrayecto( $flete->getCaIdTrayecto() );
+						$pricflete->setCaIdTrayecto( $trayecto->getCaIdTrayecto() );
 						$pricflete->setCaIdConcepto( 88 );
 					}
 					$pricflete->setCaVlrneto( $flete->getCaFleteminimo() );

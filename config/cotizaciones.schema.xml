@@ -161,6 +161,7 @@
 		<column name="ca_usucreado" type="varchar"   />	
 		<column name="ca_fchactualizado" type="timestamp"   />
 		<column name="ca_usuactualizado" type="varchar"   />
+		<column name="ca_transporte" type="varchar" />	
 		<column name="oid" type="varchar"  primaryKey="true"  />	
 
 		<foreign-key foreignTable="tb_cotizaciones">

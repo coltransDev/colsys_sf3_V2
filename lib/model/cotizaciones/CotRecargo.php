@@ -19,6 +19,15 @@ class CotRecargo extends BaseCotRecargo
 		return $textoRecargos;
 	}
 	
+	/*
+	* Retorna un resumen del texto que aparecera en la tarifa
+	*/
+	public function getTextoTarifa(){	
+		
+		$textoRecargos = $this->getCaIdmoneda()." ".Utils::formatNumber($this->getCaValorTar(),3)." ".$this->getCaAplicaTar().(($this->getCaValorMin()!=0)?" /Mín.".$this->getCaIdmoneda()." ".Utils::formatNumber($this->getCaValorMin(),3)." ".$this->getCaAplicaMin():"");			
+			
+		return $textoRecargos;
+	}
 	
 	
 } 

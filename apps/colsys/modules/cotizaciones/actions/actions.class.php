@@ -158,7 +158,9 @@ class cotizacionesActions extends sfActions
 			$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
 			$cotizacion->setCaConsecutivo( $sig ); 			
 		}
-		$cotizacion->setCaEmpresa( $this->getRequestParameter( "empresa" ) );		
+		if( $this->getRequestParameter( "empresa" ) ){
+			$cotizacion->setCaEmpresa( $this->getRequestParameter( "empresa" ) );		
+		}
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
 		$cotizacion->setCaAsunto( utf8_encode($this->getRequestParameter( "asunto" )) );
 		$cotizacion->setCaSaludo( utf8_decode($this->getRequestParameter( "saludo" )) );
@@ -1001,7 +1003,7 @@ class cotizacionesActions extends sfActions
 	public function executeDatosGrillaRecargos(){
 		$idcotizacion = $this->getRequestParameter("idcotizacion");
 		$this->forward404unless( $idcotizacion );
-		$tipo = "Recargo Local";
+		$tipo = Constantes::RECARGO_LOCAL;
 		
 		/*
 		* Es necesario determinar cuales son los grupos que se deben mostrar de acuerdo 
@@ -1315,6 +1317,10 @@ class cotizacionesActions extends sfActions
 		if( $this->getRequestParameter("observaciones")){
 			$seguro->setCaObservaciones($this->getRequestParameter("observaciones"));
 		}
+		
+		if( $this->getRequestParameter("transporte")){
+			$seguro->setCaTransporte(utf8_decode($this->getRequestParameter("transporte")));
+		}
 
 		if( !$this->getRequestParameter( "oid" ) ){ 
 			$seguro->setCaFchcreado( time() );	
@@ -1367,23 +1373,27 @@ class cotizacionesActions extends sfActions
 			}else{
 				$grupo = $destino->getTrafico()->getTraficoGrupo();
 			}
-			$row = array(			 
-				'idgrupo'=>$grupo->getCaIdGrupo(),
-				'grupo'=>utf8_encode($grupo->getCaDescripcion()),
-				'trayecto'=>utf8_encode($origen->getCaCiudad()."»".$destino->getCaCiudad()),
-				'producto'=>utf8_encode($producto->getCaProducto())
-			);
 			
-			$seguro = PricSeguroPeer::retrieveByPk( $grupo->getCaIdGrupo(), $producto->getCaTransporte() );				
+			$seguro = PricSeguroPeer::retrieveByPk( $grupo->getCaIdGrupo(), $producto->getCaTransporte() );
 			if( $seguro ){
+				$row = array(			 
+					'idgrupo'=>$grupo->getCaIdGrupo(),
+					'grupo'=>utf8_encode($grupo->getCaDescripcion()),
+					'trayecto'=>utf8_encode($origen->getCaCiudad()."»".$destino->getCaCiudad()),
+					'producto'=>utf8_encode($producto->getCaProducto())
+				);
+			
+							
+			
 				$row['vlrprima']=$seguro->getCaVlrprima();
 				$row['vlrminima']=$seguro->getCaVlrminima();
 				$row['vlrobtencionpoliza']=$seguro->getCaVlrobtencionpoliza();
 				$row['idmoneda']=$seguro->getCaIdmoneda();
 				$row['observaciones']=$seguro->getCaObservaciones();
-				
+				$row['transporte']=utf8_encode($seguro->getCaTransporte());
+				$this->data[] = $row;
 			}
-			$this->data[] = $row;
+			
 		}
 			
 		$this->setLayout("ajax");
@@ -1503,9 +1513,10 @@ class cotizacionesActions extends sfActions
 	/*
 	* Datos de los conceptos según sea el medio de transporte y la modalidad
 	*/
-	public function executeDatosConceptos(){
+	/*public function executeDatosConceptos(){
 		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
 		$modalidad_parameter = utf8_decode($this->getRequestParameter("modalidad"));
+		
 		
 		$c = new Criteria();
 		
@@ -1525,7 +1536,7 @@ class cotizacionesActions extends sfActions
 		}
 
 		$this->setLayout("ajax");
-	}
+	}*/
 	
 	
 	

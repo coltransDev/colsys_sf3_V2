@@ -1001,7 +1001,7 @@ grid_productosOnBeforeedit = function( e ){
 		}
 		
 		if( rec.data.tipo == "recargo" ){			
-			storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad, tipo:'Recargo en Origen', modo:'recargos'};				
+			storeConceptos.baseParams={transporte:rec.data.transporte, modalidad:rec.data.modalidad, tipo:'Recargo en Origen', impoexpo:rec.data.impoexpo , modo:'recargos'};				
 		}			
 		storeConceptos.load();		
 	}	

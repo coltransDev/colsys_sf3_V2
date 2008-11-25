@@ -97,6 +97,13 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the ca_transporte field.
+	 * @var        string
+	 */
+	protected $ca_transporte;
+
+
+	/**
 	 * The value for the oid field.
 	 * @var        string
 	 */
@@ -285,6 +292,17 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_usuactualizado;
+	}
+
+	/**
+	 * Get the [ca_transporte] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaTransporte()
+	{
+
+		return $this->ca_transporte;
 	}
 
 	/**
@@ -541,6 +559,28 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	} // setCaUsuactualizado()
 
 	/**
+	 * Set the value of [ca_transporte] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaTransporte($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_transporte !== $v) {
+			$this->ca_transporte = $v;
+			$this->modifiedColumns[] = CotSeguroPeer::CA_TRANSPORTE;
+		}
+
+	} // setCaTransporte()
+
+	/**
 	 * Set the value of [oid] column.
 	 * 
 	 * @param      string $v new value
@@ -601,14 +641,16 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 
 			$this->ca_usuactualizado = $rs->getString($startcol + 10);
 
-			$this->oid = $rs->getString($startcol + 11);
+			$this->ca_transporte = $rs->getString($startcol + 11);
+
+			$this->oid = $rs->getString($startcol + 12);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 12; // 12 = CotSeguroPeer::NUM_COLUMNS - CotSeguroPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 13; // 13 = CotSeguroPeer::NUM_COLUMNS - CotSeguroPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotSeguro object", $e);
@@ -883,6 +925,9 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 				return $this->getCaUsuactualizado();
 				break;
 			case 11:
+				return $this->getCaTransporte();
+				break;
+			case 12:
 				return $this->getOid();
 				break;
 			default:
@@ -916,7 +961,8 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 			$keys[8] => $this->getCaUsucreado(),
 			$keys[9] => $this->getCaFchactualizado(),
 			$keys[10] => $this->getCaUsuactualizado(),
-			$keys[11] => $this->getOid(),
+			$keys[11] => $this->getCaTransporte(),
+			$keys[12] => $this->getOid(),
 		);
 		return $result;
 	}
@@ -982,6 +1028,9 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 				$this->setCaUsuactualizado($value);
 				break;
 			case 11:
+				$this->setCaTransporte($value);
+				break;
+			case 12:
 				$this->setOid($value);
 				break;
 		} // switch()
@@ -1018,7 +1067,8 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[8], $arr)) $this->setCaUsucreado($arr[$keys[8]]);
 		if (array_key_exists($keys[9], $arr)) $this->setCaFchactualizado($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCaUsuactualizado($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setOid($arr[$keys[11]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaTransporte($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setOid($arr[$keys[12]]);
 	}
 
 	/**
@@ -1041,6 +1091,7 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotSeguroPeer::CA_USUCREADO)) $criteria->add(CotSeguroPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(CotSeguroPeer::CA_FCHACTUALIZADO)) $criteria->add(CotSeguroPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
 		if ($this->isColumnModified(CotSeguroPeer::CA_USUACTUALIZADO)) $criteria->add(CotSeguroPeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
+		if ($this->isColumnModified(CotSeguroPeer::CA_TRANSPORTE)) $criteria->add(CotSeguroPeer::CA_TRANSPORTE, $this->ca_transporte);
 		if ($this->isColumnModified(CotSeguroPeer::OID)) $criteria->add(CotSeguroPeer::OID, $this->oid);
 
 		return $criteria;
@@ -1117,6 +1168,8 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 		$copyObj->setCaFchactualizado($this->ca_fchactualizado);
 
 		$copyObj->setCaUsuactualizado($this->ca_usuactualizado);
+
+		$copyObj->setCaTransporte($this->ca_transporte);
 
 
 		$copyObj->setNew(true);

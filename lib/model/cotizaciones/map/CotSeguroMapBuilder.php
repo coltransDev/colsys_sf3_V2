@@ -83,6 +83,8 @@ class CotSeguroMapBuilder {
 
 		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, false, null);
+
 		$tMap->addPrimaryKey('OID', 'Oid', 'string', CreoleTypes::VARCHAR, true, null);
 
 	} // doBuild()

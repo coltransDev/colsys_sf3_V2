@@ -44,7 +44,7 @@
 	]
 }
 <?
-if( count($ciudades)*count($lineas)<15 ){ 
+if( count($ciudades)*count($lineas)<=16){ //Si se muestran muchos registros el browser se bloquea y se pone lento, especialmente IE
 ?>
 ,
 {

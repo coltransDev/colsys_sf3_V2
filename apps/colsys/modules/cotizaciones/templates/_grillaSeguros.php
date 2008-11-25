@@ -14,6 +14,7 @@ var recordGrilla = Ext.data.Record.create([
     {name: 'prima_min', type: 'string'},
     {name: 'obtencion', type: 'string'},
 	{name: 'observaciones', type: 'string'},
+	{name: 'transporte', type: 'string'},
     {name: 'oid', type: 'string'}
 ]);
   
@@ -57,14 +58,16 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'oid',
 			hideable: false,
 			hidden: true
+			
 		},{
-			id: 'cotizacionId',
-			header: "cotizacionId",
-			width: 10,
+			id: 'transporte',
+			header: "Transporte",
+			width: 25,
 			sortable: true,
-			dataIndex: 'cotizacionId',
+			dataIndex: 'transporte',
 			hideable: false,
-			hidden: true
+			editor: <?=extTransporte("transporte")?>
+			
 		},{
 			id: 'prima_tip',
 			header: "Tipo",
@@ -91,7 +94,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Mínimo",
 			width: 25,
 			sortable: true,
-			renderer: Ext.util.Format.usMoney,
+			renderer: Ext.util.Format.defaultValue,
 			dataIndex: 'prima_min',
 			hideable: false,
 			editor: new Ext.form.TextField({
@@ -104,7 +107,7 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Obtención Póliza",
 			width: 25,
 			sortable: true,
-			renderer: Ext.util.Format.usMoney,
+			renderer: Ext.util.Format.defaultValue,
 			dataIndex: 'obtencion',
 			hideable: false,
 			editor: new Ext.form.TextField({
@@ -183,7 +186,12 @@ function updateSeguroModel(){
 		if( !r.data.obtencion ){
 			Ext.Msg.alert( "","Por favor coloque el valor de obtención de la poliza" );	
 			return 0;						
-		}		
+		}	
+		
+		if( !r.data.transporte ){
+			Ext.Msg.alert( "","Por favor coloque el transporte" );	
+			return 0;						
+		}	
 		
 	}
 	
@@ -223,15 +231,18 @@ function agregarFilaSeguros(){
 						  prima_tip:'',
 						  prima_vlr:0,
 						  prima_min:0,
-						  obtencion:'',
+						  obtencion: 0 ,
 						  idmoneda:'',
-						  observaciones:''
+						  observaciones:'',
+						  transporte:''
+						  
 						});
 	records = [];
 	records.push( rec );
 	storeSegurosCot.insert( 0, records );	
 	rec = storeSegurosCot.getAt(0);
 	rec.set("prima_tip", "%");
+	rec.set("moneda", "USD");
 	
 }
 
@@ -280,7 +291,8 @@ var ventanaTarifarioSeguros = function( ){
 													  prima_min:0,
 													  obtencion:'',
 													  idmoneda:'',
-													  observaciones:''
+													  observaciones:'',
+													  transporte:''
 													});
 								records = [];
 								records.push( rec );
@@ -292,6 +304,7 @@ var ventanaTarifarioSeguros = function( ){
 								rec.set("prima_min", r.data.vlrminima );
 								rec.set("obtencion", r.data.vlrobtencionpoliza );
 								rec.set("idmoneda", r.data.idmoneda );
+								rec.set("transporte", r.data.transporte );
 								index++;
 							}
 						} );

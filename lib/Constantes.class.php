@@ -18,5 +18,8 @@ class Constantes{
 	const MARITIMO = "Marítimo";
 	const TERRESTRE = "Terrestre";	
 	
+	const RECARGO_LOCAL = "Recargo Local";
+	const RECARGO_EN_ORIGEN = "Recargo en Origen";
+	
 }
 ?>

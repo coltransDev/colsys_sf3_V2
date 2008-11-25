@@ -98,6 +98,7 @@ class cotizacionesComponents extends sfComponents
 		$c->addSelectColumn(CotSeguroPeer::CA_OBTENCION );
 		$c->addSelectColumn(CotSeguroPeer::CA_IDMONEDA );
 		$c->addSelectColumn(CotSeguroPeer::CA_OBSERVACIONES );
+		$c->addSelectColumn(CotSeguroPeer::CA_TRANSPORTE );
 		
 		$c->add( CotSeguroPeer::CA_IDCOTIZACION , $id );
 		
@@ -113,7 +114,8 @@ class cotizacionesComponents extends sfComponents
       									'prima_min'=>$rs->getString(5),
       									'obtencion'=>$rs->getString(6),
       									'idmoneda'=>$rs->getString(7),
-										'observaciones'=>utf8_encode($rs->getString(8))
+										'observaciones'=>utf8_encode($rs->getString(8)),
+										'transporte'=>utf8_encode($rs->getString(9))
       		);
 		}
 	}

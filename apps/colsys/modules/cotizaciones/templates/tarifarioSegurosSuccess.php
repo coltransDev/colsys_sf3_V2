@@ -15,6 +15,7 @@ var recordSeguros = Ext.data.Record.create([
 	{name: 'vlrminima', type: 'float'},	
 	{name: 'vlrobtencionpoliza', type: 'float'},
 	{name: 'idmoneda', type: 'string'},
+	{name: 'transporte', type: 'string'},
 	{name: 'observaciones', type: 'string'}	
 ]);
    		
@@ -52,6 +53,13 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 			sortable: false,	
 			hideable: false,		
 			dataIndex: 'trayecto' 			
+		},
+		{
+			header: "Transporte",
+			width: 90,
+			sortable: false,	
+			hideable: false,		
+			dataIndex: 'transporte' 			
 		},
 		{
 			header: "Producto",
