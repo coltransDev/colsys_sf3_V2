@@ -452,11 +452,11 @@ class pricingActions extends sfActions
 				$flete->setCaVlrneto( 0 );
 			}
 			
-			if( $neta ){
+			if( $neta!==null ){
 				$flete->setCaVlrneto( $neta );
 			} 
 			
-			if( $sugerida ){
+			if( $sugerida!==null ){
 				$flete->setCaVlrsugerido( $sugerida );
 			}
 			
@@ -507,11 +507,11 @@ class pricingActions extends sfActions
 				$pricRecargo->setCaVlrminimo( 0 );
 				
 			}
-			if( $neta ){
+			if( $neta!==null ){
 				$pricRecargo->setCaVlrrecargo( $neta );
 			}
 			
-			if( $minima ){
+			if( $minima!==null ){
 				$pricRecargo->setCaVlrminimo( $minima );
 			}		
 			
