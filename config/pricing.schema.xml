@@ -98,7 +98,8 @@
 		<column name="ca_idtrafico" type="varchar" required="true"  primaryKey="true"/>
 		<column name="ca_idciudad" type="varchar" required="true"  primaryKey="true"/>			
 		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>
-		<column name="ca_modalidad" type="varchar" required="true" primaryKey="true"/>			
+		<column name="ca_modalidad" type="varchar" required="true" primaryKey="true"/>
+		<column name="ca_impoexpo" type="varchar" required="true" primaryKey="true"/>				
 		<column name="ca_vlrrecargo" type="numeric" />
 		<column name="ca_aplicacion" type="varchar" />	
 		<column name="ca_vlrminimo" type="numeric" />			

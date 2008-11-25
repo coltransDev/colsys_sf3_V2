@@ -48,6 +48,13 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 
 
 	/**
+	 * The value for the ca_impoexpo field.
+	 * @var        string
+	 */
+	protected $ca_impoexpo;
+
+
+	/**
 	 * The value for the ca_vlrrecargo field.
 	 * @var        double
 	 */
@@ -182,6 +189,17 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 	{
 
 		return $this->ca_modalidad;
+	}
+
+	/**
+	 * Get the [ca_impoexpo] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaImpoexpo()
+	{
+
+		return $this->ca_impoexpo;
 	}
 
 	/**
@@ -451,6 +469,28 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 	} // setCaModalidad()
 
 	/**
+	 * Set the value of [ca_impoexpo] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaImpoexpo($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_impoexpo !== $v) {
+			$this->ca_impoexpo = $v;
+			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_IMPOEXPO;
+		}
+
+	} // setCaImpoexpo()
+
+	/**
 	 * Set the value of [ca_vlrrecargo] column.
 	 * 
 	 * @param      double $v new value
@@ -689,32 +729,34 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 
 			$this->ca_modalidad = $rs->getString($startcol + 3);
 
-			$this->ca_vlrrecargo = $rs->getFloat($startcol + 4);
+			$this->ca_impoexpo = $rs->getString($startcol + 4);
 
-			$this->ca_aplicacion = $rs->getString($startcol + 5);
+			$this->ca_vlrrecargo = $rs->getFloat($startcol + 5);
 
-			$this->ca_vlrminimo = $rs->getFloat($startcol + 6);
+			$this->ca_aplicacion = $rs->getString($startcol + 6);
 
-			$this->ca_aplicacion_min = $rs->getString($startcol + 7);
+			$this->ca_vlrminimo = $rs->getFloat($startcol + 7);
 
-			$this->ca_observaciones = $rs->getString($startcol + 8);
+			$this->ca_aplicacion_min = $rs->getString($startcol + 8);
 
-			$this->ca_fchinicio = $rs->getDate($startcol + 9, null);
+			$this->ca_observaciones = $rs->getString($startcol + 9);
 
-			$this->ca_fchvencimiento = $rs->getDate($startcol + 10, null);
+			$this->ca_fchinicio = $rs->getDate($startcol + 10, null);
 
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 11, null);
+			$this->ca_fchvencimiento = $rs->getDate($startcol + 11, null);
 
-			$this->ca_usucreado = $rs->getString($startcol + 12);
+			$this->ca_fchcreado = $rs->getTimestamp($startcol + 12, null);
 
-			$this->ca_idmoneda = $rs->getString($startcol + 13);
+			$this->ca_usucreado = $rs->getString($startcol + 13);
+
+			$this->ca_idmoneda = $rs->getString($startcol + 14);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 14; // 14 = PricRecargosxCiudadPeer::NUM_COLUMNS - PricRecargosxCiudadPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 15; // 15 = PricRecargosxCiudadPeer::NUM_COLUMNS - PricRecargosxCiudadPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricRecargosxCiudad object", $e);
@@ -968,33 +1010,36 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 				return $this->getCaModalidad();
 				break;
 			case 4:
-				return $this->getCaVlrrecargo();
+				return $this->getCaImpoexpo();
 				break;
 			case 5:
-				return $this->getCaAplicacion();
+				return $this->getCaVlrrecargo();
 				break;
 			case 6:
-				return $this->getCaVlrminimo();
+				return $this->getCaAplicacion();
 				break;
 			case 7:
-				return $this->getCaAplicacionMin();
+				return $this->getCaVlrminimo();
 				break;
 			case 8:
-				return $this->getCaObservaciones();
+				return $this->getCaAplicacionMin();
 				break;
 			case 9:
-				return $this->getCaFchinicio();
+				return $this->getCaObservaciones();
 				break;
 			case 10:
-				return $this->getCaFchvencimiento();
+				return $this->getCaFchinicio();
 				break;
 			case 11:
-				return $this->getCaFchcreado();
+				return $this->getCaFchvencimiento();
 				break;
 			case 12:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 13:
+				return $this->getCaUsucreado();
+				break;
+			case 14:
 				return $this->getCaIdmoneda();
 				break;
 			default:
@@ -1021,16 +1066,17 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 			$keys[1] => $this->getCaIdciudad(),
 			$keys[2] => $this->getCaIdrecargo(),
 			$keys[3] => $this->getCaModalidad(),
-			$keys[4] => $this->getCaVlrrecargo(),
-			$keys[5] => $this->getCaAplicacion(),
-			$keys[6] => $this->getCaVlrminimo(),
-			$keys[7] => $this->getCaAplicacionMin(),
-			$keys[8] => $this->getCaObservaciones(),
-			$keys[9] => $this->getCaFchinicio(),
-			$keys[10] => $this->getCaFchvencimiento(),
-			$keys[11] => $this->getCaFchcreado(),
-			$keys[12] => $this->getCaUsucreado(),
-			$keys[13] => $this->getCaIdmoneda(),
+			$keys[4] => $this->getCaImpoexpo(),
+			$keys[5] => $this->getCaVlrrecargo(),
+			$keys[6] => $this->getCaAplicacion(),
+			$keys[7] => $this->getCaVlrminimo(),
+			$keys[8] => $this->getCaAplicacionMin(),
+			$keys[9] => $this->getCaObservaciones(),
+			$keys[10] => $this->getCaFchinicio(),
+			$keys[11] => $this->getCaFchvencimiento(),
+			$keys[12] => $this->getCaFchcreado(),
+			$keys[13] => $this->getCaUsucreado(),
+			$keys[14] => $this->getCaIdmoneda(),
 		);
 		return $result;
 	}
@@ -1075,33 +1121,36 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 				$this->setCaModalidad($value);
 				break;
 			case 4:
-				$this->setCaVlrrecargo($value);
+				$this->setCaImpoexpo($value);
 				break;
 			case 5:
-				$this->setCaAplicacion($value);
+				$this->setCaVlrrecargo($value);
 				break;
 			case 6:
-				$this->setCaVlrminimo($value);
+				$this->setCaAplicacion($value);
 				break;
 			case 7:
-				$this->setCaAplicacionMin($value);
+				$this->setCaVlrminimo($value);
 				break;
 			case 8:
-				$this->setCaObservaciones($value);
+				$this->setCaAplicacionMin($value);
 				break;
 			case 9:
-				$this->setCaFchinicio($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 10:
-				$this->setCaFchvencimiento($value);
+				$this->setCaFchinicio($value);
 				break;
 			case 11:
-				$this->setCaFchcreado($value);
+				$this->setCaFchvencimiento($value);
 				break;
 			case 12:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 13:
+				$this->setCaUsucreado($value);
+				break;
+			case 14:
 				$this->setCaIdmoneda($value);
 				break;
 		} // switch()
@@ -1131,16 +1180,17 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdciudad($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaIdrecargo($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaModalidad($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaVlrrecargo($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaAplicacion($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaVlrminimo($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaAplicacionMin($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaObservaciones($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaFchinicio($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaFchvencimiento($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaFchcreado($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaUsucreado($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaIdmoneda($arr[$keys[13]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaImpoexpo($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaVlrrecargo($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaAplicacion($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaVlrminimo($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaAplicacionMin($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaObservaciones($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaFchinicio($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFchvencimiento($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaFchcreado($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaUsucreado($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaIdmoneda($arr[$keys[14]]);
 	}
 
 	/**
@@ -1156,6 +1206,7 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_IDCIUDAD)) $criteria->add(PricRecargosxCiudadPeer::CA_IDCIUDAD, $this->ca_idciudad);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_IDRECARGO)) $criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->ca_idrecargo);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_MODALIDAD)) $criteria->add(PricRecargosxCiudadPeer::CA_MODALIDAD, $this->ca_modalidad);
+		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_IMPOEXPO)) $criteria->add(PricRecargosxCiudadPeer::CA_IMPOEXPO, $this->ca_impoexpo);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_VLRRECARGO)) $criteria->add(PricRecargosxCiudadPeer::CA_VLRRECARGO, $this->ca_vlrrecargo);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_APLICACION)) $criteria->add(PricRecargosxCiudadPeer::CA_APLICACION, $this->ca_aplicacion);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_VLRMINIMO)) $criteria->add(PricRecargosxCiudadPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
@@ -1186,6 +1237,7 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		$criteria->add(PricRecargosxCiudadPeer::CA_IDCIUDAD, $this->ca_idciudad);
 		$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->ca_idrecargo);
 		$criteria->add(PricRecargosxCiudadPeer::CA_MODALIDAD, $this->ca_modalidad);
+		$criteria->add(PricRecargosxCiudadPeer::CA_IMPOEXPO, $this->ca_impoexpo);
 
 		return $criteria;
 	}
@@ -1207,6 +1259,8 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 
 		$pks[3] = $this->getCaModalidad();
 
+		$pks[4] = $this->getCaImpoexpo();
+
 		return $pks;
 	}
 
@@ -1226,6 +1280,8 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		$this->setCaIdrecargo($keys[2]);
 
 		$this->setCaModalidad($keys[3]);
+
+		$this->setCaImpoexpo($keys[4]);
 
 	}
 
@@ -1272,6 +1328,8 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		$copyObj->setCaIdrecargo(NULL); // this is a pkey column, so set to default value
 
 		$copyObj->setCaModalidad(NULL); // this is a pkey column, so set to default value
+
+		$copyObj->setCaImpoexpo(NULL); // this is a pkey column, so set to default value
 
 	}
 

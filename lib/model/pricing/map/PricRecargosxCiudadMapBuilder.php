@@ -69,6 +69,8 @@ class PricRecargosxCiudadMapBuilder {
 
 		$tMap->addPrimaryKey('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, true, null);
 
+		$tMap->addPrimaryKey('CA_IMPOEXPO', 'CaImpoexpo', 'string', CreoleTypes::VARCHAR, true, null);
+
 		$tMap->addColumn('CA_VLRRECARGO', 'CaVlrrecargo', 'double', CreoleTypes::NUMERIC, false, null);
 
 		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'string', CreoleTypes::VARCHAR, false, null);

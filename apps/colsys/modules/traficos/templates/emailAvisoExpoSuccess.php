@@ -102,7 +102,21 @@ echo $status->getCaIntroduccion();
 		
 	</tr>
 	<tr>
-		<td><strong>M/N:</strong></td>
+		<td>
+		<strong>
+		<?
+		if( $reporte->getCaTransporte()=="Marítimo" ){
+		?>	
+		M/N:
+		<?
+		}else{
+		?>	
+		Vuelo:
+		<?
+		}
+		?>
+		</strong>
+		</td>
 		<td><?=$status->getCaIdnave()?></td>
 		
 	</tr>
