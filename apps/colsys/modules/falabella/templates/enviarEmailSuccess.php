@@ -1,1 +1,2 @@
-<h3> El correo electronico se ha enviado correctamente, se ha enviado una copia a su correo electronico</h3>
+El correo se ha enviado correctamente<br /> 
+<?=link_to("Haga click aqui para volver", "traficos/verEstatusCarga?modo=".$modo."&idcliente=".$idCliente."&fechaInicial=".$fechaInicial."&fechaFinal=".$fechaFinal."&ver=".$ver)?>
