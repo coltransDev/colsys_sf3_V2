@@ -209,33 +209,6 @@
 	</table>
 		
 	
-
-	
-	<table name="tb_concliente" phpName="Contacto">				
-		<column name="ca_idcontacto" type="integer" required="true" primaryKey="true"  />			
-		<column name="ca_idcliente" type="integer" required="true"  />	
-		<column name="ca_papellido" type="varchar" required="true"  />	
-		<column name="ca_sapellido" type="varchar" />			
-		<column name="ca_nombres" type="varchar"    />			
-		<column name="ca_saludo" type="varchar"   />	
-		<column name="ca_cargo" type="varchar"   />	
-		<column name="ca_departamento" type="varchar"   />	
-		<column name="ca_telefonos" type="varchar"   />	
-		<column name="ca_fax" type="varchar"   />	
-		<column name="ca_email" type="varchar"   />	
-		<column name="ca_observaciones" type="varchar"   />	
-		<column name="ca_fchcreado" type="date"   />	
-		<column name="ca_fchactualizado" type="date"   />	
-		<column name="ca_usucreado" type="varchar"   />	
-		<column name="ca_usuactualizado" type="varchar"   />	
-		<column name="ca_cumpleanos" type="varchar"   />	
-		
-		<foreign-key foreignTable="tb_clientes">
-			<reference local="ca_idcliente" foreign="ca_idcliente"/>
-		</foreign-key>		
-	</table>
-
-
  	<table name="tb_emails" phpName="Email">				
 		<column name="ca_idemail" type="integer" required="true" primaryKey="true" autoIncrement="true"  />			
 		<column name="ca_fchenvio" type="timestamp" required="true"  />	
