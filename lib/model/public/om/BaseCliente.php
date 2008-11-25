@@ -214,6 +214,18 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	protected $lastContactoCriteria = null;
 
 	/**
+	 * Collection to store aggregation of collClienteStds.
+	 * @var        array
+	 */
+	protected $collClienteStds;
+
+	/**
+	 * The criteria used to select the current contents of collClienteStds.
+	 * @var        Criteria
+	 */
+	protected $lastClienteStdCriteria = null;
+
+	/**
 	 * Collection to store aggregation of collInoIngresosSeas.
 	 * @var        array
 	 */
@@ -1187,6 +1199,14 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collClienteStds !== null) {
+				foreach($this->collClienteStds as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collInoIngresosSeas !== null) {
 				foreach($this->collInoIngresosSeas as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -1303,6 +1323,14 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 
 				if ($this->collContactos !== null) {
 					foreach($this->collContactos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collClienteStds !== null) {
+					foreach($this->collClienteStds as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1752,6 +1780,10 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 
 			foreach($this->getContactos() as $relObj) {
 				$copyObj->addContacto($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getClienteStds() as $relObj) {
+				$copyObj->addClienteStd($relObj->copy($deepCopy));
 			}
 
 			foreach($this->getInoIngresosSeas() as $relObj) {
@@ -2217,6 +2249,111 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	public function addContacto(Contacto $l)
 	{
 		$this->collContactos[] = $l;
+		$l->setCliente($this);
+	}
+
+	/**
+	 * Temporary storage of collClienteStds to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initClienteStds()
+	{
+		if ($this->collClienteStds === null) {
+			$this->collClienteStds = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cliente has previously
+	 * been saved, it will retrieve related ClienteStds from storage.
+	 * If this Cliente is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getClienteStds($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collClienteStds === null) {
+			if ($this->isNew()) {
+			   $this->collClienteStds = array();
+			} else {
+
+				$criteria->add(ClienteStdPeer::CA_IDCLIENTE, $this->getCaIdcliente());
+
+				ClienteStdPeer::addSelectColumns($criteria);
+				$this->collClienteStds = ClienteStdPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(ClienteStdPeer::CA_IDCLIENTE, $this->getCaIdcliente());
+
+				ClienteStdPeer::addSelectColumns($criteria);
+				if (!isset($this->lastClienteStdCriteria) || !$this->lastClienteStdCriteria->equals($criteria)) {
+					$this->collClienteStds = ClienteStdPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastClienteStdCriteria = $criteria;
+		return $this->collClienteStds;
+	}
+
+	/**
+	 * Returns the number of related ClienteStds.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countClienteStds($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(ClienteStdPeer::CA_IDCLIENTE, $this->getCaIdcliente());
+
+		return ClienteStdPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a ClienteStd object to this object
+	 * through the ClienteStd foreign key attribute
+	 *
+	 * @param      ClienteStd $l ClienteStd
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addClienteStd(ClienteStd $l)
+	{
+		$this->collClienteStds[] = $l;
 		$l->setCliente($this);
 	}
 
