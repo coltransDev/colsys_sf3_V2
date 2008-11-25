@@ -43,12 +43,19 @@
 		?>
 	]
 }
+<?
+if( count($ciudades)*count($lineas)<15 ){ 
+?>
 ,
 {
 	text:'Todas las ciudades',
 	id:'fletes_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
 	leaf:true
-},
+}
+<?
+}
+?>
+,
 {
 	text:'Recargos generales',
 	id:'recgen_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
