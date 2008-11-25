@@ -1,20 +1,20 @@
 <?php
 
 /**
- * falabella actions.
+ * bavaria actions.
  *
  * @package    colsys
- * @subpackage falabella
- * @author     Your name here
+ * @subpackage bavaria
+ * @author     Carlos Gilberto López M.
  * @version    SVN: $Id: actions.class.php 3335 2007-01-23 16:19:56Z fabien $
  */
-class falabellaActions extends sfActions {
+class bavariaActions extends sfActions {
 	
 	/*
 	* Accion por defecto
 	*/
 	public function executeIndex() {
-		return $this->forward ( 'falabella', 'list' );
+		return $this->forward ( 'bavaria', 'list' );
 	}
 	
 	/*
@@ -22,325 +22,165 @@ class falabellaActions extends sfActions {
 	*/	
 	public function executeList() {
 		$c = new Criteria ();
-		$c->addDescendingOrderByColumn( FalaHeaderPeer::CA_FECHA_CARPETA );
-		$this->fala_headers = FalaHeaderPeer::doSelect ( $c );
+
+		$c->addSelectColumn( BavariaNotifyPeer::CA_CONSECUTIVO );
+		$c->addSelectColumn( ClientePeer::CA_COMPANIA );
+		$c->addSelectColumn( ReportePeer::CA_FCHREPORTE );
+		$c->addSelectColumn( ReportePeer::CA_MERCANCIA_DESC );
+		$c->addSelectColumn( ReportePeer::CA_ORDEN_CLIE );
+		$c->addSelectColumn( TerceroPeer::CA_NOMBRE );
+		$c->addSelectColumn( BavariaNotifyPeer::CA_FCHENVIO );
+		$c->addSelectColumn( BavariaNotifyPeer::CA_USUENVIO );
+
+		$c->addJoin( BavariaNotifyPeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO, Criteria::LEFT_JOIN );
+		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );
+		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );
+
+		$c->addJoin( ReportePeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO, Criteria::LEFT_JOIN );
+
+		$c->addDescendingOrderByColumn( BavariaNotifyPeer::CA_CONSECUTIVO );
+
+		$this->bavaria_notifys = BavariaNotifyPeer::doSelect ( $c );
 	}
 	
-	/*
-	* Permite ver las intrucciones de embarque 
-	*/
-	public function executeShippingInstructions(){
-		$this->header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
-		$this->forward404Unless($this->header);
-		$this->instructions = $this->header->getFalaInstructions();
-		$this->info = $this->header->getFalaShipmentInfo();
-	}
-	
-	
-	/*
-	* Permite ver los detalles del PO y confirmar los datos para generar el archivo de salida
-	*/
-	public function executeDetails(){
-		
-		$this->fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
-		$this->forward404Unless($this->fala_header);
-		$c = new Criteria();
-		$c->addAscendingOrderByColumn( FalaDetailPeer::CA_SKU );
-		$this->details = $this->fala_header->getFalaDetails($c);
-		$this->container = ParametroPeer::retrieveByCaso("CU057");
-	}
-	
-	/*
-	* Guarda los cambios en el encabezado del documento
-	*/
-	public function executeObserveHeader(){
-		$fala_header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
-		$this->forward404Unless($fala_header);
-	
-		if( $this->getRequestParameter ( 'num_viaje' )!==null ){
-			$fala_header->setCaNumViaje( $this->getRequestParameter ( 'num_viaje' ) );
-		}
-
-		if( $this->getRequestParameter ( 'cod_carrier' )!==null ){
-			$fala_header->setCaCodCarrier( $this->getRequestParameter ( 'cod_carrier' ) );
-		}
-
-		if( $this->getRequestParameter ( 'container_mode' )!==null ){
-			$fala_header->setCaContainerMode( $this->getRequestParameter ( 'container_mode' ) );
-		}
-
-		if( $this->getRequestParameter ( 'numero_invoice' )!==null ){
-			$fala_header->setCaNumeroInvoice( $this->getRequestParameter ( 'numero_invoice' ) );
-		}
-
-		if( $this->getRequestParameter ( 'monto_invoice' )!==null ){
-			$fala_header->setCaMontoInvoiceMiles( $this->getRequestParameter ( 'monto_invoice' ) );
-		}
-
-		$fala_header->save();
-		return sfView::NONE;		
-		
-	}
-	
-	/*
-	* Guarda los cambios en el detalle del documento
-	*/	
-	public function executeObserveDetail(){
-		$faladetail = FalaDetailPeer::retrieveByPk( $this->getRequestParameter ( 'iddoc' ), $this->getRequestParameter ( 'sku' ));		
-		$this->forward404Unless($faladetail);
-		
-		if( $this->getRequestParameter ( 'num_unidades' )!==null ){
-			$faladetail->setCaCantidadMiles( $this->getRequestParameter ( 'num_unidades' ) );
-		}
-		
-		if( $this->getRequestParameter ( 'uni_unidades' ) ){
-			$faladetail->setCaUnidadMedidadCantidad( $this->getRequestParameter ( 'uni_unidades' ) );
-		}
-		
-		if( $this->getRequestParameter ( 'num_paquetes' ) ){
-			$faladetail->setCaCantidadPaquetesMiles( $this->getRequestParameter ( 'num_paquetes' ) );
-		}
-		
-		if( $this->getRequestParameter ( 'paq_unidades' ) ){
-			$faladetail->setCaUnidadMedidaPaquetes( $this->getRequestParameter ( 'paq_unidades' ) );
-		}
-		
-		if( $this->getRequestParameter ( 'peso' ) ){
-			$faladetail->setCaCantidadPesoMiles( $this->getRequestParameter ( 'peso' ) );
-		}
-		
-		if( $this->getRequestParameter ( 'pes_unidades' ) ){
-			$faladetail->setCaUnidadMedidaPeso( $this->getRequestParameter ( 'pes_unidades' ) );
-		}
-		
-		if( $this->getRequestParameter ( 'volumen' ) ){
-			$faladetail->setCaCantidadVolumenMiles( $this->getRequestParameter ( 'volumen' ) );
-		}
-
-		if( $this->getRequestParameter ( 'vol_unidades' ) ){
-			$faladetail->setCaUnidadMedidaVolumen( $this->getRequestParameter ( 'vol_unidades' ) );
-		}
-
-		if( $this->getRequestParameter ( 'cont_part1' ) ){			
-			$faladetail->setCaNumContPart1( $this->getRequestParameter ( 'cont_part1' ) );
-		}
-		
-		if( $this->getRequestParameter ( 'cont_part2' ) ){
-			$faladetail->setCaNumContPart2( $this->getRequestParameter ( 'cont_part2' ) );
-		}
-
-		if( $this->getRequestParameter ( 'cont_sell' ) ){
-			$faladetail->setCaNumContSell( $this->getRequestParameter ( 'cont_sell' ) );
-		}
-
-		if( $this->getRequestParameter ( 'container_iso' ) ){
-			$faladetail->setCaContainerIso( $this->getRequestParameter ( 'container_iso' ) );
-		}
-	
-		$faladetail->save();
-		return sfView::NONE;		
-	}
-	
-	/*
-	* Actualiza el reporte en el encabezado del documento
-	*/
-	public function executeBuscarReporte(){
-		$fala_header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
-		$this->forward404Unless($fala_header);
-	
-		$consecutivo = $this->getRequestParameter("reporte");
-		
-		$reporte = ReportePeer::retrieveByConsecutivo( $consecutivo );
-		if( $reporte ){
-			$fala_header->setCaReporte( $reporte->getCaConsecutivo() );
-			$fala_header->save();
-			return sfView::SUCCESS;
-		}else{				
-			return sfView::ERROR;
-		}
-		
-	}
-	
-	/*
-	* Permite anular la Orden de Pedido
-	*/
-	public function executeAnularOrden(){
-		$fala_header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
-		$this->forward404Unless($fala_header);
-		$fala_header->setCaFchanulado(date("d M Y H:i:s"));
-		$fala_header->setCaUsuanulado($this->getUser()->getUserId());
-		$fala_header->save();
-		$this->redirect("falabella/list");
-	}
-	
-	/*
-	* Permite Duplicar un registro de la Orden de Pedido 
-	*/
-	public function executeDuplicateRecord(){
-		$faladetail = FalaDetailPeer::retrieveByPk( $this->getRequestParameter ( 'iddoc' ), $this->getRequestParameter ( 'sku' ));
-		$this->forward404Unless($faladetail);
-		$doc_mem = $this->getRequestParameter ( 'iddoc' );
-		$sku_mem = $faladetail->getSkuNeto();
-		
-		$c = new Criteria();
-		$c->add( FalaDetailPeer::CA_IDDOC, FalaDetailPeer::CA_IDDOC." = '$doc_mem'" , Criteria::CUSTOM );
-		$c->addAnd( FalaDetailPeer::CA_SKU, FalaDetailPeer::CA_SKU." LIKE '$sku_mem%'" , Criteria::CUSTOM );
-		$sku_num = FalaDetailPeer::doCount($c);
-
-		$sku_mem.= "-".$sku_num;
-
-		$new_faladetail = $faladetail->copy(FALSE);
-		$new_faladetail->setCaIddoc($this->getRequestParameter ( 'iddoc' ));
-		$new_faladetail->setCaSku($sku_mem);
-		$new_faladetail->setCaCantidadPedido(0);
-		$new_faladetail->setCaCantidadMiles(0);
-		$new_faladetail->save();
-		$this->redirect("falabella/details?iddoc=".base64_encode($doc_mem));
-		return sfView::NONE;
-	}
-	
-	/*
-	* Generar una Nueva Orden con los productos faltantes
-	*/
-	public function executeGenerarNuevaOrden(){
-		$doc_mem = base64_decode($this->getRequestParameter ( 'iddoc' ));
-		$fala_header = FalaHeaderPeer::retrieveByPk ( $doc_mem );
-		$this->forward404Unless($fala_header);
-		
-		$c = new Criteria();
-		$c->add( FalaHeaderPeer::CA_IDDOC, FalaHeaderPeer::CA_IDDOC." LIKE '$doc_mem%'" , Criteria::CUSTOM );
-		$doc_mem = $fala_header->getIdDocNeto();
-		$doc_num = FalaHeaderPeer::doCount($c);
-		$doc_mem.= "-".$doc_num; 
-		
-		$new_falaheader = $fala_header->copy(FALSE);
-		$new_falaheader->setCaIddoc($doc_mem);
-		$new_falaheader->setCaProcesado(FALSE);
-		$new_falaheader->setCaFchanulado(NULL);
-		$new_falaheader->setCaUsuanulado(NULL);
-		$new_falaheader->save();
-		
-		$faladetails = $fala_header->getFalaDetails();
-		foreach( $faladetails as $detail ){
-			if ($detail->getCaCantidadMiles() < $detail->getCaCantidadPedido()){
-				$new_faladetail = $detail->copy(FALSE);
-				$new_faladetail->setCaIddoc($doc_mem);
-				$new_faladetail->setCaSku($detail->getCaSku());
-				$new_faladetail->setCaCantidadPedido($detail->getCaCantidadPedido() - $detail->getCaCantidadMiles());
-				$new_faladetail->setCaCantidadMiles($detail->getCaCantidadPedido() - $detail->getCaCantidadMiles());
-				$new_faladetail->save();
-			}
-		}
-		$falashippings = $fala_header->getFalaShipmentInfos();
-		foreach( $falashippings as $shipping ){
-			$new_shipping = $shipping->copy(FALSE);
-			$new_shipping->setCaIddoc($doc_mem);
-			$new_shipping->save();
-		}
-		
-		$this->redirect("falabella/generarArchivo?iddoc=".$this->getRequestParameter ( 'iddoc' ));
-		return sfView::NONE;
-	}
 
 	/*
-	* Genera el archivo de salida
+	* Genera el archivo para envio
 	*/
 	public function executeGenerarArchivo(){
-		$fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
-		$this->forward404Unless($fala_header);
+		$idBavaria =  "860005224";
+		$cod_empresas = array( "860005224"=>"0001", "890900168"=>"0002", ""=>"", "800172251"=>"0003", "900136638"=>"0004", "830101107"=>"0005", "860528319"=>"0006" );
+		$cod_unipeso = array( ""=>"", "Kilos"=>"kg" );
+		$mod_transporte = array( "Aéreo"=>"4", "Marítimo"=>"1", "Terrestre"=>"3" );
+		$cod_embalaje = array( ""=>"", "Bultos"=>"PK", "Cajas"=>"CS", "Cartones"=>"CT", "Pallets"=>"PC", "Patines"=>"YY", "Piezas"=>"BT", "Rollos"=>"RO", "Sacos"=>"BG", "Tambores"=>"YY" );
+		$frm_embarque = array( "FCL"=>"01", "CONSOLIDADO"=>"02", "LCL"=>"03", "COLOADING"=>"03" );
+
 		$c = new Criteria();
-		$c->addAscendingOrderByColumn( FalaDetailPeer::CA_SKU );
-		$details = $fala_header->getFalaDetails($c);
 		
-		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
-		$this->forward404unless( $reporte );
+		$c->addJoin( ReportePeer::CA_CONSECUTIVO, BavariaNotifyPeer::CA_CONSECUTIVO, Criteria::LEFT_JOIN );
+		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );
+		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );
 		
-		$salida = '';
-		foreach( $details as $detail ){
-			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 1
-			$salida.= $fala_header->getCaArchivoOrigen()."|"; // Archivo de Origen 2
-			$salida.= "ASN|"; // 3
-			$salida.= "COL|"; // 4
-			$salida.= "|"; // Correlativo Coltrans 5
-			$salida.= (($reporte->getCaTransporte() != 'Aéreo')?"MB":"AW")."|"; // 6
-			$salida.= $reporte->getDoctransporte()."|"; // 7
-			$salida.= "|"; // Contact 8  /blanco
-			$salida.= "|"; // Contact Number 9
-			$salida.= "|"; // Lloyd  10
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"AIR":$reporte->getIdnave() )."|"; // Vessel 11
-			$salida.= "|"; // Número de Viaje 12
-			$salida.= "COLT|"; // Carrier 13
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"L":"")."|"; // Vessel 14
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"A":"S")."|"; // Vessel 15
-			$salida.= "UN|"; // Vessel 16
-			$salida.= $fala_header->getCaCodigoPuertoPickup()."|"; // 17 
-			$salida.= "UN|"; // Vessel 18
-			$salida.= $fala_header->getCaCodigoPuertoPickup()."|"; // 19
-			$salida.= "UN|"; // Vessel 20
-			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 21
-			$salida.= "UN|"; // Vessel 22
-			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 23
-			$salida.= $reporte->getETS("Ymd")."|"; // 24
-			$salida.= $reporte->getETS("Ymd")."|"; // 25
-			$salida.= $reporte->getETA("Ymd")."|"; // 26
-			$salida.= $reporte->getETA("Ymd")."|"; // 27
-			$salida.= str_replace("-","",$detail->getCaNumContPart1())."|"; // Id Cont 4 Car  28
-			$salida.= str_replace("-","",$detail->getCaNumContPart2())."|"; // Id Cont 10 Car  29
-			$salida.= $detail->getCaNumContSell()."|"; // Sello de Cont Car  30
-			$salida.= $detail->getCaContainerIso()."|"; // Cod ISO 31
-			$salida.= $fala_header->getCaContainerMode()."|"; //  32
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"AIR":"")."|"; // Vessel 33
-			$salida.= "|"; // 34
-			$salida.= "|"; // 35
-			$salida.= "|"; // 36
-			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 37
-			$salida.= $fala_header->getCaFechaCarpeta("Ymd")."|"; // 38
-			$salida.= $detail->getSkuNeto()."|"; // 39
-			$salida.= $detail->getCaVpn()."|"; // 40
-			$salida.= number_format($detail->getCaCantidadMiles()*10000, 0, '', '')."|"; // 41
-			$salida.= $detail->getCaUnidadMedidadCantidad()."|"; // 42
-			$salida.= $detail->getCaDescripcionItem()."|"; // 43
-			$salida.= $detail->getCaCantidadPaquetesMiles()."|"; // 44
-			$salida.= $detail->getCaUnidadMedidaPaquetes()."|"; // 45
-			$salida.= $detail->getCaCantidadVolumenMiles()."|"; // 46
-			$salida.= $detail->getCaUnidadMedidaVolumen()."|"; // 47
-			$salida.= $detail->getCaCantidadPesoMiles()."|"; // 48
-			$salida.= $detail->getCaUnidadMedidaPeso()."|"; // 49
-			$salida.= "01-01|"; // Vessel 50
-			$salida.= "|"; // 51
-			$salida.= "|"; // 52
-			$salida.= "|"; // 53
-			$salida.= "|"; // 54
-			$salida.= "UN|"; // Vessel 55
-			$salida.= $fala_header->getCaCodigoPuertoPickup()."|"; // 56
-			$salida.= "UN|"; // Vessel 57
-			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 58
-			$salida.= $fala_header->getCaNombreProveedor()."|"; // 59
-			$salida.= $fala_header->getCaCampo59()."|";// 60
-			$salida.= $fala_header->getCaCodigoProveedor()."|"; // 61
-			$salida.= $fala_header->getCaCampo61()."|";// 62
-			$salida.= number_format($fala_header->getCaMontoInvoiceMiles()*10000, 0, '', '')."|";// 63
-			$salida.= $fala_header->getCaProformaNumber();// 64
-			$salida.= "\r\n";			
+		$c->add( ClientePeer::CA_IDGRUPO , $idBavaria );
+		$c->add( ReportePeer::CA_CONSECUTIVO, BavariaNotifyPeer::CA_CONSECUTIVO, Criteria::NOT_EQUAL );
+		$c->add( ReportePeer::CA_FCHREPORTE, '2008-08-01', Criteria::GREATER_THAN );
+
+		$c->addAscendingOrderByColumn( ReportePeer::CA_CONSECUTIVO );
+
+		$reportes = ReportePeer::doSelect($c);
+		
+		$salida_one = '';
+		$salida_two = '';
+		
+		set_time_limit(0);
+		foreach( $reportes as $reporte ){
+			if( !$reporte->esUltimaVersion() ){
+				continue;				
+			}	
+			$contacto = $reporte->getContacto ();
+	
+			$salida_one.= str_pad( $cod_empresas[$contacto->getCaIdCliente()], 6, " " ); // 1
+			$salida_one.= str_pad($reporte->getCaOrdenClie(),10, " "); // 2
+			$salida_one.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 3
+			$salida_one.= str_pad(null,10, " "); // 4
+			
+			$fchfactProveedor = Utils::transformDate( $reporte->getProperty("fchfactproveedor") , $format="Ymd" );
+			$salida_one.= str_pad($fchfactProveedor,8, " "); // 5
+
+			$fchETS = Utils::transformDate( $reporte->getETS(), $format="Ymd" );
+			$salida_one.= str_pad($fchETS,8, " "); // 6
+
+			//$salida_one.= str_pad($reporte->getETS("Ymd"),8, " "); // 6
+			$salida_one.= str_pad($reporte->getDoctransporte(),25, " "); // 7
+			$fchdoctransporte = Utils::transformDate( $reporte->getProperty("fchdoctransporte") , $format="Ymd" );
+			$salida_one.= str_pad($fchdoctransporte,8, " "); // 8
+			$salida_one.= str_pad(null,8, " "); // 9
+			$salida_one.= str_pad(null,8, " "); // 10
+			$fchrecibocarga = Utils::transformDate( $reporte->getProperty("fchrecibocarga") , $format="Ymd" );
+			$salida_one.= str_pad($fchrecibocarga,8, " "); // 11
+
+			list($peso_vlr, $peso_uni) = sscanf($reporte->getPeso(), "%s %s");
+			$salida_one.= str_pad($peso_vlr,15, " "); // 12
+			$salida_one.= str_pad($cod_unipeso[$peso_uni],15, " "); // 13
+
+			$salida_one.= str_pad(null,15, " "); // 14
+			$salida_one.= str_pad( $mod_transporte[$reporte->getCaTransporte()], 1, " " ); // 15
+			
+			$salida_one.= str_pad(null,15, " "); // 16
+			
+			list($pieza_vlr, $pieza_uni) = sscanf($reporte->getPiezas(), "%s %s");
+			$salida_one.= str_pad($cod_embalaje[$pieza_uni],15, " "); // 17
+			$salida_one.= str_pad(null,10, " "); // 18 -> Empresa Transportadora
+			$salida_one.= str_pad(null,3, " "); // 19 -> Bandera Empresa Transportadora
+			$salida_one.= str_pad(null,2, " "); // 20
+			$salida_one.= str_pad( $frm_embarque[$reporte->getCaModalidad()], 2, " " ); // 21
+			$salida_one.= str_pad("US",2, " "); // 22 -> Clave de Moneda
+			
+			$salida_one.= str_pad(null,117, " "); // Campos del 23 al 32
+			
+			$salida_one.= str_pad((($pieza_uni=="Bultos")?$pieza_vlr:null),15, " "); // 33
+			$salida_one.= str_pad((($pieza_uni=="Pallets")?$pieza_vlr:null),13, " "); // 34
+			
+			$salida_one.= str_pad(null,673, " "); // Campos del 35 al 56
+			
+			$salida_one.= "\r\n";
+
+			$salida_two.= str_pad( $cod_empresas[$contacto->getCaIdCliente()], 6, " " ); // 1
+			$salida_two.= str_pad($reporte->getCaOrdenClie(),10, " "); // 2
+			$salida_two.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 3
+			$salida_two.= str_pad(null,15, " "); // 4 -> Facturas Adicionales			
+			$fchfactProveedor = Utils::transformDate( $reporte->getProperty("fchfactproveedor") , $format="Ymd" );
+			$salida_two.= str_pad($fchfactProveedor,8, " "); // 5
+			$salida_two.= str_pad($reporte->getProperty("vlrfactproveedor"),13, " "); // 6
+			$salida_two.= "\r\n";
+			
 		}	
-		$directory=sfConfig::get('app_falabella_output');
-		$filename = $directory.DIRECTORY_SEPARATOR.'ASN'.date('ymdHis').'.txt';
+		$directory= sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
+		$filename = $directory.DIRECTORY_SEPARATOR.'notificacion.txt';
 		$handle = fopen($filename , 'w');	
 		
-		if (fwrite($handle, $salida) === FALSE) {
+		if (fwrite($handle, $salida_one) === FALSE) {
 			echo "No se puede escribir al archivo {filename}";
 			exit;
 		}else{
-			$fala_header->setCaProcesado(true);
-			$fala_header->save();
+			/*$fala_header->setCaProcesado(true);
+			$fala_header->save();*/
 		}
-    	$this->redirect("falabella/list");
+
+		$filename = $directory.DIRECTORY_SEPARATOR.'facturacion.txt';
+		$handle = fopen($filename , 'w');	
+		
+		if (fwrite($handle, $salida_two) === FALSE) {
+			echo "No se puede escribir al archivo {filename}";
+			exit;
+		}else{
+			/*$fala_header->setCaProcesado(true);
+			$fala_header->save();*/
+		}
+		return sfView::NONE;
+		
 	}
+	
+	/*
+	 * Func...
+	*/
+	public function executeNuevoMensaje(){
+	}
+	
 	
 	public function executeEnviarEmail(){
 				
 		$this->setLayout("ajax");
-		$content  = sfContext::getInstance()->getController()->getPresentationFor( 'falabella', 'shippingInstructions', 'email') ;
+		
+		$directory= sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
+		$filename1 = $directory.DIRECTORY_SEPARATOR.'notificacion.txt';
+		@unlink($filename1);
+		
+		$filename2 = $directory.DIRECTORY_SEPARATOR.'facturacion.txt';		
+		@unlink($filename2);
+		
+		$this->executeGenerarArchivo();
+		
 		
 		$user = $this->getUser();
 					
@@ -349,7 +189,7 @@ class falabellaActions extends sfActions {
 		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( $user->getUserId() );
 		$email->setCaTipo( "Fal Shipping Inst." ); 		
-		$email->setCaIdcaso( substr(-20,20,base64_decode($this->getRequestParameter('iddoc'))) );
+		$email->setCaIdcaso( '1' );
 		$email->setCaFrom( $user->getEmail() );
 		$email->setCaFromname( $user->getNombre() );
 		
@@ -359,12 +199,12 @@ class falabellaActions extends sfActions {
 
 		$email->setCaReplyto( $user->getEmail() );
 				
-		$recips = explode(",",$this->getRequestParameter("destinatario"));									
+		$recips = explode(",",$this->getRequestParameter("destinatario"));
 		if( is_array($recips) ){
-			foreach( $recips as $recip ){			
-				$recip = str_replace(" ", "", $recip );			
+			foreach( $recips as $recip ){
+				$recip = str_replace(" ", "", $recip );
 				if( $recip ){
-					$email->addTo( $recip ); 
+					$email->addTo( $recip );
 				}
 			}	
 		}
@@ -381,15 +221,17 @@ class falabellaActions extends sfActions {
 	
 		$email->addCc( $this->getUser()->getEmail() );					
 		$email->setCaSubject( $this->getRequestParameter("asunto") );		
-		$email->setCaBody( $this->getRequestParameter("mensaje")."<br />".$content );	
+		$email->setCaBody( $this->getRequestParameter("mensaje") );	
+		
+		//**
+		$email->AddAttachment( $filename1 );
+		$email->AddAttachment( $filename2 );
 		
 		$email->save(); //guarda el cuerpo del mensaje
 		$this->error = $email->send();	
 		if($this->error){
 			$this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
 		}
-		
-	
 	}
 }
 ?>
