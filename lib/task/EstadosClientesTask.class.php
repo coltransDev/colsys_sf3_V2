@@ -22,24 +22,27 @@ EOF;
   protected function execute($arguments = array(), $options = array())
   {
     $configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'dev', true);
+    
     sfContext::createInstance($configuration)->dispatch();
 
 	// Borra las dos líneas siguientes si no utilizas una base de datos
 	$databaseManager = new sfDatabaseManager($configuration);
 	$databaseManager->loadConfiguration();
-	
-	$inicio  = mktime(0, 0, 0, date("m")-3  , 1, date("Y"));
-	$final = mktime(0, 0, 0, date("m"), -1,   date("Y"));
 
-	set_time_limit(0);
-  	
-	echo "Inicio-> ".date('m-d-Y',$inicio);
-	echo "Final->".date('m-d-Y',$final);
+	// $user = sfContext::getInstance()->getUser();
 	
-	$c = new Criteria();
-	//$c->add(ClienteStd::CA_FCHESTADO, date('m-d-Y',$inicio),  )
-	
-	//$c->addDescendingOrderByColumn(self::CREATED_AT);
+	$inicio  = mktime(0, 0, 0, date("m")-3, 1, date("Y"));
+	$final = mktime(0, 0, 0, date("m"), -1, date("Y"));
+
+	$empresa =  "Coltrans";
+	sfContext::getInstance()->getRequest()->setParameter("fchStart", date('m-d-Y',$inicio));
+	sfContext::getInstance()->getRequest()->setParameter("fchEnd", date('m-d-Y',$final));
+	sfContext::getInstance()->getRequest()->setParameter("empresa", $empresa);
+	echo sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstadosEmail');	
+
+	$empresa =  "Colmas";
+	sfContext::getInstance()->getRequest()->setParameter("empresa", $empresa);
+	echo sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstadosEmail');	
 	
   }
 }
