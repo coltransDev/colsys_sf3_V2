@@ -275,8 +275,8 @@ class pricingActions extends sfActions
 					'trayecto' =>$trayectoStr,
 					'nconcepto' => utf8_encode($pricConcepto->getConcepto()->getcaConcepto()),
 					//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
-					'inicio' => $pricConcepto->getCaFchinicio("d/m/Y"),
-					'vencimiento' => $pricConcepto->getCaFchvencimiento("d/m/Y"),
+					'inicio' => $pricConcepto->getCaFchinicio("Y-m-d"),
+					'vencimiento' => $pricConcepto->getCaFchvencimiento("Y-m-d"),
 					'moneda' => $pricConcepto->getCaIdMoneda(), // consulta ? $trayecto->getCaIdMoneda()								
 					'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto(),
 					'style' => $pricConcepto->getEstilo(),
@@ -301,8 +301,8 @@ class pricingActions extends sfActions
 						'trayecto' =>$trayectoStr,
 						'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
 						//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
-						'inicio' => $pricRecargo->getCaFchinicio("d/m/Y"),
-						'vencimiento' => $pricRecargo->getCaFchvencimiento("d/m/Y"),
+						'inicio' => $pricRecargo->getCaFchinicio("Y-m-d"),
+						'vencimiento' => $pricRecargo->getCaFchvencimiento("Y-m-d"),
 						'moneda' => $pricRecargo->getCaIdMoneda(),
 								
 						'_id' => $trayecto->getCaIdtrayecto()."-".$pricConcepto->getCaIdConcepto()."-".$pricRecargo->getCaIdrecargo(),

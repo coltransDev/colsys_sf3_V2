@@ -1,14 +1,20 @@
 
 <?
-include_component( "users","grillaRutinaGrupos", array("rutina"=>$rutina) );
+//include_component( "users","grillaRutinaGrupos", array("rutina"=>$rutina) );
+include_component( "users","grillaRutinaUsuarios", array("rutina"=>$rutina) );
 ?>
+
+
+function guardarCambios(){
+	guardarGrillaRutinaGrupos();
+}
 
 new Ext.TabPanel({
     renderTo: Ext.getBody(),
     activeTab: 0,
 	title: '<?=$rutina->getCaOpcion()?>',
-    items: [grillaRutinaGrupos,{
-        title: 'Usuarios',
-        html: 'Another one'
-    }]
+    items: [
+			//grillaRutinaGrupos,
+			grillaRutinaUsuarios
+			]
 });

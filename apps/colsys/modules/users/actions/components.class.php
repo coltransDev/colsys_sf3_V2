@@ -11,7 +11,7 @@
 class usersComponents extends sfComponents
 {
 	/**
-	* Executes index action
+	* 
 	*
 	*/
 	public function executeGrillaRutinaGrupos()
@@ -22,10 +22,11 @@ class usersComponents extends sfComponents
 		$accesoGrupos = AccesoGrupoPeer::doSelect( $c );
 		$accesos =array();
 		foreach( $accesoGrupos as $accesoGrupo ){
-			$accesos[]=$accesoGrupo->getCaGrupo();
+			$accesos[$accesoGrupo->getCaGrupo()]=$accesoGrupo->getCaAcceso();
 		}
 				
-				
+		$this->accesos = RutinaPeer::getAccesos();	
+			
 		$username = sfConfig::get("app_ldap_user");
 		$passwd = sfConfig::get("app_ldap_passwd");
 		$grupos=array();
@@ -55,16 +56,97 @@ class usersComponents extends sfComponents
 		
 		for($i=0; $i<$grupos['count'] ;$i++){
 			$grupo = $grupos[$i]["cn"][0];
-			if( in_array( $grupo, $accesos ) ){
+			if( isset( $accesos[$grupo] ) ){
 				$sel = true;
+				$nivel = $accesos[$grupo];
+				$nivel_val = $this->accesos[$nivel];				
 			}else{
 				$sel = false;
-			}			
+				$nivel = "";
+				$nivel_val = "";
+			}						
+			
 						
 			$this->data[]=array('grupo'=>$grupo,
-								'sel'=>$sel);			
+								'sel'=>$sel,
+								'nivel'=>$nivel,
+								'nivel_val'=>$nivel_val
+								);			
 		}		
+		
 	}
+	
+	/**
+	* 
+	*
+	*/
+	public function executeGrillaRutinaUsuarios()
+	{	
+		
+		$c = new Criteria();
+		$c->add( AccesoGrupoPeer::CA_RUTINA, $this->rutina->getCaRutina() );
+		$accesoGrupos = AccesoGrupoPeer::doSelect( $c );
+		$accesos =array();
+		foreach( $accesoGrupos as $accesoGrupo ){
+			$accesos[$accesoGrupo->getCaGrupo()]=$accesoGrupo->getCaAcceso();
+		}
+				
+		$this->accesos = RutinaPeer::getAccesos();	
+			
+		$username = sfConfig::get("app_ldap_user");
+		$passwd = sfConfig::get("app_ldap_passwd");
+		$grupos=array();
+				
+		if( $username && $passwd ){
+			$auth_user="cn=".$username.",o=coltrans_bog";			
+			$ldap_server=sfConfig::get("app_ldap_host");
+			
+			if($connect=ldap_connect($ldap_server)){
+				
+				if(@$bind=ldap_bind($connect, $auth_user, $passwd)){
+									
+					$sr = ldap_search($connect,"o=coltrans_bog" , "(objectClass=person)" );
+ 					$usuarios = ldap_get_entries($connect, $sr);							
+				}else{					
+				 	echo "No se puede conectar al servidor";					
+				}
+				ldap_close($connect);           
+			}else{
+				echo "sin conexion";
+			}
+		}
+		
+		$this->data=array();		
+		$gruposLdap = array();
+		
+		//print_r( $usuarios );
+		for($i=0; $i<$usuarios['count'] ;$i++){
+			$usuario = $usuarios[$i]["cn"][0];
+			$nombre = $usuarios[$i]["2"]["fullname"];//["0"];
+			print_r( $nombre  );
+			//print_r( $usuarios[$i] );
+			/*if( isset( $accesos[$grupo] ) ){
+				$sel = true;
+				$nivel = $accesos[$grupo];
+				$nivel_val = $this->accesos[$nivel];				
+			}else{
+				$sel = false;
+				$nivel = "";
+				$nivel_val = "";
+			}*/						
+			
+						
+			$this->data[]=array('login'=>$usuario/*,
+								'sel'=>$sel,
+								'nivel'=>$nivel,
+								'nivel_val'=>$nivel_val*/
+								);			
+		}		
+		
+		
+		
+	}
+	
   
 }
 ?>

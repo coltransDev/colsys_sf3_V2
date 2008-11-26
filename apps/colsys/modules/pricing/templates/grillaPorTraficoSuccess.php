@@ -94,8 +94,8 @@ var record = Ext.data.Record.create([
 	{name: 'nconcepto', type: 'string'},
 	{name: 'destino', type: 'string'},
 	{name: 'trayecto', type: 'string'},			
-	{name: 'inicio', type: 'date', dateFormat:'m/d/Y'},
-	{name: 'vencimiento', type: 'date', dateFormat:'m/d/Y'},		
+	{name: 'inicio', type: 'date', dateFormat:'Y-m-d'},
+	{name: 'vencimiento', type: 'date', dateFormat:'Y-m-d'},		
 	{name: 'moneda', type: 'string'},		
 	{name: 'iditem', type: 'int'},
 	{name: 'idconcepto', type: 'int'},
@@ -235,9 +235,9 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: false,
 			groupable: false,
 			dataIndex: 'inicio',               
-			renderer: Ext.util.Format.dateRenderer('d/m/Y'),
+			renderer: Ext.util.Format.dateRenderer('Y/m/d'),
 			editor: new Ext.form.DateField({
-				format: 'd/m/Y'
+				format: 'Y/m/d'
 			})
 		},{
 			header: "Venc.",
@@ -245,9 +245,9 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: false,
 			groupable: false,
 			dataIndex: 'vencimiento',               
-			renderer: Ext.util.Format.dateRenderer('d/m/Y'),
+			renderer: Ext.util.Format.dateRenderer('Y/m/d'),
 			editor: new Ext.form.DateField({
-				format: 'd/m/Y'
+				format: 'Y/m/d'
 			})
 		} 
 								
@@ -727,7 +727,8 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	view: new Ext.grid.GroupingView({
 		forceFit:true,
 		enableRowBody:true, 
-		enableGroupingMenu: false,		
+		enableGroupingMenu: false,
+		startCollapsed : true, 		
 		getRowClass: function(  record,  index,  rowParams,  store ){			
 			//definido en myRowExpander.js
 			/*switch( record.data.style ){

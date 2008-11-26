@@ -13,7 +13,7 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 var record = Ext.data.Record.create([   			
 	{name: 'rutina', type: 'string'},
 	{name: 'sel', type: 'bool'},
-	{name: 'grupo', type: 'string'},
+	{name: 'login', type: 'string'},
 	{name: 'nivel', type: 'string'},
 	{name: 'nivel_val', type: 'string'}
 ]);
@@ -39,15 +39,15 @@ var store = new Ext.data.Store({
 /*
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
-var colModelGrupos = new Ext.grid.ColumnModel({		
+var colModelUsuarios = new Ext.grid.ColumnModel({		
 	columns: [	
 		checkColumn,			
 		{
-			header: "Grupo",
+			header: "Usuario",
 			width: 90,
 			sortable: true,	
 			hideable: false,		
-			dataIndex: 'grupo'		
+			dataIndex: 'login'		
 		}
 		,
 		{
@@ -83,7 +83,8 @@ var colModelGrupos = new Ext.grid.ColumnModel({
 																<?
 																}
 																?>
-															]										
+															]	
+											
 													 }) 
 										})	 			
 		}
@@ -99,7 +100,7 @@ var colModelGrupos = new Ext.grid.ColumnModel({
 * Guarda los cambios en la base de datos
 */
 
-function guardarGrillaRutinaGrupos(){	
+function guardarGrillaRutinaUsuarios(){	
 	var records = store.getRange();
 	
 	var lenght = records.length;
@@ -129,7 +130,7 @@ function guardarGrillaRutinaGrupos(){
 	Ext.Ajax.request( 
 			{   
 				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("users/observeRutinasGrupos")?>', 						//method: 'POST', 
+				url: '<?=url_for("users/observeRutinasUsuarios")?>', 						//method: 'POST', 
 				//Solamente se envian los cambios 						
 				params :	{grupos:grupos,
 							 rutina: '<?=$rutina->getCaRutina()?>'
@@ -175,9 +176,9 @@ var gridOnvalidateedit = function(e){
 * Crea la grilla 
 */    
 
-grillaRutinaGrupos = new Ext.grid.EditorGridPanel({
+grillaRutinaUsuarios = new Ext.grid.EditorGridPanel({
 	store: store,	
-	cm: colModelGrupos,
+	cm: colModelUsuarios,
 	sm: new  Ext.grid.CellSelectionModel(),	
 	clicksToEdit: 1,
 	stripeRows: true,	

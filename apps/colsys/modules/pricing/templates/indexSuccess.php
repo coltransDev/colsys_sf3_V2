@@ -151,7 +151,7 @@ Ext.onReady(function(){
 				id:'west-panel',
 				title:'Consultas',
 				split:true,
-				width: 290,
+				width: 200,
 				minSize: 175,
 				maxSize: 400,
 				collapsible: true,

@@ -727,7 +727,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 					
 					if( $recargo->getCaBaseunitario()=='Unidades Peso/Volumen' ){						
 						echo " OK <br />";
-						$pricrecargo->setCaAplicacion( 'x Lb ó 166 Pul³' );									
+						$pricrecargo->setCaAplicacion( 'x Kg ó 6 Dm³' );									
 						
 					}
 								
@@ -835,7 +835,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 					
 					if( $recargo->getCaBaseunitario()=='Unidades Peso/Volumen' ){						
 						echo " OK <br />";
-						$pricrecargo->setCaAplicacion( 'x Lb ó 166 Pul³' );									
+						$pricrecargo->setCaAplicacion( 'x Kg ó 6 Dm³' );									
 						
 					}
 								

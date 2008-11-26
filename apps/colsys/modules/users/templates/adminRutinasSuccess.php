@@ -111,7 +111,7 @@ var ventanaPermisos = function( record ){
 				{
 					text     : 'Guardar',
 					handler  : function( ){	
-						//win.close();
+						guardarCambios();
 					}
 				},
 				{
