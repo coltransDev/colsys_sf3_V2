@@ -284,7 +284,7 @@ class pricingActions extends sfActions
 					'iditem'=>$pricConcepto->getCaIdConcepto(),
 					'tipo'=>"concepto",					
 					'neta'=>$pricConcepto->getCaVlrneto(),
-					'aplicacion' => $pricConcepto->getCaAplicacion(),	
+					'aplicacion' => utf8_encode($pricConcepto->getCaAplicacion()),	
 					'sugerida'=>$pricConcepto->getCaVlrsugerido(),
 					'orden'=>$i++
 					
@@ -312,9 +312,9 @@ class pricingActions extends sfActions
 						'idconcepto'=>$pricConcepto->getCaIdConcepto(),
 						'tipo'=>"recargo",
 						'neta'=>$pricRecargo->getCaVlrrecargo(),
-						'aplicacion' => $pricRecargo->getCaAplicacion(),		
+						'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),		
 						'minima'=>$pricRecargo->getCaVlrminimo(),
-						'aplicacion_min' => $pricRecargo->getCaAplicacionMin(),
+						'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
 						'orden'=>$i++	
 					);									
 					$data[] = $row;						
@@ -376,9 +376,9 @@ class pricingActions extends sfActions
 					'idconcepto'=>'9999',
 					'tipo'=>"recargo",
 					'neta'=>$pricRecargo->getCaVlrrecargo(),
-					'aplicacion' => $pricRecargo->getCaAplicacion(),
+					'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),
 					'minima'=>$pricRecargo->getCaVlrminimo(),
-					'aplicacion_min' => $pricRecargo->getCaAplicacionMin(),
+					'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
 					'orden'=>$i++	
 				);									
 				$data[] = $row;						
@@ -402,9 +402,9 @@ class pricingActions extends sfActions
 					'idconcepto'=>'9999',
 					'tipo'=>"recargoxciudad",
 					'neta'=>$pricRecargo->getCaVlrrecargo(),
-					'aplicacion' => $pricRecargo->getCaAplicacion(),
+					'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),
 					'minima'=>$pricRecargo->getCaVlrminimo(),
-					'aplicacion_min' => $pricRecargo->getCaAplicacionMin(),
+					'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
 					'orden'=>$i++	
 				);									
 				$data[] = $row;						
@@ -476,7 +476,7 @@ class pricingActions extends sfActions
 			}
 			
 			if( $this->getRequestParameter("aplicacion")){
-				$flete->setCaAplicacion($this->getRequestParameter("aplicacion"));
+				$flete->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
 			}
 			
 			$flete->save();
@@ -520,11 +520,11 @@ class pricingActions extends sfActions
 			}	
 			
 			if( $this->getRequestParameter("aplicacion")!==null){
-				$pricRecargo->setCaAplicacion($this->getRequestParameter("aplicacion"));
+				$pricRecargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
 			}
 			
 			if( $this->getRequestParameter("aplicacion_min")!==null){
-				$pricRecargo->setCaAplicacionMin($this->getRequestParameter("aplicacion_min"));
+				$pricRecargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
 			}
 			
 			if( $this->getRequestParameter("observaciones")!==null){
