@@ -43,6 +43,12 @@ foreach( $results as $modalidad=>$grupos ){
 			<?
 			}
 			?>
+		,{
+			text:'Recargos locales',
+			id:'recgen_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>',		
+			leaf:true
+		}	
+			
 		]
 	}
 <?

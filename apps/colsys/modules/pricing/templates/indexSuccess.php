@@ -91,6 +91,8 @@ Ext.onReady(function(){
 			if( nodeoptions[4] ){
 				idtrafico = nodeoptions[4];
 				idcomponent+="_"+idtrafico;	
+			}else{
+					idtrafico = "";
 			}
 							
 			if( nodeoptions[5] ){
