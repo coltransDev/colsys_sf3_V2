@@ -571,6 +571,14 @@ class pricingActions extends sfActions
 				$pricRecargo->setCaIdMoneda($this->getRequestParameter("moneda"));
 			}	
 			
+			if( $this->getRequestParameter("inicio")){
+				$pricRecargo->setCaFchinicio($this->getRequestParameter("inicio"));
+			}
+				
+			if( $this->getRequestParameter("vencimiento")){
+				$pricRecargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+			}
+			
 			if( $this->getRequestParameter("aplicacion")!==null){
 				$pricRecargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
 			}
@@ -618,9 +626,11 @@ class pricingActions extends sfActions
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
+		$impoexpo = $this->getRequestParameter( "impoexpo" );
 		$this->opcion = $this->getRequestParameter( "opcion" );
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $modalidad );
+		$this->forward404Unless( $impoexpo );
 		
 		if( $idtrafico ){
 			$this->trafico = TraficoPeer::retrieveByPk($idtrafico);	
@@ -645,6 +655,7 @@ class pricingActions extends sfActions
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;
+		$this->impoexpo = $impoexpo;		
 		
 		if( $this->opcion != "consulta" ){				
 			$c = new Criteria();
@@ -666,8 +677,12 @@ class pricingActions extends sfActions
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );		
+		$impoexpo = $this->getRequestParameter( "impoexpo" );
+		
 		$this->forward404Unless( $transporte );
-		$this->forward404Unless( $modalidad );
+		$this->forward404Unless( $modalidad );			
+		$this->forward404Unless( $impoexpo );
+		
 				
 		//$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
 		$this->opcion = $this->getRequestParameter( "opcion" );
@@ -741,18 +756,21 @@ class pricingActions extends sfActions
 		$idciudad = $this->getRequestParameter("idciudad");		
 		$idrecargo = $this->getRequestParameter("idrecargo");
 		$modalidad = $this->getRequestParameter("modalidad");
+		$impoexpo = $this->getRequestParameter("impoexpo");
 		
 		$this->forward404Unless( $idtrafico );
 		$this->forward404Unless( $idciudad );
 		$this->forward404Unless( $modalidad );
+		$this->forward404Unless( $impoexpo );
 		
-		$recargo = PricRecargosxCiudadPeer::retrieveByPk($idtrafico, $idciudad, $idrecargo , $modalidad);
+		$recargo = PricRecargosxCiudadPeer::retrieveByPk($idtrafico, $idciudad, $idrecargo , $modalidad, utf8_decode($impoexpo));
 		if( !$recargo ){
 			$recargo = new PricRecargosxCiudad();
 			$recargo->setCaIdTrafico( $idtrafico );
 			$recargo->setCaIdCiudad( $idciudad );
 			$recargo->setCaIdRecargo( $idrecargo );
 			$recargo->setCaModalidad( $modalidad );
+			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
 			$recargo->setCaVlrrecargo( 0 );
 			$recargo->setCaVlrminimo( 0 );
 		}
@@ -1559,9 +1577,7 @@ class pricingActions extends sfActions
 				$this->conceptos[]=$row;
 				
 			}
-		}		
-		
-		
+		}	
 		$this->setLayout("ajax");
 	}
 	

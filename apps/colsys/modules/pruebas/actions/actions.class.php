@@ -865,11 +865,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		exit("die gratefully");
 		$c = new Criteria();
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-		$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
+		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
  
 		$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
 	
-		$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049", Criteria::NOT_EQUAL );
+		//$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
 		//$c->add( TrayectoPeer::CA_MODALIDAD, "LCL" );
 		//$c->setLimit(30);
 		$trayectos = TrayectoPeer::doSelect( $c );	

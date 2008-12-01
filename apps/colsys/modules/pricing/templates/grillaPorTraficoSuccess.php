@@ -348,7 +348,7 @@ var colModel = new Ext.grid.ColumnModel({
 		}
 		
 		if( record.data.tipo=="recargo"){			
-			if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='neta' || field=='minima' || field=='moneda'|| field=='aplicacion'|| field=='aplicacion_min')  ){					
+			if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='neta' || field=='minima' || field=='moneda'|| field=='aplicacion'|| field=='aplicacion_min'|| field=='inicio' || field=='vencimiento')  ){					
 				return false;								
 			}		
 		}

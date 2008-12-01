@@ -58,7 +58,7 @@ class PDF extends FPDF {
 			if (strlen(trim($this->sucursal)) == 0) {
 			   $this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'Dir. Bogotá D.C..jpg', 160, 270, 40, 18, 'JPG');
 			}else{
-			   $this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'Dir. '.$this->sucursal.'.jpg', 160, 270, 40, 18, 'JPG');
+			   /*$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'Dir. '.$this->sucursal.'.jpg', 160, 270, 40, 18, 'JPG');*/
 			}
 		}
     }

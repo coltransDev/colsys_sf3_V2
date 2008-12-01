@@ -1514,7 +1514,7 @@ class cotizacionesActions extends sfActions
 	/*
 	* Datos de los conceptos según sea el medio de transporte y la modalidad
 	*/
-	/*public function executeDatosConceptos(){
+	public function executeDatosConceptos(){
 		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
 		$modalidad_parameter = utf8_decode($this->getRequestParameter("modalidad"));
 		
@@ -1537,7 +1537,7 @@ class cotizacionesActions extends sfActions
 		}
 
 		$this->setLayout("ajax");
-	}*/
+	}
 	
 	
 	

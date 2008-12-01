@@ -107,6 +107,7 @@ var record = Ext.data.Record.create([
 	{name: 'id', type: 'int'},
 	{name: 'idtrafico', type: 'string'},	
 	{name: 'idciudad', type: 'string'},	
+	{name: 'impoexpo', type: 'string'},	
 	{name: 'ciudad', type: 'string'},
 	{name: 'idrecargo', type: 'string'},
 	{name: 'recargo', type: 'string'},
@@ -122,7 +123,7 @@ var record = Ext.data.Record.create([
 * Crea el store
 */
 <?
-$url = "pricing/recargosGeneralesData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
+$url = "pricing/recargosGeneralesData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico."&impoexpo=".$impoexpo;
 if( $opcion=="consulta" ){
 	$url.= "&opcion=consulta";
 }	
@@ -511,7 +512,7 @@ function updateModel(){
 		Ext.Ajax.request( 
 			{   
 				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("pricing/observeRecargosGenerales?idtrafico=".$idtrafico."&modalidad=".$modalidad)?>', 						
+				url: '<?=url_for("pricing/observeRecargosGenerales?idtrafico=".$idtrafico."&modalidad=".$modalidad."&impoexpo=".$impoexpo)?>', 						
 				//Solamente se envian los cambios 						
 				params :	changes,
 										
