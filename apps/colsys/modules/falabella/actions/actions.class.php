@@ -63,7 +63,7 @@ class bavariaActions extends sfActions {
 		
 		$c->add( ClientePeer::CA_IDGRUPO , $idBavaria );
 		$c->add( ReportePeer::CA_CONSECUTIVO, BavariaNotifyPeer::CA_CONSECUTIVO, Criteria::NOT_EQUAL );
-		$c->add( ReportePeer::CA_FCHREPORTE, '2008-08-01', Criteria::GREATER_THAN );
+		$c->add( ReportePeer::CA_FCHREPORTE, '2008-10-01', Criteria::GREATER_THAN );
 
 		$c->addAscendingOrderByColumn( ReportePeer::CA_CONSECUTIVO );
 
@@ -74,14 +74,14 @@ class bavariaActions extends sfActions {
 		
 		set_time_limit(0);
 		foreach( $reportes as $reporte ){
-			if( !$reporte->esUltimaVersion() ){
+			if( !$reporte->esUltimaVersion() or !$reporte->getCaIncoterms() ){
 				continue;				
-			}	
+			}
 			$contacto = $reporte->getContacto ();
 	
 			$salida_one.= str_pad( $cod_empresas[$contacto->getCaIdCliente()], 6, " " ); // 1
-			$salida_one.= str_pad($reporte->getCaOrdenClie(),10, " "); // 2
-			$salida_one.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 3
+			$salida_one.= str_pad(substr($reporte->getCaOrdenClie(),0,10),10, " "); // 2
+			$salida_one.= str_pad(substr($reporte->getProperty("numfactproveedor"),0,15),15, " "); // 3
 			$salida_one.= str_pad(null,10, " "); // 4
 			
 			$fchfactProveedor = Utils::transformDate( $reporte->getProperty("fchfactproveedor") , $format="Ymd" );
@@ -126,8 +126,8 @@ class bavariaActions extends sfActions {
 			$salida_one.= "\r\n";
 
 			$salida_two.= str_pad( $cod_empresas[$contacto->getCaIdCliente()], 6, " " ); // 1
-			$salida_two.= str_pad($reporte->getCaOrdenClie(),10, " "); // 2
-			$salida_two.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 3
+			$salida_two.= str_pad(substr($reporte->getCaOrdenClie(),0,10),10, " "); // 2
+			$salida_two.= str_pad(substr($reporte->getProperty("numfactproveedor"),0,15),15, " "); // 3
 			$salida_two.= str_pad(null,15, " "); // 4 -> Facturas Adicionales			
 			$fchfactProveedor = Utils::transformDate( $reporte->getProperty("fchfactproveedor") , $format="Ymd" );
 			$salida_two.= str_pad($fchfactProveedor,8, " "); // 5
