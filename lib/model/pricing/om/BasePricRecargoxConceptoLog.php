@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Base class that represents a row from the 'tb_pricrecargosxconcepto' table.
+ * Base class that represents a row from the 'bs_pricrecargosxconcepto' table.
  *
  * 
  *
  * @package    lib.model.pricing.om
  */
-abstract class BasePricRecargoxConcepto extends BaseObject  implements Persistent {
+abstract class BasePricRecargoxConceptoLog extends BaseObject  implements Persistent {
 
 
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
 	 * that calling code may not be able to identify.
-	 * @var        PricRecargoxConceptoPeer
+	 * @var        PricRecargoxConceptoLogPeer
 	 */
 	protected static $peer;
 
@@ -371,7 +371,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_idtrayecto !== $v) {
 			$this->ca_idtrayecto = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_IDTRAYECTO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_IDTRAYECTO;
 		}
 
 		if ($this->aPricFlete !== null && $this->aPricFlete->getCaIdtrayecto() !== $v) {
@@ -397,7 +397,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_idconcepto !== $v) {
 			$this->ca_idconcepto = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_IDCONCEPTO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_IDCONCEPTO;
 		}
 
 		if ($this->aPricFlete !== null && $this->aPricFlete->getCaIdconcepto() !== $v) {
@@ -423,7 +423,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_idrecargo !== $v) {
 			$this->ca_idrecargo = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_IDRECARGO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_IDRECARGO;
 		}
 
 		if ($this->aTipoRecargo !== null && $this->aTipoRecargo->getCaIdrecargo() !== $v) {
@@ -443,7 +443,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_vlrrecargo !== $v) {
 			$this->ca_vlrrecargo = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_VLRRECARGO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_VLRRECARGO;
 		}
 
 	} // setCaVlrrecargo()
@@ -465,7 +465,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_aplicacion !== $v) {
 			$this->ca_aplicacion = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_APLICACION;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_APLICACION;
 		}
 
 	} // setCaAplicacion()
@@ -481,7 +481,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_vlrminimo !== $v) {
 			$this->ca_vlrminimo = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_VLRMINIMO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_VLRMINIMO;
 		}
 
 	} // setCaVlrminimo()
@@ -503,7 +503,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_aplicacion_min !== $v) {
 			$this->ca_aplicacion_min = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_APLICACION_MIN;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_APLICACION_MIN;
 		}
 
 	} // setCaAplicacionMin()
@@ -525,7 +525,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_observaciones !== $v) {
 			$this->ca_observaciones = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_OBSERVACIONES;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_OBSERVACIONES;
 		}
 
 	} // setCaObservaciones()
@@ -547,7 +547,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_idmoneda !== $v) {
 			$this->ca_idmoneda = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_IDMONEDA;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_IDMONEDA;
 		}
 
 	} // setCaIdmoneda()
@@ -571,7 +571,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		}
 		if ($this->ca_fchinicio !== $ts) {
 			$this->ca_fchinicio = $ts;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_FCHINICIO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_FCHINICIO;
 		}
 
 	} // setCaFchinicio()
@@ -595,7 +595,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		}
 		if ($this->ca_fchvencimiento !== $ts) {
 			$this->ca_fchvencimiento = $ts;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_FCHVENCIMIENTO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_FCHVENCIMIENTO;
 		}
 
 	} // setCaFchvencimiento()
@@ -619,7 +619,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		}
 		if ($this->ca_fchcreado !== $ts) {
 			$this->ca_fchcreado = $ts;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_FCHCREADO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_FCHCREADO;
 		}
 
 	} // setCaFchcreado()
@@ -641,7 +641,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_usucreado !== $v) {
 			$this->ca_usucreado = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_USUCREADO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_USUCREADO;
 		}
 
 	} // setCaUsucreado()
@@ -663,7 +663,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		if ($this->ca_consecutivo !== $v) {
 			$this->ca_consecutivo = $v;
-			$this->modifiedColumns[] = PricRecargoxConceptoPeer::CA_CONSECUTIVO;
+			$this->modifiedColumns[] = PricRecargoxConceptoLogPeer::CA_CONSECUTIVO;
 		}
 
 	} // setCaConsecutivo()
@@ -718,10 +718,10 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 14; // 14 = PricRecargoxConceptoPeer::NUM_COLUMNS - PricRecargoxConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 14; // 14 = PricRecargoxConceptoLogPeer::NUM_COLUMNS - PricRecargoxConceptoLogPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
-			throw new PropelException("Error populating PricRecargoxConcepto object", $e);
+			throw new PropelException("Error populating PricRecargoxConceptoLog object", $e);
 		}
 	}
 
@@ -741,12 +741,12 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(PricRecargoxConceptoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargoxConceptoLogPeer::DATABASE_NAME);
 		}
 
 		try {
 			$con->begin();
-			PricRecargoxConceptoPeer::doDelete($this, $con);
+			PricRecargoxConceptoLogPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
@@ -772,7 +772,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(PricRecargoxConceptoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargoxConceptoLogPeer::DATABASE_NAME);
 		}
 
 		try {
@@ -827,14 +827,14 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$pk = PricRecargoxConceptoPeer::doInsert($this, $con);
+					$pk = PricRecargoxConceptoLogPeer::doInsert($this, $con);
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
 
 					$this->setNew(false);
 				} else {
-					$affectedRows += PricRecargoxConceptoPeer::doUpdate($this, $con);
+					$affectedRows += PricRecargoxConceptoLogPeer::doUpdate($this, $con);
 				}
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
@@ -922,7 +922,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 			}
 
 
-			if (($retval = PricRecargoxConceptoPeer::doValidate($this, $columns)) !== true) {
+			if (($retval = PricRecargoxConceptoLogPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
@@ -945,7 +945,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = PricRecargoxConceptoPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = PricRecargoxConceptoLogPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		return $this->getByPosition($pos);
 	}
 
@@ -1019,7 +1019,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 */
 	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
 	{
-		$keys = PricRecargoxConceptoPeer::getFieldNames($keyType);
+		$keys = PricRecargoxConceptoLogPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getCaIdtrayecto(),
 			$keys[1] => $this->getCaIdconcepto(),
@@ -1051,7 +1051,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = PricRecargoxConceptoPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = PricRecargoxConceptoLogPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		return $this->setByPosition($pos, $value);
 	}
 
@@ -1129,7 +1129,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 */
 	public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
 	{
-		$keys = PricRecargoxConceptoPeer::getFieldNames($keyType);
+		$keys = PricRecargoxConceptoLogPeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdtrayecto($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdconcepto($arr[$keys[1]]);
@@ -1154,22 +1154,22 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 */
 	public function buildCriteria()
 	{
-		$criteria = new Criteria(PricRecargoxConceptoPeer::DATABASE_NAME);
+		$criteria = new Criteria(PricRecargoxConceptoLogPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDTRAYECTO)) $criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->ca_idtrayecto);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDCONCEPTO)) $criteria->add(PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRRECARGO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRRECARGO, $this->ca_vlrrecargo);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_APLICACION)) $criteria->add(PricRecargoxConceptoPeer::CA_APLICACION, $this->ca_aplicacion);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_VLRMINIMO)) $criteria->add(PricRecargoxConceptoPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_APLICACION_MIN)) $criteria->add(PricRecargoxConceptoPeer::CA_APLICACION_MIN, $this->ca_aplicacion_min);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_OBSERVACIONES)) $criteria->add(PricRecargoxConceptoPeer::CA_OBSERVACIONES, $this->ca_observaciones);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_IDMONEDA)) $criteria->add(PricRecargoxConceptoPeer::CA_IDMONEDA, $this->ca_idmoneda);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_FCHINICIO)) $criteria->add(PricRecargoxConceptoPeer::CA_FCHINICIO, $this->ca_fchinicio);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_FCHVENCIMIENTO)) $criteria->add(PricRecargoxConceptoPeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_FCHCREADO)) $criteria->add(PricRecargoxConceptoPeer::CA_FCHCREADO, $this->ca_fchcreado);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_USUCREADO)) $criteria->add(PricRecargoxConceptoPeer::CA_USUCREADO, $this->ca_usucreado);
-		if ($this->isColumnModified(PricRecargoxConceptoPeer::CA_CONSECUTIVO)) $criteria->add(PricRecargoxConceptoPeer::CA_CONSECUTIVO, $this->ca_consecutivo);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_IDTRAYECTO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_IDTRAYECTO, $this->ca_idtrayecto);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_IDCONCEPTO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_IDRECARGO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_VLRRECARGO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_VLRRECARGO, $this->ca_vlrrecargo);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_APLICACION)) $criteria->add(PricRecargoxConceptoLogPeer::CA_APLICACION, $this->ca_aplicacion);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_VLRMINIMO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_VLRMINIMO, $this->ca_vlrminimo);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_APLICACION_MIN)) $criteria->add(PricRecargoxConceptoLogPeer::CA_APLICACION_MIN, $this->ca_aplicacion_min);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_OBSERVACIONES)) $criteria->add(PricRecargoxConceptoLogPeer::CA_OBSERVACIONES, $this->ca_observaciones);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_IDMONEDA)) $criteria->add(PricRecargoxConceptoLogPeer::CA_IDMONEDA, $this->ca_idmoneda);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_FCHINICIO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_FCHINICIO, $this->ca_fchinicio);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_FCHVENCIMIENTO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_FCHCREADO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_USUCREADO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(PricRecargoxConceptoLogPeer::CA_CONSECUTIVO)) $criteria->add(PricRecargoxConceptoLogPeer::CA_CONSECUTIVO, $this->ca_consecutivo);
 
 		return $criteria;
 	}
@@ -1184,48 +1184,31 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 */
 	public function buildPkeyCriteria()
 	{
-		$criteria = new Criteria(PricRecargoxConceptoPeer::DATABASE_NAME);
+		$criteria = new Criteria(PricRecargoxConceptoLogPeer::DATABASE_NAME);
 
-		$criteria->add(PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->ca_idtrayecto);
-		$criteria->add(PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-		$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
+		$criteria->add(PricRecargoxConceptoLogPeer::CA_CONSECUTIVO, $this->ca_consecutivo);
 
 		return $criteria;
 	}
 
 	/**
-	 * Returns the composite primary key for this object.
-	 * The array elements will be in same order as specified in XML.
-	 * @return     array
+	 * Returns the primary key for this object (row).
+	 * @return     int
 	 */
 	public function getPrimaryKey()
 	{
-		$pks = array();
-
-		$pks[0] = $this->getCaIdtrayecto();
-
-		$pks[1] = $this->getCaIdconcepto();
-
-		$pks[2] = $this->getCaIdrecargo();
-
-		return $pks;
+		return $this->getCaConsecutivo();
 	}
 
 	/**
-	 * Set the [composite] primary key.
+	 * Generic method to set the primary key (ca_consecutivo column).
 	 *
-	 * @param      array $keys The elements of the composite key (order must match the order in XML file).
+	 * @param      int $key Primary key.
 	 * @return     void
 	 */
-	public function setPrimaryKey($keys)
+	public function setPrimaryKey($key)
 	{
-
-		$this->setCaIdtrayecto($keys[0]);
-
-		$this->setCaIdconcepto($keys[1]);
-
-		$this->setCaIdrecargo($keys[2]);
-
+		$this->setCaConsecutivo($key);
 	}
 
 	/**
@@ -1234,12 +1217,18 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 * If desired, this method can also make copies of all associated (fkey referrers)
 	 * objects.
 	 *
-	 * @param      object $copyObj An object of PricRecargoxConcepto (or compatible) type.
+	 * @param      object $copyObj An object of PricRecargoxConceptoLog (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
 	 * @throws     PropelException
 	 */
 	public function copyInto($copyObj, $deepCopy = false)
 	{
+
+		$copyObj->setCaIdtrayecto($this->ca_idtrayecto);
+
+		$copyObj->setCaIdconcepto($this->ca_idconcepto);
+
+		$copyObj->setCaIdrecargo($this->ca_idrecargo);
 
 		$copyObj->setCaVlrrecargo($this->ca_vlrrecargo);
 
@@ -1261,16 +1250,10 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 
 		$copyObj->setCaUsucreado($this->ca_usucreado);
 
-		$copyObj->setCaConsecutivo($this->ca_consecutivo);
-
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdtrayecto(NULL); // this is a pkey column, so set to default value
-
-		$copyObj->setCaIdconcepto(NULL); // this is a pkey column, so set to default value
-
-		$copyObj->setCaIdrecargo(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaConsecutivo(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -1283,7 +1266,7 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 * objects.
 	 *
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @return     PricRecargoxConcepto Clone of current object.
+	 * @return     PricRecargoxConceptoLog Clone of current object.
 	 * @throws     PropelException
 	 */
 	public function copy($deepCopy = false)
@@ -1302,12 +1285,12 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 	 * same instance for all member of this class. The method could therefore
 	 * be static, but this would prevent one from overriding the behavior.
 	 *
-	 * @return     PricRecargoxConceptoPeer
+	 * @return     PricRecargoxConceptoLogPeer
 	 */
 	public function getPeer()
 	{
 		if (self::$peer === null) {
-			self::$peer = new PricRecargoxConceptoPeer();
+			self::$peer = new PricRecargoxConceptoLogPeer();
 		}
 		return self::$peer;
 	}
@@ -1415,4 +1398,4 @@ abstract class BasePricRecargoxConcepto extends BaseObject  implements Persisten
 		return $this->aTipoRecargo;
 	}
 
-} // BasePricRecargoxConcepto
+} // BasePricRecargoxConceptoLog

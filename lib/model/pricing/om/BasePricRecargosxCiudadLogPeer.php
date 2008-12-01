@@ -1,68 +1,77 @@
 <?php
 
 /**
- * Base static class for performing query and update operations on the 'tb_contactos' table.
+ * Base static class for performing query and update operations on the 'bs_pricrecargosxciudad' table.
  *
  * 
  *
- * @package    lib.model.public.om
+ * @package    lib.model.pricing.om
  */
-abstract class BaseContactoAgentePeer {
+abstract class BasePricRecargosxCiudadLogPeer {
 
 	/** the default database name for this class */
 	const DATABASE_NAME = 'propel';
 
 	/** the table name for this class */
-	const TABLE_NAME = 'tb_contactos';
+	const TABLE_NAME = 'bs_pricrecargosxciudad';
 
 	/** A class that can be returned by this peer. */
-	const CLASS_DEFAULT = 'lib.model.public.ContactoAgente';
+	const CLASS_DEFAULT = 'lib.model.pricing.PricRecargosxCiudadLog';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 13;
+	const NUM_COLUMNS = 16;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-	/** the column name for the CA_IDCONTACTO field */
-	const CA_IDCONTACTO = 'tb_contactos.CA_IDCONTACTO';
-
-	/** the column name for the CA_IDAGENTE field */
-	const CA_IDAGENTE = 'tb_contactos.CA_IDAGENTE';
-
-	/** the column name for the CA_NOMBRE field */
-	const CA_NOMBRE = 'tb_contactos.CA_NOMBRE';
-
-	/** the column name for the CA_DIRECCION field */
-	const CA_DIRECCION = 'tb_contactos.CA_DIRECCION';
-
-	/** the column name for the CA_TELEFONOS field */
-	const CA_TELEFONOS = 'tb_contactos.CA_TELEFONOS';
-
-	/** the column name for the CA_FAX field */
-	const CA_FAX = 'tb_contactos.CA_FAX';
+	/** the column name for the CA_IDTRAFICO field */
+	const CA_IDTRAFICO = 'bs_pricrecargosxciudad.CA_IDTRAFICO';
 
 	/** the column name for the CA_IDCIUDAD field */
-	const CA_IDCIUDAD = 'tb_contactos.CA_IDCIUDAD';
+	const CA_IDCIUDAD = 'bs_pricrecargosxciudad.CA_IDCIUDAD';
 
-	/** the column name for the CA_EMAIL field */
-	const CA_EMAIL = 'tb_contactos.CA_EMAIL';
+	/** the column name for the CA_IDRECARGO field */
+	const CA_IDRECARGO = 'bs_pricrecargosxciudad.CA_IDRECARGO';
+
+	/** the column name for the CA_MODALIDAD field */
+	const CA_MODALIDAD = 'bs_pricrecargosxciudad.CA_MODALIDAD';
 
 	/** the column name for the CA_IMPOEXPO field */
-	const CA_IMPOEXPO = 'tb_contactos.CA_IMPOEXPO';
+	const CA_IMPOEXPO = 'bs_pricrecargosxciudad.CA_IMPOEXPO';
 
-	/** the column name for the CA_TRANSPORTE field */
-	const CA_TRANSPORTE = 'tb_contactos.CA_TRANSPORTE';
+	/** the column name for the CA_VLRRECARGO field */
+	const CA_VLRRECARGO = 'bs_pricrecargosxciudad.CA_VLRRECARGO';
 
-	/** the column name for the CA_CARGO field */
-	const CA_CARGO = 'tb_contactos.CA_CARGO';
+	/** the column name for the CA_APLICACION field */
+	const CA_APLICACION = 'bs_pricrecargosxciudad.CA_APLICACION';
 
-	/** the column name for the CA_DETALLE field */
-	const CA_DETALLE = 'tb_contactos.CA_DETALLE';
+	/** the column name for the CA_VLRMINIMO field */
+	const CA_VLRMINIMO = 'bs_pricrecargosxciudad.CA_VLRMINIMO';
 
-	/** the column name for the CA_SUGERIDO field */
-	const CA_SUGERIDO = 'tb_contactos.CA_SUGERIDO';
+	/** the column name for the CA_APLICACION_MIN field */
+	const CA_APLICACION_MIN = 'bs_pricrecargosxciudad.CA_APLICACION_MIN';
+
+	/** the column name for the CA_OBSERVACIONES field */
+	const CA_OBSERVACIONES = 'bs_pricrecargosxciudad.CA_OBSERVACIONES';
+
+	/** the column name for the CA_FCHINICIO field */
+	const CA_FCHINICIO = 'bs_pricrecargosxciudad.CA_FCHINICIO';
+
+	/** the column name for the CA_FCHVENCIMIENTO field */
+	const CA_FCHVENCIMIENTO = 'bs_pricrecargosxciudad.CA_FCHVENCIMIENTO';
+
+	/** the column name for the CA_FCHCREADO field */
+	const CA_FCHCREADO = 'bs_pricrecargosxciudad.CA_FCHCREADO';
+
+	/** the column name for the CA_USUCREADO field */
+	const CA_USUCREADO = 'bs_pricrecargosxciudad.CA_USUCREADO';
+
+	/** the column name for the CA_IDMONEDA field */
+	const CA_IDMONEDA = 'bs_pricrecargosxciudad.CA_IDMONEDA';
+
+	/** the column name for the CA_CONSECUTIVO field */
+	const CA_CONSECUTIVO = 'bs_pricrecargosxciudad.CA_CONSECUTIVO';
 
 	/** The PHP to DB Name Mapping */
 	private static $phpNameMap = null;
@@ -75,10 +84,10 @@ abstract class BaseContactoAgentePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcontacto', 'CaIdagente', 'CaNombre', 'CaDireccion', 'CaTelefonos', 'CaFax', 'CaIdciudad', 'CaEmail', 'CaImpoexpo', 'CaTransporte', 'CaCargo', 'CaDetalle', 'CaSugerido', ),
-		BasePeer::TYPE_COLNAME => array (ContactoAgentePeer::CA_IDCONTACTO, ContactoAgentePeer::CA_IDAGENTE, ContactoAgentePeer::CA_NOMBRE, ContactoAgentePeer::CA_DIRECCION, ContactoAgentePeer::CA_TELEFONOS, ContactoAgentePeer::CA_FAX, ContactoAgentePeer::CA_IDCIUDAD, ContactoAgentePeer::CA_EMAIL, ContactoAgentePeer::CA_IMPOEXPO, ContactoAgentePeer::CA_TRANSPORTE, ContactoAgentePeer::CA_CARGO, ContactoAgentePeer::CA_DETALLE, ContactoAgentePeer::CA_SUGERIDO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcontacto', 'ca_idagente', 'ca_nombre', 'ca_direccion', 'ca_telefonos', 'ca_fax', 'ca_idciudad', 'ca_email', 'ca_impoexpo', 'ca_transporte', 'ca_cargo', 'ca_detalle', 'ca_sugerido', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaIdciudad', 'CaIdrecargo', 'CaModalidad', 'CaImpoexpo', 'CaVlrrecargo', 'CaAplicacion', 'CaVlrminimo', 'CaAplicacionMin', 'CaObservaciones', 'CaFchinicio', 'CaFchvencimiento', 'CaFchcreado', 'CaUsucreado', 'CaIdmoneda', 'CaConsecutivo', ),
+		BasePeer::TYPE_COLNAME => array (PricRecargosxCiudadLogPeer::CA_IDTRAFICO, PricRecargosxCiudadLogPeer::CA_IDCIUDAD, PricRecargosxCiudadLogPeer::CA_IDRECARGO, PricRecargosxCiudadLogPeer::CA_MODALIDAD, PricRecargosxCiudadLogPeer::CA_IMPOEXPO, PricRecargosxCiudadLogPeer::CA_VLRRECARGO, PricRecargosxCiudadLogPeer::CA_APLICACION, PricRecargosxCiudadLogPeer::CA_VLRMINIMO, PricRecargosxCiudadLogPeer::CA_APLICACION_MIN, PricRecargosxCiudadLogPeer::CA_OBSERVACIONES, PricRecargosxCiudadLogPeer::CA_FCHINICIO, PricRecargosxCiudadLogPeer::CA_FCHVENCIMIENTO, PricRecargosxCiudadLogPeer::CA_FCHCREADO, PricRecargosxCiudadLogPeer::CA_USUCREADO, PricRecargosxCiudadLogPeer::CA_IDMONEDA, PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_idciudad', 'ca_idrecargo', 'ca_modalidad', 'ca_impoexpo', 'ca_vlrrecargo', 'ca_aplicacion', 'ca_vlrminimo', 'ca_aplicacion_min', 'ca_observaciones', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_fchcreado', 'ca_usucreado', 'ca_idmoneda', 'ca_consecutivo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
 
 	/**
@@ -88,10 +97,10 @@ abstract class BaseContactoAgentePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcontacto' => 0, 'CaIdagente' => 1, 'CaNombre' => 2, 'CaDireccion' => 3, 'CaTelefonos' => 4, 'CaFax' => 5, 'CaIdciudad' => 6, 'CaEmail' => 7, 'CaImpoexpo' => 8, 'CaTransporte' => 9, 'CaCargo' => 10, 'CaDetalle' => 11, 'CaSugerido' => 12, ),
-		BasePeer::TYPE_COLNAME => array (ContactoAgentePeer::CA_IDCONTACTO => 0, ContactoAgentePeer::CA_IDAGENTE => 1, ContactoAgentePeer::CA_NOMBRE => 2, ContactoAgentePeer::CA_DIRECCION => 3, ContactoAgentePeer::CA_TELEFONOS => 4, ContactoAgentePeer::CA_FAX => 5, ContactoAgentePeer::CA_IDCIUDAD => 6, ContactoAgentePeer::CA_EMAIL => 7, ContactoAgentePeer::CA_IMPOEXPO => 8, ContactoAgentePeer::CA_TRANSPORTE => 9, ContactoAgentePeer::CA_CARGO => 10, ContactoAgentePeer::CA_DETALLE => 11, ContactoAgentePeer::CA_SUGERIDO => 12, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcontacto' => 0, 'ca_idagente' => 1, 'ca_nombre' => 2, 'ca_direccion' => 3, 'ca_telefonos' => 4, 'ca_fax' => 5, 'ca_idciudad' => 6, 'ca_email' => 7, 'ca_impoexpo' => 8, 'ca_transporte' => 9, 'ca_cargo' => 10, 'ca_detalle' => 11, 'ca_sugerido' => 12, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaIdciudad' => 1, 'CaIdrecargo' => 2, 'CaModalidad' => 3, 'CaImpoexpo' => 4, 'CaVlrrecargo' => 5, 'CaAplicacion' => 6, 'CaVlrminimo' => 7, 'CaAplicacionMin' => 8, 'CaObservaciones' => 9, 'CaFchinicio' => 10, 'CaFchvencimiento' => 11, 'CaFchcreado' => 12, 'CaUsucreado' => 13, 'CaIdmoneda' => 14, 'CaConsecutivo' => 15, ),
+		BasePeer::TYPE_COLNAME => array (PricRecargosxCiudadLogPeer::CA_IDTRAFICO => 0, PricRecargosxCiudadLogPeer::CA_IDCIUDAD => 1, PricRecargosxCiudadLogPeer::CA_IDRECARGO => 2, PricRecargosxCiudadLogPeer::CA_MODALIDAD => 3, PricRecargosxCiudadLogPeer::CA_IMPOEXPO => 4, PricRecargosxCiudadLogPeer::CA_VLRRECARGO => 5, PricRecargosxCiudadLogPeer::CA_APLICACION => 6, PricRecargosxCiudadLogPeer::CA_VLRMINIMO => 7, PricRecargosxCiudadLogPeer::CA_APLICACION_MIN => 8, PricRecargosxCiudadLogPeer::CA_OBSERVACIONES => 9, PricRecargosxCiudadLogPeer::CA_FCHINICIO => 10, PricRecargosxCiudadLogPeer::CA_FCHVENCIMIENTO => 11, PricRecargosxCiudadLogPeer::CA_FCHCREADO => 12, PricRecargosxCiudadLogPeer::CA_USUCREADO => 13, PricRecargosxCiudadLogPeer::CA_IDMONEDA => 14, PricRecargosxCiudadLogPeer::CA_CONSECUTIVO => 15, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_idciudad' => 1, 'ca_idrecargo' => 2, 'ca_modalidad' => 3, 'ca_impoexpo' => 4, 'ca_vlrrecargo' => 5, 'ca_aplicacion' => 6, 'ca_vlrminimo' => 7, 'ca_aplicacion_min' => 8, 'ca_observaciones' => 9, 'ca_fchinicio' => 10, 'ca_fchvencimiento' => 11, 'ca_fchcreado' => 12, 'ca_usucreado' => 13, 'ca_idmoneda' => 14, 'ca_consecutivo' => 15, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
 
 	/**
@@ -101,7 +110,7 @@ abstract class BaseContactoAgentePeer {
 	 */
 	public static function getMapBuilder()
 	{
-		return BasePeer::getMapBuilder('lib.model.public.map.ContactoAgenteMapBuilder');
+		return BasePeer::getMapBuilder('lib.model.pricing.map.PricRecargosxCiudadLogMapBuilder');
 	}
 	/**
 	 * Gets a map (hash) of PHP names to DB column names.
@@ -114,7 +123,7 @@ abstract class BaseContactoAgentePeer {
 	public static function getPhpNameMap()
 	{
 		if (self::$phpNameMap === null) {
-			$map = ContactoAgentePeer::getTableMap();
+			$map = PricRecargosxCiudadLogPeer::getTableMap();
 			$columns = $map->getColumns();
 			$nameMap = array();
 			foreach ($columns as $column) {
@@ -169,12 +178,12 @@ abstract class BaseContactoAgentePeer {
 	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
 	 * </code>
 	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. ContactoAgentePeer::COLUMN_NAME).
+	 * @param      string $column The column name for current table. (i.e. PricRecargosxCiudadLogPeer::COLUMN_NAME).
 	 * @return     string
 	 */
 	public static function alias($alias, $column)
 	{
-		return str_replace(ContactoAgentePeer::TABLE_NAME.'.', $alias.'.', $column);
+		return str_replace(PricRecargosxCiudadLogPeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
 	/**
@@ -191,36 +200,42 @@ abstract class BaseContactoAgentePeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_IDCONTACTO);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_IDTRAFICO);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_IDAGENTE);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_IDCIUDAD);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_NOMBRE);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_IDRECARGO);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_DIRECCION);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_MODALIDAD);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_TELEFONOS);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_IMPOEXPO);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_FAX);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_VLRRECARGO);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_IDCIUDAD);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_APLICACION);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_EMAIL);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_VLRMINIMO);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_IMPOEXPO);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_APLICACION_MIN);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_TRANSPORTE);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_OBSERVACIONES);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_CARGO);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_FCHINICIO);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_DETALLE);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_FCHVENCIMIENTO);
 
-		$criteria->addSelectColumn(ContactoAgentePeer::CA_SUGERIDO);
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_FCHCREADO);
+
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_USUCREADO);
+
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_IDMONEDA);
+
+		$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO);
 
 	}
 
-	const COUNT = 'COUNT(tb_contactos.CA_IDCONTACTO)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_contactos.CA_IDCONTACTO)';
+	const COUNT = 'COUNT(bs_pricrecargosxciudad.CA_CONSECUTIVO)';
+	const COUNT_DISTINCT = 'COUNT(DISTINCT bs_pricrecargosxciudad.CA_CONSECUTIVO)';
 
 	/**
 	 * Returns the number of rows matching criteria.
@@ -238,9 +253,9 @@ abstract class BaseContactoAgentePeer {
 		// clear out anything that might confuse the ORDER BY clause
 		$criteria->clearSelectColumns()->clearOrderByColumns();
 		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT_DISTINCT);
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
 		} else {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT);
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
 		}
 
 		// just in case we're grouping: add those columns to the select statement
@@ -249,7 +264,7 @@ abstract class BaseContactoAgentePeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$rs = ContactoAgentePeer::doSelectRS($criteria, $con);
+		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
 			return $rs->getInt(1);
 		} else {
@@ -262,7 +277,7 @@ abstract class BaseContactoAgentePeer {
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      Connection $con
-	 * @return     ContactoAgente
+	 * @return     PricRecargosxCiudadLog
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -270,7 +285,7 @@ abstract class BaseContactoAgentePeer {
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
-		$objects = ContactoAgentePeer::doSelect($critcopy, $con);
+		$objects = PricRecargosxCiudadLogPeer::doSelect($critcopy, $con);
 		if ($objects) {
 			return $objects[0];
 		}
@@ -287,7 +302,7 @@ abstract class BaseContactoAgentePeer {
 	 */
 	public static function doSelect(Criteria $criteria, $con = null)
 	{
-		return ContactoAgentePeer::populateObjects(ContactoAgentePeer::doSelectRS($criteria, $con));
+		return PricRecargosxCiudadLogPeer::populateObjects(PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con));
 	}
 	/**
 	 * Prepares the Criteria object and uses the parent doSelect()
@@ -311,7 +326,7 @@ abstract class BaseContactoAgentePeer {
 
 		if (!$criteria->getSelectColumns()) {
 			$criteria = clone $criteria;
-			ContactoAgentePeer::addSelectColumns($criteria);
+			PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
 		}
 
 		// Set the correct dbName
@@ -333,7 +348,7 @@ abstract class BaseContactoAgentePeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = ContactoAgentePeer::getOMClass();
+		$cls = PricRecargosxCiudadLogPeer::getOMClass();
 		$cls = Propel::import($cls);
 		// populate the object(s)
 		while($rs->next()) {
@@ -345,45 +360,6 @@ abstract class BaseContactoAgentePeer {
 		}
 		return $results;
 	}
-
-	/**
-	 * Returns the number of rows matching criteria, joining the related Agente table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinAgente(Criteria $criteria, $distinct = false, $con = null)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT);
-		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE);
-
-		$rs = ContactoAgentePeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
-	}
-
 
 	/**
 	 * Returns the number of rows matching criteria, joining the related Ciudad table
@@ -401,9 +377,9 @@ abstract class BaseContactoAgentePeer {
 		// clear out anything that might confuse the ORDER BY clause
 		$criteria->clearSelectColumns()->clearOrderByColumns();
 		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT_DISTINCT);
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
 		} else {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT);
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
 		}
 
 		// just in case we're grouping: add those columns to the select statement
@@ -412,9 +388,9 @@ abstract class BaseContactoAgentePeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
 
-		$rs = ContactoAgentePeer::doSelectRS($criteria, $con);
+		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
 			return $rs->getInt(1);
 		} else {
@@ -425,67 +401,48 @@ abstract class BaseContactoAgentePeer {
 
 
 	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with their Agente objects.
+	 * Returns the number of rows matching criteria, joining the related TipoRecargo table
 	 *
-	 * @return     array Array of ContactoAgente objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      Connection $con
+	 * @return     int Number of matching rows.
 	 */
-	public static function doSelectJoinAgente(Criteria $c, $con = null)
+	public static function doCountJoinTipoRecargo(Criteria $criteria, $distinct = false, $con = null)
 	{
-		$c = clone $c;
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
-			$c->setDbName(self::DATABASE_NAME);
+		// clear out anything that might confuse the ORDER BY clause
+		$criteria->clearSelectColumns()->clearOrderByColumns();
+		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
+		} else {
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
 		}
 
-		ContactoAgentePeer::addSelectColumns($c);
-		$startcol = (ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
-		AgentePeer::addSelectColumns($c);
-
-		$c->addJoin(ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE);
-		$rs = BasePeer::doSelect($c, $con);
-		$results = array();
-
-		while($rs->next()) {
-
-			$omClass = ContactoAgentePeer::getOMClass();
-
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
-
-			$omClass = AgentePeer::getOMClass();
-
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
-
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getAgente(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addContactoAgente($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initContactoAgentes();
-				$obj2->addContactoAgente($obj1); //CHECKME
-			}
-			$results[] = $obj1;
+		// just in case we're grouping: add those columns to the select statement
+		foreach($criteria->getGroupByColumns() as $column)
+		{
+			$criteria->addSelectColumn($column);
 		}
-		return $results;
+
+		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
+
+		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
+		if ($rs->next()) {
+			return $rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
 	}
 
 
 	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with their Ciudad objects.
+	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with their Ciudad objects.
 	 *
-	 * @return     array Array of ContactoAgente objects.
+	 * @return     array Array of PricRecargosxCiudadLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -498,17 +455,17 @@ abstract class BaseContactoAgentePeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		ContactoAgentePeer::addSelectColumns($c);
-		$startcol = (ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		PricRecargosxCiudadLogPeer::addSelectColumns($c);
+		$startcol = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
 		CiudadPeer::addSelectColumns($c);
 
-		$c->addJoin(ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while($rs->next()) {
 
-			$omClass = ContactoAgentePeer::getOMClass();
+			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
 
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
@@ -526,13 +483,71 @@ abstract class BaseContactoAgentePeer {
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
 					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addContactoAgente($obj1); //CHECKME
+					$temp_obj2->addPricRecargosxCiudadLog($obj1); //CHECKME
 					break;
 				}
 			}
 			if ($newObject) {
-				$obj2->initContactoAgentes();
-				$obj2->addContactoAgente($obj1); //CHECKME
+				$obj2->initPricRecargosxCiudadLogs();
+				$obj2->addPricRecargosxCiudadLog($obj1); //CHECKME
+			}
+			$results[] = $obj1;
+		}
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with their TipoRecargo objects.
+	 *
+	 * @return     array Array of PricRecargosxCiudadLog objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinTipoRecargo(Criteria $c, $con = null)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		PricRecargosxCiudadLogPeer::addSelectColumns($c);
+		$startcol = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		TipoRecargoPeer::addSelectColumns($c);
+
+		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
+		$rs = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while($rs->next()) {
+
+			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj1 = new $cls();
+			$obj1->hydrate($rs);
+
+			$omClass = TipoRecargoPeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj2 = new $cls();
+			$obj2->hydrate($rs, $startcol);
+
+			$newObject = true;
+			foreach($results as $temp_obj1) {
+				$temp_obj2 = $temp_obj1->getTipoRecargo(); //CHECKME
+				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
+					$newObject = false;
+					// e.g. $author->addBookRelatedByBookId()
+					$temp_obj2->addPricRecargosxCiudadLog($obj1); //CHECKME
+					break;
+				}
+			}
+			if ($newObject) {
+				$obj2->initPricRecargosxCiudadLogs();
+				$obj2->addPricRecargosxCiudadLog($obj1); //CHECKME
 			}
 			$results[] = $obj1;
 		}
@@ -555,9 +570,9 @@ abstract class BaseContactoAgentePeer {
 		// clear out anything that might confuse the ORDER BY clause
 		$criteria->clearSelectColumns()->clearOrderByColumns();
 		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT_DISTINCT);
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
 		} else {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT);
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
 		}
 
 		// just in case we're grouping: add those columns to the select statement
@@ -566,11 +581,11 @@ abstract class BaseContactoAgentePeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE);
+		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
 
-		$criteria->addJoin(ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
 
-		$rs = ContactoAgentePeer::doSelectRS($criteria, $con);
+		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
 			return $rs->getInt(1);
 		} else {
@@ -581,9 +596,9 @@ abstract class BaseContactoAgentePeer {
 
 
 	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with all related objects.
+	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with all related objects.
 	 *
-	 * @return     array Array of ContactoAgente objects.
+	 * @return     array Array of PricRecargosxCiudadLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -596,25 +611,25 @@ abstract class BaseContactoAgentePeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		ContactoAgentePeer::addSelectColumns($c);
-		$startcol2 = (ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
-
-		AgentePeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + AgentePeer::NUM_COLUMNS;
+		PricRecargosxCiudadLogPeer::addSelectColumns($c);
+		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
 
 		CiudadPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + CiudadPeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + CiudadPeer::NUM_COLUMNS;
 
-		$c->addJoin(ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE);
+		TipoRecargoPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + TipoRecargoPeer::NUM_COLUMNS;
 
-		$c->addJoin(ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+
+		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
 
 		$rs = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while($rs->next()) {
 
-			$omClass = ContactoAgentePeer::getOMClass();
+			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
 
 
 			$cls = Propel::import($omClass);
@@ -622,9 +637,9 @@ abstract class BaseContactoAgentePeer {
 			$obj1->hydrate($rs);
 
 
-				// Add objects for joined Agente rows
+				// Add objects for joined Ciudad rows
 	
-			$omClass = AgentePeer::getOMClass();
+			$omClass = CiudadPeer::getOMClass();
 
 
 			$cls = Propel::import($omClass);
@@ -634,23 +649,23 @@ abstract class BaseContactoAgentePeer {
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
 				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getAgente(); // CHECKME
+				$temp_obj2 = $temp_obj1->getCiudad(); // CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
-					$temp_obj2->addContactoAgente($obj1); // CHECKME
+					$temp_obj2->addPricRecargosxCiudadLog($obj1); // CHECKME
 					break;
 				}
 			}
 
 			if ($newObject) {
-				$obj2->initContactoAgentes();
-				$obj2->addContactoAgente($obj1);
+				$obj2->initPricRecargosxCiudadLogs();
+				$obj2->addPricRecargosxCiudadLog($obj1);
 			}
 
 
-				// Add objects for joined Ciudad rows
+				// Add objects for joined TipoRecargo rows
 	
-			$omClass = CiudadPeer::getOMClass();
+			$omClass = TipoRecargoPeer::getOMClass();
 
 
 			$cls = Propel::import($omClass);
@@ -660,61 +675,22 @@ abstract class BaseContactoAgentePeer {
 			$newObject = true;
 			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
 				$temp_obj1 = $results[$j];
-				$temp_obj3 = $temp_obj1->getCiudad(); // CHECKME
+				$temp_obj3 = $temp_obj1->getTipoRecargo(); // CHECKME
 				if ($temp_obj3->getPrimaryKey() === $obj3->getPrimaryKey()) {
 					$newObject = false;
-					$temp_obj3->addContactoAgente($obj1); // CHECKME
+					$temp_obj3->addPricRecargosxCiudadLog($obj1); // CHECKME
 					break;
 				}
 			}
 
 			if ($newObject) {
-				$obj3->initContactoAgentes();
-				$obj3->addContactoAgente($obj1);
+				$obj3->initPricRecargosxCiudadLogs();
+				$obj3->addPricRecargosxCiudadLog($obj1);
 			}
 
 			$results[] = $obj1;
 		}
 		return $results;
-	}
-
-
-	/**
-	 * Returns the number of rows matching criteria, joining the related Agente table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinAllExceptAgente(Criteria $criteria, $distinct = false, $con = null)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT);
-		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
-
-		$rs = ContactoAgentePeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
 	}
 
 
@@ -734,9 +710,9 @@ abstract class BaseContactoAgentePeer {
 		// clear out anything that might confuse the ORDER BY clause
 		$criteria->clearSelectColumns()->clearOrderByColumns();
 		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT_DISTINCT);
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
 		} else {
-			$criteria->addSelectColumn(ContactoAgentePeer::COUNT);
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
 		}
 
 		// just in case we're grouping: add those columns to the select statement
@@ -745,9 +721,9 @@ abstract class BaseContactoAgentePeer {
 			$criteria->addSelectColumn($column);
 		}
 
-		$criteria->addJoin(ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE);
+		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
 
-		$rs = ContactoAgentePeer::doSelectRS($criteria, $con);
+		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
 		if ($rs->next()) {
 			return $rs->getInt(1);
 		} else {
@@ -758,13 +734,52 @@ abstract class BaseContactoAgentePeer {
 
 
 	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with all related objects except Agente.
+	 * Returns the number of rows matching criteria, joining the related TipoRecargo table
 	 *
-	 * @return     array Array of ContactoAgente objects.
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
+	 * @param      Connection $con
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptTipoRecargo(Criteria $criteria, $distinct = false, $con = null)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// clear out anything that might confuse the ORDER BY clause
+		$criteria->clearSelectColumns()->clearOrderByColumns();
+		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
+		} else {
+			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
+		}
+
+		// just in case we're grouping: add those columns to the select statement
+		foreach($criteria->getGroupByColumns() as $column)
+		{
+			$criteria->addSelectColumn($column);
+		}
+
+		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+
+		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
+		if ($rs->next()) {
+			return $rs->getInt(1);
+		} else {
+			// no rows returned; we infer that means 0 matches.
+			return 0;
+		}
+	}
+
+
+	/**
+	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with all related objects except Ciudad.
+	 *
+	 * @return     array Array of PricRecargosxCiudadLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptAgente(Criteria $c, $con = null)
+	public static function doSelectJoinAllExceptCiudad(Criteria $c, $con = null)
 	{
 		$c = clone $c;
 
@@ -775,13 +790,13 @@ abstract class BaseContactoAgentePeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		ContactoAgentePeer::addSelectColumns($c);
-		$startcol2 = (ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		PricRecargosxCiudadLogPeer::addSelectColumns($c);
+		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
 
-		CiudadPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + CiudadPeer::NUM_COLUMNS;
+		TipoRecargoPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + TipoRecargoPeer::NUM_COLUMNS;
 
-		$c->addJoin(ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
 
 
 		$rs = BasePeer::doSelect($c, $con);
@@ -789,7 +804,74 @@ abstract class BaseContactoAgentePeer {
 
 		while($rs->next()) {
 
-			$omClass = ContactoAgentePeer::getOMClass();
+			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
+
+			$cls = Propel::import($omClass);
+			$obj1 = new $cls();
+			$obj1->hydrate($rs);
+
+			$omClass = TipoRecargoPeer::getOMClass();
+
+
+			$cls = Propel::import($omClass);
+			$obj2  = new $cls();
+			$obj2->hydrate($rs, $startcol2);
+
+			$newObject = true;
+			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
+				$temp_obj1 = $results[$j];
+				$temp_obj2 = $temp_obj1->getTipoRecargo(); //CHECKME
+				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
+					$newObject = false;
+					$temp_obj2->addPricRecargosxCiudadLog($obj1);
+					break;
+				}
+			}
+
+			if ($newObject) {
+				$obj2->initPricRecargosxCiudadLogs();
+				$obj2->addPricRecargosxCiudadLog($obj1);
+			}
+
+			$results[] = $obj1;
+		}
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with all related objects except TipoRecargo.
+	 *
+	 * @return     array Array of PricRecargosxCiudadLog objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptTipoRecargo(Criteria $c, $con = null)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		PricRecargosxCiudadLogPeer::addSelectColumns($c);
+		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+
+		CiudadPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + CiudadPeer::NUM_COLUMNS;
+
+		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+
+
+		$rs = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while($rs->next()) {
+
+			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
 
 			$cls = Propel::import($omClass);
 			$obj1 = new $cls();
@@ -808,81 +890,14 @@ abstract class BaseContactoAgentePeer {
 				$temp_obj2 = $temp_obj1->getCiudad(); //CHECKME
 				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
 					$newObject = false;
-					$temp_obj2->addContactoAgente($obj1);
+					$temp_obj2->addPricRecargosxCiudadLog($obj1);
 					break;
 				}
 			}
 
 			if ($newObject) {
-				$obj2->initContactoAgentes();
-				$obj2->addContactoAgente($obj1);
-			}
-
-			$results[] = $obj1;
-		}
-		return $results;
-	}
-
-
-	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with all related objects except Ciudad.
-	 *
-	 * @return     array Array of ContactoAgente objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function doSelectJoinAllExceptCiudad(Criteria $c, $con = null)
-	{
-		$c = clone $c;
-
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
-			$c->setDbName(self::DATABASE_NAME);
-		}
-
-		ContactoAgentePeer::addSelectColumns($c);
-		$startcol2 = (ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS) + 1;
-
-		AgentePeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + AgentePeer::NUM_COLUMNS;
-
-		$c->addJoin(ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE);
-
-
-		$rs = BasePeer::doSelect($c, $con);
-		$results = array();
-
-		while($rs->next()) {
-
-			$omClass = ContactoAgentePeer::getOMClass();
-
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
-
-			$omClass = AgentePeer::getOMClass();
-
-
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getAgente(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addContactoAgente($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initContactoAgentes();
-				$obj2->addContactoAgente($obj1);
+				$obj2->initPricRecargosxCiudadLogs();
+				$obj2->addPricRecargosxCiudadLog($obj1);
 			}
 
 			$results[] = $obj1;
@@ -918,13 +933,13 @@ abstract class BaseContactoAgentePeer {
 	 */
 	public static function getOMClass()
 	{
-		return ContactoAgentePeer::CLASS_DEFAULT;
+		return PricRecargosxCiudadLogPeer::CLASS_DEFAULT;
 	}
 
 	/**
-	 * Method perform an INSERT on the database, given a ContactoAgente or Criteria object.
+	 * Method perform an INSERT on the database, given a PricRecargosxCiudadLog or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or ContactoAgente object containing data that is used to create the INSERT statement.
+	 * @param      mixed $values Criteria or PricRecargosxCiudadLog object containing data that is used to create the INSERT statement.
 	 * @param      Connection $con the connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -939,7 +954,7 @@ abstract class BaseContactoAgentePeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from ContactoAgente object
+			$criteria = $values->buildCriteria(); // build Criteria from PricRecargosxCiudadLog object
 		}
 
 
@@ -961,9 +976,9 @@ abstract class BaseContactoAgentePeer {
 	}
 
 	/**
-	 * Method perform an UPDATE on the database, given a ContactoAgente or Criteria object.
+	 * Method perform an UPDATE on the database, given a PricRecargosxCiudadLog or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or ContactoAgente object containing data that is used to create the UPDATE statement.
+	 * @param      mixed $values Criteria or PricRecargosxCiudadLog object containing data that is used to create the UPDATE statement.
 	 * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -980,10 +995,10 @@ abstract class BaseContactoAgentePeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(ContactoAgentePeer::CA_IDCONTACTO);
-			$selectCriteria->add(ContactoAgentePeer::CA_IDCONTACTO, $criteria->remove(ContactoAgentePeer::CA_IDCONTACTO), $comparison);
+			$comparison = $criteria->getComparison(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO);
+			$selectCriteria->add(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, $criteria->remove(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO), $comparison);
 
-		} else { // $values is ContactoAgente object
+		} else { // $values is PricRecargosxCiudadLog object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
 		}
@@ -995,7 +1010,7 @@ abstract class BaseContactoAgentePeer {
 	}
 
 	/**
-	 * Method to DELETE all rows from the tb_contactos table.
+	 * Method to DELETE all rows from the bs_pricrecargosxciudad table.
 	 *
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
@@ -1009,7 +1024,7 @@ abstract class BaseContactoAgentePeer {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->begin();
-			$affectedRows += BasePeer::doDeleteAll(ContactoAgentePeer::TABLE_NAME, $con);
+			$affectedRows += BasePeer::doDeleteAll(PricRecargosxCiudadLogPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -1019,9 +1034,9 @@ abstract class BaseContactoAgentePeer {
 	}
 
 	/**
-	 * Method perform a DELETE on the database, given a ContactoAgente or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a PricRecargosxCiudadLog or Criteria object OR a primary key value.
 	 *
-	 * @param      mixed $values Criteria or ContactoAgente object or primary key or array of primary keys
+	 * @param      mixed $values Criteria or PricRecargosxCiudadLog object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
 	 * @param      Connection $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -1032,18 +1047,18 @@ abstract class BaseContactoAgentePeer {
 	 public static function doDelete($values, $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME);
 		}
 
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
-		} elseif ($values instanceof ContactoAgente) {
+		} elseif ($values instanceof PricRecargosxCiudadLog) {
 
 			$criteria = $values->buildPkeyCriteria();
 		} else {
 			// it must be the primary key
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(ContactoAgentePeer::CA_IDCONTACTO, (array) $values, Criteria::IN);
+			$criteria->add(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, (array) $values, Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -1066,24 +1081,24 @@ abstract class BaseContactoAgentePeer {
 	}
 
 	/**
-	 * Validates all modified columns of given ContactoAgente object.
+	 * Validates all modified columns of given PricRecargosxCiudadLog object.
 	 * If parameter $columns is either a single column name or an array of column names
 	 * than only those columns are validated.
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      ContactoAgente $obj The object to validate.
+	 * @param      PricRecargosxCiudadLog $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(ContactoAgente $obj, $cols = null)
+	public static function doValidate(PricRecargosxCiudadLog $obj, $cols = null)
 	{
 		$columns = array();
 
 		if ($cols) {
-			$dbMap = Propel::getDatabaseMap(ContactoAgentePeer::DATABASE_NAME);
-			$tableMap = $dbMap->getTable(ContactoAgentePeer::TABLE_NAME);
+			$dbMap = Propel::getDatabaseMap(PricRecargosxCiudadLogPeer::DATABASE_NAME);
+			$tableMap = $dbMap->getTable(PricRecargosxCiudadLogPeer::TABLE_NAME);
 
 			if (! is_array($cols)) {
 				$cols = array($cols);
@@ -1099,11 +1114,11 @@ abstract class BaseContactoAgentePeer {
 
 		}
 
-		$res =  BasePeer::doValidate(ContactoAgentePeer::DATABASE_NAME, ContactoAgentePeer::TABLE_NAME, $columns);
+		$res =  BasePeer::doValidate(PricRecargosxCiudadLogPeer::DATABASE_NAME, PricRecargosxCiudadLogPeer::TABLE_NAME, $columns);
     if ($res !== true) {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
-            $col = ContactoAgentePeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
+            $col = PricRecargosxCiudadLogPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
             $request->setError($col, $failed->getMessage());
         }
     }
@@ -1116,7 +1131,7 @@ abstract class BaseContactoAgentePeer {
 	 *
 	 * @param      mixed $pk the primary key.
 	 * @param      Connection $con the connection to use
-	 * @return     ContactoAgente
+	 * @return     PricRecargosxCiudadLog
 	 */
 	public static function retrieveByPK($pk, $con = null)
 	{
@@ -1124,12 +1139,12 @@ abstract class BaseContactoAgentePeer {
 			$con = Propel::getConnection(self::DATABASE_NAME);
 		}
 
-		$criteria = new Criteria(ContactoAgentePeer::DATABASE_NAME);
+		$criteria = new Criteria(PricRecargosxCiudadLogPeer::DATABASE_NAME);
 
-		$criteria->add(ContactoAgentePeer::CA_IDCONTACTO, $pk);
+		$criteria->add(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, $pk);
 
 
-		$v = ContactoAgentePeer::doSelect($criteria, $con);
+		$v = PricRecargosxCiudadLogPeer::doSelect($criteria, $con);
 
 		return !empty($v) > 0 ? $v[0] : null;
 	}
@@ -1153,25 +1168,25 @@ abstract class BaseContactoAgentePeer {
 			$objs = array();
 		} else {
 			$criteria = new Criteria();
-			$criteria->add(ContactoAgentePeer::CA_IDCONTACTO, $pks, Criteria::IN);
-			$objs = ContactoAgentePeer::doSelect($criteria, $con);
+			$criteria->add(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, $pks, Criteria::IN);
+			$objs = PricRecargosxCiudadLogPeer::doSelect($criteria, $con);
 		}
 		return $objs;
 	}
 
-} // BaseContactoAgentePeer
+} // BasePricRecargosxCiudadLogPeer
 
 // static code to register the map builder for this Peer with the main Propel class
 if (Propel::isInit()) {
 	// the MapBuilder classes register themselves with Propel during initialization
 	// so we need to load them here.
 	try {
-		BaseContactoAgentePeer::getMapBuilder();
+		BasePricRecargosxCiudadLogPeer::getMapBuilder();
 	} catch (Exception $e) {
 		Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
 	}
 } else {
 	// even if Propel is not yet initialized, the map builder class can be registered
 	// now and then it will be loaded when Propel initializes.
-	Propel::registerMapBuilder('lib.model.public.map.ContactoAgenteMapBuilder');
+	Propel::registerMapBuilder('lib.model.pricing.map.PricRecargosxCiudadLogMapBuilder');
 }

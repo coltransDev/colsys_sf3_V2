@@ -107,6 +107,7 @@
 		<column name="ca_transporte" type="varchar" />
 		<column name="ca_cargo" type="varchar" />
 		<column name="ca_detalle" type="varchar" />	
+		<column name="ca_sugerido" type="boolean" />	
 		<foreign-key foreignTable="tb_agentes">
 			<reference local="ca_idagente" foreign="ca_idagente"/>
 		</foreign-key>	

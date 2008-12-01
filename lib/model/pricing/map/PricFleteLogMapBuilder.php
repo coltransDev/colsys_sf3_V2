@@ -2,7 +2,7 @@
 
 
 /**
- * This class adds structure of 'tb_pricfletes' table to 'propel' DatabaseMap object.
+ * This class adds structure of 'bs_pricfletes' table to 'propel' DatabaseMap object.
  *
  *
  *
@@ -13,12 +13,12 @@
  *
  * @package    lib.model.pricing.map
  */
-class PricFleteMapBuilder {
+class PricFleteLogMapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = 'lib.model.pricing.map.PricFleteMapBuilder';
+	const CLASS_NAME = 'lib.model.pricing.map.PricFleteLogMapBuilder';
 
 	/**
 	 * The database map.
@@ -56,14 +56,14 @@ class PricFleteMapBuilder {
 	{
 		$this->dbMap = Propel::getDatabaseMap('propel');
 
-		$tMap = $this->dbMap->addTable('tb_pricfletes');
-		$tMap->setPhpName('PricFlete');
+		$tMap = $this->dbMap->addTable('bs_pricfletes');
+		$tMap->setPhpName('PricFleteLog');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDTRAYECTO', 'CaIdtrayecto', 'int' , CreoleTypes::INTEGER, 'tb_trayectos', 'CA_IDTRAYECTO', true, null);
+		$tMap->addForeignKey('CA_IDTRAYECTO', 'CaIdtrayecto', 'int', CreoleTypes::INTEGER, 'tb_trayectos', 'CA_IDTRAYECTO', true, null);
 
-		$tMap->addForeignPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int' , CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
+		$tMap->addForeignKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int', CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
 
 		$tMap->addColumn('CA_VLRNETO', 'CaVlrneto', 'double', CreoleTypes::NUMERIC, false, null);
 
@@ -83,8 +83,8 @@ class PricFleteMapBuilder {
 
 		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'string', CreoleTypes::VARCHAR, false, null);
 
-		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addPrimaryKey('CA_CONSECUTIVO', 'CaConsecutivo', 'int', CreoleTypes::INTEGER, true, null);
 
 	} // doBuild()
 
-} // PricFleteMapBuilder
+} // PricFleteLogMapBuilder

@@ -123,6 +123,13 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 	 */
 	protected $ca_idmoneda;
 
+
+	/**
+	 * The value for the ca_consecutivo field.
+	 * @var        int
+	 */
+	protected $ca_consecutivo;
+
 	/**
 	 * @var        Ciudad
 	 */
@@ -370,6 +377,17 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 	{
 
 		return $this->ca_idmoneda;
+	}
+
+	/**
+	 * Get the [ca_consecutivo] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaConsecutivo()
+	{
+
+		return $this->ca_consecutivo;
 	}
 
 	/**
@@ -705,6 +723,28 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 	} // setCaIdmoneda()
 
 	/**
+	 * Set the value of [ca_consecutivo] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaConsecutivo($v)
+	{
+
+		// Since the native PHP type for this column is integer,
+		// we will cast the input value to an int (if it is not).
+		if ($v !== null && !is_int($v) && is_numeric($v)) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_consecutivo !== $v) {
+			$this->ca_consecutivo = $v;
+			$this->modifiedColumns[] = PricRecargosxCiudadPeer::CA_CONSECUTIVO;
+		}
+
+	} // setCaConsecutivo()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -751,12 +791,14 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 
 			$this->ca_idmoneda = $rs->getString($startcol + 14);
 
+			$this->ca_consecutivo = $rs->getInt($startcol + 15);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 15; // 15 = PricRecargosxCiudadPeer::NUM_COLUMNS - PricRecargosxCiudadPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 16; // 16 = PricRecargosxCiudadPeer::NUM_COLUMNS - PricRecargosxCiudadPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating PricRecargosxCiudad object", $e);
@@ -1042,6 +1084,9 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 			case 14:
 				return $this->getCaIdmoneda();
 				break;
+			case 15:
+				return $this->getCaConsecutivo();
+				break;
 			default:
 				return null;
 				break;
@@ -1077,6 +1122,7 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 			$keys[12] => $this->getCaFchcreado(),
 			$keys[13] => $this->getCaUsucreado(),
 			$keys[14] => $this->getCaIdmoneda(),
+			$keys[15] => $this->getCaConsecutivo(),
 		);
 		return $result;
 	}
@@ -1153,6 +1199,9 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 			case 14:
 				$this->setCaIdmoneda($value);
 				break;
+			case 15:
+				$this->setCaConsecutivo($value);
+				break;
 		} // switch()
 	}
 
@@ -1191,6 +1240,7 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		if (array_key_exists($keys[12], $arr)) $this->setCaFchcreado($arr[$keys[12]]);
 		if (array_key_exists($keys[13], $arr)) $this->setCaUsucreado($arr[$keys[13]]);
 		if (array_key_exists($keys[14], $arr)) $this->setCaIdmoneda($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaConsecutivo($arr[$keys[15]]);
 	}
 
 	/**
@@ -1217,6 +1267,7 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_FCHCREADO)) $criteria->add(PricRecargosxCiudadPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_USUCREADO)) $criteria->add(PricRecargosxCiudadPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_IDMONEDA)) $criteria->add(PricRecargosxCiudadPeer::CA_IDMONEDA, $this->ca_idmoneda);
+		if ($this->isColumnModified(PricRecargosxCiudadPeer::CA_CONSECUTIVO)) $criteria->add(PricRecargosxCiudadPeer::CA_CONSECUTIVO, $this->ca_consecutivo);
 
 		return $criteria;
 	}
@@ -1317,6 +1368,8 @@ abstract class BasePricRecargosxCiudad extends BaseObject  implements Persistent
 		$copyObj->setCaUsucreado($this->ca_usucreado);
 
 		$copyObj->setCaIdmoneda($this->ca_idmoneda);
+
+		$copyObj->setCaConsecutivo($this->ca_consecutivo);
 
 
 		$copyObj->setNew(true);

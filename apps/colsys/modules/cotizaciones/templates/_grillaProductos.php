@@ -682,6 +682,50 @@ var ventanaTarifario = function( record ){
 	});	
 }
 
+
+/*
+* Muestra una ventana con la informacion de los archivos tarifario del trafico
+*/
+var ventanaTarifarioArchivos = function( record ){
+	var url = '<?=url_for("pricing/archivosPais?opcion=consulta")?>';
+	
+	activeRecord = record;
+	if(record.data.impoexpo=="<?=Constantes::IMPO?>"){		
+		idtrafico = record.data.tra_origen;
+	}
+	
+	if(record.data.impoexpo=="<?=Constantes::EXPO?>"){
+		idtrafico = record.data.tra_destino; 
+	}
+	
+	Ext.Ajax.request({
+		url: url,
+		params: {						
+			idtrafico: idtrafico, 			
+			transporte: record.data.transporte,
+			impoexpo: record.data.impoexpo,
+			modalidad: record.data.modalidad
+		},
+		success: function(xhr) {			
+			//alert( xhr.responseText );			
+			var newComponent = eval(xhr.responseText);
+			
+			//Se crea la ventana			
+			win = new Ext.Window({		
+			width       : 550,
+			height      : 300,
+			closeAction :'close',
+			plain       : true,				
+			items       : [newComponent]		
+		});		
+		win.show( );		
+		},
+		failure: function() {
+			Ext.Msg.alert("Win creation failed", "Server communication failure");
+		}
+	});	
+}
+
 var mostrarCabotajes = function( rec ){
 	var rec = rec.copy();
 	rec.data.modalidad="CABOTAJE"; 
@@ -724,6 +768,16 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 				handler: function(){    					                   		
 					if( this.ctxRecord ){					
 						ventanaTarifario( this.ctxRecord );
+					}						
+				}
+			},
+			{
+				text: 'Archivos del tarifario',
+				iconCls: 'import',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord ){					
+						ventanaTarifarioArchivos( this.ctxRecord );
 					}						
 				}
 			},

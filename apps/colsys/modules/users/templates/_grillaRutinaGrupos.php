@@ -10,7 +10,7 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 /*
 * Crea el Record 
 */
-var record = Ext.data.Record.create([   			
+var recordGrupos = Ext.data.Record.create([   			
 	{name: 'rutina', type: 'string'},
 	{name: 'sel', type: 'bool'},
 	{name: 'grupo', type: 'string'},
@@ -21,7 +21,7 @@ var record = Ext.data.Record.create([
 /*
 * Crea el store
 */
-var store = new Ext.data.Store({
+var storeGrupos = new Ext.data.Store({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
 		{			
@@ -29,7 +29,7 @@ var store = new Ext.data.Store({
 			totalProperty: 'total',
 			successProperty: 'success'
 		}, 
-		record
+		recordGrupos
 	),
 	proxy: new Ext.data.MemoryProxy( <?=json_encode(array("data"=>$data))?>),
 	sortInfo:{field: 'grupo', direction: "ASC"}
@@ -100,7 +100,7 @@ var colModelGrupos = new Ext.grid.ColumnModel({
 */
 
 function guardarGrillaRutinaGrupos(){	
-	var records = store.getRange();
+	var records = storeGrupos.getRange();
 	
 	var lenght = records.length;
 	
@@ -139,7 +139,7 @@ function guardarGrillaRutinaGrupos(){
 										
 					var res = Ext.util.JSON.decode( response.responseText );	
 					if( res.success ){										
-						store.commitChanges();							
+						storeGrupos.commitChanges();							
 						win.close();				
 					}
 				}			
@@ -176,7 +176,7 @@ var gridOnvalidateedit = function(e){
 */    
 
 grillaRutinaGrupos = new Ext.grid.EditorGridPanel({
-	store: store,	
+	store: storeGrupos,	
 	cm: colModelGrupos,
 	sm: new  Ext.grid.CellSelectionModel(),	
 	clicksToEdit: 1,

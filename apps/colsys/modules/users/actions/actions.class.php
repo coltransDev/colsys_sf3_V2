@@ -211,11 +211,7 @@ class usersActions extends sfActions
 		$this->setLayout("ajax");
 		
 		$this->rutina = RutinaPeer::retrieveByPk($this->getRequestParameter("rutina"));
-		$this->forward404Unless( $this->rutina );
-		
-		
-		
-		
+		$this->forward404Unless( $this->rutina );		
 	}
 	
 	/*
@@ -249,6 +245,39 @@ class usersActions extends sfActions
 		$this->responseArray = array("success"=>true);	
 		$this->setTemplate("responseTemplate");				
 	}
+	
+	/*
+	* Guarda los accesos de un grupo y su nivel de acceso a cada opción
+	*/
+	public function executeObserveRutinasUsuarios(){
+		$usuarios=$this->getRequestParameter("usuarios");
+		$this->forward404Unless( $usuarios );
+		
+		$rutina=$this->getRequestParameter("rutina");
+		$this->forward404Unless( $rutina );
+		
+		$c = new Criteria();
+		$c->add( AccesoUsuarioPeer::CA_RUTINA, $rutina );
+		$accesoUsuarios = AccesoUsuarioPeer::doSelect( $c );
+		foreach( $accesoUsuarios as $accesoUsuario ){
+			$accesoUsuario->delete();
+		}
+		
+		$opciones = explode( "|", $usuarios );
+		foreach( $opciones as $opcion ){
+			$op = explode(",", $opcion );
+			$accesoUsuario = new AccesoUsuario();
+			$accesoUsuario->setCaRutina($rutina);
+			$accesoUsuario->setCaLogin($op[0]);
+			$accesoUsuario->setCaAcceso($op[1]);
+			$accesoUsuario->save();			
+		}
+		
+		$this->setLayout("ajax");
+		$this->responseArray = array("success"=>true);	
+		$this->setTemplate("responseTemplate");				
+	}	
+		
 		
 }
 ?>

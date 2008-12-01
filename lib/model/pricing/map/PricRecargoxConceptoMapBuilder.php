@@ -87,6 +87,8 @@ class PricRecargoxConceptoMapBuilder {
 
 		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'int', CreoleTypes::INTEGER, false, null);
+
 	} // doBuild()
 
 } // PricRecargoxConceptoMapBuilder

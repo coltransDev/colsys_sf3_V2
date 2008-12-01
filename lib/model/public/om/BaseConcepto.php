@@ -104,6 +104,18 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	protected $lastPricFleteCriteria = null;
 
 	/**
+	 * Collection to store aggregation of collPricFleteLogs.
+	 * @var        array
+	 */
+	protected $collPricFleteLogs;
+
+	/**
+	 * The criteria used to select the current contents of collPricFleteLogs.
+	 * @var        Criteria
+	 */
+	protected $lastPricFleteLogCriteria = null;
+
+	/**
 	 * Collection to store aggregation of collRepEquipos.
 	 * @var        array
 	 */
@@ -559,6 +571,14 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collPricFleteLogs !== null) {
+				foreach($this->collPricFleteLogs as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collRepEquipos !== null) {
 				foreach($this->collRepEquipos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -679,6 +699,14 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 
 				if ($this->collPricFletes !== null) {
 					foreach($this->collPricFletes as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collPricFleteLogs !== null) {
+					foreach($this->collPricFleteLogs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -979,6 +1007,10 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 
 			foreach($this->getPricFletes() as $relObj) {
 				$copyObj->addPricFlete($relObj->copy($deepCopy));
+			}
+
+			foreach($this->getPricFleteLogs() as $relObj) {
+				$copyObj->addPricFleteLog($relObj->copy($deepCopy));
 			}
 
 			foreach($this->getRepEquipos() as $relObj) {
@@ -1501,6 +1533,159 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 		$this->lastPricFleteCriteria = $criteria;
 
 		return $this->collPricFletes;
+	}
+
+	/**
+	 * Temporary storage of collPricFleteLogs to save a possible db hit in
+	 * the event objects are add to the collection, but the
+	 * complete collection is never requested.
+	 * @return     void
+	 */
+	public function initPricFleteLogs()
+	{
+		if ($this->collPricFleteLogs === null) {
+			$this->collPricFleteLogs = array();
+		}
+	}
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Concepto has previously
+	 * been saved, it will retrieve related PricFleteLogs from storage.
+	 * If this Concepto is new, it will return
+	 * an empty collection or the current collection, the criteria
+	 * is ignored on a new object.
+	 *
+	 * @param      Connection $con
+	 * @param      Criteria $criteria
+	 * @throws     PropelException
+	 */
+	public function getPricFleteLogs($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricFleteLogs === null) {
+			if ($this->isNew()) {
+			   $this->collPricFleteLogs = array();
+			} else {
+
+				$criteria->add(PricFleteLogPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+				PricFleteLogPeer::addSelectColumns($criteria);
+				$this->collPricFleteLogs = PricFleteLogPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricFleteLogPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+				PricFleteLogPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricFleteLogCriteria) || !$this->lastPricFleteLogCriteria->equals($criteria)) {
+					$this->collPricFleteLogs = PricFleteLogPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricFleteLogCriteria = $criteria;
+		return $this->collPricFleteLogs;
+	}
+
+	/**
+	 * Returns the number of related PricFleteLogs.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      Connection $con
+	 * @throws     PropelException
+	 */
+	public function countPricFleteLogs($criteria = null, $distinct = false, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		$criteria->add(PricFleteLogPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+		return PricFleteLogPeer::doCount($criteria, $distinct, $con);
+	}
+
+	/**
+	 * Method called to associate a PricFleteLog object to this object
+	 * through the PricFleteLog foreign key attribute
+	 *
+	 * @param      PricFleteLog $l PricFleteLog
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricFleteLog(PricFleteLog $l)
+	{
+		$this->collPricFleteLogs[] = $l;
+		$l->setConcepto($this);
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Concepto is new, it will return
+	 * an empty collection; or if this Concepto has previously
+	 * been saved, it will retrieve related PricFleteLogs from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Concepto.
+	 */
+	public function getPricFleteLogsJoinTrayecto($criteria = null, $con = null)
+	{
+		// include the Peer class
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricFleteLogs === null) {
+			if ($this->isNew()) {
+				$this->collPricFleteLogs = array();
+			} else {
+
+				$criteria->add(PricFleteLogPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+				$this->collPricFleteLogs = PricFleteLogPeer::doSelectJoinTrayecto($criteria, $con);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(PricFleteLogPeer::CA_IDCONCEPTO, $this->getCaIdconcepto());
+
+			if (!isset($this->lastPricFleteLogCriteria) || !$this->lastPricFleteLogCriteria->equals($criteria)) {
+				$this->collPricFleteLogs = PricFleteLogPeer::doSelectJoinTrayecto($criteria, $con);
+			}
+		}
+		$this->lastPricFleteLogCriteria = $criteria;
+
+		return $this->collPricFleteLogs;
 	}
 
 	/**

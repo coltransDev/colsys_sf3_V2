@@ -70,7 +70,7 @@ class usersComponents extends sfComponents
 			$this->data[]=array('grupo'=>$grupo,
 								'sel'=>$sel,
 								'nivel'=>$nivel,
-								'nivel_val'=>$nivel_val
+								'nivel_val'=>utf8_encode($nivel_val)
 								);			
 		}		
 		
@@ -84,13 +84,14 @@ class usersComponents extends sfComponents
 	{	
 		
 		$c = new Criteria();
-		$c->add( AccesoGrupoPeer::CA_RUTINA, $this->rutina->getCaRutina() );
-		$accesoGrupos = AccesoGrupoPeer::doSelect( $c );
+		$c->add( AccesoUsuarioPeer::CA_RUTINA, $this->rutina->getCaRutina() );
+		$accesoUsuarios = AccesoUsuarioPeer::doSelect( $c );
 		$accesos =array();
-		foreach( $accesoGrupos as $accesoGrupo ){
-			$accesos[$accesoGrupo->getCaGrupo()]=$accesoGrupo->getCaAcceso();
+		foreach( $accesoUsuarios as $accesoUsuario ){
+			$accesos[$accesoUsuario->getCaLogin()]=$accesoUsuario->getCaAcceso();
 		}
-				
+		
+						
 		$this->accesos = RutinaPeer::getAccesos();	
 			
 		$username = sfConfig::get("app_ldap_user");
@@ -122,24 +123,24 @@ class usersComponents extends sfComponents
 		//print_r( $usuarios );
 		for($i=0; $i<$usuarios['count'] ;$i++){
 			$usuario = $usuarios[$i]["cn"][0];
-			$nombre = $usuarios[$i]["2"]["fullname"];//["0"];
-			print_r( $nombre  );
+			//$nombre = $usuarios[$i]["2"]["fullname"];//["0"];
+			//print_r( $nombre  );
 			//print_r( $usuarios[$i] );
-			/*if( isset( $accesos[$grupo] ) ){
+			if( isset( $accesos[$usuario] ) ){
 				$sel = true;
-				$nivel = $accesos[$grupo];
+				$nivel = $accesos[$usuario];
 				$nivel_val = $this->accesos[$nivel];				
 			}else{
 				$sel = false;
 				$nivel = "";
 				$nivel_val = "";
-			}*/						
+			}						
 			
 						
-			$this->data[]=array('login'=>$usuario/*,
+			$this->data[]=array('login'=>$usuario,
 								'sel'=>$sel,
 								'nivel'=>$nivel,
-								'nivel_val'=>$nivel_val*/
+								'nivel_val'=>utf8_encode($nivel_val)
 								);			
 		}		
 		

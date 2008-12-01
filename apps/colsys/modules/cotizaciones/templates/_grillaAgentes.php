@@ -21,7 +21,8 @@ var recordGrillaAgentes = Ext.data.Record.create([
     {name: 'telefonos', type: 'string'},
 	{name: 'cargo', type: 'string'},
     {name: 'detalle', type: 'string'},
-	{name: 'operacion', type: 'string'}
+	{name: 'operacion', type: 'string'},
+	{name: 'sugerido', type: 'bool'}
 ]);
   
    		
@@ -245,6 +246,13 @@ var grid_agentes = new Ext.grid.EditorGridPanel({
 	view: new Ext.grid.GroupingView({
 		forceFit:true,
 		enableRowBody:false,
-		enableGroupingMenu: false
+		enableGroupingMenu: false,
+		getRowClass: function(  record,  index,  rowParams,  store ){
+			if( record.data.sugerido ){
+				return "row_yellow";
+			}else{
+				return "";
+			}									
+		} 
 	})	
 });

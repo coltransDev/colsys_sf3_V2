@@ -138,6 +138,17 @@ if( $opcion ){
 	$url .= "&opcion=".$opcion;
 }
 
+if( $timestamp ){
+	$url .= "&timestamp=".$timestamp;
+}
+
+if( $timestamp2 ){
+	$url .= "&timestamp2=".$timestamp2;
+}
+
+
+
+
 ?>
 var store = new Ext.data.GroupingStore({
 	autoLoad : true,			
@@ -425,7 +436,10 @@ var gridOnvalidateedit = function(e){
 /**
 * Muestra una ventana donde se pueden editar las observaciones
 **/
-var gridOnclickHandler =  function(e) {	
+var gridOndblclickHandler =  function(e) {	
+	<?
+	if($opcion!="consulta"){
+	?>
 	var btn = e.getTarget('.btnComentarios');        
 	if (btn) {			
 		var t = e.getTarget();
@@ -445,6 +459,9 @@ var gridOnclickHandler =  function(e) {
 		   value: record.get("observaciones")
 	   });	
 	}
+	<?
+	}
+	?>
 }
 	
 /*
@@ -537,7 +554,15 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 						});   					                   
 						
 					}
-				}				
+				},
+				{
+					text: 'Control de cambios',
+					iconCls: '',
+					scope:this,
+					handler: function(){    					                   
+							ventanaControlCambios(this.ctxRecord, index);					
+						}
+					}				
 			]
 		});
 		this.menu.on('hide', this.onContextHide, this);
@@ -555,7 +580,8 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 	if( rec.data.tipo=='recargo' ){
 		this.menu = new Ext.menu.Menu({
 			id:'grid-ctx',
-			items: [{
+			items: [					
+					{
 					text: 'Eliminar',
 					iconCls: 'delete',
 					scope:this,
@@ -691,6 +717,41 @@ function guardarGrillaPorTrafico(){
 	
 	
 }
+
+
+/*
+* Muestra todos los cambios realizados en el trayecto
+*/
+var ventanaControlCambios=function( record ){
+	var url = '<?=url_for("pricing/historialCambiosBusqueda")?>';
+	
+	activeRecord = record;
+		
+	Ext.Ajax.request({
+		url: url,
+		params: {
+			idtrayecto: record.data.idtrayecto
+		},
+		success: function(xhr) {			
+			//alert( xhr.responseText );			
+			var newComponent = eval(xhr.responseText);
+			
+			//Se crea la ventana			
+			win = new Ext.Window({		
+			width       : 550,
+			height      : 300,
+			closeAction :'close',
+			plain       : true,				
+			items       : [newComponent]		
+		});		
+		win.show( );		
+		},
+		failure: function() {
+			Ext.Msg.alert("Win creation failed", "Server communication failure");
+		}
+	});		
+	
+} 
 		
 /*
 * Crea la grilla 
@@ -747,7 +808,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	listeners:{
 		rowcontextmenu: gridOnRowcontextmenu,
 		afteredit: gridAfterEditHandler,
-		click: gridOnclickHandler,
+		dblclick : gridOndblclickHandler,
 		validateedit: gridOnvalidateedit
 	}	
 	/*

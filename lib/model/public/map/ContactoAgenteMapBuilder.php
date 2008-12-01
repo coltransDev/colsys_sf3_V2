@@ -85,6 +85,8 @@ class ContactoAgenteMapBuilder {
 
 		$tMap->addColumn('CA_DETALLE', 'CaDetalle', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_SUGERIDO', 'CaSugerido', 'boolean', CreoleTypes::BOOLEAN, false, null);
+
 	} // doBuild()
 
 } // ContactoAgenteMapBuilder

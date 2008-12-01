@@ -9,20 +9,16 @@
  */ 
 class PricFlete extends BasePricFlete
 {
-	public function getPricRecargos(){
-		$c = new Criteria();		
-		$c->add( PricRecargoPeer::CA_IDTRAYECTO, $this->getCaIdtrayecto() );
-		return PricRecargoPeer::doSelect( $c );
-		
-	}
-	
-	public function getPricRecargosxConcepto(){
+
+	public function getPricRecargosxConcepto( $fch ){
 		$c = new Criteria();
 		$c->add( PricRecargoxConceptoPeer::CA_IDCONCEPTO, $this->getCaIdConcepto() );
-		$c->add( PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdTrayecto() );
-		return PricRecargoxConceptoPeer::doSelect( $c );
-		
+		$c->add( PricRecargoxConceptoPeer::CA_IDTRAYECTO, $this->getCaIdTrayecto() );		
+				
+		return PricRecargoxConceptoPeer::doSelect( $c );		
 	}
+	
+	
 	
 	/*
 	* Retorna el estilo que se debe aplicar a las filas de acuerdo al 
@@ -61,3 +57,4 @@ class PricFlete extends BasePricFlete
 		}
 	}
 }
+?>

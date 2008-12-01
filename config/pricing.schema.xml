@@ -16,9 +16,7 @@
 		<column name="ca_idtarifas" type="integer"   />
 		<column name="ca_observaciones" type="varchar"   />
 		<column name="ca_idagente" type="integer"   />				
-	
-		
-									
+					
 		<foreign-key foreignTable="tb_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>	
@@ -38,7 +36,29 @@
 		<column name="ca_fchcreado" type="timestamp" />		
 		<column name="ca_usucreado" type="varchar" />
 		<column name="ca_estado" type="integer"   />	
-		<column name="ca_aplicacion" type="varchar" />						
+		<column name="ca_aplicacion" type="varchar" />	
+		<column name="ca_consecutivo" type="integer"   />					
+		<foreign-key foreignTable="tb_trayectos">
+			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
+		</foreign-key>	
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>								
+	</table>	
+	<!-- La tabla bs_pricfletes contiene los registros actuales y los historicos -->
+	<table name="bs_pricfletes" phpName="PricFleteLog">		
+		<column name="ca_idtrayecto" type="integer" required="true" />			
+		<column name="ca_idconcepto" type="integer" required="true" />	
+		<column name="ca_vlrneto" type="numeric" />		
+		<column name="ca_vlrsugerido" type="numeric" />	
+		<column name="ca_fchinicio" type="date"   />
+		<column name="ca_fchvencimiento" type="date"   />
+		<column name="ca_idmoneda" type="varchar" size="3" />
+		<column name="ca_fchcreado" type="timestamp" />		
+		<column name="ca_usucreado" type="varchar" />
+		<column name="ca_estado" type="integer"   />	
+		<column name="ca_aplicacion" type="varchar" />	
+		<column name="ca_consecutivo" type="integer" primaryKey="true" />		
 		<foreign-key foreignTable="tb_trayectos">
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
 		</foreign-key>	
@@ -59,19 +79,41 @@
 		<column name="ca_idmoneda" type="varchar" size="3"   />	
 		<column name="ca_fchinicio" type="date"   />
 		<column name="ca_fchvencimiento" type="date"   />
-
 		<column name="ca_fchcreado" type="timestamp" />
-		<column name="ca_usucreado" type="varchar" />
-		
+		<column name="ca_usucreado" type="varchar" />	
+		<column name="ca_consecutivo" type="integer" />	
 		<foreign-key foreignTable="tb_pricfletes">
 			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
 			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
-		</foreign-key>
-		
+		</foreign-key>		
 		<foreign-key foreignTable="tb_tiporecargo">
 			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
-		</foreign-key>	
-									
+		</foreign-key>									
+	</table>	
+	
+	<!-- La tabla bs_pricrecargosxconcepto contiene los registros actuales y los historicos -->
+	<table name="bs_pricrecargosxconcepto" phpName="PricRecargoxConceptoLog">		
+		<column name="ca_idtrayecto" type="integer" required="true" />			
+		<column name="ca_idconcepto" type="integer" required="true" />
+		<column name="ca_idrecargo" type="integer" required="true" />	
+		<column name="ca_vlrrecargo" type="numeric" required="true" />
+		<column name="ca_aplicacion" type="varchar" />	
+		<column name="ca_vlrminimo" type="numeric" />	
+		<column name="ca_aplicacion_min" type="varchar" />				
+		<column name="ca_observaciones" type="varchar"   />	
+		<column name="ca_idmoneda" type="varchar" size="3"   />	
+		<column name="ca_fchinicio" type="date"   />
+		<column name="ca_fchvencimiento" type="date"   />
+		<column name="ca_fchcreado" type="timestamp" />
+		<column name="ca_usucreado" type="varchar" />			
+		<column name="ca_consecutivo" type="integer" primaryKey="true" />	
+		<foreign-key foreignTable="tb_pricfletes">
+			<reference local="ca_idtrayecto" foreign="ca_idtrayecto"/>
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>		
+		<foreign-key foreignTable="tb_tiporecargo">
+			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
+		</foreign-key>									
 	</table>	
 	
 	<table name="tb_pricarchivos" phpName="PricArchivo">		
@@ -110,8 +152,35 @@
 		<column name="ca_fchcreado" type="timestamp" />	
 		<column name="ca_usucreado" type="varchar" />	
 		<column name="ca_idmoneda" type="varchar" size="3" />
-				
+		<column name="ca_consecutivo" type="integer" />		
 		
+		<foreign-key foreignTable="tb_ciudades">
+			<reference local="ca_idciudad" foreign="ca_idciudad"/>
+		</foreign-key>			
+		<foreign-key foreignTable="tb_tiporecargo">
+			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
+		</foreign-key>								
+	</table>
+	
+	<!-- La tabla bs_pricrecargosxciudad contiene los registros actuales y los historicos -->
+	<table name="bs_pricrecargosxciudad" phpName="PricRecargosxCiudadLog">		
+		<column name="ca_idtrafico" type="varchar" required="true"  />
+		<column name="ca_idciudad" type="varchar" required="true"  />			
+		<column name="ca_idrecargo" type="integer" required="true" />
+		<column name="ca_modalidad" type="varchar" required="true" />
+		<column name="ca_impoexpo" type="varchar" required="true" />				
+		<column name="ca_vlrrecargo" type="numeric" />
+		<column name="ca_aplicacion" type="varchar" />	
+		<column name="ca_vlrminimo" type="numeric" />			
+		<column name="ca_aplicacion_min" type="varchar" />
+		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_fchinicio" type="date"   />
+		<column name="ca_fchvencimiento" type="date"   />
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" />	
+		<column name="ca_idmoneda" type="varchar" size="3" />
+		<column name="ca_consecutivo" type="integer" primaryKey="true" />
+				
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>
 		</foreign-key>			

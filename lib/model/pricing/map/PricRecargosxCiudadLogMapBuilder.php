@@ -2,7 +2,7 @@
 
 
 /**
- * This class adds structure of 'tb_pricrecargosxciudad' table to 'propel' DatabaseMap object.
+ * This class adds structure of 'bs_pricrecargosxciudad' table to 'propel' DatabaseMap object.
  *
  *
  *
@@ -13,12 +13,12 @@
  *
  * @package    lib.model.pricing.map
  */
-class PricRecargosxCiudadMapBuilder {
+class PricRecargosxCiudadLogMapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = 'lib.model.pricing.map.PricRecargosxCiudadMapBuilder';
+	const CLASS_NAME = 'lib.model.pricing.map.PricRecargosxCiudadLogMapBuilder';
 
 	/**
 	 * The database map.
@@ -56,20 +56,20 @@ class PricRecargosxCiudadMapBuilder {
 	{
 		$this->dbMap = Propel::getDatabaseMap('propel');
 
-		$tMap = $this->dbMap->addTable('tb_pricrecargosxciudad');
-		$tMap->setPhpName('PricRecargosxCiudad');
+		$tMap = $this->dbMap->addTable('bs_pricrecargosxciudad');
+		$tMap->setPhpName('PricRecargosxCiudadLog');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_IDTRAFICO', 'CaIdtrafico', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_IDTRAFICO', 'CaIdtrafico', 'string', CreoleTypes::VARCHAR, true, null);
 
-		$tMap->addForeignPrimaryKey('CA_IDCIUDAD', 'CaIdciudad', 'string' , CreoleTypes::VARCHAR, 'tb_ciudades', 'CA_IDCIUDAD', true, null);
+		$tMap->addForeignKey('CA_IDCIUDAD', 'CaIdciudad', 'string', CreoleTypes::VARCHAR, 'tb_ciudades', 'CA_IDCIUDAD', true, null);
 
-		$tMap->addForeignPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'int' , CreoleTypes::INTEGER, 'tb_tiporecargo', 'CA_IDRECARGO', true, null);
+		$tMap->addForeignKey('CA_IDRECARGO', 'CaIdrecargo', 'int', CreoleTypes::INTEGER, 'tb_tiporecargo', 'CA_IDRECARGO', true, null);
 
-		$tMap->addPrimaryKey('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, true, null);
 
-		$tMap->addPrimaryKey('CA_IMPOEXPO', 'CaImpoexpo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'string', CreoleTypes::VARCHAR, true, null);
 
 		$tMap->addColumn('CA_VLRRECARGO', 'CaVlrrecargo', 'double', CreoleTypes::NUMERIC, false, null);
 
@@ -91,8 +91,8 @@ class PricRecargosxCiudadMapBuilder {
 
 		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, 3);
 
-		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addPrimaryKey('CA_CONSECUTIVO', 'CaConsecutivo', 'int', CreoleTypes::INTEGER, true, null);
 
 	} // doBuild()
 
-} // PricRecargosxCiudadMapBuilder
+} // PricRecargosxCiudadLogMapBuilder

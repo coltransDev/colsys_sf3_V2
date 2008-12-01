@@ -10,7 +10,7 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 /*
 * Crea el Record 
 */
-var record = Ext.data.Record.create([   			
+var recordUsuarios = Ext.data.Record.create([   			
 	{name: 'rutina', type: 'string'},
 	{name: 'sel', type: 'bool'},
 	{name: 'login', type: 'string'},
@@ -21,7 +21,7 @@ var record = Ext.data.Record.create([
 /*
 * Crea el store
 */
-var store = new Ext.data.Store({
+var storeUsuarios = new Ext.data.Store({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
 		{			
@@ -29,10 +29,10 @@ var store = new Ext.data.Store({
 			totalProperty: 'total',
 			successProperty: 'success'
 		}, 
-		record
+		recordUsuarios
 	),
 	proxy: new Ext.data.MemoryProxy( <?=json_encode(array("data"=>$data))?>),
-	sortInfo:{field: 'grupo', direction: "ASC"}
+	sortInfo:{field: 'login', direction: "ASC"}
 });
 	
 
@@ -101,28 +101,28 @@ var colModelUsuarios = new Ext.grid.ColumnModel({
 */
 
 function guardarGrillaRutinaUsuarios(){	
-	var records = store.getRange();
+	var records = storeUsuarios.getRange();
 	
 	var lenght = records.length;
 	
 	for( var i=0; i < lenght; i++){ 
 		r = records[i];			
 		if( r.data.sel && !r.data.nivel){
-			alert("Por favor coloque el nivel de acceso en los elementos seleccionados en los grupos");
+			alert("Por favor coloque el nivel de acceso en los elementos seleccionados en los usuarios");
 			return 0;
 		}		
 	}
 	
 	
-	var grupos="";
+	var usuarios="";
 	
 	for( var i=0; i< lenght; i++){
 		r = records[i];					
 		if( r.data.sel ){
-			if(grupos!=""){
-				grupos+="|";
+			if(usuarios!=""){
+				usuarios+="|";
 			}
-			grupos+=r.data.grupo+","+r.data.nivel;
+			usuarios+=r.data.login+","+r.data.nivel;
 		}
 	}
 	
@@ -132,7 +132,7 @@ function guardarGrillaRutinaUsuarios(){
 				waitMsg: 'Guardando cambios...',						
 				url: '<?=url_for("users/observeRutinasUsuarios")?>', 						//method: 'POST', 
 				//Solamente se envian los cambios 						
-				params :	{grupos:grupos,
+				params :	{usuarios:usuarios,
 							 rutina: '<?=$rutina->getCaRutina()?>'
 							},
 				
@@ -140,7 +140,7 @@ function guardarGrillaRutinaUsuarios(){
 										
 					var res = Ext.util.JSON.decode( response.responseText );	
 					if( res.success ){										
-						store.commitChanges();							
+						storeUsuarios.commitChanges();							
 						win.close();				
 					}
 				}			
@@ -177,12 +177,12 @@ var gridOnvalidateedit = function(e){
 */    
 
 grillaRutinaUsuarios = new Ext.grid.EditorGridPanel({
-	store: store,	
+	store: storeUsuarios,	
 	cm: colModelUsuarios,
 	sm: new  Ext.grid.CellSelectionModel(),	
 	clicksToEdit: 1,
 	stripeRows: true,	
-	title: 'Grupos',
+	title: 'Usuarios',
 	height: 400,	
 	closable: false,	
 	plugins: [checkColumn],	

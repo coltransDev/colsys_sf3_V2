@@ -24,6 +24,7 @@ class Trafico extends BaseTrafico
 		$c->add( ConceptoPeer::CA_MODALIDAD, $modalidad );
 		$c->add( ConceptoPeer::CA_IDCONCEPTO, $conceptosArr, Criteria::IN );
 		$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+		$c->addAscendingOrderByColumn( ConceptoPeer::CA_CONCEPTO );
 		return ConceptoPeer::doSelect( $c );		
 	}
 	

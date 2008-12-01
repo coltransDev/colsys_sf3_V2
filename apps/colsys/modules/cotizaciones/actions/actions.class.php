@@ -278,7 +278,8 @@ class cotizacionesActions extends sfActions
 									 'cargo'=>utf8_encode($contacto->getCaCargo()),
 									 'telefonos'=>$contacto->getCaTelefonos(),
 									 'operacion'=>utf8_encode(str_replace("|", " ", $contacto->getCaTransporte())),
-									 'ciudad'=>utf8_encode($ciudad->getCaCiudad())
+									 'ciudad'=>utf8_encode($ciudad->getCaCiudad()),
+									  'sugerido'=>$contacto->getCaSugerido()
 									
       									
       		);

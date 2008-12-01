@@ -81,25 +81,7 @@ var nuevoFileViewBtnHandler = function(){
 				buttonCfg: {
 					text: '',
 					iconCls: 'upload-icon'
-				}
-				/*,
-				
-				name: 'fileObj',
-				
-				
-				,
-				{
-					xtype: 'fileuploadfield',
-					id: 'form-file',
-					emptyText: 'Select an image',
-					fieldLabel: 'Photo',
-					name: 'photo-path',
-					buttonCfg: {
-						text: '',
-						iconCls: 'upload-icon'
-					}
-				}
-				*/
+				}				
 			}]
 			
 		}),
@@ -194,7 +176,10 @@ echo (isset($object)&&$object)?"var ".$object." = ":"";
 				}
 			}
 		}),
-		tbar: [			  
+		tbar: [	
+		<?
+		if( !$readOnly ){
+		?>		  
 		{
 			text: 'Nuevo',
 			tooltip: 'Sube un nuevo archivo',
@@ -202,6 +187,9 @@ echo (isset($object)&&$object)?"var ".$object." = ":"";
 			handler: nuevoFileViewBtnHandler
 		}
 		,
+		<?
+		}
+		?>
 		{
 			text: 'Abrir',
 			tooltip: 'Abre el archivo seleccionado',
@@ -213,7 +201,11 @@ echo (isset($object)&&$object)?"var ".$object." = ":"";
 					popup( "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo );
 				}
 			}
-		},
+		}
+		<?
+		if( !$readOnly ){
+		?>	
+		,
 		{
 			text: 'Borrar',
 			tooltip: 'Elimina el archivo seleccionado',
@@ -245,7 +237,10 @@ echo (isset($object)&&$object)?"var ".$object." = ":"";
 					}
 				}
 					
-			}
+			}			
 		}
+		<?
+		}
+		?>
 		]
 	});
