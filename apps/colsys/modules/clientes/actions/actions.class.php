@@ -374,10 +374,11 @@ class clientesActions extends sfActions
 		$inicio =  $this->getRequestParameter("fchStart");
 		$final =  $this->getRequestParameter("fchEnd");
 		$empresa =  $this->getRequestParameter("empresa");
+		$estado =  $this->getRequestParameter("estado");
 		
 		$this->clientesEstados = array();
 		
-		$rs = ClientePeer::estadoClientes($inicio, $final, $empresa);
+		$rs = ClientePeer::estadoClientes($inicio, $final, $empresa, null, $estado);
 		while($rs->next()) {
 			$actual = array('ca_idcliente'=>$rs->getString("ca_idcliente"),
 							'ca_compania'=>$rs->getString("ca_compania"),
@@ -388,14 +389,24 @@ class clientesActions extends sfActions
 			
 			list($year, $month, $day) = sscanf($rs->getString("ca_fchestado"), "%d-%d-%d");
 			
-			$sb = ClientePeer::estadoClientes(null, date('m-d-Y',mktime(0,0,0,$month,$day-1,$year)), 'Coltrans', $rs->getString("ca_idcliente"));
+			$sb = ClientePeer::estadoClientes(null, date('m-d-Y',mktime(0,0,0,$month,$day-1,$year)), $empresa, $rs->getString("ca_idcliente"), null);
 			while($sb->next()) {
 				$anterior = array('ca_fchestado_ant'=>$sb->getString("ca_fchestado"),
 	                              'ca_estado_ant'=>$sb->getString("ca_estado")
 	                             );
 			}
-			$this->clientesEstados[] = array_merge($actual, $anterior);
+
+			$sb = ClientePeer::facturacionClientes($inicio, $final, $empresa, $rs->getString("ca_idcliente"));
+			while($sb->next()) {
+				$facturar = array('ca_fchfactura'=>$sb->getString("ca_fchfactura"),
+	                              'ca_valor'=>$sb->getString("ca_valor")
+	                             );
+			}
+			$this->clientesEstados[] = array_merge($actual, $anterior, $facturar);
+
 		}
+		$this->inicio = $inicio;
+		$this->final = $final;
 	}
 	
 	public function executeReporteEstadosEmail(){
@@ -418,7 +429,7 @@ class clientesActions extends sfActions
 		$email = new Email();
 		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( "Administrador" );
-		$email->setCaTipo( "SDNList Compair" ); 		
+		$email->setCaTipo( "Reporte Cambios de Estado en Clientes" ); 		
 		$email->setCaIdcaso( "1" );
 		$email->setCaFrom( "admin@coltrans.com.co" );
 		$email->setCaFromname( "Administrador Sistema Colsys" );
