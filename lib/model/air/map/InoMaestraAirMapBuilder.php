@@ -89,6 +89,10 @@ class InoMaestraAirMapBuilder {
 
 		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_FCHPREAVISO', 'CaFchpreaviso', 'int', CreoleTypes::DATE, false, null);
+
+		$tMap->addColumn('CA_FCHLLEGADA', 'CaFchllegada', 'int', CreoleTypes::DATE, false, null);
+
 		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::DATE, false, null);
 
 		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, false, null);

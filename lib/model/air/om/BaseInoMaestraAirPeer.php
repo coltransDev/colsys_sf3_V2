@@ -19,7 +19,7 @@ abstract class BaseInoMaestraAirPeer {
 	const CLASS_DEFAULT = 'lib.model.air.InoMaestraAir';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 20;
+	const NUM_COLUMNS = 22;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -67,6 +67,12 @@ abstract class BaseInoMaestraAirPeer {
 	/** the column name for the CA_USUCREADO field */
 	const CA_USUCREADO = 'tb_inomaestra_air.CA_USUCREADO';
 
+	/** the column name for the CA_FCHPREAVISO field */
+	const CA_FCHPREAVISO = 'tb_inomaestra_air.CA_FCHPREAVISO';
+
+	/** the column name for the CA_FCHLLEGADA field */
+	const CA_FCHLLEGADA = 'tb_inomaestra_air.CA_FCHLLEGADA';
+
 	/** the column name for the CA_FCHACTUALIZADO field */
 	const CA_FCHACTUALIZADO = 'tb_inomaestra_air.CA_FCHACTUALIZADO';
 
@@ -96,10 +102,10 @@ abstract class BaseInoMaestraAirPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaFchreferencia', 'CaReferencia', 'CaImpoexpo', 'CaOrigen', 'CaDestino', 'CaModalidad', 'CaIdlinea', 'CaMawb', 'CaPiezas', 'CaPeso', 'CaPesovolumen', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchliquidado', 'CaUsuliquidado', 'CaFchcerrado', 'CaUsucerrado', ),
-		BasePeer::TYPE_COLNAME => array (InoMaestraAirPeer::CA_FCHREFERENCIA, InoMaestraAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_IMPOEXPO, InoMaestraAirPeer::CA_ORIGEN, InoMaestraAirPeer::CA_DESTINO, InoMaestraAirPeer::CA_MODALIDAD, InoMaestraAirPeer::CA_IDLINEA, InoMaestraAirPeer::CA_MAWB, InoMaestraAirPeer::CA_PIEZAS, InoMaestraAirPeer::CA_PESO, InoMaestraAirPeer::CA_PESOVOLUMEN, InoMaestraAirPeer::CA_OBSERVACIONES, InoMaestraAirPeer::CA_FCHCREADO, InoMaestraAirPeer::CA_USUCREADO, InoMaestraAirPeer::CA_FCHACTUALIZADO, InoMaestraAirPeer::CA_USUACTUALIZADO, InoMaestraAirPeer::CA_FCHLIQUIDADO, InoMaestraAirPeer::CA_USULIQUIDADO, InoMaestraAirPeer::CA_FCHCERRADO, InoMaestraAirPeer::CA_USUCERRADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_fchreferencia', 'ca_referencia', 'ca_impoexpo', 'ca_origen', 'ca_destino', 'ca_modalidad', 'ca_idlinea', 'ca_mawb', 'ca_piezas', 'ca_peso', 'ca_pesovolumen', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fchliquidado', 'ca_usuliquidado', 'ca_fchcerrado', 'ca_usucerrado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
+		BasePeer::TYPE_PHPNAME => array ('CaFchreferencia', 'CaReferencia', 'CaImpoexpo', 'CaOrigen', 'CaDestino', 'CaModalidad', 'CaIdlinea', 'CaMawb', 'CaPiezas', 'CaPeso', 'CaPesovolumen', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchpreaviso', 'CaFchllegada', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchliquidado', 'CaUsuliquidado', 'CaFchcerrado', 'CaUsucerrado', ),
+		BasePeer::TYPE_COLNAME => array (InoMaestraAirPeer::CA_FCHREFERENCIA, InoMaestraAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_IMPOEXPO, InoMaestraAirPeer::CA_ORIGEN, InoMaestraAirPeer::CA_DESTINO, InoMaestraAirPeer::CA_MODALIDAD, InoMaestraAirPeer::CA_IDLINEA, InoMaestraAirPeer::CA_MAWB, InoMaestraAirPeer::CA_PIEZAS, InoMaestraAirPeer::CA_PESO, InoMaestraAirPeer::CA_PESOVOLUMEN, InoMaestraAirPeer::CA_OBSERVACIONES, InoMaestraAirPeer::CA_FCHCREADO, InoMaestraAirPeer::CA_USUCREADO, InoMaestraAirPeer::CA_FCHPREAVISO, InoMaestraAirPeer::CA_FCHLLEGADA, InoMaestraAirPeer::CA_FCHACTUALIZADO, InoMaestraAirPeer::CA_USUACTUALIZADO, InoMaestraAirPeer::CA_FCHLIQUIDADO, InoMaestraAirPeer::CA_USULIQUIDADO, InoMaestraAirPeer::CA_FCHCERRADO, InoMaestraAirPeer::CA_USUCERRADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_fchreferencia', 'ca_referencia', 'ca_impoexpo', 'ca_origen', 'ca_destino', 'ca_modalidad', 'ca_idlinea', 'ca_mawb', 'ca_piezas', 'ca_peso', 'ca_pesovolumen', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchpreaviso', 'ca_fchllegada', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fchliquidado', 'ca_usuliquidado', 'ca_fchcerrado', 'ca_usucerrado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, )
 	);
 
 	/**
@@ -109,10 +115,10 @@ abstract class BaseInoMaestraAirPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaFchreferencia' => 0, 'CaReferencia' => 1, 'CaImpoexpo' => 2, 'CaOrigen' => 3, 'CaDestino' => 4, 'CaModalidad' => 5, 'CaIdlinea' => 6, 'CaMawb' => 7, 'CaPiezas' => 8, 'CaPeso' => 9, 'CaPesovolumen' => 10, 'CaObservaciones' => 11, 'CaFchcreado' => 12, 'CaUsucreado' => 13, 'CaFchactualizado' => 14, 'CaUsuactualizado' => 15, 'CaFchliquidado' => 16, 'CaUsuliquidado' => 17, 'CaFchcerrado' => 18, 'CaUsucerrado' => 19, ),
-		BasePeer::TYPE_COLNAME => array (InoMaestraAirPeer::CA_FCHREFERENCIA => 0, InoMaestraAirPeer::CA_REFERENCIA => 1, InoMaestraAirPeer::CA_IMPOEXPO => 2, InoMaestraAirPeer::CA_ORIGEN => 3, InoMaestraAirPeer::CA_DESTINO => 4, InoMaestraAirPeer::CA_MODALIDAD => 5, InoMaestraAirPeer::CA_IDLINEA => 6, InoMaestraAirPeer::CA_MAWB => 7, InoMaestraAirPeer::CA_PIEZAS => 8, InoMaestraAirPeer::CA_PESO => 9, InoMaestraAirPeer::CA_PESOVOLUMEN => 10, InoMaestraAirPeer::CA_OBSERVACIONES => 11, InoMaestraAirPeer::CA_FCHCREADO => 12, InoMaestraAirPeer::CA_USUCREADO => 13, InoMaestraAirPeer::CA_FCHACTUALIZADO => 14, InoMaestraAirPeer::CA_USUACTUALIZADO => 15, InoMaestraAirPeer::CA_FCHLIQUIDADO => 16, InoMaestraAirPeer::CA_USULIQUIDADO => 17, InoMaestraAirPeer::CA_FCHCERRADO => 18, InoMaestraAirPeer::CA_USUCERRADO => 19, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_fchreferencia' => 0, 'ca_referencia' => 1, 'ca_impoexpo' => 2, 'ca_origen' => 3, 'ca_destino' => 4, 'ca_modalidad' => 5, 'ca_idlinea' => 6, 'ca_mawb' => 7, 'ca_piezas' => 8, 'ca_peso' => 9, 'ca_pesovolumen' => 10, 'ca_observaciones' => 11, 'ca_fchcreado' => 12, 'ca_usucreado' => 13, 'ca_fchactualizado' => 14, 'ca_usuactualizado' => 15, 'ca_fchliquidado' => 16, 'ca_usuliquidado' => 17, 'ca_fchcerrado' => 18, 'ca_usucerrado' => 19, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
+		BasePeer::TYPE_PHPNAME => array ('CaFchreferencia' => 0, 'CaReferencia' => 1, 'CaImpoexpo' => 2, 'CaOrigen' => 3, 'CaDestino' => 4, 'CaModalidad' => 5, 'CaIdlinea' => 6, 'CaMawb' => 7, 'CaPiezas' => 8, 'CaPeso' => 9, 'CaPesovolumen' => 10, 'CaObservaciones' => 11, 'CaFchcreado' => 12, 'CaUsucreado' => 13, 'CaFchpreaviso' => 14, 'CaFchllegada' => 15, 'CaFchactualizado' => 16, 'CaUsuactualizado' => 17, 'CaFchliquidado' => 18, 'CaUsuliquidado' => 19, 'CaFchcerrado' => 20, 'CaUsucerrado' => 21, ),
+		BasePeer::TYPE_COLNAME => array (InoMaestraAirPeer::CA_FCHREFERENCIA => 0, InoMaestraAirPeer::CA_REFERENCIA => 1, InoMaestraAirPeer::CA_IMPOEXPO => 2, InoMaestraAirPeer::CA_ORIGEN => 3, InoMaestraAirPeer::CA_DESTINO => 4, InoMaestraAirPeer::CA_MODALIDAD => 5, InoMaestraAirPeer::CA_IDLINEA => 6, InoMaestraAirPeer::CA_MAWB => 7, InoMaestraAirPeer::CA_PIEZAS => 8, InoMaestraAirPeer::CA_PESO => 9, InoMaestraAirPeer::CA_PESOVOLUMEN => 10, InoMaestraAirPeer::CA_OBSERVACIONES => 11, InoMaestraAirPeer::CA_FCHCREADO => 12, InoMaestraAirPeer::CA_USUCREADO => 13, InoMaestraAirPeer::CA_FCHPREAVISO => 14, InoMaestraAirPeer::CA_FCHLLEGADA => 15, InoMaestraAirPeer::CA_FCHACTUALIZADO => 16, InoMaestraAirPeer::CA_USUACTUALIZADO => 17, InoMaestraAirPeer::CA_FCHLIQUIDADO => 18, InoMaestraAirPeer::CA_USULIQUIDADO => 19, InoMaestraAirPeer::CA_FCHCERRADO => 20, InoMaestraAirPeer::CA_USUCERRADO => 21, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_fchreferencia' => 0, 'ca_referencia' => 1, 'ca_impoexpo' => 2, 'ca_origen' => 3, 'ca_destino' => 4, 'ca_modalidad' => 5, 'ca_idlinea' => 6, 'ca_mawb' => 7, 'ca_piezas' => 8, 'ca_peso' => 9, 'ca_pesovolumen' => 10, 'ca_observaciones' => 11, 'ca_fchcreado' => 12, 'ca_usucreado' => 13, 'ca_fchpreaviso' => 14, 'ca_fchllegada' => 15, 'ca_fchactualizado' => 16, 'ca_usuactualizado' => 17, 'ca_fchliquidado' => 18, 'ca_usuliquidado' => 19, 'ca_fchcerrado' => 20, 'ca_usucerrado' => 21, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, )
 	);
 
 	/**
@@ -239,6 +245,10 @@ abstract class BaseInoMaestraAirPeer {
 		$criteria->addSelectColumn(InoMaestraAirPeer::CA_FCHCREADO);
 
 		$criteria->addSelectColumn(InoMaestraAirPeer::CA_USUCREADO);
+
+		$criteria->addSelectColumn(InoMaestraAirPeer::CA_FCHPREAVISO);
+
+		$criteria->addSelectColumn(InoMaestraAirPeer::CA_FCHLLEGADA);
 
 		$criteria->addSelectColumn(InoMaestraAirPeer::CA_FCHACTUALIZADO);
 

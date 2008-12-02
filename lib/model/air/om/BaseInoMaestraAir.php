@@ -118,6 +118,20 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 
 
 	/**
+	 * The value for the ca_fchpreaviso field.
+	 * @var        int
+	 */
+	protected $ca_fchpreaviso;
+
+
+	/**
+	 * The value for the ca_fchllegada field.
+	 * @var        int
+	 */
+	protected $ca_fchllegada;
+
+
+	/**
 	 * The value for the ca_fchactualizado field.
 	 * @var        int
 	 */
@@ -393,6 +407,68 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_usucreado;
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchpreaviso] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchpreaviso($format = 'Y-m-d')
+	{
+
+		if ($this->ca_fchpreaviso === null || $this->ca_fchpreaviso === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchpreaviso)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchpreaviso);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchpreaviso] as date/time value: " . var_export($this->ca_fchpreaviso, true));
+			}
+		} else {
+			$ts = $this->ca_fchpreaviso;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
+	}
+
+	/**
+	 * Get the [optionally formatted] [ca_fchllegada] column value.
+	 * 
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the integer unix timestamp will be returned.
+	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 */
+	public function getCaFchllegada($format = 'Y-m-d')
+	{
+
+		if ($this->ca_fchllegada === null || $this->ca_fchllegada === '') {
+			return null;
+		} elseif (!is_int($this->ca_fchllegada)) {
+			// a non-timestamp value was set externally, so we convert it
+			$ts = strtotime($this->ca_fchllegada);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse value of [ca_fchllegada] as date/time value: " . var_export($this->ca_fchllegada, true));
+			}
+		} else {
+			$ts = $this->ca_fchllegada;
+		}
+		if ($format === null) {
+			return $ts;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $ts);
+		} else {
+			return date($format, $ts);
+		}
 	}
 
 	/**
@@ -826,6 +902,54 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	} // setCaUsucreado()
 
 	/**
+	 * Set the value of [ca_fchpreaviso] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchpreaviso($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchpreaviso] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchpreaviso !== $ts) {
+			$this->ca_fchpreaviso = $ts;
+			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHPREAVISO;
+		}
+
+	} // setCaFchpreaviso()
+
+	/**
+	 * Set the value of [ca_fchllegada] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     void
+	 */
+	public function setCaFchllegada($v)
+	{
+
+		if ($v !== null && !is_int($v)) {
+			$ts = strtotime($v);
+			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
+				throw new PropelException("Unable to parse date/time value for [ca_fchllegada] from input: " . var_export($v, true));
+			}
+		} else {
+			$ts = $v;
+		}
+		if ($this->ca_fchllegada !== $ts) {
+			$this->ca_fchllegada = $ts;
+			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHLLEGADA;
+		}
+
+	} // setCaFchllegada()
+
+	/**
 	 * Set the value of [ca_fchactualizado] column.
 	 * 
 	 * @param      int $v new value
@@ -1008,24 +1132,28 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 
 			$this->ca_usucreado = $rs->getString($startcol + 13);
 
-			$this->ca_fchactualizado = $rs->getDate($startcol + 14, null);
+			$this->ca_fchpreaviso = $rs->getDate($startcol + 14, null);
 
-			$this->ca_usuactualizado = $rs->getString($startcol + 15);
+			$this->ca_fchllegada = $rs->getDate($startcol + 15, null);
 
-			$this->ca_fchliquidado = $rs->getDate($startcol + 16, null);
+			$this->ca_fchactualizado = $rs->getDate($startcol + 16, null);
 
-			$this->ca_usuliquidado = $rs->getString($startcol + 17);
+			$this->ca_usuactualizado = $rs->getString($startcol + 17);
 
-			$this->ca_fchcerrado = $rs->getDate($startcol + 18, null);
+			$this->ca_fchliquidado = $rs->getDate($startcol + 18, null);
 
-			$this->ca_usucerrado = $rs->getString($startcol + 19);
+			$this->ca_usuliquidado = $rs->getString($startcol + 19);
+
+			$this->ca_fchcerrado = $rs->getDate($startcol + 20, null);
+
+			$this->ca_usucerrado = $rs->getString($startcol + 21);
 
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 20; // 20 = InoMaestraAirPeer::NUM_COLUMNS - InoMaestraAirPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 22; // 22 = InoMaestraAirPeer::NUM_COLUMNS - InoMaestraAirPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating InoMaestraAir object", $e);
@@ -1328,21 +1456,27 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				return $this->getCaUsucreado();
 				break;
 			case 14:
-				return $this->getCaFchactualizado();
+				return $this->getCaFchpreaviso();
 				break;
 			case 15:
-				return $this->getCaUsuactualizado();
+				return $this->getCaFchllegada();
 				break;
 			case 16:
-				return $this->getCaFchliquidado();
+				return $this->getCaFchactualizado();
 				break;
 			case 17:
-				return $this->getCaUsuliquidado();
+				return $this->getCaUsuactualizado();
 				break;
 			case 18:
-				return $this->getCaFchcerrado();
+				return $this->getCaFchliquidado();
 				break;
 			case 19:
+				return $this->getCaUsuliquidado();
+				break;
+			case 20:
+				return $this->getCaFchcerrado();
+				break;
+			case 21:
 				return $this->getCaUsucerrado();
 				break;
 			default:
@@ -1379,12 +1513,14 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$keys[11] => $this->getCaObservaciones(),
 			$keys[12] => $this->getCaFchcreado(),
 			$keys[13] => $this->getCaUsucreado(),
-			$keys[14] => $this->getCaFchactualizado(),
-			$keys[15] => $this->getCaUsuactualizado(),
-			$keys[16] => $this->getCaFchliquidado(),
-			$keys[17] => $this->getCaUsuliquidado(),
-			$keys[18] => $this->getCaFchcerrado(),
-			$keys[19] => $this->getCaUsucerrado(),
+			$keys[14] => $this->getCaFchpreaviso(),
+			$keys[15] => $this->getCaFchllegada(),
+			$keys[16] => $this->getCaFchactualizado(),
+			$keys[17] => $this->getCaUsuactualizado(),
+			$keys[18] => $this->getCaFchliquidado(),
+			$keys[19] => $this->getCaUsuliquidado(),
+			$keys[20] => $this->getCaFchcerrado(),
+			$keys[21] => $this->getCaUsucerrado(),
 		);
 		return $result;
 	}
@@ -1459,21 +1595,27 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				$this->setCaUsucreado($value);
 				break;
 			case 14:
-				$this->setCaFchactualizado($value);
+				$this->setCaFchpreaviso($value);
 				break;
 			case 15:
-				$this->setCaUsuactualizado($value);
+				$this->setCaFchllegada($value);
 				break;
 			case 16:
-				$this->setCaFchliquidado($value);
+				$this->setCaFchactualizado($value);
 				break;
 			case 17:
-				$this->setCaUsuliquidado($value);
+				$this->setCaUsuactualizado($value);
 				break;
 			case 18:
-				$this->setCaFchcerrado($value);
+				$this->setCaFchliquidado($value);
 				break;
 			case 19:
+				$this->setCaUsuliquidado($value);
+				break;
+			case 20:
+				$this->setCaFchcerrado($value);
+				break;
+			case 21:
 				$this->setCaUsucerrado($value);
 				break;
 		} // switch()
@@ -1513,12 +1655,14 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[11], $arr)) $this->setCaObservaciones($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setCaFchcreado($arr[$keys[12]]);
 		if (array_key_exists($keys[13], $arr)) $this->setCaUsucreado($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaFchactualizado($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaUsuactualizado($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaFchliquidado($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaUsuliquidado($arr[$keys[17]]);
-		if (array_key_exists($keys[18], $arr)) $this->setCaFchcerrado($arr[$keys[18]]);
-		if (array_key_exists($keys[19], $arr)) $this->setCaUsucerrado($arr[$keys[19]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaFchpreaviso($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaFchllegada($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaFchactualizado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaUsuactualizado($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaFchliquidado($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaUsuliquidado($arr[$keys[19]]);
+		if (array_key_exists($keys[20], $arr)) $this->setCaFchcerrado($arr[$keys[20]]);
+		if (array_key_exists($keys[21], $arr)) $this->setCaUsucerrado($arr[$keys[21]]);
 	}
 
 	/**
@@ -1544,6 +1688,8 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(InoMaestraAirPeer::CA_OBSERVACIONES)) $criteria->add(InoMaestraAirPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(InoMaestraAirPeer::CA_FCHCREADO)) $criteria->add(InoMaestraAirPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(InoMaestraAirPeer::CA_USUCREADO)) $criteria->add(InoMaestraAirPeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(InoMaestraAirPeer::CA_FCHPREAVISO)) $criteria->add(InoMaestraAirPeer::CA_FCHPREAVISO, $this->ca_fchpreaviso);
+		if ($this->isColumnModified(InoMaestraAirPeer::CA_FCHLLEGADA)) $criteria->add(InoMaestraAirPeer::CA_FCHLLEGADA, $this->ca_fchllegada);
 		if ($this->isColumnModified(InoMaestraAirPeer::CA_FCHACTUALIZADO)) $criteria->add(InoMaestraAirPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
 		if ($this->isColumnModified(InoMaestraAirPeer::CA_USUACTUALIZADO)) $criteria->add(InoMaestraAirPeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
 		if ($this->isColumnModified(InoMaestraAirPeer::CA_FCHLIQUIDADO)) $criteria->add(InoMaestraAirPeer::CA_FCHLIQUIDADO, $this->ca_fchliquidado);
@@ -1629,6 +1775,10 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 		$copyObj->setCaFchcreado($this->ca_fchcreado);
 
 		$copyObj->setCaUsucreado($this->ca_usucreado);
+
+		$copyObj->setCaFchpreaviso($this->ca_fchpreaviso);
+
+		$copyObj->setCaFchllegada($this->ca_fchllegada);
 
 		$copyObj->setCaFchactualizado($this->ca_fchactualizado);
 

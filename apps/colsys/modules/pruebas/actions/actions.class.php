@@ -862,7 +862,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 	*/	
 	public function executeImportarNotasTarifario(){
 		sfConfig::set('sf_web_debug', false) ;	
-		exit("die gratefully");
+		exit("Ejecutar solo una vez");
 		$c = new Criteria();
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
 		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
@@ -914,7 +914,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 	*/
 	public function executeImportarTarifarioRecargos(){
 		set_time_limit(0); 		
-		
+		exit("Este no");
 		$c = new Criteria();
 		//$c->setLimit(500);
 		$c->add( RecargoFletePeer::CA_IDCONCEPTO, '9999' ); 

@@ -266,16 +266,18 @@ $statuss = $reporte->getHistorialStatus ();
 	$repstatuss = $reporte->getRepStatuss();	
 	foreach( $repstatuss as $repstatus ){
 		$email = $repstatus->getEmail();
-		$attachments = $email ->getEmailAttachments();		
-		
-		foreach( $attachments as $attachment ){
-		?>
-		<tr>
-			<td width="70%">
-			<div align="left" class="info"><?=mime_type_icon ( $attachment->getCaHeaderFile() ) . " " . link_popup ( $attachment->getCaHeaderFile(), "general/attachmentViewer?idx=" . $attachment->getCaIdattachment() . "&token=" . md5 ( time().$attachment->getCaHeaderFile()),"800","600" )?></div>
-			</td>
-		</tr>
-		<?
+		if( $email ){
+			$attachments = $email->getEmailAttachments();		
+			
+			foreach( $attachments as $attachment ){
+			?>
+			<tr>
+				<td width="70%">
+				<div align="left" class="info"><?=mime_type_icon ( $attachment->getCaHeaderFile() ) . " " . link_popup ( $attachment->getCaHeaderFile(), "general/attachmentViewer?idx=" . $attachment->getCaIdattachment() . "&token=" . md5 ( time().$attachment->getCaHeaderFile()),"800","600" )?></div>
+				</td>
+			</tr>
+			<?
+			}
 		}
 	}
 	?>

@@ -68,11 +68,14 @@ $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'Destino');
 $objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Incotemrs');
 $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, 'ETS');
 $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, 'ETA');
-$objPHPExcel->getActiveSheet()->setCellValue('G'.$i, utf8_encode('Continuación'));
+if( $modo=="maritimo" ){
+	$objPHPExcel->getActiveSheet()->setCellValue('G'.$i, utf8_encode('Continuación'));
+}
 if( $modo=="maritimo" ){
 	$objPHPExcel->getActiveSheet()->setCellValue('H'.$i, 'Motonave');
 }else{
-	$objPHPExcel->getActiveSheet()->setCellValue('H'.$i, 'Vuelo');
+	$objPHPExcel->getActiveSheet()->setCellValue('G'.$i, 'Orden');
+	$objPHPExcel->getActiveSheet()->mergeCells('G'.$i.":I".$i);
 }
 $objPHPExcel->getActiveSheet()->setCellValue('I'.$i, 'Orden');
 $objPHPExcel->getActiveSheet()->setCellValue('J'.$i, 'Producto');
@@ -173,16 +176,24 @@ foreach( $reportes as $reporte ){
 	if( $eta ){
 		$objPHPExcel->getActiveSheet()->setCellValue('F'.$i, $eta);
 	}
+	if( $modo=="maritimo" ){
+		if( $reporte->getCaContinuacion()!="N/A"){
+			$fchCont = $reporte->getFchLlegadaCont("d.m.y");
+			if( $fchCont ){
+				$objPHPExcel->getActiveSheet()->setCellValue('G'.$i, $fchCont);
+			}
+		}else{
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$i, utf8_encode("N/A"));
+		}	
+	}	
 	
-	if( $reporte->getCaContinuacion()!="N/A"){
-		$fchCont = $reporte->getFchLlegadaCont("d.m.y");
-		if( $fchCont ){
-			$objPHPExcel->getActiveSheet()->setCellValue('G'.$i, $fchCont);
-		}
+	if( $modo=="maritimo" ){	
+		$objPHPExcel->getActiveSheet()->setCellValue('H'.$i, utf8_encode($reporte->getIdNave()));
 	}else{
-		$objPHPExcel->getActiveSheet()->setCellValue('G'.$i, utf8_encode("N/A"));
-	}			
-	$objPHPExcel->getActiveSheet()->setCellValue('H'.$i, utf8_encode($reporte->getIdNave()));
+		//Las combine mientras arreglo el cuadro para aereo	
+		$objPHPExcel->getActiveSheet()->setCellValue('G'.$i, utf8_encode($reporte->getCaOrdenClie()));
+		$objPHPExcel->getActiveSheet()->mergeCells('G'.$i.":I".$i);
+	}
 	
 	$objPHPExcel->getActiveSheet()->setCellValue('I'.$i, utf8_encode($reporte->getCaOrdenClie()));
 	$objPHPExcel->getActiveSheet()->setCellValue('J'.$i, utf8_encode($reporte->getCaMercanciaDesc()));
@@ -235,7 +246,9 @@ foreach( $reportes as $reporte ){
 	$objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getAlignment()->setWrapText(true);			
 	$objPHPExcel->getActiveSheet()->getStyle('B'.$i)->getAlignment()->setWrapText(true);
 	$objPHPExcel->getActiveSheet()->getStyle('C'.$i)->getAlignment()->setWrapText(true);
-	$objPHPExcel->getActiveSheet()->getStyle('H'.$i)->getAlignment()->setWrapText(true);
+	$objPHPExcel->getActiveSheet()->getStyle('G'.$i)->getAlignment()->setWrapText(true);
+	$objPHPExcel->getActiveSheet()->getStyle('H'.$i)->getAlignment()->setWrapText(true);	
+	$objPHPExcel->getActiveSheet()->getStyle('I'.$i)->getAlignment()->setWrapText(true);
 	$objPHPExcel->getActiveSheet()->getStyle('J'.$i)->getAlignment()->setWrapText(true);
 	$objPHPExcel->getActiveSheet()->getStyle('J'.$i)->getFont()->setSize(8);
 	$objPHPExcel->getActiveSheet()->getStyle('N'.$i)->getAlignment()->setWrapText(true);
@@ -345,9 +358,16 @@ $objPHPExcel->getActiveSheet()->duplicateStyleArray(
 $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(21);
 $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(12);
 $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(12);
-$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(10);
-$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(12);
-$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+if( $modo=="maritimo" ){
+	$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(10);
+	$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(12);
+	$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+}else{
+	$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(0.1);
+	$objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(0.1);
+	$objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(25);
+}
+
 $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setWidth(25);
 $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setWidth(20);
 $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
