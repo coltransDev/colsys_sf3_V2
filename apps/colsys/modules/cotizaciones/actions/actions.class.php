@@ -1014,7 +1014,7 @@ class cotizacionesActions extends sfActions
 		$c = new Criteria();
 		$c->add(CotProductoPeer::CA_IDCOTIZACION, $idcotizacion );
 		$c->addSelectColumn(CotProductoPeer::CA_TRANSPORTE );
-		$c->addSelectColumn(CotProductoPeer::CA_MODALIDAD );
+		$c->addSelectColumn(CotProductoPeer::CA_MODALIDAD );		
 		$c->setDistinct();
 		$rs = CotProductoPeer::doSelectRs( $c );
 		

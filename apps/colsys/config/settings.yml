@@ -13,6 +13,7 @@ dev:
     no_script_name:         on
     etag:                   off
 
+
 test:
   .settings:
     # E_ALL | E_STRICT & ~E_NOTICE = 2047
@@ -21,6 +22,16 @@ test:
     web_debug:              off
     no_script_name:         off
     etag:                   off
+
+batch:
+  .settings:
+    # E_ALL | E_STRICT = 4095
+    error_reporting:        <?php echo (E_ALL | E_STRICT)."\n" ?>
+    logging_enabled: off
+    web_debug:              off
+    cache:                  off
+    no_script_name:         off
+    etag:                   off		
 
 all:
 #  .actions:

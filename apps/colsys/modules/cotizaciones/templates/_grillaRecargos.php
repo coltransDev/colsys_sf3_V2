@@ -37,6 +37,7 @@ var recordGrilla = Ext.data.Record.create([
     {name: 'idrecargo', type: 'string'},
     {name: 'agrupamiento', type: 'string'},
     {name: 'transporte', type: 'string'},
+	{name: 'impoexpo', type: 'string'},
     {name: 'recargo', type: 'string'},
     {name: 'tipo', type: 'string'},
     {name: 'valor_tar', type: 'string'},
@@ -437,7 +438,8 @@ var ventanaTarifarioRecargos = function( record ){
 		url: url,
 		params: {						
 			transporte: record.data.transporte, 
-			modalidad: record.data.modalidad		
+			modalidad: record.data.modalidad,
+			impoexpo: "Importación" //TODO Corregir para expo		
 		},
 		success: function(xhr) {			
 			//alert( xhr.responseText );			
@@ -495,7 +497,7 @@ var ventanaTarifarioRecargos = function( record ){
 									idmoneda: '',
 									observaciones: '',
 									transporte: activeRecordRec.data.transporte,  
-									modalidad: activeRecordRec.data.modalidad, 
+									modalidad: activeRecordRec.data.modalidad
 								});											
 								newRec.id = newId;		
 								activeRecordRec.id=newId+1;
