@@ -368,9 +368,6 @@ class clientesActions extends sfActions
 	
 	public function executeReporteEstados(){
 		set_time_limit(0);
-		// $inicio  = mktime(0, 0, 0, date("m")-3, 1, date("Y"));
-		// $final = mktime(0, 0, 0, date("m"), -1, date("Y"));
-
 		$inicio =  $this->getRequestParameter("fchStart");
 		$final =  $this->getRequestParameter("fchEnd");
 		$empresa =  $this->getRequestParameter("empresa");
@@ -389,7 +386,7 @@ class clientesActions extends sfActions
 			
 			list($year, $month, $day) = sscanf($rs->getString("ca_fchestado"), "%d-%d-%d");
 			
-			$sb = ClientePeer::estadoClientes(null, date('m-d-Y',mktime(0,0,0,$month,$day-1,$year)), $empresa, $rs->getString("ca_idcliente"), null);
+			$sb = ClientePeer::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $rs->getString("ca_idcliente"), null);
 			while($sb->next()) {
 				$anterior = array('ca_fchestado_ant'=>$sb->getString("ca_fchestado"),
 	                              'ca_estado_ant'=>$sb->getString("ca_estado")
