@@ -15,10 +15,10 @@ class ClientePeer extends BaseClientePeer
 	*/
 	public static function estadoClientes( $fch_ini, $fch_fin, $empresa, $idcliente, $estado ){
 		if ($fch_ini == null){
-			$fch_ini = date('m-d-Y',mktime(0, 0, 0, 1, 1, 1900)); }
+			$fch_ini = date('Y-m-d',mktime(0, 0, 0, 1, 1, 1900)); }
 			
 		if ($fch_fin == null){
-			$fch_fin = date('m-d-Y'); }
+			$fch_fin = date('Y-m-d'); }
 			
 		$query = "select std0.*,cl.ca_compania from tb_stdcliente std0 LEFT OUTER JOIN tb_clientes cl ON (std0.ca_idcliente = cl.ca_idcliente), ";
 		$query.= "(select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa) std1 ";
@@ -45,10 +45,10 @@ class ClientePeer extends BaseClientePeer
 	*/
 	public static function facturacionClientes( $fch_ini, $fch_fin, $empresa, $idcliente ){
 		if ($fch_ini == null){
-			$fch_ini = date('m-d-Y',mktime(0, 0, 0, 1, 1, 1900)); }
+			$fch_ini = date('Y-m-d',mktime(0, 0, 0, 1, 1, 1900)); }
 			
 		if ($fch_fin == null){
-			$fch_fin = date('m-d-Y'); }
+			$fch_fin = date('Y-m-d'); }
 
 		$query = "select cl.ca_idcliente, ca_fchfactura, ca_valor from tb_clientes cl ";
 		if ($empresa = 'Coltrans'){
