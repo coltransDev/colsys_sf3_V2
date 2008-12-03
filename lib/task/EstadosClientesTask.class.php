@@ -35,8 +35,8 @@ EOF;
 	$final = mktime(0, 0, 0, date("m"), -1, date("Y"));
 
 	$empresa =  "Coltrans";
-	sfContext::getInstance()->getRequest()->setParameter("fchStart", date('m-d-Y',$inicio));
-	sfContext::getInstance()->getRequest()->setParameter("fchEnd", date('m-d-Y',$final));
+	sfContext::getInstance()->getRequest()->setParameter("fchStart", date('Y-m-d',$inicio));
+	sfContext::getInstance()->getRequest()->setParameter("fchEnd", date('Y-m-d',$final));
 	sfContext::getInstance()->getRequest()->setParameter("empresa", $empresa);
 	echo sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstadosEmail');	
 
