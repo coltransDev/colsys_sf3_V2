@@ -366,6 +366,23 @@ class clientesActions extends sfActions
 	public function executeListaEstados() {
 	}
 	
+	/*
+	* Entrada Reporte de Circular 170 Clientes
+	*/
+	public function executeListaCircular() {
+		$c = new Criteria();
+		$c->addSelectColumn( SucursalPeer::CA_NOMBRE );
+		$c->addAscendingOrderByColumn( SucursalPeer::CA_NOMBRE );
+
+		$rs = SucursalPeer::doSelectRS( $c );
+
+		$this->sucursales = array(null => "");
+
+   		while ( $rs->next() ) {
+   				$this->sucursales = array_merge($this->sucursales, array($rs->getString(1) => $rs->getString(1)));
+		}
+	}
+	
 	public function executeReporteEstados(){
 		set_time_limit(0);
 		$inicio =  $this->getRequestParameter("fchStart");
@@ -406,6 +423,39 @@ class clientesActions extends sfActions
 		$this->final = $final;
 	}
 	
+	public function executeReporteCircular(){
+		set_time_limit(0);
+		$inicio =  $this->getRequestParameter("fchStart");
+		$final =  $this->getRequestParameter("fchEnd");
+		$sucursal =  $this->getRequestParameter("sucursal");
+		
+		$this->clientesCircular = array();
+		
+		$rs = ClientePeer::circularClientes( $inicio, $final, $sucursal );
+		while($rs->next()) {
+			$this->clientesCircular[] = array('ca_idcliente'=>$rs->getString("ca_idcliente"),
+											'ca_digito'=>$rs->getString("ca_digito"),
+											'ca_compania'=>$rs->getString("ca_compania"),
+											'ca_direccion'=>$rs->getString("ca_direccion"),
+											'ca_oficina'=>$rs->getString("ca_oficina"),
+											'ca_torre'=>$rs->getString("ca_torre"),
+											'ca_bloque'=>$rs->getString("ca_bloque"),
+											'ca_interior'=>$rs->getString("ca_interior"),
+											'ca_complemento'=>$rs->getString("ca_complemento"),
+											'ca_telefonos'=>$rs->getString("ca_telefonos"),
+											'ca_fax'=>$rs->getString("ca_fax"),
+											'ca_ciudad'=>$rs->getString("ca_ciudad"),
+											'ca_fchcircular'=>$rs->getString("ca_fchcircular"),
+											'ca_vnccircular'=>$rs->getString("ca_vnccircular"),
+				                            'ca_vendedor'=>$rs->getString("ca_vendedor"),
+				                            'ca_nombre'=>$rs->getString("ca_nombre"),
+				                            'ca_sucursal'=>$rs->getString("ca_sucursal")
+				                            );
+		}
+		$this->inicio = $inicio;
+		$this->final = $final;
+	}
+	
 	public function executeReporteEstadosEmail(){
 		$parametro = ParametroPeer::retrieveByPK("CU066",1,"defaultEmails");
 		if ($parametro) {
@@ -426,7 +476,7 @@ class clientesActions extends sfActions
 		$email = new Email();
 		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( "Administrador" );
-		$email->setCaTipo( "Reporte Cambios de Estado en Clientes" ); 		
+		$email->setCaTipo( "EstadosClientes" ); 		
 		$email->setCaIdcaso( "1" );
 		$email->setCaFrom( "admin@coltrans.com.co" );
 		$email->setCaFromname( "Administrador Sistema Colsys" );
@@ -451,7 +501,56 @@ class clientesActions extends sfActions
 		$email->setCaSubject( "Cliente con cambio de Estado, periodo:$inicio a $final en $empresa" );
 		$email->setCaBody(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstados') );
 		
-		$email->save();		
+		$email->save();
+		$email->send();
+	}
+
+	public function executeReporteCircularEmail(){
+		$parametro = ParametroPeer::retrieveByPK("CU067",1,"defaultEmails");
+		if ($parametro) {
+			if (stripos($parametro->getCaValor2(), ',') !== false) {
+				$defaultEmail = explode(",", $parametro->getCaValor2());
+			}else{
+				$defaultEmail = array($parametro->getCaValor2());
+			}
+		}
+		$parametro = ParametroPeer::retrieveByPK("CU067",2,"ccEmails");
+		if ($parametro) {
+			if (stripos($parametro->getCaValor2(), ',') !== false) {
+				$ccEmails = explode(",", $parametro->getCaValor2());
+			}else{
+				$ccEmails = array($parametro->getCaValor2());
+			}
+		}
+		$email = new Email();
+		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email->setCaUsuenvio( "Administrador" );
+		$email->setCaTipo( "CircularClientes" ); 		
+		$email->setCaIdcaso( "1" );
+		$email->setCaFrom( "admin@coltrans.com.co" );
+		$email->setCaFromname( "Administrador Sistema Colsys" );
+		$email->setCaReplyto( "admin@coltrans.com.co" );
+
+		while (list ($clave, $val) = each ($defaultEmail)) {
+			$email->addTo( $val );
+		}
+		
+		while (list ($clave, $val) = each ($ccEmails)) {
+			$email->addCc( $val );
+		}
+
+		$inicio =  $this->getRequestParameter("fchStart");
+		$final =  $this->getRequestParameter("fchEnd");
+		$sucursal =  $this->getRequestParameter("sucursal");
+		
+		$this->getRequest()->setParameter("fchStart", $inicio);
+		$this->getRequest()->setParameter("fchEnd", $final);
+		$this->getRequest()->setParameter("sucursal", $sucursal);
+		
+		$email->setCaSubject( "Cliente con Vencimiento de Circular 170 a : $inicio" );
+		$email->setCaBody(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircular') );
+		
+		$email->save();
 		$email->send();
 	}
 
