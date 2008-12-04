@@ -1,17 +1,17 @@
 <?php
 
-class EstadosClientesTask extends sfPropelBaseTask
+class CircularClientesTask extends sfPropelBaseTask
 {
   protected function configure()
   {
     $this->namespace        = 'colsys';
-    $this->name             = 'estadosClientes';
-    $this->briefDescription = 'Genera Reporte Trimestral de los Clientes que han cambiado su estado durante el periodo';
+    $this->name             = 'circularClientes';
+    $this->briefDescription = 'Genera Reporte Mensual de los Clientes que se les vence su Circular 170';
     $this->detailedDescription = <<<EOF
-The [estadosClientes|INFO] task does things.
+The [circularClientes|INFO] task does things.
 Call it with:
 
-  [php symfony estadosClientes|INFO]
+  [php symfony circularClientes|INFO]
 EOF;
     // add arguments here, like the following:
     //$this->addArgument('application', sfCommandArgument::REQUIRED, 'The application name');
@@ -29,17 +29,11 @@ EOF;
 
 	sfContext::createInstance($this->configuration)->dispatch();
 		
-	$inicio  = mktime(0, 0, 0, date("m")-3, 1, date("Y"));
-	$final = mktime(0, 0, 0, date("m"), -1, date("Y"));
+	$inicio = mktime(0, 0, 0, date('m')+1, 1, date('Y'));
+	$final = mktime(0, 0, 0, date('m')+2, 0, date('Y'));
 	
-	$empresa =  "Coltrans";
 	sfContext::getInstance()->getRequest()->setParameter("fchStart", date('Y-m-d',$inicio));
 	sfContext::getInstance()->getRequest()->setParameter("fchEnd", date('Y-m-d',$final));
-	sfContext::getInstance()->getRequest()->setParameter("empresa", $empresa);
-	echo sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstadosEmail');	
-
-	$empresa =  "Colmas";
-	sfContext::getInstance()->getRequest()->setParameter("empresa", $empresa);
-	echo sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstadosEmail');	
+	echo sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircularEmail');	
   }
 }
