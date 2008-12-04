@@ -219,7 +219,7 @@ class cotizacionesActions extends sfActions
 		
 		$mostrarTodos = $this->getRequestParameter("mostrarTodos");
 		
-		$productos = $cotizacion->getCotproductos();
+		$productos = $cotizacion->getCotProductos();
 		
 		if( $mostrarTodos ){
 			$paises = array();
