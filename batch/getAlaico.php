@@ -22,18 +22,19 @@ if($tmp==0){
 	//echo "asd";
 	//Actualizacion de la tasa alaico
 	$meses=array("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Agt", "Sep", "Oct", "Nov", "Dic");
-	$string=file_get_contents("http://www.alaico.org/htm/home.php");
+	$string=file_get_contents("http://www.alaico.org/2008/ALAICOJHON/htdocs//modules/mastop_publish/?tac=TasaAlaico");
 
 	
-	$initialTag='<td height="18"><div align="center"><span class="style22">$';
-	$finalTag="<br>";
+	$initialTag='$';
+	$finalTag="</span><br>";
 	$alaico=Utils::getInformation($string, $initialTag, $finalTag);
 	$alaico=str_replace(".", "", $alaico);
 		
 	$tasa_alaico	=	(float)$alaico;
 		
-	$initialTag='Vigente para:<br></span><span class="style22"><span class="style13"><span class="style13">';
+	$initialTag='color="#000080">';
 	$finalTag="</span>";
+	
 	$vigencia=Utils::getInformation($string, $initialTag, $finalTag);
 
 	$month1=array_search(substr($vigencia, 0,3 ), $meses )+1;
@@ -41,7 +42,7 @@ if($tmp==0){
 			$month1="0".$month1;
 	}
 
-	$month2=array_search(substr($vigencia, 7,3 ), $meses )+1;
+	$month2=array_search(substr($vigencia, 9,3 ), $meses )+1;
 	if($month2<10){
 			$month2="0".$month2;
 	}
@@ -53,7 +54,7 @@ if($tmp==0){
 	}
 
 	$day1=substr($vigencia, 4,2);
-	$day2=substr($vigencia, 11,2);
+	$day2=substr($vigencia, 13,2);
 
 	$f1=$year1."-".$month1."-".$day1;
 	$f2=$year2."-".$month2."-".$day2;
