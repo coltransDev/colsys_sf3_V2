@@ -67,4 +67,31 @@ class ClientePeer extends BaseClientePeer
 	}
 	
 
+	/*
+	* Lista los Clientes que tengan vencimiento de su Circular 170 en los próximos 30 días a partir de una fecha específicada.
+	* @author Carlos G. López M.
+	*/
+	public static function circularClientes( $fch_ini, $fch_fin, $sucursal ){
+		if ($fch_ini == null){
+			$fch_ini = date('Y-m-d',mktime(0, 0, 0, date('m')+1, 1, date('Y'))); }
+			
+		if ($fch_fin == null){
+			$fch_fin = date('Y-m-d',mktime(0, 0, 0, date('m')+2, 0, date('Y'))); }
+			
+		$query = "select c.ca_idcliente, c.ca_digito, c.ca_compania, replace(c.ca_direccion,'|',' ') as ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, d.ca_ciudad, ";
+		$query.= "ca_fchcircular, to_date(to_char(to_char(ca_fchcircular, 'YYYY')::int+1, '9999')||'-'||to_char(ca_fchcircular, 'MM')||'-'||to_char(ca_fchcircular, 'DD'),'YYYY-MM-DD') as ca_vnccircular, ";
+		$query.= "c.ca_vendedor, u.ca_nombre, u.ca_sucursal from tb_clientes c LEFT OUTER JOIN control.tb_usuarios u ON (c.ca_vendedor = u.ca_login) LEFT OUTER JOIN tb_ciudades d ON (c.ca_idciudad = d.ca_idciudad) ";
+		$query.= "where to_date(to_char(to_char(ca_fchcircular, 'YYYY')::int+1, '9999')||'-'||to_char(ca_fchcircular, 'MM')||'-'||to_char(ca_fchcircular, 'DD'),'YYYY-MM-DD') between '$fch_ini' and '$fch_fin'" ;
+
+		if ($sucursal != null){
+			$query.= "and u.ca_sucursal = '$sucursal' ";
+		}
+		
+		$query.= "order by 18, 15 ";
+
+		// echo "<br />".$query."<br />"; 
+		$con = Propel::getConnection(SdnPeer::DATABASE_NAME);
+		$stmt = $con->prepareStatement($query);
+		return $stmt->executeQuery();
+	}
 }
