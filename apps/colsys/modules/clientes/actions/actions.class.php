@@ -395,6 +395,8 @@ class clientesActions extends sfActions
 	}
 	
 	public function executeReporteEstados(){
+		$anterior = array();
+		$facturar = array();
 		set_time_limit(0);
 		$inicio =  $this->getRequestParameter("fchStart");
 		$final =  $this->getRequestParameter("fchEnd");
