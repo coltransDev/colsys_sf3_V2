@@ -12,6 +12,8 @@
   <th>Fecha</th>
   <th>Nuevo Estado</th>
   <th>Empresa</th>
+  <th>Vendedor</th>
+  <th>Sucursal</th>
   <th>Fecha Anterior</th>
   <th>Estado Anterior</th>
   <th>&Uacute;ltima Factura</th>
@@ -26,6 +28,8 @@
       <td><?php echo $clienteEstado["ca_fchestado"] ?></td>
       <td><?php echo $clienteEstado["ca_estado"] ?></td>
       <td><?php echo $clienteEstado["ca_empresa"] ?></td>
+      <td><?php echo $clienteEstado["ca_vendedor"] ?></td>
+      <td><?php echo $clienteEstado["ca_sucursal"] ?></td>
       <td><?php echo $clienteEstado["ca_fchestado_ant"] ?></td>
       <td><?php echo $clienteEstado["ca_estado_ant"] ?></td>
       <td><?php echo $clienteEstado["ca_fchfactura"] ?></td>

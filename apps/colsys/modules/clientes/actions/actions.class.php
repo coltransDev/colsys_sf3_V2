@@ -364,6 +364,17 @@ class clientesActions extends sfActions
 	* Entrada Reporte de Estados Clientes
 	*/
 	public function executeListaEstados() {
+		$c = new Criteria();
+		$c->addSelectColumn( SucursalPeer::CA_NOMBRE );
+		$c->addAscendingOrderByColumn( SucursalPeer::CA_NOMBRE );
+
+		$rs = SucursalPeer::doSelectRS( $c );
+
+		$this->sucursales = array(null => "");
+
+   		while ( $rs->next() ) {
+   				$this->sucursales = array_merge($this->sucursales, array($rs->getString(1) => $rs->getString(1)));
+		}
 	}
 	
 	/*
@@ -389,21 +400,24 @@ class clientesActions extends sfActions
 		$final =  $this->getRequestParameter("fchEnd");
 		$empresa =  $this->getRequestParameter("empresa");
 		$estado =  $this->getRequestParameter("estado");
+		$sucursal =  $this->getRequestParameter("sucursal");
 		
 		$this->clientesEstados = array();
 		
-		$rs = ClientePeer::estadoClientes($inicio, $final, $empresa, null, $estado);
+		$rs = ClientePeer::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
 		while($rs->next()) {
 			$actual = array('ca_idcliente'=>$rs->getString("ca_idcliente"),
 							'ca_compania'=>$rs->getString("ca_compania"),
                             'ca_fchestado'=>$rs->getString("ca_fchestado"),
                             'ca_estado'=>$rs->getString("ca_estado"),
-                            'ca_empresa'=>$rs->getString("ca_empresa")
+                            'ca_empresa'=>$rs->getString("ca_empresa"),
+							'ca_vendedor'=>$rs->getString("ca_vendedor"),
+							'ca_sucursal'=>$rs->getString("ca_sucursal")
                            );
 			
 			list($year, $month, $day) = sscanf($rs->getString("ca_fchestado"), "%d-%d-%d");
 			
-			$sb = ClientePeer::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $rs->getString("ca_idcliente"), null);
+			$sb = ClientePeer::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $rs->getString("ca_idcliente"), null, null);
 			while($sb->next()) {
 				$anterior = array('ca_fchestado_ant'=>$sb->getString("ca_fchestado"),
 	                              'ca_estado_ant'=>$sb->getString("ca_estado")

@@ -9,10 +9,10 @@ use_helper('YUICalendar');
 
 <table class="tableForm" width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" id="mainTable">		
 	<tr>	
-		<th colspan="6" style='font-size: 12px; font-weight:bold;'>Reporte Estado de Clientes</th>		
+		<th colspan="7" style='font-size: 12px; font-weight:bold;'>Reporte Estado de Clientes</th>		
 	</tr>
 	<tr>	
-		<th colspan="6" style='font-size: 10px;'>Ingrese la fecha inicial y final del peri&oacute;do a evaluar</th>		
+		<th colspan="7" style='font-size: 10px;'>Ingrese la fecha inicial y final del peri&oacute;do a evaluar</th>		
 	</tr>
 	<tr>
 		<th rowspan="2">&nbsp;</th>
@@ -38,6 +38,12 @@ use_helper('YUICalendar');
 		<td>
 			<span class="captura"><b>Estado :</b> <br />
 				<?=select_tag("estado", options_for_select(array(""=>null,"Potencial"=>"Potencial","Activo"=>"Activo","Vetado"=>"Vetado")) );?>
+			</span>
+  		</td>
+
+		<td>
+			<span class="captura"><b>Sucursal :</b> <br />
+				<?=select_tag("sucursal", options_for_select( $sucursales ) );?>
 			</span>
   		</td>
 
