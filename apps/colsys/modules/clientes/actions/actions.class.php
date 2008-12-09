@@ -370,7 +370,7 @@ class clientesActions extends sfActions
 
 		$rs = SucursalPeer::doSelectRS( $c );
 
-		$this->sucursales = array(null => "");
+		$this->sucursales = array(null => "Todas las Sucursales");
 
    		while ( $rs->next() ) {
    				$this->sucursales = array_merge($this->sucursales, array($rs->getString(1) => $rs->getString(1)));
@@ -387,7 +387,7 @@ class clientesActions extends sfActions
 
 		$rs = SucursalPeer::doSelectRS( $c );
 
-		$this->sucursales = array(null => "");
+		$this->sucursales = array(null => "Todas las Sucursales");
 
    		while ( $rs->next() ) {
    				$this->sucursales = array_merge($this->sucursales, array($rs->getString(1) => $rs->getString(1)));
@@ -431,6 +431,9 @@ class clientesActions extends sfActions
 				$facturar = array('ca_fchfactura'=>$sb->getString("ca_fchfactura"),
 	                              'ca_valor'=>$sb->getString("ca_valor")
 	                             );
+			}
+			if (count($anterior)==0){
+				$anterior = array('ca_fchestado_ant'=>null, 'ca_estado_ant'=>null);
 			}
 			$this->clientesEstados[] = array_merge($actual, $anterior, $facturar);
 
