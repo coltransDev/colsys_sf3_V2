@@ -123,6 +123,13 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idagente;
 
+
+	/**
+	 * The value for the ca_activo field.
+	 * @var        boolean
+	 */
+	protected $ca_activo;
+
 	/**
 	 * @var        Transportador
 	 */
@@ -366,6 +373,17 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_idagente;
+	}
+
+	/**
+	 * Get the [ca_activo] column value.
+	 * 
+	 * @return     boolean
+	 */
+	public function getCaActivo()
+	{
+
+		return $this->ca_activo;
 	}
 
 	/**
@@ -709,6 +727,22 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 	} // setCaIdagente()
 
 	/**
+	 * Set the value of [ca_activo] column.
+	 * 
+	 * @param      boolean $v new value
+	 * @return     void
+	 */
+	public function setCaActivo($v)
+	{
+
+		if ($this->ca_activo !== $v) {
+			$this->ca_activo = $v;
+			$this->modifiedColumns[] = TrayectoPeer::CA_ACTIVO;
+		}
+
+	} // setCaActivo()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -755,12 +789,14 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 
 			$this->ca_idagente = $rs->getInt($startcol + 14);
 
+			$this->ca_activo = $rs->getBoolean($startcol + 15);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 15; // 15 = TrayectoPeer::NUM_COLUMNS - TrayectoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 16; // 16 = TrayectoPeer::NUM_COLUMNS - TrayectoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Trayecto object", $e);
@@ -1094,6 +1130,9 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			case 14:
 				return $this->getCaIdagente();
 				break;
+			case 15:
+				return $this->getCaActivo();
+				break;
 			default:
 				return null;
 				break;
@@ -1129,6 +1168,7 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			$keys[12] => $this->getCaIdtarifas(),
 			$keys[13] => $this->getCaObservaciones(),
 			$keys[14] => $this->getCaIdagente(),
+			$keys[15] => $this->getCaActivo(),
 		);
 		return $result;
 	}
@@ -1205,6 +1245,9 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 			case 14:
 				$this->setCaIdagente($value);
 				break;
+			case 15:
+				$this->setCaActivo($value);
+				break;
 		} // switch()
 	}
 
@@ -1243,6 +1286,7 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[12], $arr)) $this->setCaIdtarifas($arr[$keys[12]]);
 		if (array_key_exists($keys[13], $arr)) $this->setCaObservaciones($arr[$keys[13]]);
 		if (array_key_exists($keys[14], $arr)) $this->setCaIdagente($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaActivo($arr[$keys[15]]);
 	}
 
 	/**
@@ -1269,6 +1313,7 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(TrayectoPeer::CA_IDTARIFAS)) $criteria->add(TrayectoPeer::CA_IDTARIFAS, $this->ca_idtarifas);
 		if ($this->isColumnModified(TrayectoPeer::CA_OBSERVACIONES)) $criteria->add(TrayectoPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(TrayectoPeer::CA_IDAGENTE)) $criteria->add(TrayectoPeer::CA_IDAGENTE, $this->ca_idagente);
+		if ($this->isColumnModified(TrayectoPeer::CA_ACTIVO)) $criteria->add(TrayectoPeer::CA_ACTIVO, $this->ca_activo);
 
 		return $criteria;
 	}
@@ -1350,6 +1395,8 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 		$copyObj->setCaObservaciones($this->ca_observaciones);
 
 		$copyObj->setCaIdagente($this->ca_idagente);
+
+		$copyObj->setCaActivo($this->ca_activo);
 
 
 		if ($deepCopy) {

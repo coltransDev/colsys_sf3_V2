@@ -15,7 +15,8 @@
 		<column name="ca_fchcreado" type="date"   />
 		<column name="ca_idtarifas" type="integer"   />
 		<column name="ca_observaciones" type="varchar"   />
-		<column name="ca_idagente" type="integer"   />				
+		<column name="ca_idagente" type="integer"   />	
+		<column name="ca_activo" type="boolean"   />				
 					
 		<foreign-key foreignTable="tb_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>

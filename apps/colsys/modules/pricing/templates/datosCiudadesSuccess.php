@@ -9,7 +9,12 @@ foreach( $results as $modalidad=>$grupos ){
 	{
 		text:'<?=$modalidad?>',	
 		leaf:false,
-		children:[
+		children:[			
+			{
+				text:'Recargos locales',
+				id:'recgen_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>',		
+				leaf:true
+			},
 			<?
 			$j=0;
 			foreach( $grupos as $grupo=>$paises){
@@ -43,11 +48,7 @@ foreach( $results as $modalidad=>$grupos ){
 			<?
 			}
 			?>
-		,{
-			text:'Recargos locales',
-			id:'recgen_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>',		
-			leaf:true
-		}	
+			
 			
 		]
 	}

@@ -91,6 +91,8 @@ class TrayectoMapBuilder {
 
 		$tMap->addForeignKey('CA_IDAGENTE', 'CaIdagente', 'int', CreoleTypes::INTEGER, 'tb_agentes', 'CA_IDAGENTE', false, null);
 
+		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'boolean', CreoleTypes::BOOLEAN, false, null);
+
 	} // doBuild()
 
 } // TrayectoMapBuilder

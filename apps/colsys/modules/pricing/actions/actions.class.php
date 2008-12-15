@@ -173,6 +173,7 @@ class pricingActions extends sfActions
 		$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
+		$c->add( TrayectoPeer::CA_ACTIVO, true );
 		
 		if( $this->trafico ){
 			if( $impoexpo=="Importación" ){
@@ -354,6 +355,14 @@ class pricingActions extends sfActions
 					
 				}
 				
+				if( $this->opcion=="consulta" && $pricConcepto->getEstado()==2){//Las tarifas en mantenimiento no se muestran en consulta
+					$neta=0;
+					$sugerida=0;
+				}else{
+					$neta=$pricConcepto->getCaVlrneto();
+					$sugerida=$pricConcepto->getCaVlrsugerido();
+				}
+				
 				$row = array (
 					'idtrayecto' => $trayecto->getCaIdtrayecto(),
 					'trayecto' =>$trayectoStr,
@@ -366,10 +375,10 @@ class pricingActions extends sfActions
 					'style' => $pricConcepto->getEstilo(),
 					'observaciones' => utf8_encode(str_replace("\"", "'",$trayecto->getCaObservaciones())),
 					'iditem'=>$pricConcepto->getCaIdConcepto(),
-					'tipo'=>"concepto",					
-					'neta'=>$pricConcepto->getCaVlrneto(),
-					'aplicacion' => utf8_encode($pricConcepto->getCaAplicacion()),	
-					'sugerida'=>$pricConcepto->getCaVlrsugerido(),
+					'tipo'=>"concepto",		
+					'neta'=>$neta,
+					'sugerida'=>$sugerida,							
+					'aplicacion' => utf8_encode($pricConcepto->getCaAplicacion()),						
 					'orden'=>$i++
 					
 				);
@@ -946,7 +955,8 @@ class pricingActions extends sfActions
 				'destino'=>utf8_encode($trayecto->getDestino()->getCaCiudad()), 
 				'linea'=> $transportador?utf8_encode($transportador->getCaNombre()):"",
 				'ttransito'=>utf8_encode($trayecto->getCaTiempotransito()),
-				'frecuencia'=>$trayecto->getCaFrecuencia()
+				'frecuencia'=>$trayecto->getCaFrecuencia(),
+				'activo'=>$trayecto->getCaActivo()
 			);
 						
 			
@@ -972,7 +982,17 @@ class pricingActions extends sfActions
 		
 		if( $this->getRequestParameter("frecuencia") ){
 			$trayecto->setCaFrecuencia( utf8_decode($this->getRequestParameter("frecuencia")) );
-		}		
+		}	
+		
+		if( $this->getRequestParameter("activo")!==null ){
+			
+			if( $this->getRequestParameter("activo")=="true" ){
+				$trayecto->setCaActivo( true );
+			}else{
+				$trayecto->setCaActivo( false );
+				
+			}
+		}	
 		
 		$trayecto->save();
 		return sfView::NONE;
@@ -1208,6 +1228,7 @@ class pricingActions extends sfActions
 			$c->addJoin( TraficoPeer::CA_IDGRUPO, TraficoGrupoPeer::CA_IDGRUPO );		
 			$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );
 			$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );			
+			$c->add( TrayectoPeer::CA_ACTIVO, true );
 			$c->addSelectColumn( TrayectoPeer::CA_MODALIDAD );	
 			$c->addSelectColumn( TraficoGrupoPeer::CA_DESCRIPCION );		
 			$c->addSelectColumn( TraficoPeer::CA_NOMBRE );		
@@ -1243,6 +1264,7 @@ class pricingActions extends sfActions
 			$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );
 			$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 			$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
+			$c->add( TrayectoPeer::CA_ACTIVO, true );
 			$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );	 
 			$c->setDistinct();	
 			$this->ciudades = CiudadPeer::doSelect( $c );
@@ -1260,6 +1282,7 @@ class pricingActions extends sfActions
 			$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );
 			$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 			$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
+			$c->add( TrayectoPeer::CA_ACTIVO, true );
 			$c->addAscendingOrderByColumn( TransportadorPeer::CA_NOMBRE );
 			$c->setDistinct();	
 			$this->lineas = TransportadorPeer::doSelect( $c );

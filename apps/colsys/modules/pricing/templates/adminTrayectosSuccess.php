@@ -13,7 +13,9 @@ var record = Ext.data.Record.create([
 	{name: 'trayecto', type: 'string'},			
 	{name: 'linea', type: 'string'},
 	{name: 'ttransito', type: 'string'},
-	{name: 'frecuencia', type: 'string'}
+	{name: 'frecuencia', type: 'string'},
+	{name: 'activo', type: 'bool'}
+	
 ]);
 
    		
@@ -47,7 +49,7 @@ var store = new Ext.data.GroupingStore({
 */	
 var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30, groupable: false}); 
 
-
+var checkColumnActivo = new Ext.grid.CheckColumn({header:'Activo', dataIndex:'activo', width:50, groupable: false})
 /*
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
@@ -97,7 +99,8 @@ var colModel = new Ext.grid.ColumnModel({
 			groupable: false,								
 			dataIndex: 'frecuencia'	,
 			editor: new Ext.form.TextField() 	
-		}
+		},
+		checkColumnActivo
 		
 	]	
 });
@@ -197,7 +200,7 @@ new Ext.grid.EditorGridPanel({
 	autoExpandColumn: 'origen',
 	title: '<?=$titulo?>',
 	root_title: '<?=$trafico->getCaNombre()?>',	
-	plugins: [checkColumn], 
+	plugins: [checkColumn, checkColumnActivo], 
 	closable: true,
 	id: '<?=$idcomponent?>',
 	height: 400,

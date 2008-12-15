@@ -10,7 +10,7 @@
 			}
 		?>
 		{
-			text:'<?=($linea->getCaSigla()?$linea->getCaSigla():""." - ").$linea->getCaNombre()?>',
+			text:'<?=($linea->getCaSigla()?$linea->getCaSigla()." - ":"").$linea->getCaNombre()?>',
 			id:'fleteslinea_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>_<?=$idtrafico?>_<?=$linea->getCaIdLinea()?>',		
 			leaf:true
 		}
@@ -62,12 +62,12 @@ if( count($ciudades)*count($lineas)<=16){ //Si se muestran muchos registros el b
 	leaf:true
 },
 {
-	text:'Tiempo de transito y frecuencia',
+	text:'Trayectos (T.T., Freq.)',
 	id:'admtraf_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
 	leaf:true
 },
 {
-	text:'Archivos del trafico',
+	text:'Archivos del pais',
 	id:'files_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
 	leaf:true
 }	
