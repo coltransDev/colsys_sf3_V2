@@ -10,7 +10,7 @@
 			}
 		?>
 		{
-			text:'<?=$linea->getCaSigla()." - ".$linea->getCaNombre()?>',
+			text:'<?=($linea->getCaSigla()?$linea->getCaSigla():""." - ").$linea->getCaNombre()?>',
 			id:'fleteslinea_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>_<?=$idtrafico?>_<?=$linea->getCaIdLinea()?>',		
 			leaf:true
 		}

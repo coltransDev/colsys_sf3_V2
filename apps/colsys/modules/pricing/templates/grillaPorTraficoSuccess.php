@@ -262,7 +262,9 @@ var colModel = new Ext.grid.ColumnModel({
 			})
 		} 
 								
-		,{
+		<?
+		if( $modalidad!="LCL" ){ 
+		?>,{
 			id: 'neta',
 			header: "Neta",
 			width: 80,
@@ -270,10 +272,11 @@ var colModel = new Ext.grid.ColumnModel({
 			groupable: false,							
 			dataIndex: 'neta',
 			editor: new Ext.form.NumberField()		
-		},	
+		}
 		<?
-		if( $modalidad!="LCL" ){ 
-		?>	
+		}
+		?>
+		,			
 		{
 			id: 'sugerida',
 			header: "Sugerida",
@@ -283,10 +286,7 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'sugerida',
 			editor: new Ext.form.NumberField()			
 		}
-		,
-		<?
-		}
-		?>
+		,		
 		{
 			header: "Aplicación",
 			width: 100,
