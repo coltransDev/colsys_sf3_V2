@@ -87,22 +87,92 @@ table.tableList{
 	border-collapse: collapse; 
 }
 
+
+
+
 table.tableList th{
-	margin: 0px;
-	padding: 6px 4px 2px 4px;
-	height: 22px;
-	background:url(../images/bgthblack.jpg);
-	
-	background-repeat: repeat;
-	font-size: 11px;
-	/*color: #ffffff;*/
+   text-align:center;
+   background:#1D3F99;
+   color:#FFFFFF;
 }
-
-
 table.tableList td {
 	border-bottom: 1px solid #C9C9C0;
 	padding: 4px;
 	vertical-align:top;
+}
+table.tableList td.captura {
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.destacar {
+   text-align:left;
+   background:#FFFFC0;
+   color:#1D3F99;
+   vertical-align:top;
+}
+table.tableList td.divisor {
+   text-align:center;
+   background:#000000;
+   color:#FFFFFF;
+}
+table.tableList td.imprimir {
+   text-align:left;
+   background:#FFFFFF;
+   color:#000000;
+}
+table.tableList td.invertir {
+   text-align:left;
+   background:#D2D2D2;
+   color:#000000;
+   vertical-align:top;
+}
+table.tableList td.listar {
+   text-align:left;
+   vertical-align:top;
+   background:#F0F0F0;
+   color:#000000;
+}
+table.tableList td.mostrar {
+   text-align: left;
+   background: #F0F0F0;
+   color: #000000;
+}
+table.tableList td.partir {
+   font-weight:bold;
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.periodo {
+   text-align:left;
+   background:#CCCCCC;
+   color:#000000;
+   vertical-align:top;
+}
+table.tableList td.resaltar {
+   text-align:left;
+   background:#9999CC;
+   color:#000000;
+   vertical-align:top;
+}
+table.tableList td.titulo {
+   text-align:center;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+table.tableList td.valores {
+   text-align: right;
+   vertical-align: top;
+   background: #F0F0F0;
+   color: #000000;
+}
+table.tableList th.imprimir {
+   text-align:center;
+   background:#FFFFFF;
+   color:#000000;
 }
 
 /*

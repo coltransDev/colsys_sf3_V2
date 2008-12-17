@@ -39,7 +39,7 @@ if( count($gastos) || $editable ){
 	}
 </script>
 <div id="result2"></div>
-<table width="<?=$tipo=="local"?"600":"800"?>" border="1" id="mainTable">
+<table width="<?=$tipo=="local"?"600":"800"?>" border="1" class="tableList">
 	<tr>
 		<th scope="col">Recargo <?=$tipo!="local"?$origen:"locales"?></th>
 		<th scope="col">Concepto</th>

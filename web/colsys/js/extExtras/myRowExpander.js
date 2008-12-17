@@ -66,8 +66,10 @@ Ext.extend(Ext.grid.myRowExpander, Ext.grid.RowExpander, {
             return this.tpl.apply(record.data);
         }
         var content = this.bodyContent[record.id];
-        //if(!content){  //hace que los comentarios no se borren cuando se guarda
+        //if(!content){  //hace que los comentarios no se borren cuando se guarda			
             content = this.tpl.apply(record.data);
+			
+			//alert( content.split("\n").join("<br />") );
             this.bodyContent[record.id] = content;
         //}
         return content;

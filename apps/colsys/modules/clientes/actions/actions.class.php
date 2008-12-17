@@ -102,21 +102,42 @@ class clientesActions extends sfActions
 	}
 	
 	/*
+	* Carga los datos de un tercero en un objeto JSON
+	* @author: Andres Botero
+	*/
+	public function executeDatosTercero(){
+		$tercero = TerceroPeer::retrieveBypk( $this->getRequestParameter("idtercero") );
+		$this->forward404Unless($tercero);
+		
+		$this->responseArray = array("success"=>true, 
+									"nombre"=>utf8_encode($tercero->getCaNombre()), 
+									"idtercero"=>$tercero->getCaIdtercero(),
+									"direccion"=>utf8_encode($tercero->getCaDireccion()),
+									"telefonos"=>$tercero->getCaTelefonos(),
+									"fax"=>$tercero->getCaFax(),
+									"email"=>$tercero->getCaEmail(),
+									"contacto"=>utf8_encode($tercero->getCaContacto()),
+									"identificacion"=>$tercero->getCaIdentificacion(),
+									//"ciudad"=>$tercero->getCaCiudad(),
+									"idciudad"=>$tercero->getCaIdCiudad()
+									 
+									);
+		$this->setTemplate("responseTemplate");
+	}
+	/*
 	* Permite guardar un tercero
 	* @author: Andres Botero
 	*/
 	public function executeGuardarTercero(){
-		$this->tipo=$this->getRequestParameter("tipo");		
+		$this->tipo=$this->getRequestParameter("tipo");				
 		$this->forward404unless($this->tipo);
-		//echo "->".$this->getRequestParameter("nombre");
-		print_r( $_POST );
-		//$this->forward404unless($this->getRequestParameter("nombre"));
+				
 		if($this->getRequestParameter("nombre")){
-			$id = $this->getRequestParameter("id");
-			if( !$id ){
+			$idtercero = $this->getRequestParameter("idtercero");
+			if( !$idtercero ){
 				$tercero = new Tercero();
-			}else{
-				$tercero = TerceroPeer::retrieveByPk( $id );
+			}else{				
+				$tercero = TerceroPeer::retrieveByPk( $idtercero );
 			}				
 			$tercero->setCaNombre( $this->getRequestParameter("nombre") );
 			$tercero->setCaDireccion( $this->getRequestParameter("direccion") );
@@ -127,7 +148,7 @@ class clientesActions extends sfActions
 			$tercero->setCaIdciudad( $this->getRequestParameter("ciudad") );
 			$tercero->setCaIdentificacion( $this->getRequestParameter("identificacion") );
 			$tercero->setCaVendedor( " " );
-			if( $this->tipo=="consignatario" ){
+			if( $this->tipo=="consignee" ){
 				$tercero->setCaTipo( "Consignatario" );
 			}
 			
@@ -137,7 +158,8 @@ class clientesActions extends sfActions
 			
 			$tercero->save();					
 		}
-		exit;
+		$this->responseArray = array("success"=>true, "nombre"=>$this->getRequestParameter("nombre"), "idtercero"=>$tercero->getCaIdtercero() , "tipo"=>$this->tipo);
+		$this->setTemplate("responseTemplate");
 	}
 	
 	/*

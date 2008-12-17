@@ -472,7 +472,16 @@ var actualizarObservaciones=function( btn, text ){
 		var record = store.getAt(activeRow); 
 		record.set("observaciones", text);
 		
-		document.getElementById("obs_"+record.get("_id")).innerHTML  = "<strong>Observaciones:</strong> "+text;		
+		var records = store.getModifiedRecords();				
+		var lenght = records.length;				
+					
+		for( var i=0; i< lenght; i++){
+			r = records[i];			
+			if(r.data.sel){
+				r.set("observaciones", text);			
+			}
+		}
+		
 	}
 }	
 

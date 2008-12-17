@@ -20,10 +20,10 @@
 		
 	?>
 	<tr>
-		<td rowspan="2" class="listar" ><?=link_to($reporte->getCaConsecutivo(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo)?></td>
-		<td rowspan="2" class="listar" ><?=link_to($reporte->getCaVersion()." ", "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo)?></td>
+		<td rowspan="2" class="listar" ><?=link_to($reporte->getCaConsecutivo(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo."&token=".md5(time()))?></td>
+		<td rowspan="2" class="listar" ><?=link_to($reporte->getCaVersion()." ", "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo."&token=".md5(time()))?></td>
 		<td class="listar" >
-			<?=link_to($reporte->getCliente(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo)?>
+			<?=link_to($reporte->getCliente(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo."&token=".md5(time()))?>
 			</td>
 	</tr>
 	<tr >

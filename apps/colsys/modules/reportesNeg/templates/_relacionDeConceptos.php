@@ -34,7 +34,7 @@ if( count($conceptos)>0 || $editable ){
 	}
 </script>
 
-<table width="800" border="1" id="mainTable">
+<table width="800" border="1" class="tableList">
 	<tr>
 		<th scope="col">Concepto</th>
 		<?

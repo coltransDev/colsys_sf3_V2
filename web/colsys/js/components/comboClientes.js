@@ -31,7 +31,7 @@
         width: 320,
         valueNotFoundText: 'No encontrado' ,
 		minChars: 1,
-        hideTrigger:true,
+        hideTrigger:false,
         tpl: resultTpl,
         applyTo: 'cliente',
         itemSelector: 'div.search-item',		

@@ -28,6 +28,12 @@ class generalActions extends sfActions
 		$c = new Criteria();	
 		if( $this->ciudad_id ){
 			$c->add( AgentePeer::CA_IDCIUDAD, $this->ciudad_id );
+			
+			$criterion = $c->getNewCriterion( AgentePeer::CA_IDCIUDAD, $this->ciudad_id );	
+			if( $this->selected ){							
+				$criterion->addOr($c->getNewCriterion( AgentePeer::CA_IDAGENTE, $this->selected));			}
+			$c->add($criterion);	
+			
 		}
 		$c->addAscendingOrderByColumn( AgentePeer::CA_NOMBRE );
 		$this->agentes = AgentePeer::doSelect( $c );

@@ -158,7 +158,7 @@ var colModel = new Ext.grid.ColumnModel({
 		{
 			id: 'valor_tar',
 			header: "Valor",
-			width: 100,
+			width: 80,
 			sortable: false,
 			dataIndex: 'valor_tar',
 			hideable: false ,
@@ -170,7 +170,7 @@ var colModel = new Ext.grid.ColumnModel({
 		},
 		{
 			id: 'aplica_tar',
-			header: "Aplicacion",
+			header: "Aplicación",
 			width: 100,
 			sortable: false,
 			dataIndex: 'aplica_tar',			
@@ -180,7 +180,7 @@ var colModel = new Ext.grid.ColumnModel({
 		{
 			id: 'valor_min',
 			header: "Minimo",
-			width: 100,
+			width: 80,
 			sortable: false,
 			dataIndex: 'valor_min',
 			hideable: false ,
@@ -192,7 +192,7 @@ var colModel = new Ext.grid.ColumnModel({
 		},
 		{
 			id: 'aplica_min',
-			header: "Aplicacion",
+			header: "Aplicación Min",
 			width: 100,
 			sortable: false,
 			dataIndex: 'aplica_min',
@@ -202,11 +202,21 @@ var colModel = new Ext.grid.ColumnModel({
 		{
 			id: 'idmoneda',
 			header: "Moneda",
-			width: 100,
+			width: 65,
 			sortable: false,
 			dataIndex: 'idmoneda',
 			hideable: false ,
 			editor: <?=extMonedas()?>
+		},
+		
+		{
+			id: 'linea',
+			header: "Línea",
+			width: 100,
+			sortable: false,
+			dataIndex: 'linea',
+			hideable: false
+						
 		},
 		{
 			id: 'detalles',
@@ -996,7 +1006,7 @@ function guardarGridProductos(){
 		r = records[i];		
 		//alert( r.data.iditem );
 		if( !r.data.idmoneda && r.data.iditem!=9999 ){
-			Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
+			Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items en la pestaña Tarifas de trayectos');
 			return 0;
 		}
 	}

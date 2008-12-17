@@ -164,7 +164,7 @@ function updateSeguroModel(){
 	for( var i=0; i< lenght; i++){
 		r = records[i];
 		if( !r.data.idmoneda ){
-			Ext.Msg.alert( "","Por favor coloque la moneda en todos los items " );	
+			Ext.Msg.alert( "","Por favor coloque la moneda en todos los items en la pestaña seguros" );	
 			return 0;						
 		}
 		

@@ -5,7 +5,7 @@ use_helper("Javascript", "Object", "Validation");
 <h3>Sistema administrador de negocios</h3>
 <br />
 <br />
-<table cellspacing="1" width="700" id="mainTable">
+<table cellspacing="1"  id="mainTable">
 	<tbody>
 		<tr>
 			<th colspan="6" class="titulo">REPORTE DE NEGOCIO</th>

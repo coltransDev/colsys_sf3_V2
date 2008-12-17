@@ -554,7 +554,7 @@ function updateRecargosModel(){
 	for( var i=0; i< lenght; i++){
 		r = records[i];
 		if(!r.data.idmoneda&&r.data.idrecargo){
-			Ext.Msg.alert( "","Por favor coloque la moneda en todos los items " );	
+			Ext.Msg.alert( "","Por favor coloque la moneda en todos los items en la pestaña recargos locales" );	
 			return 0;						
 		}
 	}

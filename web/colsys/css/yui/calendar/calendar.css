@@ -163,6 +163,7 @@ version: 2.2.0
 	position:relative;
 	width:100%;
 	text-align:center;
+	color:#000000;
 }
 
 .yui-calendar .calheader img {

@@ -40,40 +40,14 @@ $cliente = $reporteNegocio->getCliente();
 		var listarTodos = document.getElementById('listarTodos').checked;
 		if( listarTodos ){
 			<?
-			echo remote_function( array("url"=>"general/selectAgentes", "update"=>"agentes"));
+			echo remote_function( array("url"=>"general/selectAgentes", "update"=>"agentes", "with"=>"'selected=".$reporteNegocio->getCaIdagente()."'"));
 			?>
-
+ 
 		}else{
 			<?
-			echo remote_function( array("url"=>"general/selectAgentes", "update"=>"agentes", "with"=>"'ciudad_id='+document.getElementById('idCiudad').value"));
+			echo remote_function( array("url"=>"general/selectAgentes", "update"=>"agentes", "with"=>"'selected=".$reporteNegocio->getCaIdagente()."&ciudad_id='+document.getElementById('idCiudad').value"));
 			?>
 		}	
-	}
-	
-	function seleccionTercero( formName , sel) {
- 		
-		
-		switch( formName ){
-			
-			case "expoReporteFormconsignatario":	
-			
-				var target = document.reporteForm;									
-				target.idconsignatario.value=document.getElementById("idtercero_"+sel).value;
-				target.nombre_con.value=document.getElementById("nombre_"+sel).value;									
-				target.nombre_con.focus();
-				
-				break;
-			case "expoReporteFormnotify":				
-				var target = document.reporteForm;									
-				target.idnotify.value=document.getElementById("idtercero_"+sel).value;
-				target.nombre_not.value=document.getElementById("nombre_"+sel).value;				
-			
-				target.nombre_con.focus();
-				
-				break;	
-			
-		}
-		Modalbox.hide({params:''});
 	}
 	
 	
@@ -149,6 +123,27 @@ $cliente = $reporteNegocio->getCliente();
 	
 	
 	function nuevoTercero(tipo){	
+		ventanaTercero(tipo, null);
+	}
+	
+	function editarTercero(tipo){	
+		var target = document.reporteForm;						
+		if( tipo == "consignee" ){							
+			var idtercero = target.idconsignatario.value;		
+		}
+			
+		if( tipo == "notify" ){		
+			var idtercero = target.idnotify.value;									
+		}		
+		ventanaTercero(tipo, idtercero);
+	}
+	
+	function ventanaTercero(tipo, idtercero){	
+		if( idtercero ){
+			var titulo='Editar '+tipo;
+		}else{
+			var titulo='Nuevo '+tipo;
+		}
 		//crea una ventana 
 		win = new Ext.Window({		
 			width       : 500,
@@ -159,26 +154,33 @@ $cliente = $reporteNegocio->getCliente();
 			items       : new Ext.FormPanel({					
 				id: 'tercero-form',			
 				//frame: true,
-				title: 'Nuevo '+tipo,
+				title: titulo,
 				//autoHeight: true,
 				//bodyStyle: 'padding: 10px 10px 0 10px;',
 				//labelWidth: 50, 			
 				defaultType: 'textfield',
 				
-				
 				items: [
+						{						
+						name: 'idtercero',
+						xtype: 'hidden',
+						allowBlank:false,
+						width       : 300
+						},
 						new Ext.form.TextField({
 							fieldLabel: 'Nombre',
 							name: 'nombre',
+							id: 'nombre',
+							allowBlank:false,
 							width:300
 						})
 						,
 						{
 						fieldLabel: 'Identificación',
-						name: 'identificacion',
-						allowBlank:false,
+						name: 'identificacion',						
 						width       : 300
-						}/*,
+						}						
+						,
 						{
 						fieldLabel: 'Dirección',
 						name: 'direccion',
@@ -208,43 +210,106 @@ $cliente = $reporteNegocio->getCliente();
 						name: 'contacto',
 						allowBlank:false,
 						width       : 300
-						},						
-						{
-						fieldLabel: 'Ciudad',
-						name: 'ciudad',
-						allowBlank:false
-						}	*/							
+						},
+						new Ext.form.ComboBox({		
+							fieldLabel: 'Ciudad',
+							typeAhead: true,
+							forceSelection: true,
+							triggerAction: 'all',
+							emptyText:'Seleccione',
+							selectOnFocus: true,
+							name: 'ciudad',
+							id: 'ciudad',							
+							lazyRender:true,
+							listClass: 'x-combo-list-small',	
+							store: [
+								<?
+								$i = 0;								
+								foreach( $ciudades as $ciudad ){
+									if($i++!=0){
+										echo ",";
+									}
+								?>
+									['<?=$ciudad->getCaIdCiudad()?>', '<?=$ciudad->getTrafico()->getCaNombre()."-".$ciudad->getCaCiudad()?>']
+								<?
+								}
+								?>
+								]
+						})
+													
 				]				
 			}),
 	
 			buttons: [{
-				text     : 'Crear',
+				text     : 'Guardar',
 				handler: function(){
 					
 					var fp = Ext.getCmp("tercero-form");	
-					
-					//alert( idrecargo );				
-					//if(fp.getForm().isValid()){
-						fp.getForm().submit(
-							{
-								url: '<?=url_for("clientes/guardarTercero")?>/tipo/'+tipo,
-							//	method:'POST',
-								waitMsg: 'Creando el '+tipo,
-								success: function(fp, o){																
-									win.close();						
-									Ext.Msg.alert('Success', 'Se ha guardado');																															
-											
-								},
-								failure: function(xhr){  
-									Ext.Msg.alert('Error', 'Ha ocurrido un error al crear el '+tipo);					
-								}
+																				
+					if(fp.getForm().isValid()){
+						var idtercero = fp.getForm().findField("idtercero").getValue(); 
+						var nombre = fp.getForm().findField("nombre").getValue(); 
+						var identificacion = fp.getForm().findField("identificacion").getValue(); 
+						var direccion = fp.getForm().findField("direccion").getValue(); 
+						var telefono = fp.getForm().findField("telefono").getValue(); 
+						var fax = fp.getForm().findField("fax").getValue(); 
+						var email = fp.getForm().findField("email").getValue(); 
+						var contacto = fp.getForm().findField("contacto").getValue(); 
+						var ciudad = fp.getForm().findField("ciudad").getValue(); 
+						
+						Ext.Ajax.request( 
+						{   
+							waitMsg: 'Guardando cambios...',						
+							url: '<?=url_for("clientes/guardarTercero")?>/tipo/'+tipo,
+							//Solamente se envian los cambios 						
+							params : {
+								idtercero: idtercero, 
+								nombre: nombre,
+								identificacion: identificacion,
+								direccion: direccion,
+								telefono: telefono,
+								fax: fax,
+								email: email,
+								contacto: contacto,
+								ciudad: ciudad
 							}
-						);
-						
-						win.close();	
-						
-						
-					//}
+							,
+									
+							//Ejecuta esta accion cuando el resultado es exitoso
+							callback :function(options, success, response){	
+								var res = Ext.util.JSON.decode( response.responseText );	
+								if( res.success ){	
+									var target = document.reporteForm;	
+												
+									if( res.tipo == "consignee" ){		
+													
+										target.idconsignatario.value=res.idtercero;		
+										Ext.getCmp("nombre_consignee").setValue(res.nombre);
+									
+										document.getElementById("editarConsignatario").style.display="inline";						
+										//target.nombre_con.value=res.nombre;									
+										//target.nombre_con.focus();
+									}
+									
+									if( res.tipo == "notify" ){							
+										target.idnotify.value=res.idtercero;										
+										Ext.getCmp("nombre_notify").setValue(res.nombre);	
+										document.getElementById("editarNotify").style.display="inline";					
+										//target.nombre_not.focus();
+									}								
+																	
+								}else{
+									alert("Ha ocurrido un error al crear el registro");
+								}
+								win.close();
+								//alert( response.responseText );
+								//r.commit();
+								
+								//	
+							}
+						 }
+					);						
+					}
 				}
 			},{
 				text     : 'Cancelar',
@@ -254,15 +319,47 @@ $cliente = $reporteNegocio->getCliente();
 			}]
 		});
 		
-		win.show( );	
+		win.show( );
+		
+		if( idtercero ){
+			Ext.Ajax.request( 
+			{   
+				waitMsg: 'Guardando cambios...',						
+				url: '<?=url_for("clientes/datosTercero")?>',
+				//Solamente se envian los cambios 						
+				params : {
+					idtercero: idtercero
+				}
+				,
+						
+				//Ejecuta esta accion cuando el resultado es exitoso
+				callback :function(options, success, response){	
+					var res = Ext.util.JSON.decode( response.responseText );
+					var fp = Ext.getCmp("tercero-form");
+					fp.getForm().findField("idtercero").setValue(res.idtercero);	
+					fp.getForm().findField("nombre").setValue(res.nombre);
+					fp.getForm().findField("identificacion").setValue(res.identificacion);
+					fp.getForm().findField("direccion").setValue(res.direccion);
+					fp.getForm().findField("telefono").setValue(res.telefonos);
+					fp.getForm().findField("email").setValue(res.email);
+					fp.getForm().findField("fax").setValue(res.fax);
+					fp.getForm().findField("contacto").setValue(res.contacto);
+					fp.getForm().findField("ciudad").setValue(res.idciudad);
+					
+					
+	/*	fp.getForm().findField("tra_origen_id").hiddenField.value = record.data.tra_origen;		*/
+				
+				}
+			});
+			
+		}	
 	} 
 </script>
 <?php echo form_error('name') ?>
 <h3>Reporte de Negocio de <?=$modo=="expo"?"<strong>Exportaci&oacute;n</strong>":"<strong>Importaci&oacute;n</strong>"?></h3>
 <br>
 <br>
-<?
-//form_tag("reportesNeg/formReporteGuardar?modo=".$modo, "name=reporteForm id=reporteForm")?>
+<?=form_tag("reportesNeg/formReporteGuardar?modo=".$modo, "name=reporteForm id=reporteForm")?>
 <?=input_hidden_tag("reporteId", $reporteNegocio->getCaIdReporte() )?>
 <table cellspacing="1" width="90%" class="tableForm">
 	<tbody>
@@ -309,15 +406,16 @@ $cliente = $reporteNegocio->getCliente();
 					  <legend>4. Consignatario</legend>				
 						<table cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="115"> Nombre:					
+					<td width="155"> Nombre:					
 						<br />
 						<?
 						include_component("clientes", "comboConsignatario", array( "id"=>"idconsignatario", "idtercero"=>$reporteNegocio->getCaIdconsignatario() ));
 						?>						</td>
-					<td width="116">						
+					<td width="76">&nbsp;&nbsp;&nbsp;&nbsp;				
 					<span class="listar">
-					<?=image_tag("22x22/new.gif", "onClick=nuevoTercero('consignee')")." "?>
-					<?php //echo m_link_to(image_tag("22x22/new.gif")." Nuevo", 'clientes/agregarTercero?tipo=consignatario&formName=expoReporteFormconsignatario', array("title"=>"Haga click aca para crear un nuevo consignatario") , array( "width"=>850 ) ) ?></span></td>
+					<?=image_tag("16x16/new.gif", "onClick=nuevoTercero('consignee') title='Nuevo consignatario'")." "?>
+					<?=image_tag("16x16/edit.gif", "onClick=editarTercero('consignee') id=editarConsignatario title='Editar consignatario' ".($reporteNegocio->getCaIdconsignatario()?"style='display:inline'":"style='display:none'" ))."  "?>
+					</span></td>
 					<td width="294">
 						<?
 						if( $modo!="expo" ){ //Esta casilla solamente es util en el caso de la importaciones 
@@ -347,11 +445,14 @@ $cliente = $reporteNegocio->getCliente();
 				
 						<table cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="117">Nombre:					
+					<td width="156">Nombre:					
 						<?
 						include_component("clientes", "comboNotify", array( "id"=>"idconsignatario", "idtercero"=>$reporteNegocio->getCaIdnotify() ));
 						?></td>
-					<td width="117"><span class="listar"><?php echo m_link_to(image_tag("22x22/new.gif")." Nuevo", 'clientes/agregarTercero?tipo=notify&formName=expoReporteFormnotify', array("title"=>"Haga click aca para crear un nuevo notify") , array( "width"=>850 ) ) ?></span></td>
+					<td width="78">&nbsp;&nbsp;&nbsp;&nbsp;<span class="listar"><?=image_tag("16x16/new.gif", "onClick=nuevoTercero('notify') title='Nuevo notify'")." "?>
+						
+						<?=image_tag("16x16/edit.gif", "onClick=editarTercero('notify') id=editarNotify title='Editar notify' ".($reporteNegocio->getCaIdnotify()?"style='display:inline'":"style='display:none'" ))."  "?>
+					</span></td>
 					<td width="293">
 						<?
 						if( $modo!="expo" ){ //Esta casilla solamente es util en el caso de la importaciones 
@@ -603,12 +704,7 @@ $cliente = $reporteNegocio->getCliente();
 		}else{	
 			echo $reporteNegocio->getCaLogin()?$reporteNegocio->getCaLogin():$vendedor;
 			echo input_hidden_tag("login", $reporteNegocio->getCaLogin()?$reporteNegocio->getCaLogin():$vendedor  );	
-		}
-		
-		
-		
-	   	
-			
+		}			
 		?>
 			</span></td>
 			<td colspan="2" class="listar">Elaboro: <strong>
@@ -628,9 +724,90 @@ $cliente = $reporteNegocio->getCliente();
 		</tr>
 	</tbody>
 </table>
-</forma>
+</form>
 <script language="JavaScript" type="text/javascript">		
 	cambiarTransporte( document.getElementById('transporte').value );
 	seleccionAgente();
 </script>
-<script type="text/javascript" src="/colsys_sf/js/components/comboContactoClientes.js"></script>
+
+<script type="text/javascript" >
+//Cotizaciones
+Ext.onReady(function(){
+
+    var ds = new Ext.data.Store({
+        proxy: new Ext.data.HttpProxy({
+            url: '<?=url_for("general/listaCotizacionesJSON")?>'
+        }),
+        reader: new Ext.data.JsonReader({
+            root: 'cotizaciones',
+            totalProperty: 'totalCount',
+            id: 'id_cotizacion'
+        }, [
+            {name: 'id_cotizacion', mapping: 'ca_idcotizacion'},
+            {name: 'id_producto', mapping: 'ca_idproducto'}	,
+			{name: 'origen', mapping: 'ca_origen'},
+			{name: 'destino', mapping: 'ca_destino'},
+			{name: 'idcontacto', mapping: 'ca_idcontacto'},
+            {name: 'compania', mapping: 'ca_compania'},
+			{name: 'cargo', mapping: 'ca_cargo'},
+			{name: 'nombre', mapping: 'ca_nombres'},
+			{name: 'papellido', mapping: 'ca_papellido'},
+			{name: 'sapellido', mapping: 'ca_sapellido'},
+			{name: 'preferencias', mapping: 'ca_preferencias'},
+			{name: 'confirmar', mapping: 'ca_confirmar'},
+			{name: 'idorigen', mapping: 'ca_idorigen'},
+        ])
+    });
+	
+	var resultTpl = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item"><strong>{id_cotizacion}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>' 
+			
+    );
+    
+    var search = new Ext.form.ComboBox({
+        store: ds,
+        displayField:'id_cotizacion',
+        typeAhead: false,
+        loadingText: 'Buscando...',
+        width: 100,
+        valueNotFoundText: 'No encontrado' ,
+		minChars: 3,
+        hideTrigger:false,
+        tpl: resultTpl,
+        applyTo: 'idcotizacion',
+        itemSelector: 'div.search-item',		
+	    emptyText:'numero...',		
+	    forceSelection:true,		
+		selectOnFocus:true,
+		
+		onSelect: function(record, index){ // override default onSelect to do redirect			
+			if(this.fireEvent('beforeselect', this, record, index) !== false){
+				this.setValue(record.data[this.valueField || this.displayField]);
+				this.collapse();
+				this.fireEvent('select', this, record, index);
+			}
+						
+			document.getElementById("con_cliente").value=record.data.nombre+" "+record.data.papellido+" "+record.data.sapellido;
+			document.getElementById("cliente").value=record.data.compania;		
+			document.getElementById("idconcliente").value=record.data.idcontacto;				
+			document.getElementById("preferencias_clie").value=record.data.preferencias;	
+			document.getElementById("idCiudadOrigen").value=record.data.idorigen;	
+			
+			for(i=0; i<10; i++){				
+				document.getElementById("contactos_"+i).value="";
+				document.getElementById("confirmar_"+i).checked=false;
+			}
+			
+			
+			var confirmar =  record.data.confirmar ;						
+			var brokenconfirmar=confirmar.split(",");			
+			
+			for(i=0; i<brokenconfirmar.length; i++){				
+				document.getElementById("contactos_"+i).value=brokenconfirmar[i];
+				document.getElementById("confirmar_"+i).checked=true;
+			}	
+        }
+    });
+});
+</script>
+

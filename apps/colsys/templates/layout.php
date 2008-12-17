@@ -33,6 +33,12 @@ include_component("bar", "submenubar");
 			new Tooltip(input, {backgroundColor: "#FC9", borderColor: "#C96", textColor: "#000", textShadowColor: "#FFF"});
 		}
 	});
+	
+	$$("img").each( function(input) {
+		if(input.title){
+			new Tooltip(input, {backgroundColor: "#FC9", borderColor: "#C96", textColor: "#000", textShadowColor: "#FFF"});
+		}
+	});
 </script>
 
 </body>

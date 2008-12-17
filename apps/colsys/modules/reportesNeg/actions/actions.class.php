@@ -124,6 +124,13 @@ class reportesNegActions extends sfActions
 						
 		$c = new Criteria();
 		$this->monedas = MonedaPeer::doSelect($c);
+			
+		$c = new Criteria();
+		$c->add( TraficoPeer::CA_IDTRAFICO, '99-999', Criteria::NOT_EQUAL );
+		$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
+		$c->addJoin( TraficoPeer::CA_IDTRAFICO, CiudadPeer::CA_IDTRAFICO );	
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );		
+		$this->ciudades = CiudadPeer::doSelect( $c );	
 						
 		$this->user = $this->getUser();									
 		
