@@ -151,6 +151,20 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_datosag;
 
+
+	/**
+	 * The value for the ca_estado field.
+	 * @var        string
+	 */
+	protected $ca_estado;
+
+
+	/**
+	 * The value for the ca_motivonoaprobado field.
+	 * @var        string
+	 */
+	protected $ca_motivonoaprobado;
+
 	/**
 	 * @var        Contacto
 	 */
@@ -530,6 +544,28 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	{
 
 		return $this->ca_datosag;
+	}
+
+	/**
+	 * Get the [ca_estado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaEstado()
+	{
+
+		return $this->ca_estado;
+	}
+
+	/**
+	 * Get the [ca_motivonoaprobado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaMotivonoaprobado()
+	{
+
+		return $this->ca_motivonoaprobado;
 	}
 
 	/**
@@ -969,6 +1005,50 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	} // setCaDatosag()
 
 	/**
+	 * Set the value of [ca_estado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaEstado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_estado !== $v) {
+			$this->ca_estado = $v;
+			$this->modifiedColumns[] = CotizacionPeer::CA_ESTADO;
+		}
+
+	} // setCaEstado()
+
+	/**
+	 * Set the value of [ca_motivonoaprobado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     void
+	 */
+	public function setCaMotivonoaprobado($v)
+	{
+
+		// Since the native PHP type for this column is string,
+		// we will cast the input to a string (if it is not).
+		if ($v !== null && !is_string($v)) {
+			$v = (string) $v; 
+		}
+
+		if ($this->ca_motivonoaprobado !== $v) {
+			$this->ca_motivonoaprobado = $v;
+			$this->modifiedColumns[] = CotizacionPeer::CA_MOTIVONOAPROBADO;
+		}
+
+	} // setCaMotivonoaprobado()
+
+	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
 	 * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1023,12 +1103,16 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 			$this->ca_datosag = $rs->getString($startcol + 18);
 
+			$this->ca_estado = $rs->getString($startcol + 19);
+
+			$this->ca_motivonoaprobado = $rs->getString($startcol + 20);
+
 			$this->resetModified();
 
 			$this->setNew(false);
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 19; // 19 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 21; // 21 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cotizacion object", $e);
@@ -1392,6 +1476,12 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 18:
 				return $this->getCaDatosag();
 				break;
+			case 19:
+				return $this->getCaEstado();
+				break;
+			case 20:
+				return $this->getCaMotivonoaprobado();
+				break;
 			default:
 				return null;
 				break;
@@ -1431,6 +1521,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$keys[16] => $this->getCaUsuanulado(),
 			$keys[17] => $this->getCaEmpresa(),
 			$keys[18] => $this->getCaDatosag(),
+			$keys[19] => $this->getCaEstado(),
+			$keys[20] => $this->getCaMotivonoaprobado(),
 		);
 		return $result;
 	}
@@ -1519,6 +1611,12 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 18:
 				$this->setCaDatosag($value);
 				break;
+			case 19:
+				$this->setCaEstado($value);
+				break;
+			case 20:
+				$this->setCaMotivonoaprobado($value);
+				break;
 		} // switch()
 	}
 
@@ -1561,6 +1659,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[16], $arr)) $this->setCaUsuanulado($arr[$keys[16]]);
 		if (array_key_exists($keys[17], $arr)) $this->setCaEmpresa($arr[$keys[17]]);
 		if (array_key_exists($keys[18], $arr)) $this->setCaDatosag($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaEstado($arr[$keys[19]]);
+		if (array_key_exists($keys[20], $arr)) $this->setCaMotivonoaprobado($arr[$keys[20]]);
 	}
 
 	/**
@@ -1591,6 +1691,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotizacionPeer::CA_USUANULADO)) $criteria->add(CotizacionPeer::CA_USUANULADO, $this->ca_usuanulado);
 		if ($this->isColumnModified(CotizacionPeer::CA_EMPRESA)) $criteria->add(CotizacionPeer::CA_EMPRESA, $this->ca_empresa);
 		if ($this->isColumnModified(CotizacionPeer::CA_DATOSAG)) $criteria->add(CotizacionPeer::CA_DATOSAG, $this->ca_datosag);
+		if ($this->isColumnModified(CotizacionPeer::CA_ESTADO)) $criteria->add(CotizacionPeer::CA_ESTADO, $this->ca_estado);
+		if ($this->isColumnModified(CotizacionPeer::CA_MOTIVONOAPROBADO)) $criteria->add(CotizacionPeer::CA_MOTIVONOAPROBADO, $this->ca_motivonoaprobado);
 
 		return $criteria;
 	}
@@ -1680,6 +1782,10 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$copyObj->setCaEmpresa($this->ca_empresa);
 
 		$copyObj->setCaDatosag($this->ca_datosag);
+
+		$copyObj->setCaEstado($this->ca_estado);
+
+		$copyObj->setCaMotivonoaprobado($this->ca_motivonoaprobado);
 
 
 		if ($deepCopy) {

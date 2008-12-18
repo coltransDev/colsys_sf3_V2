@@ -740,8 +740,8 @@ class cotizacionesActions extends sfActions
 				$row['item']=utf8_encode($concepto->getCaConcepto());
 				$row['valor_tar']=$opcion->getCaValorTar();
 				$row['aplica_tar']=$opcion->getCaAplicaTar();
-				$row['valor_min']=$opcion->getCaValorMin();
-				$row['aplica_min']=$opcion->getCaAplicaMin();
+				$row['valor_min']=utf8_encode($opcion->getCaValorMin());
+				$row['aplica_min']=utf8_encode($opcion->getCaAplicaMin());
 				$row['idmoneda']=$opcion->getCaIdmoneda();
 				$row['detalles']=utf8_encode($opcion->getCaObservaciones());
 				$row['tipo']="concepto";
@@ -760,9 +760,9 @@ class cotizacionesActions extends sfActions
 					$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
 					$row['idconcepto']=$recargo->getCaIdConcepto();
 					$row['valor_tar']=$recargo->getCaValorTar();
-					$row['aplica_tar']=$recargo->getCaAplicaTar();
+					$row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
 					$row['valor_min']=$recargo->getCaValorMin();
-					$row['aplica_min']=$recargo->getCaAplicaMin();
+					$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
 					$row['idmoneda']=$recargo->getCaIdmoneda();
 					$row['detalles']=$recargo->getCaObservaciones();
 					$row['tipo']="recargo";		
@@ -802,9 +802,9 @@ class cotizacionesActions extends sfActions
 				$row['item']=utf8_encode($tipoRecargo->getCaRecargo());
 				$row['idconcepto']=$recargo->getCaIdConcepto();
 				$row['valor_tar']=$recargo->getCaValorTar();
-				$row['aplica_tar']=$recargo->getCaAplicaTar();
+				$row['aplica_tar']=utf8_encode($recargo->getCaAplicaTar());
 				$row['valor_min']=$recargo->getCaValorMin();
-				$row['aplica_min']=$recargo->getCaAplicaMin();
+				$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
 				$row['idmoneda']=$recargo->getCaIdmoneda();
 				$row['detalles']=$recargo->getCaObservaciones();
 				$row['tipo']="recargo";			

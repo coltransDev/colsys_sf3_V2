@@ -9,6 +9,8 @@
  */ 
 class Cotizacion extends BaseCotizacion
 {	
+	const EN_SEGUIMIENTO = "En seguimiento";  
+	
 	public function getId(){
 		return $this->getCaIdcotizacion();
 	}	

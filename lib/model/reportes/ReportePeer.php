@@ -136,11 +136,11 @@ class ReportePeer extends BaseReportePeer
 			$today = date( "N" );
 			
 			if( $today==1 ){
-				$add = -5;	
+				$add = -7;	
 			}elseif( $today ==2 ){
-				$add =-4;
+				$add = -6;
 			}else{
-				$add = -3;
+				$add = -5;
 			}
 			
 			$fecha = Utils::addDays( date("Y-m-d"), $add );
@@ -155,9 +155,7 @@ class ReportePeer extends BaseReportePeer
 			$criterion->addOr($c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada", Criteria::NOT_EQUAL));
 			$criterion->addOr($c->getNewCriterion( InoMaestraSeaPeer::CA_FCHCONFIRMACION, $fecha , Criteria::GREATER_EQUAL));
 		}			
-		
-		
-							
+									
 		$c->addAnd($criterion);
 		if( $criteria ){
 			return $c;

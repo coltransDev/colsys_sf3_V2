@@ -21,6 +21,8 @@
 		<column name="ca_usuanulado" type="varchar"   />	
 		<column name="ca_empresa" type="varchar"   />	
 		<column name="ca_datosag" type="varchar"   />
+		<column name="ca_estado" type="varchar"   />
+		<column name="ca_motivonoaprobado" type="varchar"   />
 		
 		<foreign-key foreignTable="tb_concliente">
 			<reference local="ca_idcontacto" foreign="ca_idcontacto"/>

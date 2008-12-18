@@ -101,6 +101,10 @@ class CotizacionMapBuilder {
 
 		$tMap->addColumn('CA_DATOSAG', 'CaDatosag', 'string', CreoleTypes::VARCHAR, false, null);
 
+		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'string', CreoleTypes::VARCHAR, false, null);
+
+		$tMap->addColumn('CA_MOTIVONOAPROBADO', 'CaMotivonoaprobado', 'string', CreoleTypes::VARCHAR, false, null);
+
 	} // doBuild()
 
 } // CotizacionMapBuilder

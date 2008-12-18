@@ -57,7 +57,7 @@ Ext.onReady(function(){
         itemSelector: 'div.search-item',		
 	    emptyText:'Escriba el nombre del cliente...',		
 	    forceSelection:true,		
-		selectOnFocus:true,
+		selectOnFocus:true,		
 		
 		onSelect: function(record, index){ // override default onSelect to do redirect			
 			if(this.fireEvent('beforeselect', this, record, index) !== false){

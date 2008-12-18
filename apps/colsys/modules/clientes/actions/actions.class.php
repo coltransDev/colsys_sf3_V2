@@ -252,7 +252,7 @@ class clientesActions extends sfActions
 		$c->addSelectColumn(UsuarioPeer::CA_NOMBRE );
 		
 		$c->addJoin( ClientePeer::CA_IDCLIENTE, ContactoPeer::CA_IDCLIENTE );
-		$c->addJoin( UsuarioPeer::CA_LOGIN, ClientePeer::CA_VENDEDOR );
+		$c->addJoin( UsuarioPeer::CA_LOGIN, ClientePeer::CA_VENDEDOR, Criteria::LEFT_JOIN );
 
 		$c->add( ClientePeer::CA_COMPANIA , "lower(".ClientePeer::CA_COMPANIA.") LIKE '%".strtolower( $criterio )."%'", Criteria::CUSTOM );	
 		

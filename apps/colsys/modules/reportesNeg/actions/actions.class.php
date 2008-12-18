@@ -630,6 +630,9 @@ class reportesNegActions extends sfActions
 		$this->monedas = MonedaPeer::doSelect($c);	
 		
 		$response = sfContext::getInstance()->getResponse();
+		
+		$user = $this->getUser();
+		$this->forward404Unless( $user );		
 	  
 	}		
 	
@@ -1026,7 +1029,7 @@ class reportesNegActions extends sfActions
 			$concepto->setCaCobraridm(  $this->getRequestParameter("cobrar_idm") );
 			
 			$user = $this->getUser();
-			$concepto->setCaUsucreado( $user->getuserId() );
+			$concepto->setCaUsucreado( $user->getUserId() );
 			$concepto->setCaFchcreado( date("Y-m-d H:i:s") );
 			$concepto->save();		
 			
