@@ -5,45 +5,14 @@ body{
 	color: #333;
 	margin: 0px;
 	padding: 0px;
-	line-height:1.9em;
-}
-
-
-.out {
-float:left;
-width:969px;
+	
 }
 
 img {
 border:none;
 }
 
-input {
-border:1px solid #e4e4e4;
-}
 
-.wrapper {
-background-image:url(../images/sideshadow.jpg);
-background-position:top right;
-background-repeat:no-repeat;
-width:100%;
-float:left;
-}
-.wrapperinx {
-background-image:url(../images/sideshadowleft.jpg);
-background-position:top left;
-background-repeat:no-repeat;
-float:left;
-width:100%;
-}
-
-.maincomponent {
-float:left;
-width:100%;
-}
-.int {
-width:938px;
-}
 
 .top {
 width:100%;
@@ -51,25 +20,45 @@ float:left;
 background-image:url(../images/topshadow.jpg);
 background-position:bottom;
 background-repeat:repeat-x;
-height: 80px;
+height: 52px;
+
 }
 
-.logo {
+.logo1 {
 float:left;
 width:auto;
 margin: 0px 0px 0px 30px;
 }
 
-.topmenu {
+.logo2 {
 float:right;
-width:600px;
-margin:12px 0 0 0;
-color:#000000;
-font-family:Arial, Helvetica, sans-serif;
-font-size:10px;
-height:25px;
-
+width:auto;
+margin: 0px 0px 0px 30px;
 }
+
+
+.header{
+padding-top:26px;
+width:100%;
+float:left;
+background-color:#2E4B66;
+}
+
+.footer {
+border-top:1px solid #e4e4e4;
+padding:12px 0;
+margin:12px 0;
+float:left;
+width:100%;
+color:#666;
+font-size:.88em;
+text-align:center;
+background-image:url(../images/footershadow.jpg);
+background-position:top;
+background-repeat:repeat-x;
+}
+
+
 
 .search {
 float:right;
@@ -90,3 +79,189 @@ a:link, a:visited {color:#1C3A56;
 a:hover {
 text-decoration:none;
 }
+
+input {
+border:1px solid #e4e4e4;
+}
+
+
+
+/*
+tables
+*/
+
+table.table1 {
+	background-color: #FFFFFF;	
+	padding: 0px;
+	border: 1px solid #CCCCCC;
+	border-spacing: 0px;	
+	border-collapse: collapse;        
+}
+
+table.table1 th {
+	margin: 0px;
+	padding: 6px 4px 2px 4px;
+	height: 25px;
+	background: #2E4B66;
+	font-size: 11px;
+	color: #FFFFFF;
+}
+
+/*
+* Colores que puede tomar una fila de acuerdo al status en que se encuentre
+*/
+
+table.table1 tr.yellow{
+	background-color:#FFFFCC;	
+}
+
+table.table1 tr.green{
+	background-color:#CEFFCE;	
+}
+
+table.table1 tr.blue{
+	background-color:#CEE7FF;	
+}
+
+table.table1 tr.orange{
+	background-color:#FFE4AE;	
+}
+
+table.table1 tr.pink{
+	background-color:#FFCCCC;	
+}
+
+table.table1 tr.rowt {
+	background-color: #E6E6E6;
+}
+
+table.table1 tr.row0 {
+	background-color: #F5F5F5;
+}
+table.table1 tr.row1 {
+	background-color: #FFF;
+}
+
+table.table1 tr.row0:hover {
+	background-color: #f1f1f1;
+}
+table.table1 tr.row1:hover {
+	background-color: #f1f1f1;
+}
+
+
+table.table1 td {
+	border-bottom: 1px solid #e5e5e5;
+	padding: 4px;
+	color:#333333;
+}
+
+
+/*
+box
+*/
+
+
+div.box1 {
+	background: #F0F0F0 url(../images/bg_newsitem.png) repeat-x;
+	border: 1px solid #EEE;
+	border-color: #EEE #EEE #DDD #EEE;
+	clear: both;
+	color: #333;
+	line-height: 1.5;
+	padding: 10px;	
+}
+
+
+div.box1 .title {
+	color: #2A337C;
+	font: bold 1.2em Tahoma,sans-serif;
+	padding: 3px 4px;
+}
+div.box1 .body {
+	font-family: "Trebuchet MS",Tahoma,sans-serif;
+	font-size: 0.9em;
+	text-align: justify;
+}
+
+/*
+* Topmenu
+*/
+
+.topmenu {
+float:inherit;
+width:600px;
+margin:28px 0 0 0;
+color:#000000;
+font-family:Arial, Helvetica, sans-serif;
+font-size:12px;
+margin-left:30px;
+height:25px;
+
+}
+
+.topmenu ul {
+float:left;
+width:auto;
+}
+
+.topmenu ul, .topmenu ul li {
+padding:0;
+margin: 0;
+list-style:none;
+}
+
+.topmenu ul li {
+float:left;
+}
+
+.topmenu ul li a:link, .topmenu ul li a:visited {
+color:#333;
+text-decoration:none;
+border-left:1px solid #e4e4e4;
+padding:6px 18px;
+}
+
+.topmenu ul li a:hover {
+background-color:#fff;
+}
+
+#content{
+
+	padding-top: 60px;		
+	margin: 0px;
+	clear:both; 
+}
+
+/** cpanel settings **/
+
+#cpanel div.icon {
+	text-align: center;
+	margin-right: 5px;
+	float: left;
+	margin-bottom: 5px;
+}
+
+#cpanel div.icon a {
+	display: block;
+	float: left;
+	border: 1px solid #f0f0f0;
+	height: 97px;
+	width: 108px;
+	color: #666;
+	vertical-align: middle;
+	text-decoration: none;
+}
+
+#cpanel div.icon a:hover {
+	border-left: 1px solid #eee;
+	border-top: 1px solid #eee;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	background: #f9f9f9;
+	color: #0B55C4;
+}
+
+#cpanel img  { padding: 10px 0; margin: 0 auto; }
+#cpanel span { display: block; text-align: center; font-size:11px; }
+
