@@ -13,7 +13,7 @@
  *
  * @package    lib.model.control.map
  */
-class AccesoGrupoMapBuilder {
+class AccesoGrupoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,18 +54,19 @@ class AccesoGrupoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(AccesoGrupoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('control.tb_accesos_grp');
+		$tMap = $this->dbMap->addTable(AccesoGrupoPeer::TABLE_NAME);
 		$tMap->setPhpName('AccesoGrupo');
+		$tMap->setClassname('AccesoGrupo');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'VARCHAR', true, 255);
 
-		$tMap->addPrimaryKey('CA_GRUPO', 'CaGrupo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_GRUPO', 'CaGrupo', 'VARCHAR', true, 255);
 
-		$tMap->addColumn('CA_ACCESO', 'CaAcceso', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_ACCESO', 'CaAcceso', 'INTEGER', false, null);
 
 	} // doBuild()
 

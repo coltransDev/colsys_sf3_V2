@@ -99,7 +99,7 @@ class Reporte extends BaseReporte
 	* Retorna los status asociasdos al reporte , sobrecarga getRepStatuss en BaseReporte
 	* Author: Andres Botero
 	*/
-	public function getRepEquipos( $criteria = null, $con = null){
+	public function getRepEquipos( $criteria = null, PropelPDO $con = null){
 		
 		if ($criteria === null) {
 			$criteria = new Criteria();
@@ -121,7 +121,7 @@ class Reporte extends BaseReporte
 	* Retorna los status asociasdos al reporte , sobrecarga getRepStatuss en BaseReporte
 	* Author: Andres Botero
 	*/
-	public function getRepStatuss( $criteria = null, $con = null){
+	public function getRepStatuss( $criteria = null, PropelPDO $con = null ){
 		
 		if ($criteria === null) {
 			$criteria = new Criteria();
@@ -142,7 +142,7 @@ class Reporte extends BaseReporte
 	* Retorna los avisos asociasdos al reporte , sobrecarga getRepAvisos en BaseReporte
 	* Author: Andres Botero
 	*/
-	public function getRepAvisos( $criteria = null, $con = null ){
+	public function getRepAvisos( $criteria = null, PropelPDO $con = null ){
 		
 		if ($criteria === null) {
 			$criteria = new Criteria();
@@ -341,7 +341,7 @@ class Reporte extends BaseReporte
 	* Retorna el objetos RepAduana asociados al reporte 
 	* @author Andres Botero
 	*/
-	public function getRepAduana( ){
+	public function getRepAduana( PropelPDO $con = null ){
 	
 		$c = new Criteria();
 		$c->add(  RepAduanaPeer::CA_IDREPORTE, $this->getCaIdreporte() );
@@ -358,7 +358,7 @@ class Reporte extends BaseReporte
 	* Retorna el objetos RepSeguro asociados al reporte 
 	* @author Andres Botero
 	*/
-	public function getRepSeguro( ){	
+	public function getRepSeguro( PropelPDO $con = null ){	
 		$c = new Criteria();
 		$c->add(  RepSeguroPeer::CA_IDREPORTE, $this->getCaIdreporte() );
 		$repseguro =  RepSeguroPeer::doSelectOne( $c );
@@ -373,7 +373,7 @@ class Reporte extends BaseReporte
 	* Retorna el objetos RepExpo asociados al reporte 
 	* @author Andres Botero
 	*/
-	public function getRepExpo(){	
+	public function getRepExpo(  PropelPDO $con = null ){	
 		$c = new Criteria();
 		$c->add(  RepExpoPeer::CA_IDREPORTE, $this->getCaIdreporte() );
 		$repexpo =  RepExpoPeer::doSelectOne( $c );

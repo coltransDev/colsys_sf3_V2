@@ -10,6 +10,8 @@
 abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 
 
+  const PEER = 'InoMaestraAirPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_fchreferencia field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchreferencia;
-
 
 	/**
 	 * The value for the ca_referencia field.
@@ -32,13 +32,11 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected $ca_referencia;
 
-
 	/**
 	 * The value for the ca_impoexpo field.
 	 * @var        string
 	 */
 	protected $ca_impoexpo;
-
 
 	/**
 	 * The value for the ca_origen field.
@@ -46,13 +44,11 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected $ca_origen;
 
-
 	/**
 	 * The value for the ca_destino field.
 	 * @var        string
 	 */
 	protected $ca_destino;
-
 
 	/**
 	 * The value for the ca_modalidad field.
@@ -60,13 +56,11 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected $ca_modalidad;
 
-
 	/**
 	 * The value for the ca_idlinea field.
 	 * @var        int
 	 */
 	protected $ca_idlinea;
-
 
 	/**
 	 * The value for the ca_mawb field.
@@ -74,27 +68,23 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected $ca_mawb;
 
-
 	/**
 	 * The value for the ca_piezas field.
 	 * @var        int
 	 */
 	protected $ca_piezas;
 
-
 	/**
 	 * The value for the ca_peso field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_peso;
 
-
 	/**
 	 * The value for the ca_pesovolumen field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_pesovolumen;
-
 
 	/**
 	 * The value for the ca_observaciones field.
@@ -102,13 +92,11 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected $ca_observaciones;
 
-
 	/**
 	 * The value for the ca_fchcreado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchcreado;
-
 
 	/**
 	 * The value for the ca_usucreado field.
@@ -116,27 +104,23 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usucreado;
 
-
 	/**
 	 * The value for the ca_fchpreaviso field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchpreaviso;
 
-
 	/**
 	 * The value for the ca_fchllegada field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchllegada;
 
-
 	/**
 	 * The value for the ca_fchactualizado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchactualizado;
-
 
 	/**
 	 * The value for the ca_usuactualizado field.
@@ -144,13 +128,11 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuactualizado;
 
-
 	/**
 	 * The value for the ca_fchliquidado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchliquidado;
-
 
 	/**
 	 * The value for the ca_usuliquidado field.
@@ -158,13 +140,11 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuliquidado;
 
-
 	/**
 	 * The value for the ca_fchcerrado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchcerrado;
-
 
 	/**
 	 * The value for the ca_usucerrado field.
@@ -178,28 +158,24 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	protected $aTransportador;
 
 	/**
-	 * Collection to store aggregation of collInoClientesAirs.
-	 * @var        array
+	 * @var        array InoClientesAir[] Collection to store aggregation of InoClientesAir objects.
 	 */
 	protected $collInoClientesAirs;
 
 	/**
-	 * The criteria used to select the current contents of collInoClientesAirs.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collInoClientesAirs.
 	 */
-	protected $lastInoClientesAirCriteria = null;
+	private $lastInoClientesAirCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collInoIngresosAirs.
-	 * @var        array
+	 * @var        array InoIngresosAir[] Collection to store aggregation of InoIngresosAir objects.
 	 */
 	protected $collInoIngresosAirs;
 
 	/**
-	 * The criteria used to select the current contents of collInoIngresosAirs.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collInoIngresosAirs.
 	 */
-	protected $lastInoIngresosAirCriteria = null;
+	private $lastInoIngresosAirCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -216,33 +192,55 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
-	 * Get the [optionally formatted] [ca_fchreferencia] column value.
+	 * Initializes internal state of BaseInoMaestraAir object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
+	 * Get the [optionally formatted] temporal [ca_fchreferencia] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchreferencia($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchreferencia === null || $this->ca_fchreferencia === '') {
+		if ($this->ca_fchreferencia === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchreferencia)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchreferencia);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchreferencia] as date/time value: " . var_export($this->ca_fchreferencia, true));
-			}
-		} else {
-			$ts = $this->ca_fchreferencia;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchreferencia);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchreferencia, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -253,7 +251,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaReferencia()
 	{
-
 		return $this->ca_referencia;
 	}
 
@@ -264,7 +261,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaImpoexpo()
 	{
-
 		return $this->ca_impoexpo;
 	}
 
@@ -275,7 +271,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaOrigen()
 	{
-
 		return $this->ca_origen;
 	}
 
@@ -286,7 +281,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaDestino()
 	{
-
 		return $this->ca_destino;
 	}
 
@@ -297,7 +291,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaModalidad()
 	{
-
 		return $this->ca_modalidad;
 	}
 
@@ -308,7 +301,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdlinea()
 	{
-
 		return $this->ca_idlinea;
 	}
 
@@ -319,7 +311,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaMawb()
 	{
-
 		return $this->ca_mawb;
 	}
 
@@ -330,29 +321,26 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaPiezas()
 	{
-
 		return $this->ca_piezas;
 	}
 
 	/**
 	 * Get the [ca_peso] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaPeso()
 	{
-
 		return $this->ca_peso;
 	}
 
 	/**
 	 * Get the [ca_pesovolumen] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaPesovolumen()
 	{
-
 		return $this->ca_pesovolumen;
 	}
 
@@ -363,38 +351,39 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaObservaciones()
 	{
-
 		return $this->ca_observaciones;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchcreado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchcreado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchcreado($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchcreado === null || $this->ca_fchcreado === '') {
+		if ($this->ca_fchcreado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchcreado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchcreado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchcreado] as date/time value: " . var_export($this->ca_fchcreado, true));
-			}
-		} else {
-			$ts = $this->ca_fchcreado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchcreado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcreado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -405,100 +394,105 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsucreado()
 	{
-
 		return $this->ca_usucreado;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchpreaviso] column value.
+	 * Get the [optionally formatted] temporal [ca_fchpreaviso] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchpreaviso($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchpreaviso === null || $this->ca_fchpreaviso === '') {
+		if ($this->ca_fchpreaviso === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchpreaviso)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchpreaviso);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchpreaviso] as date/time value: " . var_export($this->ca_fchpreaviso, true));
-			}
-		} else {
-			$ts = $this->ca_fchpreaviso;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchpreaviso);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchpreaviso, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchllegada] column value.
+	 * Get the [optionally formatted] temporal [ca_fchllegada] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchllegada($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchllegada === null || $this->ca_fchllegada === '') {
+		if ($this->ca_fchllegada === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchllegada)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchllegada);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchllegada] as date/time value: " . var_export($this->ca_fchllegada, true));
-			}
-		} else {
-			$ts = $this->ca_fchllegada;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchllegada);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchllegada, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchactualizado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchactualizado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchactualizado($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchactualizado === null || $this->ca_fchactualizado === '') {
+		if ($this->ca_fchactualizado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchactualizado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchactualizado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchactualizado] as date/time value: " . var_export($this->ca_fchactualizado, true));
-			}
-		} else {
-			$ts = $this->ca_fchactualizado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchactualizado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchactualizado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -509,38 +503,39 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuactualizado()
 	{
-
 		return $this->ca_usuactualizado;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchliquidado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchliquidado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchliquidado($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchliquidado === null || $this->ca_fchliquidado === '') {
+		if ($this->ca_fchliquidado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchliquidado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchliquidado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchliquidado] as date/time value: " . var_export($this->ca_fchliquidado, true));
-			}
-		} else {
-			$ts = $this->ca_fchliquidado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchliquidado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchliquidado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -551,38 +546,39 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuliquidado()
 	{
-
 		return $this->ca_usuliquidado;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchcerrado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchcerrado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchcerrado($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchcerrado === null || $this->ca_fchcerrado === '') {
+		if ($this->ca_fchcerrado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchcerrado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchcerrado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchcerrado] as date/time value: " . var_export($this->ca_fchcerrado, true));
-			}
-		} else {
-			$ts = $this->ca_fchcerrado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchcerrado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcerrado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -593,47 +589,68 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsucerrado()
 	{
-
 		return $this->ca_usucerrado;
 	}
 
 	/**
-	 * Set the value of [ca_fchreferencia] column.
+	 * Sets the value of [ca_fchreferencia] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaFchreferencia($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchreferencia] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchreferencia !== $ts) {
-			$this->ca_fchreferencia = $ts;
-			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHREFERENCIA;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchreferencia !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchreferencia !== null && $tmpDt = new DateTime($this->ca_fchreferencia)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchreferencia = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHREFERENCIA;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchreferencia()
 
 	/**
 	 * Set the value of [ca_referencia] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaReferencia($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_referencia !== $v) {
@@ -641,21 +658,19 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_REFERENCIA;
 		}
 
+		return $this;
 	} // setCaReferencia()
 
 	/**
 	 * Set the value of [ca_impoexpo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaImpoexpo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_impoexpo !== $v) {
@@ -663,21 +678,19 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_IMPOEXPO;
 		}
 
+		return $this;
 	} // setCaImpoexpo()
 
 	/**
 	 * Set the value of [ca_origen] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaOrigen($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_origen !== $v) {
@@ -685,21 +698,19 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_ORIGEN;
 		}
 
+		return $this;
 	} // setCaOrigen()
 
 	/**
 	 * Set the value of [ca_destino] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaDestino($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_destino !== $v) {
@@ -707,21 +718,19 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_DESTINO;
 		}
 
+		return $this;
 	} // setCaDestino()
 
 	/**
 	 * Set the value of [ca_modalidad] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaModalidad($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_modalidad !== $v) {
@@ -729,20 +738,18 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_MODALIDAD;
 		}
 
+		return $this;
 	} // setCaModalidad()
 
 	/**
 	 * Set the value of [ca_idlinea] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaIdlinea($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -755,21 +762,19 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->aTransportador = null;
 		}
 
+		return $this;
 	} // setCaIdlinea()
 
 	/**
 	 * Set the value of [ca_mawb] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaMawb($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_mawb !== $v) {
@@ -777,20 +782,18 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_MAWB;
 		}
 
+		return $this;
 	} // setCaMawb()
 
 	/**
 	 * Set the value of [ca_piezas] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaPiezas($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -799,53 +802,59 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_PIEZAS;
 		}
 
+		return $this;
 	} // setCaPiezas()
 
 	/**
 	 * Set the value of [ca_peso] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaPeso($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_peso !== $v) {
 			$this->ca_peso = $v;
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_PESO;
 		}
 
+		return $this;
 	} // setCaPeso()
 
 	/**
 	 * Set the value of [ca_pesovolumen] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaPesovolumen($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_pesovolumen !== $v) {
 			$this->ca_pesovolumen = $v;
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_PESOVOLUMEN;
 		}
 
+		return $this;
 	} // setCaPesovolumen()
 
 	/**
 	 * Set the value of [ca_observaciones] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaObservaciones($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_observaciones !== $v) {
@@ -853,45 +862,68 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_OBSERVACIONES;
 		}
 
+		return $this;
 	} // setCaObservaciones()
 
 	/**
-	 * Set the value of [ca_fchcreado] column.
+	 * Sets the value of [ca_fchcreado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaFchcreado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchcreado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchcreado !== $ts) {
-			$this->ca_fchcreado = $ts;
-			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHCREADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchcreado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchcreado !== null && $tmpDt = new DateTime($this->ca_fchcreado)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchcreado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHCREADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchcreado()
 
 	/**
 	 * Set the value of [ca_usucreado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaUsucreado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usucreado !== $v) {
@@ -899,93 +931,166 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_USUCREADO;
 		}
 
+		return $this;
 	} // setCaUsucreado()
 
 	/**
-	 * Set the value of [ca_fchpreaviso] column.
+	 * Sets the value of [ca_fchpreaviso] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaFchpreaviso($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchpreaviso] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchpreaviso !== $ts) {
-			$this->ca_fchpreaviso = $ts;
-			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHPREAVISO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchpreaviso !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchpreaviso !== null && $tmpDt = new DateTime($this->ca_fchpreaviso)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchpreaviso = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHPREAVISO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchpreaviso()
 
 	/**
-	 * Set the value of [ca_fchllegada] column.
+	 * Sets the value of [ca_fchllegada] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaFchllegada($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchllegada] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchllegada !== $ts) {
-			$this->ca_fchllegada = $ts;
-			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHLLEGADA;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchllegada !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchllegada !== null && $tmpDt = new DateTime($this->ca_fchllegada)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchllegada = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHLLEGADA;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchllegada()
 
 	/**
-	 * Set the value of [ca_fchactualizado] column.
+	 * Sets the value of [ca_fchactualizado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaFchactualizado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchactualizado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchactualizado !== $ts) {
-			$this->ca_fchactualizado = $ts;
-			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHACTUALIZADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchactualizado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchactualizado !== null && $tmpDt = new DateTime($this->ca_fchactualizado)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchactualizado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHACTUALIZADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchactualizado()
 
 	/**
 	 * Set the value of [ca_usuactualizado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaUsuactualizado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuactualizado !== $v) {
@@ -993,45 +1098,68 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_USUACTUALIZADO;
 		}
 
+		return $this;
 	} // setCaUsuactualizado()
 
 	/**
-	 * Set the value of [ca_fchliquidado] column.
+	 * Sets the value of [ca_fchliquidado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaFchliquidado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchliquidado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchliquidado !== $ts) {
-			$this->ca_fchliquidado = $ts;
-			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHLIQUIDADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchliquidado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchliquidado !== null && $tmpDt = new DateTime($this->ca_fchliquidado)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchliquidado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHLIQUIDADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchliquidado()
 
 	/**
 	 * Set the value of [ca_usuliquidado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaUsuliquidado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuliquidado !== $v) {
@@ -1039,45 +1167,68 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_USULIQUIDADO;
 		}
 
+		return $this;
 	} // setCaUsuliquidado()
 
 	/**
-	 * Set the value of [ca_fchcerrado] column.
+	 * Sets the value of [ca_fchcerrado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaFchcerrado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchcerrado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchcerrado !== $ts) {
-			$this->ca_fchcerrado = $ts;
-			$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHCERRADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchcerrado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchcerrado !== null && $tmpDt = new DateTime($this->ca_fchcerrado)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchcerrado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = InoMaestraAirPeer::CA_FCHCERRADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchcerrado()
 
 	/**
 	 * Set the value of [ca_usucerrado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 */
 	public function setCaUsucerrado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usucerrado !== $v) {
@@ -1085,72 +1236,75 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoMaestraAirPeer::CA_USUCERRADO;
 		}
 
+		return $this;
 	} // setCaUsucerrado()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_fchreferencia = $rs->getDate($startcol + 0, null);
-
-			$this->ca_referencia = $rs->getString($startcol + 1);
-
-			$this->ca_impoexpo = $rs->getString($startcol + 2);
-
-			$this->ca_origen = $rs->getString($startcol + 3);
-
-			$this->ca_destino = $rs->getString($startcol + 4);
-
-			$this->ca_modalidad = $rs->getString($startcol + 5);
-
-			$this->ca_idlinea = $rs->getInt($startcol + 6);
-
-			$this->ca_mawb = $rs->getString($startcol + 7);
-
-			$this->ca_piezas = $rs->getInt($startcol + 8);
-
-			$this->ca_peso = $rs->getFloat($startcol + 9);
-
-			$this->ca_pesovolumen = $rs->getFloat($startcol + 10);
-
-			$this->ca_observaciones = $rs->getString($startcol + 11);
-
-			$this->ca_fchcreado = $rs->getDate($startcol + 12, null);
-
-			$this->ca_usucreado = $rs->getString($startcol + 13);
-
-			$this->ca_fchpreaviso = $rs->getDate($startcol + 14, null);
-
-			$this->ca_fchllegada = $rs->getDate($startcol + 15, null);
-
-			$this->ca_fchactualizado = $rs->getDate($startcol + 16, null);
-
-			$this->ca_usuactualizado = $rs->getString($startcol + 17);
-
-			$this->ca_fchliquidado = $rs->getDate($startcol + 18, null);
-
-			$this->ca_usuliquidado = $rs->getString($startcol + 19);
-
-			$this->ca_fchcerrado = $rs->getDate($startcol + 20, null);
-
-			$this->ca_usucerrado = $rs->getString($startcol + 21);
-
+			$this->ca_fchreferencia = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_referencia = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_impoexpo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_origen = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_destino = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_modalidad = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_idlinea = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
+			$this->ca_mawb = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_piezas = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
+			$this->ca_peso = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_pesovolumen = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_observaciones = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_fchcreado = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_usucreado = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_fchpreaviso = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_fchllegada = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+			$this->ca_fchliquidado = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_usuliquidado = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_fchcerrado = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_usucerrado = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 22; // 22 = InoMaestraAirPeer::NUM_COLUMNS - InoMaestraAirPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -1161,83 +1315,154 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aTransportador !== null && $this->ca_idlinea !== $this->aTransportador->getCaIdlinea()) {
+			$this->aTransportador = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoMaestraAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = InoMaestraAirPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aTransportador = null;
+			$this->collInoClientesAirs = null;
+			$this->lastInoClientesAirCriteria = null;
+
+			$this->collInoIngresosAirs = null;
+			$this->lastInoIngresosAirCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(InoMaestraAirPeer::DATABASE_NAME);
+			$con = Propel::getConnection(InoMaestraAirPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			InoMaestraAirPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(InoMaestraAirPeer::DATABASE_NAME);
+			$con = Propel::getConnection(InoMaestraAirPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			InoMaestraAirPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -1245,7 +1470,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aTransportador !== null) {
-				if ($this->aTransportador->isModified()) {
+				if ($this->aTransportador->isModified() || $this->aTransportador->isNew()) {
 					$affectedRows += $this->aTransportador->save($con);
 				}
 				$this->setTransportador($this->aTransportador);
@@ -1264,11 +1489,12 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += InoMaestraAirPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collInoClientesAirs !== null) {
-				foreach($this->collInoClientesAirs as $referrerFK) {
+				foreach ($this->collInoClientesAirs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1276,7 +1502,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collInoIngresosAirs !== null) {
-				foreach($this->collInoIngresosAirs as $referrerFK) {
+				foreach ($this->collInoIngresosAirs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1284,6 +1510,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -1366,7 +1593,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 
 
 				if ($this->collInoClientesAirs !== null) {
-					foreach($this->collInoClientesAirs as $referrerFK) {
+					foreach ($this->collInoClientesAirs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1374,7 +1601,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collInoIngresosAirs !== null) {
-					foreach($this->collInoIngresosAirs as $referrerFK) {
+					foreach ($this->collInoIngresosAirs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1393,14 +1620,15 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = InoMaestraAirPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -1491,11 +1719,12 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = InoMaestraAirPeer::getFieldNames($keyType);
 		$result = array(
@@ -1531,8 +1760,8 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -1630,8 +1859,9 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1752,6 +1982,8 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 
 		$copyObj->setCaFchreferencia($this->ca_fchreferencia);
 
+		$copyObj->setCaReferencia($this->ca_referencia);
+
 		$copyObj->setCaImpoexpo($this->ca_impoexpo);
 
 		$copyObj->setCaOrigen($this->ca_origen);
@@ -1798,20 +2030,22 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getInoClientesAirs() as $relObj) {
-				$copyObj->addInoClientesAir($relObj->copy($deepCopy));
+			foreach ($this->getInoClientesAirs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoClientesAir($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getInoIngresosAirs() as $relObj) {
-				$copyObj->addInoIngresosAir($relObj->copy($deepCopy));
+			foreach ($this->getInoIngresosAirs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoIngresosAir($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaReferencia(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -1857,81 +2091,98 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Transportador object.
 	 *
 	 * @param      Transportador $v
-	 * @return     void
+	 * @return     InoMaestraAir The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setTransportador($v)
+	public function setTransportador(Transportador $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdlinea(NULL);
 		} else {
 			$this->setCaIdlinea($v->getCaIdlinea());
 		}
 
-
 		$this->aTransportador = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Transportador object, it will not be re-added.
+		if ($v !== null) {
+			$v->addInoMaestraAir($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Transportador object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Transportador The associated Transportador object.
 	 * @throws     PropelException
 	 */
-	public function getTransportador($con = null)
+	public function getTransportador(PropelPDO $con = null)
 	{
 		if ($this->aTransportador === null && ($this->ca_idlinea !== null)) {
-			// include the related Peer class
-			$this->aTransportador = TransportadorPeer::retrieveByPK($this->ca_idlinea, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(TransportadorPeer::DATABASE_NAME);
+			$c->add(TransportadorPeer::CA_IDLINEA, $this->ca_idlinea);
+			$this->aTransportador = TransportadorPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = TransportadorPeer::retrieveByPK($this->ca_idlinea, $con);
-			   $obj->addTransportadors($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aTransportador->addInoMaestraAirs($this);
 			 */
 		}
 		return $this->aTransportador;
 	}
 
 	/**
-	 * Temporary storage of collInoClientesAirs to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collInoClientesAirs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoClientesAirs()
+	 */
+	public function clearInoClientesAirs()
+	{
+		$this->collInoClientesAirs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoClientesAirs collection (array).
+	 *
+	 * By default this just sets the collInoClientesAirs collection to an empty array (like clearcollInoClientesAirs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initInoClientesAirs()
 	{
-		if ($this->collInoClientesAirs === null) {
-			$this->collInoClientesAirs = array();
-		}
+		$this->collInoClientesAirs = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this InoMaestraAir has previously
-	 * been saved, it will retrieve related InoClientesAirs from storage.
-	 * If this InoMaestraAir is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of InoClientesAir objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this InoMaestraAir has previously been saved, it will retrieve
+	 * related InoClientesAirs from storage. If this InoMaestraAir is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array InoClientesAir[]
 	 * @throws     PropelException
 	 */
-	public function getInoClientesAirs($criteria = null, $con = null)
+	public function getInoClientesAirs($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(InoMaestraAirPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1943,7 +2194,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			   $this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
 				InoClientesAirPeer::addSelectColumns($criteria);
 				$this->collInoClientesAirs = InoClientesAirPeer::doSelect($criteria, $con);
@@ -1956,7 +2207,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
 				InoClientesAirPeer::addSelectColumns($criteria);
 				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
@@ -1969,32 +2220,63 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related InoClientesAirs.
+	 * Returns the number of related InoClientesAir objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoClientesAir objects.
 	 * @throws     PropelException
 	 */
-	public function countInoClientesAirs($criteria = null, $distinct = false, $con = null)
+	public function countInoClientesAirs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(InoMaestraAirPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return InoClientesAirPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collInoClientesAirs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				$count = InoClientesAirPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
+					$count = InoClientesAirPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoClientesAirs);
+				}
+			} else {
+				$count = count($this->collInoClientesAirs);
+			}
+		}
+		$this->lastInoClientesAirCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a InoClientesAir object to this object
-	 * through the InoClientesAir foreign key attribute
+	 * through the InoClientesAir foreign key attribute.
 	 *
 	 * @param      InoClientesAir $l InoClientesAir
 	 * @return     void
@@ -2002,8 +2284,13 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function addInoClientesAir(InoClientesAir $l)
 	{
-		$this->collInoClientesAirs[] = $l;
-		$l->setInoMaestraAir($this);
+		if ($this->collInoClientesAirs === null) {
+			$this->initInoClientesAirs();
+		}
+		if (!in_array($l, $this->collInoClientesAirs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoClientesAirs, $l);
+			$l->setInoMaestraAir($this);
+		}
 	}
 
 
@@ -2018,11 +2305,10 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in InoMaestraAir.
 	 */
-	public function getInoClientesAirsJoinReporte($criteria = null, $con = null)
+	public function getInoClientesAirsJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(InoMaestraAirPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2034,19 +2320,19 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				$this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinReporte($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+			$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
 			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinReporte($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesAirCriteria = $criteria;
@@ -2066,11 +2352,10 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in InoMaestraAir.
 	 */
-	public function getInoClientesAirsJoinTercero($criteria = null, $con = null)
+	public function getInoClientesAirsJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(InoMaestraAirPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2082,19 +2367,19 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				$this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+				$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+			$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
 			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesAirCriteria = $criteria;
@@ -2103,36 +2388,50 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collInoIngresosAirs to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collInoIngresosAirs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoIngresosAirs()
+	 */
+	public function clearInoIngresosAirs()
+	{
+		$this->collInoIngresosAirs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoIngresosAirs collection (array).
+	 *
+	 * By default this just sets the collInoIngresosAirs collection to an empty array (like clearcollInoIngresosAirs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initInoIngresosAirs()
 	{
-		if ($this->collInoIngresosAirs === null) {
-			$this->collInoIngresosAirs = array();
-		}
+		$this->collInoIngresosAirs = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this InoMaestraAir has previously
-	 * been saved, it will retrieve related InoIngresosAirs from storage.
-	 * If this InoMaestraAir is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of InoIngresosAir objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this InoMaestraAir has previously been saved, it will retrieve
+	 * related InoIngresosAirs from storage. If this InoMaestraAir is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array InoIngresosAir[]
 	 * @throws     PropelException
 	 */
-	public function getInoIngresosAirs($criteria = null, $con = null)
+	public function getInoIngresosAirs($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(InoMaestraAirPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2144,7 +2443,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 			   $this->collInoIngresosAirs = array();
 			} else {
 
-				$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+				$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
 				InoIngresosAirPeer::addSelectColumns($criteria);
 				$this->collInoIngresosAirs = InoIngresosAirPeer::doSelect($criteria, $con);
@@ -2157,7 +2456,7 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+				$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
 				InoIngresosAirPeer::addSelectColumns($criteria);
 				if (!isset($this->lastInoIngresosAirCriteria) || !$this->lastInoIngresosAirCriteria->equals($criteria)) {
@@ -2170,32 +2469,63 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related InoIngresosAirs.
+	 * Returns the number of related InoIngresosAir objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoIngresosAir objects.
 	 * @throws     PropelException
 	 */
-	public function countInoIngresosAirs($criteria = null, $distinct = false, $con = null)
+	public function countInoIngresosAirs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(InoMaestraAirPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return InoIngresosAirPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collInoIngresosAirs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				$count = InoIngresosAirPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				if (!isset($this->lastInoIngresosAirCriteria) || !$this->lastInoIngresosAirCriteria->equals($criteria)) {
+					$count = InoIngresosAirPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoIngresosAirs);
+				}
+			} else {
+				$count = count($this->collInoIngresosAirs);
+			}
+		}
+		$this->lastInoIngresosAirCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a InoIngresosAir object to this object
-	 * through the InoIngresosAir foreign key attribute
+	 * through the InoIngresosAir foreign key attribute.
 	 *
 	 * @param      InoIngresosAir $l InoIngresosAir
 	 * @return     void
@@ -2203,8 +2533,13 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 */
 	public function addInoIngresosAir(InoIngresosAir $l)
 	{
-		$this->collInoIngresosAirs[] = $l;
-		$l->setInoMaestraAir($this);
+		if ($this->collInoIngresosAirs === null) {
+			$this->initInoIngresosAirs();
+		}
+		if (!in_array($l, $this->collInoIngresosAirs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoIngresosAirs, $l);
+			$l->setInoMaestraAir($this);
+		}
 	}
 
 
@@ -2219,11 +2554,10 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in InoMaestraAir.
 	 */
-	public function getInoIngresosAirsJoinCliente($criteria = null, $con = null)
+	public function getInoIngresosAirsJoinCliente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(InoMaestraAirPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2235,24 +2569,53 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				$this->collInoIngresosAirs = array();
 			} else {
 
-				$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+				$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
-				$this->collInoIngresosAirs = InoIngresosAirPeer::doSelectJoinCliente($criteria, $con);
+				$this->collInoIngresosAirs = InoIngresosAirPeer::doSelectJoinCliente($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->getCaReferencia());
+			$criteria->add(InoIngresosAirPeer::CA_REFERENCIA, $this->ca_referencia);
 
 			if (!isset($this->lastInoIngresosAirCriteria) || !$this->lastInoIngresosAirCriteria->equals($criteria)) {
-				$this->collInoIngresosAirs = InoIngresosAirPeer::doSelectJoinCliente($criteria, $con);
+				$this->collInoIngresosAirs = InoIngresosAirPeer::doSelectJoinCliente($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoIngresosAirCriteria = $criteria;
 
 		return $this->collInoIngresosAirs;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collInoClientesAirs) {
+				foreach ((array) $this->collInoClientesAirs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collInoIngresosAirs) {
+				foreach ((array) $this->collInoIngresosAirs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collInoClientesAirs = null;
+		$this->collInoIngresosAirs = null;
+			$this->aTransportador = null;
 	}
 
 } // BaseInoMaestraAir

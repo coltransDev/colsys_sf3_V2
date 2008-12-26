@@ -10,6 +10,8 @@
 abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 
 
+  const PEER = 'ContactoAgentePeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idcontacto field.
 	 * @var        string
 	 */
 	protected $ca_idcontacto;
-
 
 	/**
 	 * The value for the ca_idagente field.
@@ -32,13 +32,11 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idagente;
 
-
 	/**
 	 * The value for the ca_nombre field.
 	 * @var        string
 	 */
 	protected $ca_nombre;
-
 
 	/**
 	 * The value for the ca_direccion field.
@@ -46,13 +44,11 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_direccion;
 
-
 	/**
 	 * The value for the ca_telefonos field.
 	 * @var        string
 	 */
 	protected $ca_telefonos;
-
 
 	/**
 	 * The value for the ca_fax field.
@@ -60,13 +56,11 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_fax;
 
-
 	/**
 	 * The value for the ca_idciudad field.
 	 * @var        string
 	 */
 	protected $ca_idciudad;
-
 
 	/**
 	 * The value for the ca_email field.
@@ -74,13 +68,11 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_email;
 
-
 	/**
 	 * The value for the ca_impoexpo field.
 	 * @var        string
 	 */
 	protected $ca_impoexpo;
-
 
 	/**
 	 * The value for the ca_transporte field.
@@ -88,20 +80,17 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_transporte;
 
-
 	/**
 	 * The value for the ca_cargo field.
 	 * @var        string
 	 */
 	protected $ca_cargo;
 
-
 	/**
 	 * The value for the ca_detalle field.
 	 * @var        string
 	 */
 	protected $ca_detalle;
-
 
 	/**
 	 * The value for the ca_sugerido field.
@@ -134,13 +123,32 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseContactoAgente object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idcontacto] column value.
 	 * 
 	 * @return     string
 	 */
 	public function getCaIdcontacto()
 	{
-
 		return $this->ca_idcontacto;
 	}
 
@@ -151,7 +159,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdagente()
 	{
-
 		return $this->ca_idagente;
 	}
 
@@ -162,7 +169,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaNombre()
 	{
-
 		return $this->ca_nombre;
 	}
 
@@ -173,7 +179,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaDireccion()
 	{
-
 		return $this->ca_direccion;
 	}
 
@@ -184,7 +189,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaTelefonos()
 	{
-
 		return $this->ca_telefonos;
 	}
 
@@ -195,7 +199,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaFax()
 	{
-
 		return $this->ca_fax;
 	}
 
@@ -206,7 +209,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdciudad()
 	{
-
 		return $this->ca_idciudad;
 	}
 
@@ -217,7 +219,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaEmail()
 	{
-
 		return $this->ca_email;
 	}
 
@@ -228,7 +229,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaImpoexpo()
 	{
-
 		return $this->ca_impoexpo;
 	}
 
@@ -239,7 +239,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaTransporte()
 	{
-
 		return $this->ca_transporte;
 	}
 
@@ -250,7 +249,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaCargo()
 	{
-
 		return $this->ca_cargo;
 	}
 
@@ -261,7 +259,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaDetalle()
 	{
-
 		return $this->ca_detalle;
 	}
 
@@ -272,7 +269,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaSugerido()
 	{
-
 		return $this->ca_sugerido;
 	}
 
@@ -280,15 +276,12 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idcontacto] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaIdcontacto($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_idcontacto !== $v) {
@@ -296,20 +289,18 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_IDCONTACTO;
 		}
 
+		return $this;
 	} // setCaIdcontacto()
 
 	/**
 	 * Set the value of [ca_idagente] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaIdagente($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -322,21 +313,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->aAgente = null;
 		}
 
+		return $this;
 	} // setCaIdagente()
 
 	/**
 	 * Set the value of [ca_nombre] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaNombre($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_nombre !== $v) {
@@ -344,21 +333,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_NOMBRE;
 		}
 
+		return $this;
 	} // setCaNombre()
 
 	/**
 	 * Set the value of [ca_direccion] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaDireccion($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_direccion !== $v) {
@@ -366,21 +353,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_DIRECCION;
 		}
 
+		return $this;
 	} // setCaDireccion()
 
 	/**
 	 * Set the value of [ca_telefonos] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaTelefonos($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_telefonos !== $v) {
@@ -388,21 +373,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_TELEFONOS;
 		}
 
+		return $this;
 	} // setCaTelefonos()
 
 	/**
 	 * Set the value of [ca_fax] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaFax($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_fax !== $v) {
@@ -410,21 +393,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_FAX;
 		}
 
+		return $this;
 	} // setCaFax()
 
 	/**
 	 * Set the value of [ca_idciudad] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaIdciudad($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_idciudad !== $v) {
@@ -436,21 +417,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->aCiudad = null;
 		}
 
+		return $this;
 	} // setCaIdciudad()
 
 	/**
 	 * Set the value of [ca_email] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaEmail($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_email !== $v) {
@@ -458,21 +437,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_EMAIL;
 		}
 
+		return $this;
 	} // setCaEmail()
 
 	/**
 	 * Set the value of [ca_impoexpo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaImpoexpo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_impoexpo !== $v) {
@@ -480,21 +457,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_IMPOEXPO;
 		}
 
+		return $this;
 	} // setCaImpoexpo()
 
 	/**
 	 * Set the value of [ca_transporte] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaTransporte($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_transporte !== $v) {
@@ -502,21 +477,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_TRANSPORTE;
 		}
 
+		return $this;
 	} // setCaTransporte()
 
 	/**
 	 * Set the value of [ca_cargo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaCargo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_cargo !== $v) {
@@ -524,21 +497,19 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_CARGO;
 		}
 
+		return $this;
 	} // setCaCargo()
 
 	/**
 	 * Set the value of [ca_detalle] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaDetalle($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_detalle !== $v) {
@@ -546,70 +517,86 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_DETALLE;
 		}
 
+		return $this;
 	} // setCaDetalle()
 
 	/**
 	 * Set the value of [ca_sugerido] column.
 	 * 
 	 * @param      boolean $v new value
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 */
 	public function setCaSugerido($v)
 	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
 
 		if ($this->ca_sugerido !== $v) {
 			$this->ca_sugerido = $v;
 			$this->modifiedColumns[] = ContactoAgentePeer::CA_SUGERIDO;
 		}
 
+		return $this;
 	} // setCaSugerido()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idcontacto = $rs->getString($startcol + 0);
-
-			$this->ca_idagente = $rs->getInt($startcol + 1);
-
-			$this->ca_nombre = $rs->getString($startcol + 2);
-
-			$this->ca_direccion = $rs->getString($startcol + 3);
-
-			$this->ca_telefonos = $rs->getString($startcol + 4);
-
-			$this->ca_fax = $rs->getString($startcol + 5);
-
-			$this->ca_idciudad = $rs->getString($startcol + 6);
-
-			$this->ca_email = $rs->getString($startcol + 7);
-
-			$this->ca_impoexpo = $rs->getString($startcol + 8);
-
-			$this->ca_transporte = $rs->getString($startcol + 9);
-
-			$this->ca_cargo = $rs->getString($startcol + 10);
-
-			$this->ca_detalle = $rs->getString($startcol + 11);
-
-			$this->ca_sugerido = $rs->getBoolean($startcol + 12);
-
+			$this->ca_idcontacto = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_idagente = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+			$this->ca_nombre = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_direccion = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_telefonos = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_fax = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_idciudad = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_email = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_impoexpo = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_transporte = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_cargo = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_detalle = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_sugerido = ($row[$startcol + 12] !== null) ? (boolean) $row[$startcol + 12] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 13; // 13 = ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS).
@@ -620,83 +607,152 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aAgente !== null && $this->ca_idagente !== $this->aAgente->getCaIdagente()) {
+			$this->aAgente = null;
+		}
+		if ($this->aCiudad !== null && $this->ca_idciudad !== $this->aCiudad->getCaIdciudad()) {
+			$this->aCiudad = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = ContactoAgentePeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aAgente = null;
+			$this->aCiudad = null;
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME);
+			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			ContactoAgentePeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME);
+			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			ContactoAgentePeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -704,14 +760,14 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aAgente !== null) {
-				if ($this->aAgente->isModified()) {
+				if ($this->aAgente->isModified() || $this->aAgente->isNew()) {
 					$affectedRows += $this->aAgente->save($con);
 				}
 				$this->setAgente($this->aAgente);
 			}
 
 			if ($this->aCiudad !== null) {
-				if ($this->aCiudad->isModified()) {
+				if ($this->aCiudad->isModified() || $this->aCiudad->isNew()) {
 					$affectedRows += $this->aCiudad->save($con);
 				}
 				$this->setCiudad($this->aCiudad);
@@ -730,10 +786,12 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += ContactoAgentePeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -833,14 +891,15 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = ContactoAgentePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -904,11 +963,12 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = ContactoAgentePeer::getFieldNames($keyType);
 		$result = array(
@@ -935,8 +995,8 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -1007,8 +1067,9 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1109,6 +1170,8 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIdcontacto($this->ca_idcontacto);
+
 		$copyObj->setCaIdagente($this->ca_idagente);
 
 		$copyObj->setCaNombre($this->ca_nombre);
@@ -1135,8 +1198,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaIdcontacto(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -1182,45 +1243,48 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Agente object.
 	 *
 	 * @param      Agente $v
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setAgente($v)
+	public function setAgente(Agente $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdagente(NULL);
 		} else {
 			$this->setCaIdagente($v->getCaIdagente());
 		}
 
-
 		$this->aAgente = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Agente object, it will not be re-added.
+		if ($v !== null) {
+			$v->addContactoAgente($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Agente object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Agente The associated Agente object.
 	 * @throws     PropelException
 	 */
-	public function getAgente($con = null)
+	public function getAgente(PropelPDO $con = null)
 	{
 		if ($this->aAgente === null && ($this->ca_idagente !== null)) {
-			// include the related Peer class
-			$this->aAgente = AgentePeer::retrieveByPK($this->ca_idagente, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(AgentePeer::DATABASE_NAME);
+			$c->add(AgentePeer::CA_IDAGENTE, $this->ca_idagente);
+			$this->aAgente = AgentePeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = AgentePeer::retrieveByPK($this->ca_idagente, $con);
-			   $obj->addAgentes($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aAgente->addContactoAgentes($this);
 			 */
 		}
 		return $this->aAgente;
@@ -1230,48 +1294,69 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Ciudad object.
 	 *
 	 * @param      Ciudad $v
-	 * @return     void
+	 * @return     ContactoAgente The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setCiudad($v)
+	public function setCiudad(Ciudad $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdciudad(NULL);
 		} else {
 			$this->setCaIdciudad($v->getCaIdciudad());
 		}
 
-
 		$this->aCiudad = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Ciudad object, it will not be re-added.
+		if ($v !== null) {
+			$v->addContactoAgente($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Ciudad object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Ciudad The associated Ciudad object.
 	 * @throws     PropelException
 	 */
-	public function getCiudad($con = null)
+	public function getCiudad(PropelPDO $con = null)
 	{
 		if ($this->aCiudad === null && (($this->ca_idciudad !== "" && $this->ca_idciudad !== null))) {
-			// include the related Peer class
-			$this->aCiudad = CiudadPeer::retrieveByPK($this->ca_idciudad, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(CiudadPeer::DATABASE_NAME);
+			$c->add(CiudadPeer::CA_IDCIUDAD, $this->ca_idciudad);
+			$this->aCiudad = CiudadPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = CiudadPeer::retrieveByPK($this->ca_idciudad, $con);
-			   $obj->addCiudads($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aCiudad->addContactoAgentes($this);
 			 */
 		}
 		return $this->aCiudad;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+		} // if ($deep)
+
+			$this->aAgente = null;
+			$this->aCiudad = null;
 	}
 
 } // BaseContactoAgente

@@ -47,8 +47,8 @@ class CotProducto extends BaseCotProducto
 	*alias para getCotOpciones
 	* Author: Andres Botero
 	*/
-	public function getCotOpciones(){
-		return $this->getCotOpcions();
+	public function getCotOpciones( $c=null ){
+		return $this->getCotOpcions( $c );
 	}
 	
 	/*

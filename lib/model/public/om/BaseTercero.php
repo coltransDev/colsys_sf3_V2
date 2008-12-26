@@ -10,6 +10,8 @@
 abstract class BaseTercero extends BaseObject  implements Persistent {
 
 
+  const PEER = 'TerceroPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idtercero field.
 	 * @var        int
 	 */
 	protected $ca_idtercero;
-
 
 	/**
 	 * The value for the ca_nombre field.
@@ -32,13 +32,11 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	protected $ca_nombre;
 
-
 	/**
 	 * The value for the ca_contacto field.
 	 * @var        string
 	 */
 	protected $ca_contacto;
-
 
 	/**
 	 * The value for the ca_direccion field.
@@ -46,13 +44,11 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	protected $ca_direccion;
 
-
 	/**
 	 * The value for the ca_telefonos field.
 	 * @var        string
 	 */
 	protected $ca_telefonos;
-
 
 	/**
 	 * The value for the ca_fax field.
@@ -60,13 +56,11 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	protected $ca_fax;
 
-
 	/**
 	 * The value for the ca_idciudad field.
 	 * @var        string
 	 */
 	protected $ca_idciudad;
-
 
 	/**
 	 * The value for the ca_email field.
@@ -74,20 +68,17 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	protected $ca_email;
 
-
 	/**
 	 * The value for the ca_vendedor field.
 	 * @var        string
 	 */
 	protected $ca_vendedor;
 
-
 	/**
 	 * The value for the ca_tipo field.
 	 * @var        string
 	 */
 	protected $ca_tipo;
-
 
 	/**
 	 * The value for the ca_identificacion field.
@@ -96,40 +87,34 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	protected $ca_identificacion;
 
 	/**
-	 * Collection to store aggregation of collInoClientesAirs.
-	 * @var        array
+	 * @var        array InoClientesAir[] Collection to store aggregation of InoClientesAir objects.
 	 */
 	protected $collInoClientesAirs;
 
 	/**
-	 * The criteria used to select the current contents of collInoClientesAirs.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collInoClientesAirs.
 	 */
-	protected $lastInoClientesAirCriteria = null;
+	private $lastInoClientesAirCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collReportes.
-	 * @var        array
+	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
 	 */
 	protected $collReportes;
 
 	/**
-	 * The criteria used to select the current contents of collReportes.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collReportes.
 	 */
-	protected $lastReporteCriteria = null;
+	private $lastReporteCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collInoClientesSeas.
-	 * @var        array
+	 * @var        array InoClientesSea[] Collection to store aggregation of InoClientesSea objects.
 	 */
 	protected $collInoClientesSeas;
 
 	/**
-	 * The criteria used to select the current contents of collInoClientesSeas.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collInoClientesSeas.
 	 */
-	protected $lastInoClientesSeaCriteria = null;
+	private $lastInoClientesSeaCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -146,13 +131,32 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseTercero object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idtercero] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaIdtercero()
 	{
-
 		return $this->ca_idtercero;
 	}
 
@@ -163,7 +167,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaNombre()
 	{
-
 		return $this->ca_nombre;
 	}
 
@@ -174,7 +177,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaContacto()
 	{
-
 		return $this->ca_contacto;
 	}
 
@@ -185,7 +187,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaDireccion()
 	{
-
 		return $this->ca_direccion;
 	}
 
@@ -196,7 +197,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaTelefonos()
 	{
-
 		return $this->ca_telefonos;
 	}
 
@@ -207,7 +207,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaFax()
 	{
-
 		return $this->ca_fax;
 	}
 
@@ -218,7 +217,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdciudad()
 	{
-
 		return $this->ca_idciudad;
 	}
 
@@ -229,7 +227,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaEmail()
 	{
-
 		return $this->ca_email;
 	}
 
@@ -240,7 +237,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaVendedor()
 	{
-
 		return $this->ca_vendedor;
 	}
 
@@ -251,7 +247,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaTipo()
 	{
-
 		return $this->ca_tipo;
 	}
 
@@ -262,7 +257,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdentificacion()
 	{
-
 		return $this->ca_identificacion;
 	}
 
@@ -270,14 +264,11 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idtercero] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaIdtercero($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -286,21 +277,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_IDTERCERO;
 		}
 
+		return $this;
 	} // setCaIdtercero()
 
 	/**
 	 * Set the value of [ca_nombre] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaNombre($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_nombre !== $v) {
@@ -308,21 +297,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_NOMBRE;
 		}
 
+		return $this;
 	} // setCaNombre()
 
 	/**
 	 * Set the value of [ca_contacto] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaContacto($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_contacto !== $v) {
@@ -330,21 +317,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_CONTACTO;
 		}
 
+		return $this;
 	} // setCaContacto()
 
 	/**
 	 * Set the value of [ca_direccion] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaDireccion($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_direccion !== $v) {
@@ -352,21 +337,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_DIRECCION;
 		}
 
+		return $this;
 	} // setCaDireccion()
 
 	/**
 	 * Set the value of [ca_telefonos] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaTelefonos($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_telefonos !== $v) {
@@ -374,21 +357,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_TELEFONOS;
 		}
 
+		return $this;
 	} // setCaTelefonos()
 
 	/**
 	 * Set the value of [ca_fax] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaFax($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_fax !== $v) {
@@ -396,21 +377,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_FAX;
 		}
 
+		return $this;
 	} // setCaFax()
 
 	/**
 	 * Set the value of [ca_idciudad] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaIdciudad($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_idciudad !== $v) {
@@ -418,21 +397,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_IDCIUDAD;
 		}
 
+		return $this;
 	} // setCaIdciudad()
 
 	/**
 	 * Set the value of [ca_email] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaEmail($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_email !== $v) {
@@ -440,21 +417,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_EMAIL;
 		}
 
+		return $this;
 	} // setCaEmail()
 
 	/**
 	 * Set the value of [ca_vendedor] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaVendedor($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_vendedor !== $v) {
@@ -462,21 +437,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_VENDEDOR;
 		}
 
+		return $this;
 	} // setCaVendedor()
 
 	/**
 	 * Set the value of [ca_tipo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaTipo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_tipo !== $v) {
@@ -484,21 +457,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_TIPO;
 		}
 
+		return $this;
 	} // setCaTipo()
 
 	/**
 	 * Set the value of [ca_identificacion] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Tercero The current object (for fluent API support)
 	 */
 	public function setCaIdentificacion($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_identificacion !== $v) {
@@ -506,50 +477,64 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TerceroPeer::CA_IDENTIFICACION;
 		}
 
+		return $this;
 	} // setCaIdentificacion()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idtercero = $rs->getInt($startcol + 0);
-
-			$this->ca_nombre = $rs->getString($startcol + 1);
-
-			$this->ca_contacto = $rs->getString($startcol + 2);
-
-			$this->ca_direccion = $rs->getString($startcol + 3);
-
-			$this->ca_telefonos = $rs->getString($startcol + 4);
-
-			$this->ca_fax = $rs->getString($startcol + 5);
-
-			$this->ca_idciudad = $rs->getString($startcol + 6);
-
-			$this->ca_email = $rs->getString($startcol + 7);
-
-			$this->ca_vendedor = $rs->getString($startcol + 8);
-
-			$this->ca_tipo = $rs->getString($startcol + 9);
-
-			$this->ca_identificacion = $rs->getString($startcol + 10);
-
+			$this->ca_idtercero = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_nombre = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_contacto = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_direccion = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_telefonos = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_fax = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_idciudad = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_email = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_vendedor = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_tipo = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_identificacion = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 11; // 11 = TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -560,83 +545,157 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(TerceroPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = TerceroPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->collInoClientesAirs = null;
+			$this->lastInoClientesAirCriteria = null;
+
+			$this->collReportes = null;
+			$this->lastReporteCriteria = null;
+
+			$this->collInoClientesSeas = null;
+			$this->lastInoClientesSeaCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TerceroPeer::DATABASE_NAME);
+			$con = Propel::getConnection(TerceroPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			TerceroPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TerceroPeer::DATABASE_NAME);
+			$con = Propel::getConnection(TerceroPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			TerceroPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = TerceroPeer::CA_IDTERCERO;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -652,11 +711,12 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += TerceroPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collInoClientesAirs !== null) {
-				foreach($this->collInoClientesAirs as $referrerFK) {
+				foreach ($this->collInoClientesAirs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -664,7 +724,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collReportes !== null) {
-				foreach($this->collReportes as $referrerFK) {
+				foreach ($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -672,7 +732,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collInoClientesSeas !== null) {
-				foreach($this->collInoClientesSeas as $referrerFK) {
+				foreach ($this->collInoClientesSeas as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -680,6 +740,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -750,7 +811,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 
 
 				if ($this->collInoClientesAirs !== null) {
-					foreach($this->collInoClientesAirs as $referrerFK) {
+					foreach ($this->collInoClientesAirs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -758,7 +819,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collReportes !== null) {
-					foreach($this->collReportes as $referrerFK) {
+					foreach ($this->collReportes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -766,7 +827,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collInoClientesSeas !== null) {
-					foreach($this->collInoClientesSeas as $referrerFK) {
+					foreach ($this->collInoClientesSeas as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -785,14 +846,15 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = TerceroPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -850,11 +912,12 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = TerceroPeer::getFieldNames($keyType);
 		$result = array(
@@ -879,8 +942,8 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -945,8 +1008,9 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1069,16 +1133,22 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getInoClientesAirs() as $relObj) {
-				$copyObj->addInoClientesAir($relObj->copy($deepCopy));
+			foreach ($this->getInoClientesAirs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoClientesAir($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getReportes() as $relObj) {
-				$copyObj->addReporte($relObj->copy($deepCopy));
+			foreach ($this->getReportes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addReporte($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getInoClientesSeas() as $relObj) {
-				$copyObj->addInoClientesSea($relObj->copy($deepCopy));
+			foreach ($this->getInoClientesSeas() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoClientesSea($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
@@ -1086,7 +1156,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdtercero(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaIdtercero(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -1129,36 +1199,50 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collInoClientesAirs to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collInoClientesAirs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoClientesAirs()
+	 */
+	public function clearInoClientesAirs()
+	{
+		$this->collInoClientesAirs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoClientesAirs collection (array).
+	 *
+	 * By default this just sets the collInoClientesAirs collection to an empty array (like clearcollInoClientesAirs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initInoClientesAirs()
 	{
-		if ($this->collInoClientesAirs === null) {
-			$this->collInoClientesAirs = array();
-		}
+		$this->collInoClientesAirs = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Tercero has previously
-	 * been saved, it will retrieve related InoClientesAirs from storage.
-	 * If this Tercero is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of InoClientesAir objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Tercero has previously been saved, it will retrieve
+	 * related InoClientesAirs from storage. If this Tercero is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array InoClientesAir[]
 	 * @throws     PropelException
 	 */
-	public function getInoClientesAirs($criteria = null, $con = null)
+	public function getInoClientesAirs($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1170,7 +1254,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			   $this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 				InoClientesAirPeer::addSelectColumns($criteria);
 				$this->collInoClientesAirs = InoClientesAirPeer::doSelect($criteria, $con);
@@ -1183,7 +1267,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 				InoClientesAirPeer::addSelectColumns($criteria);
 				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
@@ -1196,32 +1280,63 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related InoClientesAirs.
+	 * Returns the number of related InoClientesAir objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoClientesAir objects.
 	 * @throws     PropelException
 	 */
-	public function countInoClientesAirs($criteria = null, $distinct = false, $con = null)
+	public function countInoClientesAirs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return InoClientesAirPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collInoClientesAirs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
+
+				$count = InoClientesAirPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
+
+				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
+					$count = InoClientesAirPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoClientesAirs);
+				}
+			} else {
+				$count = count($this->collInoClientesAirs);
+			}
+		}
+		$this->lastInoClientesAirCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a InoClientesAir object to this object
-	 * through the InoClientesAir foreign key attribute
+	 * through the InoClientesAir foreign key attribute.
 	 *
 	 * @param      InoClientesAir $l InoClientesAir
 	 * @return     void
@@ -1229,8 +1344,13 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function addInoClientesAir(InoClientesAir $l)
 	{
-		$this->collInoClientesAirs[] = $l;
-		$l->setTercero($this);
+		if ($this->collInoClientesAirs === null) {
+			$this->initInoClientesAirs();
+		}
+		if (!in_array($l, $this->collInoClientesAirs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoClientesAirs, $l);
+			$l->setTercero($this);
+		}
 	}
 
 
@@ -1245,11 +1365,10 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Tercero.
 	 */
-	public function getInoClientesAirsJoinReporte($criteria = null, $con = null)
+	public function getInoClientesAirsJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1261,19 +1380,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinReporte($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+			$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinReporte($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesAirCriteria = $criteria;
@@ -1293,11 +1412,10 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Tercero.
 	 */
-	public function getInoClientesAirsJoinInoMaestraAir($criteria = null, $con = null)
+	public function getInoClientesAirsJoinInoMaestraAir($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1309,19 +1427,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+			$criteria->add(InoClientesAirPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesAirCriteria = $criteria;
@@ -1330,36 +1448,50 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collReportes to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collReportes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addReportes()
+	 */
+	public function clearReportes()
+	{
+		$this->collReportes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collReportes collection (array).
+	 *
+	 * By default this just sets the collReportes collection to an empty array (like clearcollReportes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initReportes()
 	{
-		if ($this->collReportes === null) {
-			$this->collReportes = array();
-		}
+		$this->collReportes = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Tercero has previously
-	 * been saved, it will retrieve related Reportes from storage.
-	 * If this Tercero is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of Reporte objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Tercero has previously been saved, it will retrieve
+	 * related Reportes from storage. If this Tercero is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array Reporte[]
 	 * @throws     PropelException
 	 */
-	public function getReportes($criteria = null, $con = null)
+	public function getReportes($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1371,7 +1503,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			   $this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 				ReportePeer::addSelectColumns($criteria);
 				$this->collReportes = ReportePeer::doSelect($criteria, $con);
@@ -1384,7 +1516,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 				ReportePeer::addSelectColumns($criteria);
 				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
@@ -1397,32 +1529,63 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related Reportes.
+	 * Returns the number of related Reporte objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Reporte objects.
 	 * @throws     PropelException
 	 */
-	public function countReportes($criteria = null, $distinct = false, $con = null)
+	public function countReportes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return ReportePeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
+
+				$count = ReportePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
+
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$count = ReportePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collReportes);
+				}
+			} else {
+				$count = count($this->collReportes);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a Reporte object to this object
-	 * through the Reporte foreign key attribute
+	 * through the Reporte foreign key attribute.
 	 *
 	 * @param      Reporte $l Reporte
 	 * @return     void
@@ -1430,8 +1593,13 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function addReporte(Reporte $l)
 	{
-		$this->collReportes[] = $l;
-		$l->setTercero($this);
+		if ($this->collReportes === null) {
+			$this->initReportes();
+		}
+		if (!in_array($l, $this->collReportes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collReportes, $l);
+			$l->setTercero($this);
+		}
 	}
 
 
@@ -1446,11 +1614,10 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Tercero.
 	 */
-	public function getReportesJoinUsuario($criteria = null, $con = null)
+	public function getReportesJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1462,19 +1629,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
-				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+			$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1494,11 +1661,10 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Tercero.
 	 */
-	public function getReportesJoinTransportador($criteria = null, $con = null)
+	public function getReportesJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1510,19 +1676,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
-				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+			$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1542,11 +1708,10 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Tercero.
 	 */
-	public function getReportesJoinAgente($criteria = null, $con = null)
+	public function getReportesJoinAgente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1558,19 +1723,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
-				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+			$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1590,11 +1755,10 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Tercero.
 	 */
-	public function getReportesJoinBodega($criteria = null, $con = null)
+	public function getReportesJoinBodega($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1606,19 +1770,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
-				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+			$criteria->add(ReportePeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1627,36 +1791,50 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collInoClientesSeas to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collInoClientesSeas collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoClientesSeas()
+	 */
+	public function clearInoClientesSeas()
+	{
+		$this->collInoClientesSeas = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoClientesSeas collection (array).
+	 *
+	 * By default this just sets the collInoClientesSeas collection to an empty array (like clearcollInoClientesSeas());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initInoClientesSeas()
 	{
-		if ($this->collInoClientesSeas === null) {
-			$this->collInoClientesSeas = array();
-		}
+		$this->collInoClientesSeas = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Tercero has previously
-	 * been saved, it will retrieve related InoClientesSeas from storage.
-	 * If this Tercero is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of InoClientesSea objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Tercero has previously been saved, it will retrieve
+	 * related InoClientesSeas from storage. If this Tercero is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array InoClientesSea[]
 	 * @throws     PropelException
 	 */
-	public function getInoClientesSeas($criteria = null, $con = null)
+	public function getInoClientesSeas($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1668,7 +1846,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 			   $this->collInoClientesSeas = array();
 			} else {
 
-				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 				InoClientesSeaPeer::addSelectColumns($criteria);
 				$this->collInoClientesSeas = InoClientesSeaPeer::doSelect($criteria, $con);
@@ -1681,7 +1859,7 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 				InoClientesSeaPeer::addSelectColumns($criteria);
 				if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
@@ -1694,32 +1872,63 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related InoClientesSeas.
+	 * Returns the number of related InoClientesSea objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoClientesSea objects.
 	 * @throws     PropelException
 	 */
-	public function countInoClientesSeas($criteria = null, $distinct = false, $con = null)
+	public function countInoClientesSeas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return InoClientesSeaPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
+
+				$count = InoClientesSeaPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
+
+				if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+					$count = InoClientesSeaPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoClientesSeas);
+				}
+			} else {
+				$count = count($this->collInoClientesSeas);
+			}
+		}
+		$this->lastInoClientesSeaCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a InoClientesSea object to this object
-	 * through the InoClientesSea foreign key attribute
+	 * through the InoClientesSea foreign key attribute.
 	 *
 	 * @param      InoClientesSea $l InoClientesSea
 	 * @return     void
@@ -1727,8 +1936,13 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 */
 	public function addInoClientesSea(InoClientesSea $l)
 	{
-		$this->collInoClientesSeas[] = $l;
-		$l->setTercero($this);
+		if ($this->collInoClientesSeas === null) {
+			$this->initInoClientesSeas();
+		}
+		if (!in_array($l, $this->collInoClientesSeas, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoClientesSeas, $l);
+			$l->setTercero($this);
+		}
 	}
 
 
@@ -1743,11 +1957,10 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Tercero.
 	 */
-	public function getInoClientesSeasJoinReporte($criteria = null, $con = null)
+	public function getInoClientesSeasJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1759,19 +1972,19 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$this->collInoClientesSeas = array();
 			} else {
 
-				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
-				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinReporte($criteria, $con);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+			$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
-				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinReporte($criteria, $con);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesSeaCriteria = $criteria;
@@ -1791,11 +2004,10 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Tercero.
 	 */
-	public function getInoClientesSeasJoinInoMaestraSea($criteria = null, $con = null)
+	public function getInoClientesSeasJoinInoMaestraSea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TerceroPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1807,24 +2019,58 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$this->collInoClientesSeas = array();
 			} else {
 
-				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+				$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
-				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->getCaIdtercero());
+			$criteria->add(InoClientesSeaPeer::CA_IDPROVEEDOR, $this->ca_idtercero);
 
 			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
-				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesSeaCriteria = $criteria;
 
 		return $this->collInoClientesSeas;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collInoClientesAirs) {
+				foreach ((array) $this->collInoClientesAirs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collReportes) {
+				foreach ((array) $this->collReportes as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collInoClientesSeas) {
+				foreach ((array) $this->collInoClientesSeas as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collInoClientesAirs = null;
+		$this->collReportes = null;
+		$this->collInoClientesSeas = null;
 	}
 
 } // BaseTercero

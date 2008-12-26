@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class EmailMapBuilder {
+class EmailMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,42 +54,43 @@ class EmailMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(EmailPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_emails');
+		$tMap = $this->dbMap->addTable(EmailPeer::TABLE_NAME);
 		$tMap->setPhpName('Email');
+		$tMap->setClassname('Email');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_emails_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_emails_ca_idemail_seq');
 
-		$tMap->addPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_FCHENVIO', 'CaFchenvio', 'int', CreoleTypes::TIMESTAMP, true, null);
+		$tMap->addColumn('CA_FCHENVIO', 'CaFchenvio', 'TIMESTAMP', true, null);
 
-		$tMap->addColumn('CA_USUENVIO', 'CaUsuenvio', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_USUENVIO', 'CaUsuenvio', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TIPO', 'CaTipo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TIPO', 'CaTipo', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IDCASO', 'CaIdcaso', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_IDCASO', 'CaIdcaso', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FROM', 'CaFrom', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FROM', 'CaFrom', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FROMNAME', 'CaFromname', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FROMNAME', 'CaFromname', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CC', 'CaCc', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CC', 'CaCc', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_REPLYTO', 'CaReplyto', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_REPLYTO', 'CaReplyto', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ADDRESS', 'CaAddress', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ADDRESS', 'CaAddress', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ATTACHMENT', 'CaAttachment', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ATTACHMENT', 'CaAttachment', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SUBJECT', 'CaSubject', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SUBJECT', 'CaSubject', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_BODY', 'CaBody', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_BODY', 'CaBody', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_READRECEIPT', 'CaReadreceipt', 'boolean', CreoleTypes::BOOLEAN, false, null);
+		$tMap->addColumn('CA_READRECEIPT', 'CaReadreceipt', 'BOOLEAN', false, null);
 
 	} // doBuild()
 

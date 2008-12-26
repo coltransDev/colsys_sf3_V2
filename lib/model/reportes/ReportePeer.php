@@ -67,7 +67,7 @@ class ReportePeer extends BaseReportePeer
 	public static function getReportesActivos( $modo , $idCliente , $criteria=false, $order="" ){
 				
 		$c = new Criteria();
-			
+		return $c;	
 		$c->add( ClientePeer::CA_IDGRUPO, $idCliente );
 		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );	
 		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );
@@ -94,8 +94,7 @@ class ReportePeer extends BaseReportePeer
 				$c->addDescendingOrderByColumn(ReportePeer::CA_FCHREPORTE);	
 				break;
 		}
-		
-		
+				
 		$c->add( ReportePeer::CA_USUANULADO, null, Criteria::ISNULL );
 		if( $modo=="aereo"){
 			$criterion = $c->getNewCriterion( ReportePeer::CA_FCHREPORTE, "2008-10-01", Criteria::GREATER_THAN ); // // Se acordo esta fecha para empezar a operar en esta modalidad			

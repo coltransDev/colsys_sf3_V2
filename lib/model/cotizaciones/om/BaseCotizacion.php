@@ -10,6 +10,8 @@
 abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 
+  const PEER = 'CotizacionPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idcotizacion field.
 	 * @var        int
 	 */
 	protected $ca_idcotizacion;
-
 
 	/**
 	 * The value for the ca_idcontacto field.
@@ -32,13 +32,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idcontacto;
 
-
 	/**
 	 * The value for the ca_consecutivo field.
 	 * @var        string
 	 */
 	protected $ca_consecutivo;
-
 
 	/**
 	 * The value for the ca_asunto field.
@@ -46,13 +44,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_asunto;
 
-
 	/**
 	 * The value for the ca_saludo field.
 	 * @var        string
 	 */
 	protected $ca_saludo;
-
 
 	/**
 	 * The value for the ca_entrada field.
@@ -60,13 +56,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_entrada;
 
-
 	/**
 	 * The value for the ca_despedida field.
 	 * @var        string
 	 */
 	protected $ca_despedida;
-
 
 	/**
 	 * The value for the ca_usuario field.
@@ -74,20 +68,17 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuario;
 
-
 	/**
 	 * The value for the ca_anexos field.
 	 * @var        string
 	 */
 	protected $ca_anexos;
 
-
 	/**
 	 * The value for the ca_fchcreado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchcreado;
-
 
 	/**
 	 * The value for the ca_usucreado field.
@@ -95,13 +86,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usucreado;
 
-
 	/**
 	 * The value for the ca_fchactualizado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchactualizado;
-
 
 	/**
 	 * The value for the ca_usuactualizado field.
@@ -109,27 +98,23 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuactualizado;
 
-
 	/**
 	 * The value for the ca_fchsolicitud field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchsolicitud;
 
-
 	/**
 	 * The value for the ca_horasolicitud field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_horasolicitud;
 
-
 	/**
 	 * The value for the ca_fchanulado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchanulado;
-
 
 	/**
 	 * The value for the ca_usuanulado field.
@@ -137,13 +122,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuanulado;
 
-
 	/**
 	 * The value for the ca_empresa field.
 	 * @var        string
 	 */
 	protected $ca_empresa;
-
 
 	/**
 	 * The value for the ca_datosag field.
@@ -151,13 +134,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	protected $ca_datosag;
 
-
 	/**
 	 * The value for the ca_estado field.
 	 * @var        string
 	 */
 	protected $ca_estado;
-
 
 	/**
 	 * The value for the ca_motivonoaprobado field.
@@ -176,52 +157,44 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	protected $aUsuario;
 
 	/**
-	 * Collection to store aggregation of collCotProductos.
-	 * @var        array
+	 * @var        array CotProducto[] Collection to store aggregation of CotProducto objects.
 	 */
 	protected $collCotProductos;
 
 	/**
-	 * The criteria used to select the current contents of collCotProductos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collCotProductos.
 	 */
-	protected $lastCotProductoCriteria = null;
+	private $lastCotProductoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collCotContinuacions.
-	 * @var        array
+	 * @var        array CotContinuacion[] Collection to store aggregation of CotContinuacion objects.
 	 */
 	protected $collCotContinuacions;
 
 	/**
-	 * The criteria used to select the current contents of collCotContinuacions.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collCotContinuacions.
 	 */
-	protected $lastCotContinuacionCriteria = null;
+	private $lastCotContinuacionCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collCotSeguros.
-	 * @var        array
+	 * @var        array CotSeguro[] Collection to store aggregation of CotSeguro objects.
 	 */
 	protected $collCotSeguros;
 
 	/**
-	 * The criteria used to select the current contents of collCotSeguros.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collCotSeguros.
 	 */
-	protected $lastCotSeguroCriteria = null;
+	private $lastCotSeguroCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collCotArchivos.
-	 * @var        array
+	 * @var        array CotArchivo[] Collection to store aggregation of CotArchivo objects.
 	 */
 	protected $collCotArchivos;
 
 	/**
-	 * The criteria used to select the current contents of collCotArchivos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collCotArchivos.
 	 */
-	protected $lastCotArchivoCriteria = null;
+	private $lastCotArchivoCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -238,13 +211,32 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseCotizacion object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idcotizacion] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaIdcotizacion()
 	{
-
 		return $this->ca_idcotizacion;
 	}
 
@@ -255,7 +247,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdcontacto()
 	{
-
 		return $this->ca_idcontacto;
 	}
 
@@ -266,7 +257,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaConsecutivo()
 	{
-
 		return $this->ca_consecutivo;
 	}
 
@@ -277,7 +267,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaAsunto()
 	{
-
 		return $this->ca_asunto;
 	}
 
@@ -288,7 +277,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaSaludo()
 	{
-
 		return $this->ca_saludo;
 	}
 
@@ -299,7 +287,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaEntrada()
 	{
-
 		return $this->ca_entrada;
 	}
 
@@ -310,7 +297,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaDespedida()
 	{
-
 		return $this->ca_despedida;
 	}
 
@@ -321,7 +307,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuario()
 	{
-
 		return $this->ca_usuario;
 	}
 
@@ -332,38 +317,39 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaAnexos()
 	{
-
 		return $this->ca_anexos;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchcreado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchcreado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchcreado($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchcreado === null || $this->ca_fchcreado === '') {
+		if ($this->ca_fchcreado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchcreado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchcreado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchcreado] as date/time value: " . var_export($this->ca_fchcreado, true));
-			}
-		} else {
-			$ts = $this->ca_fchcreado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchcreado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcreado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -374,38 +360,39 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsucreado()
 	{
-
 		return $this->ca_usucreado;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchactualizado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchactualizado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchactualizado($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchactualizado === null || $this->ca_fchactualizado === '') {
+		if ($this->ca_fchactualizado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchactualizado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchactualizado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchactualizado] as date/time value: " . var_export($this->ca_fchactualizado, true));
-			}
-		} else {
-			$ts = $this->ca_fchactualizado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchactualizado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchactualizado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -416,100 +403,105 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuactualizado()
 	{
-
 		return $this->ca_usuactualizado;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchsolicitud] column value.
+	 * Get the [optionally formatted] temporal [ca_fchsolicitud] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchsolicitud($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchsolicitud === null || $this->ca_fchsolicitud === '') {
+		if ($this->ca_fchsolicitud === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchsolicitud)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchsolicitud);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchsolicitud] as date/time value: " . var_export($this->ca_fchsolicitud, true));
-			}
-		} else {
-			$ts = $this->ca_fchsolicitud;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchsolicitud);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchsolicitud, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_horasolicitud] column value.
+	 * Get the [optionally formatted] temporal [ca_horasolicitud] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaHorasolicitud($format = 'H:i:s')
 	{
-
-		if ($this->ca_horasolicitud === null || $this->ca_horasolicitud === '') {
+		if ($this->ca_horasolicitud === null) {
 			return null;
-		} elseif (!is_int($this->ca_horasolicitud)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_horasolicitud);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_horasolicitud] as date/time value: " . var_export($this->ca_horasolicitud, true));
-			}
-		} else {
-			$ts = $this->ca_horasolicitud;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_horasolicitud);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_horasolicitud, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchanulado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchanulado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchanulado($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchanulado === null || $this->ca_fchanulado === '') {
+		if ($this->ca_fchanulado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchanulado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchanulado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchanulado] as date/time value: " . var_export($this->ca_fchanulado, true));
-			}
-		} else {
-			$ts = $this->ca_fchanulado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchanulado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchanulado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -520,7 +512,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuanulado()
 	{
-
 		return $this->ca_usuanulado;
 	}
 
@@ -531,7 +522,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaEmpresa()
 	{
-
 		return $this->ca_empresa;
 	}
 
@@ -542,7 +532,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaDatosag()
 	{
-
 		return $this->ca_datosag;
 	}
 
@@ -553,7 +542,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaEstado()
 	{
-
 		return $this->ca_estado;
 	}
 
@@ -564,7 +552,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function getCaMotivonoaprobado()
 	{
-
 		return $this->ca_motivonoaprobado;
 	}
 
@@ -572,14 +559,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idcotizacion] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaIdcotizacion($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -588,20 +572,18 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_IDCOTIZACION;
 		}
 
+		return $this;
 	} // setCaIdcotizacion()
 
 	/**
 	 * Set the value of [ca_idcontacto] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaIdcontacto($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -614,21 +596,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->aContacto = null;
 		}
 
+		return $this;
 	} // setCaIdcontacto()
 
 	/**
 	 * Set the value of [ca_consecutivo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaConsecutivo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_consecutivo !== $v) {
@@ -636,21 +616,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_CONSECUTIVO;
 		}
 
+		return $this;
 	} // setCaConsecutivo()
 
 	/**
 	 * Set the value of [ca_asunto] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaAsunto($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_asunto !== $v) {
@@ -658,21 +636,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_ASUNTO;
 		}
 
+		return $this;
 	} // setCaAsunto()
 
 	/**
 	 * Set the value of [ca_saludo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaSaludo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_saludo !== $v) {
@@ -680,21 +656,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_SALUDO;
 		}
 
+		return $this;
 	} // setCaSaludo()
 
 	/**
 	 * Set the value of [ca_entrada] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaEntrada($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_entrada !== $v) {
@@ -702,21 +676,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_ENTRADA;
 		}
 
+		return $this;
 	} // setCaEntrada()
 
 	/**
 	 * Set the value of [ca_despedida] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaDespedida($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_despedida !== $v) {
@@ -724,21 +696,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_DESPEDIDA;
 		}
 
+		return $this;
 	} // setCaDespedida()
 
 	/**
 	 * Set the value of [ca_usuario] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaUsuario($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuario !== $v) {
@@ -750,21 +720,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->aUsuario = null;
 		}
 
+		return $this;
 	} // setCaUsuario()
 
 	/**
 	 * Set the value of [ca_anexos] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaAnexos($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_anexos !== $v) {
@@ -772,45 +740,68 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_ANEXOS;
 		}
 
+		return $this;
 	} // setCaAnexos()
 
 	/**
-	 * Set the value of [ca_fchcreado] column.
+	 * Sets the value of [ca_fchcreado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaFchcreado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchcreado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchcreado !== $ts) {
-			$this->ca_fchcreado = $ts;
-			$this->modifiedColumns[] = CotizacionPeer::CA_FCHCREADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchcreado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchcreado !== null && $tmpDt = new DateTime($this->ca_fchcreado)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchcreado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = CotizacionPeer::CA_FCHCREADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchcreado()
 
 	/**
 	 * Set the value of [ca_usucreado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaUsucreado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usucreado !== $v) {
@@ -818,45 +809,68 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_USUCREADO;
 		}
 
+		return $this;
 	} // setCaUsucreado()
 
 	/**
-	 * Set the value of [ca_fchactualizado] column.
+	 * Sets the value of [ca_fchactualizado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaFchactualizado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchactualizado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchactualizado !== $ts) {
-			$this->ca_fchactualizado = $ts;
-			$this->modifiedColumns[] = CotizacionPeer::CA_FCHACTUALIZADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchactualizado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchactualizado !== null && $tmpDt = new DateTime($this->ca_fchactualizado)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchactualizado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = CotizacionPeer::CA_FCHACTUALIZADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchactualizado()
 
 	/**
 	 * Set the value of [ca_usuactualizado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaUsuactualizado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuactualizado !== $v) {
@@ -864,93 +878,166 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_USUACTUALIZADO;
 		}
 
+		return $this;
 	} // setCaUsuactualizado()
 
 	/**
-	 * Set the value of [ca_fchsolicitud] column.
+	 * Sets the value of [ca_fchsolicitud] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaFchsolicitud($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchsolicitud] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchsolicitud !== $ts) {
-			$this->ca_fchsolicitud = $ts;
-			$this->modifiedColumns[] = CotizacionPeer::CA_FCHSOLICITUD;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchsolicitud !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchsolicitud !== null && $tmpDt = new DateTime($this->ca_fchsolicitud)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchsolicitud = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = CotizacionPeer::CA_FCHSOLICITUD;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchsolicitud()
 
 	/**
-	 * Set the value of [ca_horasolicitud] column.
+	 * Sets the value of [ca_horasolicitud] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaHorasolicitud($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_horasolicitud] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_horasolicitud !== $ts) {
-			$this->ca_horasolicitud = $ts;
-			$this->modifiedColumns[] = CotizacionPeer::CA_HORASOLICITUD;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_horasolicitud !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_horasolicitud !== null && $tmpDt = new DateTime($this->ca_horasolicitud)) ? $tmpDt->format('H:i:s') : null;
+			$newNorm = ($dt !== null) ? $dt->format('H:i:s') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_horasolicitud = ($dt ? $dt->format('H:i:s') : null);
+				$this->modifiedColumns[] = CotizacionPeer::CA_HORASOLICITUD;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaHorasolicitud()
 
 	/**
-	 * Set the value of [ca_fchanulado] column.
+	 * Sets the value of [ca_fchanulado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaFchanulado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchanulado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchanulado !== $ts) {
-			$this->ca_fchanulado = $ts;
-			$this->modifiedColumns[] = CotizacionPeer::CA_FCHANULADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchanulado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchanulado !== null && $tmpDt = new DateTime($this->ca_fchanulado)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchanulado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = CotizacionPeer::CA_FCHANULADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchanulado()
 
 	/**
 	 * Set the value of [ca_usuanulado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaUsuanulado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuanulado !== $v) {
@@ -958,21 +1045,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_USUANULADO;
 		}
 
+		return $this;
 	} // setCaUsuanulado()
 
 	/**
 	 * Set the value of [ca_empresa] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaEmpresa($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_empresa !== $v) {
@@ -980,21 +1065,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_EMPRESA;
 		}
 
+		return $this;
 	} // setCaEmpresa()
 
 	/**
 	 * Set the value of [ca_datosag] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaDatosag($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_datosag !== $v) {
@@ -1002,21 +1085,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_DATOSAG;
 		}
 
+		return $this;
 	} // setCaDatosag()
 
 	/**
 	 * Set the value of [ca_estado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaEstado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_estado !== $v) {
@@ -1024,21 +1105,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_ESTADO;
 		}
 
+		return $this;
 	} // setCaEstado()
 
 	/**
 	 * Set the value of [ca_motivonoaprobado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 */
 	public function setCaMotivonoaprobado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_motivonoaprobado !== $v) {
@@ -1046,70 +1125,74 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = CotizacionPeer::CA_MOTIVONOAPROBADO;
 		}
 
+		return $this;
 	} // setCaMotivonoaprobado()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idcotizacion = $rs->getInt($startcol + 0);
-
-			$this->ca_idcontacto = $rs->getInt($startcol + 1);
-
-			$this->ca_consecutivo = $rs->getString($startcol + 2);
-
-			$this->ca_asunto = $rs->getString($startcol + 3);
-
-			$this->ca_saludo = $rs->getString($startcol + 4);
-
-			$this->ca_entrada = $rs->getString($startcol + 5);
-
-			$this->ca_despedida = $rs->getString($startcol + 6);
-
-			$this->ca_usuario = $rs->getString($startcol + 7);
-
-			$this->ca_anexos = $rs->getString($startcol + 8);
-
-			$this->ca_fchcreado = $rs->getDate($startcol + 9, null);
-
-			$this->ca_usucreado = $rs->getString($startcol + 10);
-
-			$this->ca_fchactualizado = $rs->getDate($startcol + 11, null);
-
-			$this->ca_usuactualizado = $rs->getString($startcol + 12);
-
-			$this->ca_fchsolicitud = $rs->getDate($startcol + 13, null);
-
-			$this->ca_horasolicitud = $rs->getTime($startcol + 14, null);
-
-			$this->ca_fchanulado = $rs->getDate($startcol + 15, null);
-
-			$this->ca_usuanulado = $rs->getString($startcol + 16);
-
-			$this->ca_empresa = $rs->getString($startcol + 17);
-
-			$this->ca_datosag = $rs->getString($startcol + 18);
-
-			$this->ca_estado = $rs->getString($startcol + 19);
-
-			$this->ca_motivonoaprobado = $rs->getString($startcol + 20);
-
+			$this->ca_idcotizacion = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_idcontacto = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+			$this->ca_consecutivo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_asunto = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_saludo = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_entrada = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_despedida = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_usuario = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_anexos = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_fchcreado = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_usucreado = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_fchsolicitud = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_horasolicitud = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_fchanulado = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_usuanulado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_empresa = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+			$this->ca_datosag = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_estado = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_motivonoaprobado = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 21; // 21 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -1120,83 +1203,164 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aContacto !== null && $this->ca_idcontacto !== $this->aContacto->getCaIdcontacto()) {
+			$this->aContacto = null;
+		}
+		if ($this->aUsuario !== null && $this->ca_usuario !== $this->aUsuario->getCaLogin()) {
+			$this->aUsuario = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = CotizacionPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aContacto = null;
+			$this->aUsuario = null;
+			$this->collCotProductos = null;
+			$this->lastCotProductoCriteria = null;
+
+			$this->collCotContinuacions = null;
+			$this->lastCotContinuacionCriteria = null;
+
+			$this->collCotSeguros = null;
+			$this->lastCotSeguroCriteria = null;
+
+			$this->collCotArchivos = null;
+			$this->lastCotArchivoCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME);
+			$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			CotizacionPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME);
+			$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			CotizacionPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -1204,19 +1368,22 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aContacto !== null) {
-				if ($this->aContacto->isModified()) {
+				if ($this->aContacto->isModified() || $this->aContacto->isNew()) {
 					$affectedRows += $this->aContacto->save($con);
 				}
 				$this->setContacto($this->aContacto);
 			}
 
 			if ($this->aUsuario !== null) {
-				if ($this->aUsuario->isModified()) {
+				if ($this->aUsuario->isModified() || $this->aUsuario->isNew()) {
 					$affectedRows += $this->aUsuario->save($con);
 				}
 				$this->setUsuario($this->aUsuario);
 			}
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = CotizacionPeer::CA_IDCOTIZACION;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -1232,11 +1399,12 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += CotizacionPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collCotProductos !== null) {
-				foreach($this->collCotProductos as $referrerFK) {
+				foreach ($this->collCotProductos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1244,7 +1412,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collCotContinuacions !== null) {
-				foreach($this->collCotContinuacions as $referrerFK) {
+				foreach ($this->collCotContinuacions as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1252,7 +1420,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collCotSeguros !== null) {
-				foreach($this->collCotSeguros as $referrerFK) {
+				foreach ($this->collCotSeguros as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1260,7 +1428,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collCotArchivos !== null) {
-				foreach($this->collCotArchivos as $referrerFK) {
+				foreach ($this->collCotArchivos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1268,6 +1436,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -1356,7 +1525,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 
 				if ($this->collCotProductos !== null) {
-					foreach($this->collCotProductos as $referrerFK) {
+					foreach ($this->collCotProductos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1364,7 +1533,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collCotContinuacions !== null) {
-					foreach($this->collCotContinuacions as $referrerFK) {
+					foreach ($this->collCotContinuacions as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1372,7 +1541,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collCotSeguros !== null) {
-					foreach($this->collCotSeguros as $referrerFK) {
+					foreach ($this->collCotSeguros as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1380,7 +1549,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collCotArchivos !== null) {
-					foreach($this->collCotArchivos as $referrerFK) {
+					foreach ($this->collCotArchivos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1399,14 +1568,15 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = CotizacionPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -1494,11 +1664,12 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = CotizacionPeer::getFieldNames($keyType);
 		$result = array(
@@ -1533,8 +1704,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -1629,8 +1800,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1793,20 +1965,28 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getCotProductos() as $relObj) {
-				$copyObj->addCotProducto($relObj->copy($deepCopy));
+			foreach ($this->getCotProductos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotProducto($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getCotContinuacions() as $relObj) {
-				$copyObj->addCotContinuacion($relObj->copy($deepCopy));
+			foreach ($this->getCotContinuacions() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotContinuacion($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getCotSeguros() as $relObj) {
-				$copyObj->addCotSeguro($relObj->copy($deepCopy));
+			foreach ($this->getCotSeguros() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotSeguro($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getCotArchivos() as $relObj) {
-				$copyObj->addCotArchivo($relObj->copy($deepCopy));
+			foreach ($this->getCotArchivos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotArchivo($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
@@ -1814,7 +1994,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdcotizacion(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaIdcotizacion(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -1860,45 +2040,48 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Contacto object.
 	 *
 	 * @param      Contacto $v
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setContacto($v)
+	public function setContacto(Contacto $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdcontacto(NULL);
 		} else {
 			$this->setCaIdcontacto($v->getCaIdcontacto());
 		}
 
-
 		$this->aContacto = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Contacto object, it will not be re-added.
+		if ($v !== null) {
+			$v->addCotizacion($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Contacto object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Contacto The associated Contacto object.
 	 * @throws     PropelException
 	 */
-	public function getContacto($con = null)
+	public function getContacto(PropelPDO $con = null)
 	{
 		if ($this->aContacto === null && ($this->ca_idcontacto !== null)) {
-			// include the related Peer class
-			$this->aContacto = ContactoPeer::retrieveByPK($this->ca_idcontacto, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(ContactoPeer::DATABASE_NAME);
+			$c->add(ContactoPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+			$this->aContacto = ContactoPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = ContactoPeer::retrieveByPK($this->ca_idcontacto, $con);
-			   $obj->addContactos($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aContacto->addCotizacions($this);
 			 */
 		}
 		return $this->aContacto;
@@ -1908,81 +2091,98 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Usuario object.
 	 *
 	 * @param      Usuario $v
-	 * @return     void
+	 * @return     Cotizacion The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setUsuario($v)
+	public function setUsuario(Usuario $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaUsuario(NULL);
 		} else {
 			$this->setCaUsuario($v->getCaLogin());
 		}
 
-
 		$this->aUsuario = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Usuario object, it will not be re-added.
+		if ($v !== null) {
+			$v->addCotizacion($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Usuario object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Usuario The associated Usuario object.
 	 * @throws     PropelException
 	 */
-	public function getUsuario($con = null)
+	public function getUsuario(PropelPDO $con = null)
 	{
 		if ($this->aUsuario === null && (($this->ca_usuario !== "" && $this->ca_usuario !== null))) {
-			// include the related Peer class
-			$this->aUsuario = UsuarioPeer::retrieveByPK($this->ca_usuario, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(UsuarioPeer::DATABASE_NAME);
+			$c->add(UsuarioPeer::CA_LOGIN, $this->ca_usuario);
+			$this->aUsuario = UsuarioPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = UsuarioPeer::retrieveByPK($this->ca_usuario, $con);
-			   $obj->addUsuarios($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aUsuario->addCotizacions($this);
 			 */
 		}
 		return $this->aUsuario;
 	}
 
 	/**
-	 * Temporary storage of collCotProductos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collCotProductos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotProductos()
+	 */
+	public function clearCotProductos()
+	{
+		$this->collCotProductos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotProductos collection (array).
+	 *
+	 * By default this just sets the collCotProductos collection to an empty array (like clearcollCotProductos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initCotProductos()
 	{
-		if ($this->collCotProductos === null) {
-			$this->collCotProductos = array();
-		}
+		$this->collCotProductos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Cotizacion has previously
-	 * been saved, it will retrieve related CotProductos from storage.
-	 * If this Cotizacion is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of CotProducto objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Cotizacion has previously been saved, it will retrieve
+	 * related CotProductos from storage. If this Cotizacion is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array CotProducto[]
 	 * @throws     PropelException
 	 */
-	public function getCotProductos($criteria = null, $con = null)
+	public function getCotProductos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1994,7 +2194,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			   $this->collCotProductos = array();
 			} else {
 
-				$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 				CotProductoPeer::addSelectColumns($criteria);
 				$this->collCotProductos = CotProductoPeer::doSelect($criteria, $con);
@@ -2007,7 +2207,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 				CotProductoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
@@ -2020,32 +2220,63 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related CotProductos.
+	 * Returns the number of related CotProducto objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotProducto objects.
 	 * @throws     PropelException
 	 */
-	public function countCotProductos($criteria = null, $distinct = false, $con = null)
+	public function countCotProductos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return CotProductoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collCotProductos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$count = CotProductoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
+					$count = CotProductoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotProductos);
+				}
+			} else {
+				$count = count($this->collCotProductos);
+			}
+		}
+		$this->lastCotProductoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a CotProducto object to this object
-	 * through the CotProducto foreign key attribute
+	 * through the CotProducto foreign key attribute.
 	 *
 	 * @param      CotProducto $l CotProducto
 	 * @return     void
@@ -2053,41 +2284,60 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function addCotProducto(CotProducto $l)
 	{
-		$this->collCotProductos[] = $l;
-		$l->setCotizacion($this);
-	}
-
-	/**
-	 * Temporary storage of collCotContinuacions to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initCotContinuacions()
-	{
-		if ($this->collCotContinuacions === null) {
-			$this->collCotContinuacions = array();
+		if ($this->collCotProductos === null) {
+			$this->initCotProductos();
+		}
+		if (!in_array($l, $this->collCotProductos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotProductos, $l);
+			$l->setCotizacion($this);
 		}
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Cotizacion has previously
-	 * been saved, it will retrieve related CotContinuacions from storage.
-	 * If this Cotizacion is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Clears out the collCotContinuacions collection (array).
 	 *
-	 * @param      Connection $con
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotContinuacions()
+	 */
+	public function clearCotContinuacions()
+	{
+		$this->collCotContinuacions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotContinuacions collection (array).
+	 *
+	 * By default this just sets the collCotContinuacions collection to an empty array (like clearcollCotContinuacions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initCotContinuacions()
+	{
+		$this->collCotContinuacions = array();
+	}
+
+	/**
+	 * Gets an array of CotContinuacion objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Cotizacion has previously been saved, it will retrieve
+	 * related CotContinuacions from storage. If this Cotizacion is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array CotContinuacion[]
 	 * @throws     PropelException
 	 */
-	public function getCotContinuacions($criteria = null, $con = null)
+	public function getCotContinuacions($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2099,7 +2349,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			   $this->collCotContinuacions = array();
 			} else {
 
-				$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 				CotContinuacionPeer::addSelectColumns($criteria);
 				$this->collCotContinuacions = CotContinuacionPeer::doSelect($criteria, $con);
@@ -2112,7 +2362,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 				CotContinuacionPeer::addSelectColumns($criteria);
 				if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
@@ -2125,32 +2375,63 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related CotContinuacions.
+	 * Returns the number of related CotContinuacion objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotContinuacion objects.
 	 * @throws     PropelException
 	 */
-	public function countCotContinuacions($criteria = null, $distinct = false, $con = null)
+	public function countCotContinuacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return CotContinuacionPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collCotContinuacions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$count = CotContinuacionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
+					$count = CotContinuacionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotContinuacions);
+				}
+			} else {
+				$count = count($this->collCotContinuacions);
+			}
+		}
+		$this->lastCotContinuacionCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a CotContinuacion object to this object
-	 * through the CotContinuacion foreign key attribute
+	 * through the CotContinuacion foreign key attribute.
 	 *
 	 * @param      CotContinuacion $l CotContinuacion
 	 * @return     void
@@ -2158,8 +2439,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function addCotContinuacion(CotContinuacion $l)
 	{
-		$this->collCotContinuacions[] = $l;
-		$l->setCotizacion($this);
+		if ($this->collCotContinuacions === null) {
+			$this->initCotContinuacions();
+		}
+		if (!in_array($l, $this->collCotContinuacions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotContinuacions, $l);
+			$l->setCotizacion($this);
+		}
 	}
 
 
@@ -2174,11 +2460,10 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Cotizacion.
 	 */
-	public function getCotContinuacionsJoinConcepto($criteria = null, $con = null)
+	public function getCotContinuacionsJoinConcepto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2190,19 +2475,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				$this->collCotContinuacions = array();
 			} else {
 
-				$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
-				$this->collCotContinuacions = CotContinuacionPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collCotContinuacions = CotContinuacionPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+			$criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 			if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
-				$this->collCotContinuacions = CotContinuacionPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collCotContinuacions = CotContinuacionPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastCotContinuacionCriteria = $criteria;
@@ -2211,36 +2496,50 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collCotSeguros to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collCotSeguros collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotSeguros()
+	 */
+	public function clearCotSeguros()
+	{
+		$this->collCotSeguros = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotSeguros collection (array).
+	 *
+	 * By default this just sets the collCotSeguros collection to an empty array (like clearcollCotSeguros());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initCotSeguros()
 	{
-		if ($this->collCotSeguros === null) {
-			$this->collCotSeguros = array();
-		}
+		$this->collCotSeguros = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Cotizacion has previously
-	 * been saved, it will retrieve related CotSeguros from storage.
-	 * If this Cotizacion is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of CotSeguro objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Cotizacion has previously been saved, it will retrieve
+	 * related CotSeguros from storage. If this Cotizacion is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array CotSeguro[]
 	 * @throws     PropelException
 	 */
-	public function getCotSeguros($criteria = null, $con = null)
+	public function getCotSeguros($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2252,7 +2551,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			   $this->collCotSeguros = array();
 			} else {
 
-				$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 				CotSeguroPeer::addSelectColumns($criteria);
 				$this->collCotSeguros = CotSeguroPeer::doSelect($criteria, $con);
@@ -2265,7 +2564,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 				CotSeguroPeer::addSelectColumns($criteria);
 				if (!isset($this->lastCotSeguroCriteria) || !$this->lastCotSeguroCriteria->equals($criteria)) {
@@ -2278,32 +2577,63 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related CotSeguros.
+	 * Returns the number of related CotSeguro objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotSeguro objects.
 	 * @throws     PropelException
 	 */
-	public function countCotSeguros($criteria = null, $distinct = false, $con = null)
+	public function countCotSeguros(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return CotSeguroPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collCotSeguros === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$count = CotSeguroPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				if (!isset($this->lastCotSeguroCriteria) || !$this->lastCotSeguroCriteria->equals($criteria)) {
+					$count = CotSeguroPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotSeguros);
+				}
+			} else {
+				$count = count($this->collCotSeguros);
+			}
+		}
+		$this->lastCotSeguroCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a CotSeguro object to this object
-	 * through the CotSeguro foreign key attribute
+	 * through the CotSeguro foreign key attribute.
 	 *
 	 * @param      CotSeguro $l CotSeguro
 	 * @return     void
@@ -2311,8 +2641,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function addCotSeguro(CotSeguro $l)
 	{
-		$this->collCotSeguros[] = $l;
-		$l->setCotizacion($this);
+		if ($this->collCotSeguros === null) {
+			$this->initCotSeguros();
+		}
+		if (!in_array($l, $this->collCotSeguros, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotSeguros, $l);
+			$l->setCotizacion($this);
+		}
 	}
 
 
@@ -2327,11 +2662,10 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Cotizacion.
 	 */
-	public function getCotSegurosJoinMoneda($criteria = null, $con = null)
+	public function getCotSegurosJoinMoneda($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2343,19 +2677,19 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				$this->collCotSeguros = array();
 			} else {
 
-				$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
-				$this->collCotSeguros = CotSeguroPeer::doSelectJoinMoneda($criteria, $con);
+				$this->collCotSeguros = CotSeguroPeer::doSelectJoinMoneda($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+			$criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 			if (!isset($this->lastCotSeguroCriteria) || !$this->lastCotSeguroCriteria->equals($criteria)) {
-				$this->collCotSeguros = CotSeguroPeer::doSelectJoinMoneda($criteria, $con);
+				$this->collCotSeguros = CotSeguroPeer::doSelectJoinMoneda($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastCotSeguroCriteria = $criteria;
@@ -2364,36 +2698,50 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collCotArchivos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collCotArchivos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotArchivos()
+	 */
+	public function clearCotArchivos()
+	{
+		$this->collCotArchivos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotArchivos collection (array).
+	 *
+	 * By default this just sets the collCotArchivos collection to an empty array (like clearcollCotArchivos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initCotArchivos()
 	{
-		if ($this->collCotArchivos === null) {
-			$this->collCotArchivos = array();
-		}
+		$this->collCotArchivos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Cotizacion has previously
-	 * been saved, it will retrieve related CotArchivos from storage.
-	 * If this Cotizacion is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of CotArchivo objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Cotizacion has previously been saved, it will retrieve
+	 * related CotArchivos from storage. If this Cotizacion is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array CotArchivo[]
 	 * @throws     PropelException
 	 */
-	public function getCotArchivos($criteria = null, $con = null)
+	public function getCotArchivos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2405,7 +2753,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			   $this->collCotArchivos = array();
 			} else {
 
-				$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 				CotArchivoPeer::addSelectColumns($criteria);
 				$this->collCotArchivos = CotArchivoPeer::doSelect($criteria, $con);
@@ -2418,7 +2766,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+				$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 
 				CotArchivoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastCotArchivoCriteria) || !$this->lastCotArchivoCriteria->equals($criteria)) {
@@ -2431,32 +2779,63 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related CotArchivos.
+	 * Returns the number of related CotArchivo objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotArchivo objects.
 	 * @throws     PropelException
 	 */
-	public function countCotArchivos($criteria = null, $distinct = false, $con = null)
+	public function countCotArchivos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->getCaIdcotizacion());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return CotArchivoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collCotArchivos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$count = CotArchivoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotArchivoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				if (!isset($this->lastCotArchivoCriteria) || !$this->lastCotArchivoCriteria->equals($criteria)) {
+					$count = CotArchivoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotArchivos);
+				}
+			} else {
+				$count = count($this->collCotArchivos);
+			}
+		}
+		$this->lastCotArchivoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a CotArchivo object to this object
-	 * through the CotArchivo foreign key attribute
+	 * through the CotArchivo foreign key attribute.
 	 *
 	 * @param      CotArchivo $l CotArchivo
 	 * @return     void
@@ -2464,8 +2843,55 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 */
 	public function addCotArchivo(CotArchivo $l)
 	{
-		$this->collCotArchivos[] = $l;
-		$l->setCotizacion($this);
+		if ($this->collCotArchivos === null) {
+			$this->initCotArchivos();
+		}
+		if (!in_array($l, $this->collCotArchivos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotArchivos, $l);
+			$l->setCotizacion($this);
+		}
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collCotProductos) {
+				foreach ((array) $this->collCotProductos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collCotContinuacions) {
+				foreach ((array) $this->collCotContinuacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collCotSeguros) {
+				foreach ((array) $this->collCotSeguros as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collCotArchivos) {
+				foreach ((array) $this->collCotArchivos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collCotProductos = null;
+		$this->collCotContinuacions = null;
+		$this->collCotSeguros = null;
+		$this->collCotArchivos = null;
+			$this->aContacto = null;
+			$this->aUsuario = null;
 	}
 
 } // BaseCotizacion

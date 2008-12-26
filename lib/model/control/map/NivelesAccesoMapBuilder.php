@@ -13,7 +13,7 @@
  *
  * @package    lib.model.control.map
  */
-class NivelesAccesoMapBuilder {
+class NivelesAccesoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,18 +54,19 @@ class NivelesAccesoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(NivelesAccesoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('control.tb_niveles');
+		$tMap = $this->dbMap->addTable(NivelesAccesoPeer::TABLE_NAME);
 		$tMap->setPhpName('NivelesAcceso');
+		$tMap->setClassname('NivelesAcceso');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_LOGIN', 'CaLogin', 'string' , CreoleTypes::VARCHAR, 'control.tb_usuarios', 'CA_LOGIN', true, null);
+		$tMap->addForeignPrimaryKey('CA_LOGIN', 'CaLogin', 'VARCHAR' , 'control.tb_usuarios', 'CA_LOGIN', true, null);
 
-		$tMap->addPrimaryKey('CA_BASEDEDATOS', 'CaBasededatos', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_BASEDEDATOS', 'CaBasededatos', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_NIVEL', 'CaNivel', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NIVEL', 'CaNivel', 'VARCHAR', false, null);
 
 	} // doBuild()
 

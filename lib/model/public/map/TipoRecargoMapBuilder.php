@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class TipoRecargoMapBuilder {
+class TipoRecargoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,28 +54,29 @@ class TipoRecargoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TipoRecargoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_tiporecargo');
+		$tMap = $this->dbMap->addTable(TipoRecargoPeer::TABLE_NAME);
 		$tMap->setPhpName('TipoRecargo');
+		$tMap->setClassname('TipoRecargo');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_RECARGO', 'CaRecargo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_RECARGO', 'CaRecargo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TIPO', 'CaTipo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TIPO', 'CaTipo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_INCOTERMS', 'CaIncoterms', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_INCOTERMS', 'CaIncoterms', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_REPORTE', 'CaReporte', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_REPORTE', 'CaReporte', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'VARCHAR', false, null);
 
 	} // doBuild()
 

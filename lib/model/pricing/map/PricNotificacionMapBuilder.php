@@ -13,7 +13,7 @@
  *
  * @package    lib.model.pricing.map
  */
-class PricNotificacionMapBuilder {
+class PricNotificacionMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,26 +54,27 @@ class PricNotificacionMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(PricNotificacionPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_pricnotificaciones');
+		$tMap = $this->dbMap->addTable(PricNotificacionPeer::TABLE_NAME);
 		$tMap->setPhpName('PricNotificacion');
+		$tMap->setClassname('PricNotificacion');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_pricnotificaciones_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_pricnotificaciones_id');
 
-		$tMap->addPrimaryKey('CA_IDNOTIFICACION', 'CaIdnotificacion', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDNOTIFICACION', 'CaIdnotificacion', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_TITULO', 'CaTitulo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TITULO', 'CaTitulo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_MENSAJE', 'CaMensaje', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_MENSAJE', 'CaMensaje', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_CADUCIDAD', 'CaCaducidad', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_CADUCIDAD', 'CaCaducidad', 'DATE', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, 15);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, 15);
 
 	} // doBuild()
 

@@ -13,7 +13,7 @@
  *
  * @package    lib.model.sea.map
  */
-class InoIngresosSeaMapBuilder {
+class InoIngresosSeaMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,40 +54,41 @@ class InoIngresosSeaMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(InoIngresosSeaPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_inoingresos_sea');
+		$tMap = $this->dbMap->addTable(InoIngresosSeaPeer::TABLE_NAME);
 		$tMap->setPhpName('InoIngresosSea');
+		$tMap->setClassname('InoIngresosSea');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'string' , CreoleTypes::VARCHAR, 'tb_inomaestra_sea', 'CA_REFERENCIA', true, null);
+		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'VARCHAR' , 'tb_inomaestra_sea', 'CA_REFERENCIA', true, null);
 
-		$tMap->addForeignPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'int' , CreoleTypes::INTEGER, 'tb_clientes', 'CA_IDCLIENTE', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'INTEGER' , 'tb_clientes', 'CA_IDCLIENTE', true, null);
 
-		$tMap->addPrimaryKey('CA_HBLS', 'CaHbls', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_HBLS', 'CaHbls', 'VARCHAR', true, null);
 
-		$tMap->addPrimaryKey('CA_FACTURA', 'CaFactura', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_FACTURA', 'CaFactura', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_FCHFACTURA', 'CaFchfactura', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHFACTURA', 'CaFchfactura', 'DATE', false, null);
 
-		$tMap->addColumn('CA_VALOR', 'CaValor', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VALOR', 'CaValor', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_RECCAJA', 'CaReccaja', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_RECCAJA', 'CaReccaja', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHPAGO', 'CaFchpago', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHPAGO', 'CaFchpago', 'DATE', false, null);
 
-		$tMap->addColumn('CA_TCAMBIO', 'CaTcambio', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_TCAMBIO', 'CaTcambio', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'VARCHAR', false, null);
 
 	} // doBuild()
 

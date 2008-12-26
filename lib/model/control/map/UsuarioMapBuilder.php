@@ -13,7 +13,7 @@
  *
  * @package    lib.model.control.map
  */
-class UsuarioMapBuilder {
+class UsuarioMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,30 +54,31 @@ class UsuarioMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(UsuarioPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('control.tb_usuarios');
+		$tMap = $this->dbMap->addTable(UsuarioPeer::TABLE_NAME);
 		$tMap->setPhpName('Usuario');
+		$tMap->setClassname('Usuario');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('control.tb_usuarios_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('control.tb_usuarios_ca_login_seq');
 
-		$tMap->addPrimaryKey('CA_LOGIN', 'CaLogin', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_LOGIN', 'CaLogin', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CARGO', 'CaCargo', 'string', CreoleTypes::VARCHAR, false, 10);
+		$tMap->addColumn('CA_CARGO', 'CaCargo', 'VARCHAR', false, 10);
 
-		$tMap->addColumn('CA_DEPARTAMENTO', 'CaDepartamento', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DEPARTAMENTO', 'CaDepartamento', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_SUCURSAL', 'CaSucursal', 'string', CreoleTypes::VARCHAR, 'control.tb_sucursales', 'CA_NOMBRE', false, null);
+		$tMap->addForeignKey('CA_SUCURSAL', 'CaSucursal', 'VARCHAR', 'control.tb_sucursales', 'CA_NOMBRE', false, null);
 
-		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_RUTINAS', 'CaRutinas', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_RUTINAS', 'CaRutinas', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_EXTENSION', 'CaExtension', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EXTENSION', 'CaExtension', 'VARCHAR', false, null);
 
 	} // doBuild()
 

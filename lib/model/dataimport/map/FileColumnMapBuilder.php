@@ -13,7 +13,7 @@
  *
  * @package    lib.model.dataimport.map
  */
-class FileColumnMapBuilder {
+class FileColumnMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,40 +54,41 @@ class FileColumnMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(FileColumnPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_filecolumns');
+		$tMap = $this->dbMap->addTable(FileColumnPeer::TABLE_NAME);
 		$tMap->setPhpName('FileColumn');
+		$tMap->setClassname('FileColumn');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_filecolumns_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_filecolumns_ca_idcolumna_seq');
 
-		$tMap->addForeignKey('CA_IDFILEHEADER', 'CaIdfileheader', 'int', CreoleTypes::INTEGER, 'tb_fileheader', 'CA_IDFILEHEADER', true, null);
+		$tMap->addForeignKey('CA_IDFILEHEADER', 'CaIdfileheader', 'INTEGER', 'tb_fileheader', 'CA_IDFILEHEADER', true, null);
 
-		$tMap->addPrimaryKey('CA_IDCOLUMNA', 'CaIdcolumna', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDCOLUMNA', 'CaIdcolumna', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_COLUMNA', 'CaColumna', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_COLUMNA', 'CaColumna', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_LABEL', 'CaLabel', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_LABEL', 'CaLabel', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_MASCARA', 'CaMascara', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_MASCARA', 'CaMascara', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TIPO', 'CaTipo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TIPO', 'CaTipo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_LONGITUD', 'CaLongitud', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addColumn('CA_LONGITUD', 'CaLongitud', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_PRECISION', 'CaPrecision', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addColumn('CA_PRECISION', 'CaPrecision', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_IDREGISTRO', 'CaIdregistro', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addColumn('CA_IDREGISTRO', 'CaIdregistro', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, true, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', true, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::TIMESTAMP, true, null);
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', true, null);
 
-		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', true, null);
 
 	} // doBuild()
 

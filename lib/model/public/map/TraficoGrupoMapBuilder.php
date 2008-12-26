@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class TraficoGrupoMapBuilder {
+class TraficoGrupoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,18 +54,19 @@ class TraficoGrupoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TraficoGrupoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_grupos');
+		$tMap = $this->dbMap->addTable(TraficoGrupoPeer::TABLE_NAME);
 		$tMap->setPhpName('TraficoGrupo');
+		$tMap->setClassname('TraficoGrupo');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_grupos_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_grupos_ca_idgrupo_seq');
 
-		$tMap->addPrimaryKey('CA_IDGRUPO', 'CaIdgrupo', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDGRUPO', 'CaIdgrupo', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_DESCRIPCION', 'CaDescripcion', 'string', CreoleTypes::VARCHAR, false, 40);
+		$tMap->addColumn('CA_DESCRIPCION', 'CaDescripcion', 'VARCHAR', false, 40);
 
 	} // doBuild()
 

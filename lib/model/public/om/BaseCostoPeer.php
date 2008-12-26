@@ -24,7 +24,6 @@ abstract class BaseCostoPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-
 	/** the column name for the CA_IDCOSTO field */
 	const CA_IDCOSTO = 'tb_costos.CA_IDCOSTO';
 
@@ -43,9 +42,19 @@ abstract class BaseCostoPeer {
 	/** the column name for the CA_COMISIONABLE field */
 	const CA_COMISIONABLE = 'tb_costos.CA_COMISIONABLE';
 
-	/** The PHP to DB Name Mapping */
-	private static $phpNameMap = null;
+	/**
+	 * An identiy map to hold any loaded instances of Costo objects.
+	 * This must be public so that other peer classes can access this when hydrating from JOIN
+	 * queries.
+	 * @var        array Costo[]
+	 */
+	public static $instances = array();
 
+	/**
+	 * The MapBuilder instance for this peer.
+	 * @var        MapBuilder
+	 */
+	private static $mapBuilder = null;
 
 	/**
 	 * holds an array of fieldnames
@@ -55,7 +64,8 @@ abstract class BaseCostoPeer {
 	 */
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdcosto', 'CaCosto', 'CaTransporte', 'CaImpoexpo', 'CaModalidad', 'CaComisionable', ),
-		BasePeer::TYPE_COLNAME => array (CostoPeer::CA_IDCOSTO, CostoPeer::CA_COSTO, CostoPeer::CA_TRANSPORTE, CostoPeer::CA_IMPOEXPO, CostoPeer::CA_MODALIDAD, CostoPeer::CA_COMISIONABLE, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcosto', 'caCosto', 'caTransporte', 'caImpoexpo', 'caModalidad', 'caComisionable', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCOSTO, self::CA_COSTO, self::CA_TRANSPORTE, self::CA_IMPOEXPO, self::CA_MODALIDAD, self::CA_COMISIONABLE, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_idcosto', 'ca_costo', 'ca_transporte', 'ca_impoexpo', 'ca_modalidad', 'ca_comisionable', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
@@ -68,49 +78,32 @@ abstract class BaseCostoPeer {
 	 */
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdcosto' => 0, 'CaCosto' => 1, 'CaTransporte' => 2, 'CaImpoexpo' => 3, 'CaModalidad' => 4, 'CaComisionable' => 5, ),
-		BasePeer::TYPE_COLNAME => array (CostoPeer::CA_IDCOSTO => 0, CostoPeer::CA_COSTO => 1, CostoPeer::CA_TRANSPORTE => 2, CostoPeer::CA_IMPOEXPO => 3, CostoPeer::CA_MODALIDAD => 4, CostoPeer::CA_COMISIONABLE => 5, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcosto' => 0, 'caCosto' => 1, 'caTransporte' => 2, 'caImpoexpo' => 3, 'caModalidad' => 4, 'caComisionable' => 5, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCOSTO => 0, self::CA_COSTO => 1, self::CA_TRANSPORTE => 2, self::CA_IMPOEXPO => 3, self::CA_MODALIDAD => 4, self::CA_COMISIONABLE => 5, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_idcosto' => 0, 'ca_costo' => 1, 'ca_transporte' => 2, 'ca_impoexpo' => 3, 'ca_modalidad' => 4, 'ca_comisionable' => 5, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
 	/**
-	 * @return     MapBuilder the map builder for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
+	 * Get a (singleton) instance of the MapBuilder for this peer class.
+	 * @return     MapBuilder The map builder for this peer
 	 */
 	public static function getMapBuilder()
 	{
-		return BasePeer::getMapBuilder('lib.model.public.map.CostoMapBuilder');
-	}
-	/**
-	 * Gets a map (hash) of PHP names to DB column names.
-	 *
-	 * @return     array The PHP to DB name map for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @deprecated Use the getFieldNames() and translateFieldName() methods instead of this.
-	 */
-	public static function getPhpNameMap()
-	{
-		if (self::$phpNameMap === null) {
-			$map = CostoPeer::getTableMap();
-			$columns = $map->getColumns();
-			$nameMap = array();
-			foreach ($columns as $column) {
-				$nameMap[$column->getPhpName()] = $column->getColumnName();
-			}
-			self::$phpNameMap = $nameMap;
+		if (self::$mapBuilder === null) {
+			self::$mapBuilder = new CostoMapBuilder();
 		}
-		return self::$phpNameMap;
+		return self::$mapBuilder;
 	}
 	/**
 	 * Translates a fieldname to another type
 	 *
 	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants TYPE_PHPNAME,
-	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -123,18 +116,18 @@ abstract class BaseCostoPeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants TYPE_PHPNAME,
-	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     array A list of field names
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
 		if (!array_key_exists($type, self::$fieldNames)) {
-			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
+			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
 		}
 		return self::$fieldNames[$type];
 	}
@@ -184,54 +177,60 @@ abstract class BaseCostoPeer {
 
 	}
 
-	const COUNT = 'COUNT(tb_costos.CA_IDCOSTO)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_costos.CA_IDCOSTO)';
-
 	/**
 	 * Returns the number of rows matching criteria.
 	 *
 	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCount(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we're going to modify criteria, so copy it first
+		// we may modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(CostoPeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(CostoPeer::COUNT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(CostoPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
 		}
 
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
+		if (!$criteria->hasSelectClause()) {
+			CostoPeer::addSelectColumns($criteria);
 		}
 
-		$rs = CostoPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
+
+		if ($con === null) {
+			$con = Propel::getConnection(CostoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
+
+		// BasePeer returns a PDOStatement
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
 	}
 	/**
 	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     Costo
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectOne(Criteria $criteria, $con = null)
+	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
@@ -245,36 +244,35 @@ abstract class BaseCostoPeer {
 	 * Method to do selects.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     array Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelect(Criteria $criteria, $con = null)
+	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
-		return CostoPeer::populateObjects(CostoPeer::doSelectRS($criteria, $con));
+		return CostoPeer::populateObjects(CostoPeer::doSelectStmt($criteria, $con));
 	}
 	/**
-	 * Prepares the Criteria object and uses the parent doSelect()
-	 * method to get a ResultSet.
+	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
 	 *
-	 * Use this method directly if you want to just get the resultset
-	 * (instead of an array of objects).
+	 * Use this method directly if you want to work with an executed statement durirectly (for example
+	 * to perform your own object hydration).
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con The connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return     ResultSet The resultset object with numerically-indexed fields.
+	 * @return     PDOStatement The executed PDOStatement object.
 	 * @see        BasePeer::doSelect()
 	 */
-	public static function doSelectRS(Criteria $criteria, $con = null)
+	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(CostoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		if (!$criteria->getSelectColumns()) {
+		if (!$criteria->hasSelectClause()) {
 			$criteria = clone $criteria;
 			CostoPeer::addSelectColumns($criteria);
 		}
@@ -282,10 +280,107 @@ abstract class BaseCostoPeer {
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a Creole ResultSet, set to return
-		// rows indexed numerically.
+		// BasePeer returns a PDOStatement
 		return BasePeer::doSelect($criteria, $con);
 	}
+	/**
+	 * Adds an object to the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doSelect*()
+	 * methods in your stub classes -- you may need to explicitly add objects
+	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
+	 * and retrieveByPK*() calls.
+	 *
+	 * @param      Costo $value A Costo object.
+	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
+	 */
+	public static function addInstanceToPool(Costo $obj, $key = null)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if ($key === null) {
+				$key = (string) $obj->getCaIdcosto();
+			} // if key === null
+			self::$instances[$key] = $obj;
+		}
+	}
+
+	/**
+	 * Removes an object from the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doDelete
+	 * methods in your stub classes -- you may need to explicitly remove objects
+	 * from the cache in order to prevent returning objects that no longer exist.
+	 *
+	 * @param      mixed $value A Costo object or a primary key value.
+	 */
+	public static function removeInstanceFromPool($value)
+	{
+		if (Propel::isInstancePoolingEnabled() && $value !== null) {
+			if (is_object($value) && $value instanceof Costo) {
+				$key = (string) $value->getCaIdcosto();
+			} elseif (is_scalar($value)) {
+				// assume we've been passed a primary key
+				$key = (string) $value;
+			} else {
+				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Costo object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+				throw $e;
+			}
+
+			unset(self::$instances[$key]);
+		}
+	} // removeInstanceFromPool()
+
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
+	 * @return     Costo Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+	 * @see        getPrimaryKeyHash()
+	 */
+	public static function getInstanceFromPool($key)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if (isset(self::$instances[$key])) {
+				return self::$instances[$key];
+			}
+		}
+		return null; // just to be explicit
+	}
+	
+	/**
+	 * Clear the instance pool.
+	 *
+	 * @return     void
+	 */
+	public static function clearInstancePool()
+	{
+		self::$instances = array();
+	}
+	
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      array $row PropelPDO resultset row.
+	 * @param      int $startcol The 0-based offset for reading from the resultset row.
+	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
+	 */
+	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
+	{
+		// If the PK cannot be derived from the row, return NULL.
+		if ($row[$startcol + 0] === null) {
+			return null;
+		}
+		return (string) $row[$startcol + 0];
+	}
+
 	/**
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
@@ -293,21 +388,30 @@ abstract class BaseCostoPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function populateObjects(ResultSet $rs)
+	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
 		$cls = CostoPeer::getOMClass();
-		$cls = Propel::import($cls);
+		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key = CostoPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj = CostoPeer::getInstanceFromPool($key))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj->hydrate($row, 0, true); // rehydrate
+				$results[] = $obj;
+			} else {
 		
-			$obj = new $cls();
-			$obj->hydrate($rs);
-			$results[] = $obj;
-			
+				$obj = new $cls();
+				$obj->hydrate($row);
+				$results[] = $obj;
+				CostoPeer::addInstanceToPool($obj, $key);
+			} // if key exists
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -345,15 +449,15 @@ abstract class BaseCostoPeer {
 	 * Method perform an INSERT on the database, given a Costo or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or Costo object containing data that is used to create the INSERT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doInsert($values, $con = null)
+	public static function doInsert($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(CostoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
@@ -369,11 +473,11 @@ abstract class BaseCostoPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table (I guess, conceivably)
-			$con->begin();
+			$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 
@@ -384,15 +488,15 @@ abstract class BaseCostoPeer {
 	 * Method perform an UPDATE on the database, given a Costo or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or Costo object containing data that is used to create the UPDATE statement.
-	 * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
+	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doUpdate($values, $con = null)
+	public static function doUpdate($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(CostoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -422,18 +526,18 @@ abstract class BaseCostoPeer {
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(CostoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(CostoPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -443,27 +547,43 @@ abstract class BaseCostoPeer {
 	 *
 	 * @param      mixed $values Criteria or Costo object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
 	 *				if supported by native driver or if emulated using Propel.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	 public static function doDelete($values, $con = null)
+	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(CostoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(CostoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} elseif ($values instanceof Costo) {
+			// invalidate the cache for all objects of this type, since we have no
+			// way of knowing (without running a query) what objects should be invalidated
+			// from the cache based on this Criteria.
+			CostoPeer::clearInstancePool();
 
+			// rename for clarity
+			$criteria = clone $values;
+		} elseif ($values instanceof Costo) {
+			// invalidate the cache for this single object
+			CostoPeer::removeInstanceFromPool($values);
+			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else {
 			// it must be the primary key
+
+
+
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(CostoPeer::CA_IDCOSTO, (array) $values, Criteria::IN);
+
+			foreach ((array) $values as $singleval) {
+				// we can invalidate the cache for this single object
+				CostoPeer::removeInstanceFromPool($singleval);
+			}
 		}
 
 		// Set the correct dbName
@@ -474,13 +594,14 @@ abstract class BaseCostoPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
+
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -509,7 +630,7 @@ abstract class BaseCostoPeer {
 				$cols = array($cols);
 			}
 
-			foreach($cols as $colName) {
+			foreach ($cols as $colName) {
 				if ($tableMap->containsColumn($colName)) {
 					$get = 'get' . $tableMap->getColumn($colName)->getPhpName();
 					$columns[$colName] = $obj->$get();
@@ -524,7 +645,6 @@ abstract class BaseCostoPeer {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
             $col = CostoPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
-            $request->setError($col, $failed->getMessage());
         }
     }
 
@@ -534,20 +654,23 @@ abstract class BaseCostoPeer {
 	/**
 	 * Retrieve a single object by pkey.
 	 *
-	 * @param      mixed $pk the primary key.
-	 * @param      Connection $con the connection to use
+	 * @param      int $pk the primary key.
+	 * @param      PropelPDO $con the connection to use
 	 * @return     Costo
 	 */
-	public static function retrieveByPK($pk, $con = null)
+	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
+
+		if (null !== ($obj = CostoPeer::getInstanceFromPool((string) $pk))) {
+			return $obj;
+		}
+
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(CostoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$criteria = new Criteria(CostoPeer::DATABASE_NAME);
-
 		$criteria->add(CostoPeer::CA_IDCOSTO, $pk);
-
 
 		$v = CostoPeer::doSelect($criteria, $con);
 
@@ -558,21 +681,21 @@ abstract class BaseCostoPeer {
 	 * Retrieve multiple objects by pkey.
 	 *
 	 * @param      array $pks List of primary keys
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function retrieveByPKs($pks, $con = null)
+	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(CostoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$objs = null;
 		if (empty($pks)) {
 			$objs = array();
 		} else {
-			$criteria = new Criteria();
+			$criteria = new Criteria(CostoPeer::DATABASE_NAME);
 			$criteria->add(CostoPeer::CA_IDCOSTO, $pks, Criteria::IN);
 			$objs = CostoPeer::doSelect($criteria, $con);
 		}
@@ -581,17 +704,14 @@ abstract class BaseCostoPeer {
 
 } // BaseCostoPeer
 
-// static code to register the map builder for this Peer with the main Propel class
-if (Propel::isInit()) {
-	// the MapBuilder classes register themselves with Propel during initialization
-	// so we need to load them here.
-	try {
-		BaseCostoPeer::getMapBuilder();
-	} catch (Exception $e) {
-		Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
-	}
-} else {
-	// even if Propel is not yet initialized, the map builder class can be registered
-	// now and then it will be loaded when Propel initializes.
-	Propel::registerMapBuilder('lib.model.public.map.CostoMapBuilder');
-}
+// This is the static code needed to register the MapBuilder for this table with the main Propel class.
+//
+// NOTE: This static code cannot call methods on the CostoPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the CostoPeer class:
+//
+// Propel::getDatabaseMap(CostoPeer::DATABASE_NAME)->addTableBuilder(CostoPeer::TABLE_NAME, CostoPeer::getMapBuilder());
+//
+// Doing so will effectively overwrite the registration below.
+
+Propel::getDatabaseMap(BaseCostoPeer::DATABASE_NAME)->addTableBuilder(BaseCostoPeer::TABLE_NAME, BaseCostoPeer::getMapBuilder());
+

@@ -10,6 +10,8 @@
 abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 
 
+  const PEER = 'FalaDetailPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_iddoc field.
 	 * @var        string
 	 */
 	protected $ca_iddoc;
-
 
 	/**
 	 * The value for the ca_sku field.
@@ -32,13 +32,11 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_sku;
 
-
 	/**
 	 * The value for the ca_vpn field.
 	 * @var        string
 	 */
 	protected $ca_vpn;
-
 
 	/**
 	 * The value for the ca_num_cont_part1 field.
@@ -46,13 +44,11 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_num_cont_part1;
 
-
 	/**
 	 * The value for the ca_num_cont_part2 field.
 	 * @var        string
 	 */
 	protected $ca_num_cont_part2;
-
 
 	/**
 	 * The value for the ca_num_cont_sell field.
@@ -60,13 +56,11 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_num_cont_sell;
 
-
 	/**
 	 * The value for the ca_container_iso field.
 	 * @var        string
 	 */
 	protected $ca_container_iso;
-
 
 	/**
 	 * The value for the ca_cantidad_pedido field.
@@ -74,13 +68,11 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_cantidad_pedido;
 
-
 	/**
 	 * The value for the ca_cantidad_miles field.
 	 * @var        int
 	 */
 	protected $ca_cantidad_miles;
-
 
 	/**
 	 * The value for the ca_unidad_medidad_cantidad field.
@@ -88,20 +80,17 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_unidad_medidad_cantidad;
 
-
 	/**
 	 * The value for the ca_descripcion_item field.
 	 * @var        string
 	 */
 	protected $ca_descripcion_item;
 
-
 	/**
 	 * The value for the ca_cantidad_paquetes_miles field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_cantidad_paquetes_miles;
-
 
 	/**
 	 * The value for the ca_unidad_medida_paquetes field.
@@ -109,13 +98,11 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_unidad_medida_paquetes;
 
-
 	/**
 	 * The value for the ca_cantidad_volumen_miles field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_cantidad_volumen_miles;
-
 
 	/**
 	 * The value for the ca_unidad_medida_volumen field.
@@ -123,13 +110,11 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_unidad_medida_volumen;
 
-
 	/**
 	 * The value for the ca_cantidad_peso_miles field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_cantidad_peso_miles;
-
 
 	/**
 	 * The value for the ca_unidad_medida_peso field.
@@ -157,13 +142,32 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseFalaDetail object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_iddoc] column value.
 	 * 
 	 * @return     string
 	 */
 	public function getCaIddoc()
 	{
-
 		return $this->ca_iddoc;
 	}
 
@@ -174,7 +178,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaSku()
 	{
-
 		return $this->ca_sku;
 	}
 
@@ -185,7 +188,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaVpn()
 	{
-
 		return $this->ca_vpn;
 	}
 
@@ -196,7 +198,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaNumContPart1()
 	{
-
 		return $this->ca_num_cont_part1;
 	}
 
@@ -207,7 +208,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaNumContPart2()
 	{
-
 		return $this->ca_num_cont_part2;
 	}
 
@@ -218,7 +218,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaNumContSell()
 	{
-
 		return $this->ca_num_cont_sell;
 	}
 
@@ -229,7 +228,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaContainerIso()
 	{
-
 		return $this->ca_container_iso;
 	}
 
@@ -240,7 +238,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaCantidadPedido()
 	{
-
 		return $this->ca_cantidad_pedido;
 	}
 
@@ -251,7 +248,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaCantidadMiles()
 	{
-
 		return $this->ca_cantidad_miles;
 	}
 
@@ -262,7 +258,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaUnidadMedidadCantidad()
 	{
-
 		return $this->ca_unidad_medidad_cantidad;
 	}
 
@@ -273,18 +268,16 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaDescripcionItem()
 	{
-
 		return $this->ca_descripcion_item;
 	}
 
 	/**
 	 * Get the [ca_cantidad_paquetes_miles] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaCantidadPaquetesMiles()
 	{
-
 		return $this->ca_cantidad_paquetes_miles;
 	}
 
@@ -295,18 +288,16 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaUnidadMedidaPaquetes()
 	{
-
 		return $this->ca_unidad_medida_paquetes;
 	}
 
 	/**
 	 * Get the [ca_cantidad_volumen_miles] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaCantidadVolumenMiles()
 	{
-
 		return $this->ca_cantidad_volumen_miles;
 	}
 
@@ -317,18 +308,16 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaUnidadMedidaVolumen()
 	{
-
 		return $this->ca_unidad_medida_volumen;
 	}
 
 	/**
 	 * Get the [ca_cantidad_peso_miles] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaCantidadPesoMiles()
 	{
-
 		return $this->ca_cantidad_peso_miles;
 	}
 
@@ -339,7 +328,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 */
 	public function getCaUnidadMedidaPeso()
 	{
-
 		return $this->ca_unidad_medida_peso;
 	}
 
@@ -347,15 +335,12 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 * Set the value of [ca_iddoc] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaIddoc($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_iddoc !== $v) {
@@ -367,21 +352,19 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->aFalaHeader = null;
 		}
 
+		return $this;
 	} // setCaIddoc()
 
 	/**
 	 * Set the value of [ca_sku] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaSku($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_sku !== $v) {
@@ -389,21 +372,19 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_SKU;
 		}
 
+		return $this;
 	} // setCaSku()
 
 	/**
 	 * Set the value of [ca_vpn] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaVpn($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_vpn !== $v) {
@@ -411,21 +392,19 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_VPN;
 		}
 
+		return $this;
 	} // setCaVpn()
 
 	/**
 	 * Set the value of [ca_num_cont_part1] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaNumContPart1($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_num_cont_part1 !== $v) {
@@ -433,21 +412,19 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_NUM_CONT_PART1;
 		}
 
+		return $this;
 	} // setCaNumContPart1()
 
 	/**
 	 * Set the value of [ca_num_cont_part2] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaNumContPart2($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_num_cont_part2 !== $v) {
@@ -455,21 +432,19 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_NUM_CONT_PART2;
 		}
 
+		return $this;
 	} // setCaNumContPart2()
 
 	/**
 	 * Set the value of [ca_num_cont_sell] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaNumContSell($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_num_cont_sell !== $v) {
@@ -477,21 +452,19 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_NUM_CONT_SELL;
 		}
 
+		return $this;
 	} // setCaNumContSell()
 
 	/**
 	 * Set the value of [ca_container_iso] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaContainerIso($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_container_iso !== $v) {
@@ -499,20 +472,18 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_CONTAINER_ISO;
 		}
 
+		return $this;
 	} // setCaContainerIso()
 
 	/**
 	 * Set the value of [ca_cantidad_pedido] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaCantidadPedido($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -521,20 +492,18 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_CANTIDAD_PEDIDO;
 		}
 
+		return $this;
 	} // setCaCantidadPedido()
 
 	/**
 	 * Set the value of [ca_cantidad_miles] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaCantidadMiles($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -543,21 +512,19 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_CANTIDAD_MILES;
 		}
 
+		return $this;
 	} // setCaCantidadMiles()
 
 	/**
 	 * Set the value of [ca_unidad_medidad_cantidad] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaUnidadMedidadCantidad($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_unidad_medidad_cantidad !== $v) {
@@ -565,21 +532,19 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_UNIDAD_MEDIDAD_CANTIDAD;
 		}
 
+		return $this;
 	} // setCaUnidadMedidadCantidad()
 
 	/**
 	 * Set the value of [ca_descripcion_item] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaDescripcionItem($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_descripcion_item !== $v) {
@@ -587,37 +552,39 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_DESCRIPCION_ITEM;
 		}
 
+		return $this;
 	} // setCaDescripcionItem()
 
 	/**
 	 * Set the value of [ca_cantidad_paquetes_miles] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaCantidadPaquetesMiles($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_cantidad_paquetes_miles !== $v) {
 			$this->ca_cantidad_paquetes_miles = $v;
 			$this->modifiedColumns[] = FalaDetailPeer::CA_CANTIDAD_PAQUETES_MILES;
 		}
 
+		return $this;
 	} // setCaCantidadPaquetesMiles()
 
 	/**
 	 * Set the value of [ca_unidad_medida_paquetes] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaUnidadMedidaPaquetes($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_unidad_medida_paquetes !== $v) {
@@ -625,37 +592,39 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_UNIDAD_MEDIDA_PAQUETES;
 		}
 
+		return $this;
 	} // setCaUnidadMedidaPaquetes()
 
 	/**
 	 * Set the value of [ca_cantidad_volumen_miles] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaCantidadVolumenMiles($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_cantidad_volumen_miles !== $v) {
 			$this->ca_cantidad_volumen_miles = $v;
 			$this->modifiedColumns[] = FalaDetailPeer::CA_CANTIDAD_VOLUMEN_MILES;
 		}
 
+		return $this;
 	} // setCaCantidadVolumenMiles()
 
 	/**
 	 * Set the value of [ca_unidad_medida_volumen] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaUnidadMedidaVolumen($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_unidad_medida_volumen !== $v) {
@@ -663,37 +632,39 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_UNIDAD_MEDIDA_VOLUMEN;
 		}
 
+		return $this;
 	} // setCaUnidadMedidaVolumen()
 
 	/**
 	 * Set the value of [ca_cantidad_peso_miles] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaCantidadPesoMiles($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_cantidad_peso_miles !== $v) {
 			$this->ca_cantidad_peso_miles = $v;
 			$this->modifiedColumns[] = FalaDetailPeer::CA_CANTIDAD_PESO_MILES;
 		}
 
+		return $this;
 	} // setCaCantidadPesoMiles()
 
 	/**
 	 * Set the value of [ca_unidad_medida_peso] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 */
 	public function setCaUnidadMedidaPeso($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_unidad_medida_peso !== $v) {
@@ -701,62 +672,70 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaDetailPeer::CA_UNIDAD_MEDIDA_PESO;
 		}
 
+		return $this;
 	} // setCaUnidadMedidaPeso()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_iddoc = $rs->getString($startcol + 0);
-
-			$this->ca_sku = $rs->getString($startcol + 1);
-
-			$this->ca_vpn = $rs->getString($startcol + 2);
-
-			$this->ca_num_cont_part1 = $rs->getString($startcol + 3);
-
-			$this->ca_num_cont_part2 = $rs->getString($startcol + 4);
-
-			$this->ca_num_cont_sell = $rs->getString($startcol + 5);
-
-			$this->ca_container_iso = $rs->getString($startcol + 6);
-
-			$this->ca_cantidad_pedido = $rs->getInt($startcol + 7);
-
-			$this->ca_cantidad_miles = $rs->getInt($startcol + 8);
-
-			$this->ca_unidad_medidad_cantidad = $rs->getString($startcol + 9);
-
-			$this->ca_descripcion_item = $rs->getString($startcol + 10);
-
-			$this->ca_cantidad_paquetes_miles = $rs->getFloat($startcol + 11);
-
-			$this->ca_unidad_medida_paquetes = $rs->getString($startcol + 12);
-
-			$this->ca_cantidad_volumen_miles = $rs->getFloat($startcol + 13);
-
-			$this->ca_unidad_medida_volumen = $rs->getString($startcol + 14);
-
-			$this->ca_cantidad_peso_miles = $rs->getFloat($startcol + 15);
-
-			$this->ca_unidad_medida_peso = $rs->getString($startcol + 16);
-
+			$this->ca_iddoc = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_sku = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_vpn = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_num_cont_part1 = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_num_cont_part2 = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_num_cont_sell = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_container_iso = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_cantidad_pedido = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+			$this->ca_cantidad_miles = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
+			$this->ca_unidad_medidad_cantidad = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_descripcion_item = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_cantidad_paquetes_miles = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_unidad_medida_paquetes = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_cantidad_volumen_miles = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_unidad_medida_volumen = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_cantidad_peso_miles = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_unidad_medida_peso = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 17; // 17 = FalaDetailPeer::NUM_COLUMNS - FalaDetailPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -767,83 +746,148 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aFalaHeader !== null && $this->ca_iddoc !== $this->aFalaHeader->getCaIddoc()) {
+			$this->aFalaHeader = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(FalaDetailPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = FalaDetailPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aFalaHeader = null;
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(FalaDetailPeer::DATABASE_NAME);
+			$con = Propel::getConnection(FalaDetailPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			FalaDetailPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(FalaDetailPeer::DATABASE_NAME);
+			$con = Propel::getConnection(FalaDetailPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			FalaDetailPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -851,7 +895,7 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aFalaHeader !== null) {
-				if ($this->aFalaHeader->isModified()) {
+				if ($this->aFalaHeader->isModified() || $this->aFalaHeader->isNew()) {
 					$affectedRows += $this->aFalaHeader->save($con);
 				}
 				$this->setFalaHeader($this->aFalaHeader);
@@ -870,10 +914,12 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += FalaDetailPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -967,14 +1013,15 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = FalaDetailPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -1050,11 +1097,12 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = FalaDetailPeer::getFieldNames($keyType);
 		$result = array(
@@ -1085,8 +1133,8 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -1169,8 +1217,9 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1291,6 +1340,10 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIddoc($this->ca_iddoc);
+
+		$copyObj->setCaSku($this->ca_sku);
+
 		$copyObj->setCaVpn($this->ca_vpn);
 
 		$copyObj->setCaNumContPart1($this->ca_num_cont_part1);
@@ -1323,10 +1376,6 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaIddoc(NULL); // this is a pkey column, so set to default value
-
-		$copyObj->setCaSku(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -1372,48 +1421,68 @@ abstract class BaseFalaDetail extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a FalaHeader object.
 	 *
 	 * @param      FalaHeader $v
-	 * @return     void
+	 * @return     FalaDetail The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setFalaHeader($v)
+	public function setFalaHeader(FalaHeader $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIddoc(NULL);
 		} else {
 			$this->setCaIddoc($v->getCaIddoc());
 		}
 
-
 		$this->aFalaHeader = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the FalaHeader object, it will not be re-added.
+		if ($v !== null) {
+			$v->addFalaDetail($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated FalaHeader object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     FalaHeader The associated FalaHeader object.
 	 * @throws     PropelException
 	 */
-	public function getFalaHeader($con = null)
+	public function getFalaHeader(PropelPDO $con = null)
 	{
 		if ($this->aFalaHeader === null && (($this->ca_iddoc !== "" && $this->ca_iddoc !== null))) {
-			// include the related Peer class
-			$this->aFalaHeader = FalaHeaderPeer::retrieveByPK($this->ca_iddoc, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(FalaHeaderPeer::DATABASE_NAME);
+			$c->add(FalaHeaderPeer::CA_IDDOC, $this->ca_iddoc);
+			$this->aFalaHeader = FalaHeaderPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = FalaHeaderPeer::retrieveByPK($this->ca_iddoc, $con);
-			   $obj->addFalaHeaders($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aFalaHeader->addFalaDetails($this);
 			 */
 		}
 		return $this->aFalaHeader;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+		} // if ($deep)
+
+			$this->aFalaHeader = null;
 	}
 
 } // BaseFalaDetail

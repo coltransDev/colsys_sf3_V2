@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class ConceptoMapBuilder {
+class ConceptoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,28 +54,29 @@ class ConceptoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(ConceptoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_conceptos');
+		$tMap = $this->dbMap->addTable(ConceptoPeer::TABLE_NAME);
 		$tMap->setPhpName('Concepto');
+		$tMap->setClassname('Concepto');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_conceptos_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_conceptos_ca_idconcepto_seq');
 
-		$tMap->addPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_CONCEPTO', 'CaConcepto', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_CONCEPTO', 'CaConcepto', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_UNIDAD', 'CaUnidad', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_UNIDAD', 'CaUnidad', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_PREGUNTA', 'CaPregunta', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_PREGUNTA', 'CaPregunta', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_LIMINFERIOR', 'CaLiminferior', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_LIMINFERIOR', 'CaLiminferior', 'INTEGER', false, null);
 
 	} // doBuild()
 

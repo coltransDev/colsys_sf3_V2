@@ -13,7 +13,7 @@
  *
  * @package    lib.model.falabella.map
  */
-class FalaDetailMapBuilder {
+class FalaDetailMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,46 +54,47 @@ class FalaDetailMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(FalaDetailPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_faladetails');
+		$tMap = $this->dbMap->addTable(FalaDetailPeer::TABLE_NAME);
 		$tMap->setPhpName('FalaDetail');
+		$tMap->setClassname('FalaDetail');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDDOC', 'CaIddoc', 'string' , CreoleTypes::VARCHAR, 'tb_falaheader', 'CA_IDDOC', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDDOC', 'CaIddoc', 'VARCHAR' , 'tb_falaheader', 'CA_IDDOC', true, null);
 
-		$tMap->addPrimaryKey('CA_SKU', 'CaSku', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_SKU', 'CaSku', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_VPN', 'CaVpn', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_VPN', 'CaVpn', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_NUM_CONT_PART1', 'CaNumContPart1', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NUM_CONT_PART1', 'CaNumContPart1', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_NUM_CONT_PART2', 'CaNumContPart2', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NUM_CONT_PART2', 'CaNumContPart2', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_NUM_CONT_SELL', 'CaNumContSell', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NUM_CONT_SELL', 'CaNumContSell', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CONTAINER_ISO', 'CaContainerIso', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CONTAINER_ISO', 'CaContainerIso', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CANTIDAD_PEDIDO', 'CaCantidadPedido', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_CANTIDAD_PEDIDO', 'CaCantidadPedido', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_CANTIDAD_MILES', 'CaCantidadMiles', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_CANTIDAD_MILES', 'CaCantidadMiles', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_UNIDAD_MEDIDAD_CANTIDAD', 'CaUnidadMedidadCantidad', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_UNIDAD_MEDIDAD_CANTIDAD', 'CaUnidadMedidadCantidad', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DESCRIPCION_ITEM', 'CaDescripcionItem', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DESCRIPCION_ITEM', 'CaDescripcionItem', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CANTIDAD_PAQUETES_MILES', 'CaCantidadPaquetesMiles', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_CANTIDAD_PAQUETES_MILES', 'CaCantidadPaquetesMiles', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_UNIDAD_MEDIDA_PAQUETES', 'CaUnidadMedidaPaquetes', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_UNIDAD_MEDIDA_PAQUETES', 'CaUnidadMedidaPaquetes', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CANTIDAD_VOLUMEN_MILES', 'CaCantidadVolumenMiles', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_CANTIDAD_VOLUMEN_MILES', 'CaCantidadVolumenMiles', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_UNIDAD_MEDIDA_VOLUMEN', 'CaUnidadMedidaVolumen', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_UNIDAD_MEDIDA_VOLUMEN', 'CaUnidadMedidaVolumen', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CANTIDAD_PESO_MILES', 'CaCantidadPesoMiles', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_CANTIDAD_PESO_MILES', 'CaCantidadPesoMiles', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_UNIDAD_MEDIDA_PESO', 'CaUnidadMedidaPeso', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_UNIDAD_MEDIDA_PESO', 'CaUnidadMedidaPeso', 'VARCHAR', false, null);
 
 	} // doBuild()
 

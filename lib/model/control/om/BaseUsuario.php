@@ -10,6 +10,8 @@
 abstract class BaseUsuario extends BaseObject  implements Persistent {
 
 
+  const PEER = 'UsuarioPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_login field.
 	 * @var        string
 	 */
 	protected $ca_login;
-
 
 	/**
 	 * The value for the ca_nombre field.
@@ -32,13 +32,11 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	protected $ca_nombre;
 
-
 	/**
 	 * The value for the ca_cargo field.
 	 * @var        string
 	 */
 	protected $ca_cargo;
-
 
 	/**
 	 * The value for the ca_departamento field.
@@ -46,13 +44,11 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	protected $ca_departamento;
 
-
 	/**
 	 * The value for the ca_sucursal field.
 	 * @var        string
 	 */
 	protected $ca_sucursal;
-
 
 	/**
 	 * The value for the ca_email field.
@@ -60,13 +56,11 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	protected $ca_email;
 
-
 	/**
 	 * The value for the ca_rutinas field.
 	 * @var        string
 	 */
 	protected $ca_rutinas;
-
 
 	/**
 	 * The value for the ca_extension field.
@@ -80,52 +74,44 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	protected $aSucursal;
 
 	/**
-	 * Collection to store aggregation of collNivelesAccesos.
-	 * @var        array
+	 * @var        array NivelesAcceso[] Collection to store aggregation of NivelesAcceso objects.
 	 */
 	protected $collNivelesAccesos;
 
 	/**
-	 * The criteria used to select the current contents of collNivelesAccesos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collNivelesAccesos.
 	 */
-	protected $lastNivelesAccesoCriteria = null;
+	private $lastNivelesAccesoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collAccesoUsuarios.
-	 * @var        array
+	 * @var        array AccesoUsuario[] Collection to store aggregation of AccesoUsuario objects.
 	 */
 	protected $collAccesoUsuarios;
 
 	/**
-	 * The criteria used to select the current contents of collAccesoUsuarios.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collAccesoUsuarios.
 	 */
-	protected $lastAccesoUsuarioCriteria = null;
+	private $lastAccesoUsuarioCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collCotizacions.
-	 * @var        array
+	 * @var        array Cotizacion[] Collection to store aggregation of Cotizacion objects.
 	 */
 	protected $collCotizacions;
 
 	/**
-	 * The criteria used to select the current contents of collCotizacions.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collCotizacions.
 	 */
-	protected $lastCotizacionCriteria = null;
+	private $lastCotizacionCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collReportes.
-	 * @var        array
+	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
 	 */
 	protected $collReportes;
 
 	/**
-	 * The criteria used to select the current contents of collReportes.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collReportes.
 	 */
-	protected $lastReporteCriteria = null;
+	private $lastReporteCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -142,13 +128,32 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseUsuario object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_login] column value.
 	 * 
 	 * @return     string
 	 */
 	public function getCaLogin()
 	{
-
 		return $this->ca_login;
 	}
 
@@ -159,7 +164,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function getCaNombre()
 	{
-
 		return $this->ca_nombre;
 	}
 
@@ -170,7 +174,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function getCaCargo()
 	{
-
 		return $this->ca_cargo;
 	}
 
@@ -181,7 +184,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function getCaDepartamento()
 	{
-
 		return $this->ca_departamento;
 	}
 
@@ -192,7 +194,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function getCaSucursal()
 	{
-
 		return $this->ca_sucursal;
 	}
 
@@ -203,7 +204,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function getCaEmail()
 	{
-
 		return $this->ca_email;
 	}
 
@@ -214,7 +214,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function getCaRutinas()
 	{
-
 		return $this->ca_rutinas;
 	}
 
@@ -225,7 +224,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function getCaExtension()
 	{
-
 		return $this->ca_extension;
 	}
 
@@ -233,15 +231,12 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * Set the value of [ca_login] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 */
 	public function setCaLogin($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_login !== $v) {
@@ -249,21 +244,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = UsuarioPeer::CA_LOGIN;
 		}
 
+		return $this;
 	} // setCaLogin()
 
 	/**
 	 * Set the value of [ca_nombre] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 */
 	public function setCaNombre($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_nombre !== $v) {
@@ -271,21 +264,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = UsuarioPeer::CA_NOMBRE;
 		}
 
+		return $this;
 	} // setCaNombre()
 
 	/**
 	 * Set the value of [ca_cargo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 */
 	public function setCaCargo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_cargo !== $v) {
@@ -293,21 +284,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = UsuarioPeer::CA_CARGO;
 		}
 
+		return $this;
 	} // setCaCargo()
 
 	/**
 	 * Set the value of [ca_departamento] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 */
 	public function setCaDepartamento($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_departamento !== $v) {
@@ -315,21 +304,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = UsuarioPeer::CA_DEPARTAMENTO;
 		}
 
+		return $this;
 	} // setCaDepartamento()
 
 	/**
 	 * Set the value of [ca_sucursal] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 */
 	public function setCaSucursal($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_sucursal !== $v) {
@@ -341,21 +328,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->aSucursal = null;
 		}
 
+		return $this;
 	} // setCaSucursal()
 
 	/**
 	 * Set the value of [ca_email] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 */
 	public function setCaEmail($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_email !== $v) {
@@ -363,21 +348,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = UsuarioPeer::CA_EMAIL;
 		}
 
+		return $this;
 	} // setCaEmail()
 
 	/**
 	 * Set the value of [ca_rutinas] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 */
 	public function setCaRutinas($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_rutinas !== $v) {
@@ -385,21 +368,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = UsuarioPeer::CA_RUTINAS;
 		}
 
+		return $this;
 	} // setCaRutinas()
 
 	/**
 	 * Set the value of [ca_extension] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 */
 	public function setCaExtension($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_extension !== $v) {
@@ -407,44 +388,61 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = UsuarioPeer::CA_EXTENSION;
 		}
 
+		return $this;
 	} // setCaExtension()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_login = $rs->getString($startcol + 0);
-
-			$this->ca_nombre = $rs->getString($startcol + 1);
-
-			$this->ca_cargo = $rs->getString($startcol + 2);
-
-			$this->ca_departamento = $rs->getString($startcol + 3);
-
-			$this->ca_sucursal = $rs->getString($startcol + 4);
-
-			$this->ca_email = $rs->getString($startcol + 5);
-
-			$this->ca_rutinas = $rs->getString($startcol + 6);
-
-			$this->ca_extension = $rs->getString($startcol + 7);
-
+			$this->ca_login = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_nombre = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_cargo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_departamento = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_sucursal = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_email = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_rutinas = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_extension = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 8; // 8 = UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -455,83 +453,160 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aSucursal !== null && $this->ca_sucursal !== $this->aSucursal->getCaNombre()) {
+			$this->aSucursal = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = UsuarioPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aSucursal = null;
+			$this->collNivelesAccesos = null;
+			$this->lastNivelesAccesoCriteria = null;
+
+			$this->collAccesoUsuarios = null;
+			$this->lastAccesoUsuarioCriteria = null;
+
+			$this->collCotizacions = null;
+			$this->lastCotizacionCriteria = null;
+
+			$this->collReportes = null;
+			$this->lastReporteCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME);
+			$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			UsuarioPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME);
+			$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			UsuarioPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -539,12 +614,15 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aSucursal !== null) {
-				if ($this->aSucursal->isModified()) {
+				if ($this->aSucursal->isModified() || $this->aSucursal->isNew()) {
 					$affectedRows += $this->aSucursal->save($con);
 				}
 				$this->setSucursal($this->aSucursal);
 			}
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = UsuarioPeer::CA_LOGIN;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -560,11 +638,12 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += UsuarioPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collNivelesAccesos !== null) {
-				foreach($this->collNivelesAccesos as $referrerFK) {
+				foreach ($this->collNivelesAccesos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -572,7 +651,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collAccesoUsuarios !== null) {
-				foreach($this->collAccesoUsuarios as $referrerFK) {
+				foreach ($this->collAccesoUsuarios as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -580,7 +659,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collCotizacions !== null) {
-				foreach($this->collCotizacions as $referrerFK) {
+				foreach ($this->collCotizacions as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -588,7 +667,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collReportes !== null) {
-				foreach($this->collReportes as $referrerFK) {
+				foreach ($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -596,6 +675,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -678,7 +758,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 
 
 				if ($this->collNivelesAccesos !== null) {
-					foreach($this->collNivelesAccesos as $referrerFK) {
+					foreach ($this->collNivelesAccesos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -686,7 +766,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collAccesoUsuarios !== null) {
-					foreach($this->collAccesoUsuarios as $referrerFK) {
+					foreach ($this->collAccesoUsuarios as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -694,7 +774,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collCotizacions !== null) {
-					foreach($this->collCotizacions as $referrerFK) {
+					foreach ($this->collCotizacions as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -702,7 +782,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collReportes !== null) {
-					foreach($this->collReportes as $referrerFK) {
+					foreach ($this->collReportes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -721,14 +801,15 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = UsuarioPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -777,11 +858,12 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = UsuarioPeer::getFieldNames($keyType);
 		$result = array(
@@ -803,8 +885,8 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -860,8 +942,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -972,20 +1055,28 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getNivelesAccesos() as $relObj) {
-				$copyObj->addNivelesAcceso($relObj->copy($deepCopy));
+			foreach ($this->getNivelesAccesos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addNivelesAcceso($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getAccesoUsuarios() as $relObj) {
-				$copyObj->addAccesoUsuario($relObj->copy($deepCopy));
+			foreach ($this->getAccesoUsuarios() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addAccesoUsuario($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getCotizacions() as $relObj) {
-				$copyObj->addCotizacion($relObj->copy($deepCopy));
+			foreach ($this->getCotizacions() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotizacion($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getReportes() as $relObj) {
-				$copyObj->addReporte($relObj->copy($deepCopy));
+			foreach ($this->getReportes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addReporte($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
@@ -993,7 +1084,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaLogin(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaLogin(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -1039,81 +1130,98 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Sucursal object.
 	 *
 	 * @param      Sucursal $v
-	 * @return     void
+	 * @return     Usuario The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setSucursal($v)
+	public function setSucursal(Sucursal $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaSucursal(NULL);
 		} else {
 			$this->setCaSucursal($v->getCaNombre());
 		}
 
-
 		$this->aSucursal = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Sucursal object, it will not be re-added.
+		if ($v !== null) {
+			$v->addUsuario($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Sucursal object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Sucursal The associated Sucursal object.
 	 * @throws     PropelException
 	 */
-	public function getSucursal($con = null)
+	public function getSucursal(PropelPDO $con = null)
 	{
 		if ($this->aSucursal === null && (($this->ca_sucursal !== "" && $this->ca_sucursal !== null))) {
-			// include the related Peer class
-			$this->aSucursal = SucursalPeer::retrieveByPK($this->ca_sucursal, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(SucursalPeer::DATABASE_NAME);
+			$c->add(SucursalPeer::CA_NOMBRE, $this->ca_sucursal);
+			$this->aSucursal = SucursalPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = SucursalPeer::retrieveByPK($this->ca_sucursal, $con);
-			   $obj->addSucursals($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aSucursal->addUsuarios($this);
 			 */
 		}
 		return $this->aSucursal;
 	}
 
 	/**
-	 * Temporary storage of collNivelesAccesos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collNivelesAccesos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addNivelesAccesos()
+	 */
+	public function clearNivelesAccesos()
+	{
+		$this->collNivelesAccesos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collNivelesAccesos collection (array).
+	 *
+	 * By default this just sets the collNivelesAccesos collection to an empty array (like clearcollNivelesAccesos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initNivelesAccesos()
 	{
-		if ($this->collNivelesAccesos === null) {
-			$this->collNivelesAccesos = array();
-		}
+		$this->collNivelesAccesos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Usuario has previously
-	 * been saved, it will retrieve related NivelesAccesos from storage.
-	 * If this Usuario is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of NivelesAcceso objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously been saved, it will retrieve
+	 * related NivelesAccesos from storage. If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array NivelesAcceso[]
 	 * @throws     PropelException
 	 */
-	public function getNivelesAccesos($criteria = null, $con = null)
+	public function getNivelesAccesos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1125,7 +1233,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			   $this->collNivelesAccesos = array();
 			} else {
 
-				$criteria->add(NivelesAccesoPeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(NivelesAccesoPeer::CA_LOGIN, $this->ca_login);
 
 				NivelesAccesoPeer::addSelectColumns($criteria);
 				$this->collNivelesAccesos = NivelesAccesoPeer::doSelect($criteria, $con);
@@ -1138,7 +1246,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(NivelesAccesoPeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(NivelesAccesoPeer::CA_LOGIN, $this->ca_login);
 
 				NivelesAccesoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastNivelesAccesoCriteria) || !$this->lastNivelesAccesoCriteria->equals($criteria)) {
@@ -1151,32 +1259,63 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related NivelesAccesos.
+	 * Returns the number of related NivelesAcceso objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related NivelesAcceso objects.
 	 * @throws     PropelException
 	 */
-	public function countNivelesAccesos($criteria = null, $distinct = false, $con = null)
+	public function countNivelesAccesos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(NivelesAccesoPeer::CA_LOGIN, $this->getCaLogin());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return NivelesAccesoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collNivelesAccesos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(NivelesAccesoPeer::CA_LOGIN, $this->ca_login);
+
+				$count = NivelesAccesoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NivelesAccesoPeer::CA_LOGIN, $this->ca_login);
+
+				if (!isset($this->lastNivelesAccesoCriteria) || !$this->lastNivelesAccesoCriteria->equals($criteria)) {
+					$count = NivelesAccesoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNivelesAccesos);
+				}
+			} else {
+				$count = count($this->collNivelesAccesos);
+			}
+		}
+		$this->lastNivelesAccesoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a NivelesAcceso object to this object
-	 * through the NivelesAcceso foreign key attribute
+	 * through the NivelesAcceso foreign key attribute.
 	 *
 	 * @param      NivelesAcceso $l NivelesAcceso
 	 * @return     void
@@ -1184,41 +1323,60 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function addNivelesAcceso(NivelesAcceso $l)
 	{
-		$this->collNivelesAccesos[] = $l;
-		$l->setUsuario($this);
-	}
-
-	/**
-	 * Temporary storage of collAccesoUsuarios to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initAccesoUsuarios()
-	{
-		if ($this->collAccesoUsuarios === null) {
-			$this->collAccesoUsuarios = array();
+		if ($this->collNivelesAccesos === null) {
+			$this->initNivelesAccesos();
+		}
+		if (!in_array($l, $this->collNivelesAccesos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNivelesAccesos, $l);
+			$l->setUsuario($this);
 		}
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Usuario has previously
-	 * been saved, it will retrieve related AccesoUsuarios from storage.
-	 * If this Usuario is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Clears out the collAccesoUsuarios collection (array).
 	 *
-	 * @param      Connection $con
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addAccesoUsuarios()
+	 */
+	public function clearAccesoUsuarios()
+	{
+		$this->collAccesoUsuarios = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collAccesoUsuarios collection (array).
+	 *
+	 * By default this just sets the collAccesoUsuarios collection to an empty array (like clearcollAccesoUsuarios());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initAccesoUsuarios()
+	{
+		$this->collAccesoUsuarios = array();
+	}
+
+	/**
+	 * Gets an array of AccesoUsuario objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously been saved, it will retrieve
+	 * related AccesoUsuarios from storage. If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array AccesoUsuario[]
 	 * @throws     PropelException
 	 */
-	public function getAccesoUsuarios($criteria = null, $con = null)
+	public function getAccesoUsuarios($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1230,7 +1388,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			   $this->collAccesoUsuarios = array();
 			} else {
 
-				$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->ca_login);
 
 				AccesoUsuarioPeer::addSelectColumns($criteria);
 				$this->collAccesoUsuarios = AccesoUsuarioPeer::doSelect($criteria, $con);
@@ -1243,7 +1401,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->ca_login);
 
 				AccesoUsuarioPeer::addSelectColumns($criteria);
 				if (!isset($this->lastAccesoUsuarioCriteria) || !$this->lastAccesoUsuarioCriteria->equals($criteria)) {
@@ -1256,32 +1414,63 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related AccesoUsuarios.
+	 * Returns the number of related AccesoUsuario objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related AccesoUsuario objects.
 	 * @throws     PropelException
 	 */
-	public function countAccesoUsuarios($criteria = null, $distinct = false, $con = null)
+	public function countAccesoUsuarios(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->getCaLogin());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return AccesoUsuarioPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collAccesoUsuarios === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->ca_login);
+
+				$count = AccesoUsuarioPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(AccesoUsuarioPeer::CA_LOGIN, $this->ca_login);
+
+				if (!isset($this->lastAccesoUsuarioCriteria) || !$this->lastAccesoUsuarioCriteria->equals($criteria)) {
+					$count = AccesoUsuarioPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collAccesoUsuarios);
+				}
+			} else {
+				$count = count($this->collAccesoUsuarios);
+			}
+		}
+		$this->lastAccesoUsuarioCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a AccesoUsuario object to this object
-	 * through the AccesoUsuario foreign key attribute
+	 * through the AccesoUsuario foreign key attribute.
 	 *
 	 * @param      AccesoUsuario $l AccesoUsuario
 	 * @return     void
@@ -1289,41 +1478,60 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function addAccesoUsuario(AccesoUsuario $l)
 	{
-		$this->collAccesoUsuarios[] = $l;
-		$l->setUsuario($this);
-	}
-
-	/**
-	 * Temporary storage of collCotizacions to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initCotizacions()
-	{
-		if ($this->collCotizacions === null) {
-			$this->collCotizacions = array();
+		if ($this->collAccesoUsuarios === null) {
+			$this->initAccesoUsuarios();
+		}
+		if (!in_array($l, $this->collAccesoUsuarios, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collAccesoUsuarios, $l);
+			$l->setUsuario($this);
 		}
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Usuario has previously
-	 * been saved, it will retrieve related Cotizacions from storage.
-	 * If this Usuario is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Clears out the collCotizacions collection (array).
 	 *
-	 * @param      Connection $con
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotizacions()
+	 */
+	public function clearCotizacions()
+	{
+		$this->collCotizacions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotizacions collection (array).
+	 *
+	 * By default this just sets the collCotizacions collection to an empty array (like clearcollCotizacions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initCotizacions()
+	{
+		$this->collCotizacions = array();
+	}
+
+	/**
+	 * Gets an array of Cotizacion objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously been saved, it will retrieve
+	 * related Cotizacions from storage. If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array Cotizacion[]
 	 * @throws     PropelException
 	 */
-	public function getCotizacions($criteria = null, $con = null)
+	public function getCotizacions($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1335,7 +1543,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			   $this->collCotizacions = array();
 			} else {
 
-				$criteria->add(CotizacionPeer::CA_USUARIO, $this->getCaLogin());
+				$criteria->add(CotizacionPeer::CA_USUARIO, $this->ca_login);
 
 				CotizacionPeer::addSelectColumns($criteria);
 				$this->collCotizacions = CotizacionPeer::doSelect($criteria, $con);
@@ -1348,7 +1556,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(CotizacionPeer::CA_USUARIO, $this->getCaLogin());
+				$criteria->add(CotizacionPeer::CA_USUARIO, $this->ca_login);
 
 				CotizacionPeer::addSelectColumns($criteria);
 				if (!isset($this->lastCotizacionCriteria) || !$this->lastCotizacionCriteria->equals($criteria)) {
@@ -1361,32 +1569,63 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related Cotizacions.
+	 * Returns the number of related Cotizacion objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Cotizacion objects.
 	 * @throws     PropelException
 	 */
-	public function countCotizacions($criteria = null, $distinct = false, $con = null)
+	public function countCotizacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(CotizacionPeer::CA_USUARIO, $this->getCaLogin());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return CotizacionPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collCotizacions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotizacionPeer::CA_USUARIO, $this->ca_login);
+
+				$count = CotizacionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotizacionPeer::CA_USUARIO, $this->ca_login);
+
+				if (!isset($this->lastCotizacionCriteria) || !$this->lastCotizacionCriteria->equals($criteria)) {
+					$count = CotizacionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotizacions);
+				}
+			} else {
+				$count = count($this->collCotizacions);
+			}
+		}
+		$this->lastCotizacionCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a Cotizacion object to this object
-	 * through the Cotizacion foreign key attribute
+	 * through the Cotizacion foreign key attribute.
 	 *
 	 * @param      Cotizacion $l Cotizacion
 	 * @return     void
@@ -1394,8 +1633,13 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function addCotizacion(Cotizacion $l)
 	{
-		$this->collCotizacions[] = $l;
-		$l->setUsuario($this);
+		if ($this->collCotizacions === null) {
+			$this->initCotizacions();
+		}
+		if (!in_array($l, $this->collCotizacions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotizacions, $l);
+			$l->setUsuario($this);
+		}
 	}
 
 
@@ -1410,11 +1654,10 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Usuario.
 	 */
-	public function getCotizacionsJoinContacto($criteria = null, $con = null)
+	public function getCotizacionsJoinContacto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1426,19 +1669,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$this->collCotizacions = array();
 			} else {
 
-				$criteria->add(CotizacionPeer::CA_USUARIO, $this->getCaLogin());
+				$criteria->add(CotizacionPeer::CA_USUARIO, $this->ca_login);
 
-				$this->collCotizacions = CotizacionPeer::doSelectJoinContacto($criteria, $con);
+				$this->collCotizacions = CotizacionPeer::doSelectJoinContacto($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(CotizacionPeer::CA_USUARIO, $this->getCaLogin());
+			$criteria->add(CotizacionPeer::CA_USUARIO, $this->ca_login);
 
 			if (!isset($this->lastCotizacionCriteria) || !$this->lastCotizacionCriteria->equals($criteria)) {
-				$this->collCotizacions = CotizacionPeer::doSelectJoinContacto($criteria, $con);
+				$this->collCotizacions = CotizacionPeer::doSelectJoinContacto($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastCotizacionCriteria = $criteria;
@@ -1447,36 +1690,50 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collReportes to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collReportes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addReportes()
+	 */
+	public function clearReportes()
+	{
+		$this->collReportes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collReportes collection (array).
+	 *
+	 * By default this just sets the collReportes collection to an empty array (like clearcollReportes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initReportes()
 	{
-		if ($this->collReportes === null) {
-			$this->collReportes = array();
-		}
+		$this->collReportes = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Usuario has previously
-	 * been saved, it will retrieve related Reportes from storage.
-	 * If this Usuario is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of Reporte objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously been saved, it will retrieve
+	 * related Reportes from storage. If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array Reporte[]
 	 * @throws     PropelException
 	 */
-	public function getReportes($criteria = null, $con = null)
+	public function getReportes($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1488,7 +1745,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			   $this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
 				ReportePeer::addSelectColumns($criteria);
 				$this->collReportes = ReportePeer::doSelect($criteria, $con);
@@ -1501,7 +1758,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
 				ReportePeer::addSelectColumns($criteria);
 				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
@@ -1514,32 +1771,63 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related Reportes.
+	 * Returns the number of related Reporte objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Reporte objects.
 	 * @throws     PropelException
 	 */
-	public function countReportes($criteria = null, $distinct = false, $con = null)
+	public function countReportes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return ReportePeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
+
+				$count = ReportePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
+
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$count = ReportePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collReportes);
+				}
+			} else {
+				$count = count($this->collReportes);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a Reporte object to this object
-	 * through the Reporte foreign key attribute
+	 * through the Reporte foreign key attribute.
 	 *
 	 * @param      Reporte $l Reporte
 	 * @return     void
@@ -1547,8 +1835,13 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function addReporte(Reporte $l)
 	{
-		$this->collReportes[] = $l;
-		$l->setUsuario($this);
+		if ($this->collReportes === null) {
+			$this->initReportes();
+		}
+		if (!in_array($l, $this->collReportes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collReportes, $l);
+			$l->setUsuario($this);
+		}
 	}
 
 
@@ -1563,11 +1856,10 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Usuario.
 	 */
-	public function getReportesJoinTransportador($criteria = null, $con = null)
+	public function getReportesJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1579,19 +1871,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
-				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+			$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1611,11 +1903,10 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Usuario.
 	 */
-	public function getReportesJoinTercero($criteria = null, $con = null)
+	public function getReportesJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1627,19 +1918,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
-				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+			$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1659,11 +1950,10 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Usuario.
 	 */
-	public function getReportesJoinAgente($criteria = null, $con = null)
+	public function getReportesJoinAgente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1675,19 +1965,19 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
-				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+			$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1707,11 +1997,10 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Usuario.
 	 */
-	public function getReportesJoinBodega($criteria = null, $con = null)
+	public function getReportesJoinBodega($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1723,24 +2012,65 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+				$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
-				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_LOGIN, $this->getCaLogin());
+			$criteria->add(ReportePeer::CA_LOGIN, $this->ca_login);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
 
 		return $this->collReportes;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collNivelesAccesos) {
+				foreach ((array) $this->collNivelesAccesos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collAccesoUsuarios) {
+				foreach ((array) $this->collAccesoUsuarios as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collCotizacions) {
+				foreach ((array) $this->collCotizacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collReportes) {
+				foreach ((array) $this->collReportes as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collNivelesAccesos = null;
+		$this->collAccesoUsuarios = null;
+		$this->collCotizacions = null;
+		$this->collReportes = null;
+			$this->aSucursal = null;
 	}
 
 } // BaseUsuario

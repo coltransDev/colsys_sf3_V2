@@ -13,7 +13,7 @@
  *
  * @package    lib.model.cotizaciones.map
  */
-class CotContinuacionMapBuilder {
+class CotContinuacionMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,50 +54,51 @@ class CotContinuacionMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(CotContinuacionPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_cotcontinuacion');
+		$tMap = $this->dbMap->addTable(CotContinuacionPeer::TABLE_NAME);
 		$tMap->setPhpName('CotContinuacion');
+		$tMap->setClassname('CotContinuacion');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('OID', 'Oid', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('OID', 'Oid', 'INTEGER', true, null);
 
-		$tMap->addForeignKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int', CreoleTypes::INTEGER, 'tb_cotizaciones', 'CA_IDCOTIZACION', false, null);
+		$tMap->addForeignKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'INTEGER', 'tb_cotizaciones', 'CA_IDCOTIZACION', false, null);
 
-		$tMap->addColumn('CA_TIPO', 'CaTipo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TIPO', 'CaTipo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ORIGEN', 'CaOrigen', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ORIGEN', 'CaOrigen', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DESTINO', 'CaDestino', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DESTINO', 'CaDestino', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int', CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', false, null);
+		$tMap->addForeignKey('CA_IDCONCEPTO', 'CaIdconcepto', 'INTEGER', 'tb_conceptos', 'CA_IDCONCEPTO', false, null);
 
-		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IDEQUIPO', 'CaIdequipo', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_IDEQUIPO', 'CaIdequipo', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_TARIFA', 'CaTarifa', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TARIFA', 'CaTarifa', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_VALOR_TAR', 'CaValorTar', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VALOR_TAR', 'CaValorTar', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_VALOR_MIN', 'CaValorMin', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VALOR_MIN', 'CaValorMin', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_FRECUENCIA', 'CaFrecuencia', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FRECUENCIA', 'CaFrecuencia', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TIEMPOTRANSITO', 'CaTiempotransito', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TIEMPOTRANSITO', 'CaTiempotransito', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
 	} // doBuild()
 

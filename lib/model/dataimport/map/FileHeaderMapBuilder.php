@@ -13,7 +13,7 @@
  *
  * @package    lib.model.dataimport.map
  */
-class FileHeaderMapBuilder {
+class FileHeaderMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,32 +54,33 @@ class FileHeaderMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(FileHeaderPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_fileheader');
+		$tMap = $this->dbMap->addTable(FileHeaderPeer::TABLE_NAME);
 		$tMap->setPhpName('FileHeader');
+		$tMap->setClassname('FileHeader');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_fileheader_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_fileheader_ca_idfileheader_seq');
 
-		$tMap->addPrimaryKey('CA_IDFILEHEADER', 'CaIdfileheader', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDFILEHEADER', 'CaIdfileheader', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_DESCRIPCION', 'CaDescripcion', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_DESCRIPCION', 'CaDescripcion', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TIPOARCHIVO', 'CaTipoarchivo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TIPOARCHIVO', 'CaTipoarchivo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_SEPARADOR', 'CaSeparador', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_SEPARADOR', 'CaSeparador', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_SEPARADORDEC', 'CaSeparadordec', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_SEPARADORDEC', 'CaSeparadordec', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, true, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', true, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::TIMESTAMP, true, null);
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', true, null);
 
-		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', true, null);
 
 	} // doBuild()
 

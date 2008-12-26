@@ -24,7 +24,6 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-
 	/** the column name for the CA_IDTRAFICO field */
 	const CA_IDTRAFICO = 'bs_pricrecargosxciudad.CA_IDTRAFICO';
 
@@ -73,9 +72,19 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	/** the column name for the CA_CONSECUTIVO field */
 	const CA_CONSECUTIVO = 'bs_pricrecargosxciudad.CA_CONSECUTIVO';
 
-	/** The PHP to DB Name Mapping */
-	private static $phpNameMap = null;
+	/**
+	 * An identiy map to hold any loaded instances of PricRecargosxCiudadLog objects.
+	 * This must be public so that other peer classes can access this when hydrating from JOIN
+	 * queries.
+	 * @var        array PricRecargosxCiudadLog[]
+	 */
+	public static $instances = array();
 
+	/**
+	 * The MapBuilder instance for this peer.
+	 * @var        MapBuilder
+	 */
+	private static $mapBuilder = null;
 
 	/**
 	 * holds an array of fieldnames
@@ -85,7 +94,8 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 */
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaIdciudad', 'CaIdrecargo', 'CaModalidad', 'CaImpoexpo', 'CaVlrrecargo', 'CaAplicacion', 'CaVlrminimo', 'CaAplicacionMin', 'CaObservaciones', 'CaFchinicio', 'CaFchvencimiento', 'CaFchcreado', 'CaUsucreado', 'CaIdmoneda', 'CaConsecutivo', ),
-		BasePeer::TYPE_COLNAME => array (PricRecargosxCiudadLogPeer::CA_IDTRAFICO, PricRecargosxCiudadLogPeer::CA_IDCIUDAD, PricRecargosxCiudadLogPeer::CA_IDRECARGO, PricRecargosxCiudadLogPeer::CA_MODALIDAD, PricRecargosxCiudadLogPeer::CA_IMPOEXPO, PricRecargosxCiudadLogPeer::CA_VLRRECARGO, PricRecargosxCiudadLogPeer::CA_APLICACION, PricRecargosxCiudadLogPeer::CA_VLRMINIMO, PricRecargosxCiudadLogPeer::CA_APLICACION_MIN, PricRecargosxCiudadLogPeer::CA_OBSERVACIONES, PricRecargosxCiudadLogPeer::CA_FCHINICIO, PricRecargosxCiudadLogPeer::CA_FCHVENCIMIENTO, PricRecargosxCiudadLogPeer::CA_FCHCREADO, PricRecargosxCiudadLogPeer::CA_USUCREADO, PricRecargosxCiudadLogPeer::CA_IDMONEDA, PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtrafico', 'caIdciudad', 'caIdrecargo', 'caModalidad', 'caImpoexpo', 'caVlrrecargo', 'caAplicacion', 'caVlrminimo', 'caAplicacionMin', 'caObservaciones', 'caFchinicio', 'caFchvencimiento', 'caFchcreado', 'caUsucreado', 'caIdmoneda', 'caConsecutivo', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTRAFICO, self::CA_IDCIUDAD, self::CA_IDRECARGO, self::CA_MODALIDAD, self::CA_IMPOEXPO, self::CA_VLRRECARGO, self::CA_APLICACION, self::CA_VLRMINIMO, self::CA_APLICACION_MIN, self::CA_OBSERVACIONES, self::CA_FCHINICIO, self::CA_FCHVENCIMIENTO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_IDMONEDA, self::CA_CONSECUTIVO, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_idciudad', 'ca_idrecargo', 'ca_modalidad', 'ca_impoexpo', 'ca_vlrrecargo', 'ca_aplicacion', 'ca_vlrminimo', 'ca_aplicacion_min', 'ca_observaciones', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_fchcreado', 'ca_usucreado', 'ca_idmoneda', 'ca_consecutivo', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
@@ -98,49 +108,32 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 */
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaIdciudad' => 1, 'CaIdrecargo' => 2, 'CaModalidad' => 3, 'CaImpoexpo' => 4, 'CaVlrrecargo' => 5, 'CaAplicacion' => 6, 'CaVlrminimo' => 7, 'CaAplicacionMin' => 8, 'CaObservaciones' => 9, 'CaFchinicio' => 10, 'CaFchvencimiento' => 11, 'CaFchcreado' => 12, 'CaUsucreado' => 13, 'CaIdmoneda' => 14, 'CaConsecutivo' => 15, ),
-		BasePeer::TYPE_COLNAME => array (PricRecargosxCiudadLogPeer::CA_IDTRAFICO => 0, PricRecargosxCiudadLogPeer::CA_IDCIUDAD => 1, PricRecargosxCiudadLogPeer::CA_IDRECARGO => 2, PricRecargosxCiudadLogPeer::CA_MODALIDAD => 3, PricRecargosxCiudadLogPeer::CA_IMPOEXPO => 4, PricRecargosxCiudadLogPeer::CA_VLRRECARGO => 5, PricRecargosxCiudadLogPeer::CA_APLICACION => 6, PricRecargosxCiudadLogPeer::CA_VLRMINIMO => 7, PricRecargosxCiudadLogPeer::CA_APLICACION_MIN => 8, PricRecargosxCiudadLogPeer::CA_OBSERVACIONES => 9, PricRecargosxCiudadLogPeer::CA_FCHINICIO => 10, PricRecargosxCiudadLogPeer::CA_FCHVENCIMIENTO => 11, PricRecargosxCiudadLogPeer::CA_FCHCREADO => 12, PricRecargosxCiudadLogPeer::CA_USUCREADO => 13, PricRecargosxCiudadLogPeer::CA_IDMONEDA => 14, PricRecargosxCiudadLogPeer::CA_CONSECUTIVO => 15, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtrafico' => 0, 'caIdciudad' => 1, 'caIdrecargo' => 2, 'caModalidad' => 3, 'caImpoexpo' => 4, 'caVlrrecargo' => 5, 'caAplicacion' => 6, 'caVlrminimo' => 7, 'caAplicacionMin' => 8, 'caObservaciones' => 9, 'caFchinicio' => 10, 'caFchvencimiento' => 11, 'caFchcreado' => 12, 'caUsucreado' => 13, 'caIdmoneda' => 14, 'caConsecutivo' => 15, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTRAFICO => 0, self::CA_IDCIUDAD => 1, self::CA_IDRECARGO => 2, self::CA_MODALIDAD => 3, self::CA_IMPOEXPO => 4, self::CA_VLRRECARGO => 5, self::CA_APLICACION => 6, self::CA_VLRMINIMO => 7, self::CA_APLICACION_MIN => 8, self::CA_OBSERVACIONES => 9, self::CA_FCHINICIO => 10, self::CA_FCHVENCIMIENTO => 11, self::CA_FCHCREADO => 12, self::CA_USUCREADO => 13, self::CA_IDMONEDA => 14, self::CA_CONSECUTIVO => 15, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_idciudad' => 1, 'ca_idrecargo' => 2, 'ca_modalidad' => 3, 'ca_impoexpo' => 4, 'ca_vlrrecargo' => 5, 'ca_aplicacion' => 6, 'ca_vlrminimo' => 7, 'ca_aplicacion_min' => 8, 'ca_observaciones' => 9, 'ca_fchinicio' => 10, 'ca_fchvencimiento' => 11, 'ca_fchcreado' => 12, 'ca_usucreado' => 13, 'ca_idmoneda' => 14, 'ca_consecutivo' => 15, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
 
 	/**
-	 * @return     MapBuilder the map builder for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
+	 * Get a (singleton) instance of the MapBuilder for this peer class.
+	 * @return     MapBuilder The map builder for this peer
 	 */
 	public static function getMapBuilder()
 	{
-		return BasePeer::getMapBuilder('lib.model.pricing.map.PricRecargosxCiudadLogMapBuilder');
-	}
-	/**
-	 * Gets a map (hash) of PHP names to DB column names.
-	 *
-	 * @return     array The PHP to DB name map for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @deprecated Use the getFieldNames() and translateFieldName() methods instead of this.
-	 */
-	public static function getPhpNameMap()
-	{
-		if (self::$phpNameMap === null) {
-			$map = PricRecargosxCiudadLogPeer::getTableMap();
-			$columns = $map->getColumns();
-			$nameMap = array();
-			foreach ($columns as $column) {
-				$nameMap[$column->getPhpName()] = $column->getColumnName();
-			}
-			self::$phpNameMap = $nameMap;
+		if (self::$mapBuilder === null) {
+			self::$mapBuilder = new PricRecargosxCiudadLogMapBuilder();
 		}
-		return self::$phpNameMap;
+		return self::$mapBuilder;
 	}
 	/**
 	 * Translates a fieldname to another type
 	 *
 	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants TYPE_PHPNAME,
-	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -153,18 +146,18 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants TYPE_PHPNAME,
-	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     array A list of field names
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
 		if (!array_key_exists($type, self::$fieldNames)) {
-			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
+			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
 		}
 		return self::$fieldNames[$type];
 	}
@@ -234,54 +227,60 @@ abstract class BasePricRecargosxCiudadLogPeer {
 
 	}
 
-	const COUNT = 'COUNT(bs_pricrecargosxciudad.CA_CONSECUTIVO)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT bs_pricrecargosxciudad.CA_CONSECUTIVO)';
-
 	/**
 	 * Returns the number of rows matching criteria.
 	 *
 	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCount(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we're going to modify criteria, so copy it first
+		// we may modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(PricRecargosxCiudadLogPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
 		}
 
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
+		if (!$criteria->hasSelectClause()) {
+			PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
 		}
 
-		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
+
+		if ($con === null) {
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
+
+		// BasePeer returns a PDOStatement
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
 	}
 	/**
 	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     PricRecargosxCiudadLog
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectOne(Criteria $criteria, $con = null)
+	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
@@ -295,36 +294,35 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Method to do selects.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     array Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelect(Criteria $criteria, $con = null)
+	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
-		return PricRecargosxCiudadLogPeer::populateObjects(PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con));
+		return PricRecargosxCiudadLogPeer::populateObjects(PricRecargosxCiudadLogPeer::doSelectStmt($criteria, $con));
 	}
 	/**
-	 * Prepares the Criteria object and uses the parent doSelect()
-	 * method to get a ResultSet.
+	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
 	 *
-	 * Use this method directly if you want to just get the resultset
-	 * (instead of an array of objects).
+	 * Use this method directly if you want to work with an executed statement durirectly (for example
+	 * to perform your own object hydration).
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con The connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return     ResultSet The resultset object with numerically-indexed fields.
+	 * @return     PDOStatement The executed PDOStatement object.
 	 * @see        BasePeer::doSelect()
 	 */
-	public static function doSelectRS(Criteria $criteria, $con = null)
+	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		if (!$criteria->getSelectColumns()) {
+		if (!$criteria->hasSelectClause()) {
 			$criteria = clone $criteria;
 			PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
 		}
@@ -332,10 +330,107 @@ abstract class BasePricRecargosxCiudadLogPeer {
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a Creole ResultSet, set to return
-		// rows indexed numerically.
+		// BasePeer returns a PDOStatement
 		return BasePeer::doSelect($criteria, $con);
 	}
+	/**
+	 * Adds an object to the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doSelect*()
+	 * methods in your stub classes -- you may need to explicitly add objects
+	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
+	 * and retrieveByPK*() calls.
+	 *
+	 * @param      PricRecargosxCiudadLog $value A PricRecargosxCiudadLog object.
+	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
+	 */
+	public static function addInstanceToPool(PricRecargosxCiudadLog $obj, $key = null)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if ($key === null) {
+				$key = (string) $obj->getCaConsecutivo();
+			} // if key === null
+			self::$instances[$key] = $obj;
+		}
+	}
+
+	/**
+	 * Removes an object from the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doDelete
+	 * methods in your stub classes -- you may need to explicitly remove objects
+	 * from the cache in order to prevent returning objects that no longer exist.
+	 *
+	 * @param      mixed $value A PricRecargosxCiudadLog object or a primary key value.
+	 */
+	public static function removeInstanceFromPool($value)
+	{
+		if (Propel::isInstancePoolingEnabled() && $value !== null) {
+			if (is_object($value) && $value instanceof PricRecargosxCiudadLog) {
+				$key = (string) $value->getCaConsecutivo();
+			} elseif (is_scalar($value)) {
+				// assume we've been passed a primary key
+				$key = (string) $value;
+			} else {
+				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or PricRecargosxCiudadLog object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+				throw $e;
+			}
+
+			unset(self::$instances[$key]);
+		}
+	} // removeInstanceFromPool()
+
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
+	 * @return     PricRecargosxCiudadLog Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+	 * @see        getPrimaryKeyHash()
+	 */
+	public static function getInstanceFromPool($key)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if (isset(self::$instances[$key])) {
+				return self::$instances[$key];
+			}
+		}
+		return null; // just to be explicit
+	}
+	
+	/**
+	 * Clear the instance pool.
+	 *
+	 * @return     void
+	 */
+	public static function clearInstancePool()
+	{
+		self::$instances = array();
+	}
+	
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      array $row PropelPDO resultset row.
+	 * @param      int $startcol The 0-based offset for reading from the resultset row.
+	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
+	 */
+	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
+	{
+		// If the PK cannot be derived from the row, return NULL.
+		if ($row[$startcol + 15] === null) {
+			return null;
+		}
+		return (string) $row[$startcol + 15];
+	}
+
 	/**
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
@@ -343,21 +438,30 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function populateObjects(ResultSet $rs)
+	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
 		$cls = PricRecargosxCiudadLogPeer::getOMClass();
-		$cls = Propel::import($cls);
+		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key = PricRecargosxCiudadLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj = PricRecargosxCiudadLogPeer::getInstanceFromPool($key))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj->hydrate($row, 0, true); // rehydrate
+				$results[] = $obj;
+			} else {
 		
-			$obj = new $cls();
-			$obj->hydrate($rs);
-			$results[] = $obj;
-			
+				$obj = new $cls();
+				$obj->hydrate($row);
+				$results[] = $obj;
+				PricRecargosxCiudadLogPeer::addInstanceToPool($obj, $key);
+			} // if key exists
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -365,38 +469,49 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Returns the number of rows matching criteria, joining the related Ciudad table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinCiudad(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinCiudad(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(PricRecargosxCiudadLogPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
-
-		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
@@ -404,49 +519,62 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Returns the number of rows matching criteria, joining the related TipoRecargo table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinTipoRecargo(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinTipoRecargo(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(PricRecargosxCiudadLogPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
-
-		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
 	/**
 	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with their Ciudad objects.
-	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of PricRecargosxCiudadLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinCiudad(Criteria $c, $con = null)
+	public static function doSelectJoinCiudad(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -456,55 +584,64 @@ abstract class BasePricRecargosxCiudadLogPeer {
 		}
 
 		PricRecargosxCiudadLogPeer::addSelectColumns($c);
-		$startcol = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS);
 		CiudadPeer::addSelectColumns($c);
 
-		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = PricRecargosxCiudadLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxCiudadLogPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
 
-			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
+				$omClass = PricRecargosxCiudadLogPeer::getOMClass();
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				PricRecargosxCiudadLogPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
 
-			$omClass = CiudadPeer::getOMClass();
+			$key2 = CiudadPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = CiudadPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
 
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
+					$omClass = CiudadPeer::getOMClass();
 
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getCiudad(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addPricRecargosxCiudadLog($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initPricRecargosxCiudadLogs();
-				$obj2->addPricRecargosxCiudadLog($obj1); //CHECKME
-			}
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					CiudadPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (PricRecargosxCiudadLog) to $obj2 (Ciudad)
+				$obj2->addPricRecargosxCiudadLog($obj1);
+
+			} // if joined row was not null
+
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
 
 	/**
 	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with their TipoRecargo objects.
-	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of PricRecargosxCiudadLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinTipoRecargo(Criteria $c, $con = null)
+	public static function doSelectJoinTipoRecargo(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -514,43 +651,50 @@ abstract class BasePricRecargosxCiudadLogPeer {
 		}
 
 		PricRecargosxCiudadLogPeer::addSelectColumns($c);
-		$startcol = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS);
 		TipoRecargoPeer::addSelectColumns($c);
 
-		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = PricRecargosxCiudadLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxCiudadLogPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
 
-			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
+				$omClass = PricRecargosxCiudadLogPeer::getOMClass();
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				PricRecargosxCiudadLogPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
 
-			$omClass = TipoRecargoPeer::getOMClass();
+			$key2 = TipoRecargoPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = TipoRecargoPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
 
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
+					$omClass = TipoRecargoPeer::getOMClass();
 
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getTipoRecargo(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addPricRecargosxCiudadLog($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initPricRecargosxCiudadLogs();
-				$obj2->addPricRecargosxCiudadLog($obj1); //CHECKME
-			}
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					TipoRecargoPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (PricRecargosxCiudadLog) to $obj2 (TipoRecargo)
+				$obj2->addPricRecargosxCiudadLog($obj1);
+
+			} // if joined row was not null
+
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -559,50 +703,62 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAll(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(PricRecargosxCiudadLogPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
+		$criteria->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
-
-		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
-
-		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
-
 
 	/**
 	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with all related objects.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of PricRecargosxCiudadLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAll(Criteria $c, $con = null)
+	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -612,84 +768,77 @@ abstract class BasePricRecargosxCiudadLogPeer {
 		}
 
 		PricRecargosxCiudadLogPeer::addSelectColumns($c);
-		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		CiudadPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + CiudadPeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (CiudadPeer::NUM_COLUMNS - CiudadPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		TipoRecargoPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + TipoRecargoPeer::NUM_COLUMNS;
+		$startcol4 = $startcol3 + (TipoRecargoPeer::NUM_COLUMNS - TipoRecargoPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
-
-		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
-
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
+		$c->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = PricRecargosxCiudadLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxCiudadLogPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = PricRecargosxCiudadLogPeer::getOMClass();
 
-			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				PricRecargosxCiudadLogPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+			// Add objects for joined Ciudad rows
+
+			$key2 = CiudadPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+			if ($key2 !== null) {
+				$obj2 = CiudadPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = CiudadPeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					CiudadPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 loaded
 
-
-				// Add objects for joined Ciudad rows
-	
-			$omClass = CiudadPeer::getOMClass();
-
-
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol2);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getCiudad(); // CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addPricRecargosxCiudadLog($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initPricRecargosxCiudadLogs();
+				// Add the $obj1 (PricRecargosxCiudadLog) to the collection in $obj2 (Ciudad)
 				$obj2->addPricRecargosxCiudadLog($obj1);
-			}
+			} // if joined row not null
+
+			// Add objects for joined TipoRecargo rows
+
+			$key3 = TipoRecargoPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = TipoRecargoPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = TipoRecargoPeer::getOMClass();
 
 
-				// Add objects for joined TipoRecargo rows
-	
-			$omClass = TipoRecargoPeer::getOMClass();
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TipoRecargoPeer::addInstanceToPool($obj3, $key3);
+				} // if obj3 loaded
 
-
-			$cls = Propel::import($omClass);
-			$obj3 = new $cls();
-			$obj3->hydrate($rs, $startcol3);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj3 = $temp_obj1->getTipoRecargo(); // CHECKME
-				if ($temp_obj3->getPrimaryKey() === $obj3->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj3->addPricRecargosxCiudadLog($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj3->initPricRecargosxCiudadLogs();
+				// Add the $obj1 (PricRecargosxCiudadLog) to the collection in $obj3 (TipoRecargo)
 				$obj3->addPricRecargosxCiudadLog($obj1);
-			}
+			} // if joined row not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -698,38 +847,43 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Returns the number of rows matching criteria, joining the related Ciudad table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptCiudad(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAllExceptCiudad(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
-
-		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
@@ -737,49 +891,57 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Returns the number of rows matching criteria, joining the related TipoRecargo table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptTipoRecargo(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAllExceptTipoRecargo(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT_DISTINCT);
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(PricRecargosxCiudadLogPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
-
-		$rs = PricRecargosxCiudadLogPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
 	/**
 	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with all related objects except Ciudad.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of PricRecargosxCiudadLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptCiudad(Criteria $c, $con = null)
+	public static function doSelectJoinAllExceptCiudad(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -791,50 +953,55 @@ abstract class BasePricRecargosxCiudadLogPeer {
 		}
 
 		PricRecargosxCiudadLogPeer::addSelectColumns($c);
-		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		TipoRecargoPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + TipoRecargoPeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (TipoRecargoPeer::NUM_COLUMNS - TipoRecargoPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO);
+				$c->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
 
-
-		$rs = BasePeer::doSelect($c, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = PricRecargosxCiudadLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxCiudadLogPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = PricRecargosxCiudadLogPeer::getOMClass();
 
-			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				PricRecargosxCiudadLogPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				// Add objects for joined TipoRecargo rows
 
-			$omClass = TipoRecargoPeer::getOMClass();
+				$key2 = TipoRecargoPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = TipoRecargoPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = TipoRecargoPeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					TipoRecargoPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getTipoRecargo(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addPricRecargosxCiudadLog($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initPricRecargosxCiudadLogs();
+				// Add the $obj1 (PricRecargosxCiudadLog) to the collection in $obj2 (TipoRecargo)
 				$obj2->addPricRecargosxCiudadLog($obj1);
-			}
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -842,11 +1009,14 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	/**
 	 * Selects a collection of PricRecargosxCiudadLog objects pre-filled with all related objects except TipoRecargo.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of PricRecargosxCiudadLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptTipoRecargo(Criteria $c, $con = null)
+	public static function doSelectJoinAllExceptTipoRecargo(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -858,50 +1028,55 @@ abstract class BasePricRecargosxCiudadLogPeer {
 		}
 
 		PricRecargosxCiudadLogPeer::addSelectColumns($c);
-		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (PricRecargosxCiudadLogPeer::NUM_COLUMNS - PricRecargosxCiudadLogPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		CiudadPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + CiudadPeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (CiudadPeer::NUM_COLUMNS - CiudadPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD);
+				$c->addJoin(array(PricRecargosxCiudadLogPeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
 
-
-		$rs = BasePeer::doSelect($c, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = PricRecargosxCiudadLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxCiudadLogPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = PricRecargosxCiudadLogPeer::getOMClass();
 
-			$omClass = PricRecargosxCiudadLogPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				PricRecargosxCiudadLogPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				// Add objects for joined Ciudad rows
 
-			$omClass = CiudadPeer::getOMClass();
+				$key2 = CiudadPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = CiudadPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = CiudadPeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					CiudadPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getCiudad(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addPricRecargosxCiudadLog($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initPricRecargosxCiudadLogs();
+				// Add the $obj1 (PricRecargosxCiudadLog) to the collection in $obj2 (Ciudad)
 				$obj2->addPricRecargosxCiudadLog($obj1);
-			}
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -940,15 +1115,15 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Method perform an INSERT on the database, given a PricRecargosxCiudadLog or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or PricRecargosxCiudadLog object containing data that is used to create the INSERT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doInsert($values, $con = null)
+	public static function doInsert($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
@@ -964,11 +1139,11 @@ abstract class BasePricRecargosxCiudadLogPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table (I guess, conceivably)
-			$con->begin();
+			$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 
@@ -979,15 +1154,15 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Method perform an UPDATE on the database, given a PricRecargosxCiudadLog or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or PricRecargosxCiudadLog object containing data that is used to create the UPDATE statement.
-	 * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
+	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doUpdate($values, $con = null)
+	public static function doUpdate($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -1017,18 +1192,18 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(PricRecargosxCiudadLogPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -1038,27 +1213,43 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 *
 	 * @param      mixed $values Criteria or PricRecargosxCiudadLog object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
 	 *				if supported by native driver or if emulated using Propel.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	 public static function doDelete($values, $con = null)
+	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} elseif ($values instanceof PricRecargosxCiudadLog) {
+			// invalidate the cache for all objects of this type, since we have no
+			// way of knowing (without running a query) what objects should be invalidated
+			// from the cache based on this Criteria.
+			PricRecargosxCiudadLogPeer::clearInstancePool();
 
+			// rename for clarity
+			$criteria = clone $values;
+		} elseif ($values instanceof PricRecargosxCiudadLog) {
+			// invalidate the cache for this single object
+			PricRecargosxCiudadLogPeer::removeInstanceFromPool($values);
+			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else {
 			// it must be the primary key
+
+
+
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, (array) $values, Criteria::IN);
+
+			foreach ((array) $values as $singleval) {
+				// we can invalidate the cache for this single object
+				PricRecargosxCiudadLogPeer::removeInstanceFromPool($singleval);
+			}
 		}
 
 		// Set the correct dbName
@@ -1069,13 +1260,14 @@ abstract class BasePricRecargosxCiudadLogPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
+
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -1104,7 +1296,7 @@ abstract class BasePricRecargosxCiudadLogPeer {
 				$cols = array($cols);
 			}
 
-			foreach($cols as $colName) {
+			foreach ($cols as $colName) {
 				if ($tableMap->containsColumn($colName)) {
 					$get = 'get' . $tableMap->getColumn($colName)->getPhpName();
 					$columns[$colName] = $obj->$get();
@@ -1119,7 +1311,6 @@ abstract class BasePricRecargosxCiudadLogPeer {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
             $col = PricRecargosxCiudadLogPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
-            $request->setError($col, $failed->getMessage());
         }
     }
 
@@ -1129,20 +1320,23 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	/**
 	 * Retrieve a single object by pkey.
 	 *
-	 * @param      mixed $pk the primary key.
-	 * @param      Connection $con the connection to use
+	 * @param      int $pk the primary key.
+	 * @param      PropelPDO $con the connection to use
 	 * @return     PricRecargosxCiudadLog
 	 */
-	public static function retrieveByPK($pk, $con = null)
+	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
+
+		if (null !== ($obj = PricRecargosxCiudadLogPeer::getInstanceFromPool((string) $pk))) {
+			return $obj;
+		}
+
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$criteria = new Criteria(PricRecargosxCiudadLogPeer::DATABASE_NAME);
-
 		$criteria->add(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, $pk);
-
 
 		$v = PricRecargosxCiudadLogPeer::doSelect($criteria, $con);
 
@@ -1153,21 +1347,21 @@ abstract class BasePricRecargosxCiudadLogPeer {
 	 * Retrieve multiple objects by pkey.
 	 *
 	 * @param      array $pks List of primary keys
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function retrieveByPKs($pks, $con = null)
+	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(PricRecargosxCiudadLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$objs = null;
 		if (empty($pks)) {
 			$objs = array();
 		} else {
-			$criteria = new Criteria();
+			$criteria = new Criteria(PricRecargosxCiudadLogPeer::DATABASE_NAME);
 			$criteria->add(PricRecargosxCiudadLogPeer::CA_CONSECUTIVO, $pks, Criteria::IN);
 			$objs = PricRecargosxCiudadLogPeer::doSelect($criteria, $con);
 		}
@@ -1176,17 +1370,14 @@ abstract class BasePricRecargosxCiudadLogPeer {
 
 } // BasePricRecargosxCiudadLogPeer
 
-// static code to register the map builder for this Peer with the main Propel class
-if (Propel::isInit()) {
-	// the MapBuilder classes register themselves with Propel during initialization
-	// so we need to load them here.
-	try {
-		BasePricRecargosxCiudadLogPeer::getMapBuilder();
-	} catch (Exception $e) {
-		Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
-	}
-} else {
-	// even if Propel is not yet initialized, the map builder class can be registered
-	// now and then it will be loaded when Propel initializes.
-	Propel::registerMapBuilder('lib.model.pricing.map.PricRecargosxCiudadLogMapBuilder');
-}
+// This is the static code needed to register the MapBuilder for this table with the main Propel class.
+//
+// NOTE: This static code cannot call methods on the PricRecargosxCiudadLogPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the PricRecargosxCiudadLogPeer class:
+//
+// Propel::getDatabaseMap(PricRecargosxCiudadLogPeer::DATABASE_NAME)->addTableBuilder(PricRecargosxCiudadLogPeer::TABLE_NAME, PricRecargosxCiudadLogPeer::getMapBuilder());
+//
+// Doing so will effectively overwrite the registration below.
+
+Propel::getDatabaseMap(BasePricRecargosxCiudadLogPeer::DATABASE_NAME)->addTableBuilder(BasePricRecargosxCiudadLogPeer::TABLE_NAME, BasePricRecargosxCiudadLogPeer::getMapBuilder());
+

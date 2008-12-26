@@ -24,7 +24,6 @@ abstract class BaseRepStatusPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-
 	/** the column name for the CA_IDREPORTE field */
 	const CA_IDREPORTE = 'tb_repstatus.CA_IDREPORTE';
 
@@ -97,9 +96,19 @@ abstract class BaseRepStatusPeer {
 	/** the column name for the CA_HORALLEGADA field */
 	const CA_HORALLEGADA = 'tb_repstatus.CA_HORALLEGADA';
 
-	/** The PHP to DB Name Mapping */
-	private static $phpNameMap = null;
+	/**
+	 * An identiy map to hold any loaded instances of RepStatus objects.
+	 * This must be public so that other peer classes can access this when hydrating from JOIN
+	 * queries.
+	 * @var        array RepStatus[]
+	 */
+	public static $instances = array();
 
+	/**
+	 * The MapBuilder instance for this peer.
+	 * @var        MapBuilder
+	 */
+	private static $mapBuilder = null;
 
 	/**
 	 * holds an array of fieldnames
@@ -109,7 +118,8 @@ abstract class BaseRepStatusPeer {
 	 */
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdreporte', 'CaIdemail', 'CaFchstatus', 'CaStatus', 'CaComentarios', 'CaFchrecibo', 'CaFchenvio', 'CaUsuenvio', 'CaEtapa', 'CaIntroduccion', 'CaFchsalida', 'CaFchllegada', 'CaFchcontinuacion', 'CaPiezas', 'CaPeso', 'CaVolumen', 'CaDoctransporte', 'CaIdnave', 'CaDocmaster', 'CaFchreserva', 'CaFchcierrereserva', 'CaEquipos', 'CaHorasalida', 'CaHorallegada', ),
-		BasePeer::TYPE_COLNAME => array (RepStatusPeer::CA_IDREPORTE, RepStatusPeer::CA_IDEMAIL, RepStatusPeer::CA_FCHSTATUS, RepStatusPeer::CA_STATUS, RepStatusPeer::CA_COMENTARIOS, RepStatusPeer::CA_FCHRECIBO, RepStatusPeer::CA_FCHENVIO, RepStatusPeer::CA_USUENVIO, RepStatusPeer::CA_ETAPA, RepStatusPeer::CA_INTRODUCCION, RepStatusPeer::CA_FCHSALIDA, RepStatusPeer::CA_FCHLLEGADA, RepStatusPeer::CA_FCHCONTINUACION, RepStatusPeer::CA_PIEZAS, RepStatusPeer::CA_PESO, RepStatusPeer::CA_VOLUMEN, RepStatusPeer::CA_DOCTRANSPORTE, RepStatusPeer::CA_IDNAVE, RepStatusPeer::CA_DOCMASTER, RepStatusPeer::CA_FCHRESERVA, RepStatusPeer::CA_FCHCIERRERESERVA, RepStatusPeer::CA_EQUIPOS, RepStatusPeer::CA_HORASALIDA, RepStatusPeer::CA_HORALLEGADA, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte', 'caIdemail', 'caFchstatus', 'caStatus', 'caComentarios', 'caFchrecibo', 'caFchenvio', 'caUsuenvio', 'caEtapa', 'caIntroduccion', 'caFchsalida', 'caFchllegada', 'caFchcontinuacion', 'caPiezas', 'caPeso', 'caVolumen', 'caDoctransporte', 'caIdnave', 'caDocmaster', 'caFchreserva', 'caFchcierrereserva', 'caEquipos', 'caHorasalida', 'caHorallegada', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE, self::CA_IDEMAIL, self::CA_FCHSTATUS, self::CA_STATUS, self::CA_COMENTARIOS, self::CA_FCHRECIBO, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_ETAPA, self::CA_INTRODUCCION, self::CA_FCHSALIDA, self::CA_FCHLLEGADA, self::CA_FCHCONTINUACION, self::CA_PIEZAS, self::CA_PESO, self::CA_VOLUMEN, self::CA_DOCTRANSPORTE, self::CA_IDNAVE, self::CA_DOCMASTER, self::CA_FCHRESERVA, self::CA_FCHCIERRERESERVA, self::CA_EQUIPOS, self::CA_HORASALIDA, self::CA_HORALLEGADA, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte', 'ca_idemail', 'ca_fchstatus', 'ca_status', 'ca_comentarios', 'ca_fchrecibo', 'ca_fchenvio', 'ca_usuenvio', 'ca_etapa', 'ca_introduccion', 'ca_fchsalida', 'ca_fchllegada', 'ca_fchcontinuacion', 'ca_piezas', 'ca_peso', 'ca_volumen', 'ca_doctransporte', 'ca_idnave', 'ca_docmaster', 'ca_fchreserva', 'ca_fchcierrereserva', 'ca_equipos', 'ca_horasalida', 'ca_horallegada', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
 	);
@@ -122,49 +132,32 @@ abstract class BaseRepStatusPeer {
 	 */
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdreporte' => 0, 'CaIdemail' => 1, 'CaFchstatus' => 2, 'CaStatus' => 3, 'CaComentarios' => 4, 'CaFchrecibo' => 5, 'CaFchenvio' => 6, 'CaUsuenvio' => 7, 'CaEtapa' => 8, 'CaIntroduccion' => 9, 'CaFchsalida' => 10, 'CaFchllegada' => 11, 'CaFchcontinuacion' => 12, 'CaPiezas' => 13, 'CaPeso' => 14, 'CaVolumen' => 15, 'CaDoctransporte' => 16, 'CaIdnave' => 17, 'CaDocmaster' => 18, 'CaFchreserva' => 19, 'CaFchcierrereserva' => 20, 'CaEquipos' => 21, 'CaHorasalida' => 22, 'CaHorallegada' => 23, ),
-		BasePeer::TYPE_COLNAME => array (RepStatusPeer::CA_IDREPORTE => 0, RepStatusPeer::CA_IDEMAIL => 1, RepStatusPeer::CA_FCHSTATUS => 2, RepStatusPeer::CA_STATUS => 3, RepStatusPeer::CA_COMENTARIOS => 4, RepStatusPeer::CA_FCHRECIBO => 5, RepStatusPeer::CA_FCHENVIO => 6, RepStatusPeer::CA_USUENVIO => 7, RepStatusPeer::CA_ETAPA => 8, RepStatusPeer::CA_INTRODUCCION => 9, RepStatusPeer::CA_FCHSALIDA => 10, RepStatusPeer::CA_FCHLLEGADA => 11, RepStatusPeer::CA_FCHCONTINUACION => 12, RepStatusPeer::CA_PIEZAS => 13, RepStatusPeer::CA_PESO => 14, RepStatusPeer::CA_VOLUMEN => 15, RepStatusPeer::CA_DOCTRANSPORTE => 16, RepStatusPeer::CA_IDNAVE => 17, RepStatusPeer::CA_DOCMASTER => 18, RepStatusPeer::CA_FCHRESERVA => 19, RepStatusPeer::CA_FCHCIERRERESERVA => 20, RepStatusPeer::CA_EQUIPOS => 21, RepStatusPeer::CA_HORASALIDA => 22, RepStatusPeer::CA_HORALLEGADA => 23, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte' => 0, 'caIdemail' => 1, 'caFchstatus' => 2, 'caStatus' => 3, 'caComentarios' => 4, 'caFchrecibo' => 5, 'caFchenvio' => 6, 'caUsuenvio' => 7, 'caEtapa' => 8, 'caIntroduccion' => 9, 'caFchsalida' => 10, 'caFchllegada' => 11, 'caFchcontinuacion' => 12, 'caPiezas' => 13, 'caPeso' => 14, 'caVolumen' => 15, 'caDoctransporte' => 16, 'caIdnave' => 17, 'caDocmaster' => 18, 'caFchreserva' => 19, 'caFchcierrereserva' => 20, 'caEquipos' => 21, 'caHorasalida' => 22, 'caHorallegada' => 23, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE => 0, self::CA_IDEMAIL => 1, self::CA_FCHSTATUS => 2, self::CA_STATUS => 3, self::CA_COMENTARIOS => 4, self::CA_FCHRECIBO => 5, self::CA_FCHENVIO => 6, self::CA_USUENVIO => 7, self::CA_ETAPA => 8, self::CA_INTRODUCCION => 9, self::CA_FCHSALIDA => 10, self::CA_FCHLLEGADA => 11, self::CA_FCHCONTINUACION => 12, self::CA_PIEZAS => 13, self::CA_PESO => 14, self::CA_VOLUMEN => 15, self::CA_DOCTRANSPORTE => 16, self::CA_IDNAVE => 17, self::CA_DOCMASTER => 18, self::CA_FCHRESERVA => 19, self::CA_FCHCIERRERESERVA => 20, self::CA_EQUIPOS => 21, self::CA_HORASALIDA => 22, self::CA_HORALLEGADA => 23, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte' => 0, 'ca_idemail' => 1, 'ca_fchstatus' => 2, 'ca_status' => 3, 'ca_comentarios' => 4, 'ca_fchrecibo' => 5, 'ca_fchenvio' => 6, 'ca_usuenvio' => 7, 'ca_etapa' => 8, 'ca_introduccion' => 9, 'ca_fchsalida' => 10, 'ca_fchllegada' => 11, 'ca_fchcontinuacion' => 12, 'ca_piezas' => 13, 'ca_peso' => 14, 'ca_volumen' => 15, 'ca_doctransporte' => 16, 'ca_idnave' => 17, 'ca_docmaster' => 18, 'ca_fchreserva' => 19, 'ca_fchcierrereserva' => 20, 'ca_equipos' => 21, 'ca_horasalida' => 22, 'ca_horallegada' => 23, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
 	);
 
 	/**
-	 * @return     MapBuilder the map builder for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
+	 * Get a (singleton) instance of the MapBuilder for this peer class.
+	 * @return     MapBuilder The map builder for this peer
 	 */
 	public static function getMapBuilder()
 	{
-		return BasePeer::getMapBuilder('lib.model.reportes.map.RepStatusMapBuilder');
-	}
-	/**
-	 * Gets a map (hash) of PHP names to DB column names.
-	 *
-	 * @return     array The PHP to DB name map for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @deprecated Use the getFieldNames() and translateFieldName() methods instead of this.
-	 */
-	public static function getPhpNameMap()
-	{
-		if (self::$phpNameMap === null) {
-			$map = RepStatusPeer::getTableMap();
-			$columns = $map->getColumns();
-			$nameMap = array();
-			foreach ($columns as $column) {
-				$nameMap[$column->getPhpName()] = $column->getColumnName();
-			}
-			self::$phpNameMap = $nameMap;
+		if (self::$mapBuilder === null) {
+			self::$mapBuilder = new RepStatusMapBuilder();
 		}
-		return self::$phpNameMap;
+		return self::$mapBuilder;
 	}
 	/**
 	 * Translates a fieldname to another type
 	 *
 	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants TYPE_PHPNAME,
-	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -177,18 +170,18 @@ abstract class BaseRepStatusPeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants TYPE_PHPNAME,
-	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     array A list of field names
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
 		if (!array_key_exists($type, self::$fieldNames)) {
-			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
+			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
 		}
 		return self::$fieldNames[$type];
 	}
@@ -274,54 +267,60 @@ abstract class BaseRepStatusPeer {
 
 	}
 
-	const COUNT = 'COUNT(tb_repstatus.CA_IDREPORTE)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_repstatus.CA_IDREPORTE)';
-
 	/**
 	 * Returns the number of rows matching criteria.
 	 *
 	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCount(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we're going to modify criteria, so copy it first
+		// we may modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(RepStatusPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
 		}
 
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
+		if (!$criteria->hasSelectClause()) {
+			RepStatusPeer::addSelectColumns($criteria);
 		}
 
-		$rs = RepStatusPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
+
+		// BasePeer returns a PDOStatement
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
 	}
 	/**
 	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     RepStatus
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectOne(Criteria $criteria, $con = null)
+	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
@@ -335,36 +334,35 @@ abstract class BaseRepStatusPeer {
 	 * Method to do selects.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     array Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelect(Criteria $criteria, $con = null)
+	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
-		return RepStatusPeer::populateObjects(RepStatusPeer::doSelectRS($criteria, $con));
+		return RepStatusPeer::populateObjects(RepStatusPeer::doSelectStmt($criteria, $con));
 	}
 	/**
-	 * Prepares the Criteria object and uses the parent doSelect()
-	 * method to get a ResultSet.
+	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
 	 *
-	 * Use this method directly if you want to just get the resultset
-	 * (instead of an array of objects).
+	 * Use this method directly if you want to work with an executed statement durirectly (for example
+	 * to perform your own object hydration).
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con The connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return     ResultSet The resultset object with numerically-indexed fields.
+	 * @return     PDOStatement The executed PDOStatement object.
 	 * @see        BasePeer::doSelect()
 	 */
-	public static function doSelectRS(Criteria $criteria, $con = null)
+	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		if (!$criteria->getSelectColumns()) {
+		if (!$criteria->hasSelectClause()) {
 			$criteria = clone $criteria;
 			RepStatusPeer::addSelectColumns($criteria);
 		}
@@ -372,10 +370,107 @@ abstract class BaseRepStatusPeer {
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a Creole ResultSet, set to return
-		// rows indexed numerically.
+		// BasePeer returns a PDOStatement
 		return BasePeer::doSelect($criteria, $con);
 	}
+	/**
+	 * Adds an object to the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doSelect*()
+	 * methods in your stub classes -- you may need to explicitly add objects
+	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
+	 * and retrieveByPK*() calls.
+	 *
+	 * @param      RepStatus $value A RepStatus object.
+	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
+	 */
+	public static function addInstanceToPool(RepStatus $obj, $key = null)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if ($key === null) {
+				$key = serialize(array((string) $obj->getCaIdreporte(), (string) $obj->getCaIdemail()));
+			} // if key === null
+			self::$instances[$key] = $obj;
+		}
+	}
+
+	/**
+	 * Removes an object from the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doDelete
+	 * methods in your stub classes -- you may need to explicitly remove objects
+	 * from the cache in order to prevent returning objects that no longer exist.
+	 *
+	 * @param      mixed $value A RepStatus object or a primary key value.
+	 */
+	public static function removeInstanceFromPool($value)
+	{
+		if (Propel::isInstancePoolingEnabled() && $value !== null) {
+			if (is_object($value) && $value instanceof RepStatus) {
+				$key = serialize(array((string) $value->getCaIdreporte(), (string) $value->getCaIdemail()));
+			} elseif (is_array($value) && count($value) === 2) {
+				// assume we've been passed a primary key
+				$key = serialize(array((string) $value[0], (string) $value[1]));
+			} else {
+				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or RepStatus object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+				throw $e;
+			}
+
+			unset(self::$instances[$key]);
+		}
+	} // removeInstanceFromPool()
+
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
+	 * @return     RepStatus Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+	 * @see        getPrimaryKeyHash()
+	 */
+	public static function getInstanceFromPool($key)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if (isset(self::$instances[$key])) {
+				return self::$instances[$key];
+			}
+		}
+		return null; // just to be explicit
+	}
+	
+	/**
+	 * Clear the instance pool.
+	 *
+	 * @return     void
+	 */
+	public static function clearInstancePool()
+	{
+		self::$instances = array();
+	}
+	
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      array $row PropelPDO resultset row.
+	 * @param      int $startcol The 0-based offset for reading from the resultset row.
+	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
+	 */
+	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
+	{
+		// If the PK cannot be derived from the row, return NULL.
+		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null) {
+			return null;
+		}
+		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1]));
+	}
+
 	/**
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
@@ -383,21 +478,30 @@ abstract class BaseRepStatusPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function populateObjects(ResultSet $rs)
+	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
 		$cls = RepStatusPeer::getOMClass();
-		$cls = Propel::import($cls);
+		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj = RepStatusPeer::getInstanceFromPool($key))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj->hydrate($row, 0, true); // rehydrate
+				$results[] = $obj;
+			} else {
 		
-			$obj = new $cls();
-			$obj->hydrate($rs);
-			$results[] = $obj;
-			
+				$obj = new $cls();
+				$obj->hydrate($row);
+				$results[] = $obj;
+				RepStatusPeer::addInstanceToPool($obj, $key);
+			} // if key exists
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -405,38 +509,49 @@ abstract class BaseRepStatusPeer {
 	 * Returns the number of rows matching criteria, joining the related Reporte table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinReporte(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinReporte(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(RepStatusPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$rs = RepStatusPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
@@ -444,49 +559,62 @@ abstract class BaseRepStatusPeer {
 	 * Returns the number of rows matching criteria, joining the related Email table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinEmail(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinEmail(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(RepStatusPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(RepStatusPeer::CA_IDEMAIL, EmailPeer::CA_IDEMAIL);
-
-		$rs = RepStatusPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
 	/**
 	 * Selects a collection of RepStatus objects pre-filled with their Reporte objects.
-	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of RepStatus objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinReporte(Criteria $c, $con = null)
+	public static function doSelectJoinReporte(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -496,55 +624,64 @@ abstract class BaseRepStatusPeer {
 		}
 
 		RepStatusPeer::addSelectColumns($c);
-		$startcol = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
 		ReportePeer::addSelectColumns($c);
 
-		$c->addJoin(RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
 
-			$omClass = RepStatusPeer::getOMClass();
+				$omClass = RepStatusPeer::getOMClass();
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
 
-			$omClass = ReportePeer::getOMClass();
+			$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = ReportePeer::getInstanceFromPool($key2);
+				if (!$obj2) {
 
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
+					$omClass = ReportePeer::getOMClass();
 
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getReporte(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addRepStatus($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initRepStatuss();
-				$obj2->addRepStatus($obj1); //CHECKME
-			}
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (RepStatus) to $obj2 (Reporte)
+				$obj2->addRepStatus($obj1);
+
+			} // if joined row was not null
+
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
 
 	/**
 	 * Selects a collection of RepStatus objects pre-filled with their Email objects.
-	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of RepStatus objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinEmail(Criteria $c, $con = null)
+	public static function doSelectJoinEmail(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -554,43 +691,50 @@ abstract class BaseRepStatusPeer {
 		}
 
 		RepStatusPeer::addSelectColumns($c);
-		$startcol = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
 		EmailPeer::addSelectColumns($c);
 
-		$c->addJoin(RepStatusPeer::CA_IDEMAIL, EmailPeer::CA_IDEMAIL);
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
 
-			$omClass = RepStatusPeer::getOMClass();
+				$omClass = RepStatusPeer::getOMClass();
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
 
-			$omClass = EmailPeer::getOMClass();
+			$key2 = EmailPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = EmailPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
 
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
+					$omClass = EmailPeer::getOMClass();
 
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getEmail(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addRepStatus($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initRepStatuss();
-				$obj2->addRepStatus($obj1); //CHECKME
-			}
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					EmailPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (RepStatus) to $obj2 (Email)
+				$obj2->addRepStatus($obj1);
+
+			} // if joined row was not null
+
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -599,50 +743,62 @@ abstract class BaseRepStatusPeer {
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAll(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(RepStatusPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+		$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$criteria->addJoin(RepStatusPeer::CA_IDEMAIL, EmailPeer::CA_IDEMAIL);
-
-		$rs = RepStatusPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
-
 
 	/**
 	 * Selects a collection of RepStatus objects pre-filled with all related objects.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of RepStatus objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAll(Criteria $c, $con = null)
+	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -652,84 +808,77 @@ abstract class BaseRepStatusPeer {
 		}
 
 		RepStatusPeer::addSelectColumns($c);
-		$startcol2 = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		ReportePeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + ReportePeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
 
 		EmailPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + EmailPeer::NUM_COLUMNS;
+		$startcol4 = $startcol3 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$c->addJoin(RepStatusPeer::CA_IDEMAIL, EmailPeer::CA_IDEMAIL);
-
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+		$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = RepStatusPeer::getOMClass();
 
-			$omClass = RepStatusPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+			// Add objects for joined Reporte rows
+
+			$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+			if ($key2 !== null) {
+				$obj2 = ReportePeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = ReportePeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 loaded
 
-
-				// Add objects for joined Reporte rows
-	
-			$omClass = ReportePeer::getOMClass();
-
-
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol2);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getReporte(); // CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addRepStatus($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initRepStatuss();
+				// Add the $obj1 (RepStatus) to the collection in $obj2 (Reporte)
 				$obj2->addRepStatus($obj1);
-			}
+			} // if joined row not null
+
+			// Add objects for joined Email rows
+
+			$key3 = EmailPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = EmailPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = EmailPeer::getOMClass();
 
 
-				// Add objects for joined Email rows
-	
-			$omClass = EmailPeer::getOMClass();
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					EmailPeer::addInstanceToPool($obj3, $key3);
+				} // if obj3 loaded
 
-
-			$cls = Propel::import($omClass);
-			$obj3 = new $cls();
-			$obj3->hydrate($rs, $startcol3);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj3 = $temp_obj1->getEmail(); // CHECKME
-				if ($temp_obj3->getPrimaryKey() === $obj3->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj3->addRepStatus($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj3->initRepStatuss();
+				// Add the $obj1 (RepStatus) to the collection in $obj3 (Email)
 				$obj3->addRepStatus($obj1);
-			}
+			} // if joined row not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -738,38 +887,43 @@ abstract class BaseRepStatusPeer {
 	 * Returns the number of rows matching criteria, joining the related Reporte table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptReporte(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAllExceptReporte(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT_DISTINCT);
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(RepStatusPeer::CA_IDEMAIL, EmailPeer::CA_IDEMAIL);
-
-		$rs = RepStatusPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
@@ -777,49 +931,57 @@ abstract class BaseRepStatusPeer {
 	 * Returns the number of rows matching criteria, joining the related Email table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptEmail(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAllExceptEmail(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT_DISTINCT);
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(RepStatusPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$rs = RepStatusPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
 	/**
 	 * Selects a collection of RepStatus objects pre-filled with all related objects except Reporte.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of RepStatus objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptReporte(Criteria $c, $con = null)
+	public static function doSelectJoinAllExceptReporte(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -831,50 +993,55 @@ abstract class BaseRepStatusPeer {
 		}
 
 		RepStatusPeer::addSelectColumns($c);
-		$startcol2 = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		EmailPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + EmailPeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(RepStatusPeer::CA_IDEMAIL, EmailPeer::CA_IDEMAIL);
+				$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
 
-
-		$rs = BasePeer::doSelect($c, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = RepStatusPeer::getOMClass();
 
-			$omClass = RepStatusPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				// Add objects for joined Email rows
 
-			$omClass = EmailPeer::getOMClass();
+				$key2 = EmailPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = EmailPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = EmailPeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					EmailPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getEmail(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addRepStatus($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initRepStatuss();
+				// Add the $obj1 (RepStatus) to the collection in $obj2 (Email)
 				$obj2->addRepStatus($obj1);
-			}
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -882,11 +1049,14 @@ abstract class BaseRepStatusPeer {
 	/**
 	 * Selects a collection of RepStatus objects pre-filled with all related objects except Email.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of RepStatus objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptEmail(Criteria $c, $con = null)
+	public static function doSelectJoinAllExceptEmail(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -898,50 +1068,55 @@ abstract class BaseRepStatusPeer {
 		}
 
 		RepStatusPeer::addSelectColumns($c);
-		$startcol2 = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		ReportePeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + ReportePeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
+				$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 
-
-		$rs = BasePeer::doSelect($c, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = RepStatusPeer::getOMClass();
 
-			$omClass = RepStatusPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				// Add objects for joined Reporte rows
 
-			$omClass = ReportePeer::getOMClass();
+				$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = ReportePeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = ReportePeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getReporte(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addRepStatus($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initRepStatuss();
+				// Add the $obj1 (RepStatus) to the collection in $obj2 (Reporte)
 				$obj2->addRepStatus($obj1);
-			}
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -980,15 +1155,15 @@ abstract class BaseRepStatusPeer {
 	 * Method perform an INSERT on the database, given a RepStatus or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or RepStatus object containing data that is used to create the INSERT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doInsert($values, $con = null)
+	public static function doInsert($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
@@ -1004,11 +1179,11 @@ abstract class BaseRepStatusPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table (I guess, conceivably)
-			$con->begin();
+			$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 
@@ -1019,15 +1194,15 @@ abstract class BaseRepStatusPeer {
 	 * Method perform an UPDATE on the database, given a RepStatus or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or RepStatus object containing data that is used to create the UPDATE statement.
-	 * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
+	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doUpdate($values, $con = null)
+	public static function doUpdate($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -1060,18 +1235,18 @@ abstract class BaseRepStatusPeer {
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(RepStatusPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -1081,44 +1256,54 @@ abstract class BaseRepStatusPeer {
 	 *
 	 * @param      mixed $values Criteria or RepStatus object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
 	 *				if supported by native driver or if emulated using Propel.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	 public static function doDelete($values, $con = null)
+	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME);
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} elseif ($values instanceof RepStatus) {
+			// invalidate the cache for all objects of this type, since we have no
+			// way of knowing (without running a query) what objects should be invalidated
+			// from the cache based on this Criteria.
+			RepStatusPeer::clearInstancePool();
 
+			// rename for clarity
+			$criteria = clone $values;
+		} elseif ($values instanceof RepStatus) {
+			// invalidate the cache for this single object
+			RepStatusPeer::removeInstanceFromPool($values);
+			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else {
 			// it must be the primary key
+
+
+
 			$criteria = new Criteria(self::DATABASE_NAME);
 			// primary key is composite; we therefore, expect
 			// the primary key passed to be an array of pkey
 			// values
-			if(count($values) == count($values, COUNT_RECURSIVE))
-			{
+			if (count($values) == count($values, COUNT_RECURSIVE)) {
 				// array is not multi-dimensional
 				$values = array($values);
 			}
-			$vals = array();
-			foreach($values as $value)
-			{
 
-				$vals[0][] = $value[0];
-				$vals[1][] = $value[1];
+			foreach ($values as $value) {
+
+				$criterion = $criteria->getNewCriterion(RepStatusPeer::CA_IDREPORTE, $value[0]);
+				$criterion->addAnd($criteria->getNewCriterion(RepStatusPeer::CA_IDEMAIL, $value[1]));
+				$criteria->addOr($criterion);
+
+				// we can invalidate the cache for this single PK
+				RepStatusPeer::removeInstanceFromPool($value);
 			}
-
-			$criteria->add(RepStatusPeer::CA_IDREPORTE, $vals[0], Criteria::IN);
-			$criteria->add(RepStatusPeer::CA_IDEMAIL, $vals[1], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -1129,13 +1314,14 @@ abstract class BaseRepStatusPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
+
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -1164,7 +1350,7 @@ abstract class BaseRepStatusPeer {
 				$cols = array($cols);
 			}
 
-			foreach($cols as $colName) {
+			foreach ($cols as $colName) {
 				if ($tableMap->containsColumn($colName)) {
 					$get = 'get' . $tableMap->getColumn($colName)->getPhpName();
 					$columns[$colName] = $obj->$get();
@@ -1179,7 +1365,6 @@ abstract class BaseRepStatusPeer {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
             $col = RepStatusPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
-            $request->setError($col, $failed->getMessage());
         }
     }
 
@@ -1188,17 +1373,22 @@ abstract class BaseRepStatusPeer {
 
 	/**
 	 * Retrieve object using using composite pkey values.
-	 * @param int $ca_idreporte
-	   @param int $ca_idemail
+	 * @param      int $ca_idreporte
+	   @param      int $ca_idemail
 	   
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     RepStatus
 	 */
-	public static function retrieveByPK( $ca_idreporte, $ca_idemail, $con = null) {
-		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+	public static function retrieveByPK($ca_idreporte, $ca_idemail, PropelPDO $con = null) {
+		$key = serialize(array((string) $ca_idreporte, (string) $ca_idemail));
+ 		if (null !== ($obj = RepStatusPeer::getInstanceFromPool($key))) {
+ 			return $obj;
 		}
-		$criteria = new Criteria();
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+		$criteria = new Criteria(RepStatusPeer::DATABASE_NAME);
 		$criteria->add(RepStatusPeer::CA_IDREPORTE, $ca_idreporte);
 		$criteria->add(RepStatusPeer::CA_IDEMAIL, $ca_idemail);
 		$v = RepStatusPeer::doSelect($criteria, $con);
@@ -1207,17 +1397,14 @@ abstract class BaseRepStatusPeer {
 	}
 } // BaseRepStatusPeer
 
-// static code to register the map builder for this Peer with the main Propel class
-if (Propel::isInit()) {
-	// the MapBuilder classes register themselves with Propel during initialization
-	// so we need to load them here.
-	try {
-		BaseRepStatusPeer::getMapBuilder();
-	} catch (Exception $e) {
-		Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
-	}
-} else {
-	// even if Propel is not yet initialized, the map builder class can be registered
-	// now and then it will be loaded when Propel initializes.
-	Propel::registerMapBuilder('lib.model.reportes.map.RepStatusMapBuilder');
-}
+// This is the static code needed to register the MapBuilder for this table with the main Propel class.
+//
+// NOTE: This static code cannot call methods on the RepStatusPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the RepStatusPeer class:
+//
+// Propel::getDatabaseMap(RepStatusPeer::DATABASE_NAME)->addTableBuilder(RepStatusPeer::TABLE_NAME, RepStatusPeer::getMapBuilder());
+//
+// Doing so will effectively overwrite the registration below.
+
+Propel::getDatabaseMap(BaseRepStatusPeer::DATABASE_NAME)->addTableBuilder(BaseRepStatusPeer::TABLE_NAME, BaseRepStatusPeer::getMapBuilder());
+

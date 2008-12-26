@@ -39,7 +39,7 @@ class Cotizacion extends BaseCotizacion
 		$c->add( CotRecargoPeer::CA_IDCOTIZACION , $this->getCaIdcotizacion() );
 		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
 		$c->setDistinct();
-		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_TRANSPORTE );
+		//$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_TRANSPORTE );
 		$c->addAscendingOrderByColumn( CotRecargoPeer::CA_MODALIDAD );
 		
 		return CotRecargoPeer::doSelect($c);		

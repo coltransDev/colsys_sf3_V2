@@ -13,7 +13,7 @@
  *
  * @package    lib.model.falabella.map
  */
-class FalaInstructionMapBuilder {
+class FalaInstructionMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,18 +54,19 @@ class FalaInstructionMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(FalaInstructionPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_falainstructions');
+		$tMap = $this->dbMap->addTable(FalaInstructionPeer::TABLE_NAME);
 		$tMap->setPhpName('FalaInstruction');
+		$tMap->setClassname('FalaInstruction');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignKey('CA_IDDOC', 'CaIddoc', 'string', CreoleTypes::VARCHAR, 'tb_falaheader', 'CA_IDDOC', true, null);
+		$tMap->addForeignKey('CA_IDDOC', 'CaIddoc', 'VARCHAR', 'tb_falaheader', 'CA_IDDOC', true, null);
 
-		$tMap->addColumn('CA_INSTRUCTIONS', 'CaInstructions', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_INSTRUCTIONS', 'CaInstructions', 'VARCHAR', false, null);
 
-		$tMap->addPrimaryKey('CA_IDFALAINSTRUCTIONS', 'CaIdfalainstructions', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDFALAINSTRUCTIONS', 'CaIdfalainstructions', 'INTEGER', true, null);
 
 	} // doBuild()
 

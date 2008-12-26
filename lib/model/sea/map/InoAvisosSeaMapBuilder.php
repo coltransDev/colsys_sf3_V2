@@ -13,7 +13,7 @@
  *
  * @package    lib.model.sea.map
  */
-class InoAvisosSeaMapBuilder {
+class InoAvisosSeaMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,32 +54,33 @@ class InoAvisosSeaMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(InoAvisosSeaPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_inoavisos_sea');
+		$tMap = $this->dbMap->addTable(InoAvisosSeaPeer::TABLE_NAME);
 		$tMap->setPhpName('InoAvisosSea');
+		$tMap->setClassname('InoAvisosSea');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'string' , CreoleTypes::VARCHAR, 'tb_inomaestra_sea', 'CA_REFERENCIA', true, null);
+		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'VARCHAR' , 'tb_inomaestra_sea', 'CA_REFERENCIA', true, null);
 
-		$tMap->addForeignPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'int' , CreoleTypes::INTEGER, 'tb_clientes', 'CA_IDCLIENTE', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'INTEGER' , 'tb_clientes', 'CA_IDCLIENTE', true, null);
 
-		$tMap->addPrimaryKey('CA_HBLS', 'CaHbls', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_HBLS', 'CaHbls', 'VARCHAR', true, null);
 
-		$tMap->addPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_FCHAVISO', 'CaFchaviso', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHAVISO', 'CaFchaviso', 'DATE', false, null);
 
-		$tMap->addColumn('CA_AVISO', 'CaAviso', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_AVISO', 'CaAviso', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IDBODEGA', 'CaIdbodega', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_IDBODEGA', 'CaIdbodega', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_FCHLLEGADA', 'CaFchllegada', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHLLEGADA', 'CaFchllegada', 'DATE', false, null);
 
-		$tMap->addColumn('CA_FCHENVIO', 'CaFchenvio', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHENVIO', 'CaFchenvio', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUENVIO', 'CaUsuenvio', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUENVIO', 'CaUsuenvio', 'VARCHAR', false, null);
 
 	} // doBuild()
 

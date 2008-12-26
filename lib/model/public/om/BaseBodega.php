@@ -10,6 +10,8 @@
 abstract class BaseBodega extends BaseObject  implements Persistent {
 
 
+  const PEER = 'BodegaPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idbodega field.
 	 * @var        int
 	 */
 	protected $ca_idbodega;
-
 
 	/**
 	 * The value for the ca_nombre field.
@@ -32,13 +32,11 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 */
 	protected $ca_nombre;
 
-
 	/**
 	 * The value for the ca_tipo field.
 	 * @var        string
 	 */
 	protected $ca_tipo;
-
 
 	/**
 	 * The value for the ca_transporte field.
@@ -47,16 +45,14 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	protected $ca_transporte;
 
 	/**
-	 * Collection to store aggregation of collReportes.
-	 * @var        array
+	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
 	 */
 	protected $collReportes;
 
 	/**
-	 * The criteria used to select the current contents of collReportes.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collReportes.
 	 */
-	protected $lastReporteCriteria = null;
+	private $lastReporteCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -73,13 +69,32 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseBodega object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idbodega] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaIdbodega()
 	{
-
 		return $this->ca_idbodega;
 	}
 
@@ -90,7 +105,6 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 */
 	public function getCaNombre()
 	{
-
 		return $this->ca_nombre;
 	}
 
@@ -101,7 +115,6 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 */
 	public function getCaTipo()
 	{
-
 		return $this->ca_tipo;
 	}
 
@@ -112,7 +125,6 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 */
 	public function getCaTransporte()
 	{
-
 		return $this->ca_transporte;
 	}
 
@@ -120,14 +132,11 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idbodega] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Bodega The current object (for fluent API support)
 	 */
 	public function setCaIdbodega($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -136,21 +145,19 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = BodegaPeer::CA_IDBODEGA;
 		}
 
+		return $this;
 	} // setCaIdbodega()
 
 	/**
 	 * Set the value of [ca_nombre] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Bodega The current object (for fluent API support)
 	 */
 	public function setCaNombre($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_nombre !== $v) {
@@ -158,21 +165,19 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = BodegaPeer::CA_NOMBRE;
 		}
 
+		return $this;
 	} // setCaNombre()
 
 	/**
 	 * Set the value of [ca_tipo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Bodega The current object (for fluent API support)
 	 */
 	public function setCaTipo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_tipo !== $v) {
@@ -180,21 +185,19 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = BodegaPeer::CA_TIPO;
 		}
 
+		return $this;
 	} // setCaTipo()
 
 	/**
 	 * Set the value of [ca_transporte] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Bodega The current object (for fluent API support)
 	 */
 	public function setCaTransporte($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_transporte !== $v) {
@@ -202,36 +205,57 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = BodegaPeer::CA_TRANSPORTE;
 		}
 
+		return $this;
 	} // setCaTransporte()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idbodega = $rs->getInt($startcol + 0);
-
-			$this->ca_nombre = $rs->getString($startcol + 1);
-
-			$this->ca_tipo = $rs->getString($startcol + 2);
-
-			$this->ca_transporte = $rs->getString($startcol + 3);
-
+			$this->ca_idbodega = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_nombre = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_tipo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_transporte = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 4; // 4 = BodegaPeer::NUM_COLUMNS - BodegaPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -242,83 +266,151 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(BodegaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = BodegaPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->collReportes = null;
+			$this->lastReporteCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(BodegaPeer::DATABASE_NAME);
+			$con = Propel::getConnection(BodegaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			BodegaPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(BodegaPeer::DATABASE_NAME);
+			$con = Propel::getConnection(BodegaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			BodegaPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = BodegaPeer::CA_IDBODEGA;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -334,11 +426,12 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += BodegaPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collReportes !== null) {
-				foreach($this->collReportes as $referrerFK) {
+				foreach ($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -346,6 +439,7 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -416,7 +510,7 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 
 
 				if ($this->collReportes !== null) {
-					foreach($this->collReportes as $referrerFK) {
+					foreach ($this->collReportes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -435,14 +529,15 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = BodegaPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -479,11 +574,12 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = BodegaPeer::getFieldNames($keyType);
 		$result = array(
@@ -501,8 +597,8 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -546,8 +642,9 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -642,8 +739,10 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getReportes() as $relObj) {
-				$copyObj->addReporte($relObj->copy($deepCopy));
+			foreach ($this->getReportes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addReporte($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
@@ -651,7 +750,7 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdbodega(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaIdbodega(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -694,36 +793,50 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collReportes to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collReportes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addReportes()
+	 */
+	public function clearReportes()
+	{
+		$this->collReportes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collReportes collection (array).
+	 *
+	 * By default this just sets the collReportes collection to an empty array (like clearcollReportes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initReportes()
 	{
-		if ($this->collReportes === null) {
-			$this->collReportes = array();
-		}
+		$this->collReportes = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Bodega has previously
-	 * been saved, it will retrieve related Reportes from storage.
-	 * If this Bodega is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of Reporte objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Bodega has previously been saved, it will retrieve
+	 * related Reportes from storage. If this Bodega is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array Reporte[]
 	 * @throws     PropelException
 	 */
-	public function getReportes($criteria = null, $con = null)
+	public function getReportes($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(BodegaPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -735,7 +848,7 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 			   $this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
 				ReportePeer::addSelectColumns($criteria);
 				$this->collReportes = ReportePeer::doSelect($criteria, $con);
@@ -748,7 +861,7 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
 				ReportePeer::addSelectColumns($criteria);
 				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
@@ -761,32 +874,63 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related Reportes.
+	 * Returns the number of related Reporte objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Reporte objects.
 	 * @throws     PropelException
 	 */
-	public function countReportes($criteria = null, $distinct = false, $con = null)
+	public function countReportes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(BodegaPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return ReportePeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
+
+				$count = ReportePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
+
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$count = ReportePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collReportes);
+				}
+			} else {
+				$count = count($this->collReportes);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a Reporte object to this object
-	 * through the Reporte foreign key attribute
+	 * through the Reporte foreign key attribute.
 	 *
 	 * @param      Reporte $l Reporte
 	 * @return     void
@@ -794,8 +938,13 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 */
 	public function addReporte(Reporte $l)
 	{
-		$this->collReportes[] = $l;
-		$l->setBodega($this);
+		if ($this->collReportes === null) {
+			$this->initReportes();
+		}
+		if (!in_array($l, $this->collReportes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collReportes, $l);
+			$l->setBodega($this);
+		}
 	}
 
 
@@ -810,11 +959,10 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Bodega.
 	 */
-	public function getReportesJoinUsuario($criteria = null, $con = null)
+	public function getReportesJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(BodegaPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -826,19 +974,19 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
-				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+			$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -858,11 +1006,10 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Bodega.
 	 */
-	public function getReportesJoinTransportador($criteria = null, $con = null)
+	public function getReportesJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(BodegaPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -874,19 +1021,19 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
-				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+			$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -906,11 +1053,10 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Bodega.
 	 */
-	public function getReportesJoinTercero($criteria = null, $con = null)
+	public function getReportesJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(BodegaPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -922,19 +1068,19 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
-				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+			$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -954,11 +1100,10 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Bodega.
 	 */
-	public function getReportesJoinAgente($criteria = null, $con = null)
+	public function getReportesJoinAgente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(BodegaPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -970,24 +1115,46 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+				$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
-				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDBODEGA, $this->getCaIdbodega());
+			$criteria->add(ReportePeer::CA_IDBODEGA, $this->ca_idbodega);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
 
 		return $this->collReportes;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collReportes) {
+				foreach ((array) $this->collReportes as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collReportes = null;
 	}
 
 } // BaseBodega

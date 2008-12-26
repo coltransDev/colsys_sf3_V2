@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class MonedaMapBuilder {
+class MonedaMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,18 +54,19 @@ class MonedaMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(MonedaPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_monedas');
+		$tMap = $this->dbMap->addTable(MonedaPeer::TABLE_NAME);
 		$tMap->setPhpName('Moneda');
+		$tMap->setClassname('Moneda');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, true, 3);
+		$tMap->addPrimaryKey('CA_IDMONEDA', 'CaIdmoneda', 'VARCHAR', true, 3);
 
-		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_REFERENCIA', 'CaReferencia', 'string', CreoleTypes::VARCHAR, false, 3);
+		$tMap->addColumn('CA_REFERENCIA', 'CaReferencia', 'VARCHAR', false, 3);
 
 	} // doBuild()
 

@@ -13,7 +13,7 @@
  *
  * @package    lib.model.control.map
  */
-class LogUsuarioMapBuilder {
+class LogUsuarioMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,22 +54,23 @@ class LogUsuarioMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(LogUsuarioPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('control.tb_log');
+		$tMap = $this->dbMap->addTable(LogUsuarioPeer::TABLE_NAME);
 		$tMap->setPhpName('LogUsuario');
+		$tMap->setClassname('LogUsuario');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_IDLOG', 'CaIdlog', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDLOG', 'CaIdlog', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_LOGIN', 'CaLogin', 'string', CreoleTypes::VARCHAR, false, 50);
+		$tMap->addColumn('CA_LOGIN', 'CaLogin', 'VARCHAR', false, 50);
 
-		$tMap->addColumn('CA_EVENT', 'CaEvent', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EVENT', 'CaEvent', 'VARCHAR', false, 255);
 
-		$tMap->addColumn('CA_MODULE', 'CaModule', 'string', CreoleTypes::VARCHAR, false, 100);
+		$tMap->addColumn('CA_MODULE', 'CaModule', 'VARCHAR', false, 100);
 
-		$tMap->addColumn('CA_ACTION', 'CaAction', 'string', CreoleTypes::VARCHAR, false, 100);
+		$tMap->addColumn('CA_ACTION', 'CaAction', 'VARCHAR', false, 100);
 
 	} // doBuild()
 

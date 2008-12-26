@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class TrackingUserMapBuilder {
+class TrackingUserMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,30 +54,31 @@ class TrackingUserMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TrackingUserPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_tracking_users');
+		$tMap = $this->dbMap->addTable(TrackingUserPeer::TABLE_NAME);
 		$tMap->setPhpName('TrackingUser');
+		$tMap->setClassname('TrackingUser');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_tracking_users_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_tracking_users_ca_id_seq');
 
-		$tMap->addPrimaryKey('CA_ID', 'CaId', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_ID', 'CaId', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_BLOCKED', 'CaBlocked', 'boolean', CreoleTypes::BOOLEAN, false, null);
+		$tMap->addColumn('CA_BLOCKED', 'CaBlocked', 'BOOLEAN', false, null);
 
-		$tMap->addColumn('CA_ACTIVATION_CODE', 'CaActivationCode', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ACTIVATION_CODE', 'CaActivationCode', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PASSWD', 'CaPasswd', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PASSWD', 'CaPasswd', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PASSWORD_EXPIRY', 'CaPasswordExpiry', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_PASSWORD_EXPIRY', 'CaPasswordExpiry', 'DATE', false, null);
 
-		$tMap->addColumn('CA_ACTIVATED', 'CaActivated', 'boolean', CreoleTypes::BOOLEAN, false, null);
+		$tMap->addColumn('CA_ACTIVATED', 'CaActivated', 'BOOLEAN', false, null);
 
-		$tMap->addForeignKey('CA_IDCONTACTO', 'CaIdcontacto', 'int', CreoleTypes::INTEGER, 'tb_concliente', 'CA_IDCONTACTO', false, null);
+		$tMap->addForeignKey('CA_IDCONTACTO', 'CaIdcontacto', 'INTEGER', 'tb_concliente', 'CA_IDCONTACTO', false, null);
 
 	} // doBuild()
 

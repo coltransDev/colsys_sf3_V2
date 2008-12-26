@@ -13,7 +13,7 @@
  *
  * @package    lib.model.cotizaciones.map
  */
-class CotizacionMapBuilder {
+class CotizacionMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,56 +54,57 @@ class CotizacionMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(CotizacionPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_cotizaciones');
+		$tMap = $this->dbMap->addTable(CotizacionPeer::TABLE_NAME);
 		$tMap->setPhpName('Cotizacion');
+		$tMap->setClassname('Cotizacion');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_cotizaciones_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_cotizaciones_id');
 
-		$tMap->addPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'INTEGER', true, null);
 
-		$tMap->addForeignKey('CA_IDCONTACTO', 'CaIdcontacto', 'int', CreoleTypes::INTEGER, 'tb_concliente', 'CA_IDCONTACTO', true, null);
+		$tMap->addForeignKey('CA_IDCONTACTO', 'CaIdcontacto', 'INTEGER', 'tb_concliente', 'CA_IDCONTACTO', true, null);
 
-		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ASUNTO', 'CaAsunto', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ASUNTO', 'CaAsunto', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SALUDO', 'CaSaludo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SALUDO', 'CaSaludo', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ENTRADA', 'CaEntrada', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ENTRADA', 'CaEntrada', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DESPEDIDA', 'CaDespedida', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DESPEDIDA', 'CaDespedida', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_USUARIO', 'CaUsuario', 'string', CreoleTypes::VARCHAR, 'control.tb_usuarios', 'CA_LOGIN', false, null);
+		$tMap->addForeignKey('CA_USUARIO', 'CaUsuario', 'VARCHAR', 'control.tb_usuarios', 'CA_LOGIN', false, null);
 
-		$tMap->addColumn('CA_ANEXOS', 'CaAnexos', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ANEXOS', 'CaAnexos', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'DATE', false, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'DATE', false, null);
 
-		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHSOLICITUD', 'CaFchsolicitud', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHSOLICITUD', 'CaFchsolicitud', 'DATE', false, null);
 
-		$tMap->addColumn('CA_HORASOLICITUD', 'CaHorasolicitud', 'int', CreoleTypes::TIME, false, null);
+		$tMap->addColumn('CA_HORASOLICITUD', 'CaHorasolicitud', 'TIME', false, null);
 
-		$tMap->addColumn('CA_FCHANULADO', 'CaFchanulado', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHANULADO', 'CaFchanulado', 'DATE', false, null);
 
-		$tMap->addColumn('CA_USUANULADO', 'CaUsuanulado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUANULADO', 'CaUsuanulado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_EMPRESA', 'CaEmpresa', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EMPRESA', 'CaEmpresa', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DATOSAG', 'CaDatosag', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DATOSAG', 'CaDatosag', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_MOTIVONOAPROBADO', 'CaMotivonoaprobado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_MOTIVONOAPROBADO', 'CaMotivonoaprobado', 'VARCHAR', false, null);
 
 	} // doBuild()
 

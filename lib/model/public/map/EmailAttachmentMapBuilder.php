@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class EmailAttachmentMapBuilder {
+class EmailAttachmentMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,26 +54,27 @@ class EmailAttachmentMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(EmailAttachmentPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_attachments');
+		$tMap = $this->dbMap->addTable(EmailAttachmentPeer::TABLE_NAME);
 		$tMap->setPhpName('EmailAttachment');
+		$tMap->setClassname('EmailAttachment');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_attachments_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_attachments_ca_idattachment_seq');
 
-		$tMap->addPrimaryKey('CA_IDATTACHMENT', 'CaIdattachment', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDATTACHMENT', 'CaIdattachment', 'INTEGER', true, null);
 
-		$tMap->addForeignKey('CA_IDEMAIL', 'CaIdemail', 'int', CreoleTypes::INTEGER, 'tb_emails', 'CA_IDEMAIL', true, null);
+		$tMap->addForeignKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER', 'tb_emails', 'CA_IDEMAIL', true, null);
 
-		$tMap->addColumn('CA_EXTENSION', 'CaExtension', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_EXTENSION', 'CaExtension', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_HEADER_FILE', 'CaHeaderFile', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_HEADER_FILE', 'CaHeaderFile', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FILESIZE', 'CaFilesize', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FILESIZE', 'CaFilesize', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CONTENT', 'CaContent', 'string', CreoleTypes::BLOB, false, null);
+		$tMap->addColumn('CA_CONTENT', 'CaContent', 'BLOB', false, null);
 
 	} // doBuild()
 

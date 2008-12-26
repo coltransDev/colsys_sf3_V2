@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class TrackingUserLogMapBuilder {
+class TrackingUserLogMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,26 +54,27 @@ class TrackingUserLogMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TrackingUserLogPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_tracking_users_log');
+		$tMap = $this->dbMap->addTable(TrackingUserLogPeer::TABLE_NAME);
 		$tMap->setPhpName('TrackingUserLog');
+		$tMap->setClassname('TrackingUserLog');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_tracking_users_log_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_tracking_users_log_ca_id_seq');
 
-		$tMap->addPrimaryKey('CA_ID', 'CaId', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_ID', 'CaId', 'INTEGER', true, null);
 
-		$tMap->addForeignKey('CA_EMAIL', 'CaEmail', 'string', CreoleTypes::VARCHAR, 'tb_tracking_users', 'CA_EMAIL', false, null);
+		$tMap->addForeignKey('CA_EMAIL', 'CaEmail', 'VARCHAR', 'tb_tracking_users', 'CA_EMAIL', false, null);
 
-		$tMap->addColumn('CA_FCHEVENTO', 'CaFchevento', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHEVENTO', 'CaFchevento', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_URL', 'CaUrl', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_URL', 'CaUrl', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_EVENTO', 'CaEvento', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EVENTO', 'CaEvento', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IPADDRESS', 'CaIpaddress', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_IPADDRESS', 'CaIpaddress', 'VARCHAR', false, null);
 
 	} // doBuild()
 

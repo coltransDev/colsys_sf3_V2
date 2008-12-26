@@ -10,6 +10,8 @@
 abstract class BaseAgente extends BaseObject  implements Persistent {
 
 
+  const PEER = 'AgentePeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idagente field.
 	 * @var        int
 	 */
 	protected $ca_idagente;
-
 
 	/**
 	 * The value for the ca_nombre field.
@@ -32,13 +32,11 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_nombre;
 
-
 	/**
 	 * The value for the ca_direccion field.
 	 * @var        string
 	 */
 	protected $ca_direccion;
-
 
 	/**
 	 * The value for the ca_telefonos field.
@@ -46,13 +44,11 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_telefonos;
 
-
 	/**
 	 * The value for the ca_fax field.
 	 * @var        string
 	 */
 	protected $ca_fax;
-
 
 	/**
 	 * The value for the ca_idciudad field.
@@ -60,13 +56,11 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idciudad;
 
-
 	/**
 	 * The value for the ca_zipcode field.
 	 * @var        string
 	 */
 	protected $ca_zipcode;
-
 
 	/**
 	 * The value for the ca_website field.
@@ -74,13 +68,11 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	protected $ca_website;
 
-
 	/**
 	 * The value for the ca_email field.
 	 * @var        string
 	 */
 	protected $ca_email;
-
 
 	/**
 	 * The value for the ca_divulgacion field.
@@ -94,40 +86,34 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	protected $aCiudad;
 
 	/**
-	 * Collection to store aggregation of collTrayectos.
-	 * @var        array
+	 * @var        array Trayecto[] Collection to store aggregation of Trayecto objects.
 	 */
 	protected $collTrayectos;
 
 	/**
-	 * The criteria used to select the current contents of collTrayectos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collTrayectos.
 	 */
-	protected $lastTrayectoCriteria = null;
+	private $lastTrayectoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collReportes.
-	 * @var        array
+	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
 	 */
 	protected $collReportes;
 
 	/**
-	 * The criteria used to select the current contents of collReportes.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collReportes.
 	 */
-	protected $lastReporteCriteria = null;
+	private $lastReporteCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collContactoAgentes.
-	 * @var        array
+	 * @var        array ContactoAgente[] Collection to store aggregation of ContactoAgente objects.
 	 */
 	protected $collContactoAgentes;
 
 	/**
-	 * The criteria used to select the current contents of collContactoAgentes.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collContactoAgentes.
 	 */
-	protected $lastContactoAgenteCriteria = null;
+	private $lastContactoAgenteCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -144,13 +130,32 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseAgente object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idagente] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaIdagente()
 	{
-
 		return $this->ca_idagente;
 	}
 
@@ -161,7 +166,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaNombre()
 	{
-
 		return $this->ca_nombre;
 	}
 
@@ -172,7 +176,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaDireccion()
 	{
-
 		return $this->ca_direccion;
 	}
 
@@ -183,7 +186,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaTelefonos()
 	{
-
 		return $this->ca_telefonos;
 	}
 
@@ -194,7 +196,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaFax()
 	{
-
 		return $this->ca_fax;
 	}
 
@@ -205,7 +206,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdciudad()
 	{
-
 		return $this->ca_idciudad;
 	}
 
@@ -216,7 +216,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaZipcode()
 	{
-
 		return $this->ca_zipcode;
 	}
 
@@ -227,7 +226,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaWebsite()
 	{
-
 		return $this->ca_website;
 	}
 
@@ -238,7 +236,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaEmail()
 	{
-
 		return $this->ca_email;
 	}
 
@@ -249,7 +246,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function getCaDivulgacion()
 	{
-
 		return $this->ca_divulgacion;
 	}
 
@@ -257,14 +253,11 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idagente] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaIdagente($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -273,21 +266,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_IDAGENTE;
 		}
 
+		return $this;
 	} // setCaIdagente()
 
 	/**
 	 * Set the value of [ca_nombre] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaNombre($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_nombre !== $v) {
@@ -295,21 +286,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_NOMBRE;
 		}
 
+		return $this;
 	} // setCaNombre()
 
 	/**
 	 * Set the value of [ca_direccion] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaDireccion($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_direccion !== $v) {
@@ -317,21 +306,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_DIRECCION;
 		}
 
+		return $this;
 	} // setCaDireccion()
 
 	/**
 	 * Set the value of [ca_telefonos] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaTelefonos($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_telefonos !== $v) {
@@ -339,21 +326,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_TELEFONOS;
 		}
 
+		return $this;
 	} // setCaTelefonos()
 
 	/**
 	 * Set the value of [ca_fax] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaFax($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_fax !== $v) {
@@ -361,21 +346,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_FAX;
 		}
 
+		return $this;
 	} // setCaFax()
 
 	/**
 	 * Set the value of [ca_idciudad] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaIdciudad($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_idciudad !== $v) {
@@ -387,21 +370,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->aCiudad = null;
 		}
 
+		return $this;
 	} // setCaIdciudad()
 
 	/**
 	 * Set the value of [ca_zipcode] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaZipcode($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_zipcode !== $v) {
@@ -409,21 +390,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_ZIPCODE;
 		}
 
+		return $this;
 	} // setCaZipcode()
 
 	/**
 	 * Set the value of [ca_website] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaWebsite($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_website !== $v) {
@@ -431,21 +410,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_WEBSITE;
 		}
 
+		return $this;
 	} // setCaWebsite()
 
 	/**
 	 * Set the value of [ca_email] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaEmail($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_email !== $v) {
@@ -453,21 +430,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_EMAIL;
 		}
 
+		return $this;
 	} // setCaEmail()
 
 	/**
 	 * Set the value of [ca_divulgacion] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 */
 	public function setCaDivulgacion($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_divulgacion !== $v) {
@@ -475,48 +450,63 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = AgentePeer::CA_DIVULGACION;
 		}
 
+		return $this;
 	} // setCaDivulgacion()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idagente = $rs->getInt($startcol + 0);
-
-			$this->ca_nombre = $rs->getString($startcol + 1);
-
-			$this->ca_direccion = $rs->getString($startcol + 2);
-
-			$this->ca_telefonos = $rs->getString($startcol + 3);
-
-			$this->ca_fax = $rs->getString($startcol + 4);
-
-			$this->ca_idciudad = $rs->getString($startcol + 5);
-
-			$this->ca_zipcode = $rs->getString($startcol + 6);
-
-			$this->ca_website = $rs->getString($startcol + 7);
-
-			$this->ca_email = $rs->getString($startcol + 8);
-
-			$this->ca_divulgacion = $rs->getString($startcol + 9);
-
+			$this->ca_idagente = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_nombre = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_direccion = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_telefonos = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_fax = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_idciudad = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_zipcode = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_website = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_email = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_divulgacion = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 10; // 10 = AgentePeer::NUM_COLUMNS - AgentePeer::NUM_LAZY_LOAD_COLUMNS).
@@ -527,83 +517,157 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aCiudad !== null && $this->ca_idciudad !== $this->aCiudad->getCaIdciudad()) {
+			$this->aCiudad = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(AgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = AgentePeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aCiudad = null;
+			$this->collTrayectos = null;
+			$this->lastTrayectoCriteria = null;
+
+			$this->collReportes = null;
+			$this->lastReporteCriteria = null;
+
+			$this->collContactoAgentes = null;
+			$this->lastContactoAgenteCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(AgentePeer::DATABASE_NAME);
+			$con = Propel::getConnection(AgentePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			AgentePeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(AgentePeer::DATABASE_NAME);
+			$con = Propel::getConnection(AgentePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			AgentePeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -611,12 +675,15 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aCiudad !== null) {
-				if ($this->aCiudad->isModified()) {
+				if ($this->aCiudad->isModified() || $this->aCiudad->isNew()) {
 					$affectedRows += $this->aCiudad->save($con);
 				}
 				$this->setCiudad($this->aCiudad);
 			}
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = AgentePeer::CA_IDAGENTE;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -632,11 +699,12 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += AgentePeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collTrayectos !== null) {
-				foreach($this->collTrayectos as $referrerFK) {
+				foreach ($this->collTrayectos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -644,7 +712,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collReportes !== null) {
-				foreach($this->collReportes as $referrerFK) {
+				foreach ($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -652,7 +720,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collContactoAgentes !== null) {
-				foreach($this->collContactoAgentes as $referrerFK) {
+				foreach ($this->collContactoAgentes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -660,6 +728,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -742,7 +811,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 
 
 				if ($this->collTrayectos !== null) {
-					foreach($this->collTrayectos as $referrerFK) {
+					foreach ($this->collTrayectos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -750,7 +819,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collReportes !== null) {
-					foreach($this->collReportes as $referrerFK) {
+					foreach ($this->collReportes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -758,7 +827,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collContactoAgentes !== null) {
-					foreach($this->collContactoAgentes as $referrerFK) {
+					foreach ($this->collContactoAgentes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -777,14 +846,15 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = AgentePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -839,11 +909,12 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = AgentePeer::getFieldNames($keyType);
 		$result = array(
@@ -867,8 +938,8 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -930,8 +1001,9 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1050,16 +1122,22 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getTrayectos() as $relObj) {
-				$copyObj->addTrayecto($relObj->copy($deepCopy));
+			foreach ($this->getTrayectos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addTrayecto($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getReportes() as $relObj) {
-				$copyObj->addReporte($relObj->copy($deepCopy));
+			foreach ($this->getReportes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addReporte($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getContactoAgentes() as $relObj) {
-				$copyObj->addContactoAgente($relObj->copy($deepCopy));
+			foreach ($this->getContactoAgentes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addContactoAgente($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
@@ -1067,7 +1145,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdagente(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaIdagente(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -1113,81 +1191,98 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Ciudad object.
 	 *
 	 * @param      Ciudad $v
-	 * @return     void
+	 * @return     Agente The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setCiudad($v)
+	public function setCiudad(Ciudad $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdciudad(NULL);
 		} else {
 			$this->setCaIdciudad($v->getCaIdciudad());
 		}
 
-
 		$this->aCiudad = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Ciudad object, it will not be re-added.
+		if ($v !== null) {
+			$v->addAgente($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Ciudad object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Ciudad The associated Ciudad object.
 	 * @throws     PropelException
 	 */
-	public function getCiudad($con = null)
+	public function getCiudad(PropelPDO $con = null)
 	{
 		if ($this->aCiudad === null && (($this->ca_idciudad !== "" && $this->ca_idciudad !== null))) {
-			// include the related Peer class
-			$this->aCiudad = CiudadPeer::retrieveByPK($this->ca_idciudad, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(CiudadPeer::DATABASE_NAME);
+			$c->add(CiudadPeer::CA_IDCIUDAD, $this->ca_idciudad);
+			$this->aCiudad = CiudadPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = CiudadPeer::retrieveByPK($this->ca_idciudad, $con);
-			   $obj->addCiudads($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aCiudad->addAgentes($this);
 			 */
 		}
 		return $this->aCiudad;
 	}
 
 	/**
-	 * Temporary storage of collTrayectos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collTrayectos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addTrayectos()
+	 */
+	public function clearTrayectos()
+	{
+		$this->collTrayectos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collTrayectos collection (array).
+	 *
+	 * By default this just sets the collTrayectos collection to an empty array (like clearcollTrayectos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initTrayectos()
 	{
-		if ($this->collTrayectos === null) {
-			$this->collTrayectos = array();
-		}
+		$this->collTrayectos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Agente has previously
-	 * been saved, it will retrieve related Trayectos from storage.
-	 * If this Agente is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of Trayecto objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Agente has previously been saved, it will retrieve
+	 * related Trayectos from storage. If this Agente is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array Trayecto[]
 	 * @throws     PropelException
 	 */
-	public function getTrayectos($criteria = null, $con = null)
+	public function getTrayectos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1199,7 +1294,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			   $this->collTrayectos = array();
 			} else {
 
-				$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->ca_idagente);
 
 				TrayectoPeer::addSelectColumns($criteria);
 				$this->collTrayectos = TrayectoPeer::doSelect($criteria, $con);
@@ -1212,7 +1307,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->ca_idagente);
 
 				TrayectoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastTrayectoCriteria) || !$this->lastTrayectoCriteria->equals($criteria)) {
@@ -1225,32 +1320,63 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related Trayectos.
+	 * Returns the number of related Trayecto objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Trayecto objects.
 	 * @throws     PropelException
 	 */
-	public function countTrayectos($criteria = null, $distinct = false, $con = null)
+	public function countTrayectos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->getCaIdagente());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return TrayectoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collTrayectos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->ca_idagente);
+
+				$count = TrayectoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->ca_idagente);
+
+				if (!isset($this->lastTrayectoCriteria) || !$this->lastTrayectoCriteria->equals($criteria)) {
+					$count = TrayectoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collTrayectos);
+				}
+			} else {
+				$count = count($this->collTrayectos);
+			}
+		}
+		$this->lastTrayectoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a Trayecto object to this object
-	 * through the Trayecto foreign key attribute
+	 * through the Trayecto foreign key attribute.
 	 *
 	 * @param      Trayecto $l Trayecto
 	 * @return     void
@@ -1258,8 +1384,13 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function addTrayecto(Trayecto $l)
 	{
-		$this->collTrayectos[] = $l;
-		$l->setAgente($this);
+		if ($this->collTrayectos === null) {
+			$this->initTrayectos();
+		}
+		if (!in_array($l, $this->collTrayectos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collTrayectos, $l);
+			$l->setAgente($this);
+		}
 	}
 
 
@@ -1274,11 +1405,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Agente.
 	 */
-	public function getTrayectosJoinTransportador($criteria = null, $con = null)
+	public function getTrayectosJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1290,19 +1420,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$this->collTrayectos = array();
 			} else {
 
-				$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->ca_idagente);
 
-				$this->collTrayectos = TrayectoPeer::doSelectJoinTransportador($criteria, $con);
+				$this->collTrayectos = TrayectoPeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->getCaIdagente());
+			$criteria->add(TrayectoPeer::CA_IDAGENTE, $this->ca_idagente);
 
 			if (!isset($this->lastTrayectoCriteria) || !$this->lastTrayectoCriteria->equals($criteria)) {
-				$this->collTrayectos = TrayectoPeer::doSelectJoinTransportador($criteria, $con);
+				$this->collTrayectos = TrayectoPeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastTrayectoCriteria = $criteria;
@@ -1311,36 +1441,50 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collReportes to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collReportes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addReportes()
+	 */
+	public function clearReportes()
+	{
+		$this->collReportes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collReportes collection (array).
+	 *
+	 * By default this just sets the collReportes collection to an empty array (like clearcollReportes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initReportes()
 	{
-		if ($this->collReportes === null) {
-			$this->collReportes = array();
-		}
+		$this->collReportes = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Agente has previously
-	 * been saved, it will retrieve related Reportes from storage.
-	 * If this Agente is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of Reporte objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Agente has previously been saved, it will retrieve
+	 * related Reportes from storage. If this Agente is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array Reporte[]
 	 * @throws     PropelException
 	 */
-	public function getReportes($criteria = null, $con = null)
+	public function getReportes($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1352,7 +1496,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			   $this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
 				ReportePeer::addSelectColumns($criteria);
 				$this->collReportes = ReportePeer::doSelect($criteria, $con);
@@ -1365,7 +1509,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
 				ReportePeer::addSelectColumns($criteria);
 				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
@@ -1378,32 +1522,63 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related Reportes.
+	 * Returns the number of related Reporte objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Reporte objects.
 	 * @throws     PropelException
 	 */
-	public function countReportes($criteria = null, $distinct = false, $con = null)
+	public function countReportes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return ReportePeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				$count = ReportePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$count = ReportePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collReportes);
+				}
+			} else {
+				$count = count($this->collReportes);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a Reporte object to this object
-	 * through the Reporte foreign key attribute
+	 * through the Reporte foreign key attribute.
 	 *
 	 * @param      Reporte $l Reporte
 	 * @return     void
@@ -1411,8 +1586,13 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function addReporte(Reporte $l)
 	{
-		$this->collReportes[] = $l;
-		$l->setAgente($this);
+		if ($this->collReportes === null) {
+			$this->initReportes();
+		}
+		if (!in_array($l, $this->collReportes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collReportes, $l);
+			$l->setAgente($this);
+		}
 	}
 
 
@@ -1427,11 +1607,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Agente.
 	 */
-	public function getReportesJoinUsuario($criteria = null, $con = null)
+	public function getReportesJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1443,19 +1622,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
-				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+			$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1475,11 +1654,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Agente.
 	 */
-	public function getReportesJoinTransportador($criteria = null, $con = null)
+	public function getReportesJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1491,19 +1669,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
-				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+			$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1523,11 +1701,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Agente.
 	 */
-	public function getReportesJoinTercero($criteria = null, $con = null)
+	public function getReportesJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1539,19 +1716,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
-				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+			$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1571,11 +1748,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Agente.
 	 */
-	public function getReportesJoinBodega($criteria = null, $con = null)
+	public function getReportesJoinBodega($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1587,19 +1763,19 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$this->collReportes = array();
 			} else {
 
-				$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
-				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ReportePeer::CA_IDAGENTE, $this->getCaIdagente());
+			$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
-				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con);
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;
@@ -1608,36 +1784,50 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collContactoAgentes to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collContactoAgentes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addContactoAgentes()
+	 */
+	public function clearContactoAgentes()
+	{
+		$this->collContactoAgentes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collContactoAgentes collection (array).
+	 *
+	 * By default this just sets the collContactoAgentes collection to an empty array (like clearcollContactoAgentes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initContactoAgentes()
 	{
-		if ($this->collContactoAgentes === null) {
-			$this->collContactoAgentes = array();
-		}
+		$this->collContactoAgentes = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Agente has previously
-	 * been saved, it will retrieve related ContactoAgentes from storage.
-	 * If this Agente is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of ContactoAgente objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Agente has previously been saved, it will retrieve
+	 * related ContactoAgentes from storage. If this Agente is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array ContactoAgente[]
 	 * @throws     PropelException
 	 */
-	public function getContactoAgentes($criteria = null, $con = null)
+	public function getContactoAgentes($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1649,7 +1839,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			   $this->collContactoAgentes = array();
 			} else {
 
-				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
 
 				ContactoAgentePeer::addSelectColumns($criteria);
 				$this->collContactoAgentes = ContactoAgentePeer::doSelect($criteria, $con);
@@ -1662,7 +1852,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
 
 				ContactoAgentePeer::addSelectColumns($criteria);
 				if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
@@ -1675,32 +1865,63 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related ContactoAgentes.
+	 * Returns the number of related ContactoAgente objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related ContactoAgente objects.
 	 * @throws     PropelException
 	 */
-	public function countContactoAgentes($criteria = null, $distinct = false, $con = null)
+	public function countContactoAgentes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->getCaIdagente());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return ContactoAgentePeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collContactoAgentes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				$count = ContactoAgentePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
+					$count = ContactoAgentePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collContactoAgentes);
+				}
+			} else {
+				$count = count($this->collContactoAgentes);
+			}
+		}
+		$this->lastContactoAgenteCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a ContactoAgente object to this object
-	 * through the ContactoAgente foreign key attribute
+	 * through the ContactoAgente foreign key attribute.
 	 *
 	 * @param      ContactoAgente $l ContactoAgente
 	 * @return     void
@@ -1708,8 +1929,13 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 */
 	public function addContactoAgente(ContactoAgente $l)
 	{
-		$this->collContactoAgentes[] = $l;
-		$l->setAgente($this);
+		if ($this->collContactoAgentes === null) {
+			$this->initContactoAgentes();
+		}
+		if (!in_array($l, $this->collContactoAgentes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collContactoAgentes, $l);
+			$l->setAgente($this);
+		}
 	}
 
 
@@ -1724,11 +1950,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Agente.
 	 */
-	public function getContactoAgentesJoinCiudad($criteria = null, $con = null)
+	public function getContactoAgentesJoinCiudad($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1740,24 +1965,59 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$this->collContactoAgentes = array();
 			} else {
 
-				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->getCaIdagente());
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
 
-				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinCiudad($criteria, $con);
+				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->getCaIdagente());
+			$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
 
 			if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
-				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinCiudad($criteria, $con);
+				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastContactoAgenteCriteria = $criteria;
 
 		return $this->collContactoAgentes;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collTrayectos) {
+				foreach ((array) $this->collTrayectos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collReportes) {
+				foreach ((array) $this->collReportes as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collContactoAgentes) {
+				foreach ((array) $this->collContactoAgentes as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collTrayectos = null;
+		$this->collReportes = null;
+		$this->collContactoAgentes = null;
+			$this->aCiudad = null;
 	}
 
 } // BaseAgente

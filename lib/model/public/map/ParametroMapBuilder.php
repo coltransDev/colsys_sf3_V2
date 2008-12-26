@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class ParametroMapBuilder {
+class ParametroMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,22 +54,23 @@ class ParametroMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(ParametroPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_parametros');
+		$tMap = $this->dbMap->addTable(ParametroPeer::TABLE_NAME);
 		$tMap->setPhpName('Parametro');
+		$tMap->setClassname('Parametro');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_parametros_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_parametros_ca_casouso_seq');
 
-		$tMap->addPrimaryKey('CA_CASOUSO', 'CaCasouso', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_CASOUSO', 'CaCasouso', 'VARCHAR', true, null);
 
-		$tMap->addPrimaryKey('CA_IDENTIFICACION', 'CaIdentificacion', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDENTIFICACION', 'CaIdentificacion', 'INTEGER', true, null);
 
-		$tMap->addPrimaryKey('CA_VALOR', 'CaValor', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_VALOR', 'CaValor', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_VALOR2', 'CaValor2', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_VALOR2', 'CaValor2', 'VARCHAR', false, null);
 
 	} // doBuild()
 

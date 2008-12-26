@@ -13,7 +13,7 @@
  *
  * @package    lib.model.reportes.map
  */
-class RepEquipoMapBuilder {
+class RepEquipoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,22 +54,23 @@ class RepEquipoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(RepEquipoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_repequipos');
+		$tMap = $this->dbMap->addTable(RepEquipoPeer::TABLE_NAME);
 		$tMap->setPhpName('RepEquipo');
+		$tMap->setClassname('RepEquipo');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDREPORTE', 'CaIdreporte', 'int' , CreoleTypes::INTEGER, 'tb_reportes', 'CA_IDREPORTE', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDREPORTE', 'CaIdreporte', 'INTEGER' , 'tb_reportes', 'CA_IDREPORTE', true, null);
 
-		$tMap->addForeignPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int' , CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'INTEGER' , 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
 
-		$tMap->addColumn('CA_CANTIDAD', 'CaCantidad', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_CANTIDAD', 'CaCantidad', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_IDEQUIPO', 'CaIdequipo', 'string', CreoleTypes::VARCHAR, false, 12);
+		$tMap->addColumn('CA_IDEQUIPO', 'CaIdequipo', 'VARCHAR', false, 12);
 
-		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'VARCHAR', false, null);
 
 	} // doBuild()
 

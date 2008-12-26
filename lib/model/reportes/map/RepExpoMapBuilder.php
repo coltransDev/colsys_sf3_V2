@@ -13,7 +13,7 @@
  *
  * @package    lib.model.reportes.map
  */
-class RepExpoMapBuilder {
+class RepExpoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,40 +54,41 @@ class RepExpoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(RepExpoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_repexpo');
+		$tMap = $this->dbMap->addTable(RepExpoPeer::TABLE_NAME);
 		$tMap->setPhpName('RepExpo');
+		$tMap->setClassname('RepExpo');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDREPORTE', 'CaIdreporte', 'int' , CreoleTypes::INTEGER, 'tb_reportes', 'CA_IDREPORTE', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDREPORTE', 'CaIdreporte', 'INTEGER' , 'tb_reportes', 'CA_IDREPORTE', true, null);
 
-		$tMap->addColumn('CA_PESO', 'CaPeso', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_PESO', 'CaPeso', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_VOLUMEN', 'CaVolumen', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VOLUMEN', 'CaVolumen', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_PIEZAS', 'CaPiezas', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PIEZAS', 'CaPiezas', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DIMENSIONES', 'CaDimensiones', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DIMENSIONES', 'CaDimensiones', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_VALORCARGA', 'CaValorcarga', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VALORCARGA', 'CaValorcarga', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_ANTICIPO', 'CaAnticipo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ANTICIPO', 'CaAnticipo', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IDSIA', 'CaIdsia', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_IDSIA', 'CaIdsia', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_TIPOEXPO', 'CaTipoexpo', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_TIPOEXPO', 'CaTipoexpo', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_IDLINEATERRESTRE', 'CaIdlineaterrestre', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_IDLINEATERRESTRE', 'CaIdlineaterrestre', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_MOTONAVE', 'CaMotonave', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_MOTONAVE', 'CaMotonave', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_EMISIONBL', 'CaEmisionbl', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EMISIONBL', 'CaEmisionbl', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DATOSBL', 'CaDatosbl', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DATOSBL', 'CaDatosbl', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_NUMBL', 'CaNumbl', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_NUMBL', 'CaNumbl', 'INTEGER', false, null);
 
 	} // doBuild()
 

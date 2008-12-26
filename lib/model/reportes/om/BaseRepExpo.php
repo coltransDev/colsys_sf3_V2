@@ -10,6 +10,8 @@
 abstract class BaseRepExpo extends BaseObject  implements Persistent {
 
 
+  const PEER = 'RepExpoPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,27 +20,23 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idreporte field.
 	 * @var        int
 	 */
 	protected $ca_idreporte;
 
-
 	/**
 	 * The value for the ca_peso field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_peso;
 
-
 	/**
 	 * The value for the ca_volumen field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_volumen;
-
 
 	/**
 	 * The value for the ca_piezas field.
@@ -46,20 +44,17 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_piezas;
 
-
 	/**
 	 * The value for the ca_dimensiones field.
 	 * @var        string
 	 */
 	protected $ca_dimensiones;
 
-
 	/**
 	 * The value for the ca_valorcarga field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_valorcarga;
-
 
 	/**
 	 * The value for the ca_anticipo field.
@@ -67,13 +62,11 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_anticipo;
 
-
 	/**
 	 * The value for the ca_idsia field.
 	 * @var        int
 	 */
 	protected $ca_idsia;
-
 
 	/**
 	 * The value for the ca_tipoexpo field.
@@ -81,13 +74,11 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_tipoexpo;
 
-
 	/**
 	 * The value for the ca_idlineaterrestre field.
 	 * @var        int
 	 */
 	protected $ca_idlineaterrestre;
-
 
 	/**
 	 * The value for the ca_motonave field.
@@ -95,20 +86,17 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_motonave;
 
-
 	/**
 	 * The value for the ca_emisionbl field.
 	 * @var        string
 	 */
 	protected $ca_emisionbl;
 
-
 	/**
 	 * The value for the ca_datosbl field.
 	 * @var        string
 	 */
 	protected $ca_datosbl;
-
 
 	/**
 	 * The value for the ca_numbl field.
@@ -136,35 +124,52 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseRepExpo object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idreporte] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaIdreporte()
 	{
-
 		return $this->ca_idreporte;
 	}
 
 	/**
 	 * Get the [ca_peso] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaPeso()
 	{
-
 		return $this->ca_peso;
 	}
 
 	/**
 	 * Get the [ca_volumen] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaVolumen()
 	{
-
 		return $this->ca_volumen;
 	}
 
@@ -175,7 +180,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaPiezas()
 	{
-
 		return $this->ca_piezas;
 	}
 
@@ -186,18 +190,16 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaDimensiones()
 	{
-
 		return $this->ca_dimensiones;
 	}
 
 	/**
 	 * Get the [ca_valorcarga] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaValorcarga()
 	{
-
 		return $this->ca_valorcarga;
 	}
 
@@ -208,7 +210,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaAnticipo()
 	{
-
 		return $this->ca_anticipo;
 	}
 
@@ -219,7 +220,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdsia()
 	{
-
 		return $this->ca_idsia;
 	}
 
@@ -230,7 +230,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaTipoexpo()
 	{
-
 		return $this->ca_tipoexpo;
 	}
 
@@ -241,7 +240,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdlineaterrestre()
 	{
-
 		return $this->ca_idlineaterrestre;
 	}
 
@@ -252,7 +250,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaMotonave()
 	{
-
 		return $this->ca_motonave;
 	}
 
@@ -263,7 +260,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaEmisionbl()
 	{
-
 		return $this->ca_emisionbl;
 	}
 
@@ -274,7 +270,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaDatosbl()
 	{
-
 		return $this->ca_datosbl;
 	}
 
@@ -285,7 +280,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 */
 	public function getCaNumbl()
 	{
-
 		return $this->ca_numbl;
 	}
 
@@ -293,14 +287,11 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idreporte] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaIdreporte($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -313,53 +304,59 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->aReporte = null;
 		}
 
+		return $this;
 	} // setCaIdreporte()
 
 	/**
 	 * Set the value of [ca_peso] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaPeso($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_peso !== $v) {
 			$this->ca_peso = $v;
 			$this->modifiedColumns[] = RepExpoPeer::CA_PESO;
 		}
 
+		return $this;
 	} // setCaPeso()
 
 	/**
 	 * Set the value of [ca_volumen] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaVolumen($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_volumen !== $v) {
 			$this->ca_volumen = $v;
 			$this->modifiedColumns[] = RepExpoPeer::CA_VOLUMEN;
 		}
 
+		return $this;
 	} // setCaVolumen()
 
 	/**
 	 * Set the value of [ca_piezas] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaPiezas($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_piezas !== $v) {
@@ -367,21 +364,19 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_PIEZAS;
 		}
 
+		return $this;
 	} // setCaPiezas()
 
 	/**
 	 * Set the value of [ca_dimensiones] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaDimensiones($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_dimensiones !== $v) {
@@ -389,37 +384,39 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_DIMENSIONES;
 		}
 
+		return $this;
 	} // setCaDimensiones()
 
 	/**
 	 * Set the value of [ca_valorcarga] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaValorcarga($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_valorcarga !== $v) {
 			$this->ca_valorcarga = $v;
 			$this->modifiedColumns[] = RepExpoPeer::CA_VALORCARGA;
 		}
 
+		return $this;
 	} // setCaValorcarga()
 
 	/**
 	 * Set the value of [ca_anticipo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaAnticipo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_anticipo !== $v) {
@@ -427,20 +424,18 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_ANTICIPO;
 		}
 
+		return $this;
 	} // setCaAnticipo()
 
 	/**
 	 * Set the value of [ca_idsia] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaIdsia($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -449,20 +444,18 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_IDSIA;
 		}
 
+		return $this;
 	} // setCaIdsia()
 
 	/**
 	 * Set the value of [ca_tipoexpo] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaTipoexpo($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -471,20 +464,18 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_TIPOEXPO;
 		}
 
+		return $this;
 	} // setCaTipoexpo()
 
 	/**
 	 * Set the value of [ca_idlineaterrestre] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaIdlineaterrestre($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -493,21 +484,19 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_IDLINEATERRESTRE;
 		}
 
+		return $this;
 	} // setCaIdlineaterrestre()
 
 	/**
 	 * Set the value of [ca_motonave] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaMotonave($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_motonave !== $v) {
@@ -515,21 +504,19 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_MOTONAVE;
 		}
 
+		return $this;
 	} // setCaMotonave()
 
 	/**
 	 * Set the value of [ca_emisionbl] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaEmisionbl($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_emisionbl !== $v) {
@@ -537,21 +524,19 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_EMISIONBL;
 		}
 
+		return $this;
 	} // setCaEmisionbl()
 
 	/**
 	 * Set the value of [ca_datosbl] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaDatosbl($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_datosbl !== $v) {
@@ -559,20 +544,18 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_DATOSBL;
 		}
 
+		return $this;
 	} // setCaDatosbl()
 
 	/**
 	 * Set the value of [ca_numbl] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 */
 	public function setCaNumbl($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -581,56 +564,67 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepExpoPeer::CA_NUMBL;
 		}
 
+		return $this;
 	} // setCaNumbl()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idreporte = $rs->getInt($startcol + 0);
-
-			$this->ca_peso = $rs->getFloat($startcol + 1);
-
-			$this->ca_volumen = $rs->getFloat($startcol + 2);
-
-			$this->ca_piezas = $rs->getString($startcol + 3);
-
-			$this->ca_dimensiones = $rs->getString($startcol + 4);
-
-			$this->ca_valorcarga = $rs->getFloat($startcol + 5);
-
-			$this->ca_anticipo = $rs->getString($startcol + 6);
-
-			$this->ca_idsia = $rs->getInt($startcol + 7);
-
-			$this->ca_tipoexpo = $rs->getInt($startcol + 8);
-
-			$this->ca_idlineaterrestre = $rs->getInt($startcol + 9);
-
-			$this->ca_motonave = $rs->getString($startcol + 10);
-
-			$this->ca_emisionbl = $rs->getString($startcol + 11);
-
-			$this->ca_datosbl = $rs->getString($startcol + 12);
-
-			$this->ca_numbl = $rs->getInt($startcol + 13);
-
+			$this->ca_idreporte = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_peso = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_volumen = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_piezas = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_dimensiones = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_valorcarga = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_anticipo = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_idsia = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+			$this->ca_tipoexpo = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
+			$this->ca_idlineaterrestre = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+			$this->ca_motonave = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_emisionbl = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_datosbl = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_numbl = ($row[$startcol + 13] !== null) ? (int) $row[$startcol + 13] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 14; // 14 = RepExpoPeer::NUM_COLUMNS - RepExpoPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -641,83 +635,148 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aReporte !== null && $this->ca_idreporte !== $this->aReporte->getCaIdreporte()) {
+			$this->aReporte = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepExpoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = RepExpoPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aReporte = null;
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(RepExpoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(RepExpoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			RepExpoPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(RepExpoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(RepExpoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			RepExpoPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -725,7 +784,7 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aReporte !== null) {
-				if ($this->aReporte->isModified()) {
+				if ($this->aReporte->isModified() || $this->aReporte->isNew()) {
 					$affectedRows += $this->aReporte->save($con);
 				}
 				$this->setReporte($this->aReporte);
@@ -744,10 +803,12 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += RepExpoPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -841,14 +902,15 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = RepExpoPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -915,11 +977,12 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = RepExpoPeer::getFieldNames($keyType);
 		$result = array(
@@ -947,8 +1010,8 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -1022,8 +1085,9 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1126,6 +1190,8 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIdreporte($this->ca_idreporte);
+
 		$copyObj->setCaPeso($this->ca_peso);
 
 		$copyObj->setCaVolumen($this->ca_volumen);
@@ -1154,8 +1220,6 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaIdreporte(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -1201,48 +1265,62 @@ abstract class BaseRepExpo extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Reporte object.
 	 *
 	 * @param      Reporte $v
-	 * @return     void
+	 * @return     RepExpo The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setReporte($v)
+	public function setReporte(Reporte $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdreporte(NULL);
 		} else {
 			$this->setCaIdreporte($v->getCaIdreporte());
 		}
 
-
 		$this->aReporte = $v;
+
+		// Add binding for other direction of this 1:1 relationship.
+		if ($v !== null) {
+			$v->setRepExpo($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Reporte object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Reporte The associated Reporte object.
 	 * @throws     PropelException
 	 */
-	public function getReporte($con = null)
+	public function getReporte(PropelPDO $con = null)
 	{
 		if ($this->aReporte === null && ($this->ca_idreporte !== null)) {
-			// include the related Peer class
-			$this->aReporte = ReportePeer::retrieveByPK($this->ca_idreporte, $con);
-
-			/* The following can be used instead of the line above to
-			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = ReportePeer::retrieveByPK($this->ca_idreporte, $con);
-			   $obj->addReportes($this);
-			 */
+			$c = new Criteria(ReportePeer::DATABASE_NAME);
+			$c->add(ReportePeer::CA_IDREPORTE, $this->ca_idreporte);
+			$this->aReporte = ReportePeer::doSelectOne($c, $con);
+			// Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+			$this->aReporte->setRepExpo($this);
 		}
 		return $this->aReporte;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+		} // if ($deep)
+
+			$this->aReporte = null;
 	}
 
 } // BaseRepExpo

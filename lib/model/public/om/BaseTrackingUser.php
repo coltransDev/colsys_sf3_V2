@@ -10,6 +10,8 @@
 abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 
 
+  const PEER = 'TrackingUserPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_id field.
 	 * @var        int
 	 */
 	protected $ca_id;
-
 
 	/**
 	 * The value for the ca_email field.
@@ -32,13 +32,11 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	protected $ca_email;
 
-
 	/**
 	 * The value for the ca_blocked field.
 	 * @var        boolean
 	 */
 	protected $ca_blocked;
-
 
 	/**
 	 * The value for the ca_activation_code field.
@@ -46,27 +44,23 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	protected $ca_activation_code;
 
-
 	/**
 	 * The value for the ca_passwd field.
 	 * @var        string
 	 */
 	protected $ca_passwd;
 
-
 	/**
 	 * The value for the ca_password_expiry field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_password_expiry;
-
 
 	/**
 	 * The value for the ca_activated field.
 	 * @var        boolean
 	 */
 	protected $ca_activated;
-
 
 	/**
 	 * The value for the ca_idcontacto field.
@@ -80,16 +74,14 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	protected $aContacto;
 
 	/**
-	 * Collection to store aggregation of collTrackingUserLogs.
-	 * @var        array
+	 * @var        array TrackingUserLog[] Collection to store aggregation of TrackingUserLog objects.
 	 */
 	protected $collTrackingUserLogs;
 
 	/**
-	 * The criteria used to select the current contents of collTrackingUserLogs.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collTrackingUserLogs.
 	 */
-	protected $lastTrackingUserLogCriteria = null;
+	private $lastTrackingUserLogCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -106,13 +98,32 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseTrackingUser object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_id] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaId()
 	{
-
 		return $this->ca_id;
 	}
 
@@ -123,7 +134,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	public function getCaEmail()
 	{
-
 		return $this->ca_email;
 	}
 
@@ -134,7 +144,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	public function getCaBlocked()
 	{
-
 		return $this->ca_blocked;
 	}
 
@@ -145,7 +154,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	public function getCaActivationCode()
 	{
-
 		return $this->ca_activation_code;
 	}
 
@@ -156,38 +164,39 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	public function getCaPasswd()
 	{
-
 		return $this->ca_passwd;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_password_expiry] column value.
+	 * Get the [optionally formatted] temporal [ca_password_expiry] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaPasswordExpiry($format = 'Y-m-d')
 	{
-
-		if ($this->ca_password_expiry === null || $this->ca_password_expiry === '') {
+		if ($this->ca_password_expiry === null) {
 			return null;
-		} elseif (!is_int($this->ca_password_expiry)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_password_expiry);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_password_expiry] as date/time value: " . var_export($this->ca_password_expiry, true));
-			}
-		} else {
-			$ts = $this->ca_password_expiry;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_password_expiry);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_password_expiry, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -198,7 +207,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	public function getCaActivated()
 	{
-
 		return $this->ca_activated;
 	}
 
@@ -209,7 +217,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdcontacto()
 	{
-
 		return $this->ca_idcontacto;
 	}
 
@@ -217,14 +224,11 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 * Set the value of [ca_id] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     TrackingUser The current object (for fluent API support)
 	 */
 	public function setCaId($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -233,21 +237,19 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TrackingUserPeer::CA_ID;
 		}
 
+		return $this;
 	} // setCaId()
 
 	/**
 	 * Set the value of [ca_email] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TrackingUser The current object (for fluent API support)
 	 */
 	public function setCaEmail($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_email !== $v) {
@@ -255,37 +257,39 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TrackingUserPeer::CA_EMAIL;
 		}
 
+		return $this;
 	} // setCaEmail()
 
 	/**
 	 * Set the value of [ca_blocked] column.
 	 * 
 	 * @param      boolean $v new value
-	 * @return     void
+	 * @return     TrackingUser The current object (for fluent API support)
 	 */
 	public function setCaBlocked($v)
 	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
 
 		if ($this->ca_blocked !== $v) {
 			$this->ca_blocked = $v;
 			$this->modifiedColumns[] = TrackingUserPeer::CA_BLOCKED;
 		}
 
+		return $this;
 	} // setCaBlocked()
 
 	/**
 	 * Set the value of [ca_activation_code] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TrackingUser The current object (for fluent API support)
 	 */
 	public function setCaActivationCode($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_activation_code !== $v) {
@@ -293,21 +297,19 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TrackingUserPeer::CA_ACTIVATION_CODE;
 		}
 
+		return $this;
 	} // setCaActivationCode()
 
 	/**
 	 * Set the value of [ca_passwd] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TrackingUser The current object (for fluent API support)
 	 */
 	public function setCaPasswd($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_passwd !== $v) {
@@ -315,60 +317,87 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TrackingUserPeer::CA_PASSWD;
 		}
 
+		return $this;
 	} // setCaPasswd()
 
 	/**
-	 * Set the value of [ca_password_expiry] column.
+	 * Sets the value of [ca_password_expiry] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     TrackingUser The current object (for fluent API support)
 	 */
 	public function setCaPasswordExpiry($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_password_expiry] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_password_expiry !== $ts) {
-			$this->ca_password_expiry = $ts;
-			$this->modifiedColumns[] = TrackingUserPeer::CA_PASSWORD_EXPIRY;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_password_expiry !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_password_expiry !== null && $tmpDt = new DateTime($this->ca_password_expiry)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_password_expiry = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = TrackingUserPeer::CA_PASSWORD_EXPIRY;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaPasswordExpiry()
 
 	/**
 	 * Set the value of [ca_activated] column.
 	 * 
 	 * @param      boolean $v new value
-	 * @return     void
+	 * @return     TrackingUser The current object (for fluent API support)
 	 */
 	public function setCaActivated($v)
 	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
 
 		if ($this->ca_activated !== $v) {
 			$this->ca_activated = $v;
 			$this->modifiedColumns[] = TrackingUserPeer::CA_ACTIVATED;
 		}
 
+		return $this;
 	} // setCaActivated()
 
 	/**
 	 * Set the value of [ca_idcontacto] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     TrackingUser The current object (for fluent API support)
 	 */
 	public function setCaIdcontacto($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -381,44 +410,61 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			$this->aContacto = null;
 		}
 
+		return $this;
 	} // setCaIdcontacto()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_id = $rs->getInt($startcol + 0);
-
-			$this->ca_email = $rs->getString($startcol + 1);
-
-			$this->ca_blocked = $rs->getBoolean($startcol + 2);
-
-			$this->ca_activation_code = $rs->getString($startcol + 3);
-
-			$this->ca_passwd = $rs->getString($startcol + 4);
-
-			$this->ca_password_expiry = $rs->getDate($startcol + 5, null);
-
-			$this->ca_activated = $rs->getBoolean($startcol + 6);
-
-			$this->ca_idcontacto = $rs->getInt($startcol + 7);
-
+			$this->ca_id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_email = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_blocked = ($row[$startcol + 2] !== null) ? (boolean) $row[$startcol + 2] : null;
+			$this->ca_activation_code = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_passwd = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_password_expiry = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_activated = ($row[$startcol + 6] !== null) ? (boolean) $row[$startcol + 6] : null;
+			$this->ca_idcontacto = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 8; // 8 = TrackingUserPeer::NUM_COLUMNS - TrackingUserPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -429,83 +475,151 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aContacto !== null && $this->ca_idcontacto !== $this->aContacto->getCaIdcontacto()) {
+			$this->aContacto = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = TrackingUserPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aContacto = null;
+			$this->collTrackingUserLogs = null;
+			$this->lastTrackingUserLogCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME);
+			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			TrackingUserPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME);
+			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			TrackingUserPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -513,12 +627,15 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aContacto !== null) {
-				if ($this->aContacto->isModified()) {
+				if ($this->aContacto->isModified() || $this->aContacto->isNew()) {
 					$affectedRows += $this->aContacto->save($con);
 				}
 				$this->setContacto($this->aContacto);
 			}
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = TrackingUserPeer::CA_ID;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -534,11 +651,12 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += TrackingUserPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collTrackingUserLogs !== null) {
-				foreach($this->collTrackingUserLogs as $referrerFK) {
+				foreach ($this->collTrackingUserLogs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -546,6 +664,7 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -628,7 +747,7 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 
 
 				if ($this->collTrackingUserLogs !== null) {
-					foreach($this->collTrackingUserLogs as $referrerFK) {
+					foreach ($this->collTrackingUserLogs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -647,14 +766,15 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = TrackingUserPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -703,11 +823,12 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = TrackingUserPeer::getFieldNames($keyType);
 		$result = array(
@@ -729,8 +850,8 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -786,8 +907,9 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -898,8 +1020,10 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getTrackingUserLogs() as $relObj) {
-				$copyObj->addTrackingUserLog($relObj->copy($deepCopy));
+			foreach ($this->getTrackingUserLogs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addTrackingUserLog($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
@@ -907,7 +1031,7 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaId(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaId(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -953,81 +1077,98 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Contacto object.
 	 *
 	 * @param      Contacto $v
-	 * @return     void
+	 * @return     TrackingUser The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setContacto($v)
+	public function setContacto(Contacto $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdcontacto(NULL);
 		} else {
 			$this->setCaIdcontacto($v->getCaIdcontacto());
 		}
 
-
 		$this->aContacto = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Contacto object, it will not be re-added.
+		if ($v !== null) {
+			$v->addTrackingUser($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Contacto object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Contacto The associated Contacto object.
 	 * @throws     PropelException
 	 */
-	public function getContacto($con = null)
+	public function getContacto(PropelPDO $con = null)
 	{
 		if ($this->aContacto === null && ($this->ca_idcontacto !== null)) {
-			// include the related Peer class
-			$this->aContacto = ContactoPeer::retrieveByPK($this->ca_idcontacto, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(ContactoPeer::DATABASE_NAME);
+			$c->add(ContactoPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+			$this->aContacto = ContactoPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = ContactoPeer::retrieveByPK($this->ca_idcontacto, $con);
-			   $obj->addContactos($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aContacto->addTrackingUsers($this);
 			 */
 		}
 		return $this->aContacto;
 	}
 
 	/**
-	 * Temporary storage of collTrackingUserLogs to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collTrackingUserLogs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addTrackingUserLogs()
+	 */
+	public function clearTrackingUserLogs()
+	{
+		$this->collTrackingUserLogs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collTrackingUserLogs collection (array).
+	 *
+	 * By default this just sets the collTrackingUserLogs collection to an empty array (like clearcollTrackingUserLogs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initTrackingUserLogs()
 	{
-		if ($this->collTrackingUserLogs === null) {
-			$this->collTrackingUserLogs = array();
-		}
+		$this->collTrackingUserLogs = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TrackingUser has previously
-	 * been saved, it will retrieve related TrackingUserLogs from storage.
-	 * If this TrackingUser is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of TrackingUserLog objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TrackingUser has previously been saved, it will retrieve
+	 * related TrackingUserLogs from storage. If this TrackingUser is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array TrackingUserLog[]
 	 * @throws     PropelException
 	 */
-	public function getTrackingUserLogs($criteria = null, $con = null)
+	public function getTrackingUserLogs($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TrackingUserPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1039,7 +1180,7 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			   $this->collTrackingUserLogs = array();
 			} else {
 
-				$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->getCaEmail());
+				$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->ca_email);
 
 				TrackingUserLogPeer::addSelectColumns($criteria);
 				$this->collTrackingUserLogs = TrackingUserLogPeer::doSelect($criteria, $con);
@@ -1052,7 +1193,7 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->getCaEmail());
+				$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->ca_email);
 
 				TrackingUserLogPeer::addSelectColumns($criteria);
 				if (!isset($this->lastTrackingUserLogCriteria) || !$this->lastTrackingUserLogCriteria->equals($criteria)) {
@@ -1065,32 +1206,63 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related TrackingUserLogs.
+	 * Returns the number of related TrackingUserLog objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related TrackingUserLog objects.
 	 * @throws     PropelException
 	 */
-	public function countTrackingUserLogs($criteria = null, $distinct = false, $con = null)
+	public function countTrackingUserLogs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TrackingUserPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->getCaEmail());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return TrackingUserLogPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collTrackingUserLogs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->ca_email);
+
+				$count = TrackingUserLogPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(TrackingUserLogPeer::CA_EMAIL, $this->ca_email);
+
+				if (!isset($this->lastTrackingUserLogCriteria) || !$this->lastTrackingUserLogCriteria->equals($criteria)) {
+					$count = TrackingUserLogPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collTrackingUserLogs);
+				}
+			} else {
+				$count = count($this->collTrackingUserLogs);
+			}
+		}
+		$this->lastTrackingUserLogCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a TrackingUserLog object to this object
-	 * through the TrackingUserLog foreign key attribute
+	 * through the TrackingUserLog foreign key attribute.
 	 *
 	 * @param      TrackingUserLog $l TrackingUserLog
 	 * @return     void
@@ -1098,8 +1270,36 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	public function addTrackingUserLog(TrackingUserLog $l)
 	{
-		$this->collTrackingUserLogs[] = $l;
-		$l->setTrackingUser($this);
+		if ($this->collTrackingUserLogs === null) {
+			$this->initTrackingUserLogs();
+		}
+		if (!in_array($l, $this->collTrackingUserLogs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collTrackingUserLogs, $l);
+			$l->setTrackingUser($this);
+		}
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collTrackingUserLogs) {
+				foreach ((array) $this->collTrackingUserLogs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collTrackingUserLogs = null;
+			$this->aContacto = null;
 	}
 
 } // BaseTrackingUser

@@ -24,7 +24,6 @@ abstract class BaseFalaHeaderPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-
 	/** the column name for the CA_IDDOC field */
 	const CA_IDDOC = 'tb_falaheader.CA_IDDOC';
 
@@ -133,9 +132,19 @@ abstract class BaseFalaHeaderPeer {
 	/** the column name for the CA_USUANULADO field */
 	const CA_USUANULADO = 'tb_falaheader.CA_USUANULADO';
 
-	/** The PHP to DB Name Mapping */
-	private static $phpNameMap = null;
+	/**
+	 * An identiy map to hold any loaded instances of FalaHeader objects.
+	 * This must be public so that other peer classes can access this when hydrating from JOIN
+	 * queries.
+	 * @var        array FalaHeader[]
+	 */
+	public static $instances = array();
 
+	/**
+	 * The MapBuilder instance for this peer.
+	 * @var        MapBuilder
+	 */
+	private static $mapBuilder = null;
 
 	/**
 	 * holds an array of fieldnames
@@ -145,7 +154,8 @@ abstract class BaseFalaHeaderPeer {
 	 */
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIddoc', 'CaFechaCarpeta', 'CaArchivoOrigen', 'CaReporte', 'CaNumViaje', 'CaCodCarrier', 'CaCodigoPuertoPickup', 'CaCodigoPuertoDescarga', 'CaContainerMode', 'CaNombreProveedor', 'CaCampo59', 'CaCodigoProveedor', 'CaCampo61', 'CaMontoInvoiceMiles', 'CaProcesado', 'CaTrader', 'CaVendorId', 'CaVendorName', 'CaVendorAddr1', 'CaVendorCity', 'CaVendorCountry', 'CaEsd', 'CaLsd', 'CaIncoterms', 'CaPaymentTerms', 'CaProformaNumber', 'CaOrigin', 'CaDestination', 'CaTransShipPort', 'CaReqdDelivery', 'CaOrdenComments', 'CaManufacturerContact', 'CaManufacturerPhone', 'CaManufacturerFax', 'CaFchanulado', 'CaUsuanulado', ),
-		BasePeer::TYPE_COLNAME => array (FalaHeaderPeer::CA_IDDOC, FalaHeaderPeer::CA_FECHA_CARPETA, FalaHeaderPeer::CA_ARCHIVO_ORIGEN, FalaHeaderPeer::CA_REPORTE, FalaHeaderPeer::CA_NUM_VIAJE, FalaHeaderPeer::CA_COD_CARRIER, FalaHeaderPeer::CA_CODIGO_PUERTO_PICKUP, FalaHeaderPeer::CA_CODIGO_PUERTO_DESCARGA, FalaHeaderPeer::CA_CONTAINER_MODE, FalaHeaderPeer::CA_NOMBRE_PROVEEDOR, FalaHeaderPeer::CA_CAMPO_59, FalaHeaderPeer::CA_CODIGO_PROVEEDOR, FalaHeaderPeer::CA_CAMPO_61, FalaHeaderPeer::CA_MONTO_INVOICE_MILES, FalaHeaderPeer::CA_PROCESADO, FalaHeaderPeer::CA_TRADER, FalaHeaderPeer::CA_VENDOR_ID, FalaHeaderPeer::CA_VENDOR_NAME, FalaHeaderPeer::CA_VENDOR_ADDR1, FalaHeaderPeer::CA_VENDOR_CITY, FalaHeaderPeer::CA_VENDOR_COUNTRY, FalaHeaderPeer::CA_ESD, FalaHeaderPeer::CA_LSD, FalaHeaderPeer::CA_INCOTERMS, FalaHeaderPeer::CA_PAYMENT_TERMS, FalaHeaderPeer::CA_PROFORMA_NUMBER, FalaHeaderPeer::CA_ORIGIN, FalaHeaderPeer::CA_DESTINATION, FalaHeaderPeer::CA_TRANS_SHIP_PORT, FalaHeaderPeer::CA_REQD_DELIVERY, FalaHeaderPeer::CA_ORDEN_COMMENTS, FalaHeaderPeer::CA_MANUFACTURER_CONTACT, FalaHeaderPeer::CA_MANUFACTURER_PHONE, FalaHeaderPeer::CA_MANUFACTURER_FAX, FalaHeaderPeer::CA_FCHANULADO, FalaHeaderPeer::CA_USUANULADO, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIddoc', 'caFechaCarpeta', 'caArchivoOrigen', 'caReporte', 'caNumViaje', 'caCodCarrier', 'caCodigoPuertoPickup', 'caCodigoPuertoDescarga', 'caContainerMode', 'caNombreProveedor', 'caCampo59', 'caCodigoProveedor', 'caCampo61', 'caMontoInvoiceMiles', 'caProcesado', 'caTrader', 'caVendorId', 'caVendorName', 'caVendorAddr1', 'caVendorCity', 'caVendorCountry', 'caEsd', 'caLsd', 'caIncoterms', 'caPaymentTerms', 'caProformaNumber', 'caOrigin', 'caDestination', 'caTransShipPort', 'caReqdDelivery', 'caOrdenComments', 'caManufacturerContact', 'caManufacturerPhone', 'caManufacturerFax', 'caFchanulado', 'caUsuanulado', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDDOC, self::CA_FECHA_CARPETA, self::CA_ARCHIVO_ORIGEN, self::CA_REPORTE, self::CA_NUM_VIAJE, self::CA_COD_CARRIER, self::CA_CODIGO_PUERTO_PICKUP, self::CA_CODIGO_PUERTO_DESCARGA, self::CA_CONTAINER_MODE, self::CA_NOMBRE_PROVEEDOR, self::CA_CAMPO_59, self::CA_CODIGO_PROVEEDOR, self::CA_CAMPO_61, self::CA_MONTO_INVOICE_MILES, self::CA_PROCESADO, self::CA_TRADER, self::CA_VENDOR_ID, self::CA_VENDOR_NAME, self::CA_VENDOR_ADDR1, self::CA_VENDOR_CITY, self::CA_VENDOR_COUNTRY, self::CA_ESD, self::CA_LSD, self::CA_INCOTERMS, self::CA_PAYMENT_TERMS, self::CA_PROFORMA_NUMBER, self::CA_ORIGIN, self::CA_DESTINATION, self::CA_TRANS_SHIP_PORT, self::CA_REQD_DELIVERY, self::CA_ORDEN_COMMENTS, self::CA_MANUFACTURER_CONTACT, self::CA_MANUFACTURER_PHONE, self::CA_MANUFACTURER_FAX, self::CA_FCHANULADO, self::CA_USUANULADO, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_iddoc', 'ca_fecha_carpeta', 'ca_archivo_origen', 'ca_reporte', 'ca_num_viaje', 'ca_cod_carrier', 'ca_codigo_puerto_pickup', 'ca_codigo_puerto_descarga', 'ca_container_mode', 'ca_nombre_proveedor', 'ca_campo_59', 'ca_codigo_proveedor', 'ca_campo_61', 'ca_monto_invoice_miles', 'ca_procesado', 'ca_trader', 'ca_vendor_id', 'ca_vendor_name', 'ca_vendor_addr1', 'ca_vendor_city', 'ca_vendor_country', 'ca_esd', 'ca_lsd', 'ca_incoterms', 'ca_payment_terms', 'ca_proforma_number', 'ca_origin', 'ca_destination', 'ca_trans_ship_port', 'ca_reqd_delivery', 'ca_orden_comments', 'ca_manufacturer_contact', 'ca_manufacturer_phone', 'ca_manufacturer_fax', 'ca_fchanulado', 'ca_usuanulado', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, )
 	);
@@ -158,49 +168,32 @@ abstract class BaseFalaHeaderPeer {
 	 */
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIddoc' => 0, 'CaFechaCarpeta' => 1, 'CaArchivoOrigen' => 2, 'CaReporte' => 3, 'CaNumViaje' => 4, 'CaCodCarrier' => 5, 'CaCodigoPuertoPickup' => 6, 'CaCodigoPuertoDescarga' => 7, 'CaContainerMode' => 8, 'CaNombreProveedor' => 9, 'CaCampo59' => 10, 'CaCodigoProveedor' => 11, 'CaCampo61' => 12, 'CaMontoInvoiceMiles' => 13, 'CaProcesado' => 14, 'CaTrader' => 15, 'CaVendorId' => 16, 'CaVendorName' => 17, 'CaVendorAddr1' => 18, 'CaVendorCity' => 19, 'CaVendorCountry' => 20, 'CaEsd' => 21, 'CaLsd' => 22, 'CaIncoterms' => 23, 'CaPaymentTerms' => 24, 'CaProformaNumber' => 25, 'CaOrigin' => 26, 'CaDestination' => 27, 'CaTransShipPort' => 28, 'CaReqdDelivery' => 29, 'CaOrdenComments' => 30, 'CaManufacturerContact' => 31, 'CaManufacturerPhone' => 32, 'CaManufacturerFax' => 33, 'CaFchanulado' => 34, 'CaUsuanulado' => 35, ),
-		BasePeer::TYPE_COLNAME => array (FalaHeaderPeer::CA_IDDOC => 0, FalaHeaderPeer::CA_FECHA_CARPETA => 1, FalaHeaderPeer::CA_ARCHIVO_ORIGEN => 2, FalaHeaderPeer::CA_REPORTE => 3, FalaHeaderPeer::CA_NUM_VIAJE => 4, FalaHeaderPeer::CA_COD_CARRIER => 5, FalaHeaderPeer::CA_CODIGO_PUERTO_PICKUP => 6, FalaHeaderPeer::CA_CODIGO_PUERTO_DESCARGA => 7, FalaHeaderPeer::CA_CONTAINER_MODE => 8, FalaHeaderPeer::CA_NOMBRE_PROVEEDOR => 9, FalaHeaderPeer::CA_CAMPO_59 => 10, FalaHeaderPeer::CA_CODIGO_PROVEEDOR => 11, FalaHeaderPeer::CA_CAMPO_61 => 12, FalaHeaderPeer::CA_MONTO_INVOICE_MILES => 13, FalaHeaderPeer::CA_PROCESADO => 14, FalaHeaderPeer::CA_TRADER => 15, FalaHeaderPeer::CA_VENDOR_ID => 16, FalaHeaderPeer::CA_VENDOR_NAME => 17, FalaHeaderPeer::CA_VENDOR_ADDR1 => 18, FalaHeaderPeer::CA_VENDOR_CITY => 19, FalaHeaderPeer::CA_VENDOR_COUNTRY => 20, FalaHeaderPeer::CA_ESD => 21, FalaHeaderPeer::CA_LSD => 22, FalaHeaderPeer::CA_INCOTERMS => 23, FalaHeaderPeer::CA_PAYMENT_TERMS => 24, FalaHeaderPeer::CA_PROFORMA_NUMBER => 25, FalaHeaderPeer::CA_ORIGIN => 26, FalaHeaderPeer::CA_DESTINATION => 27, FalaHeaderPeer::CA_TRANS_SHIP_PORT => 28, FalaHeaderPeer::CA_REQD_DELIVERY => 29, FalaHeaderPeer::CA_ORDEN_COMMENTS => 30, FalaHeaderPeer::CA_MANUFACTURER_CONTACT => 31, FalaHeaderPeer::CA_MANUFACTURER_PHONE => 32, FalaHeaderPeer::CA_MANUFACTURER_FAX => 33, FalaHeaderPeer::CA_FCHANULADO => 34, FalaHeaderPeer::CA_USUANULADO => 35, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIddoc' => 0, 'caFechaCarpeta' => 1, 'caArchivoOrigen' => 2, 'caReporte' => 3, 'caNumViaje' => 4, 'caCodCarrier' => 5, 'caCodigoPuertoPickup' => 6, 'caCodigoPuertoDescarga' => 7, 'caContainerMode' => 8, 'caNombreProveedor' => 9, 'caCampo59' => 10, 'caCodigoProveedor' => 11, 'caCampo61' => 12, 'caMontoInvoiceMiles' => 13, 'caProcesado' => 14, 'caTrader' => 15, 'caVendorId' => 16, 'caVendorName' => 17, 'caVendorAddr1' => 18, 'caVendorCity' => 19, 'caVendorCountry' => 20, 'caEsd' => 21, 'caLsd' => 22, 'caIncoterms' => 23, 'caPaymentTerms' => 24, 'caProformaNumber' => 25, 'caOrigin' => 26, 'caDestination' => 27, 'caTransShipPort' => 28, 'caReqdDelivery' => 29, 'caOrdenComments' => 30, 'caManufacturerContact' => 31, 'caManufacturerPhone' => 32, 'caManufacturerFax' => 33, 'caFchanulado' => 34, 'caUsuanulado' => 35, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDDOC => 0, self::CA_FECHA_CARPETA => 1, self::CA_ARCHIVO_ORIGEN => 2, self::CA_REPORTE => 3, self::CA_NUM_VIAJE => 4, self::CA_COD_CARRIER => 5, self::CA_CODIGO_PUERTO_PICKUP => 6, self::CA_CODIGO_PUERTO_DESCARGA => 7, self::CA_CONTAINER_MODE => 8, self::CA_NOMBRE_PROVEEDOR => 9, self::CA_CAMPO_59 => 10, self::CA_CODIGO_PROVEEDOR => 11, self::CA_CAMPO_61 => 12, self::CA_MONTO_INVOICE_MILES => 13, self::CA_PROCESADO => 14, self::CA_TRADER => 15, self::CA_VENDOR_ID => 16, self::CA_VENDOR_NAME => 17, self::CA_VENDOR_ADDR1 => 18, self::CA_VENDOR_CITY => 19, self::CA_VENDOR_COUNTRY => 20, self::CA_ESD => 21, self::CA_LSD => 22, self::CA_INCOTERMS => 23, self::CA_PAYMENT_TERMS => 24, self::CA_PROFORMA_NUMBER => 25, self::CA_ORIGIN => 26, self::CA_DESTINATION => 27, self::CA_TRANS_SHIP_PORT => 28, self::CA_REQD_DELIVERY => 29, self::CA_ORDEN_COMMENTS => 30, self::CA_MANUFACTURER_CONTACT => 31, self::CA_MANUFACTURER_PHONE => 32, self::CA_MANUFACTURER_FAX => 33, self::CA_FCHANULADO => 34, self::CA_USUANULADO => 35, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_iddoc' => 0, 'ca_fecha_carpeta' => 1, 'ca_archivo_origen' => 2, 'ca_reporte' => 3, 'ca_num_viaje' => 4, 'ca_cod_carrier' => 5, 'ca_codigo_puerto_pickup' => 6, 'ca_codigo_puerto_descarga' => 7, 'ca_container_mode' => 8, 'ca_nombre_proveedor' => 9, 'ca_campo_59' => 10, 'ca_codigo_proveedor' => 11, 'ca_campo_61' => 12, 'ca_monto_invoice_miles' => 13, 'ca_procesado' => 14, 'ca_trader' => 15, 'ca_vendor_id' => 16, 'ca_vendor_name' => 17, 'ca_vendor_addr1' => 18, 'ca_vendor_city' => 19, 'ca_vendor_country' => 20, 'ca_esd' => 21, 'ca_lsd' => 22, 'ca_incoterms' => 23, 'ca_payment_terms' => 24, 'ca_proforma_number' => 25, 'ca_origin' => 26, 'ca_destination' => 27, 'ca_trans_ship_port' => 28, 'ca_reqd_delivery' => 29, 'ca_orden_comments' => 30, 'ca_manufacturer_contact' => 31, 'ca_manufacturer_phone' => 32, 'ca_manufacturer_fax' => 33, 'ca_fchanulado' => 34, 'ca_usuanulado' => 35, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, )
 	);
 
 	/**
-	 * @return     MapBuilder the map builder for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
+	 * Get a (singleton) instance of the MapBuilder for this peer class.
+	 * @return     MapBuilder The map builder for this peer
 	 */
 	public static function getMapBuilder()
 	{
-		return BasePeer::getMapBuilder('lib.model.falabella.map.FalaHeaderMapBuilder');
-	}
-	/**
-	 * Gets a map (hash) of PHP names to DB column names.
-	 *
-	 * @return     array The PHP to DB name map for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @deprecated Use the getFieldNames() and translateFieldName() methods instead of this.
-	 */
-	public static function getPhpNameMap()
-	{
-		if (self::$phpNameMap === null) {
-			$map = FalaHeaderPeer::getTableMap();
-			$columns = $map->getColumns();
-			$nameMap = array();
-			foreach ($columns as $column) {
-				$nameMap[$column->getPhpName()] = $column->getColumnName();
-			}
-			self::$phpNameMap = $nameMap;
+		if (self::$mapBuilder === null) {
+			self::$mapBuilder = new FalaHeaderMapBuilder();
 		}
-		return self::$phpNameMap;
+		return self::$mapBuilder;
 	}
 	/**
 	 * Translates a fieldname to another type
 	 *
 	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants TYPE_PHPNAME,
-	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -213,18 +206,18 @@ abstract class BaseFalaHeaderPeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants TYPE_PHPNAME,
-	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     array A list of field names
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
 		if (!array_key_exists($type, self::$fieldNames)) {
-			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
+			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
 		}
 		return self::$fieldNames[$type];
 	}
@@ -334,54 +327,60 @@ abstract class BaseFalaHeaderPeer {
 
 	}
 
-	const COUNT = 'COUNT(tb_falaheader.CA_IDDOC)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_falaheader.CA_IDDOC)';
-
 	/**
 	 * Returns the number of rows matching criteria.
 	 *
 	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCount(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we're going to modify criteria, so copy it first
+		// we may modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(FalaHeaderPeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(FalaHeaderPeer::COUNT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(FalaHeaderPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
 		}
 
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
+		if (!$criteria->hasSelectClause()) {
+			FalaHeaderPeer::addSelectColumns($criteria);
 		}
 
-		$rs = FalaHeaderPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
+
+		if ($con === null) {
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
+
+		// BasePeer returns a PDOStatement
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
 	}
 	/**
 	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     FalaHeader
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectOne(Criteria $criteria, $con = null)
+	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
@@ -395,36 +394,35 @@ abstract class BaseFalaHeaderPeer {
 	 * Method to do selects.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     array Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelect(Criteria $criteria, $con = null)
+	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
-		return FalaHeaderPeer::populateObjects(FalaHeaderPeer::doSelectRS($criteria, $con));
+		return FalaHeaderPeer::populateObjects(FalaHeaderPeer::doSelectStmt($criteria, $con));
 	}
 	/**
-	 * Prepares the Criteria object and uses the parent doSelect()
-	 * method to get a ResultSet.
+	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
 	 *
-	 * Use this method directly if you want to just get the resultset
-	 * (instead of an array of objects).
+	 * Use this method directly if you want to work with an executed statement durirectly (for example
+	 * to perform your own object hydration).
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con The connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return     ResultSet The resultset object with numerically-indexed fields.
+	 * @return     PDOStatement The executed PDOStatement object.
 	 * @see        BasePeer::doSelect()
 	 */
-	public static function doSelectRS(Criteria $criteria, $con = null)
+	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		if (!$criteria->getSelectColumns()) {
+		if (!$criteria->hasSelectClause()) {
 			$criteria = clone $criteria;
 			FalaHeaderPeer::addSelectColumns($criteria);
 		}
@@ -432,10 +430,107 @@ abstract class BaseFalaHeaderPeer {
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a Creole ResultSet, set to return
-		// rows indexed numerically.
+		// BasePeer returns a PDOStatement
 		return BasePeer::doSelect($criteria, $con);
 	}
+	/**
+	 * Adds an object to the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doSelect*()
+	 * methods in your stub classes -- you may need to explicitly add objects
+	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
+	 * and retrieveByPK*() calls.
+	 *
+	 * @param      FalaHeader $value A FalaHeader object.
+	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
+	 */
+	public static function addInstanceToPool(FalaHeader $obj, $key = null)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if ($key === null) {
+				$key = (string) $obj->getCaIddoc();
+			} // if key === null
+			self::$instances[$key] = $obj;
+		}
+	}
+
+	/**
+	 * Removes an object from the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doDelete
+	 * methods in your stub classes -- you may need to explicitly remove objects
+	 * from the cache in order to prevent returning objects that no longer exist.
+	 *
+	 * @param      mixed $value A FalaHeader object or a primary key value.
+	 */
+	public static function removeInstanceFromPool($value)
+	{
+		if (Propel::isInstancePoolingEnabled() && $value !== null) {
+			if (is_object($value) && $value instanceof FalaHeader) {
+				$key = (string) $value->getCaIddoc();
+			} elseif (is_scalar($value)) {
+				// assume we've been passed a primary key
+				$key = (string) $value;
+			} else {
+				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or FalaHeader object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+				throw $e;
+			}
+
+			unset(self::$instances[$key]);
+		}
+	} // removeInstanceFromPool()
+
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
+	 * @return     FalaHeader Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+	 * @see        getPrimaryKeyHash()
+	 */
+	public static function getInstanceFromPool($key)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if (isset(self::$instances[$key])) {
+				return self::$instances[$key];
+			}
+		}
+		return null; // just to be explicit
+	}
+	
+	/**
+	 * Clear the instance pool.
+	 *
+	 * @return     void
+	 */
+	public static function clearInstancePool()
+	{
+		self::$instances = array();
+	}
+	
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      array $row PropelPDO resultset row.
+	 * @param      int $startcol The 0-based offset for reading from the resultset row.
+	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
+	 */
+	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
+	{
+		// If the PK cannot be derived from the row, return NULL.
+		if ($row[$startcol + 0] === null) {
+			return null;
+		}
+		return (string) $row[$startcol + 0];
+	}
+
 	/**
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
@@ -443,21 +538,30 @@ abstract class BaseFalaHeaderPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function populateObjects(ResultSet $rs)
+	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
 		$cls = FalaHeaderPeer::getOMClass();
-		$cls = Propel::import($cls);
+		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key = FalaHeaderPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj = FalaHeaderPeer::getInstanceFromPool($key))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj->hydrate($row, 0, true); // rehydrate
+				$results[] = $obj;
+			} else {
 		
-			$obj = new $cls();
-			$obj->hydrate($rs);
-			$results[] = $obj;
-			
+				$obj = new $cls();
+				$obj->hydrate($row);
+				$results[] = $obj;
+				FalaHeaderPeer::addInstanceToPool($obj, $key);
+			} // if key exists
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -495,15 +599,15 @@ abstract class BaseFalaHeaderPeer {
 	 * Method perform an INSERT on the database, given a FalaHeader or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or FalaHeader object containing data that is used to create the INSERT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doInsert($values, $con = null)
+	public static function doInsert($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
@@ -519,11 +623,11 @@ abstract class BaseFalaHeaderPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table (I guess, conceivably)
-			$con->begin();
+			$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 
@@ -534,15 +638,15 @@ abstract class BaseFalaHeaderPeer {
 	 * Method perform an UPDATE on the database, given a FalaHeader or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or FalaHeader object containing data that is used to create the UPDATE statement.
-	 * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
+	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doUpdate($values, $con = null)
+	public static function doUpdate($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -572,18 +676,18 @@ abstract class BaseFalaHeaderPeer {
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(FalaHeaderPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -593,27 +697,43 @@ abstract class BaseFalaHeaderPeer {
 	 *
 	 * @param      mixed $values Criteria or FalaHeader object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
 	 *				if supported by native driver or if emulated using Propel.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	 public static function doDelete($values, $con = null)
+	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} elseif ($values instanceof FalaHeader) {
+			// invalidate the cache for all objects of this type, since we have no
+			// way of knowing (without running a query) what objects should be invalidated
+			// from the cache based on this Criteria.
+			FalaHeaderPeer::clearInstancePool();
 
+			// rename for clarity
+			$criteria = clone $values;
+		} elseif ($values instanceof FalaHeader) {
+			// invalidate the cache for this single object
+			FalaHeaderPeer::removeInstanceFromPool($values);
+			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else {
 			// it must be the primary key
+
+
+
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(FalaHeaderPeer::CA_IDDOC, (array) $values, Criteria::IN);
+
+			foreach ((array) $values as $singleval) {
+				// we can invalidate the cache for this single object
+				FalaHeaderPeer::removeInstanceFromPool($singleval);
+			}
 		}
 
 		// Set the correct dbName
@@ -624,13 +744,14 @@ abstract class BaseFalaHeaderPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
+
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -659,7 +780,7 @@ abstract class BaseFalaHeaderPeer {
 				$cols = array($cols);
 			}
 
-			foreach($cols as $colName) {
+			foreach ($cols as $colName) {
 				if ($tableMap->containsColumn($colName)) {
 					$get = 'get' . $tableMap->getColumn($colName)->getPhpName();
 					$columns[$colName] = $obj->$get();
@@ -674,7 +795,6 @@ abstract class BaseFalaHeaderPeer {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
             $col = FalaHeaderPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
-            $request->setError($col, $failed->getMessage());
         }
     }
 
@@ -684,20 +804,23 @@ abstract class BaseFalaHeaderPeer {
 	/**
 	 * Retrieve a single object by pkey.
 	 *
-	 * @param      mixed $pk the primary key.
-	 * @param      Connection $con the connection to use
+	 * @param      string $pk the primary key.
+	 * @param      PropelPDO $con the connection to use
 	 * @return     FalaHeader
 	 */
-	public static function retrieveByPK($pk, $con = null)
+	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
+
+		if (null !== ($obj = FalaHeaderPeer::getInstanceFromPool((string) $pk))) {
+			return $obj;
+		}
+
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$criteria = new Criteria(FalaHeaderPeer::DATABASE_NAME);
-
 		$criteria->add(FalaHeaderPeer::CA_IDDOC, $pk);
-
 
 		$v = FalaHeaderPeer::doSelect($criteria, $con);
 
@@ -708,21 +831,21 @@ abstract class BaseFalaHeaderPeer {
 	 * Retrieve multiple objects by pkey.
 	 *
 	 * @param      array $pks List of primary keys
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function retrieveByPKs($pks, $con = null)
+	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$objs = null;
 		if (empty($pks)) {
 			$objs = array();
 		} else {
-			$criteria = new Criteria();
+			$criteria = new Criteria(FalaHeaderPeer::DATABASE_NAME);
 			$criteria->add(FalaHeaderPeer::CA_IDDOC, $pks, Criteria::IN);
 			$objs = FalaHeaderPeer::doSelect($criteria, $con);
 		}
@@ -731,17 +854,14 @@ abstract class BaseFalaHeaderPeer {
 
 } // BaseFalaHeaderPeer
 
-// static code to register the map builder for this Peer with the main Propel class
-if (Propel::isInit()) {
-	// the MapBuilder classes register themselves with Propel during initialization
-	// so we need to load them here.
-	try {
-		BaseFalaHeaderPeer::getMapBuilder();
-	} catch (Exception $e) {
-		Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
-	}
-} else {
-	// even if Propel is not yet initialized, the map builder class can be registered
-	// now and then it will be loaded when Propel initializes.
-	Propel::registerMapBuilder('lib.model.falabella.map.FalaHeaderMapBuilder');
-}
+// This is the static code needed to register the MapBuilder for this table with the main Propel class.
+//
+// NOTE: This static code cannot call methods on the FalaHeaderPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the FalaHeaderPeer class:
+//
+// Propel::getDatabaseMap(FalaHeaderPeer::DATABASE_NAME)->addTableBuilder(FalaHeaderPeer::TABLE_NAME, FalaHeaderPeer::getMapBuilder());
+//
+// Doing so will effectively overwrite the registration below.
+
+Propel::getDatabaseMap(BaseFalaHeaderPeer::DATABASE_NAME)->addTableBuilder(BaseFalaHeaderPeer::TABLE_NAME, BaseFalaHeaderPeer::getMapBuilder());
+

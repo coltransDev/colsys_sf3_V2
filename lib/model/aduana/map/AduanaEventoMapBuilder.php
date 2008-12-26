@@ -13,7 +13,7 @@
  *
  * @package    lib.model.aduana.map
  */
-class AduanaEventoMapBuilder {
+class AduanaEventoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,24 +54,25 @@ class AduanaEventoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(AduanaEventoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_brk_evento');
+		$tMap = $this->dbMap->addTable(AduanaEventoPeer::TABLE_NAME);
 		$tMap->setPhpName('AduanaEvento');
+		$tMap->setClassname('AduanaEvento');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'string' , CreoleTypes::VARCHAR, 'tb_brk_maestra', 'CA_REFERENCIA', true, null);
+		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'VARCHAR' , 'tb_brk_maestra', 'CA_REFERENCIA', true, null);
 
-		$tMap->addColumn('CA_REALIZADO', 'CaRealizado', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_REALIZADO', 'CaRealizado', 'INTEGER', false, null);
 
-		$tMap->addPrimaryKey('CA_IDEVENTO', 'CaIdevento', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDEVENTO', 'CaIdevento', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_USUARIO', 'CaUsuario', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUARIO', 'CaUsuario', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHEVENTO', 'CaFchevento', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHEVENTO', 'CaFchevento', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_NOTAS', 'CaNotas', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NOTAS', 'CaNotas', 'VARCHAR', false, null);
 
 	} // doBuild()
 

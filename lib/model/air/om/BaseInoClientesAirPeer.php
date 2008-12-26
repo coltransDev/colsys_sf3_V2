@@ -24,7 +24,6 @@ abstract class BaseInoClientesAirPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-
 	/** the column name for the CA_REFERENCIA field */
 	const CA_REFERENCIA = 'tb_inoclientes_air.CA_REFERENCIA';
 
@@ -73,9 +72,19 @@ abstract class BaseInoClientesAirPeer {
 	/** the column name for the CA_IDBODEGA field */
 	const CA_IDBODEGA = 'tb_inoclientes_air.CA_IDBODEGA';
 
-	/** The PHP to DB Name Mapping */
-	private static $phpNameMap = null;
+	/**
+	 * An identiy map to hold any loaded instances of InoClientesAir objects.
+	 * This must be public so that other peer classes can access this when hydrating from JOIN
+	 * queries.
+	 * @var        array InoClientesAir[]
+	 */
+	public static $instances = array();
 
+	/**
+	 * The MapBuilder instance for this peer.
+	 * @var        MapBuilder
+	 */
+	private static $mapBuilder = null;
 
 	/**
 	 * holds an array of fieldnames
@@ -85,7 +94,8 @@ abstract class BaseInoClientesAirPeer {
 	 */
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaReferencia', 'CaIdcliente', 'CaHawb', 'CaIdreporte', 'CaIdproveedor', 'CaProveedor', 'CaNumpiezas', 'CaPeso', 'CaVolumen', 'CaNumorden', 'CaLoginvendedor', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaIdbodega', ),
-		BasePeer::TYPE_COLNAME => array (InoClientesAirPeer::CA_REFERENCIA, InoClientesAirPeer::CA_IDCLIENTE, InoClientesAirPeer::CA_HAWB, InoClientesAirPeer::CA_IDREPORTE, InoClientesAirPeer::CA_IDPROVEEDOR, InoClientesAirPeer::CA_PROVEEDOR, InoClientesAirPeer::CA_NUMPIEZAS, InoClientesAirPeer::CA_PESO, InoClientesAirPeer::CA_VOLUMEN, InoClientesAirPeer::CA_NUMORDEN, InoClientesAirPeer::CA_LOGINVENDEDOR, InoClientesAirPeer::CA_FCHCREADO, InoClientesAirPeer::CA_USUCREADO, InoClientesAirPeer::CA_FCHACTUALIZADO, InoClientesAirPeer::CA_USUACTUALIZADO, InoClientesAirPeer::CA_IDBODEGA, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caReferencia', 'caIdcliente', 'caHawb', 'caIdreporte', 'caIdproveedor', 'caProveedor', 'caNumpiezas', 'caPeso', 'caVolumen', 'caNumorden', 'caLoginvendedor', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caIdbodega', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_REFERENCIA, self::CA_IDCLIENTE, self::CA_HAWB, self::CA_IDREPORTE, self::CA_IDPROVEEDOR, self::CA_PROVEEDOR, self::CA_NUMPIEZAS, self::CA_PESO, self::CA_VOLUMEN, self::CA_NUMORDEN, self::CA_LOGINVENDEDOR, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_IDBODEGA, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_referencia', 'ca_idcliente', 'ca_hawb', 'ca_idreporte', 'ca_idproveedor', 'ca_proveedor', 'ca_numpiezas', 'ca_peso', 'ca_volumen', 'ca_numorden', 'ca_loginvendedor', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_idbodega', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
@@ -98,49 +108,32 @@ abstract class BaseInoClientesAirPeer {
 	 */
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaReferencia' => 0, 'CaIdcliente' => 1, 'CaHawb' => 2, 'CaIdreporte' => 3, 'CaIdproveedor' => 4, 'CaProveedor' => 5, 'CaNumpiezas' => 6, 'CaPeso' => 7, 'CaVolumen' => 8, 'CaNumorden' => 9, 'CaLoginvendedor' => 10, 'CaFchcreado' => 11, 'CaUsucreado' => 12, 'CaFchactualizado' => 13, 'CaUsuactualizado' => 14, 'CaIdbodega' => 15, ),
-		BasePeer::TYPE_COLNAME => array (InoClientesAirPeer::CA_REFERENCIA => 0, InoClientesAirPeer::CA_IDCLIENTE => 1, InoClientesAirPeer::CA_HAWB => 2, InoClientesAirPeer::CA_IDREPORTE => 3, InoClientesAirPeer::CA_IDPROVEEDOR => 4, InoClientesAirPeer::CA_PROVEEDOR => 5, InoClientesAirPeer::CA_NUMPIEZAS => 6, InoClientesAirPeer::CA_PESO => 7, InoClientesAirPeer::CA_VOLUMEN => 8, InoClientesAirPeer::CA_NUMORDEN => 9, InoClientesAirPeer::CA_LOGINVENDEDOR => 10, InoClientesAirPeer::CA_FCHCREADO => 11, InoClientesAirPeer::CA_USUCREADO => 12, InoClientesAirPeer::CA_FCHACTUALIZADO => 13, InoClientesAirPeer::CA_USUACTUALIZADO => 14, InoClientesAirPeer::CA_IDBODEGA => 15, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caReferencia' => 0, 'caIdcliente' => 1, 'caHawb' => 2, 'caIdreporte' => 3, 'caIdproveedor' => 4, 'caProveedor' => 5, 'caNumpiezas' => 6, 'caPeso' => 7, 'caVolumen' => 8, 'caNumorden' => 9, 'caLoginvendedor' => 10, 'caFchcreado' => 11, 'caUsucreado' => 12, 'caFchactualizado' => 13, 'caUsuactualizado' => 14, 'caIdbodega' => 15, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_REFERENCIA => 0, self::CA_IDCLIENTE => 1, self::CA_HAWB => 2, self::CA_IDREPORTE => 3, self::CA_IDPROVEEDOR => 4, self::CA_PROVEEDOR => 5, self::CA_NUMPIEZAS => 6, self::CA_PESO => 7, self::CA_VOLUMEN => 8, self::CA_NUMORDEN => 9, self::CA_LOGINVENDEDOR => 10, self::CA_FCHCREADO => 11, self::CA_USUCREADO => 12, self::CA_FCHACTUALIZADO => 13, self::CA_USUACTUALIZADO => 14, self::CA_IDBODEGA => 15, ),
 		BasePeer::TYPE_FIELDNAME => array ('ca_referencia' => 0, 'ca_idcliente' => 1, 'ca_hawb' => 2, 'ca_idreporte' => 3, 'ca_idproveedor' => 4, 'ca_proveedor' => 5, 'ca_numpiezas' => 6, 'ca_peso' => 7, 'ca_volumen' => 8, 'ca_numorden' => 9, 'ca_loginvendedor' => 10, 'ca_fchcreado' => 11, 'ca_usucreado' => 12, 'ca_fchactualizado' => 13, 'ca_usuactualizado' => 14, 'ca_idbodega' => 15, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
 
 	/**
-	 * @return     MapBuilder the map builder for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
+	 * Get a (singleton) instance of the MapBuilder for this peer class.
+	 * @return     MapBuilder The map builder for this peer
 	 */
 	public static function getMapBuilder()
 	{
-		return BasePeer::getMapBuilder('lib.model.air.map.InoClientesAirMapBuilder');
-	}
-	/**
-	 * Gets a map (hash) of PHP names to DB column names.
-	 *
-	 * @return     array The PHP to DB name map for this peer
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @deprecated Use the getFieldNames() and translateFieldName() methods instead of this.
-	 */
-	public static function getPhpNameMap()
-	{
-		if (self::$phpNameMap === null) {
-			$map = InoClientesAirPeer::getTableMap();
-			$columns = $map->getColumns();
-			$nameMap = array();
-			foreach ($columns as $column) {
-				$nameMap[$column->getPhpName()] = $column->getColumnName();
-			}
-			self::$phpNameMap = $nameMap;
+		if (self::$mapBuilder === null) {
+			self::$mapBuilder = new InoClientesAirMapBuilder();
 		}
-		return self::$phpNameMap;
+		return self::$mapBuilder;
 	}
 	/**
 	 * Translates a fieldname to another type
 	 *
 	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants TYPE_PHPNAME,
-	 *                         TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @param      string $toType   One of the class type constants
 	 * @return     string translated name of the field.
+	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
 	 */
 	static public function translateFieldName($name, $fromType, $toType)
 	{
@@ -153,18 +146,18 @@ abstract class BaseInoClientesAirPeer {
 	}
 
 	/**
-	 * Returns an array of of field names.
+	 * Returns an array of field names.
 	 *
 	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants TYPE_PHPNAME,
-	 *                      TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     array A list of field names
 	 */
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
 		if (!array_key_exists($type, self::$fieldNames)) {
-			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
+			throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME, BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. ' . $type . ' was given.');
 		}
 		return self::$fieldNames[$type];
 	}
@@ -234,54 +227,60 @@ abstract class BaseInoClientesAirPeer {
 
 	}
 
-	const COUNT = 'COUNT(tb_inoclientes_air.CA_REFERENCIA)';
-	const COUNT_DISTINCT = 'COUNT(DISTINCT tb_inoclientes_air.CA_REFERENCIA)';
-
 	/**
 	 * Returns the number of rows matching criteria.
 	 *
 	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCount(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we're going to modify criteria, so copy it first
+		// we may modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT_DISTINCT);
-		} else {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(InoClientesAirPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
 		}
 
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
+		if (!$criteria->hasSelectClause()) {
+			InoClientesAirPeer::addSelectColumns($criteria);
 		}
 
-		$rs = InoClientesAirPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
+
+		// BasePeer returns a PDOStatement
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
 	}
 	/**
 	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     InoClientesAir
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectOne(Criteria $criteria, $con = null)
+	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
@@ -295,36 +294,35 @@ abstract class BaseInoClientesAirPeer {
 	 * Method to do selects.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     array Array of selected Objects
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelect(Criteria $criteria, $con = null)
+	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
-		return InoClientesAirPeer::populateObjects(InoClientesAirPeer::doSelectRS($criteria, $con));
+		return InoClientesAirPeer::populateObjects(InoClientesAirPeer::doSelectStmt($criteria, $con));
 	}
 	/**
-	 * Prepares the Criteria object and uses the parent doSelect()
-	 * method to get a ResultSet.
+	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
 	 *
-	 * Use this method directly if you want to just get the resultset
-	 * (instead of an array of objects).
+	 * Use this method directly if you want to work with an executed statement durirectly (for example
+	 * to perform your own object hydration).
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con The connection to use
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
-	 * @return     ResultSet The resultset object with numerically-indexed fields.
+	 * @return     PDOStatement The executed PDOStatement object.
 	 * @see        BasePeer::doSelect()
 	 */
-	public static function doSelectRS(Criteria $criteria, $con = null)
+	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		if (!$criteria->getSelectColumns()) {
+		if (!$criteria->hasSelectClause()) {
 			$criteria = clone $criteria;
 			InoClientesAirPeer::addSelectColumns($criteria);
 		}
@@ -332,10 +330,107 @@ abstract class BaseInoClientesAirPeer {
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a Creole ResultSet, set to return
-		// rows indexed numerically.
+		// BasePeer returns a PDOStatement
 		return BasePeer::doSelect($criteria, $con);
 	}
+	/**
+	 * Adds an object to the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doSelect*()
+	 * methods in your stub classes -- you may need to explicitly add objects
+	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
+	 * and retrieveByPK*() calls.
+	 *
+	 * @param      InoClientesAir $value A InoClientesAir object.
+	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
+	 */
+	public static function addInstanceToPool(InoClientesAir $obj, $key = null)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if ($key === null) {
+				$key = serialize(array((string) $obj->getCaReferencia(), (string) $obj->getCaIdcliente(), (string) $obj->getCaHawb()));
+			} // if key === null
+			self::$instances[$key] = $obj;
+		}
+	}
+
+	/**
+	 * Removes an object from the instance pool.
+	 *
+	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
+	 * from the database.  In some cases -- especially when you override doDelete
+	 * methods in your stub classes -- you may need to explicitly remove objects
+	 * from the cache in order to prevent returning objects that no longer exist.
+	 *
+	 * @param      mixed $value A InoClientesAir object or a primary key value.
+	 */
+	public static function removeInstanceFromPool($value)
+	{
+		if (Propel::isInstancePoolingEnabled() && $value !== null) {
+			if (is_object($value) && $value instanceof InoClientesAir) {
+				$key = serialize(array((string) $value->getCaReferencia(), (string) $value->getCaIdcliente(), (string) $value->getCaHawb()));
+			} elseif (is_array($value) && count($value) === 3) {
+				// assume we've been passed a primary key
+				$key = serialize(array((string) $value[0], (string) $value[1], (string) $value[2]));
+			} else {
+				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or InoClientesAir object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+				throw $e;
+			}
+
+			unset(self::$instances[$key]);
+		}
+	} // removeInstanceFromPool()
+
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
+	 * @return     InoClientesAir Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+	 * @see        getPrimaryKeyHash()
+	 */
+	public static function getInstanceFromPool($key)
+	{
+		if (Propel::isInstancePoolingEnabled()) {
+			if (isset(self::$instances[$key])) {
+				return self::$instances[$key];
+			}
+		}
+		return null; // just to be explicit
+	}
+	
+	/**
+	 * Clear the instance pool.
+	 *
+	 * @return     void
+	 */
+	public static function clearInstancePool()
+	{
+		self::$instances = array();
+	}
+	
+	/**
+	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
+	 *
+	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
+	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
+	 *
+	 * @param      array $row PropelPDO resultset row.
+	 * @param      int $startcol The 0-based offset for reading from the resultset row.
+	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
+	 */
+	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
+	{
+		// If the PK cannot be derived from the row, return NULL.
+		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null && $row[$startcol + 2] === null) {
+			return null;
+		}
+		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1], (string) $row[$startcol + 2]));
+	}
+
 	/**
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
@@ -343,21 +438,30 @@ abstract class BaseInoClientesAirPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function populateObjects(ResultSet $rs)
+	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
 		$cls = InoClientesAirPeer::getOMClass();
-		$cls = Propel::import($cls);
+		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key = InoClientesAirPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj = InoClientesAirPeer::getInstanceFromPool($key))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj->hydrate($row, 0, true); // rehydrate
+				$results[] = $obj;
+			} else {
 		
-			$obj = new $cls();
-			$obj->hydrate($rs);
-			$results[] = $obj;
-			
+				$obj = new $cls();
+				$obj->hydrate($row);
+				$results[] = $obj;
+				InoClientesAirPeer::addInstanceToPool($obj, $key);
+			} // if key exists
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -365,38 +469,49 @@ abstract class BaseInoClientesAirPeer {
 	 * Returns the number of rows matching criteria, joining the related Reporte table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinReporte(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinReporte(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(InoClientesAirPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesAirPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(InoClientesAirPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(InoClientesAirPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$rs = InoClientesAirPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
@@ -404,38 +519,49 @@ abstract class BaseInoClientesAirPeer {
 	 * Returns the number of rows matching criteria, joining the related Tercero table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinTercero(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinTercero(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(InoClientesAirPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesAirPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(InoClientesAirPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(InoClientesAirPeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO);
-
-		$rs = InoClientesAirPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
@@ -443,49 +569,62 @@ abstract class BaseInoClientesAirPeer {
 	 * Returns the number of rows matching criteria, joining the related InoMaestraAir table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinInoMaestraAir(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinInoMaestraAir(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(InoClientesAirPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesAirPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(InoClientesAirPeer::CA_REFERENCIA,), array(InoMaestraAirPeer::CA_REFERENCIA,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA);
-
-		$rs = InoClientesAirPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
 	/**
 	 * Selects a collection of InoClientesAir objects pre-filled with their Reporte objects.
-	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of InoClientesAir objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinReporte(Criteria $c, $con = null)
+	public static function doSelectJoinReporte(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -495,55 +634,64 @@ abstract class BaseInoClientesAirPeer {
 		}
 
 		InoClientesAirPeer::addSelectColumns($c);
-		$startcol = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS);
 		ReportePeer::addSelectColumns($c);
 
-		$c->addJoin(InoClientesAirPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(InoClientesAirPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesAirPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesAirPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
 
-			$omClass = InoClientesAirPeer::getOMClass();
+				$omClass = InoClientesAirPeer::getOMClass();
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesAirPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
 
-			$omClass = ReportePeer::getOMClass();
+			$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = ReportePeer::getInstanceFromPool($key2);
+				if (!$obj2) {
 
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
+					$omClass = ReportePeer::getOMClass();
 
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getReporte(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addInoClientesAir($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initInoClientesAirs();
-				$obj2->addInoClientesAir($obj1); //CHECKME
-			}
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (InoClientesAir) to $obj2 (Reporte)
+				$obj2->addInoClientesAir($obj1);
+
+			} // if joined row was not null
+
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
 
 	/**
 	 * Selects a collection of InoClientesAir objects pre-filled with their Tercero objects.
-	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of InoClientesAir objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinTercero(Criteria $c, $con = null)
+	public static function doSelectJoinTercero(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -553,55 +701,64 @@ abstract class BaseInoClientesAirPeer {
 		}
 
 		InoClientesAirPeer::addSelectColumns($c);
-		$startcol = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS);
 		TerceroPeer::addSelectColumns($c);
 
-		$c->addJoin(InoClientesAirPeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO);
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(InoClientesAirPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesAirPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesAirPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
 
-			$omClass = InoClientesAirPeer::getOMClass();
+				$omClass = InoClientesAirPeer::getOMClass();
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesAirPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
 
-			$omClass = TerceroPeer::getOMClass();
+			$key2 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = TerceroPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
 
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
+					$omClass = TerceroPeer::getOMClass();
 
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getTercero(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addInoClientesAir($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initInoClientesAirs();
-				$obj2->addInoClientesAir($obj1); //CHECKME
-			}
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					TerceroPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (InoClientesAir) to $obj2 (Tercero)
+				$obj2->addInoClientesAir($obj1);
+
+			} // if joined row was not null
+
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
 
 	/**
 	 * Selects a collection of InoClientesAir objects pre-filled with their InoMaestraAir objects.
-	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of InoClientesAir objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinInoMaestraAir(Criteria $c, $con = null)
+	public static function doSelectJoinInoMaestraAir(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -611,43 +768,50 @@ abstract class BaseInoClientesAirPeer {
 		}
 
 		InoClientesAirPeer::addSelectColumns($c);
-		$startcol = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS);
 		InoMaestraAirPeer::addSelectColumns($c);
 
-		$c->addJoin(InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA);
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(InoClientesAirPeer::CA_REFERENCIA,), array(InoMaestraAirPeer::CA_REFERENCIA,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesAirPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesAirPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
 
-			$omClass = InoClientesAirPeer::getOMClass();
+				$omClass = InoClientesAirPeer::getOMClass();
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesAirPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
 
-			$omClass = InoMaestraAirPeer::getOMClass();
+			$key2 = InoMaestraAirPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = InoMaestraAirPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
 
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol);
+					$omClass = InoMaestraAirPeer::getOMClass();
 
-			$newObject = true;
-			foreach($results as $temp_obj1) {
-				$temp_obj2 = $temp_obj1->getInoMaestraAir(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					// e.g. $author->addBookRelatedByBookId()
-					$temp_obj2->addInoClientesAir($obj1); //CHECKME
-					break;
-				}
-			}
-			if ($newObject) {
-				$obj2->initInoClientesAirs();
-				$obj2->addInoClientesAir($obj1); //CHECKME
-			}
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					InoMaestraAirPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (InoClientesAir) to $obj2 (InoMaestraAir)
+				$obj2->addInoClientesAir($obj1);
+
+			} // if joined row was not null
+
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -656,52 +820,63 @@ abstract class BaseInoClientesAirPeer {
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAll(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT_DISTINCT);
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(InoClientesAirPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesAirPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(InoClientesAirPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+		$criteria->addJoin(array(InoClientesAirPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+		$criteria->addJoin(array(InoClientesAirPeer::CA_REFERENCIA,), array(InoMaestraAirPeer::CA_REFERENCIA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(InoClientesAirPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$criteria->addJoin(InoClientesAirPeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO);
-
-		$criteria->addJoin(InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA);
-
-		$rs = InoClientesAirPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
-
 
 	/**
 	 * Selects a collection of InoClientesAir objects pre-filled with all related objects.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of InoClientesAir objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAll(Criteria $c, $con = null)
+	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -711,115 +886,101 @@ abstract class BaseInoClientesAirPeer {
 		}
 
 		InoClientesAirPeer::addSelectColumns($c);
-		$startcol2 = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		ReportePeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + ReportePeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
 
 		TerceroPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + TerceroPeer::NUM_COLUMNS;
+		$startcol4 = $startcol3 + (TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		InoMaestraAirPeer::addSelectColumns($c);
-		$startcol5 = $startcol4 + InoMaestraAirPeer::NUM_COLUMNS;
+		$startcol5 = $startcol4 + (InoMaestraAirPeer::NUM_COLUMNS - InoMaestraAirPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(InoClientesAirPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$c->addJoin(InoClientesAirPeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO);
-
-		$c->addJoin(InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA);
-
-		$rs = BasePeer::doSelect($c, $con);
+		$c->addJoin(array(InoClientesAirPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+		$c->addJoin(array(InoClientesAirPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+		$c->addJoin(array(InoClientesAirPeer::CA_REFERENCIA,), array(InoMaestraAirPeer::CA_REFERENCIA,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesAirPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesAirPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = InoClientesAirPeer::getOMClass();
 
-			$omClass = InoClientesAirPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesAirPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+			// Add objects for joined Reporte rows
+
+			$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+			if ($key2 !== null) {
+				$obj2 = ReportePeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = ReportePeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 loaded
 
-
-				// Add objects for joined Reporte rows
-	
-			$omClass = ReportePeer::getOMClass();
-
-
-			$cls = Propel::import($omClass);
-			$obj2 = new $cls();
-			$obj2->hydrate($rs, $startcol2);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getReporte(); // CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addInoClientesAir($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj2 (Reporte)
 				$obj2->addInoClientesAir($obj1);
-			}
+			} // if joined row not null
+
+			// Add objects for joined Tercero rows
+
+			$key3 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = TerceroPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = TerceroPeer::getOMClass();
 
 
-				// Add objects for joined Tercero rows
-	
-			$omClass = TerceroPeer::getOMClass();
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TerceroPeer::addInstanceToPool($obj3, $key3);
+				} // if obj3 loaded
 
-
-			$cls = Propel::import($omClass);
-			$obj3 = new $cls();
-			$obj3->hydrate($rs, $startcol3);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj3 = $temp_obj1->getTercero(); // CHECKME
-				if ($temp_obj3->getPrimaryKey() === $obj3->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj3->addInoClientesAir($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj3->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj3 (Tercero)
 				$obj3->addInoClientesAir($obj1);
-			}
+			} // if joined row not null
+
+			// Add objects for joined InoMaestraAir rows
+
+			$key4 = InoMaestraAirPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+			if ($key4 !== null) {
+				$obj4 = InoMaestraAirPeer::getInstanceFromPool($key4);
+				if (!$obj4) {
+
+					$omClass = InoMaestraAirPeer::getOMClass();
 
 
-				// Add objects for joined InoMaestraAir rows
-	
-			$omClass = InoMaestraAirPeer::getOMClass();
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					InoMaestraAirPeer::addInstanceToPool($obj4, $key4);
+				} // if obj4 loaded
 
-
-			$cls = Propel::import($omClass);
-			$obj4 = new $cls();
-			$obj4->hydrate($rs, $startcol4);
-
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj4 = $temp_obj1->getInoMaestraAir(); // CHECKME
-				if ($temp_obj4->getPrimaryKey() === $obj4->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj4->addInoClientesAir($obj1); // CHECKME
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj4->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj4 (InoMaestraAir)
 				$obj4->addInoClientesAir($obj1);
-			}
+			} // if joined row not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -828,40 +989,44 @@ abstract class BaseInoClientesAirPeer {
 	 * Returns the number of rows matching criteria, joining the related Reporte table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptReporte(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAllExceptReporte(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT_DISTINCT);
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesAirPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(InoClientesAirPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$criteria->addJoin(array(InoClientesAirPeer::CA_REFERENCIA,), array(InoMaestraAirPeer::CA_REFERENCIA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(InoClientesAirPeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO);
-
-		$criteria->addJoin(InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA);
-
-		$rs = InoClientesAirPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
@@ -869,40 +1034,44 @@ abstract class BaseInoClientesAirPeer {
 	 * Returns the number of rows matching criteria, joining the related Tercero table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptTercero(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAllExceptTercero(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT_DISTINCT);
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesAirPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(InoClientesAirPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$criteria->addJoin(array(InoClientesAirPeer::CA_REFERENCIA,), array(InoMaestraAirPeer::CA_REFERENCIA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(InoClientesAirPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$criteria->addJoin(InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA);
-
-		$rs = InoClientesAirPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
@@ -910,51 +1079,58 @@ abstract class BaseInoClientesAirPeer {
 	 * Returns the number of rows matching criteria, joining the related InoMaestraAir table
 	 *
 	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns (You can also set DISTINCT modifier in Criteria).
-	 * @param      Connection $con
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptInoMaestraAir(Criteria $criteria, $distinct = false, $con = null)
+	public static function doCountJoinAllExceptInoMaestraAir(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
 
-		// clear out anything that might confuse the ORDER BY clause
-		$criteria->clearSelectColumns()->clearOrderByColumns();
-		if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT_DISTINCT);
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesAirPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(InoClientesAirPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$criteria->addJoin(array(InoClientesAirPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
 		} else {
-			$criteria->addSelectColumn(InoClientesAirPeer::COUNT);
+			$count = 0; // no rows returned; we infer that means 0 matches.
 		}
-
-		// just in case we're grouping: add those columns to the select statement
-		foreach($criteria->getGroupByColumns() as $column)
-		{
-			$criteria->addSelectColumn($column);
-		}
-
-		$criteria->addJoin(InoClientesAirPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
-
-		$criteria->addJoin(InoClientesAirPeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO);
-
-		$rs = InoClientesAirPeer::doSelectRS($criteria, $con);
-		if ($rs->next()) {
-			return $rs->getInt(1);
-		} else {
-			// no rows returned; we infer that means 0 matches.
-			return 0;
-		}
+		$stmt->closeCursor();
+		return $count;
 	}
 
 
 	/**
 	 * Selects a collection of InoClientesAir objects pre-filled with all related objects except Reporte.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of InoClientesAir objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptReporte(Criteria $c, $con = null)
+	public static function doSelectJoinAllExceptReporte(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -966,78 +1142,80 @@ abstract class BaseInoClientesAirPeer {
 		}
 
 		InoClientesAirPeer::addSelectColumns($c);
-		$startcol2 = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		TerceroPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + TerceroPeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		InoMaestraAirPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + InoMaestraAirPeer::NUM_COLUMNS;
+		$startcol4 = $startcol3 + (InoMaestraAirPeer::NUM_COLUMNS - InoMaestraAirPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(InoClientesAirPeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO);
+				$c->addJoin(array(InoClientesAirPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$c->addJoin(array(InoClientesAirPeer::CA_REFERENCIA,), array(InoMaestraAirPeer::CA_REFERENCIA,), $join_behavior);
 
-		$c->addJoin(InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA);
-
-
-		$rs = BasePeer::doSelect($c, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesAirPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesAirPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = InoClientesAirPeer::getOMClass();
 
-			$omClass = InoClientesAirPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesAirPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				// Add objects for joined Tercero rows
 
-			$omClass = TerceroPeer::getOMClass();
+				$key2 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = TerceroPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = TerceroPeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					TerceroPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getTercero(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addInoClientesAir($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj2 (Tercero)
 				$obj2->addInoClientesAir($obj1);
-			}
 
-			$omClass = InoMaestraAirPeer::getOMClass();
+			} // if joined row is not null
+
+				// Add objects for joined InoMaestraAir rows
+
+				$key3 = InoMaestraAirPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = InoMaestraAirPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = InoMaestraAirPeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj3  = new $cls();
-			$obj3->hydrate($rs, $startcol3);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					InoMaestraAirPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj3 = $temp_obj1->getInoMaestraAir(); //CHECKME
-				if ($temp_obj3->getPrimaryKey() === $obj3->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj3->addInoClientesAir($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj3->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj3 (InoMaestraAir)
 				$obj3->addInoClientesAir($obj1);
-			}
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -1045,11 +1223,14 @@ abstract class BaseInoClientesAirPeer {
 	/**
 	 * Selects a collection of InoClientesAir objects pre-filled with all related objects except Tercero.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of InoClientesAir objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptTercero(Criteria $c, $con = null)
+	public static function doSelectJoinAllExceptTercero(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -1061,78 +1242,80 @@ abstract class BaseInoClientesAirPeer {
 		}
 
 		InoClientesAirPeer::addSelectColumns($c);
-		$startcol2 = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		ReportePeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + ReportePeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
 
 		InoMaestraAirPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + InoMaestraAirPeer::NUM_COLUMNS;
+		$startcol4 = $startcol3 + (InoMaestraAirPeer::NUM_COLUMNS - InoMaestraAirPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(InoClientesAirPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
+				$c->addJoin(array(InoClientesAirPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$c->addJoin(array(InoClientesAirPeer::CA_REFERENCIA,), array(InoMaestraAirPeer::CA_REFERENCIA,), $join_behavior);
 
-		$c->addJoin(InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA);
-
-
-		$rs = BasePeer::doSelect($c, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesAirPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesAirPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = InoClientesAirPeer::getOMClass();
 
-			$omClass = InoClientesAirPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesAirPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				// Add objects for joined Reporte rows
 
-			$omClass = ReportePeer::getOMClass();
+				$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = ReportePeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = ReportePeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getReporte(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addInoClientesAir($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj2 (Reporte)
 				$obj2->addInoClientesAir($obj1);
-			}
 
-			$omClass = InoMaestraAirPeer::getOMClass();
+			} // if joined row is not null
+
+				// Add objects for joined InoMaestraAir rows
+
+				$key3 = InoMaestraAirPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = InoMaestraAirPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = InoMaestraAirPeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj3  = new $cls();
-			$obj3->hydrate($rs, $startcol3);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					InoMaestraAirPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj3 = $temp_obj1->getInoMaestraAir(); //CHECKME
-				if ($temp_obj3->getPrimaryKey() === $obj3->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj3->addInoClientesAir($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj3->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj3 (InoMaestraAir)
 				$obj3->addInoClientesAir($obj1);
-			}
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -1140,11 +1323,14 @@ abstract class BaseInoClientesAirPeer {
 	/**
 	 * Selects a collection of InoClientesAir objects pre-filled with all related objects except InoMaestraAir.
 	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of InoClientesAir objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptInoMaestraAir(Criteria $c, $con = null)
+	public static function doSelectJoinAllExceptInoMaestraAir(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -1156,78 +1342,80 @@ abstract class BaseInoClientesAirPeer {
 		}
 
 		InoClientesAirPeer::addSelectColumns($c);
-		$startcol2 = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS) + 1;
+		$startcol2 = (InoClientesAirPeer::NUM_COLUMNS - InoClientesAirPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		ReportePeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + ReportePeer::NUM_COLUMNS;
+		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
 
 		TerceroPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + TerceroPeer::NUM_COLUMNS;
+		$startcol4 = $startcol3 + (TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(InoClientesAirPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE);
+				$c->addJoin(array(InoClientesAirPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$c->addJoin(array(InoClientesAirPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 
-		$c->addJoin(InoClientesAirPeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO);
-
-
-		$rs = BasePeer::doSelect($c, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
-		while($rs->next()) {
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesAirPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesAirPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = InoClientesAirPeer::getOMClass();
 
-			$omClass = InoClientesAirPeer::getOMClass();
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesAirPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
 
-			$cls = Propel::import($omClass);
-			$obj1 = new $cls();
-			$obj1->hydrate($rs);
+				// Add objects for joined Reporte rows
 
-			$omClass = ReportePeer::getOMClass();
+				$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = ReportePeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = ReportePeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj2  = new $cls();
-			$obj2->hydrate($rs, $startcol2);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj2 = $temp_obj1->getReporte(); //CHECKME
-				if ($temp_obj2->getPrimaryKey() === $obj2->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj2->addInoClientesAir($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj2->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj2 (Reporte)
 				$obj2->addInoClientesAir($obj1);
-			}
 
-			$omClass = TerceroPeer::getOMClass();
+			} // if joined row is not null
+
+				// Add objects for joined Tercero rows
+
+				$key3 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = TerceroPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = TerceroPeer::getOMClass();
 
 
-			$cls = Propel::import($omClass);
-			$obj3  = new $cls();
-			$obj3->hydrate($rs, $startcol3);
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TerceroPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
 
-			$newObject = true;
-			for ($j=0, $resCount=count($results); $j < $resCount; $j++) {
-				$temp_obj1 = $results[$j];
-				$temp_obj3 = $temp_obj1->getTercero(); //CHECKME
-				if ($temp_obj3->getPrimaryKey() === $obj3->getPrimaryKey()) {
-					$newObject = false;
-					$temp_obj3->addInoClientesAir($obj1);
-					break;
-				}
-			}
-
-			if ($newObject) {
-				$obj3->initInoClientesAirs();
+				// Add the $obj1 (InoClientesAir) to the collection in $obj3 (Tercero)
 				$obj3->addInoClientesAir($obj1);
-			}
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
+		$stmt->closeCursor();
 		return $results;
 	}
 
@@ -1266,15 +1454,15 @@ abstract class BaseInoClientesAirPeer {
 	 * Method perform an INSERT on the database, given a InoClientesAir or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or InoClientesAir object containing data that is used to create the INSERT statement.
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doInsert($values, $con = null)
+	public static function doInsert($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
@@ -1290,11 +1478,11 @@ abstract class BaseInoClientesAirPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table (I guess, conceivably)
-			$con->begin();
+			$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 
@@ -1305,15 +1493,15 @@ abstract class BaseInoClientesAirPeer {
 	 * Method perform an UPDATE on the database, given a InoClientesAir or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or InoClientesAir object containing data that is used to create the UPDATE statement.
-	 * @param      Connection $con The connection to use (specify Connection object to exert more control over transactions).
+	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doUpdate($values, $con = null)
+	public static function doUpdate($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -1349,18 +1537,18 @@ abstract class BaseInoClientesAirPeer {
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(InoClientesAirPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -1370,46 +1558,55 @@ abstract class BaseInoClientesAirPeer {
 	 *
 	 * @param      mixed $values Criteria or InoClientesAir object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
-	 * @param      Connection $con the connection to use
+	 * @param      PropelPDO $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
 	 *				if supported by native driver or if emulated using Propel.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	 public static function doDelete($values, $con = null)
+	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME);
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} elseif ($values instanceof InoClientesAir) {
+			// invalidate the cache for all objects of this type, since we have no
+			// way of knowing (without running a query) what objects should be invalidated
+			// from the cache based on this Criteria.
+			InoClientesAirPeer::clearInstancePool();
 
+			// rename for clarity
+			$criteria = clone $values;
+		} elseif ($values instanceof InoClientesAir) {
+			// invalidate the cache for this single object
+			InoClientesAirPeer::removeInstanceFromPool($values);
+			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else {
 			// it must be the primary key
+
+
+
 			$criteria = new Criteria(self::DATABASE_NAME);
 			// primary key is composite; we therefore, expect
 			// the primary key passed to be an array of pkey
 			// values
-			if(count($values) == count($values, COUNT_RECURSIVE))
-			{
+			if (count($values) == count($values, COUNT_RECURSIVE)) {
 				// array is not multi-dimensional
 				$values = array($values);
 			}
-			$vals = array();
-			foreach($values as $value)
-			{
 
-				$vals[0][] = $value[0];
-				$vals[1][] = $value[1];
-				$vals[2][] = $value[2];
+			foreach ($values as $value) {
+
+				$criterion = $criteria->getNewCriterion(InoClientesAirPeer::CA_REFERENCIA, $value[0]);
+				$criterion->addAnd($criteria->getNewCriterion(InoClientesAirPeer::CA_IDCLIENTE, $value[1]));
+				$criterion->addAnd($criteria->getNewCriterion(InoClientesAirPeer::CA_HAWB, $value[2]));
+				$criteria->addOr($criterion);
+
+				// we can invalidate the cache for this single PK
+				InoClientesAirPeer::removeInstanceFromPool($value);
 			}
-
-			$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $vals[0], Criteria::IN);
-			$criteria->add(InoClientesAirPeer::CA_IDCLIENTE, $vals[1], Criteria::IN);
-			$criteria->add(InoClientesAirPeer::CA_HAWB, $vals[2], Criteria::IN);
 		}
 
 		// Set the correct dbName
@@ -1420,13 +1617,14 @@ abstract class BaseInoClientesAirPeer {
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->begin();
+			$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
+
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
@@ -1455,7 +1653,7 @@ abstract class BaseInoClientesAirPeer {
 				$cols = array($cols);
 			}
 
-			foreach($cols as $colName) {
+			foreach ($cols as $colName) {
 				if ($tableMap->containsColumn($colName)) {
 					$get = 'get' . $tableMap->getColumn($colName)->getPhpName();
 					$columns[$colName] = $obj->$get();
@@ -1470,7 +1668,6 @@ abstract class BaseInoClientesAirPeer {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
             $col = InoClientesAirPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
-            $request->setError($col, $failed->getMessage());
         }
     }
 
@@ -1479,18 +1676,23 @@ abstract class BaseInoClientesAirPeer {
 
 	/**
 	 * Retrieve object using using composite pkey values.
-	 * @param string $ca_referencia
-	   @param int $ca_idcliente
-	   @param string $ca_hawb
+	 * @param      string $ca_referencia
+	   @param      int $ca_idcliente
+	   @param      string $ca_hawb
 	   
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     InoClientesAir
 	 */
-	public static function retrieveByPK( $ca_referencia, $ca_idcliente, $ca_hawb, $con = null) {
-		if ($con === null) {
-			$con = Propel::getConnection(self::DATABASE_NAME);
+	public static function retrieveByPK($ca_referencia, $ca_idcliente, $ca_hawb, PropelPDO $con = null) {
+		$key = serialize(array((string) $ca_referencia, (string) $ca_idcliente, (string) $ca_hawb));
+ 		if (null !== ($obj = InoClientesAirPeer::getInstanceFromPool($key))) {
+ 			return $obj;
 		}
-		$criteria = new Criteria();
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesAirPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+		$criteria = new Criteria(InoClientesAirPeer::DATABASE_NAME);
 		$criteria->add(InoClientesAirPeer::CA_REFERENCIA, $ca_referencia);
 		$criteria->add(InoClientesAirPeer::CA_IDCLIENTE, $ca_idcliente);
 		$criteria->add(InoClientesAirPeer::CA_HAWB, $ca_hawb);
@@ -1500,17 +1702,14 @@ abstract class BaseInoClientesAirPeer {
 	}
 } // BaseInoClientesAirPeer
 
-// static code to register the map builder for this Peer with the main Propel class
-if (Propel::isInit()) {
-	// the MapBuilder classes register themselves with Propel during initialization
-	// so we need to load them here.
-	try {
-		BaseInoClientesAirPeer::getMapBuilder();
-	} catch (Exception $e) {
-		Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
-	}
-} else {
-	// even if Propel is not yet initialized, the map builder class can be registered
-	// now and then it will be loaded when Propel initializes.
-	Propel::registerMapBuilder('lib.model.air.map.InoClientesAirMapBuilder');
-}
+// This is the static code needed to register the MapBuilder for this table with the main Propel class.
+//
+// NOTE: This static code cannot call methods on the InoClientesAirPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the InoClientesAirPeer class:
+//
+// Propel::getDatabaseMap(InoClientesAirPeer::DATABASE_NAME)->addTableBuilder(InoClientesAirPeer::TABLE_NAME, InoClientesAirPeer::getMapBuilder());
+//
+// Doing so will effectively overwrite the registration below.
+
+Propel::getDatabaseMap(BaseInoClientesAirPeer::DATABASE_NAME)->addTableBuilder(BaseInoClientesAirPeer::TABLE_NAME, BaseInoClientesAirPeer::getMapBuilder());
+

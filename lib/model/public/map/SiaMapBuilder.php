@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class SiaMapBuilder {
+class SiaMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,22 +54,23 @@ class SiaMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(SiaPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_sia');
+		$tMap = $this->dbMap->addTable(SiaPeer::TABLE_NAME);
 		$tMap->setPhpName('Sia');
+		$tMap->setClassname('Sia');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_sia_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_sia_ca_idsia_seq');
 
-		$tMap->addPrimaryKey('CA_IDSIA', 'CaIdsia', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDSIA', 'CaIdsia', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TEL', 'CaTel', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TEL', 'CaTel', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CONTACTO', 'CaContacto', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CONTACTO', 'CaContacto', 'VARCHAR', false, null);
 
 	} // doBuild()
 

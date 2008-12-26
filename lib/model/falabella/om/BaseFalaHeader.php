@@ -10,6 +10,8 @@
 abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 
 
+  const PEER = 'FalaHeaderPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,20 +20,17 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_iddoc field.
 	 * @var        string
 	 */
 	protected $ca_iddoc;
 
-
 	/**
 	 * The value for the ca_fecha_carpeta field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fecha_carpeta;
-
 
 	/**
 	 * The value for the ca_archivo_origen field.
@@ -39,13 +38,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_archivo_origen;
 
-
 	/**
 	 * The value for the ca_reporte field.
 	 * @var        string
 	 */
 	protected $ca_reporte;
-
 
 	/**
 	 * The value for the ca_num_viaje field.
@@ -53,13 +50,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_num_viaje;
 
-
 	/**
 	 * The value for the ca_cod_carrier field.
 	 * @var        string
 	 */
 	protected $ca_cod_carrier;
-
 
 	/**
 	 * The value for the ca_codigo_puerto_pickup field.
@@ -67,13 +62,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_codigo_puerto_pickup;
 
-
 	/**
 	 * The value for the ca_codigo_puerto_descarga field.
 	 * @var        string
 	 */
 	protected $ca_codigo_puerto_descarga;
-
 
 	/**
 	 * The value for the ca_container_mode field.
@@ -81,13 +74,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_container_mode;
 
-
 	/**
 	 * The value for the ca_nombre_proveedor field.
 	 * @var        string
 	 */
 	protected $ca_nombre_proveedor;
-
 
 	/**
 	 * The value for the ca_campo_59 field.
@@ -95,13 +86,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_campo_59;
 
-
 	/**
 	 * The value for the ca_codigo_proveedor field.
 	 * @var        string
 	 */
 	protected $ca_codigo_proveedor;
-
 
 	/**
 	 * The value for the ca_campo_61 field.
@@ -109,13 +98,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_campo_61;
 
-
 	/**
 	 * The value for the ca_monto_invoice_miles field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_monto_invoice_miles;
-
 
 	/**
 	 * The value for the ca_procesado field.
@@ -123,13 +110,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_procesado;
 
-
 	/**
 	 * The value for the ca_trader field.
 	 * @var        string
 	 */
 	protected $ca_trader;
-
 
 	/**
 	 * The value for the ca_vendor_id field.
@@ -137,13 +122,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_vendor_id;
 
-
 	/**
 	 * The value for the ca_vendor_name field.
 	 * @var        string
 	 */
 	protected $ca_vendor_name;
-
 
 	/**
 	 * The value for the ca_vendor_addr1 field.
@@ -151,13 +134,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_vendor_addr1;
 
-
 	/**
 	 * The value for the ca_vendor_city field.
 	 * @var        string
 	 */
 	protected $ca_vendor_city;
-
 
 	/**
 	 * The value for the ca_vendor_country field.
@@ -165,20 +146,17 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_vendor_country;
 
-
 	/**
 	 * The value for the ca_esd field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_esd;
 
-
 	/**
 	 * The value for the ca_lsd field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_lsd;
-
 
 	/**
 	 * The value for the ca_incoterms field.
@@ -186,13 +164,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_incoterms;
 
-
 	/**
 	 * The value for the ca_payment_terms field.
 	 * @var        string
 	 */
 	protected $ca_payment_terms;
-
 
 	/**
 	 * The value for the ca_proforma_number field.
@@ -200,13 +176,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_proforma_number;
 
-
 	/**
 	 * The value for the ca_origin field.
 	 * @var        string
 	 */
 	protected $ca_origin;
-
 
 	/**
 	 * The value for the ca_destination field.
@@ -214,20 +188,17 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_destination;
 
-
 	/**
 	 * The value for the ca_trans_ship_port field.
 	 * @var        string
 	 */
 	protected $ca_trans_ship_port;
 
-
 	/**
 	 * The value for the ca_reqd_delivery field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_reqd_delivery;
-
 
 	/**
 	 * The value for the ca_orden_comments field.
@@ -235,13 +206,11 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_orden_comments;
 
-
 	/**
 	 * The value for the ca_manufacturer_contact field.
 	 * @var        string
 	 */
 	protected $ca_manufacturer_contact;
-
 
 	/**
 	 * The value for the ca_manufacturer_phone field.
@@ -249,20 +218,17 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	protected $ca_manufacturer_phone;
 
-
 	/**
 	 * The value for the ca_manufacturer_fax field.
 	 * @var        string
 	 */
 	protected $ca_manufacturer_fax;
 
-
 	/**
 	 * The value for the ca_fchanulado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchanulado;
-
 
 	/**
 	 * The value for the ca_usuanulado field.
@@ -271,40 +237,29 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	protected $ca_usuanulado;
 
 	/**
-	 * Collection to store aggregation of collFalaDetails.
-	 * @var        array
+	 * @var        array FalaDetail[] Collection to store aggregation of FalaDetail objects.
 	 */
 	protected $collFalaDetails;
 
 	/**
-	 * The criteria used to select the current contents of collFalaDetails.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collFalaDetails.
 	 */
-	protected $lastFalaDetailCriteria = null;
+	private $lastFalaDetailCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collFalaInstructions.
-	 * @var        array
+	 * @var        array FalaInstruction[] Collection to store aggregation of FalaInstruction objects.
 	 */
 	protected $collFalaInstructions;
 
 	/**
-	 * The criteria used to select the current contents of collFalaInstructions.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collFalaInstructions.
 	 */
-	protected $lastFalaInstructionCriteria = null;
+	private $lastFalaInstructionCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collFalaShipmentInfos.
-	 * @var        array
+	 * @var        FalaShipmentInfo one-to-one related FalaShipmentInfo object
 	 */
-	protected $collFalaShipmentInfos;
-
-	/**
-	 * The criteria used to select the current contents of collFalaShipmentInfos.
-	 * @var        Criteria
-	 */
-	protected $lastFalaShipmentInfoCriteria = null;
+	protected $singleFalaShipmentInfo;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -321,44 +276,65 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseFalaHeader object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_iddoc] column value.
 	 * 
 	 * @return     string
 	 */
 	public function getCaIddoc()
 	{
-
 		return $this->ca_iddoc;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fecha_carpeta] column value.
+	 * Get the [optionally formatted] temporal [ca_fecha_carpeta] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFechaCarpeta($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fecha_carpeta === null || $this->ca_fecha_carpeta === '') {
+		if ($this->ca_fecha_carpeta === null) {
 			return null;
-		} elseif (!is_int($this->ca_fecha_carpeta)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fecha_carpeta);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fecha_carpeta] as date/time value: " . var_export($this->ca_fecha_carpeta, true));
-			}
-		} else {
-			$ts = $this->ca_fecha_carpeta;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fecha_carpeta);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fecha_carpeta, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -369,7 +345,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaArchivoOrigen()
 	{
-
 		return $this->ca_archivo_origen;
 	}
 
@@ -380,7 +355,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaReporte()
 	{
-
 		return $this->ca_reporte;
 	}
 
@@ -391,7 +365,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaNumViaje()
 	{
-
 		return $this->ca_num_viaje;
 	}
 
@@ -402,7 +375,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaCodCarrier()
 	{
-
 		return $this->ca_cod_carrier;
 	}
 
@@ -413,7 +385,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaCodigoPuertoPickup()
 	{
-
 		return $this->ca_codigo_puerto_pickup;
 	}
 
@@ -424,7 +395,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaCodigoPuertoDescarga()
 	{
-
 		return $this->ca_codigo_puerto_descarga;
 	}
 
@@ -435,7 +405,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaContainerMode()
 	{
-
 		return $this->ca_container_mode;
 	}
 
@@ -446,7 +415,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaNombreProveedor()
 	{
-
 		return $this->ca_nombre_proveedor;
 	}
 
@@ -457,7 +425,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaCampo59()
 	{
-
 		return $this->ca_campo_59;
 	}
 
@@ -468,7 +435,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaCodigoProveedor()
 	{
-
 		return $this->ca_codigo_proveedor;
 	}
 
@@ -479,18 +445,16 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaCampo61()
 	{
-
 		return $this->ca_campo_61;
 	}
 
 	/**
 	 * Get the [ca_monto_invoice_miles] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaMontoInvoiceMiles()
 	{
-
 		return $this->ca_monto_invoice_miles;
 	}
 
@@ -501,7 +465,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaProcesado()
 	{
-
 		return $this->ca_procesado;
 	}
 
@@ -512,7 +475,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaTrader()
 	{
-
 		return $this->ca_trader;
 	}
 
@@ -523,7 +485,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaVendorId()
 	{
-
 		return $this->ca_vendor_id;
 	}
 
@@ -534,7 +495,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaVendorName()
 	{
-
 		return $this->ca_vendor_name;
 	}
 
@@ -545,7 +505,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaVendorAddr1()
 	{
-
 		return $this->ca_vendor_addr1;
 	}
 
@@ -556,7 +515,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaVendorCity()
 	{
-
 		return $this->ca_vendor_city;
 	}
 
@@ -567,69 +525,72 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaVendorCountry()
 	{
-
 		return $this->ca_vendor_country;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_esd] column value.
+	 * Get the [optionally formatted] temporal [ca_esd] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaEsd($format = 'Y-m-d')
 	{
-
-		if ($this->ca_esd === null || $this->ca_esd === '') {
+		if ($this->ca_esd === null) {
 			return null;
-		} elseif (!is_int($this->ca_esd)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_esd);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_esd] as date/time value: " . var_export($this->ca_esd, true));
-			}
-		} else {
-			$ts = $this->ca_esd;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_esd);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_esd, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_lsd] column value.
+	 * Get the [optionally formatted] temporal [ca_lsd] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaLsd($format = 'Y-m-d')
 	{
-
-		if ($this->ca_lsd === null || $this->ca_lsd === '') {
+		if ($this->ca_lsd === null) {
 			return null;
-		} elseif (!is_int($this->ca_lsd)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_lsd);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_lsd] as date/time value: " . var_export($this->ca_lsd, true));
-			}
-		} else {
-			$ts = $this->ca_lsd;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_lsd);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_lsd, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -640,7 +601,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaIncoterms()
 	{
-
 		return $this->ca_incoterms;
 	}
 
@@ -651,7 +611,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaPaymentTerms()
 	{
-
 		return $this->ca_payment_terms;
 	}
 
@@ -662,7 +621,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaProformaNumber()
 	{
-
 		return $this->ca_proforma_number;
 	}
 
@@ -673,7 +631,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaOrigin()
 	{
-
 		return $this->ca_origin;
 	}
 
@@ -684,7 +641,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaDestination()
 	{
-
 		return $this->ca_destination;
 	}
 
@@ -695,38 +651,39 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaTransShipPort()
 	{
-
 		return $this->ca_trans_ship_port;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_reqd_delivery] column value.
+	 * Get the [optionally formatted] temporal [ca_reqd_delivery] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaReqdDelivery($format = 'Y-m-d')
 	{
-
-		if ($this->ca_reqd_delivery === null || $this->ca_reqd_delivery === '') {
+		if ($this->ca_reqd_delivery === null) {
 			return null;
-		} elseif (!is_int($this->ca_reqd_delivery)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_reqd_delivery);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_reqd_delivery] as date/time value: " . var_export($this->ca_reqd_delivery, true));
-			}
-		} else {
-			$ts = $this->ca_reqd_delivery;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_reqd_delivery);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_reqd_delivery, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -737,7 +694,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaOrdenComments()
 	{
-
 		return $this->ca_orden_comments;
 	}
 
@@ -748,7 +704,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaManufacturerContact()
 	{
-
 		return $this->ca_manufacturer_contact;
 	}
 
@@ -759,7 +714,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaManufacturerPhone()
 	{
-
 		return $this->ca_manufacturer_phone;
 	}
 
@@ -770,38 +724,39 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaManufacturerFax()
 	{
-
 		return $this->ca_manufacturer_fax;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchanulado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchanulado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchanulado($format = 'Y-m-d H:i:s')
 	{
-
-		if ($this->ca_fchanulado === null || $this->ca_fchanulado === '') {
+		if ($this->ca_fchanulado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchanulado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchanulado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchanulado] as date/time value: " . var_export($this->ca_fchanulado, true));
-			}
-		} else {
-			$ts = $this->ca_fchanulado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchanulado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchanulado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -812,7 +767,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuanulado()
 	{
-
 		return $this->ca_usuanulado;
 	}
 
@@ -820,15 +774,12 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 * Set the value of [ca_iddoc] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaIddoc($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_iddoc !== $v) {
@@ -836,45 +787,68 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_IDDOC;
 		}
 
+		return $this;
 	} // setCaIddoc()
 
 	/**
-	 * Set the value of [ca_fecha_carpeta] column.
+	 * Sets the value of [ca_fecha_carpeta] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaFechaCarpeta($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fecha_carpeta] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fecha_carpeta !== $ts) {
-			$this->ca_fecha_carpeta = $ts;
-			$this->modifiedColumns[] = FalaHeaderPeer::CA_FECHA_CARPETA;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fecha_carpeta !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fecha_carpeta !== null && $tmpDt = new DateTime($this->ca_fecha_carpeta)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fecha_carpeta = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = FalaHeaderPeer::CA_FECHA_CARPETA;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFechaCarpeta()
 
 	/**
 	 * Set the value of [ca_archivo_origen] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaArchivoOrigen($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_archivo_origen !== $v) {
@@ -882,21 +856,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_ARCHIVO_ORIGEN;
 		}
 
+		return $this;
 	} // setCaArchivoOrigen()
 
 	/**
 	 * Set the value of [ca_reporte] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaReporte($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_reporte !== $v) {
@@ -904,21 +876,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_REPORTE;
 		}
 
+		return $this;
 	} // setCaReporte()
 
 	/**
 	 * Set the value of [ca_num_viaje] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaNumViaje($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_num_viaje !== $v) {
@@ -926,21 +896,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_NUM_VIAJE;
 		}
 
+		return $this;
 	} // setCaNumViaje()
 
 	/**
 	 * Set the value of [ca_cod_carrier] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaCodCarrier($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_cod_carrier !== $v) {
@@ -948,21 +916,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_COD_CARRIER;
 		}
 
+		return $this;
 	} // setCaCodCarrier()
 
 	/**
 	 * Set the value of [ca_codigo_puerto_pickup] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaCodigoPuertoPickup($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_codigo_puerto_pickup !== $v) {
@@ -970,21 +936,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_CODIGO_PUERTO_PICKUP;
 		}
 
+		return $this;
 	} // setCaCodigoPuertoPickup()
 
 	/**
 	 * Set the value of [ca_codigo_puerto_descarga] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaCodigoPuertoDescarga($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_codigo_puerto_descarga !== $v) {
@@ -992,21 +956,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_CODIGO_PUERTO_DESCARGA;
 		}
 
+		return $this;
 	} // setCaCodigoPuertoDescarga()
 
 	/**
 	 * Set the value of [ca_container_mode] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaContainerMode($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_container_mode !== $v) {
@@ -1014,21 +976,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_CONTAINER_MODE;
 		}
 
+		return $this;
 	} // setCaContainerMode()
 
 	/**
 	 * Set the value of [ca_nombre_proveedor] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaNombreProveedor($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_nombre_proveedor !== $v) {
@@ -1036,21 +996,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_NOMBRE_PROVEEDOR;
 		}
 
+		return $this;
 	} // setCaNombreProveedor()
 
 	/**
 	 * Set the value of [ca_campo_59] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaCampo59($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_campo_59 !== $v) {
@@ -1058,21 +1016,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_CAMPO_59;
 		}
 
+		return $this;
 	} // setCaCampo59()
 
 	/**
 	 * Set the value of [ca_codigo_proveedor] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaCodigoProveedor($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_codigo_proveedor !== $v) {
@@ -1080,21 +1036,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_CODIGO_PROVEEDOR;
 		}
 
+		return $this;
 	} // setCaCodigoProveedor()
 
 	/**
 	 * Set the value of [ca_campo_61] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaCampo61($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_campo_61 !== $v) {
@@ -1102,53 +1056,59 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_CAMPO_61;
 		}
 
+		return $this;
 	} // setCaCampo61()
 
 	/**
 	 * Set the value of [ca_monto_invoice_miles] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaMontoInvoiceMiles($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_monto_invoice_miles !== $v) {
 			$this->ca_monto_invoice_miles = $v;
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_MONTO_INVOICE_MILES;
 		}
 
+		return $this;
 	} // setCaMontoInvoiceMiles()
 
 	/**
 	 * Set the value of [ca_procesado] column.
 	 * 
 	 * @param      boolean $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaProcesado($v)
 	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
 
 		if ($this->ca_procesado !== $v) {
 			$this->ca_procesado = $v;
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_PROCESADO;
 		}
 
+		return $this;
 	} // setCaProcesado()
 
 	/**
 	 * Set the value of [ca_trader] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaTrader($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_trader !== $v) {
@@ -1156,21 +1116,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_TRADER;
 		}
 
+		return $this;
 	} // setCaTrader()
 
 	/**
 	 * Set the value of [ca_vendor_id] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaVendorId($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_vendor_id !== $v) {
@@ -1178,21 +1136,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_VENDOR_ID;
 		}
 
+		return $this;
 	} // setCaVendorId()
 
 	/**
 	 * Set the value of [ca_vendor_name] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaVendorName($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_vendor_name !== $v) {
@@ -1200,21 +1156,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_VENDOR_NAME;
 		}
 
+		return $this;
 	} // setCaVendorName()
 
 	/**
 	 * Set the value of [ca_vendor_addr1] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaVendorAddr1($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_vendor_addr1 !== $v) {
@@ -1222,21 +1176,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_VENDOR_ADDR1;
 		}
 
+		return $this;
 	} // setCaVendorAddr1()
 
 	/**
 	 * Set the value of [ca_vendor_city] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaVendorCity($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_vendor_city !== $v) {
@@ -1244,21 +1196,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_VENDOR_CITY;
 		}
 
+		return $this;
 	} // setCaVendorCity()
 
 	/**
 	 * Set the value of [ca_vendor_country] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaVendorCountry($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_vendor_country !== $v) {
@@ -1266,69 +1216,117 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_VENDOR_COUNTRY;
 		}
 
+		return $this;
 	} // setCaVendorCountry()
 
 	/**
-	 * Set the value of [ca_esd] column.
+	 * Sets the value of [ca_esd] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaEsd($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_esd] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_esd !== $ts) {
-			$this->ca_esd = $ts;
-			$this->modifiedColumns[] = FalaHeaderPeer::CA_ESD;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_esd !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_esd !== null && $tmpDt = new DateTime($this->ca_esd)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_esd = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = FalaHeaderPeer::CA_ESD;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaEsd()
 
 	/**
-	 * Set the value of [ca_lsd] column.
+	 * Sets the value of [ca_lsd] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaLsd($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_lsd] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_lsd !== $ts) {
-			$this->ca_lsd = $ts;
-			$this->modifiedColumns[] = FalaHeaderPeer::CA_LSD;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_lsd !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_lsd !== null && $tmpDt = new DateTime($this->ca_lsd)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_lsd = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = FalaHeaderPeer::CA_LSD;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaLsd()
 
 	/**
 	 * Set the value of [ca_incoterms] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaIncoterms($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_incoterms !== $v) {
@@ -1336,21 +1334,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_INCOTERMS;
 		}
 
+		return $this;
 	} // setCaIncoterms()
 
 	/**
 	 * Set the value of [ca_payment_terms] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaPaymentTerms($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_payment_terms !== $v) {
@@ -1358,21 +1354,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_PAYMENT_TERMS;
 		}
 
+		return $this;
 	} // setCaPaymentTerms()
 
 	/**
 	 * Set the value of [ca_proforma_number] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaProformaNumber($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_proforma_number !== $v) {
@@ -1380,21 +1374,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_PROFORMA_NUMBER;
 		}
 
+		return $this;
 	} // setCaProformaNumber()
 
 	/**
 	 * Set the value of [ca_origin] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaOrigin($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_origin !== $v) {
@@ -1402,21 +1394,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_ORIGIN;
 		}
 
+		return $this;
 	} // setCaOrigin()
 
 	/**
 	 * Set the value of [ca_destination] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaDestination($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_destination !== $v) {
@@ -1424,21 +1414,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_DESTINATION;
 		}
 
+		return $this;
 	} // setCaDestination()
 
 	/**
 	 * Set the value of [ca_trans_ship_port] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaTransShipPort($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_trans_ship_port !== $v) {
@@ -1446,45 +1434,68 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_TRANS_SHIP_PORT;
 		}
 
+		return $this;
 	} // setCaTransShipPort()
 
 	/**
-	 * Set the value of [ca_reqd_delivery] column.
+	 * Sets the value of [ca_reqd_delivery] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaReqdDelivery($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_reqd_delivery] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_reqd_delivery !== $ts) {
-			$this->ca_reqd_delivery = $ts;
-			$this->modifiedColumns[] = FalaHeaderPeer::CA_REQD_DELIVERY;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_reqd_delivery !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_reqd_delivery !== null && $tmpDt = new DateTime($this->ca_reqd_delivery)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_reqd_delivery = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = FalaHeaderPeer::CA_REQD_DELIVERY;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaReqdDelivery()
 
 	/**
 	 * Set the value of [ca_orden_comments] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaOrdenComments($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_orden_comments !== $v) {
@@ -1492,21 +1503,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_ORDEN_COMMENTS;
 		}
 
+		return $this;
 	} // setCaOrdenComments()
 
 	/**
 	 * Set the value of [ca_manufacturer_contact] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaManufacturerContact($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_manufacturer_contact !== $v) {
@@ -1514,21 +1523,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_MANUFACTURER_CONTACT;
 		}
 
+		return $this;
 	} // setCaManufacturerContact()
 
 	/**
 	 * Set the value of [ca_manufacturer_phone] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaManufacturerPhone($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_manufacturer_phone !== $v) {
@@ -1536,21 +1543,19 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_MANUFACTURER_PHONE;
 		}
 
+		return $this;
 	} // setCaManufacturerPhone()
 
 	/**
 	 * Set the value of [ca_manufacturer_fax] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaManufacturerFax($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_manufacturer_fax !== $v) {
@@ -1558,45 +1563,68 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_MANUFACTURER_FAX;
 		}
 
+		return $this;
 	} // setCaManufacturerFax()
 
 	/**
-	 * Set the value of [ca_fchanulado] column.
+	 * Sets the value of [ca_fchanulado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaFchanulado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchanulado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchanulado !== $ts) {
-			$this->ca_fchanulado = $ts;
-			$this->modifiedColumns[] = FalaHeaderPeer::CA_FCHANULADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchanulado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchanulado !== null && $tmpDt = new DateTime($this->ca_fchanulado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchanulado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = FalaHeaderPeer::CA_FCHANULADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchanulado()
 
 	/**
 	 * Set the value of [ca_usuanulado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 */
 	public function setCaUsuanulado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuanulado !== $v) {
@@ -1604,100 +1632,89 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaHeaderPeer::CA_USUANULADO;
 		}
 
+		return $this;
 	} // setCaUsuanulado()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_iddoc = $rs->getString($startcol + 0);
-
-			$this->ca_fecha_carpeta = $rs->getDate($startcol + 1, null);
-
-			$this->ca_archivo_origen = $rs->getString($startcol + 2);
-
-			$this->ca_reporte = $rs->getString($startcol + 3);
-
-			$this->ca_num_viaje = $rs->getString($startcol + 4);
-
-			$this->ca_cod_carrier = $rs->getString($startcol + 5);
-
-			$this->ca_codigo_puerto_pickup = $rs->getString($startcol + 6);
-
-			$this->ca_codigo_puerto_descarga = $rs->getString($startcol + 7);
-
-			$this->ca_container_mode = $rs->getString($startcol + 8);
-
-			$this->ca_nombre_proveedor = $rs->getString($startcol + 9);
-
-			$this->ca_campo_59 = $rs->getString($startcol + 10);
-
-			$this->ca_codigo_proveedor = $rs->getString($startcol + 11);
-
-			$this->ca_campo_61 = $rs->getString($startcol + 12);
-
-			$this->ca_monto_invoice_miles = $rs->getFloat($startcol + 13);
-
-			$this->ca_procesado = $rs->getBoolean($startcol + 14);
-
-			$this->ca_trader = $rs->getString($startcol + 15);
-
-			$this->ca_vendor_id = $rs->getString($startcol + 16);
-
-			$this->ca_vendor_name = $rs->getString($startcol + 17);
-
-			$this->ca_vendor_addr1 = $rs->getString($startcol + 18);
-
-			$this->ca_vendor_city = $rs->getString($startcol + 19);
-
-			$this->ca_vendor_country = $rs->getString($startcol + 20);
-
-			$this->ca_esd = $rs->getDate($startcol + 21, null);
-
-			$this->ca_lsd = $rs->getDate($startcol + 22, null);
-
-			$this->ca_incoterms = $rs->getString($startcol + 23);
-
-			$this->ca_payment_terms = $rs->getString($startcol + 24);
-
-			$this->ca_proforma_number = $rs->getString($startcol + 25);
-
-			$this->ca_origin = $rs->getString($startcol + 26);
-
-			$this->ca_destination = $rs->getString($startcol + 27);
-
-			$this->ca_trans_ship_port = $rs->getString($startcol + 28);
-
-			$this->ca_reqd_delivery = $rs->getDate($startcol + 29, null);
-
-			$this->ca_orden_comments = $rs->getString($startcol + 30);
-
-			$this->ca_manufacturer_contact = $rs->getString($startcol + 31);
-
-			$this->ca_manufacturer_phone = $rs->getString($startcol + 32);
-
-			$this->ca_manufacturer_fax = $rs->getString($startcol + 33);
-
-			$this->ca_fchanulado = $rs->getTimestamp($startcol + 34, null);
-
-			$this->ca_usuanulado = $rs->getString($startcol + 35);
-
+			$this->ca_iddoc = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_fecha_carpeta = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_archivo_origen = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_reporte = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_num_viaje = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_cod_carrier = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_codigo_puerto_pickup = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_codigo_puerto_descarga = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_container_mode = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_nombre_proveedor = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_campo_59 = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_codigo_proveedor = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_campo_61 = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_monto_invoice_miles = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_procesado = ($row[$startcol + 14] !== null) ? (boolean) $row[$startcol + 14] : null;
+			$this->ca_trader = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_vendor_id = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_vendor_name = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+			$this->ca_vendor_addr1 = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_vendor_city = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_vendor_country = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_esd = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+			$this->ca_lsd = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_incoterms = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+			$this->ca_payment_terms = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+			$this->ca_proforma_number = ($row[$startcol + 25] !== null) ? (string) $row[$startcol + 25] : null;
+			$this->ca_origin = ($row[$startcol + 26] !== null) ? (string) $row[$startcol + 26] : null;
+			$this->ca_destination = ($row[$startcol + 27] !== null) ? (string) $row[$startcol + 27] : null;
+			$this->ca_trans_ship_port = ($row[$startcol + 28] !== null) ? (string) $row[$startcol + 28] : null;
+			$this->ca_reqd_delivery = ($row[$startcol + 29] !== null) ? (string) $row[$startcol + 29] : null;
+			$this->ca_orden_comments = ($row[$startcol + 30] !== null) ? (string) $row[$startcol + 30] : null;
+			$this->ca_manufacturer_contact = ($row[$startcol + 31] !== null) ? (string) $row[$startcol + 31] : null;
+			$this->ca_manufacturer_phone = ($row[$startcol + 32] !== null) ? (string) $row[$startcol + 32] : null;
+			$this->ca_manufacturer_fax = ($row[$startcol + 33] !== null) ? (string) $row[$startcol + 33] : null;
+			$this->ca_fchanulado = ($row[$startcol + 34] !== null) ? (string) $row[$startcol + 34] : null;
+			$this->ca_usuanulado = ($row[$startcol + 35] !== null) ? (string) $row[$startcol + 35] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 36; // 36 = FalaHeaderPeer::NUM_COLUMNS - FalaHeaderPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -1708,78 +1725,148 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = FalaHeaderPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->collFalaDetails = null;
+			$this->lastFalaDetailCriteria = null;
+
+			$this->collFalaInstructions = null;
+			$this->lastFalaInstructionCriteria = null;
+
+			$this->singleFalaShipmentInfo = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			FalaHeaderPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME);
+			$con = Propel::getConnection(FalaHeaderPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			FalaHeaderPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
@@ -1798,11 +1885,12 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += FalaHeaderPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collFalaDetails !== null) {
-				foreach($this->collFalaDetails as $referrerFK) {
+				foreach ($this->collFalaDetails as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1810,22 +1898,21 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collFalaInstructions !== null) {
-				foreach($this->collFalaInstructions as $referrerFK) {
+				foreach ($this->collFalaInstructions as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
 				}
 			}
 
-			if ($this->collFalaShipmentInfos !== null) {
-				foreach($this->collFalaShipmentInfos as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
+			if ($this->singleFalaShipmentInfo !== null) {
+				if (!$this->singleFalaShipmentInfo->isDeleted()) {
+						$affectedRows += $this->singleFalaShipmentInfo->save($con);
 				}
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -1896,7 +1983,7 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 
 
 				if ($this->collFalaDetails !== null) {
-					foreach($this->collFalaDetails as $referrerFK) {
+					foreach ($this->collFalaDetails as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1904,18 +1991,16 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collFalaInstructions !== null) {
-					foreach($this->collFalaInstructions as $referrerFK) {
+					foreach ($this->collFalaInstructions as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
 					}
 				}
 
-				if ($this->collFalaShipmentInfos !== null) {
-					foreach($this->collFalaShipmentInfos as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
+				if ($this->singleFalaShipmentInfo !== null) {
+					if (!$this->singleFalaShipmentInfo->validate($columns)) {
+						$failureMap = array_merge($failureMap, $this->singleFalaShipmentInfo->getValidationFailures());
 					}
 				}
 
@@ -1931,14 +2016,15 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = FalaHeaderPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -2071,11 +2157,12 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = FalaHeaderPeer::getFieldNames($keyType);
 		$result = array(
@@ -2125,8 +2212,8 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -2266,8 +2353,9 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -2414,6 +2502,8 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIddoc($this->ca_iddoc);
+
 		$copyObj->setCaFechaCarpeta($this->ca_fecha_carpeta);
 
 		$copyObj->setCaArchivoOrigen($this->ca_archivo_origen);
@@ -2490,24 +2580,27 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getFalaDetails() as $relObj) {
-				$copyObj->addFalaDetail($relObj->copy($deepCopy));
+			foreach ($this->getFalaDetails() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addFalaDetail($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getFalaInstructions() as $relObj) {
-				$copyObj->addFalaInstruction($relObj->copy($deepCopy));
+			foreach ($this->getFalaInstructions() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addFalaInstruction($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getFalaShipmentInfos() as $relObj) {
-				$copyObj->addFalaShipmentInfo($relObj->copy($deepCopy));
+			$relObj = $this->getFalaShipmentInfo();
+			if ($relObj) {
+				$copyObj->setFalaShipmentInfo($relObj->copy($deepCopy));
 			}
 
 		} // if ($deepCopy)
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaIddoc(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -2550,36 +2643,50 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collFalaDetails to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collFalaDetails collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addFalaDetails()
+	 */
+	public function clearFalaDetails()
+	{
+		$this->collFalaDetails = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collFalaDetails collection (array).
+	 *
+	 * By default this just sets the collFalaDetails collection to an empty array (like clearcollFalaDetails());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initFalaDetails()
 	{
-		if ($this->collFalaDetails === null) {
-			$this->collFalaDetails = array();
-		}
+		$this->collFalaDetails = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this FalaHeader has previously
-	 * been saved, it will retrieve related FalaDetails from storage.
-	 * If this FalaHeader is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of FalaDetail objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this FalaHeader has previously been saved, it will retrieve
+	 * related FalaDetails from storage. If this FalaHeader is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array FalaDetail[]
 	 * @throws     PropelException
 	 */
-	public function getFalaDetails($criteria = null, $con = null)
+	public function getFalaDetails($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(FalaHeaderPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2591,7 +2698,7 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			   $this->collFalaDetails = array();
 			} else {
 
-				$criteria->add(FalaDetailPeer::CA_IDDOC, $this->getCaIddoc());
+				$criteria->add(FalaDetailPeer::CA_IDDOC, $this->ca_iddoc);
 
 				FalaDetailPeer::addSelectColumns($criteria);
 				$this->collFalaDetails = FalaDetailPeer::doSelect($criteria, $con);
@@ -2604,7 +2711,7 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(FalaDetailPeer::CA_IDDOC, $this->getCaIddoc());
+				$criteria->add(FalaDetailPeer::CA_IDDOC, $this->ca_iddoc);
 
 				FalaDetailPeer::addSelectColumns($criteria);
 				if (!isset($this->lastFalaDetailCriteria) || !$this->lastFalaDetailCriteria->equals($criteria)) {
@@ -2617,32 +2724,63 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related FalaDetails.
+	 * Returns the number of related FalaDetail objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related FalaDetail objects.
 	 * @throws     PropelException
 	 */
-	public function countFalaDetails($criteria = null, $distinct = false, $con = null)
+	public function countFalaDetails(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(FalaHeaderPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(FalaDetailPeer::CA_IDDOC, $this->getCaIddoc());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return FalaDetailPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collFalaDetails === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(FalaDetailPeer::CA_IDDOC, $this->ca_iddoc);
+
+				$count = FalaDetailPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(FalaDetailPeer::CA_IDDOC, $this->ca_iddoc);
+
+				if (!isset($this->lastFalaDetailCriteria) || !$this->lastFalaDetailCriteria->equals($criteria)) {
+					$count = FalaDetailPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collFalaDetails);
+				}
+			} else {
+				$count = count($this->collFalaDetails);
+			}
+		}
+		$this->lastFalaDetailCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a FalaDetail object to this object
-	 * through the FalaDetail foreign key attribute
+	 * through the FalaDetail foreign key attribute.
 	 *
 	 * @param      FalaDetail $l FalaDetail
 	 * @return     void
@@ -2650,41 +2788,60 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function addFalaDetail(FalaDetail $l)
 	{
-		$this->collFalaDetails[] = $l;
-		$l->setFalaHeader($this);
-	}
-
-	/**
-	 * Temporary storage of collFalaInstructions to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initFalaInstructions()
-	{
-		if ($this->collFalaInstructions === null) {
-			$this->collFalaInstructions = array();
+		if ($this->collFalaDetails === null) {
+			$this->initFalaDetails();
+		}
+		if (!in_array($l, $this->collFalaDetails, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collFalaDetails, $l);
+			$l->setFalaHeader($this);
 		}
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this FalaHeader has previously
-	 * been saved, it will retrieve related FalaInstructions from storage.
-	 * If this FalaHeader is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Clears out the collFalaInstructions collection (array).
 	 *
-	 * @param      Connection $con
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addFalaInstructions()
+	 */
+	public function clearFalaInstructions()
+	{
+		$this->collFalaInstructions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collFalaInstructions collection (array).
+	 *
+	 * By default this just sets the collFalaInstructions collection to an empty array (like clearcollFalaInstructions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initFalaInstructions()
+	{
+		$this->collFalaInstructions = array();
+	}
+
+	/**
+	 * Gets an array of FalaInstruction objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this FalaHeader has previously been saved, it will retrieve
+	 * related FalaInstructions from storage. If this FalaHeader is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array FalaInstruction[]
 	 * @throws     PropelException
 	 */
-	public function getFalaInstructions($criteria = null, $con = null)
+	public function getFalaInstructions($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(FalaHeaderPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2696,7 +2853,7 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 			   $this->collFalaInstructions = array();
 			} else {
 
-				$criteria->add(FalaInstructionPeer::CA_IDDOC, $this->getCaIddoc());
+				$criteria->add(FalaInstructionPeer::CA_IDDOC, $this->ca_iddoc);
 
 				FalaInstructionPeer::addSelectColumns($criteria);
 				$this->collFalaInstructions = FalaInstructionPeer::doSelect($criteria, $con);
@@ -2709,7 +2866,7 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(FalaInstructionPeer::CA_IDDOC, $this->getCaIddoc());
+				$criteria->add(FalaInstructionPeer::CA_IDDOC, $this->ca_iddoc);
 
 				FalaInstructionPeer::addSelectColumns($criteria);
 				if (!isset($this->lastFalaInstructionCriteria) || !$this->lastFalaInstructionCriteria->equals($criteria)) {
@@ -2722,32 +2879,63 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related FalaInstructions.
+	 * Returns the number of related FalaInstruction objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related FalaInstruction objects.
 	 * @throws     PropelException
 	 */
-	public function countFalaInstructions($criteria = null, $distinct = false, $con = null)
+	public function countFalaInstructions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(FalaHeaderPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(FalaInstructionPeer::CA_IDDOC, $this->getCaIddoc());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return FalaInstructionPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collFalaInstructions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(FalaInstructionPeer::CA_IDDOC, $this->ca_iddoc);
+
+				$count = FalaInstructionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(FalaInstructionPeer::CA_IDDOC, $this->ca_iddoc);
+
+				if (!isset($this->lastFalaInstructionCriteria) || !$this->lastFalaInstructionCriteria->equals($criteria)) {
+					$count = FalaInstructionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collFalaInstructions);
+				}
+			} else {
+				$count = count($this->collFalaInstructions);
+			}
+		}
+		$this->lastFalaInstructionCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a FalaInstruction object to this object
-	 * through the FalaInstruction foreign key attribute
+	 * through the FalaInstruction foreign key attribute.
 	 *
 	 * @param      FalaInstruction $l FalaInstruction
 	 * @return     void
@@ -2755,113 +2943,81 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 	 */
 	public function addFalaInstruction(FalaInstruction $l)
 	{
-		$this->collFalaInstructions[] = $l;
-		$l->setFalaHeader($this);
-	}
-
-	/**
-	 * Temporary storage of collFalaShipmentInfos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initFalaShipmentInfos()
-	{
-		if ($this->collFalaShipmentInfos === null) {
-			$this->collFalaShipmentInfos = array();
+		if ($this->collFalaInstructions === null) {
+			$this->initFalaInstructions();
+		}
+		if (!in_array($l, $this->collFalaInstructions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collFalaInstructions, $l);
+			$l->setFalaHeader($this);
 		}
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this FalaHeader has previously
-	 * been saved, it will retrieve related FalaShipmentInfos from storage.
-	 * If this FalaHeader is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets a single FalaShipmentInfo object, which is related to this object by a one-to-one relationship.
 	 *
-	 * @param      Connection $con
-	 * @param      Criteria $criteria
+	 * @param      PropelPDO $con
+	 * @return     FalaShipmentInfo
 	 * @throws     PropelException
 	 */
-	public function getFalaShipmentInfos($criteria = null, $con = null)
+	public function getFalaShipmentInfo(PropelPDO $con = null)
 	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
+
+		if ($this->singleFalaShipmentInfo === null && !$this->isNew()) {
+			$this->singleFalaShipmentInfo = FalaShipmentInfoPeer::retrieveByPK($this->ca_iddoc, $con);
 		}
 
-		if ($this->collFalaShipmentInfos === null) {
-			if ($this->isNew()) {
-			   $this->collFalaShipmentInfos = array();
-			} else {
-
-				$criteria->add(FalaShipmentInfoPeer::CA_IDDOC, $this->getCaIddoc());
-
-				FalaShipmentInfoPeer::addSelectColumns($criteria);
-				$this->collFalaShipmentInfos = FalaShipmentInfoPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(FalaShipmentInfoPeer::CA_IDDOC, $this->getCaIddoc());
-
-				FalaShipmentInfoPeer::addSelectColumns($criteria);
-				if (!isset($this->lastFalaShipmentInfoCriteria) || !$this->lastFalaShipmentInfoCriteria->equals($criteria)) {
-					$this->collFalaShipmentInfos = FalaShipmentInfoPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastFalaShipmentInfoCriteria = $criteria;
-		return $this->collFalaShipmentInfos;
+		return $this->singleFalaShipmentInfo;
 	}
 
 	/**
-	 * Returns the number of related FalaShipmentInfos.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      Connection $con
-	 * @throws     PropelException
-	 */
-	public function countFalaShipmentInfos($criteria = null, $distinct = false, $con = null)
-	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		$criteria->add(FalaShipmentInfoPeer::CA_IDDOC, $this->getCaIddoc());
-
-		return FalaShipmentInfoPeer::doCount($criteria, $distinct, $con);
-	}
-
-	/**
-	 * Method called to associate a FalaShipmentInfo object to this object
-	 * through the FalaShipmentInfo foreign key attribute
+	 * Sets a single FalaShipmentInfo object as related to this object by a one-to-one relationship.
 	 *
 	 * @param      FalaShipmentInfo $l FalaShipmentInfo
-	 * @return     void
+	 * @return     FalaHeader The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function addFalaShipmentInfo(FalaShipmentInfo $l)
+	public function setFalaShipmentInfo(FalaShipmentInfo $v)
 	{
-		$this->collFalaShipmentInfos[] = $l;
-		$l->setFalaHeader($this);
+		$this->singleFalaShipmentInfo = $v;
+
+		// Make sure that that the passed-in FalaShipmentInfo isn't already associated with this object
+		if ($v->getFalaHeader() === null) {
+			$v->setFalaHeader($this);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collFalaDetails) {
+				foreach ((array) $this->collFalaDetails as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collFalaInstructions) {
+				foreach ((array) $this->collFalaInstructions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->singleFalaShipmentInfo) {
+				$this->singleFalaShipmentInfo->clearAllReferences($deep);
+			}
+		} // if ($deep)
+
+		$this->collFalaDetails = null;
+		$this->collFalaInstructions = null;
+		$this->singleFalaShipmentInfo = null;
 	}
 
 } // BaseFalaHeader

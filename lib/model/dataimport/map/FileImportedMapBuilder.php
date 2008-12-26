@@ -13,7 +13,7 @@
  *
  * @package    lib.model.dataimport.map
  */
-class FileImportedMapBuilder {
+class FileImportedMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,24 +54,25 @@ class FileImportedMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(FileImportedPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_fileimported');
+		$tMap = $this->dbMap->addTable(FileImportedPeer::TABLE_NAME);
 		$tMap->setPhpName('FileImported');
+		$tMap->setClassname('FileImported');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDFILEHEADER', 'CaIdfileheader', 'int' , CreoleTypes::INTEGER, 'tb_fileheader', 'CA_IDFILEHEADER', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDFILEHEADER', 'CaIdfileheader', 'INTEGER' , 'tb_fileheader', 'CA_IDFILEHEADER', true, null);
 
-		$tMap->addPrimaryKey('CA_FCHIMPORTACION', 'CaFchimportacion', 'int', CreoleTypes::TIMESTAMP, true, null);
+		$tMap->addPrimaryKey('CA_FCHIMPORTACION', 'CaFchimportacion', 'TIMESTAMP', true, null);
 
-		$tMap->addColumn('CA_CONTENT', 'CaContent', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CONTENT', 'CaContent', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_USUARIO', 'CaUsuario', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_USUARIO', 'CaUsuario', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_PROCESADO', 'CaProcesado', 'boolean', CreoleTypes::BOOLEAN, true, null);
+		$tMap->addColumn('CA_PROCESADO', 'CaProcesado', 'BOOLEAN', true, null);
 
-		$tMap->addPrimaryKey('CA_NOMBRE', 'CaNombre', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_NOMBRE', 'CaNombre', 'VARCHAR', true, null);
 
 	} // doBuild()
 

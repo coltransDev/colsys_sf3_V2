@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class TRMMapBuilder {
+class TRMMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,38 +54,39 @@ class TRMMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TRMPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_trms');
+		$tMap = $this->dbMap->addTable(TRMPeer::TABLE_NAME);
 		$tMap->setPhpName('TRM');
+		$tMap->setClassname('TRM');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_FECHA', 'CaFecha', 'int', CreoleTypes::DATE, true, null);
+		$tMap->addPrimaryKey('CA_FECHA', 'CaFecha', 'DATE', true, null);
 
-		$tMap->addColumn('CA_EURO', 'CaEuro', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_EURO', 'CaEuro', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_PESOS', 'CaPesos', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addColumn('CA_PESOS', 'CaPesos', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_LIBRA', 'CaLibra', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_LIBRA', 'CaLibra', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_FSUIZO', 'CaFsuizo', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_FSUIZO', 'CaFsuizo', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_MARCO', 'CaMarco', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_MARCO', 'CaMarco', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_YEN', 'CaYen', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_YEN', 'CaYen', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_RUPEE', 'CaRupee', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_RUPEE', 'CaRupee', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_AUSDOLAR', 'CaAusdolar', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_AUSDOLAR', 'CaAusdolar', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_CANDOLAR', 'CaCandolar', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_CANDOLAR', 'CaCandolar', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_CORNORUEGA', 'CaCornoruega', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_CORNORUEGA', 'CaCornoruega', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_SINGDOLAR', 'CaSingdolar', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_SINGDOLAR', 'CaSingdolar', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_RAND', 'CaRand', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_RAND', 'CaRand', 'NUMERIC', false, null);
 
 	} // doBuild()
 

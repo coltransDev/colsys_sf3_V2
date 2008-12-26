@@ -13,7 +13,7 @@
  *
  * @package    lib.model.pricing.map
  */
-class TrayectoMapBuilder {
+class TrayectoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,44 +54,45 @@ class TrayectoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TrayectoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_trayectos');
+		$tMap = $this->dbMap->addTable(TrayectoPeer::TABLE_NAME);
 		$tMap->setPhpName('Trayecto');
+		$tMap->setClassname('Trayecto');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addColumn('OID', 'Oid', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addColumn('OID', 'Oid', 'INTEGER', true, null);
 
-		$tMap->addPrimaryKey('CA_IDTRAYECTO', 'CaIdtrayecto', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDTRAYECTO', 'CaIdtrayecto', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_ORIGEN', 'CaOrigen', 'string', CreoleTypes::VARCHAR, true, 8);
+		$tMap->addColumn('CA_ORIGEN', 'CaOrigen', 'VARCHAR', true, 8);
 
-		$tMap->addColumn('CA_DESTINO', 'CaDestino', 'string', CreoleTypes::VARCHAR, true, 8);
+		$tMap->addColumn('CA_DESTINO', 'CaDestino', 'VARCHAR', true, 8);
 
-		$tMap->addForeignKey('CA_IDLINEA', 'CaIdlinea', 'int', CreoleTypes::INTEGER, 'tb_transporlineas', 'CA_IDLINEA', true, null);
+		$tMap->addForeignKey('CA_IDLINEA', 'CaIdlinea', 'INTEGER', 'tb_transporlineas', 'CA_IDLINEA', true, null);
 
-		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TERMINAL', 'CaTerminal', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TERMINAL', 'CaTerminal', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FRECUENCIA', 'CaFrecuencia', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FRECUENCIA', 'CaFrecuencia', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TIEMPOTRANSITO', 'CaTiempotransito', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TIEMPOTRANSITO', 'CaTiempotransito', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'DATE', false, null);
 
-		$tMap->addColumn('CA_IDTARIFAS', 'CaIdtarifas', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_IDTARIFAS', 'CaIdtarifas', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_IDAGENTE', 'CaIdagente', 'int', CreoleTypes::INTEGER, 'tb_agentes', 'CA_IDAGENTE', false, null);
+		$tMap->addForeignKey('CA_IDAGENTE', 'CaIdagente', 'INTEGER', 'tb_agentes', 'CA_IDAGENTE', false, null);
 
-		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'boolean', CreoleTypes::BOOLEAN, false, null);
+		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
 
 	} // doBuild()
 

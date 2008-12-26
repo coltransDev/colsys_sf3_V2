@@ -10,6 +10,8 @@
 abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 
 
+  const PEER = 'FalaShipmentInfoPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,27 +20,23 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_iddoc field.
 	 * @var        string
 	 */
 	protected $ca_iddoc;
 
-
 	/**
 	 * The value for the ca_begin_window field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_begin_window;
 
-
 	/**
 	 * The value for the ca_end_window field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_end_window;
-
 
 	/**
 	 * The value for the ca_commodities field.
@@ -46,13 +44,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_commodities;
 
-
 	/**
 	 * The value for the ca_partial field.
 	 * @var        string
 	 */
 	protected $ca_partial;
-
 
 	/**
 	 * The value for the ca_payment_terms field.
@@ -60,13 +56,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_payment_terms;
 
-
 	/**
 	 * The value for the ca_incoterms field.
 	 * @var        string
 	 */
 	protected $ca_incoterms;
-
 
 	/**
 	 * The value for the ca_container_type field.
@@ -74,13 +68,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_container_type;
 
-
 	/**
 	 * The value for the ca_utv field.
 	 * @var        string
 	 */
 	protected $ca_utv;
-
 
 	/**
 	 * The value for the ca_etv field.
@@ -88,13 +80,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_etv;
 
-
 	/**
 	 * The value for the ca_line field.
 	 * @var        string
 	 */
 	protected $ca_line;
-
 
 	/**
 	 * The value for the ca_contact_line field.
@@ -102,20 +92,17 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_contact_line;
 
-
 	/**
 	 * The value for the ca_contact_importer field.
 	 * @var        string
 	 */
 	protected $ca_contact_importer;
 
-
 	/**
 	 * The value for the ca_uppo field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_uppo;
-
 
 	/**
 	 * The value for the ca_eb field.
@@ -123,13 +110,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_eb;
 
-
 	/**
 	 * The value for the ca_edd field.
 	 * @var        string
 	 */
 	protected $ca_edd;
-
 
 	/**
 	 * The value for the ca_port field.
@@ -137,13 +122,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_port;
 
-
 	/**
 	 * The value for the ca_transshipment field.
 	 * @var        string
 	 */
 	protected $ca_transshipment;
-
 
 	/**
 	 * The value for the ca_transshipment_port field.
@@ -151,13 +134,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_transshipment_port;
 
-
 	/**
 	 * The value for the ca_shipping_org field.
 	 * @var        string
 	 */
 	protected $ca_shipping_org;
-
 
 	/**
 	 * The value for the ca_original_org field.
@@ -165,13 +146,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_original_org;
 
-
 	/**
 	 * The value for the ca_fwd_copy_org field.
 	 * @var        string
 	 */
 	protected $ca_fwd_copy_org;
-
 
 	/**
 	 * The value for the ca_fcr_org field.
@@ -179,13 +158,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_fcr_org;
 
-
 	/**
 	 * The value for the ca_shipping_dst field.
 	 * @var        string
 	 */
 	protected $ca_shipping_dst;
-
 
 	/**
 	 * The value for the ca_original_dst field.
@@ -193,13 +170,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_original_dst;
 
-
 	/**
 	 * The value for the ca_fwd_copy_dst field.
 	 * @var        string
 	 */
 	protected $ca_fwd_copy_dst;
-
 
 	/**
 	 * The value for the ca_fcr_dst field.
@@ -207,13 +182,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_fcr_dst;
 
-
 	/**
 	 * The value for the ca_transport_via field.
 	 * @var        string
 	 */
 	protected $ca_transport_via;
-
 
 	/**
 	 * The value for the ca_invoice_org field.
@@ -221,13 +194,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_invoice_org;
 
-
 	/**
 	 * The value for the ca_packing_list_org field.
 	 * @var        string
 	 */
 	protected $ca_packing_list_org;
-
 
 	/**
 	 * The value for the ca_document_org field.
@@ -235,13 +206,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_document_org;
 
-
 	/**
 	 * The value for the ca_oc_org field.
 	 * @var        string
 	 */
 	protected $ca_oc_org;
-
 
 	/**
 	 * The value for the ca_others_docs_org field.
@@ -249,13 +218,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_others_docs_org;
 
-
 	/**
 	 * The value for the ca_invoice_cps field.
 	 * @var        string
 	 */
 	protected $ca_invoice_cps;
-
 
 	/**
 	 * The value for the ca_packing_list_cps field.
@@ -263,13 +230,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_packing_list_cps;
 
-
 	/**
 	 * The value for the ca_document_cps field.
 	 * @var        string
 	 */
 	protected $ca_document_cps;
-
 
 	/**
 	 * The value for the ca_oc_cps field.
@@ -277,13 +242,11 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_oc_cps;
 
-
 	/**
 	 * The value for the ca_others_docs_cps field.
 	 * @var        string
 	 */
 	protected $ca_others_docs_cps;
-
 
 	/**
 	 * The value for the ca_final_port field.
@@ -291,17 +254,15 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_final_port;
 
-
 	/**
 	 * The value for the ca_alter_port field.
 	 * @var        string
 	 */
 	protected $ca_alter_port;
 
-
 	/**
 	 * The value for the ca_limit_date field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_limit_date;
 
@@ -325,75 +286,98 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseFalaShipmentInfo object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_iddoc] column value.
 	 * 
 	 * @return     string
 	 */
 	public function getCaIddoc()
 	{
-
 		return $this->ca_iddoc;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_begin_window] column value.
+	 * Get the [optionally formatted] temporal [ca_begin_window] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaBeginWindow($format = 'Y-m-d')
 	{
-
-		if ($this->ca_begin_window === null || $this->ca_begin_window === '') {
+		if ($this->ca_begin_window === null) {
 			return null;
-		} elseif (!is_int($this->ca_begin_window)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_begin_window);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_begin_window] as date/time value: " . var_export($this->ca_begin_window, true));
-			}
-		} else {
-			$ts = $this->ca_begin_window;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_begin_window);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_begin_window, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_end_window] column value.
+	 * Get the [optionally formatted] temporal [ca_end_window] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaEndWindow($format = 'Y-m-d')
 	{
-
-		if ($this->ca_end_window === null || $this->ca_end_window === '') {
+		if ($this->ca_end_window === null) {
 			return null;
-		} elseif (!is_int($this->ca_end_window)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_end_window);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_end_window] as date/time value: " . var_export($this->ca_end_window, true));
-			}
-		} else {
-			$ts = $this->ca_end_window;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_end_window);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_end_window, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -404,7 +388,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaCommodities()
 	{
-
 		return $this->ca_commodities;
 	}
 
@@ -415,7 +398,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaPartial()
 	{
-
 		return $this->ca_partial;
 	}
 
@@ -426,7 +408,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaPaymentTerms()
 	{
-
 		return $this->ca_payment_terms;
 	}
 
@@ -437,7 +418,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaIncoterms()
 	{
-
 		return $this->ca_incoterms;
 	}
 
@@ -448,7 +428,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaContainerType()
 	{
-
 		return $this->ca_container_type;
 	}
 
@@ -459,7 +438,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaUtv()
 	{
-
 		return $this->ca_utv;
 	}
 
@@ -470,7 +448,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaEtv()
 	{
-
 		return $this->ca_etv;
 	}
 
@@ -481,7 +458,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaLine()
 	{
-
 		return $this->ca_line;
 	}
 
@@ -492,7 +468,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaContactLine()
 	{
-
 		return $this->ca_contact_line;
 	}
 
@@ -503,18 +478,16 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaContactImporter()
 	{
-
 		return $this->ca_contact_importer;
 	}
 
 	/**
 	 * Get the [ca_uppo] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaUppo()
 	{
-
 		return $this->ca_uppo;
 	}
 
@@ -525,7 +498,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaEb()
 	{
-
 		return $this->ca_eb;
 	}
 
@@ -536,7 +508,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaEdd()
 	{
-
 		return $this->ca_edd;
 	}
 
@@ -547,7 +518,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaPort()
 	{
-
 		return $this->ca_port;
 	}
 
@@ -558,7 +528,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaTransshipment()
 	{
-
 		return $this->ca_transshipment;
 	}
 
@@ -569,7 +538,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaTransshipmentPort()
 	{
-
 		return $this->ca_transshipment_port;
 	}
 
@@ -580,7 +548,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaShippingOrg()
 	{
-
 		return $this->ca_shipping_org;
 	}
 
@@ -591,7 +558,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaOriginalOrg()
 	{
-
 		return $this->ca_original_org;
 	}
 
@@ -602,7 +568,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaFwdCopyOrg()
 	{
-
 		return $this->ca_fwd_copy_org;
 	}
 
@@ -613,7 +578,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaFcrOrg()
 	{
-
 		return $this->ca_fcr_org;
 	}
 
@@ -624,7 +588,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaShippingDst()
 	{
-
 		return $this->ca_shipping_dst;
 	}
 
@@ -635,7 +598,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaOriginalDst()
 	{
-
 		return $this->ca_original_dst;
 	}
 
@@ -646,7 +608,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaFwdCopyDst()
 	{
-
 		return $this->ca_fwd_copy_dst;
 	}
 
@@ -657,7 +618,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaFcrDst()
 	{
-
 		return $this->ca_fcr_dst;
 	}
 
@@ -668,7 +628,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaTransportVia()
 	{
-
 		return $this->ca_transport_via;
 	}
 
@@ -679,7 +638,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaInvoiceOrg()
 	{
-
 		return $this->ca_invoice_org;
 	}
 
@@ -690,7 +648,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaPackingListOrg()
 	{
-
 		return $this->ca_packing_list_org;
 	}
 
@@ -701,7 +658,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaDocumentOrg()
 	{
-
 		return $this->ca_document_org;
 	}
 
@@ -712,7 +668,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaOcOrg()
 	{
-
 		return $this->ca_oc_org;
 	}
 
@@ -723,7 +678,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaOthersDocsOrg()
 	{
-
 		return $this->ca_others_docs_org;
 	}
 
@@ -734,7 +688,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaInvoiceCps()
 	{
-
 		return $this->ca_invoice_cps;
 	}
 
@@ -745,7 +698,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaPackingListCps()
 	{
-
 		return $this->ca_packing_list_cps;
 	}
 
@@ -756,7 +708,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaDocumentCps()
 	{
-
 		return $this->ca_document_cps;
 	}
 
@@ -767,7 +718,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaOcCps()
 	{
-
 		return $this->ca_oc_cps;
 	}
 
@@ -778,7 +728,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaOthersDocsCps()
 	{
-
 		return $this->ca_others_docs_cps;
 	}
 
@@ -789,7 +738,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaFinalPort()
 	{
-
 		return $this->ca_final_port;
 	}
 
@@ -800,38 +748,39 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 */
 	public function getCaAlterPort()
 	{
-
 		return $this->ca_alter_port;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_limit_date] column value.
+	 * Get the [optionally formatted] temporal [ca_limit_date] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaLimitDate($format = 'Y-m-d')
 	{
-
-		if ($this->ca_limit_date === null || $this->ca_limit_date === '') {
+		if ($this->ca_limit_date === null) {
 			return null;
-		} elseif (!is_int($this->ca_limit_date)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_limit_date);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_limit_date] as date/time value: " . var_export($this->ca_limit_date, true));
-			}
-		} else {
-			$ts = $this->ca_limit_date;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_limit_date);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_limit_date, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -839,15 +788,12 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 * Set the value of [ca_iddoc] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaIddoc($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_iddoc !== $v) {
@@ -859,69 +805,117 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->aFalaHeader = null;
 		}
 
+		return $this;
 	} // setCaIddoc()
 
 	/**
-	 * Set the value of [ca_begin_window] column.
+	 * Sets the value of [ca_begin_window] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaBeginWindow($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_begin_window] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_begin_window !== $ts) {
-			$this->ca_begin_window = $ts;
-			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_BEGIN_WINDOW;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_begin_window !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_begin_window !== null && $tmpDt = new DateTime($this->ca_begin_window)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_begin_window = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_BEGIN_WINDOW;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaBeginWindow()
 
 	/**
-	 * Set the value of [ca_end_window] column.
+	 * Sets the value of [ca_end_window] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaEndWindow($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_end_window] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_end_window !== $ts) {
-			$this->ca_end_window = $ts;
-			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_END_WINDOW;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_end_window !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_end_window !== null && $tmpDt = new DateTime($this->ca_end_window)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_end_window = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_END_WINDOW;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaEndWindow()
 
 	/**
 	 * Set the value of [ca_commodities] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaCommodities($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_commodities !== $v) {
@@ -929,21 +923,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_COMMODITIES;
 		}
 
+		return $this;
 	} // setCaCommodities()
 
 	/**
 	 * Set the value of [ca_partial] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaPartial($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_partial !== $v) {
@@ -951,21 +943,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_PARTIAL;
 		}
 
+		return $this;
 	} // setCaPartial()
 
 	/**
 	 * Set the value of [ca_payment_terms] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaPaymentTerms($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_payment_terms !== $v) {
@@ -973,21 +963,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_PAYMENT_TERMS;
 		}
 
+		return $this;
 	} // setCaPaymentTerms()
 
 	/**
 	 * Set the value of [ca_incoterms] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaIncoterms($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_incoterms !== $v) {
@@ -995,21 +983,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_INCOTERMS;
 		}
 
+		return $this;
 	} // setCaIncoterms()
 
 	/**
 	 * Set the value of [ca_container_type] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaContainerType($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_container_type !== $v) {
@@ -1017,21 +1003,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_CONTAINER_TYPE;
 		}
 
+		return $this;
 	} // setCaContainerType()
 
 	/**
 	 * Set the value of [ca_utv] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaUtv($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_utv !== $v) {
@@ -1039,21 +1023,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_UTV;
 		}
 
+		return $this;
 	} // setCaUtv()
 
 	/**
 	 * Set the value of [ca_etv] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaEtv($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_etv !== $v) {
@@ -1061,21 +1043,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_ETV;
 		}
 
+		return $this;
 	} // setCaEtv()
 
 	/**
 	 * Set the value of [ca_line] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaLine($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_line !== $v) {
@@ -1083,21 +1063,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_LINE;
 		}
 
+		return $this;
 	} // setCaLine()
 
 	/**
 	 * Set the value of [ca_contact_line] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaContactLine($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_contact_line !== $v) {
@@ -1105,21 +1083,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_CONTACT_LINE;
 		}
 
+		return $this;
 	} // setCaContactLine()
 
 	/**
 	 * Set the value of [ca_contact_importer] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaContactImporter($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_contact_importer !== $v) {
@@ -1127,37 +1103,39 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_CONTACT_IMPORTER;
 		}
 
+		return $this;
 	} // setCaContactImporter()
 
 	/**
 	 * Set the value of [ca_uppo] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaUppo($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_uppo !== $v) {
 			$this->ca_uppo = $v;
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_UPPO;
 		}
 
+		return $this;
 	} // setCaUppo()
 
 	/**
 	 * Set the value of [ca_eb] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaEb($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_eb !== $v) {
@@ -1165,21 +1143,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_EB;
 		}
 
+		return $this;
 	} // setCaEb()
 
 	/**
 	 * Set the value of [ca_edd] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaEdd($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_edd !== $v) {
@@ -1187,21 +1163,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_EDD;
 		}
 
+		return $this;
 	} // setCaEdd()
 
 	/**
 	 * Set the value of [ca_port] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaPort($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_port !== $v) {
@@ -1209,21 +1183,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_PORT;
 		}
 
+		return $this;
 	} // setCaPort()
 
 	/**
 	 * Set the value of [ca_transshipment] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaTransshipment($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_transshipment !== $v) {
@@ -1231,21 +1203,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_TRANSSHIPMENT;
 		}
 
+		return $this;
 	} // setCaTransshipment()
 
 	/**
 	 * Set the value of [ca_transshipment_port] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaTransshipmentPort($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_transshipment_port !== $v) {
@@ -1253,21 +1223,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_TRANSSHIPMENT_PORT;
 		}
 
+		return $this;
 	} // setCaTransshipmentPort()
 
 	/**
 	 * Set the value of [ca_shipping_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaShippingOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_shipping_org !== $v) {
@@ -1275,21 +1243,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_SHIPPING_ORG;
 		}
 
+		return $this;
 	} // setCaShippingOrg()
 
 	/**
 	 * Set the value of [ca_original_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaOriginalOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_original_org !== $v) {
@@ -1297,21 +1263,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_ORIGINAL_ORG;
 		}
 
+		return $this;
 	} // setCaOriginalOrg()
 
 	/**
 	 * Set the value of [ca_fwd_copy_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaFwdCopyOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_fwd_copy_org !== $v) {
@@ -1319,21 +1283,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_FWD_COPY_ORG;
 		}
 
+		return $this;
 	} // setCaFwdCopyOrg()
 
 	/**
 	 * Set the value of [ca_fcr_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaFcrOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_fcr_org !== $v) {
@@ -1341,21 +1303,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_FCR_ORG;
 		}
 
+		return $this;
 	} // setCaFcrOrg()
 
 	/**
 	 * Set the value of [ca_shipping_dst] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaShippingDst($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_shipping_dst !== $v) {
@@ -1363,21 +1323,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_SHIPPING_DST;
 		}
 
+		return $this;
 	} // setCaShippingDst()
 
 	/**
 	 * Set the value of [ca_original_dst] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaOriginalDst($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_original_dst !== $v) {
@@ -1385,21 +1343,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_ORIGINAL_DST;
 		}
 
+		return $this;
 	} // setCaOriginalDst()
 
 	/**
 	 * Set the value of [ca_fwd_copy_dst] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaFwdCopyDst($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_fwd_copy_dst !== $v) {
@@ -1407,21 +1363,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_FWD_COPY_DST;
 		}
 
+		return $this;
 	} // setCaFwdCopyDst()
 
 	/**
 	 * Set the value of [ca_fcr_dst] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaFcrDst($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_fcr_dst !== $v) {
@@ -1429,21 +1383,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_FCR_DST;
 		}
 
+		return $this;
 	} // setCaFcrDst()
 
 	/**
 	 * Set the value of [ca_transport_via] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaTransportVia($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_transport_via !== $v) {
@@ -1451,21 +1403,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_TRANSPORT_VIA;
 		}
 
+		return $this;
 	} // setCaTransportVia()
 
 	/**
 	 * Set the value of [ca_invoice_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaInvoiceOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_invoice_org !== $v) {
@@ -1473,21 +1423,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_INVOICE_ORG;
 		}
 
+		return $this;
 	} // setCaInvoiceOrg()
 
 	/**
 	 * Set the value of [ca_packing_list_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaPackingListOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_packing_list_org !== $v) {
@@ -1495,21 +1443,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_PACKING_LIST_ORG;
 		}
 
+		return $this;
 	} // setCaPackingListOrg()
 
 	/**
 	 * Set the value of [ca_document_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaDocumentOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_document_org !== $v) {
@@ -1517,21 +1463,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_DOCUMENT_ORG;
 		}
 
+		return $this;
 	} // setCaDocumentOrg()
 
 	/**
 	 * Set the value of [ca_oc_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaOcOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_oc_org !== $v) {
@@ -1539,21 +1483,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_OC_ORG;
 		}
 
+		return $this;
 	} // setCaOcOrg()
 
 	/**
 	 * Set the value of [ca_others_docs_org] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaOthersDocsOrg($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_others_docs_org !== $v) {
@@ -1561,21 +1503,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_OTHERS_DOCS_ORG;
 		}
 
+		return $this;
 	} // setCaOthersDocsOrg()
 
 	/**
 	 * Set the value of [ca_invoice_cps] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaInvoiceCps($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_invoice_cps !== $v) {
@@ -1583,21 +1523,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_INVOICE_CPS;
 		}
 
+		return $this;
 	} // setCaInvoiceCps()
 
 	/**
 	 * Set the value of [ca_packing_list_cps] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaPackingListCps($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_packing_list_cps !== $v) {
@@ -1605,21 +1543,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_PACKING_LIST_CPS;
 		}
 
+		return $this;
 	} // setCaPackingListCps()
 
 	/**
 	 * Set the value of [ca_document_cps] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaDocumentCps($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_document_cps !== $v) {
@@ -1627,21 +1563,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_DOCUMENT_CPS;
 		}
 
+		return $this;
 	} // setCaDocumentCps()
 
 	/**
 	 * Set the value of [ca_oc_cps] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaOcCps($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_oc_cps !== $v) {
@@ -1649,21 +1583,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_OC_CPS;
 		}
 
+		return $this;
 	} // setCaOcCps()
 
 	/**
 	 * Set the value of [ca_others_docs_cps] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaOthersDocsCps($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_others_docs_cps !== $v) {
@@ -1671,21 +1603,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_OTHERS_DOCS_CPS;
 		}
 
+		return $this;
 	} // setCaOthersDocsCps()
 
 	/**
 	 * Set the value of [ca_final_port] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaFinalPort($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_final_port !== $v) {
@@ -1693,21 +1623,19 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_FINAL_PORT;
 		}
 
+		return $this;
 	} // setCaFinalPort()
 
 	/**
 	 * Set the value of [ca_alter_port] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaAlterPort($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_alter_port !== $v) {
@@ -1715,134 +1643,143 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_ALTER_PORT;
 		}
 
+		return $this;
 	} // setCaAlterPort()
 
 	/**
-	 * Set the value of [ca_limit_date] column.
+	 * Sets the value of [ca_limit_date] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 */
 	public function setCaLimitDate($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_limit_date] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_limit_date !== $ts) {
-			$this->ca_limit_date = $ts;
-			$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_LIMIT_DATE;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_limit_date !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_limit_date !== null && $tmpDt = new DateTime($this->ca_limit_date)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_limit_date = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = FalaShipmentInfoPeer::CA_LIMIT_DATE;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaLimitDate()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_iddoc = $rs->getString($startcol + 0);
-
-			$this->ca_begin_window = $rs->getDate($startcol + 1, null);
-
-			$this->ca_end_window = $rs->getDate($startcol + 2, null);
-
-			$this->ca_commodities = $rs->getString($startcol + 3);
-
-			$this->ca_partial = $rs->getString($startcol + 4);
-
-			$this->ca_payment_terms = $rs->getString($startcol + 5);
-
-			$this->ca_incoterms = $rs->getString($startcol + 6);
-
-			$this->ca_container_type = $rs->getString($startcol + 7);
-
-			$this->ca_utv = $rs->getString($startcol + 8);
-
-			$this->ca_etv = $rs->getString($startcol + 9);
-
-			$this->ca_line = $rs->getString($startcol + 10);
-
-			$this->ca_contact_line = $rs->getString($startcol + 11);
-
-			$this->ca_contact_importer = $rs->getString($startcol + 12);
-
-			$this->ca_uppo = $rs->getFloat($startcol + 13);
-
-			$this->ca_eb = $rs->getString($startcol + 14);
-
-			$this->ca_edd = $rs->getString($startcol + 15);
-
-			$this->ca_port = $rs->getString($startcol + 16);
-
-			$this->ca_transshipment = $rs->getString($startcol + 17);
-
-			$this->ca_transshipment_port = $rs->getString($startcol + 18);
-
-			$this->ca_shipping_org = $rs->getString($startcol + 19);
-
-			$this->ca_original_org = $rs->getString($startcol + 20);
-
-			$this->ca_fwd_copy_org = $rs->getString($startcol + 21);
-
-			$this->ca_fcr_org = $rs->getString($startcol + 22);
-
-			$this->ca_shipping_dst = $rs->getString($startcol + 23);
-
-			$this->ca_original_dst = $rs->getString($startcol + 24);
-
-			$this->ca_fwd_copy_dst = $rs->getString($startcol + 25);
-
-			$this->ca_fcr_dst = $rs->getString($startcol + 26);
-
-			$this->ca_transport_via = $rs->getString($startcol + 27);
-
-			$this->ca_invoice_org = $rs->getString($startcol + 28);
-
-			$this->ca_packing_list_org = $rs->getString($startcol + 29);
-
-			$this->ca_document_org = $rs->getString($startcol + 30);
-
-			$this->ca_oc_org = $rs->getString($startcol + 31);
-
-			$this->ca_others_docs_org = $rs->getString($startcol + 32);
-
-			$this->ca_invoice_cps = $rs->getString($startcol + 33);
-
-			$this->ca_packing_list_cps = $rs->getString($startcol + 34);
-
-			$this->ca_document_cps = $rs->getString($startcol + 35);
-
-			$this->ca_oc_cps = $rs->getString($startcol + 36);
-
-			$this->ca_others_docs_cps = $rs->getString($startcol + 37);
-
-			$this->ca_final_port = $rs->getString($startcol + 38);
-
-			$this->ca_alter_port = $rs->getString($startcol + 39);
-
-			$this->ca_limit_date = $rs->getDate($startcol + 40, null);
-
+			$this->ca_iddoc = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_begin_window = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_end_window = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_commodities = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_partial = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_payment_terms = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_incoterms = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_container_type = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_utv = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_etv = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_line = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_contact_line = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_contact_importer = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_uppo = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_eb = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_edd = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_port = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_transshipment = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+			$this->ca_transshipment_port = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_shipping_org = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_original_org = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_fwd_copy_org = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+			$this->ca_fcr_org = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_shipping_dst = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+			$this->ca_original_dst = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+			$this->ca_fwd_copy_dst = ($row[$startcol + 25] !== null) ? (string) $row[$startcol + 25] : null;
+			$this->ca_fcr_dst = ($row[$startcol + 26] !== null) ? (string) $row[$startcol + 26] : null;
+			$this->ca_transport_via = ($row[$startcol + 27] !== null) ? (string) $row[$startcol + 27] : null;
+			$this->ca_invoice_org = ($row[$startcol + 28] !== null) ? (string) $row[$startcol + 28] : null;
+			$this->ca_packing_list_org = ($row[$startcol + 29] !== null) ? (string) $row[$startcol + 29] : null;
+			$this->ca_document_org = ($row[$startcol + 30] !== null) ? (string) $row[$startcol + 30] : null;
+			$this->ca_oc_org = ($row[$startcol + 31] !== null) ? (string) $row[$startcol + 31] : null;
+			$this->ca_others_docs_org = ($row[$startcol + 32] !== null) ? (string) $row[$startcol + 32] : null;
+			$this->ca_invoice_cps = ($row[$startcol + 33] !== null) ? (string) $row[$startcol + 33] : null;
+			$this->ca_packing_list_cps = ($row[$startcol + 34] !== null) ? (string) $row[$startcol + 34] : null;
+			$this->ca_document_cps = ($row[$startcol + 35] !== null) ? (string) $row[$startcol + 35] : null;
+			$this->ca_oc_cps = ($row[$startcol + 36] !== null) ? (string) $row[$startcol + 36] : null;
+			$this->ca_others_docs_cps = ($row[$startcol + 37] !== null) ? (string) $row[$startcol + 37] : null;
+			$this->ca_final_port = ($row[$startcol + 38] !== null) ? (string) $row[$startcol + 38] : null;
+			$this->ca_alter_port = ($row[$startcol + 39] !== null) ? (string) $row[$startcol + 39] : null;
+			$this->ca_limit_date = ($row[$startcol + 40] !== null) ? (string) $row[$startcol + 40] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 41; // 41 = FalaShipmentInfoPeer::NUM_COLUMNS - FalaShipmentInfoPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -1853,83 +1790,148 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aFalaHeader !== null && $this->ca_iddoc !== $this->aFalaHeader->getCaIddoc()) {
+			$this->aFalaHeader = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(FalaShipmentInfoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = FalaShipmentInfoPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aFalaHeader = null;
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(FalaShipmentInfoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(FalaShipmentInfoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			FalaShipmentInfoPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(FalaShipmentInfoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(FalaShipmentInfoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			FalaShipmentInfoPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -1937,7 +1939,7 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aFalaHeader !== null) {
-				if ($this->aFalaHeader->isModified()) {
+				if ($this->aFalaHeader->isModified() || $this->aFalaHeader->isNew()) {
 					$affectedRows += $this->aFalaHeader->save($con);
 				}
 				$this->setFalaHeader($this->aFalaHeader);
@@ -1956,10 +1958,12 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += FalaShipmentInfoPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -2053,14 +2057,15 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = FalaShipmentInfoPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -2208,11 +2213,12 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = FalaShipmentInfoPeer::getFieldNames($keyType);
 		$result = array(
@@ -2267,8 +2273,8 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -2423,8 +2429,9 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -2581,6 +2588,8 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIddoc($this->ca_iddoc);
+
 		$copyObj->setCaBeginWindow($this->ca_begin_window);
 
 		$copyObj->setCaEndWindow($this->ca_end_window);
@@ -2664,8 +2673,6 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIddoc(NULL); // this is a pkey column, so set to default value
-
 	}
 
 	/**
@@ -2710,48 +2717,62 @@ abstract class BaseFalaShipmentInfo extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a FalaHeader object.
 	 *
 	 * @param      FalaHeader $v
-	 * @return     void
+	 * @return     FalaShipmentInfo The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setFalaHeader($v)
+	public function setFalaHeader(FalaHeader $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIddoc(NULL);
 		} else {
 			$this->setCaIddoc($v->getCaIddoc());
 		}
 
-
 		$this->aFalaHeader = $v;
+
+		// Add binding for other direction of this 1:1 relationship.
+		if ($v !== null) {
+			$v->setFalaShipmentInfo($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated FalaHeader object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     FalaHeader The associated FalaHeader object.
 	 * @throws     PropelException
 	 */
-	public function getFalaHeader($con = null)
+	public function getFalaHeader(PropelPDO $con = null)
 	{
 		if ($this->aFalaHeader === null && (($this->ca_iddoc !== "" && $this->ca_iddoc !== null))) {
-			// include the related Peer class
-			$this->aFalaHeader = FalaHeaderPeer::retrieveByPK($this->ca_iddoc, $con);
-
-			/* The following can be used instead of the line above to
-			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = FalaHeaderPeer::retrieveByPK($this->ca_iddoc, $con);
-			   $obj->addFalaHeaders($this);
-			 */
+			$c = new Criteria(FalaHeaderPeer::DATABASE_NAME);
+			$c->add(FalaHeaderPeer::CA_IDDOC, $this->ca_iddoc);
+			$this->aFalaHeader = FalaHeaderPeer::doSelectOne($c, $con);
+			// Because this foreign key represents a one-to-one relationship, we will create a bi-directional association.
+			$this->aFalaHeader->setFalaShipmentInfo($this);
 		}
 		return $this->aFalaHeader;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+		} // if ($deep)
+
+			$this->aFalaHeader = null;
 	}
 
 } // BaseFalaShipmentInfo

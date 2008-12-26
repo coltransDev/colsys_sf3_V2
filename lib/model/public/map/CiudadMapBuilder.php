@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class CiudadMapBuilder {
+class CiudadMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,20 +54,21 @@ class CiudadMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(CiudadPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_ciudades');
+		$tMap = $this->dbMap->addTable(CiudadPeer::TABLE_NAME);
 		$tMap->setPhpName('Ciudad');
+		$tMap->setClassname('Ciudad');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_IDCIUDAD', 'CaIdciudad', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_IDCIUDAD', 'CaIdciudad', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_CIUDAD', 'CaCiudad', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CIUDAD', 'CaCiudad', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_IDTRAFICO', 'CaIdtrafico', 'string', CreoleTypes::VARCHAR, 'tb_traficos', 'CA_IDTRAFICO', false, null);
+		$tMap->addForeignKey('CA_IDTRAFICO', 'CaIdtrafico', 'VARCHAR', 'tb_traficos', 'CA_IDTRAFICO', false, null);
 
-		$tMap->addColumn('CA_PUERTO', 'CaPuerto', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PUERTO', 'CaPuerto', 'VARCHAR', false, null);
 
 	} // doBuild()
 

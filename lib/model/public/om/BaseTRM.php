@@ -10,6 +10,8 @@
 abstract class BaseTRM extends BaseObject  implements Persistent {
 
 
+  const PEER = 'TRMPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,94 +20,81 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_fecha field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fecha;
 
-
 	/**
 	 * The value for the ca_euro field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_euro;
 
-
 	/**
 	 * The value for the ca_pesos field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_pesos;
 
-
 	/**
 	 * The value for the ca_libra field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_libra;
 
-
 	/**
 	 * The value for the ca_fsuizo field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_fsuizo;
 
-
 	/**
 	 * The value for the ca_marco field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_marco;
 
-
 	/**
 	 * The value for the ca_yen field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_yen;
 
-
 	/**
 	 * The value for the ca_rupee field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_rupee;
 
-
 	/**
 	 * The value for the ca_ausdolar field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_ausdolar;
 
-
 	/**
 	 * The value for the ca_candolar field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_candolar;
 
-
 	/**
 	 * The value for the ca_cornoruega field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_cornoruega;
 
-
 	/**
 	 * The value for the ca_singdolar field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_singdolar;
 
-
 	/**
 	 * The value for the ca_rand field.
-	 * @var        double
+	 * @var        string
 	 */
 	protected $ca_rand;
 
@@ -124,430 +113,524 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
-	 * Get the [optionally formatted] [ca_fecha] column value.
+	 * Initializes internal state of BaseTRM object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
+	 * Get the [optionally formatted] temporal [ca_fecha] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFecha($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fecha === null || $this->ca_fecha === '') {
+		if ($this->ca_fecha === null) {
 			return null;
-		} elseif (!is_int($this->ca_fecha)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fecha);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fecha] as date/time value: " . var_export($this->ca_fecha, true));
-			}
-		} else {
-			$ts = $this->ca_fecha;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fecha);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fecha, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
 	/**
 	 * Get the [ca_euro] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaEuro()
 	{
-
 		return $this->ca_euro;
 	}
 
 	/**
 	 * Get the [ca_pesos] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaPesos()
 	{
-
 		return $this->ca_pesos;
 	}
 
 	/**
 	 * Get the [ca_libra] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaLibra()
 	{
-
 		return $this->ca_libra;
 	}
 
 	/**
 	 * Get the [ca_fsuizo] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaFsuizo()
 	{
-
 		return $this->ca_fsuizo;
 	}
 
 	/**
 	 * Get the [ca_marco] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaMarco()
 	{
-
 		return $this->ca_marco;
 	}
 
 	/**
 	 * Get the [ca_yen] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaYen()
 	{
-
 		return $this->ca_yen;
 	}
 
 	/**
 	 * Get the [ca_rupee] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaRupee()
 	{
-
 		return $this->ca_rupee;
 	}
 
 	/**
 	 * Get the [ca_ausdolar] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaAusdolar()
 	{
-
 		return $this->ca_ausdolar;
 	}
 
 	/**
 	 * Get the [ca_candolar] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaCandolar()
 	{
-
 		return $this->ca_candolar;
 	}
 
 	/**
 	 * Get the [ca_cornoruega] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaCornoruega()
 	{
-
 		return $this->ca_cornoruega;
 	}
 
 	/**
 	 * Get the [ca_singdolar] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaSingdolar()
 	{
-
 		return $this->ca_singdolar;
 	}
 
 	/**
 	 * Get the [ca_rand] column value.
 	 * 
-	 * @return     double
+	 * @return     string
 	 */
 	public function getCaRand()
 	{
-
 		return $this->ca_rand;
 	}
 
 	/**
-	 * Set the value of [ca_fecha] column.
+	 * Sets the value of [ca_fecha] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaFecha($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fecha] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fecha !== $ts) {
-			$this->ca_fecha = $ts;
-			$this->modifiedColumns[] = TRMPeer::CA_FECHA;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fecha !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fecha !== null && $tmpDt = new DateTime($this->ca_fecha)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fecha = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = TRMPeer::CA_FECHA;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFecha()
 
 	/**
 	 * Set the value of [ca_euro] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaEuro($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_euro !== $v) {
 			$this->ca_euro = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_EURO;
 		}
 
+		return $this;
 	} // setCaEuro()
 
 	/**
 	 * Set the value of [ca_pesos] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaPesos($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_pesos !== $v) {
 			$this->ca_pesos = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_PESOS;
 		}
 
+		return $this;
 	} // setCaPesos()
 
 	/**
 	 * Set the value of [ca_libra] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaLibra($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_libra !== $v) {
 			$this->ca_libra = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_LIBRA;
 		}
 
+		return $this;
 	} // setCaLibra()
 
 	/**
 	 * Set the value of [ca_fsuizo] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaFsuizo($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_fsuizo !== $v) {
 			$this->ca_fsuizo = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_FSUIZO;
 		}
 
+		return $this;
 	} // setCaFsuizo()
 
 	/**
 	 * Set the value of [ca_marco] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaMarco($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_marco !== $v) {
 			$this->ca_marco = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_MARCO;
 		}
 
+		return $this;
 	} // setCaMarco()
 
 	/**
 	 * Set the value of [ca_yen] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaYen($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_yen !== $v) {
 			$this->ca_yen = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_YEN;
 		}
 
+		return $this;
 	} // setCaYen()
 
 	/**
 	 * Set the value of [ca_rupee] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaRupee($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_rupee !== $v) {
 			$this->ca_rupee = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_RUPEE;
 		}
 
+		return $this;
 	} // setCaRupee()
 
 	/**
 	 * Set the value of [ca_ausdolar] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaAusdolar($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_ausdolar !== $v) {
 			$this->ca_ausdolar = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_AUSDOLAR;
 		}
 
+		return $this;
 	} // setCaAusdolar()
 
 	/**
 	 * Set the value of [ca_candolar] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaCandolar($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_candolar !== $v) {
 			$this->ca_candolar = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_CANDOLAR;
 		}
 
+		return $this;
 	} // setCaCandolar()
 
 	/**
 	 * Set the value of [ca_cornoruega] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaCornoruega($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_cornoruega !== $v) {
 			$this->ca_cornoruega = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_CORNORUEGA;
 		}
 
+		return $this;
 	} // setCaCornoruega()
 
 	/**
 	 * Set the value of [ca_singdolar] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaSingdolar($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_singdolar !== $v) {
 			$this->ca_singdolar = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_SINGDOLAR;
 		}
 
+		return $this;
 	} // setCaSingdolar()
 
 	/**
 	 * Set the value of [ca_rand] column.
 	 * 
-	 * @param      double $v new value
-	 * @return     void
+	 * @param      string $v new value
+	 * @return     TRM The current object (for fluent API support)
 	 */
 	public function setCaRand($v)
 	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
 
 		if ($this->ca_rand !== $v) {
 			$this->ca_rand = $v;
 			$this->modifiedColumns[] = TRMPeer::CA_RAND;
 		}
 
+		return $this;
 	} // setCaRand()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_fecha = $rs->getDate($startcol + 0, null);
-
-			$this->ca_euro = $rs->getFloat($startcol + 1);
-
-			$this->ca_pesos = $rs->getFloat($startcol + 2);
-
-			$this->ca_libra = $rs->getFloat($startcol + 3);
-
-			$this->ca_fsuizo = $rs->getFloat($startcol + 4);
-
-			$this->ca_marco = $rs->getFloat($startcol + 5);
-
-			$this->ca_yen = $rs->getFloat($startcol + 6);
-
-			$this->ca_rupee = $rs->getFloat($startcol + 7);
-
-			$this->ca_ausdolar = $rs->getFloat($startcol + 8);
-
-			$this->ca_candolar = $rs->getFloat($startcol + 9);
-
-			$this->ca_cornoruega = $rs->getFloat($startcol + 10);
-
-			$this->ca_singdolar = $rs->getFloat($startcol + 11);
-
-			$this->ca_rand = $rs->getFloat($startcol + 12);
-
+			$this->ca_fecha = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_euro = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_pesos = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_libra = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_fsuizo = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_marco = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_yen = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_rupee = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_ausdolar = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_candolar = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_cornoruega = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_singdolar = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_rand = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 13; // 13 = TRMPeer::NUM_COLUMNS - TRMPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -558,78 +641,140 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(TRMPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = TRMPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TRMPeer::DATABASE_NAME);
+			$con = Propel::getConnection(TRMPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			TRMPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TRMPeer::DATABASE_NAME);
+			$con = Propel::getConnection(TRMPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			TRMPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
@@ -648,10 +793,12 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += TRMPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -733,14 +880,15 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = TRMPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -804,11 +952,12 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = TRMPeer::getFieldNames($keyType);
 		$result = array(
@@ -835,8 +984,8 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -907,8 +1056,9 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -978,7 +1128,7 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 
 	/**
 	 * Returns the primary key for this object (row).
-	 * @return     int
+	 * @return     string
 	 */
 	public function getPrimaryKey()
 	{
@@ -988,7 +1138,7 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	/**
 	 * Generic method to set the primary key (ca_fecha column).
 	 *
-	 * @param      int $key Primary key.
+	 * @param      string $key Primary key.
 	 * @return     void
 	 */
 	public function setPrimaryKey($key)
@@ -1008,6 +1158,8 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 	 */
 	public function copyInto($copyObj, $deepCopy = false)
 	{
+
+		$copyObj->setCaFecha($this->ca_fecha);
 
 		$copyObj->setCaEuro($this->ca_euro);
 
@@ -1035,8 +1187,6 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaFecha(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -1076,6 +1226,22 @@ abstract class BaseTRM extends BaseObject  implements Persistent {
 			self::$peer = new TRMPeer();
 		}
 		return self::$peer;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+		} // if ($deep)
+
 	}
 
 } // BaseTRM

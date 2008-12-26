@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class TraficoMapBuilder {
+class TraficoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,28 +54,29 @@ class TraficoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TraficoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_traficos');
+		$tMap = $this->dbMap->addTable(TraficoPeer::TABLE_NAME);
 		$tMap->setPhpName('Trafico');
+		$tMap->setClassname('Trafico');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_traficos_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_traficos_ca_idtrafico_seq');
 
-		$tMap->addPrimaryKey('CA_IDTRAFICO', 'CaIdtrafico', 'string', CreoleTypes::VARCHAR, true, 6);
+		$tMap->addPrimaryKey('CA_IDTRAFICO', 'CaIdtrafico', 'VARCHAR', true, 6);
 
-		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'string', CreoleTypes::VARCHAR, false, 40);
+		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, 40);
 
-		$tMap->addColumn('CA_BANDERA', 'CaBandera', 'string', CreoleTypes::VARCHAR, false, 30);
+		$tMap->addColumn('CA_BANDERA', 'CaBandera', 'VARCHAR', false, 30);
 
-		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, 3);
+		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'VARCHAR', false, 3);
 
-		$tMap->addForeignKey('CA_IDGRUPO', 'CaIdgrupo', 'int', CreoleTypes::INTEGER, 'tb_grupos', 'CA_IDGRUPO', false, null);
+		$tMap->addForeignKey('CA_IDGRUPO', 'CaIdgrupo', 'INTEGER', 'tb_grupos', 'CA_IDGRUPO', false, null);
 
-		$tMap->addColumn('CA_LINK', 'CaLink', 'string', CreoleTypes::VARCHAR, false, 255);
+		$tMap->addColumn('CA_LINK', 'CaLink', 'VARCHAR', false, 255);
 
-		$tMap->addColumn('CA_CONCEPTOS', 'CaConceptos', 'string', CreoleTypes::VARCHAR, false, 255);
+		$tMap->addColumn('CA_CONCEPTOS', 'CaConceptos', 'VARCHAR', false, 255);
 
 	} // doBuild()
 

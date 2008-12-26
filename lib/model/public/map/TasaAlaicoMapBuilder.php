@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class TasaAlaicoMapBuilder {
+class TasaAlaicoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,18 +54,19 @@ class TasaAlaicoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TasaAlaicoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_tasaalaico');
+		$tMap = $this->dbMap->addTable(TasaAlaicoPeer::TABLE_NAME);
 		$tMap->setPhpName('TasaAlaico');
+		$tMap->setClassname('TasaAlaico');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_FECHAINICIAL', 'CaFechainicial', 'int', CreoleTypes::DATE, true, null);
+		$tMap->addPrimaryKey('CA_FECHAINICIAL', 'CaFechainicial', 'DATE', true, null);
 
-		$tMap->addColumn('CA_FECHAFINAL', 'CaFechafinal', 'int', CreoleTypes::DATE, true, null);
+		$tMap->addColumn('CA_FECHAFINAL', 'CaFechafinal', 'DATE', true, null);
 
-		$tMap->addColumn('CA_VALORTASA', 'CaValortasa', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_VALORTASA', 'CaValortasa', 'VARCHAR', true, null);
 
 	} // doBuild()
 

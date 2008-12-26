@@ -10,6 +10,8 @@
 abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 
 
+  const PEER = 'TipoRecargoPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,13 +20,11 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idrecargo field.
 	 * @var        int
 	 */
 	protected $ca_idrecargo;
-
 
 	/**
 	 * The value for the ca_recargo field.
@@ -32,13 +32,11 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_recargo;
 
-
 	/**
 	 * The value for the ca_tipo field.
 	 * @var        string
 	 */
 	protected $ca_tipo;
-
 
 	/**
 	 * The value for the ca_transporte field.
@@ -46,13 +44,11 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_transporte;
 
-
 	/**
 	 * The value for the ca_incoterms field.
 	 * @var        string
 	 */
 	protected $ca_incoterms;
-
 
 	/**
 	 * The value for the ca_reporte field.
@@ -60,13 +56,11 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	protected $ca_reporte;
 
-
 	/**
 	 * The value for the ca_impoexpo field.
 	 * @var        string
 	 */
 	protected $ca_impoexpo;
-
 
 	/**
 	 * The value for the ca_aplicacion field.
@@ -75,100 +69,84 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	protected $ca_aplicacion;
 
 	/**
-	 * Collection to store aggregation of collCotRecargos.
-	 * @var        array
+	 * @var        array CotRecargo[] Collection to store aggregation of CotRecargo objects.
 	 */
 	protected $collCotRecargos;
 
 	/**
-	 * The criteria used to select the current contents of collCotRecargos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collCotRecargos.
 	 */
-	protected $lastCotRecargoCriteria = null;
+	private $lastCotRecargoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collPricRecargoxConceptos.
-	 * @var        array
+	 * @var        array PricRecargoxConcepto[] Collection to store aggregation of PricRecargoxConcepto objects.
 	 */
 	protected $collPricRecargoxConceptos;
 
 	/**
-	 * The criteria used to select the current contents of collPricRecargoxConceptos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collPricRecargoxConceptos.
 	 */
-	protected $lastPricRecargoxConceptoCriteria = null;
+	private $lastPricRecargoxConceptoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collPricRecargoxConceptoLogs.
-	 * @var        array
+	 * @var        array PricRecargoxConceptoLog[] Collection to store aggregation of PricRecargoxConceptoLog objects.
 	 */
 	protected $collPricRecargoxConceptoLogs;
 
 	/**
-	 * The criteria used to select the current contents of collPricRecargoxConceptoLogs.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collPricRecargoxConceptoLogs.
 	 */
-	protected $lastPricRecargoxConceptoLogCriteria = null;
+	private $lastPricRecargoxConceptoLogCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collPricRecargosxCiudads.
-	 * @var        array
+	 * @var        array PricRecargosxCiudad[] Collection to store aggregation of PricRecargosxCiudad objects.
 	 */
 	protected $collPricRecargosxCiudads;
 
 	/**
-	 * The criteria used to select the current contents of collPricRecargosxCiudads.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collPricRecargosxCiudads.
 	 */
-	protected $lastPricRecargosxCiudadCriteria = null;
+	private $lastPricRecargosxCiudadCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collPricRecargosxCiudadLogs.
-	 * @var        array
+	 * @var        array PricRecargosxCiudadLog[] Collection to store aggregation of PricRecargosxCiudadLog objects.
 	 */
 	protected $collPricRecargosxCiudadLogs;
 
 	/**
-	 * The criteria used to select the current contents of collPricRecargosxCiudadLogs.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collPricRecargosxCiudadLogs.
 	 */
-	protected $lastPricRecargosxCiudadLogCriteria = null;
+	private $lastPricRecargosxCiudadLogCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepGastos.
-	 * @var        array
+	 * @var        array RepGasto[] Collection to store aggregation of RepGasto objects.
 	 */
 	protected $collRepGastos;
 
 	/**
-	 * The criteria used to select the current contents of collRepGastos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepGastos.
 	 */
-	protected $lastRepGastoCriteria = null;
+	private $lastRepGastoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRecargoFletes.
-	 * @var        array
+	 * @var        array RecargoFlete[] Collection to store aggregation of RecargoFlete objects.
 	 */
 	protected $collRecargoFletes;
 
 	/**
-	 * The criteria used to select the current contents of collRecargoFletes.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRecargoFletes.
 	 */
-	protected $lastRecargoFleteCriteria = null;
+	private $lastRecargoFleteCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRecargoFleteTrafs.
-	 * @var        array
+	 * @var        array RecargoFleteTraf[] Collection to store aggregation of RecargoFleteTraf objects.
 	 */
 	protected $collRecargoFleteTrafs;
 
 	/**
-	 * The criteria used to select the current contents of collRecargoFleteTrafs.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRecargoFleteTrafs.
 	 */
-	protected $lastRecargoFleteTrafCriteria = null;
+	private $lastRecargoFleteTrafCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -185,13 +163,32 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseTipoRecargo object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idrecargo] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaIdrecargo()
 	{
-
 		return $this->ca_idrecargo;
 	}
 
@@ -202,7 +199,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function getCaRecargo()
 	{
-
 		return $this->ca_recargo;
 	}
 
@@ -213,7 +209,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function getCaTipo()
 	{
-
 		return $this->ca_tipo;
 	}
 
@@ -224,7 +219,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function getCaTransporte()
 	{
-
 		return $this->ca_transporte;
 	}
 
@@ -235,7 +229,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function getCaIncoterms()
 	{
-
 		return $this->ca_incoterms;
 	}
 
@@ -246,7 +239,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function getCaReporte()
 	{
-
 		return $this->ca_reporte;
 	}
 
@@ -257,7 +249,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function getCaImpoexpo()
 	{
-
 		return $this->ca_impoexpo;
 	}
 
@@ -268,7 +259,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function getCaAplicacion()
 	{
-
 		return $this->ca_aplicacion;
 	}
 
@@ -276,14 +266,11 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idrecargo] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     TipoRecargo The current object (for fluent API support)
 	 */
 	public function setCaIdrecargo($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -292,21 +279,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TipoRecargoPeer::CA_IDRECARGO;
 		}
 
+		return $this;
 	} // setCaIdrecargo()
 
 	/**
 	 * Set the value of [ca_recargo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TipoRecargo The current object (for fluent API support)
 	 */
 	public function setCaRecargo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_recargo !== $v) {
@@ -314,21 +299,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TipoRecargoPeer::CA_RECARGO;
 		}
 
+		return $this;
 	} // setCaRecargo()
 
 	/**
 	 * Set the value of [ca_tipo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TipoRecargo The current object (for fluent API support)
 	 */
 	public function setCaTipo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_tipo !== $v) {
@@ -336,21 +319,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TipoRecargoPeer::CA_TIPO;
 		}
 
+		return $this;
 	} // setCaTipo()
 
 	/**
 	 * Set the value of [ca_transporte] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TipoRecargo The current object (for fluent API support)
 	 */
 	public function setCaTransporte($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_transporte !== $v) {
@@ -358,21 +339,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TipoRecargoPeer::CA_TRANSPORTE;
 		}
 
+		return $this;
 	} // setCaTransporte()
 
 	/**
 	 * Set the value of [ca_incoterms] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TipoRecargo The current object (for fluent API support)
 	 */
 	public function setCaIncoterms($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_incoterms !== $v) {
@@ -380,21 +359,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TipoRecargoPeer::CA_INCOTERMS;
 		}
 
+		return $this;
 	} // setCaIncoterms()
 
 	/**
 	 * Set the value of [ca_reporte] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TipoRecargo The current object (for fluent API support)
 	 */
 	public function setCaReporte($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_reporte !== $v) {
@@ -402,21 +379,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TipoRecargoPeer::CA_REPORTE;
 		}
 
+		return $this;
 	} // setCaReporte()
 
 	/**
 	 * Set the value of [ca_impoexpo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TipoRecargo The current object (for fluent API support)
 	 */
 	public function setCaImpoexpo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_impoexpo !== $v) {
@@ -424,21 +399,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TipoRecargoPeer::CA_IMPOEXPO;
 		}
 
+		return $this;
 	} // setCaImpoexpo()
 
 	/**
 	 * Set the value of [ca_aplicacion] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     TipoRecargo The current object (for fluent API support)
 	 */
 	public function setCaAplicacion($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_aplicacion !== $v) {
@@ -446,44 +419,61 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TipoRecargoPeer::CA_APLICACION;
 		}
 
+		return $this;
 	} // setCaAplicacion()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idrecargo = $rs->getInt($startcol + 0);
-
-			$this->ca_recargo = $rs->getString($startcol + 1);
-
-			$this->ca_tipo = $rs->getString($startcol + 2);
-
-			$this->ca_transporte = $rs->getString($startcol + 3);
-
-			$this->ca_incoterms = $rs->getString($startcol + 4);
-
-			$this->ca_reporte = $rs->getString($startcol + 5);
-
-			$this->ca_impoexpo = $rs->getString($startcol + 6);
-
-			$this->ca_aplicacion = $rs->getString($startcol + 7);
-
+			$this->ca_idrecargo = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_recargo = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_tipo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_transporte = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_incoterms = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_reporte = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_impoexpo = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_aplicacion = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 8; // 8 = TipoRecargoPeer::NUM_COLUMNS - TipoRecargoPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -494,78 +484,164 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(TipoRecargoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = TipoRecargoPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->collCotRecargos = null;
+			$this->lastCotRecargoCriteria = null;
+
+			$this->collPricRecargoxConceptos = null;
+			$this->lastPricRecargoxConceptoCriteria = null;
+
+			$this->collPricRecargoxConceptoLogs = null;
+			$this->lastPricRecargoxConceptoLogCriteria = null;
+
+			$this->collPricRecargosxCiudads = null;
+			$this->lastPricRecargosxCiudadCriteria = null;
+
+			$this->collPricRecargosxCiudadLogs = null;
+			$this->lastPricRecargosxCiudadLogCriteria = null;
+
+			$this->collRepGastos = null;
+			$this->lastRepGastoCriteria = null;
+
+			$this->collRecargoFletes = null;
+			$this->lastRecargoFleteCriteria = null;
+
+			$this->collRecargoFleteTrafs = null;
+			$this->lastRecargoFleteTrafCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TipoRecargoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(TipoRecargoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			TipoRecargoPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TipoRecargoPeer::DATABASE_NAME);
+			$con = Propel::getConnection(TipoRecargoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			TipoRecargoPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
@@ -584,11 +660,12 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += TipoRecargoPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collCotRecargos !== null) {
-				foreach($this->collCotRecargos as $referrerFK) {
+				foreach ($this->collCotRecargos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -596,7 +673,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collPricRecargoxConceptos !== null) {
-				foreach($this->collPricRecargoxConceptos as $referrerFK) {
+				foreach ($this->collPricRecargoxConceptos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -604,7 +681,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collPricRecargoxConceptoLogs !== null) {
-				foreach($this->collPricRecargoxConceptoLogs as $referrerFK) {
+				foreach ($this->collPricRecargoxConceptoLogs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -612,7 +689,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collPricRecargosxCiudads !== null) {
-				foreach($this->collPricRecargosxCiudads as $referrerFK) {
+				foreach ($this->collPricRecargosxCiudads as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -620,7 +697,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collPricRecargosxCiudadLogs !== null) {
-				foreach($this->collPricRecargosxCiudadLogs as $referrerFK) {
+				foreach ($this->collPricRecargosxCiudadLogs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -628,7 +705,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRepGastos !== null) {
-				foreach($this->collRepGastos as $referrerFK) {
+				foreach ($this->collRepGastos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -636,7 +713,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRecargoFletes !== null) {
-				foreach($this->collRecargoFletes as $referrerFK) {
+				foreach ($this->collRecargoFletes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -644,7 +721,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRecargoFleteTrafs !== null) {
-				foreach($this->collRecargoFleteTrafs as $referrerFK) {
+				foreach ($this->collRecargoFleteTrafs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -652,6 +729,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -722,7 +800,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 
 
 				if ($this->collCotRecargos !== null) {
-					foreach($this->collCotRecargos as $referrerFK) {
+					foreach ($this->collCotRecargos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -730,7 +808,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collPricRecargoxConceptos !== null) {
-					foreach($this->collPricRecargoxConceptos as $referrerFK) {
+					foreach ($this->collPricRecargoxConceptos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -738,7 +816,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collPricRecargoxConceptoLogs !== null) {
-					foreach($this->collPricRecargoxConceptoLogs as $referrerFK) {
+					foreach ($this->collPricRecargoxConceptoLogs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -746,7 +824,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collPricRecargosxCiudads !== null) {
-					foreach($this->collPricRecargosxCiudads as $referrerFK) {
+					foreach ($this->collPricRecargosxCiudads as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -754,7 +832,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collPricRecargosxCiudadLogs !== null) {
-					foreach($this->collPricRecargosxCiudadLogs as $referrerFK) {
+					foreach ($this->collPricRecargosxCiudadLogs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -762,7 +840,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRepGastos !== null) {
-					foreach($this->collRepGastos as $referrerFK) {
+					foreach ($this->collRepGastos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -770,7 +848,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRecargoFletes !== null) {
-					foreach($this->collRecargoFletes as $referrerFK) {
+					foreach ($this->collRecargoFletes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -778,7 +856,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRecargoFleteTrafs !== null) {
-					foreach($this->collRecargoFleteTrafs as $referrerFK) {
+					foreach ($this->collRecargoFleteTrafs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -797,14 +875,15 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = TipoRecargoPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -853,11 +932,12 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = TipoRecargoPeer::getFieldNames($keyType);
 		$result = array(
@@ -879,8 +959,8 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -936,8 +1016,9 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1028,6 +1109,8 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIdrecargo($this->ca_idrecargo);
+
 		$copyObj->setCaRecargo($this->ca_recargo);
 
 		$copyObj->setCaTipo($this->ca_tipo);
@@ -1048,44 +1131,58 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getCotRecargos() as $relObj) {
-				$copyObj->addCotRecargo($relObj->copy($deepCopy));
+			foreach ($this->getCotRecargos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotRecargo($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getPricRecargoxConceptos() as $relObj) {
-				$copyObj->addPricRecargoxConcepto($relObj->copy($deepCopy));
+			foreach ($this->getPricRecargoxConceptos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPricRecargoxConcepto($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getPricRecargoxConceptoLogs() as $relObj) {
-				$copyObj->addPricRecargoxConceptoLog($relObj->copy($deepCopy));
+			foreach ($this->getPricRecargoxConceptoLogs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPricRecargoxConceptoLog($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getPricRecargosxCiudads() as $relObj) {
-				$copyObj->addPricRecargosxCiudad($relObj->copy($deepCopy));
+			foreach ($this->getPricRecargosxCiudads() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPricRecargosxCiudad($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getPricRecargosxCiudadLogs() as $relObj) {
-				$copyObj->addPricRecargosxCiudadLog($relObj->copy($deepCopy));
+			foreach ($this->getPricRecargosxCiudadLogs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPricRecargosxCiudadLog($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepGastos() as $relObj) {
-				$copyObj->addRepGasto($relObj->copy($deepCopy));
+			foreach ($this->getRepGastos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepGasto($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRecargoFletes() as $relObj) {
-				$copyObj->addRecargoFlete($relObj->copy($deepCopy));
+			foreach ($this->getRecargoFletes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRecargoFlete($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRecargoFleteTrafs() as $relObj) {
-				$copyObj->addRecargoFleteTraf($relObj->copy($deepCopy));
+			foreach ($this->getRecargoFleteTrafs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRecargoFleteTraf($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaIdrecargo(NULL); // this is a pkey column, so set to default value
 
 	}
 
@@ -1128,36 +1225,50 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collCotRecargos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collCotRecargos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotRecargos()
+	 */
+	public function clearCotRecargos()
+	{
+		$this->collCotRecargos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotRecargos collection (array).
+	 *
+	 * By default this just sets the collCotRecargos collection to an empty array (like clearcollCotRecargos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initCotRecargos()
 	{
-		if ($this->collCotRecargos === null) {
-			$this->collCotRecargos = array();
-		}
+		$this->collCotRecargos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TipoRecargo has previously
-	 * been saved, it will retrieve related CotRecargos from storage.
-	 * If this TipoRecargo is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of CotRecargo objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously been saved, it will retrieve
+	 * related CotRecargos from storage. If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array CotRecargo[]
 	 * @throws     PropelException
 	 */
-	public function getCotRecargos($criteria = null, $con = null)
+	public function getCotRecargos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1169,7 +1280,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			   $this->collCotRecargos = array();
 			} else {
 
-				$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				CotRecargoPeer::addSelectColumns($criteria);
 				$this->collCotRecargos = CotRecargoPeer::doSelect($criteria, $con);
@@ -1182,7 +1293,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				CotRecargoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastCotRecargoCriteria) || !$this->lastCotRecargoCriteria->equals($criteria)) {
@@ -1195,32 +1306,63 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related CotRecargos.
+	 * Returns the number of related CotRecargo objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotRecargo objects.
 	 * @throws     PropelException
 	 */
-	public function countCotRecargos($criteria = null, $distinct = false, $con = null)
+	public function countCotRecargos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return CotRecargoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collCotRecargos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				$count = CotRecargoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				if (!isset($this->lastCotRecargoCriteria) || !$this->lastCotRecargoCriteria->equals($criteria)) {
+					$count = CotRecargoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotRecargos);
+				}
+			} else {
+				$count = count($this->collCotRecargos);
+			}
+		}
+		$this->lastCotRecargoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a CotRecargo object to this object
-	 * through the CotRecargo foreign key attribute
+	 * through the CotRecargo foreign key attribute.
 	 *
 	 * @param      CotRecargo $l CotRecargo
 	 * @return     void
@@ -1228,8 +1370,13 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function addCotRecargo(CotRecargo $l)
 	{
-		$this->collCotRecargos[] = $l;
-		$l->setTipoRecargo($this);
+		if ($this->collCotRecargos === null) {
+			$this->initCotRecargos();
+		}
+		if (!in_array($l, $this->collCotRecargos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotRecargos, $l);
+			$l->setTipoRecargo($this);
+		}
 	}
 
 
@@ -1244,11 +1391,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in TipoRecargo.
 	 */
-	public function getCotRecargosJoinCotOpcion($criteria = null, $con = null)
+	public function getCotRecargosJoinCotOpcion($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1260,19 +1406,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$this->collCotRecargos = array();
 			} else {
 
-				$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
-				$this->collCotRecargos = CotRecargoPeer::doSelectJoinCotOpcion($criteria, $con);
+				$this->collCotRecargos = CotRecargoPeer::doSelectJoinCotOpcion($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+			$criteria->add(CotRecargoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 			if (!isset($this->lastCotRecargoCriteria) || !$this->lastCotRecargoCriteria->equals($criteria)) {
-				$this->collCotRecargos = CotRecargoPeer::doSelectJoinCotOpcion($criteria, $con);
+				$this->collCotRecargos = CotRecargoPeer::doSelectJoinCotOpcion($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastCotRecargoCriteria = $criteria;
@@ -1281,36 +1427,50 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collPricRecargoxConceptos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collPricRecargoxConceptos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPricRecargoxConceptos()
+	 */
+	public function clearPricRecargoxConceptos()
+	{
+		$this->collPricRecargoxConceptos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPricRecargoxConceptos collection (array).
+	 *
+	 * By default this just sets the collPricRecargoxConceptos collection to an empty array (like clearcollPricRecargoxConceptos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initPricRecargoxConceptos()
 	{
-		if ($this->collPricRecargoxConceptos === null) {
-			$this->collPricRecargoxConceptos = array();
-		}
+		$this->collPricRecargoxConceptos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TipoRecargo has previously
-	 * been saved, it will retrieve related PricRecargoxConceptos from storage.
-	 * If this TipoRecargo is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of PricRecargoxConcepto objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously been saved, it will retrieve
+	 * related PricRecargoxConceptos from storage. If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array PricRecargoxConcepto[]
 	 * @throws     PropelException
 	 */
-	public function getPricRecargoxConceptos($criteria = null, $con = null)
+	public function getPricRecargoxConceptos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1322,7 +1482,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			   $this->collPricRecargoxConceptos = array();
 			} else {
 
-				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				PricRecargoxConceptoPeer::addSelectColumns($criteria);
 				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelect($criteria, $con);
@@ -1335,7 +1495,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				PricRecargoxConceptoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
@@ -1348,32 +1508,63 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related PricRecargoxConceptos.
+	 * Returns the number of related PricRecargoxConcepto objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related PricRecargoxConcepto objects.
 	 * @throws     PropelException
 	 */
-	public function countPricRecargoxConceptos($criteria = null, $distinct = false, $con = null)
+	public function countPricRecargoxConceptos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return PricRecargoxConceptoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collPricRecargoxConceptos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				$count = PricRecargoxConceptoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
+					$count = PricRecargoxConceptoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collPricRecargoxConceptos);
+				}
+			} else {
+				$count = count($this->collPricRecargoxConceptos);
+			}
+		}
+		$this->lastPricRecargoxConceptoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a PricRecargoxConcepto object to this object
-	 * through the PricRecargoxConcepto foreign key attribute
+	 * through the PricRecargoxConcepto foreign key attribute.
 	 *
 	 * @param      PricRecargoxConcepto $l PricRecargoxConcepto
 	 * @return     void
@@ -1381,8 +1572,13 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function addPricRecargoxConcepto(PricRecargoxConcepto $l)
 	{
-		$this->collPricRecargoxConceptos[] = $l;
-		$l->setTipoRecargo($this);
+		if ($this->collPricRecargoxConceptos === null) {
+			$this->initPricRecargoxConceptos();
+		}
+		if (!in_array($l, $this->collPricRecargoxConceptos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collPricRecargoxConceptos, $l);
+			$l->setTipoRecargo($this);
+		}
 	}
 
 
@@ -1397,11 +1593,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in TipoRecargo.
 	 */
-	public function getPricRecargoxConceptosJoinPricFlete($criteria = null, $con = null)
+	public function getPricRecargoxConceptosJoinPricFlete($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1413,19 +1608,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$this->collPricRecargoxConceptos = array();
 			} else {
 
-				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
-				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinPricFlete($criteria, $con);
+				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinPricFlete($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+			$criteria->add(PricRecargoxConceptoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 			if (!isset($this->lastPricRecargoxConceptoCriteria) || !$this->lastPricRecargoxConceptoCriteria->equals($criteria)) {
-				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinPricFlete($criteria, $con);
+				$this->collPricRecargoxConceptos = PricRecargoxConceptoPeer::doSelectJoinPricFlete($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastPricRecargoxConceptoCriteria = $criteria;
@@ -1434,36 +1629,50 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collPricRecargoxConceptoLogs to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collPricRecargoxConceptoLogs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPricRecargoxConceptoLogs()
+	 */
+	public function clearPricRecargoxConceptoLogs()
+	{
+		$this->collPricRecargoxConceptoLogs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPricRecargoxConceptoLogs collection (array).
+	 *
+	 * By default this just sets the collPricRecargoxConceptoLogs collection to an empty array (like clearcollPricRecargoxConceptoLogs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initPricRecargoxConceptoLogs()
 	{
-		if ($this->collPricRecargoxConceptoLogs === null) {
-			$this->collPricRecargoxConceptoLogs = array();
-		}
+		$this->collPricRecargoxConceptoLogs = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TipoRecargo has previously
-	 * been saved, it will retrieve related PricRecargoxConceptoLogs from storage.
-	 * If this TipoRecargo is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of PricRecargoxConceptoLog objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously been saved, it will retrieve
+	 * related PricRecargoxConceptoLogs from storage. If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array PricRecargoxConceptoLog[]
 	 * @throws     PropelException
 	 */
-	public function getPricRecargoxConceptoLogs($criteria = null, $con = null)
+	public function getPricRecargoxConceptoLogs($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1475,7 +1684,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			   $this->collPricRecargoxConceptoLogs = array();
 			} else {
 
-				$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				PricRecargoxConceptoLogPeer::addSelectColumns($criteria);
 				$this->collPricRecargoxConceptoLogs = PricRecargoxConceptoLogPeer::doSelect($criteria, $con);
@@ -1488,7 +1697,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				PricRecargoxConceptoLogPeer::addSelectColumns($criteria);
 				if (!isset($this->lastPricRecargoxConceptoLogCriteria) || !$this->lastPricRecargoxConceptoLogCriteria->equals($criteria)) {
@@ -1501,32 +1710,63 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related PricRecargoxConceptoLogs.
+	 * Returns the number of related PricRecargoxConceptoLog objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related PricRecargoxConceptoLog objects.
 	 * @throws     PropelException
 	 */
-	public function countPricRecargoxConceptoLogs($criteria = null, $distinct = false, $con = null)
+	public function countPricRecargoxConceptoLogs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return PricRecargoxConceptoLogPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collPricRecargoxConceptoLogs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				$count = PricRecargoxConceptoLogPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				if (!isset($this->lastPricRecargoxConceptoLogCriteria) || !$this->lastPricRecargoxConceptoLogCriteria->equals($criteria)) {
+					$count = PricRecargoxConceptoLogPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collPricRecargoxConceptoLogs);
+				}
+			} else {
+				$count = count($this->collPricRecargoxConceptoLogs);
+			}
+		}
+		$this->lastPricRecargoxConceptoLogCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a PricRecargoxConceptoLog object to this object
-	 * through the PricRecargoxConceptoLog foreign key attribute
+	 * through the PricRecargoxConceptoLog foreign key attribute.
 	 *
 	 * @param      PricRecargoxConceptoLog $l PricRecargoxConceptoLog
 	 * @return     void
@@ -1534,8 +1774,13 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function addPricRecargoxConceptoLog(PricRecargoxConceptoLog $l)
 	{
-		$this->collPricRecargoxConceptoLogs[] = $l;
-		$l->setTipoRecargo($this);
+		if ($this->collPricRecargoxConceptoLogs === null) {
+			$this->initPricRecargoxConceptoLogs();
+		}
+		if (!in_array($l, $this->collPricRecargoxConceptoLogs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collPricRecargoxConceptoLogs, $l);
+			$l->setTipoRecargo($this);
+		}
 	}
 
 
@@ -1550,11 +1795,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in TipoRecargo.
 	 */
-	public function getPricRecargoxConceptoLogsJoinPricFlete($criteria = null, $con = null)
+	public function getPricRecargoxConceptoLogsJoinPricFlete($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1566,19 +1810,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$this->collPricRecargoxConceptoLogs = array();
 			} else {
 
-				$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
-				$this->collPricRecargoxConceptoLogs = PricRecargoxConceptoLogPeer::doSelectJoinPricFlete($criteria, $con);
+				$this->collPricRecargoxConceptoLogs = PricRecargoxConceptoLogPeer::doSelectJoinPricFlete($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+			$criteria->add(PricRecargoxConceptoLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 			if (!isset($this->lastPricRecargoxConceptoLogCriteria) || !$this->lastPricRecargoxConceptoLogCriteria->equals($criteria)) {
-				$this->collPricRecargoxConceptoLogs = PricRecargoxConceptoLogPeer::doSelectJoinPricFlete($criteria, $con);
+				$this->collPricRecargoxConceptoLogs = PricRecargoxConceptoLogPeer::doSelectJoinPricFlete($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastPricRecargoxConceptoLogCriteria = $criteria;
@@ -1587,36 +1831,50 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collPricRecargosxCiudads to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collPricRecargosxCiudads collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPricRecargosxCiudads()
+	 */
+	public function clearPricRecargosxCiudads()
+	{
+		$this->collPricRecargosxCiudads = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPricRecargosxCiudads collection (array).
+	 *
+	 * By default this just sets the collPricRecargosxCiudads collection to an empty array (like clearcollPricRecargosxCiudads());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initPricRecargosxCiudads()
 	{
-		if ($this->collPricRecargosxCiudads === null) {
-			$this->collPricRecargosxCiudads = array();
-		}
+		$this->collPricRecargosxCiudads = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TipoRecargo has previously
-	 * been saved, it will retrieve related PricRecargosxCiudads from storage.
-	 * If this TipoRecargo is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of PricRecargosxCiudad objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously been saved, it will retrieve
+	 * related PricRecargosxCiudads from storage. If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array PricRecargosxCiudad[]
 	 * @throws     PropelException
 	 */
-	public function getPricRecargosxCiudads($criteria = null, $con = null)
+	public function getPricRecargosxCiudads($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1628,7 +1886,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			   $this->collPricRecargosxCiudads = array();
 			} else {
 
-				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				PricRecargosxCiudadPeer::addSelectColumns($criteria);
 				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelect($criteria, $con);
@@ -1641,7 +1899,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				PricRecargosxCiudadPeer::addSelectColumns($criteria);
 				if (!isset($this->lastPricRecargosxCiudadCriteria) || !$this->lastPricRecargosxCiudadCriteria->equals($criteria)) {
@@ -1654,32 +1912,63 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related PricRecargosxCiudads.
+	 * Returns the number of related PricRecargosxCiudad objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related PricRecargosxCiudad objects.
 	 * @throws     PropelException
 	 */
-	public function countPricRecargosxCiudads($criteria = null, $distinct = false, $con = null)
+	public function countPricRecargosxCiudads(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return PricRecargosxCiudadPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collPricRecargosxCiudads === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				$count = PricRecargosxCiudadPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				if (!isset($this->lastPricRecargosxCiudadCriteria) || !$this->lastPricRecargosxCiudadCriteria->equals($criteria)) {
+					$count = PricRecargosxCiudadPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collPricRecargosxCiudads);
+				}
+			} else {
+				$count = count($this->collPricRecargosxCiudads);
+			}
+		}
+		$this->lastPricRecargosxCiudadCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a PricRecargosxCiudad object to this object
-	 * through the PricRecargosxCiudad foreign key attribute
+	 * through the PricRecargosxCiudad foreign key attribute.
 	 *
 	 * @param      PricRecargosxCiudad $l PricRecargosxCiudad
 	 * @return     void
@@ -1687,8 +1976,13 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function addPricRecargosxCiudad(PricRecargosxCiudad $l)
 	{
-		$this->collPricRecargosxCiudads[] = $l;
-		$l->setTipoRecargo($this);
+		if ($this->collPricRecargosxCiudads === null) {
+			$this->initPricRecargosxCiudads();
+		}
+		if (!in_array($l, $this->collPricRecargosxCiudads, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collPricRecargosxCiudads, $l);
+			$l->setTipoRecargo($this);
+		}
 	}
 
 
@@ -1703,11 +1997,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in TipoRecargo.
 	 */
-	public function getPricRecargosxCiudadsJoinCiudad($criteria = null, $con = null)
+	public function getPricRecargosxCiudadsJoinCiudad($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1719,19 +2012,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$this->collPricRecargosxCiudads = array();
 			} else {
 
-				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
-				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelectJoinCiudad($criteria, $con);
+				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+			$criteria->add(PricRecargosxCiudadPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 			if (!isset($this->lastPricRecargosxCiudadCriteria) || !$this->lastPricRecargosxCiudadCriteria->equals($criteria)) {
-				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelectJoinCiudad($criteria, $con);
+				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastPricRecargosxCiudadCriteria = $criteria;
@@ -1740,36 +2033,50 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collPricRecargosxCiudadLogs to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collPricRecargosxCiudadLogs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPricRecargosxCiudadLogs()
+	 */
+	public function clearPricRecargosxCiudadLogs()
+	{
+		$this->collPricRecargosxCiudadLogs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPricRecargosxCiudadLogs collection (array).
+	 *
+	 * By default this just sets the collPricRecargosxCiudadLogs collection to an empty array (like clearcollPricRecargosxCiudadLogs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initPricRecargosxCiudadLogs()
 	{
-		if ($this->collPricRecargosxCiudadLogs === null) {
-			$this->collPricRecargosxCiudadLogs = array();
-		}
+		$this->collPricRecargosxCiudadLogs = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TipoRecargo has previously
-	 * been saved, it will retrieve related PricRecargosxCiudadLogs from storage.
-	 * If this TipoRecargo is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of PricRecargosxCiudadLog objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously been saved, it will retrieve
+	 * related PricRecargosxCiudadLogs from storage. If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array PricRecargosxCiudadLog[]
 	 * @throws     PropelException
 	 */
-	public function getPricRecargosxCiudadLogs($criteria = null, $con = null)
+	public function getPricRecargosxCiudadLogs($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1781,7 +2088,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			   $this->collPricRecargosxCiudadLogs = array();
 			} else {
 
-				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
 				$this->collPricRecargosxCiudadLogs = PricRecargosxCiudadLogPeer::doSelect($criteria, $con);
@@ -1794,7 +2101,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				PricRecargosxCiudadLogPeer::addSelectColumns($criteria);
 				if (!isset($this->lastPricRecargosxCiudadLogCriteria) || !$this->lastPricRecargosxCiudadLogCriteria->equals($criteria)) {
@@ -1807,32 +2114,63 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related PricRecargosxCiudadLogs.
+	 * Returns the number of related PricRecargosxCiudadLog objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related PricRecargosxCiudadLog objects.
 	 * @throws     PropelException
 	 */
-	public function countPricRecargosxCiudadLogs($criteria = null, $distinct = false, $con = null)
+	public function countPricRecargosxCiudadLogs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return PricRecargosxCiudadLogPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collPricRecargosxCiudadLogs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				$count = PricRecargosxCiudadLogPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				if (!isset($this->lastPricRecargosxCiudadLogCriteria) || !$this->lastPricRecargosxCiudadLogCriteria->equals($criteria)) {
+					$count = PricRecargosxCiudadLogPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collPricRecargosxCiudadLogs);
+				}
+			} else {
+				$count = count($this->collPricRecargosxCiudadLogs);
+			}
+		}
+		$this->lastPricRecargosxCiudadLogCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a PricRecargosxCiudadLog object to this object
-	 * through the PricRecargosxCiudadLog foreign key attribute
+	 * through the PricRecargosxCiudadLog foreign key attribute.
 	 *
 	 * @param      PricRecargosxCiudadLog $l PricRecargosxCiudadLog
 	 * @return     void
@@ -1840,8 +2178,13 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function addPricRecargosxCiudadLog(PricRecargosxCiudadLog $l)
 	{
-		$this->collPricRecargosxCiudadLogs[] = $l;
-		$l->setTipoRecargo($this);
+		if ($this->collPricRecargosxCiudadLogs === null) {
+			$this->initPricRecargosxCiudadLogs();
+		}
+		if (!in_array($l, $this->collPricRecargosxCiudadLogs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collPricRecargosxCiudadLogs, $l);
+			$l->setTipoRecargo($this);
+		}
 	}
 
 
@@ -1856,11 +2199,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in TipoRecargo.
 	 */
-	public function getPricRecargosxCiudadLogsJoinCiudad($criteria = null, $con = null)
+	public function getPricRecargosxCiudadLogsJoinCiudad($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1872,19 +2214,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$this->collPricRecargosxCiudadLogs = array();
 			} else {
 
-				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
-				$this->collPricRecargosxCiudadLogs = PricRecargosxCiudadLogPeer::doSelectJoinCiudad($criteria, $con);
+				$this->collPricRecargosxCiudadLogs = PricRecargosxCiudadLogPeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+			$criteria->add(PricRecargosxCiudadLogPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 			if (!isset($this->lastPricRecargosxCiudadLogCriteria) || !$this->lastPricRecargosxCiudadLogCriteria->equals($criteria)) {
-				$this->collPricRecargosxCiudadLogs = PricRecargosxCiudadLogPeer::doSelectJoinCiudad($criteria, $con);
+				$this->collPricRecargosxCiudadLogs = PricRecargosxCiudadLogPeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastPricRecargosxCiudadLogCriteria = $criteria;
@@ -1893,36 +2235,50 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepGastos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepGastos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepGastos()
+	 */
+	public function clearRepGastos()
+	{
+		$this->collRepGastos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepGastos collection (array).
+	 *
+	 * By default this just sets the collRepGastos collection to an empty array (like clearcollRepGastos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepGastos()
 	{
-		if ($this->collRepGastos === null) {
-			$this->collRepGastos = array();
-		}
+		$this->collRepGastos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TipoRecargo has previously
-	 * been saved, it will retrieve related RepGastos from storage.
-	 * If this TipoRecargo is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepGasto objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously been saved, it will retrieve
+	 * related RepGastos from storage. If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepGasto[]
 	 * @throws     PropelException
 	 */
-	public function getRepGastos($criteria = null, $con = null)
+	public function getRepGastos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1934,7 +2290,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			   $this->collRepGastos = array();
 			} else {
 
-				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				RepGastoPeer::addSelectColumns($criteria);
 				$this->collRepGastos = RepGastoPeer::doSelect($criteria, $con);
@@ -1947,7 +2303,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				RepGastoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepGastoCriteria) || !$this->lastRepGastoCriteria->equals($criteria)) {
@@ -1960,32 +2316,63 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepGastos.
+	 * Returns the number of related RepGasto objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepGasto objects.
 	 * @throws     PropelException
 	 */
-	public function countRepGastos($criteria = null, $distinct = false, $con = null)
+	public function countRepGastos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepGastoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepGastos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				$count = RepGastoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				if (!isset($this->lastRepGastoCriteria) || !$this->lastRepGastoCriteria->equals($criteria)) {
+					$count = RepGastoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepGastos);
+				}
+			} else {
+				$count = count($this->collRepGastos);
+			}
+		}
+		$this->lastRepGastoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepGasto object to this object
-	 * through the RepGasto foreign key attribute
+	 * through the RepGasto foreign key attribute.
 	 *
 	 * @param      RepGasto $l RepGasto
 	 * @return     void
@@ -1993,8 +2380,13 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function addRepGasto(RepGasto $l)
 	{
-		$this->collRepGastos[] = $l;
-		$l->setTipoRecargo($this);
+		if ($this->collRepGastos === null) {
+			$this->initRepGastos();
+		}
+		if (!in_array($l, $this->collRepGastos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepGastos, $l);
+			$l->setTipoRecargo($this);
+		}
 	}
 
 
@@ -2009,11 +2401,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in TipoRecargo.
 	 */
-	public function getRepGastosJoinReporte($criteria = null, $con = null)
+	public function getRepGastosJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2025,19 +2416,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$this->collRepGastos = array();
 			} else {
 
-				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
-				$this->collRepGastos = RepGastoPeer::doSelectJoinReporte($criteria, $con);
+				$this->collRepGastos = RepGastoPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+			$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 			if (!isset($this->lastRepGastoCriteria) || !$this->lastRepGastoCriteria->equals($criteria)) {
-				$this->collRepGastos = RepGastoPeer::doSelectJoinReporte($criteria, $con);
+				$this->collRepGastos = RepGastoPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepGastoCriteria = $criteria;
@@ -2057,11 +2448,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in TipoRecargo.
 	 */
-	public function getRepGastosJoinConcepto($criteria = null, $con = null)
+	public function getRepGastosJoinConcepto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2073,19 +2463,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$this->collRepGastos = array();
 			} else {
 
-				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
-				$this->collRepGastos = RepGastoPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collRepGastos = RepGastoPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+			$criteria->add(RepGastoPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 			if (!isset($this->lastRepGastoCriteria) || !$this->lastRepGastoCriteria->equals($criteria)) {
-				$this->collRepGastos = RepGastoPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collRepGastos = RepGastoPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepGastoCriteria = $criteria;
@@ -2094,36 +2484,50 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRecargoFletes to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRecargoFletes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRecargoFletes()
+	 */
+	public function clearRecargoFletes()
+	{
+		$this->collRecargoFletes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRecargoFletes collection (array).
+	 *
+	 * By default this just sets the collRecargoFletes collection to an empty array (like clearcollRecargoFletes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRecargoFletes()
 	{
-		if ($this->collRecargoFletes === null) {
-			$this->collRecargoFletes = array();
-		}
+		$this->collRecargoFletes = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TipoRecargo has previously
-	 * been saved, it will retrieve related RecargoFletes from storage.
-	 * If this TipoRecargo is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RecargoFlete objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously been saved, it will retrieve
+	 * related RecargoFletes from storage. If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RecargoFlete[]
 	 * @throws     PropelException
 	 */
-	public function getRecargoFletes($criteria = null, $con = null)
+	public function getRecargoFletes($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2135,7 +2539,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			   $this->collRecargoFletes = array();
 			} else {
 
-				$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				RecargoFletePeer::addSelectColumns($criteria);
 				$this->collRecargoFletes = RecargoFletePeer::doSelect($criteria, $con);
@@ -2148,7 +2552,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				RecargoFletePeer::addSelectColumns($criteria);
 				if (!isset($this->lastRecargoFleteCriteria) || !$this->lastRecargoFleteCriteria->equals($criteria)) {
@@ -2161,32 +2565,63 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RecargoFletes.
+	 * Returns the number of related RecargoFlete objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RecargoFlete objects.
 	 * @throws     PropelException
 	 */
-	public function countRecargoFletes($criteria = null, $distinct = false, $con = null)
+	public function countRecargoFletes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->getCaIdrecargo());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RecargoFletePeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRecargoFletes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				$count = RecargoFletePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				if (!isset($this->lastRecargoFleteCriteria) || !$this->lastRecargoFleteCriteria->equals($criteria)) {
+					$count = RecargoFletePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRecargoFletes);
+				}
+			} else {
+				$count = count($this->collRecargoFletes);
+			}
+		}
+		$this->lastRecargoFleteCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RecargoFlete object to this object
-	 * through the RecargoFlete foreign key attribute
+	 * through the RecargoFlete foreign key attribute.
 	 *
 	 * @param      RecargoFlete $l RecargoFlete
 	 * @return     void
@@ -2194,8 +2629,13 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function addRecargoFlete(RecargoFlete $l)
 	{
-		$this->collRecargoFletes[] = $l;
-		$l->setTipoRecargo($this);
+		if ($this->collRecargoFletes === null) {
+			$this->initRecargoFletes();
+		}
+		if (!in_array($l, $this->collRecargoFletes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRecargoFletes, $l);
+			$l->setTipoRecargo($this);
+		}
 	}
 
 
@@ -2210,11 +2650,10 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in TipoRecargo.
 	 */
-	public function getRecargoFletesJoinFlete($criteria = null, $con = null)
+	public function getRecargoFletesJoinFlete($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2226,19 +2665,19 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$this->collRecargoFletes = array();
 			} else {
 
-				$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->ca_idrecargo);
 
-				$this->collRecargoFletes = RecargoFletePeer::doSelectJoinFlete($criteria, $con);
+				$this->collRecargoFletes = RecargoFletePeer::doSelectJoinFlete($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->getCaIdrecargo());
+			$criteria->add(RecargoFletePeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 			if (!isset($this->lastRecargoFleteCriteria) || !$this->lastRecargoFleteCriteria->equals($criteria)) {
-				$this->collRecargoFletes = RecargoFletePeer::doSelectJoinFlete($criteria, $con);
+				$this->collRecargoFletes = RecargoFletePeer::doSelectJoinFlete($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRecargoFleteCriteria = $criteria;
@@ -2247,36 +2686,50 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRecargoFleteTrafs to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRecargoFleteTrafs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRecargoFleteTrafs()
+	 */
+	public function clearRecargoFleteTrafs()
+	{
+		$this->collRecargoFleteTrafs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRecargoFleteTrafs collection (array).
+	 *
+	 * By default this just sets the collRecargoFleteTrafs collection to an empty array (like clearcollRecargoFleteTrafs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRecargoFleteTrafs()
 	{
-		if ($this->collRecargoFleteTrafs === null) {
-			$this->collRecargoFleteTrafs = array();
-		}
+		$this->collRecargoFleteTrafs = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TipoRecargo has previously
-	 * been saved, it will retrieve related RecargoFleteTrafs from storage.
-	 * If this TipoRecargo is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RecargoFleteTraf objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TipoRecargo has previously been saved, it will retrieve
+	 * related RecargoFleteTrafs from storage. If this TipoRecargo is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RecargoFleteTraf[]
 	 * @throws     PropelException
 	 */
-	public function getRecargoFleteTrafs($criteria = null, $con = null)
+	public function getRecargoFleteTrafs($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -2288,7 +2741,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 			   $this->collRecargoFleteTrafs = array();
 			} else {
 
-				$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				RecargoFleteTrafPeer::addSelectColumns($criteria);
 				$this->collRecargoFleteTrafs = RecargoFleteTrafPeer::doSelect($criteria, $con);
@@ -2301,7 +2754,7 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+				$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->ca_idrecargo);
 
 				RecargoFleteTrafPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRecargoFleteTrafCriteria) || !$this->lastRecargoFleteTrafCriteria->equals($criteria)) {
@@ -2314,32 +2767,63 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RecargoFleteTrafs.
+	 * Returns the number of related RecargoFleteTraf objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RecargoFleteTraf objects.
 	 * @throws     PropelException
 	 */
-	public function countRecargoFleteTrafs($criteria = null, $distinct = false, $con = null)
+	public function countRecargoFleteTrafs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(TipoRecargoPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->getCaIdrecargo());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RecargoFleteTrafPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRecargoFleteTrafs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				$count = RecargoFleteTrafPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->ca_idrecargo);
+
+				if (!isset($this->lastRecargoFleteTrafCriteria) || !$this->lastRecargoFleteTrafCriteria->equals($criteria)) {
+					$count = RecargoFleteTrafPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRecargoFleteTrafs);
+				}
+			} else {
+				$count = count($this->collRecargoFleteTrafs);
+			}
+		}
+		$this->lastRecargoFleteTrafCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RecargoFleteTraf object to this object
-	 * through the RecargoFleteTraf foreign key attribute
+	 * through the RecargoFleteTraf foreign key attribute.
 	 *
 	 * @param      RecargoFleteTraf $l RecargoFleteTraf
 	 * @return     void
@@ -2347,8 +2831,77 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	 */
 	public function addRecargoFleteTraf(RecargoFleteTraf $l)
 	{
-		$this->collRecargoFleteTrafs[] = $l;
-		$l->setTipoRecargo($this);
+		if ($this->collRecargoFleteTrafs === null) {
+			$this->initRecargoFleteTrafs();
+		}
+		if (!in_array($l, $this->collRecargoFleteTrafs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRecargoFleteTrafs, $l);
+			$l->setTipoRecargo($this);
+		}
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collCotRecargos) {
+				foreach ((array) $this->collCotRecargos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collPricRecargoxConceptos) {
+				foreach ((array) $this->collPricRecargoxConceptos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collPricRecargoxConceptoLogs) {
+				foreach ((array) $this->collPricRecargoxConceptoLogs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collPricRecargosxCiudads) {
+				foreach ((array) $this->collPricRecargosxCiudads as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collPricRecargosxCiudadLogs) {
+				foreach ((array) $this->collPricRecargosxCiudadLogs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRepGastos) {
+				foreach ((array) $this->collRepGastos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRecargoFletes) {
+				foreach ((array) $this->collRecargoFletes as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRecargoFleteTrafs) {
+				foreach ((array) $this->collRecargoFleteTrafs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collCotRecargos = null;
+		$this->collPricRecargoxConceptos = null;
+		$this->collPricRecargoxConceptoLogs = null;
+		$this->collPricRecargosxCiudads = null;
+		$this->collPricRecargosxCiudadLogs = null;
+		$this->collRepGastos = null;
+		$this->collRecargoFletes = null;
+		$this->collRecargoFleteTrafs = null;
 	}
 
 } // BaseTipoRecargo

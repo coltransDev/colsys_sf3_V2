@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class ClienteMapBuilder {
+class ClienteMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,58 +54,59 @@ class ClienteMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(ClientePeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_clientes');
+		$tMap = $this->dbMap->addTable(ClientePeer::TABLE_NAME);
 		$tMap->setPhpName('Cliente');
+		$tMap->setClassname('Cliente');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_clientes_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_clientes_ca_idcliente_seq');
 
-		$tMap->addPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_DIGITO', 'CaDigito', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_DIGITO', 'CaDigito', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_COMPANIA', 'CaCompania', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_COMPANIA', 'CaCompania', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PAPELLIDO', 'CaPapellido', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PAPELLIDO', 'CaPapellido', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SAPELLIDO', 'CaSapellido', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SAPELLIDO', 'CaSapellido', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_NOMBRES', 'CaNombres', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NOMBRES', 'CaNombres', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SALUDO', 'CaSaludo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SALUDO', 'CaSaludo', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SEXO', 'CaSexo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SEXO', 'CaSexo', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CUMPLEANOS', 'CaCumpleanos', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CUMPLEANOS', 'CaCumpleanos', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_OFICINA', 'CaOficina', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OFICINA', 'CaOficina', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_VENDEDOR', 'CaVendedor', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_VENDEDOR', 'CaVendedor', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_COORDINADOR', 'CaCoordinador', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_COORDINADOR', 'CaCoordinador', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DIRECCION', 'CaDireccion', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DIRECCION', 'CaDireccion', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_LOCALIDAD', 'CaLocalidad', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_LOCALIDAD', 'CaLocalidad', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_COMPLEMENTO', 'CaComplemento', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_COMPLEMENTO', 'CaComplemento', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TELEFONOS', 'CaTelefonos', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TELEFONOS', 'CaTelefonos', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FAX', 'CaFax', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FAX', 'CaFax', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PREFERENCIAS', 'CaPreferencias', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PREFERENCIAS', 'CaPreferencias', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CONFIRMAR', 'CaConfirmar', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CONFIRMAR', 'CaConfirmar', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_IDCIUDAD', 'CaIdciudad', 'string', CreoleTypes::VARCHAR, 'tb_ciudades', 'CA_IDCIUDAD', false, null);
+		$tMap->addForeignKey('CA_IDCIUDAD', 'CaIdciudad', 'VARCHAR', 'tb_ciudades', 'CA_IDCIUDAD', false, null);
 
-		$tMap->addColumn('CA_IDGRUPO', 'CaIdgrupo', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_IDGRUPO', 'CaIdgrupo', 'INTEGER', false, null);
 
 	} // doBuild()
 

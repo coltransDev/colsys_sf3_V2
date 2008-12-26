@@ -13,7 +13,7 @@
  *
  * @package    lib.model.falabella.map
  */
-class FalaShipmentInfoMapBuilder {
+class FalaShipmentInfoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,94 +54,95 @@ class FalaShipmentInfoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(FalaShipmentInfoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_falashipmentinfo');
+		$tMap = $this->dbMap->addTable(FalaShipmentInfoPeer::TABLE_NAME);
 		$tMap->setPhpName('FalaShipmentInfo');
+		$tMap->setClassname('FalaShipmentInfo');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDDOC', 'CaIddoc', 'string' , CreoleTypes::VARCHAR, 'tb_falaheader', 'CA_IDDOC', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDDOC', 'CaIddoc', 'VARCHAR' , 'tb_falaheader', 'CA_IDDOC', true, null);
 
-		$tMap->addColumn('CA_BEGIN_WINDOW', 'CaBeginWindow', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_BEGIN_WINDOW', 'CaBeginWindow', 'DATE', false, null);
 
-		$tMap->addColumn('CA_END_WINDOW', 'CaEndWindow', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_END_WINDOW', 'CaEndWindow', 'DATE', false, null);
 
-		$tMap->addColumn('CA_COMMODITIES', 'CaCommodities', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_COMMODITIES', 'CaCommodities', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PARTIAL', 'CaPartial', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PARTIAL', 'CaPartial', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PAYMENT_TERMS', 'CaPaymentTerms', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PAYMENT_TERMS', 'CaPaymentTerms', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_INCOTERMS', 'CaIncoterms', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_INCOTERMS', 'CaIncoterms', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CONTAINER_TYPE', 'CaContainerType', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CONTAINER_TYPE', 'CaContainerType', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_UTV', 'CaUtv', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_UTV', 'CaUtv', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ETV', 'CaEtv', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ETV', 'CaEtv', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_LINE', 'CaLine', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_LINE', 'CaLine', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CONTACT_LINE', 'CaContactLine', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CONTACT_LINE', 'CaContactLine', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CONTACT_IMPORTER', 'CaContactImporter', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CONTACT_IMPORTER', 'CaContactImporter', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_UPPO', 'CaUppo', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_UPPO', 'CaUppo', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_EB', 'CaEb', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EB', 'CaEb', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_EDD', 'CaEdd', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EDD', 'CaEdd', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PORT', 'CaPort', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PORT', 'CaPort', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TRANSSHIPMENT', 'CaTransshipment', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TRANSSHIPMENT', 'CaTransshipment', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TRANSSHIPMENT_PORT', 'CaTransshipmentPort', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TRANSSHIPMENT_PORT', 'CaTransshipmentPort', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SHIPPING_ORG', 'CaShippingOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SHIPPING_ORG', 'CaShippingOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ORIGINAL_ORG', 'CaOriginalOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ORIGINAL_ORG', 'CaOriginalOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FWD_COPY_ORG', 'CaFwdCopyOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FWD_COPY_ORG', 'CaFwdCopyOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCR_ORG', 'CaFcrOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FCR_ORG', 'CaFcrOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SHIPPING_DST', 'CaShippingDst', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SHIPPING_DST', 'CaShippingDst', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ORIGINAL_DST', 'CaOriginalDst', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ORIGINAL_DST', 'CaOriginalDst', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FWD_COPY_DST', 'CaFwdCopyDst', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FWD_COPY_DST', 'CaFwdCopyDst', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCR_DST', 'CaFcrDst', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FCR_DST', 'CaFcrDst', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TRANSPORT_VIA', 'CaTransportVia', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TRANSPORT_VIA', 'CaTransportVia', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_INVOICE_ORG', 'CaInvoiceOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_INVOICE_ORG', 'CaInvoiceOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PACKING_LIST_ORG', 'CaPackingListOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PACKING_LIST_ORG', 'CaPackingListOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DOCUMENT_ORG', 'CaDocumentOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DOCUMENT_ORG', 'CaDocumentOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_OC_ORG', 'CaOcOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OC_ORG', 'CaOcOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_OTHERS_DOCS_ORG', 'CaOthersDocsOrg', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OTHERS_DOCS_ORG', 'CaOthersDocsOrg', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_INVOICE_CPS', 'CaInvoiceCps', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_INVOICE_CPS', 'CaInvoiceCps', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_PACKING_LIST_CPS', 'CaPackingListCps', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PACKING_LIST_CPS', 'CaPackingListCps', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_DOCUMENT_CPS', 'CaDocumentCps', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DOCUMENT_CPS', 'CaDocumentCps', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_OC_CPS', 'CaOcCps', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OC_CPS', 'CaOcCps', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_OTHERS_DOCS_CPS', 'CaOthersDocsCps', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OTHERS_DOCS_CPS', 'CaOthersDocsCps', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FINAL_PORT', 'CaFinalPort', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FINAL_PORT', 'CaFinalPort', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ALTER_PORT', 'CaAlterPort', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ALTER_PORT', 'CaAlterPort', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_LIMIT_DATE', 'CaLimitDate', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_LIMIT_DATE', 'CaLimitDate', 'DATE', false, null);
 
 	} // doBuild()
 

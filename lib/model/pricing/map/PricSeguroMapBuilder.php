@@ -13,7 +13,7 @@
  *
  * @package    lib.model.pricing.map
  */
-class PricSeguroMapBuilder {
+class PricSeguroMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,30 +54,31 @@ class PricSeguroMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(PricSeguroPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_pricseguros');
+		$tMap = $this->dbMap->addTable(PricSeguroPeer::TABLE_NAME);
 		$tMap->setPhpName('PricSeguro');
+		$tMap->setClassname('PricSeguro');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDGRUPO', 'CaIdgrupo', 'int' , CreoleTypes::INTEGER, 'tb_grupos', 'CA_IDGRUPO', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDGRUPO', 'CaIdgrupo', 'INTEGER' , 'tb_grupos', 'CA_IDGRUPO', true, null);
 
-		$tMap->addPrimaryKey('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_VLRPRIMA', 'CaVlrprima', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VLRPRIMA', 'CaVlrprima', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_VLRMINIMA', 'CaVlrminima', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VLRMINIMA', 'CaVlrminima', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_VLROBTENCIONPOLIZA', 'CaVlrobtencionpoliza', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VLROBTENCIONPOLIZA', 'CaVlrobtencionpoliza', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, 3);
+		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'VARCHAR', false, 3);
 
-		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
 	} // doBuild()
 

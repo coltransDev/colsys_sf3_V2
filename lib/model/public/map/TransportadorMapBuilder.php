@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class TransportadorMapBuilder {
+class TransportadorMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,24 +54,25 @@ class TransportadorMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(TransportadorPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_transporlineas');
+		$tMap = $this->dbMap->addTable(TransportadorPeer::TABLE_NAME);
 		$tMap->setPhpName('Transportador');
+		$tMap->setClassname('Transportador');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_transporlineas_SEQ');
+		$tMap->setPrimaryKeyMethodInfo('tb_transporlineas_ca_idlinea_seq');
 
-		$tMap->addPrimaryKey('CA_IDLINEA', 'CaIdlinea', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDLINEA', 'CaIdlinea', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_IDTRANSPORTISTA', 'CaIdtransportista', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_IDTRANSPORTISTA', 'CaIdtransportista', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SIGLA', 'CaSigla', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SIGLA', 'CaSigla', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', false, null);
 
 	} // doBuild()
 

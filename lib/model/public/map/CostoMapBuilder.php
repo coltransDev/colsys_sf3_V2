@@ -13,7 +13,7 @@
  *
  * @package    lib.model.public.map
  */
-class CostoMapBuilder {
+class CostoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,24 +54,25 @@ class CostoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(CostoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_costos');
+		$tMap = $this->dbMap->addTable(CostoPeer::TABLE_NAME);
 		$tMap->setPhpName('Costo');
+		$tMap->setClassname('Costo');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_IDCOSTO', 'CaIdcosto', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('CA_IDCOSTO', 'CaIdcosto', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_COSTO', 'CaCosto', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_COSTO', 'CaCosto', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_IMPOEXPO', 'CaImpoexpo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_COMISIONABLE', 'CaComisionable', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_COMISIONABLE', 'CaComisionable', 'VARCHAR', false, null);
 
 	} // doBuild()
 

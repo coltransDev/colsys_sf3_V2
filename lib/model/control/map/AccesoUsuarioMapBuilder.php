@@ -13,7 +13,7 @@
  *
  * @package    lib.model.control.map
  */
-class AccesoUsuarioMapBuilder {
+class AccesoUsuarioMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,18 +54,19 @@ class AccesoUsuarioMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(AccesoUsuarioPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('control.tb_accesos_user');
+		$tMap = $this->dbMap->addTable(AccesoUsuarioPeer::TABLE_NAME);
 		$tMap->setPhpName('AccesoUsuario');
+		$tMap->setClassname('AccesoUsuario');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'VARCHAR', true, 255);
 
-		$tMap->addForeignPrimaryKey('CA_LOGIN', 'CaLogin', 'string' , CreoleTypes::VARCHAR, 'control.tb_usuarios', 'CA_LOGIN', true, null);
+		$tMap->addForeignPrimaryKey('CA_LOGIN', 'CaLogin', 'VARCHAR' , 'control.tb_usuarios', 'CA_LOGIN', true, 255);
 
-		$tMap->addColumn('CA_ACCESO', 'CaAcceso', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_ACCESO', 'CaAcceso', 'INTEGER', false, null);
 
 	} // doBuild()
 

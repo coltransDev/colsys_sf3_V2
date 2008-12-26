@@ -10,6 +10,8 @@
 abstract class BaseEmail extends BaseObject  implements Persistent {
 
 
+  const PEER = 'EmailPeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,20 +20,17 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idemail field.
 	 * @var        int
 	 */
 	protected $ca_idemail;
 
-
 	/**
 	 * The value for the ca_fchenvio field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchenvio;
-
 
 	/**
 	 * The value for the ca_usuenvio field.
@@ -39,13 +38,11 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuenvio;
 
-
 	/**
 	 * The value for the ca_tipo field.
 	 * @var        string
 	 */
 	protected $ca_tipo;
-
 
 	/**
 	 * The value for the ca_idcaso field.
@@ -53,13 +50,11 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idcaso;
 
-
 	/**
 	 * The value for the ca_from field.
 	 * @var        string
 	 */
 	protected $ca_from;
-
 
 	/**
 	 * The value for the ca_fromname field.
@@ -67,13 +62,11 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_fromname;
 
-
 	/**
 	 * The value for the ca_cc field.
 	 * @var        string
 	 */
 	protected $ca_cc;
-
 
 	/**
 	 * The value for the ca_replyto field.
@@ -81,13 +74,11 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_replyto;
 
-
 	/**
 	 * The value for the ca_address field.
 	 * @var        string
 	 */
 	protected $ca_address;
-
 
 	/**
 	 * The value for the ca_attachment field.
@@ -95,20 +86,17 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	protected $ca_attachment;
 
-
 	/**
 	 * The value for the ca_subject field.
 	 * @var        string
 	 */
 	protected $ca_subject;
 
-
 	/**
 	 * The value for the ca_body field.
 	 * @var        string
 	 */
 	protected $ca_body;
-
 
 	/**
 	 * The value for the ca_readreceipt field.
@@ -117,40 +105,34 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	protected $ca_readreceipt;
 
 	/**
-	 * Collection to store aggregation of collRepAvisos.
-	 * @var        array
+	 * @var        array RepAviso[] Collection to store aggregation of RepAviso objects.
 	 */
 	protected $collRepAvisos;
 
 	/**
-	 * The criteria used to select the current contents of collRepAvisos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepAvisos.
 	 */
-	protected $lastRepAvisoCriteria = null;
+	private $lastRepAvisoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepStatuss.
-	 * @var        array
+	 * @var        array RepStatus[] Collection to store aggregation of RepStatus objects.
 	 */
 	protected $collRepStatuss;
 
 	/**
-	 * The criteria used to select the current contents of collRepStatuss.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepStatuss.
 	 */
-	protected $lastRepStatusCriteria = null;
+	private $lastRepStatusCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collEmailAttachments.
-	 * @var        array
+	 * @var        array EmailAttachment[] Collection to store aggregation of EmailAttachment objects.
 	 */
 	protected $collEmailAttachments;
 
 	/**
-	 * The criteria used to select the current contents of collEmailAttachments.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collEmailAttachments.
 	 */
-	protected $lastEmailAttachmentCriteria = null;
+	private $lastEmailAttachmentCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -167,44 +149,65 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseEmail object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idemail] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaIdemail()
 	{
-
 		return $this->ca_idemail;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchenvio] column value.
+	 * Get the [optionally formatted] temporal [ca_fchenvio] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchenvio($format = 'Y-m-d H:i:s')
 	{
-
-		if ($this->ca_fchenvio === null || $this->ca_fchenvio === '') {
+		if ($this->ca_fchenvio === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchenvio)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchenvio);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchenvio] as date/time value: " . var_export($this->ca_fchenvio, true));
-			}
-		} else {
-			$ts = $this->ca_fchenvio;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchenvio);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchenvio, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -215,7 +218,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuenvio()
 	{
-
 		return $this->ca_usuenvio;
 	}
 
@@ -226,7 +228,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaTipo()
 	{
-
 		return $this->ca_tipo;
 	}
 
@@ -237,7 +238,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdcaso()
 	{
-
 		return $this->ca_idcaso;
 	}
 
@@ -248,7 +248,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaFrom()
 	{
-
 		return $this->ca_from;
 	}
 
@@ -259,7 +258,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaFromname()
 	{
-
 		return $this->ca_fromname;
 	}
 
@@ -270,7 +268,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaCc()
 	{
-
 		return $this->ca_cc;
 	}
 
@@ -281,7 +278,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaReplyto()
 	{
-
 		return $this->ca_replyto;
 	}
 
@@ -292,7 +288,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaAddress()
 	{
-
 		return $this->ca_address;
 	}
 
@@ -303,7 +298,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaAttachment()
 	{
-
 		return $this->ca_attachment;
 	}
 
@@ -314,7 +308,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaSubject()
 	{
-
 		return $this->ca_subject;
 	}
 
@@ -325,7 +318,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaBody()
 	{
-
 		return $this->ca_body;
 	}
 
@@ -336,7 +328,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function getCaReadreceipt()
 	{
-
 		return $this->ca_readreceipt;
 	}
 
@@ -344,14 +335,11 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idemail] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaIdemail($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -360,45 +348,68 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_IDEMAIL;
 		}
 
+		return $this;
 	} // setCaIdemail()
 
 	/**
-	 * Set the value of [ca_fchenvio] column.
+	 * Sets the value of [ca_fchenvio] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaFchenvio($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchenvio] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchenvio !== $ts) {
-			$this->ca_fchenvio = $ts;
-			$this->modifiedColumns[] = EmailPeer::CA_FCHENVIO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchenvio !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchenvio !== null && $tmpDt = new DateTime($this->ca_fchenvio)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchenvio = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = EmailPeer::CA_FCHENVIO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchenvio()
 
 	/**
 	 * Set the value of [ca_usuenvio] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaUsuenvio($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuenvio !== $v) {
@@ -406,21 +417,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_USUENVIO;
 		}
 
+		return $this;
 	} // setCaUsuenvio()
 
 	/**
 	 * Set the value of [ca_tipo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaTipo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_tipo !== $v) {
@@ -428,21 +437,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_TIPO;
 		}
 
+		return $this;
 	} // setCaTipo()
 
 	/**
 	 * Set the value of [ca_idcaso] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaIdcaso($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_idcaso !== $v) {
@@ -450,21 +457,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_IDCASO;
 		}
 
+		return $this;
 	} // setCaIdcaso()
 
 	/**
 	 * Set the value of [ca_from] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaFrom($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_from !== $v) {
@@ -472,21 +477,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_FROM;
 		}
 
+		return $this;
 	} // setCaFrom()
 
 	/**
 	 * Set the value of [ca_fromname] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaFromname($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_fromname !== $v) {
@@ -494,21 +497,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_FROMNAME;
 		}
 
+		return $this;
 	} // setCaFromname()
 
 	/**
 	 * Set the value of [ca_cc] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaCc($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_cc !== $v) {
@@ -516,21 +517,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_CC;
 		}
 
+		return $this;
 	} // setCaCc()
 
 	/**
 	 * Set the value of [ca_replyto] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaReplyto($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_replyto !== $v) {
@@ -538,21 +537,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_REPLYTO;
 		}
 
+		return $this;
 	} // setCaReplyto()
 
 	/**
 	 * Set the value of [ca_address] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaAddress($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_address !== $v) {
@@ -560,21 +557,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_ADDRESS;
 		}
 
+		return $this;
 	} // setCaAddress()
 
 	/**
 	 * Set the value of [ca_attachment] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaAttachment($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_attachment !== $v) {
@@ -582,21 +577,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_ATTACHMENT;
 		}
 
+		return $this;
 	} // setCaAttachment()
 
 	/**
 	 * Set the value of [ca_subject] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaSubject($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_subject !== $v) {
@@ -604,21 +597,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_SUBJECT;
 		}
 
+		return $this;
 	} // setCaSubject()
 
 	/**
 	 * Set the value of [ca_body] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaBody($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_body !== $v) {
@@ -626,72 +617,87 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = EmailPeer::CA_BODY;
 		}
 
+		return $this;
 	} // setCaBody()
 
 	/**
 	 * Set the value of [ca_readreceipt] column.
 	 * 
 	 * @param      boolean $v new value
-	 * @return     void
+	 * @return     Email The current object (for fluent API support)
 	 */
 	public function setCaReadreceipt($v)
 	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
 
 		if ($this->ca_readreceipt !== $v) {
 			$this->ca_readreceipt = $v;
 			$this->modifiedColumns[] = EmailPeer::CA_READRECEIPT;
 		}
 
+		return $this;
 	} // setCaReadreceipt()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idemail = $rs->getInt($startcol + 0);
-
-			$this->ca_fchenvio = $rs->getTimestamp($startcol + 1, null);
-
-			$this->ca_usuenvio = $rs->getString($startcol + 2);
-
-			$this->ca_tipo = $rs->getString($startcol + 3);
-
-			$this->ca_idcaso = $rs->getString($startcol + 4);
-
-			$this->ca_from = $rs->getString($startcol + 5);
-
-			$this->ca_fromname = $rs->getString($startcol + 6);
-
-			$this->ca_cc = $rs->getString($startcol + 7);
-
-			$this->ca_replyto = $rs->getString($startcol + 8);
-
-			$this->ca_address = $rs->getString($startcol + 9);
-
-			$this->ca_attachment = $rs->getString($startcol + 10);
-
-			$this->ca_subject = $rs->getString($startcol + 11);
-
-			$this->ca_body = $rs->getString($startcol + 12);
-
-			$this->ca_readreceipt = $rs->getBoolean($startcol + 13);
-
+			$this->ca_idemail = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_fchenvio = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_usuenvio = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_tipo = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_idcaso = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_from = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_fromname = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_cc = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_replyto = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_address = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_attachment = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_subject = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_body = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_readreceipt = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 14; // 14 = EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS).
@@ -702,83 +708,157 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(EmailPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = EmailPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->collRepAvisos = null;
+			$this->lastRepAvisoCriteria = null;
+
+			$this->collRepStatuss = null;
+			$this->lastRepStatusCriteria = null;
+
+			$this->collEmailAttachments = null;
+			$this->lastEmailAttachmentCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(EmailPeer::DATABASE_NAME);
+			$con = Propel::getConnection(EmailPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			EmailPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(EmailPeer::DATABASE_NAME);
+			$con = Propel::getConnection(EmailPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			EmailPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = EmailPeer::CA_IDEMAIL;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -794,11 +874,12 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += EmailPeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collRepAvisos !== null) {
-				foreach($this->collRepAvisos as $referrerFK) {
+				foreach ($this->collRepAvisos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -806,7 +887,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRepStatuss !== null) {
-				foreach($this->collRepStatuss as $referrerFK) {
+				foreach ($this->collRepStatuss as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -814,7 +895,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collEmailAttachments !== null) {
-				foreach($this->collEmailAttachments as $referrerFK) {
+				foreach ($this->collEmailAttachments as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -822,6 +903,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -892,7 +974,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 
 
 				if ($this->collRepAvisos !== null) {
-					foreach($this->collRepAvisos as $referrerFK) {
+					foreach ($this->collRepAvisos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -900,7 +982,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRepStatuss !== null) {
-					foreach($this->collRepStatuss as $referrerFK) {
+					foreach ($this->collRepStatuss as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -908,7 +990,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collEmailAttachments !== null) {
-					foreach($this->collEmailAttachments as $referrerFK) {
+					foreach ($this->collEmailAttachments as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -927,14 +1009,15 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = EmailPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -1001,11 +1084,12 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = EmailPeer::getFieldNames($keyType);
 		$result = array(
@@ -1033,8 +1117,8 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -1108,8 +1192,9 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -1244,16 +1329,22 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getRepAvisos() as $relObj) {
-				$copyObj->addRepAviso($relObj->copy($deepCopy));
+			foreach ($this->getRepAvisos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepAviso($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepStatuss() as $relObj) {
-				$copyObj->addRepStatus($relObj->copy($deepCopy));
+			foreach ($this->getRepStatuss() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepStatus($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getEmailAttachments() as $relObj) {
-				$copyObj->addEmailAttachment($relObj->copy($deepCopy));
+			foreach ($this->getEmailAttachments() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addEmailAttachment($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
@@ -1261,7 +1352,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdemail(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaIdemail(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -1304,36 +1395,50 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepAvisos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepAvisos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepAvisos()
+	 */
+	public function clearRepAvisos()
+	{
+		$this->collRepAvisos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepAvisos collection (array).
+	 *
+	 * By default this just sets the collRepAvisos collection to an empty array (like clearcollRepAvisos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepAvisos()
 	{
-		if ($this->collRepAvisos === null) {
-			$this->collRepAvisos = array();
-		}
+		$this->collRepAvisos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Email has previously
-	 * been saved, it will retrieve related RepAvisos from storage.
-	 * If this Email is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepAviso objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Email has previously been saved, it will retrieve
+	 * related RepAvisos from storage. If this Email is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepAviso[]
 	 * @throws     PropelException
 	 */
-	public function getRepAvisos($criteria = null, $con = null)
+	public function getRepAvisos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1345,7 +1450,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			   $this->collRepAvisos = array();
 			} else {
 
-				$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->getCaIdemail());
+				$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->ca_idemail);
 
 				RepAvisoPeer::addSelectColumns($criteria);
 				$this->collRepAvisos = RepAvisoPeer::doSelect($criteria, $con);
@@ -1358,7 +1463,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->getCaIdemail());
+				$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->ca_idemail);
 
 				RepAvisoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
@@ -1371,32 +1476,63 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepAvisos.
+	 * Returns the number of related RepAviso objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepAviso objects.
 	 * @throws     PropelException
 	 */
-	public function countRepAvisos($criteria = null, $distinct = false, $con = null)
+	public function countRepAvisos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->getCaIdemail());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepAvisoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepAvisos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				$count = RepAvisoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
+					$count = RepAvisoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepAvisos);
+				}
+			} else {
+				$count = count($this->collRepAvisos);
+			}
+		}
+		$this->lastRepAvisoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepAviso object to this object
-	 * through the RepAviso foreign key attribute
+	 * through the RepAviso foreign key attribute.
 	 *
 	 * @param      RepAviso $l RepAviso
 	 * @return     void
@@ -1404,8 +1540,13 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function addRepAviso(RepAviso $l)
 	{
-		$this->collRepAvisos[] = $l;
-		$l->setEmail($this);
+		if ($this->collRepAvisos === null) {
+			$this->initRepAvisos();
+		}
+		if (!in_array($l, $this->collRepAvisos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepAvisos, $l);
+			$l->setEmail($this);
+		}
 	}
 
 
@@ -1420,11 +1561,10 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Email.
 	 */
-	public function getRepAvisosJoinReporte($criteria = null, $con = null)
+	public function getRepAvisosJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1436,19 +1576,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				$this->collRepAvisos = array();
 			} else {
 
-				$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->getCaIdemail());
+				$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->ca_idemail);
 
-				$this->collRepAvisos = RepAvisoPeer::doSelectJoinReporte($criteria, $con);
+				$this->collRepAvisos = RepAvisoPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->getCaIdemail());
+			$criteria->add(RepAvisoPeer::CA_IDEMAIL, $this->ca_idemail);
 
 			if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
-				$this->collRepAvisos = RepAvisoPeer::doSelectJoinReporte($criteria, $con);
+				$this->collRepAvisos = RepAvisoPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepAvisoCriteria = $criteria;
@@ -1457,36 +1597,50 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepStatuss to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepStatuss collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepStatuss()
+	 */
+	public function clearRepStatuss()
+	{
+		$this->collRepStatuss = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepStatuss collection (array).
+	 *
+	 * By default this just sets the collRepStatuss collection to an empty array (like clearcollRepStatuss());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepStatuss()
 	{
-		if ($this->collRepStatuss === null) {
-			$this->collRepStatuss = array();
-		}
+		$this->collRepStatuss = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Email has previously
-	 * been saved, it will retrieve related RepStatuss from storage.
-	 * If this Email is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepStatus objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Email has previously been saved, it will retrieve
+	 * related RepStatuss from storage. If this Email is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepStatus[]
 	 * @throws     PropelException
 	 */
-	public function getRepStatuss($criteria = null, $con = null)
+	public function getRepStatuss($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1498,7 +1652,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			   $this->collRepStatuss = array();
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->getCaIdemail());
+				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
 
 				RepStatusPeer::addSelectColumns($criteria);
 				$this->collRepStatuss = RepStatusPeer::doSelect($criteria, $con);
@@ -1511,7 +1665,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->getCaIdemail());
+				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
 
 				RepStatusPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
@@ -1524,32 +1678,63 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepStatuss.
+	 * Returns the number of related RepStatus objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepStatus objects.
 	 * @throws     PropelException
 	 */
-	public function countRepStatuss($criteria = null, $distinct = false, $con = null)
+	public function countRepStatuss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->getCaIdemail());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepStatusPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepStatuss === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				$count = RepStatusPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
+					$count = RepStatusPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepStatuss);
+				}
+			} else {
+				$count = count($this->collRepStatuss);
+			}
+		}
+		$this->lastRepStatusCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepStatus object to this object
-	 * through the RepStatus foreign key attribute
+	 * through the RepStatus foreign key attribute.
 	 *
 	 * @param      RepStatus $l RepStatus
 	 * @return     void
@@ -1557,8 +1742,13 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function addRepStatus(RepStatus $l)
 	{
-		$this->collRepStatuss[] = $l;
-		$l->setEmail($this);
+		if ($this->collRepStatuss === null) {
+			$this->initRepStatuss();
+		}
+		if (!in_array($l, $this->collRepStatuss, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepStatuss, $l);
+			$l->setEmail($this);
+		}
 	}
 
 
@@ -1573,11 +1763,10 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Email.
 	 */
-	public function getRepStatussJoinReporte($criteria = null, $con = null)
+	public function getRepStatussJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1589,19 +1778,19 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				$this->collRepStatuss = array();
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->getCaIdemail());
+				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
 
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinReporte($criteria, $con);
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->getCaIdemail());
+			$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
 
 			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinReporte($criteria, $con);
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepStatusCriteria = $criteria;
@@ -1610,36 +1799,50 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collEmailAttachments to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collEmailAttachments collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addEmailAttachments()
+	 */
+	public function clearEmailAttachments()
+	{
+		$this->collEmailAttachments = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collEmailAttachments collection (array).
+	 *
+	 * By default this just sets the collEmailAttachments collection to an empty array (like clearcollEmailAttachments());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initEmailAttachments()
 	{
-		if ($this->collEmailAttachments === null) {
-			$this->collEmailAttachments = array();
-		}
+		$this->collEmailAttachments = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Email has previously
-	 * been saved, it will retrieve related EmailAttachments from storage.
-	 * If this Email is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of EmailAttachment objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Email has previously been saved, it will retrieve
+	 * related EmailAttachments from storage. If this Email is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array EmailAttachment[]
 	 * @throws     PropelException
 	 */
-	public function getEmailAttachments($criteria = null, $con = null)
+	public function getEmailAttachments($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1651,7 +1854,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			   $this->collEmailAttachments = array();
 			} else {
 
-				$criteria->add(EmailAttachmentPeer::CA_IDEMAIL, $this->getCaIdemail());
+				$criteria->add(EmailAttachmentPeer::CA_IDEMAIL, $this->ca_idemail);
 
 				EmailAttachmentPeer::addSelectColumns($criteria);
 				$this->collEmailAttachments = EmailAttachmentPeer::doSelect($criteria, $con);
@@ -1664,7 +1867,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(EmailAttachmentPeer::CA_IDEMAIL, $this->getCaIdemail());
+				$criteria->add(EmailAttachmentPeer::CA_IDEMAIL, $this->ca_idemail);
 
 				EmailAttachmentPeer::addSelectColumns($criteria);
 				if (!isset($this->lastEmailAttachmentCriteria) || !$this->lastEmailAttachmentCriteria->equals($criteria)) {
@@ -1677,32 +1880,63 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related EmailAttachments.
+	 * Returns the number of related EmailAttachment objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related EmailAttachment objects.
 	 * @throws     PropelException
 	 */
-	public function countEmailAttachments($criteria = null, $distinct = false, $con = null)
+	public function countEmailAttachments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(EmailAttachmentPeer::CA_IDEMAIL, $this->getCaIdemail());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return EmailAttachmentPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collEmailAttachments === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(EmailAttachmentPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				$count = EmailAttachmentPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(EmailAttachmentPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				if (!isset($this->lastEmailAttachmentCriteria) || !$this->lastEmailAttachmentCriteria->equals($criteria)) {
+					$count = EmailAttachmentPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collEmailAttachments);
+				}
+			} else {
+				$count = count($this->collEmailAttachments);
+			}
+		}
+		$this->lastEmailAttachmentCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a EmailAttachment object to this object
-	 * through the EmailAttachment foreign key attribute
+	 * through the EmailAttachment foreign key attribute.
 	 *
 	 * @param      EmailAttachment $l EmailAttachment
 	 * @return     void
@@ -1710,8 +1944,47 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 */
 	public function addEmailAttachment(EmailAttachment $l)
 	{
-		$this->collEmailAttachments[] = $l;
-		$l->setEmail($this);
+		if ($this->collEmailAttachments === null) {
+			$this->initEmailAttachments();
+		}
+		if (!in_array($l, $this->collEmailAttachments, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collEmailAttachments, $l);
+			$l->setEmail($this);
+		}
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collRepAvisos) {
+				foreach ((array) $this->collRepAvisos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRepStatuss) {
+				foreach ((array) $this->collRepStatuss as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collEmailAttachments) {
+				foreach ((array) $this->collEmailAttachments as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collRepAvisos = null;
+		$this->collRepStatuss = null;
+		$this->collEmailAttachments = null;
 	}
 
 } // BaseEmail

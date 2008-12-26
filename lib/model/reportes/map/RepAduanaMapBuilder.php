@@ -13,7 +13,7 @@
  *
  * @package    lib.model.reportes.map
  */
-class RepAduanaMapBuilder {
+class RepAduanaMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,30 +54,31 @@ class RepAduanaMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(RepAduanaPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_repaduana');
+		$tMap = $this->dbMap->addTable(RepAduanaPeer::TABLE_NAME);
 		$tMap->setPhpName('RepAduana');
+		$tMap->setClassname('RepAduana');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDREPORTE', 'CaIdreporte', 'int' , CreoleTypes::INTEGER, 'tb_reportes', 'CA_IDREPORTE', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDREPORTE', 'CaIdreporte', 'INTEGER' , 'tb_reportes', 'CA_IDREPORTE', true, null);
 
-		$tMap->addColumn('CA_COORDINADOR', 'CaCoordinador', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_COORDINADOR', 'CaCoordinador', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TRANSNACARGA', 'CaTransnacarga', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TRANSNACARGA', 'CaTransnacarga', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TRANSNATIPO', 'CaTransnatipo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TRANSNATIPO', 'CaTransnatipo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_INSTRUCCIONES', 'CaInstrucciones', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_INSTRUCCIONES', 'CaInstrucciones', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
 	} // doBuild()
 

@@ -10,6 +10,8 @@
 abstract class BaseReporte extends BaseObject  implements Persistent {
 
 
+  const PEER = 'ReportePeer';
+
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
@@ -18,20 +20,17 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected static $peer;
 
-
 	/**
 	 * The value for the ca_idreporte field.
 	 * @var        int
 	 */
 	protected $ca_idreporte;
 
-
 	/**
 	 * The value for the ca_fchreporte field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchreporte;
-
 
 	/**
 	 * The value for the ca_consecutivo field.
@@ -39,13 +38,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_consecutivo;
 
-
 	/**
 	 * The value for the ca_version field.
 	 * @var        int
 	 */
 	protected $ca_version;
-
 
 	/**
 	 * The value for the ca_idcotizacion field.
@@ -53,13 +50,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idcotizacion;
 
-
 	/**
 	 * The value for the ca_origen field.
 	 * @var        string
 	 */
 	protected $ca_origen;
-
 
 	/**
 	 * The value for the ca_destino field.
@@ -67,20 +62,17 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_destino;
 
-
 	/**
 	 * The value for the ca_impoexpo field.
 	 * @var        string
 	 */
 	protected $ca_impoexpo;
 
-
 	/**
 	 * The value for the ca_fchdespacho field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchdespacho;
-
 
 	/**
 	 * The value for the ca_idagente field.
@@ -88,13 +80,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idagente;
 
-
 	/**
 	 * The value for the ca_incoterms field.
 	 * @var        string
 	 */
 	protected $ca_incoterms;
-
 
 	/**
 	 * The value for the ca_mercancia_desc field.
@@ -102,13 +92,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_mercancia_desc;
 
-
 	/**
 	 * The value for the ca_idproveedor field.
 	 * @var        string
 	 */
 	protected $ca_idproveedor;
-
 
 	/**
 	 * The value for the ca_orden_prov field.
@@ -116,13 +104,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_orden_prov;
 
-
 	/**
 	 * The value for the ca_idconcliente field.
 	 * @var        int
 	 */
 	protected $ca_idconcliente;
-
 
 	/**
 	 * The value for the ca_orden_clie field.
@@ -130,13 +116,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_orden_clie;
 
-
 	/**
 	 * The value for the ca_confirmar_clie field.
 	 * @var        string
 	 */
 	protected $ca_confirmar_clie;
-
 
 	/**
 	 * The value for the ca_idrepresentante field.
@@ -144,13 +128,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idrepresentante;
 
-
 	/**
 	 * The value for the ca_informar_repr field.
 	 * @var        string
 	 */
 	protected $ca_informar_repr;
-
 
 	/**
 	 * The value for the ca_idconsignatario field.
@@ -158,13 +140,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idconsignatario;
 
-
 	/**
 	 * The value for the ca_informar_cons field.
 	 * @var        string
 	 */
 	protected $ca_informar_cons;
-
 
 	/**
 	 * The value for the ca_idnotify field.
@@ -172,13 +152,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idnotify;
 
-
 	/**
 	 * The value for the ca_informar_noti field.
 	 * @var        string
 	 */
 	protected $ca_informar_noti;
-
 
 	/**
 	 * The value for the ca_notify field.
@@ -186,13 +164,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_notify;
 
-
 	/**
 	 * The value for the ca_transporte field.
 	 * @var        string
 	 */
 	protected $ca_transporte;
-
 
 	/**
 	 * The value for the ca_modalidad field.
@@ -200,13 +176,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_modalidad;
 
-
 	/**
 	 * The value for the ca_seguro field.
 	 * @var        string
 	 */
 	protected $ca_seguro;
-
 
 	/**
 	 * The value for the ca_liberacion field.
@@ -214,13 +188,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_liberacion;
 
-
 	/**
 	 * The value for the ca_tiempocredito field.
 	 * @var        string
 	 */
 	protected $ca_tiempocredito;
-
 
 	/**
 	 * The value for the ca_preferencias_clie field.
@@ -228,13 +200,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_preferencias_clie;
 
-
 	/**
 	 * The value for the ca_instrucciones field.
 	 * @var        string
 	 */
 	protected $ca_instrucciones;
-
 
 	/**
 	 * The value for the ca_idlinea field.
@@ -242,13 +212,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idlinea;
 
-
 	/**
 	 * The value for the ca_idconsignar field.
 	 * @var        int
 	 */
 	protected $ca_idconsignar;
-
 
 	/**
 	 * The value for the ca_idconsignarmaster field.
@@ -256,13 +224,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_idconsignarmaster;
 
-
 	/**
 	 * The value for the ca_idbodega field.
 	 * @var        int
 	 */
 	protected $ca_idbodega;
-
 
 	/**
 	 * The value for the ca_mastersame field.
@@ -270,13 +236,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_mastersame;
 
-
 	/**
 	 * The value for the ca_continuacion field.
 	 * @var        string
 	 */
 	protected $ca_continuacion;
-
 
 	/**
 	 * The value for the ca_continuacion_dest field.
@@ -284,13 +248,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_continuacion_dest;
 
-
 	/**
 	 * The value for the ca_continuacion_conf field.
 	 * @var        string
 	 */
 	protected $ca_continuacion_conf;
-
 
 	/**
 	 * The value for the ca_etapa_actual field.
@@ -298,20 +260,17 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_etapa_actual;
 
-
 	/**
 	 * The value for the ca_login field.
 	 * @var        string
 	 */
 	protected $ca_login;
 
-
 	/**
 	 * The value for the ca_fchcreado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchcreado;
-
 
 	/**
 	 * The value for the ca_usucreado field.
@@ -319,13 +278,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usucreado;
 
-
 	/**
 	 * The value for the ca_fchactualizado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchactualizado;
-
 
 	/**
 	 * The value for the ca_usuactualizado field.
@@ -333,13 +290,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuactualizado;
 
-
 	/**
 	 * The value for the ca_fchanulado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchanulado;
-
 
 	/**
 	 * The value for the ca_usuanulado field.
@@ -347,13 +302,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usuanulado;
 
-
 	/**
 	 * The value for the ca_fchcerrado field.
-	 * @var        int
+	 * @var        string
 	 */
 	protected $ca_fchcerrado;
-
 
 	/**
 	 * The value for the ca_usucerrado field.
@@ -361,13 +314,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	protected $ca_usucerrado;
 
-
 	/**
 	 * The value for the ca_colmas field.
 	 * @var        string
 	 */
 	protected $ca_colmas;
-
 
 	/**
 	 * The value for the ca_propiedades field.
@@ -401,136 +352,99 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	protected $aBodega;
 
 	/**
-	 * Collection to store aggregation of collInoClientesAirs.
-	 * @var        array
+	 * @var        array InoClientesAir[] Collection to store aggregation of InoClientesAir objects.
 	 */
 	protected $collInoClientesAirs;
 
 	/**
-	 * The criteria used to select the current contents of collInoClientesAirs.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collInoClientesAirs.
 	 */
-	protected $lastInoClientesAirCriteria = null;
+	private $lastInoClientesAirCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepAvisos.
-	 * @var        array
+	 * @var        array RepAviso[] Collection to store aggregation of RepAviso objects.
 	 */
 	protected $collRepAvisos;
 
 	/**
-	 * The criteria used to select the current contents of collRepAvisos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepAvisos.
 	 */
-	protected $lastRepAvisoCriteria = null;
+	private $lastRepAvisoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepStatuss.
-	 * @var        array
+	 * @var        array RepStatus[] Collection to store aggregation of RepStatus objects.
 	 */
 	protected $collRepStatuss;
 
 	/**
-	 * The criteria used to select the current contents of collRepStatuss.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepStatuss.
 	 */
-	protected $lastRepStatusCriteria = null;
+	private $lastRepStatusCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepEquipos.
-	 * @var        array
+	 * @var        array RepEquipo[] Collection to store aggregation of RepEquipo objects.
 	 */
 	protected $collRepEquipos;
 
 	/**
-	 * The criteria used to select the current contents of collRepEquipos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepEquipos.
 	 */
-	protected $lastRepEquipoCriteria = null;
+	private $lastRepEquipoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepGastos.
-	 * @var        array
+	 * @var        array RepGasto[] Collection to store aggregation of RepGasto objects.
 	 */
 	protected $collRepGastos;
 
 	/**
-	 * The criteria used to select the current contents of collRepGastos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepGastos.
 	 */
-	protected $lastRepGastoCriteria = null;
+	private $lastRepGastoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepSeguros.
-	 * @var        array
+	 * @var        RepSeguro one-to-one related RepSeguro object
 	 */
-	protected $collRepSeguros;
+	protected $singleRepSeguro;
 
 	/**
-	 * The criteria used to select the current contents of collRepSeguros.
-	 * @var        Criteria
-	 */
-	protected $lastRepSeguroCriteria = null;
-
-	/**
-	 * Collection to store aggregation of collRepCostos.
-	 * @var        array
+	 * @var        array RepCosto[] Collection to store aggregation of RepCosto objects.
 	 */
 	protected $collRepCostos;
 
 	/**
-	 * The criteria used to select the current contents of collRepCostos.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepCostos.
 	 */
-	protected $lastRepCostoCriteria = null;
+	private $lastRepCostoCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepTarifas.
-	 * @var        array
+	 * @var        array RepTarifa[] Collection to store aggregation of RepTarifa objects.
 	 */
 	protected $collRepTarifas;
 
 	/**
-	 * The criteria used to select the current contents of collRepTarifas.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collRepTarifas.
 	 */
-	protected $lastRepTarifaCriteria = null;
+	private $lastRepTarifaCriteria = null;
 
 	/**
-	 * Collection to store aggregation of collRepAduanas.
-	 * @var        array
+	 * @var        RepAduana one-to-one related RepAduana object
 	 */
-	protected $collRepAduanas;
+	protected $singleRepAduana;
 
 	/**
-	 * The criteria used to select the current contents of collRepAduanas.
-	 * @var        Criteria
+	 * @var        RepExpo one-to-one related RepExpo object
 	 */
-	protected $lastRepAduanaCriteria = null;
+	protected $singleRepExpo;
 
 	/**
-	 * Collection to store aggregation of collRepExpos.
-	 * @var        array
-	 */
-	protected $collRepExpos;
-
-	/**
-	 * The criteria used to select the current contents of collRepExpos.
-	 * @var        Criteria
-	 */
-	protected $lastRepExpoCriteria = null;
-
-	/**
-	 * Collection to store aggregation of collInoClientesSeas.
-	 * @var        array
+	 * @var        array InoClientesSea[] Collection to store aggregation of InoClientesSea objects.
 	 */
 	protected $collInoClientesSeas;
 
 	/**
-	 * The criteria used to select the current contents of collInoClientesSeas.
-	 * @var        Criteria
+	 * @var        Criteria The criteria used to select the current contents of collInoClientesSeas.
 	 */
-	protected $lastInoClientesSeaCriteria = null;
+	private $lastInoClientesSeaCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -547,44 +461,65 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
+	 * Initializes internal state of BaseReporte object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
+
+	/**
 	 * Get the [ca_idreporte] column value.
 	 * 
 	 * @return     int
 	 */
 	public function getCaIdreporte()
 	{
-
 		return $this->ca_idreporte;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchreporte] column value.
+	 * Get the [optionally formatted] temporal [ca_fchreporte] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchreporte($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchreporte === null || $this->ca_fchreporte === '') {
+		if ($this->ca_fchreporte === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchreporte)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchreporte);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchreporte] as date/time value: " . var_export($this->ca_fchreporte, true));
-			}
-		} else {
-			$ts = $this->ca_fchreporte;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchreporte);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchreporte, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -595,7 +530,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaConsecutivo()
 	{
-
 		return $this->ca_consecutivo;
 	}
 
@@ -606,7 +540,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaVersion()
 	{
-
 		return $this->ca_version;
 	}
 
@@ -617,7 +550,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdcotizacion()
 	{
-
 		return $this->ca_idcotizacion;
 	}
 
@@ -628,7 +560,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaOrigen()
 	{
-
 		return $this->ca_origen;
 	}
 
@@ -639,7 +570,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaDestino()
 	{
-
 		return $this->ca_destino;
 	}
 
@@ -650,38 +580,39 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaImpoexpo()
 	{
-
 		return $this->ca_impoexpo;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchdespacho] column value.
+	 * Get the [optionally formatted] temporal [ca_fchdespacho] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchdespacho($format = 'Y-m-d')
 	{
-
-		if ($this->ca_fchdespacho === null || $this->ca_fchdespacho === '') {
+		if ($this->ca_fchdespacho === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchdespacho)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchdespacho);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchdespacho] as date/time value: " . var_export($this->ca_fchdespacho, true));
-			}
-		} else {
-			$ts = $this->ca_fchdespacho;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchdespacho);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchdespacho, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -692,7 +623,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdagente()
 	{
-
 		return $this->ca_idagente;
 	}
 
@@ -703,7 +633,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIncoterms()
 	{
-
 		return $this->ca_incoterms;
 	}
 
@@ -714,7 +643,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaMercanciaDesc()
 	{
-
 		return $this->ca_mercancia_desc;
 	}
 
@@ -725,7 +653,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdproveedor()
 	{
-
 		return $this->ca_idproveedor;
 	}
 
@@ -736,7 +663,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaOrdenProv()
 	{
-
 		return $this->ca_orden_prov;
 	}
 
@@ -747,7 +673,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdconcliente()
 	{
-
 		return $this->ca_idconcliente;
 	}
 
@@ -758,7 +683,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaOrdenClie()
 	{
-
 		return $this->ca_orden_clie;
 	}
 
@@ -769,7 +693,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaConfirmarClie()
 	{
-
 		return $this->ca_confirmar_clie;
 	}
 
@@ -780,7 +703,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdrepresentante()
 	{
-
 		return $this->ca_idrepresentante;
 	}
 
@@ -791,7 +713,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaInformarRepr()
 	{
-
 		return $this->ca_informar_repr;
 	}
 
@@ -802,7 +723,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdconsignatario()
 	{
-
 		return $this->ca_idconsignatario;
 	}
 
@@ -813,7 +733,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaInformarCons()
 	{
-
 		return $this->ca_informar_cons;
 	}
 
@@ -824,7 +743,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdnotify()
 	{
-
 		return $this->ca_idnotify;
 	}
 
@@ -835,7 +753,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaInformarNoti()
 	{
-
 		return $this->ca_informar_noti;
 	}
 
@@ -846,7 +763,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaNotify()
 	{
-
 		return $this->ca_notify;
 	}
 
@@ -857,7 +773,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaTransporte()
 	{
-
 		return $this->ca_transporte;
 	}
 
@@ -868,7 +783,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaModalidad()
 	{
-
 		return $this->ca_modalidad;
 	}
 
@@ -879,7 +793,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaSeguro()
 	{
-
 		return $this->ca_seguro;
 	}
 
@@ -890,7 +803,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaLiberacion()
 	{
-
 		return $this->ca_liberacion;
 	}
 
@@ -901,7 +813,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaTiempocredito()
 	{
-
 		return $this->ca_tiempocredito;
 	}
 
@@ -912,7 +823,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaPreferenciasClie()
 	{
-
 		return $this->ca_preferencias_clie;
 	}
 
@@ -923,7 +833,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaInstrucciones()
 	{
-
 		return $this->ca_instrucciones;
 	}
 
@@ -934,7 +843,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdlinea()
 	{
-
 		return $this->ca_idlinea;
 	}
 
@@ -945,7 +853,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdconsignar()
 	{
-
 		return $this->ca_idconsignar;
 	}
 
@@ -956,7 +863,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdconsignarmaster()
 	{
-
 		return $this->ca_idconsignarmaster;
 	}
 
@@ -967,7 +873,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaIdbodega()
 	{
-
 		return $this->ca_idbodega;
 	}
 
@@ -978,7 +883,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaMastersame()
 	{
-
 		return $this->ca_mastersame;
 	}
 
@@ -989,7 +893,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaContinuacion()
 	{
-
 		return $this->ca_continuacion;
 	}
 
@@ -1000,7 +903,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaContinuacionDest()
 	{
-
 		return $this->ca_continuacion_dest;
 	}
 
@@ -1011,7 +913,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaContinuacionConf()
 	{
-
 		return $this->ca_continuacion_conf;
 	}
 
@@ -1022,7 +923,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaEtapaActual()
 	{
-
 		return $this->ca_etapa_actual;
 	}
 
@@ -1033,38 +933,39 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaLogin()
 	{
-
 		return $this->ca_login;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchcreado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchcreado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchcreado($format = 'Y-m-d H:i:s')
 	{
-
-		if ($this->ca_fchcreado === null || $this->ca_fchcreado === '') {
+		if ($this->ca_fchcreado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchcreado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchcreado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchcreado] as date/time value: " . var_export($this->ca_fchcreado, true));
-			}
-		} else {
-			$ts = $this->ca_fchcreado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchcreado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcreado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -1075,38 +976,39 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsucreado()
 	{
-
 		return $this->ca_usucreado;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchactualizado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchactualizado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchactualizado($format = 'Y-m-d H:i:s')
 	{
-
-		if ($this->ca_fchactualizado === null || $this->ca_fchactualizado === '') {
+		if ($this->ca_fchactualizado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchactualizado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchactualizado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchactualizado] as date/time value: " . var_export($this->ca_fchactualizado, true));
-			}
-		} else {
-			$ts = $this->ca_fchactualizado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchactualizado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchactualizado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -1117,38 +1019,39 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuactualizado()
 	{
-
 		return $this->ca_usuactualizado;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchanulado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchanulado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchanulado($format = 'Y-m-d H:i:s')
 	{
-
-		if ($this->ca_fchanulado === null || $this->ca_fchanulado === '') {
+		if ($this->ca_fchanulado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchanulado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchanulado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchanulado] as date/time value: " . var_export($this->ca_fchanulado, true));
-			}
-		} else {
-			$ts = $this->ca_fchanulado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchanulado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchanulado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -1159,38 +1062,39 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsuanulado()
 	{
-
 		return $this->ca_usuanulado;
 	}
 
 	/**
-	 * Get the [optionally formatted] [ca_fchcerrado] column value.
+	 * Get the [optionally formatted] temporal [ca_fchcerrado] column value.
 	 * 
+	 *
 	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the integer unix timestamp will be returned.
-	 * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
-	 * @throws     PropelException - if unable to convert the date/time to timestamp.
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
 	public function getCaFchcerrado($format = 'Y-m-d H:i:s')
 	{
-
-		if ($this->ca_fchcerrado === null || $this->ca_fchcerrado === '') {
+		if ($this->ca_fchcerrado === null) {
 			return null;
-		} elseif (!is_int($this->ca_fchcerrado)) {
-			// a non-timestamp value was set externally, so we convert it
-			$ts = strtotime($this->ca_fchcerrado);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse value of [ca_fchcerrado] as date/time value: " . var_export($this->ca_fchcerrado, true));
-			}
-		} else {
-			$ts = $this->ca_fchcerrado;
 		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchcerrado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcerrado, true), $x);
+		}
+
 		if ($format === null) {
-			return $ts;
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
 		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $ts);
+			return strftime($format, $dt->format('U'));
 		} else {
-			return date($format, $ts);
+			return $dt->format($format);
 		}
 	}
 
@@ -1201,7 +1105,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaUsucerrado()
 	{
-
 		return $this->ca_usucerrado;
 	}
 
@@ -1212,7 +1115,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaColmas()
 	{
-
 		return $this->ca_colmas;
 	}
 
@@ -1223,7 +1125,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function getCaPropiedades()
 	{
-
 		return $this->ca_propiedades;
 	}
 
@@ -1231,14 +1132,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * Set the value of [ca_idreporte] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdreporte($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1247,45 +1145,68 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDREPORTE;
 		}
 
+		return $this;
 	} // setCaIdreporte()
 
 	/**
-	 * Set the value of [ca_fchreporte] column.
+	 * Sets the value of [ca_fchreporte] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaFchreporte($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchreporte] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchreporte !== $ts) {
-			$this->ca_fchreporte = $ts;
-			$this->modifiedColumns[] = ReportePeer::CA_FCHREPORTE;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchreporte !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchreporte !== null && $tmpDt = new DateTime($this->ca_fchreporte)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchreporte = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = ReportePeer::CA_FCHREPORTE;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchreporte()
 
 	/**
 	 * Set the value of [ca_consecutivo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaConsecutivo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_consecutivo !== $v) {
@@ -1293,20 +1214,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_CONSECUTIVO;
 		}
 
+		return $this;
 	} // setCaConsecutivo()
 
 	/**
 	 * Set the value of [ca_version] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaVersion($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1315,20 +1234,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_VERSION;
 		}
 
+		return $this;
 	} // setCaVersion()
 
 	/**
 	 * Set the value of [ca_idcotizacion] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdcotizacion($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1337,21 +1254,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDCOTIZACION;
 		}
 
+		return $this;
 	} // setCaIdcotizacion()
 
 	/**
 	 * Set the value of [ca_origen] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaOrigen($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_origen !== $v) {
@@ -1359,21 +1274,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_ORIGEN;
 		}
 
+		return $this;
 	} // setCaOrigen()
 
 	/**
 	 * Set the value of [ca_destino] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaDestino($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_destino !== $v) {
@@ -1381,21 +1294,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_DESTINO;
 		}
 
+		return $this;
 	} // setCaDestino()
 
 	/**
 	 * Set the value of [ca_impoexpo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaImpoexpo($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_impoexpo !== $v) {
@@ -1403,44 +1314,67 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IMPOEXPO;
 		}
 
+		return $this;
 	} // setCaImpoexpo()
 
 	/**
-	 * Set the value of [ca_fchdespacho] column.
+	 * Sets the value of [ca_fchdespacho] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaFchdespacho($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchdespacho] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchdespacho !== $ts) {
-			$this->ca_fchdespacho = $ts;
-			$this->modifiedColumns[] = ReportePeer::CA_FCHDESPACHO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchdespacho !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchdespacho !== null && $tmpDt = new DateTime($this->ca_fchdespacho)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchdespacho = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = ReportePeer::CA_FCHDESPACHO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchdespacho()
 
 	/**
 	 * Set the value of [ca_idagente] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdagente($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1453,21 +1387,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aAgente = null;
 		}
 
+		return $this;
 	} // setCaIdagente()
 
 	/**
 	 * Set the value of [ca_incoterms] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIncoterms($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_incoterms !== $v) {
@@ -1475,21 +1407,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_INCOTERMS;
 		}
 
+		return $this;
 	} // setCaIncoterms()
 
 	/**
 	 * Set the value of [ca_mercancia_desc] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaMercanciaDesc($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_mercancia_desc !== $v) {
@@ -1497,21 +1427,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_MERCANCIA_DESC;
 		}
 
+		return $this;
 	} // setCaMercanciaDesc()
 
 	/**
 	 * Set the value of [ca_idproveedor] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdproveedor($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_idproveedor !== $v) {
@@ -1523,21 +1451,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aTercero = null;
 		}
 
+		return $this;
 	} // setCaIdproveedor()
 
 	/**
 	 * Set the value of [ca_orden_prov] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaOrdenProv($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_orden_prov !== $v) {
@@ -1545,20 +1471,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_ORDEN_PROV;
 		}
 
+		return $this;
 	} // setCaOrdenProv()
 
 	/**
 	 * Set the value of [ca_idconcliente] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdconcliente($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1567,21 +1491,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDCONCLIENTE;
 		}
 
+		return $this;
 	} // setCaIdconcliente()
 
 	/**
 	 * Set the value of [ca_orden_clie] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaOrdenClie($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_orden_clie !== $v) {
@@ -1589,21 +1511,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_ORDEN_CLIE;
 		}
 
+		return $this;
 	} // setCaOrdenClie()
 
 	/**
 	 * Set the value of [ca_confirmar_clie] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaConfirmarClie($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_confirmar_clie !== $v) {
@@ -1611,20 +1531,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_CONFIRMAR_CLIE;
 		}
 
+		return $this;
 	} // setCaConfirmarClie()
 
 	/**
 	 * Set the value of [ca_idrepresentante] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdrepresentante($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1633,21 +1551,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDREPRESENTANTE;
 		}
 
+		return $this;
 	} // setCaIdrepresentante()
 
 	/**
 	 * Set the value of [ca_informar_repr] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaInformarRepr($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_informar_repr !== $v) {
@@ -1655,20 +1571,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_INFORMAR_REPR;
 		}
 
+		return $this;
 	} // setCaInformarRepr()
 
 	/**
 	 * Set the value of [ca_idconsignatario] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdconsignatario($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1677,21 +1591,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDCONSIGNATARIO;
 		}
 
+		return $this;
 	} // setCaIdconsignatario()
 
 	/**
 	 * Set the value of [ca_informar_cons] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaInformarCons($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_informar_cons !== $v) {
@@ -1699,20 +1611,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_INFORMAR_CONS;
 		}
 
+		return $this;
 	} // setCaInformarCons()
 
 	/**
 	 * Set the value of [ca_idnotify] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdnotify($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1721,21 +1631,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDNOTIFY;
 		}
 
+		return $this;
 	} // setCaIdnotify()
 
 	/**
 	 * Set the value of [ca_informar_noti] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaInformarNoti($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_informar_noti !== $v) {
@@ -1743,20 +1651,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_INFORMAR_NOTI;
 		}
 
+		return $this;
 	} // setCaInformarNoti()
 
 	/**
 	 * Set the value of [ca_notify] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaNotify($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1765,21 +1671,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_NOTIFY;
 		}
 
+		return $this;
 	} // setCaNotify()
 
 	/**
 	 * Set the value of [ca_transporte] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaTransporte($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_transporte !== $v) {
@@ -1787,21 +1691,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_TRANSPORTE;
 		}
 
+		return $this;
 	} // setCaTransporte()
 
 	/**
 	 * Set the value of [ca_modalidad] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaModalidad($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_modalidad !== $v) {
@@ -1809,21 +1711,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_MODALIDAD;
 		}
 
+		return $this;
 	} // setCaModalidad()
 
 	/**
 	 * Set the value of [ca_seguro] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaSeguro($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_seguro !== $v) {
@@ -1831,21 +1731,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_SEGURO;
 		}
 
+		return $this;
 	} // setCaSeguro()
 
 	/**
 	 * Set the value of [ca_liberacion] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaLiberacion($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_liberacion !== $v) {
@@ -1853,21 +1751,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_LIBERACION;
 		}
 
+		return $this;
 	} // setCaLiberacion()
 
 	/**
 	 * Set the value of [ca_tiempocredito] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaTiempocredito($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_tiempocredito !== $v) {
@@ -1875,21 +1771,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_TIEMPOCREDITO;
 		}
 
+		return $this;
 	} // setCaTiempocredito()
 
 	/**
 	 * Set the value of [ca_preferencias_clie] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaPreferenciasClie($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_preferencias_clie !== $v) {
@@ -1897,21 +1791,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_PREFERENCIAS_CLIE;
 		}
 
+		return $this;
 	} // setCaPreferenciasClie()
 
 	/**
 	 * Set the value of [ca_instrucciones] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaInstrucciones($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_instrucciones !== $v) {
@@ -1919,20 +1811,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_INSTRUCCIONES;
 		}
 
+		return $this;
 	} // setCaInstrucciones()
 
 	/**
 	 * Set the value of [ca_idlinea] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdlinea($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1945,20 +1835,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aTransportador = null;
 		}
 
+		return $this;
 	} // setCaIdlinea()
 
 	/**
 	 * Set the value of [ca_idconsignar] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdconsignar($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1967,20 +1855,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDCONSIGNAR;
 		}
 
+		return $this;
 	} // setCaIdconsignar()
 
 	/**
 	 * Set the value of [ca_idconsignarmaster] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdconsignarmaster($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -1989,20 +1875,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_IDCONSIGNARMASTER;
 		}
 
+		return $this;
 	} // setCaIdconsignarmaster()
 
 	/**
 	 * Set the value of [ca_idbodega] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaIdbodega($v)
 	{
-
-		// Since the native PHP type for this column is integer,
-		// we will cast the input value to an int (if it is not).
-		if ($v !== null && !is_int($v) && is_numeric($v)) {
+		if ($v !== null) {
 			$v = (int) $v;
 		}
 
@@ -2015,21 +1899,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aBodega = null;
 		}
 
+		return $this;
 	} // setCaIdbodega()
 
 	/**
 	 * Set the value of [ca_mastersame] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaMastersame($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_mastersame !== $v) {
@@ -2037,21 +1919,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_MASTERSAME;
 		}
 
+		return $this;
 	} // setCaMastersame()
 
 	/**
 	 * Set the value of [ca_continuacion] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaContinuacion($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_continuacion !== $v) {
@@ -2059,21 +1939,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_CONTINUACION;
 		}
 
+		return $this;
 	} // setCaContinuacion()
 
 	/**
 	 * Set the value of [ca_continuacion_dest] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaContinuacionDest($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_continuacion_dest !== $v) {
@@ -2081,21 +1959,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_CONTINUACION_DEST;
 		}
 
+		return $this;
 	} // setCaContinuacionDest()
 
 	/**
 	 * Set the value of [ca_continuacion_conf] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaContinuacionConf($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_continuacion_conf !== $v) {
@@ -2103,21 +1979,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_CONTINUACION_CONF;
 		}
 
+		return $this;
 	} // setCaContinuacionConf()
 
 	/**
 	 * Set the value of [ca_etapa_actual] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaEtapaActual($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_etapa_actual !== $v) {
@@ -2125,21 +1999,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_ETAPA_ACTUAL;
 		}
 
+		return $this;
 	} // setCaEtapaActual()
 
 	/**
 	 * Set the value of [ca_login] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaLogin($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_login !== $v) {
@@ -2151,45 +2023,68 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aUsuario = null;
 		}
 
+		return $this;
 	} // setCaLogin()
 
 	/**
-	 * Set the value of [ca_fchcreado] column.
+	 * Sets the value of [ca_fchcreado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaFchcreado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchcreado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchcreado !== $ts) {
-			$this->ca_fchcreado = $ts;
-			$this->modifiedColumns[] = ReportePeer::CA_FCHCREADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchcreado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchcreado !== null && $tmpDt = new DateTime($this->ca_fchcreado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchcreado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = ReportePeer::CA_FCHCREADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchcreado()
 
 	/**
 	 * Set the value of [ca_usucreado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaUsucreado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usucreado !== $v) {
@@ -2197,45 +2092,68 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_USUCREADO;
 		}
 
+		return $this;
 	} // setCaUsucreado()
 
 	/**
-	 * Set the value of [ca_fchactualizado] column.
+	 * Sets the value of [ca_fchactualizado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaFchactualizado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchactualizado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchactualizado !== $ts) {
-			$this->ca_fchactualizado = $ts;
-			$this->modifiedColumns[] = ReportePeer::CA_FCHACTUALIZADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchactualizado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchactualizado !== null && $tmpDt = new DateTime($this->ca_fchactualizado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchactualizado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = ReportePeer::CA_FCHACTUALIZADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchactualizado()
 
 	/**
 	 * Set the value of [ca_usuactualizado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaUsuactualizado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuactualizado !== $v) {
@@ -2243,45 +2161,68 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_USUACTUALIZADO;
 		}
 
+		return $this;
 	} // setCaUsuactualizado()
 
 	/**
-	 * Set the value of [ca_fchanulado] column.
+	 * Sets the value of [ca_fchanulado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaFchanulado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchanulado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchanulado !== $ts) {
-			$this->ca_fchanulado = $ts;
-			$this->modifiedColumns[] = ReportePeer::CA_FCHANULADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchanulado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchanulado !== null && $tmpDt = new DateTime($this->ca_fchanulado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchanulado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = ReportePeer::CA_FCHANULADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchanulado()
 
 	/**
 	 * Set the value of [ca_usuanulado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaUsuanulado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usuanulado !== $v) {
@@ -2289,45 +2230,68 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_USUANULADO;
 		}
 
+		return $this;
 	} // setCaUsuanulado()
 
 	/**
-	 * Set the value of [ca_fchcerrado] column.
+	 * Sets the value of [ca_fchcerrado] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      int $v new value
-	 * @return     void
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaFchcerrado($v)
 	{
-
-		if ($v !== null && !is_int($v)) {
-			$ts = strtotime($v);
-			if ($ts === -1 || $ts === false) { // in PHP 5.1 return value changes to FALSE
-				throw new PropelException("Unable to parse date/time value for [ca_fchcerrado] from input: " . var_export($v, true));
-			}
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
 		} else {
-			$ts = $v;
-		}
-		if ($this->ca_fchcerrado !== $ts) {
-			$this->ca_fchcerrado = $ts;
-			$this->modifiedColumns[] = ReportePeer::CA_FCHCERRADO;
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
 		}
 
+		if ( $this->ca_fchcerrado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchcerrado !== null && $tmpDt = new DateTime($this->ca_fchcerrado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchcerrado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = ReportePeer::CA_FCHCERRADO;
+			}
+		} // if either are not null
+
+		return $this;
 	} // setCaFchcerrado()
 
 	/**
 	 * Set the value of [ca_usucerrado] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaUsucerrado($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_usucerrado !== $v) {
@@ -2335,21 +2299,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_USUCERRADO;
 		}
 
+		return $this;
 	} // setCaUsucerrado()
 
 	/**
 	 * Set the value of [ca_colmas] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaColmas($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_colmas !== $v) {
@@ -2357,21 +2319,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_COLMAS;
 		}
 
+		return $this;
 	} // setCaColmas()
 
 	/**
 	 * Set the value of [ca_propiedades] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 */
 	public function setCaPropiedades($v)
 	{
-
-		// Since the native PHP type for this column is string,
-		// we will cast the input to a string (if it is not).
-		if ($v !== null && !is_string($v)) {
-			$v = (string) $v; 
+		if ($v !== null) {
+			$v = (string) $v;
 		}
 
 		if ($this->ca_propiedades !== $v) {
@@ -2379,130 +2339,104 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = ReportePeer::CA_PROPIEDADES;
 		}
 
+		return $this;
 	} // setCaPropiedades()
+
+	/**
+	 * Indicates whether the columns in this object are only set to default values.
+	 *
+	 * This method can be used in conjunction with isModified() to indicate whether an object is both
+	 * modified _and_ has some values set which are non-default.
+	 *
+	 * @return     boolean Whether the columns in this object are only been set with default values.
+	 */
+	public function hasOnlyDefaultValues()
+	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
+		// otherwise, everything was equal, so return TRUE
+		return true;
+	} // hasOnlyDefaultValues()
 
 	/**
 	 * Hydrates (populates) the object variables with values from the database resultset.
 	 *
-	 * An offset (1-based "start column") is specified so that objects can be hydrated
+	 * An offset (0-based "start column") is specified so that objects can be hydrated
 	 * with a subset of the columns in the resultset rows.  This is needed, for example,
 	 * for results of JOIN queries where the resultset row includes columns from two or
 	 * more tables.
 	 *
-	 * @param      ResultSet $rs The ResultSet class with cursor advanced to desired record pos.
-	 * @param      int $startcol 1-based offset column which indicates which restultset column to start with.
+	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
+	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
+	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
 	 * @return     int next starting column
 	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
 	 */
-	public function hydrate(ResultSet $rs, $startcol = 1)
+	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
 
-			$this->ca_idreporte = $rs->getInt($startcol + 0);
-
-			$this->ca_fchreporte = $rs->getDate($startcol + 1, null);
-
-			$this->ca_consecutivo = $rs->getString($startcol + 2);
-
-			$this->ca_version = $rs->getInt($startcol + 3);
-
-			$this->ca_idcotizacion = $rs->getInt($startcol + 4);
-
-			$this->ca_origen = $rs->getString($startcol + 5);
-
-			$this->ca_destino = $rs->getString($startcol + 6);
-
-			$this->ca_impoexpo = $rs->getString($startcol + 7);
-
-			$this->ca_fchdespacho = $rs->getDate($startcol + 8, null);
-
-			$this->ca_idagente = $rs->getInt($startcol + 9);
-
-			$this->ca_incoterms = $rs->getString($startcol + 10);
-
-			$this->ca_mercancia_desc = $rs->getString($startcol + 11);
-
-			$this->ca_idproveedor = $rs->getString($startcol + 12);
-
-			$this->ca_orden_prov = $rs->getString($startcol + 13);
-
-			$this->ca_idconcliente = $rs->getInt($startcol + 14);
-
-			$this->ca_orden_clie = $rs->getString($startcol + 15);
-
-			$this->ca_confirmar_clie = $rs->getString($startcol + 16);
-
-			$this->ca_idrepresentante = $rs->getInt($startcol + 17);
-
-			$this->ca_informar_repr = $rs->getString($startcol + 18);
-
-			$this->ca_idconsignatario = $rs->getInt($startcol + 19);
-
-			$this->ca_informar_cons = $rs->getString($startcol + 20);
-
-			$this->ca_idnotify = $rs->getInt($startcol + 21);
-
-			$this->ca_informar_noti = $rs->getString($startcol + 22);
-
-			$this->ca_notify = $rs->getInt($startcol + 23);
-
-			$this->ca_transporte = $rs->getString($startcol + 24);
-
-			$this->ca_modalidad = $rs->getString($startcol + 25);
-
-			$this->ca_seguro = $rs->getString($startcol + 26);
-
-			$this->ca_liberacion = $rs->getString($startcol + 27);
-
-			$this->ca_tiempocredito = $rs->getString($startcol + 28);
-
-			$this->ca_preferencias_clie = $rs->getString($startcol + 29);
-
-			$this->ca_instrucciones = $rs->getString($startcol + 30);
-
-			$this->ca_idlinea = $rs->getInt($startcol + 31);
-
-			$this->ca_idconsignar = $rs->getInt($startcol + 32);
-
-			$this->ca_idconsignarmaster = $rs->getInt($startcol + 33);
-
-			$this->ca_idbodega = $rs->getInt($startcol + 34);
-
-			$this->ca_mastersame = $rs->getString($startcol + 35);
-
-			$this->ca_continuacion = $rs->getString($startcol + 36);
-
-			$this->ca_continuacion_dest = $rs->getString($startcol + 37);
-
-			$this->ca_continuacion_conf = $rs->getString($startcol + 38);
-
-			$this->ca_etapa_actual = $rs->getString($startcol + 39);
-
-			$this->ca_login = $rs->getString($startcol + 40);
-
-			$this->ca_fchcreado = $rs->getTimestamp($startcol + 41, null);
-
-			$this->ca_usucreado = $rs->getString($startcol + 42);
-
-			$this->ca_fchactualizado = $rs->getTimestamp($startcol + 43, null);
-
-			$this->ca_usuactualizado = $rs->getString($startcol + 44);
-
-			$this->ca_fchanulado = $rs->getTimestamp($startcol + 45, null);
-
-			$this->ca_usuanulado = $rs->getString($startcol + 46);
-
-			$this->ca_fchcerrado = $rs->getTimestamp($startcol + 47, null);
-
-			$this->ca_usucerrado = $rs->getString($startcol + 48);
-
-			$this->ca_colmas = $rs->getString($startcol + 49);
-
-			$this->ca_propiedades = $rs->getString($startcol + 50);
-
+			$this->ca_idreporte = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_fchreporte = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_consecutivo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_version = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+			$this->ca_idcotizacion = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
+			$this->ca_origen = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_destino = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_impoexpo = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_fchdespacho = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_idagente = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+			$this->ca_incoterms = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_mercancia_desc = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_idproveedor = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_orden_prov = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_idconcliente = ($row[$startcol + 14] !== null) ? (int) $row[$startcol + 14] : null;
+			$this->ca_orden_clie = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_confirmar_clie = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_idrepresentante = ($row[$startcol + 17] !== null) ? (int) $row[$startcol + 17] : null;
+			$this->ca_informar_repr = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_idconsignatario = ($row[$startcol + 19] !== null) ? (int) $row[$startcol + 19] : null;
+			$this->ca_informar_cons = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_idnotify = ($row[$startcol + 21] !== null) ? (int) $row[$startcol + 21] : null;
+			$this->ca_informar_noti = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_notify = ($row[$startcol + 23] !== null) ? (int) $row[$startcol + 23] : null;
+			$this->ca_transporte = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+			$this->ca_modalidad = ($row[$startcol + 25] !== null) ? (string) $row[$startcol + 25] : null;
+			$this->ca_seguro = ($row[$startcol + 26] !== null) ? (string) $row[$startcol + 26] : null;
+			$this->ca_liberacion = ($row[$startcol + 27] !== null) ? (string) $row[$startcol + 27] : null;
+			$this->ca_tiempocredito = ($row[$startcol + 28] !== null) ? (string) $row[$startcol + 28] : null;
+			$this->ca_preferencias_clie = ($row[$startcol + 29] !== null) ? (string) $row[$startcol + 29] : null;
+			$this->ca_instrucciones = ($row[$startcol + 30] !== null) ? (string) $row[$startcol + 30] : null;
+			$this->ca_idlinea = ($row[$startcol + 31] !== null) ? (int) $row[$startcol + 31] : null;
+			$this->ca_idconsignar = ($row[$startcol + 32] !== null) ? (int) $row[$startcol + 32] : null;
+			$this->ca_idconsignarmaster = ($row[$startcol + 33] !== null) ? (int) $row[$startcol + 33] : null;
+			$this->ca_idbodega = ($row[$startcol + 34] !== null) ? (int) $row[$startcol + 34] : null;
+			$this->ca_mastersame = ($row[$startcol + 35] !== null) ? (string) $row[$startcol + 35] : null;
+			$this->ca_continuacion = ($row[$startcol + 36] !== null) ? (string) $row[$startcol + 36] : null;
+			$this->ca_continuacion_dest = ($row[$startcol + 37] !== null) ? (string) $row[$startcol + 37] : null;
+			$this->ca_continuacion_conf = ($row[$startcol + 38] !== null) ? (string) $row[$startcol + 38] : null;
+			$this->ca_etapa_actual = ($row[$startcol + 39] !== null) ? (string) $row[$startcol + 39] : null;
+			$this->ca_login = ($row[$startcol + 40] !== null) ? (string) $row[$startcol + 40] : null;
+			$this->ca_fchcreado = ($row[$startcol + 41] !== null) ? (string) $row[$startcol + 41] : null;
+			$this->ca_usucreado = ($row[$startcol + 42] !== null) ? (string) $row[$startcol + 42] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 43] !== null) ? (string) $row[$startcol + 43] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 44] !== null) ? (string) $row[$startcol + 44] : null;
+			$this->ca_fchanulado = ($row[$startcol + 45] !== null) ? (string) $row[$startcol + 45] : null;
+			$this->ca_usuanulado = ($row[$startcol + 46] !== null) ? (string) $row[$startcol + 46] : null;
+			$this->ca_fchcerrado = ($row[$startcol + 47] !== null) ? (string) $row[$startcol + 47] : null;
+			$this->ca_usucerrado = ($row[$startcol + 48] !== null) ? (string) $row[$startcol + 48] : null;
+			$this->ca_colmas = ($row[$startcol + 49] !== null) ? (string) $row[$startcol + 49] : null;
+			$this->ca_propiedades = ($row[$startcol + 50] !== null) ? (string) $row[$startcol + 50] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
+
+			if ($rehydrate) {
+				$this->ensureConsistency();
+			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
 			return $startcol + 51; // 51 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
@@ -2513,83 +2447,194 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Checks and repairs the internal consistency of the object.
+	 *
+	 * This method is executed after an already-instantiated object is re-hydrated
+	 * from the database.  It exists to check any foreign keys to make sure that
+	 * the objects related to the current object are correct based on foreign key.
+	 *
+	 * You can override this method in the stub class, but you should always invoke
+	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
+	 * in case your model changes.
+	 *
+	 * @throws     PropelException
+	 */
+	public function ensureConsistency()
+	{
+
+		if ($this->aAgente !== null && $this->ca_idagente !== $this->aAgente->getCaIdagente()) {
+			$this->aAgente = null;
+		}
+		if ($this->aTercero !== null && $this->ca_idproveedor !== $this->aTercero->getCaIdtercero()) {
+			$this->aTercero = null;
+		}
+		if ($this->aTransportador !== null && $this->ca_idlinea !== $this->aTransportador->getCaIdlinea()) {
+			$this->aTransportador = null;
+		}
+		if ($this->aBodega !== null && $this->ca_idbodega !== $this->aBodega->getCaIdbodega()) {
+			$this->aBodega = null;
+		}
+		if ($this->aUsuario !== null && $this->ca_login !== $this->aUsuario->getCaLogin()) {
+			$this->aUsuario = null;
+		}
+	} // ensureConsistency
+
+	/**
+	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
+	 *
+	 * This will only work if the object has been saved and has a valid primary key set.
+	 *
+	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
+	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
+	 * @return     void
+	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
+	 */
+	public function reload($deep = false, PropelPDO $con = null)
+	{
+		if ($this->isDeleted()) {
+			throw new PropelException("Cannot reload a deleted object.");
+		}
+
+		if ($this->isNew()) {
+			throw new PropelException("Cannot reload an unsaved object.");
+		}
+
+		if ($con === null) {
+			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		// We don't need to alter the object instance pool; we're just modifying this instance
+		// already in the pool.
+
+		$stmt = ReportePeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$row = $stmt->fetch(PDO::FETCH_NUM);
+		$stmt->closeCursor();
+		if (!$row) {
+			throw new PropelException('Cannot find matching row in the database to reload object values.');
+		}
+		$this->hydrate($row, 0, true); // rehydrate
+
+		if ($deep) {  // also de-associate any related objects?
+
+			$this->aUsuario = null;
+			$this->aTransportador = null;
+			$this->aTercero = null;
+			$this->aAgente = null;
+			$this->aBodega = null;
+			$this->collInoClientesAirs = null;
+			$this->lastInoClientesAirCriteria = null;
+
+			$this->collRepAvisos = null;
+			$this->lastRepAvisoCriteria = null;
+
+			$this->collRepStatuss = null;
+			$this->lastRepStatusCriteria = null;
+
+			$this->collRepEquipos = null;
+			$this->lastRepEquipoCriteria = null;
+
+			$this->collRepGastos = null;
+			$this->lastRepGastoCriteria = null;
+
+			$this->singleRepSeguro = null;
+
+			$this->collRepCostos = null;
+			$this->lastRepCostoCriteria = null;
+
+			$this->collRepTarifas = null;
+			$this->lastRepTarifaCriteria = null;
+
+			$this->singleRepAduana = null;
+
+			$this->singleRepExpo = null;
+
+			$this->collInoClientesSeas = null;
+			$this->lastInoClientesSeaCriteria = null;
+
+		} // if (deep)
+	}
+
+	/**
 	 * Removes this object from datastore and sets delete attribute.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     void
 	 * @throws     PropelException
 	 * @see        BaseObject::setDeleted()
 	 * @see        BaseObject::isDeleted()
 	 */
-	public function delete($con = null)
+	public function delete(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
+			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			ReportePeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.  If the object is new,
-	 * it inserts it; otherwise an update is performed.  This method
-	 * wraps the doSave() worker method in a transaction.
+	 * Persists this object to the database.
 	 *
-	 * @param      Connection $con
+	 * If the object is new, it inserts it; otherwise an update is performed.
+	 * All modified related objects will also be persisted in the doSave()
+	 * method.  This method wraps all precipitate database operations in a
+	 * single transaction.
+	 *
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        doSave()
 	 */
-	public function save($con = null)
+	public function save(PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
+			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
+		$con->beginTransaction();
 		try {
-			$con->begin();
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+			ReportePeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
-			$con->rollback();
+			$con->rollBack();
 			throw $e;
 		}
 	}
 
 	/**
-	 * Stores the object in the database.
+	 * Performs the work of inserting or updating the row in the database.
 	 *
 	 * If the object is new, it inserts it; otherwise an update is performed.
 	 * All related objects are also updated in this method.
 	 *
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
 	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
 	 * @throws     PropelException
 	 * @see        save()
 	 */
-	protected function doSave($con)
+	protected function doSave(PropelPDO $con)
 	{
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
-
 
 			// We call the save method on the following object(s) if they
 			// were passed to this object by their coresponding set
@@ -2597,40 +2642,43 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			// foreign key reference.
 
 			if ($this->aUsuario !== null) {
-				if ($this->aUsuario->isModified()) {
+				if ($this->aUsuario->isModified() || $this->aUsuario->isNew()) {
 					$affectedRows += $this->aUsuario->save($con);
 				}
 				$this->setUsuario($this->aUsuario);
 			}
 
 			if ($this->aTransportador !== null) {
-				if ($this->aTransportador->isModified()) {
+				if ($this->aTransportador->isModified() || $this->aTransportador->isNew()) {
 					$affectedRows += $this->aTransportador->save($con);
 				}
 				$this->setTransportador($this->aTransportador);
 			}
 
 			if ($this->aTercero !== null) {
-				if ($this->aTercero->isModified()) {
+				if ($this->aTercero->isModified() || $this->aTercero->isNew()) {
 					$affectedRows += $this->aTercero->save($con);
 				}
 				$this->setTercero($this->aTercero);
 			}
 
 			if ($this->aAgente !== null) {
-				if ($this->aAgente->isModified()) {
+				if ($this->aAgente->isModified() || $this->aAgente->isNew()) {
 					$affectedRows += $this->aAgente->save($con);
 				}
 				$this->setAgente($this->aAgente);
 			}
 
 			if ($this->aBodega !== null) {
-				if ($this->aBodega->isModified()) {
+				if ($this->aBodega->isModified() || $this->aBodega->isNew()) {
 					$affectedRows += $this->aBodega->save($con);
 				}
 				$this->setBodega($this->aBodega);
 			}
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = ReportePeer::CA_IDREPORTE;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -2646,11 +2694,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				} else {
 					$affectedRows += ReportePeer::doUpdate($this, $con);
 				}
+
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
 			if ($this->collInoClientesAirs !== null) {
-				foreach($this->collInoClientesAirs as $referrerFK) {
+				foreach ($this->collInoClientesAirs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -2658,7 +2707,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRepAvisos !== null) {
-				foreach($this->collRepAvisos as $referrerFK) {
+				foreach ($this->collRepAvisos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -2666,7 +2715,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRepStatuss !== null) {
-				foreach($this->collRepStatuss as $referrerFK) {
+				foreach ($this->collRepStatuss as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -2674,7 +2723,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRepEquipos !== null) {
-				foreach($this->collRepEquipos as $referrerFK) {
+				foreach ($this->collRepEquipos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -2682,23 +2731,21 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRepGastos !== null) {
-				foreach($this->collRepGastos as $referrerFK) {
+				foreach ($this->collRepGastos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
 				}
 			}
 
-			if ($this->collRepSeguros !== null) {
-				foreach($this->collRepSeguros as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
+			if ($this->singleRepSeguro !== null) {
+				if (!$this->singleRepSeguro->isDeleted()) {
+						$affectedRows += $this->singleRepSeguro->save($con);
 				}
 			}
 
 			if ($this->collRepCostos !== null) {
-				foreach($this->collRepCostos as $referrerFK) {
+				foreach ($this->collRepCostos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -2706,31 +2753,27 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			if ($this->collRepTarifas !== null) {
-				foreach($this->collRepTarifas as $referrerFK) {
+				foreach ($this->collRepTarifas as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
 				}
 			}
 
-			if ($this->collRepAduanas !== null) {
-				foreach($this->collRepAduanas as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
+			if ($this->singleRepAduana !== null) {
+				if (!$this->singleRepAduana->isDeleted()) {
+						$affectedRows += $this->singleRepAduana->save($con);
 				}
 			}
 
-			if ($this->collRepExpos !== null) {
-				foreach($this->collRepExpos as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
+			if ($this->singleRepExpo !== null) {
+				if (!$this->singleRepExpo->isDeleted()) {
+						$affectedRows += $this->singleRepExpo->save($con);
 				}
 			}
 
 			if ($this->collInoClientesSeas !== null) {
-				foreach($this->collInoClientesSeas as $referrerFK) {
+				foreach ($this->collInoClientesSeas as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -2738,6 +2781,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			$this->alreadyInSave = false;
+
 		}
 		return $affectedRows;
 	} // doSave()
@@ -2844,7 +2888,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 
 				if ($this->collInoClientesAirs !== null) {
-					foreach($this->collInoClientesAirs as $referrerFK) {
+					foreach ($this->collInoClientesAirs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -2852,7 +2896,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRepAvisos !== null) {
-					foreach($this->collRepAvisos as $referrerFK) {
+					foreach ($this->collRepAvisos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -2860,7 +2904,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRepStatuss !== null) {
-					foreach($this->collRepStatuss as $referrerFK) {
+					foreach ($this->collRepStatuss as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -2868,7 +2912,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRepEquipos !== null) {
-					foreach($this->collRepEquipos as $referrerFK) {
+					foreach ($this->collRepEquipos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -2876,23 +2920,21 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRepGastos !== null) {
-					foreach($this->collRepGastos as $referrerFK) {
+					foreach ($this->collRepGastos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
 					}
 				}
 
-				if ($this->collRepSeguros !== null) {
-					foreach($this->collRepSeguros as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
+				if ($this->singleRepSeguro !== null) {
+					if (!$this->singleRepSeguro->validate($columns)) {
+						$failureMap = array_merge($failureMap, $this->singleRepSeguro->getValidationFailures());
 					}
 				}
 
 				if ($this->collRepCostos !== null) {
-					foreach($this->collRepCostos as $referrerFK) {
+					foreach ($this->collRepCostos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -2900,31 +2942,27 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				}
 
 				if ($this->collRepTarifas !== null) {
-					foreach($this->collRepTarifas as $referrerFK) {
+					foreach ($this->collRepTarifas as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
 					}
 				}
 
-				if ($this->collRepAduanas !== null) {
-					foreach($this->collRepAduanas as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
+				if ($this->singleRepAduana !== null) {
+					if (!$this->singleRepAduana->validate($columns)) {
+						$failureMap = array_merge($failureMap, $this->singleRepAduana->getValidationFailures());
 					}
 				}
 
-				if ($this->collRepExpos !== null) {
-					foreach($this->collRepExpos as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
+				if ($this->singleRepExpo !== null) {
+					if (!$this->singleRepExpo->validate($columns)) {
+						$failureMap = array_merge($failureMap, $this->singleRepExpo->getValidationFailures());
 					}
 				}
 
 				if ($this->collInoClientesSeas !== null) {
-					foreach($this->collInoClientesSeas as $referrerFK) {
+					foreach ($this->collInoClientesSeas as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -2943,14 +2981,15 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 *
 	 * @param      string $name name
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     mixed Value of field.
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = ReportePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
-		return $this->getByPosition($pos);
+		$field = $this->getByPosition($pos);
+		return $field;
 	}
 
 	/**
@@ -3128,11 +3167,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param      string $keyType One of the class type constants TYPE_PHPNAME,
-	 *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
 	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = ReportePeer::getFieldNames($keyType);
 		$result = array(
@@ -3197,8 +3237,8 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * @param      string $name peer name
 	 * @param      mixed $value field value
 	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants TYPE_PHPNAME,
-	 *                     TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
 	 * @return     void
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
@@ -3383,8 +3423,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * array. If so the setByName() method is called for that column.
 	 *
 	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME,
-	 * TYPE_NUM. The default key type is the column's phpname (e.g. 'authorId')
+	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
+	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
+	 * The default key type is the column's phpname (e.g. 'AuthorId')
 	 *
 	 * @param      array  $arr     An array to populate the object from.
 	 * @param      string $keyType The type of keys the array uses.
@@ -3667,48 +3708,67 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach($this->getInoClientesAirs() as $relObj) {
-				$copyObj->addInoClientesAir($relObj->copy($deepCopy));
+			foreach ($this->getInoClientesAirs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoClientesAir($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepAvisos() as $relObj) {
-				$copyObj->addRepAviso($relObj->copy($deepCopy));
+			foreach ($this->getRepAvisos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepAviso($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepStatuss() as $relObj) {
-				$copyObj->addRepStatus($relObj->copy($deepCopy));
+			foreach ($this->getRepStatuss() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepStatus($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepEquipos() as $relObj) {
-				$copyObj->addRepEquipo($relObj->copy($deepCopy));
+			foreach ($this->getRepEquipos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepEquipo($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepGastos() as $relObj) {
-				$copyObj->addRepGasto($relObj->copy($deepCopy));
+			foreach ($this->getRepGastos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepGasto($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepSeguros() as $relObj) {
-				$copyObj->addRepSeguro($relObj->copy($deepCopy));
+			$relObj = $this->getRepSeguro();
+			if ($relObj) {
+				$copyObj->setRepSeguro($relObj->copy($deepCopy));
 			}
 
-			foreach($this->getRepCostos() as $relObj) {
-				$copyObj->addRepCosto($relObj->copy($deepCopy));
+			foreach ($this->getRepCostos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepCosto($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepTarifas() as $relObj) {
-				$copyObj->addRepTarifa($relObj->copy($deepCopy));
+			foreach ($this->getRepTarifas() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepTarifa($relObj->copy($deepCopy));
+				}
 			}
 
-			foreach($this->getRepAduanas() as $relObj) {
-				$copyObj->addRepAduana($relObj->copy($deepCopy));
+			$relObj = $this->getRepAduana();
+			if ($relObj) {
+				$copyObj->setRepAduana($relObj->copy($deepCopy));
 			}
 
-			foreach($this->getRepExpos() as $relObj) {
-				$copyObj->addRepExpo($relObj->copy($deepCopy));
+			$relObj = $this->getRepExpo();
+			if ($relObj) {
+				$copyObj->setRepExpo($relObj->copy($deepCopy));
 			}
 
-			foreach($this->getInoClientesSeas() as $relObj) {
-				$copyObj->addInoClientesSea($relObj->copy($deepCopy));
+			foreach ($this->getInoClientesSeas() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoClientesSea($relObj->copy($deepCopy));
+				}
 			}
 
 		} // if ($deepCopy)
@@ -3716,7 +3776,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdreporte(NULL); // this is a pkey column, so set to default value
+		$copyObj->setCaIdreporte(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -3762,45 +3822,48 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Usuario object.
 	 *
 	 * @param      Usuario $v
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setUsuario($v)
+	public function setUsuario(Usuario $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaLogin(NULL);
 		} else {
 			$this->setCaLogin($v->getCaLogin());
 		}
 
-
 		$this->aUsuario = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Usuario object, it will not be re-added.
+		if ($v !== null) {
+			$v->addReporte($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Usuario object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Usuario The associated Usuario object.
 	 * @throws     PropelException
 	 */
-	public function getUsuario($con = null)
+	public function getUsuario(PropelPDO $con = null)
 	{
 		if ($this->aUsuario === null && (($this->ca_login !== "" && $this->ca_login !== null))) {
-			// include the related Peer class
-			$this->aUsuario = UsuarioPeer::retrieveByPK($this->ca_login, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(UsuarioPeer::DATABASE_NAME);
+			$c->add(UsuarioPeer::CA_LOGIN, $this->ca_login);
+			$this->aUsuario = UsuarioPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = UsuarioPeer::retrieveByPK($this->ca_login, $con);
-			   $obj->addUsuarios($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aUsuario->addReportes($this);
 			 */
 		}
 		return $this->aUsuario;
@@ -3810,45 +3873,48 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Transportador object.
 	 *
 	 * @param      Transportador $v
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setTransportador($v)
+	public function setTransportador(Transportador $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdlinea(NULL);
 		} else {
 			$this->setCaIdlinea($v->getCaIdlinea());
 		}
 
-
 		$this->aTransportador = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Transportador object, it will not be re-added.
+		if ($v !== null) {
+			$v->addReporte($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Transportador object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Transportador The associated Transportador object.
 	 * @throws     PropelException
 	 */
-	public function getTransportador($con = null)
+	public function getTransportador(PropelPDO $con = null)
 	{
 		if ($this->aTransportador === null && ($this->ca_idlinea !== null)) {
-			// include the related Peer class
-			$this->aTransportador = TransportadorPeer::retrieveByPK($this->ca_idlinea, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(TransportadorPeer::DATABASE_NAME);
+			$c->add(TransportadorPeer::CA_IDLINEA, $this->ca_idlinea);
+			$this->aTransportador = TransportadorPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = TransportadorPeer::retrieveByPK($this->ca_idlinea, $con);
-			   $obj->addTransportadors($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aTransportador->addReportes($this);
 			 */
 		}
 		return $this->aTransportador;
@@ -3858,45 +3924,48 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Tercero object.
 	 *
 	 * @param      Tercero $v
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setTercero($v)
+	public function setTercero(Tercero $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdproveedor(NULL);
 		} else {
 			$this->setCaIdproveedor($v->getCaIdtercero());
 		}
 
-
 		$this->aTercero = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Tercero object, it will not be re-added.
+		if ($v !== null) {
+			$v->addReporte($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Tercero object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Tercero The associated Tercero object.
 	 * @throws     PropelException
 	 */
-	public function getTercero($con = null)
+	public function getTercero(PropelPDO $con = null)
 	{
 		if ($this->aTercero === null && (($this->ca_idproveedor !== "" && $this->ca_idproveedor !== null))) {
-			// include the related Peer class
-			$this->aTercero = TerceroPeer::retrieveByPK($this->ca_idproveedor, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(TerceroPeer::DATABASE_NAME);
+			$c->add(TerceroPeer::CA_IDTERCERO, $this->ca_idproveedor);
+			$this->aTercero = TerceroPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = TerceroPeer::retrieveByPK($this->ca_idproveedor, $con);
-			   $obj->addTerceros($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aTercero->addReportes($this);
 			 */
 		}
 		return $this->aTercero;
@@ -3906,45 +3975,48 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Agente object.
 	 *
 	 * @param      Agente $v
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setAgente($v)
+	public function setAgente(Agente $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdagente(NULL);
 		} else {
 			$this->setCaIdagente($v->getCaIdagente());
 		}
 
-
 		$this->aAgente = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Agente object, it will not be re-added.
+		if ($v !== null) {
+			$v->addReporte($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Agente object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Agente The associated Agente object.
 	 * @throws     PropelException
 	 */
-	public function getAgente($con = null)
+	public function getAgente(PropelPDO $con = null)
 	{
 		if ($this->aAgente === null && ($this->ca_idagente !== null)) {
-			// include the related Peer class
-			$this->aAgente = AgentePeer::retrieveByPK($this->ca_idagente, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(AgentePeer::DATABASE_NAME);
+			$c->add(AgentePeer::CA_IDAGENTE, $this->ca_idagente);
+			$this->aAgente = AgentePeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = AgentePeer::retrieveByPK($this->ca_idagente, $con);
-			   $obj->addAgentes($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aAgente->addReportes($this);
 			 */
 		}
 		return $this->aAgente;
@@ -3954,81 +4026,98 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * Declares an association between this object and a Bodega object.
 	 *
 	 * @param      Bodega $v
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setBodega($v)
+	public function setBodega(Bodega $v = null)
 	{
-
-
 		if ($v === null) {
 			$this->setCaIdbodega(NULL);
 		} else {
 			$this->setCaIdbodega($v->getCaIdbodega());
 		}
 
-
 		$this->aBodega = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Bodega object, it will not be re-added.
+		if ($v !== null) {
+			$v->addReporte($this);
+		}
+
+		return $this;
 	}
 
 
 	/**
 	 * Get the associated Bodega object
 	 *
-	 * @param      Connection Optional Connection object.
+	 * @param      PropelPDO Optional Connection object.
 	 * @return     Bodega The associated Bodega object.
 	 * @throws     PropelException
 	 */
-	public function getBodega($con = null)
+	public function getBodega(PropelPDO $con = null)
 	{
 		if ($this->aBodega === null && ($this->ca_idbodega !== null)) {
-			// include the related Peer class
-			$this->aBodega = BodegaPeer::retrieveByPK($this->ca_idbodega, $con);
-
-			/* The following can be used instead of the line above to
+			$c = new Criteria(BodegaPeer::DATABASE_NAME);
+			$c->add(BodegaPeer::CA_IDBODEGA, $this->ca_idbodega);
+			$this->aBodega = BodegaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
 			   guarantee the related object contains a reference
-			   to this object, but this level of coupling
-			   may be undesirable in many circumstances.
-			   As it can lead to a db query with many results that may
-			   never be used.
-			   $obj = BodegaPeer::retrieveByPK($this->ca_idbodega, $con);
-			   $obj->addBodegas($this);
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aBodega->addReportes($this);
 			 */
 		}
 		return $this->aBodega;
 	}
 
 	/**
-	 * Temporary storage of collInoClientesAirs to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collInoClientesAirs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoClientesAirs()
+	 */
+	public function clearInoClientesAirs()
+	{
+		$this->collInoClientesAirs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoClientesAirs collection (array).
+	 *
+	 * By default this just sets the collInoClientesAirs collection to an empty array (like clearcollInoClientesAirs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initInoClientesAirs()
 	{
-		if ($this->collInoClientesAirs === null) {
-			$this->collInoClientesAirs = array();
-		}
+		$this->collInoClientesAirs = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related InoClientesAirs from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of InoClientesAir objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related InoClientesAirs from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array InoClientesAir[]
 	 * @throws     PropelException
 	 */
-	public function getInoClientesAirs($criteria = null, $con = null)
+	public function getInoClientesAirs($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4040,7 +4129,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			   $this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				InoClientesAirPeer::addSelectColumns($criteria);
 				$this->collInoClientesAirs = InoClientesAirPeer::doSelect($criteria, $con);
@@ -4053,7 +4142,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				InoClientesAirPeer::addSelectColumns($criteria);
 				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
@@ -4066,32 +4155,63 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related InoClientesAirs.
+	 * Returns the number of related InoClientesAir objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoClientesAir objects.
 	 * @throws     PropelException
 	 */
-	public function countInoClientesAirs($criteria = null, $distinct = false, $con = null)
+	public function countInoClientesAirs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->getCaIdreporte());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return InoClientesAirPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collInoClientesAirs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = InoClientesAirPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
+					$count = InoClientesAirPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoClientesAirs);
+				}
+			} else {
+				$count = count($this->collInoClientesAirs);
+			}
+		}
+		$this->lastInoClientesAirCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a InoClientesAir object to this object
-	 * through the InoClientesAir foreign key attribute
+	 * through the InoClientesAir foreign key attribute.
 	 *
 	 * @param      InoClientesAir $l InoClientesAir
 	 * @return     void
@@ -4099,8 +4219,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function addInoClientesAir(InoClientesAir $l)
 	{
-		$this->collInoClientesAirs[] = $l;
-		$l->setReporte($this);
+		if ($this->collInoClientesAirs === null) {
+			$this->initInoClientesAirs();
+		}
+		if (!in_array($l, $this->collInoClientesAirs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoClientesAirs, $l);
+			$l->setReporte($this);
+		}
 	}
 
 
@@ -4115,11 +4240,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getInoClientesAirsJoinTercero($criteria = null, $con = null)
+	public function getInoClientesAirsJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4131,19 +4255,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesAirCriteria = $criteria;
@@ -4163,11 +4287,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getInoClientesAirsJoinInoMaestraAir($criteria = null, $con = null)
+	public function getInoClientesAirsJoinInoMaestraAir($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4179,19 +4302,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collInoClientesAirs = array();
 			} else {
 
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesAirCriteria = $criteria;
@@ -4200,36 +4323,50 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepAvisos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepAvisos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepAvisos()
+	 */
+	public function clearRepAvisos()
+	{
+		$this->collRepAvisos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepAvisos collection (array).
+	 *
+	 * By default this just sets the collRepAvisos collection to an empty array (like clearcollRepAvisos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepAvisos()
 	{
-		if ($this->collRepAvisos === null) {
-			$this->collRepAvisos = array();
-		}
+		$this->collRepAvisos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepAvisos from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepAviso objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related RepAvisos from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepAviso[]
 	 * @throws     PropelException
 	 */
-	public function getRepAvisos($criteria = null, $con = null)
+	public function getRepAvisos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4241,7 +4378,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			   $this->collRepAvisos = array();
 			} else {
 
-				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepAvisoPeer::addSelectColumns($criteria);
 				$this->collRepAvisos = RepAvisoPeer::doSelect($criteria, $con);
@@ -4254,7 +4391,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepAvisoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
@@ -4267,32 +4404,63 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepAvisos.
+	 * Returns the number of related RepAviso objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepAviso objects.
 	 * @throws     PropelException
 	 */
-	public function countRepAvisos($criteria = null, $distinct = false, $con = null)
+	public function countRepAvisos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepAvisoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepAvisos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = RepAvisoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
+					$count = RepAvisoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepAvisos);
+				}
+			} else {
+				$count = count($this->collRepAvisos);
+			}
+		}
+		$this->lastRepAvisoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepAviso object to this object
-	 * through the RepAviso foreign key attribute
+	 * through the RepAviso foreign key attribute.
 	 *
 	 * @param      RepAviso $l RepAviso
 	 * @return     void
@@ -4300,8 +4468,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function addRepAviso(RepAviso $l)
 	{
-		$this->collRepAvisos[] = $l;
-		$l->setReporte($this);
+		if ($this->collRepAvisos === null) {
+			$this->initRepAvisos();
+		}
+		if (!in_array($l, $this->collRepAvisos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepAvisos, $l);
+			$l->setReporte($this);
+		}
 	}
 
 
@@ -4316,11 +4489,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getRepAvisosJoinEmail($criteria = null, $con = null)
+	public function getRepAvisosJoinEmail($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4332,19 +4504,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collRepAvisos = array();
 			} else {
 
-				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collRepAvisos = RepAvisoPeer::doSelectJoinEmail($criteria, $con);
+				$this->collRepAvisos = RepAvisoPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
-				$this->collRepAvisos = RepAvisoPeer::doSelectJoinEmail($criteria, $con);
+				$this->collRepAvisos = RepAvisoPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepAvisoCriteria = $criteria;
@@ -4353,36 +4525,50 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepStatuss to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepStatuss collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepStatuss()
+	 */
+	public function clearRepStatuss()
+	{
+		$this->collRepStatuss = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepStatuss collection (array).
+	 *
+	 * By default this just sets the collRepStatuss collection to an empty array (like clearcollRepStatuss());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepStatuss()
 	{
-		if ($this->collRepStatuss === null) {
-			$this->collRepStatuss = array();
-		}
+		$this->collRepStatuss = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepStatuss from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepStatus objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related RepStatuss from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepStatus[]
 	 * @throws     PropelException
 	 */
-	public function getRepStatuss($criteria = null, $con = null)
+	public function getRepStatuss($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4394,7 +4580,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			   $this->collRepStatuss = array();
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepStatusPeer::addSelectColumns($criteria);
 				$this->collRepStatuss = RepStatusPeer::doSelect($criteria, $con);
@@ -4407,7 +4593,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepStatusPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
@@ -4420,32 +4606,63 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepStatuss.
+	 * Returns the number of related RepStatus objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepStatus objects.
 	 * @throws     PropelException
 	 */
-	public function countRepStatuss($criteria = null, $distinct = false, $con = null)
+	public function countRepStatuss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepStatusPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepStatuss === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = RepStatusPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
+					$count = RepStatusPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepStatuss);
+				}
+			} else {
+				$count = count($this->collRepStatuss);
+			}
+		}
+		$this->lastRepStatusCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepStatus object to this object
-	 * through the RepStatus foreign key attribute
+	 * through the RepStatus foreign key attribute.
 	 *
 	 * @param      RepStatus $l RepStatus
 	 * @return     void
@@ -4453,8 +4670,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function addRepStatus(RepStatus $l)
 	{
-		$this->collRepStatuss[] = $l;
-		$l->setReporte($this);
+		if ($this->collRepStatuss === null) {
+			$this->initRepStatuss();
+		}
+		if (!in_array($l, $this->collRepStatuss, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepStatuss, $l);
+			$l->setReporte($this);
+		}
 	}
 
 
@@ -4469,11 +4691,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getRepStatussJoinEmail($criteria = null, $con = null)
+	public function getRepStatussJoinEmail($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4485,19 +4706,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collRepStatuss = array();
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con);
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con);
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepStatusCriteria = $criteria;
@@ -4506,36 +4727,50 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepEquipos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepEquipos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepEquipos()
+	 */
+	public function clearRepEquipos()
+	{
+		$this->collRepEquipos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepEquipos collection (array).
+	 *
+	 * By default this just sets the collRepEquipos collection to an empty array (like clearcollRepEquipos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepEquipos()
 	{
-		if ($this->collRepEquipos === null) {
-			$this->collRepEquipos = array();
-		}
+		$this->collRepEquipos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepEquipos from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepEquipo objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related RepEquipos from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepEquipo[]
 	 * @throws     PropelException
 	 */
-	public function getRepEquipos($criteria = null, $con = null)
+	public function getRepEquipos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4547,7 +4782,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			   $this->collRepEquipos = array();
 			} else {
 
-				$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepEquipoPeer::addSelectColumns($criteria);
 				$this->collRepEquipos = RepEquipoPeer::doSelect($criteria, $con);
@@ -4560,7 +4795,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepEquipoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepEquipoCriteria) || !$this->lastRepEquipoCriteria->equals($criteria)) {
@@ -4573,32 +4808,63 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepEquipos.
+	 * Returns the number of related RepEquipo objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepEquipo objects.
 	 * @throws     PropelException
 	 */
-	public function countRepEquipos($criteria = null, $distinct = false, $con = null)
+	public function countRepEquipos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepEquipoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepEquipos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = RepEquipoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastRepEquipoCriteria) || !$this->lastRepEquipoCriteria->equals($criteria)) {
+					$count = RepEquipoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepEquipos);
+				}
+			} else {
+				$count = count($this->collRepEquipos);
+			}
+		}
+		$this->lastRepEquipoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepEquipo object to this object
-	 * through the RepEquipo foreign key attribute
+	 * through the RepEquipo foreign key attribute.
 	 *
 	 * @param      RepEquipo $l RepEquipo
 	 * @return     void
@@ -4606,8 +4872,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function addRepEquipo(RepEquipo $l)
 	{
-		$this->collRepEquipos[] = $l;
-		$l->setReporte($this);
+		if ($this->collRepEquipos === null) {
+			$this->initRepEquipos();
+		}
+		if (!in_array($l, $this->collRepEquipos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepEquipos, $l);
+			$l->setReporte($this);
+		}
 	}
 
 
@@ -4622,11 +4893,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getRepEquiposJoinConcepto($criteria = null, $con = null)
+	public function getRepEquiposJoinConcepto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4638,19 +4908,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collRepEquipos = array();
 			} else {
 
-				$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collRepEquipos = RepEquipoPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collRepEquipos = RepEquipoPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(RepEquipoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastRepEquipoCriteria) || !$this->lastRepEquipoCriteria->equals($criteria)) {
-				$this->collRepEquipos = RepEquipoPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collRepEquipos = RepEquipoPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepEquipoCriteria = $criteria;
@@ -4659,36 +4929,50 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepGastos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepGastos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepGastos()
+	 */
+	public function clearRepGastos()
+	{
+		$this->collRepGastos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepGastos collection (array).
+	 *
+	 * By default this just sets the collRepGastos collection to an empty array (like clearcollRepGastos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepGastos()
 	{
-		if ($this->collRepGastos === null) {
-			$this->collRepGastos = array();
-		}
+		$this->collRepGastos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepGastos from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepGasto objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related RepGastos from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepGasto[]
 	 * @throws     PropelException
 	 */
-	public function getRepGastos($criteria = null, $con = null)
+	public function getRepGastos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4700,7 +4984,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			   $this->collRepGastos = array();
 			} else {
 
-				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepGastoPeer::addSelectColumns($criteria);
 				$this->collRepGastos = RepGastoPeer::doSelect($criteria, $con);
@@ -4713,7 +4997,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepGastoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepGastoCriteria) || !$this->lastRepGastoCriteria->equals($criteria)) {
@@ -4726,32 +5010,63 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepGastos.
+	 * Returns the number of related RepGasto objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepGasto objects.
 	 * @throws     PropelException
 	 */
-	public function countRepGastos($criteria = null, $distinct = false, $con = null)
+	public function countRepGastos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepGastoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepGastos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = RepGastoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastRepGastoCriteria) || !$this->lastRepGastoCriteria->equals($criteria)) {
+					$count = RepGastoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepGastos);
+				}
+			} else {
+				$count = count($this->collRepGastos);
+			}
+		}
+		$this->lastRepGastoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepGasto object to this object
-	 * through the RepGasto foreign key attribute
+	 * through the RepGasto foreign key attribute.
 	 *
 	 * @param      RepGasto $l RepGasto
 	 * @return     void
@@ -4759,8 +5074,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function addRepGasto(RepGasto $l)
 	{
-		$this->collRepGastos[] = $l;
-		$l->setReporte($this);
+		if ($this->collRepGastos === null) {
+			$this->initRepGastos();
+		}
+		if (!in_array($l, $this->collRepGastos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepGastos, $l);
+			$l->setReporte($this);
+		}
 	}
 
 
@@ -4775,11 +5095,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getRepGastosJoinConcepto($criteria = null, $con = null)
+	public function getRepGastosJoinConcepto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4791,19 +5110,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collRepGastos = array();
 			} else {
 
-				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collRepGastos = RepGastoPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collRepGastos = RepGastoPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastRepGastoCriteria) || !$this->lastRepGastoCriteria->equals($criteria)) {
-				$this->collRepGastos = RepGastoPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collRepGastos = RepGastoPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepGastoCriteria = $criteria;
@@ -4823,11 +5142,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getRepGastosJoinTipoRecargo($criteria = null, $con = null)
+	public function getRepGastosJoinTipoRecargo($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -4839,19 +5157,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collRepGastos = array();
 			} else {
 
-				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collRepGastos = RepGastoPeer::doSelectJoinTipoRecargo($criteria, $con);
+				$this->collRepGastos = RepGastoPeer::doSelectJoinTipoRecargo($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(RepGastoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastRepGastoCriteria) || !$this->lastRepGastoCriteria->equals($criteria)) {
-				$this->collRepGastos = RepGastoPeer::doSelectJoinTipoRecargo($criteria, $con);
+				$this->collRepGastos = RepGastoPeer::doSelectJoinTipoRecargo($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepGastoCriteria = $criteria;
@@ -4860,141 +5178,86 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepSeguros to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initRepSeguros()
-	{
-		if ($this->collRepSeguros === null) {
-			$this->collRepSeguros = array();
-		}
-	}
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepSeguros from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets a single RepSeguro object, which is related to this object by a one-to-one relationship.
 	 *
-	 * @param      Connection $con
-	 * @param      Criteria $criteria
+	 * @param      PropelPDO $con
+	 * @return     RepSeguro
 	 * @throws     PropelException
 	 */
-	public function getRepSeguros($criteria = null, $con = null)
+	public function getRepSeguro(PropelPDO $con = null)
 	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
+
+		if ($this->singleRepSeguro === null && !$this->isNew()) {
+			$this->singleRepSeguro = RepSeguroPeer::retrieveByPK($this->ca_idreporte, $con);
 		}
 
-		if ($this->collRepSeguros === null) {
-			if ($this->isNew()) {
-			   $this->collRepSeguros = array();
-			} else {
-
-				$criteria->add(RepSeguroPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-				RepSeguroPeer::addSelectColumns($criteria);
-				$this->collRepSeguros = RepSeguroPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(RepSeguroPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-				RepSeguroPeer::addSelectColumns($criteria);
-				if (!isset($this->lastRepSeguroCriteria) || !$this->lastRepSeguroCriteria->equals($criteria)) {
-					$this->collRepSeguros = RepSeguroPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastRepSeguroCriteria = $criteria;
-		return $this->collRepSeguros;
+		return $this->singleRepSeguro;
 	}
 
 	/**
-	 * Returns the number of related RepSeguros.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      Connection $con
-	 * @throws     PropelException
-	 */
-	public function countRepSeguros($criteria = null, $distinct = false, $con = null)
-	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		$criteria->add(RepSeguroPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-		return RepSeguroPeer::doCount($criteria, $distinct, $con);
-	}
-
-	/**
-	 * Method called to associate a RepSeguro object to this object
-	 * through the RepSeguro foreign key attribute
+	 * Sets a single RepSeguro object as related to this object by a one-to-one relationship.
 	 *
 	 * @param      RepSeguro $l RepSeguro
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function addRepSeguro(RepSeguro $l)
+	public function setRepSeguro(RepSeguro $v)
 	{
-		$this->collRepSeguros[] = $l;
-		$l->setReporte($this);
+		$this->singleRepSeguro = $v;
+
+		// Make sure that that the passed-in RepSeguro isn't already associated with this object
+		if ($v->getReporte() === null) {
+			$v->setReporte($this);
+		}
+
+		return $this;
 	}
 
 	/**
-	 * Temporary storage of collRepCostos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepCostos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepCostos()
+	 */
+	public function clearRepCostos()
+	{
+		$this->collRepCostos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepCostos collection (array).
+	 *
+	 * By default this just sets the collRepCostos collection to an empty array (like clearcollRepCostos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepCostos()
 	{
-		if ($this->collRepCostos === null) {
-			$this->collRepCostos = array();
-		}
+		$this->collRepCostos = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepCostos from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepCosto objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related RepCostos from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepCosto[]
 	 * @throws     PropelException
 	 */
-	public function getRepCostos($criteria = null, $con = null)
+	public function getRepCostos($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -5006,7 +5269,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			   $this->collRepCostos = array();
 			} else {
 
-				$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepCostoPeer::addSelectColumns($criteria);
 				$this->collRepCostos = RepCostoPeer::doSelect($criteria, $con);
@@ -5019,7 +5282,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepCostoPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepCostoCriteria) || !$this->lastRepCostoCriteria->equals($criteria)) {
@@ -5032,32 +5295,63 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepCostos.
+	 * Returns the number of related RepCosto objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepCosto objects.
 	 * @throws     PropelException
 	 */
-	public function countRepCostos($criteria = null, $distinct = false, $con = null)
+	public function countRepCostos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepCostoPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepCostos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = RepCostoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastRepCostoCriteria) || !$this->lastRepCostoCriteria->equals($criteria)) {
+					$count = RepCostoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepCostos);
+				}
+			} else {
+				$count = count($this->collRepCostos);
+			}
+		}
+		$this->lastRepCostoCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepCosto object to this object
-	 * through the RepCosto foreign key attribute
+	 * through the RepCosto foreign key attribute.
 	 *
 	 * @param      RepCosto $l RepCosto
 	 * @return     void
@@ -5065,8 +5359,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function addRepCosto(RepCosto $l)
 	{
-		$this->collRepCostos[] = $l;
-		$l->setReporte($this);
+		if ($this->collRepCostos === null) {
+			$this->initRepCostos();
+		}
+		if (!in_array($l, $this->collRepCostos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepCostos, $l);
+			$l->setReporte($this);
+		}
 	}
 
 
@@ -5081,11 +5380,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getRepCostosJoinCosto($criteria = null, $con = null)
+	public function getRepCostosJoinCosto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -5097,19 +5395,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collRepCostos = array();
 			} else {
 
-				$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collRepCostos = RepCostoPeer::doSelectJoinCosto($criteria, $con);
+				$this->collRepCostos = RepCostoPeer::doSelectJoinCosto($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(RepCostoPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastRepCostoCriteria) || !$this->lastRepCostoCriteria->equals($criteria)) {
-				$this->collRepCostos = RepCostoPeer::doSelectJoinCosto($criteria, $con);
+				$this->collRepCostos = RepCostoPeer::doSelectJoinCosto($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepCostoCriteria = $criteria;
@@ -5118,36 +5416,50 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepTarifas to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collRepTarifas collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepTarifas()
+	 */
+	public function clearRepTarifas()
+	{
+		$this->collRepTarifas = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepTarifas collection (array).
+	 *
+	 * By default this just sets the collRepTarifas collection to an empty array (like clearcollRepTarifas());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initRepTarifas()
 	{
-		if ($this->collRepTarifas === null) {
-			$this->collRepTarifas = array();
-		}
+		$this->collRepTarifas = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepTarifas from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of RepTarifa objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related RepTarifas from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array RepTarifa[]
 	 * @throws     PropelException
 	 */
-	public function getRepTarifas($criteria = null, $con = null)
+	public function getRepTarifas($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -5159,7 +5471,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			   $this->collRepTarifas = array();
 			} else {
 
-				$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepTarifaPeer::addSelectColumns($criteria);
 				$this->collRepTarifas = RepTarifaPeer::doSelect($criteria, $con);
@@ -5172,7 +5484,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				RepTarifaPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepTarifaCriteria) || !$this->lastRepTarifaCriteria->equals($criteria)) {
@@ -5185,32 +5497,63 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related RepTarifas.
+	 * Returns the number of related RepTarifa objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepTarifa objects.
 	 * @throws     PropelException
 	 */
-	public function countRepTarifas($criteria = null, $distinct = false, $con = null)
+	public function countRepTarifas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return RepTarifaPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collRepTarifas === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = RepTarifaPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastRepTarifaCriteria) || !$this->lastRepTarifaCriteria->equals($criteria)) {
+					$count = RepTarifaPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepTarifas);
+				}
+			} else {
+				$count = count($this->collRepTarifas);
+			}
+		}
+		$this->lastRepTarifaCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a RepTarifa object to this object
-	 * through the RepTarifa foreign key attribute
+	 * through the RepTarifa foreign key attribute.
 	 *
 	 * @param      RepTarifa $l RepTarifa
 	 * @return     void
@@ -5218,8 +5561,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function addRepTarifa(RepTarifa $l)
 	{
-		$this->collRepTarifas[] = $l;
-		$l->setReporte($this);
+		if ($this->collRepTarifas === null) {
+			$this->initRepTarifas();
+		}
+		if (!in_array($l, $this->collRepTarifas, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepTarifas, $l);
+			$l->setReporte($this);
+		}
 	}
 
 
@@ -5234,11 +5582,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getRepTarifasJoinConcepto($criteria = null, $con = null)
+	public function getRepTarifasJoinConcepto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -5250,19 +5597,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collRepTarifas = array();
 			} else {
 
-				$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collRepTarifas = RepTarifaPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collRepTarifas = RepTarifaPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(RepTarifaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastRepTarifaCriteria) || !$this->lastRepTarifaCriteria->equals($criteria)) {
-				$this->collRepTarifas = RepTarifaPeer::doSelectJoinConcepto($criteria, $con);
+				$this->collRepTarifas = RepTarifaPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepTarifaCriteria = $criteria;
@@ -5271,246 +5618,122 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Temporary storage of collRepAduanas to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initRepAduanas()
-	{
-		if ($this->collRepAduanas === null) {
-			$this->collRepAduanas = array();
-		}
-	}
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepAduanas from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets a single RepAduana object, which is related to this object by a one-to-one relationship.
 	 *
-	 * @param      Connection $con
-	 * @param      Criteria $criteria
+	 * @param      PropelPDO $con
+	 * @return     RepAduana
 	 * @throws     PropelException
 	 */
-	public function getRepAduanas($criteria = null, $con = null)
+	public function getRepAduana(PropelPDO $con = null)
 	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
+
+		if ($this->singleRepAduana === null && !$this->isNew()) {
+			$this->singleRepAduana = RepAduanaPeer::retrieveByPK($this->ca_idreporte, $con);
 		}
 
-		if ($this->collRepAduanas === null) {
-			if ($this->isNew()) {
-			   $this->collRepAduanas = array();
-			} else {
-
-				$criteria->add(RepAduanaPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-				RepAduanaPeer::addSelectColumns($criteria);
-				$this->collRepAduanas = RepAduanaPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(RepAduanaPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-				RepAduanaPeer::addSelectColumns($criteria);
-				if (!isset($this->lastRepAduanaCriteria) || !$this->lastRepAduanaCriteria->equals($criteria)) {
-					$this->collRepAduanas = RepAduanaPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastRepAduanaCriteria = $criteria;
-		return $this->collRepAduanas;
+		return $this->singleRepAduana;
 	}
 
 	/**
-	 * Returns the number of related RepAduanas.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      Connection $con
-	 * @throws     PropelException
-	 */
-	public function countRepAduanas($criteria = null, $distinct = false, $con = null)
-	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		$criteria->add(RepAduanaPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-		return RepAduanaPeer::doCount($criteria, $distinct, $con);
-	}
-
-	/**
-	 * Method called to associate a RepAduana object to this object
-	 * through the RepAduana foreign key attribute
+	 * Sets a single RepAduana object as related to this object by a one-to-one relationship.
 	 *
 	 * @param      RepAduana $l RepAduana
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function addRepAduana(RepAduana $l)
+	public function setRepAduana(RepAduana $v)
 	{
-		$this->collRepAduanas[] = $l;
-		$l->setReporte($this);
-	}
+		$this->singleRepAduana = $v;
 
-	/**
-	 * Temporary storage of collRepExpos to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
-	 * @return     void
-	 */
-	public function initRepExpos()
-	{
-		if ($this->collRepExpos === null) {
-			$this->collRepExpos = array();
+		// Make sure that that the passed-in RepAduana isn't already associated with this object
+		if ($v->getReporte() === null) {
+			$v->setReporte($this);
 		}
+
+		return $this;
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related RepExpos from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets a single RepExpo object, which is related to this object by a one-to-one relationship.
 	 *
-	 * @param      Connection $con
-	 * @param      Criteria $criteria
+	 * @param      PropelPDO $con
+	 * @return     RepExpo
 	 * @throws     PropelException
 	 */
-	public function getRepExpos($criteria = null, $con = null)
+	public function getRepExpo(PropelPDO $con = null)
 	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
+
+		if ($this->singleRepExpo === null && !$this->isNew()) {
+			$this->singleRepExpo = RepExpoPeer::retrieveByPK($this->ca_idreporte, $con);
 		}
 
-		if ($this->collRepExpos === null) {
-			if ($this->isNew()) {
-			   $this->collRepExpos = array();
-			} else {
-
-				$criteria->add(RepExpoPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-				RepExpoPeer::addSelectColumns($criteria);
-				$this->collRepExpos = RepExpoPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(RepExpoPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-				RepExpoPeer::addSelectColumns($criteria);
-				if (!isset($this->lastRepExpoCriteria) || !$this->lastRepExpoCriteria->equals($criteria)) {
-					$this->collRepExpos = RepExpoPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastRepExpoCriteria = $criteria;
-		return $this->collRepExpos;
+		return $this->singleRepExpo;
 	}
 
 	/**
-	 * Returns the number of related RepExpos.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      Connection $con
-	 * @throws     PropelException
-	 */
-	public function countRepExpos($criteria = null, $distinct = false, $con = null)
-	{
-		// include the Peer class
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		$criteria->add(RepExpoPeer::CA_IDREPORTE, $this->getCaIdreporte());
-
-		return RepExpoPeer::doCount($criteria, $distinct, $con);
-	}
-
-	/**
-	 * Method called to associate a RepExpo object to this object
-	 * through the RepExpo foreign key attribute
+	 * Sets a single RepExpo object as related to this object by a one-to-one relationship.
 	 *
 	 * @param      RepExpo $l RepExpo
-	 * @return     void
+	 * @return     Reporte The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function addRepExpo(RepExpo $l)
+	public function setRepExpo(RepExpo $v)
 	{
-		$this->collRepExpos[] = $l;
-		$l->setReporte($this);
+		$this->singleRepExpo = $v;
+
+		// Make sure that that the passed-in RepExpo isn't already associated with this object
+		if ($v->getReporte() === null) {
+			$v->setReporte($this);
+		}
+
+		return $this;
 	}
 
 	/**
-	 * Temporary storage of collInoClientesSeas to save a possible db hit in
-	 * the event objects are add to the collection, but the
-	 * complete collection is never requested.
+	 * Clears out the collInoClientesSeas collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoClientesSeas()
+	 */
+	public function clearInoClientesSeas()
+	{
+		$this->collInoClientesSeas = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoClientesSeas collection (array).
+	 *
+	 * By default this just sets the collInoClientesSeas collection to an empty array (like clearcollInoClientesSeas());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
 	 * @return     void
 	 */
 	public function initInoClientesSeas()
 	{
-		if ($this->collInoClientesSeas === null) {
-			$this->collInoClientesSeas = array();
-		}
+		$this->collInoClientesSeas = array();
 	}
 
 	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously
-	 * been saved, it will retrieve related InoClientesSeas from storage.
-	 * If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria
-	 * is ignored on a new object.
+	 * Gets an array of InoClientesSea objects which contain a foreign key that references this object.
 	 *
-	 * @param      Connection $con
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related InoClientesSeas from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
+	 * @return     array InoClientesSea[]
 	 * @throws     PropelException
 	 */
-	public function getInoClientesSeas($criteria = null, $con = null)
+	public function getInoClientesSeas($criteria = null, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -5522,7 +5745,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			   $this->collInoClientesSeas = array();
 			} else {
 
-				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				InoClientesSeaPeer::addSelectColumns($criteria);
 				$this->collInoClientesSeas = InoClientesSeaPeer::doSelect($criteria, $con);
@@ -5535,7 +5758,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 				InoClientesSeaPeer::addSelectColumns($criteria);
 				if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
@@ -5548,32 +5771,63 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Returns the number of related InoClientesSeas.
+	 * Returns the number of related InoClientesSea objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
-	 * @param      Connection $con
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoClientesSea objects.
 	 * @throws     PropelException
 	 */
-	public function countInoClientesSeas($criteria = null, $distinct = false, $con = null)
+	public function countInoClientesSeas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
 			$criteria = clone $criteria;
 		}
 
-		$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
 
-		return InoClientesSeaPeer::doCount($criteria, $distinct, $con);
+		$count = null;
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = InoClientesSeaPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+					$count = InoClientesSeaPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoClientesSeas);
+				}
+			} else {
+				$count = count($this->collInoClientesSeas);
+			}
+		}
+		$this->lastInoClientesSeaCriteria = $criteria;
+		return $count;
 	}
 
 	/**
 	 * Method called to associate a InoClientesSea object to this object
-	 * through the InoClientesSea foreign key attribute
+	 * through the InoClientesSea foreign key attribute.
 	 *
 	 * @param      InoClientesSea $l InoClientesSea
 	 * @return     void
@@ -5581,8 +5835,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 */
 	public function addInoClientesSea(InoClientesSea $l)
 	{
-		$this->collInoClientesSeas[] = $l;
-		$l->setReporte($this);
+		if ($this->collInoClientesSeas === null) {
+			$this->initInoClientesSeas();
+		}
+		if (!in_array($l, $this->collInoClientesSeas, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoClientesSeas, $l);
+			$l->setReporte($this);
+		}
 	}
 
 
@@ -5597,11 +5856,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getInoClientesSeasJoinTercero($criteria = null, $con = null)
+	public function getInoClientesSeasJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -5613,19 +5871,19 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collInoClientesSeas = array();
 			} else {
 
-				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinTercero($criteria, $con);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
-				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinTercero($criteria, $con);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesSeaCriteria = $criteria;
@@ -5645,11 +5903,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
-	public function getInoClientesSeasJoinInoMaestraSea($criteria = null, $con = null)
+	public function getInoClientesSeasJoinInoMaestraSea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// include the Peer class
 		if ($criteria === null) {
-			$criteria = new Criteria();
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -5661,24 +5918,105 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->collInoClientesSeas = array();
 			} else {
 
-				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
-				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->getCaIdreporte());
+			$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
 
 			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
-				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastInoClientesSeaCriteria = $criteria;
 
 		return $this->collInoClientesSeas;
+	}
+
+	/**
+	 * Resets all collections of referencing foreign keys.
+	 *
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
+	 *
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 */
+	public function clearAllReferences($deep = false)
+	{
+		if ($deep) {
+			if ($this->collInoClientesAirs) {
+				foreach ((array) $this->collInoClientesAirs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRepAvisos) {
+				foreach ((array) $this->collRepAvisos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRepStatuss) {
+				foreach ((array) $this->collRepStatuss as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRepEquipos) {
+				foreach ((array) $this->collRepEquipos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRepGastos) {
+				foreach ((array) $this->collRepGastos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->singleRepSeguro) {
+				$this->singleRepSeguro->clearAllReferences($deep);
+			}
+			if ($this->collRepCostos) {
+				foreach ((array) $this->collRepCostos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collRepTarifas) {
+				foreach ((array) $this->collRepTarifas as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->singleRepAduana) {
+				$this->singleRepAduana->clearAllReferences($deep);
+			}
+			if ($this->singleRepExpo) {
+				$this->singleRepExpo->clearAllReferences($deep);
+			}
+			if ($this->collInoClientesSeas) {
+				foreach ((array) $this->collInoClientesSeas as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+		} // if ($deep)
+
+		$this->collInoClientesAirs = null;
+		$this->collRepAvisos = null;
+		$this->collRepStatuss = null;
+		$this->collRepEquipos = null;
+		$this->collRepGastos = null;
+		$this->singleRepSeguro = null;
+		$this->collRepCostos = null;
+		$this->collRepTarifas = null;
+		$this->singleRepAduana = null;
+		$this->singleRepExpo = null;
+		$this->collInoClientesSeas = null;
+			$this->aUsuario = null;
+			$this->aTransportador = null;
+			$this->aTercero = null;
+			$this->aAgente = null;
+			$this->aBodega = null;
 	}
 
 } // BaseReporte

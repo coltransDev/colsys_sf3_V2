@@ -13,7 +13,7 @@
  *
  * @package    lib.model.reportes.map
  */
-class RepGastoMapBuilder {
+class RepGastoMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,40 +54,41 @@ class RepGastoMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(RepGastoPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_repgastos');
+		$tMap = $this->dbMap->addTable(RepGastoPeer::TABLE_NAME);
 		$tMap->setPhpName('RepGasto');
+		$tMap->setClassname('RepGasto');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('OID', 'Oid', 'int', CreoleTypes::INTEGER, true, null);
+		$tMap->addPrimaryKey('OID', 'Oid', 'INTEGER', true, null);
 
-		$tMap->addForeignKey('CA_IDREPORTE', 'CaIdreporte', 'int', CreoleTypes::INTEGER, 'tb_reportes', 'CA_IDREPORTE', true, null);
+		$tMap->addForeignKey('CA_IDREPORTE', 'CaIdreporte', 'INTEGER', 'tb_reportes', 'CA_IDREPORTE', true, null);
 
-		$tMap->addForeignKey('CA_IDRECARGO', 'CaIdrecargo', 'int', CreoleTypes::INTEGER, 'tb_tiporecargo', 'CA_IDRECARGO', true, null);
+		$tMap->addForeignKey('CA_IDRECARGO', 'CaIdrecargo', 'INTEGER', 'tb_tiporecargo', 'CA_IDRECARGO', true, null);
 
-		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_TIPO', 'CaTipo', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addColumn('CA_TIPO', 'CaTipo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_NETA_TAR', 'CaNetaTar', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addColumn('CA_NETA_TAR', 'CaNetaTar', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_NETA_MIN', 'CaNetaMin', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addColumn('CA_NETA_MIN', 'CaNetaMin', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_REPORTAR_TAR', 'CaReportarTar', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addColumn('CA_REPORTAR_TAR', 'CaReportarTar', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_REPORTAR_MIN', 'CaReportarMin', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addColumn('CA_REPORTAR_MIN', 'CaReportarMin', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_COBRAR_TAR', 'CaCobrarTar', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addColumn('CA_COBRAR_TAR', 'CaCobrarTar', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_COBRAR_MIN', 'CaCobrarMin', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addColumn('CA_COBRAR_MIN', 'CaCobrarMin', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, true, 3);
+		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'VARCHAR', true, 3);
 
-		$tMap->addColumn('CA_DETALLES', 'CaDetalles', 'string', CreoleTypes::VARCHAR, true, 3);
+		$tMap->addColumn('CA_DETALLES', 'CaDetalles', 'VARCHAR', true, 3);
 
-		$tMap->addForeignKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int', CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
+		$tMap->addForeignKey('CA_IDCONCEPTO', 'CaIdconcepto', 'INTEGER', 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
 
 	} // doBuild()
 

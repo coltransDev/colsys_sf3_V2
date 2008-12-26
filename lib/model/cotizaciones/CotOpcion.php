@@ -36,9 +36,9 @@ class CotOpcion extends BaseCotOpcion
 		$min_mem = (($producto->getCaTransporte()=='Aéreo')?' x HAWB':' x HBL');
 		return @$this->getCaIdmoneda()." ".$aflete[0].$apl_mem.((@$aflete[1]!=0)?" / Min. ".$this->getCaIdmoneda().$aflete[1].$min_mem:"");*/
 		
-		$texto = $this->getCaIdmoneda()." ".$this->getCaValorTar()." ".$this->getCaAplicaTar();
-		if( $this->getCaValorMin() ){
-			$texto .= " / Min. ".$this->getCaValorMin()." ".$this->getCaAplicaMin();
+		$texto = $this->getCaIdmoneda()." ".Utils::formatNumber($this->getCaValorTar())." ".$this->getCaAplicaTar();
+		if( $this->getCaValorMin()!=0 && $this->getCaValorMin() ){
+			$texto .= " / Min. ".Utils::formatNumber($this->getCaValorMin())." ".$this->getCaAplicaMin();
 		}
 		return $texto;
 		

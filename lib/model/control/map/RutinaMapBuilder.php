@@ -13,7 +13,7 @@
  *
  * @package    lib.model.control.map
  */
-class RutinaMapBuilder {
+class RutinaMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,22 +54,23 @@ class RutinaMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(RutinaPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('control.tb_rutinas');
+		$tMap = $this->dbMap->addTable(RutinaPeer::TABLE_NAME);
 		$tMap->setPhpName('Rutina');
+		$tMap->setClassname('Rutina');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'string', CreoleTypes::VARCHAR, true, null);
+		$tMap->addPrimaryKey('CA_RUTINA', 'CaRutina', 'VARCHAR', true, 255);
 
-		$tMap->addColumn('CA_OPCION', 'CaOpcion', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_OPCION', 'CaOpcion', 'VARCHAR', false, 255);
 
-		$tMap->addColumn('CA_DESCRIPCION', 'CaDescripcion', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_DESCRIPCION', 'CaDescripcion', 'VARCHAR', false, 255);
 
-		$tMap->addColumn('CA_PROGRAMA', 'CaPrograma', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_PROGRAMA', 'CaPrograma', 'VARCHAR', false, 255);
 
-		$tMap->addColumn('CA_GRUPO', 'CaGrupo', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_GRUPO', 'CaGrupo', 'VARCHAR', false, 255);
 
 	} // doBuild()
 

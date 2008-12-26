@@ -13,7 +13,7 @@
  *
  * @package    lib.model.pricing.map
  */
-class PricFleteMapBuilder {
+class PricFleteMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,36 +54,37 @@ class PricFleteMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(PricFletePeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_pricfletes');
+		$tMap = $this->dbMap->addTable(PricFletePeer::TABLE_NAME);
 		$tMap->setPhpName('PricFlete');
+		$tMap->setClassname('PricFlete');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_IDTRAYECTO', 'CaIdtrayecto', 'int' , CreoleTypes::INTEGER, 'tb_trayectos', 'CA_IDTRAYECTO', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDTRAYECTO', 'CaIdtrayecto', 'INTEGER' , 'tb_trayectos', 'CA_IDTRAYECTO', true, null);
 
-		$tMap->addForeignPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'int' , CreoleTypes::INTEGER, 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'INTEGER' , 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
 
-		$tMap->addColumn('CA_VLRNETO', 'CaVlrneto', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VLRNETO', 'CaVlrneto', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_VLRSUGERIDO', 'CaVlrsugerido', 'double', CreoleTypes::NUMERIC, false, null);
+		$tMap->addColumn('CA_VLRSUGERIDO', 'CaVlrsugerido', 'NUMERIC', false, null);
 
-		$tMap->addColumn('CA_FCHINICIO', 'CaFchinicio', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHINICIO', 'CaFchinicio', 'DATE', false, null);
 
-		$tMap->addColumn('CA_FCHVENCIMIENTO', 'CaFchvencimiento', 'int', CreoleTypes::DATE, false, null);
+		$tMap->addColumn('CA_FCHVENCIMIENTO', 'CaFchvencimiento', 'DATE', false, null);
 
-		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'string', CreoleTypes::VARCHAR, false, 3);
+		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'VARCHAR', false, 3);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'INTEGER', false, null);
 
-		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_APLICACION', 'CaAplicacion', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'int', CreoleTypes::INTEGER, false, null);
+		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'INTEGER', false, null);
 
 	} // doBuild()
 

@@ -10,6 +10,7 @@ function extTransporte($id="transporte"){
 	$html = "new Ext.form.ComboBox({
 					fieldLabel: 'Transporte',
 					typeAhead: true,
+					width: 70,
 					forceSelection: true,
 					triggerAction: 'all',
 					emptyText:'Seleccione',

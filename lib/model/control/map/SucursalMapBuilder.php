@@ -13,7 +13,7 @@
  *
  * @package    lib.model.control.map
  */
-class SucursalMapBuilder {
+class SucursalMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,20 +54,21 @@ class SucursalMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(SucursalPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('control.tb_sucursales');
+		$tMap = $this->dbMap->addTable(SucursalPeer::TABLE_NAME);
 		$tMap->setPhpName('Sucursal');
+		$tMap->setClassname('Sucursal');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_NOMBRE', 'CaNombre', 'string', CreoleTypes::VARCHAR, true, 50);
+		$tMap->addPrimaryKey('CA_NOMBRE', 'CaNombre', 'VARCHAR', true, 50);
 
-		$tMap->addColumn('CA_TELEFONO', 'CaTelefono', 'string', CreoleTypes::VARCHAR, false, 50);
+		$tMap->addColumn('CA_TELEFONO', 'CaTelefono', 'VARCHAR', false, 50);
 
-		$tMap->addColumn('CA_FAX', 'CaFax', 'string', CreoleTypes::VARCHAR, false, 100);
+		$tMap->addColumn('CA_FAX', 'CaFax', 'VARCHAR', false, 100);
 
-		$tMap->addColumn('CA_DIRECCION', 'CaDireccion', 'string', CreoleTypes::VARCHAR, false, 100);
+		$tMap->addColumn('CA_DIRECCION', 'CaDireccion', 'VARCHAR', false, 100);
 
 	} // doBuild()
 
