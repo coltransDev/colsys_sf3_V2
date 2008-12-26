@@ -20,12 +20,6 @@ class gestDocumentalActions extends sfActions
 		$response->addJavaScript("extExtras/FileUploadField",'last');
 	}
 	
-	public function executeGuardarPrueba(){
-		print_r( $_FILES );
-		
-		print_r( $_POST );
-		exit;
-	}
 	
 	/*
 	* Muestra un formulario que hace posible cargar un archivo
@@ -39,7 +33,7 @@ class gestDocumentalActions extends sfActions
 	* Ejecuta la accion de cargar el archivo en el iframe, en la forma CargarArchivoForm
 	* author: Andres Botero
 	*/
-	public function executeCargarArchivo(){
+	public function executeCargarArchivo( $request ){
 		
 		//toma el valor del id del reporte, la referencia u otro objeto que se desee guardar
 		// y determina el directorio
@@ -76,7 +70,7 @@ class gestDocumentalActions extends sfActions
 		} 
 		*/
 		
-		$destPath = $directory.DIRECTORY_SEPARATOR.$this->getRequest()->getFileName('file'); 
+		$destPath = $directory.DIRECTORY_SEPARATOR.$request->getFileName('file'); 
 		//mueve el archivo
 		$this->getRequest()->moveFile('file', $destPath  );		
 		  		

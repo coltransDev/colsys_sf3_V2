@@ -1124,17 +1124,17 @@ class pricingActions extends sfActions
 		$c->addSelectColumn( PricArchivoPeer::CA_DESCRIPCION );
 		$c->addSelectColumn( PricArchivoPeer::CA_FCHCREADO );
 		$c->addSelectColumn( PricArchivoPeer::CA_USUCREADO );
-		$rs= PricArchivoPeer::doSelectRS( $c );
+		$stmt = PricArchivoPeer::doSelectStmt( $c );
 		
 		$this->files = array();
 		
-		while ( $rs->next() ) {
-      		$this->files[] = array('idarchivo'=>$rs->getString(1),
-							   	  'name'=>utf8_encode($rs->getString(2)),
-								  'size'=>utf8_encode($rs->getString(3)),
-								  'descripcion'=>utf8_encode($rs->getString(4)),
-								  'lastmod'=>utf8_encode($rs->getString(5)),      
-								  'usucreado'=>utf8_encode($rs->getString(6))
+		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {
+      		$this->files[] = array('idarchivo'=>$row[0],
+							   	  'name'=>utf8_encode($row[1]),
+								  'size'=>utf8_encode($row[2]),
+								  'descripcion'=>utf8_encode($row[3]),
+								  'lastmod'=>utf8_encode($row[4]),      
+								  'usucreado'=>utf8_encode($row[5])
 							 );
 		}	
 		
@@ -1237,14 +1237,14 @@ class pricingActions extends sfActions
 			$c->addAscendingOrderByColumn( TraficoGrupoPeer::CA_DESCRIPCION );		
 			$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
 			
-			$rs = TraficoPeer::doSelectRS( $c );			
+			$stmt = TraficoPeer::doSelectStmt( $c );			
 			$this->results = array();
 			
-			while($rs->next()){
-				$modalidad = $rs->getString(1);
-				$grupo = $rs->getString(2);
-				$pais = $rs->getString(3);
-				$idtrafico = $rs->getString(4);
+			while($row = $stmt->fetch(PDO::FETCH_NUM)){
+				$modalidad = $row[0];
+				$grupo = $row[1];
+				$pais = $row[2];
+				$idtrafico = $row[3];
 				
 				$this->results[$modalidad][$grupo][]=array("idtrafico"=>$idtrafico, "pais"=>$pais);
 			}
@@ -1340,7 +1340,10 @@ class pricingActions extends sfActions
 		$caducidad=$this->getRequestParameter("caducidad");
 		
 		$user = $this->getUser();
-		$notificacion = PricNotificacionPeer::retrieveByPk( $this->getRequestParameter("idnotificacion") );
+		$notificacion = null;
+		if( $this->getRequestParameter("idnotificacion") ){
+			$notificacion = PricNotificacionPeer::retrieveByPk( $this->getRequestParameter("idnotificacion") );			
+		}
 		if( !$notificacion ){
 			$notificacion = new PricNotificacion();
 		}

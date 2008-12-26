@@ -259,8 +259,6 @@ class cotizacionesActions extends sfActions
 				
 		$agentes = array();
 		
-		
-		
    		foreach ( $contactos as $contacto ) {
 			$agente = $contacto->getAgente();
 			$ciudad = $contacto->getCiudad();
@@ -282,12 +280,13 @@ class cotizacionesActions extends sfActions
 									  'sugerido'=>$contacto->getCaSugerido()
 									
       									
-      		);
-			
-			$this->responseArray = array("agentes"=>$agentes, "total"=>count($this->agentes), "success"=>true);
-			$this->setTemplate("responseTemplate");
-			$this->setLayout("ajax");
+      		);		
 		}
+		
+		$this->responseArray = array("agentes"=>$agentes, "total"=>count($this->agentes), "success"=>true);
+		$this->setTemplate("responseTemplate");
+		$this->setLayout("ajax");
+		
 	}		
 		
 	/*
@@ -486,8 +485,8 @@ class cotizacionesActions extends sfActions
 			$producto->setCaEscala( $this->getRequestParameter("ciu_escala") );
 		}		
 		$producto->setCaDestino( $this->getRequestParameter("ciu_destino") );
-		$producto->setCaFrecuencia( $this->getRequestParameter("frecuencia") );
-		$producto->setCaTiempotransito( $this->getRequestParameter("ttransito") );
+		$producto->setCaFrecuencia( utf8_decode($this->getRequestParameter("frecuencia")) );
+		$producto->setCaTiempotransito( utf8_decode($this->getRequestParameter("ttransito")) );
 		$producto->setCaObservaciones( $this->getRequestParameter("observaciones") );
 		$producto->setCaImprimir( $this->getRequestParameter("imprimir") );
 		if( !$producto->getCaIdProducto() ){ 
@@ -543,8 +542,8 @@ class cotizacionesActions extends sfActions
 		$idmoneda = $this->getRequestParameter("idmoneda");
 		$valor_tar = $this->getRequestParameter("valor_tar");
 		$valor_min = $this->getRequestParameter("valor_min");
-		$aplica_tar = $this->getRequestParameter("aplica_tar");
-		$aplica_min = $this->getRequestParameter("aplica_min");
+		$aplica_tar = utf8_decode($this->getRequestParameter("aplica_tar"));
+		$aplica_min = utf8_decode($this->getRequestParameter("aplica_min"));
 		$observaciones = $this->getRequestParameter("detalles");
 		
 		$tipo = $this->getRequestParameter("tipo");
@@ -739,8 +738,8 @@ class cotizacionesActions extends sfActions
 				$row['iditem']=$opcion->getCaIdConcepto();
 				$row['item']=utf8_encode($concepto->getCaConcepto());
 				$row['valor_tar']=$opcion->getCaValorTar();
-				$row['aplica_tar']=$opcion->getCaAplicaTar();
-				$row['valor_min']=utf8_encode($opcion->getCaValorMin());
+				$row['aplica_tar']=utf8_encode($opcion->getCaAplicaTar());
+				$row['valor_min']=$opcion->getCaValorMin();
 				$row['aplica_min']=utf8_encode($opcion->getCaAplicaMin());
 				$row['idmoneda']=$opcion->getCaIdmoneda();
 				$row['detalles']=utf8_encode($opcion->getCaObservaciones());
@@ -1016,11 +1015,11 @@ class cotizacionesActions extends sfActions
 		$c->addSelectColumn(CotProductoPeer::CA_TRANSPORTE );
 		$c->addSelectColumn(CotProductoPeer::CA_MODALIDAD );		
 		$c->setDistinct();
-		$rs = CotProductoPeer::doSelectRs( $c );
+		$stmt = CotProductoPeer::doSelectStmt( $c );
 		
-		while ( $rs->next() ) {
-			$grupos[$rs->getString(1)][]=$rs->getString(2);
-			$grupos[$rs->getString(1)] = array_unique( $grupos[$rs->getString(1)] );	
+		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {
+			$grupos[$row[0]][]=$row[1];
+			$grupos[$row[0]] = array_unique( $grupos[$row[0]] );	
 		}
 		
 		/*
@@ -1034,12 +1033,12 @@ class cotizacionesActions extends sfActions
 		$c->addSelectColumn( TipoRecargoPeer::CA_TRANSPORTE );
 		$c->addSelectColumn( CotRecargoPeer::CA_MODALIDAD );
 		$c->setDistinct();
-		$rs = CotRecargoPeer::doSelectRs( $c );
+		$stmt = CotRecargoPeer::doSelectStmt( $c );
 		
 		$this->recargos=array();
-		while ( $rs->next() ) {
-			$grupos[$rs->getString(1)][]=$rs->getString(2);
-			$grupos[$rs->getString(1)] = array_unique( $grupos[$rs->getString(1)] );			
+		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {
+			$grupos[$row[0]][]=$row[1];
+			$grupos[$row[0]] = array_unique( $grupos[$row[0]] );			
 		}
 		
 		$id=100;	
@@ -1245,29 +1244,29 @@ class cotizacionesActions extends sfActions
 
 		$c->add( CotContinuacionPeer::CA_IDCOTIZACION , $id );
 		
-		$rs = CotContinuacionPeer::doSelectRS( $c );
+		$stmt = CotContinuacionPeer::doSelectStmt( $c );
 		
 		$this->contviajes = array();
 		
-   		while ( $rs->next() ) {
-      		$this->contviajes[] = array('idcotizacion'=>$rs->getString(1),
-      									'tipo'=>$rs->getString(2),
-      									'modalidad'=>$rs->getString(3),
-										'origen'=>$rs->getString(4),
-										'ciuorigen'=>utf8_encode($rs->getString(5)),
-      									'destino'=>$rs->getString(6),
-      									'ciudestino'=>utf8_encode($rs->getString(7)),
-      									'idconcepto'=>$rs->getString(8),
-      									'concepto'=>$rs->getString(9),
-      									'idequipo'=>$rs->getString(10),
-      									'equipo'=>$rs->getString(11),
-      									'valor_tar'=>$rs->getString(12),
-      									'valor_min'=>$rs->getString(13),
-      									'idmoneda'=>$rs->getString(14),
-										'frecuencia'=>utf8_encode($rs->getString(15)),
-										'ttransito'=>utf8_encode($rs->getString(16)),
-										'observaciones'=>utf8_encode($rs->getString(17)),
-										'oid'=>utf8_encode($rs->getInt(18)),
+   		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {
+      		$this->contviajes[] = array('idcotizacion'=>$row[0],
+      									'tipo'=>$row[1],
+      									'modalidad'=>$row[2],
+										'origen'=>$row[3],
+										'ciuorigen'=>$row[4],
+      									'destino'=>$row[5],
+      									'ciudestino'=>utf8_encode($row[6]),
+      									'idconcepto'=>$row[7],
+      									'concepto'=>$row[8],
+      									'idequipo'=>$row[9],
+      									'equipo'=>$row[10],
+      									'valor_tar'=>$row[11],
+      									'valor_min'=>$row[12],
+      									'idmoneda'=>$row[13],
+										'frecuencia'=>utf8_encode($row[14]),
+										'ttransito'=>utf8_encode($row[15]),
+										'observaciones'=>utf8_encode($row[16]),
+										'oid'=>utf8_encode($row[17]),
       		);
 		}		
 	}
@@ -1429,33 +1428,38 @@ class cotizacionesActions extends sfActions
 	/*
 	* Guarda un archivo en la base de datos
 	*/	
-	public function executeAdjuntarArchivo(){						
+	public function executeAdjuntarArchivo( $request ){						
+					
 		$idcotizacion = $this->getRequestParameter( "idcotizacion" );
 		$this->forward404Unless( $idcotizacion );
-		$fileName = $this->getRequest()->getFileName('file');
- 		$path = $this->getRequest()->getFilePath('file');
-		$size = $this->getRequest()->getFileSize('file');
-		$type = $this->getRequest()->getFileType('file');
+		
+		if ( count( $_FILES )>0 ){		 	
+			foreach ( $_FILES as $uploadedFile){
+				$fileName  = $uploadedFile['name'];
+				$fileSize  = $uploadedFile['size'];
+				$fileType  = $uploadedFile['type'];				
+						
+				$fileObj = new CotArchivo();
+				$fileObj->setCaTamano($fileSize);
+				$fileObj->setCaNombre($fileName);
+				$fileObj->setCaIdCotizacion($idcotizacion);	
+				$fileObj->setCaTipo($fileType);
 				
-		$fileObj = new CotArchivo();
-		$fileObj->setCaTamano($size);
-		$fileObj->setCaNombre($fileName);
-		$fileObj->setCaIdCotizacion($idcotizacion);	
-		$fileObj->setCaTipo($type);
-		
-		$fp = fopen($path, "r");
-		$data = fread( $fp , $size);
-		fclose( $fp );
-    	$fileObj->setCaDatos($data);
-		$fileObj->setCaFchcreado(time());
-		$user = $this->getUser();
-		$fileObj->setCaUsucreado($user->getUserid());
-		$fileObj->save();	
-		$id = $fileObj->getCaIdArchivo();
-		
-		$this->responseArray = array("id"=>$id, "filename"=>$fileName, "success"=>true);	
+				$fp = fopen($path, "r");
+				$data = fread( $fp , $fileSize);
+				fclose( $fp );
+				$fileObj->setCaDatos($data);
+				$fileObj->setCaFchcreado(time());
+				$user = $this->getUser();
+				$fileObj->setCaUsucreado($user->getUserid());
+				$fileObj->save();	
+				$id = $fileObj->getCaIdArchivo();
+				
+				$this->responseArray = array("id"=>$id, "filename"=>$fileName, "success"=>true);				
+			
+		  	}
+		}
 		$this->setTemplate("responseTemplate");
-	
 	}
 	
 	/*
@@ -1527,12 +1531,12 @@ class cotizacionesActions extends sfActions
 		$c->add( ConceptoPeer::CA_TRANSPORTE, $transport_parameter );
 		$c->add( ConceptoPeer::CA_MODALIDAD, $modalidad_parameter );
 		
-		$rs = ConceptoPeer::doSelectRS( $c );
+		$stmt = ConceptoPeer::doSelectStmt( $c );
 
 		$this->conceptos = array();
 		
-		while ( $rs->next() ) {
-			$row = array('idconcepto'=>$rs->getString(1), 'concepto'=>utf8_encode($rs->getString(2)));
+		while ( $result = $stmt->fetch(PDO::FETCH_NUM) ) {
+			$row = array('idconcepto'=>$result[0], 'concepto'=>utf8_encode($result[1]));
 			$this->conceptos[]=$row;
 		}
 

@@ -2,7 +2,9 @@
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.cotizaciones">
 	
 	<table name="tb_cotizaciones" phpName="Cotizacion">				
-		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" autoIncrement="true"  />							
+		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" autoIncrement="true"  />	
+		<id-method-parameter value="tb_cotizaciones_id"/>
+						
 		<column name="ca_idcontacto" type="integer" required="true"  />			
 		<column name="ca_consecutivo" type="varchar" />	
 		<column name="ca_asunto" type="varchar"    />			
@@ -34,6 +36,7 @@
 	
 	<table name="tb_cotproductos" phpName="CotProducto">						
 		<column name="ca_idproducto" type="integer" required="true" primaryKey="true" autoIncrement="true"  />
+		<id-method-parameter value="tb_cotproductos_id"/>
 		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" />
 				
 		<column name="ca_transporte" type="varchar"    />			
@@ -63,6 +66,7 @@
 	
 	<table name="tb_cotopciones" phpName="CotOpcion">			
 		<column name="ca_idopcion" type="varchar" required="true"  primaryKey="true"  autoIncrement="true"  />	
+		<id-method-parameter value="tb_cotopciones_id"/>
 		<column name="ca_idcotizacion" type="integer" required="true" primaryKey="true" />
 				
 		<column name="ca_idproducto" type="integer" required="true"  primaryKey="true" />
@@ -176,6 +180,7 @@
 	
 	<table name="tb_cotarchivos" phpName="CotArchivo">		
 		<column name="ca_idarchivo" type="varchar" required="true"  primaryKey="true" autoIncrement="true"/>			
+		<id-method-parameter value="tb_cotarchivos_id"/>
 		<column name="ca_idcotizacion" type="integer" required="true" />
 		<column name="ca_nombre" type="varchar" required="true" />			
 		<column name="ca_tamano" type="numeric" />

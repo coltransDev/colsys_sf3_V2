@@ -61,7 +61,6 @@ $pdf->Ln(2);
 $pdf->MultiCell(0, 4, $cotizacion->getCaEntrada(),0,1);
 
 
-
 $productos = $cotizacion->getCotProductos();
 
 if( count($productos)>0 ){
@@ -106,7 +105,10 @@ foreach( $productos as $producto ):
 		$pdf->SetFont('Arial','',8);
 		$pdf->Row(array($producto->getCaImpoExpo(), $producto->getCaTransporte(), $producto->getCaIncoterms(), $producto->getOrigen()->getCaCiudad()." - ".$producto->getOrigen()->getCaTrafico(),  $producto->getDestino()->getCaCiudad()." - ".$producto->getDestino()->getCaTrafico() ));		
 		
-		$opciones = $producto->getCotOpciones();
+		$c = new Criteria();
+		$c->addJoin( CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO );
+		$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+		$opciones = $producto->getCotOpciones( $c );
 		
 		foreach( $opciones as $opcion ){
 			$textoRecargos = $opcion->getTextoRecargos();		
@@ -208,7 +210,10 @@ foreach( $productos as $producto ):
 		$origenes[] = $producto->getOrigen()->getCaCiudad();
 		$destinos[] =  $producto->getDestino()->getCaCiudad();
 		
-		$opciones = $producto->getCotOpciones();		
+		$c = new Criteria();
+		$c->addJoin( CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO );
+		$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+		$opciones = $producto->getCotOpciones( $c );		
 		foreach( $opciones as $opcion ){
 			$concepto = $opcion->getConcepto();		
 			if ( isset($tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()]) ){
@@ -275,7 +280,10 @@ $trayectos2  = array();
 
 foreach( $productos as $producto ):	
 	if ($producto->getCaImprimir() == 'Concepto' or $producto->getCaImprimir() == 'Trayecto'  ):
-		$opciones = $producto->getCotOpciones();		
+		$c = new Criteria();
+		$c->addJoin( CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO );
+		$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+		$opciones = $producto->getCotOpciones( $c );		
 		$trayecto = $producto->getOrigen()->getCaCiudad()."\n".$producto->getDestino()->getCaCiudad();
 		if ($producto->getCaImprimir() == 'Concepto' ){		
 			$trayectos1[] = $trayecto;
@@ -400,7 +408,7 @@ if( count($recargosLoc)>0 ){
 	$pdf->SetFont('Arial','',7);
 	
 	$titu_mem= array('Concepto', 'Transporte','Modalidad',  'Tarifa', 'Observaciones');
-	$width_mem= array(45,20, 20, 33, 52);
+	$width_mem= array(45,20, 21, 32, 52);
 	$pdf->SetWidths($width_mem);
 	$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
 	$pdf->SetStyles(array_fill(0, count($width_mem), "B"));

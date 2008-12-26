@@ -20,7 +20,7 @@ switch($action){
 		$button[2]["name"]="Email ";
 		$button[2]["tooltip"]="Enviar la cotizaci&oacute;n por e-mail";
 		$button[2]["image"]="22x22/email.gif"; 			
-		$button[2]["link"]= "#";
+		$button[2]["link"]= "cotizaciones/verCotizacion?id=".$this->getRequestParameter("id");
 		$button[2]["onClick"]= "showEmailForm()";
 		break;	
 

@@ -13,7 +13,7 @@ if( $sf_user->hasCredential("colsys_user") ){
 		<tr class="row0">
 			<td width="29%"><strong>Busqueda</strong></td>
 			<td width="35%"><?=input_tag("busqueda")?></td>
-			<td width="36%"><?=button_to("Buscar", "#", "class=button")?></td>
+			<td width="36%"></td>
 		</tr>
 		<tr >
 			<td colspan="3">

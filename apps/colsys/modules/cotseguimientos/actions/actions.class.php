@@ -80,8 +80,8 @@ class cotseguimientosActions extends sfActions
 							);
 		} 
 				
-		$this->estados = ParametroPeer::retrieveByCaso( "CU065" );
-		$this->motivos = ParametroPeer::retrieveByCaso( "CU066" );					
+		$this->estados = ParametroPeer::retrieveByCaso( "CU068" );
+		$this->motivos = ParametroPeer::retrieveByCaso( "CU069" );					
 	}
 	/**
 	* guarda los cambios realizados en la grilla
@@ -143,13 +143,14 @@ class cotseguimientosActions extends sfActions
 		
 		$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME);
 	
-		$stmt = $con->prepareStatement($sql);
-		$this->rs = $stmt->executeQuery();	 
+		$this->stmt = $con->prepare($sql);
+		$this->stmt->execute();	 
 		$this->fechaInicial = $fechaInicial;
 		$this->fechaFinal = $fechaFinal;
 		
 	}
 	
-	
+
+
 }
 ?>

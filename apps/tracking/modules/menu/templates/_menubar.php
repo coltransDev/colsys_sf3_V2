@@ -1,36 +1,20 @@
-<div id="menubar">
-	<?
-	if( $showMenu ){
-	?>
-	<table width="100%" border="0">
-		<tr height="25px">
-			<td width="7%" class="menuRight"><?=link_to("Home", "homepage/index2")?></td>
-			<td width="7%" class="menuRight"><?=link_to("Mar&iacute;timo", "maritimo/index")?></td>
-			<td width="7%" class="menuRight"><?=link_to("A&eacute;reo", "aereo/index")?></td>
-			<td width="7%" class="menuRight"><?=link_to("Aduana", "aduana/index")?></td>
-			<td width="7%" class="menuRight"><?=link_to("Buscar", "buscar/index")?></td>	
-			<td width="52%" class="menuRight">
-			<div id="indicator"><?=image_tag("ajax-loader-snake.gif")?></div>			
-			<strong><?=$nombre?></strong>
-			
-			</td>
-			<!--			
-			<td width="6%" class="menuRight">Ayuda</td>
-				-->	
-			<td width="7%" class="menuRight"><?=link_to("Cuenta", "cuenta/index")?></td>
-		
-			<td width="6%" class="menuRight"><?=link_to("Salir", "login/signout")?></td>
-		</tr>
-	</table>
-	<?
-	}
-	?>
+
+<div class="topmenu" >
+	
+<?
+if( $showMenu ){	
+?>
+	<ul id="mainlevel-nav" >
+		<li><?=link_to("Inicio", "homepage/index2", "class=mainlevel-nav")?></li>
+		<li><?=link_to("Mar&iacute;timo", "maritimo/index", "class=mainlevel-nav")?></li>
+		<li><?=link_to("A&eacute;reo", "aereo/index", "class=mainlevel-nav")?></li>
+		<li><?=link_to("Aduana", "aduana/index", "class=mainlevel-nav")?></li>
+		<li><?=link_to("Buscar", "buscar/index", "class=mainlevel-nav")?></li>
+		<li><?=link_to("Cuenta", "cuenta/index", "class=mainlevel-nav")?></li>
+		<li><?=link_to("Salir", "login/signout", "class=mainlevel-nav")?></li>
+	</ul>	
+<?
+}
+?>		
+	
 </div>
-<div id="menubar_btm">
-	&nbsp;
-</div>
-<br />
-
-
-
-

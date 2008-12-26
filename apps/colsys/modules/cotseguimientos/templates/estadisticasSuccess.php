@@ -24,16 +24,16 @@ if( $sucursal ){
 	</tr>
 	<?
 	$total = 0;
-	while( $rs->next() ){
+	while( $row = $stmt->fetch() ){
 	
 	?>	
 	<tr>
-		<td><?=$rs->getString("ca_estado")?></td>
-		<td><?=$rs->getString("ca_motivonoaprobado")?></td>
-		<td><?=$rs->getInt("count")?></td>
+		<td><?=$row["ca_estado"]?></td>
+		<td><?=$row["ca_motivonoaprobado"]?></td>
+		<td><?=$row["count"]?></td>
 	</tr>	
 	<?	
-	$total+=$rs->getInt("count");
+	$total+=$row["count"];
 	}
 	?>
 	

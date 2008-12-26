@@ -14,7 +14,7 @@
 	<tr>
 		<td><div align="left"><strong>Destinatario:</strong> (Por favor separe varios destinatarios con comas)<br>		
 				<?				
-				echo form_error("destinatario");			
+				//echo form_error("destinatario");			
 				echo input_tag("destinatario", "" , "size=120");
 				?>
 		</div></td>

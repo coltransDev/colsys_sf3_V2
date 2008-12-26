@@ -9,9 +9,9 @@ default:
     keywords:     tracking, cargo
     language:     es
 
-  stylesheets:    [tracking, modalbox/modalbox]
+  stylesheets:    [tracking]
 
-  javascripts:    [tracking, prototype/prototype, prototype/effects, prototype/controls  ,prototype/scriptaculous, modalbox/modalbox]
+  javascripts:    [tracking, prototype/prototype, prototype/effects, prototype/controls  ,prototype/scriptaculous ]
 
   has_layout:     on
   layout:         layout

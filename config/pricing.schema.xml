@@ -118,7 +118,8 @@
 	</table>	
 	
 	<table name="tb_pricarchivos" phpName="PricArchivo">		
-		<column name="ca_idarchivo" type="varchar" required="true"  primaryKey="true" autoIncrement="true"/>			
+		<column name="ca_idarchivo" type="varchar" required="true"  primaryKey="true" autoIncrement="true"/>		
+		<id-method-parameter value="tb_pricarchivos_id"/>	
 		<column name="ca_idtrafico" type="varchar" required="true" />
 		<column name="ca_nombre" type="varchar" required="true" />	
 		<column name="ca_descripcion" type="varchar" required="true" />
@@ -191,7 +192,8 @@
 	</table>
 	
 	<table name="tb_pricnotificaciones" phpName="PricNotificacion">		
-		<column name="ca_idnotificacion" type="integer" required="true"  primaryKey="true" autoIncrement="true"/>					
+		<column name="ca_idnotificacion" type="integer" required="true"  primaryKey="true" autoIncrement="true"/>	
+		<id-method-parameter value="tb_pricnotificaciones_id"/>						
 		<column name="ca_titulo" type="varchar" required="true" />	
 		<column name="ca_mensaje" type="varchar" required="true" />			
 		<column name="ca_caducidad" type="date" />

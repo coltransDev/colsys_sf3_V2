@@ -32,7 +32,7 @@ use_helper("Javascript", "Validation");
 
 
 	
-<iframe src="<?=url_for("cotizaciones/generarPDF?id=".$cotizacion->getCaIdcotizacion())."&token=".md5(time())?>" width="830px" height="650px"></iframe>
+<iframe src="<?=url_for("cotizaciones/generarPDF?id=".$cotizacion->getCaIdcotizacion()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
 
 <?
 if( count($emails)>0 ){

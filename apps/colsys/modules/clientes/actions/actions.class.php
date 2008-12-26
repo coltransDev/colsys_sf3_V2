@@ -259,22 +259,12 @@ class clientesActions extends sfActions
 		$c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );
 		$c->addAscendingOrderByColumn( ContactoPeer::CA_NOMBRES );
 		$c->setLimit(40);
-		$rs = ClientePeer::doSelectRS( $c );
+		$stmt = ClientePeer::doSelectStmt( $c );
 		
 		$this->clientes = array();
  
-   		while ( $rs->next() ) {
-      		$this->clientes[] = array('ca_idcontacto'=>$rs->getString(1),
-                                      'ca_compania'=>utf8_encode($rs->getString(2)),
-									  'ca_nombres'=>utf8_encode($rs->getString(3)),
-									  'ca_papellido'=>utf8_encode($rs->getString(4)),
-									  'ca_sapellido'=>utf8_encode($rs->getString(5)),      
-									  'ca_cargo'=>utf8_encode($rs->getString(6)), 
-									  'ca_preferencias'=>utf8_encode($rs->getString(7)),
-									  'ca_confirmar'=>utf8_encode($rs->getString(8)),
-									  'ca_vendedor'=>utf8_encode($rs->getString(9)),
-									  'ca_nombre'=>utf8_encode($rs->getString(10)),
-                                 );
+   		while ( $row = $stmt->fetch() ) {
+      		$this->clientes[] = $row;
 		}					
 		$this->setLayout("none");
 	}

@@ -50,7 +50,7 @@ Ext.onReady(function(){
 	
     var ds = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-            url: '/colsys_sf/index.php/clientes/listaContactosClientesJSON'
+            url: '<?=url_for('clientes/listaContactosClientesJSON')?>'
         }),
         reader: new Ext.data.JsonReader({
             root: 'clientes',

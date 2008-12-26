@@ -102,20 +102,20 @@ class cotizacionesComponents extends sfComponents
 		
 		$c->add( CotSeguroPeer::CA_IDCOTIZACION , $id );
 		
-		$rs = CotSeguroPeer::doSelectRS( $c );
-		
+		$stmt = CotSeguroPeer::doSelectStmt( $c );
+						
 		$this->seguros = array();
 		
-   		while ( $rs->next() ) {
-      		$this->seguros[] = array('oid'=>$rs->getString(1),
-      									'idcotizacion'=>$rs->getString(2),
-      									'prima_tip'=>$rs->getString(3),
-      									'prima_vlr'=>$rs->getString(4),
-      									'prima_min'=>$rs->getString(5),
-      									'obtencion'=>$rs->getString(6),
-      									'idmoneda'=>$rs->getString(7),
-										'observaciones'=>utf8_encode($rs->getString(8)),
-										'transporte'=>utf8_encode($rs->getString(9))
+   		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {			
+      		$this->seguros[] = array('oid'=>$row[0] ,
+      									'idcotizacion'=>$row[1],
+      									'prima_tip'=>$row[2],
+      									'prima_vlr'=>$row[3],
+      									'prima_min'=>$row[4],
+      									'obtencion'=>$row[5],
+      									'idmoneda'=>$row[6],
+										'observaciones'=>utf8_encode($row[7]),
+										'transporte'=>utf8_encode($row[8])
       		);
 		}
 	}

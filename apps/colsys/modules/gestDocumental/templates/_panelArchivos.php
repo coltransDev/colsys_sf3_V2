@@ -61,6 +61,7 @@ var nuevoFileViewBtnHandler = function(){
 		
 		items       : new Ext.FormPanel({			
 			fileUpload: true,		
+			standardSubmit: true,	
 			frame: true,
 			title: 'Por favor seleccione un archivo',
 			autoHeight: true,

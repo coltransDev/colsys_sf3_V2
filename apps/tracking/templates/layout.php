@@ -11,18 +11,52 @@
 
 </head>
 <body>
+	<div class="top">
+		<div class="logo1"> 			          					
+				<?=image_tag("coltrans_logo.jpg")?>
+		</div>
+		<div class="logo2"> 			          					
+				<?=image_tag("colmas_logo.jpg")?>
+		</div>
+			
+		
+		
 	
-	<div id="header" align="center">
-		<div id="logo_colmas"><?=image_tag("logo_colmas.jpg")?></div>
-		<div id="logo_coltrans"><?=image_tag("logo_coltrans.jpg")?></div>
+		<!--	<div class="search">
+			<div class="searchint">
+				<div class="moduletable">
+				<jdoc:include type="modules" name="user4" />
+			</div>
+		  </div>
+		</div>-->
+
+	
+		
+		
+		<?
+		include_component("menu", "menubar")
+		?>
+			
+		
+	</div>
+<!--Top Area End-->
+
+
+	<!--Header Start-->			
+	<div class="header">
+	<!--<jdoc:include type="modules" name="user5"  />	-->					
 	</div>	
-	<?=include_component("menu", "menubar")?>		
+	
+		
 	<div id="content" align="center">
 		<?php echo $sf_content ?>
 	</div>
 	
-	<div id="footer" >
-		Coltrans S.A. - Colmas SIA LTDA. Todos los derechos reservados
-	</div>
+	
+	<div class="footer">	
+		<div class="copyright">
+			Coltrans S.A. - Colmas LTDA. Todos los derechos reservados
+		</div>
+	</div>		
 </body>
 </html>

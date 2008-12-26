@@ -21,7 +21,7 @@ if( $sf_user->hasCredential("customer") ){
 	
 	<table width="52%" border="1" class="table1">
 		<tr>
-			<th scope="col">Por favor selecciona un cliente</th>
+			<th scope="col">Por favor seleccione un cliente</th>
 		</tr>
 		<?
 		$i=0;
