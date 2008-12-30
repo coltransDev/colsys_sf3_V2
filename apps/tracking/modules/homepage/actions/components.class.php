@@ -19,6 +19,7 @@ class homepageComponents extends sfComponents
 		$c = new Criteria();
 		$c->setLimit(25);
 		$c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );
+		$this->filtro ="IMOCO";
 		if( isset($this->filtro) ){
 			$c->add( ClientePeer::CA_COMPANIA, "lower(".ClientePeer::CA_COMPANIA.") LIKE '%".strtolower($this->filtro)."%'" , Criteria::CUSTOM );
 		}

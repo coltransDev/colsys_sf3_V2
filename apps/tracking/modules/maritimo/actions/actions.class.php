@@ -16,21 +16,66 @@ class maritimoActions extends sfActions
 	*/
 	public function executeIndex()
 	{					
-		$c = new Criteria();
-		$c->add( ContactoPeer::CA_IDCLIENTE , $this->getUser()->getClienteActivo() );		
-		$c->addJoin( ReportePeer::CA_IDCONCLIENTE , ContactoPeer::CA_IDCONTACTO );					
-		$c->addDescendingOrderByColumn( ReportePeer::CA_FCHREPORTE );
-		$c->add( ReportePeer::CA_TRANSPORTE, "Marítimo" );
-		$c->add( ReportePeer::CA_USUANULADO, null, Criteria::ISNULL );
-		$c->add( ReportePeer::CA_FCHREPORTE,"2008-04-01" , Criteria::GREATER_EQUAL );
+		$response = sfContext::getInstance()->getResponse();		
+		$response->addJavaScript("extExtras/RowExpander",'last');
+		
+		$reportes = ReportePeer::getReportesActivosImpoMaritimo( $this->getUser()->getClienteActivo() );
+		
+		$this->data=array();
+		
+		foreach( $reportes as $reporte ){
+			if( !$reporte->esUltimaVersion() ){
+				continue;
+			}	
+			
+			$class= $reporte->getColorStatus();
+			
+			$origen = $reporte->getOrigen();
+			if( $origen ){
+				$origenStr = $origen->getCaCiudad();
+			}else{
+				$origenStr="";
+			}		
+			
+			$destino = $reporte->getDestino();
+			if( $destino ){
+				$destinoStr = $destino->getCaCiudad();
+			}else{
+				$destinoStr="";
+			}	
+			
+			$historial = $reporte->getHistorialStatus();
+			
+			
+			if( count($historial)>0 ){			
+				$ultimo = array_pop($historial);
+				reset($historial);			
+				$actualizado = date( "Y-m-d" , key($historial) );
+				$status = $ultimo['status'];
+			}else{
+				$actualizado = "";
+				$status = "";
+			}
+			
+			$this->data[] = array(
+								"consecutivo"=>$reporte->getCaConsecutivo(),
+								"origen"=>$origenStr,
+								"destino"=>$destinoStr,
+								"ETS"=>$reporte->getETS(),
+								"ETA"=>$reporte->getETA(),
+								"orden"=>$reporte->getCaOrdenClie(),
+								"proveedor"=>$reporte->getTercero()->getCaNombre(),
+								"status"=>$status,
+								"actualizado"=>$actualizado,								
+								"style"=>$reporte->getColorStatus()
+								
+
+							);
+			
+		}
+		
+		
 				
-		$pager = new sfPropelPager('Reporte', 20);		
-		$pager->setCriteria($c);	
-		$pager->setPage($this->getRequestParameter('page', 1));			
-		$pager->init();
-		
-		$this->reportes_pager = $pager;	
-		
 	}
 	
 	
@@ -38,14 +83,16 @@ class maritimoActions extends sfActions
 	* Muestra detalles de la referencia
 	*/
 	
-	public function executeVerReferencia(){
-		$referencia =  $this->getRequestParameter("referencia");		
+	public function executeDetailsRep(){
+	
+	
+		/*$referencia =  $this->getRequestParameter("referencia");		
 		$this->forward404Unless( $referencia );
 		
 		$c = new Criteria();
 		$c->add( InoClientesSeaPeer::CA_REFERENCIA, $referencia );
 		$c->add( InoClientesSeaPeer::CA_IDCLIENTE, $this->getUser()->getClienteActivo() );
-		$this->referenciasCliente = InoClientesSeaPeer::doSelect( $c );		
+		$this->referenciasCliente = InoClientesSeaPeer::doSelect( $c );		*/
 		
 		$this->user = $this->getUser();
 

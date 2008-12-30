@@ -1,8 +1,8 @@
 
 
+<div align="center">
 <h3>Pagina Principal</h3>
-
-
+<br />
 
 <table width="539" border="1" class="table1">
 	<tr>
@@ -72,3 +72,4 @@
 		</td>
 	</tr>	
 </table>
+</div>

@@ -43,7 +43,7 @@ class homepageActions extends sfActions
 	* Muestra el componente ListaClientes
 	*/
 	public function executeListaClientes(){
-		$this->filtro = $this->getRequestParameter("filtro");
+		$this->filtro = $this->getRequestParameter("filtro");		
 		$this->setLayout("ajax");
 	}
 	
@@ -67,27 +67,8 @@ class homepageActions extends sfActions
 		if( !$this->getUser()->getClienteActivo() ){			
 			$this->redirect( "homepage/index");
 		}
-		
-		
-		
-		//ultimos reportes	
-		
-		
-		$c = ReportePeer::getReportesActivos(null , $this->getUser()->getClienteActivo(), true );
 				
-		$pager = new sfPropelPager('Reporte', 20);		
-		$pager->setCriteria($c);	
-		$pager->setPage($this->getRequestParameter('page', 1));			
-		$pager->init();
-		
-		$this->reportes_pager = $pager;
-		
 	}
-	
-	
-	
-	
-
 	
 }
 

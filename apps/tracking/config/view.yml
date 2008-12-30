@@ -9,9 +9,9 @@ default:
     keywords:     tracking, cargo
     language:     es
 
-  stylesheets:    [tracking]
+  stylesheets:    [tracking, ext/css/ext-all, ext/css/xtheme-slate]
 
-  javascripts:    [tracking, prototype/prototype, prototype/effects, prototype/controls  ,prototype/scriptaculous ]
+  javascripts:    [tracking, ext/adapter/ext/ext-base, ext/ext-all-debug, tracking,  prototype/prototype, prototype/effects, prototype/controls  ,prototype/scriptaculous ]
 
   has_layout:     on
   layout:         layout

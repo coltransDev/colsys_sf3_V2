@@ -1,3 +1,4 @@
+<div align="center">
 <?
 
 if( $sf_user->hasCredential("customer") ){
@@ -52,3 +53,4 @@ if( $sf_user->hasCredential("customer") ){
 <?
 }
 ?>
+</div>

@@ -1,3 +1,4 @@
+<div align="center">
 <?
 echo form_tag("login/novell");
 use_helper("Validation");
@@ -32,6 +33,4 @@ use_helper("Validation");
 
 </form>
 
-<p>
-	 
-</p>
+</div>

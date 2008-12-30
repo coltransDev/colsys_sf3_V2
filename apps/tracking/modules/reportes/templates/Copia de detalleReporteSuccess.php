@@ -1,69 +1,25 @@
 <?
-use_helper (  "Popup", "MimeType" );
+use_helper ( "Modalbox", "Javascript", "Popup", "MimeType" );
 $fileIdx = 0;
 ?>
-<script language="javascript">
-	function comentar( id ){		
-		document.getElementById( "coment_status_txt_"+id ).style.display = "inline";
-		document.getElementById( "coment_status_"+id ).style.display = "none";
-	}
-	function cancelar_comentar( id ){
-		document.getElementById( "coment_status_"+id ).style.display = "inline";
-		document.getElementById( "coment_status_txt_"+id ).style.display = "none";
-	}
-	
-	function guardar_comentario( id, idreporte, idemail ){
-		
-		var txt = document.getElementById( "coment_status_field_"+id ).value;
-		Ext.Ajax.request( 
-			{   
-				waitMsg: 'Guardando...',						
-				url: '<?=url_for("reportes/guardarRespuesta")?>', 						//method: 'POST', 
-				//Solamente se envian los cambios 						
-				params : {
-					idemail: idemail,
-					idreporte: idreporte, 
-					comentario: txt
-				},
-										
-				callback :function(options, success, response){	
-					alert("asd");					
-					var res = Ext.util.JSON.decode( response.responseText );	
-					/*
-					if( res.success ){	
-						store.each(
-							function(r){
-								if(r.id == res.id){									
-									store.remove( r );
-								}
-							}
-						);							
-					}*/
-				}	
-			 }
-		); 				
-		//document.getElementById( "coment_status_txt_"+id ).style.display = "none";
-	}
-		
-</script>
 <table width="90%" border="1" class="table1">
 	<tr>
 		<th colspan="2">Detalles del embarque</th>
 	</tr>
 	<tr>
 		<td colspan="2">
-		<div align="left"><b>Proveedor:</b><br>
+		<div align="left"><strong>Proveedor:</strong><br>
 	        <?=$reporte->getTercero ()?>		
         </div>		</td>
 	</tr>
 	<tr>
 		<td width="50%">
-		<div align="left"><b>Origen:</b><br />
+		<div align="left"><strong>Origen:</strong><br />
 		  <?=$reporte->getOrigen ()?>	  
 		  </div>		</td>
 		<td width="50%">
-		<div align="left"><b>Destino:<br />
-		</b>
+		<div align="left"><strong>Destino:<br />
+		</strong>
 	      <?=$reporte->getDestino ()?> 
 	    </div>		</td>
 	</tr>
@@ -74,14 +30,14 @@ $fileIdx = 0;
 				$transportador = $reporte->getTransportador ();
 				if ($transportador) {
 					?>
-		  <b>Transportador</b><br />
+		  <strong>Transportador</strong><br />
 		  <?
 					echo $transportador->getCaNombre ();
 				}
 				?>
 		  </div>		</td>
 		<td>
-		<div align="left"><b>Modalidad:</b> <br />
+		<div align="left"><strong>Modalidad:</strong> <br />
 		  <?=$reporte->getCaModalidad ()?>
 		  </div>		</td>
 	</tr>
@@ -101,30 +57,30 @@ $fileIdx = 0;
 		?>
 	
 	<tr>
-		<td><div align="left"><b>ETS</b><br />
+		<td><div align="left"><strong>ETS</strong><br />
 			<?=$reporte->getETS ()?>
 		</div></td>
-		<td><div align="left"><b>ETA</b><br />
+		<td><div align="left"><strong>ETA</strong><br />
 			<?=$reporte->getETA ()?></div></td>
 	</tr>
 	<tr>
 		<td width="50%">
-		<div align="left"><b><?=$reporte->getCaTransporte()=="Aéreo"?"HAWB":"HBL"?></b> <br />
+		<div align="left"><strong><?=$reporte->getCaTransporte()=="Aéreo"?"HAWB":"HBL"?></strong> <br />
 	      <?=$reporte->getDoctransporte ()?>
 		  </div>		</td>
 		<td width="50%">
-		<div align="left"><b>Piezas:<br />
-		</b>
+		<div align="left"><strong>Piezas:<br />
+		</strong>
 	      <?=$reporte->getPiezas () ?>
 		  </div>		</td>
 	</tr>
 	<tr>
 		<td>
-		<div align="left"><b>Peso </b> <br />
+		<div align="left"><strong>Peso Neto </strong> <br />
         <?= $reporte->getPeso () ?>
 	    </div>		</td>
 		<td>
-		<div align="left"><b>Volumen </b><br />
+		<div align="left"><strong>Volumen </strong><br />
         <?=$reporte->getVolumen () ?>
 	    </div>		</td>
 	</tr>
@@ -135,11 +91,11 @@ $fileIdx = 0;
 			?>
 	<tr>
 		<td>
-		<div align="left"><b>Fecha Liberaci&oacute;n</b><br />
+		<div align="left"><strong>Fecha Liberaci&oacute;n</strong><br />
   	      <?=$referencia->getCaFchLiberacion ()?>
   	    </div>		</td>
 		<td>
-		<div align="left"><b>Nota Liberaci&oacute;n</b><br />
+		<div align="left"><strong>Nota Liberaci&oacute;n</strong><br />
   	      <?=$referencia->getCaNotaLiberacion ()?>
   	    </div>		</td>
 	</tr>
@@ -156,11 +112,11 @@ $fileIdx = 0;
 			?>	
 		<tr>
 		<td>
-		<div align="left"><b>Factura</b><br />
+		<div align="left"><strong>Factura</strong><br />
 	        <?=$ingreso->getCaFactura ()?>
 		    </div>		</td>
 		<td>
-		<div align="left"><b>Fecha factura</b><br />
+		<div align="left"><strong>Fecha factura</strong><br />
 	        <?=$ingreso->getCaFchfactura ()?>
 		    </div>		</td>
 	</tr>
@@ -169,11 +125,11 @@ $fileIdx = 0;
 				?>
 		<tr>
 		<td>
-		<div align="left"><b>Recibo de caja </b><br />
+		<div align="left"><strong>Recibo de caja </strong><br />
 	        <?=$ingreso->getCaReccaja () ? $ingreso->getCaReccaja () : "&nbsp;"?>
 		    </div>		</td>
 		<td>
-		<div align="left"><b>Referencia:</b><br />
+		<div align="left"><strong>Referencia:</strong><br />
         <?=$referencia->getCaReferencia ()?>
 	    </div>		</td>
 	</tr>	  
@@ -217,12 +173,12 @@ $statuss = $reporte->getHistorialStatus ();
 	</tr>
 	<tr>
 		<td>
-		<div align="left"><b>Fecha </b></div>
+		<div align="left"><strong>Fecha </strong></div>
 		</td>
 		<td>
-		<div align="left"><b> Status</b></div>
+		<div align="left"><strong> Status</strong></div>
 		</td>
-		<td><b>Opciones</b></td>
+		<td><strong>Opciones</strong></td>
 	</tr>
 	<?
 	if( count($statuss) ){
@@ -230,36 +186,23 @@ $statuss = $reporte->getHistorialStatus ();
 	?>
 	
 	<tr>
-		<td width="16%" valign="top">
-		<div align="left" class="story"><?=Utils::fechaMes(date("Y-m-d", $timestamp ))." ".date("h:i A", $timestamp ) ?> 
+		<td width="19%" valign="top">
+		<div align="left"><strong><?=Utils::fechaMes(date("Y-m-d", $timestamp ))." ".date("h:i A", $timestamp ) ?> </strong>
 		</div>
-	  </td>
-		<td width="73%">			
-			<div class="story">			
-				<?=Utils::replace ( $status["status"] )?>	
-				<br />			
+		</td>
+		<td width="70%">
+		<div align="left" class="info">	
+			
+			
+			<?=Utils::replace ( $status["status"] )?>		
 			</div>
-			
-			<?
-			include_component("reportes","listaRespuestas", array("idreporte"=>$reporte->getCaIdreporte(), "idemail"=>$status['emailid'] ));
-			?>
-			
-			<div class="story_coment" id="coment_status_txt_<?=$timestamp?>" style="display:none" >
-				<textarea rows="1" cols="50" id="coment_status_field_<?=$timestamp?>" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
-				<br />
-				
-				<b><a onclick="guardar_comentario('<?=$timestamp?>', <?=$reporte->getCaIdreporte()?>, <?=$status['emailid']?>  )">Guardar</b></a> <b><a onclick="cancelar_comentar('<?=$timestamp?>')">Cancelar</a></b>
-			</div>	
-			<div class="story_coment" id="coment_status_<?=$timestamp?>" onclick="comentar('<?=$timestamp?>')">
-				<b>Respuesta</b>
-			</div>	
-	  </td>
+		</td>
 		<td width="11%"><?php
 			if( isset($status["emailid"]) ){
-				echo link_to ( image_tag ( "24x24/mail_post_to.gif" ), 'reportes/verEmail?email=' .$status["emailid"]  );
+				echo link_to ( image_tag ( "24x24/mail_foward.png" ), 'reportes/verEmail?email=' .$status["emailid"]  );
 				
 				
-			}			
+			}
 			?></td>
 	</tr>
 	<?
@@ -267,7 +210,7 @@ $statuss = $reporte->getHistorialStatus ();
 	}else{
 	?>
 	<tr>
-	  <td valign="top" colspan="3"><div align="center">No se han creado status en el momento</div></td>
+		<td width="19%" valign="top" colspan="3"><div align="center">No se han creado status en el momento</div></td>
 	</tr>
 	<?
 	}
@@ -339,4 +282,6 @@ $statuss = $reporte->getHistorialStatus ();
 	}
 	?>
 </table>
+
+
 

@@ -33,9 +33,7 @@
 	
 		
 		
-		<?
-		include_component("menu", "menubar")
-		?>
+		
 			
 		
 	</div>
@@ -44,11 +42,13 @@
 
 	<!--Header Start-->			
 	<div class="header">
-	<!--<jdoc:include type="modules" name="user5"  />	-->					
+		<?
+		include_component("menu", "menubar")
+		?>
 	</div>	
 	
 		
-	<div id="content" align="center">
+	<div id="content" >
 		<?php echo $sf_content ?>
 	</div>
 	

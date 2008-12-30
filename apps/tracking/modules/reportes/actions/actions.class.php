@@ -14,8 +14,8 @@ class reportesActions extends sfActions
 	* Muestra una vista previa del reporte cuando el usuario hace click sobre el embarque
 	*/
 	public function executeDetalleReporte(){
-		$reporte_id = $this->getRequestParameter( "reporte" );
-		$this->reporte = ReportePeer::retrieveByPk( $reporte_id );
+		$reporte_id = $this->getRequestParameter( "rep" );
+		$this->reporte = ReportePeer::retrieveByConsecutivo( $reporte_id );
 		$this->forward404Unless( $this->reporte );
 			
 		
@@ -33,7 +33,7 @@ class reportesActions extends sfActions
 		*/
 		$directory = $this->reporte->getDirectorio();									
 		if( !is_dir($directory) ){			
-			mkdir($directory, 0777);			
+			@mkdir($directory, 0777);			
 		}		
 		$this->files=sfFinder::type('file')->maxDepth(0)->in($directory);								
 		$this->user->clearFiles();
@@ -42,9 +42,30 @@ class reportesActions extends sfActions
 	
 	public function executeVerEmail(){
 		$email_id = $this->getRequestParameter( "email" );	
-		$this->email = EmailPeer::retrieveByPk( $email_id );
-				
+		$this->email = EmailPeer::retrieveByPk( $email_id );				
 		//$this->forward404Unless( $this->email );
+	}
+	
+	/*
+	* Guarda un comentario realizado en un status
+	*/
+	public function executeGuardarRespuesta( $request ){		
+		$this->setLayout("ajax");
+		
+		$idreporte = $request->getParameter("idreporte"); 
+		$idemail = $request->getParameter("idemail"); 
+		$comentario = $request->getParameter("comentario"); 
+		
+		//print_r($_POST );
+		$reporte = ReportePeer::retrieveByPk( $idreporte );
+		
+		$respuesta  = new RepStatusRespuesta();
+		$respuesta->setCaIdreporte( $idreporte );
+		$respuesta->setCaIdemail( $idemail );
+		$respuesta->setCaRespuesta( $comentario );
+		$respuesta->setCaFchcreado( time() );
+		$respuesta->save();
+		//$respuesta->setCaEmail(); ca_idrepstatusrespuestas
 		
 		
 	}

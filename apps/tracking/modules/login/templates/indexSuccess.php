@@ -1,3 +1,4 @@
+<div align="center">
 <?
 echo form_tag("login/register");
 ?>
@@ -45,3 +46,4 @@ echo form_tag("login/register");
 <p>
 	<?=link_to(" Usuarios de Colsys Click aca ", "login/novell")?> 
 </p>
+</div>
