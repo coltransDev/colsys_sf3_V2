@@ -12,6 +12,7 @@ class Reporte extends BaseReporte
 	private $ultimoAviso=null; 	
 	private $ultimoStatus=null;
 	private $historialStatus=null;
+	private $inoClientesSea=null;
 	
 	/*
 	* Retorna un array conteniendo los proovedores del reporte
@@ -139,53 +140,6 @@ class Reporte extends BaseReporte
 	}
 	
 	/*
-	* Retorna los avisos asociasdos al reporte , sobrecarga getRepAvisos en BaseReporte
-	* Author: Andres Botero
-	*/
-	public function getRepAvisos( $criteria = null, PropelPDO $con = null ){
-		
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-		
-		$criteria->add( RepAvisoPeer::CA_IDREPORTE, $this->getCaIdreporte() );
-		$criteria->addDescendingOrderByColumn( RepAvisoPeer::CA_FCHENVIO );
-			
-		return RepAvisoPeer::doSelect( $criteria, $con );		
-	}
-	
-	/*
-	* Retorna el ultimo aviso segun el orden cronologico
-	* Author: Andres Botero
-	*/	
-	public function getUltimoAviso(){
-		if( $this->ultimoAviso ){
-			return $this->ultimoAviso;
-		}else{	
-			$c =new Criteria();
-			$c->add( RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte() );
-			$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
-			$c->add( RepStatusPeer::CA_ETAPA, "ETA");
-			
-			$c->setLimit(1);
-			
-			$aviso = RepStatusPeer::doSelectOne( $c );
-			
-			$this->ultimoAviso = $aviso;
-			
-			if( $this->ultimoAviso ){
-				return $this->ultimoAviso;
-			}else{
-				return null;
-			}
-		}
-	}
-	
-	/*
 	* Retorna el ultimo status segun el orden cronologico
 	* Author: Andres Botero
 	*/	
@@ -209,6 +163,55 @@ class Reporte extends BaseReporte
 			}
 		}
 	}
+	
+	/*
+	* Retorna los avisos asociasdos al reporte , sobrecarga getRepAvisos en BaseReporte
+	* Author: Andres Botero
+	*/
+	/*public function getRepAvisos( $criteria = null, PropelPDO $con = null ){
+		
+		if ($criteria === null) {
+			$criteria = new Criteria();
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+		
+		$criteria->add( RepAvisoPeer::CA_IDREPORTE, $this->getCaIdreporte() );
+		$criteria->addDescendingOrderByColumn( RepAvisoPeer::CA_FCHENVIO );
+			
+		return RepAvisoPeer::doSelect( $criteria, $con );		
+	}*/
+	
+	/*
+	* Retorna el ultimo aviso segun el orden cronologico
+	* Author: Andres Botero
+	*/	
+	/*public function getUltimoAviso(){
+		if( $this->ultimoAviso ){
+			return $this->ultimoAviso;
+		}else{	
+			$c =new Criteria();
+			$c->add( RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte() );
+			$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
+			$c->add( RepStatusPeer::CA_ETAPA, "ETA");
+			
+			$c->setLimit(1);
+			
+			$aviso = RepStatusPeer::doSelectOne( $c );
+			
+			$this->ultimoAviso = $aviso;
+			
+			if( $this->ultimoAviso ){
+				return $this->ultimoAviso;
+			}else{
+				return null;
+			}
+		}
+	}*/
+	
+	
 	
 	/*
 	* Retorna el objeto Contacto asociado al reporte 
@@ -276,10 +279,13 @@ class Reporte extends BaseReporte
 	* @author Andres Botero
 	*/
 	public function getInoClientesSea(){
-		$c = new Criteria();
-		$c->addJoin( InoClientesSeaPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
-		$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );
-		return InoClientesSeaPeer::doSelectOne( $c );
+		if( !$this->inoClientesSea ){
+			$c = new Criteria();
+			$c->addJoin( InoClientesSeaPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
+			$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );
+			$this->inoClientesSea = InoClientesSeaPeer::doSelectOne( $c );
+		}
+		return $this->inoClientesSea;
 	}
 	
 	/*
@@ -837,7 +843,7 @@ class Reporte extends BaseReporte
 				$inoclientesSea = $this->getInoClientesSea();
 				
 				if( $inoclientesSea ){
-											
+															
 					$refSea = $inoclientesSea->getInoMaestraSea();											
 					if( $refSea->getCaFchconfirmado( ) ){	
 						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["tipo"] = "status maritimo";
@@ -849,8 +855,7 @@ class Reporte extends BaseReporte
 						
 						if( $email ){
 							$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["emailid"] = $email->getCaIdEmail();				
-						}
-						
+						}						
 					}						
 									
 					/*
