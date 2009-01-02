@@ -19,6 +19,8 @@ class aduanaActions extends sfActions
     	$c = new Criteria();
 		$c->add( AduanaMaestraPeer::CA_IDCLIENTE,  $this->getUser()->getClienteActivo() );
 		$c->add( AduanaMaestraPeer::CA_FCHREFERENCIA,  "2008-01-01", Criteria::GREATER_EQUAL);
+		
+		$c->add( AduanaMaestraPeer::CA_REFERENCIA,  "2%", Criteria::LIKE);
 			
 		//$c->addDescendingOrderByColumn( InoMaestraSeaPeer::CA_FCHEMBARQUE );
 		$c->addDescendingOrderByColumn( AduanaMaestraPeer::CA_REFERENCIA );
