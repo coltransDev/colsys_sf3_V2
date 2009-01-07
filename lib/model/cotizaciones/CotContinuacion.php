@@ -50,9 +50,9 @@ class CotContinuacion extends BaseCotContinuacion
 	}
 	
 	public function getTextoTarifa(){
-		$str = $this->getCaIdMoneda()." ".$this->getCaValorTar();
+		$str = $this->getCaIdMoneda()." ".Utils::formatNumber($this->getCaValorTar());
 		if( $this->getCaValorMin() ){
-			$str .= " /Min. ". $this->getCaIdMoneda()." ".$this->getCaValorMin();
+			$str .= " /Min. ". $this->getCaIdMoneda()." ".Utils::formatNumber($this->getCaValorMin());
 		}
 		return $str;
 	}

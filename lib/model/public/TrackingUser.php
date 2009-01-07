@@ -29,5 +29,16 @@ class TrackingUser extends BaseTrackingUser
 		$this->setCaActivationCode( $code );
 		return $code;
 	}
+	
+	/*
+	* Verifica que el password sea valido
+	*/
+	public function checkPasswd( $sValue ){
+		$passwd = sha1($this->getCaActivationCode().$sValue);			
+		if( $passwd == $this->getCaPasswd() ){					
+			return true;			
+		}
+		return false;		
+	}
 }
 ?>

@@ -13,7 +13,7 @@
  *
  * @package    lib.model.sdnlist.map
  */
-class SdnMapBuilder {
+class SdnMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,24 +54,25 @@ class SdnMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(SdnPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_sdn');
+		$tMap = $this->dbMap->addTable(SdnPeer::TABLE_NAME);
 		$tMap->setPhpName('Sdn');
+		$tMap->setClassname('Sdn');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addPrimaryKey('CA_UID', 'CaUid', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addPrimaryKey('CA_UID', 'CaUid', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_FIRSTNAME', 'CaFirstname', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FIRSTNAME', 'CaFirstname', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_LASTNAME', 'CaLastname', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_LASTNAME', 'CaLastname', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_TITLE', 'CaTitle', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TITLE', 'CaTitle', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_SDNTYPE', 'CaSdntype', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_SDNTYPE', 'CaSdntype', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_REMARKS', 'CaRemarks', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_REMARKS', 'CaRemarks', 'VARCHAR', false, null);
 
 	} // doBuild()
 

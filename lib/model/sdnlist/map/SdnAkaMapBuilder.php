@@ -13,7 +13,7 @@
  *
  * @package    lib.model.sdnlist.map
  */
-class SdnAkaMapBuilder {
+class SdnAkaMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,24 +54,25 @@ class SdnAkaMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(SdnAkaPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_sdnaka');
+		$tMap = $this->dbMap->addTable(SdnAkaPeer::TABLE_NAME);
 		$tMap->setPhpName('SdnAka');
+		$tMap->setClassname('SdnAka');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_UID', 'CaUid', 'double' , CreoleTypes::NUMERIC, 'tb_sdn', 'CA_UID', true, null);
+		$tMap->addForeignPrimaryKey('CA_UID', 'CaUid', 'NUMERIC' , 'tb_sdn', 'CA_UID', true, null);
 
-		$tMap->addPrimaryKey('CA_UID_AKA', 'CaUidAka', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addPrimaryKey('CA_UID_AKA', 'CaUidAka', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_TYPE', 'CaType', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_TYPE', 'CaType', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CATEGORY', 'CaCategory', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CATEGORY', 'CaCategory', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FIRSTNAME', 'CaFirstname', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_FIRSTNAME', 'CaFirstname', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_LASTNAME', 'CaLastname', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_LASTNAME', 'CaLastname', 'VARCHAR', false, null);
 
 	} // doBuild()
 

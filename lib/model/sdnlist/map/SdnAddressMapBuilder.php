@@ -13,7 +13,7 @@
  *
  * @package    lib.model.sdnlist.map
  */
-class SdnAddressMapBuilder {
+class SdnAddressMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,30 +54,31 @@ class SdnAddressMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(SdnAddressPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_sdnaddress');
+		$tMap = $this->dbMap->addTable(SdnAddressPeer::TABLE_NAME);
 		$tMap->setPhpName('SdnAddress');
+		$tMap->setClassname('SdnAddress');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_UID', 'CaUid', 'double' , CreoleTypes::NUMERIC, 'tb_sdn', 'CA_UID', true, null);
+		$tMap->addForeignPrimaryKey('CA_UID', 'CaUid', 'NUMERIC' , 'tb_sdn', 'CA_UID', true, null);
 
-		$tMap->addPrimaryKey('CA_UID_ADDRESS', 'CaUidAddress', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addPrimaryKey('CA_UID_ADDRESS', 'CaUidAddress', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_ADDRESS1', 'CaAddress1', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ADDRESS1', 'CaAddress1', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ADDRESS2', 'CaAddress2', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ADDRESS2', 'CaAddress2', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ADDRESS3', 'CaAddress3', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ADDRESS3', 'CaAddress3', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_CITY', 'CaCity', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_CITY', 'CaCity', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_STATE', 'CaState', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_STATE', 'CaState', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_POSTAL', 'CaPostal', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_POSTAL', 'CaPostal', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_COUNTRY', 'CaCountry', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_COUNTRY', 'CaCountry', 'VARCHAR', false, null);
 
 	} // doBuild()
 

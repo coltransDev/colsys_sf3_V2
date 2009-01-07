@@ -13,7 +13,7 @@
  *
  * @package    lib.model.sdnlist.map
  */
-class SdnIdMapBuilder {
+class SdnIdMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,26 +54,27 @@ class SdnIdMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(SdnIdPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_sdnid');
+		$tMap = $this->dbMap->addTable(SdnIdPeer::TABLE_NAME);
 		$tMap->setPhpName('SdnId');
+		$tMap->setClassname('SdnId');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addForeignPrimaryKey('CA_UID', 'CaUid', 'double' , CreoleTypes::NUMERIC, 'tb_sdn', 'CA_UID', true, null);
+		$tMap->addForeignPrimaryKey('CA_UID', 'CaUid', 'NUMERIC' , 'tb_sdn', 'CA_UID', true, null);
 
-		$tMap->addPrimaryKey('CA_UID_ID', 'CaUidId', 'double', CreoleTypes::NUMERIC, true, null);
+		$tMap->addPrimaryKey('CA_UID_ID', 'CaUidId', 'NUMERIC', true, null);
 
-		$tMap->addColumn('CA_IDTYPE', 'CaIdtype', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_IDTYPE', 'CaIdtype', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IDNUMBER', 'CaIdnumber', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_IDNUMBER', 'CaIdnumber', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_IDCOUNTRY', 'CaIdcountry', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_IDCOUNTRY', 'CaIdcountry', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ISSUEDATE', 'CaIssuedate', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_ISSUEDATE', 'CaIssuedate', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_EXPIRATIONDATE', 'CaExpirationdate', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_EXPIRATIONDATE', 'CaExpirationdate', 'VARCHAR', false, null);
 
 	} // doBuild()
 

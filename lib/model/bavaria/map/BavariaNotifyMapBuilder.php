@@ -13,7 +13,7 @@
  *
  * @package    lib.model.bavaria.map
  */
-class BavariaNotifyMapBuilder {
+class BavariaNotifyMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
@@ -54,18 +54,19 @@ class BavariaNotifyMapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap('propel');
+		$this->dbMap = Propel::getDatabaseMap(BavariaNotifyPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable('tb_bavarianotify');
+		$tMap = $this->dbMap->addTable(BavariaNotifyPeer::TABLE_NAME);
 		$tMap->setPhpName('BavariaNotify');
+		$tMap->setClassname('BavariaNotify');
 
 		$tMap->setUseIdGenerator(false);
 
-		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'string', CreoleTypes::VARCHAR, false, 10);
+		$tMap->addPrimaryKey('CA_CONSECUTIVO', 'CaConsecutivo', 'VARCHAR', true, 10);
 
-		$tMap->addColumn('CA_FCHENVIO', 'CaFchenvio', 'int', CreoleTypes::TIMESTAMP, false, null);
+		$tMap->addColumn('CA_FCHENVIO', 'CaFchenvio', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUENVIO', 'CaUsuenvio', 'string', CreoleTypes::VARCHAR, false, null);
+		$tMap->addColumn('CA_USUENVIO', 'CaUsuenvio', 'VARCHAR', false, null);
 
 	} // doBuild()
 

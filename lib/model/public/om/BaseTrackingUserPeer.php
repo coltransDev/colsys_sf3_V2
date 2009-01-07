@@ -19,13 +19,10 @@ abstract class BaseTrackingUserPeer {
 	const CLASS_DEFAULT = 'lib.model.public.TrackingUser';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 8;
+	const NUM_COLUMNS = 7;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
-
-	/** the column name for the CA_ID field */
-	const CA_ID = 'tb_tracking_users.CA_ID';
 
 	/** the column name for the CA_EMAIL field */
 	const CA_EMAIL = 'tb_tracking_users.CA_EMAIL';
@@ -69,11 +66,11 @@ abstract class BaseTrackingUserPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaId', 'CaEmail', 'CaBlocked', 'CaActivationCode', 'CaPasswd', 'CaPasswordExpiry', 'CaActivated', 'CaIdcontacto', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caId', 'caEmail', 'caBlocked', 'caActivationCode', 'caPasswd', 'caPasswordExpiry', 'caActivated', 'caIdcontacto', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_ID, self::CA_EMAIL, self::CA_BLOCKED, self::CA_ACTIVATION_CODE, self::CA_PASSWD, self::CA_PASSWORD_EXPIRY, self::CA_ACTIVATED, self::CA_IDCONTACTO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_id', 'ca_email', 'ca_blocked', 'ca_activation_code', 'ca_passwd', 'ca_password_expiry', 'ca_activated', 'ca_idcontacto', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+		BasePeer::TYPE_PHPNAME => array ('CaEmail', 'CaBlocked', 'CaActivationCode', 'CaPasswd', 'CaPasswordExpiry', 'CaActivated', 'CaIdcontacto', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caEmail', 'caBlocked', 'caActivationCode', 'caPasswd', 'caPasswordExpiry', 'caActivated', 'caIdcontacto', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_EMAIL, self::CA_BLOCKED, self::CA_ACTIVATION_CODE, self::CA_PASSWD, self::CA_PASSWORD_EXPIRY, self::CA_ACTIVATED, self::CA_IDCONTACTO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_email', 'ca_blocked', 'ca_activation_code', 'ca_passwd', 'ca_password_expiry', 'ca_activated', 'ca_idcontacto', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -83,11 +80,11 @@ abstract class BaseTrackingUserPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaId' => 0, 'CaEmail' => 1, 'CaBlocked' => 2, 'CaActivationCode' => 3, 'CaPasswd' => 4, 'CaPasswordExpiry' => 5, 'CaActivated' => 6, 'CaIdcontacto' => 7, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caId' => 0, 'caEmail' => 1, 'caBlocked' => 2, 'caActivationCode' => 3, 'caPasswd' => 4, 'caPasswordExpiry' => 5, 'caActivated' => 6, 'caIdcontacto' => 7, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_ID => 0, self::CA_EMAIL => 1, self::CA_BLOCKED => 2, self::CA_ACTIVATION_CODE => 3, self::CA_PASSWD => 4, self::CA_PASSWORD_EXPIRY => 5, self::CA_ACTIVATED => 6, self::CA_IDCONTACTO => 7, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_id' => 0, 'ca_email' => 1, 'ca_blocked' => 2, 'ca_activation_code' => 3, 'ca_passwd' => 4, 'ca_password_expiry' => 5, 'ca_activated' => 6, 'ca_idcontacto' => 7, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
+		BasePeer::TYPE_PHPNAME => array ('CaEmail' => 0, 'CaBlocked' => 1, 'CaActivationCode' => 2, 'CaPasswd' => 3, 'CaPasswordExpiry' => 4, 'CaActivated' => 5, 'CaIdcontacto' => 6, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caEmail' => 0, 'caBlocked' => 1, 'caActivationCode' => 2, 'caPasswd' => 3, 'caPasswordExpiry' => 4, 'caActivated' => 5, 'caIdcontacto' => 6, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_EMAIL => 0, self::CA_BLOCKED => 1, self::CA_ACTIVATION_CODE => 2, self::CA_PASSWD => 3, self::CA_PASSWORD_EXPIRY => 4, self::CA_ACTIVATED => 5, self::CA_IDCONTACTO => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_email' => 0, 'ca_blocked' => 1, 'ca_activation_code' => 2, 'ca_passwd' => 3, 'ca_password_expiry' => 4, 'ca_activated' => 5, 'ca_idcontacto' => 6, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -168,8 +165,6 @@ abstract class BaseTrackingUserPeer {
 	 */
 	public static function addSelectColumns(Criteria $criteria)
 	{
-
-		$criteria->addSelectColumn(TrackingUserPeer::CA_ID);
 
 		$criteria->addSelectColumn(TrackingUserPeer::CA_EMAIL);
 
@@ -309,7 +304,7 @@ abstract class BaseTrackingUserPeer {
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = (string) $obj->getCaId();
+				$key = (string) $obj->getCaEmail();
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -329,7 +324,7 @@ abstract class BaseTrackingUserPeer {
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof TrackingUser) {
-				$key = (string) $value->getCaId();
+				$key = (string) $value->getCaEmail();
 			} elseif (is_scalar($value)) {
 				// assume we've been passed a primary key
 				$key = (string) $value;
@@ -712,10 +707,6 @@ abstract class BaseTrackingUserPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from TrackingUser object
 		}
 
-		if ($criteria->containsKey(TrackingUserPeer::CA_ID) && $criteria->keyContainsValue(TrackingUserPeer::CA_ID) ) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ('.TrackingUserPeer::CA_ID.')');
-		}
-
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
@@ -754,8 +745,8 @@ abstract class BaseTrackingUserPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(TrackingUserPeer::CA_ID);
-			$selectCriteria->add(TrackingUserPeer::CA_ID, $criteria->remove(TrackingUserPeer::CA_ID), $comparison);
+			$comparison = $criteria->getComparison(TrackingUserPeer::CA_EMAIL);
+			$selectCriteria->add(TrackingUserPeer::CA_EMAIL, $criteria->remove(TrackingUserPeer::CA_EMAIL), $comparison);
 
 		} else { // $values is TrackingUser object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -828,7 +819,7 @@ abstract class BaseTrackingUserPeer {
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(TrackingUserPeer::CA_ID, (array) $values, Criteria::IN);
+			$criteria->add(TrackingUserPeer::CA_EMAIL, (array) $values, Criteria::IN);
 
 			foreach ((array) $values as $singleval) {
 				// we can invalidate the cache for this single object
@@ -904,7 +895,7 @@ abstract class BaseTrackingUserPeer {
 	/**
 	 * Retrieve a single object by pkey.
 	 *
-	 * @param      int $pk the primary key.
+	 * @param      string $pk the primary key.
 	 * @param      PropelPDO $con the connection to use
 	 * @return     TrackingUser
 	 */
@@ -920,7 +911,7 @@ abstract class BaseTrackingUserPeer {
 		}
 
 		$criteria = new Criteria(TrackingUserPeer::DATABASE_NAME);
-		$criteria->add(TrackingUserPeer::CA_ID, $pk);
+		$criteria->add(TrackingUserPeer::CA_EMAIL, $pk);
 
 		$v = TrackingUserPeer::doSelect($criteria, $con);
 
@@ -946,7 +937,7 @@ abstract class BaseTrackingUserPeer {
 			$objs = array();
 		} else {
 			$criteria = new Criteria(TrackingUserPeer::DATABASE_NAME);
-			$criteria->add(TrackingUserPeer::CA_ID, $pks, Criteria::IN);
+			$criteria->add(TrackingUserPeer::CA_EMAIL, $pks, Criteria::IN);
 			$objs = TrackingUserPeer::doSelect($criteria, $con);
 		}
 		return $objs;

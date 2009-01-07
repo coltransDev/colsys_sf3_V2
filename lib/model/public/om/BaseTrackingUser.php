@@ -21,12 +21,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	protected static $peer;
 
 	/**
-	 * The value for the ca_id field.
-	 * @var        int
-	 */
-	protected $ca_id;
-
-	/**
 	 * The value for the ca_email field.
 	 * @var        string
 	 */
@@ -115,16 +109,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	 */
 	public function applyDefaultValues()
 	{
-	}
-
-	/**
-	 * Get the [ca_id] column value.
-	 * 
-	 * @return     int
-	 */
-	public function getCaId()
-	{
-		return $this->ca_id;
 	}
 
 	/**
@@ -219,26 +203,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	{
 		return $this->ca_idcontacto;
 	}
-
-	/**
-	 * Set the value of [ca_id] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     TrackingUser The current object (for fluent API support)
-	 */
-	public function setCaId($v)
-	{
-		if ($v !== null) {
-			$v = (int) $v;
-		}
-
-		if ($this->ca_id !== $v) {
-			$this->ca_id = $v;
-			$this->modifiedColumns[] = TrackingUserPeer::CA_ID;
-		}
-
-		return $this;
-	} // setCaId()
 
 	/**
 	 * Set the value of [ca_email] column.
@@ -450,14 +414,13 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->ca_email = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-			$this->ca_blocked = ($row[$startcol + 2] !== null) ? (boolean) $row[$startcol + 2] : null;
-			$this->ca_activation_code = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_passwd = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_password_expiry = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_activated = ($row[$startcol + 6] !== null) ? (boolean) $row[$startcol + 6] : null;
-			$this->ca_idcontacto = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+			$this->ca_email = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_blocked = ($row[$startcol + 1] !== null) ? (boolean) $row[$startcol + 1] : null;
+			$this->ca_activation_code = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_passwd = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_password_expiry = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_activated = ($row[$startcol + 5] !== null) ? (boolean) $row[$startcol + 5] : null;
+			$this->ca_idcontacto = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -467,7 +430,7 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 8; // 8 = TrackingUserPeer::NUM_COLUMNS - TrackingUserPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 7; // 7 = TrackingUserPeer::NUM_COLUMNS - TrackingUserPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating TrackingUser object", $e);
@@ -633,9 +596,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 				$this->setContacto($this->aContacto);
 			}
 
-			if ($this->isNew() ) {
-				$this->modifiedColumns[] = TrackingUserPeer::CA_ID;
-			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -644,8 +604,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
-
-					$this->setCaId($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -788,27 +746,24 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaId();
-				break;
-			case 1:
 				return $this->getCaEmail();
 				break;
-			case 2:
+			case 1:
 				return $this->getCaBlocked();
 				break;
-			case 3:
+			case 2:
 				return $this->getCaActivationCode();
 				break;
-			case 4:
+			case 3:
 				return $this->getCaPasswd();
 				break;
-			case 5:
+			case 4:
 				return $this->getCaPasswordExpiry();
 				break;
-			case 6:
+			case 5:
 				return $this->getCaActivated();
 				break;
-			case 7:
+			case 6:
 				return $this->getCaIdcontacto();
 				break;
 			default:
@@ -832,14 +787,13 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	{
 		$keys = TrackingUserPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaId(),
-			$keys[1] => $this->getCaEmail(),
-			$keys[2] => $this->getCaBlocked(),
-			$keys[3] => $this->getCaActivationCode(),
-			$keys[4] => $this->getCaPasswd(),
-			$keys[5] => $this->getCaPasswordExpiry(),
-			$keys[6] => $this->getCaActivated(),
-			$keys[7] => $this->getCaIdcontacto(),
+			$keys[0] => $this->getCaEmail(),
+			$keys[1] => $this->getCaBlocked(),
+			$keys[2] => $this->getCaActivationCode(),
+			$keys[3] => $this->getCaPasswd(),
+			$keys[4] => $this->getCaPasswordExpiry(),
+			$keys[5] => $this->getCaActivated(),
+			$keys[6] => $this->getCaIdcontacto(),
 		);
 		return $result;
 	}
@@ -872,27 +826,24 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaId($value);
-				break;
-			case 1:
 				$this->setCaEmail($value);
 				break;
-			case 2:
+			case 1:
 				$this->setCaBlocked($value);
 				break;
-			case 3:
+			case 2:
 				$this->setCaActivationCode($value);
 				break;
-			case 4:
+			case 3:
 				$this->setCaPasswd($value);
 				break;
-			case 5:
+			case 4:
 				$this->setCaPasswordExpiry($value);
 				break;
-			case 6:
+			case 5:
 				$this->setCaActivated($value);
 				break;
-			case 7:
+			case 6:
 				$this->setCaIdcontacto($value);
 				break;
 		} // switch()
@@ -919,14 +870,13 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	{
 		$keys = TrackingUserPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaId($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaEmail($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaBlocked($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaActivationCode($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaPasswd($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaPasswordExpiry($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaActivated($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaIdcontacto($arr[$keys[7]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaEmail($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaBlocked($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaActivationCode($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaPasswd($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaPasswordExpiry($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaActivated($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaIdcontacto($arr[$keys[6]]);
 	}
 
 	/**
@@ -938,7 +888,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(TrackingUserPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(TrackingUserPeer::CA_ID)) $criteria->add(TrackingUserPeer::CA_ID, $this->ca_id);
 		if ($this->isColumnModified(TrackingUserPeer::CA_EMAIL)) $criteria->add(TrackingUserPeer::CA_EMAIL, $this->ca_email);
 		if ($this->isColumnModified(TrackingUserPeer::CA_BLOCKED)) $criteria->add(TrackingUserPeer::CA_BLOCKED, $this->ca_blocked);
 		if ($this->isColumnModified(TrackingUserPeer::CA_ACTIVATION_CODE)) $criteria->add(TrackingUserPeer::CA_ACTIVATION_CODE, $this->ca_activation_code);
@@ -962,29 +911,29 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(TrackingUserPeer::DATABASE_NAME);
 
-		$criteria->add(TrackingUserPeer::CA_ID, $this->ca_id);
+		$criteria->add(TrackingUserPeer::CA_EMAIL, $this->ca_email);
 
 		return $criteria;
 	}
 
 	/**
 	 * Returns the primary key for this object (row).
-	 * @return     int
+	 * @return     string
 	 */
 	public function getPrimaryKey()
 	{
-		return $this->getCaId();
+		return $this->getCaEmail();
 	}
 
 	/**
-	 * Generic method to set the primary key (ca_id column).
+	 * Generic method to set the primary key (ca_email column).
 	 *
-	 * @param      int $key Primary key.
+	 * @param      string $key Primary key.
 	 * @return     void
 	 */
 	public function setPrimaryKey($key)
 	{
-		$this->setCaId($key);
+		$this->setCaEmail($key);
 	}
 
 	/**
@@ -1030,8 +979,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaId(NULL); // this is a auto-increment column, so set to default value
 
 	}
 

@@ -62,7 +62,7 @@ class TrackingUserLogMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_tracking_users_log_ca_id_seq');
+		$tMap->setPrimaryKeyMethodInfo('tb_tracking_users_log_id');
 
 		$tMap->addPrimaryKey('CA_ID', 'CaId', 'INTEGER', true, null);
 

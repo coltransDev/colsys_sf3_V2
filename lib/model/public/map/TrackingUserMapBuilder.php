@@ -60,13 +60,9 @@ class TrackingUserMapBuilder implements MapBuilder {
 		$tMap->setPhpName('TrackingUser');
 		$tMap->setClassname('TrackingUser');
 
-		$tMap->setUseIdGenerator(true);
+		$tMap->setUseIdGenerator(false);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_tracking_users_ca_id_seq');
-
-		$tMap->addPrimaryKey('CA_ID', 'CaId', 'INTEGER', true, null);
-
-		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'VARCHAR', false, null);
+		$tMap->addPrimaryKey('CA_EMAIL', 'CaEmail', 'VARCHAR', true, null);
 
 		$tMap->addColumn('CA_BLOCKED', 'CaBlocked', 'BOOLEAN', false, null);
 
