@@ -1,1 +1,0 @@
-<h3>La clave se ha cambiado correctamente</h3>
