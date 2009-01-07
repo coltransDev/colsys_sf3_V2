@@ -10,9 +10,13 @@ class StaticEmail{
 		$mess = new Swift_Message( $subject );							
 		
 		//Add some "parts"  
-		//Sending a multipart email decrease your spam score						
-		$mess->attach( new Swift_Message_Part(  $content , "text/html") );
-								
+		//Sending a multipart email decrease your spam score		
+		if(isset( $content["plain"] )){				
+			$mess->attach( new Swift_Message_Part(  $content["plain"] , "text/plain") );
+		}
+		if(isset( $content["html"] )){			
+			$mess->attach( new Swift_Message_Part(  $content["html"] , "text/html") );						
+		}
 		//Recipients 
 		$recipients = new Swift_RecipientList();	
 		
