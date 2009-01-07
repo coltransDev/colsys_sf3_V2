@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.public">
-	<table name="tb_tracking_users" phpName="TrackingUser">
-		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
-		<column name="ca_email" type="varchar" />	
+	<table name="tb_tracking_users" phpName="TrackingUser">		
+		<column name="ca_email" type="varchar" primaryKey="true" />	
 		<column name="ca_blocked" type="boolean" />		
 		<column name="ca_activation_code" type="varchar" />
 		<column name="ca_passwd" type="varchar" />
@@ -15,6 +14,7 @@
 	</table>
 	
 	<table name="tb_tracking_users_log" phpName="TrackingUserLog">
+		<id-method-parameter value="tb_tracking_users_log_id"/>
 		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
 		<column name="ca_email" type="varchar" />	
 		<column name="ca_fchevento" type="timestamp" />		
