@@ -750,6 +750,7 @@ class cotizacionesActions extends sfActions
 				$this->productos[] = $row;
 				 //Se muestran los recargos 
 				$recargos = $opcion->getCotRecargos();
+
 				foreach( $recargos as $recargo ){
 					$tipoRecargo = $recargo->getTipoRecargo();
 					
@@ -1489,6 +1490,7 @@ class cotizacionesActions extends sfActions
 	public function executeVerArchivo(){
 		$this->archivo = CotArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
 		$this->forward404Unless( $this->archivo );
+		
 		$this->getResponse()->addHttpMeta('content-type', $this->archivo->getCaTipo());
     	$this->getResponse()->addHttpMeta('content-length', $this->archivo->getCaTamano());		
 	}
