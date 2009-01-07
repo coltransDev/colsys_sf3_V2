@@ -446,7 +446,7 @@ class traficosActions extends sfActions
 	 */
 	public function executeInformeTraficos(){
 		
-		
+		set_time_limit(0);
 		
 		
 		$formato = $this->getRequestParameter("formato");
@@ -462,10 +462,8 @@ class traficosActions extends sfActions
 	
 	
 	public function executeInformeTraficosFormato1(  ){
-		
-		
+				
 		$this->idCliente = $this->getRequestParameter("idcliente");
-
 		$this->modo = $this->getRequestParameter("modo");
 		$this->cliente = ClientePeer::retrieveByPk( $this->idCliente );
 		$this->fechaInicial = $this->getRequestParameter("fechaInicial");
@@ -477,7 +475,7 @@ class traficosActions extends sfActions
 		
 		switch( $this->ver ){
 			case "activos":		
-				$this->reportes = ReportePeer::getReportesActivos( $this->modo ,  $this->idCliente, false, "proveedor" );
+				$this->reportes = ReportePeer::getReportesActivosImpoMaritimo(  $this->idCliente, false, "orden" ); // proveedor
 				break;
 			case "fecha";
 				

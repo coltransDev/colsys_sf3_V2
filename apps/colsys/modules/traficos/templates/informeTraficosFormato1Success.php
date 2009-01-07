@@ -232,7 +232,7 @@ foreach( $reportes as $reporte ){
 	$ref = $reporte->getNumReferencia()?" ".$reporte->getNumReferencia():"";
 	
 	
-	$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, $reporte->getFchUltimoStatus("d.m.y" ).$ref );
+	$objPHPExcel->getActiveSheet()->setCellValue('R'.$i, $reporte->getFchUltimoStatus("d.m.y" ) );
 	$objPHPExcel->getActiveSheet()->setCellValue('S'.$i, $reporte->getCaConsecutivo().$ref );
 	
 	

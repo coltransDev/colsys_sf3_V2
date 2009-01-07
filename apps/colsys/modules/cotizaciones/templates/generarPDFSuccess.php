@@ -35,6 +35,7 @@ $pdf->Cell(0, 4,$contacto->getCaSaludo(),0,1);
 $pdf->SetFont('Arial','B',10);
 
 $pdf->Cell(0, 4, strtoupper($contacto->getNombre()),0,1);
+$cargo=null;
 if ( $contacto->getCaCargo()!='' and $contacto->getCaDepartamento()!='') {
 	$cargo = $contacto->getCaCargo()." - ".$contacto->getCaDepartamento();
 } else if ($contacto->getCaCargo()!='' and $contacto->getCaDepartamento()=='') {
@@ -86,8 +87,9 @@ foreach( $productos as $producto ):
 	if ($producto->getCaImpoExpo()==Constantes::EXPO){	
 		$imprimirNotas[]="anexoExpo";
 	}
-		
+	
 	if ($producto->getCaImprimir() == 'Por Item'):
+		
 		$tabla = array();
 		$pdf->Ln(2);
 		$pdf->SetWidths(array(170));
@@ -195,7 +197,7 @@ foreach( $productos as $producto ):
 		$pdf->SetWidths($widths);
 		$pdf->SetAligns(array_fill(0, 3, "L"));
 		$pdf->Row($datos);		
-		array_merge($directorioAg , explode('|',$producto->getCaDatosag()) );		
+		//array_merge($directorioAg , explode('|',$producto->getCaDatosag()) );		
 	endif; 
 endforeach;
 

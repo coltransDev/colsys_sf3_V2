@@ -487,7 +487,7 @@ class cotizacionesActions extends sfActions
 		$producto->setCaDestino( $this->getRequestParameter("ciu_destino") );
 		$producto->setCaFrecuencia( utf8_decode($this->getRequestParameter("frecuencia")) );
 		$producto->setCaTiempotransito( utf8_decode($this->getRequestParameter("ttransito")) );
-		$producto->setCaObservaciones( $this->getRequestParameter("observaciones") );
+		$producto->setCaObservaciones( utf8_decode($this->getRequestParameter("observaciones")) );
 		$producto->setCaImprimir( $this->getRequestParameter("imprimir") );
 		if( !$producto->getCaIdProducto() ){ 
 			$producto->setCaFchcreado( time() );	
@@ -544,7 +544,7 @@ class cotizacionesActions extends sfActions
 		$valor_min = $this->getRequestParameter("valor_min");
 		$aplica_tar = utf8_decode($this->getRequestParameter("aplica_tar"));
 		$aplica_min = utf8_decode($this->getRequestParameter("aplica_min"));
-		$observaciones = $this->getRequestParameter("detalles");
+		$observaciones = utf8_decode($this->getRequestParameter("detalles"));
 		
 		$tipo = $this->getRequestParameter("tipo");
 		$id = $this->getRequestParameter("id");
@@ -593,8 +593,8 @@ class cotizacionesActions extends sfActions
 			if( $aplica_min ){
 				$opcion->setCaAplicaMin( $aplica_min );
 			}
-			if( $observaciones ){
-				$opcion->setCaObservaciones( $observaciones );
+			if( $observaciones!==null ){
+				$opcion->setCaObservaciones( $observaciones );				
 			}	
 			$opcion->save();			
 			$this->responseArray["idopcion"]=$opcion->getCaIdopcion();
@@ -696,7 +696,7 @@ class cotizacionesActions extends sfActions
 				$trayecto .= utf8_encode($escala->getCaCiudad())." - ".utf8_encode($escala->getTrafico()->getCaNombre()." » ");
 			}
 			
-			$trayecto .= utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."] ";
+			$trayecto .= utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."]  ".$producto->getCaIdproducto();
 			
 			//Se envian las opciones existentes
 			$c = new Criteria();
@@ -1435,10 +1435,12 @@ class cotizacionesActions extends sfActions
 		
 		if ( count( $_FILES )>0 ){		 	
 			foreach ( $_FILES as $uploadedFile){
+				
 				$fileName  = $uploadedFile['name'];
 				$fileSize  = $uploadedFile['size'];
 				$fileType  = $uploadedFile['type'];				
-						
+				$path = $uploadedFile['tmp_name'];		
+				
 				$fileObj = new CotArchivo();
 				$fileObj->setCaTamano($fileSize);
 				$fileObj->setCaNombre($fileName);
@@ -1458,7 +1460,10 @@ class cotizacionesActions extends sfActions
 				$this->responseArray = array("id"=>$id, "filename"=>$fileName, "success"=>true);				
 			
 		  	}
+		}else{
+			$this->responseArray = array("success"=>false);
 		}
+		$this->setLayout("ajax");
 		$this->setTemplate("responseTemplate");
 	}
 	

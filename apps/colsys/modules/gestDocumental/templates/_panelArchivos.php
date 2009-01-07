@@ -60,8 +60,7 @@ var nuevoFileViewBtnHandler = function(){
 		plain       : true,		
 		
 		items       : new Ext.FormPanel({			
-			fileUpload: true,		
-			standardSubmit: true,	
+			fileUpload: true,					
 			frame: true,
 			title: 'Por favor seleccione un archivo',
 			autoHeight: true,
@@ -90,12 +89,13 @@ var nuevoFileViewBtnHandler = function(){
 		buttons: [{
 			text     : 'Guardar',
 			handler: function(){																				
-				var fp = Ext.getCmp("file-panel-form");					
-				if(fp.getForm().isValid()){										
-					fp.getForm().submit({
+				var fp = Ext.getCmp("file-panel-form");						
+				if(fp.getForm().isValid()){
+													
+					fp.getForm().submit({							
 						url: '<?=url_for( $uploadURL ) ?>',							
 						//waitMsg: 'Cargando el archivo...',						
-						success: function(fp, o){	
+						success: function(fp, o){								
 							<?
 							//FIX-ME: En caso que la carga de archivos sea local no va a recargarse
 							?>

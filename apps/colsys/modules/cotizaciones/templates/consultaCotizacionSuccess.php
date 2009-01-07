@@ -87,6 +87,12 @@ Ext.onReady(function(){
 	 var despedida = '<?=str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaDespedida()))?>';
 	 despedida = despedida.split("<br />").join("\n");
 	 
+	 var entrada = '<?=str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaEntrada()))?>';
+	 entrada = entrada.split("<br />").join("\n");
+	 
+	 var anexos = '<?=str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaAnexos()))?>';
+	 anexos = anexos.split("<br />").join("\n");
+	 
     var mainPanel = new Ext.FormPanel({
         labelAlign: 'top',
         title: 'Sistema de cotizaciones <?=$cotizacion->getCaEmpresa()?>',
@@ -248,7 +254,7 @@ Ext.onReady(function(){
 					width: 500,
 					fieldLabel: 'Entrada',
 					name: 'entrada',
-					value: '<?=$cotizacion->getCaEntrada()?>',
+					value: entrada,
                     allowBlank:false
                 }]
             },{
@@ -270,7 +276,7 @@ Ext.onReady(function(){
 					width: 500,
 					fieldLabel: 'Anexos',
 					name: 'anexos',
-					value: '<?=$cotizacion->getCaAnexos()?>',
+					value: anexos,
                     allowBlank:false
                 }
 
@@ -331,10 +337,12 @@ Ext.onReady(function(){
 	
 			items: [{
 				xtype:'tabpanel',
+				id: 'tpanel', 
 				plain:true,
 				activeTab: 0,
-				height:250,
-				defaults:{bodyStyle:'padding:10px'},
+				height:250,	
+				autoWidth : true, 			
+				defaults:{bodyStyle:'padding:10px'},				
 				items:[			
 					<?
 					if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
@@ -356,7 +364,25 @@ Ext.onReady(function(){
 				]
 			}]
 		});
+		
+		
+
 		subPanel.render(document.body);
+		
+		
+		var tWidth = Ext.get('tpanel').getWidth();
+		<?
+		if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
+			//Para que funcione en IE6 se deben ajustar el tamaño de los grids
+		?>		
+			grid_recargos.setWidth(tWidth - 2); //fudged it until the horizontal scrollbar went away 
+			grid_contviajes.setWidth(tWidth - 2); 
+			grid_seguros.setWidth(tWidth - 2); 
+			grid_agentes.setWidth(tWidth - 2); 			
+		 <?
+		}
+		?>
+
 	<?	
 	}
 	?>

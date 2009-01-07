@@ -207,28 +207,18 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'idmoneda',
 			hideable: false ,
 			editor: <?=extMonedas()?>
-		},
-		
-		{
-			id: 'linea',
-			header: "Línea",
-			width: 100,
-			sortable: false,
-			dataIndex: 'linea',
-			hideable: false
-						
-		},
+		},		
 		{
 			id: 'detalles',
 			header: "Detalles",
 			width: 100,
 			sortable: false,
-			dataIndex: 'detalles',
-			
+			dataIndex: 'detalles',			
 			hideable: false ,
 			editor: new Ext.form.TextField({
 				allowBlank: false ,				
-				style: 'text-align:left'
+				style: 'text-align:left',
+				allowBlank: true
 			})
 		}
 		/*	
