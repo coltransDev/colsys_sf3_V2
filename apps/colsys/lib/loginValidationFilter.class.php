@@ -6,6 +6,9 @@ class loginValidationFilter extends sfFilter
 		
 		if( sfContext::getInstance()->getConfiguration()->getEnvironment()!="batch" ){
 			$cookie = sfContext::getInstance()->getRequest()->getCookie($this->getParameter('cookie_name'));
+			echo "".$this->getParameter('cookie_name');
+			print_r( $cookie );
+			exit("asd");
 			if ($cookie)
 			{		
 				sfContext::getInstance()->getUser()->setUserId( $cookie );

@@ -12,9 +12,9 @@ include_component("bar", "submenubar");
 ?>
 <br />
 <br />	
+ <?php echo $sf_content ?>
 
 
-<div align="center" id="content"> <?php echo $sf_content ?> </div>
 
 <script type="text/javascript" charset="utf-8">	
 	$$("a").each( function(input) {

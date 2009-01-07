@@ -224,7 +224,7 @@ var contviajeHandler = function(){
 	//crea una ventana 
 	win = new Ext.Window({		
 		width       : 500,
-		height      : 470,
+		height      : 510,
 		closeAction :'hide',
 		plain       : true,		
 		

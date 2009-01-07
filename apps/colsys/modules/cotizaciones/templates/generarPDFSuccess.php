@@ -509,7 +509,7 @@ if ( count($seguros)>0 ) {
 		if($seguro->getCaTransporte()==Constantes::MARITIMO){
 			$linea .= "marítima";
 		}
-		$linea .= " sobre valor CIF de la mercancía ".(($seguro->getCaPrimaTip()=="%")?$seguro->getCaPrimaVlr()." ".$seguro->getCaPrimaTip():$seguro->getCaIdmoneda()." ".$seguro->getCaPrimaVlr())." ".(($seguro->getCaPrimaMin()!=0)?" / Mínimo ".$seguro->getCaIdmoneda()." ".$seguro->getCaPrimaMin():"").(($seguro->getCaObtencion()!=0)?" + Obtención de Póliza ".$seguro->getCaIdmoneda()." ".$seguro->getCaObtencion():"").((strlen($seguro->getCaObservaciones())!=0)?" ".$seguro->getCaObservaciones():".");
+		$linea .= " sobre valor CIF de la mercancía ".(($seguro->getCaPrimaTip()=="%")?Utils::formatNumber($seguro->getCaPrimaVlr())." ".$seguro->getCaPrimaTip():$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaVlr()))." ".(($seguro->getCaPrimaMin()!=0)?" / Mínimo ".$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaMin()):"").(($seguro->getCaObtencion()!=0)?" + Obtención de Póliza ".$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaObtencion()):"").((strlen($seguro->getCaObservaciones())!=0)?" ".$seguro->getCaObservaciones():".");
 		$pdf->MultiCell(0, 4, $linea, 0, 1);
 		$i++;
 	}

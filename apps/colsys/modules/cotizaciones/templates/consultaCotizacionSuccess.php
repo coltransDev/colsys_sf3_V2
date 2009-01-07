@@ -17,7 +17,8 @@
 	}*/
 	
 ?>
-
+<div id="panel1" align="left"></div>
+<div id="panel2" align="left"></div>
 <script language="javascript" type="text/javascript">
 
 Ext.onReady(function(){
@@ -318,7 +319,7 @@ Ext.onReady(function(){
 	        }]
         }]
     });
-	mainPanel.render(document.body);
+	mainPanel.render("panel1");
      <?
 	 if( $cotizacion->getCaIdcotizacion() && $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
 	 	
@@ -367,7 +368,7 @@ Ext.onReady(function(){
 		
 		
 
-		subPanel.render(document.body);
+		subPanel.render("panel2");
 		
 		
 		var tWidth = Ext.get('tpanel').getWidth();
@@ -390,3 +391,4 @@ Ext.onReady(function(){
     
 });
 </script>
+
