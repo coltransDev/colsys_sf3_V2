@@ -181,6 +181,7 @@ echo (isset($object)&&$object)?"var ".$object." = ":"";
 		<?
 		if( !$readOnly ){
 		?>		  
+
 		{
 			text: 'Nuevo',
 			tooltip: 'Sube un nuevo archivo',
