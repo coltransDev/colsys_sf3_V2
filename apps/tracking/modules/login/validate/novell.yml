@@ -1,0 +1,14 @@
+fillin:
+  enabled: true  # Enable the form repopulation
+  param:
+    exclude_types: [hidden, password] # Do not repopulate these field types
+fields:
+  username:
+    required:
+      msg:       Por favor ingrese un nombre de usuario
+  password:
+    required: 
+      msg:       Por favor coloque la clave
+    sfStringValidator:
+      min:       5
+      min_error: La clave debe ser por lo menos de 5 caracteres

@@ -1,0 +1,3 @@
+all:
+  is_secure: on # Only for authenticated users
+  credentials: [[ customer, colsys_user ]]  
