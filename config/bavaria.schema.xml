@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.bavaria">
 	<table name="tb_bavarianotify" phpName="BavariaNotify" >
-		<column name="ca_consecutivo" type="varchar" size="10" />
+		<column name="ca_consecutivo" type="varchar" size="10" primaryKey="true"/>
 		<column name="ca_fchenvio" type="timestamp" />	
 		<column name="ca_usuenvio" type="varchar" />
 	</table>
