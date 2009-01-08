@@ -1,11 +1,11 @@
 rendering: ~
 security:  ~
 
-#loginValidation:                 # Filters need a unique name
-#  class: loginValidationFilter
-#  param:
-#    cookie_name: coltranscookie
-#
+loginValidation:                 # Filters need a unique name
+  class: loginValidationFilter
+  param:
+    cookie_name: coltranscookie
+
 cache:     ~
 common:    ~
 
