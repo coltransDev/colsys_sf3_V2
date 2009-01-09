@@ -7,9 +7,12 @@
 * Crea el Record 
 */
 var record = Ext.data.Record.create([   
-	{name: 'idcotizacion', type: 'int'},				
+	{name: 'id', type: 'int'},                                 	
+	{name: 'idcotizacion', type: 'int'},
+	{name: 'idproducto', type: 'int'},				
 	{name: 'cliente', type: 'string'},	
 	{name: 'consecutivo', type: 'string'},
+	{name: 'trayecto', type: 'string'},
 	{name: 'usuario', type: 'string'},
 	{name: 'estado', type: 'string'},
 	{name: 'motivonoaprobado', type: 'string'}
@@ -22,8 +25,8 @@ var record = Ext.data.Record.create([
 var store = new Ext.data.Store({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
-		{			
-			id: 'idcotizacion',
+		{	
+			id: 'id',			
 			root: 'data',
 			totalProperty: 'total',
 			successProperty: 'success'
@@ -53,6 +56,14 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,	
 			hideable: false,		
 			dataIndex: 'cliente'	
+		}
+		,	
+		{
+			header: "Trayectos",
+			width: 90,
+			sortable: true,	
+			hideable: false,		
+			dataIndex: 'trayecto'	
 		}
 		,		
 		{
@@ -180,8 +191,8 @@ function guardarCambios(){
 		var changes = r.getChanges();
 		
 		changes['idcotizacion']=r.data.idcotizacion;
-			
-												
+		changes['idproducto']=r.data.idproducto;
+											
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
@@ -193,8 +204,8 @@ function guardarCambios(){
 				callback :function(options, success, response){	
 										
 					var res = Ext.util.JSON.decode( response.responseText );	
-					if( res.idcotizacion && res.success ){				
-						var rec = store.getById( res.idcotizacion );																										
+					if( res.idcotizacion && res.idproducto && res.success ){				
+						var rec = store.getById( res.idcotizacion+"-"+res.idproducto );																										
 						rec.commit();						
 					}
 				}			

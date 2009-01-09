@@ -135,18 +135,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	protected $ca_datosag;
 
 	/**
-	 * The value for the ca_estado field.
-	 * @var        string
-	 */
-	protected $ca_estado;
-
-	/**
-	 * The value for the ca_motivonoaprobado field.
-	 * @var        string
-	 */
-	protected $ca_motivonoaprobado;
-
-	/**
 	 * @var        Contacto
 	 */
 	protected $aContacto;
@@ -533,26 +521,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	public function getCaDatosag()
 	{
 		return $this->ca_datosag;
-	}
-
-	/**
-	 * Get the [ca_estado] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaEstado()
-	{
-		return $this->ca_estado;
-	}
-
-	/**
-	 * Get the [ca_motivonoaprobado] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaMotivonoaprobado()
-	{
-		return $this->ca_motivonoaprobado;
 	}
 
 	/**
@@ -1089,46 +1057,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	} // setCaDatosag()
 
 	/**
-	 * Set the value of [ca_estado] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Cotizacion The current object (for fluent API support)
-	 */
-	public function setCaEstado($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_estado !== $v) {
-			$this->ca_estado = $v;
-			$this->modifiedColumns[] = CotizacionPeer::CA_ESTADO;
-		}
-
-		return $this;
-	} // setCaEstado()
-
-	/**
-	 * Set the value of [ca_motivonoaprobado] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Cotizacion The current object (for fluent API support)
-	 */
-	public function setCaMotivonoaprobado($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_motivonoaprobado !== $v) {
-			$this->ca_motivonoaprobado = $v;
-			$this->modifiedColumns[] = CotizacionPeer::CA_MOTIVONOAPROBADO;
-		}
-
-		return $this;
-	} // setCaMotivonoaprobado()
-
-	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -1184,8 +1112,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->ca_usuanulado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
 			$this->ca_empresa = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
 			$this->ca_datosag = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
-			$this->ca_estado = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
-			$this->ca_motivonoaprobado = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1195,7 +1121,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 21; // 21 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 19; // 19 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cotizacion object", $e);
@@ -1646,12 +1572,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 18:
 				return $this->getCaDatosag();
 				break;
-			case 19:
-				return $this->getCaEstado();
-				break;
-			case 20:
-				return $this->getCaMotivonoaprobado();
-				break;
 			default:
 				return null;
 				break;
@@ -1692,8 +1612,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$keys[16] => $this->getCaUsuanulado(),
 			$keys[17] => $this->getCaEmpresa(),
 			$keys[18] => $this->getCaDatosag(),
-			$keys[19] => $this->getCaEstado(),
-			$keys[20] => $this->getCaMotivonoaprobado(),
 		);
 		return $result;
 	}
@@ -1782,12 +1700,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 18:
 				$this->setCaDatosag($value);
 				break;
-			case 19:
-				$this->setCaEstado($value);
-				break;
-			case 20:
-				$this->setCaMotivonoaprobado($value);
-				break;
 		} // switch()
 	}
 
@@ -1831,8 +1743,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[16], $arr)) $this->setCaUsuanulado($arr[$keys[16]]);
 		if (array_key_exists($keys[17], $arr)) $this->setCaEmpresa($arr[$keys[17]]);
 		if (array_key_exists($keys[18], $arr)) $this->setCaDatosag($arr[$keys[18]]);
-		if (array_key_exists($keys[19], $arr)) $this->setCaEstado($arr[$keys[19]]);
-		if (array_key_exists($keys[20], $arr)) $this->setCaMotivonoaprobado($arr[$keys[20]]);
 	}
 
 	/**
@@ -1863,8 +1773,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotizacionPeer::CA_USUANULADO)) $criteria->add(CotizacionPeer::CA_USUANULADO, $this->ca_usuanulado);
 		if ($this->isColumnModified(CotizacionPeer::CA_EMPRESA)) $criteria->add(CotizacionPeer::CA_EMPRESA, $this->ca_empresa);
 		if ($this->isColumnModified(CotizacionPeer::CA_DATOSAG)) $criteria->add(CotizacionPeer::CA_DATOSAG, $this->ca_datosag);
-		if ($this->isColumnModified(CotizacionPeer::CA_ESTADO)) $criteria->add(CotizacionPeer::CA_ESTADO, $this->ca_estado);
-		if ($this->isColumnModified(CotizacionPeer::CA_MOTIVONOAPROBADO)) $criteria->add(CotizacionPeer::CA_MOTIVONOAPROBADO, $this->ca_motivonoaprobado);
 
 		return $criteria;
 	}
@@ -1954,10 +1862,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$copyObj->setCaEmpresa($this->ca_empresa);
 
 		$copyObj->setCaDatosag($this->ca_datosag);
-
-		$copyObj->setCaEstado($this->ca_estado);
-
-		$copyObj->setCaMotivonoaprobado($this->ca_motivonoaprobado);
 
 
 		if ($deepCopy) {
@@ -2291,6 +2195,53 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			array_push($this->collCotProductos, $l);
 			$l->setCotizacion($this);
 		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cotizacion is new, it will return
+	 * an empty collection; or if this Cotizacion has previously
+	 * been saved, it will retrieve related CotProductos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Cotizacion.
+	 */
+	public function getCotProductosJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotProductos === null) {
+			if ($this->isNew()) {
+				$this->collCotProductos = array();
+			} else {
+
+				$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$this->collCotProductos = CotProductoPeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+			if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
+				$this->collCotProductos = CotProductoPeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotProductoCriteria = $criteria;
+
+		return $this->collCotProductos;
 	}
 
 	/**

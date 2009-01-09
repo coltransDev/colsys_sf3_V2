@@ -19,7 +19,7 @@ abstract class BaseCotProductoPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotProducto';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 20;
+	const NUM_COLUMNS = 24;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -84,6 +84,18 @@ abstract class BaseCotProductoPeer {
 	/** the column name for the CA_DATOSAG field */
 	const CA_DATOSAG = 'tb_cotproductos.CA_DATOSAG';
 
+	/** the column name for the CA_IDLINEA field */
+	const CA_IDLINEA = 'tb_cotproductos.CA_IDLINEA';
+
+	/** the column name for the CA_POSTULARLINEA field */
+	const CA_POSTULARLINEA = 'tb_cotproductos.CA_POSTULARLINEA';
+
+	/** the column name for the CA_ESTADO field */
+	const CA_ESTADO = 'tb_cotproductos.CA_ESTADO';
+
+	/** the column name for the CA_MOTIVONOAPROBADO field */
+	const CA_MOTIVONOAPROBADO = 'tb_cotproductos.CA_MOTIVONOAPROBADO';
+
 	/**
 	 * An identiy map to hold any loaded instances of CotProducto objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -105,11 +117,11 @@ abstract class BaseCotProductoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdproducto', 'CaIdcotizacion', 'CaTransporte', 'CaModalidad', 'CaOrigen', 'CaDestino', 'CaEscala', 'CaImpoexpo', 'CaImprimir', 'CaProducto', 'CaIncoterms', 'CaFrecuencia', 'CaTiempotransito', 'CaLocrecargos', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaDatosag', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdproducto', 'caIdcotizacion', 'caTransporte', 'caModalidad', 'caOrigen', 'caDestino', 'caEscala', 'caImpoexpo', 'caImprimir', 'caProducto', 'caIncoterms', 'caFrecuencia', 'caTiempotransito', 'caLocrecargos', 'caObservaciones', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caDatosag', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDPRODUCTO, self::CA_IDCOTIZACION, self::CA_TRANSPORTE, self::CA_MODALIDAD, self::CA_ORIGEN, self::CA_DESTINO, self::CA_ESCALA, self::CA_IMPOEXPO, self::CA_IMPRIMIR, self::CA_PRODUCTO, self::CA_INCOTERMS, self::CA_FRECUENCIA, self::CA_TIEMPOTRANSITO, self::CA_LOCRECARGOS, self::CA_OBSERVACIONES, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_DATOSAG, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idproducto', 'ca_idcotizacion', 'ca_transporte', 'ca_modalidad', 'ca_origen', 'ca_destino', 'ca_escala', 'ca_impoexpo', 'ca_imprimir', 'ca_producto', 'ca_incoterms', 'ca_frecuencia', 'ca_tiempotransito', 'ca_locrecargos', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_datosag', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdproducto', 'CaIdcotizacion', 'CaTransporte', 'CaModalidad', 'CaOrigen', 'CaDestino', 'CaEscala', 'CaImpoexpo', 'CaImprimir', 'CaProducto', 'CaIncoterms', 'CaFrecuencia', 'CaTiempotransito', 'CaLocrecargos', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaDatosag', 'CaIdlinea', 'CaPostularlinea', 'CaEstado', 'CaMotivonoaprobado', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdproducto', 'caIdcotizacion', 'caTransporte', 'caModalidad', 'caOrigen', 'caDestino', 'caEscala', 'caImpoexpo', 'caImprimir', 'caProducto', 'caIncoterms', 'caFrecuencia', 'caTiempotransito', 'caLocrecargos', 'caObservaciones', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caDatosag', 'caIdlinea', 'caPostularlinea', 'caEstado', 'caMotivonoaprobado', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDPRODUCTO, self::CA_IDCOTIZACION, self::CA_TRANSPORTE, self::CA_MODALIDAD, self::CA_ORIGEN, self::CA_DESTINO, self::CA_ESCALA, self::CA_IMPOEXPO, self::CA_IMPRIMIR, self::CA_PRODUCTO, self::CA_INCOTERMS, self::CA_FRECUENCIA, self::CA_TIEMPOTRANSITO, self::CA_LOCRECARGOS, self::CA_OBSERVACIONES, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_DATOSAG, self::CA_IDLINEA, self::CA_POSTULARLINEA, self::CA_ESTADO, self::CA_MOTIVONOAPROBADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idproducto', 'ca_idcotizacion', 'ca_transporte', 'ca_modalidad', 'ca_origen', 'ca_destino', 'ca_escala', 'ca_impoexpo', 'ca_imprimir', 'ca_producto', 'ca_incoterms', 'ca_frecuencia', 'ca_tiempotransito', 'ca_locrecargos', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_datosag', 'ca_idlinea', 'ca_postularlinea', 'ca_estado', 'ca_motivonoaprobado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
 	);
 
 	/**
@@ -119,11 +131,11 @@ abstract class BaseCotProductoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdproducto' => 0, 'CaIdcotizacion' => 1, 'CaTransporte' => 2, 'CaModalidad' => 3, 'CaOrigen' => 4, 'CaDestino' => 5, 'CaEscala' => 6, 'CaImpoexpo' => 7, 'CaImprimir' => 8, 'CaProducto' => 9, 'CaIncoterms' => 10, 'CaFrecuencia' => 11, 'CaTiempotransito' => 12, 'CaLocrecargos' => 13, 'CaObservaciones' => 14, 'CaFchcreado' => 15, 'CaUsucreado' => 16, 'CaFchactualizado' => 17, 'CaUsuactualizado' => 18, 'CaDatosag' => 19, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdproducto' => 0, 'caIdcotizacion' => 1, 'caTransporte' => 2, 'caModalidad' => 3, 'caOrigen' => 4, 'caDestino' => 5, 'caEscala' => 6, 'caImpoexpo' => 7, 'caImprimir' => 8, 'caProducto' => 9, 'caIncoterms' => 10, 'caFrecuencia' => 11, 'caTiempotransito' => 12, 'caLocrecargos' => 13, 'caObservaciones' => 14, 'caFchcreado' => 15, 'caUsucreado' => 16, 'caFchactualizado' => 17, 'caUsuactualizado' => 18, 'caDatosag' => 19, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDPRODUCTO => 0, self::CA_IDCOTIZACION => 1, self::CA_TRANSPORTE => 2, self::CA_MODALIDAD => 3, self::CA_ORIGEN => 4, self::CA_DESTINO => 5, self::CA_ESCALA => 6, self::CA_IMPOEXPO => 7, self::CA_IMPRIMIR => 8, self::CA_PRODUCTO => 9, self::CA_INCOTERMS => 10, self::CA_FRECUENCIA => 11, self::CA_TIEMPOTRANSITO => 12, self::CA_LOCRECARGOS => 13, self::CA_OBSERVACIONES => 14, self::CA_FCHCREADO => 15, self::CA_USUCREADO => 16, self::CA_FCHACTUALIZADO => 17, self::CA_USUACTUALIZADO => 18, self::CA_DATOSAG => 19, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idproducto' => 0, 'ca_idcotizacion' => 1, 'ca_transporte' => 2, 'ca_modalidad' => 3, 'ca_origen' => 4, 'ca_destino' => 5, 'ca_escala' => 6, 'ca_impoexpo' => 7, 'ca_imprimir' => 8, 'ca_producto' => 9, 'ca_incoterms' => 10, 'ca_frecuencia' => 11, 'ca_tiempotransito' => 12, 'ca_locrecargos' => 13, 'ca_observaciones' => 14, 'ca_fchcreado' => 15, 'ca_usucreado' => 16, 'ca_fchactualizado' => 17, 'ca_usuactualizado' => 18, 'ca_datosag' => 19, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdproducto' => 0, 'CaIdcotizacion' => 1, 'CaTransporte' => 2, 'CaModalidad' => 3, 'CaOrigen' => 4, 'CaDestino' => 5, 'CaEscala' => 6, 'CaImpoexpo' => 7, 'CaImprimir' => 8, 'CaProducto' => 9, 'CaIncoterms' => 10, 'CaFrecuencia' => 11, 'CaTiempotransito' => 12, 'CaLocrecargos' => 13, 'CaObservaciones' => 14, 'CaFchcreado' => 15, 'CaUsucreado' => 16, 'CaFchactualizado' => 17, 'CaUsuactualizado' => 18, 'CaDatosag' => 19, 'CaIdlinea' => 20, 'CaPostularlinea' => 21, 'CaEstado' => 22, 'CaMotivonoaprobado' => 23, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdproducto' => 0, 'caIdcotizacion' => 1, 'caTransporte' => 2, 'caModalidad' => 3, 'caOrigen' => 4, 'caDestino' => 5, 'caEscala' => 6, 'caImpoexpo' => 7, 'caImprimir' => 8, 'caProducto' => 9, 'caIncoterms' => 10, 'caFrecuencia' => 11, 'caTiempotransito' => 12, 'caLocrecargos' => 13, 'caObservaciones' => 14, 'caFchcreado' => 15, 'caUsucreado' => 16, 'caFchactualizado' => 17, 'caUsuactualizado' => 18, 'caDatosag' => 19, 'caIdlinea' => 20, 'caPostularlinea' => 21, 'caEstado' => 22, 'caMotivonoaprobado' => 23, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDPRODUCTO => 0, self::CA_IDCOTIZACION => 1, self::CA_TRANSPORTE => 2, self::CA_MODALIDAD => 3, self::CA_ORIGEN => 4, self::CA_DESTINO => 5, self::CA_ESCALA => 6, self::CA_IMPOEXPO => 7, self::CA_IMPRIMIR => 8, self::CA_PRODUCTO => 9, self::CA_INCOTERMS => 10, self::CA_FRECUENCIA => 11, self::CA_TIEMPOTRANSITO => 12, self::CA_LOCRECARGOS => 13, self::CA_OBSERVACIONES => 14, self::CA_FCHCREADO => 15, self::CA_USUCREADO => 16, self::CA_FCHACTUALIZADO => 17, self::CA_USUACTUALIZADO => 18, self::CA_DATOSAG => 19, self::CA_IDLINEA => 20, self::CA_POSTULARLINEA => 21, self::CA_ESTADO => 22, self::CA_MOTIVONOAPROBADO => 23, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idproducto' => 0, 'ca_idcotizacion' => 1, 'ca_transporte' => 2, 'ca_modalidad' => 3, 'ca_origen' => 4, 'ca_destino' => 5, 'ca_escala' => 6, 'ca_impoexpo' => 7, 'ca_imprimir' => 8, 'ca_producto' => 9, 'ca_incoterms' => 10, 'ca_frecuencia' => 11, 'ca_tiempotransito' => 12, 'ca_locrecargos' => 13, 'ca_observaciones' => 14, 'ca_fchcreado' => 15, 'ca_usucreado' => 16, 'ca_fchactualizado' => 17, 'ca_usuactualizado' => 18, 'ca_datosag' => 19, 'ca_idlinea' => 20, 'ca_postularlinea' => 21, 'ca_estado' => 22, 'ca_motivonoaprobado' => 23, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
 	);
 
 	/**
@@ -244,6 +256,14 @@ abstract class BaseCotProductoPeer {
 		$criteria->addSelectColumn(CotProductoPeer::CA_USUACTUALIZADO);
 
 		$criteria->addSelectColumn(CotProductoPeer::CA_DATOSAG);
+
+		$criteria->addSelectColumn(CotProductoPeer::CA_IDLINEA);
+
+		$criteria->addSelectColumn(CotProductoPeer::CA_POSTULARLINEA);
+
+		$criteria->addSelectColumn(CotProductoPeer::CA_ESTADO);
+
+		$criteria->addSelectColumn(CotProductoPeer::CA_MOTIVONOAPROBADO);
 
 	}
 
@@ -536,6 +556,56 @@ abstract class BaseCotProductoPeer {
 
 
 	/**
+	 * Returns the number of rows matching criteria, joining the related Transportador table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinTransportador(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(CotProductoPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			CotProductoPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(CotProductoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(CotProductoPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
 	 * Selects a collection of CotProducto objects pre-filled with their Cotizacion objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -603,6 +673,73 @@ abstract class BaseCotProductoPeer {
 
 
 	/**
+	 * Selects a collection of CotProducto objects pre-filled with their Transportador objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of CotProducto objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinTransportador(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		CotProductoPeer::addSelectColumns($c);
+		$startcol = (CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS);
+		TransportadorPeer::addSelectColumns($c);
+
+		$c->addJoin(array(CotProductoPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = CotProductoPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = CotProductoPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = CotProductoPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				CotProductoPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = TransportadorPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = TransportadorPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					TransportadorPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (CotProducto) to $obj2 (Transportador)
+				$obj2->addCotProducto($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
@@ -639,6 +776,7 @@ abstract class BaseCotProductoPeer {
 		}
 
 		$criteria->addJoin(array(CotProductoPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
+		$criteria->addJoin(array(CotProductoPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -675,7 +813,11 @@ abstract class BaseCotProductoPeer {
 		CotizacionPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TransportadorPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		$c->addJoin(array(CotProductoPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
+		$c->addJoin(array(CotProductoPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -713,6 +855,264 @@ abstract class BaseCotProductoPeer {
 				// Add the $obj1 (CotProducto) to the collection in $obj2 (Cotizacion)
 				$obj2->addCotProducto($obj1);
 			} // if joined row not null
+
+			// Add objects for joined Transportador rows
+
+			$key3 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = TransportadorPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = TransportadorPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TransportadorPeer::addInstanceToPool($obj3, $key3);
+				} // if obj3 loaded
+
+				// Add the $obj1 (CotProducto) to the collection in $obj3 (Transportador)
+				$obj3->addCotProducto($obj1);
+			} // if joined row not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Cotizacion table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptCotizacion(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			CotProductoPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(CotProductoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(CotProductoPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Transportador table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptTransportador(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			CotProductoPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(CotProductoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(CotProductoPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Selects a collection of CotProducto objects pre-filled with all related objects except Cotizacion.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of CotProducto objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptCotizacion(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		CotProductoPeer::addSelectColumns($c);
+		$startcol2 = (CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		TransportadorPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(CotProductoPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = CotProductoPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = CotProductoPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = CotProductoPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				CotProductoPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Transportador rows
+
+				$key2 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = TransportadorPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = TransportadorPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					TransportadorPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (CotProducto) to the collection in $obj2 (Transportador)
+				$obj2->addCotProducto($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of CotProducto objects pre-filled with all related objects except Transportador.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of CotProducto objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptTransportador(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		CotProductoPeer::addSelectColumns($c);
+		$startcol2 = (CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		CotizacionPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(CotProductoPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = CotProductoPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = CotProductoPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = CotProductoPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				CotProductoPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Cotizacion rows
+
+				$key2 = CotizacionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = CotizacionPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = CotizacionPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					CotizacionPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (CotProducto) to the collection in $obj2 (Cotizacion)
+				$obj2->addCotProducto($obj1);
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}

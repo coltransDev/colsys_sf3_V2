@@ -47,10 +47,10 @@ class Trayecto extends BaseTrayecto
 			$c->add( PricRecargoxConceptoLogPeer::CA_IDTRAYECTO, $this->getCaIdTrayecto() );
 			$c->add( PricRecargoxConceptoLogPeer::CA_FCHCREADO, $fch, Criteria::LESS_EQUAL );
 			$c->setDistinct();
-			$rs = PricRecargoxConceptoLogPeer::doSelectRS( $c );
+			$stmt = PricRecargoxConceptoLogPeer::doSelectStmt( $c );
 			$resultados = array();
-			while( $rs->next() ){		
-				$idrecargo = $rs->getInt(1); 
+			while( $row = $stmt->fetch(PDO::FETCH_NUM) ){		
+				$idrecargo = $row[0]; 
 				//Se sacan el ultimo recargo 
 				$c = new Criteria();
 				$c->add( PricRecargoxConceptoLogPeer::CA_IDCONCEPTO, '9999' );
@@ -96,10 +96,10 @@ class Trayecto extends BaseTrayecto
 			$c->add( PricRecargosxCiudadLogPeer::CA_IMPOEXPO, $this->getCaImpoExpo() );
 			$c->add( PricRecargosxCiudadLogPeer::CA_FCHCREADO, $fch, Criteria::LESS_EQUAL );
 			$c->setDistinct();
-			$rs = PricRecargosxCiudadLogPeer::doSelectRS( $c );
+			$stmt = PricRecargosxCiudadLogPeer::doSelectStmt( $c );
 			$resultados = array();
-			while( $rs->next() ){		
-				$idrecargo = $rs->getInt(1); 
+			while( $row = $stmt->fetch(PDO::FETCH_NUM) ){		
+				$idrecargo = $row[0]; 
 				//Se sacan el ultimo recargo 
 				$c = new Criteria();
 				$c->add( PricRecargosxCiudadLogPeer::CA_IDTRAFICO, $ciudad->getCaIdTrafico() );			

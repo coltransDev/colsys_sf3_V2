@@ -496,9 +496,18 @@ class cotizacionesActions extends sfActions
 			$producto->setCaFchactualizado( time() );	
 			$producto->setCaUsuactualizado( $user_id );							
 		}
+		
+		if( $this->getRequestParameter("idlinea") ){ 
+			$producto->setCaIdlinea( $this->getRequestParameter("idlinea") );
+		}
+		
+		$producto->setCaPostularLinea( $this->getRequestParameter("postular_linea") );
+		
+		
 		$producto->save();
 		return sfView::NONE;
 	}
+	
 	
 	
 	
@@ -690,18 +699,29 @@ class cotizacionesActions extends sfActions
 			$origen = $producto->getOrigen();
 			$destino = $producto->getDestino();
 			$escala = $producto->getEscala();					
+			
+			$linea = $producto->getTransportador();
+				
+			if( $linea ){
+				$lineaStr = $linea->getCaNombre();
+			}else{
+				$lineaStr = "";
+			}
+			
 			$trayecto = utf8_encode($producto->getCaImpoExpo())." ".utf8_encode($producto->getCaTransporte())." ".utf8_encode($producto->getCaModalidad())." [".utf8_encode( $origen->getCaCiudad() )." - ".utf8_encode($origen->getTrafico()->getCaNombre()." » ");
 			
 			if( $escala ){
 				$trayecto .= utf8_encode($escala->getCaCiudad())." - ".utf8_encode($escala->getTrafico()->getCaNombre()." » ");
 			}
 			
-			$trayecto .= utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."]  ".$producto->getCaIdproducto();
-			
+			$trayecto .= utf8_encode($destino->getCaCiudad())." - ".utf8_encode($destino->getTrafico()->getCaNombre())."]  ".$lineaStr." ".$producto->getCaIdproducto();
+						
 			//Se envian las opciones existentes
 			$c = new Criteria();
 			$c->add( CotOpcionPeer::CA_IDPRODUCTO, $producto->getCaIdProducto() );
 			$opciones = $producto->getCotOpciones( $c );
+			
+			
 			
 			$baseRow = array(
 		 					 'trayecto'=>$trayecto,
@@ -728,6 +748,9 @@ class cotizacionesActions extends sfActions
 							 'ttransito'=>utf8_encode($producto->getCaTiempotransito()),
 							 'imprimir'=>utf8_encode($producto->getCaImprimir()),
 							 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
+							 'idlinea'=>$producto->getCaIdlinea(),
+							 'linea'=>utf8_encode($lineaStr),
+							 'postular_linea'=>	$producto->getCaPostularLinea(),
 							 'id'=>$i
 						);
 						
@@ -1047,6 +1070,8 @@ class cotizacionesActions extends sfActions
 		foreach( $grupos as $transporte=>$modalidades ){
 			
 			foreach( $modalidades as $modalidad  ){
+				
+			
 				$agrupamiento = utf8_encode($transporte." ".$modalidad);
 				
 				$c = new Criteria();		
@@ -1097,9 +1122,12 @@ class cotizacionesActions extends sfActions
 											'idmoneda'=>'',
 											'modalidad'=>utf8_encode($modalidad),
 											'observaciones'=>''
-									);
+
+											);
+				$id+=100;	
 			}
-			$id+=100;	
+			
+			
 		}				
 	}
 	

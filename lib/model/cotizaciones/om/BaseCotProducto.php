@@ -141,9 +141,38 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	protected $ca_datosag;
 
 	/**
+	 * The value for the ca_idlinea field.
+	 * @var        int
+	 */
+	protected $ca_idlinea;
+
+	/**
+	 * The value for the ca_postularlinea field.
+	 * @var        boolean
+	 */
+	protected $ca_postularlinea;
+
+	/**
+	 * The value for the ca_estado field.
+	 * @var        string
+	 */
+	protected $ca_estado;
+
+	/**
+	 * The value for the ca_motivonoaprobado field.
+	 * @var        string
+	 */
+	protected $ca_motivonoaprobado;
+
+	/**
 	 * @var        Cotizacion
 	 */
 	protected $aCotizacion;
+
+	/**
+	 * @var        Transportador
+	 */
+	protected $aTransportador;
 
 	/**
 	 * @var        array CotOpcion[] Collection to store aggregation of CotOpcion objects.
@@ -433,6 +462,46 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	public function getCaDatosag()
 	{
 		return $this->ca_datosag;
+	}
+
+	/**
+	 * Get the [ca_idlinea] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdlinea()
+	{
+		return $this->ca_idlinea;
+	}
+
+	/**
+	 * Get the [ca_postularlinea] column value.
+	 * 
+	 * @return     boolean
+	 */
+	public function getCaPostularlinea()
+	{
+		return $this->ca_postularlinea;
+	}
+
+	/**
+	 * Get the [ca_estado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaEstado()
+	{
+		return $this->ca_estado;
+	}
+
+	/**
+	 * Get the [ca_motivonoaprobado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaMotivonoaprobado()
+	{
+		return $this->ca_motivonoaprobado;
 	}
 
 	/**
@@ -898,6 +967,90 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	} // setCaDatosag()
 
 	/**
+	 * Set the value of [ca_idlinea] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     CotProducto The current object (for fluent API support)
+	 */
+	public function setCaIdlinea($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idlinea !== $v) {
+			$this->ca_idlinea = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_IDLINEA;
+		}
+
+		if ($this->aTransportador !== null && $this->aTransportador->getCaIdlinea() !== $v) {
+			$this->aTransportador = null;
+		}
+
+		return $this;
+	} // setCaIdlinea()
+
+	/**
+	 * Set the value of [ca_postularlinea] column.
+	 * 
+	 * @param      boolean $v new value
+	 * @return     CotProducto The current object (for fluent API support)
+	 */
+	public function setCaPostularlinea($v)
+	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
+
+		if ($this->ca_postularlinea !== $v) {
+			$this->ca_postularlinea = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_POSTULARLINEA;
+		}
+
+		return $this;
+	} // setCaPostularlinea()
+
+	/**
+	 * Set the value of [ca_estado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     CotProducto The current object (for fluent API support)
+	 */
+	public function setCaEstado($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_estado !== $v) {
+			$this->ca_estado = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_ESTADO;
+		}
+
+		return $this;
+	} // setCaEstado()
+
+	/**
+	 * Set the value of [ca_motivonoaprobado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     CotProducto The current object (for fluent API support)
+	 */
+	public function setCaMotivonoaprobado($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_motivonoaprobado !== $v) {
+			$this->ca_motivonoaprobado = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_MOTIVONOAPROBADO;
+		}
+
+		return $this;
+	} // setCaMotivonoaprobado()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -954,6 +1107,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			$this->ca_fchactualizado = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
 			$this->ca_usuactualizado = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
 			$this->ca_datosag = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_idlinea = ($row[$startcol + 20] !== null) ? (int) $row[$startcol + 20] : null;
+			$this->ca_postularlinea = ($row[$startcol + 21] !== null) ? (boolean) $row[$startcol + 21] : null;
+			$this->ca_estado = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_motivonoaprobado = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -963,7 +1120,7 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 20; // 20 = CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 24; // 24 = CotProductoPeer::NUM_COLUMNS - CotProductoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotProducto object", $e);
@@ -988,6 +1145,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 		if ($this->aCotizacion !== null && $this->ca_idcotizacion !== $this->aCotizacion->getCaIdcotizacion()) {
 			$this->aCotizacion = null;
+		}
+		if ($this->aTransportador !== null && $this->ca_idlinea !== $this->aTransportador->getCaIdlinea()) {
+			$this->aTransportador = null;
 		}
 	} // ensureConsistency
 
@@ -1029,6 +1189,7 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		if ($deep) {  // also de-associate any related objects?
 
 			$this->aCotizacion = null;
+			$this->aTransportador = null;
 			$this->collCotOpcions = null;
 			$this->lastCotOpcionCriteria = null;
 
@@ -1127,6 +1288,13 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 					$affectedRows += $this->aCotizacion->save($con);
 				}
 				$this->setCotizacion($this->aCotizacion);
+			}
+
+			if ($this->aTransportador !== null) {
+				if ($this->aTransportador->isModified() || $this->aTransportador->isNew()) {
+					$affectedRows += $this->aTransportador->save($con);
+				}
+				$this->setTransportador($this->aTransportador);
 			}
 
 			if ($this->isNew() ) {
@@ -1233,6 +1401,12 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			if ($this->aCotizacion !== null) {
 				if (!$this->aCotizacion->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aCotizacion->getValidationFailures());
+				}
+			}
+
+			if ($this->aTransportador !== null) {
+				if (!$this->aTransportador->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTransportador->getValidationFailures());
 				}
 			}
 
@@ -1343,6 +1517,18 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			case 19:
 				return $this->getCaDatosag();
 				break;
+			case 20:
+				return $this->getCaIdlinea();
+				break;
+			case 21:
+				return $this->getCaPostularlinea();
+				break;
+			case 22:
+				return $this->getCaEstado();
+				break;
+			case 23:
+				return $this->getCaMotivonoaprobado();
+				break;
 			default:
 				return null;
 				break;
@@ -1384,6 +1570,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			$keys[17] => $this->getCaFchactualizado(),
 			$keys[18] => $this->getCaUsuactualizado(),
 			$keys[19] => $this->getCaDatosag(),
+			$keys[20] => $this->getCaIdlinea(),
+			$keys[21] => $this->getCaPostularlinea(),
+			$keys[22] => $this->getCaEstado(),
+			$keys[23] => $this->getCaMotivonoaprobado(),
 		);
 		return $result;
 	}
@@ -1475,6 +1665,18 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			case 19:
 				$this->setCaDatosag($value);
 				break;
+			case 20:
+				$this->setCaIdlinea($value);
+				break;
+			case 21:
+				$this->setCaPostularlinea($value);
+				break;
+			case 22:
+				$this->setCaEstado($value);
+				break;
+			case 23:
+				$this->setCaMotivonoaprobado($value);
+				break;
 		} // switch()
 	}
 
@@ -1519,6 +1721,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[17], $arr)) $this->setCaFchactualizado($arr[$keys[17]]);
 		if (array_key_exists($keys[18], $arr)) $this->setCaUsuactualizado($arr[$keys[18]]);
 		if (array_key_exists($keys[19], $arr)) $this->setCaDatosag($arr[$keys[19]]);
+		if (array_key_exists($keys[20], $arr)) $this->setCaIdlinea($arr[$keys[20]]);
+		if (array_key_exists($keys[21], $arr)) $this->setCaPostularlinea($arr[$keys[21]]);
+		if (array_key_exists($keys[22], $arr)) $this->setCaEstado($arr[$keys[22]]);
+		if (array_key_exists($keys[23], $arr)) $this->setCaMotivonoaprobado($arr[$keys[23]]);
 	}
 
 	/**
@@ -1550,6 +1756,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotProductoPeer::CA_FCHACTUALIZADO)) $criteria->add(CotProductoPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
 		if ($this->isColumnModified(CotProductoPeer::CA_USUACTUALIZADO)) $criteria->add(CotProductoPeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
 		if ($this->isColumnModified(CotProductoPeer::CA_DATOSAG)) $criteria->add(CotProductoPeer::CA_DATOSAG, $this->ca_datosag);
+		if ($this->isColumnModified(CotProductoPeer::CA_IDLINEA)) $criteria->add(CotProductoPeer::CA_IDLINEA, $this->ca_idlinea);
+		if ($this->isColumnModified(CotProductoPeer::CA_POSTULARLINEA)) $criteria->add(CotProductoPeer::CA_POSTULARLINEA, $this->ca_postularlinea);
+		if ($this->isColumnModified(CotProductoPeer::CA_ESTADO)) $criteria->add(CotProductoPeer::CA_ESTADO, $this->ca_estado);
+		if ($this->isColumnModified(CotProductoPeer::CA_MOTIVONOAPROBADO)) $criteria->add(CotProductoPeer::CA_MOTIVONOAPROBADO, $this->ca_motivonoaprobado);
 
 		return $criteria;
 	}
@@ -1653,6 +1863,14 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		$copyObj->setCaUsuactualizado($this->ca_usuactualizado);
 
 		$copyObj->setCaDatosag($this->ca_datosag);
+
+		$copyObj->setCaIdlinea($this->ca_idlinea);
+
+		$copyObj->setCaPostularlinea($this->ca_postularlinea);
+
+		$copyObj->setCaEstado($this->ca_estado);
+
+		$copyObj->setCaMotivonoaprobado($this->ca_motivonoaprobado);
 
 
 		if ($deepCopy) {
@@ -1762,6 +1980,57 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aCotizacion;
+	}
+
+	/**
+	 * Declares an association between this object and a Transportador object.
+	 *
+	 * @param      Transportador $v
+	 * @return     CotProducto The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setTransportador(Transportador $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdlinea(NULL);
+		} else {
+			$this->setCaIdlinea($v->getCaIdlinea());
+		}
+
+		$this->aTransportador = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Transportador object, it will not be re-added.
+		if ($v !== null) {
+			$v->addCotProducto($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Transportador object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Transportador The associated Transportador object.
+	 * @throws     PropelException
+	 */
+	public function getTransportador(PropelPDO $con = null)
+	{
+		if ($this->aTransportador === null && ($this->ca_idlinea !== null)) {
+			$c = new Criteria(TransportadorPeer::DATABASE_NAME);
+			$c->add(TransportadorPeer::CA_IDLINEA, $this->ca_idlinea);
+			$this->aTransportador = TransportadorPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aTransportador->addCotProductos($this);
+			 */
+		}
+		return $this->aTransportador;
 	}
 
 	/**
@@ -2001,6 +2270,7 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 		$this->collCotOpcions = null;
 			$this->aCotizacion = null;
+			$this->aTransportador = null;
 	}
 
 } // BaseCotProducto

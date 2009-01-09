@@ -331,7 +331,7 @@ class pricingActions extends sfActions
 				$this->conceptos = $trafico->getConceptos( $transporte, $modalidad );
 				
 			}
-			
+						
 			// Se incluyen las filas de cada concepto y sus respectivos recargos		
 			foreach( $this->conceptos as $concepto ){ 	
 				if(!$fchcorte){
@@ -339,7 +339,7 @@ class pricingActions extends sfActions
 				}else{
 					$pricConcepto = PricFleteLogPeer::retrieveByFch( $trayecto->getCaIdtrayecto() ,$concepto->getCaidConcepto(), $fchcorte );	
 				}
-						
+					
 				if( !$pricConcepto ){
 					if( $this->opcion=="consulta"){
 						continue;
@@ -355,7 +355,7 @@ class pricingActions extends sfActions
 					
 				}
 				
-				if( $this->opcion=="consulta" && $pricConcepto->getEstado()==2){//Las tarifas en mantenimiento no se muestran en consulta
+				if( $this->opcion=="consulta" && $pricConcepto->getCaEstado()==2){//Las tarifas en mantenimiento no se muestran en consulta
 					$neta=0;
 					$sugerida=0;
 				}else{
@@ -1399,7 +1399,7 @@ class pricingActions extends sfActions
 		
 		$this->data = array();
 		
-		$c = new Criteria();
+		/*$c = new Criteria();
 		$c->add( PricFletePeer::CA_IDTRAYECTO, $idtrayecto );		
 		$c->addAscendingOrderByColumn( PricFletePeer::CA_USUCREADO );
 		$flete = PricFletePeer::doSelectOne( $c );		
@@ -1418,7 +1418,7 @@ class pricingActions extends sfActions
 								"fchcreado" => $fecha,
 								"horacreado" => $flete->getCaFchcreado("h:i:s A"),
 								"usucreado" => $flete->getCaUsucreado()
-						  );
+						  );*/
 		
 		
 		
@@ -1428,17 +1428,29 @@ class pricingActions extends sfActions
 		
 		$con = Propel::getConnection(PricFleteLogPeer::DATABASE_NAME);
 		
-		$stmt = $con->prepareStatement($sql);
-		$rs = $stmt->executeQuery();	 
-		while($rs->next()){
-			$timestamp = strtotime( $rs->getString('ca_fchcreado') )-1;
+		$stmt = $con->prepare($sql);
+		$stmt->execute();	 
+		while($row = $stmt->fetch()){
+						
+			$timestamp = strtotime( $row['ca_fchcreado'] )+1;
+			
+			if( date("Y-m-d", $timestamp )==$hoy ){
+				$fecha="Hoy";
+			}elseif( date("Y-m-d", $timestamp )==$ayer ){
+				$fecha="Ayer";
+			}else{
+				$fecha=date("Y-m-d",$timestamp);
+			}
+		
 			$this->data[] =  array("idtrayecto" =>  $idtrayecto,								
 								"timestamp" => $timestamp,								
-								"fchcreado" => date("Y-m-d",$timestamp),
+								"fchcreado" => $fecha,
 								"horacreado" => date("h:i:s A", $timestamp ),
-								"usucreado" => $rs->getString('ca_usucreado')
+								"usucreado" => $row['ca_usucreado']
 						  );	
 		}
+		
+				
 		
 				
 		/*

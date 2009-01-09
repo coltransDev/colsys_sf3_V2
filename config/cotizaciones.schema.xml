@@ -23,8 +23,7 @@
 		<column name="ca_usuanulado" type="varchar"   />	
 		<column name="ca_empresa" type="varchar"   />	
 		<column name="ca_datosag" type="varchar"   />
-		<column name="ca_estado" type="varchar"   />
-		<column name="ca_motivonoaprobado" type="varchar"   />
+		
 		
 		<foreign-key foreignTable="tb_concliente">
 			<reference local="ca_idcontacto" foreign="ca_idcontacto"/>
@@ -57,10 +56,17 @@
 		<column name="ca_fchactualizado" type="timestamp"   />
 		<column name="ca_usuactualizado" type="varchar"   />	
 		<column name="ca_datosag" type="varchar"   />
+		<column name="ca_idlinea" type="integer"   />
+		<column name="ca_postularlinea" type="boolean"   />
+		<column name="ca_estado" type="varchar"   />
+		<column name="ca_motivonoaprobado" type="varchar"   />
 		
 		<foreign-key foreignTable="tb_cotizaciones">
 			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
-		</foreign-key>	
+		</foreign-key>		
+		<foreign-key foreignTable="tb_transporlineas">
+			<reference local="ca_idlinea" foreign="ca_idlinea"/>
+		</foreign-key>
 	</table>
 	
 	

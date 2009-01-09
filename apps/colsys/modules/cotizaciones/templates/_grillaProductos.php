@@ -85,6 +85,10 @@ var recordProductos = Ext.data.Record.create([
 	{name: 'impoexpo', type: 'string'},
 	{name: 'incoterms', type: 'string'},
 	{name: 'observaciones', type: 'string'},
+	{name: 'idlinea', type: 'string'},
+	{name: 'linea', type: 'string'},
+	{name: 'postular_linea', type: 'string'},
+	
 	{name: 'parent', type: 'int'}
 			
 ]);
@@ -302,7 +306,10 @@ var grid_productosOnvalidateedit = function(e){
 						   frecuencia: rec.data.frecuencia,
 						   ttransito: rec.data.ttransito,
 						   imprimir: rec.data.imprimir,
-						   observaciones: rec.data.observaciones,				  
+						   observaciones: rec.data.observaciones,
+						   idlinea: '',
+						   linea: '',
+						   postular_linea: '',				  
 						   
 						   item: '+',
 						   iditem: '',	
@@ -338,8 +345,8 @@ var crearVentanaProducto=function( record ){
 	//crea una ventana 
 	win = new Ext.Window({		
 		width       : 500,
-		height      : 510,
-		closeAction :'hide',
+		height      : 650,
+		closeAction :'close',
 		plain       : true,		
 		
 		items       : new Ext.FormPanel({
@@ -377,7 +384,15 @@ var crearVentanaProducto=function( record ){
 					,<?=extTransporte("transporte")?>
 					
 					,<?=include_component("widgets", "modalidades" ,array("id"=>"modalidad", "label"=>"Modalidad", "allowBlank"=>"false", "transporte"=>"transporte", "impoexpo"=>"impoexpo"))?>			
-					
+					,<?=include_component("widgets", "lineas" ,array("id"=>"idlinea", "label"=>"Linea", "allowBlank"=>"true", "link"=>"transporte" ))?>
+					,{
+						xtype:'checkbox',
+						fieldLabel: 'Postular nombre de Linea',
+						id: 'postular_linea',
+						name: 'postular_linea',
+						value: false,
+						width: 300
+	                }
 					,<?=include_component("widgets", "paises" ,array("id"=>"tra_origen", "label"=>"Pais Origen", "allowBlank"=>"false"))?>										
 					,<?=include_component("widgets", "ciudades" ,array("id"=>"ciu_origen", "label"=>"Ciudad Origen", "link"=>"tra_origen", "allowBlank"=>"false"))?>
 							
@@ -465,8 +480,7 @@ var crearVentanaProducto=function( record ){
 	
 	if(typeof(record)!="undefined"){ // Coloca los datos en la ventana 		
 		var fp = Ext.getCmp("producto-form");
-		form = fp.getForm().loadRecord(record);	
-		
+		form = fp.getForm().loadRecord(record);		
 		fp.getForm().findField("tra_origen_id").setRawValue(record.data.tra_origen_value);
 		fp.getForm().findField("tra_origen_id").hiddenField.value = record.data.tra_origen;		
 		fp.getForm().findField("ciu_origen_id").setRawValue(record.data.ciu_origen_value);
@@ -481,6 +495,9 @@ var crearVentanaProducto=function( record ){
 		fp.getForm().findField("tra_escala_id").hiddenField.value = record.data.tra_escala;		
 		fp.getForm().findField("ciu_escala_id").setRawValue(record.data.ciu_escala_value);
 		fp.getForm().findField("ciu_escala_id").hiddenField.value = record.data.ciu_escala;		
+		fp.getForm().findField("idlinea").setRawValue(record.data.linea);
+		fp.getForm().findField("idlinea").hiddenField.value = record.data.idlinea;	
+		
 	}	
 }
 
@@ -521,7 +538,8 @@ var ventanaTarifario = function( record ){
 			idciudad2: idciudad2,
 			transporte: record.data.transporte,
 			impoexpo: record.data.impoexpo,
-			modalidad: record.data.modalidad
+			modalidad: record.data.modalidad,
+			idlinea: record.data.idlinea
 		},
 		success: function(xhr) {			
 			//alert( xhr.responseText );			

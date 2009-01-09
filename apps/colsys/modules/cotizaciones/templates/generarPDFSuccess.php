@@ -90,6 +90,8 @@ foreach( $productos as $producto ):
 	
 	if ($producto->getCaImprimir() == 'Por Item'):
 		
+		$linea = $producto->getTransportador();
+		
 		$tabla = array();
 		$pdf->Ln(2);
 		$pdf->SetWidths(array(170));
@@ -106,6 +108,13 @@ foreach( $productos as $producto ):
 		$pdf->SetFills(array_fill(0, 5, 0));
 		$pdf->SetFont('Arial','',8);
 		$pdf->Row(array($producto->getCaImpoExpo(), $producto->getCaTransporte(), $producto->getCaIncoterms(), $producto->getOrigen()->getCaCiudad()." - ".$producto->getOrigen()->getCaTrafico(),  $producto->getDestino()->getCaCiudad()." - ".$producto->getDestino()->getCaTrafico() ));		
+		
+		if( $linea && $producto->getCaPostularLinea()){
+			$pdf->SetFont('Arial','',8);
+			$pdf->SetWidths(array(170));
+			$pdf->SetAligns(array_fill(0, 3, "L"));
+			$pdf->Row(array(($producto->getCaTransporte()==Constantes::AEREO?"Aérolinea: ":"Linea: ").$linea->getCaNombre()));			
+		}
 		
 		$c = new Criteria();
 		$c->addJoin( CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO );
@@ -177,6 +186,9 @@ foreach( $productos as $producto ):
 		$widths = array();
 		$datos = array();
 		$pos_mem = 0;
+		
+		
+		
 		//Imprime el tiempo de transito
 		if (strlen($producto->getCaFrecuencia())<>0){
 			array_push($widths,35);			

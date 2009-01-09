@@ -102,10 +102,6 @@ class CotizacionMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_DATOSAG', 'CaDatosag', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'VARCHAR', false, null);
-
-		$tMap->addColumn('CA_MOTIVONOAPROBADO', 'CaMotivonoaprobado', 'VARCHAR', false, null);
-
 	} // doBuild()
 
 } // CotizacionMapBuilder

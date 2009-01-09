@@ -62,22 +62,53 @@ class cotseguimientosActions extends sfActions
 			$c->add(  UsuarioPeer::CA_SUCURSAL, $sucursal );	
 		}		
 		$c->addAscendingOrderByColumn( CotizacionPeer::CA_CONSECUTIVO );
-		$c->add( CotizacionPeer::CA_ESTADO , Cotizacion::EN_SEGUIMIENTO  );
+		$c->addJoin( CotizacionPeer::CA_IDCOTIZACION , CotProductoPeer::CA_IDCOTIZACION );
+		$c->add( CotProductoPeer::CA_ESTADO , Cotizacion::EN_SEGUIMIENTO  );
+		$c->add( CotizacionPeer::CA_CONSECUTIVO, null, Criteria::ISNOTNULL );
+		$c->setDistinct();
 				
 		$cotizaciones = CotizacionPeer::doSelect( $c );
 		
 		$this->data = array();
 		
 		foreach( $cotizaciones as $cotizacion ){
-			$cliente = $cotizacion->getCliente();
-			$this->data[] = array( "idcotizacion"=>$cotizacion->getCaIdCotizacion(),
-									"consecutivo"=>$cotizacion->getCaConsecutivo(),
-									"cliente"=>$cliente->getCaCompania(),
-									"usuario"=>$cotizacion->getCaUsuario(),
-									"estado"=>$cotizacion->getCaEstado(),
-									"motivonoaprobado"=>$cotizacion->getCaMotivonoaprobado()
 				
+			$cliente = $cotizacion->getCliente();
+			$productos = $cotizacion->getCotProductos();
+			foreach( $productos as $producto ){
+				$origen = $producto->getOrigen();
+				$destino = $producto->getDestino();
+				$escala = $producto->getEscala();	
+				$linea = $producto->getTransportador();
+					
+				
+				$trayecto =  $origen->getCaCiudad() ." - ".$origen->getTrafico()->getCaNombre()." » ";
+				
+				if( $escala ){
+					$trayecto .= $escala->getCaCiudad()." - ".$escala->getTrafico()->getCaNombre()." » ";
+				}
+				
+				$trayecto .= $destino->getCaCiudad()." - ".$destino->getTrafico()->getCaNombre();
+				if( $linea ){
+					$trayecto .= " » ".$linea->getCaNombre();
+				}
+				
+				
+				
+				$this->data[] = array("id"=>$cotizacion->getCaIdCotizacion()."-".$producto->getCaIdProducto(),				
+									"idcotizacion"=>$cotizacion->getCaIdCotizacion(),
+									"idproducto"=>$producto->getCaIdProducto(),
+									"impoexpo"=>utf8_encode($producto->getCaImpoExpo()),
+									"transporte"=>utf8_encode($producto->getCaTransporte()),
+									"modalidad"=>utf8_encode($producto->getCaModalidad()),
+									"trayecto"=>utf8_encode($trayecto),
+									"consecutivo"=>str_pad($cotizacion->getCaConsecutivo(),5,"0",STR_PAD_LEFT),
+									"cliente"=>utf8_encode($cliente->getCaCompania()),									
+									"usuario"=>$cotizacion->getCaUsuario(),
+									"estado"=>$producto->getCaEstado(),
+									"motivonoaprobado"=>$producto->getCaMotivonoaprobado()				
 							);
+			}
 		} 
 				
 		$this->estados = ParametroPeer::retrieveByCaso( "CU068" );
@@ -89,20 +120,20 @@ class cotseguimientosActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeObserveListadocotizaciones($request){
-		$cotizacion = CotizacionPeer::retrieveByPk( $request->getParameter("idcotizacion") );
-		$this->forward404Unless( $cotizacion );
+		$cotproducto = CotProductoPeer::retrieveByPk( $request->getParameter("idproducto"),$request->getParameter("idcotizacion") );
+		$this->forward404Unless( $cotproducto );
 		
 		$estado = $request->getparameter( "estado" );
 		$motivonoaprobado = $request->getparameter( "motivonoaprobado" );
 		if( $estado ){
-			$cotizacion->setCaEstado( $estado );			
+			$cotproducto->setCaEstado( $estado );			
 		}
 		
 		if( $motivonoaprobado!==null ){
-			$cotizacion->setCaMotivonoaprobado( utf8_decode($motivonoaprobado) );			
+			$cotproducto->setCaMotivonoaprobado( utf8_decode($motivonoaprobado) );			
 		}
-		$cotizacion->save();
-		$this->responseArray = array( "success"=>true, "idcotizacion"=>$cotizacion->getCaIdcotizacion() );
+		$cotproducto->save();
+		$this->responseArray = array( "success"=>true,"idcotizacion"=>$cotproducto->getCaIdcotizacion(), "idproducto"=>$cotproducto->getCaIdproducto() );
 		$this->setTemplate( "responseTemplate" );		
 	}
 	

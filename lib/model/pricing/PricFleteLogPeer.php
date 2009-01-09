@@ -13,7 +13,7 @@ class PricFleteLogPeer extends BasePricFleteLogPeer
 	* Retorna el objeto PricFleteLog vigente hasta $fch
 	*/
 	public static function retrieveByFch( $idtrayecto, $idconcepto, $fch ){
-				
+
 		$c = new Criteria();
 		$c->add( PricFleteLogPeer::CA_IDTRAYECTO, $idtrayecto );		
 		$c->add( PricFleteLogPeer::CA_IDCONCEPTO, $idconcepto );		

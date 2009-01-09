@@ -17,10 +17,11 @@ class PricFleteLog extends BasePricFleteLog
 		$c->add( PricRecargoxConceptoLogPeer::CA_IDTRAYECTO, $this->getCaIdTrayecto() );
 		$c->add( PricRecargoxConceptoLogPeer::CA_FCHCREADO, $fch, Criteria::LESS_EQUAL );
 		$c->setDistinct();
-		$rs = PricRecargoxConceptoLogPeer::doSelectRS( $c );
+		$stmt = PricRecargoxConceptoLogPeer::doSelectStmt( $c );
+		
 		$resultados = array();
-		while( $rs->next() ){		
-			$idrecargo = $rs->getInt(1); 
+		while( $row = $stmt->fetch(PDO::FETCH_NUM) ){		
+			$idrecargo = $row[0]; 
 			//Se sacan el ultimo recargo 
 			$c = new Criteria();
 			$c->add( PricRecargoxConceptoLogPeer::CA_IDCONCEPTO, $this->getCaIdConcepto() );
