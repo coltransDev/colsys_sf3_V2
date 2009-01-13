@@ -95,7 +95,7 @@ class Trayecto extends BaseTrayecto
 			$c->add( PricRecargosxCiudadLogPeer::CA_MODALIDAD, $this->getCaModalidad() );
 			$c->add( PricRecargosxCiudadLogPeer::CA_IMPOEXPO, $this->getCaImpoExpo() );
 			$c->add( PricRecargosxCiudadLogPeer::CA_FCHCREADO, $fch, Criteria::LESS_EQUAL );
-			$c->setDistinct();
+			$c->setDistinct();			
 			$stmt = PricRecargosxCiudadLogPeer::doSelectStmt( $c );
 			$resultados = array();
 			while( $row = $stmt->fetch(PDO::FETCH_NUM) ){		
