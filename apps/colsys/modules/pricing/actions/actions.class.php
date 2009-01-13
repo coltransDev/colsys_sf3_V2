@@ -719,10 +719,10 @@ class pricingActions extends sfActions
 				'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
 				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
 				'vlrminimo'=>$recargo->getCaVlrminimo(),
-				'aplicacion'=>$recargo->getCaAplicacion(),
-				'aplicacion_min'=>$recargo->getCaAplicacionMin(),
+				'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
+				'aplicacion_min'=>utf8_encode($recargo->getCaAplicacionMin()),
 				'idmoneda'=>$recargo->getCaIdmoneda(),
-				'observaciones'=>$recargo->getCaObservaciones()								
+				'observaciones'=>utf8_encode($recargo->getCaObservaciones())								
 			);
 			$this->data[]= $row;
 		}
@@ -781,8 +781,12 @@ class pricingActions extends sfActions
 			$recargo->setCaModalidad( $modalidad );
 			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
 			$recargo->setCaVlrrecargo( 0 );
-			$recargo->setCaVlrminimo( 0 );
+			$recargo->setCaVlrminimo( 0 );			
 		}
+		$user = $this->getUser();
+		$recargo->setCaUsucreado( $user->getUserId() );
+		$recargo->setCaFchcreado( time() );
+		
 					
 		if( $this->getRequestParameter("vlrrecargo") ){
 			$recargo->setCaVlrrecargo( $this->getRequestParameter("vlrrecargo") );
@@ -797,15 +801,15 @@ class pricingActions extends sfActions
 		}	
 		
 		if( $this->getRequestParameter("aplicacion")!==null){
-			$recargo->setCaAplicacion($this->getRequestParameter("aplicacion"));
+			$recargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
 		}
 		
 		if( $this->getRequestParameter("aplicacion_min")!==null){
-			$recargo->setCaAplicacionMin($this->getRequestParameter("aplicacion_min"));
+			$recargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
 		}
 		
 		if( $this->getRequestParameter("observaciones")!==null){
-			$recargo->setCaObservaciones($this->getRequestParameter("observaciones"));
+			$recargo->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
 		}
 								
 		$recargo->save();		
@@ -1394,44 +1398,30 @@ class pricingActions extends sfActions
 		$idtrayecto = $this->getRequestParameter("idtrayecto");
 		$this->forward404Unless($idtrayecto);
 		
+		$trayecto = TrayectoPeer::retrieveByPK($idtrayecto); 
+		if( $trayecto->getCaImpoexpo()==Constantes::IMPO ){
+			$idciudad = $trayecto->getCaOrigen();			
+		}else{
+			$idciudad = $trayecto->getCaDestino();			
+		}
+		
 		$hoy = date("Y-m-d");
 		$ayer = date("Y-m-d", time()-86400);
 		
 		$this->data = array();
-		
-		/*$c = new Criteria();
-		$c->add( PricFletePeer::CA_IDTRAYECTO, $idtrayecto );		
-		$c->addAscendingOrderByColumn( PricFletePeer::CA_USUCREADO );
-		$flete = PricFletePeer::doSelectOne( $c );		
-		$timestamp = strtotime( $flete->getCaFchcreado() )-1; //un segundo antes
 				
-		if( $flete->getCaFchcreado("Y-m-d")==$hoy ){
-			$fecha="Hoy";
-		}elseif( $flete->getCaFchcreado("Y-m-d")==$ayer ){
-			$fecha="Ayer";
-		}else{
-			$fecha=$flete->getCaFchcreado("Y-m-d");
-		}
-		
-		$this->data[] =  array("idtrayecto" =>  $flete->getCaIdtrayecto(),								
-								"timestamp" => $timestamp,								
-								"fchcreado" => $fecha,
-								"horacreado" => $flete->getCaFchcreado("h:i:s A"),
-								"usucreado" => $flete->getCaUsucreado()
-						  );*/
-		
-		
-		
 		$sql = "SELECT ca_fchcreado, ca_usucreado FROM log_pricfletes WHERE ca_idtrayecto = ".$idtrayecto." 
 			UNION 
-		SELECT ca_fchcreado, ca_usucreado FROM log_pricrecargosxconcepto WHERE ca_idtrayecto = ".$idtrayecto."  ORDER BY ca_fchcreado DESC LIMIT 200";
+		SELECT ca_fchcreado, ca_usucreado FROM log_pricrecargosxconcepto WHERE ca_idtrayecto = ".$idtrayecto." 
+			UNION 
+		SELECT ca_fchcreado, ca_usucreado FROM log_pricrecargosxciudad WHERE ca_idciudad = '".$idciudad."' OR ca_idciudad = '999-9999'
+		ORDER BY ca_fchcreado DESC LIMIT 200";
 		
 		$con = Propel::getConnection(PricFleteLogPeer::DATABASE_NAME);
 		
 		$stmt = $con->prepare($sql);
 		$stmt->execute();	 
-		while($row = $stmt->fetch()){
-						
+		while($row = $stmt->fetch()){									
 			$timestamp = strtotime( $row['ca_fchcreado'] )+1;
 			
 			if( date("Y-m-d", $timestamp )==$hoy ){
@@ -1449,81 +1439,8 @@ class pricingActions extends sfActions
 								"usucreado" => $row['ca_usucreado']
 						  );	
 		}
-		
-				
-		
-				
-		/*
-		$c->addSelectColumn( PricFleteLogPeer::CA_USUCREADO );	
-		$c->addSelectColumn( PricFleteLogPeer::CA_FCHCREADO );			
-		$c->addAsColumn("fchcreado", "to_char( ".PricFleteLogPeer::CA_FCHCREADO.", 'yyyy-mm-dd')"); 	
-		$c->addAsColumn("horacreado", "to_char( ".PricFleteLogPeer::CA_FCHCREADO.", 'HH12:MIAM')"); 			
-		$c->setLimit( 50 );
-		$c->setDistinct();
-		$rs = PricFleteLogPeer::doSelectRS( $c );
-			
-		while( $rs->next() ){
-			$usucreado = $rs->getString(1);	
-			$fchregistro = $rs->getString(2);										
-			$fchcreado = $rs->getString(3);	
-			$horacreado = $rs->getString(4);
-			$timestamp = strtotime( $fchcreado." ".$horacreado  );
-			$timestamp2 = strtotime( $fchregistro );
 						
-			if( $fchcreado==$hoy ){
-				$fecha="Hoy";
-			}elseif( $fchcreado==$ayer ){
-				$fecha="Ayer";
-			}else{
-				$fecha=$fchcreado;
-			}
-			
-			if( $fchcreado ){
-				$this->data[]=array("idtrayecto" =>  $idtrayecto,
-								"fecha" => $fecha,
-								"timestamp" => $timestamp,
-								"timestamp2" => $timestamp2,
-								"fchcreado" => $fchcreado,
-								"usucreado" => $usucreado,
-								"horacreado" => $horacreado
-								 );
-			}
-		}
-		
-		$c = new Criteria();
-		$c->add( PricRecargoxConceptoLogPeer::CA_IDTRAYECTO, $idtrayecto );		
-		$c->addSelectColumn( PricRecargoxConceptoLogPeer::CA_USUCREADO );			
-		$c->addAsColumn("fchcreado", "to_char( ".PricRecargoxConceptoLogPeer::CA_FCHCREADO.", 'yyyy-mm-dd')"); 	
-		$c->addAsColumn("horacreado", "to_char( ".PricRecargoxConceptoLogPeer::CA_FCHCREADO.", 'HH12:MIAM')"); 								
-		$c->setLimit( 50 );
-		$c->setDistinct();
-		$rs = PricRecargoxConceptoLogPeer::doSelectRS( $c );				
-		while( $rs->next() ){
-			$usucreado = $rs->getString(1);									
-			$fchcreado = $rs->getString(2);	
-			$horacreado = $rs->getString(3);
-			$timestamp = strtotime( $fchcreado." ".$horacreado  );
-						
-			if( $fchcreado==$hoy ){
-				$fecha="Hoy";
-			}elseif( $fchcreado==$ayer ){
-				$fecha="Ayer";
-			}else{
-				$fecha=$fchcreado;
-			}
-			
-			if( $fchcreado ){
-				$this->data[]=array("idtrayecto" =>  $idtrayecto,
-								"fecha" => $fecha,
-								"timestamp" => $timestamp,
-								"fchcreado" => $fchcreado,
-								"usucreado" => $usucreado,
-								"horacreado" => $horacreado
-								 );
-			}
-		}*/
-		
-	}	
+	}
 	
 	/*
 	* Muestra el tarifario de acuerdo a la hora seleccionada
