@@ -211,7 +211,8 @@
 		
 	
  	<table name="tb_emails" phpName="Email">				
-		<column name="ca_idemail" type="integer" required="true" primaryKey="true" autoIncrement="true"  />			
+		<column name="ca_idemail" type="integer" required="true" primaryKey="true" autoIncrement="true"  />
+		<id-method-parameter value="tb_emails_id"/>			
 		<column name="ca_fchenvio" type="timestamp" required="true"  />	
 		<column name="ca_usuenvio" type="varchar" required="true"  />	
 		<column name="ca_tipo" type="varchar" />			

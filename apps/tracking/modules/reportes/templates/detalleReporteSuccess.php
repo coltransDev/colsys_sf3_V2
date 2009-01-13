@@ -234,6 +234,9 @@ $statuss = $reporte->getHistorialStatus ();
 			include_component("reportes","listaRespuestas", array("idreporte"=>$reporte->getCaIdreporte(), "idemail"=>$status['emailid'] ));
 			?>
 			</div>
+			<?php 
+			if($trackingUser){
+			?>
 			<div class="story_coment" id="coment_status_txt_<?=$timestamp?>" style="display:none" >
 				<textarea rows="1" cols="50" id="coment_status_field_<?=$timestamp?>" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
 				<br />
@@ -243,10 +246,13 @@ $statuss = $reporte->getHistorialStatus ();
 			<div class="story_coment" id="coment_status_<?=$timestamp?>" onclick="comentar('<?=$timestamp?>')">
 				<b>Respuesta</b>
 			</div>	
+			<?php 
+			}
+			?>
 	  </td>
 		<td width="11%"><?php
 			if( isset($status["emailid"]) ){
-				echo link_to ( image_tag ( "24x24/mail_post_to.gif" ), 'reportes/verEmail?email=' .$status["emailid"]  );
+				echo link_to ( image_tag ( "24x24/mail_post_to.gif" ), 'reportes/verEmail?idreporte='.$reporte->getCaIdreporte().'&email=' .$status["emailid"]  );
 				
 				
 			}			

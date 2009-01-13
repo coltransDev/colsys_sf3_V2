@@ -62,7 +62,7 @@ class EmailMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_emails_ca_idemail_seq');
+		$tMap->setPrimaryKeyMethodInfo('tb_emails_id');
 
 		$tMap->addPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER', true, null);
 

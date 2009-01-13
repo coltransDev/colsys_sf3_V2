@@ -24,7 +24,7 @@ class myLoginValidatorNovell extends sfValidatorBase
 				
 				if(@$bind=ldap_bind($connect, $auth_user, $passwd)){
 					sfContext::getInstance()->getUser()->signInNovell( $username );	
-					return array_merge($values, array('user' => $user));
+					return $values;
 				}
 				ldap_close($connect);           
 			}

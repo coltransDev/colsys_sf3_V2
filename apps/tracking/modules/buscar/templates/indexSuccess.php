@@ -3,7 +3,7 @@
 <h3>Por favor coloque los criterios de busqueda</h3>
 <br />
 
-<form action="<?=url_for("buscar/buscar")?>" method="post">
+<form action="<?=url_for("buscar/index")?>" method="post">
 <table width="50%" border="1" class="table1">
 	<tr>
 		<th colspan="2" scope="col">&nbsp; </th>
@@ -14,13 +14,18 @@
 			<input type="text" name="criterio" />
 		</div></td>
 	</tr>
-	<!--<tr>
+	<tr>
 		<td><div align="right">Buscar por </div></td>
 		<td><div align="left">
-			<?
-			//select_tag("buscar_por", options_for_select(array("no_pedido"=>"No. de Pedido", "proveedor"=>"Proveedor",  "hbl_hawb"=>"HBL - HAWB",  "reporte"=>"Reporte"), "no_referencia"))?>
+			<select name="buscar_por" id="buscar_por"> 
+				<option value="no_pedido">No. de Orden/Pedido</option>
+				<option value="proveedor">Proveedor</option>
+				<option value="hbl_hawb">HBL - HAWB</option>
+				<option value="reporte">Reporte</option>		
+			</select>
+			
 		</div></td>
-	</tr>-->
+	</tr>	
 	<tr>
 		<td colspan="2"><div align="center"><input type="submit" value="Buscar" class="button" /></div></td>
 	</tr>

@@ -26,7 +26,7 @@ class reportesActions extends sfActions
 		}	
 		
 		$this->statusReporte = $this->reporte->getRepStatuss();
-		
+		$this->trackingUser = $this->getUser()->getTrackingUser();
 		
 		/*
 		* Muestra los archivos adjuntos al reporte 
@@ -41,9 +41,22 @@ class reportesActions extends sfActions
 	}
 	
 	public function executeVerEmail(){
-		$email_id = $this->getRequestParameter( "email" );	
-		$this->email = EmailPeer::retrieveByPk( $email_id );				
-		//$this->forward404Unless( $this->email );
+		$idemail = $this->getRequestParameter( "email" );	
+		$idreporte = $this->getRequestParameter( "idreporte" );
+		$this->forward404Unless( $idreporte );
+		$this->forward404Unless( $idemail );
+				
+		$status = RepStatusPeer::retrieveByPk($idreporte, $idemail);
+		$this->forward404Unless( $status );
+		$reporte = $status->getReporte();
+		
+		$cliente = $reporte->getCliente();				
+		if( $cliente->getCaIdCliente()!= $this->getUser()->getClienteActivo() ){ // En este caso esta tratando de ver informacion que no es del cliente
+			$this->forward404();			
+		}
+		
+		$this->email = EmailPeer::retrieveByPk( $idemail );				
+		$this->forward404Unless( $this->email );
 	}
 	
 	/*
@@ -57,15 +70,79 @@ class reportesActions extends sfActions
 		$comentario = $request->getParameter("comentario"); 
 		
 		//print_r($_POST );
-		$reporte = ReportePeer::retrieveByPk( $idreporte );
+		$reporte = ReportePeer::retrieveByPk( $idreporte );	
+
+		$cliente = $reporte->getCliente();				
+		if( $cliente->getCaIdCliente()!= $this->getUser()->getClienteActivo() ){ // En este caso esta tratando de ver informacion que no es del cliente
+			$this->forward404();			
+		}
+		
+		$status = RepStatusPeer::retrieveByPk($idreporte, $idemail);
+
+		$user = $this->getUser()->getTrackingUser();
+		
 		
 		$respuesta  = new RepStatusRespuesta();
 		$respuesta->setCaIdreporte( $idreporte );
 		$respuesta->setCaIdemail( $idemail );
 		$respuesta->setCaRespuesta( $comentario );
 		$respuesta->setCaFchcreado( time() );
+		$respuesta->setCaEmail( $user->getCaEmail() ); 
 		$respuesta->save();
-		//$respuesta->setCaEmail(); ca_idrepstatusrespuestas
+		
+		
+		$email = new Email();
+		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email->setCaUsuenvio( "tracking" );
+		
+		$email->setCaTipo( "Respuesta a Status" ); 	
+		
+		
+		$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() );
+		$email->setCaFrom( $user->getCaEmail() );
+		$email->setCaFromname( "Respuesta a status desde pagina Web" );
+		
+		
+
+		$email->setCaReplyto( $user->getCaEmail() );
+				
+		$recips = explode( ",", $reporte->getCaConfirmarClie() );									
+		if( is_array($recips) ){
+			foreach( $recips as $recip ){			
+				$recip = str_replace(" ", "", $recip );			
+				if( $recip && strpos($recip, "coltrans.com.co")!==false){
+					$email->addTo( $recip ); 
+				}
+			}	
+		}
+	
+		
+		if ($this->getRequestParameter("copiar_cont")){
+			$recips = explode(",",$reporte->getCaContinuacionConf());			
+			foreach( $recips as $recip ){			
+				$recip = str_replace(" ", "", $recip );			
+				if( $recip && strpos($recip, "coltrans.com.co")!==false ){					
+					$email->addCc( $recip ); 
+				}
+			}	   
+		}
+
+		
+		if ($this->getRequestParameter("copiar_adua")){
+			$cordinador = $reporte->getCliente()->getCoordinador(); 	
+		 
+			if( $cordinador ){			
+				$email->addCc( $cordinador->getCaEmail() );				
+			}		  		   
+		}
+					
+		$email->setCaSubject( "Respuesta a status desde Tracking" );
+		
+		$email->setCaAddress("abotero@coltrans.com.co"); //--------
+		$email->setCaBody( "Respuesta: <br />".$comentario."<br /><br />Status: <br />".$status->getStatus() );		
+		$email->save(); 
+		$email->send(); 	
+				
 		
 		$this->idreporte = $idreporte;
 		$this->idemail = $idemail;
