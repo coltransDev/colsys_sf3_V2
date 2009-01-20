@@ -1,5 +1,5 @@
 <?
-use_helper (  "Popup", "MimeType" );
+use_helper (   "MimeType" );
 $fileIdx = 0;
 ?>
 <script language="javascript">
@@ -43,7 +43,14 @@ $fileIdx = 0;
 	<tr>
 		<td colspan="2">
 		<div align="left"><b>Proveedor:</b><br>
-	        <?=$reporte->getTercero ()?>		
+	        <?
+	        $proveedoresStr ="";
+			$proveedores = $reporte->getProveedores();
+			foreach( $proveedores as $proveedor ){				
+				$proveedoresStr.= $proveedor->getCaNombre()."<br />";					
+			}
+			echo $proveedoresStr;
+	        ?>		
         </div>		</td>
 	</tr>
 	<tr>
@@ -235,7 +242,7 @@ $statuss = $reporte->getHistorialStatus ();
 			?>
 			</div>
 			<?php 
-			if($trackingUser){
+			if($trackingUser && false ){
 			?>
 			<div class="story_coment" id="coment_status_txt_<?=$timestamp?>" style="display:none" >
 				<textarea rows="1" cols="50" id="coment_status_field_<?=$timestamp?>" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
@@ -274,6 +281,7 @@ $statuss = $reporte->getHistorialStatus ();
 
 	?>
 <br />
+<a name="archivos"></a>
 <table width="90%" border="1" class="table1">
 	<tr>
 		<th scope="col">Archivos</th>
@@ -283,10 +291,13 @@ $statuss = $reporte->getHistorialStatus ();
 	if ($files) {
 		foreach ( $files as $file ) {
 			$user->addFile ( $file, $fileIdx );
+			$url = "general/fileViewer?idx=" . $fileIdx . "&token=" . md5 ( time().basename($file));
 		?>
 	<tr>
 		<td width="70%">
-		<div align="left" class="info"><?=mime_type_icon ( basename ( $file ) ) . " " . link_popup ( basename ( $file ), "general/fileViewer?idx=" . $fileIdx . "&token=" . md5 ( time().basename($file)),"800","600" )?></div>
+		<div align="left" class="info"><?=mime_type_icon ( basename ( $file ) )?> 
+			<a href="#archivos" onClick="popup('<?=url_for($url)?>', '800', '600' , '')"><?=basename ( $file )?></a>
+		</div>
 		</td>
 	</tr>
 		<?
@@ -305,10 +316,14 @@ $statuss = $reporte->getHistorialStatus ();
 		$attachments = $email ->getEmailAttachments();
 		
 		foreach( $attachments as $attachment ){
+			$url = "general/attachmentViewer?idx=" . $attachment->getCaIdattachment() . "&token=" . md5 ( time().$attachment->getCaHeaderFile());
 		?>
 		<tr>
 			<td width="70%">
-			<div align="left" class="info"><?=mime_type_icon ( $attachment->getCaHeaderFile() ) . " " . link_popup ( $attachment->getCaHeaderFile(), "general/attachmentViewer?idx=" . $attachment->getCaIdattachment() . "&token=" . md5 ( time().$attachment->getCaHeaderFile()),"800","600" )?></div>
+			<div align="left" class="info"><?=mime_type_icon ( $attachment->getCaHeaderFile() )?>
+			
+			<a href="#" onClick="popup('<?=url_for($url)?>', '800', '600' , '')"><?=basename ( $attachment->getCaHeaderFile() )?></a>
+			</div>
 			</td>
 		</tr>
 		<?

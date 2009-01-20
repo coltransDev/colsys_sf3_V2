@@ -80,7 +80,14 @@ class reportesComponents extends sfComponents
 			$actualizado = $reporte->getFchUltimoStatus("Y-m-d" );
 			$status = $reporte->getTextoStatus();
 						
-			
+			$proveedoresStr ="";
+			$proveedores = $reporte->getProveedores();
+			foreach( $proveedores as $proveedor ){
+				if( $proveedoresStr ){
+					$proveedoresStr.=" - ";					
+				}
+				$proveedoresStr.= $proveedor->getCaNombre();					
+			}
 			
 			$this->data[] = array(
 								"consecutivo"=>$reporte->getCaConsecutivo(),
@@ -89,7 +96,7 @@ class reportesComponents extends sfComponents
 								"ETS"=>$reporte->getETS(),
 								"ETA"=>$reporte->getETA(),
 								"orden"=>utf8_encode($reporte->getCaOrdenClie()),
-								"proveedor"=>utf8_encode($reporte->getTercero()->getCaNombre()),
+								"proveedor"=>utf8_encode( $proveedoresStr ),
 								"status"=>utf8_encode($status),
 								"actualizado"=>$actualizado,								
 								"style"=>$reporte->getColorStatus()

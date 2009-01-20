@@ -45,16 +45,17 @@ class reportesActions extends sfActions
 		$idreporte = $this->getRequestParameter( "idreporte" );
 		$this->forward404Unless( $idreporte );
 		$this->forward404Unless( $idemail );
-				
+		
 		$status = RepStatusPeer::retrieveByPk($idreporte, $idemail);
-		$this->forward404Unless( $status );
-		$reporte = $status->getReporte();
-		
-		$cliente = $reporte->getCliente();				
-		if( $cliente->getCaIdCliente()!= $this->getUser()->getClienteActivo() ){ // En este caso esta tratando de ver informacion que no es del cliente
-			$this->forward404();			
+		if( $status ){
+			//$this->forward404Unless( $status );
+			$reporte = $status->getReporte();
+			
+			$cliente = $reporte->getCliente();				
+			if( $cliente->getCaIdCliente()!= $this->getUser()->getClienteActivo() ){ // En este caso esta tratando de ver informacion que no es del cliente
+				$this->forward404();			
+			}
 		}
-		
 		$this->email = EmailPeer::retrieveByPk( $idemail );				
 		$this->forward404Unless( $this->email );
 	}
@@ -98,7 +99,7 @@ class reportesActions extends sfActions
 		$email->setCaTipo( "Respuesta a Status" ); 	
 		
 		
-		$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() );
+		$email->setCaIdcaso( 0 ); //$respuesta->getCaIdrepstatusrespuestas()
 		$email->setCaFrom( $user->getCaEmail() );
 		$email->setCaFromname( "Respuesta a status desde pagina Web" );
 		
@@ -176,7 +177,7 @@ class reportesActions extends sfActions
 		}
 					
 		
-		$this->parametros = ParametroPeer::retrieveByCaso( "CU059", null , null, $this->idCliente );
+		$this->parametros = ParametroPeer::retrieveByCaso( "CU059", null , null, $this->getUser()->getClienteActivo() );
 		
 		$this->filename = $this->getRequestParameter("filename");
 		
