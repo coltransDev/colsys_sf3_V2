@@ -302,15 +302,15 @@ class clientesActions extends sfActions
 		
 		$c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );		
 		$c->setLimit(40);
-		$rs = ClientePeer::doSelectRS( $c );
+		$stmt = ClientePeer::doSelectStmt( $c );
 		
 		$this->clientes = array();
  
-   		while ( $rs->next() ) {
-      		$this->clientes[] = array('ca_idcliente'=>$rs->getString(1),
-                                      'ca_compania'=>utf8_encode($rs->getString(2)),
-									  'ca_preferencias'=>utf8_encode($rs->getString(3)),
-									  'ca_confirmar'=>utf8_encode($rs->getString(4)),
+   		while ( $row = $stmt->fetch( PDO::FETCH_NUM ) ) {
+      		$this->clientes[] = array('ca_idcliente'=>$row[0],
+                                      'ca_compania'=>utf8_encode($row[1]),
+									  'ca_preferencias'=>utf8_encode($row[2]),
+									  'ca_confirmar'=>utf8_encode($row[3]),
                                  );
 		}					
 		$this->setLayout("none");
@@ -337,15 +337,15 @@ class clientesActions extends sfActions
 		$c->addAscendingOrderByColumn( TerceroPeer::CA_NOMBRE );
 		
 		$c->setLimit(40);
-		$rs = TerceroPeer::doSelectRS( $c );
+		$stmt = TerceroPeer::doSelectStmt( $c );
 		
 		$this->terceros = array();
  
-   		while ( $rs->next() ) {
-      		$this->terceros[] = array('ca_idtercero'=>$rs->getString(1),
-                                      'ca_nombre'=>utf8_encode($rs->getString(2)),
-									  'ca_ciudad'=>utf8_encode($rs->getString(3)),
-									  'ca_pais'=>utf8_encode($rs->getString(4))		                              
+   		while (  $row = $stmt->fetch( PDO::FETCH_NUM ) ) {
+      		$this->terceros[] = array('ca_idtercero'=>$row[0],
+                                      'ca_nombre'=>utf8_encode($row[1]),
+									  'ca_ciudad'=>utf8_encode($row[2]),
+									  'ca_pais'=>utf8_encode($row[3])		                              
                                  );
 		}					
 		$this->setLayout("none");
@@ -372,15 +372,15 @@ class clientesActions extends sfActions
 		$c->addAscendingOrderByColumn( TerceroPeer::CA_NOMBRE );
 		
 		$c->setLimit(40);
-		$rs = TerceroPeer::doSelectRS( $c );
+		$stmt = TerceroPeer::doSelectStmt( $c );
 		
 		$this->terceros = array();
  
-   		while ( $rs->next() ) {
-      		$this->terceros[] = array('ca_idtercero'=>$rs->getString(1),
-                                      'ca_nombre'=>utf8_encode($rs->getString(2)),
-									  'ca_ciudad'=>utf8_encode($rs->getString(3)),
-									  'ca_pais'=>utf8_encode($rs->getString(4))		                              
+   		while ( $row = $stmt->fetch( PDO::FETCH_NUM ) ) {
+      		$this->terceros[] = array('ca_idtercero'=>$row[0],
+                                      'ca_nombre'=>utf8_encode($row[1]),
+									  'ca_ciudad'=>utf8_encode($row[2] ),
+									  'ca_pais'=>utf8_encode($row[3] )		                              
                                  );
 		}					
 		$this->setLayout("none");
@@ -395,12 +395,12 @@ class clientesActions extends sfActions
 		$c->addSelectColumn( SucursalPeer::CA_NOMBRE );
 		$c->addAscendingOrderByColumn( SucursalPeer::CA_NOMBRE );
 
-		$rs = SucursalPeer::doSelectRS( $c );
+		$stmt = SucursalPeer::doSelectStmt( $c );
 
 		$this->sucursales = array(null => "Todas las Sucursales");
 
-   		while ( $rs->next() ) {
-   				$this->sucursales = array_merge($this->sucursales, array($rs->getString(1) => $rs->getString(1)));
+   		while ($row = $stmt->fetch( PDO::FETCH_NUM ) ) {
+   				$this->sucursales = array_merge($this->sucursales, array($row[0] => $row[0]));
 		}
 	}
 	
@@ -412,12 +412,12 @@ class clientesActions extends sfActions
 		$c->addSelectColumn( SucursalPeer::CA_NOMBRE );
 		$c->addAscendingOrderByColumn( SucursalPeer::CA_NOMBRE );
 
-		$rs = SucursalPeer::doSelectRS( $c );
+		$stmt = SucursalPeer::doSelectStmt( $c );
 
 		$this->sucursales = array(null => "Todas las Sucursales");
 
-   		while ( $rs->next() ) {
-   				$this->sucursales = array_merge($this->sucursales, array($rs->getString(1) => $rs->getString(1)));
+   		while ( $row = $stmt->fetch( PDO::FETCH_NUM ) ) {
+   				$this->sucursales = array_merge($this->sucursales, array($row[0] => $row[0]));
 		}
 	}
 	
@@ -433,31 +433,22 @@ class clientesActions extends sfActions
 		
 		$this->clientesEstados = array();
 		
-		$rs = ClientePeer::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
-		while($rs->next()) {
-			$actual = array('ca_idcliente'=>$rs->getString("ca_idcliente"),
-							'ca_compania'=>$rs->getString("ca_compania"),
-                            'ca_fchestado'=>$rs->getString("ca_fchestado"),
-                            'ca_estado'=>$rs->getString("ca_estado"),
-                            'ca_empresa'=>$rs->getString("ca_empresa"),
-							'ca_vendedor'=>$rs->getString("ca_vendedor"),
-							'ca_sucursal'=>$rs->getString("ca_sucursal")
-                           );
+		$stmt = ClientePeer::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
+		while($row = $stmt->fetch()) {
+			$actual = $row;
 			
-			list($year, $month, $day) = sscanf($rs->getString("ca_fchestado"), "%d-%d-%d");
+			list($year, $month, $day) = sscanf($row["ca_fchestado"], "%d-%d-%d");
 			
-			$sb = ClientePeer::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $rs->getString("ca_idcliente"), null, null);
-			while($sb->next()) {
-				$anterior = array('ca_fchestado_ant'=>$sb->getString("ca_fchestado"),
-	                              'ca_estado_ant'=>$sb->getString("ca_estado")
+			$sb = ClientePeer::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $row["ca_idcliente"], null, null);
+			while($row1 = $sb->fetch()) {
+				$anterior = array('ca_fchestado_ant'=>$row1["ca_fchestado"],
+	                              'ca_estado_ant'=>$row1["ca_estado"]
 	                             );
 			}
-
-			$sb = ClientePeer::facturacionClientes($inicio, $final, $empresa, $rs->getString("ca_idcliente"));
-			while($sb->next()) {
-				$facturar = array('ca_fchfactura'=>$sb->getString("ca_fchfactura"),
-	                              'ca_valor'=>$sb->getString("ca_valor")
-	                             );
+			
+			$sb = ClientePeer::facturacionClientes($inicio, $final, $empresa, $row["ca_idcliente"]);
+			while($row2 = $sb->fetch()) {
+				$facturar = $row2;
 			}
 			if (count($anterior)==0){
 				$anterior = array('ca_fchestado_ant'=>null, 'ca_estado_ant'=>null);
@@ -477,26 +468,9 @@ class clientesActions extends sfActions
 		
 		$this->clientesCircular = array();
 		
-		$rs = ClientePeer::circularClientes( $inicio, $final, $sucursal );
-		while($rs->next()) {
-			$this->clientesCircular[] = array('ca_idcliente'=>$rs->getString("ca_idcliente"),
-											'ca_digito'=>$rs->getString("ca_digito"),
-											'ca_compania'=>$rs->getString("ca_compania"),
-											'ca_direccion'=>$rs->getString("ca_direccion"),
-											'ca_oficina'=>$rs->getString("ca_oficina"),
-											'ca_torre'=>$rs->getString("ca_torre"),
-											'ca_bloque'=>$rs->getString("ca_bloque"),
-											'ca_interior'=>$rs->getString("ca_interior"),
-											'ca_complemento'=>$rs->getString("ca_complemento"),
-											'ca_telefonos'=>$rs->getString("ca_telefonos"),
-											'ca_fax'=>$rs->getString("ca_fax"),
-											'ca_ciudad'=>$rs->getString("ca_ciudad"),
-											'ca_fchcircular'=>$rs->getString("ca_fchcircular"),
-											'ca_vnccircular'=>$rs->getString("ca_vnccircular"),
-				                            'ca_vendedor'=>$rs->getString("ca_vendedor"),
-				                            'ca_nombre'=>$rs->getString("ca_nombre"),
-				                            'ca_sucursal'=>$rs->getString("ca_sucursal")
-				                            );
+		$stmt = ClientePeer::circularClientes( $inicio, $final, $sucursal );
+		while($row = $stmt->fetch() ) {
+			$this->clientesCircular[] = $row;
 		}
 		$this->inicio = $inicio;
 		$this->final = $final;
@@ -601,6 +575,7 @@ class clientesActions extends sfActions
 	}
 
 	public function executeReporteListaClinton(){
+		set_time_limit(0);
 		echo "\n\nInicio el proceso : ".date("h:i:s A")."\n\n";
 		
 		$file =  sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."clinton.xml";
@@ -830,7 +805,7 @@ class clientesActions extends sfActions
 		echo "Termina Carga de tablas : ".date("h:i:s A")."\n\n";
 		
 		echo "Inicia comparativo con Maestra de Clientes: ".date("h:i:s A")."\n\n";
-		$rs = SdnPeer::evaluaClientes();
+		$stmt = SdnPeer::evaluaClientes();
 		$ven_mem = null;
 		$msn_mem = '';
 		$tit_mem = array("ca_idcliente","ca_compania","ca_nombres","ca_papellido","ca_sapellido","ca_vendedor", "sdnm_uid","sdnm_firstname","sdnm_lastname","sdnm_title","sdnm_sdntype","sdnm_remarks","sdid_uid_id","sdid_idtype","sdid_idnumber","sdid_idcountry","sdid_issuedate","sdid_expirationdate","sdal_uid_aka","sdal_type","sdal_category","sdal_firstname","sdal_lastname","sdak_uid_aka","sdak_type","sdak_category","sdak_firstname","sdak_lastname");
@@ -849,8 +824,8 @@ class clientesActions extends sfActions
 		}
 		
 		$x = 0;
-		while($rs->next()) {
-			if ($rs->getString("ca_vendedor") !== $ven_mem) {
+		while($row = $stmt->fetch()) {
+			if ($row["ca_vendedor"] !== $ven_mem) {
 				if ($msn_mem != ''){
 					$msn_mem.= "</table>";
 					echo "Body Mail: \n".$msn_mem."\n\n";
@@ -862,8 +837,8 @@ class clientesActions extends sfActions
 					//$email->save(); //guarda el cuerpo del mensaje
 					//$email->send(); //envia el mensaje de correo	
 				}
-				if ($rs->getString("ca_vendedor") != '') {
-					$user = UsuarioPeer::retrieveByPk($rs->getString("ca_vendedor"));	
+				if ($row["ca_vendedor"] != '') {
+					$user = UsuarioPeer::retrieveByPk($row["ca_vendedor"]);	
 				}else{
 					$user = new Usuario();
 				}
@@ -883,7 +858,7 @@ class clientesActions extends sfActions
 						$email->addTo( $val );
 					}
 				}
-				$ven_mem = $rs->getString("ca_vendedor");
+				$ven_mem = $row["ca_vendedor"];
 				$msn_mem = "El sistema ha encontrado algunas similitudes en su listado de Clientes, comparado con la Lista Clinton del día $nueva_fecha. Favor hacer la respectivas verificaciones y tomar acción en caso de que un cliente haya sido reportado.";
 				$msn_mem.= "<br />";
 				$msn_mem.= "<table width='90%' cellspacing='1' border='1'>"; 
@@ -895,7 +870,7 @@ class clientesActions extends sfActions
 			}
 			$msn_mem.= "	<tr>";
 			for($i=0; $i<count($tit_mem); $i++) {
-				$msn_mem.= "	<td>".$rs->getString($tit_mem[$i])."</td>";
+				$msn_mem.= "	<td>".$row[$tit_mem[$i]]."</td>";
 			}
 			$msn_mem.= "	</tr>";
 		}
