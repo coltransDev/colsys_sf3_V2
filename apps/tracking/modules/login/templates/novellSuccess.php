@@ -6,18 +6,19 @@
 	<div class="box1" style="width:550px" align="center">
 		<table width="550px" border="0">
 		<tr>
-			<td width="21">
+		  <td colspan="2"><div align="center" style="color:#FF0000">Por favor utilice la clave de NOVELL </div></td>
+		  </tr>
+		<tr>
+			<td width="169">
 			<?=image_tag("logo_colsys.gif")?>			</td>
-			<td width="21">
-				<div align="right">
+			<td width="371">
+				<div align="left">
 				<table >
 					<?
 					echo $form;
 					?>
 				</table>
-				</div>
-			</td>
-			
+				</div>		  </td>
 		</tr>
 	
 		<tr>	

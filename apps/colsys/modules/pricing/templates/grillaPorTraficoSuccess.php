@@ -110,6 +110,7 @@ var record = Ext.data.Record.create([
 	{name: 'neta', type: 'float'}	,
 	{name: 'minima', type: 'float'}, 
 	{name: 'sugerida', type: 'float'},
+	{name: 'consecutivo', type: 'int'},	
 	{name: 'orden', type: 'int'}		
 ]);
    		
@@ -508,6 +509,27 @@ var colocarEstilo = function( rec,  val ){
 }
 
 
+var seleccionarConcepto = function(){ 
+	var iditem = this.ctxRecord.data.iditem;
+	var tipo = this.ctxRecord.data.tipo;	
+	var idconcepto = this.ctxRecord.data.idconcepto;
+					
+	store.each(function(r){
+		if( tipo=="concepto" ){ 
+			if( r.data.iditem==iditem && r.data.tipo==tipo ){
+				r.set('sel', true);
+			}
+		}
+		
+		if( tipo=="recargo" ){ 
+			if( r.data.iditem==iditem && r.data.idconcepto==idconcepto && r.data.tipo==tipo ){
+				r.set('sel', true);
+			}
+		}
+	});   					                   
+	
+}
+
 
 var gridOnRowcontextmenu =  function(grid, index, e){
 		
@@ -563,7 +585,14 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 						});   					                   
 						
 					}
+				},				
+				{
+					text: 'Seleccionar este concepto',
+					iconCls: 'new-tab',
+					scope:this,
+					handler: seleccionarConcepto
 				},
+				
 				{
 					text: 'Control de cambios',
 					iconCls: '',
@@ -597,7 +626,14 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 					handler: function(){    					                   
 						eliminarFila(this.ctxRecord, index);					
 					}
-				}				
+				},
+								
+				{
+					text: 'Seleccionar este recargo',
+					iconCls: 'new-tab',
+					scope:this,
+					handler: seleccionarConcepto
+				},				
 			]
 		});
 				

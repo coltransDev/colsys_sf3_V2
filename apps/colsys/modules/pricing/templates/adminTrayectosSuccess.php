@@ -23,7 +23,7 @@ var record = Ext.data.Record.create([
 * Crea el store
 */
 <?
-$url = "pricing/datosAdminTrayectos?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
+$url = "pricing/datosAdminTrayectos?impoexpo=".utf8_encode($impoexpo)."&modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico;
 ?>
 
 var store = new Ext.data.GroupingStore({

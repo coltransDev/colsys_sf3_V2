@@ -29,5 +29,5 @@ use_helper("Javascript", "Validation");
 
 </div>
 	
-
+</div>
 <iframe src="<?=url_for("reportesNeg/generarPDF?reporteId=".$reporteNegocio->getCaIdreporte())."&token=".md5(time())?>" width="830px" height="650px"></iframe>

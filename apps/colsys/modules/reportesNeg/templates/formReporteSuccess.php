@@ -4,7 +4,6 @@ use_helper('Validation');
 use_helper('Modalbox');
 use_helper('Javascript');
 use_helper('YUICalendar');
-use_helper('Ext2');
 
 $cliente = $reporteNegocio->getCliente();
 ?>
@@ -48,6 +47,32 @@ $cliente = $reporteNegocio->getCliente();
 			echo remote_function( array("url"=>"general/selectAgentes", "update"=>"agentes", "with"=>"'selected=".$reporteNegocio->getCaIdagente()."&ciudad_id='+document.getElementById('idCiudad').value"));
 			?>
 		}	
+	}
+	
+	function seleccionTercero( formName , sel) {
+ 		
+		
+		switch( formName ){
+			
+			case "expoReporteFormconsignatario":	
+			
+				var target = document.reporteForm;									
+				target.idconsignatario.value=document.getElementById("idtercero_"+sel).value;
+				target.nombre_con.value=document.getElementById("nombre_"+sel).value;									
+				target.nombre_con.focus();
+				
+				break;
+			case "expoReporteFormnotify":				
+				var target = document.reporteForm;									
+				target.idnotify.value=document.getElementById("idtercero_"+sel).value;
+				target.nombre_not.value=document.getElementById("nombre_"+sel).value;				
+			
+				target.nombre_con.focus();
+				
+				break;	
+			
+		}
+		Modalbox.hide({params:''});
 	}
 	
 	
@@ -120,7 +145,6 @@ $cliente = $reporteNegocio->getCliente();
 			campo.style.display="none";
 		}
 	}
-	
 	
 	function nuevoTercero(tipo){	
 		ventanaTercero(tipo, null);
@@ -354,14 +378,23 @@ $cliente = $reporteNegocio->getCliente();
 			
 		}	
 	} 
+	
+	function verificarListaClinton(){
+		if(document.getElementById("listaclinton").value=="Sí"){
+			alert("El cliente se encuentra en lista clinton");
+			return false;
+		}
+		return true;
+	}
 </script>
 <?php echo form_error('name') ?>
 <h3>Reporte de Negocio de <?=$modo=="expo"?"<strong>Exportaci&oacute;n</strong>":"<strong>Importaci&oacute;n</strong>"?></h3>
 <br>
 <br>
-<?=form_tag("reportesNeg/formReporteGuardar?modo=".$modo, "name=reporteForm id=reporteForm")?>
+<?=form_tag("reportesNeg/formReporteGuardar?modo=".$modo, "name=reporteForm id=reporteForm onSubmit='return verificarListaClinton()'")?>
 <?=input_hidden_tag("reporteId", $reporteNegocio->getCaIdReporte() )?>
-<table cellspacing="1" width="90%" class="tableForm">
+<?=input_hidden_tag("listaclinton", "" )?>
+<table cellspacing="1" width="90%" class="tableForm"  id="mainTable">
 	<tbody>
 		<tr>
 			<th class="titulo" colspan="4">REPORTE DE NEGOCIO</th>
@@ -406,16 +439,17 @@ $cliente = $reporteNegocio->getCliente();
 					  <legend>4. Consignatario</legend>				
 						<table cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="155"> Nombre:					
+					<td width="115"> Nombre:					
 						<br />
 						<?
 						include_component("clientes", "comboConsignatario", array( "id"=>"idconsignatario", "idtercero"=>$reporteNegocio->getCaIdconsignatario() ));
 						?>						</td>
-					<td width="76">&nbsp;&nbsp;&nbsp;&nbsp;				
+					<td width="116">
+					&nbsp;&nbsp;&nbsp;&nbsp;				
 					<span class="listar">
 					<?=image_tag("16x16/new.gif", "onClick=nuevoTercero('consignee') title='Nuevo consignatario'")." "?>
 					<?=image_tag("16x16/edit.gif", "onClick=editarTercero('consignee') id=editarConsignatario title='Editar consignatario' ".($reporteNegocio->getCaIdconsignatario()?"style='display:inline'":"style='display:none'" ))."  "?>
-					</span></td>
+					</td>
 					<td width="294">
 						<?
 						if( $modo!="expo" ){ //Esta casilla solamente es util en el caso de la importaciones 
@@ -445,14 +479,17 @@ $cliente = $reporteNegocio->getCliente();
 				
 						<table cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="156">Nombre:					
+					<td width="117">Nombre:					
 						<?
 						include_component("clientes", "comboNotify", array( "id"=>"idconsignatario", "idtercero"=>$reporteNegocio->getCaIdnotify() ));
 						?></td>
-					<td width="78">&nbsp;&nbsp;&nbsp;&nbsp;<span class="listar"><?=image_tag("16x16/new.gif", "onClick=nuevoTercero('notify') title='Nuevo notify'")." "?>
+					<td width="117">
+					&nbsp;&nbsp;&nbsp;&nbsp;<span class="listar"><?=image_tag("16x16/new.gif", "onClick=nuevoTercero('notify') title='Nuevo notify'")." "?>
 						
 						<?=image_tag("16x16/edit.gif", "onClick=editarTercero('notify') id=editarNotify title='Editar notify' ".($reporteNegocio->getCaIdnotify()?"style='display:inline'":"style='display:none'" ))."  "?>
-					</span></td>
+					</span>
+					
+					</td>
 					<td width="293">
 						<?
 						if( $modo!="expo" ){ //Esta casilla solamente es util en el caso de la importaciones 
@@ -704,7 +741,12 @@ $cliente = $reporteNegocio->getCliente();
 		}else{	
 			echo $reporteNegocio->getCaLogin()?$reporteNegocio->getCaLogin():$vendedor;
 			echo input_hidden_tag("login", $reporteNegocio->getCaLogin()?$reporteNegocio->getCaLogin():$vendedor  );	
-		}			
+		}
+		
+		
+		
+	   	
+			
 		?>
 			</span></td>
 			<td colspan="2" class="listar">Elaboro: <strong>
@@ -729,85 +771,3 @@ $cliente = $reporteNegocio->getCliente();
 	cambiarTransporte( document.getElementById('transporte').value );
 	seleccionAgente();
 </script>
-
-<script type="text/javascript" >
-//Cotizaciones
-Ext.onReady(function(){
-
-    var ds = new Ext.data.Store({
-        proxy: new Ext.data.HttpProxy({
-            url: '<?=url_for("general/listaCotizacionesJSON")?>'
-        }),
-        reader: new Ext.data.JsonReader({
-            root: 'cotizaciones',
-            totalProperty: 'totalCount',
-            id: 'id_cotizacion'
-        }, [
-            {name: 'id_cotizacion', mapping: 'ca_idcotizacion'},
-            {name: 'id_producto', mapping: 'ca_idproducto'}	,
-			{name: 'origen', mapping: 'ca_origen'},
-			{name: 'destino', mapping: 'ca_destino'},
-			{name: 'idcontacto', mapping: 'ca_idcontacto'},
-            {name: 'compania', mapping: 'ca_compania'},
-			{name: 'cargo', mapping: 'ca_cargo'},
-			{name: 'nombre', mapping: 'ca_nombres'},
-			{name: 'papellido', mapping: 'ca_papellido'},
-			{name: 'sapellido', mapping: 'ca_sapellido'},
-			{name: 'preferencias', mapping: 'ca_preferencias'},
-			{name: 'confirmar', mapping: 'ca_confirmar'},
-			{name: 'idorigen', mapping: 'ca_idorigen'},
-        ])
-    });
-	
-	var resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{id_cotizacion}</strong><br /><span><br />{origen} - {destino}</span> </div></tpl>' 
-			
-    );
-    
-    var search = new Ext.form.ComboBox({
-        store: ds,
-        displayField:'id_cotizacion',
-        typeAhead: false,
-        loadingText: 'Buscando...',
-        width: 100,
-        valueNotFoundText: 'No encontrado' ,
-		minChars: 3,
-        hideTrigger:false,
-        tpl: resultTpl,
-        applyTo: 'idcotizacion',
-        itemSelector: 'div.search-item',		
-	    emptyText:'numero...',		
-	    forceSelection:true,		
-		selectOnFocus:true,
-		
-		onSelect: function(record, index){ // override default onSelect to do redirect			
-			if(this.fireEvent('beforeselect', this, record, index) !== false){
-				this.setValue(record.data[this.valueField || this.displayField]);
-				this.collapse();
-				this.fireEvent('select', this, record, index);
-			}
-						
-			document.getElementById("con_cliente").value=record.data.nombre+" "+record.data.papellido+" "+record.data.sapellido;
-			document.getElementById("cliente").value=record.data.compania;		
-			document.getElementById("idconcliente").value=record.data.idcontacto;				
-			document.getElementById("preferencias_clie").value=record.data.preferencias;	
-			document.getElementById("idCiudadOrigen").value=record.data.idorigen;	
-			
-			for(i=0; i<10; i++){				
-				document.getElementById("contactos_"+i).value="";
-				document.getElementById("confirmar_"+i).checked=false;
-			}
-			
-			
-			var confirmar =  record.data.confirmar ;						
-			var brokenconfirmar=confirmar.split(",");			
-			
-			for(i=0; i<brokenconfirmar.length; i++){				
-				document.getElementById("contactos_"+i).value=brokenconfirmar[i];
-				document.getElementById("confirmar_"+i).checked=true;
-			}	
-        }
-    });
-});
-</script>
-

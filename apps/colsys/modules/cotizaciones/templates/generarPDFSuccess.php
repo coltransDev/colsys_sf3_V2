@@ -75,12 +75,13 @@ if( count($productos)>0 ){
 
 
 
-$imprimirObservaciones = false;
-$imprimirRecargos = false;
+
 
 $tabla = array();
 
 foreach( $productos as $producto ):
+	$imprimirObservaciones = false;
+	$imprimirRecargos = false;
 	if ($producto->getCaImpoExpo()==Constantes::IMPO){	
 		$imprimirNotas[]="anexoImpo";
 	}
@@ -188,6 +189,34 @@ foreach( $productos as $producto ):
 		$pos_mem = 0;
 		
 		
+		//Recargos generales		
+		$recargosGen = $producto->getRecargosGenerales();
+		
+		if( count($recargosGen)>0 ){
+			$pdf->Ln(2);
+			$pdf->SetFont('Arial','B',8);
+			$pdf->Cell(0, 4, 'RECARGOS DEL TRAYECTO', 0, 1, 'L', 0);
+			$pdf->Ln(2);
+			$pdf->SetFont('Arial','',7);
+			
+			$titu_mem= array('Concepto', 'Tarifa', 'Observaciones');
+			$width_mem= array(30, 70, 70);
+			$pdf->SetWidths($width_mem);
+			$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
+			$pdf->SetStyles(array_fill(0, count($width_mem), "B"));
+			$pdf->SetFills(array_fill(0, count($width_mem), 1));
+			$pdf->Row($titu_mem);
+			
+			$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+			$pdf->SetStyles(array_fill(0, count($width_mem), ""));
+			$pdf->SetFills(array_fill(0, count($width_mem), 0));
+			
+			foreach( $recargosGen as $recargo ){
+				$row = array( $recargo->getTiporecargo()->getCarecargo(),  $recargo->getTextoTarifa() , $recargo->getCaObservaciones() );
+				$pdf->Row($row);
+			}
+		}
+		
 		
 		//Imprime el tiempo de transito
 		if (strlen($producto->getCaFrecuencia())<>0){
@@ -208,10 +237,14 @@ foreach( $productos as $producto ):
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetWidths($widths);
 		$pdf->SetAligns(array_fill(0, 3, "L"));
-		$pdf->Row($datos);		
-		//array_merge($directorioAg , explode('|',$producto->getCaDatosag()) );		
+		$pdf->Row($datos);			
+		
+			
 	endif; 
 endforeach;
+
+
+
 
 // ======================== Impresión por Puerto ======================== //
 
@@ -531,68 +564,69 @@ if ( count($seguros)>0 ) {
 // ======================== Directorio de agentes ======================== //
 
 
-//$datosAg = array_unique( $datosAg );
-$datosAg = explode("|", $cotizacion->getCaDatosag() );
-$c = new Criteria();
-$c->addJoin( ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE );
-$c->addJoin( AgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
-$c->addJoin( CiudadPeer::CA_IDTRAFICO, TraficoPeer::CA_IDTRAFICO );
-$c->add( ContactoAgentePeer::CA_IDCONTACTO, $datosAg, Criteria::IN );
-$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
-$c->addAscendingOrderByColumn( AgentePeer::CA_NOMBRE );
-$c->addAscendingOrderByColumn( ContactoAgentePeer::CA_NOMBRE );
-
-$contactosAgente = ContactoAgentePeer::doSelect( $c );
-
-if( count($contactosAgente)>0 ){	
+if( $cotizacion->getCaDatosag() ){
+	$datosAg = explode("|", $cotizacion->getCaDatosag() );
+	$c = new Criteria();
+	$c->addJoin( ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE );
+	$c->addJoin( AgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
+	$c->addJoin( CiudadPeer::CA_IDTRAFICO, TraficoPeer::CA_IDTRAFICO );
+	$c->add( ContactoAgentePeer::CA_IDCONTACTO, $datosAg, Criteria::IN );
+	$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
+	$c->addAscendingOrderByColumn( AgentePeer::CA_NOMBRE );
+	$c->addAscendingOrderByColumn( ContactoAgentePeer::CA_NOMBRE );
 	
-	 $pdf->Ln(2);
-	$pdf->SetFont('Arial','B',9);
-	$pdf->MultiCell(0, 4, "DIRECTORIO DE AGENTES", 0,'L',0);
+	$contactosAgente = ContactoAgentePeer::doSelect( $c );
 	
-	$pdf->Ln(4);
-	$pdf->SetFont('Arial','',9);
-	if( count($contactosAgente)==1 ){
-		$pdf->MultiCell(0, 4, 'A continuación relacionamos los datos de nuestro agente encargado de coordinar los despachos:',0,1);
-	}else{
-		$pdf->MultiCell(0, 4, 'A continuación relacionamos los datos de nuestros agentes encargados de coordinar los despachos:',0,1);
-	}
-	$pdf->Ln(2);
-	$idagente = "";
-	$idtrafico = "";
-	foreach( $contactosAgente as $contacto ){
-				
-		$agente = $contacto->getAgente();
-		$ciudad = $contacto->getCiudad();
+	if( count($contactosAgente)>0 ){	
 		
-		if( $idtrafico!=$ciudad->getCaIdtrafico() ){
-			$idtrafico=$ciudad->getCaIdtrafico();
-			$trafico = $ciudad->getTrafico();
-			$pdf->Ln(1);
-			$pdf->SetFont('Arial','B',10);
-			$pdf->MultiCell(0, 3, '» '.$trafico->getCaNombre().' «',0,1);
-			$pdf->Ln(2);
-		}
+		 $pdf->Ln(2);
+		$pdf->SetFont('Arial','B',9);
+		$pdf->MultiCell(0, 4, "DIRECTORIO DE AGENTES", 0,'L',0);
 		
-		if( $idagente != $agente->getCaidAgente() ){
-			$idagente = $agente->getCaidAgente();
-			
-			$pdf->SetFont('Arial','B',8);
-			$pdf->MultiCell(0, 3,$agente->getCaNombre(),0,1);
-			$pdf->SetFont('Arial','',8);			
-			$pdf->Ln(2);
-			$pdf->MultiCell(0, 3,"Contactos :",0,1);
-		   
+		$pdf->Ln(4);
+		$pdf->SetFont('Arial','',9);
+		if( count($contactosAgente)==1 ){
+			$pdf->MultiCell(0, 4, 'A continuación relacionamos los datos de nuestro agente encargado de coordinar los despachos:',0,1);
+		}else{
+			$pdf->MultiCell(0, 4, 'A continuación relacionamos los datos de nuestros agentes encargados de coordinar los despachos:',0,1);
 		}
-				
-		$pdf->SetFont('Arial','B',8);
-		$pdf->MultiCell(0, 3,$contacto->getCaNombre(),0,1);
-		$pdf->SetFont('Arial','',8);
-		$pdf->MultiCell(0, 3,$contacto->getCaDireccion()." - ".$ciudad->getCaCiudad(),0,1);
-		$pdf->MultiCell(0, 3,"Teléfonos (".substr(strtoupper($ciudad->getCaIdtrafico()),3,3)." - ".substr(strtoupper($contacto->getCaIdciudad() ),4,4).") : ".$contacto->getCaTelefonos()." - Fax : ".$contacto->getCaFax(),0,1);
-		$pdf->MultiCell(0, 3,"Correo Electrónico :".$contacto->getCaEmail(),0,1);
-		$pdf->MultiCell(0, 3,"Operación :".str_replace("|",", ", $contacto->getCaTransporte()),0,1);
 		$pdf->Ln(2);
+		$idagente = "";
+		$idtrafico = "";
+		foreach( $contactosAgente as $contacto ){
+					
+			$agente = $contacto->getAgente();
+			$ciudad = $contacto->getCiudad();
+			
+			if( $idtrafico!=$ciudad->getCaIdtrafico() ){
+				$idtrafico=$ciudad->getCaIdtrafico();
+				$trafico = $ciudad->getTrafico();
+				$pdf->Ln(1);
+				$pdf->SetFont('Arial','B',10);
+				$pdf->MultiCell(0, 3, '» '.$trafico->getCaNombre().' «',0,1);
+				$pdf->Ln(2);
+			}
+			
+			if( $idagente != $agente->getCaidAgente() ){
+				$idagente = $agente->getCaidAgente();
+				
+				$pdf->SetFont('Arial','B',8);
+				$pdf->MultiCell(0, 3,$agente->getCaNombre(),0,1);
+				$pdf->SetFont('Arial','',8);			
+				$pdf->Ln(2);
+				$pdf->MultiCell(0, 3,"Contactos :",0,1);
+			   
+			}
+					
+			$pdf->SetFont('Arial','B',8);
+			$pdf->MultiCell(0, 3,$contacto->getCaNombre(),0,1);
+			$pdf->SetFont('Arial','',8);
+			$pdf->MultiCell(0, 3,$contacto->getCaDireccion()." - ".$ciudad->getCaCiudad(),0,1);
+			$pdf->MultiCell(0, 3,"Teléfonos (".substr(strtoupper($ciudad->getCaIdtrafico()),3,3)." - ".substr(strtoupper($contacto->getCaIdciudad() ),4,4).") : ".$contacto->getCaTelefonos()." - Fax : ".$contacto->getCaFax(),0,1);
+			$pdf->MultiCell(0, 3,"Correo Electrónico :".$contacto->getCaEmail(),0,1);
+			$pdf->MultiCell(0, 3,"Operación :".str_replace("|",", ", $contacto->getCaTransporte()),0,1);
+			$pdf->Ln(2);
+		}
 	}
 }
 

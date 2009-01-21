@@ -210,24 +210,28 @@ class clientesActions extends sfActions
 		
 		$user->save();
 		
-		$link = "/tracking/login/activate/code/".$code ;					
-		$content = Utils::replace(" Apreciado/a ".Utils::replace($contacto->getCaNombres()." ".$contacto->getCaPapellido())."\n
-		Gracias por utilizar el servicio de tracking and tracing de Coltrans S.A., hemos enviado este correo para activar la clave de su cuenta, por favor haga click en el enlace que se encuentra a continuación: \n");
 		
-		$content .= "<a href='https://www.coltrans.com.co".$link."'>Haga click aca para activar su cuenta</a>";
-		$content .= Utils::replace("\n						
-		Si desea conocer más de este servicio por favor comuníquese con nuestro departamento de servicio al cliente\n
-		Cordialmente 
-		\n\n
-		Coltrans S.A.					
-		");	
-		$user = $this->getUser();		
+		
+		$link = "/tracking/login/activate/code/".$code ;	
+		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."clientes".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."email.yml";
+		$yml = sfYaml::load($config);		
+
+		
+		$contentPlain = sprintf($yml['email'], "https://www.coltrans.com.co".$link, "http://www.coltrans.com.co" );
+		$contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://www.coltrans.com.co".$link."'>https://www.coltrans.com.co".$link."</a>", "<a href='http://www.coltrans.com.co'>http://www.coltrans.com.co</a>" );;
+							
+		
 		$from = "serclientebog@coltrans.com.co";
-		$fromName = "Coltrans S.A., Servicio al cliente";
+		$fromName = "Coltrans S.A. - Servicio al cliente";
+		//$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
 		
-		$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail(), $user->getNombre()=>$user->getEmail()); //$contacto->getCaEmail()
-			//,																													
-		Utils::sendEmail( "CORREO DE ACTIVACION", $content, $from, $fromName, $to );		
+		//$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
+		$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail(), $this->getUser()->getNombre()=>$this->getUser()->getEmail());																					
+		StaticEmail::sendEmail( "Activación Clave Coltrans.com.co", array("plain"=>$contentPlain,"html"=>$contentHTML), $from, $fromName, $to );								
+		
+		
+		
+			
 		
 		
 	}
@@ -250,6 +254,8 @@ class clientesActions extends sfActions
 		$c->addSelectColumn(ClientePeer::CA_CONFIRMAR );
 		$c->addSelectColumn(ClientePeer::CA_VENDEDOR );
 		$c->addSelectColumn(UsuarioPeer::CA_NOMBRE );
+		$c->addSelectColumn(ClientePeer::CA_LISTACLINTON );
+		$c->addSelectColumn(ClientePeer::CA_FCHCIRCULAR );
 		
 		$c->addJoin( ClientePeer::CA_IDCLIENTE, ContactoPeer::CA_IDCLIENTE );
 		$c->addJoin( UsuarioPeer::CA_LOGIN, ClientePeer::CA_VENDEDOR, Criteria::LEFT_JOIN );
@@ -264,7 +270,16 @@ class clientesActions extends sfActions
 		$this->clientes = array();
  
    		while ( $row = $stmt->fetch() ) {
-      		$this->clientes[] = $row;
+			$row["ca_compania"]=utf8_encode($row["ca_compania"]);
+			$row["ca_nombres"]=utf8_encode($row["ca_nombres"]);
+			$row["ca_papellido"]=utf8_encode($row["ca_papellido"]);
+			$row["ca_sapellido"]=utf8_encode($row["ca_sapellido"]);
+			$row["ca_preferencias"]=utf8_encode($row["ca_preferencias"]);
+			$row["ca_nombre"]=utf8_encode($row["ca_nombre"]);
+			$row["ca_cargo"]=utf8_encode($row["ca_cargo"]);
+			$row["ca_listaclinton"]=utf8_encode($row["ca_listaclinton"]);	
+			$row["ca_fchcircular"]=strtotime($row["ca_fchcircular"]);			      		
+			$this->clientes[] = $row;
 		}					
 		$this->setLayout("none");
 	}

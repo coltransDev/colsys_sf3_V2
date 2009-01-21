@@ -115,7 +115,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: true,
 			dataIndex: 'concepto',
 			hideable: false,
-			editor: <?=extConcepto($id="conceptoOtmDta", Constantes::TERRESTRE, $modalidad="OTM-DTA")?>
+			editor: <?=extConcepto($id="conceptoOtmDta", Constantes::TERRESTRE, "OTM-DTA")?>
 		},
 		{
 			id: 'equipo',

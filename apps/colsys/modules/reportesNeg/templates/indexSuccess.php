@@ -8,8 +8,8 @@ use_helper("Javascript");
 <h3>Sistema Reporte de negocios</h3>
 <br />
 <br />
-<?=form_tag( "reportesNeg/busquedaReporte?modo=".$modo."&token=".md5(time())	)?>
-<table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" class="tableForm">		
+<?=form_tag( "reportesNeg/busquedaReporte?modo=".$modo	)?>
+<table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" id="mainTable">		
 	<tr>	
 		<th colspan="5" style='font-size: 12px; font-weight:bold;'><b><strong>Ingrese un criterio para realizar las busqueda</strong></b>		</th>		
 	</tr>

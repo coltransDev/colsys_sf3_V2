@@ -50,8 +50,8 @@
 				</div>
 				<div style="float:left;">
 					<div class="icon">
-						<a href="<?=url_for("buscar/index")?>">
-							<img src="/colmasweb/administrator/templates/khepri/images/header/icon-48-section.png" alt="Administrador de secciones"  />			
+						<a href="<?=url_for("buscar/index")?>">							
+							<?=image_tag("48x48/icon-48-section.png")?>			
 							<span>Busqueda</span></a>
 					</div>
 				</div>

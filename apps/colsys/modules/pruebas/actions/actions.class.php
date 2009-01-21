@@ -586,14 +586,30 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		$c = new Criteria();
 		//$c->add( TrayectoPeer::CA_IDTRAYECTO, 1294, Criteria::NOT_EQUAL );
 		//$c->addAnd( TrayectoPeer::CA_IDTRAYECTO, 1297, Criteria::NOT_EQUAL );
-		
+		/*
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
+		$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" ); 
+		*/
+		
+		/*
+		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
+		$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" ); 
+		*/
+		
+		
+		$c->add( TrayectoPeer::CA_IMPOEXPO, "Exportación" );
+		$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" ); 
+		
+		
+		
+		
+		//$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
 		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" ); 
 		//$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );				
 		
 		//$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
 		//$c->add( TrayectoPeer::CA_MODALIDAD, "FCL" );
-		//$c->add( TrayectoPeer::CA_IDTRAYECTO, 345 );
+		//$c->add( TrayectoPeer::CA_IDTRAYECTO, 3705 );
 		
 		//$c->setLimit(30);
 		$trayectos = TrayectoPeer::doSelect( $c );	
@@ -673,11 +689,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 						$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
 					}
 																			
-					if( $recargo->getCaVlrfijo() ){
+					if( $recargo->getCaVlrfijo()&& $recargo->getCaVlrfijo()!=0 ){
 						$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
 						//echo "-> fijo ".$recargo->getCaVlrfijo()."<br />";	
 					}else{
-						if( $recargo->getCaPorcentaje() ){
+						if( $recargo->getCaPorcentaje() && $recargo->getCaPorcentaje()!=0 ){
 							echo "-> % ".$recargo->getCaPorcentaje()." ".$recargo->getCaBasePorcentaje()."<br />";	
 							$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
 												
@@ -776,11 +792,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 					$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
 				}
 																		
-				if( $recargo->getCaVlrfijo() ){
+				if( $recargo->getCaVlrfijo() && $recargo->getCaVlrfijo()!=0 ){
 					$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
-					//echo "-> fijo ".$recargo->getCaVlrfijo()."<br />";	
+					echo "-> fijo ".$recargo->getCaVlrfijo()."<br />";	
 				}else{
-					if( $recargo->getCaPorcentaje() ){
+					if( $recargo->getCaPorcentaje() && $recargo->getCaPorcentaje()!=0){
 						echo "-> % ".$recargo->getCaPorcentaje()." ".$recargo->getCaBasePorcentaje()."<br />";	
 						$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
 											
@@ -864,7 +880,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		sfConfig::set('sf_web_debug', false) ;	
 		exit("Ejecutar solo una vez");
 		$c = new Criteria();
-		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
+		$c->add( TrayectoPeer::CA_IMPOEXPO, "Exportación" );
 		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
  
 		$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
@@ -909,9 +925,145 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		}	
 	}
 	
+	
 	/*
 	* Importa el tarifario anterior dentro del nuevo tarifario
 	*/
+	public function executeImportarTarifarioRecargosGrales(){
+		set_time_limit(0); 		
+		
+		sfConfig::set('sf_web_debug', false) ;	
+		
+		$c = new Criteria();
+		//$c->add(  RecargoFleteTrafPeer:: );
+		//$c->setLimit(10);
+		//$c->add(  RecargoFleteTrafPeer::CA_IMPOEXPO, "Importación" );
+		$recargos = RecargoFleteTrafPeer::doSelect( $c );
+		$i=0;
+				
+		foreach( $recargos as $recargo ){
+			
+			echo (++$i)." ".$recargo->getCaIdTrafico()." ".$recargo->getCaIdCiudad()." ".$recargo->getCaIdRecargo()." ".$recargo->getCaModalidad()."<br />";
+		
+			$pricrecargo = PricRecargosxCiudadPeer::retrieveByPk( $recargo->getCaIdTrafico(), $recargo->getCaIdCiudad(), $recargo->getCaIdRecargo(), $recargo->getCaModalidad(), $recargo->getCaImpoexpo() ); 	
+			if( !$pricrecargo ){
+				$pricrecargo = new PricRecargosxCiudad();
+				$pricrecargo->setCaIdTrafico( $recargo->getCaIdTrafico() );
+				$pricrecargo->setCaIdCiudad( $recargo->getCaIdCiudad() );
+				$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
+				$pricrecargo->setCaModalidad( $recargo->getCaModalidad() );
+				$pricrecargo->setCaImpoexpo( $recargo->getCaImpoexpo() );
+			}												
+					
+			if( $recargo->getCaVlrfijo() && $recargo->getCaVlrfijo()!=0 ){
+				$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
+				//echo "-> fijo ".$recargo->getCaVlrfijo()."<br />";	
+			}else{
+				if( $recargo->getCaPorcentaje() && $recargo->getCaPorcentaje()!=0 ){
+					echo "-> % ".$recargo->getCaPorcentaje()." ".$recargo->getCaBasePorcentaje()."<br />";	
+					$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
+										
+					//if( $recargo->getCaBasePorcentaje()=='Sobre Flete' ){
+						$pricrecargo->setCaAplicacion( '% Sobre Flete' );
+					//}
+										
+				}else{
+					echo "-> Unit ".$recargo->getCaVlrunitario()." ".$recargo->getCaBaseunitario()."<br />";	
+					$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrunitario() );
+					
+					if( $recargo->getCaBaseunitario()=='Unidades Peso/Volumen' ){						
+						echo " OK <br />";
+						$pricrecargo->setCaAplicacion( 'x Kg ó 6 Dm³' );									
+						
+					}
+								
+					if( $recargo->getCaBaseunitario()=='Cantidad de BLs/AWBs' ){
+						$trayecto = TrayectoPeer::retrieveByPk( $recargo->getCaIdTrayecto() );	
+						if( $trayecto->getCaTransporte()=="Aéreo" ){
+							$pricrecargo->setCaAplicacion( 'x HAWB' );
+						}
+						if( $trayecto->getCaTransporte()=="Marítimo" ){
+							$pricrecargo->setCaAplicacion( 'x HBL' );
+						}
+					}
+					
+					if( $recargo->getCaBaseunitario()=="Número de Piezas" ){
+						$pricrecargo->setCaAplicacion( "x Pieza" );
+						
+					}				
+				}
+			}
+			
+			$pricrecargo->setCaFchinicio( $recargo->getCaFchinicio() );
+			$pricrecargo->setCaFchvencimiento( $recargo->getCaFchvencimiento() );
+						
+			$pricrecargo->setCaVlrminimo( $recargo->getCaRecargominimo() );
+			$pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
+			$pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );	
+			
+			if( !$pricrecargo->getCaUsucreado() ){
+				$pricrecargo->setCaUsucreado("Administrador");
+			}
+			
+			if( !$pricrecargo->getCaFchcreado() ){
+				$pricrecargo->setCaFchcreado(date("Y-m-d"));
+			} 
+						
+			$pricrecargo->save();
+		}	
+	}
+	
+	
+	/*
+	*
+	*/	
+	public function executeImportarArchivos(){
+		$c = new Criteria();
+		$traficos = TraficoPeer::doSelect( $c );
+		$dir = "d:\\links\\";
+		foreach( $traficos as $trafico ){
+			echo $trafico->getCaNombre()."<br />";
+			$links = explode("|", $trafico->getCalink());
+			foreach( $links as $link ){
+				echo "<br />---->".$link;
+				$path = $dir.$link;
+				
+				
+				$fileObj = new PricArchivo();
+				
+				$fileObj->setCaNombre($link);
+				$fileObj->setCaIdTrafico($trafico->getCaIdtrafico());	
+				
+				$fileObj->setCaTamano($size);
+				$fileObj->setCaTipo(Utils::mimetype($link));
+				$fileObj->setCaTransporte($transporte);
+				$fileObj->setCaModalidad("FCL");
+				$fileObj->setCaImpoExpo("Importación");
+				$fp = fopen($path, "r");
+				$data = fread( $fp , $size);
+				fclose( $fp );
+				$fileObj->setCaDatos($data);
+				$fileObj->setCaFchcreado(time());
+				$user = $this->getUser();
+				$fileObj->setCaUsucreado("Administrador");
+				//$fileObj->save();
+				
+			}
+		}
+		
+		//$path  = "";
+	
+		
+		
+	
+	}
+	
+	
+	/*
+	* Importa el tarifario anterior dentro del nuevo tarifario
+	*/
+	
+	/*
 	public function executeImportarTarifarioRecargos(){
 		set_time_limit(0); 		
 		exit("Este no");
@@ -1022,85 +1174,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		}
 		
 	}
-	
-	
-	/*
-	* Importa el tarifario anterior dentro del nuevo tarifario
 	*/
-	public function executeImportarTarifarioRecargosGrales(){
-		set_time_limit(0); 		
-		
-		sfConfig::set('sf_web_debug', false) ;	
-		
-		$c = new Criteria();
-		//$c->add(  RecargoFleteTrafPeer:: );
-		//$c->setLimit(10);
-		$recargos = RecargoFleteTrafPeer::doSelect( $c );
-				
-		foreach( $recargos as $recargo ){
-			$pricrecargo = PricRecargosxCiudadPeer::retrieveByPk( $recargo->getCaIdTrafico(), $recargo->getCaIdCiudad(), $recargo->getCaIdRecargo(), $recargo->getCaModalidad(), $recargo->getCaImpoexpo() ); 	
-			if( !$pricrecargo ){
-				$pricrecargo = new PricRecargosxCiudad();
-				$pricrecargo->setCaIdTrafico( $recargo->getCaIdTrafico() );
-				$pricrecargo->setCaIdCiudad( $recargo->getCaIdCiudad() );
-				$pricrecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
-				$pricrecargo->setCaModalidad( $recargo->getCaModalidad() );
-				$pricrecargo->setCaImpoexpo( $recargo->getCaImpoexpo() );
-			}												
-					
-			if( $recargo->getCaVlrfijo() ){
-				$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrfijo() );											
-				//echo "-> fijo ".$recargo->getCaVlrfijo()."<br />";	
-			}else{
-				if( $recargo->getCaPorcentaje() ){
-					echo "-> % ".$recargo->getCaPorcentaje()." ".$recargo->getCaBasePorcentaje()."<br />";	
-					$pricrecargo->setCaVlrrecargo( $recargo->getCaPorcentaje() );
-										
-					//if( $recargo->getCaBasePorcentaje()=='Sobre Flete' ){
-						$pricrecargo->setCaAplicacion( '% Sobre Flete' );
-					//}
-										
-				}else{
-					echo "-> Unit ".$recargo->getCaVlrunitario()." ".$recargo->getCaBaseunitario()."<br />";	
-					$pricrecargo->setCaVlrrecargo( $recargo->getCaVlrunitario() );
-					
-					if( $recargo->getCaBaseunitario()=='Unidades Peso/Volumen' ){						
-						echo " OK <br />";
-						$pricrecargo->setCaAplicacion( 'x Kg ó 6 Dm³' );									
-						
-					}
-								
-					if( $recargo->getCaBaseunitario()=='Cantidad de BLs/AWBs' ){
-						$trayecto = TrayectoPeer::retrieveByPk( $recargo->getCaIdTrayecto() );	
-						if( $trayecto->getCaTransporte()=="Aéreo" ){
-							$pricrecargo->setCaAplicacion( 'x HAWB' );
-						}
-						if( $trayecto->getCaTransporte()=="Marítimo" ){
-							$pricrecargo->setCaAplicacion( 'x HBL' );
-						}
-					}
-					
-					if( $recargo->getCaBaseunitario()=="Número de Piezas" ){
-						$pricrecargo->setCaAplicacion( "x Pieza" );
-						
-					}				
-				}
-			}
-			
-			$pricrecargo->setCaFchinicio( $recargo->getCaFchinicio() );
-			$pricrecargo->setCaFchvencimiento( $recargo->getCaFchvencimiento() );
-						
-			$pricrecargo->setCaVlrminimo( $recargo->getCaRecargominimo() );
-			$pricrecargo->setCaIdmoneda( $recargo->getCaIdmoneda() );
-			$pricrecargo->setCaObservaciones( $recargo->getCaObservaciones() );				
-			$pricrecargo->save();
-		}	
-	}
 	
-	
-	/*
-	*
-	*/		
+		
 	
 	
 	
@@ -1111,8 +1187,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 	*/
 	public function executeParametrizarConceptos(){
 		$c = new Criteria();
-		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
-		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
+		$c->add( TrayectoPeer::CA_IMPOEXPO, "Exportación" );
+		$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
 
 		/*$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
 		$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );*/

@@ -1,4 +1,5 @@
-<table cellspacing="1" >
+<div align="center">
+<table cellspacing="1" class="tableForm" >
 	<tr>
 		<th colspan="5">Maestra de Contactos por Cliente</th>
 	</tr>
@@ -86,3 +87,4 @@
 </table>
 
 <BR><TABLE CELLSPACING=10><TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:parent.frames[2].location.href = "/clientes.php?modalidad=N.i.t.&\criterio=<?=$cliente->getCaIdCliente()?>"'></TH></TABLE>
+</div>

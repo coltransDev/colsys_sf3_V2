@@ -1,7 +1,7 @@
 <?
 if( count($costos)>0 || $editable ){
 ?>
-<table width="800" border="1" class="tableList">
+<table width="800" border="1" id="mainTable">
 	<tr>
 		<th scope="col">Recargo</th>
 		<th scope="col">Tipo</th>
@@ -59,13 +59,13 @@ if( count($costos)>0 || $editable ){
 				}
 				?>
 				>
-				<?=number_format($costo->getCaNetcosto(),2,".","")?>
+				<?=$costo->getCaNetcosto()?>
 			</div>
 			<?
 			if( $editable ){			
 				?>
 				<div id="netcosto_<?=$costo->getOid()?>_div_hd" align="center" style="display:none">
-					<?=input_tag("netcosto_".$costo->getOid(),number_format($costo->getCaNetcosto(),2,".",""), "size=6 onBlur=actualizarGrilla('netcosto_".$costo->getOid()."')")?>	
+					<?=input_tag("netcosto_".$costo->getOid(),$costo->getCaNetcosto(), "size=6 onBlur=actualizarGrilla('netcosto_".$costo->getOid()."')")?>	
 				</div>
 				<?
 				echo observe_field("netcosto_".$costo->getOid(), array('update'   => '',
@@ -85,13 +85,13 @@ if( count($costos)>0 || $editable ){
 				}
 				?>
 				>
-				<?=number_format($costo->getCaVlrcosto(),2,".","")?>
+				<?=$costo->getCaVlrcosto()?>
 			</div>
 			<?
 			if( $editable ){			
 				?>
 				<div id="vlrcosto_<?=$costo->getOid()?>_div_hd" align="center" style="display:none">
-					<?=input_tag("vlrcosto_".$costo->getOid(),number_format($costo->getCaVlrcosto(),2,".",""), "size=6 onBlur=actualizarGrilla('vlrcosto_".$costo->getOid()."')")?>	
+					<?=input_tag("vlrcosto_".$costo->getOid(),$costo->getCaVlrcosto(), "size=6 onBlur=actualizarGrilla('vlrcosto_".$costo->getOid()."')")?>	
 				</div>
 				<?
 				echo observe_field("vlrcosto_".$costo->getOid(), array('update'   => '',
@@ -111,13 +111,13 @@ if( count($costos)>0 || $editable ){
 				}
 				?>
 				>
-				<?=number_format($costo->getCaMincosto(),2,".","")?>
+				<?=$costo->getCaMincosto()?>
 			</div>
 			<?
 			if( $editable ){			
 				?>
 				<div id="mincosto_<?=$costo->getOid()?>_div_hd" align="center" style="display:none">
-					<?=input_tag("mincosto_".$costo->getOid(),number_format($costo->getCaMincosto(),2,".",""), "size=6 onBlur=actualizarGrilla('mincosto_".$costo->getOid()."')")?>	
+					<?=input_tag("mincosto_".$costo->getOid(),$costo->getCaMincosto(), "size=6 onBlur=actualizarGrilla('mincosto_".$costo->getOid()."')")?>	
 				</div>
 				<?
 				echo observe_field("mincosto_".$costo->getOid(), array('update'   => '',

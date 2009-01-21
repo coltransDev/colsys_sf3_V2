@@ -7,7 +7,7 @@ use_helper("Javascript", "Object", "Validation");
 <h3>Sistema administrador de negocios</h3>
 <br />
 <br />
-<table cellspacing="1" width="700" class="tableForm">
+<table cellspacing="1" width="700" id="mainTable">
 	<tbody>
 		<tr>
 			<th colspan="6" class="titulo">REPORTE DE NEGOCIO</th>
@@ -24,7 +24,7 @@ use_helper("Javascript", "Object", "Validation");
 							<?=$reporteNegocio->getCaVersion()."/".$reporteNegocio->numVersiones()?>
 			</div></td>
 			<td width="85" class="mostrar"><div align="left"><strong>Cotizaci&oacute;n</strong><br /><?=$reporteNegocio->getCaIdCotizacion()?>
-			</div></td>
+</div></td>
 			<?
 		/*$cotProducto = $reporteNegocio->getCotProducto();
 		if( $cotProducto ){
@@ -283,8 +283,10 @@ use_helper("Javascript", "Object", "Validation");
 			<td colspan="3" class="listar">&nbsp;</td>
 		</tr>
 		<?
-		if( $reporteNegocio->getCaColmas() == "Sí"  ){
+		
+		if( $reporteNegocio->getCaColmas() == "Sí"  ){		
 		?>
+		
 		<tr>
 			<td valign="top" class="captura"><strong>Transporte terrestre nacional: </strong></td>
 			<td colspan="5" class="listar">

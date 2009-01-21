@@ -229,7 +229,7 @@ class pricingActions extends sfActions
 				$trayectoStr.=" [".$agente->getCaNombre()."] ";	
 			}
 			
-			$trayectoStr.=" (TT ".$trayecto->getCaTiempotransito()." Freq. ".$trayecto->getCaFrecuencia().")";
+			$trayectoStr.=" (TT ".$trayecto->getCaTiempotransito()." Freq. ".$trayecto->getCaFrecuencia().") ".$trayecto->getCaidTrayecto();
 			
 			$trayectoStr = utf8_encode($trayectoStr);
 		 	
@@ -260,7 +260,8 @@ class pricingActions extends sfActions
 						'neta'=>$pricRecargo->getCaVlrrecargo(),
 						'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),
 						'minima'=>$pricRecargo->getCaVlrminimo(),
-						'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin())
+						'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
+						'consecutivo' => $pricRecargo->getCaConsecutivo()
 						
 					);									
 					$recargosGenerales[] = $row;						
@@ -287,7 +288,8 @@ class pricingActions extends sfActions
 						'neta'=>$pricRecargo->getCaVlrrecargo(),
 						'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),
 						'minima'=>$pricRecargo->getCaVlrminimo(),
-						'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin())
+						'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
+						'consecutivo' => $pricRecargo->getCaConsecutivo()
 						
 					);									
 					$recargosGenerales[] = $row;						
@@ -378,7 +380,8 @@ class pricingActions extends sfActions
 					'tipo'=>"concepto",		
 					'neta'=>$neta,
 					'sugerida'=>$sugerida,							
-					'aplicacion' => utf8_encode($pricConcepto->getCaAplicacion()),						
+					'aplicacion' => utf8_encode($pricConcepto->getCaAplicacion()),	
+					'consecutivo' => $pricConcepto->getCaConsecutivo(),					
 					'orden'=>$i++
 					
 				);
@@ -413,6 +416,7 @@ class pricingActions extends sfActions
 							'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),		
 							'minima'=>$pricRecargo->getCaVlrminimo(),
 							'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
+							'consecutivo' => $pricRecargo->getCaConsecutivo(),
 							'orden'=>$i++	
 						);									
 						$data[] = $row;						
@@ -868,7 +872,8 @@ class pricingActions extends sfActions
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
 		$modalidad = $this->getRequestParameter( "modalidad" );
-		$impoexpo = $this->getRequestParameter( "impoexpo" );
+		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
+		
 		
 		$this->forward404Unless( $modalidad );	
 		$this->forward404Unless( $impoexpo );
@@ -898,7 +903,7 @@ class pricingActions extends sfActions
 		$this->conceptos = $this->trafico->getConceptos( $transporte, $modalidad );
 				
 		
-					
+		$this->impoexpo = $impoexpo;			
 		$this->modalidad = $modalidad;
 		$this->transporte = $transporte;
 		$this->idtrafico = $idtrafico;					
@@ -915,7 +920,8 @@ class pricingActions extends sfActions
 	public function executeDatosAdminTrayectos(){
 		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
 		$idtrafico = $this->getRequestParameter( "idtrafico" );
-		$modalidad = $this->getRequestParameter( "modalidad" );		
+		$modalidad = $this->getRequestParameter( "modalidad" );	
+		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));	
 		$start = $this->getRequestParameter( "start" );
 		$limit = $this->getRequestParameter( "limit" );
 				
@@ -924,11 +930,16 @@ class pricingActions extends sfActions
 		$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
 		
 		$c = new Criteria();
-		$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		if( $impoexpo == Constantes::EXPO){
+			$c->addJoin( TrayectoPeer::CA_DESTINO, CiudadPeer::CA_IDCIUDAD );
+		}else{
+			$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		}
 		$c->addJoin( TrayectoPeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA );
 		$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
+		$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );
 				
 
 		$c->addAscendingOrderByColumn( TransportadorPeer::CA_NOMBRE );
@@ -939,6 +950,7 @@ class pricingActions extends sfActions
 		if( $start ){
 			$c->setOffset( $start );
 		}	
+		
 		$trayectos = TrayectoPeer::doSelect( $c );
 			
 
@@ -1529,9 +1541,13 @@ class pricingActions extends sfActions
 				$row = array("idconcepto"=>$concepto->getCaIdConcepto(),
 							 "concepto"=>utf8_encode($concepto->getCaConcepto())	
 							);
-				$this->conceptos[]=$row;
-				
+				$this->conceptos[]=$row;			
 			}
+			
+			$this->conceptos[] = array("idconcepto"=>9999,
+								 "concepto"=>utf8_encode("Recargos generales del trayecto")	
+								);
+			
 		}	
 		$this->setLayout("ajax");
 	}

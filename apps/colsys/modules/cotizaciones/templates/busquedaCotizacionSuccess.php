@@ -4,7 +4,7 @@
 * @author Carlos G. López
 */	
 ?>
-
+<div align="center">"
 <?
 $url = "cotizaciones/busquedaCotizacion?criterio=".$criterio;
 if( $cadena ){
@@ -108,3 +108,4 @@ endif;
 </table>
 <br />
 <br />
+</div>

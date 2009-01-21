@@ -4,7 +4,7 @@
 * @author Andres Botero
 */	
 ?>
-<table width="800px" border="1" class="tableList">
+<table width="800px" border="1" id="mainTable">
 	<tr>
 		<th width="57" scope="col">Consecutivo</th>
 		<th width="57" scope="col">Versi&oacute;n</th>
@@ -20,10 +20,10 @@
 		
 	?>
 	<tr>
-		<td rowspan="2" class="listar" ><?=link_to($reporte->getCaConsecutivo(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo."&token=".md5(time()))?></td>
-		<td rowspan="2" class="listar" ><?=link_to($reporte->getCaVersion()." ", "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo."&token=".md5(time()))?></td>
+		<td rowspan="2" class="listar" ><?=link_to($reporte->getCaConsecutivo(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo)?></td>
+		<td rowspan="2" class="listar" ><?=link_to($reporte->getCaVersion()." ", "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo)?></td>
 		<td class="listar" >
-			<?=link_to($reporte->getCliente(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo."&token=".md5(time()))?>
+			<?=link_to($reporte->getCliente(), "reportesNeg/consultaReporte?reporteId=".$reporte->getCaIdReporte()."&modo=".$modo)?>
 			</td>
 	</tr>
 	<tr >

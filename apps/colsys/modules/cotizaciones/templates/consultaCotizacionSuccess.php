@@ -66,6 +66,8 @@ Ext.onReady(function(){
 			{name: 'sapellido', mapping: 'ca_sapellido'},
             {name: 'vendedor', mapping: 'ca_vendedor'},
             {name: 'nombre_ven', mapping: 'ca_nombre'},
+			{name: 'listaclinton', mapping: 'ca_listaclinton'},
+			{name: 'fchcircular', mapping: 'ca_fchcircular', type:'int'}
         ])
     });
 
@@ -134,7 +136,13 @@ Ext.onReady(function(){
 							allowBlank:false,
 							readOnly: true, 
 							width: 120
-		                }]
+		                },
+						{
+							xtype:'hidden',
+							id: 'listaclinton'
+							
+		                }
+						]
 				    },
 					{
 		                layout: 'form',
@@ -182,10 +190,31 @@ Ext.onReady(function(){
 								this.collapse();
 								this.fireEvent('select', this, record, index);
 							}
+							
 							Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
 							Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 							Ext.getCmp("usuario").setValue(record.get("vendedor"));
 							Ext.getCmp("vendedor").setValue(record.get("nombre_ven"));
+							
+							Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
+							if( record.get("listaclinton")=="Sí" ){								
+								Ext.MessageBox.alert("Alerta","Este cliente se encuentra en lista clinton");
+							}
+							
+							var fchcircular = record.get("fchcircular");
+							//alert( fchcircular);
+							if( !fchcircular ){
+								Ext.MessageBox.alert("Alerta","El cliente no tiene circular 170");
+							}else{
+								if( fchcircular+(86400*365)<=<?=time()?> ){
+									Ext.MessageBox.alert("Alerta","La circular 170 se encuentra vencida");
+								}else{
+									if( fchcircular+(86400*335)<=<?=time()?> ){
+										Ext.MessageBox.alert("Alerta","La circular 170 se vencera en menos de 30 dias");
+									}
+								}
+							}
+														
 						}
 					})
 				,{
@@ -289,6 +318,10 @@ Ext.onReady(function(){
 	        buttons: [{
 	            text: 'Salvar',
 	            handler: function(){
+					if( Ext.getCmp("listaclinton").getValue()=="Sí" ){
+						Ext.MessageBox.alert("Alerta","Este cliente se encuentra en lista clinton");
+						return 0;
+					}
 	            	if( mainPanel.getForm().isValid() ){
 						
 	            		mainPanel.getForm().submit({url:'<?=url_for('cotizaciones/formCotizacionGuardar')?>', 

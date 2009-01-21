@@ -66,6 +66,7 @@ class traficosActions extends sfActions
 				if( $this->modo=="maritimo" ){
 					$c->add( ReportePeer::CA_TRANSPORTE, "Marítimo" );
 					$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
+					$c->addOr( ReportePeer::CA_IMPOEXPO, "Triangulación" );
 				}
 				
 				if( $this->modo=="aereo" ){
@@ -446,7 +447,7 @@ class traficosActions extends sfActions
 	 */
 	public function executeInformeTraficos(){
 		
-		set_time_limit(0);
+		
 		
 		
 		$formato = $this->getRequestParameter("formato");
@@ -462,8 +463,10 @@ class traficosActions extends sfActions
 	
 	
 	public function executeInformeTraficosFormato1(  ){
-				
+		
+		
 		$this->idCliente = $this->getRequestParameter("idcliente");
+
 		$this->modo = $this->getRequestParameter("modo");
 		$this->cliente = ClientePeer::retrieveByPk( $this->idCliente );
 		$this->fechaInicial = $this->getRequestParameter("fechaInicial");
@@ -475,7 +478,7 @@ class traficosActions extends sfActions
 		
 		switch( $this->ver ){
 			case "activos":		
-				$this->reportes = ReportePeer::getReportesActivosImpoMaritimo(  $this->idCliente, false, "orden" ); // proveedor
+				$this->reportes = ReportePeer::getReportesActivos( $this->modo ,  $this->idCliente, false, "proveedor" );
 				break;
 			case "fecha";
 				

@@ -324,15 +324,9 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeEnviarCotizacionEmail(){
 		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
-		$fileName = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."cotizacion".$this->getRequestParameter("id").".pdf" ;
-		if(file_exists($fileName)){
-			@unlink( $fileName );
-		}	 		
-		$this->getRequest()->setParameter('filename',$fileName); 
-		sfContext::getInstance()->getController()->getPresentationFor( 'cotizaciones', 'generarPDF') ;
-		$this->setLayout("ajax");
 		
-						
+		$this->setLayout("ajax");
+								
 		$user = $this->getUser();
 					
 		//Crea el correo electronico
@@ -369,17 +363,61 @@ class cotizacionesActions extends sfActions
 				}
 			}
 		}
+		$mensaje = utf8_decode($this->getRequestParameter("mensaje"));
 				
 		$email->addCc( $this->getUser()->getEmail() );					
-		$email->setCaSubject( $this->getRequestParameter("asunto") );		
-		$email->setCaBody( $this->getRequestParameter("mensaje") );	
-		$email->addAttachment( $fileName );
+		$email->setCaSubject( utf8_decode($this->getRequestParameter("asunto")) );		
+		$email->setCaBody( $mensaje );
+		$email->setCaBodyhtml( Utils::replace($mensaje) );		
+		$email->save();
+		$incluirPDF = $this->getRequestParameter("incluirPDF");
+		if( $incluirPDF ){
+			$fileName = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."cotizacion".$this->getRequestParameter("id").".pdf" ;
+			if(file_exists($fileName)){
+				@unlink( $fileName );
+			}				
+			$this->getRequest()->setParameter('filename',$fileName); 
+			sfContext::getInstance()->getController()->getPresentationFor( 'cotizaciones', 'generarPDF') ;	
+			$fileSize = filesize($fileName);			
+			$fp = fopen($fileName, "r");
+			$data = fread( $fp , $fileSize);
+			fclose( $fp );
+
+		
+			
+			$attachment = new EmailAttachment();
+			$attachment->setCaIdemail( $email->getCaIdemail() );
+			$attachment->setCaContent( $data );			
+			$attachment->setCaFilesize( $fileSize );
+			$attachment->setCaHeaderFile( basename($fileName) );
+			$attachment->save();
+			@unlink( $fileName );
+		}
+		
+		$attachments = $this->getRequestParameter("attachments");
+		
+		$archivos = $this->cotizacion->getCotArchivos();				
+		foreach($archivos as $archivo ){	
+			if( $attachments && in_array($archivo->getCaIdArchivo(),$attachments )){
+				$fp = $archivo->getCaDatos();
+				if ($fp !== null) {						
+					$attachment = new EmailAttachment();
+					$attachment->setCaIdemail( $email->getCaIdemail() );
+					$attachment->setCaContent( stream_get_contents($fp) );			
+					$attachment->setCaFilesize( $archivo->getCaTamano() );
+					$attachment->setCaHeaderFile( $archivo->getCaNombre() );
+					$attachment->save();
+				}
+				fclose($fp);
+			}
+		}
+  
 		$email->save(); //guarda el cuerpo del mensaje
 		$this->error = $email->send();	
 		if($this->error){
 			$this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
 		}
-		@unlink( $fileName );
+		
 	}
 	
 	
