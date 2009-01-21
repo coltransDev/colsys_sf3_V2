@@ -98,7 +98,7 @@ function export_file(){
 												)?></td>
 
 		<td><strong>Container Mode:</strong><br /><?
-			echo select_tag("container_mode", options_for_select(array("LCL","CY/CY","CFS/CFS","CFS/CY"), $fala_header->getCaContainerMode(), "include_blank=true") );
+			echo select_tag("container_mode", options_for_select(array("LCL"=>"LCL","CY/CY"=>"CY/CY","CFS/CFS"=>"CFS/CFS","CFS/CY"=>"CFS/CY"), $fala_header->getCaContainerMode(), "include_blank=true") );
 			echo observe_field("container_mode", array("url"=>"falabella/observeHeader",
 												"update"=>"result",
 												"with"=>"'iddoc=".$fala_header->getCaIddoc()."&container_mode='+document.getElementById('container_mode').value",
