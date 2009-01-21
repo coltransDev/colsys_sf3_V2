@@ -1351,6 +1351,7 @@ abstract class BaseRecargoFleteTraf extends BaseObject  implements Persistent {
 		$criteria->add(RecargoFleteTrafPeer::CA_IDTRAFICO, $this->ca_idtrafico);
 		$criteria->add(RecargoFleteTrafPeer::CA_IDCIUDAD, $this->ca_idciudad);
 		$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $this->ca_idrecargo);
+		$criteria->add(RecargoFleteTrafPeer::CA_MODALIDAD, $this->ca_modalidad);
 
 		return $criteria;
 	}
@@ -1370,6 +1371,8 @@ abstract class BaseRecargoFleteTraf extends BaseObject  implements Persistent {
 
 		$pks[2] = $this->getCaIdrecargo();
 
+		$pks[3] = $this->getCaModalidad();
+
 		return $pks;
 	}
 
@@ -1387,6 +1390,8 @@ abstract class BaseRecargoFleteTraf extends BaseObject  implements Persistent {
 		$this->setCaIdciudad($keys[1]);
 
 		$this->setCaIdrecargo($keys[2]);
+
+		$this->setCaModalidad($keys[3]);
 
 	}
 

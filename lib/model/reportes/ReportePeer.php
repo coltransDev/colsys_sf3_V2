@@ -77,6 +77,7 @@ class ReportePeer extends BaseReportePeer
 						
 		$c->add( ReportePeer::CA_TRANSPORTE, Constantes::MARITIMO );
 		$c->add( ReportePeer::CA_IMPOEXPO, Constantes::IMPO );
+		$c->addOr( ReportePeer::CA_IMPOEXPO, Constantes::TRIANGULACION );
 								
 		switch( $order ){
 			case "orden":
@@ -170,6 +171,7 @@ class ReportePeer extends BaseReportePeer
 				
 		$c->add( ReportePeer::CA_TRANSPORTE, Constantes::AEREO );
 		$c->add( ReportePeer::CA_IMPOEXPO, Constantes::IMPO );
+		$c->addOr( ReportePeer::CA_IMPOEXPO, Constantes::TRIANGULACION );
 						
 		if( $idCliente==860048626 ||$idCliente==830512518 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
 			$fecha =  date("Y-m-")."01";			

@@ -111,6 +111,12 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	protected $ca_usuactualizado;
 
 	/**
+	 * The value for the ca_consecutivo field.
+	 * @var        int
+	 */
+	protected $ca_consecutivo;
+
+	/**
 	 * @var        CotProducto
 	 */
 	protected $aCotProducto;
@@ -358,6 +364,16 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	public function getCaUsuactualizado()
 	{
 		return $this->ca_usuactualizado;
+	}
+
+	/**
+	 * Get the [ca_consecutivo] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaConsecutivo()
+	{
+		return $this->ca_consecutivo;
 	}
 
 	/**
@@ -731,6 +747,26 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 	} // setCaUsuactualizado()
 
 	/**
+	 * Set the value of [ca_consecutivo] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     CotOpcion The current object (for fluent API support)
+	 */
+	public function setCaConsecutivo($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_consecutivo !== $v) {
+			$this->ca_consecutivo = $v;
+			$this->modifiedColumns[] = CotOpcionPeer::CA_CONSECUTIVO;
+		}
+
+		return $this;
+	} // setCaConsecutivo()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -782,6 +818,7 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 			$this->ca_usucreado = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
 			$this->ca_fchactualizado = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
 			$this->ca_usuactualizado = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_consecutivo = ($row[$startcol + 15] !== null) ? (int) $row[$startcol + 15] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -791,7 +828,7 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 15; // 15 = CotOpcionPeer::NUM_COLUMNS - CotOpcionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 16; // 16 = CotOpcionPeer::NUM_COLUMNS - CotOpcionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating CotOpcion object", $e);
@@ -1176,6 +1213,9 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 			case 14:
 				return $this->getCaUsuactualizado();
 				break;
+			case 15:
+				return $this->getCaConsecutivo();
+				break;
 			default:
 				return null;
 				break;
@@ -1212,6 +1252,7 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 			$keys[12] => $this->getCaUsucreado(),
 			$keys[13] => $this->getCaFchactualizado(),
 			$keys[14] => $this->getCaUsuactualizado(),
+			$keys[15] => $this->getCaConsecutivo(),
 		);
 		return $result;
 	}
@@ -1288,6 +1329,9 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 			case 14:
 				$this->setCaUsuactualizado($value);
 				break;
+			case 15:
+				$this->setCaConsecutivo($value);
+				break;
 		} // switch()
 	}
 
@@ -1327,6 +1371,7 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[12], $arr)) $this->setCaUsucreado($arr[$keys[12]]);
 		if (array_key_exists($keys[13], $arr)) $this->setCaFchactualizado($arr[$keys[13]]);
 		if (array_key_exists($keys[14], $arr)) $this->setCaUsuactualizado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaConsecutivo($arr[$keys[15]]);
 	}
 
 	/**
@@ -1353,6 +1398,7 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotOpcionPeer::CA_USUCREADO)) $criteria->add(CotOpcionPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(CotOpcionPeer::CA_FCHACTUALIZADO)) $criteria->add(CotOpcionPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
 		if ($this->isColumnModified(CotOpcionPeer::CA_USUACTUALIZADO)) $criteria->add(CotOpcionPeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
+		if ($this->isColumnModified(CotOpcionPeer::CA_CONSECUTIVO)) $criteria->add(CotOpcionPeer::CA_CONSECUTIVO, $this->ca_consecutivo);
 
 		return $criteria;
 	}
@@ -1451,6 +1497,8 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 		$copyObj->setCaFchactualizado($this->ca_fchactualizado);
 
 		$copyObj->setCaUsuactualizado($this->ca_usuactualizado);
+
+		$copyObj->setCaConsecutivo($this->ca_consecutivo);
 
 
 		if ($deepCopy) {

@@ -99,6 +99,12 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	protected $ca_body;
 
 	/**
+	 * The value for the ca_bodyhtml field.
+	 * @var        string
+	 */
+	protected $ca_bodyhtml;
+
+	/**
 	 * The value for the ca_readreceipt field.
 	 * @var        boolean
 	 */
@@ -319,6 +325,16 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	public function getCaBody()
 	{
 		return $this->ca_body;
+	}
+
+	/**
+	 * Get the [ca_bodyhtml] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaBodyhtml()
+	{
+		return $this->ca_bodyhtml;
 	}
 
 	/**
@@ -621,6 +637,26 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	} // setCaBody()
 
 	/**
+	 * Set the value of [ca_bodyhtml] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Email The current object (for fluent API support)
+	 */
+	public function setCaBodyhtml($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_bodyhtml !== $v) {
+			$this->ca_bodyhtml = $v;
+			$this->modifiedColumns[] = EmailPeer::CA_BODYHTML;
+		}
+
+		return $this;
+	} // setCaBodyhtml()
+
+	/**
 	 * Set the value of [ca_readreceipt] column.
 	 * 
 	 * @param      boolean $v new value
@@ -690,7 +726,8 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->ca_attachment = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->ca_subject = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
 			$this->ca_body = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-			$this->ca_readreceipt = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
+			$this->ca_bodyhtml = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_readreceipt = ($row[$startcol + 14] !== null) ? (boolean) $row[$startcol + 14] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -700,7 +737,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 14; // 14 = EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 15; // 15 = EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Email object", $e);
@@ -1070,6 +1107,9 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				return $this->getCaBody();
 				break;
 			case 13:
+				return $this->getCaBodyhtml();
+				break;
+			case 14:
 				return $this->getCaReadreceipt();
 				break;
 			default:
@@ -1106,7 +1146,8 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$keys[10] => $this->getCaAttachment(),
 			$keys[11] => $this->getCaSubject(),
 			$keys[12] => $this->getCaBody(),
-			$keys[13] => $this->getCaReadreceipt(),
+			$keys[13] => $this->getCaBodyhtml(),
+			$keys[14] => $this->getCaReadreceipt(),
 		);
 		return $result;
 	}
@@ -1178,6 +1219,9 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				$this->setCaBody($value);
 				break;
 			case 13:
+				$this->setCaBodyhtml($value);
+				break;
+			case 14:
 				$this->setCaReadreceipt($value);
 				break;
 		} // switch()
@@ -1217,7 +1261,8 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[10], $arr)) $this->setCaAttachment($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setCaSubject($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setCaBody($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaReadreceipt($arr[$keys[13]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaBodyhtml($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaReadreceipt($arr[$keys[14]]);
 	}
 
 	/**
@@ -1242,6 +1287,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(EmailPeer::CA_ATTACHMENT)) $criteria->add(EmailPeer::CA_ATTACHMENT, $this->ca_attachment);
 		if ($this->isColumnModified(EmailPeer::CA_SUBJECT)) $criteria->add(EmailPeer::CA_SUBJECT, $this->ca_subject);
 		if ($this->isColumnModified(EmailPeer::CA_BODY)) $criteria->add(EmailPeer::CA_BODY, $this->ca_body);
+		if ($this->isColumnModified(EmailPeer::CA_BODYHTML)) $criteria->add(EmailPeer::CA_BODYHTML, $this->ca_bodyhtml);
 		if ($this->isColumnModified(EmailPeer::CA_READRECEIPT)) $criteria->add(EmailPeer::CA_READRECEIPT, $this->ca_readreceipt);
 
 		return $criteria;
@@ -1320,6 +1366,8 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 		$copyObj->setCaSubject($this->ca_subject);
 
 		$copyObj->setCaBody($this->ca_body);
+
+		$copyObj->setCaBodyhtml($this->ca_bodyhtml);
 
 		$copyObj->setCaReadreceipt($this->ca_readreceipt);
 

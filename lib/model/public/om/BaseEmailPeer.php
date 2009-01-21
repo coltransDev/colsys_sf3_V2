@@ -19,7 +19,7 @@ abstract class BaseEmailPeer {
 	const CLASS_DEFAULT = 'lib.model.public.Email';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 14;
+	const NUM_COLUMNS = 15;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -63,6 +63,9 @@ abstract class BaseEmailPeer {
 	/** the column name for the CA_BODY field */
 	const CA_BODY = 'tb_emails.CA_BODY';
 
+	/** the column name for the CA_BODYHTML field */
+	const CA_BODYHTML = 'tb_emails.CA_BODYHTML';
+
 	/** the column name for the CA_READRECEIPT field */
 	const CA_READRECEIPT = 'tb_emails.CA_READRECEIPT';
 
@@ -87,11 +90,11 @@ abstract class BaseEmailPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdemail', 'CaFchenvio', 'CaUsuenvio', 'CaTipo', 'CaIdcaso', 'CaFrom', 'CaFromname', 'CaCc', 'CaReplyto', 'CaAddress', 'CaAttachment', 'CaSubject', 'CaBody', 'CaReadreceipt', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdemail', 'caFchenvio', 'caUsuenvio', 'caTipo', 'caIdcaso', 'caFrom', 'caFromname', 'caCc', 'caReplyto', 'caAddress', 'caAttachment', 'caSubject', 'caBody', 'caReadreceipt', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDEMAIL, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_TIPO, self::CA_IDCASO, self::CA_FROM, self::CA_FROMNAME, self::CA_CC, self::CA_REPLYTO, self::CA_ADDRESS, self::CA_ATTACHMENT, self::CA_SUBJECT, self::CA_BODY, self::CA_READRECEIPT, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idemail', 'ca_fchenvio', 'ca_usuenvio', 'ca_tipo', 'ca_idcaso', 'ca_from', 'ca_fromname', 'ca_cc', 'ca_replyto', 'ca_address', 'ca_attachment', 'ca_subject', 'ca_body', 'ca_readreceipt', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdemail', 'CaFchenvio', 'CaUsuenvio', 'CaTipo', 'CaIdcaso', 'CaFrom', 'CaFromname', 'CaCc', 'CaReplyto', 'CaAddress', 'CaAttachment', 'CaSubject', 'CaBody', 'CaBodyhtml', 'CaReadreceipt', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdemail', 'caFchenvio', 'caUsuenvio', 'caTipo', 'caIdcaso', 'caFrom', 'caFromname', 'caCc', 'caReplyto', 'caAddress', 'caAttachment', 'caSubject', 'caBody', 'caBodyhtml', 'caReadreceipt', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDEMAIL, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_TIPO, self::CA_IDCASO, self::CA_FROM, self::CA_FROMNAME, self::CA_CC, self::CA_REPLYTO, self::CA_ADDRESS, self::CA_ATTACHMENT, self::CA_SUBJECT, self::CA_BODY, self::CA_BODYHTML, self::CA_READRECEIPT, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idemail', 'ca_fchenvio', 'ca_usuenvio', 'ca_tipo', 'ca_idcaso', 'ca_from', 'ca_fromname', 'ca_cc', 'ca_replyto', 'ca_address', 'ca_attachment', 'ca_subject', 'ca_body', 'ca_bodyhtml', 'ca_readreceipt', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
 	);
 
 	/**
@@ -101,11 +104,11 @@ abstract class BaseEmailPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdemail' => 0, 'CaFchenvio' => 1, 'CaUsuenvio' => 2, 'CaTipo' => 3, 'CaIdcaso' => 4, 'CaFrom' => 5, 'CaFromname' => 6, 'CaCc' => 7, 'CaReplyto' => 8, 'CaAddress' => 9, 'CaAttachment' => 10, 'CaSubject' => 11, 'CaBody' => 12, 'CaReadreceipt' => 13, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdemail' => 0, 'caFchenvio' => 1, 'caUsuenvio' => 2, 'caTipo' => 3, 'caIdcaso' => 4, 'caFrom' => 5, 'caFromname' => 6, 'caCc' => 7, 'caReplyto' => 8, 'caAddress' => 9, 'caAttachment' => 10, 'caSubject' => 11, 'caBody' => 12, 'caReadreceipt' => 13, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDEMAIL => 0, self::CA_FCHENVIO => 1, self::CA_USUENVIO => 2, self::CA_TIPO => 3, self::CA_IDCASO => 4, self::CA_FROM => 5, self::CA_FROMNAME => 6, self::CA_CC => 7, self::CA_REPLYTO => 8, self::CA_ADDRESS => 9, self::CA_ATTACHMENT => 10, self::CA_SUBJECT => 11, self::CA_BODY => 12, self::CA_READRECEIPT => 13, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idemail' => 0, 'ca_fchenvio' => 1, 'ca_usuenvio' => 2, 'ca_tipo' => 3, 'ca_idcaso' => 4, 'ca_from' => 5, 'ca_fromname' => 6, 'ca_cc' => 7, 'ca_replyto' => 8, 'ca_address' => 9, 'ca_attachment' => 10, 'ca_subject' => 11, 'ca_body' => 12, 'ca_readreceipt' => 13, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdemail' => 0, 'CaFchenvio' => 1, 'CaUsuenvio' => 2, 'CaTipo' => 3, 'CaIdcaso' => 4, 'CaFrom' => 5, 'CaFromname' => 6, 'CaCc' => 7, 'CaReplyto' => 8, 'CaAddress' => 9, 'CaAttachment' => 10, 'CaSubject' => 11, 'CaBody' => 12, 'CaBodyhtml' => 13, 'CaReadreceipt' => 14, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdemail' => 0, 'caFchenvio' => 1, 'caUsuenvio' => 2, 'caTipo' => 3, 'caIdcaso' => 4, 'caFrom' => 5, 'caFromname' => 6, 'caCc' => 7, 'caReplyto' => 8, 'caAddress' => 9, 'caAttachment' => 10, 'caSubject' => 11, 'caBody' => 12, 'caBodyhtml' => 13, 'caReadreceipt' => 14, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDEMAIL => 0, self::CA_FCHENVIO => 1, self::CA_USUENVIO => 2, self::CA_TIPO => 3, self::CA_IDCASO => 4, self::CA_FROM => 5, self::CA_FROMNAME => 6, self::CA_CC => 7, self::CA_REPLYTO => 8, self::CA_ADDRESS => 9, self::CA_ATTACHMENT => 10, self::CA_SUBJECT => 11, self::CA_BODY => 12, self::CA_BODYHTML => 13, self::CA_READRECEIPT => 14, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idemail' => 0, 'ca_fchenvio' => 1, 'ca_usuenvio' => 2, 'ca_tipo' => 3, 'ca_idcaso' => 4, 'ca_from' => 5, 'ca_fromname' => 6, 'ca_cc' => 7, 'ca_replyto' => 8, 'ca_address' => 9, 'ca_attachment' => 10, 'ca_subject' => 11, 'ca_body' => 12, 'ca_bodyhtml' => 13, 'ca_readreceipt' => 14, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
 	);
 
 	/**
@@ -212,6 +215,8 @@ abstract class BaseEmailPeer {
 		$criteria->addSelectColumn(EmailPeer::CA_SUBJECT);
 
 		$criteria->addSelectColumn(EmailPeer::CA_BODY);
+
+		$criteria->addSelectColumn(EmailPeer::CA_BODYHTML);
 
 		$criteria->addSelectColumn(EmailPeer::CA_READRECEIPT);
 

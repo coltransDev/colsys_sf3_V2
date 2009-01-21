@@ -261,15 +261,23 @@ class Reporte extends BaseReporte
 	}
 	
 	
-	/*
-	* Retorna el objeto Tercero de tipo proveedor asociado al reporte 
+	
+	
+/*
+	* Retorna el un array de objetos Tercero de tipo proveedor asociado al reporte 
 	* @author Andres Botero
 	*/
-	public function getProveedor(){
-		$c = new Criteria();
-		$c->add( TerceroPeer::CA_IDTERCERO, $this->getCaIdProveedor() );
-		$consignee = TerceroPeer::doSelectOne( $c );
-		return $consignee;
+	public function getProveedores(){
+		if( $this->getCaIdProveedor() ){			
+			$proveedores = explode("|",$this->getCaIdProveedor());
+			
+			$c = new Criteria();
+			$c->add( TerceroPeer::CA_IDTERCERO, $proveedores, Criteria::IN );		
+			$proveedor = TerceroPeer::doSelect( $c );	
+			return $proveedor;
+		}else{
+			return null;
+		}
 	}
 	
 	

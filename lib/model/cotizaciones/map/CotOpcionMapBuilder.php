@@ -94,6 +94,8 @@ class CotOpcionMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_CONSECUTIVO', 'CaConsecutivo', 'INTEGER', false, null);
+
 	} // doBuild()
 
 } // CotOpcionMapBuilder

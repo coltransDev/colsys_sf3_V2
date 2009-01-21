@@ -62,7 +62,7 @@ class EmailAttachmentMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_attachments_ca_idattachment_seq');
+		$tMap->setPrimaryKeyMethodInfo('tb_attachments_id');
 
 		$tMap->addPrimaryKey('CA_IDATTACHMENT', 'CaIdattachment', 'INTEGER', true, null);
 

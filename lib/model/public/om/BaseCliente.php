@@ -153,6 +153,18 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	protected $ca_idgrupo;
 
 	/**
+	 * The value for the ca_listaclinton field.
+	 * @var        string
+	 */
+	protected $ca_listaclinton;
+
+	/**
+	 * The value for the ca_fchcircular field.
+	 * @var        string
+	 */
+	protected $ca_fchcircular;
+
+	/**
 	 * @var        Ciudad
 	 */
 	protected $aCiudad;
@@ -469,6 +481,49 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	public function getCaIdgrupo()
 	{
 		return $this->ca_idgrupo;
+	}
+
+	/**
+	 * Get the [ca_listaclinton] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaListaclinton()
+	{
+		return $this->ca_listaclinton;
+	}
+
+	/**
+	 * Get the [optionally formatted] temporal [ca_fchcircular] column value.
+	 * 
+	 *
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
+	 */
+	public function getCaFchcircular($format = 'Y-m-d')
+	{
+		if ($this->ca_fchcircular === null) {
+			return null;
+		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchcircular);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcircular, true), $x);
+		}
+
+		if ($format === null) {
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $dt->format('U'));
+		} else {
+			return $dt->format($format);
+		}
 	}
 
 	/**
@@ -916,6 +971,75 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	} // setCaIdgrupo()
 
 	/**
+	 * Set the value of [ca_listaclinton] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Cliente The current object (for fluent API support)
+	 */
+	public function setCaListaclinton($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_listaclinton !== $v) {
+			$this->ca_listaclinton = $v;
+			$this->modifiedColumns[] = ClientePeer::CA_LISTACLINTON;
+		}
+
+		return $this;
+	} // setCaListaclinton()
+
+	/**
+	 * Sets the value of [ca_fchcircular] column to a normalized version of the date/time value specified.
+	 * 
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Cliente The current object (for fluent API support)
+	 */
+	public function setCaFchcircular($v)
+	{
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->ca_fchcircular !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchcircular !== null && $tmpDt = new DateTime($this->ca_fchcircular)) ? $tmpDt->format('Y-m-d') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchcircular = ($dt ? $dt->format('Y-m-d') : null);
+				$this->modifiedColumns[] = ClientePeer::CA_FCHCIRCULAR;
+			}
+		} // if either are not null
+
+		return $this;
+	} // setCaFchcircular()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -974,6 +1098,8 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			$this->ca_confirmar = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
 			$this->ca_idciudad = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
 			$this->ca_idgrupo = ($row[$startcol + 21] !== null) ? (int) $row[$startcol + 21] : null;
+			$this->ca_listaclinton = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_fchcircular = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -983,7 +1109,7 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 22; // 22 = ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 24; // 24 = ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cliente object", $e);
@@ -1464,6 +1590,12 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			case 21:
 				return $this->getCaIdgrupo();
 				break;
+			case 22:
+				return $this->getCaListaclinton();
+				break;
+			case 23:
+				return $this->getCaFchcircular();
+				break;
 			default:
 				return null;
 				break;
@@ -1507,6 +1639,8 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			$keys[19] => $this->getCaConfirmar(),
 			$keys[20] => $this->getCaIdciudad(),
 			$keys[21] => $this->getCaIdgrupo(),
+			$keys[22] => $this->getCaListaclinton(),
+			$keys[23] => $this->getCaFchcircular(),
 		);
 		return $result;
 	}
@@ -1604,6 +1738,12 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			case 21:
 				$this->setCaIdgrupo($value);
 				break;
+			case 22:
+				$this->setCaListaclinton($value);
+				break;
+			case 23:
+				$this->setCaFchcircular($value);
+				break;
 		} // switch()
 	}
 
@@ -1650,6 +1790,8 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[19], $arr)) $this->setCaConfirmar($arr[$keys[19]]);
 		if (array_key_exists($keys[20], $arr)) $this->setCaIdciudad($arr[$keys[20]]);
 		if (array_key_exists($keys[21], $arr)) $this->setCaIdgrupo($arr[$keys[21]]);
+		if (array_key_exists($keys[22], $arr)) $this->setCaListaclinton($arr[$keys[22]]);
+		if (array_key_exists($keys[23], $arr)) $this->setCaFchcircular($arr[$keys[23]]);
 	}
 
 	/**
@@ -1683,6 +1825,8 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ClientePeer::CA_CONFIRMAR)) $criteria->add(ClientePeer::CA_CONFIRMAR, $this->ca_confirmar);
 		if ($this->isColumnModified(ClientePeer::CA_IDCIUDAD)) $criteria->add(ClientePeer::CA_IDCIUDAD, $this->ca_idciudad);
 		if ($this->isColumnModified(ClientePeer::CA_IDGRUPO)) $criteria->add(ClientePeer::CA_IDGRUPO, $this->ca_idgrupo);
+		if ($this->isColumnModified(ClientePeer::CA_LISTACLINTON)) $criteria->add(ClientePeer::CA_LISTACLINTON, $this->ca_listaclinton);
+		if ($this->isColumnModified(ClientePeer::CA_FCHCIRCULAR)) $criteria->add(ClientePeer::CA_FCHCIRCULAR, $this->ca_fchcircular);
 
 		return $criteria;
 	}
@@ -1778,6 +1922,10 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		$copyObj->setCaIdciudad($this->ca_idciudad);
 
 		$copyObj->setCaIdgrupo($this->ca_idgrupo);
+
+		$copyObj->setCaListaclinton($this->ca_listaclinton);
+
+		$copyObj->setCaFchcircular($this->ca_fchcircular);
 
 
 		if ($deepCopy) {

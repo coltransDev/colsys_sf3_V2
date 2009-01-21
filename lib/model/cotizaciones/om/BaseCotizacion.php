@@ -111,6 +111,12 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	protected $ca_horasolicitud;
 
 	/**
+	 * The value for the ca_fchpresentacion field.
+	 * @var        string
+	 */
+	protected $ca_fchpresentacion;
+
+	/**
 	 * The value for the ca_fchanulado field.
 	 * @var        string
 	 */
@@ -448,6 +454,39 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$dt = new DateTime($this->ca_horasolicitud);
 		} catch (Exception $x) {
 			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_horasolicitud, true), $x);
+		}
+
+		if ($format === null) {
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $dt->format('U'));
+		} else {
+			return $dt->format($format);
+		}
+	}
+
+	/**
+	 * Get the [optionally formatted] temporal [ca_fchpresentacion] column value.
+	 * 
+	 *
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
+	 */
+	public function getCaFchpresentacion($format = 'Y-m-d H:i:s')
+	{
+		if ($this->ca_fchpresentacion === null) {
+			return null;
+		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchpresentacion);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchpresentacion, true), $x);
 		}
 
 		if ($format === null) {
@@ -948,6 +987,55 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	} // setCaHorasolicitud()
 
 	/**
+	 * Sets the value of [ca_fchpresentacion] column to a normalized version of the date/time value specified.
+	 * 
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Cotizacion The current object (for fluent API support)
+	 */
+	public function setCaFchpresentacion($v)
+	{
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->ca_fchpresentacion !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchpresentacion !== null && $tmpDt = new DateTime($this->ca_fchpresentacion)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchpresentacion = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = CotizacionPeer::CA_FCHPRESENTACION;
+			}
+		} // if either are not null
+
+		return $this;
+	} // setCaFchpresentacion()
+
+	/**
 	 * Sets the value of [ca_fchanulado] column to a normalized version of the date/time value specified.
 	 * 
 	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
@@ -1108,10 +1196,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->ca_usuactualizado = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
 			$this->ca_fchsolicitud = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
 			$this->ca_horasolicitud = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-			$this->ca_fchanulado = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
-			$this->ca_usuanulado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-			$this->ca_empresa = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
-			$this->ca_datosag = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_fchpresentacion = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_fchanulado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_usuanulado = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+			$this->ca_empresa = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_datosag = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1121,7 +1210,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 19; // 19 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 20; // 20 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cotizacion object", $e);
@@ -1561,15 +1650,18 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				return $this->getCaHorasolicitud();
 				break;
 			case 15:
-				return $this->getCaFchanulado();
+				return $this->getCaFchpresentacion();
 				break;
 			case 16:
-				return $this->getCaUsuanulado();
+				return $this->getCaFchanulado();
 				break;
 			case 17:
-				return $this->getCaEmpresa();
+				return $this->getCaUsuanulado();
 				break;
 			case 18:
+				return $this->getCaEmpresa();
+				break;
+			case 19:
 				return $this->getCaDatosag();
 				break;
 			default:
@@ -1608,10 +1700,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$keys[12] => $this->getCaUsuactualizado(),
 			$keys[13] => $this->getCaFchsolicitud(),
 			$keys[14] => $this->getCaHorasolicitud(),
-			$keys[15] => $this->getCaFchanulado(),
-			$keys[16] => $this->getCaUsuanulado(),
-			$keys[17] => $this->getCaEmpresa(),
-			$keys[18] => $this->getCaDatosag(),
+			$keys[15] => $this->getCaFchpresentacion(),
+			$keys[16] => $this->getCaFchanulado(),
+			$keys[17] => $this->getCaUsuanulado(),
+			$keys[18] => $this->getCaEmpresa(),
+			$keys[19] => $this->getCaDatosag(),
 		);
 		return $result;
 	}
@@ -1689,15 +1782,18 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				$this->setCaHorasolicitud($value);
 				break;
 			case 15:
-				$this->setCaFchanulado($value);
+				$this->setCaFchpresentacion($value);
 				break;
 			case 16:
-				$this->setCaUsuanulado($value);
+				$this->setCaFchanulado($value);
 				break;
 			case 17:
-				$this->setCaEmpresa($value);
+				$this->setCaUsuanulado($value);
 				break;
 			case 18:
+				$this->setCaEmpresa($value);
+				break;
+			case 19:
 				$this->setCaDatosag($value);
 				break;
 		} // switch()
@@ -1739,10 +1835,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[12], $arr)) $this->setCaUsuactualizado($arr[$keys[12]]);
 		if (array_key_exists($keys[13], $arr)) $this->setCaFchsolicitud($arr[$keys[13]]);
 		if (array_key_exists($keys[14], $arr)) $this->setCaHorasolicitud($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaFchanulado($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaUsuanulado($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaEmpresa($arr[$keys[17]]);
-		if (array_key_exists($keys[18], $arr)) $this->setCaDatosag($arr[$keys[18]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaFchpresentacion($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaFchanulado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaUsuanulado($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaEmpresa($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaDatosag($arr[$keys[19]]);
 	}
 
 	/**
@@ -1769,6 +1866,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotizacionPeer::CA_USUACTUALIZADO)) $criteria->add(CotizacionPeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
 		if ($this->isColumnModified(CotizacionPeer::CA_FCHSOLICITUD)) $criteria->add(CotizacionPeer::CA_FCHSOLICITUD, $this->ca_fchsolicitud);
 		if ($this->isColumnModified(CotizacionPeer::CA_HORASOLICITUD)) $criteria->add(CotizacionPeer::CA_HORASOLICITUD, $this->ca_horasolicitud);
+		if ($this->isColumnModified(CotizacionPeer::CA_FCHPRESENTACION)) $criteria->add(CotizacionPeer::CA_FCHPRESENTACION, $this->ca_fchpresentacion);
 		if ($this->isColumnModified(CotizacionPeer::CA_FCHANULADO)) $criteria->add(CotizacionPeer::CA_FCHANULADO, $this->ca_fchanulado);
 		if ($this->isColumnModified(CotizacionPeer::CA_USUANULADO)) $criteria->add(CotizacionPeer::CA_USUANULADO, $this->ca_usuanulado);
 		if ($this->isColumnModified(CotizacionPeer::CA_EMPRESA)) $criteria->add(CotizacionPeer::CA_EMPRESA, $this->ca_empresa);
@@ -1854,6 +1952,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$copyObj->setCaFchsolicitud($this->ca_fchsolicitud);
 
 		$copyObj->setCaHorasolicitud($this->ca_horasolicitud);
+
+		$copyObj->setCaFchpresentacion($this->ca_fchpresentacion);
 
 		$copyObj->setCaFchanulado($this->ca_fchanulado);
 

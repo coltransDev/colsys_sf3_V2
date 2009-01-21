@@ -90,6 +90,8 @@ class EmailMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_BODY', 'CaBody', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_BODYHTML', 'CaBodyhtml', 'VARCHAR', false, null);
+
 		$tMap->addColumn('CA_READRECEIPT', 'CaReadreceipt', 'BOOLEAN', false, null);
 
 	} // doBuild()

@@ -94,6 +94,8 @@ class CotizacionMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_HORASOLICITUD', 'CaHorasolicitud', 'TIME', false, null);
 
+		$tMap->addColumn('CA_FCHPRESENTACION', 'CaFchpresentacion', 'TIMESTAMP', false, null);
+
 		$tMap->addColumn('CA_FCHANULADO', 'CaFchanulado', 'DATE', false, null);
 
 		$tMap->addColumn('CA_USUANULADO', 'CaUsuanulado', 'VARCHAR', false, null);

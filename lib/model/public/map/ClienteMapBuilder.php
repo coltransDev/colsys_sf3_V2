@@ -108,6 +108,10 @@ class ClienteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_IDGRUPO', 'CaIdgrupo', 'INTEGER', false, null);
 
+		$tMap->addColumn('CA_LISTACLINTON', 'CaListaclinton', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_FCHCIRCULAR', 'CaFchcircular', 'DATE', false, null);
+
 	} // doBuild()
 
 } // ClienteMapBuilder

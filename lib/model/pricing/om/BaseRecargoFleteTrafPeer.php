@@ -349,7 +349,7 @@ abstract class BaseRecargoFleteTrafPeer {
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = serialize(array((string) $obj->getCaIdtrafico(), (string) $obj->getCaIdciudad(), (string) $obj->getCaIdrecargo()));
+				$key = serialize(array((string) $obj->getCaIdtrafico(), (string) $obj->getCaIdciudad(), (string) $obj->getCaIdrecargo(), (string) $obj->getCaModalidad()));
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -369,10 +369,10 @@ abstract class BaseRecargoFleteTrafPeer {
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof RecargoFleteTraf) {
-				$key = serialize(array((string) $value->getCaIdtrafico(), (string) $value->getCaIdciudad(), (string) $value->getCaIdrecargo()));
-			} elseif (is_array($value) && count($value) === 3) {
+				$key = serialize(array((string) $value->getCaIdtrafico(), (string) $value->getCaIdciudad(), (string) $value->getCaIdrecargo(), (string) $value->getCaModalidad()));
+			} elseif (is_array($value) && count($value) === 4) {
 				// assume we've been passed a primary key
-				$key = serialize(array((string) $value[0], (string) $value[1], (string) $value[2]));
+				$key = serialize(array((string) $value[0], (string) $value[1], (string) $value[2], (string) $value[3]));
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or RecargoFleteTraf object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -425,10 +425,10 @@ abstract class BaseRecargoFleteTrafPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null && $row[$startcol + 2] === null) {
+		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null && $row[$startcol + 2] === null && $row[$startcol + 14] === null) {
 			return null;
 		}
-		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1], (string) $row[$startcol + 2]));
+		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1], (string) $row[$startcol + 2], (string) $row[$startcol + 14]));
 	}
 
 	/**
@@ -799,6 +799,9 @@ abstract class BaseRecargoFleteTrafPeer {
 			$comparison = $criteria->getComparison(RecargoFleteTrafPeer::CA_IDRECARGO);
 			$selectCriteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $criteria->remove(RecargoFleteTrafPeer::CA_IDRECARGO), $comparison);
 
+			$comparison = $criteria->getComparison(RecargoFleteTrafPeer::CA_MODALIDAD);
+			$selectCriteria->add(RecargoFleteTrafPeer::CA_MODALIDAD, $criteria->remove(RecargoFleteTrafPeer::CA_MODALIDAD), $comparison);
+
 		} else { // $values is RecargoFleteTraf object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -883,6 +886,7 @@ abstract class BaseRecargoFleteTrafPeer {
 				$criterion = $criteria->getNewCriterion(RecargoFleteTrafPeer::CA_IDTRAFICO, $value[0]);
 				$criterion->addAnd($criteria->getNewCriterion(RecargoFleteTrafPeer::CA_IDCIUDAD, $value[1]));
 				$criterion->addAnd($criteria->getNewCriterion(RecargoFleteTrafPeer::CA_IDRECARGO, $value[2]));
+				$criterion->addAnd($criteria->getNewCriterion(RecargoFleteTrafPeer::CA_MODALIDAD, $value[3]));
 				$criteria->addOr($criterion);
 
 				// we can invalidate the cache for this single PK
@@ -960,12 +964,13 @@ abstract class BaseRecargoFleteTrafPeer {
 	 * @param      string $ca_idtrafico
 	   @param      string $ca_idciudad
 	   @param      int $ca_idrecargo
+	   @param      string $ca_modalidad
 	   
 	 * @param      PropelPDO $con
 	 * @return     RecargoFleteTraf
 	 */
-	public static function retrieveByPK($ca_idtrafico, $ca_idciudad, $ca_idrecargo, PropelPDO $con = null) {
-		$key = serialize(array((string) $ca_idtrafico, (string) $ca_idciudad, (string) $ca_idrecargo));
+	public static function retrieveByPK($ca_idtrafico, $ca_idciudad, $ca_idrecargo, $ca_modalidad, PropelPDO $con = null) {
+		$key = serialize(array((string) $ca_idtrafico, (string) $ca_idciudad, (string) $ca_idrecargo, (string) $ca_modalidad));
  		if (null !== ($obj = RecargoFleteTrafPeer::getInstanceFromPool($key))) {
  			return $obj;
 		}
@@ -977,6 +982,7 @@ abstract class BaseRecargoFleteTrafPeer {
 		$criteria->add(RecargoFleteTrafPeer::CA_IDTRAFICO, $ca_idtrafico);
 		$criteria->add(RecargoFleteTrafPeer::CA_IDCIUDAD, $ca_idciudad);
 		$criteria->add(RecargoFleteTrafPeer::CA_IDRECARGO, $ca_idrecargo);
+		$criteria->add(RecargoFleteTrafPeer::CA_MODALIDAD, $ca_modalidad);
 		$v = RecargoFleteTrafPeer::doSelect($criteria, $con);
 
 		return !empty($v) ? $v[0] : null;

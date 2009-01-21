@@ -9,4 +9,5 @@
  */ 
 class EmailAttachment extends BaseEmailAttachment
 {
+	
 }

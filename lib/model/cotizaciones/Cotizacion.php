@@ -44,5 +44,21 @@ class Cotizacion extends BaseCotizacion
 		
 		return CotRecargoPeer::doSelect($c);		
 	}
+	
+	/*
+	* Retorna verdadero si la cotización tiene no conceptos.
+	* @author Andres Botero
+	*/
+	public function enBlanco(){
+		$count = 0;
+		$productos = $this->getCotProductos();		
+		$count+=count($productos); 
+		$continuacion = $this->getCotContinuacions();
+		$count+=count($continuacion);
+		$seguros = $this->getCotSeguros();
+		$count+=count($seguros);
+		return $count==0;
+		
+	}
 }
 ?>

@@ -63,8 +63,15 @@ class Email extends BaseEmail
 		$mess = new Swift_Message( $this->getCaSubject() );							
 				
 		//Add some "parts"  
-		//Sending a multipart email decrease your spam score						
-		$mess->attach( new Swift_Message_Part(  $this->getCaBody() , "text/html") );
+		//Sending a multipart email decrease your spam score	
+
+		if( $this->getCaBody() ){		
+			$mess->attach( new Swift_Message_Part(  $this->getCaBody() , "text/plain") );
+		}
+		
+		if( $this->getCaBodyhtml() ){
+			$mess->attach( new Swift_Message_Part(  $this->getCaBodyhtml() , "text/html") );			
+		}
 								
 		//Recipients 
 		$recipients = new Swift_RecipientList();	
@@ -94,9 +101,11 @@ class Email extends BaseEmail
 		
 		//Busca los attachments en la tabla de attachments 
 		$attachments = $this->getEmailAttachments();
-		foreach( $attachments as $attachment ){			
-			$mess->attach(new Swift_Message_Attachment(
- 							 $attachment->getCaContent(), $attachment->getCaHeaderFile(), Utils::mimetype($attachment->getCaHeaderFile())));
+		foreach( $attachments as $attachment ){	
+			$fp =  $attachment->getCaContent();		
+			$mess->attach(new Swift_Message_Attachment( 
+ 							 stream_get_contents($fp), $attachment->getCaHeaderFile(), Utils::mimetype($attachment->getCaHeaderFile())));
+ 			fclose( $fp );				 
 		}
 		
 		

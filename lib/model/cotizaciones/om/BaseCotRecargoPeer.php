@@ -19,7 +19,7 @@ abstract class BaseCotRecargoPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotRecargo';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 17;
+	const NUM_COLUMNS = 18;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -75,6 +75,9 @@ abstract class BaseCotRecargoPeer {
 	/** the column name for the CA_USUACTUALIZADO field */
 	const CA_USUACTUALIZADO = 'tb_cotrecargos.CA_USUACTUALIZADO';
 
+	/** the column name for the CA_CONSECUTIVO field */
+	const CA_CONSECUTIVO = 'tb_cotrecargos.CA_CONSECUTIVO';
+
 	/**
 	 * An identiy map to hold any loaded instances of CotRecargo objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -96,11 +99,11 @@ abstract class BaseCotRecargoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdproducto', 'CaIdopcion', 'CaIdconcepto', 'CaIdrecargo', 'CaTipo', 'CaValorTar', 'CaAplicaTar', 'CaValorMin', 'CaAplicaMin', 'CaIdmoneda', 'CaModalidad', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion', 'caIdproducto', 'caIdopcion', 'caIdconcepto', 'caIdrecargo', 'caTipo', 'caValorTar', 'caAplicaTar', 'caValorMin', 'caAplicaMin', 'caIdmoneda', 'caModalidad', 'caObservaciones', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION, self::CA_IDPRODUCTO, self::CA_IDOPCION, self::CA_IDCONCEPTO, self::CA_IDRECARGO, self::CA_TIPO, self::CA_VALOR_TAR, self::CA_APLICA_TAR, self::CA_VALOR_MIN, self::CA_APLICA_MIN, self::CA_IDMONEDA, self::CA_MODALIDAD, self::CA_OBSERVACIONES, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idproducto', 'ca_idopcion', 'ca_idconcepto', 'ca_idrecargo', 'ca_tipo', 'ca_valor_tar', 'ca_aplica_tar', 'ca_valor_min', 'ca_aplica_min', 'ca_idmoneda', 'ca_modalidad', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdproducto', 'CaIdopcion', 'CaIdconcepto', 'CaIdrecargo', 'CaTipo', 'CaValorTar', 'CaAplicaTar', 'CaValorMin', 'CaAplicaMin', 'CaIdmoneda', 'CaModalidad', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaConsecutivo', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion', 'caIdproducto', 'caIdopcion', 'caIdconcepto', 'caIdrecargo', 'caTipo', 'caValorTar', 'caAplicaTar', 'caValorMin', 'caAplicaMin', 'caIdmoneda', 'caModalidad', 'caObservaciones', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caConsecutivo', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION, self::CA_IDPRODUCTO, self::CA_IDOPCION, self::CA_IDCONCEPTO, self::CA_IDRECARGO, self::CA_TIPO, self::CA_VALOR_TAR, self::CA_APLICA_TAR, self::CA_VALOR_MIN, self::CA_APLICA_MIN, self::CA_IDMONEDA, self::CA_MODALIDAD, self::CA_OBSERVACIONES, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_CONSECUTIVO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idproducto', 'ca_idopcion', 'ca_idconcepto', 'ca_idrecargo', 'ca_tipo', 'ca_valor_tar', 'ca_aplica_tar', 'ca_valor_min', 'ca_aplica_min', 'ca_idmoneda', 'ca_modalidad', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_consecutivo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	/**
@@ -110,11 +113,11 @@ abstract class BaseCotRecargoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdproducto' => 1, 'CaIdopcion' => 2, 'CaIdconcepto' => 3, 'CaIdrecargo' => 4, 'CaTipo' => 5, 'CaValorTar' => 6, 'CaAplicaTar' => 7, 'CaValorMin' => 8, 'CaAplicaMin' => 9, 'CaIdmoneda' => 10, 'CaModalidad' => 11, 'CaObservaciones' => 12, 'CaFchcreado' => 13, 'CaUsucreado' => 14, 'CaFchactualizado' => 15, 'CaUsuactualizado' => 16, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion' => 0, 'caIdproducto' => 1, 'caIdopcion' => 2, 'caIdconcepto' => 3, 'caIdrecargo' => 4, 'caTipo' => 5, 'caValorTar' => 6, 'caAplicaTar' => 7, 'caValorMin' => 8, 'caAplicaMin' => 9, 'caIdmoneda' => 10, 'caModalidad' => 11, 'caObservaciones' => 12, 'caFchcreado' => 13, 'caUsucreado' => 14, 'caFchactualizado' => 15, 'caUsuactualizado' => 16, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION => 0, self::CA_IDPRODUCTO => 1, self::CA_IDOPCION => 2, self::CA_IDCONCEPTO => 3, self::CA_IDRECARGO => 4, self::CA_TIPO => 5, self::CA_VALOR_TAR => 6, self::CA_APLICA_TAR => 7, self::CA_VALOR_MIN => 8, self::CA_APLICA_MIN => 9, self::CA_IDMONEDA => 10, self::CA_MODALIDAD => 11, self::CA_OBSERVACIONES => 12, self::CA_FCHCREADO => 13, self::CA_USUCREADO => 14, self::CA_FCHACTUALIZADO => 15, self::CA_USUACTUALIZADO => 16, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idproducto' => 1, 'ca_idopcion' => 2, 'ca_idconcepto' => 3, 'ca_idrecargo' => 4, 'ca_tipo' => 5, 'ca_valor_tar' => 6, 'ca_aplica_tar' => 7, 'ca_valor_min' => 8, 'ca_aplica_min' => 9, 'ca_idmoneda' => 10, 'ca_modalidad' => 11, 'ca_observaciones' => 12, 'ca_fchcreado' => 13, 'ca_usucreado' => 14, 'ca_fchactualizado' => 15, 'ca_usuactualizado' => 16, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdproducto' => 1, 'CaIdopcion' => 2, 'CaIdconcepto' => 3, 'CaIdrecargo' => 4, 'CaTipo' => 5, 'CaValorTar' => 6, 'CaAplicaTar' => 7, 'CaValorMin' => 8, 'CaAplicaMin' => 9, 'CaIdmoneda' => 10, 'CaModalidad' => 11, 'CaObservaciones' => 12, 'CaFchcreado' => 13, 'CaUsucreado' => 14, 'CaFchactualizado' => 15, 'CaUsuactualizado' => 16, 'CaConsecutivo' => 17, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion' => 0, 'caIdproducto' => 1, 'caIdopcion' => 2, 'caIdconcepto' => 3, 'caIdrecargo' => 4, 'caTipo' => 5, 'caValorTar' => 6, 'caAplicaTar' => 7, 'caValorMin' => 8, 'caAplicaMin' => 9, 'caIdmoneda' => 10, 'caModalidad' => 11, 'caObservaciones' => 12, 'caFchcreado' => 13, 'caUsucreado' => 14, 'caFchactualizado' => 15, 'caUsuactualizado' => 16, 'caConsecutivo' => 17, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION => 0, self::CA_IDPRODUCTO => 1, self::CA_IDOPCION => 2, self::CA_IDCONCEPTO => 3, self::CA_IDRECARGO => 4, self::CA_TIPO => 5, self::CA_VALOR_TAR => 6, self::CA_APLICA_TAR => 7, self::CA_VALOR_MIN => 8, self::CA_APLICA_MIN => 9, self::CA_IDMONEDA => 10, self::CA_MODALIDAD => 11, self::CA_OBSERVACIONES => 12, self::CA_FCHCREADO => 13, self::CA_USUCREADO => 14, self::CA_FCHACTUALIZADO => 15, self::CA_USUACTUALIZADO => 16, self::CA_CONSECUTIVO => 17, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idproducto' => 1, 'ca_idopcion' => 2, 'ca_idconcepto' => 3, 'ca_idrecargo' => 4, 'ca_tipo' => 5, 'ca_valor_tar' => 6, 'ca_aplica_tar' => 7, 'ca_valor_min' => 8, 'ca_aplica_min' => 9, 'ca_idmoneda' => 10, 'ca_modalidad' => 11, 'ca_observaciones' => 12, 'ca_fchcreado' => 13, 'ca_usucreado' => 14, 'ca_fchactualizado' => 15, 'ca_usuactualizado' => 16, 'ca_consecutivo' => 17, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	/**
@@ -229,6 +232,8 @@ abstract class BaseCotRecargoPeer {
 		$criteria->addSelectColumn(CotRecargoPeer::CA_FCHACTUALIZADO);
 
 		$criteria->addSelectColumn(CotRecargoPeer::CA_USUACTUALIZADO);
+
+		$criteria->addSelectColumn(CotRecargoPeer::CA_CONSECUTIVO);
 
 	}
 
