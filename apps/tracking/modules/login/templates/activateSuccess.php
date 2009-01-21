@@ -14,7 +14,7 @@ use_helper("Validation");
 	  <th colspan="2">&nbsp;</th>
     </tr>
 	<tr>
-		<th width="46%"><div align="right"><strong>Su correo electronico:</strong></div></th>
+		<th width="46%"><strong>Su correo electronico</strong></th>
 		<td width="54%"><?=$user->getCaEmail()?></td>
 	</tr>
 	<?

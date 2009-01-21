@@ -17,14 +17,23 @@ class homepageActions extends sfActions
     */
 	public function executeIndex()
 	{
+		
 		if( $this->getUser()->hasCredential("colsys_user") ){
 			$this->forward("homepage","indexColsys");
 		}
 		$cliente =$this->getRequestParameter( "cliente" );
 		
 		if( $cliente ){
-			$this->getUser()->setClienteActivo( $cliente );		
-			$this->redirect( "homepage/index2" );						
+			
+			//Se verifica que el cliente activo este entre los clientes del usuario
+			$clientes = $this->getUser()->getClientes();			
+			foreach( $clientes  as $cl ){			
+				if( $cl->getCaIdCliente()==$cliente ){					
+					$this->getUser()->setClienteActivo( $cliente );		
+					$this->redirect( "homepage/index2" );
+				}
+			}
+									
 		}else{
 			$contacto = $this->getUser()->getContacto();	
 			$clientes = $this->getUser()->getClientes();						

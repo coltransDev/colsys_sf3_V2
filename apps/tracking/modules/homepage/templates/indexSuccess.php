@@ -4,7 +4,7 @@
 if( $sf_user->hasCredential("customer") ){
 	
 	$saludo = $contacto->getCaSaludo();
-	if( strtolower($saludo)=="señora"||strtolower($saludo)=="doctora"){
+	if( strtolower($saludo)=="señora"||strtolower($saludo)=="doctora"||strtolower($saludo)=="doña"){
 		$bienvenida  = "Bienvenida";
 	}else{
 		$bienvenida  = "Bienvenido";
@@ -12,7 +12,7 @@ if( $sf_user->hasCredential("customer") ){
 	
 	?>
 	
-	<h3><?=$bienvenida?> <?=$contacto->getCaSaludo()." ".ucfirst($contacto->getCaNombres())." ".ucfirst($contacto->getCaPApellido())." ".ucfirst($contacto->getCaSApellido())?></h3>
+	<h3><?=$bienvenida?> a nuestro sistema de Tracking &amp; Tracing</h3>
 	<br />
 	
 	<form action="<?=url_for("homepage/index")?>" method="post">
@@ -29,7 +29,9 @@ if( $sf_user->hasCredential("customer") ){
 		<tr>	
 			<td align="left">
 			  <div align="left">
-			    <?=radiobutton_tag("cliente", $cliente->getCaIdcliente(), $i==0)." ".$cliente."<br />"?>	
+			  	<input type="radio" name="cliente" value="<?=$cliente->getCaIdcliente()?>" <?=$i==0?'checked="checked"':''?> />
+				<?=$cliente?>				
+				<br />			   
 	          </div>
 			 </td>
 		</tr>
@@ -41,7 +43,7 @@ if( $sf_user->hasCredential("customer") ){
 			<td>
 			  
 			  <div align="center">
-			    <?=submit_tag("Continuar", "class=button")?>
+			  	<input type="submit" value="Continuar" class="button" />
 		      </div></td></tr>
 	</table>	
 	</form>
