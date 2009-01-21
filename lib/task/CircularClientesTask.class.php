@@ -21,7 +21,7 @@ EOF;
 
   protected function execute($arguments = array(), $options = array())
   {
-    $this->configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'dev', true );
+    $this->configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'batch', true );
 	
 	// Borra las dos líneas siguientes si no utilizas una base de datos
 	$databaseManager = new sfDatabaseManager($this->configuration);

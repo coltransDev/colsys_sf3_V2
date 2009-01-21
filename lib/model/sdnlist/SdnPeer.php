@@ -17,8 +17,8 @@ class SdnPeer extends BaseSdnPeer
 		$sql_array = array("delete from tb_sdnaddress","delete from tb_sdnaka","delete from tb_sdnid","delete from tb_sdn");
 		$con = Propel::getConnection(SdnPeer::DATABASE_NAME);
 		while (list ($clave, $sql) = each ($sql_array)) {
-			$stmt = $con->prepareStatement($sql);
-			$stmt->executeQuery();
+			$stmt = $con->prepare($sql);
+			$stmt->execute();
 		}
 		return;
 	}
@@ -52,8 +52,9 @@ class SdnPeer extends BaseSdnPeer
 		$query.= "  order by cl.ca_vendedor, cl.ca_compania";
 		
 		$con = Propel::getConnection(SdnPeer::DATABASE_NAME);
-		$stmt = $con->prepareStatement($query);
-		return $stmt->executeQuery();
+		$stmt = $con->prepare($query);
+		$stmt->execute();
+		return $stmt;
 	}
 	
 }

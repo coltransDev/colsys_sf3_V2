@@ -36,8 +36,9 @@ class ClientePeer extends BaseClientePeer
 		
 		// echo "<br />".$query."<br />"; 
 		$con = Propel::getConnection(SdnPeer::DATABASE_NAME);
-		$stmt = $con->prepareStatement($query);
-		return $stmt->executeQuery();
+		$stmt = $con->prepare($query);
+		$stmt->execute();
+		return $stmt;
 	}
 
 
@@ -63,9 +64,12 @@ class ClientePeer extends BaseClientePeer
 		$query.= "where cl.ca_idcliente = $idcliente";		
 		
 		// echo "<br />".$query."<br />"; 
+		
+		
 		$con = Propel::getConnection(SdnPeer::DATABASE_NAME);
-		$stmt = $con->prepareStatement($query);
-		return $stmt->executeQuery();
+		$stmt = $con->prepare($query);
+		$stmt->execute();
+		return $stmt;
 	}
 	
 
@@ -93,7 +97,8 @@ class ClientePeer extends BaseClientePeer
 
 		// echo "<br />".$query."<br />"; 
 		$con = Propel::getConnection(SdnPeer::DATABASE_NAME);
-		$stmt = $con->prepareStatement($query);
-		return $stmt->executeQuery();
+		$stmt = $con->prepare($query);
+		$stmt->execute();
+		return $stmt;
 	}
 }
