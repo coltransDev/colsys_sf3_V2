@@ -186,7 +186,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 			}		
 		]
 	});
-	this.menu.on('hide', this.onContextHide, this);
+	//this.menu.on('hide', this.onContextHide, this);
 		
 	if(this.ctxRow){
 		Ext.fly(this.ctxRow).removeClass('x-node-ctx');

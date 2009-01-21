@@ -18,7 +18,7 @@ $enBlanco = $cotizacion->enBlanco();
 		}
 	}
 </script>
-<div id="emailForm"  style="display:none;">
+<div id="emailForm"  style="display:<?=$enBlanco?"inline":"none"?>;">
 	<?
 	//echo form_tag( "cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion() ); 
 	echo form_remote_tag(array("url"=>"cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion(), 

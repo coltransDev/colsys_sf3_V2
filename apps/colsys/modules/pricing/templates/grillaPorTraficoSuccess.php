@@ -343,6 +343,9 @@ var colModel = new Ext.grid.ColumnModel({
 			return false;
 		}
 		
+		if( record.data.tipo=="concepto" && record.data.iditem=='9999' ){
+			return false;
+		}
 		
 		if( record.data.tipo=="concepto" && !(field=='neta' || field=='sugerida'||field=='inicio' || field=='vencimiento' || field=='moneda'|| field=='aplicacion')  ){
 			return false;
@@ -537,7 +540,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 	e.stopEvent(); //Evita que se despliegue el menu con el boton izquierdo
 	if( rec.data.tipo=='concepto' ){
 		this.menu = new Ext.menu.Menu({
-			id:'grid-ctx',
+			id:'grid-ctx',			
 			items: [{
 					text: 'Nuevo recargo',
 					iconCls: 'add',
@@ -599,11 +602,11 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 					scope:this,
 					handler: function(){    					                   
 							ventanaControlCambios(this.ctxRecord, index);					
-						}
-					}				
+					}
+				}				
 			]
 		});
-		this.menu.on('hide', this.onContextHide, this);
+		//this.menu.on('hide', this.onContextHide, this);
     		
 		if(this.ctxRow){
 			Ext.fly(this.ctxRow).removeClass('x-node-ctx');
@@ -618,6 +621,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 	if( rec.data.tipo=='recargo' ){
 		this.menu = new Ext.menu.Menu({
 			id:'grid-ctx',
+			 
 			items: [					
 					{
 					text: 'Eliminar',
@@ -633,11 +637,11 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 					iconCls: 'new-tab',
 					scope:this,
 					handler: seleccionarConcepto
-				},				
+				}				
 			]
 		});
 				
-		this.menu.on('hide', this.onContextHide, this);
+		//this.menu.on('hide', this.onContextHide, this);
     		
 		if(this.ctxRow){
 			Ext.fly(this.ctxRow).removeClass('x-node-ctx');
@@ -717,6 +721,15 @@ function guardarGrillaPorTrafico(){
 	var records = store.getModifiedRecords();
 			
 	var lenght = records.length;
+	
+	for( var i=0; i< lenght; i++){
+		r = records[i];
+		if(!r.data.moneda){
+			Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
+			return 0;
+		}
+	}	
+	
 	for( var i=0; i< lenght; i++){
 		r = records[i];
 					

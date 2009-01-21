@@ -985,7 +985,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 			}		
 			]
 	});
-	this.menu.on('hide', this.onContextHide, this);
+	//this.menu.on('hide', this.onContextHide, this);
    
 	e.stopEvent();
 	if(this.ctxRow){
