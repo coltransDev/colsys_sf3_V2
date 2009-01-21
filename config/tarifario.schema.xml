@@ -68,7 +68,7 @@
 		<column name="ca_observaciones" type="varchar" />
 		<column name="ca_fchinicio" type="date"   />
 		<column name="ca_fchvencimiento" type="date"   />
-		<column name="ca_modalidad" type="varchar" />
+		<column name="ca_modalidad" type="varchar" primaryKey="true"/>
 		<column name="ca_impoexpo" type="varchar" />
   		
 		<foreign-key foreignTable="tb_tiporecargo">

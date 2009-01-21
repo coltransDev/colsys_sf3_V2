@@ -23,6 +23,8 @@
 		<column name="ca_confirmar" type="varchar" />
 		<column name="ca_idciudad" type="varchar" />
 		<column name="ca_idgrupo" type="integer" />
+		<column name="ca_listaclinton" type="varchar" />
+		<column name="ca_fchcircular" type="date" />
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>
 		</foreign-key>
@@ -225,11 +227,13 @@
 		<column name="ca_attachment" type="varchar"   />	
 		<column name="ca_subject" type="varchar"   />		
 		<column name="ca_body" type="varchar"   />
+		<column name="ca_bodyhtml" type="varchar"   />
 		<column name="ca_readreceipt" type="boolean"   />	
 	</table>
 	
 	<table name="tb_attachments" phpName="EmailAttachment">				
 		<column name="ca_idattachment" type="integer" required="true" primaryKey="true" autoIncrement="true"  />			
+		<id-method-parameter value="tb_attachments_id"/>
 		<column name="ca_idemail" type="integer" required="true"  />	
 		<column name="ca_extension" type="varchar" required="true"  />	
 		<column name="ca_header_file" type="varchar" />			
