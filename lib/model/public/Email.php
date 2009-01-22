@@ -104,7 +104,7 @@ class Email extends BaseEmail
 		foreach( $attachments as $attachment ){	
 			$fp =  $attachment->getCaContent();		
 			$mess->attach(new Swift_Message_Attachment( 
- 							 stream_get_contents($fp), $attachment->getCaHeaderFile(), Utils::mimetype($attachment->getCaHeaderFile())));
+ 							 stream_get_contents($fp), Utils::replace($attachment->getCaHeaderFile()), Utils::mimetype($attachment->getCaHeaderFile())));
  			fclose( $fp );				 
 		}
 		

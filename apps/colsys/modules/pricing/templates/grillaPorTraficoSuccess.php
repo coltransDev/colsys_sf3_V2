@@ -400,7 +400,10 @@ var gridAfterEditHandler = function(e) {
 				
 		for( var i=0; i< lenght; i++){
 			r = records[i];			
-			if(r.data.sel){
+			if(r.data.sel){ 
+				if( !(r.data.tipo=="concepto"||r.data.tipo=="recargo") ){
+					continue;
+				}
 				if (r.data.recargo_id && (field == 'aplicacion'||field == 'inicio'||field == 'vencimiento')) {			
 					continue;
 				}	
@@ -520,7 +523,11 @@ var seleccionarConcepto = function(){
 	store.each(function(r){
 		if( tipo=="concepto" ){ 
 			if( r.data.iditem==iditem && r.data.tipo==tipo ){
-				r.set('sel', true);
+				//alert( r.data.neta+" "+ r.data.minima );
+				if( !(r.data.neta=="" && r.data.minima=="") ){//Evita que se seleccionen escalas que no se han creado por que no se necesitan
+				
+					r.set('sel', true);
+				}
 			}
 		}
 		
@@ -724,7 +731,7 @@ function guardarGrillaPorTrafico(){
 	
 	for( var i=0; i< lenght; i++){
 		r = records[i];
-		if(!r.data.moneda){
+		if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto")){
 			Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
 			return 0;
 		}
@@ -748,7 +755,7 @@ function guardarGrillaPorTrafico(){
 		changes['tipo']=r.data.tipo;
 		changes['iditem']=r.data.iditem;	
 		changes['idconcepto']=r.data.idconcepto;	
-		changes['idtrayecto']=r.data.idtrayecto;
+		changes['idtrayecto']=r.data.idtrayecto;		
 												
 		//envia los datos al servidor 
 		Ext.Ajax.request( 

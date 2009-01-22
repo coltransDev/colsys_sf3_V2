@@ -57,7 +57,7 @@ if( count($ciudades)*count($lineas)<=16){ //Si se muestran muchos registros el b
 ?>
 ,
 {
-	text:'Recargos generales',
+	text:'Recargos por ciudad',
 	id:'recgen_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
 	leaf:true
 },

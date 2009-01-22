@@ -494,8 +494,12 @@ class pricingActions extends sfActions
 		$user=$this->getUser();
 		
 		if( $tipo=="trayecto_obs" ){									
-			if( $this->getRequestParameter("observaciones")){
-				$trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));
+			if( $this->getRequestParameter("observaciones")!==null){	
+				if( $this->getRequestParameter("observaciones") ){			
+					$trayecto->setCaObservaciones($this->getRequestParameter("observaciones"));				
+				}else{
+					$trayecto->setCaObservaciones(null);				
+				}				
 			}					
 			$trayecto->save();
 		}
@@ -548,16 +552,17 @@ class pricingActions extends sfActions
 			$minima = $this->getRequestParameter("minima");
 			$idconcepto = $this->getRequestParameter("idconcepto");
 			$idrecargo = $this->getRequestParameter("iditem");
-			
-			$flete  = PricFletePeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $idconcepto );			
-			if( !$flete ){
-				$flete = new PricFlete();
-				$flete->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
-				$flete->setCaIdconcepto( $idconcepto );
-				$flete->setCaVlrneto( 0 );
-				$flete->setCaUsucreado( $user->getUserId() );
-				$flete->setCaFchcreado( time() );
-				$flete->save();
+			if( $idconcepto!=9999 ){
+				$flete  = PricFletePeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $idconcepto );			
+				if( !$flete ){
+					$flete = new PricFlete();
+					$flete->setCaIdtrayecto( $trayecto->getCaIdTrayecto() );
+					$flete->setCaIdconcepto( $idconcepto );
+					$flete->setCaVlrneto( 0 );
+					$flete->setCaUsucreado( $user->getUserId() );
+					$flete->setCaFchcreado( time() );
+					$flete->save();
+				}
 			}
 			
 			$pricRecargo = PricRecargoxConceptoPeer::retrieveByPk( $trayecto->getCaIdTrayecto() , $idconcepto , $idrecargo);
@@ -816,8 +821,10 @@ class pricingActions extends sfActions
 			$recargo->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
 		}
 								
-		$recargo->save();		
-		return sfView::NONE;	
+		$recargo->save();	
+		$id = $this->getRequestParameter("id");
+		$this->responseArray = array("id"=>$id, "success"=>true);	
+		$this->setTemplate("responseTemplate");		
 	}
 	
 	/*
@@ -829,16 +836,22 @@ class pricingActions extends sfActions
 		$idciudad = $this->getRequestParameter("idciudad");		
 		$idrecargo = $this->getRequestParameter("idrecargo");
 		$modalidad = $this->getRequestParameter("modalidad");
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		
 		$this->forward404Unless( $idtrafico );
 		$this->forward404Unless( $idciudad );
 		$this->forward404Unless( $modalidad );
+		$this->forward404Unless( $impoexpo );
 		
-		$recargo = PricRecargosxCiudadPeer::retrieveByPk($idtrafico, $idciudad, $idrecargo , $modalidad);
+		$recargo = PricRecargosxCiudadPeer::retrieveByPk($idtrafico, $idciudad, $idrecargo , $modalidad, $impoexpo);
+				
+		$this->responseArray = array();
 		if( $recargo ){
-			$recargo->delete();
+			$recargo->delete();		
 		}	
-		return sfView::NONE;	
+		$id = $this->getRequestParameter("id");
+		$this->responseArray = array("id"=>$id, "success"=>true);	
+		$this->setTemplate("responseTemplate");	
 	}
 	
 	/*	
@@ -1161,36 +1174,48 @@ class pricingActions extends sfActions
 	* @author: Andres Botero 
 	*/
 	public function executeSubirArchivo(){
+		
+		sfConfig::set('sf_web_debug', false) ;	
 		$idtrafico = $this->getRequestParameter("idtrafico");	
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));	
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));	
 		$modalidad = utf8_decode($this->getRequestParameter("modalidad"));	
 			
 		$this->forward404Unless($idtrafico);	
-		
-		$fileName = $this->getRequest()->getFileName('file');
- 		$path = $this->getRequest()->getFilePath('file');
-		$size = $this->getRequest()->getFileSize('file');
-		$type = $this->getRequest()->getFileType('file');
-		
-		$fileObj = new PricArchivo();
-		$fileObj->setCaTamano($size);
-		$fileObj->setCaNombre($fileName);
-		$fileObj->setCaIdTrafico($idtrafico);	
-		$fileObj->setCaTipo($type);
-		$fileObj->setCaTransporte($transporte);
-		$fileObj->setCaModalidad($modalidad);
-		$fileObj->setCaImpoExpo($impoexpo);
-		$fp = fopen($path, "r");
-		$data = fread( $fp , $size);
-		fclose( $fp );
-    	$fileObj->setCaDatos($data);
-		$fileObj->setCaFchcreado(time());
-		$user = $this->getUser();
-		$fileObj->setCaUsucreado($user->getUserid());
-		$fileObj->save();	
-		
-		$this->responseArray = array("id"=>$fileObj->getCaIdArchivo(),"filename"=>$fileName, "success"=>true);	
+			
+		if ( count( $_FILES )>0 ){		 	
+			foreach ( $_FILES as $uploadedFile){
+				
+				$fileName  = $uploadedFile['name'];
+				$fileSize  = $uploadedFile['size'];
+				$fileType  = $uploadedFile['type'];				
+				$path = $uploadedFile['tmp_name'];		
+				
+				$fileObj = new PricArchivo();
+				$fileObj->setCaTamano($fileSize);
+				$fileObj->setCaNombre($fileName);				
+				$fileObj->setCaTipo($fileType);
+				$fileObj->setCaIdTrafico($idtrafico);
+				$fileObj->setCaTransporte($transporte);
+				$fileObj->setCaModalidad($modalidad);
+				$fileObj->setCaImpoExpo($impoexpo);
+				$fp = fopen($path, "r");
+				$data = fread( $fp , $fileSize);
+				fclose( $fp );
+				$fileObj->setCaDatos($data);
+				$fileObj->setCaFchcreado(time());
+				$user = $this->getUser();
+				$fileObj->setCaUsucreado($user->getUserid());
+				$fileObj->save();	
+				$id = $fileObj->getCaIdArchivo();
+				
+				$this->responseArray = array("id"=>$fileObj->getCaIdArchivo(), "filename"=>$fileName, "success"=>true);				
+			
+		  	}
+		}else{
+			$this->responseArray = array("success"=>false);
+		}
+		$this->setLayout("ajax");		
 		$this->setTemplate("responseTemplate");				
 	}	
 	

@@ -17,7 +17,7 @@ if( count($referencias) ){
 	?>
 	<tr>
 		<td width="84" align="center" valign="top">
-		<?=link_to($referencia->getCaReferencia(), "aduana/verReferencia?referencia=".$referencia->getCaReferencia() )?>		</td>
+		<?=$referencia->getCaReferencia()?>		</td>
 	    <td width="153" align="center" valign="top"><div align="left">
 	      <?=$referencia->getOrigen()?>
         </div></td>

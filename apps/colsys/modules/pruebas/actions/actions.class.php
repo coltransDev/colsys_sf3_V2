@@ -1402,5 +1402,86 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 			$alaico->save();                
 		}
 	}
+	
+	
+	/*
+	* Unifica los recargos LCL en recargos generales del trayecto
+	*/
+	public function executeFixTarifarioLCL(){
+		
+		exit();
+		$c = new Criteria();
+	
+		
+		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
+		$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" ); 
+		$c->add( TrayectoPeer::CA_MODALIDAD, "LCL" );
+		
+		
+		
+		//$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
+		//$c->add( TrayectoPeer::CA_TRANSPORTE , "Marítimo" ); 
+		//$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );				
+		
+		//$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );
+		//
+		//$c->add( TrayectoPeer::CA_IDTRAYECTO, 3705 );
+		
+		//$c->setLimit(30);
+		$trayectos = TrayectoPeer::doSelect( $c );	
+		set_time_limit(0); 
+		
+		foreach( $trayectos as $trayecto ){	
+						
+			$c = new Criteria();
+			$c->add( PricRecargoxConceptoPeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto() );
+			$recs = PricRecargoxConceptoPeer::doSelect( $c );
+			if( count($recs)>0 ){
+				$idRecargos = array();							
+				foreach( $recs as $recargo ){
+					$idRecargos[]=$recargo->getCaIdrecargo();	
+				}
+				
+				foreach( $idRecargos as $idRecargo ){
+					if( $idRecargo==9999){
+						continue;
+					}
+					$c = new Criteria();
+					$c->add( PricRecargoxConceptoPeer::CA_IDTRAYECTO, $trayecto->getCaIdtrayecto() );
+					$c->add( PricRecargoxConceptoPeer::CA_IDRECARGO, $idRecargo );
+					$recargos = PricRecargoxConceptoPeer::doSelect( $c );
+					
+					echo count($recargos)."<br />";
+					for( $i=0; $i<count($recargos); $i++ ){
+						if($i==0){
+							
+							$vlrRecargo = $recargos[$i]->getCaVlrrecargo();
+							$vlrMinimo = $recargos[$i]->getCaVlrminimo();
+						}else{
+							echo "asasd";
+							if( $vlrRecargo!=$recargos[$i]->getCaVlrrecargo() && $vlrMinimo != $recargo[$i]->getCaVlrminimo() ){
+								echo "aca no se pudo<br /> ".$recargo->getCaIdTrayecto();
+							}else{
+								echo "OK ".$recargo->getCaIdTrayecto();
+							}
+						}
+						
+						/*
+						if($i==0){
+							$recargos[$i]->setCaIdConcepto(9999);
+							$recargos[$i]->save();
+						}else{
+							
+						}*/
+					}
+				}
+				
+			}	
+		}	
+				
+				
+					
+	
+	}
 }
 ?>

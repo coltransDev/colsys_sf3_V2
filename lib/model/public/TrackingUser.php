@@ -35,7 +35,7 @@ class TrackingUser extends BaseTrackingUser
 	*/
 	public function checkPasswd( $sValue ){
 		$passwd = sha1($this->getCaActivationCode().$sValue);			
-		if( $passwd == $this->getCaPasswd() ){					
+		if( $passwd == $this->getCaPasswd() && !$this->getCaBlocked()){					
 			return true;			
 		}
 		return false;		

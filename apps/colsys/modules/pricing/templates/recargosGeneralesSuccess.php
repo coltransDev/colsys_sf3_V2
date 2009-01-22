@@ -132,8 +132,7 @@ var storeRecargos = new Ext.data.GroupingStore({
 	autoLoad : true,			
 	url: '<?=url_for($url)?>',
 	reader: new Ext.data.JsonReader(
-		{
-			id: 'id',
+		{			
 			root: 'data',
 			totalProperty: 'total',
 			successProperty: 'success'
@@ -494,7 +493,7 @@ var actualizarObservaciones=function( btn, text ){
 	}
 }	
 
-function updateModel(){
+function guardarRecargosGenerales(){
 	var success = true;
 	var records = storeRecargos.getModifiedRecords();
 			
@@ -504,7 +503,7 @@ function updateModel(){
 					
 		var changes = r.getChanges();
 						
-		
+		changes['id']=r.id;
 		changes['idciudad']=r.data.idciudad;										
  	    changes['idrecargo']=r.data.idrecargo;											
 		
@@ -515,29 +514,23 @@ function updateModel(){
 				url: '<?=url_for("pricing/observeRecargosGenerales?idtrafico=".$idtrafico."&modalidad=".$modalidad."&impoexpo=".$impoexpo)?>', 						
 				//Solamente se envian los cambios 						
 				params :	changes,
+				
+				callback :function(options, success, response){	
 										
-				//Ejecuta esta accion en caso de fallo
-				//(404 error etc, ***NOT*** success=false)
-				failure:function(response,options){							
-					alert( response.responseText );						
-					success = false;
-				},
-				//Ejecuta esta accion cuando el resultado es exitoso
-				success:function(response,options){							
-					//alert( response.responseText );						
-					//r.commit();
-				}
+					var res = Ext.util.JSON.decode( response.responseText );	
+					if( res.id && res.success){				
+						var rec = storeRecargos.getById( res.id );						
+						rec.set("sel", false); //Quita la seleccion de todas las columnas				
+						rec.commit();		
+					}
+				}	
+										
+				
 			 }
 		); 
 		r.set("sel", false);//Quita la seleccion de todas las columnas 
-	}
-	
-	if( success ){
-		storeRecargos.commitChanges();
-		Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
-	}else{
-		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
 	}	
+	
 }
 
 /*
@@ -557,39 +550,37 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 					if( this.ctxRecord && this.ctxRecord.data.idrecargo ){					
 											
 						
-						var id = this.ctxRecord.data.id;						
+						var id = this.ctxRecord.id;						
 						var idciudad = this.ctxRecord.data.idciudad;
 						var idrecargo = this.ctxRecord.data.idrecargo;
-						
+											
 						if( idrecargo ){
 							
 							Ext.Ajax.request( 
 							{   
 								waitMsg: 'Guardando cambios...',						
-								url: '<?=url_for("pricing/eliminarRecargosGenerales?idtrafico=".$idtrafico."&modalidad=".$modalidad)?>',
+								url: '<?=url_for("pricing/eliminarRecargosGenerales?idtrafico=".$idtrafico."&modalidad=".$modalidad."&impoexpo=".$impoexpo)?>',
 								//method: 'POST', 
 								//Solamente se envian los cambios 						
 								params :	{									
 									idciudad: idciudad,									
-									idrecargo: idrecargo
+									idrecargo: idrecargo,
+									id: id
 
 								},
 														
-								//Ejecuta esta accion en caso de fallo
-								//(404 error etc, ***NOT*** success=false)
-								failure:function(response,options){							
-									alert( response.responseText );						
-									success = false;
-								},
-								//Ejecuta esta accion cuando el resultado es exitoso
-								success:function(response,options){							
+								
+								callback :function(options, success, response){	
+										
+									var res = Ext.util.JSON.decode( response.responseText );	
 									
-									storeRecargos.each( function( record ){																					
-											if( record.data.id==id ){																							
-												storeRecargos.remove(record);																																																																				
-											}										
-									});
-								}
+									if( res.id && res.success){				
+										var rec = storeRecargos.getById( res.id );														
+										storeRecargos.remove(rec);	
+									}
+								}									
+								
+								
 							}); 
 						}
 					}						
@@ -646,7 +637,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 			text: 'Guardar Cambios',
 			tooltip: 'Guarda los cambios realizados en el tarifario',
 			iconCls:'disk',  // reference to our css
-			handler: updateModel
+			handler: guardarRecargosGenerales
 		},	
 		{
 			text: 'Seleccionar todo',

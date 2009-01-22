@@ -1496,7 +1496,7 @@ class cotizacionesActions extends sfActions
 	* Guarda un archivo en la base de datos
 	*/	
 	public function executeAdjuntarArchivo( $request ){						
-					
+		sfConfig::set('sf_web_debug', false) ;				
 		$idcotizacion = $this->getRequestParameter( "idcotizacion" );
 		$this->forward404Unless( $idcotizacion );
 		

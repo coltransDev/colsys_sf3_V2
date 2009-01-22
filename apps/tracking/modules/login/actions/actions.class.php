@@ -68,22 +68,25 @@ class loginActions extends sfActions
 					}else{
 						$code=$user->getCaActivationCode();
 					}	
-					
-					$link = "/tracking/login/activate/code/".$code ;	
-					$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."login".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."email.yml";
-					$yml = sfYaml::load($config);		
-			
-					
-					$contentPlain = sprintf($yml['email'], "https://www.coltrans.com.co".$link, "http://www.coltrans.com.co" );
-					$contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://www.coltrans.com.co".$link."'>https://www.coltrans.com.co".$link."</a>", "<a href='http://www.coltrans.com.co'>http://www.coltrans.com.co</a>" );;
-										
-					
-					$from = "serclientebog@coltrans.com.co";
-					$fromName = "Coltrans S.A. - Servicio al cliente";
-					$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
-																											
-					StaticEmail::sendEmail( "Activación Clave Coltrans.com.co", array("plain"=>$contentPlain,"html"=>$contentHTML), $from, $fromName, $to );								
-					$this->setTemplate("register");											
+					if( $user->getCaBlocked() ){
+						$this->setTemplate("registerNotFound");	
+					}else{
+						$link = "/tracking/login/activate/code/".$code ;	
+						$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."login".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."email.yml";
+						$yml = sfYaml::load($config);		
+				
+						
+						$contentPlain = sprintf($yml['email'], "https://www.coltrans.com.co".$link, "http://www.coltrans.com.co" );
+						$contentHTML = sprintf(Utils::replace($yml['email']), "<a href='https://www.coltrans.com.co".$link."'>https://www.coltrans.com.co".$link."</a>", "<a href='http://www.coltrans.com.co'>http://www.coltrans.com.co</a>" );
+											
+						
+						$from = "serclientebog@coltrans.com.co";
+						$fromName = "Coltrans S.A. - Servicio al cliente";
+						$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
+																												
+						StaticEmail::sendEmail( "Activación Clave Coltrans.com.co", array("plain"=>$contentPlain,"html"=>$contentHTML), $from, $fromName, $to );													
+						$this->setTemplate("register");
+					}											
 				}else{	
 					$this->setTemplate("registerNotFound");											
 				}	
@@ -112,18 +115,19 @@ class loginActions extends sfActions
 			$this->form->bind(
 				array(						
 						'clave1' => $request->getParameter('clave1'),
-						'clave2' => $request->getParameter('clave2')
-		
+						'clave2' => $request->getParameter('clave2')		
 					)
 				); 
 			
 			if ($this->form->isValid()){
-				$user->setCaActivated(true);			
-				$user->setPasswd( $request->getParameter('clave1') );
-				$user->save();
-				//Valida el usuario y lo ingresa al sistema			
-				$this->getUser()->signIn( $user );
-				$this->redirect( "homepage/index" );
+				if( !$user->getCaBlocked() ){				
+					$user->setCaActivated(true);			
+					$user->setPasswd( $request->getParameter('clave1') );
+					$user->save();
+					//Valida el usuario y lo ingresa al sistema			
+					$this->getUser()->signIn( $user );
+					$this->redirect( "homepage/index" );
+				}
 			}
 			
 		}					

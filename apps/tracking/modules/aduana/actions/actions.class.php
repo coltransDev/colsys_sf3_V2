@@ -31,6 +31,7 @@ class aduanaActions extends sfActions
 	* Muestra detalles de la referencia
 	*/	
 	public function executeVerReferencia(){		
+		$this->forward404();
 		$referencia =  $this->getRequestParameter("referencia");		
 		$this->forward404Unless( $referencia );
 		
