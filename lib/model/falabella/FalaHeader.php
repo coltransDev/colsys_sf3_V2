@@ -10,7 +10,7 @@
 class FalaHeader extends BaseFalaHeader
 {
 	
-	public function getFalaShipmentInfo(){
+	public function getFalaShipmentInfo( PropelPDO $con = null ){
 		return 	FalaShipmentInfoPeer::retrieveByPk( $this->getCaIdDoc() );
 	}
 	
