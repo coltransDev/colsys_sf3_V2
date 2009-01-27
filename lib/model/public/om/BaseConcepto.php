@@ -51,12 +51,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	protected $ca_modalidad;
 
 	/**
-	 * The value for the ca_pregunta field.
-	 * @var        string
-	 */
-	protected $ca_pregunta;
-
-	/**
 	 * The value for the ca_liminferior field.
 	 * @var        int
 	 */
@@ -227,16 +221,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [ca_pregunta] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaPregunta()
-	{
-		return $this->ca_pregunta;
-	}
-
-	/**
 	 * Get the [ca_liminferior] column value.
 	 * 
 	 * @return     int
@@ -347,26 +331,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	} // setCaModalidad()
 
 	/**
-	 * Set the value of [ca_pregunta] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Concepto The current object (for fluent API support)
-	 */
-	public function setCaPregunta($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_pregunta !== $v) {
-			$this->ca_pregunta = $v;
-			$this->modifiedColumns[] = ConceptoPeer::CA_PREGUNTA;
-		}
-
-		return $this;
-	} // setCaPregunta()
-
-	/**
 	 * Set the value of [ca_liminferior] column.
 	 * 
 	 * @param      int $v new value
@@ -428,8 +392,7 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 			$this->ca_unidad = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->ca_transporte = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->ca_modalidad = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_pregunta = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_liminferior = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
+			$this->ca_liminferior = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -439,7 +402,7 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 7; // 7 = ConceptoPeer::NUM_COLUMNS - ConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 6; // 6 = ConceptoPeer::NUM_COLUMNS - ConceptoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Concepto object", $e);
@@ -880,9 +843,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				return $this->getCaModalidad();
 				break;
 			case 5:
-				return $this->getCaPregunta();
-				break;
-			case 6:
 				return $this->getCaLiminferior();
 				break;
 			default:
@@ -911,8 +871,7 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 			$keys[2] => $this->getCaUnidad(),
 			$keys[3] => $this->getCaTransporte(),
 			$keys[4] => $this->getCaModalidad(),
-			$keys[5] => $this->getCaPregunta(),
-			$keys[6] => $this->getCaLiminferior(),
+			$keys[5] => $this->getCaLiminferior(),
 		);
 		return $result;
 	}
@@ -960,9 +919,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$this->setCaModalidad($value);
 				break;
 			case 5:
-				$this->setCaPregunta($value);
-				break;
-			case 6:
 				$this->setCaLiminferior($value);
 				break;
 		} // switch()
@@ -994,8 +950,7 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[2], $arr)) $this->setCaUnidad($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaTransporte($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaModalidad($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaPregunta($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaLiminferior($arr[$keys[6]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaLiminferior($arr[$keys[5]]);
 	}
 
 	/**
@@ -1012,7 +967,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ConceptoPeer::CA_UNIDAD)) $criteria->add(ConceptoPeer::CA_UNIDAD, $this->ca_unidad);
 		if ($this->isColumnModified(ConceptoPeer::CA_TRANSPORTE)) $criteria->add(ConceptoPeer::CA_TRANSPORTE, $this->ca_transporte);
 		if ($this->isColumnModified(ConceptoPeer::CA_MODALIDAD)) $criteria->add(ConceptoPeer::CA_MODALIDAD, $this->ca_modalidad);
-		if ($this->isColumnModified(ConceptoPeer::CA_PREGUNTA)) $criteria->add(ConceptoPeer::CA_PREGUNTA, $this->ca_pregunta);
 		if ($this->isColumnModified(ConceptoPeer::CA_LIMINFERIOR)) $criteria->add(ConceptoPeer::CA_LIMINFERIOR, $this->ca_liminferior);
 
 		return $criteria;
@@ -1075,8 +1029,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 		$copyObj->setCaTransporte($this->ca_transporte);
 
 		$copyObj->setCaModalidad($this->ca_modalidad);
-
-		$copyObj->setCaPregunta($this->ca_pregunta);
 
 		$copyObj->setCaLiminferior($this->ca_liminferior);
 

@@ -647,6 +647,9 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = TipoRecargoPeer::CA_IDRECARGO;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -655,6 +658,8 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
+
+					$this->setCaIdrecargo($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -1109,8 +1114,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
-		$copyObj->setCaIdrecargo($this->ca_idrecargo);
-
 		$copyObj->setCaRecargo($this->ca_recargo);
 
 		$copyObj->setCaTipo($this->ca_tipo);
@@ -1183,6 +1186,8 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
+
+		$copyObj->setCaIdrecargo(NULL); // this is a auto-increment column, so set to default value
 
 	}
 

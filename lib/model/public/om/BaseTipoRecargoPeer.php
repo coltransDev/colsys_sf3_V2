@@ -476,6 +476,10 @@ abstract class BaseTipoRecargoPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from TipoRecargo object
 		}
 
+		if ($criteria->containsKey(TipoRecargoPeer::CA_IDRECARGO) && $criteria->keyContainsValue(TipoRecargoPeer::CA_IDRECARGO) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.TipoRecargoPeer::CA_IDRECARGO.')');
+		}
+
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);

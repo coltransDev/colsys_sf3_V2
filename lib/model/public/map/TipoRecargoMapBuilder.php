@@ -60,7 +60,9 @@ class TipoRecargoMapBuilder implements MapBuilder {
 		$tMap->setPhpName('TipoRecargo');
 		$tMap->setClassname('TipoRecargo');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
+
+		$tMap->setPrimaryKeyMethodInfo('tb_tiporecargo_id');
 
 		$tMap->addPrimaryKey('CA_IDRECARGO', 'CaIdrecargo', 'INTEGER', true, null);
 

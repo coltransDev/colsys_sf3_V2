@@ -62,7 +62,7 @@ class ConceptoMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_conceptos_ca_idconcepto_seq');
+		$tMap->setPrimaryKeyMethodInfo('tb_conceptos_id');
 
 		$tMap->addPrimaryKey('CA_IDCONCEPTO', 'CaIdconcepto', 'INTEGER', true, null);
 
@@ -73,8 +73,6 @@ class ConceptoMapBuilder implements MapBuilder {
 		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', true, null);
 
 		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'VARCHAR', true, null);
-
-		$tMap->addColumn('CA_PREGUNTA', 'CaPregunta', 'VARCHAR', true, null);
 
 		$tMap->addColumn('CA_LIMINFERIOR', 'CaLiminferior', 'INTEGER', false, null);
 

@@ -19,7 +19,7 @@ abstract class BaseConceptoPeer {
 	const CLASS_DEFAULT = 'lib.model.public.Concepto';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 7;
+	const NUM_COLUMNS = 6;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -38,9 +38,6 @@ abstract class BaseConceptoPeer {
 
 	/** the column name for the CA_MODALIDAD field */
 	const CA_MODALIDAD = 'tb_conceptos.CA_MODALIDAD';
-
-	/** the column name for the CA_PREGUNTA field */
-	const CA_PREGUNTA = 'tb_conceptos.CA_PREGUNTA';
 
 	/** the column name for the CA_LIMINFERIOR field */
 	const CA_LIMINFERIOR = 'tb_conceptos.CA_LIMINFERIOR';
@@ -66,11 +63,11 @@ abstract class BaseConceptoPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdconcepto', 'CaConcepto', 'CaUnidad', 'CaTransporte', 'CaModalidad', 'CaPregunta', 'CaLiminferior', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdconcepto', 'caConcepto', 'caUnidad', 'caTransporte', 'caModalidad', 'caPregunta', 'caLiminferior', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCONCEPTO, self::CA_CONCEPTO, self::CA_UNIDAD, self::CA_TRANSPORTE, self::CA_MODALIDAD, self::CA_PREGUNTA, self::CA_LIMINFERIOR, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idconcepto', 'ca_concepto', 'ca_unidad', 'ca_transporte', 'ca_modalidad', 'ca_pregunta', 'ca_liminferior', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdconcepto', 'CaConcepto', 'CaUnidad', 'CaTransporte', 'CaModalidad', 'CaLiminferior', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdconcepto', 'caConcepto', 'caUnidad', 'caTransporte', 'caModalidad', 'caLiminferior', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCONCEPTO, self::CA_CONCEPTO, self::CA_UNIDAD, self::CA_TRANSPORTE, self::CA_MODALIDAD, self::CA_LIMINFERIOR, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idconcepto', 'ca_concepto', 'ca_unidad', 'ca_transporte', 'ca_modalidad', 'ca_liminferior', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
 	/**
@@ -80,11 +77,11 @@ abstract class BaseConceptoPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdconcepto' => 0, 'CaConcepto' => 1, 'CaUnidad' => 2, 'CaTransporte' => 3, 'CaModalidad' => 4, 'CaPregunta' => 5, 'CaLiminferior' => 6, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdconcepto' => 0, 'caConcepto' => 1, 'caUnidad' => 2, 'caTransporte' => 3, 'caModalidad' => 4, 'caPregunta' => 5, 'caLiminferior' => 6, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCONCEPTO => 0, self::CA_CONCEPTO => 1, self::CA_UNIDAD => 2, self::CA_TRANSPORTE => 3, self::CA_MODALIDAD => 4, self::CA_PREGUNTA => 5, self::CA_LIMINFERIOR => 6, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idconcepto' => 0, 'ca_concepto' => 1, 'ca_unidad' => 2, 'ca_transporte' => 3, 'ca_modalidad' => 4, 'ca_pregunta' => 5, 'ca_liminferior' => 6, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdconcepto' => 0, 'CaConcepto' => 1, 'CaUnidad' => 2, 'CaTransporte' => 3, 'CaModalidad' => 4, 'CaLiminferior' => 5, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdconcepto' => 0, 'caConcepto' => 1, 'caUnidad' => 2, 'caTransporte' => 3, 'caModalidad' => 4, 'caLiminferior' => 5, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCONCEPTO => 0, self::CA_CONCEPTO => 1, self::CA_UNIDAD => 2, self::CA_TRANSPORTE => 3, self::CA_MODALIDAD => 4, self::CA_LIMINFERIOR => 5, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idconcepto' => 0, 'ca_concepto' => 1, 'ca_unidad' => 2, 'ca_transporte' => 3, 'ca_modalidad' => 4, 'ca_liminferior' => 5, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
 	/**
@@ -175,8 +172,6 @@ abstract class BaseConceptoPeer {
 		$criteria->addSelectColumn(ConceptoPeer::CA_TRANSPORTE);
 
 		$criteria->addSelectColumn(ConceptoPeer::CA_MODALIDAD);
-
-		$criteria->addSelectColumn(ConceptoPeer::CA_PREGUNTA);
 
 		$criteria->addSelectColumn(ConceptoPeer::CA_LIMINFERIOR);
 
