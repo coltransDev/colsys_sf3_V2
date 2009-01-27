@@ -99,7 +99,7 @@ class PDF extends FPDF {
 		foreach( $data as $value ){				
 			@$nb=max($nb,$this->NbLines($this->widths[$i],$value));
 			$i++;
-		}
+		} 
 		return ($this->height)*$nb;
 	}
     function Row($data) {
