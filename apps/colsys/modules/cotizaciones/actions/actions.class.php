@@ -44,9 +44,10 @@ class cotizacionesActions extends sfActions
 		$login = $this->getRequestParameter("login");
 		
 				
-		$c = new Criteria();		
+		$c = new Criteria();	
+		$c->add( CotizacionPeer::CA_CONSECUTIVO, null, Criteria::ISNOTNULL );	
 		switch( $criterio ){
-			case "mis_cotizaciones":
+			case "mis_cotizaciones":				
 				$c->add( CotizacionPeer::CA_USUARIO, "%".$user->getUserId()."%", Criteria::LIKE );	
 				break;	
 			case "consecutivo":
@@ -89,6 +90,11 @@ class cotizacionesActions extends sfActions
 		$this->pager->setPage($this->getRequestParameter('page', 1));			
 		$this->pager->init();
 		
+		
+		if( count($this->pager->getResults())==1 && count($this->pager->getLinks())==1  ){
+			$cotizaciones = $this->pager->getResults();
+			$this->redirect("cotizaciones/consultaCotizacion?id=".$cotizaciones[0]->getCaIdCotizacion());
+		}
 		$this->criterio = $criterio;
 		$this->cadena = $cadena;
 		$this->login = $login;
@@ -116,7 +122,12 @@ class cotizacionesActions extends sfActions
 			$this->forward404Unless( $cotizacion );					
 			$this->editable = $this->getRequestParameter("editable");	
 			$this->option = $this->getRequestParameter("option");
-			$this->cotizacion = $cotizacion;
+			
+			if($cotizacion->getCaUsuanulado()){
+				$this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdCotizacion());
+			}
+			
+			$this->cotizacion = $cotizacion;			
 		}else {			
 			$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
 			$textos = sfYaml::load($config);			
@@ -129,6 +140,8 @@ class cotizacionesActions extends sfActions
 			$this->cotizacion->setCaAnexos( $textos['anexos'] );
 			$this->cotizacion->setCaUsuario($user);
 		}
+		
+		
 		
 		
 		/*$this->data = array();
@@ -170,6 +183,11 @@ class cotizacionesActions extends sfActions
 		$cotizacion->setCaUsuario( $this->getRequestParameter( "usuario" ) );
 		$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
 		$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
+		
+		if( $this->getRequestParameter( "fchPresentacion" ) ){
+			$cotizacion->setCaFchpresentacion( $this->getRequestParameter( "fchPresentacion" )." ".$this->getRequestParameter( "horaPresentacion" ) );
+		}
+		
 		if( !$cotizacion->getCaIdCotizacion() ){ 
 			$cotizacion->setCaFchcreado( time() );	
 			$cotizacion->setCaUsucreado( $user_id );			
@@ -185,6 +203,20 @@ class cotizacionesActions extends sfActions
 		$this->setLayout("ajax");
 	}
 	
+	
+	/*
+	* Anula una cotizacion 
+	* @author Andres Botero
+	*/
+	
+	public function executeAnularCotizacion(){
+		$cotizacion = CotizacionPeer::retrieveByPk( $this->getRequestParameter("idcotizacion") );
+		$this->forward404Unless($cotizacion);
+		$cotizacion->setCaFchanulado(time());
+		$cotizacion->setCaUsuanulado($this->getUser()->getUserId());
+		$cotizacion->save();
+		$this->redirect("cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdCotizacion());	
+	}
 	
 	/*
 	* Guarda los agentes del directorio de agentes 
@@ -247,6 +279,7 @@ class cotizacionesActions extends sfActions
 		$datosag  = explode("|",$cotizacion->getCaDatosag());
 		
 		$c = new Criteria();	
+		$c->addJoin( ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE );
 		if( $mostrarTodos ){
 			$c->addJoin( ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
 			$criterion = $c->getNewCriterion( CiudadPeer::CA_IDTRAFICO, $paises, Criteria::IN );
@@ -254,7 +287,9 @@ class cotizacionesActions extends sfActions
 			$criterion = $c->getNewCriterion( ContactoAgentePeer::CA_IDCIUDAD, $ciudades, Criteria::IN );
 		}								
 		$criterion->addOr($c->getNewCriterion( ContactoAgentePeer::CA_IDCONTACTO, $datosag, Criteria::IN ));			
-		$c->add($criterion);		
+		$c->add($criterion);	
+		$c->add( ContactoAgentePeer::CA_ACTIVO, true );	
+		$c->add( AgentePeer::CA_ACTIVO, true );	
 		$contactos = ContactoAgentePeer::doSelect( $c );
 				
 		$agentes = array();
@@ -316,6 +351,20 @@ class cotizacionesActions extends sfActions
 		$this->filename=$this->getRequestParameter("filename");
 		$this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."notas.yml");
 		
+		$grupos = array();
+		$c = new Criteria();
+		$c->add(CotProductoPeer::CA_IDCOTIZACION, $this->cotizacion->getCaIdcotizacion() );
+		$c->addSelectColumn(CotProductoPeer::CA_TRANSPORTE );
+		$c->addSelectColumn(CotProductoPeer::CA_MODALIDAD );		
+		$c->setDistinct();
+		$stmt = CotProductoPeer::doSelectStmt( $c );
+		
+		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {
+			$grupos[$row[0]][]=$row[1];
+			$grupos[$row[0]] = array_unique( $grupos[$row[0]] );	
+		}
+		
+		$this->grupos = $grupos;
 	}
 	
 	
@@ -363,12 +412,14 @@ class cotizacionesActions extends sfActions
 				}
 			}
 		}
-		$mensaje = utf8_decode($this->getRequestParameter("mensaje"));
+		$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
+		$usuario = UsuarioPeer::retrieveByPk( $this->getUser()->getUserId() );
+		
 				
 		$email->addCc( $this->getUser()->getEmail() );					
 		$email->setCaSubject( utf8_decode($this->getRequestParameter("asunto")) );		
-		$email->setCaBody( $mensaje );
-		$email->setCaBodyhtml( Utils::replace($mensaje) );		
+		$email->setCaBody( $mensaje.$usuario->getFirma() );
+		$email->setCaBodyhtml( Utils::replace($mensaje).$usuario->getFirmaHTML() );		
 		$email->save();
 		$incluirPDF = $this->getRequestParameter("incluirPDF");
 		if( $incluirPDF ){
@@ -414,9 +465,13 @@ class cotizacionesActions extends sfActions
   
 		$email->save(); //guarda el cuerpo del mensaje
 		$this->error = $email->send();	
-		if($this->error){
-			$this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
+		if(!$this->error){
+			if( !$this->cotizacion->getCaFchPresentacion() ){
+				$this->cotizacion->setCaFchPresentacion(time());	
+				$this->cotizacion->save();						
+			}
 		}
+		
 		
 	}
 	
@@ -432,12 +487,15 @@ class cotizacionesActions extends sfActions
 		$newCotizacion = $cotizacion->copy( false ); //La copia recursiva se hace paso a paso por que las llaves son naturales 
 		$user = $this->getUser();		
 		$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
-		$newCotizacion->setCaConsecutivo( $sig ); 		
+		$newCotizacion->setCaConsecutivo( $sig ); 
+		$newCotizacion->setCaFchpresentacion(null);
+		$newCotizacion->setCaHorasolicitud(null);
+		$newCotizacion->setCaFchsolicitud(null);		
 		$newCotizacion->setCaFchcreado( time() );
 		$newCotizacion->setCaUsucreado( $user->getUserId() );
 		$newCotizacion->setCaFchactualizado( null );
 		$newCotizacion->setCaUsuactualizado( null );
-		
+	
 		$newCotizacion->save();
 		
 		$productos = $cotizacion->getCotProductos();
@@ -464,9 +522,20 @@ class cotizacionesActions extends sfActions
 					$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
 					$newRecargo->save();
 				}			
-			}
-			
+			}			
 		}
+		
+		$recargos = $cotizacion->getRecargosLocales();
+		foreach( $recargos as $recargo ){	
+			$newRecargo = $recargo->copy( false );
+			$newRecargo->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
+			$newRecargo->setCaIdProducto( $newProducto->getCaIdProducto() );
+			$newRecargo->setCaIdOpcion( $newOpcion->getCaIdOpcion() );
+			$newRecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
+			$newRecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
+			$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
+			$newRecargo->save();
+		}		
 			
 		$seguros = $cotizacion->getCotSeguros();
 		foreach( $seguros as $seguro ){	
@@ -477,16 +546,17 @@ class cotizacionesActions extends sfActions
 		
 		$continuaciones = $cotizacion->getCotContinuacions();
 		foreach( $continuaciones as $continuacion ){	
-			$newContinuacion = $continuacion->copy( false );
+			$newContinuacion = $continuacion->copy( false );			
 			$newContinuacion->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
 			$newContinuacion->setCaTipo( $continuacion->getCaTipo() );
 			$newContinuacion->setCaOrigen( $continuacion->getCaOrigen() );
 			$newContinuacion->setCaDestino( $continuacion->getCaDestino() );
 			$newContinuacion->setCaIdconcepto( $continuacion->getCaIdconcepto() );
-			$newContinuacion->save();			
+			$newContinuacion->delOid();
+			$newContinuacion->save();	
+					
 		}
-		
-		
+				
 		$this->redirect("cotizaciones/consultaCotizacion?id=".$newCotizacion->getCaIdCotizacion());				
 	}
 	
@@ -592,6 +662,7 @@ class cotizacionesActions extends sfActions
 		$aplica_tar = utf8_decode($this->getRequestParameter("aplica_tar"));
 		$aplica_min = utf8_decode($this->getRequestParameter("aplica_min"));
 		$observaciones = utf8_decode($this->getRequestParameter("detalles"));
+		$consecutivo = $this->getRequestParameter("consecutivo"); //Consecutivo tarifario
 		
 		$tipo = $this->getRequestParameter("tipo");
 		$id = $this->getRequestParameter("id");
@@ -643,6 +714,10 @@ class cotizacionesActions extends sfActions
 			if( $observaciones!==null ){
 				$opcion->setCaObservaciones( $observaciones );				
 			}	
+			
+			if( $consecutivo ){
+				$opcion->setCaConsecutivo( $consecutivo );
+			}
 			$opcion->save();			
 			$this->responseArray["idopcion"]=$opcion->getCaIdopcion();
 			$_SESSION['idopcion_'.$id] = $opcion->getCaIdopcion();
@@ -665,7 +740,7 @@ class cotizacionesActions extends sfActions
 					* Solo aplica cuando se esta creando un concepto nuevo.
 					*/					
 					if(!isset($_SESSION['idopcion_'.$parent])){ //es posible que llegue primero el recargo que el concepto.
-						sleep(5); 
+						sleep(10); 
 					}
 					$idopcion = $_SESSION['idopcion_'.$parent]; 					
 				}
@@ -712,7 +787,11 @@ class cotizacionesActions extends sfActions
 			
 			if( $observaciones ){
 				$recargo->setCaObservaciones( $observaciones );
-			}									
+			}	
+			
+			if( $consecutivo ){
+				$recargo->setCaConsecutivo( $consecutivo );
+			}								
 			$recargo->save();	
 		}
 		$this->setTemplate("responseTemplate");	
@@ -790,6 +869,7 @@ class cotizacionesActions extends sfActions
 							 'linea'=>utf8_encode($lineaStr),
 							 'postular_linea'=>	$producto->getCaPostularLinea(),
 							 'id'=>$i
+							 
 						);
 						
 			foreach( $opciones as $opcion ){
@@ -806,6 +886,8 @@ class cotizacionesActions extends sfActions
 				$row['detalles']=utf8_encode($opcion->getCaObservaciones());
 				$row['tipo']="concepto";
 				$row['id']+=$j++;
+				$row['orden']=$row['id'];
+				$row['parent']=$row['id'];
 				
 				$parent = $row['id'];		
 				$this->productos[] = $row;
@@ -829,6 +911,7 @@ class cotizacionesActions extends sfActions
 					$row['tipo']="recargo";		
 					$row['id']+=$j++;	
 					$row['parent']=$parent;	
+					$row['orden']=$parent."-".$row['id'];
 					$this->productos[] = $row;				
 				}	
 				$j+=20;			 
@@ -849,7 +932,8 @@ class cotizacionesActions extends sfActions
 				$row['idmoneda']='';
 				$row['detalles']='';
 				$row['tipo']="concepto";
-				$row['id']+=$j++;							
+				$row['id']+=$j++;	
+				$row['orden']=$row['id'];						
 				$parent = $row['id'];		
 				$this->productos[] = $row;									
 			}
@@ -870,7 +954,8 @@ class cotizacionesActions extends sfActions
 				$row['detalles']=$recargo->getCaObservaciones();
 				$row['tipo']="recargo";			
 				$row['id']+=$j++;	
-				$row['parent']=$parent;				
+				$row['parent']=$parent;	
+				$row['orden']=$parent."-".$row['id'];
 				$this->productos[] = $row;					
 			}
 			$j+=20;
@@ -887,7 +972,8 @@ class cotizacionesActions extends sfActions
 			$row['idmoneda']="";
 			$row['detalles']="";
 			$row['tipo']="concepto";	
-			$row['id']+=$j++;						
+			$row['id']+=$j++;	
+			$row['orden']="9999-9999";					
 			$j+=20;
 			$this->productos[] = $row;
 			$i+=1000;
@@ -1205,14 +1291,13 @@ class cotizacionesActions extends sfActions
 		$user_id = $this->getUser()->getUserId();
 		$update = true;
 		
-		$continuacion = CotContinuacionPeer::retrieveByPk( $this->getRequestParameter("oid") );
-
+		$continuacion = CotContinuacionPeer::retrieveByPk( $this->getRequestParameter("oid") );		
 		if ( !$continuacion ) {
 				$update = false;
 				$continuacion = new CotContinuacion();
 				$continuacion->setCaIdCotizacion( $this->getRequestParameter("cotizacionId") );
 		}
-
+		
 		if( $this->getRequestParameter("tipo") ){
 			$continuacion->setCaTipo( $this->getRequestParameter("tipo") );
 		}
@@ -1233,8 +1318,8 @@ class cotizacionesActions extends sfActions
 			$continuacion->setCaIdConcepto( $this->getRequestParameter("idconceptoOtmDta") );
 		}
 		
-		if( $this->getRequestParameter("idconceptoOtmDta") ){
-			$continuacion->setCaIdEquipo( $this->getRequestParameter("idconceptoOtmDta") );
+		if( $this->getRequestParameter("idequipo") ){
+			$continuacion->setCaIdEquipo( $this->getRequestParameter("idequipo") );
 		}
 				
 		if( $this->getRequestParameter("valor_tar") ){
@@ -1250,15 +1335,15 @@ class cotizacionesActions extends sfActions
 		}
 		
 		if( $this->getRequestParameter("frecuencia") ){
-			$continuacion->setCaFrecuencia( $this->getRequestParameter("frecuencia") );
+			$continuacion->setCaFrecuencia( utf8_decode($this->getRequestParameter("frecuencia")) );
 		}
 		
 		if( $this->getRequestParameter("ttransito") ){
-			$continuacion->setCaTiempoTransito( $this->getRequestParameter("ttransito") );
+			$continuacion->setCaTiempoTransito( utf8_decode($this->getRequestParameter("ttransito")) );
 		}
 		
 		if( $this->getRequestParameter("observaciones") ){
-			$continuacion->setCaObservaciones( $this->getRequestParameter("observaciones") );
+			$continuacion->setCaObservaciones( utf8_decode($this->getRequestParameter("observaciones")) );
 		}
 		
 		if( !$update ){ 
@@ -1406,10 +1491,8 @@ class cotizacionesActions extends sfActions
 	public function executeEliminarGrillaSeguros(){
 		$user_id = $this->getUser()->getUserId();
 		$id = $this->getRequestParameter( "id" );
-		if( $this->getRequestParameter( "oid" ) ) {
-			$c = new Criteria();
-			$c->add( CotSeguroPeer::OID , $this->getRequestParameter("oid") );
-			$seguro = CotSeguroPeer::doSelectOne( $c );
+		if( $this->getRequestParameter( "oid" ) ) {			
+			$seguro = CotSeguroPeer::retrieveByPk( $this->getRequestParameter( "oid" ) );
 			if( $seguro ){
 				$seguro->delete();
 				$this->responseArray = array("id"=>$id);

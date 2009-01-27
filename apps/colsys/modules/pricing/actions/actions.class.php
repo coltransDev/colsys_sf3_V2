@@ -161,7 +161,7 @@ class pricingActions extends sfActions
 		}
 		
 		$c = new Criteria();		
-		if( $impoexpo=="Importación" ){
+		if( $impoexpo==Constantes::IMPO ){
 			$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
 		}else{
 			$c->addJoin( TrayectoPeer::CA_DESTINO, CiudadPeer::CA_IDCIUDAD );
@@ -176,7 +176,7 @@ class pricingActions extends sfActions
 		$c->add( TrayectoPeer::CA_ACTIVO, true );
 		
 		if( $this->trafico ){
-			if( $impoexpo=="Importación" ){
+			if( $impoexpo==Constantes::IMPO ){
 				if( $idciudad ){
 					$c->add( TrayectoPeer::CA_ORIGEN, $idciudad );	
 				}		
@@ -213,7 +213,7 @@ class pricingActions extends sfActions
 			* Determina cuales conceptos deberian mostrarse de acuerdo al trafico
 			* seleccionado.
 			*/
-			if( $impoexpo=="Importación" ){
+			if( $impoexpo==Constantes::IMPO ){
 				$idtraficoConcepto =  $trayecto->getOrigen()->getCaIdTrafico();
 			}else{
 				$idtraficoConcepto =  $trayecto->getDestino()->getCaIdTrafico();
@@ -257,7 +257,7 @@ class pricingActions extends sfActions
 						'iditem'=>$pricRecargo->getCaIdrecargo(),
 						'idconcepto'=>'9999',
 						'tipo'=>"recargo",
-						'neta'=>$pricRecargo->getCaVlrrecargo(),
+						'sugerida'=>$pricRecargo->getCaVlrrecargo(),
 						'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),
 						'minima'=>$pricRecargo->getCaVlrminimo(),
 						'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
@@ -285,7 +285,7 @@ class pricingActions extends sfActions
 						'iditem'=>$pricRecargo->getCaIdrecargo(),
 						'idconcepto'=>'9999',
 						'tipo'=>"recargoxciudad",
-						'neta'=>$pricRecargo->getCaVlrrecargo(),
+						'sugerida'=>$pricRecargo->getCaVlrrecargo(),
 						'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),
 						'minima'=>$pricRecargo->getCaVlrminimo(),
 						'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
@@ -323,7 +323,7 @@ class pricingActions extends sfActions
 			
 			if( !$this->trafico ){		
 				//La consulta se hace de una modalidad completa y toca determinar los conceptos de cada trafico
-				if( $impoexpo=="Importación" ){
+				if( $impoexpo==Constantes::IMPO ){
 					$trafico =  $trayecto->getOrigen()->getTrafico();
 				}else{
 					$trafico =  $trayecto->getDestino()->getTrafico();
@@ -396,6 +396,15 @@ class pricingActions extends sfActions
 				if( $pricRecargos ){
 					foreach( $pricRecargos as $pricRecargo ){
 						$tipoRecargo = $pricRecargo->getTipoRecargo();
+						
+						if( $this->opcion=="consulta" && $pricConcepto->getCaEstado()==2){//Las tarifas en mantenimiento no se muestran en consulta
+							
+							$sugerida=0;
+							$minima=0;
+						}else{							
+							$sugerida=$pricRecargo->getCaVlrrecargo();
+							$minima=$pricRecargo->getCaVlrminimo();
+						}
 											
 						$row = array (
 							'idtrayecto' => $trayecto->getCaIdtrayecto(),
@@ -412,9 +421,9 @@ class pricingActions extends sfActions
 							'iditem'=>$pricRecargo->getCaIdrecargo(),
 							'idconcepto'=>$pricConcepto->getCaIdConcepto(),
 							'tipo'=>"recargo",
-							'neta'=>$pricRecargo->getCaVlrrecargo(),
+							'sugerida'=>$sugerida,
 							'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),		
-							'minima'=>$pricRecargo->getCaVlrminimo(),
+							'minima'=>$minima,
 							'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
 							'consecutivo' => $pricRecargo->getCaConsecutivo(),
 							'orden'=>$i++	
@@ -423,7 +432,7 @@ class pricingActions extends sfActions
 					}
 				}
 				
-				if( $this->opcion=="consulta" &&  count($recargosGenerales)>0 && $trayecto->getCatransporte()==Constantes::MARITIMO ){
+				if( $this->opcion=="consulta" &&  count($recargosGenerales)>0 && $trayecto->getCaTransporte()==Constantes::MARITIMO && $trayecto->getCaModalidad()=="FCL" ){
 					//En el caso maritimo se incluyen los recargos despues de cada concepto en el modo de consulta unicamente
 					foreach( $recargosGenerales as $rec ){	
 						$rec['orden']=$i++;				
@@ -438,7 +447,7 @@ class pricingActions extends sfActions
 			
 			//$this->opcion!="consulta" se hace para que el usuario pueda 
 			// hacer click con el boton derecho y agregar un recargo general 
-			if( $this->opcion!="consulta" || ( count($recargosGenerales)>0 && $trayecto->getCatransporte()==Constantes::AEREO) ){ 
+			if( $this->opcion!="consulta" || ( count($recargosGenerales)>0 && !($trayecto->getCatransporte()==Constantes::MARITIMO && $trayecto->getCaModalidad()=="FCL") ) ){ 
 				
 				//Se incluye una fila antes de los recargos generales del trayecto
 				$row = array (
@@ -462,7 +471,7 @@ class pricingActions extends sfActions
 				$data[] = $row;								
 			}			
 			
-			if( $this->opcion!="consulta" || ( count($recargosGenerales)>0 && $trayecto->getCatransporte()==Constantes::AEREO) ){ 
+			if( $this->opcion!="consulta" || ( count($recargosGenerales)>0 && !($trayecto->getCatransporte()==Constantes::MARITIMO && $trayecto->getCaModalidad()=="FCL")) ){ 
 				foreach( $recargosGenerales as $rec ){	
 					$rec['orden']=$i++;				
 					$data[] = $rec;	
@@ -489,6 +498,7 @@ class pricingActions extends sfActions
 		
 		$tipo = $this->getRequestParameter("tipo");		
 		$neta = $this->getRequestParameter("neta");		
+		$sugerida = $this->getRequestParameter("sugerida");
 		$id = $this->getRequestParameter("id");
 		
 		$user=$this->getUser();
@@ -505,7 +515,7 @@ class pricingActions extends sfActions
 		}
 		
 		if( $tipo=="concepto" ){			
-			$sugerida = $this->getRequestParameter("sugerida");
+			
 			$idconcepto = $this->getRequestParameter("iditem");
 
 			$flete  = PricFletePeer::retrieveByPk( $trayecto->getCaIdTrayecto(), $idconcepto );			
@@ -525,8 +535,13 @@ class pricingActions extends sfActions
 				$flete->setCaVlrsugerido( $sugerida );
 			}
 			
+			
 			if( $this->getRequestParameter("style")!==null){
-				$flete->setEstilo($this->getRequestParameter("style"));			
+				if( $this->getRequestParameter("style") ){
+					$flete->setEstilo($this->getRequestParameter("style"));			
+				}else{
+					$flete->setEstilo(null);					
+				}
 			}
 			
 			if( $this->getRequestParameter("inicio")){
@@ -577,8 +592,8 @@ class pricingActions extends sfActions
 				$pricRecargo->setCaFchcreado( time() );
 				
 			}
-			if( $neta!==null ){
-				$pricRecargo->setCaVlrrecargo( $neta );
+			if( $sugerida!==null ){
+				$pricRecargo->setCaVlrrecargo( $sugerida );
 			}
 			
 			if( $minima!==null ){
@@ -1260,7 +1275,7 @@ class pricingActions extends sfActions
 		if(substr($node,0,4)!="impo" && substr($node,0,4)!="expo"){ 	
 			$c = new Criteria();
 			$c->setDistinct();
-			if( $impoexpo=="Importación" ){
+			if( $impoexpo==Constantes::IMPO ){
 				$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
 			}else{
 				$c->addJoin( TrayectoPeer::CA_DESTINO, CiudadPeer::CA_IDCIUDAD );
@@ -1296,7 +1311,7 @@ class pricingActions extends sfActions
 			$idtrafico = $opciones[3];
 			
 			$c = new Criteria();
-			if( $impoexpo=="Importación" ){
+			if( $impoexpo==Constantes::IMPO ){
 				$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );		
 			}else{
 				$c->addJoin( TrayectoPeer::CA_DESTINO, CiudadPeer::CA_IDCIUDAD );			
@@ -1313,7 +1328,7 @@ class pricingActions extends sfActions
 			
 			$c = new Criteria();
 			
-			if( $impoexpo=="Importación" ){
+			if( $impoexpo==Constantes::IMPO ){
 				$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );		
 			}else{
 				$c->addJoin( TrayectoPeer::CA_DESTINO, CiudadPeer::CA_IDCIUDAD );			

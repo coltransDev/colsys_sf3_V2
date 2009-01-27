@@ -515,7 +515,7 @@ var ventanaTarifarioRecargos = function( record ){
 								newRec.set("aplica_tar", r.data.aplicacion );
 								newRec.set("aplica_min", r.data.aplicacion_min );
 								newRec.set("idmoneda", r.data.idmoneda );
-								newRec.set("observaciones", r.data.observaciones );																													
+								//newRec.set("observaciones", r.data.observaciones ); //No se ha definido las observaciones para cliente																													
 								
 							}
 						} );

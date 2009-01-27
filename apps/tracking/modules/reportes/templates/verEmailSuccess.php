@@ -1,7 +1,8 @@
 <?
 
 ?>
-<table width="90%" border="0" class="table1">
+
+<table width="90%" border="0" class="table1" align="center">
 	<tr>
 		<th  scope="col">Email</th>
 	</tr>

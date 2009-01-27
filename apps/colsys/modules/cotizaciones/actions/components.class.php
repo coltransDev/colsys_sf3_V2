@@ -90,7 +90,7 @@ class cotizacionesComponents extends sfComponents
 		$id = $this->cotizacion->getCaIdcotizacion();
 		
 		$c = new Criteria();
-		$c->addSelectColumn(CotSeguroPeer::OID );
+		$c->addSelectColumn(CotSeguroPeer::CA_IDSEGURO );
 		$c->addSelectColumn(CotSeguroPeer::CA_IDCOTIZACION );
 		$c->addSelectColumn(CotSeguroPeer::CA_PRIMA_TIP );
 		$c->addSelectColumn(CotSeguroPeer::CA_PRIMA_VLR );

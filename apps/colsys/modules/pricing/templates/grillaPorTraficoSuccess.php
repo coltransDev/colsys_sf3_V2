@@ -352,7 +352,7 @@ var colModel = new Ext.grid.ColumnModel({
 		}
 		
 		if( record.data.tipo=="recargo"){			
-			if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='neta' || field=='minima' || field=='moneda'|| field=='aplicacion'|| field=='aplicacion_min'|| field=='inicio' || field=='vencimiento')  ){					
+			if( (field=='nconcepto' && record.data.iditem) || !( field=='nconcepto' || field=='sugerida' || field=='minima' || field=='moneda'|| field=='aplicacion'|| field=='aplicacion_min'|| field=='inicio' || field=='vencimiento')  ){					
 				return false;								
 			}		
 		}
@@ -590,7 +590,9 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 						var trayecto = this.ctxRecord.data.trayecto;					
 						store.each(function(r){
 							if( r.data.trayecto==trayecto){
-								r.set('sel', true);
+								if( !(r.data.neta=="" && r.data.minima=="") ){
+									r.set('sel', true);
+								}
 							}
 						});   					                   
 						
@@ -832,6 +834,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	title: '<?=$titulo?>',	
 	plugins: [checkColumn, expander], 
 	closable: true,
+	width: 780,
 	
 	id: 'fletes_<?=$idcomponent?>',
 	height: 400,

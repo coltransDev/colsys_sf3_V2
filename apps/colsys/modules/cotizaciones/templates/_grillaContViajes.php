@@ -134,7 +134,7 @@ var colModel = new Ext.grid.ColumnModel({
 			renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_tar',
 			hideable: false,
-			editor: new Ext.form.TextField({
+			editor: new Ext.form.NumberField({
 						name: 'valor_tar',
 						allowBlank:false,
 						allowNegative: false
@@ -148,7 +148,7 @@ var colModel = new Ext.grid.ColumnModel({
 			renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_min',
 			hideable: false,
-			editor: new Ext.form.TextField({
+			editor: new Ext.form.NumberField({
 						name: 'valor_min',
 						allowBlank:false,
 						allowNegative: false
@@ -225,7 +225,7 @@ var contviajeHandler = function(){
 	win = new Ext.Window({		
 		width       : 500,
 		height      : 510,
-		closeAction :'hide',
+		closeAction :'close',
 		plain       : true,		
 		
 		items       : new Ext.FormPanel({
@@ -251,14 +251,14 @@ var contviajeHandler = function(){
 					,<?=extConcepto($id="conceptoOtmDta", Constantes::TERRESTRE , $modalidad="OTM-DTA")?>
 					,<?=extConcepto($id="equipo", Constantes::MARITIMO , $modalidad="Ext.getCmp('modalidad')")?>
 					,{
-						xtype:'textfield',
+						xtype:'numberfield',
 						fieldLabel: 'Valor',
 						name: 'valor_tar',
 						value: '',						 
 						allowBlank:false,
 						width: 120
 	                },{
-						xtype:'textfield',
+						xtype:'numberfield',
 						fieldLabel: 'Mínimo',
 						name: 'valor_min',
 						value: '',						 

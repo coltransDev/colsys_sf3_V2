@@ -168,6 +168,7 @@ new Ext.grid.GridPanel({
 	stripeRows: true,	
 	title: 'Seguros',
 	height: 400,
+	width: 780,
 	plugins: [checkColumn], //expander,
 	closable: true,
 	id: '<?=$idcomponent?>',	

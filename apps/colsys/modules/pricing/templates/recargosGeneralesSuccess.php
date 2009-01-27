@@ -626,6 +626,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	//autoExpandColumn: 'nconcepto',
 	title: 'Recargos <?=($idtrafico!="99-999"?$trafico->getCaNombre():"locales")." ".$modalidad?>',
 	height: 400,
+	width: 780,
 	plugins: [checkColumn], //expander,
 	closable: true,
 	id: 'recgen_<?=$idcomponent?>',

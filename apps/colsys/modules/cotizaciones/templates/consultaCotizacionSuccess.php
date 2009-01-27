@@ -87,13 +87,13 @@ Ext.onReady(function(){
      * ================  Main Form  =======================
      */
 	 
-	 var despedida = '<?=str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaDespedida()))?>';
+	 var despedida = '<?=str_replace("'", "\'", str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaDespedida())))?>';
 	 despedida = despedida.split("<br />").join("\n");
 	 
-	 var entrada = '<?=str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaEntrada()))?>';
+	 var entrada = '<?=str_replace("'", "\'",str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaEntrada())))?>';
 	 entrada = entrada.split("<br />").join("\n");
 	 
-	 var anexos = '<?=str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaAnexos()))?>';
+	 var anexos = '<?=str_replace("'", "\'",str_replace("\r", "", str_replace("\n", "<br />",$cotizacion->getCaAnexos())))?>';
 	 anexos = anexos.split("<br />").join("\n");
 	 
     var mainPanel = new Ext.FormPanel({
@@ -311,6 +311,65 @@ Ext.onReady(function(){
                 }
 
 				]
+            },
+			{
+                title:'Seguimientos',
+                layout:'form',
+                defaults: {width: 420},
+
+                items: [{
+				    layout:'table',
+				    border: false, 
+				    defaults: {
+				        // applied to each contained panel
+				        bodyStyle:'padding-right:20px',
+				        border: false
+				    },
+				    layoutConfig: {
+				        // The total column count must be specified here
+				        columns: 3
+				    },
+				    items: [
+					{
+		                layout: 'form',
+		                items: [{
+							xtype:'datefield',
+							fieldLabel: 'Fecha de Presentación',
+							name: 'fchPresentacion',
+							value: '<?=$cotizacion->getCaFchpresentacion("Y-m-d")?>',
+							format: "Y-m-d", 
+							allowBlank:true,
+							<?=$cotizacion->getCaFchpresentacion()?" disabled  : true, ":""?>
+							width: 120
+		                }]
+				    },{
+		                layout: 'form',
+		                items: [{
+							xtype:'timefield',
+							fieldLabel: 'Hora de Presentación',
+							name: 'horaPresentacion',
+							value: '<?=$cotizacion->getCaFchpresentacion("H:i:s")?>',
+							format: "H:i:s", 
+							allowBlank:true,
+							<?=$cotizacion->getCaFchpresentacion()?"disabled : true, ":""?>
+							width: 100
+		                }]
+				    }]
+                }
+				,{
+					id: 'cotizacionId',
+					xtype:'hidden',
+					name: 'cotizacionId',
+					value: '<?=$cotizacion->getCaIdcotizacion()?>',
+                    allowBlank:false
+				},{
+					id: 'idconcliente',
+					xtype:'hidden',
+					name: 'idconcliente',
+					value: '<?=$cotizacion->getCaIdcontacto()?>',
+                    allowBlank:false
+				}
+					]
             }
 			
 			],

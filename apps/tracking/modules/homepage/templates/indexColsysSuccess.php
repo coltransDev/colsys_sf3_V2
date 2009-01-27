@@ -1,6 +1,6 @@
 <div align="center">
 <?
-use_helper("Javascript");
+
 if( $sf_user->hasCredential("colsys_user") ){
 	?>
 	

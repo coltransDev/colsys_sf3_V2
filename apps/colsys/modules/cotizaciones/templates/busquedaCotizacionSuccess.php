@@ -4,7 +4,7 @@
 * @author Carlos G. López
 */	
 ?>
-<div align="center">"
+<div align="center">
 <?
 $url = "cotizaciones/busquedaCotizacion?criterio=".$criterio;
 if( $cadena ){

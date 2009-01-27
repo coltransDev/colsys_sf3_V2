@@ -258,7 +258,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	clicksToEdit: 1,
 	stripeRows: true,	
 	title: 'Seguros <?=$transporte?>',
-	height: 400,
+	height: 400,	
 	plugins: [checkColumn], //expander,
 	closable: true,
 	id: '<?=$idcomponent?>',

@@ -162,6 +162,7 @@ Ext.onReady(function(){
 		cm: colModel,
 		sm:  new Ext.grid.RowSelectionModel( {singleSelect:true}), 
 		//height:350,
+		width: 1024,
 		autoHeight: true,         
 		//renderTo: 'panel1',	
 		plugins: [expander], 	

@@ -1,3 +1,12 @@
+concepto:
+  class: sfPropelRouteCollection
+  options:
+    model:               Concepto
+    module:              conceptos
+    prefix_path:         conceptos
+    column:              ca_idconcepto
+    with_wildcard_routes: true
+
 # default rules
 homepage:
   url:   /

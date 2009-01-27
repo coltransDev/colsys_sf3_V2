@@ -27,7 +27,8 @@ $enBlanco = $cotizacion->enBlanco();
 							    'complete' => visual_effect('fade', 'indicator')							
 							
 						 ));
-	include_component("general", "formEmail");
+	$contactos = $cotizacion->getCliente()->getCaConfirmar();		
+	include_component("general", "formEmail", array("contacts"=>$contactos));
 	?>
 	<br />
 	

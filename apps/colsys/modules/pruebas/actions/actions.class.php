@@ -1478,10 +1478,29 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 				
 			}	
 		}	
-				
-				
-					
-	
 	}
+	
+	/*
+	* Coloca la fecha de presentacion de acuerdo a los envios por email
+	*/
+	public function executeFixCotFchpresentacion(){
+		$sql = "SELECT ca_idcotizacion, ca_fchenvio 
+from tb_cotizaciones INNER JOIN  tb_emails ON tb_cotizaciones.ca_idcotizacion = tb_emails.ca_idcaso 
+WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL AND tb_emails.ca_fchenvio = (SELECT MIN(ca_fchenvio) from tb_emails a WHERE a.ca_idemail=tb_emails.ca_idemail )";
+		$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
+		
+		$stmt = $con->prepare($sql);
+		$stmt->execute();	 
+		
+		while($row= $stmt->fetch() ){
+			//print_r( $row );
+			$cotizacion = CotizacionPeer::retrieveByPk( $row['ca_idcotizacion']);
+			$cotizacion->setCaFchpresentacion(  $row['ca_fchenvio']);
+			$cotizacion->save();
+			
+			echo "OK ".$cotizacion->getCaConsecutivo();
+		}
+	
+	} 
 }
 ?>

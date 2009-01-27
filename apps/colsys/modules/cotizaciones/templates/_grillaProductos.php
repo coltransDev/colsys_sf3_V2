@@ -88,9 +88,9 @@ var recordProductos = Ext.data.Record.create([
 	{name: 'idlinea', type: 'string'},
 	{name: 'linea', type: 'string'},
 	{name: 'postular_linea', type: 'string'},
-	
-	{name: 'parent', type: 'int'}
-			
+	{name: 'consecutivo', type: 'string'},	
+	{name: 'orden', type: 'string'},	
+	{name: 'parent', type: 'int'},				
 ]);
    		
 /*
@@ -101,13 +101,13 @@ var storeProductos = new Ext.data.GroupingStore({
 	url: '<?=url_for("cotizaciones/grillaProductosData?idcotizacion=".$cotizacion->getCaIdCotizacion())?>',
 	reader: new Ext.data.JsonReader(
 		{
-			id: 'id',
+			//id: 'id',
 			root: 'productos',
 			totalProperty: 'total'
 		}, 
 		recordProductos
 	),
-	sortInfo:{field: 'id', direction: "ASC"},	
+	sortInfo:{field: 'orden', direction: "ASC"},	
 	groupField: 'trayecto'		
 });
 		
@@ -211,7 +211,7 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'idmoneda',
 			hideable: false ,
 			editor: <?=extMonedas()?>
-		},		
+		}		,		
 		{
 			id: 'detalles',
 			header: "Detalles",
@@ -236,6 +236,12 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Parent",
 			width: 100,			
 			dataIndex: 'parent'
+			
+		}	,
+		{			
+			header: "Orden",
+			width: 100,			
+			dataIndex: 'orden'
 			
 		}	*/	
 	]
@@ -319,9 +325,12 @@ var grid_productosOnvalidateedit = function(e){
 						   aplica_tar: '',
 						   aplica_min: '',
 						   idmoneda: '',
-						   detalles: ''
+						   detalles: '',
+						   orden: '9999-9999'
 						});	
-						newRec.id = rec.data.id+20;		
+						rec.data.parent = rec.data.id;
+						rec.data.orden = rec.data.id;
+						//newRec.id = rec.data.id+20;		
 						newRec.data.concepto = "";												
 						//Inserta una columna en blanco al final
 												
@@ -583,15 +592,15 @@ var ventanaTarifario = function( record ){
 						var j = 0;	
 						var parent = null;					
 						storePricing.each( function(r){
-							if( r.data.sel==true ){
+							if( r.data.sel==true && r.data.tipo!="trayecto_obs"  ){
 							
 								var iditem = r.data.iditem;								
 								//Cuando se habla de LCL se colocan los minimos
-								if( r.data.tipo=="concepto" && activeRecord.data.modalidad != "LCL" ){
+								if( r.data.tipo=="concepto" ){
 									var valor_tar = r.data.sugerida; //Minima sugerida de venta
 									var valor_min = ''; //No aplica
 								}else{	
-									var valor_tar = r.data.neta;
+									var valor_tar = r.data.sugerida;
 									var valor_min = r.data.minima;									
 								}
 								
@@ -644,16 +653,17 @@ var ventanaTarifario = function( record ){
 								   aplica_min: '',
 								   idmoneda: '',
 								   detalles: '',
-								   parent: parent
+								   parent: parent,
+								   orden: parent+'-'+newId
 								});	
 								j++;
 								
-								newRec.id = newId;
+								
 								newRec.set("trayecto", activeRecord.data.trayecto );
 								
-								activeRecord.id=newId+20;
+								//activeRecord.id=newId+20;
 								activeRecord.data.id=newId+20;
-																
+								newId = newRec.id;								
 								storeProductos.addSorted( newRec );
 								
 								//Es necesario buscar de nuevo el record dentro del store
@@ -676,7 +686,8 @@ var ventanaTarifario = function( record ){
 								newRec.set("aplica_tar", r.data.aplicacion );
 								newRec.set("aplica_min", r.data.aplicacion_min );
 								newRec.set("valor_min", valor_min );
-								newRec.set("idmoneda", r.data.moneda );																								
+								newRec.set("idmoneda", r.data.moneda );	
+								newRec.set("consecutivo", r.data.consecutivo );																												
 								index++;
 							}
 						} );
@@ -819,14 +830,17 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 					if( rec.data.iditem ){									
 						if( rec.data.tipo=="concepto"){
 							var idconcepto = rec.data.iditem;
-							var parent = rec.data.id;
+							var parent = rec.data.parent;							
 						}else{
 							var idconcepto = rec.data.idconcepto;
 							var parent = rec.data.parent;
 						}
 						
+						
+						newId = rec.data.id+1;
+												
 						var newRec = new recordProductos({
-						   id: rec.data.id+1,  
+						   id: newId,  
 						   idcotizacion: rec.data.idcotizacion,  
 						   idproducto: rec.data.idproducto,  
 						   trayecto: rec.data.trayecto,   
@@ -863,9 +877,10 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						   aplica_min: '',
 						   idmoneda: '',
 						   detalles: '',
-						   parent: parent
+						   parent: parent,
+						   orden: parent+"-"+newId
 						});	
-						newRec.id = rec.data.id+1; 										
+						//newRec.id = rec.data.id+1; 										
 						storeProductos.addSorted(newRec);
 					}						
 				}				
@@ -1020,18 +1035,18 @@ function guardarGridProductos(){
 	}
 	
 	for( var i=0; i< lenght; i++){
-		r = records[i];
-					
+		r = records[i];					
 		var changes = r.getChanges();
 		//alert( r.data.id );
-		changes['id']=r.data.id;
+		changes['id']=r.id;
 		changes['parent']=r.data.parent;
 		changes['idproducto']=r.data.idproducto;	
 		changes['tipo']=r.data.tipo;	
 		changes['idopcion']=r.data.idopcion;				
 		changes['idconcepto']=r.data.idconcepto;
 		changes['iditem']=r.data.iditem;
-		changes['modalidad']=r.data.modalidad;										
+		changes['modalidad']=r.data.modalidad;	
+										
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
@@ -1053,7 +1068,14 @@ function guardarGridProductos(){
 					var res = Ext.util.JSON.decode( response.responseText );					
 					var rec = storeProductos.getById( res.id );										
 					rec.set("idopcion", res.idopcion );											
-					rec.commit();						
+					rec.commit();	
+					
+					//Se coloca el id del padre en la bd
+					storeProductos.each( function(r){
+						if(r.data.parent == rec.data.parent && r.data.tipo=="recargo"  ){							
+							r.set("idopcion", res.idopcion );		
+						}
+					} );								
 				}
 			 }
 		); 		
@@ -1119,7 +1141,6 @@ grid_productosOnBeforeedit = function( e ){
 				
 
 
-
 /*
 * Crea la grilla 
 */    
@@ -1176,5 +1197,6 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 		validateedit: grid_productosOnvalidateedit,
 		rowcontextmenu:grid_productosOnRowcontextmenu,
 		beforeedit:grid_productosOnBeforeedit
+		
 	}
 });

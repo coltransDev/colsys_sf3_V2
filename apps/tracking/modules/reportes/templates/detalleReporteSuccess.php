@@ -36,6 +36,8 @@ $fileIdx = 0;
 	}
 		
 </script>
+<div align="center">
+
 <table width="90%" border="1" class="table1">
 	<tr>
 		<th colspan="2">Detalles del embarque</th>
@@ -351,3 +353,4 @@ $statuss = $reporte->getHistorialStatus ();
 	?>
 </table>
 
+</div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html >
 <head>
 
 <?php include_http_metas() ?>
@@ -17,46 +17,33 @@
 		</div>
 		<div class="logo2"> 			          					
 				<?=image_tag("colmas_logo.jpg")?>
-		</div>
-			
-		
-		
-	
-		<!--	<div class="search">
+		</div>			
+		<!--	
+		<div class="search">
 			<div class="searchint">
 				<div class="moduletable">
 				<jdoc:include type="modules" name="user4" />
 			</div>
 		  </div>
-		</div>-->
-
-	
-		
-		
-		
-			
-		
+		</div>-->		
 	</div>
-<!--Top Area End-->
-
-
-	<!--Header Start-->			
+	
 	<div class="header">
 		<?
 		include_component("menu", "menubar")
 		?>
-	</div>	
-	
-		
-	<div id="content" >
-		<?php echo $sf_content ?>
+	</div>
+	<div class="headerspace">
+		&nbsp;
 	</div>
 	
-	
-	<div class="footer">	
-		<div class="copyright">
-			Coltrans S.A. - Colmas LTDA. Todos los derechos reservados
-		</div>
-	</div>		
+<?
+echo $sf_content ?>
+
+<div class="footer">	
+	<div class="copyright">
+		Coltrans S.A. - Colmas LTDA. Todos los derechos reservados
+	</div>
+</div>	
 </body>
-</html>
+</html>	
