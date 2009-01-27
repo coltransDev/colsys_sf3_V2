@@ -19,7 +19,7 @@ abstract class BaseAgentePeer {
 	const CLASS_DEFAULT = 'lib.model.public.Agente';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 10;
+	const NUM_COLUMNS = 11;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -54,6 +54,9 @@ abstract class BaseAgentePeer {
 	/** the column name for the CA_DIVULGACION field */
 	const CA_DIVULGACION = 'tb_agentes.CA_DIVULGACION';
 
+	/** the column name for the CA_ACTIVO field */
+	const CA_ACTIVO = 'tb_agentes.CA_ACTIVO';
+
 	/**
 	 * An identiy map to hold any loaded instances of Agente objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -75,11 +78,11 @@ abstract class BaseAgentePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdagente', 'CaNombre', 'CaDireccion', 'CaTelefonos', 'CaFax', 'CaIdciudad', 'CaZipcode', 'CaWebsite', 'CaEmail', 'CaDivulgacion', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdagente', 'caNombre', 'caDireccion', 'caTelefonos', 'caFax', 'caIdciudad', 'caZipcode', 'caWebsite', 'caEmail', 'caDivulgacion', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDAGENTE, self::CA_NOMBRE, self::CA_DIRECCION, self::CA_TELEFONOS, self::CA_FAX, self::CA_IDCIUDAD, self::CA_ZIPCODE, self::CA_WEBSITE, self::CA_EMAIL, self::CA_DIVULGACION, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idagente', 'ca_nombre', 'ca_direccion', 'ca_telefonos', 'ca_fax', 'ca_idciudad', 'ca_zipcode', 'ca_website', 'ca_email', 'ca_divulgacion', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdagente', 'CaNombre', 'CaDireccion', 'CaTelefonos', 'CaFax', 'CaIdciudad', 'CaZipcode', 'CaWebsite', 'CaEmail', 'CaDivulgacion', 'CaActivo', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdagente', 'caNombre', 'caDireccion', 'caTelefonos', 'caFax', 'caIdciudad', 'caZipcode', 'caWebsite', 'caEmail', 'caDivulgacion', 'caActivo', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDAGENTE, self::CA_NOMBRE, self::CA_DIRECCION, self::CA_TELEFONOS, self::CA_FAX, self::CA_IDCIUDAD, self::CA_ZIPCODE, self::CA_WEBSITE, self::CA_EMAIL, self::CA_DIVULGACION, self::CA_ACTIVO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idagente', 'ca_nombre', 'ca_direccion', 'ca_telefonos', 'ca_fax', 'ca_idciudad', 'ca_zipcode', 'ca_website', 'ca_email', 'ca_divulgacion', 'ca_activo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
 	);
 
 	/**
@@ -89,11 +92,11 @@ abstract class BaseAgentePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdagente' => 0, 'CaNombre' => 1, 'CaDireccion' => 2, 'CaTelefonos' => 3, 'CaFax' => 4, 'CaIdciudad' => 5, 'CaZipcode' => 6, 'CaWebsite' => 7, 'CaEmail' => 8, 'CaDivulgacion' => 9, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdagente' => 0, 'caNombre' => 1, 'caDireccion' => 2, 'caTelefonos' => 3, 'caFax' => 4, 'caIdciudad' => 5, 'caZipcode' => 6, 'caWebsite' => 7, 'caEmail' => 8, 'caDivulgacion' => 9, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDAGENTE => 0, self::CA_NOMBRE => 1, self::CA_DIRECCION => 2, self::CA_TELEFONOS => 3, self::CA_FAX => 4, self::CA_IDCIUDAD => 5, self::CA_ZIPCODE => 6, self::CA_WEBSITE => 7, self::CA_EMAIL => 8, self::CA_DIVULGACION => 9, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idagente' => 0, 'ca_nombre' => 1, 'ca_direccion' => 2, 'ca_telefonos' => 3, 'ca_fax' => 4, 'ca_idciudad' => 5, 'ca_zipcode' => 6, 'ca_website' => 7, 'ca_email' => 8, 'ca_divulgacion' => 9, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdagente' => 0, 'CaNombre' => 1, 'CaDireccion' => 2, 'CaTelefonos' => 3, 'CaFax' => 4, 'CaIdciudad' => 5, 'CaZipcode' => 6, 'CaWebsite' => 7, 'CaEmail' => 8, 'CaDivulgacion' => 9, 'CaActivo' => 10, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdagente' => 0, 'caNombre' => 1, 'caDireccion' => 2, 'caTelefonos' => 3, 'caFax' => 4, 'caIdciudad' => 5, 'caZipcode' => 6, 'caWebsite' => 7, 'caEmail' => 8, 'caDivulgacion' => 9, 'caActivo' => 10, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDAGENTE => 0, self::CA_NOMBRE => 1, self::CA_DIRECCION => 2, self::CA_TELEFONOS => 3, self::CA_FAX => 4, self::CA_IDCIUDAD => 5, self::CA_ZIPCODE => 6, self::CA_WEBSITE => 7, self::CA_EMAIL => 8, self::CA_DIVULGACION => 9, self::CA_ACTIVO => 10, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idagente' => 0, 'ca_nombre' => 1, 'ca_direccion' => 2, 'ca_telefonos' => 3, 'ca_fax' => 4, 'ca_idciudad' => 5, 'ca_zipcode' => 6, 'ca_website' => 7, 'ca_email' => 8, 'ca_divulgacion' => 9, 'ca_activo' => 10, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
 	);
 
 	/**
@@ -194,6 +197,8 @@ abstract class BaseAgentePeer {
 		$criteria->addSelectColumn(AgentePeer::CA_EMAIL);
 
 		$criteria->addSelectColumn(AgentePeer::CA_DIVULGACION);
+
+		$criteria->addSelectColumn(AgentePeer::CA_ACTIVO);
 
 	}
 

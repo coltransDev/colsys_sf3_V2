@@ -84,6 +84,8 @@ class AgenteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_DIVULGACION', 'CaDivulgacion', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
+
 	} // doBuild()
 
 } // AgenteMapBuilder

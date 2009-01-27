@@ -24,6 +24,9 @@ abstract class BaseCotSeguroPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
+	/** the column name for the CA_IDSEGURO field */
+	const CA_IDSEGURO = 'tb_cotseguro.CA_IDSEGURO';
+
 	/** the column name for the CA_IDCOTIZACION field */
 	const CA_IDCOTIZACION = 'tb_cotseguro.CA_IDCOTIZACION';
 
@@ -60,9 +63,6 @@ abstract class BaseCotSeguroPeer {
 	/** the column name for the CA_TRANSPORTE field */
 	const CA_TRANSPORTE = 'tb_cotseguro.CA_TRANSPORTE';
 
-	/** the column name for the OID field */
-	const OID = 'tb_cotseguro.OID';
-
 	/**
 	 * An identiy map to hold any loaded instances of CotSeguro objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -84,10 +84,10 @@ abstract class BaseCotSeguroPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdmoneda', 'CaPrimaTip', 'CaPrimaVlr', 'CaPrimaMin', 'CaObtencion', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaTransporte', 'Oid', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion', 'caIdmoneda', 'caPrimaTip', 'caPrimaVlr', 'caPrimaMin', 'caObtencion', 'caObservaciones', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caTransporte', 'oid', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION, self::CA_IDMONEDA, self::CA_PRIMA_TIP, self::CA_PRIMA_VLR, self::CA_PRIMA_MIN, self::CA_OBTENCION, self::CA_OBSERVACIONES, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_TRANSPORTE, self::OID, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idmoneda', 'ca_prima_tip', 'ca_prima_vlr', 'ca_prima_min', 'ca_obtencion', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_transporte', 'oid', ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdseguro', 'CaIdcotizacion', 'CaIdmoneda', 'CaPrimaTip', 'CaPrimaVlr', 'CaPrimaMin', 'CaObtencion', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaTransporte', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdseguro', 'caIdcotizacion', 'caIdmoneda', 'caPrimaTip', 'caPrimaVlr', 'caPrimaMin', 'caObtencion', 'caObservaciones', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caTransporte', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSEGURO, self::CA_IDCOTIZACION, self::CA_IDMONEDA, self::CA_PRIMA_TIP, self::CA_PRIMA_VLR, self::CA_PRIMA_MIN, self::CA_OBTENCION, self::CA_OBSERVACIONES, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_TRANSPORTE, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idseguro', 'ca_idcotizacion', 'ca_idmoneda', 'ca_prima_tip', 'ca_prima_vlr', 'ca_prima_min', 'ca_obtencion', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_transporte', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
@@ -98,10 +98,10 @@ abstract class BaseCotSeguroPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdmoneda' => 1, 'CaPrimaTip' => 2, 'CaPrimaVlr' => 3, 'CaPrimaMin' => 4, 'CaObtencion' => 5, 'CaObservaciones' => 6, 'CaFchcreado' => 7, 'CaUsucreado' => 8, 'CaFchactualizado' => 9, 'CaUsuactualizado' => 10, 'CaTransporte' => 11, 'Oid' => 12, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion' => 0, 'caIdmoneda' => 1, 'caPrimaTip' => 2, 'caPrimaVlr' => 3, 'caPrimaMin' => 4, 'caObtencion' => 5, 'caObservaciones' => 6, 'caFchcreado' => 7, 'caUsucreado' => 8, 'caFchactualizado' => 9, 'caUsuactualizado' => 10, 'caTransporte' => 11, 'oid' => 12, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION => 0, self::CA_IDMONEDA => 1, self::CA_PRIMA_TIP => 2, self::CA_PRIMA_VLR => 3, self::CA_PRIMA_MIN => 4, self::CA_OBTENCION => 5, self::CA_OBSERVACIONES => 6, self::CA_FCHCREADO => 7, self::CA_USUCREADO => 8, self::CA_FCHACTUALIZADO => 9, self::CA_USUACTUALIZADO => 10, self::CA_TRANSPORTE => 11, self::OID => 12, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idmoneda' => 1, 'ca_prima_tip' => 2, 'ca_prima_vlr' => 3, 'ca_prima_min' => 4, 'ca_obtencion' => 5, 'ca_observaciones' => 6, 'ca_fchcreado' => 7, 'ca_usucreado' => 8, 'ca_fchactualizado' => 9, 'ca_usuactualizado' => 10, 'ca_transporte' => 11, 'oid' => 12, ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdseguro' => 0, 'CaIdcotizacion' => 1, 'CaIdmoneda' => 2, 'CaPrimaTip' => 3, 'CaPrimaVlr' => 4, 'CaPrimaMin' => 5, 'CaObtencion' => 6, 'CaObservaciones' => 7, 'CaFchcreado' => 8, 'CaUsucreado' => 9, 'CaFchactualizado' => 10, 'CaUsuactualizado' => 11, 'CaTransporte' => 12, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdseguro' => 0, 'caIdcotizacion' => 1, 'caIdmoneda' => 2, 'caPrimaTip' => 3, 'caPrimaVlr' => 4, 'caPrimaMin' => 5, 'caObtencion' => 6, 'caObservaciones' => 7, 'caFchcreado' => 8, 'caUsucreado' => 9, 'caFchactualizado' => 10, 'caUsuactualizado' => 11, 'caTransporte' => 12, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSEGURO => 0, self::CA_IDCOTIZACION => 1, self::CA_IDMONEDA => 2, self::CA_PRIMA_TIP => 3, self::CA_PRIMA_VLR => 4, self::CA_PRIMA_MIN => 5, self::CA_OBTENCION => 6, self::CA_OBSERVACIONES => 7, self::CA_FCHCREADO => 8, self::CA_USUCREADO => 9, self::CA_FCHACTUALIZADO => 10, self::CA_USUACTUALIZADO => 11, self::CA_TRANSPORTE => 12, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idseguro' => 0, 'ca_idcotizacion' => 1, 'ca_idmoneda' => 2, 'ca_prima_tip' => 3, 'ca_prima_vlr' => 4, 'ca_prima_min' => 5, 'ca_obtencion' => 6, 'ca_observaciones' => 7, 'ca_fchcreado' => 8, 'ca_usucreado' => 9, 'ca_fchactualizado' => 10, 'ca_usuactualizado' => 11, 'ca_transporte' => 12, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
@@ -184,6 +184,8 @@ abstract class BaseCotSeguroPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
+		$criteria->addSelectColumn(CotSeguroPeer::CA_IDSEGURO);
+
 		$criteria->addSelectColumn(CotSeguroPeer::CA_IDCOTIZACION);
 
 		$criteria->addSelectColumn(CotSeguroPeer::CA_IDMONEDA);
@@ -207,8 +209,6 @@ abstract class BaseCotSeguroPeer {
 		$criteria->addSelectColumn(CotSeguroPeer::CA_USUACTUALIZADO);
 
 		$criteria->addSelectColumn(CotSeguroPeer::CA_TRANSPORTE);
-
-		$criteria->addSelectColumn(CotSeguroPeer::OID);
 
 	}
 
@@ -334,7 +334,7 @@ abstract class BaseCotSeguroPeer {
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = (string) $obj->getOid();
+				$key = (string) $obj->getCaIdseguro();
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -354,7 +354,7 @@ abstract class BaseCotSeguroPeer {
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof CotSeguro) {
-				$key = (string) $value->getOid();
+				$key = (string) $value->getCaIdseguro();
 			} elseif (is_scalar($value)) {
 				// assume we've been passed a primary key
 				$key = (string) $value;
@@ -410,10 +410,10 @@ abstract class BaseCotSeguroPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 12] === null) {
+		if ($row[$startcol + 0] === null) {
 			return null;
 		}
-		return (string) $row[$startcol + 12];
+		return (string) $row[$startcol + 0];
 	}
 
 	/**
@@ -1117,6 +1117,10 @@ abstract class BaseCotSeguroPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from CotSeguro object
 		}
 
+		if ($criteria->containsKey(CotSeguroPeer::CA_IDSEGURO) && $criteria->keyContainsValue(CotSeguroPeer::CA_IDSEGURO) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.CotSeguroPeer::CA_IDSEGURO.')');
+		}
+
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
@@ -1155,8 +1159,8 @@ abstract class BaseCotSeguroPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(CotSeguroPeer::OID);
-			$selectCriteria->add(CotSeguroPeer::OID, $criteria->remove(CotSeguroPeer::OID), $comparison);
+			$comparison = $criteria->getComparison(CotSeguroPeer::CA_IDSEGURO);
+			$selectCriteria->add(CotSeguroPeer::CA_IDSEGURO, $criteria->remove(CotSeguroPeer::CA_IDSEGURO), $comparison);
 
 		} else { // $values is CotSeguro object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -1229,7 +1233,7 @@ abstract class BaseCotSeguroPeer {
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(CotSeguroPeer::OID, (array) $values, Criteria::IN);
+			$criteria->add(CotSeguroPeer::CA_IDSEGURO, (array) $values, Criteria::IN);
 
 			foreach ((array) $values as $singleval) {
 				// we can invalidate the cache for this single object
@@ -1321,7 +1325,7 @@ abstract class BaseCotSeguroPeer {
 		}
 
 		$criteria = new Criteria(CotSeguroPeer::DATABASE_NAME);
-		$criteria->add(CotSeguroPeer::OID, $pk);
+		$criteria->add(CotSeguroPeer::CA_IDSEGURO, $pk);
 
 		$v = CotSeguroPeer::doSelect($criteria, $con);
 
@@ -1347,7 +1351,7 @@ abstract class BaseCotSeguroPeer {
 			$objs = array();
 		} else {
 			$criteria = new Criteria(CotSeguroPeer::DATABASE_NAME);
-			$criteria->add(CotSeguroPeer::OID, $pks, Criteria::IN);
+			$criteria->add(CotSeguroPeer::CA_IDSEGURO, $pks, Criteria::IN);
 			$objs = CotSeguroPeer::doSelect($criteria, $con);
 		}
 		return $objs;

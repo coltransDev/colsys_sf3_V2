@@ -52,7 +52,7 @@ class PricFlete extends BasePricFlete
 				$this->setCaEstado(2);
 				break;
 			default:
-				$this->setCaEstado(1);
+				$this->setCaEstado(null);
 				break;
 		}
 	}

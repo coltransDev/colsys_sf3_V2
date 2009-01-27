@@ -32,13 +32,19 @@ class Cotizacion extends BaseCotizacion
 	* Retorna los recargos locales de la cotización
 	* @author Andres Botero
 	*/
-	public function getRecargosLocales(){	
+	public function getRecargosLocales( $transporte=null, $modalidad=null ){	
 		$tipo = Constantes::RECARGO_LOCAL;
 		$c = new Criteria();		
 		$c->addJoin( CotRecargoPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO, Criteria::LEFT_JOIN );		
 		$c->add( CotRecargoPeer::CA_IDCOTIZACION , $this->getCaIdcotizacion() );
 		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
-		$c->setDistinct();
+		if( $transporte ){
+			$c->add( TipoRecargoPeer::CA_TRANSPORTE , $transporte );
+		}
+		if( $modalidad ){
+			$c->add( CotRecargoPeer::CA_MODALIDAD , $modalidad );
+		}
+		$c->setDistinct();		
 		//$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_TRANSPORTE );
 		$c->addAscendingOrderByColumn( CotRecargoPeer::CA_MODALIDAD );
 		

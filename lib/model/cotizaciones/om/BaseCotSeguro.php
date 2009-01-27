@@ -21,6 +21,12 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	protected static $peer;
 
 	/**
+	 * The value for the ca_idseguro field.
+	 * @var        string
+	 */
+	protected $ca_idseguro;
+
+	/**
 	 * The value for the ca_idcotizacion field.
 	 * @var        int
 	 */
@@ -93,12 +99,6 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	protected $ca_transporte;
 
 	/**
-	 * The value for the oid field.
-	 * @var        string
-	 */
-	protected $oid;
-
-	/**
 	 * @var        Cotizacion
 	 */
 	protected $aCotizacion;
@@ -140,6 +140,16 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	 */
 	public function applyDefaultValues()
 	{
+	}
+
+	/**
+	 * Get the [ca_idseguro] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIdseguro()
+	{
+		return $this->ca_idseguro;
 	}
 
 	/**
@@ -309,14 +319,24 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [oid] column value.
+	 * Set the value of [ca_idseguro] column.
 	 * 
-	 * @return     string
+	 * @param      string $v new value
+	 * @return     CotSeguro The current object (for fluent API support)
 	 */
-	public function getOid()
+	public function setCaIdseguro($v)
 	{
-		return $this->oid;
-	}
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_idseguro !== $v) {
+			$this->ca_idseguro = $v;
+			$this->modifiedColumns[] = CotSeguroPeer::CA_IDSEGURO;
+		}
+
+		return $this;
+	} // setCaIdseguro()
 
 	/**
 	 * Set the value of [ca_idcotizacion] column.
@@ -625,26 +645,6 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	} // setCaTransporte()
 
 	/**
-	 * Set the value of [oid] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     CotSeguro The current object (for fluent API support)
-	 */
-	public function setOid($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->oid !== $v) {
-			$this->oid = $v;
-			$this->modifiedColumns[] = CotSeguroPeer::OID;
-		}
-
-		return $this;
-	} // setOid()
-
-	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -681,19 +681,19 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_idcotizacion = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->ca_idmoneda = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-			$this->ca_prima_tip = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->ca_prima_vlr = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_prima_min = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_obtencion = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_observaciones = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_fchcreado = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-			$this->ca_usucreado = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-			$this->ca_fchactualizado = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-			$this->ca_usuactualizado = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-			$this->ca_transporte = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-			$this->oid = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_idseguro = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_idcotizacion = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+			$this->ca_idmoneda = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_prima_tip = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_prima_vlr = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_prima_min = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_obtencion = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_observaciones = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_fchcreado = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_usucreado = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_transporte = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -877,6 +877,9 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 				$this->setMoneda($this->aMoneda);
 			}
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = CotSeguroPeer::CA_IDSEGURO;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -885,6 +888,8 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
+
+					$this->setCaIdseguro($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -1017,43 +1022,43 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdcotizacion();
+				return $this->getCaIdseguro();
 				break;
 			case 1:
-				return $this->getCaIdmoneda();
+				return $this->getCaIdcotizacion();
 				break;
 			case 2:
-				return $this->getCaPrimaTip();
+				return $this->getCaIdmoneda();
 				break;
 			case 3:
-				return $this->getCaPrimaVlr();
+				return $this->getCaPrimaTip();
 				break;
 			case 4:
-				return $this->getCaPrimaMin();
+				return $this->getCaPrimaVlr();
 				break;
 			case 5:
-				return $this->getCaObtencion();
+				return $this->getCaPrimaMin();
 				break;
 			case 6:
-				return $this->getCaObservaciones();
+				return $this->getCaObtencion();
 				break;
 			case 7:
-				return $this->getCaFchcreado();
+				return $this->getCaObservaciones();
 				break;
 			case 8:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 9:
-				return $this->getCaFchactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 10:
-				return $this->getCaUsuactualizado();
+				return $this->getCaFchactualizado();
 				break;
 			case 11:
-				return $this->getCaTransporte();
+				return $this->getCaUsuactualizado();
 				break;
 			case 12:
-				return $this->getOid();
+				return $this->getCaTransporte();
 				break;
 			default:
 				return null;
@@ -1076,19 +1081,19 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 		$keys = CotSeguroPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdcotizacion(),
-			$keys[1] => $this->getCaIdmoneda(),
-			$keys[2] => $this->getCaPrimaTip(),
-			$keys[3] => $this->getCaPrimaVlr(),
-			$keys[4] => $this->getCaPrimaMin(),
-			$keys[5] => $this->getCaObtencion(),
-			$keys[6] => $this->getCaObservaciones(),
-			$keys[7] => $this->getCaFchcreado(),
-			$keys[8] => $this->getCaUsucreado(),
-			$keys[9] => $this->getCaFchactualizado(),
-			$keys[10] => $this->getCaUsuactualizado(),
-			$keys[11] => $this->getCaTransporte(),
-			$keys[12] => $this->getOid(),
+			$keys[0] => $this->getCaIdseguro(),
+			$keys[1] => $this->getCaIdcotizacion(),
+			$keys[2] => $this->getCaIdmoneda(),
+			$keys[3] => $this->getCaPrimaTip(),
+			$keys[4] => $this->getCaPrimaVlr(),
+			$keys[5] => $this->getCaPrimaMin(),
+			$keys[6] => $this->getCaObtencion(),
+			$keys[7] => $this->getCaObservaciones(),
+			$keys[8] => $this->getCaFchcreado(),
+			$keys[9] => $this->getCaUsucreado(),
+			$keys[10] => $this->getCaFchactualizado(),
+			$keys[11] => $this->getCaUsuactualizado(),
+			$keys[12] => $this->getCaTransporte(),
 		);
 		return $result;
 	}
@@ -1121,43 +1126,43 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdcotizacion($value);
+				$this->setCaIdseguro($value);
 				break;
 			case 1:
-				$this->setCaIdmoneda($value);
+				$this->setCaIdcotizacion($value);
 				break;
 			case 2:
-				$this->setCaPrimaTip($value);
+				$this->setCaIdmoneda($value);
 				break;
 			case 3:
-				$this->setCaPrimaVlr($value);
+				$this->setCaPrimaTip($value);
 				break;
 			case 4:
-				$this->setCaPrimaMin($value);
+				$this->setCaPrimaVlr($value);
 				break;
 			case 5:
-				$this->setCaObtencion($value);
+				$this->setCaPrimaMin($value);
 				break;
 			case 6:
-				$this->setCaObservaciones($value);
+				$this->setCaObtencion($value);
 				break;
 			case 7:
-				$this->setCaFchcreado($value);
+				$this->setCaObservaciones($value);
 				break;
 			case 8:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 9:
-				$this->setCaFchactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 10:
-				$this->setCaUsuactualizado($value);
+				$this->setCaFchactualizado($value);
 				break;
 			case 11:
-				$this->setCaTransporte($value);
+				$this->setCaUsuactualizado($value);
 				break;
 			case 12:
-				$this->setOid($value);
+				$this->setCaTransporte($value);
 				break;
 		} // switch()
 	}
@@ -1183,19 +1188,19 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 		$keys = CotSeguroPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdcotizacion($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaIdmoneda($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaPrimaTip($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaPrimaVlr($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaPrimaMin($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaObtencion($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaObservaciones($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaFchcreado($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaUsucreado($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaFchactualizado($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaUsuactualizado($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaTransporte($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setOid($arr[$keys[12]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdseguro($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdcotizacion($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaIdmoneda($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaPrimaTip($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaPrimaVlr($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaPrimaMin($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaObtencion($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaObservaciones($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaFchcreado($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaUsucreado($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaFchactualizado($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaUsuactualizado($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaTransporte($arr[$keys[12]]);
 	}
 
 	/**
@@ -1207,6 +1212,7 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotSeguroPeer::DATABASE_NAME);
 
+		if ($this->isColumnModified(CotSeguroPeer::CA_IDSEGURO)) $criteria->add(CotSeguroPeer::CA_IDSEGURO, $this->ca_idseguro);
 		if ($this->isColumnModified(CotSeguroPeer::CA_IDCOTIZACION)) $criteria->add(CotSeguroPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		if ($this->isColumnModified(CotSeguroPeer::CA_IDMONEDA)) $criteria->add(CotSeguroPeer::CA_IDMONEDA, $this->ca_idmoneda);
 		if ($this->isColumnModified(CotSeguroPeer::CA_PRIMA_TIP)) $criteria->add(CotSeguroPeer::CA_PRIMA_TIP, $this->ca_prima_tip);
@@ -1219,7 +1225,6 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotSeguroPeer::CA_FCHACTUALIZADO)) $criteria->add(CotSeguroPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
 		if ($this->isColumnModified(CotSeguroPeer::CA_USUACTUALIZADO)) $criteria->add(CotSeguroPeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
 		if ($this->isColumnModified(CotSeguroPeer::CA_TRANSPORTE)) $criteria->add(CotSeguroPeer::CA_TRANSPORTE, $this->ca_transporte);
-		if ($this->isColumnModified(CotSeguroPeer::OID)) $criteria->add(CotSeguroPeer::OID, $this->oid);
 
 		return $criteria;
 	}
@@ -1236,7 +1241,7 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotSeguroPeer::DATABASE_NAME);
 
-		$criteria->add(CotSeguroPeer::OID, $this->oid);
+		$criteria->add(CotSeguroPeer::CA_IDSEGURO, $this->ca_idseguro);
 
 		return $criteria;
 	}
@@ -1247,18 +1252,18 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 	 */
 	public function getPrimaryKey()
 	{
-		return $this->getOid();
+		return $this->getCaIdseguro();
 	}
 
 	/**
-	 * Generic method to set the primary key (oid column).
+	 * Generic method to set the primary key (ca_idseguro column).
 	 *
 	 * @param      string $key Primary key.
 	 * @return     void
 	 */
 	public function setPrimaryKey($key)
 	{
-		$this->setOid($key);
+		$this->setCaIdseguro($key);
 	}
 
 	/**
@@ -1298,10 +1303,10 @@ abstract class BaseCotSeguro extends BaseObject  implements Persistent {
 
 		$copyObj->setCaTransporte($this->ca_transporte);
 
-		$copyObj->setOid($this->oid);
-
 
 		$copyObj->setNew(true);
+
+		$copyObj->setCaIdseguro(NULL); // this is a auto-increment column, so set to default value
 
 	}
 

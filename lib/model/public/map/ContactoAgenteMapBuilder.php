@@ -88,6 +88,8 @@ class ContactoAgenteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_SUGERIDO', 'CaSugerido', 'BOOLEAN', false, null);
 
+		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
+
 	} // doBuild()
 
 } // ContactoAgenteMapBuilder

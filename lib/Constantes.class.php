@@ -2,6 +2,7 @@
 
 /*
 * Constantes predefinidas en el programa
+sobre valor a asegurar
 */
 
 class Constantes{

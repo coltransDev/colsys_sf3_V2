@@ -99,6 +99,12 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	protected $ca_sugerido;
 
 	/**
+	 * The value for the ca_activo field.
+	 * @var        boolean
+	 */
+	protected $ca_activo;
+
+	/**
 	 * @var        Agente
 	 */
 	protected $aAgente;
@@ -270,6 +276,16 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	public function getCaSugerido()
 	{
 		return $this->ca_sugerido;
+	}
+
+	/**
+	 * Get the [ca_activo] column value.
+	 * 
+	 * @return     boolean
+	 */
+	public function getCaActivo()
+	{
+		return $this->ca_activo;
 	}
 
 	/**
@@ -541,6 +557,26 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	} // setCaSugerido()
 
 	/**
+	 * Set the value of [ca_activo] column.
+	 * 
+	 * @param      boolean $v new value
+	 * @return     ContactoAgente The current object (for fluent API support)
+	 */
+	public function setCaActivo($v)
+	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
+
+		if ($this->ca_activo !== $v) {
+			$this->ca_activo = $v;
+			$this->modifiedColumns[] = ContactoAgentePeer::CA_ACTIVO;
+		}
+
+		return $this;
+	} // setCaActivo()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -590,6 +626,7 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->ca_cargo = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->ca_detalle = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
 			$this->ca_sugerido = ($row[$startcol + 12] !== null) ? (boolean) $row[$startcol + 12] : null;
+			$this->ca_activo = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -599,7 +636,7 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 13; // 13 = ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 14; // 14 = ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating ContactoAgente object", $e);
@@ -951,6 +988,9 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			case 12:
 				return $this->getCaSugerido();
 				break;
+			case 13:
+				return $this->getCaActivo();
+				break;
 			default:
 				return null;
 				break;
@@ -985,6 +1025,7 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$keys[10] => $this->getCaCargo(),
 			$keys[11] => $this->getCaDetalle(),
 			$keys[12] => $this->getCaSugerido(),
+			$keys[13] => $this->getCaActivo(),
 		);
 		return $result;
 	}
@@ -1055,6 +1096,9 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			case 12:
 				$this->setCaSugerido($value);
 				break;
+			case 13:
+				$this->setCaActivo($value);
+				break;
 		} // switch()
 	}
 
@@ -1092,6 +1136,7 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[10], $arr)) $this->setCaCargo($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setCaDetalle($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setCaSugerido($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaActivo($arr[$keys[13]]);
 	}
 
 	/**
@@ -1116,6 +1161,7 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ContactoAgentePeer::CA_CARGO)) $criteria->add(ContactoAgentePeer::CA_CARGO, $this->ca_cargo);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_DETALLE)) $criteria->add(ContactoAgentePeer::CA_DETALLE, $this->ca_detalle);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_SUGERIDO)) $criteria->add(ContactoAgentePeer::CA_SUGERIDO, $this->ca_sugerido);
+		if ($this->isColumnModified(ContactoAgentePeer::CA_ACTIVO)) $criteria->add(ContactoAgentePeer::CA_ACTIVO, $this->ca_activo);
 
 		return $criteria;
 	}
@@ -1195,6 +1241,8 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 		$copyObj->setCaDetalle($this->ca_detalle);
 
 		$copyObj->setCaSugerido($this->ca_sugerido);
+
+		$copyObj->setCaActivo($this->ca_activo);
 
 
 		$copyObj->setNew(true);

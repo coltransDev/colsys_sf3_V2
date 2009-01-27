@@ -60,7 +60,11 @@ class CotSeguroMapBuilder implements MapBuilder {
 		$tMap->setPhpName('CotSeguro');
 		$tMap->setClassname('CotSeguro');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
+
+		$tMap->setPrimaryKeyMethodInfo('tb_cotseguro_id');
+
+		$tMap->addPrimaryKey('CA_IDSEGURO', 'CaIdseguro', 'VARCHAR', true, null);
 
 		$tMap->addForeignKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'INTEGER', 'tb_cotizaciones', 'CA_IDCOTIZACION', true, null);
 
@@ -85,8 +89,6 @@ class CotSeguroMapBuilder implements MapBuilder {
 		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', false, null);
-
-		$tMap->addPrimaryKey('OID', 'Oid', 'VARCHAR', true, null);
 
 	} // doBuild()
 

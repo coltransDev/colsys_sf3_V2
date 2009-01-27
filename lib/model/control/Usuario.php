@@ -32,7 +32,7 @@ class Usuario extends BaseUsuario
 			$resultado .= "Tel.: ".$sucursal->getCaTelefono()." ".$this->getCaExtension()."\n";
 			$resultado .= "Fax.: ".$sucursal->getCaFax()."\n";	
 		}
-		$resultado .= Utils::replace($sucursal->getCaNombre())."- Colombia\n";
+		$resultado .= $sucursal->getCaNombre()." - Colombia\n";
 		$resultado .= "http://www.coltrans.com.co";
 		return $resultado;
 	}
