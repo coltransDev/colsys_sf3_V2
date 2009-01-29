@@ -6,12 +6,12 @@
 		<column name="ca_nombre" type="varchar" />		
 		<column name="ca_cargo" type="varchar" size="10" />	
 		<column name="ca_departamento" type="varchar" />
-		<column name="ca_sucursal" type="varchar" />						
+		<column name="ca_idsucursal" type="varchar" />						
 		<column name="ca_email" type="varchar" />
 		<column name="ca_rutinas" type="varchar" />
 		<column name="ca_extension" type="varchar" />	
 		<foreign-key foreignTable="control.tb_sucursales">
-			<reference local="ca_sucursal" foreign="ca_nombre"/>
+			<reference local="ca_idsucursal" foreign="ca_idsucursal"/>
 		</foreign-key>		
 	</table>
 	
