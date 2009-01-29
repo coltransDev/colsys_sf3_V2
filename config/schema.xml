@@ -91,6 +91,7 @@
 		<column name="ca_website" type="varchar" />
 		<column name="ca_email" type="varchar" />
 		<column name="ca_divulgacion" type="varchar" />	
+		<column name="ca_activo" type="boolean" />	
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>
 		</foreign-key>	
@@ -109,7 +110,8 @@
 		<column name="ca_transporte" type="varchar" />
 		<column name="ca_cargo" type="varchar" />
 		<column name="ca_detalle" type="varchar" />	
-		<column name="ca_sugerido" type="boolean" />	
+		<column name="ca_sugerido" type="boolean" />
+		<column name="ca_activo" type="boolean" />	
 		<foreign-key foreignTable="tb_agentes">
 			<reference local="ca_idagente" foreign="ca_idagente"/>
 		</foreign-key>	
@@ -153,16 +155,17 @@
 	
 	<table name="tb_conceptos" phpName="Concepto">
 		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true" autoIncrement="true" />	
+		<id-method-parameter value="tb_conceptos_id"/>
 		<column name="ca_concepto" type="varchar" required="true"  />	
 		<column name="ca_unidad" type="varchar" required="true"  />	
 		<column name="ca_transporte" type="varchar" required="true"  />	
-		<column name="ca_modalidad" type="varchar" required="true"  />			
-		<column name="ca_pregunta" type="varchar" required="true"  />	
+		<column name="ca_modalidad" type="varchar" required="true"  />					
 		<column name="ca_liminferior" type="integer"   />	
 	</table>
 	
 	<table name="tb_tiporecargo" phpName="TipoRecargo" >				
-		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true" />	
+		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"  autoIncrement="true" />	
+		<id-method-parameter value="tb_tiporecargo_id"/>
 		<column name="ca_recargo" type="varchar" required="true" />	
 		<column name="ca_tipo" type="varchar" required="true" />	
 		<column name="ca_transporte" type="varchar" required="true" />			
@@ -173,7 +176,8 @@
 	</table>
 	
 	<table name="tb_costos" phpName="Costo">				
-		<column name="ca_idcosto" type="integer" required="true" primaryKey="true"  />	
+		<column name="ca_idcosto" type="integer" required="true" primaryKey="true"  autoIncrement="true"/>
+		<id-method-parameter value="tb_costos_id"/>	
 		<column name="ca_costo" type="varchar" required="true"  />	
 		<column name="ca_transporte" type="varchar" required="true"  />	
 		<column name="ca_impoexpo" type="varchar" required="true"  />			

@@ -25,6 +25,7 @@
 	</table>
 	
 	<table name="control.tb_sucursales" phpName="Sucursal">
+		<column name="ca_idsucursal" type="VARCHAR" size="3"/>
 		<column name="ca_nombre" type="VARCHAR" size="50" required="true" primaryKey="true"/>
 		<column name="ca_telefono" type="VARCHAR" size="50"/>
 		<column name="ca_fax" type="VARCHAR" size="100"/>
