@@ -40,7 +40,7 @@ class PDF extends FPDF {
 			$this->Cell(0,14,$this->linerepeat,0,0,'L');
 			//Logo
 			$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'ColtransSA.jpg', 18, 8, 63, 10, 'JPG');
-			$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'20y.jpg', 170, 8, 18, 14, 'JPG');
+			/*$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'20y.jpg', 170, 8, 18, 14, 'JPG');*/
 			//Salto de línea
 			$this->Ln(10);
 		}
@@ -57,10 +57,8 @@ class PDF extends FPDF {
 			//Número de página
 			$this->Cell(0,14,'Página '.$this->PageNo().'/{nb}',0,0,'C');
 			$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'pie_pagina.jpg', 18, 270, 40, 16, 'JPG');
-			if (strlen(trim($this->sucursal)) == 0) {
-			   $this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'Dir. Bogotá D.C..jpg', 160, 270, 40, 18, 'JPG');
-			}else{
-			   /*$this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'Dir. '.$this->sucursal.'.jpg', 160, 270, 40, 18, 'JPG');*/
+			if (!strlen(trim($this->sucursal)) == 0) {		
+			   $this->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'Dir'.$this->sucursal.'.jpg', 160, 270, 40, 18, 'JPG');
 			}
 		}
     }
