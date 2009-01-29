@@ -36,4 +36,8 @@ class Usuario extends BaseUsuario
 		$resultado .= "http://www.coltrans.com.co";
 		return $resultado;
 	}
+	
+	public function getCaSucursal(){
+		return $this->getSucursal()->getCaNombre();
+	}
 }
