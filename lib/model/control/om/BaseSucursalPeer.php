@@ -19,10 +19,13 @@ abstract class BaseSucursalPeer {
 	const CLASS_DEFAULT = 'lib.model.control.Sucursal';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 4;
+	const NUM_COLUMNS = 5;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
+
+	/** the column name for the CA_IDSUCURSAL field */
+	const CA_IDSUCURSAL = 'control.tb_sucursales.CA_IDSUCURSAL';
 
 	/** the column name for the CA_NOMBRE field */
 	const CA_NOMBRE = 'control.tb_sucursales.CA_NOMBRE';
@@ -57,11 +60,11 @@ abstract class BaseSucursalPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaNombre', 'CaTelefono', 'CaFax', 'CaDireccion', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caNombre', 'caTelefono', 'caFax', 'caDireccion', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_NOMBRE, self::CA_TELEFONO, self::CA_FAX, self::CA_DIRECCION, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_nombre', 'ca_telefono', 'ca_fax', 'ca_direccion', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdsucursal', 'CaNombre', 'CaTelefono', 'CaFax', 'CaDireccion', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdsucursal', 'caNombre', 'caTelefono', 'caFax', 'caDireccion', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSUCURSAL, self::CA_NOMBRE, self::CA_TELEFONO, self::CA_FAX, self::CA_DIRECCION, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idsucursal', 'ca_nombre', 'ca_telefono', 'ca_fax', 'ca_direccion', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
 	/**
@@ -71,11 +74,11 @@ abstract class BaseSucursalPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaNombre' => 0, 'CaTelefono' => 1, 'CaFax' => 2, 'CaDireccion' => 3, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caNombre' => 0, 'caTelefono' => 1, 'caFax' => 2, 'caDireccion' => 3, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_NOMBRE => 0, self::CA_TELEFONO => 1, self::CA_FAX => 2, self::CA_DIRECCION => 3, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_nombre' => 0, 'ca_telefono' => 1, 'ca_fax' => 2, 'ca_direccion' => 3, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdsucursal' => 0, 'CaNombre' => 1, 'CaTelefono' => 2, 'CaFax' => 3, 'CaDireccion' => 4, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdsucursal' => 0, 'caNombre' => 1, 'caTelefono' => 2, 'caFax' => 3, 'caDireccion' => 4, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSUCURSAL => 0, self::CA_NOMBRE => 1, self::CA_TELEFONO => 2, self::CA_FAX => 3, self::CA_DIRECCION => 4, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idsucursal' => 0, 'ca_nombre' => 1, 'ca_telefono' => 2, 'ca_fax' => 3, 'ca_direccion' => 4, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
 	/**
@@ -156,6 +159,8 @@ abstract class BaseSucursalPeer {
 	 */
 	public static function addSelectColumns(Criteria $criteria)
 	{
+
+		$criteria->addSelectColumn(SucursalPeer::CA_IDSUCURSAL);
 
 		$criteria->addSelectColumn(SucursalPeer::CA_NOMBRE);
 
@@ -365,10 +370,10 @@ abstract class BaseSucursalPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null) {
+		if ($row[$startcol + 1] === null) {
 			return null;
 		}
-		return (string) $row[$startcol + 0];
+		return (string) $row[$startcol + 1];
 	}
 
 	/**

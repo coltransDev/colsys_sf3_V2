@@ -466,6 +466,10 @@ abstract class BaseCostoPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from Costo object
 		}
 
+		if ($criteria->containsKey(CostoPeer::CA_IDCOSTO) && $criteria->keyContainsValue(CostoPeer::CA_IDCOSTO) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.CostoPeer::CA_IDCOSTO.')');
+		}
+
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);

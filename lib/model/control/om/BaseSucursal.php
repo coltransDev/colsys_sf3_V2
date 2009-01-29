@@ -21,6 +21,12 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	protected static $peer;
 
 	/**
+	 * The value for the ca_idsucursal field.
+	 * @var        string
+	 */
+	protected $ca_idsucursal;
+
+	/**
 	 * The value for the ca_nombre field.
 	 * @var        string
 	 */
@@ -89,6 +95,16 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [ca_idsucursal] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIdsucursal()
+	{
+		return $this->ca_idsucursal;
+	}
+
+	/**
 	 * Get the [ca_nombre] column value.
 	 * 
 	 * @return     string
@@ -127,6 +143,26 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	{
 		return $this->ca_direccion;
 	}
+
+	/**
+	 * Set the value of [ca_idsucursal] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Sucursal The current object (for fluent API support)
+	 */
+	public function setCaIdsucursal($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_idsucursal !== $v) {
+			$this->ca_idsucursal = $v;
+			$this->modifiedColumns[] = SucursalPeer::CA_IDSUCURSAL;
+		}
+
+		return $this;
+	} // setCaIdsucursal()
 
 	/**
 	 * Set the value of [ca_nombre] column.
@@ -245,10 +281,11 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_nombre = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
-			$this->ca_telefono = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-			$this->ca_fax = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->ca_direccion = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_idsucursal = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
+			$this->ca_nombre = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_telefono = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_fax = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_direccion = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -258,7 +295,7 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 4; // 4 = SucursalPeer::NUM_COLUMNS - SucursalPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 5; // 5 = SucursalPeer::NUM_COLUMNS - SucursalPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Sucursal object", $e);
@@ -546,15 +583,18 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaNombre();
+				return $this->getCaIdsucursal();
 				break;
 			case 1:
-				return $this->getCaTelefono();
+				return $this->getCaNombre();
 				break;
 			case 2:
-				return $this->getCaFax();
+				return $this->getCaTelefono();
 				break;
 			case 3:
+				return $this->getCaFax();
+				break;
+			case 4:
 				return $this->getCaDireccion();
 				break;
 			default:
@@ -578,10 +618,11 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	{
 		$keys = SucursalPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaNombre(),
-			$keys[1] => $this->getCaTelefono(),
-			$keys[2] => $this->getCaFax(),
-			$keys[3] => $this->getCaDireccion(),
+			$keys[0] => $this->getCaIdsucursal(),
+			$keys[1] => $this->getCaNombre(),
+			$keys[2] => $this->getCaTelefono(),
+			$keys[3] => $this->getCaFax(),
+			$keys[4] => $this->getCaDireccion(),
 		);
 		return $result;
 	}
@@ -614,15 +655,18 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaNombre($value);
+				$this->setCaIdsucursal($value);
 				break;
 			case 1:
-				$this->setCaTelefono($value);
+				$this->setCaNombre($value);
 				break;
 			case 2:
-				$this->setCaFax($value);
+				$this->setCaTelefono($value);
 				break;
 			case 3:
+				$this->setCaFax($value);
+				break;
+			case 4:
 				$this->setCaDireccion($value);
 				break;
 		} // switch()
@@ -649,10 +693,11 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	{
 		$keys = SucursalPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaNombre($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaTelefono($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaFax($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaDireccion($arr[$keys[3]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdsucursal($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaNombre($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaTelefono($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaFax($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaDireccion($arr[$keys[4]]);
 	}
 
 	/**
@@ -664,6 +709,7 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(SucursalPeer::DATABASE_NAME);
 
+		if ($this->isColumnModified(SucursalPeer::CA_IDSUCURSAL)) $criteria->add(SucursalPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 		if ($this->isColumnModified(SucursalPeer::CA_NOMBRE)) $criteria->add(SucursalPeer::CA_NOMBRE, $this->ca_nombre);
 		if ($this->isColumnModified(SucursalPeer::CA_TELEFONO)) $criteria->add(SucursalPeer::CA_TELEFONO, $this->ca_telefono);
 		if ($this->isColumnModified(SucursalPeer::CA_FAX)) $criteria->add(SucursalPeer::CA_FAX, $this->ca_fax);
@@ -721,6 +767,8 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	 */
 	public function copyInto($copyObj, $deepCopy = false)
 	{
+
+		$copyObj->setCaIdsucursal($this->ca_idsucursal);
 
 		$copyObj->setCaNombre($this->ca_nombre);
 

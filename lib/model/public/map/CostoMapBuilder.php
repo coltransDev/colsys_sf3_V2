@@ -60,7 +60,9 @@ class CostoMapBuilder implements MapBuilder {
 		$tMap->setPhpName('Costo');
 		$tMap->setClassname('Costo');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
+
+		$tMap->setPrimaryKeyMethodInfo('tb_costos_id');
 
 		$tMap->addPrimaryKey('CA_IDCOSTO', 'CaIdcosto', 'INTEGER', true, null);
 

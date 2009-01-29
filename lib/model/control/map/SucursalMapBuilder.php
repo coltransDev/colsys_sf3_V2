@@ -62,6 +62,8 @@ class SucursalMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(false);
 
+		$tMap->addColumn('CA_IDSUCURSAL', 'CaIdsucursal', 'VARCHAR', false, 3);
+
 		$tMap->addPrimaryKey('CA_NOMBRE', 'CaNombre', 'VARCHAR', true, 50);
 
 		$tMap->addColumn('CA_TELEFONO', 'CaTelefono', 'VARCHAR', false, 50);
