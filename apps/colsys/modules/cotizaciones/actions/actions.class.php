@@ -336,6 +336,12 @@ class cotizacionesActions extends sfActions
 		$c->add(EmailPeer::CA_IDCASO,$this->cotizacion->getCaIdCotizacion()); 
 		$c->addAscendingOrderByColumn(EmailPeer::CA_FCHENVIO);
 		$this->emails = EmailPeer::doSelect( $c );
+		
+		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
+		$textos = sfYaml::load($config);	
+		$this->asunto = sprintf( $textos['asuntoEmail'], $this->cotizacion->getCaConsecutivo() );
+		$this->mensaje = sprintf( $textos['mensajeEmail'], $this->cotizacion->getContacto()->getNombre(), $this->cotizacion->getCaConsecutivo() );
+		
 				
 	}
 	/*
@@ -343,6 +349,8 @@ class cotizacionesActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeGenerarPDF(){
+	
+		setlocale(LC_CTYPE, "es_ES");
 		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
 		$this->usuario = $this->cotizacion->getUsuario();
@@ -529,8 +537,8 @@ class cotizacionesActions extends sfActions
 		foreach( $recargos as $recargo ){	
 			$newRecargo = $recargo->copy( false );
 			$newRecargo->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
-			$newRecargo->setCaIdProducto( $newProducto->getCaIdProducto() );
-			$newRecargo->setCaIdOpcion( $newOpcion->getCaIdOpcion() );
+			$newRecargo->setCaIdProducto( $recargo->getCaIdProducto() );
+			$newRecargo->setCaIdOpcion( $recargo->getCaIdOpcion() );
 			$newRecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
 			$newRecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
 			$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
@@ -1437,9 +1445,8 @@ class cotizacionesActions extends sfActions
 		$user_id = $this->getUser()->getUserId();
 		$id = $this->getRequestParameter( "id" );
 		if( $this->getRequestParameter( "oid" ) ) {
-			$c = new Criteria();
-			$c->add( CotSeguroPeer::OID , $this->getRequestParameter("oid") );
-			$seguro = CotSeguroPeer::doSelectOne( $c );
+			
+			$seguro = CotSeguroPeer::retrieveByPk( $this->getRequestParameter("oid")  );
 			$this->forward404Unless( $seguro );
 		}else{
 			$seguro = new CotSeguro();
@@ -1640,8 +1647,8 @@ class cotizacionesActions extends sfActions
 		$this->archivo = CotArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
 		$this->forward404Unless( $this->archivo );
 		
-		$this->getResponse()->addHttpMeta('content-type', $this->archivo->getCaTipo());
-    	$this->getResponse()->addHttpMeta('content-length', $this->archivo->getCaTamano());		
+		session_cache_limiter('public'); 
+		
 	}
 	
 	/*************************************************************************
