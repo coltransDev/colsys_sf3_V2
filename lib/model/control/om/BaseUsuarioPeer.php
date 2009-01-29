@@ -36,8 +36,8 @@ abstract class BaseUsuarioPeer {
 	/** the column name for the CA_DEPARTAMENTO field */
 	const CA_DEPARTAMENTO = 'control.tb_usuarios.CA_DEPARTAMENTO';
 
-	/** the column name for the CA_SUCURSAL field */
-	const CA_SUCURSAL = 'control.tb_usuarios.CA_SUCURSAL';
+	/** the column name for the CA_IDSUCURSAL field */
+	const CA_IDSUCURSAL = 'control.tb_usuarios.CA_IDSUCURSAL';
 
 	/** the column name for the CA_EMAIL field */
 	const CA_EMAIL = 'control.tb_usuarios.CA_EMAIL';
@@ -69,10 +69,10 @@ abstract class BaseUsuarioPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaLogin', 'CaNombre', 'CaCargo', 'CaDepartamento', 'CaSucursal', 'CaEmail', 'CaRutinas', 'CaExtension', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caLogin', 'caNombre', 'caCargo', 'caDepartamento', 'caSucursal', 'caEmail', 'caRutinas', 'caExtension', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_LOGIN, self::CA_NOMBRE, self::CA_CARGO, self::CA_DEPARTAMENTO, self::CA_SUCURSAL, self::CA_EMAIL, self::CA_RUTINAS, self::CA_EXTENSION, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_login', 'ca_nombre', 'ca_cargo', 'ca_departamento', 'ca_sucursal', 'ca_email', 'ca_rutinas', 'ca_extension', ),
+		BasePeer::TYPE_PHPNAME => array ('CaLogin', 'CaNombre', 'CaCargo', 'CaDepartamento', 'CaIdsucursal', 'CaEmail', 'CaRutinas', 'CaExtension', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caLogin', 'caNombre', 'caCargo', 'caDepartamento', 'caIdsucursal', 'caEmail', 'caRutinas', 'caExtension', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_LOGIN, self::CA_NOMBRE, self::CA_CARGO, self::CA_DEPARTAMENTO, self::CA_IDSUCURSAL, self::CA_EMAIL, self::CA_RUTINAS, self::CA_EXTENSION, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_login', 'ca_nombre', 'ca_cargo', 'ca_departamento', 'ca_idsucursal', 'ca_email', 'ca_rutinas', 'ca_extension', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
@@ -83,10 +83,10 @@ abstract class BaseUsuarioPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaLogin' => 0, 'CaNombre' => 1, 'CaCargo' => 2, 'CaDepartamento' => 3, 'CaSucursal' => 4, 'CaEmail' => 5, 'CaRutinas' => 6, 'CaExtension' => 7, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caLogin' => 0, 'caNombre' => 1, 'caCargo' => 2, 'caDepartamento' => 3, 'caSucursal' => 4, 'caEmail' => 5, 'caRutinas' => 6, 'caExtension' => 7, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_LOGIN => 0, self::CA_NOMBRE => 1, self::CA_CARGO => 2, self::CA_DEPARTAMENTO => 3, self::CA_SUCURSAL => 4, self::CA_EMAIL => 5, self::CA_RUTINAS => 6, self::CA_EXTENSION => 7, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_login' => 0, 'ca_nombre' => 1, 'ca_cargo' => 2, 'ca_departamento' => 3, 'ca_sucursal' => 4, 'ca_email' => 5, 'ca_rutinas' => 6, 'ca_extension' => 7, ),
+		BasePeer::TYPE_PHPNAME => array ('CaLogin' => 0, 'CaNombre' => 1, 'CaCargo' => 2, 'CaDepartamento' => 3, 'CaIdsucursal' => 4, 'CaEmail' => 5, 'CaRutinas' => 6, 'CaExtension' => 7, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caLogin' => 0, 'caNombre' => 1, 'caCargo' => 2, 'caDepartamento' => 3, 'caIdsucursal' => 4, 'caEmail' => 5, 'caRutinas' => 6, 'caExtension' => 7, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_LOGIN => 0, self::CA_NOMBRE => 1, self::CA_CARGO => 2, self::CA_DEPARTAMENTO => 3, self::CA_IDSUCURSAL => 4, self::CA_EMAIL => 5, self::CA_RUTINAS => 6, self::CA_EXTENSION => 7, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_login' => 0, 'ca_nombre' => 1, 'ca_cargo' => 2, 'ca_departamento' => 3, 'ca_idsucursal' => 4, 'ca_email' => 5, 'ca_rutinas' => 6, 'ca_extension' => 7, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
@@ -177,7 +177,7 @@ abstract class BaseUsuarioPeer {
 
 		$criteria->addSelectColumn(UsuarioPeer::CA_DEPARTAMENTO);
 
-		$criteria->addSelectColumn(UsuarioPeer::CA_SUCURSAL);
+		$criteria->addSelectColumn(UsuarioPeer::CA_IDSUCURSAL);
 
 		$criteria->addSelectColumn(UsuarioPeer::CA_EMAIL);
 
@@ -461,7 +461,7 @@ abstract class BaseUsuarioPeer {
 			$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(UsuarioPeer::CA_SUCURSAL,), array(SucursalPeer::CA_NOMBRE,), $join_behavior);
+		$criteria->addJoin(array(UsuarioPeer::CA_IDSUCURSAL,), array(SucursalPeer::CA_IDSUCURSAL,), $join_behavior);
 
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -497,7 +497,7 @@ abstract class BaseUsuarioPeer {
 		$startcol = (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
 		SucursalPeer::addSelectColumns($c);
 
-		$c->addJoin(array(UsuarioPeer::CA_SUCURSAL,), array(SucursalPeer::CA_NOMBRE,), $join_behavior);
+		$c->addJoin(array(UsuarioPeer::CA_IDSUCURSAL,), array(SucursalPeer::CA_IDSUCURSAL,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -578,7 +578,7 @@ abstract class BaseUsuarioPeer {
 			$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(UsuarioPeer::CA_SUCURSAL,), array(SucursalPeer::CA_NOMBRE,), $join_behavior);
+		$criteria->addJoin(array(UsuarioPeer::CA_IDSUCURSAL,), array(SucursalPeer::CA_IDSUCURSAL,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -615,7 +615,7 @@ abstract class BaseUsuarioPeer {
 		SucursalPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (SucursalPeer::NUM_COLUMNS - SucursalPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(array(UsuarioPeer::CA_SUCURSAL,), array(SucursalPeer::CA_NOMBRE,), $join_behavior);
+		$c->addJoin(array(UsuarioPeer::CA_IDSUCURSAL,), array(SucursalPeer::CA_IDSUCURSAL,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 

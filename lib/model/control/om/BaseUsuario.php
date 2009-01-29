@@ -45,10 +45,10 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	protected $ca_departamento;
 
 	/**
-	 * The value for the ca_sucursal field.
+	 * The value for the ca_idsucursal field.
 	 * @var        string
 	 */
-	protected $ca_sucursal;
+	protected $ca_idsucursal;
 
 	/**
 	 * The value for the ca_email field.
@@ -188,13 +188,13 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [ca_sucursal] column value.
+	 * Get the [ca_idsucursal] column value.
 	 * 
 	 * @return     string
 	 */
-	public function getCaSucursal()
+	public function getCaIdsucursal()
 	{
-		return $this->ca_sucursal;
+		return $this->ca_idsucursal;
 	}
 
 	/**
@@ -308,28 +308,28 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	} // setCaDepartamento()
 
 	/**
-	 * Set the value of [ca_sucursal] column.
+	 * Set the value of [ca_idsucursal] column.
 	 * 
 	 * @param      string $v new value
 	 * @return     Usuario The current object (for fluent API support)
 	 */
-	public function setCaSucursal($v)
+	public function setCaIdsucursal($v)
 	{
 		if ($v !== null) {
 			$v = (string) $v;
 		}
 
-		if ($this->ca_sucursal !== $v) {
-			$this->ca_sucursal = $v;
-			$this->modifiedColumns[] = UsuarioPeer::CA_SUCURSAL;
+		if ($this->ca_idsucursal !== $v) {
+			$this->ca_idsucursal = $v;
+			$this->modifiedColumns[] = UsuarioPeer::CA_IDSUCURSAL;
 		}
 
-		if ($this->aSucursal !== null && $this->aSucursal->getCaNombre() !== $v) {
+		if ($this->aSucursal !== null && $this->aSucursal->getCaIdsucursal() !== $v) {
 			$this->aSucursal = null;
 		}
 
 		return $this;
-	} // setCaSucursal()
+	} // setCaIdsucursal()
 
 	/**
 	 * Set the value of [ca_email] column.
@@ -432,7 +432,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->ca_nombre = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
 			$this->ca_cargo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->ca_departamento = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_sucursal = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_idsucursal = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->ca_email = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
 			$this->ca_rutinas = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
 			$this->ca_extension = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
@@ -468,7 +468,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	public function ensureConsistency()
 	{
 
-		if ($this->aSucursal !== null && $this->ca_sucursal !== $this->aSucursal->getCaNombre()) {
+		if ($this->aSucursal !== null && $this->ca_idsucursal !== $this->aSucursal->getCaIdsucursal()) {
 			$this->aSucursal = null;
 		}
 	} // ensureConsistency
@@ -835,7 +835,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				return $this->getCaDepartamento();
 				break;
 			case 4:
-				return $this->getCaSucursal();
+				return $this->getCaIdsucursal();
 				break;
 			case 5:
 				return $this->getCaEmail();
@@ -871,7 +871,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$keys[1] => $this->getCaNombre(),
 			$keys[2] => $this->getCaCargo(),
 			$keys[3] => $this->getCaDepartamento(),
-			$keys[4] => $this->getCaSucursal(),
+			$keys[4] => $this->getCaIdsucursal(),
 			$keys[5] => $this->getCaEmail(),
 			$keys[6] => $this->getCaRutinas(),
 			$keys[7] => $this->getCaExtension(),
@@ -919,7 +919,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$this->setCaDepartamento($value);
 				break;
 			case 4:
-				$this->setCaSucursal($value);
+				$this->setCaIdsucursal($value);
 				break;
 			case 5:
 				$this->setCaEmail($value);
@@ -958,7 +958,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[1], $arr)) $this->setCaNombre($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaCargo($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaDepartamento($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaSucursal($arr[$keys[4]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaIdsucursal($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaEmail($arr[$keys[5]]);
 		if (array_key_exists($keys[6], $arr)) $this->setCaRutinas($arr[$keys[6]]);
 		if (array_key_exists($keys[7], $arr)) $this->setCaExtension($arr[$keys[7]]);
@@ -977,7 +977,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(UsuarioPeer::CA_NOMBRE)) $criteria->add(UsuarioPeer::CA_NOMBRE, $this->ca_nombre);
 		if ($this->isColumnModified(UsuarioPeer::CA_CARGO)) $criteria->add(UsuarioPeer::CA_CARGO, $this->ca_cargo);
 		if ($this->isColumnModified(UsuarioPeer::CA_DEPARTAMENTO)) $criteria->add(UsuarioPeer::CA_DEPARTAMENTO, $this->ca_departamento);
-		if ($this->isColumnModified(UsuarioPeer::CA_SUCURSAL)) $criteria->add(UsuarioPeer::CA_SUCURSAL, $this->ca_sucursal);
+		if ($this->isColumnModified(UsuarioPeer::CA_IDSUCURSAL)) $criteria->add(UsuarioPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 		if ($this->isColumnModified(UsuarioPeer::CA_EMAIL)) $criteria->add(UsuarioPeer::CA_EMAIL, $this->ca_email);
 		if ($this->isColumnModified(UsuarioPeer::CA_RUTINAS)) $criteria->add(UsuarioPeer::CA_RUTINAS, $this->ca_rutinas);
 		if ($this->isColumnModified(UsuarioPeer::CA_EXTENSION)) $criteria->add(UsuarioPeer::CA_EXTENSION, $this->ca_extension);
@@ -1041,7 +1041,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 
 		$copyObj->setCaDepartamento($this->ca_departamento);
 
-		$copyObj->setCaSucursal($this->ca_sucursal);
+		$copyObj->setCaIdsucursal($this->ca_idsucursal);
 
 		$copyObj->setCaEmail($this->ca_email);
 
@@ -1136,9 +1136,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	public function setSucursal(Sucursal $v = null)
 	{
 		if ($v === null) {
-			$this->setCaSucursal(NULL);
+			$this->setCaIdsucursal(NULL);
 		} else {
-			$this->setCaSucursal($v->getCaNombre());
+			$this->setCaIdsucursal($v->getCaIdsucursal());
 		}
 
 		$this->aSucursal = $v;
@@ -1162,9 +1162,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	 */
 	public function getSucursal(PropelPDO $con = null)
 	{
-		if ($this->aSucursal === null && (($this->ca_sucursal !== "" && $this->ca_sucursal !== null))) {
+		if ($this->aSucursal === null && (($this->ca_idsucursal !== "" && $this->ca_idsucursal !== null))) {
 			$c = new Criteria(SucursalPeer::DATABASE_NAME);
-			$c->add(SucursalPeer::CA_NOMBRE, $this->ca_sucursal);
+			$c->add(SucursalPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 			$this->aSucursal = SucursalPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
 			   guarantee the related object contains a reference

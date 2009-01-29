@@ -891,7 +891,7 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 			   $this->collUsuarios = array();
 			} else {
 
-				$criteria->add(UsuarioPeer::CA_SUCURSAL, $this->ca_nombre);
+				$criteria->add(UsuarioPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 
 				UsuarioPeer::addSelectColumns($criteria);
 				$this->collUsuarios = UsuarioPeer::doSelect($criteria, $con);
@@ -904,7 +904,7 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(UsuarioPeer::CA_SUCURSAL, $this->ca_nombre);
+				$criteria->add(UsuarioPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 
 				UsuarioPeer::addSelectColumns($criteria);
 				if (!isset($this->lastUsuarioCriteria) || !$this->lastUsuarioCriteria->equals($criteria)) {
@@ -944,7 +944,7 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 				$count = 0;
 			} else {
 
-				$criteria->add(UsuarioPeer::CA_SUCURSAL, $this->ca_nombre);
+				$criteria->add(UsuarioPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 
 				$count = UsuarioPeer::doCount($criteria, $con);
 			}
@@ -956,7 +956,7 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 				// one, just return count of the collection.
 
 
-				$criteria->add(UsuarioPeer::CA_SUCURSAL, $this->ca_nombre);
+				$criteria->add(UsuarioPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 
 				if (!isset($this->lastUsuarioCriteria) || !$this->lastUsuarioCriteria->equals($criteria)) {
 					$count = UsuarioPeer::doCount($criteria, $con);

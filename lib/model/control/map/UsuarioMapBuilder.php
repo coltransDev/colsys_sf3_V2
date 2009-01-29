@@ -72,7 +72,7 @@ class UsuarioMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_DEPARTAMENTO', 'CaDepartamento', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_SUCURSAL', 'CaSucursal', 'VARCHAR', 'control.tb_sucursales', 'CA_NOMBRE', false, null);
+		$tMap->addForeignKey('CA_IDSUCURSAL', 'CaIdsucursal', 'VARCHAR', 'control.tb_sucursales', 'CA_IDSUCURSAL', false, null);
 
 		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'VARCHAR', false, null);
 
