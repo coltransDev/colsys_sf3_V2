@@ -1,8 +1,9 @@
 <?
 
+
 $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
 
- 
+
 $pdf = new PDF (  );
 $pdf->Open ();  
 $pdf->setColtransHeader ( true );
@@ -81,7 +82,9 @@ $productos = $cotizacion->getCotProductos( $c );
 // ======================== Impresión por Item ======================== //
 
 $tabla = array();
-$i=0;$tituloTransporte = null;
+$i=0;
+
+$tituloTransporte = null;
 foreach( $productos as $producto ):
 	$imprimirObservaciones = false;
 	$imprimirRecargos = false;
@@ -93,11 +96,30 @@ foreach( $productos as $producto ):
 	}
 	
 	if ($producto->getCaImprimir() == 'Por Item'):
-		// Control Impresión		$pdf->beginGroup();		if( $tituloTransporte != $producto->getCaTransporte() ){			$tituloTransporte = $producto->getCaTransporte();						$pdf->Ln(4);			$pdf->SetFont('Arial','B',9);			$pdf->Cell(0, 4, 'TRANSPORTE DE CARGA INTERNACIONAL '.strtoupper($tituloTransporte), 0, 1, 'L');			$pdf->Ln(2);			$age_imp = true;			$pdf->SetFont('Arial','B',9);			$i=0; //Controla el espacio entre producto y producto		}				
+		// Control Impresión
+		$pdf->beginGroup();
+		if( $tituloTransporte != $producto->getCaTransporte() ){
+			$tituloTransporte = $producto->getCaTransporte();
+			
+			$pdf->Ln(4);
+			$pdf->SetFont('Arial','B',9);
+			$pdf->Cell(0, 4, 'TRANSPORTE DE CARGA INTERNACIONAL '.strtoupper($tituloTransporte), 0, 1, 'L');
+			$pdf->Ln(2);
+			$age_imp = true;
+			$pdf->SetFont('Arial','B',9);
+			$i=0; //Controla el espacio entre producto y producto
+		}		
+		
 		$linea = $producto->getTransportador();
 		
 		$tabla = array();
-		if( $i++==0 ){			$pdf->Ln(2);		}else{			$pdf->Ln(6);		}		$pdf->SetFont('Arial','B',8);				$pdf->SetWidths(array(170));
+		if( $i++==0 ){
+			$pdf->Ln(2);
+		}else{
+			$pdf->Ln(6);
+		}
+		$pdf->SetFont('Arial','B',8);		
+		$pdf->SetWidths(array(170));
 		$pdf->SetAligns(array("L"));
 		$pdf->SetStyles(array("B"));
 		$pdf->Row(array('Producto : '.$producto->getCaProducto()));
@@ -140,12 +162,15 @@ foreach( $productos as $producto ):
 				$tabla[$opcion->getCaIdOpcion()]["observaciones"] = $opcion->getCaObservaciones();
 				$imprimirObservaciones = true;
 			}
-		}								
+		}	
+		
+					
 		
 			
 		//Imprime los detalles de la tabla (Opciones)
 		if( count($tabla)>0 ){
-						$pdf->Ln(2);
+			
+			$pdf->Ln(2);
 			$titulos = array('Concepto', 'Tarifas');
 			
 			if ($imprimirRecargos){
@@ -187,7 +212,8 @@ foreach( $productos as $producto ):
 				$pdf->SetFills(array_fill(0, 4, 0));
 				$pdf->Row($item);
 			}
-					}
+			
+		}
 		$pdf->flushGroup();
 		$pdf->Ln(2);
 		$widths = array();
@@ -201,7 +227,15 @@ foreach( $productos as $producto ):
 		
 		
 		if( count($recargosGen)>0 ){
-			$imprimirObservaciones=false;			foreach( $recargosGen as $recargo ){				if( $recargo->getCaObservaciones() ){					$imprimirObservaciones=true;				}			}					$pdf->beginGroup(); 			$pdf->Ln(2);
+			$imprimirObservaciones=false;
+			foreach( $recargosGen as $recargo ){
+				if( $recargo->getCaObservaciones() ){
+					$imprimirObservaciones=true;
+				}
+			}
+		
+			$pdf->beginGroup(); 
+			$pdf->Ln(2);
 			$pdf->SetFont('Arial','B',9);
 			$pdf->Cell(0, 4, 'RECARGOS EN ORIGEN ', 0, 1, 'L', 0);
 			$pdf->Ln(2);
@@ -233,7 +267,10 @@ foreach( $productos as $producto ):
 				}
 				$pdf->Row($row);
 			}
-			$pdf->Ln(2);			$pdf->flushGroup(); 					}
+			$pdf->Ln(2);
+			$pdf->flushGroup(); 
+			
+		}
 			
 		
 		
@@ -468,7 +505,53 @@ if( count($tablaTrayectos)>0 ){
 foreach( $grupos as $key => $grupo ){
 	foreach( $grupo as $modalidad ){
 	
-		$recargosLoc = $cotizacion->getRecargosLocales($key, $modalidad);		if( count($recargosLoc)>0 ){			$imprimirObservaciones=false;			foreach( $recargosLoc as $recargo ){				if( $recargo->getCaObservaciones() ){					$imprimirObservaciones=true;				}			}					$pdf->beginGroup(); 			$pdf->Ln(4);			$pdf->SetFont('Arial','B',9);			$pdf->Cell(0, 4, 'RECARGOS LOCALES '.strtoupper($key).' '.strtoupper($modalidad), 0, 1, 'L', 0);			$pdf->Ln(2);			$pdf->SetFont('Arial','',7);						$titu_mem= array('Concepto',  'Tarifa' );						if( $imprimirObservaciones ){				array_push( $titu_mem, 'Observaciones' );				$width_mem= array(55, 53, 62);			}else{				$width_mem= array(80, 90);			}									$pdf->SetWidths($width_mem);			$pdf->SetAligns(array_fill(0, count($width_mem), "C"));			$pdf->SetStyles(array_fill(0, count($width_mem), "B"));			$pdf->SetFills(array_fill(0, count($width_mem), 1));			$pdf->Row($titu_mem);						$pdf->SetAligns(array_fill(0, count($width_mem), "L"));			$pdf->SetStyles(array_fill(0, count($width_mem), ""));			$pdf->SetFills(array_fill(0, count($width_mem), 0));						foreach( $recargosLoc as $recargo ){				$row = array( $recargo->getTiporecargo()->getCarecargo(), $recargo->getTextoTarifa() );				if( $imprimirObservaciones ){					array_push( $row,  $recargo->getCaObservaciones() );				}				$pdf->Row($row);			}			$pdf->flushGroup(); 					}	}
+		$recargosLoc = $cotizacion->getRecargosLocales($key, $modalidad);
+
+		if( count($recargosLoc)>0 ){
+			$imprimirObservaciones=false;
+			foreach( $recargosLoc as $recargo ){
+				if( $recargo->getCaObservaciones() ){
+					$imprimirObservaciones=true;
+				}
+			}
+		
+			$pdf->beginGroup(); 
+			$pdf->Ln(4);
+			$pdf->SetFont('Arial','B',9);
+			$pdf->Cell(0, 4, 'RECARGOS LOCALES '.strtoupper($key).' '.strtoupper($modalidad), 0, 1, 'L', 0);
+			$pdf->Ln(2);
+			$pdf->SetFont('Arial','',7);
+			
+			$titu_mem= array('Concepto',  'Tarifa' );			
+			if( $imprimirObservaciones ){
+				array_push( $titu_mem, 'Observaciones' );
+				$width_mem= array(55, 53, 62);
+			}else{
+				$width_mem= array(80, 90);
+			}
+			
+			
+			$pdf->SetWidths($width_mem);
+			$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
+			$pdf->SetStyles(array_fill(0, count($width_mem), "B"));
+			$pdf->SetFills(array_fill(0, count($width_mem), 1));
+			$pdf->Row($titu_mem);
+			
+			$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+			$pdf->SetStyles(array_fill(0, count($width_mem), ""));
+			$pdf->SetFills(array_fill(0, count($width_mem), 0));
+			
+			foreach( $recargosLoc as $recargo ){
+				$row = array( $recargo->getTiporecargo()->getCarecargo(), $recargo->getTextoTarifa() );
+				if( $imprimirObservaciones ){
+					array_push( $row,  $recargo->getCaObservaciones() );
+				}
+				$pdf->Row($row);
+			}
+			$pdf->flushGroup(); 
+			
+		}
+	}
 }
 
 // ======================== Continuación de viaje ======================== //
@@ -603,7 +686,35 @@ if ( count($seguros)>0 ) {
 		
 		if($seguro->getCaTransporte()==Constantes::MARITIMO){
 			$linea .= "marítima";
-		}*/		/*$linea .= " sobre valor asegurado "..(($seguro->getCaObtencion()!=0)?" + Obtención de Póliza ".$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaObtencion()):"").((strlen($seguro->getCaObservaciones())!=0)?" ".$seguro->getCaObservaciones():".");*/		//$pdf->MultiCell(0, 4, $linea, 0, 1);										$pdf->SetAligns(array_fill(0, count($width_mem), "L"));		$pdf->SetStyles(array_fill(0, count($width_mem), ""));		$pdf->SetFills(array_fill(0, count($width_mem), 0));						$row = array( 					($seguro->getCaPrimaTip()=="%")?Utils::formatNumber($seguro->getCaPrimaVlr())." ".$seguro->getCaPrimaTip():$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaVlr())." sobre valor asegurado" 					 ,					($seguro->getCaPrimaMin()!=0)?$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaMin()):" "					,					($seguro->getCaObtencion()!=0)?$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaObtencion()):""							 );		/*if( $imprimirObservaciones ){			array_push( $row,  $recargo->getCaObservaciones() );		}*/		$pdf->Row($row);										$i++;
+		}*/
+		/*$linea .= " sobre valor asegurado "..(($seguro->getCaObtencion()!=0)?" + Obtención de Póliza ".$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaObtencion()):"").((strlen($seguro->getCaObservaciones())!=0)?" ".$seguro->getCaObservaciones():".");*/
+		//$pdf->MultiCell(0, 4, $linea, 0, 1);
+		
+		
+		
+		
+		$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+		$pdf->SetStyles(array_fill(0, count($width_mem), ""));
+		$pdf->SetFills(array_fill(0, count($width_mem), 0));
+		
+		
+		$row = array( 
+					($seguro->getCaPrimaTip()=="%")?Utils::formatNumber($seguro->getCaPrimaVlr())." ".$seguro->getCaPrimaTip():$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaVlr())." sobre valor asegurado" 
+					 ,
+					($seguro->getCaPrimaMin()!=0)?$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaMin()):" "
+					,
+					($seguro->getCaObtencion()!=0)?$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaObtencion()):""
+					
+		 );
+		/*if( $imprimirObservaciones ){
+			array_push( $row,  $recargo->getCaObservaciones() );
+		}*/
+		$pdf->Row($row);
+		
+		
+		
+		
+		$i++;
 	}
 	$pdf->flushGroup();
 }
@@ -639,7 +750,9 @@ if( $cotizacion->getCaDatosag() ){
 			$pdf->MultiCell(0, 4, 'A continuación relacionamos los datos de nuestros agentes encargados de coordinar los despachos:',0,1);
 			$imprimiotitulo = true;
 		}
-						$pdf->Ln(2);
+		
+		
+		$pdf->Ln(2);
 		$idagente = "";
 		$idtrafico = "";
 		foreach( $contactosAgente as $contacto ){
@@ -647,7 +760,11 @@ if( $cotizacion->getCaDatosag() ){
 			$agente = $contacto->getAgente();
 			$ciudad = $contacto->getCiudad();
 			
-			if( !$imprimiotitulo ){				$pdf->beginGroup(); 			}						if( $idtrafico!=$ciudad->getCaIdtrafico() ){
+			if( !$imprimiotitulo ){
+				$pdf->beginGroup(); 
+			}
+			
+			if( $idtrafico!=$ciudad->getCaIdtrafico() ){
 				$idtrafico=$ciudad->getCaIdtrafico();
 				$trafico = $ciudad->getTrafico();
 				$pdf->Ln(1);
