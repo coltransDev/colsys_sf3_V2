@@ -28,7 +28,7 @@ $enBlanco = $cotizacion->enBlanco();
 							
 						 ));
 	$contactos = $cotizacion->getCliente()->getCaConfirmar();		
-	include_component("general", "formEmail", array("contacts"=>$contactos));
+	include_component("general", "formEmail", array("subject"=>$asunto,"message"=>$mensaje,"contacts"=>$contactos));
 	?>
 	<br />
 	
