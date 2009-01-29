@@ -1189,6 +1189,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 		$c = new Criteria();
 		$c->add( TrayectoPeer::CA_IMPOEXPO, "Exportación" );
 		$c->add( TrayectoPeer::CA_TRANSPORTE , "Aéreo" );
+		$c->add( TrayectoPeer::CA_MODALIDAD , "DIRECTO" );
 
 		/*$c->addJoin( TrayectoPeer::CA_ORIGEN , CiudadPeer::CA_IDCIUDAD );
 		$c->add( CiudadPeer::CA_IDTRAFICO, "DE-049" );*/
@@ -1225,6 +1226,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 
 				$conceptosStr.=$flete->getCaIdConcepto();
 			}
+			
+			//$conceptosStr.="|22|23|24|25|26|27|28";
 			$conceptosArr = explode("|",$conceptosStr);
 			$conceptosArr = array_unique($conceptosArr);
 			$conceptosStr=implode("|",$conceptosArr);
