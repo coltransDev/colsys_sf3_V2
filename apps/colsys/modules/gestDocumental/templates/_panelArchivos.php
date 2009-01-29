@@ -201,6 +201,7 @@ echo (isset($object)&&$object)?"var ".$object." = ":"";
 				records =  fv.getSelectedRecords();			
 				for( var i=0;i< records.length; i++){				
 					popup( "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo );
+					//document.location.href = "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo;
 				}
 			}
 		}

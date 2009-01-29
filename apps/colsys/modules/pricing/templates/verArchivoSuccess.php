@@ -1,8 +1,13 @@
 <?
 header('Content-Disposition: attachment; filename="'.$archivo->getCaNombre().'"');
 header('content-type: "'.$archivo->getCaTipo().'"');
-header('content-length: "'.$archivo->getCaTamano().'"');
+header('Content-Length: '.$archivo->getCaTamano());
 
-$archivo->getCaDatos()->dump();
+
+$fp = $archivo->getCaDatos();
+if ($fp !== null) {
+  fpassthru($fp);
+}
+
 exit();
 ?>

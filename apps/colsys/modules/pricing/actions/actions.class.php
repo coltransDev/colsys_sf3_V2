@@ -1241,7 +1241,7 @@ class pricingActions extends sfActions
 	public function executeVerArchivo(){
 		$this->archivo = PricArchivoPeer::retrieveByPk( $this->getRequestParameter("idarchivo") );
 		$this->forward404Unless( $this->archivo );				
-    	
+    	session_cache_limiter('public'); 
 	}
 	
 	/*
