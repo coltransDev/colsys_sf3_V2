@@ -44,6 +44,12 @@ float:left;
 background-color:#2E4B66;
 }
 
+.headerspace{
+	margin: 0px;
+}
+
+
+
 .footer {
 border-top:1px solid #e4e4e4;
 padding:12px 0;
