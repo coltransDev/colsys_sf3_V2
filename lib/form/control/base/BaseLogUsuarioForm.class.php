@@ -3,9 +3,10 @@
 /**
  * LogUsuario form base class.
  *
- * @package    form
- * @subpackage log_usuario
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseLogUsuarioForm extends BaseFormPropel
 {
@@ -22,7 +23,7 @@ class BaseLogUsuarioForm extends BaseFormPropel
     $this->setValidators(array(
       'ca_idlog'  => new sfValidatorPropelChoice(array('model' => 'LogUsuario', 'column' => 'ca_idlog', 'required' => false)),
       'ca_login'  => new sfValidatorString(array('max_length' => 50, 'required' => false)),
-      'ca_event'  => new sfValidatorString(array('required' => false)),
+      'ca_event'  => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'ca_module' => new sfValidatorString(array('max_length' => 100, 'required' => false)),
       'ca_action' => new sfValidatorString(array('max_length' => 100, 'required' => false)),
     ));

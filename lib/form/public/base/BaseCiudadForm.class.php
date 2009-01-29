@@ -3,9 +3,10 @@
 /**
  * Ciudad form base class.
  *
- * @package    form
- * @subpackage ciudad
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseCiudadForm extends BaseFormPropel
 {
@@ -14,7 +15,7 @@ class BaseCiudadForm extends BaseFormPropel
     $this->setWidgets(array(
       'ca_idciudad'  => new sfWidgetFormInputHidden(),
       'ca_ciudad'    => new sfWidgetFormInput(),
-      'ca_idtrafico' => new sfWidgetFormPropelSelect(array('model' => 'Trafico', 'add_empty' => true)),
+      'ca_idtrafico' => new sfWidgetFormPropelChoice(array('model' => 'Trafico', 'add_empty' => true)),
       'ca_puerto'    => new sfWidgetFormInput(),
     ));
 

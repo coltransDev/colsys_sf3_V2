@@ -3,9 +3,10 @@
 /**
  * InoClientesAir form base class.
  *
- * @package    form
- * @subpackage ino_clientes_air
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseInoClientesAirForm extends BaseFormPropel
 {
@@ -15,8 +16,8 @@ class BaseInoClientesAirForm extends BaseFormPropel
       'ca_referencia'     => new sfWidgetFormInputHidden(),
       'ca_idcliente'      => new sfWidgetFormInputHidden(),
       'ca_hawb'           => new sfWidgetFormInputHidden(),
-      'ca_idreporte'      => new sfWidgetFormPropelSelect(array('model' => 'Reporte', 'add_empty' => true)),
-      'ca_idproveedor'    => new sfWidgetFormPropelSelect(array('model' => 'Tercero', 'add_empty' => true)),
+      'ca_idreporte'      => new sfWidgetFormPropelChoice(array('model' => 'Reporte', 'add_empty' => true)),
+      'ca_idproveedor'    => new sfWidgetFormPropelChoice(array('model' => 'Tercero', 'add_empty' => true)),
       'ca_proveedor'      => new sfWidgetFormInput(),
       'ca_numpiezas'      => new sfWidgetFormInput(),
       'ca_peso'           => new sfWidgetFormInput(),

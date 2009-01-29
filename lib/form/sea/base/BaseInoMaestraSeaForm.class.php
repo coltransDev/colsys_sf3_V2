@@ -3,9 +3,10 @@
 /**
  * InoMaestraSea form base class.
  *
- * @package    form
- * @subpackage ino_maestra_sea
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseInoMaestraSeaForm extends BaseFormPropel
 {
@@ -20,7 +21,7 @@ class BaseInoMaestraSeaForm extends BaseFormPropel
       'ca_fchembarque'         => new sfWidgetFormDate(),
       'ca_fcharribo'           => new sfWidgetFormDate(),
       'ca_modalidad'           => new sfWidgetFormInput(),
-      'ca_idlinea'             => new sfWidgetFormPropelSelect(array('model' => 'Transportador', 'add_empty' => true)),
+      'ca_idlinea'             => new sfWidgetFormPropelChoice(array('model' => 'Transportador', 'add_empty' => true)),
       'ca_motonave'            => new sfWidgetFormInput(),
       'ca_ciclo'               => new sfWidgetFormInput(),
       'ca_mbls'                => new sfWidgetFormInput(),
@@ -55,8 +56,8 @@ class BaseInoMaestraSeaForm extends BaseFormPropel
       'ca_usuconfirma_otm'     => new sfWidgetFormInput(),
       'ca_provisional'         => new sfWidgetFormInputCheckbox(),
       'ca_sitiodevolucion'     => new sfWidgetFormInput(),
-      'ino_avisos_sea_list'    => new sfWidgetFormPropelSelectMany(array('model' => 'Cliente')),
-      'ino_ingresos_sea_list'  => new sfWidgetFormPropelSelectMany(array('model' => 'Cliente')),
+      'ino_avisos_sea_list'    => new sfWidgetFormPropelChoiceMany(array('model' => 'Cliente')),
+      'ino_ingresos_sea_list'  => new sfWidgetFormPropelChoiceMany(array('model' => 'Cliente')),
     ));
 
     $this->setValidators(array(

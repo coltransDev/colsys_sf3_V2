@@ -3,9 +3,10 @@
 /**
  * Usuario form base class.
  *
- * @package    form
- * @subpackage usuario
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseUsuarioForm extends BaseFormPropel
 {
@@ -16,7 +17,7 @@ class BaseUsuarioForm extends BaseFormPropel
       'ca_nombre'       => new sfWidgetFormInput(),
       'ca_cargo'        => new sfWidgetFormInput(),
       'ca_departamento' => new sfWidgetFormInput(),
-      'ca_sucursal'     => new sfWidgetFormPropelSelect(array('model' => 'Sucursal', 'add_empty' => true)),
+      'ca_sucursal'     => new sfWidgetFormPropelChoice(array('model' => 'Sucursal', 'add_empty' => true)),
       'ca_email'        => new sfWidgetFormInput(),
       'ca_rutinas'      => new sfWidgetFormInput(),
       'ca_extension'    => new sfWidgetFormInput(),

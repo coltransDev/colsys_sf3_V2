@@ -3,9 +3,10 @@
 /**
  * EmailAttachment form base class.
  *
- * @package    form
- * @subpackage email_attachment
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseEmailAttachmentForm extends BaseFormPropel
 {
@@ -13,7 +14,7 @@ class BaseEmailAttachmentForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'ca_idattachment' => new sfWidgetFormInputHidden(),
-      'ca_idemail'      => new sfWidgetFormPropelSelect(array('model' => 'Email', 'add_empty' => false)),
+      'ca_idemail'      => new sfWidgetFormPropelChoice(array('model' => 'Email', 'add_empty' => false)),
       'ca_extension'    => new sfWidgetFormInput(),
       'ca_header_file'  => new sfWidgetFormInput(),
       'ca_filesize'     => new sfWidgetFormInput(),

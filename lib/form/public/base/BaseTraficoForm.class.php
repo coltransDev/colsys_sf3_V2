@@ -3,9 +3,10 @@
 /**
  * Trafico form base class.
  *
- * @package    form
- * @subpackage trafico
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseTraficoForm extends BaseFormPropel
 {
@@ -16,10 +17,9 @@ class BaseTraficoForm extends BaseFormPropel
       'ca_nombre'    => new sfWidgetFormInput(),
       'ca_bandera'   => new sfWidgetFormInput(),
       'ca_idmoneda'  => new sfWidgetFormInput(),
-      'ca_idgrupo'   => new sfWidgetFormInput(),
+      'ca_idgrupo'   => new sfWidgetFormPropelChoice(array('model' => 'TraficoGrupo', 'add_empty' => true)),
       'ca_link'      => new sfWidgetFormInput(),
       'ca_conceptos' => new sfWidgetFormInput(),
-      'ca_recargos'  => new sfWidgetFormInput(),
     ));
 
     $this->setValidators(array(
@@ -27,10 +27,9 @@ class BaseTraficoForm extends BaseFormPropel
       'ca_nombre'    => new sfValidatorString(array('max_length' => 40, 'required' => false)),
       'ca_bandera'   => new sfValidatorString(array('max_length' => 30, 'required' => false)),
       'ca_idmoneda'  => new sfValidatorString(array('max_length' => 3, 'required' => false)),
-      'ca_idgrupo'   => new sfValidatorInteger(array('required' => false)),
+      'ca_idgrupo'   => new sfValidatorPropelChoice(array('model' => 'TraficoGrupo', 'column' => 'ca_idgrupo', 'required' => false)),
       'ca_link'      => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'ca_conceptos' => new sfValidatorString(array('max_length' => 255, 'required' => false)),
-      'ca_recargos'  => new sfValidatorString(array('max_length' => 255, 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('trafico[%s]');

@@ -3,9 +3,10 @@
 /**
  * Cliente form base class.
  *
- * @package    form
- * @subpackage cliente
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseClienteForm extends BaseFormPropel
 {
@@ -32,10 +33,13 @@ class BaseClienteForm extends BaseFormPropel
       'ca_fax'                => new sfWidgetFormInput(),
       'ca_preferencias'       => new sfWidgetFormInput(),
       'ca_confirmar'          => new sfWidgetFormInput(),
-      'ca_idciudad'           => new sfWidgetFormPropelSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ino_ingresos_air_list' => new sfWidgetFormPropelSelectMany(array('model' => 'InoMaestraAir')),
-      'ino_avisos_sea_list'   => new sfWidgetFormPropelSelectMany(array('model' => 'InoMaestraSea')),
-      'ino_ingresos_sea_list' => new sfWidgetFormPropelSelectMany(array('model' => 'InoMaestraSea')),
+      'ca_idciudad'           => new sfWidgetFormPropelChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_idgrupo'            => new sfWidgetFormInput(),
+      'ca_listaclinton'       => new sfWidgetFormInput(),
+      'ca_fchcircular'        => new sfWidgetFormDate(),
+      'ino_ingresos_air_list' => new sfWidgetFormPropelChoiceMany(array('model' => 'InoMaestraAir')),
+      'ino_avisos_sea_list'   => new sfWidgetFormPropelChoiceMany(array('model' => 'InoMaestraSea')),
+      'ino_ingresos_sea_list' => new sfWidgetFormPropelChoiceMany(array('model' => 'InoMaestraSea')),
     ));
 
     $this->setValidators(array(
@@ -60,6 +64,9 @@ class BaseClienteForm extends BaseFormPropel
       'ca_preferencias'       => new sfValidatorString(array('required' => false)),
       'ca_confirmar'          => new sfValidatorString(array('required' => false)),
       'ca_idciudad'           => new sfValidatorPropelChoice(array('model' => 'Ciudad', 'column' => 'ca_idciudad', 'required' => false)),
+      'ca_idgrupo'            => new sfValidatorInteger(array('required' => false)),
+      'ca_listaclinton'       => new sfValidatorString(array('required' => false)),
+      'ca_fchcircular'        => new sfValidatorDate(array('required' => false)),
       'ino_ingresos_air_list' => new sfValidatorPropelChoiceMany(array('model' => 'InoMaestraAir', 'required' => false)),
       'ino_avisos_sea_list'   => new sfValidatorPropelChoiceMany(array('model' => 'InoMaestraSea', 'required' => false)),
       'ino_ingresos_sea_list' => new sfValidatorPropelChoiceMany(array('model' => 'InoMaestraSea', 'required' => false)),

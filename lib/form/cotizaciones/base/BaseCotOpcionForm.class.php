@@ -3,9 +3,10 @@
 /**
  * CotOpcion form base class.
  *
- * @package    form
- * @subpackage cot_opcion
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseCotOpcionForm extends BaseFormPropel
 {
@@ -13,33 +14,41 @@ class BaseCotOpcionForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'ca_idopcion'       => new sfWidgetFormInputHidden(),
-      'ca_idproducto'     => new sfWidgetFormPropelSelect(array('model' => 'CotProducto', 'add_empty' => false)),
-      'ca_idconcepto'     => new sfWidgetFormPropelSelect(array('model' => 'Concepto', 'add_empty' => true)),
+      'ca_idcotizacion'   => new sfWidgetFormInputHidden(),
+      'ca_idproducto'     => new sfWidgetFormInputHidden(),
+      'ca_idconcepto'     => new sfWidgetFormPropelChoice(array('model' => 'Concepto', 'add_empty' => true)),
+      'ca_valor_tar'      => new sfWidgetFormInput(),
+      'ca_aplica_tar'     => new sfWidgetFormInput(),
+      'ca_valor_min'      => new sfWidgetFormInput(),
+      'ca_aplica_min'     => new sfWidgetFormInput(),
       'ca_idmoneda'       => new sfWidgetFormInput(),
-      'ca_tarifa'         => new sfWidgetFormInput(),
-      'ca_oferta'         => new sfWidgetFormInput(),
       'ca_recargos'       => new sfWidgetFormInput(),
       'ca_observaciones'  => new sfWidgetFormInput(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
       'ca_usucreado'      => new sfWidgetFormInput(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
       'ca_usuactualizado' => new sfWidgetFormInput(),
-      'cot_recargo_list'  => new sfWidgetFormPropelSelectMany(array('model' => 'TipoRecargo')),
+      'ca_consecutivo'    => new sfWidgetFormInput(),
+      'cot_recargo_list'  => new sfWidgetFormPropelChoiceMany(array('model' => 'TipoRecargo')),
     ));
 
     $this->setValidators(array(
       'ca_idopcion'       => new sfValidatorPropelChoice(array('model' => 'CotOpcion', 'column' => 'ca_idopcion', 'required' => false)),
-      'ca_idproducto'     => new sfValidatorPropelChoice(array('model' => 'CotProducto', 'column' => 'ca_idcotizacion')),
+      'ca_idcotizacion'   => new sfValidatorPropelChoice(array('model' => 'CotProducto', 'column' => 'ca_idproducto', 'required' => false)),
+      'ca_idproducto'     => new sfValidatorPropelChoice(array('model' => 'CotProducto', 'column' => 'ca_idproducto', 'required' => false)),
       'ca_idconcepto'     => new sfValidatorPropelChoice(array('model' => 'Concepto', 'column' => 'ca_idconcepto', 'required' => false)),
+      'ca_valor_tar'      => new sfValidatorNumber(array('required' => false)),
+      'ca_aplica_tar'     => new sfValidatorString(array('required' => false)),
+      'ca_valor_min'      => new sfValidatorNumber(array('required' => false)),
+      'ca_aplica_min'     => new sfValidatorString(array('required' => false)),
       'ca_idmoneda'       => new sfValidatorString(array('required' => false)),
-      'ca_tarifa'         => new sfValidatorString(array('required' => false)),
-      'ca_oferta'         => new sfValidatorString(array('required' => false)),
       'ca_recargos'       => new sfValidatorString(array('required' => false)),
       'ca_observaciones'  => new sfValidatorString(array('required' => false)),
       'ca_fchcreado'      => new sfValidatorDateTime(array('required' => false)),
       'ca_usucreado'      => new sfValidatorString(array('required' => false)),
       'ca_fchactualizado' => new sfValidatorDateTime(array('required' => false)),
       'ca_usuactualizado' => new sfValidatorString(array('required' => false)),
+      'ca_consecutivo'    => new sfValidatorInteger(array('required' => false)),
       'cot_recargo_list'  => new sfValidatorPropelChoiceMany(array('model' => 'TipoRecargo', 'required' => false)),
     ));
 

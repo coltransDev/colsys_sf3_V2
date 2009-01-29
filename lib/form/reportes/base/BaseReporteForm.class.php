@@ -3,9 +3,10 @@
 /**
  * Reporte form base class.
  *
- * @package    form
- * @subpackage reporte
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseReporteForm extends BaseFormPropel
 {
@@ -21,10 +22,10 @@ class BaseReporteForm extends BaseFormPropel
       'ca_destino'           => new sfWidgetFormInput(),
       'ca_impoexpo'          => new sfWidgetFormInput(),
       'ca_fchdespacho'       => new sfWidgetFormDate(),
-      'ca_idagente'          => new sfWidgetFormPropelSelect(array('model' => 'Agente', 'add_empty' => true)),
+      'ca_idagente'          => new sfWidgetFormPropelChoice(array('model' => 'Agente', 'add_empty' => true)),
       'ca_incoterms'         => new sfWidgetFormInput(),
       'ca_mercancia_desc'    => new sfWidgetFormInput(),
-      'ca_idproveedor'       => new sfWidgetFormPropelSelect(array('model' => 'Tercero', 'add_empty' => true)),
+      'ca_idproveedor'       => new sfWidgetFormPropelChoice(array('model' => 'Tercero', 'add_empty' => true)),
       'ca_orden_prov'        => new sfWidgetFormInput(),
       'ca_idconcliente'      => new sfWidgetFormInput(),
       'ca_orden_clie'        => new sfWidgetFormInput(),
@@ -43,16 +44,16 @@ class BaseReporteForm extends BaseFormPropel
       'ca_tiempocredito'     => new sfWidgetFormInput(),
       'ca_preferencias_clie' => new sfWidgetFormInput(),
       'ca_instrucciones'     => new sfWidgetFormInput(),
-      'ca_idlinea'           => new sfWidgetFormPropelSelect(array('model' => 'Transportador', 'add_empty' => true)),
+      'ca_idlinea'           => new sfWidgetFormPropelChoice(array('model' => 'Transportador', 'add_empty' => true)),
       'ca_idconsignar'       => new sfWidgetFormInput(),
       'ca_idconsignarmaster' => new sfWidgetFormInput(),
-      'ca_idbodega'          => new sfWidgetFormInput(),
+      'ca_idbodega'          => new sfWidgetFormPropelChoice(array('model' => 'Bodega', 'add_empty' => true)),
       'ca_mastersame'        => new sfWidgetFormInput(),
       'ca_continuacion'      => new sfWidgetFormInput(),
       'ca_continuacion_dest' => new sfWidgetFormInput(),
       'ca_continuacion_conf' => new sfWidgetFormInput(),
       'ca_etapa_actual'      => new sfWidgetFormInput(),
-      'ca_login'             => new sfWidgetFormPropelSelect(array('model' => 'Usuario', 'add_empty' => true)),
+      'ca_login'             => new sfWidgetFormPropelChoice(array('model' => 'Usuario', 'add_empty' => true)),
       'ca_fchcreado'         => new sfWidgetFormDateTime(),
       'ca_usucreado'         => new sfWidgetFormInput(),
       'ca_fchactualizado'    => new sfWidgetFormDateTime(),
@@ -63,9 +64,9 @@ class BaseReporteForm extends BaseFormPropel
       'ca_usucerrado'        => new sfWidgetFormInput(),
       'ca_colmas'            => new sfWidgetFormInput(),
       'ca_propiedades'       => new sfWidgetFormInput(),
-      'rep_aviso_list'       => new sfWidgetFormPropelSelectMany(array('model' => 'Email')),
-      'rep_equipo_list'      => new sfWidgetFormPropelSelectMany(array('model' => 'Concepto')),
-      'rep_status_list'      => new sfWidgetFormPropelSelectMany(array('model' => 'Email')),
+      'rep_aviso_list'       => new sfWidgetFormPropelChoiceMany(array('model' => 'Email')),
+      'rep_equipo_list'      => new sfWidgetFormPropelChoiceMany(array('model' => 'Concepto')),
+      'rep_status_list'      => new sfWidgetFormPropelChoiceMany(array('model' => 'Email')),
     ));
 
     $this->setValidators(array(
@@ -103,7 +104,7 @@ class BaseReporteForm extends BaseFormPropel
       'ca_idlinea'           => new sfValidatorPropelChoice(array('model' => 'Transportador', 'column' => 'ca_idlinea', 'required' => false)),
       'ca_idconsignar'       => new sfValidatorInteger(array('required' => false)),
       'ca_idconsignarmaster' => new sfValidatorInteger(array('required' => false)),
-      'ca_idbodega'          => new sfValidatorInteger(array('required' => false)),
+      'ca_idbodega'          => new sfValidatorPropelChoice(array('model' => 'Bodega', 'column' => 'ca_idbodega', 'required' => false)),
       'ca_mastersame'        => new sfValidatorString(array('required' => false)),
       'ca_continuacion'      => new sfValidatorString(array('required' => false)),
       'ca_continuacion_dest' => new sfValidatorString(array('required' => false)),

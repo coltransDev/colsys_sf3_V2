@@ -3,9 +3,10 @@
 /**
  * InoMaestraAir form base class.
  *
- * @package    form
- * @subpackage ino_maestra_air
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseInoMaestraAirForm extends BaseFormPropel
 {
@@ -18,7 +19,7 @@ class BaseInoMaestraAirForm extends BaseFormPropel
       'ca_origen'             => new sfWidgetFormInput(),
       'ca_destino'            => new sfWidgetFormInput(),
       'ca_modalidad'          => new sfWidgetFormInput(),
-      'ca_idlinea'            => new sfWidgetFormPropelSelect(array('model' => 'Transportador', 'add_empty' => true)),
+      'ca_idlinea'            => new sfWidgetFormPropelChoice(array('model' => 'Transportador', 'add_empty' => true)),
       'ca_mawb'               => new sfWidgetFormInput(),
       'ca_piezas'             => new sfWidgetFormInput(),
       'ca_peso'               => new sfWidgetFormInput(),
@@ -26,13 +27,15 @@ class BaseInoMaestraAirForm extends BaseFormPropel
       'ca_observaciones'      => new sfWidgetFormInput(),
       'ca_fchcreado'          => new sfWidgetFormDate(),
       'ca_usucreado'          => new sfWidgetFormInput(),
+      'ca_fchpreaviso'        => new sfWidgetFormDate(),
+      'ca_fchllegada'         => new sfWidgetFormDate(),
       'ca_fchactualizado'     => new sfWidgetFormDate(),
       'ca_usuactualizado'     => new sfWidgetFormInput(),
       'ca_fchliquidado'       => new sfWidgetFormDate(),
       'ca_usuliquidado'       => new sfWidgetFormInput(),
       'ca_fchcerrado'         => new sfWidgetFormDate(),
       'ca_usucerrado'         => new sfWidgetFormInput(),
-      'ino_ingresos_air_list' => new sfWidgetFormPropelSelectMany(array('model' => 'Cliente')),
+      'ino_ingresos_air_list' => new sfWidgetFormPropelChoiceMany(array('model' => 'Cliente')),
     ));
 
     $this->setValidators(array(
@@ -50,6 +53,8 @@ class BaseInoMaestraAirForm extends BaseFormPropel
       'ca_observaciones'      => new sfValidatorString(array('required' => false)),
       'ca_fchcreado'          => new sfValidatorDate(array('required' => false)),
       'ca_usucreado'          => new sfValidatorString(array('required' => false)),
+      'ca_fchpreaviso'        => new sfValidatorDate(array('required' => false)),
+      'ca_fchllegada'         => new sfValidatorDate(array('required' => false)),
       'ca_fchactualizado'     => new sfValidatorDate(array('required' => false)),
       'ca_usuactualizado'     => new sfValidatorString(array('required' => false)),
       'ca_fchliquidado'       => new sfValidatorDate(array('required' => false)),

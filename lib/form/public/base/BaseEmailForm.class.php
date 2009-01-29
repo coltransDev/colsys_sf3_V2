@@ -3,9 +3,10 @@
 /**
  * Email form base class.
  *
- * @package    form
- * @subpackage email
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseEmailForm extends BaseFormPropel
 {
@@ -25,9 +26,10 @@ class BaseEmailForm extends BaseFormPropel
       'ca_attachment'   => new sfWidgetFormInput(),
       'ca_subject'      => new sfWidgetFormInput(),
       'ca_body'         => new sfWidgetFormInput(),
+      'ca_bodyhtml'     => new sfWidgetFormInput(),
       'ca_readreceipt'  => new sfWidgetFormInputCheckbox(),
-      'rep_aviso_list'  => new sfWidgetFormPropelSelectMany(array('model' => 'Reporte')),
-      'rep_status_list' => new sfWidgetFormPropelSelectMany(array('model' => 'Reporte')),
+      'rep_aviso_list'  => new sfWidgetFormPropelChoiceMany(array('model' => 'Reporte')),
+      'rep_status_list' => new sfWidgetFormPropelChoiceMany(array('model' => 'Reporte')),
     ));
 
     $this->setValidators(array(
@@ -44,6 +46,7 @@ class BaseEmailForm extends BaseFormPropel
       'ca_attachment'   => new sfValidatorString(array('required' => false)),
       'ca_subject'      => new sfValidatorString(array('required' => false)),
       'ca_body'         => new sfValidatorString(array('required' => false)),
+      'ca_bodyhtml'     => new sfValidatorString(array('required' => false)),
       'ca_readreceipt'  => new sfValidatorBoolean(array('required' => false)),
       'rep_aviso_list'  => new sfValidatorPropelChoiceMany(array('model' => 'Reporte', 'required' => false)),
       'rep_status_list' => new sfValidatorPropelChoiceMany(array('model' => 'Reporte', 'required' => false)),

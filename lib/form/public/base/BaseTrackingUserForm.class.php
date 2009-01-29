@@ -3,28 +3,27 @@
 /**
  * TrackingUser form base class.
  *
- * @package    form
- * @subpackage tracking_user
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseTrackingUserForm extends BaseFormPropel
 {
   public function setup()
   {
     $this->setWidgets(array(
-      'ca_id'              => new sfWidgetFormInputHidden(),
-      'ca_email'           => new sfWidgetFormInput(),
+      'ca_email'           => new sfWidgetFormInputHidden(),
       'ca_blocked'         => new sfWidgetFormInputCheckbox(),
       'ca_activation_code' => new sfWidgetFormInput(),
       'ca_passwd'          => new sfWidgetFormInput(),
       'ca_password_expiry' => new sfWidgetFormDate(),
       'ca_activated'       => new sfWidgetFormInputCheckbox(),
-      'ca_idcontacto'      => new sfWidgetFormPropelSelect(array('model' => 'Contacto', 'add_empty' => true)),
+      'ca_idcontacto'      => new sfWidgetFormPropelChoice(array('model' => 'Contacto', 'add_empty' => true)),
     ));
 
     $this->setValidators(array(
-      'ca_id'              => new sfValidatorPropelChoice(array('model' => 'TrackingUser', 'column' => 'ca_id', 'required' => false)),
-      'ca_email'           => new sfValidatorString(array('required' => false)),
+      'ca_email'           => new sfValidatorPropelChoice(array('model' => 'TrackingUser', 'column' => 'ca_email', 'required' => false)),
       'ca_blocked'         => new sfValidatorBoolean(array('required' => false)),
       'ca_activation_code' => new sfValidatorString(array('required' => false)),
       'ca_passwd'          => new sfValidatorString(array('required' => false)),

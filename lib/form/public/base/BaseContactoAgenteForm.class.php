@@ -3,9 +3,10 @@
 /**
  * ContactoAgente form base class.
  *
- * @package    form
- * @subpackage contacto_agente
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseContactoAgenteForm extends BaseFormPropel
 {
@@ -13,17 +14,19 @@ class BaseContactoAgenteForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'ca_idcontacto' => new sfWidgetFormInputHidden(),
-      'ca_idagente'   => new sfWidgetFormPropelSelect(array('model' => 'Agente', 'add_empty' => true)),
+      'ca_idagente'   => new sfWidgetFormPropelChoice(array('model' => 'Agente', 'add_empty' => true)),
       'ca_nombre'     => new sfWidgetFormInput(),
       'ca_direccion'  => new sfWidgetFormInput(),
       'ca_telefonos'  => new sfWidgetFormInput(),
       'ca_fax'        => new sfWidgetFormInput(),
-      'ca_idciudad'   => new sfWidgetFormPropelSelect(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_idciudad'   => new sfWidgetFormPropelChoice(array('model' => 'Ciudad', 'add_empty' => true)),
       'ca_email'      => new sfWidgetFormInput(),
       'ca_impoexpo'   => new sfWidgetFormInput(),
       'ca_transporte' => new sfWidgetFormInput(),
       'ca_cargo'      => new sfWidgetFormInput(),
       'ca_detalle'    => new sfWidgetFormInput(),
+      'ca_sugerido'   => new sfWidgetFormInputCheckbox(),
+      'ca_activo'     => new sfWidgetFormInputCheckbox(),
     ));
 
     $this->setValidators(array(
@@ -39,6 +42,8 @@ class BaseContactoAgenteForm extends BaseFormPropel
       'ca_transporte' => new sfValidatorString(array('required' => false)),
       'ca_cargo'      => new sfValidatorString(array('required' => false)),
       'ca_detalle'    => new sfValidatorString(array('required' => false)),
+      'ca_sugerido'   => new sfValidatorBoolean(array('required' => false)),
+      'ca_activo'     => new sfValidatorBoolean(array('required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('contacto_agente[%s]');

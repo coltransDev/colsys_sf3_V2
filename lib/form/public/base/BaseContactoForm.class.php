@@ -3,9 +3,10 @@
 /**
  * Contacto form base class.
  *
- * @package    form
- * @subpackage contacto
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseContactoForm extends BaseFormPropel
 {
@@ -13,7 +14,7 @@ class BaseContactoForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'ca_idcontacto'     => new sfWidgetFormInputHidden(),
-      'ca_idcliente'      => new sfWidgetFormPropelSelect(array('model' => 'Cliente', 'add_empty' => false)),
+      'ca_idcliente'      => new sfWidgetFormPropelChoice(array('model' => 'Cliente', 'add_empty' => false)),
       'ca_papellido'      => new sfWidgetFormInput(),
       'ca_sapellido'      => new sfWidgetFormInput(),
       'ca_nombres'        => new sfWidgetFormInput(),

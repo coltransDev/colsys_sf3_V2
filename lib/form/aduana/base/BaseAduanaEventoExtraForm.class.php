@@ -3,16 +3,17 @@
 /**
  * AduanaEventoExtra form base class.
  *
- * @package    form
- * @subpackage aduana_evento_extra
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseAduanaEventoExtraForm extends BaseFormPropel
 {
   public function setup()
   {
     $this->setWidgets(array(
-      'ca_referencia'     => new sfWidgetFormPropelSelect(array('model' => 'AduanaMaestra', 'add_empty' => false)),
+      'ca_referencia'     => new sfWidgetFormPropelChoice(array('model' => 'AduanaMaestra', 'add_empty' => false)),
       'ca_idevento'       => new sfWidgetFormInputHidden(),
       'ca_usucreado'      => new sfWidgetFormInput(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),

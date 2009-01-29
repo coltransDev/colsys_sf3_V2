@@ -3,16 +3,17 @@
 /**
  * FileColumn form base class.
  *
- * @package    form
- * @subpackage file_column
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseFileColumnForm extends BaseFormPropel
 {
   public function setup()
   {
     $this->setWidgets(array(
-      'ca_idfileheader'   => new sfWidgetFormPropelSelect(array('model' => 'FileHeader', 'add_empty' => false)),
+      'ca_idfileheader'   => new sfWidgetFormPropelChoice(array('model' => 'FileHeader', 'add_empty' => false)),
       'ca_idcolumna'      => new sfWidgetFormInputHidden(),
       'ca_columna'        => new sfWidgetFormInput(),
       'ca_label'          => new sfWidgetFormInput(),

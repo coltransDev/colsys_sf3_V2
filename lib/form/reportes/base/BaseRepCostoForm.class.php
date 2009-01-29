@@ -3,9 +3,10 @@
 /**
  * RepCosto form base class.
  *
- * @package    form
- * @subpackage rep_costo
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseRepCostoForm extends BaseFormPropel
 {
@@ -13,8 +14,8 @@ class BaseRepCostoForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'oid'               => new sfWidgetFormInputHidden(),
-      'ca_idreporte'      => new sfWidgetFormPropelSelect(array('model' => 'Reporte', 'add_empty' => false)),
-      'ca_idcosto'        => new sfWidgetFormPropelSelect(array('model' => 'Costo', 'add_empty' => false)),
+      'ca_idreporte'      => new sfWidgetFormPropelChoice(array('model' => 'Reporte', 'add_empty' => false)),
+      'ca_idcosto'        => new sfWidgetFormPropelChoice(array('model' => 'Costo', 'add_empty' => false)),
       'ca_tipo'           => new sfWidgetFormInput(),
       'ca_vlrcosto'       => new sfWidgetFormInput(),
       'ca_mincosto'       => new sfWidgetFormInput(),

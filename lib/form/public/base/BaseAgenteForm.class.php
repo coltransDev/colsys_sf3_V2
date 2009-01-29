@@ -3,9 +3,10 @@
 /**
  * Agente form base class.
  *
- * @package    form
- * @subpackage agente
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
  */
 class BaseAgenteForm extends BaseFormPropel
 {
@@ -17,11 +18,12 @@ class BaseAgenteForm extends BaseFormPropel
       'ca_direccion'   => new sfWidgetFormInput(),
       'ca_telefonos'   => new sfWidgetFormInput(),
       'ca_fax'         => new sfWidgetFormInput(),
-      'ca_idciudad'    => new sfWidgetFormPropelSelect(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_idciudad'    => new sfWidgetFormPropelChoice(array('model' => 'Ciudad', 'add_empty' => true)),
       'ca_zipcode'     => new sfWidgetFormInput(),
       'ca_website'     => new sfWidgetFormInput(),
       'ca_email'       => new sfWidgetFormInput(),
       'ca_divulgacion' => new sfWidgetFormInput(),
+      'ca_activo'      => new sfWidgetFormInputCheckbox(),
     ));
 
     $this->setValidators(array(
@@ -35,6 +37,7 @@ class BaseAgenteForm extends BaseFormPropel
       'ca_website'     => new sfValidatorString(array('required' => false)),
       'ca_email'       => new sfValidatorString(array('required' => false)),
       'ca_divulgacion' => new sfValidatorString(array('required' => false)),
+      'ca_activo'      => new sfValidatorBoolean(array('required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('agente[%s]');
