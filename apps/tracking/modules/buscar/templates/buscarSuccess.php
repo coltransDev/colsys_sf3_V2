@@ -23,7 +23,7 @@
 		
 		$via = $reporte->getCaTransporte();
 	?>
-	<tr class="<?=$class?>"  onClick="document.location='<?=url_for("reportes/detalleReporte?reporte=".$reporte->getCaIdReporte())?>'" style="cursor:pointer">
+	<tr class="<?=$class?>"  onClick="document.location='<?=url_for("reportes/detalleReporte?rep=".$reporte->getCaConsecutivo())?>'" style="cursor:pointer">
 		<td>			
 			<div align="center" class="info">
 			  <?
