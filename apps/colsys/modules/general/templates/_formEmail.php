@@ -15,7 +15,7 @@ var seleccionarContacto = function(){
 	}
 	
 	
-	
+	 
 }
 </script> 
 <table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableForm">	
@@ -74,8 +74,7 @@ var seleccionarContacto = function(){
 	<tr>
 		<td colspan="2">
 			<div align="left"><strong>Mensaje</strong><br>
-				<?		
-		
+				<?				
 		echo textarea_tag("mensaje",isset($message)?$message:"", array('size'=>'120x5','rich'=>false, 'width'=>620, 'height'=>'150' ));
 		?>
 		</div></td>
