@@ -236,7 +236,7 @@ foreach( $productos as $producto ):
 		
 			$pdf->beginGroup(); 
 			$pdf->Ln(2);
-			$pdf->SetFont('Arial','B',9);
+			$pdf->SetFont('Arial','B',8);
 			$pdf->Cell(0, 4, 'RECARGOS EN ORIGEN ', 0, 1, 'L', 0);
 			$pdf->Ln(2);
 			$pdf->SetFont('Arial','',7);
@@ -517,7 +517,7 @@ foreach( $grupos as $key => $grupo ){
 		
 			$pdf->beginGroup(); 
 			$pdf->Ln(4);
-			$pdf->SetFont('Arial','B',9);
+			$pdf->SetFont('Arial','B',8);
 			$pdf->Cell(0, 4, 'RECARGOS LOCALES '.strtoupper($key).' '.strtoupper($modalidad), 0, 1, 'L', 0);
 			$pdf->Ln(2);
 			$pdf->SetFont('Arial','',7);
