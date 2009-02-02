@@ -666,47 +666,50 @@ if(count($continuaciones)>0){
 			//Recargos OTM - DTA 			
 			$recargosLoc = $cotizacion->getRecargosLocales(Constantes::TERRESTRE,  $tipo );
 			
-			$imprimirObservaciones=false;
-			foreach( $recargosLoc as $recargo ){
-				if( $recargo->getCaObservaciones() ){
-					$imprimirObservaciones=true;
+			if( count($recargosLoc)>0 ){
+			
+				$imprimirObservaciones=false;
+				foreach( $recargosLoc as $recargo ){
+					if( $recargo->getCaObservaciones() ){
+						$imprimirObservaciones=true;
+					}
 				}
-			}
-		
-			$pdf->beginGroup(); 
-			$pdf->Ln(4);
-			$pdf->SetFont('Arial','B',8);
-			$pdf->Cell(0, 4, 'RECARGOS' , 0, 1, 'L', 0);
-			$pdf->Ln(2);
-			$pdf->SetFont('Arial','',7);
 			
-			$titu_mem= array('Concepto',  'Tarifa' );			
-			if( $imprimirObservaciones ){
-				array_push( $titu_mem, 'Observaciones' );
-				$width_mem= array(55, 53, 62);
-			}else{
-				$width_mem= array(80, 90);
-			}
-			
-			
-			$pdf->SetWidths($width_mem);
-			$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
-			$pdf->SetStyles(array_fill(0, count($width_mem), "B"));
-			$pdf->SetFills(array_fill(0, count($width_mem), 1));
-			$pdf->Row($titu_mem);
-			
-			$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
-			$pdf->SetStyles(array_fill(0, count($width_mem), ""));
-			$pdf->SetFills(array_fill(0, count($width_mem), 0));
-			
-			foreach( $recargosLoc as $recargo ){
-				$row = array( $recargo->getTiporecargo()->getCarecargo(), $recargo->getTextoTarifa() );
+				$pdf->beginGroup(); 
+				$pdf->Ln(4);
+				$pdf->SetFont('Arial','B',8);
+				$pdf->Cell(0, 4, 'RECARGOS' , 0, 1, 'L', 0);
+				$pdf->Ln(2);
+				$pdf->SetFont('Arial','',7);
+				
+				$titu_mem= array('Concepto',  'Tarifa' );			
 				if( $imprimirObservaciones ){
-					array_push( $row,  $recargo->getCaObservaciones() );
+					array_push( $titu_mem, 'Observaciones' );
+					$width_mem= array(55, 53, 62);
+				}else{
+					$width_mem= array(80, 90);
 				}
-				$pdf->Row($row);
-			}
-			$pdf->flushGroup(); 				
+				
+				
+				$pdf->SetWidths($width_mem);
+				$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
+				$pdf->SetStyles(array_fill(0, count($width_mem), "B"));
+				$pdf->SetFills(array_fill(0, count($width_mem), 1));
+				$pdf->Row($titu_mem);
+				
+				$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
+				$pdf->SetStyles(array_fill(0, count($width_mem), ""));
+				$pdf->SetFills(array_fill(0, count($width_mem), 0));
+				
+				foreach( $recargosLoc as $recargo ){
+					$row = array( $recargo->getTiporecargo()->getCarecargo(), $recargo->getTextoTarifa() );
+					if( $imprimirObservaciones ){
+						array_push( $row,  $recargo->getCaObservaciones() );
+					}
+					$pdf->Row($row);
+				}
+				$pdf->flushGroup(); 	
+			}			
 		}
 	
 					
