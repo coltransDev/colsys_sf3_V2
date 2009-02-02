@@ -733,9 +733,11 @@ function guardarGrillaPorTrafico(){
 	
 	for( var i=0; i< lenght; i++){
 		r = records[i];
-		if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto")){
-			Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
-			return 0;
+		if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto") ){
+			if( r.data.iditem!=9999){
+				Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
+				return 0;
+			}
 		}
 	}	
 	

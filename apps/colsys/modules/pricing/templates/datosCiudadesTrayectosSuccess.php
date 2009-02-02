@@ -48,7 +48,7 @@ if( count($ciudades)*count($lineas)<=16){ //Si se muestran muchos registros el b
 ?>
 ,
 {
-	text:'Todas las ciudades',
+	text:'Todas las Ciudades',
 	id:'fletes_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
 	leaf:true
 }
@@ -57,10 +57,28 @@ if( count($ciudades)*count($lineas)<=16){ //Si se muestran muchos registros el b
 ?>
 ,
 {
-	text:'Recargos por ciudad',
+	text:'Recargos por Ciudad',
 	id:'recgen_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
 	leaf:true
-},
+}
+
+<?
+if( $transporte==Constantes::MARITIMO ){ 
+	$linea = "Naviera";
+}elseif( $transporte==Constantes::AEREO ){
+	$linea = "Aerolínea";
+}else{
+	$linea =  "linea";
+}
+?>
+
+,
+{
+	text:'Recargos por <?=$linea?>',
+	id:'reclin_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		
+	leaf:true
+}
+,
 {
 	text:'Trayectos (T.T., Freq.)',
 	id:'admtraf_<?=$impoexpo."_".$transporte."_".$modalidad."_".$idtrafico?>',		

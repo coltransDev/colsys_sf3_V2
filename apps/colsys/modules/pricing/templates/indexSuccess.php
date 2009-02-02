@@ -47,6 +47,19 @@ Ext.onReady(function(){
 					?>
 					var url = '<?=url_for( $url )?>';						
 					break;
+					
+				case "reclin":
+					/*
+					* Se muestran los recargos generales para el pais seleccionado
+					*/
+					<?
+					$url = "pricing/recargosPorLinea";
+					if( $opcion=="consulta" ){
+						$url.= "?opcion=consulta";
+					}
+					?>
+					var url = '<?=url_for( $url )?>';						
+					break;	
 				case "admtraf":
 					/*
 					* Se muestran la administracion de trayectos para el pais seleccionado
@@ -166,20 +179,24 @@ Ext.onReady(function(){
 				items: [
 					<?	
 										
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>"Importación", "transporte"=>"Marítimo", "titulo"=>"Importaciones Marítimas"));						
+					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::IMPO, "transporte"=>Constantes::MARITIMO, "titulo"=>"Importaciones Marítimas"));						
 					?>								
 					,
 					<?						
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>"Importación", "transporte"=>"Aéreo", "titulo"=>"Importaciones Aéreas"));						
+					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::IMPO, "transporte"=>Constantes::AEREO, "titulo"=>"Importaciones Aéreas"));						
 					?>								
 					,
 					<?						
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>"Exportación", "transporte"=>"Marítimo", "titulo"=>"Exportaciones Marítimas"));						
+					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::EXPO, "transporte"=>Constantes::MARITIMO, "titulo"=>"Exportaciones Marítimas"));						
 					?>								
 					,
 					<?						
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>"Exportación", "transporte"=>"Aéreo", "titulo"=>"Exportaciones Aéreas"));						
+					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::EXPO, "transporte"=>Constantes::AEREO, "titulo"=>"Exportaciones Aéreas"));						
 					?>								
+					,
+					<?						
+					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::IMPO, "transporte"=>"", "titulo"=>"Cargas Nacionales"));						
+					?>
 					
 					<?	
 								

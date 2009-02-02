@@ -15,6 +15,21 @@ foreach( $results as $modalidad=>$grupos ){
 				id:'recgen_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>',		
 				leaf:true
 			},
+			
+			<?
+			if( $transporte==Constantes::MARITIMO ){ 
+				$linea = "Naviera";
+			}elseif( $transporte==Constantes::AEREO ){
+				$linea = "Aérolinea";
+			}else{
+				$linea =  "linea";
+			}
+			?>
+			{
+				text:'Recargos locales x <?=$linea?>',
+				id:'reclin_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>',		
+				leaf:true
+			},
 			<?
 			$j=0;
 			foreach( $grupos as $grupo=>$paises){

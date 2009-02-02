@@ -114,7 +114,7 @@ class pricingActions extends sfActions
 		$this->linea = "";		
 		
 		//Datos para el combo recargos		
-		$tipo = "Recargo en Origen";
+		$tipo = Constantes::RECARGO_EN_ORIGEN;
 		
 		$c = new Criteria();
 		$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte );
@@ -236,7 +236,8 @@ class pricingActions extends sfActions
 			//----------
 			//Se determinan los recargos generales x ciudad		
 			
-			$pricRecargosxCiudad = $trayecto->getRecargosxCiudad( $fchcorte );			
+			$pricRecargosxCiudad = $trayecto->getRecargosxCiudad( $fchcorte );	
+			$pricRecargosxLinea = $trayecto->getRecargosxLinea( $fchcorte );		
 			$pricRecargos = $trayecto->getRecargosGenerales( $fchcorte );
 			
 			$recargosGenerales = array(); 		
@@ -269,6 +270,35 @@ class pricingActions extends sfActions
 			}
 			if( $pricRecargosxCiudad ){
 				foreach( $pricRecargosxCiudad as $pricRecargo ){
+					$tipoRecargo = $pricRecargo->getTipoRecargo();
+										
+					$row = array (
+						'idtrayecto' => $trayecto->getCaIdtrayecto(),
+						'trayecto' =>$trayectoStr,
+						'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
+						//'destino' => utf8_encode($trayecto->getDestino()->getCaCiudad()),
+						'inicio' => "",
+						'vencimiento' => "",
+						'moneda' => $pricRecargo->getCaIdMoneda(),									
+						
+						'style' => '',
+						'observaciones' => utf8_encode(str_replace("\"", "'",$pricRecargo->getCaObservaciones())),
+						'iditem'=>$pricRecargo->getCaIdrecargo(),
+						'idconcepto'=>'9999',
+						'tipo'=>"recargoxciudad",
+						'sugerida'=>$pricRecargo->getCaVlrrecargo(),
+						'aplicacion' => utf8_encode($pricRecargo->getCaAplicacion()),
+						'minima'=>$pricRecargo->getCaVlrminimo(),
+						'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
+						'consecutivo' => $pricRecargo->getCaConsecutivo()
+						
+					);									
+					$recargosGenerales[] = $row;						
+				}	
+			}	//Fin recargos generales
+			
+			if( $pricRecargosxLinea ){
+				foreach( $pricRecargosxLinea as $pricRecargo ){
 					$tipoRecargo = $pricRecargo->getTipoRecargo();
 										
 					$row = array (
@@ -674,12 +704,12 @@ class pricingActions extends sfActions
 				$c->addAscendingOrderByColumn(CiudadPeer::CA_CIUDAD);
 				$this->ciudades = CiudadPeer::doSelect( $c );
 			}			
-			$tipo = "Recargo en Origen";
+			$tipo = Constantes::RECARGO_EN_ORIGEN;
 			
 			$this->idcomponent = $this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad;		
 					
 		}else{
-			$tipo = "Recargo local";	
+			$tipo = Constantes::RECARGO_LOCAL;	
 			$idtrafico = "99-999"; 
 			$this->idcomponent = "recargoslocales-".$transporte."_".$modalidad;		
 		}
@@ -885,6 +915,251 @@ class pricingActions extends sfActions
 		$this->trafico = TraficoPeer::retrieveByPK($this->getRequestParameter("id_trafico"));
 		$this->forward404Unless($this->trafico);
 	}
+	
+	
+	/*********************************************************************
+	* Recargos x linea
+	*	
+	*********************************************************************/
+	
+	
+	/*
+	* Recargos x linea de un pais 
+	* @author: Andres Botero 
+	*/
+	public function executeRecargosPorLinea(){
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$idtrafico = $this->getRequestParameter( "idtrafico" );
+		$modalidad = $this->getRequestParameter( "modalidad" );
+		$impoexpo = utf8_decode($this->getRequestParameter( "impoexpo" ));
+		$this->opcion = $this->getRequestParameter( "opcion" );
+		
+		$this->forward404Unless( $transporte );
+		$this->forward404Unless( $modalidad );
+		$this->forward404Unless( $impoexpo );
+		
+		
+		if( $idtrafico ){
+			$this->trafico = TraficoPeer::retrieveByPk($idtrafico);				
+			$tipo = Constantes::RECARGO_EN_ORIGEN;			
+			$this->idcomponent = $this->trafico->getCaIdTrafico()."_".$transporte."_".$modalidad."_linea";							
+		}else{
+			$tipo = Constantes::RECARGO_LOCAL;	
+			$idtrafico = "99-999"; 
+			$this->idcomponent = "recargoslocaleslinea-".$transporte."_".$modalidad;		
+		}
+				
+		if( $this->opcion != "consulta" ){				
+			$c = new Criteria();
+			$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte);	
+			$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
+			$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
+			$this->recargos = TipoRecargoPeer::doSelect( $c );
+			
+			$c = new Criteria();
+			
+			if( $impoexpo==Constantes::IMPO ){			
+				$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );		
+			}else{
+				$c->addJoin( TrayectoPeer::CA_DESTINO, CiudadPeer::CA_IDCIUDAD );			
+			}
+			$c->addJoin( TrayectoPeer::CA_IDLINEA, TransportadorPeer::CA_IDLINEA );	
+			if( $idtrafico != "99-999" ){ 	
+				$c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
+			}
+			$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );
+			$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
+			$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
+			$c->add( TrayectoPeer::CA_ACTIVO, true );
+			$c->addAscendingOrderByColumn( TransportadorPeer::CA_NOMBRE );
+			$c->setDistinct();	
+			$this->lineas = TransportadorPeer::doSelect( $c );
+						
+			$this->aplicaciones = ParametroPeer::retrieveByCaso("CU064", null, $transporte );
+		}	
+		
+		$this->modalidad = $modalidad;
+		$this->transporte = $transporte;
+		$this->idtrafico = $idtrafico;
+		$this->impoexpo = $impoexpo;	
+				
+		$this->setLayout("ajax");
+	}
+	
+		
+	/*
+	* Provee datos para los recargos por ciudad
+	* @author: Andres Botero 
+	*/
+	public function executeRecargosPorLineaData(){
+		$transporte = utf8_decode($this->getRequestParameter( "transporte" ));
+		$idtrafico = $this->getRequestParameter( "idtrafico" );
+		$modalidad = $this->getRequestParameter( "modalidad" );		
+		$impoexpo = $this->getRequestParameter( "impoexpo" );
+		
+		$this->forward404Unless( $transporte );
+		$this->forward404Unless( $modalidad );			
+		$this->forward404Unless( $impoexpo );
+		
+				
+		//$this->trafico = TraficoPeer::retrieveByPk( $idtrafico );
+		$this->opcion = $this->getRequestParameter( "opcion" );
+		
+		if( !$idtrafico ){
+			$idtrafico = "99-999"; 
+		}
+		
+		$c = new Criteria();
+		$c->addJoin( PricRecargosxLineaPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO  );	
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte  );	
+		$c->add( PricRecargosxLineaPeer::CA_IDTRAFICO, $idtrafico  );	
+		$c->add( PricRecargosxLineaPeer::CA_MODALIDAD, $modalidad  );	
+		$recargos = PricRecargosxLineaPeer::doSelect( $c );
+				
+		
+		
+		$this->data = array();
+		$i=0;
+		foreach( $recargos as $recargo ){
+			$row = array(
+				'id'=>$i++,
+				'idtrafico'=>$idtrafico,
+				'idlinea'=>$recargo->getCaIdlinea(),
+				'linea'=>$recargo->getTransportador()->getCaNombre(),
+				'idrecargo'=>$recargo->getCaIdrecargo(),
+				'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
+				'vlrminimo'=>$recargo->getCaVlrminimo(),
+				'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
+				'aplicacion_min'=>utf8_encode($recargo->getCaAplicacionMin()),
+				'idmoneda'=>$recargo->getCaIdmoneda(),
+				'observaciones'=>utf8_encode($recargo->getCaObservaciones())								
+			);
+			$this->data[]= $row;
+		}
+		
+		
+		if( $this->opcion!="consulta" ){
+			/*
+			* Incluye una fila vacia que permite agregar datos
+			*/
+			$row = array(
+				'id'=>$i++,
+				'idtrafico'=>$idtrafico,
+				'idlinea'=>'',
+				'linea'=>'+',
+				'idrecargo'=>'',
+				'recargo'=>'',
+				'vlrrecargo'=>'',
+				'vlrminimo'=>'',
+				'aplicacion'=>'',
+				'aplicacion_min'=>'',
+				'idmoneda'=>'',
+				'observaciones'=>''								
+			);
+			$this->data[]= $row;
+		}
+					
+		$this->transporte = $transporte;
+		$this->modalidad = $modalidad;
+		
+		$this->setLayout("ajax");
+	}
+	
+	
+	/*
+	* Guarda los cambios realizados en los recargos generales
+	* @author: Andres Botero 
+	*/
+	public function executeObserveRecargosPorLinea(){
+		
+		$idtrafico = $this->getRequestParameter("idtrafico");
+		$idlinea = $this->getRequestParameter("idlinea");		
+		$idrecargo = $this->getRequestParameter("idrecargo");
+		$modalidad = $this->getRequestParameter("modalidad");
+		$impoexpo = $this->getRequestParameter("impoexpo");
+		//echo $impoexpo;
+		
+		$this->forward404Unless( $idtrafico );
+		$this->forward404Unless( $idlinea );
+		$this->forward404Unless( $modalidad );
+		$this->forward404Unless( $impoexpo );
+		
+		$recargo = PricRecargosxLineaPeer::retrieveByPk($idtrafico, $idlinea, $idrecargo , $modalidad, utf8_decode($impoexpo));
+		if( !$recargo ){
+			
+			$recargo = new PricRecargosxLinea();
+			$recargo->setCaIdTrafico( $idtrafico );
+			$recargo->setCaIdlinea( $idlinea );
+			$recargo->setCaIdRecargo( $idrecargo );
+			$recargo->setCaModalidad( $modalidad );
+			$recargo->setCaImpoexpo( utf8_decode($impoexpo) );
+			$recargo->setCaVlrrecargo( 0 );
+			$recargo->setCaVlrminimo( 0 );			
+		}
+		$user = $this->getUser();
+		$recargo->setCaUsucreado( $user->getUserId() );
+		$recargo->setCaFchcreado( time() );
+		
+					
+		if( $this->getRequestParameter("vlrrecargo") ){
+			$recargo->setCaVlrrecargo( $this->getRequestParameter("vlrrecargo") );
+		}
+		
+		if( $this->getRequestParameter("vlrminimo") ){
+			$recargo->setCaVlrminimo( $this->getRequestParameter("vlrminimo") );
+		}		
+		
+		if( $this->getRequestParameter("idmoneda") ){
+			$recargo->setCaIdMoneda($this->getRequestParameter("idmoneda"));
+		}	
+		
+		if( $this->getRequestParameter("aplicacion")!==null){
+			$recargo->setCaAplicacion(utf8_decode($this->getRequestParameter("aplicacion")));
+		}
+		
+		if( $this->getRequestParameter("aplicacion_min")!==null){
+			$recargo->setCaAplicacionMin(utf8_decode($this->getRequestParameter("aplicacion_min")));
+		}
+		
+		if( $this->getRequestParameter("observaciones")!==null){
+			$recargo->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
+		}
+								
+		$recargo->save();	
+		$id = $this->getRequestParameter("id");
+		$this->responseArray = array("id"=>$id, "success"=>true);	
+		$this->setTemplate("responseTemplate");		
+	}
+	
+	
+	/*
+	* Elimina un recargo general
+	* @author: Andres Botero 
+	*/
+	public function executeEliminarRecargosPorLinea(){
+		$idtrafico = $this->getRequestParameter("idtrafico");
+		$idlinea = $this->getRequestParameter("idlinea");		
+		$idrecargo = $this->getRequestParameter("idrecargo");
+		$modalidad = $this->getRequestParameter("modalidad");
+		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+		
+		$this->forward404Unless( $idtrafico );
+		$this->forward404Unless( $idlinea );
+		$this->forward404Unless( $modalidad );
+		$this->forward404Unless( $impoexpo );
+		
+		$recargo = PricRecargosxLineaPeer::retrieveByPk($idtrafico, $idlinea, $idrecargo , $modalidad, $impoexpo);
+				
+		$this->responseArray = array();
+		if( $recargo ){
+			$recargo->delete();		
+		}	
+		$id = $this->getRequestParameter("id");
+		$this->responseArray = array("id"=>$id, "success"=>true);	
+		$this->setTemplate("responseTemplate");	
+	}
+	
 	
 	/*********************************************************************
 	* Administrador de trayectos, tiempos de transito y frecuencias

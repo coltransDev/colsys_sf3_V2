@@ -1,14 +1,21 @@
 <?
 use_helper("Ext2");
 
+if( $transporte==Constantes::MARITIMO ){ 
+	$lineaStr = "Naviera";
+}elseif( $transporte==Constantes::AEREO ){
+	$lineaStr = "Aerolínea";
+}else{
+	$lineaStr = "Línea";
+}
+
 	
 ?>
 
 <?
-if( $opcion!="consulta" ){
-	if( $idtrafico!="99-999"  ){
+if( $opcion!="consulta" ){	
 	?>
-	var comboCiudades = new Ext.form.ComboBox({			
+	var comboLineas = new Ext.form.ComboBox({			
 		typeAhead: true,
 		forceSelection: true,
 		triggerAction: 'all',
@@ -17,18 +24,21 @@ if( $opcion!="consulta" ){
 		lazyRender:true,
 		allowBlank: false,
 		listClass: 'x-combo-list-small',
-		valueField:'idciudad',
-		displayField:'ciudad',
+		valueField:'idlinea',
+		displayField:'linea',
 		mode: 'local',	
 		store :  new Ext.data.SimpleStore({
-					fields: ['idciudad', 'ciudad'],
+					fields: ['idlinea', 'linea'],
 					data : [
-						['999-9999','Todas las ciudades']
+						
 						<?					
-						foreach( $ciudades as $ciudad ){
-							
+						$i=0;
+						foreach( $lineas as $linea ){
+							if( $i++!=0 ){
+								echo ",";
+							}
 						?>
-							,['<?=$ciudad->getCaIdCiudad()?>','<?=$ciudad->getCaCiudad()?>']
+							['<?=$linea->getCaIdLinea()?>','<?=$linea->getCaNombre()?>']
 						<?
 						}
 						?>
@@ -36,9 +46,7 @@ if( $opcion!="consulta" ){
 				})
 	
 	});
-	<?
-	}
-	?>
+	
 	
 	
 	var comboRecargos = new Ext.form.ComboBox({			
@@ -102,9 +110,9 @@ var record = Ext.data.Record.create([
 	{name: 'sel', type: 'string'},
 	{name: 'id', type: 'int'},
 	{name: 'idtrafico', type: 'string'},	
-	{name: 'idciudad', type: 'string'},	
+	{name: 'idlinea', type: 'string'},	
 	{name: 'impoexpo', type: 'string'},	
-	{name: 'ciudad', type: 'string'},
+	{name: 'linea', type: 'string'},
 	{name: 'idrecargo', type: 'string'},
 	{name: 'recargo', type: 'string'},
 	{name: 'vlrrecargo', type: 'float'},
@@ -119,7 +127,7 @@ var record = Ext.data.Record.create([
 * Crea el store
 */
 <?
-$url = "pricing/recargosGeneralesData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico."&impoexpo=".$impoexpo;
+$url = "pricing/recargosPorLineaData?modalidad=".$modalidad."&transporte=".utf8_encode($transporte)."&idtrafico=".$idtrafico."&impoexpo=".$impoexpo;
 if( $opcion=="consulta" ){
 	$url.= "&opcion=consulta";
 }	
@@ -148,29 +156,23 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 */
 var colModel = new Ext.grid.ColumnModel({		
 	columns: [		
-		checkColumn	
-		<?
-		if( $idtrafico!="99-999" ){
-		?>
+		checkColumn			
 		, 			
 		{
-			header: "Ciudad",
+			header: "<?=$lineaStr?>",
 			width: 100,
 			sortable: false,	
 			hideable: false,		
-			dataIndex: 'ciudad' 
+			dataIndex: 'linea' 
 			<?
 			if( $opcion!="consulta" ){
 			?>
 			,
-			editor: comboCiudades 
+			editor: comboLineas 
 			<?
 			}
 			?>
-		}
-		<?
-		}
-		?>
+		}		
 		,
 		{
 			header: "Recargo",
@@ -276,29 +278,15 @@ var colModel = new Ext.grid.ColumnModel({
 		var record = storeRecargos.getAt(rowIndex);
 		var field = this.getDataIndex(colIndex);
 		
-		<?
-		if( $idtrafico!="99-999" ){
-		?>	
-		if( !record.data.idciudad && field!="ciudad" ){
+		
+		if( !record.data.idlinea && field!="linea" ){
 			return false;
 		}
 		
-		if( record.data.idciudad && field=="ciudad" ){
-			return false;
-		}
-		<?
-		}else{
-		?>
-		if( !record.data.idrecargo && field!="recargo" ){
+		if( record.data.idlinea && field=="linea" ){
 			return false;
 		}
 		
-		if( record.data.idrecargo && field=="recargo" ){
-			return false;
-		}
-		<?
-		}
-		?>
 		
 		
 		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
@@ -337,7 +325,7 @@ var gridAfterEditHandler = function(e) {
 		for( var i=0; i< lenght; i++){
 			r = records[i];			
 			if(r.data.sel){
-				if ( (field == 'ciudad')) {			
+				if ( (field == 'linea')) {			
 					continue;
 				}	
 				r.set(field,e.value);
@@ -363,39 +351,9 @@ var gridOnvalidateedit = function(e){
 		var store = ed.field.store;
 		
 	    store.each( function( r ){				
-				if( r.data.idrecargo==e.value ){	
-					<?
-					if( $idtrafico=="99-999" ){
-					?>
-					if( !rec.data.idrecargo  ){	
-						/*
-						* Crea una columna en blanco adicional para permitir 
-						* agregar mas items
-						*/
-						var newRec = new record({
-							id: rec.data.id+1, 
-						   idtrafico: rec.data.idtrafico,  
-						   idciudad: '999-9999',
-						   ciudad: '', 
-						   idrecargo: '',  						   
-						   recargo: '+', 
-						   vlrrecargo: '',  
-						   vlrminimo: '',   
-						   aplicacion: '',
-						   aplicacion_min: '',							   
-						   idmoneda: '',
-						   observaciones: ''
-						});	
-						newRec.id = rec.data.id+1;								
-						//Inserta una columna en blanco al final												
-						storeRecargos.addSorted(newRec);										
-						
-					}
-					<?
-					}
-					?>													
+				if( r.data.idrecargo==e.value ){						
 					rec.set("idrecargo", r.data.idrecargo);
-					rec.set("idmoneda", "COP");
+					rec.set("idmoneda", "USD");
 					e.value = r.data.recargo;				
 					return true;
 				}
@@ -403,17 +361,15 @@ var gridOnvalidateedit = function(e){
 		)		
 	}
 	
-	if( e.field == "ciudad"){		
+	if( e.field == "linea"){		
 		var rec = e.record;		   
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
 		var store = ed.field.store;
 		
 	    store.each( function( r ){						
-				if( r.data.idciudad==e.value ){									
-					<?
-					if( $idtrafico!="99-999" ){
-					?>
-					if( !rec.data.idciudad  ){	
+				if( r.data.idlinea==e.value ){									
+					
+					if( !rec.data.idlinea  ){	
 						/*
 						* Crea una columna en blanco adicional para permitir 
 						* agregar mas items
@@ -421,8 +377,8 @@ var gridOnvalidateedit = function(e){
 						var newRec = new record({
 							id: rec.data.id+1, 
 						   idtrafico: rec.data.idtrafico,  
-						   idciudad: '',
-						   ciudad: '+', 
+						   idlinea: '',
+						   linea: '+', 
 						   idrecargo: '',  						   
 						   recargo: '', 
 						   vlrrecargo: '',  
@@ -437,12 +393,10 @@ var gridOnvalidateedit = function(e){
 						storeRecargos.addSorted(newRec);										
 						
 					}
-					<?
-					}
-					?>
-					rec.set("idciudad", r.data.idciudad);
+					
+					rec.set("idlinea", r.data.idlinea);
 					rec.set("idmoneda", "USD");
-					e.value = r.data.ciudad;				
+					e.value = r.data.linea;				
 					return true;
 				}
 			}
@@ -489,7 +443,7 @@ var actualizarObservaciones=function( btn, text ){
 	}
 }	
 
-function guardarRecargosGenerales(){
+function guardarRecargosPorLinea(){
 	var success = true;
 	var records = storeRecargos.getModifiedRecords();
 			
@@ -500,14 +454,14 @@ function guardarRecargosGenerales(){
 		var changes = r.getChanges();
 						
 		changes['id']=r.id;
-		changes['idciudad']=r.data.idciudad;										
+		changes['idlinea']=r.data.idlinea;										
  	    changes['idrecargo']=r.data.idrecargo;											
 		
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
 				waitMsg: 'Guardando cambios...',						
-				url: '<?=url_for("pricing/observeRecargosGenerales?idtrafico=".$idtrafico."&modalidad=".$modalidad."&impoexpo=".$impoexpo)?>', 						
+				url: '<?=url_for("pricing/observeRecargosPorLinea?idtrafico=".$idtrafico."&modalidad=".$modalidad."&impoexpo=".utf8_encode($impoexpo))?>', 						
 				//Solamente se envian los cambios 						
 				params :	changes,
 				
@@ -543,11 +497,9 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 				iconCls: 'new-tab',
 				scope:this,
 				handler: function(){    					                   		
-					if( this.ctxRecord && this.ctxRecord.data.idrecargo ){					
-											
-						
+					if( this.ctxRecord && this.ctxRecord.data.idrecargo ){											
 						var id = this.ctxRecord.id;						
-						var idciudad = this.ctxRecord.data.idciudad;
+						var idlinea = this.ctxRecord.data.idlinea;
 						var idrecargo = this.ctxRecord.data.idrecargo;
 											
 						if( idrecargo ){
@@ -555,11 +507,11 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 							Ext.Ajax.request( 
 							{   
 								waitMsg: 'Guardando cambios...',						
-								url: '<?=url_for("pricing/eliminarRecargosGenerales?idtrafico=".$idtrafico."&modalidad=".$modalidad."&impoexpo=".$impoexpo)?>',
+								url: '<?=url_for("pricing/eliminarRecargosPorLinea?idtrafico=".$idtrafico."&modalidad=".$modalidad."&impoexpo=".utf8_encode($impoexpo))?>',
 								//method: 'POST', 
 								//Solamente se envian los cambios 						
 								params :	{									
-									idciudad: idciudad,									
+									idlinea: idlinea,									
 									idrecargo: idrecargo,
 									id: id
 
@@ -620,7 +572,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	clicksToEdit: 1,
 	stripeRows: true,
 	//autoExpandColumn: 'nconcepto',
-	title: 'Recargos <?=($idtrafico!="99-999"?$trafico->getCaNombre():"locales")." ".$modalidad?>',
+	title: '<?=($idtrafico!="99-999"?("Recargos x ".$lineaStr." ".$trafico->getCaNombre()." ".$modalidad):("Recargos locales ".$lineaStr) )?>',
 	height: 400,
 	width: 780,
 	plugins: [checkColumn], //expander,
@@ -634,7 +586,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 			text: 'Guardar Cambios',
 			tooltip: 'Guarda los cambios realizados en el tarifario',
 			iconCls:'disk',  // reference to our css
-			handler: guardarRecargosGenerales
+			handler: guardarRecargosPorLinea
 		},	
 		{
 			text: 'Seleccionar todo',
