@@ -6,6 +6,11 @@ loginValidation:                 # Filters need a unique name
   param:
     cookie_name: coltranscookie
 
+localeValidation:                 # Filters need a unique name
+  class: localeFilter
+  param:
+    culture: es_ES	
+
 cache:     ~
 common:    ~
 
