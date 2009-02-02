@@ -190,9 +190,9 @@ class pruebasActions extends sfActions {
 	public function executeSendEmail() {
 		exit("detenido");
 		$c = new Criteria ( );
-		$c->add ( EmailPeer::CA_FCHENVIO, "2008-12-01 10:30:00", Criteria::GREATER_THAN );
-		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2008-12-01 11:00:00", Criteria::LESS_THAN );
-		//$c->add( EmailPeer::CA_IDEMAIL, 134180);
+		/*$c->add ( EmailPeer::CA_FCHENVIO, "2008-12-01 10:30:00", Criteria::GREATER_THAN );
+		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2008-12-01 11:00:00", Criteria::LESS_THAN );*/
+		$c->add( EmailPeer::CA_IDEMAIL, 188572);
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
 		
 		$i = 0;
@@ -1230,8 +1230,8 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 			//$conceptosStr.="|22|23|24|25|26|27|28";
 			$conceptosArr = explode("|",$conceptosStr);
 			$conceptosArr = array_unique($conceptosArr);
-			$conceptosStr=implode("|",$conceptosArr);
-			echo "<br />Conceptos -->".$conceptosStr."<br />";
+			/*$conceptosStr=implode("|",$conceptosArr);
+			echo "<br />Conceptos -->".$conceptosStr."<br />";*/
 			$trafico->setCaConceptos($conceptosStr);
 			$trafico->save();
 			
