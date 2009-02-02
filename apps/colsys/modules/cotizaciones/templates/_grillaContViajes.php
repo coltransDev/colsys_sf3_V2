@@ -1,13 +1,26 @@
 <?
 use_helper("Ext2");
 ?>
+
+editorModalidad = new Ext.form.ComboBox({
+	fieldLabel: 'Concepto',			
+	typeAhead: true,
+	forceSelection: true,
+	triggerAction: 'all',
+	emptyText:'Seleccione',
+	selectOnFocus: true,					
+	mode: 'local',	
+	lazyRender:true,
+	listClass: 'x-combo-list-small',	
+	store : [['FCL','FCL'], ['LCL','LCL']]	
+})  
   
 
 /*
 * Crea el Record 
 */
 var recordGrilla = Ext.data.Record.create([
-	{name: 'oid', type: 'int'},  
+	{name: 'id', type: 'int'},  
     {name: 'idcotizacion', type: 'string'},   		
     {name: 'tipo', type: 'string'},   		
     {name: 'modalidad', type: 'string'},   		
@@ -24,8 +37,9 @@ var recordGrilla = Ext.data.Record.create([
 	{name: 'idmoneda', type: 'string'},
 	{name: 'frecuencia', type: 'string'},
 	{name: 'ttransito', type: 'string'},
-	{name: 'observaciones', type: 'string'}
-]);
+	{name: 'observaciones', type: 'string'},
+	{name: 'orden', type: 'int'}
+]); 
   
    		
 /*
@@ -42,7 +56,7 @@ var storeContViajes = new Ext.data.GroupingStore({
 		}, 
 		recordGrilla
 	),
-	sortInfo:{field: 'modalidad', direction: "ASC"},
+	sortInfo:{field: 'orden', direction: "ASC"},
 	//proxy: new Ext.data.MemoryProxy(data_contviajes),
 	groupField: 'tipo'		
 });
@@ -67,16 +81,17 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'tipo',
 			header: "Tipo",
 			width: 40,
-			sortable: true,			
+			sortable: false,			
 			dataIndex: 'tipo',
-			hideable: false,
-			editor: <?=extOtmDta("tipo")?>
+			hideable: false,			
+			hidden: true	
+			
 		},	
 		{
 			id: 'cotizacionId',
 			header: "cotizacionId",
 			width: 10,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'idcotizacion',
 			hideable: false,
 			hidden: true
@@ -85,16 +100,16 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'modalidad',
 			header: "Modalidad",
 			width: 60,
-			sortable: true,			
+			sortable: false,			
 			dataIndex: 'modalidad',
 			hideable: false,
-			editor: <?=extModalidad("modalidad", Constantes::MARITIMO, Constantes::IMPO )?>
+			editor: editorModalidad
 		},
 		{
 			id: 'ciuorigen',
 			header: "Origen",
 			width: 80,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'ciuorigen',
 			hideable: false,
 			editor: <?=include_component("widgets", "ciudades" ,array("id"=>"origen", "label"=>"Ciudad Origen", "idpais"=>"CO-057" ))?>
@@ -103,7 +118,7 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'ciudestino',
 			header: "Destino",
 			width: 80,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'ciudestino',
 			hideable: false,
 			editor: <?=include_component("widgets", "ciudades" ,array("id"=>"destino", "label"=>"Ciudad Destino", "idpais"=>"CO-057" ))?>
@@ -112,7 +127,7 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'concepto',
 			header: "Concepto",
 			width: 90,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'concepto',
 			hideable: false,
 			editor: <?=extConcepto($id="conceptoOtmDta", Constantes::TERRESTRE, "OTM-DTA")?>
@@ -121,7 +136,7 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'equipo',
 			header: "Equipo",
 			width: 100,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'equipo',
 			hideable: false,
 			editor: <?=extConcepto($id="equipo", Constantes::MARITIMO)?>
@@ -130,7 +145,7 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'valor_tar',
 			header: "Tarifa",
 			width: 100,
-			sortable: true,
+			sortable: false,
 			renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_tar',
 			hideable: false,
@@ -144,7 +159,7 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'valor_min',
 			header: "Mínimo",
 			width: 100,
-			sortable: true,
+			sortable: false,
 			renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_min',
 			hideable: false,
@@ -158,7 +173,7 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'idmoneda',
 			header: "Moneda",
 			width: 100,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'idmoneda',
 			hideable: false,
 			editor: <?=extMonedas()?>
@@ -167,39 +182,61 @@ var colModel = new Ext.grid.ColumnModel({
 			id: 'frecuencia',
 			header: "Frecuencia",
 			width: 100,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'frecuencia',
 			hideable: false,
 			editor: new Ext.form.TextField({
 						name: 'frecuencia',
-						allowBlank:false
+						allowBlank:true
 			})
 		},
 		{
 			id: 'ttransito',
 			header: "Tiempo/Transito",
 			width: 100,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'ttransito',
 			hideable: false,
 			editor: new Ext.form.TextField({
 						name: 'ttransito',
-						allowBlank:false
+						allowBlank:true
 			}) 
 		},
 		{
 			id: 'observaciones',
 			header: "Observaciones",
 			width: 100,
-			sortable: true,
+			sortable: false,
 			dataIndex: 'observaciones',
-			hideable: false,
+			hideable: false,			
 			editor: new Ext.form.TextField({
 						name: 'observaciones',
-						allowBlank:false
+						allowBlank:true
 			}) 
 		}
-	]
+	],
+	isCellEditable: function(colIndex, rowIndex) {	
+		var record = storeContViajes.getAt(rowIndex);
+		var field = this.getDataIndex(colIndex);
+		
+		//alert( record.data.modalidad+" "+field);
+			
+		if( record.data.modalidad!="+" && field=="modalidad" ){
+			return false;
+		}
+		
+		if( record.data.modalidad=="+" && field!="modalidad" ){
+			return false;
+		}
+		
+		
+		if( record.data.modalidad!="FCL" && field=="equipo" ){
+			return false;
+		}
+		
+		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
+	}
+	
 });
 
 
@@ -220,11 +257,11 @@ var selModel = new  Ext.grid.CellSelectionModel();
 * Handlers de los eventos y botones de la grilla 
 */
 
-var contviajeHandler = function(){
+var contviajeObservacionesHandler = function( rec ){
 	//crea una ventana 
 	win = new Ext.Window({		
 		width       : 500,
-		height      : 510,
+		height      : 200,
 		closeAction :'close',
 		plain       : true,		
 		
@@ -232,60 +269,19 @@ var contviajeHandler = function(){
 			id: 'contviaje-form',
 			layout: 'form',
 			frame: true,
-			title: 'Ingrese los datos del Producto',
+			title: 'Ingrese las observaciones',
 			autoHeight: true,
 			bodyStyle: 'padding: 5px 5px 0 5px;',
 			labelWidth: 100,
 			
-			items: [{
-						id: 'cotizacionId',
-						xtype:'hidden',
-						name: 'cotizacionId',
-						value: '<?=$cotizacion->getCaIdcotizacion()?>',
-			            allowBlank:false
-			        }
-					,<?=extOtmDta("tipo")?>
-					,<?=extModalidad("modalidad", Constantes::MARITIMO, Constantes::IMPO )?>
-					,<?=include_component("widgets", "ciudades" ,array("id"=>"origen", "label"=>"Ciudad Origen", "idpais"=>"CO-057" ))?>
-					,<?=include_component("widgets", "ciudades" ,array("id"=>"destino", "label"=>"Ciudad Destino", "idpais"=>"CO-057" ))?>
-					,<?=extConcepto($id="conceptoOtmDta", Constantes::TERRESTRE , $modalidad="OTM-DTA")?>
-					,<?=extConcepto($id="equipo", Constantes::MARITIMO , $modalidad="Ext.getCmp('modalidad')")?>
-					,{
-						xtype:'numberfield',
-						fieldLabel: 'Valor',
-						name: 'valor_tar',
-						value: '',						 
-						allowBlank:false,
-						width: 120
-	                },{
-						xtype:'numberfield',
-						fieldLabel: 'Mínimo',
-						name: 'valor_min',
-						value: '',						 
-						allowBlank:false,
-						width: 120
-	                }
-	                ,<?=extMonedas("idmoneda")?>
-					,{
-						xtype: 'textfield',
-						width: 100,
-						fieldLabel: 'Frecuencia',
-						name: 'frecuencia',
-						value: '',
-	                    allowBlank:false
-					},{
-						xtype: 'textfield',
-						width: 100,
-						fieldLabel: 'T/Transito',
-						name: 'ttransito',
-						value: '',
-	                    allowBlank:false
-					},{
+			items: [
+					{
 						xtype: 'textarea',
 						width: 310,
+						
 						fieldLabel: 'Observaciones',
 						name: 'observaciones',
-						value: '',
+						value: rec.data.observaciones,
 	                    allowBlank:true
 					}
 					]
@@ -293,28 +289,16 @@ var contviajeHandler = function(){
 		}),
 
 		buttons: [{
-			text     : 'Guardar',
+			text     : 'Ok',
 			handler: function(){
-				var fp = Ext.getCmp("contviaje-form");	
-												
-				if( fp.getForm().isValid() ){
-					fp.getForm().submit({url:'<?=url_for('cotizaciones/formContViajeGuardar')?>', 
-	            							 	waitMsg:'Salvando Datos de OTM/DTA...',
-	            							 	// standardSubmit: false,
-	            							 	
-	            							 	success:function(response,options){
-	            							 		storeContViajes.reload();
-	            							 		win.close();
-	            							 	},
-		            							failure:function(response,options){
-													Ext.Msg.alert( "Error "+response.responseText );
-													win.close();
-												}//end failure block      
-											});
-					}else{
-						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información de la Continuación de Viaje no es válida o está incompleta!');
-					}	            	
+				var fp = Ext.getCmp("contviaje-form");													
+				if( fp.getForm().isValid() ){				
+									
+					rec.set( "observaciones",  fp.getForm().findField("observaciones").getValue() );
+					win.close();           	
+					
 				}
+			}	
 		},{
 			text     : 'Cancelar',
 			handler  : function(){
@@ -334,14 +318,48 @@ function updateContViajeModel(){
 	var records = storeContViajes.getModifiedRecords();
 			
 	var lenght = records.length;
+	
+	
+	for( var i=0; i< lenght; i++){
+		r = records[i];
+		if( r.data.modalidad!="+"   ){
+			if( !r.data.origen ){
+				Ext.MessageBox.alert('Alerta', 'Por favor indique la ciudad de origen');
+				return false;
+			}
+			
+			if( !r.data.destino ){
+				Ext.MessageBox.alert('Alerta', 'Por favor indique la ciudad de destino');
+				return false;
+			}
+			
+			if( !r.data.idconcepto ){
+				Ext.MessageBox.alert('Alerta', 'Por favor indique el concepto');
+				return false;
+			}
+			
+			if( !r.data.idequipo && r.data.modalidad =="FCL" ){
+				Ext.MessageBox.alert('Alerta', 'Por favor indique el equipo');
+				return false;
+			}
+			
+		}
+	}
+	
+	
 	for( var i=0; i< lenght; i++){
 		r = records[i];
 					
 		var changes = r.getChanges();
 		
 		changes['cotizacionId']=r.data.idcotizacion;
-		changes['oid']=r.data.oid;	
-
+		changes['id']=r.id;
+		changes['idcontinuacion']=r.data.id;
+		changes['tipo']=r.data.tipo;	
+		changes['modalidad']=r.data.modalidad;	
+		changes['idmoneda']=r.data.idmoneda;
+		changes['idconcepto']=r.data.idconcepto;
+			
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
@@ -349,29 +367,17 @@ function updateContViajeModel(){
 				url: '<?=url_for("cotizaciones/formContViajeGuardar")?>', 
 				//Solamente se envian los cambios 						
 				params :	changes,
-										
-				//Ejecuta esta accion en caso de fallo
-				//(404 error etc, ***NOT*** success=false)
-				failure:function(response,options){
-					alert( response.responseText );
-					success = false;
-				},
-				//Ejecuta esta accion cuando el resultado es exitoso
-				success:function(response,options){
-					//alert( response.responseText );
-					//r.commit();
+														
+				callback :function(options, success, response){											
+					var res = Ext.util.JSON.decode( response.responseText );					
+					var rec = storeContViajes.getById( res.id );										
+					rec.set("id", res.idcontinuacion );											
+					rec.commit();										
 				}
 			 }
 		);
-		r.set("sel", false);//Quita la seleccion de todas las columnas 
-	}
 	
-	if( success ){
-		storeContViajes.commitChanges();			
-		//Ext.MessageBox.alert('Status','Los cambios se han guardado correctamente');
-	}else{
-		Ext.MessageBox.alert('Warning','Los cambios no se han guardado: ');
-	}	
+	}		
 }
 
 
@@ -386,7 +392,35 @@ var grid_contviajesOnvalidateedit = function(e){
 	var rec = e.record;		   
 	var ed = this.colModel.getCellEditor(e.column, e.row);		
 	var store = ed.field.store;
-
+	
+	if( e.field == "modalidad" && rec.data.modalidad =="+" ){		
+		var rec = e.record;		   	
+		var newRec = new recordProductos({
+					   id: '',  
+					   idcotizacion: rec.data.idcotizacion,  
+					   tipo: rec.data.tipo,  
+					   modalidad: '+',   
+					   origen: '',  
+					   ciuorigen: '',   
+					   destino: '',
+					   ciudestino: '',
+					   idconcepto: '',
+					   concepto: '',
+					   idequipo: '',
+					   equipo: '',
+					   valor_tar: 0,
+					   valor_min: 0,
+					   idmoneda: 'COP',
+					   frecuencia: '',
+					   observaciones: '',
+					   orden: rec.data.orden+1					  
+					});						
+											
+		storeContViajes.addSorted(newRec);
+		return true;		
+	}
+	
+	
 	if( e.field == "ciuorigen"){	
 	    store.each( function( r ){	    		
 				if( r.data.idciudad==e.value ){									
@@ -405,10 +439,10 @@ var grid_contviajesOnvalidateedit = function(e){
 				}
 			}
 		)		
-	}else if( e.field == "concepto"){
+	}else if( e.field == "concepto"){		
 	    store.each( function( r ){
-				if( r.data.idconcepto==e.value ){
-					rec.set("concepto", r.data.idconcepto );
+				if( r.data.idconcepto==e.value ){					
+					rec.set("idconcepto", r.data.idconcepto );
 					e.value = r.data.concepto;
 					return true;
 				}
@@ -417,7 +451,7 @@ var grid_contviajesOnvalidateedit = function(e){
 	}else if( e.field == "equipo"){
 	    store.each( function( r ){
 				if( r.data.idconcepto==e.value ){
-					rec.set("equipo", r.data.idconcepto );
+					rec.set("idequipo", r.data.idconcepto );
 					e.value = r.data.concepto;
 					return true;
 				}
@@ -434,6 +468,76 @@ var grid_contOnBeforeedit = function( e ){
 		 ed.field.store.reload();
 	}
 		
+}
+
+
+
+
+var grid_contviajesOnRowcontextmenu =  function(grid, index, e){		
+	rec = this.store.getAt(index);	
+	this.menu = new Ext.menu.Menu({
+	id:'grid_productos-ctx',
+	items: [{
+				text: 'Observaciones',
+				iconCls: 'page_white_edit',
+				scope:this,
+				handler: function(){  
+					contviajeObservacionesHandler( this.ctxRecord );  					                   									
+				}
+			},
+			{
+				text: 'Eliminar item',
+				iconCls: 'delete',
+				scope:this,
+				handler: function(){    					                   		
+					if( this.ctxRecord.data.modalidad!="+" && confirm("Desea continuar?") ){
+					
+						if( !this.ctxRecord.data.id ){
+							var rec = storeContViajes.getById( this.ctxRecord.id );		
+							storeContViajes.remove(rec);	
+						}else{					
+							var idcontinuacion = this.ctxRecord.data.id;
+							var id = this.ctxRecord.id;
+							
+							Ext.Ajax.request( 
+								{   
+									waitMsg: 'Guardando cambios...',						
+									url: '<?=url_for("cotizaciones/eliminarContViaje?idcotizacion=".$cotizacion->getCaIdcotizacion())?>',
+									//method: 'POST', 
+									//Solamente se envian los cambios 						
+									params :	{								
+										idcontinuacion: idcontinuacion,
+										id: id								
+									},
+															
+									callback :function(options, success, response){	
+												
+										var res = Ext.util.JSON.decode( response.responseText );					
+										var rec = storeContViajes.getById( res.id );		
+										storeContViajes.remove(rec);												
+		
+																	
+									}							
+									
+								 }
+							);//Ext.Ajax.request
+						}
+					}						
+				}
+			}		
+			]
+	});
+	//this.menu.on('hide', this.onContextHide, this);
+   
+	e.stopEvent();
+	if(this.ctxRow){
+		Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+		this.ctxRow = null;
+	}
+	this.ctxRecord = rec;
+	this.ctxRow = this.view.getRow(index);
+	Ext.fly(this.ctxRow).addClass('x-node-ctx');
+	this.menu.showAt(e.getXY());
 }
 
 /*
@@ -460,13 +564,8 @@ var grid_contviajes = new Ext.grid.EditorGridPanel({
 		tooltip: 'Guarda los cambios realizados en el Continuación de Viaje',
 		iconCls: 'disk',  // reference to our css
 		handler: guardarItems
-	},
-	{
-		text: 'Agregar Concepto',
-		tooltip: 'Agregar un Concepto de OTM o DTA',
-		iconCls: 'add',  // reference to our css
-		handler: contviajeHandler
 	}
+	
 	
 	],
 	
@@ -489,6 +588,7 @@ var grid_contviajes = new Ext.grid.EditorGridPanel({
 	}),
 	listeners:{
 		validateedit: grid_contviajesOnvalidateedit,
-		beforeedit: grid_contOnBeforeedit
+		beforeedit: grid_contOnBeforeedit,
+		rowcontextmenu: grid_contviajesOnRowcontextmenu
 	}	
 });

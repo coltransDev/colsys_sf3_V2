@@ -997,7 +997,18 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 					); 
 					}						
 				}
-			}		
+			},
+			{
+				text: 'Observaciones',
+				iconCls: 'page_white_edit',
+				scope:this,
+				handler: function(){ 
+					if( this.ctxRecord.data.iditem  ){
+						grid_productosObservacionesHandler( this.ctxRecord );  					                   										
+					} 
+					
+				}
+			},		
 			]
 	});
 	//this.menu.on('hide', this.onContextHide, this);
@@ -1138,6 +1149,64 @@ grid_productosOnBeforeedit = function( e ){
 	}
 		
 }
+
+	
+/*
+* Handlers de los eventos y botones de la grilla 
+*/
+
+var grid_productosObservacionesHandler = function( rec ){
+	//crea una ventana 
+	win = new Ext.Window({		
+		width       : 500,
+		height      : 200,
+		closeAction :'close',
+		plain       : true,		
+		
+		items       : new Ext.FormPanel({
+			id: 'producto-form-obs',
+			layout: 'form',
+			frame: true,
+			title: 'Ingrese las observaciones',
+			autoHeight: true,
+			bodyStyle: 'padding: 5px 5px 0 5px;',
+			labelWidth: 100,
+			
+			items: [
+					{
+						xtype: 'textarea',
+						width: 310,
+						
+						fieldLabel: 'Observaciones',
+						name: 'observaciones',
+						value: rec.data.detalles,
+	                    allowBlank:true
+					}
+					]
+			
+		}),
+
+		buttons: [{
+			text     : 'Ok',
+			handler: function(){
+				var fp = Ext.getCmp("producto-form-obs");													
+				if( fp.getForm().isValid() ){
+										
+					rec.set( "detalles",  fp.getForm().findField("observaciones").getValue() );
+					win.close();           	
+					
+				}
+			}	
+		},{
+			text     : 'Cancelar',
+			handler  : function(){
+				win.close();
+			}
+		}]
+	});
+	win.show( );	
+}	
+	
 				
 
 

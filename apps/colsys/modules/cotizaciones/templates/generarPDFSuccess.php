@@ -568,7 +568,8 @@ if(count($continuaciones)>0){
 	
 	$tipo = "";
 	foreach( $continuaciones as $continuacion ){
-		$imprimirNotas[]="OTM_".$continuacion->getCaModalidad();
+		$imprimirNotas[]="anexoImpo";
+		$imprimirNotas[]="OTM_".$continuacion->getCaModalidad();		
 		if( $tipo!=$continuacion->getCaTipo() ){			
 			
 			
@@ -663,10 +664,12 @@ if ( count($seguros)>0 ) {
 	$pdf->Ln(2);
 	$pdf->SetFont('Arial','',7);
 	
-	$titu_mem= array('Prima',  'Tarifa Mínima' , 'Obtención de la Póliza');			
+	$titu_mem= array('Transporte', 'Prima',  'Tarifa Mínima' , 'Obtención de la Póliza');			
 	//if( $imprimirObservaciones ){
 	//	array_push( $titu_mem, 'Observaciones' );
-		$width_mem= array(55, 53, 62);
+		//$width_mem= array(55, 53, 62);
+		$width_mem= array(33, 53, 42, 42);
+		//$pdf->SetWidths();
 	/*}else{
 		$width_mem= array(80, 90);
 	}*/
@@ -698,8 +701,9 @@ if ( count($seguros)>0 ) {
 		$pdf->SetFills(array_fill(0, count($width_mem), 0));
 		
 		
-		$row = array( 
-					($seguro->getCaPrimaTip()=="%")?Utils::formatNumber($seguro->getCaPrimaVlr())." ".$seguro->getCaPrimaTip():$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaVlr())." sobre valor asegurado" 
+		$row = array(
+					$seguro->getCaTransporte(), 
+					(($seguro->getCaPrimaTip()=="%")?Utils::formatNumber($seguro->getCaPrimaVlr())." ".$seguro->getCaPrimaTip():$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaVlr()))." sobre valor asegurado" 
 					 ,
 					($seguro->getCaPrimaMin()!=0)?$seguro->getCaIdmoneda()." ".Utils::formatNumber($seguro->getCaPrimaMin()):" "
 					,

@@ -350,7 +350,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeGenerarPDF(){
 	
-		setlocale(LC_CTYPE, "es_ES");
+		
 		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
 		$this->usuario = $this->cotizacion->getUsuario();
@@ -555,12 +555,7 @@ class cotizacionesActions extends sfActions
 		$continuaciones = $cotizacion->getCotContinuacions();
 		foreach( $continuaciones as $continuacion ){	
 			$newContinuacion = $continuacion->copy( false );			
-			$newContinuacion->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
-			$newContinuacion->setCaTipo( $continuacion->getCaTipo() );
-			$newContinuacion->setCaOrigen( $continuacion->getCaOrigen() );
-			$newContinuacion->setCaDestino( $continuacion->getCaDestino() );
-			$newContinuacion->setCaIdconcepto( $continuacion->getCaIdconcepto() );
-			$newContinuacion->delOid();
+			$newContinuacion->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );			
 			$newContinuacion->save();	
 					
 		}
@@ -1298,8 +1293,10 @@ class cotizacionesActions extends sfActions
 	public function executeFormContViajeGuardar(){
 		$user_id = $this->getUser()->getUserId();
 		$update = true;
-		
-		$continuacion = CotContinuacionPeer::retrieveByPk( $this->getRequestParameter("oid") );		
+		$continuacion=null;
+		if( $this->getRequestParameter("idcontinuacion") ){
+			$continuacion = CotContinuacionPeer::retrieveByPk( $this->getRequestParameter("idcontinuacion") );		
+		}
 		if ( !$continuacion ) {
 				$update = false;
 				$continuacion = new CotContinuacion();
@@ -1322,8 +1319,8 @@ class cotizacionesActions extends sfActions
 			$continuacion->setCaDestino( $this->getRequestParameter("destino") );
 		}
 		
-		if( $this->getRequestParameter("idconceptoOtmDta") ){
-			$continuacion->setCaIdConcepto( $this->getRequestParameter("idconceptoOtmDta") );
+		if( $this->getRequestParameter("idconcepto") ){
+			$continuacion->setCaIdConcepto( $this->getRequestParameter("idconcepto") );
 		}
 		
 		if( $this->getRequestParameter("idequipo") ){
@@ -1342,16 +1339,20 @@ class cotizacionesActions extends sfActions
 			$continuacion->setCaIdMoneda( $this->getRequestParameter("idmoneda") );
 		}
 		
-		if( $this->getRequestParameter("frecuencia") ){
+		if( $this->getRequestParameter("frecuencia")!==null ){
 			$continuacion->setCaFrecuencia( utf8_decode($this->getRequestParameter("frecuencia")) );
 		}
 		
-		if( $this->getRequestParameter("ttransito") ){
+		if( $this->getRequestParameter("ttransito")!==null ){
 			$continuacion->setCaTiempoTransito( utf8_decode($this->getRequestParameter("ttransito")) );
 		}
 		
-		if( $this->getRequestParameter("observaciones") ){
-			$continuacion->setCaObservaciones( utf8_decode($this->getRequestParameter("observaciones")) );
+		if( $this->getRequestParameter("observaciones")!==null ){
+			if( $this->getRequestParameter("observaciones") ){
+				$continuacion->setCaObservaciones( utf8_decode($this->getRequestParameter("observaciones")) );
+			}else{
+				$continuacion->setCaObservaciones( null );
+			}
 		}
 		
 		if( !$update ){ 
@@ -1363,8 +1364,25 @@ class cotizacionesActions extends sfActions
 		}
 
 		$continuacion->save();
-		return sfView::NONE;
+		
+		$this->responseArray = array( "id"=>$this->getRequestParameter("id"), "idcontinuacion"=>$continuacion->getCaIdcontinuacion() );		
+		$this->setTemplate("responseTemplate");
+		$this->setLayout("ajax");				
 	}
+	
+	
+	public function executeEliminarContViaje(){
+	
+		$continuacion = CotContinuacionPeer::retrieveByPk( $this->getRequestParameter("idcontinuacion") );	
+		$this->forward404Unless( $continuacion );
+		
+		$continuacion->delete();		
+				
+		$this->responseArray = array("id"=>$this->getRequestParameter("id"));
+		$this->setTemplate("responseTemplate");
+		$this->setLayout("ajax");	
+	}
+	
 	
 	/*
 	* Devuelve los datos para la grilla de OTM/DTA 
@@ -1396,19 +1414,26 @@ class cotizacionesActions extends sfActions
 		$c->addSelectColumn(CotContinuacionPeer::CA_FRECUENCIA );
 		$c->addSelectColumn(CotContinuacionPeer::CA_TIEMPOTRANSITO );
 		$c->addSelectColumn(CotContinuacionPeer::CA_OBSERVACIONES );
-		$c->addSelectColumn(CotContinuacionPeer::OID );
+		$c->addSelectColumn(CotContinuacionPeer::CA_IDCONTINUACION );
 		$c->addJoin( CotContinuacionPeer::CA_ORIGEN, "c_org.ca_idciudad", Criteria::LEFT_JOIN );
 		$c->addJoin( CotContinuacionPeer::CA_DESTINO, "c_dst.ca_idciudad", Criteria::LEFT_JOIN );
 		$c->addJoin( CotContinuacionPeer::CA_IDCONCEPTO, "concepto.ca_idconcepto", Criteria::LEFT_JOIN );
 		$c->addJoin( CotContinuacionPeer::CA_IDEQUIPO, "equipo.ca_idconcepto", Criteria::LEFT_JOIN );
 
 		$c->add( CotContinuacionPeer::CA_IDCOTIZACION , $id );
+		$c->addAscendingOrderByColumn(CotContinuacionPeer::CA_TIPO );
+		$c->addAscendingOrderByColumn(CotContinuacionPeer::CA_MODALIDAD );
+		
 		
 		$stmt = CotContinuacionPeer::doSelectStmt( $c );
 		
 		$this->contviajes = array();
+		$i=0;
+		
+		$tipo = null;
 		
    		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {
+			
       		$this->contviajes[] = array('idcotizacion'=>$row[0],
       									'tipo'=>$row[1],
       									'modalidad'=>$row[2],
@@ -1426,9 +1451,54 @@ class cotizacionesActions extends sfActions
 										'frecuencia'=>utf8_encode($row[14]),
 										'ttransito'=>utf8_encode($row[15]),
 										'observaciones'=>utf8_encode($row[16]),
-										'oid'=>utf8_encode($row[17]),
+										'id'=>utf8_encode($row[17]),
+										'orden'=>$i++
       		);
-		}		
+		}	
+		
+		$this->contviajes[] = array('idcotizacion'=>$id,
+      									'tipo'=>"OTM",
+      									'modalidad'=>'+',
+										'origen'=>'',
+										'ciuorigen'=>'',
+      									'destino'=>'',
+      									'ciudestino'=>'',
+      									'idconcepto'=>'',
+      									'concepto'=>'',
+      									'idequipo'=>'',
+      									'equipo'=>'',
+      									'valor_tar'=>'',
+      									'valor_min'=>'',
+      									'idmoneda'=>'COP',
+										'frecuencia'=>'',
+										'ttransito'=>'',
+										'observaciones'=>'',
+										'oid'=>'',
+										'orden'=>9999+$i++,
+      			);
+				
+		$this->contviajes[] = array('idcotizacion'=>$id,
+      									'tipo'=>"DTA",
+      									'modalidad'=>'+',
+										'origen'=>'',
+										'ciuorigen'=>'',
+      									'destino'=>'',
+      									'ciudestino'=>'',
+      									'idconcepto'=>'',
+      									'concepto'=>'',
+      									'idequipo'=>'',
+      									'equipo'=>'',
+      									'valor_tar'=>'',
+      									'valor_min'=>'',
+      									'idmoneda'=>'COP',
+										'frecuencia'=>'',
+										'ttransito'=>'',
+										'observaciones'=>'',
+										'oid'=>'',
+										'orden'=>9999+$i++,
+      			);		
+		
+			
 	}
 	
 	
