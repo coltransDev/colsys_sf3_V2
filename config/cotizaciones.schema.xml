@@ -136,7 +136,8 @@
 	</table>
 	
 	<table name="tb_cotcontinuacion" phpName="CotContinuacion">	
-		<column name="oid" type="integer" primaryKey="true" />						
+		<column name="ca_idcontinuacion" type="integer" primaryKey="true" autoIncrement="true" />	
+		<id-method-parameter value="tb_cotcontinuacion_id"/>					
 		<column name="ca_idcotizacion" type="integer"   />
 		<column name="ca_tipo" type="varchar" required="true"   />	
 		<column name="ca_modalidad" type="varchar"   />	

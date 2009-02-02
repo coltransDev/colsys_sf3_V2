@@ -90,7 +90,7 @@
 		<column name="ca_zipcode" type="varchar" />
 		<column name="ca_website" type="varchar" />
 		<column name="ca_email" type="varchar" />
-		<column name="ca_divulgacion" type="varchar" />	
+		<column name="ca_tipo" type="varchar" />	
 		<column name="ca_activo" type="boolean" />	
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>
