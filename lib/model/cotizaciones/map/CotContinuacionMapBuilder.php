@@ -60,9 +60,11 @@ class CotContinuacionMapBuilder implements MapBuilder {
 		$tMap->setPhpName('CotContinuacion');
 		$tMap->setClassname('CotContinuacion');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
 
-		$tMap->addPrimaryKey('OID', 'Oid', 'INTEGER', true, null);
+		$tMap->setPrimaryKeyMethodInfo('tb_cotcontinuacion_id');
+
+		$tMap->addPrimaryKey('CA_IDCONTINUACION', 'CaIdcontinuacion', 'INTEGER', true, null);
 
 		$tMap->addForeignKey('CA_IDCOTIZACION', 'CaIdcotizacion', 'INTEGER', 'tb_cotizaciones', 'CA_IDCOTIZACION', false, null);
 

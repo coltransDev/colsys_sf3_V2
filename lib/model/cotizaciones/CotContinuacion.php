@@ -57,10 +57,5 @@ class CotContinuacion extends BaseCotContinuacion
 		return $str;
 	}
 	
-	
-	public function delOid(PropelPDO $con = null){		
-		if( ($k = array_search(CotContinuacionPeer::OID, $this->modifiedColumns))!==null ){
-			unset($this->modifiedColumns[$k]);	
-		}						
-	}
+		
 }

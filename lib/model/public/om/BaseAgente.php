@@ -75,10 +75,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	protected $ca_email;
 
 	/**
-	 * The value for the ca_divulgacion field.
+	 * The value for the ca_tipo field.
 	 * @var        string
 	 */
-	protected $ca_divulgacion;
+	protected $ca_tipo;
 
 	/**
 	 * The value for the ca_activo field.
@@ -246,13 +246,13 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [ca_divulgacion] column value.
+	 * Get the [ca_tipo] column value.
 	 * 
 	 * @return     string
 	 */
-	public function getCaDivulgacion()
+	public function getCaTipo()
 	{
-		return $this->ca_divulgacion;
+		return $this->ca_tipo;
 	}
 
 	/**
@@ -450,24 +450,24 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	} // setCaEmail()
 
 	/**
-	 * Set the value of [ca_divulgacion] column.
+	 * Set the value of [ca_tipo] column.
 	 * 
 	 * @param      string $v new value
 	 * @return     Agente The current object (for fluent API support)
 	 */
-	public function setCaDivulgacion($v)
+	public function setCaTipo($v)
 	{
 		if ($v !== null) {
 			$v = (string) $v;
 		}
 
-		if ($this->ca_divulgacion !== $v) {
-			$this->ca_divulgacion = $v;
-			$this->modifiedColumns[] = AgentePeer::CA_DIVULGACION;
+		if ($this->ca_tipo !== $v) {
+			$this->ca_tipo = $v;
+			$this->modifiedColumns[] = AgentePeer::CA_TIPO;
 		}
 
 		return $this;
-	} // setCaDivulgacion()
+	} // setCaTipo()
 
 	/**
 	 * Set the value of [ca_activo] column.
@@ -535,7 +535,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->ca_zipcode = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
 			$this->ca_website = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
 			$this->ca_email = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-			$this->ca_divulgacion = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_tipo = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->ca_activo = ($row[$startcol + 10] !== null) ? (boolean) $row[$startcol + 10] : null;
 			$this->resetModified();
 
@@ -932,7 +932,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				return $this->getCaEmail();
 				break;
 			case 9:
-				return $this->getCaDivulgacion();
+				return $this->getCaTipo();
 				break;
 			case 10:
 				return $this->getCaActivo();
@@ -967,7 +967,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$keys[6] => $this->getCaZipcode(),
 			$keys[7] => $this->getCaWebsite(),
 			$keys[8] => $this->getCaEmail(),
-			$keys[9] => $this->getCaDivulgacion(),
+			$keys[9] => $this->getCaTipo(),
 			$keys[10] => $this->getCaActivo(),
 		);
 		return $result;
@@ -1028,7 +1028,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$this->setCaEmail($value);
 				break;
 			case 9:
-				$this->setCaDivulgacion($value);
+				$this->setCaTipo($value);
 				break;
 			case 10:
 				$this->setCaActivo($value);
@@ -1066,7 +1066,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[6], $arr)) $this->setCaZipcode($arr[$keys[6]]);
 		if (array_key_exists($keys[7], $arr)) $this->setCaWebsite($arr[$keys[7]]);
 		if (array_key_exists($keys[8], $arr)) $this->setCaEmail($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaDivulgacion($arr[$keys[9]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaTipo($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCaActivo($arr[$keys[10]]);
 	}
 
@@ -1088,7 +1088,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(AgentePeer::CA_ZIPCODE)) $criteria->add(AgentePeer::CA_ZIPCODE, $this->ca_zipcode);
 		if ($this->isColumnModified(AgentePeer::CA_WEBSITE)) $criteria->add(AgentePeer::CA_WEBSITE, $this->ca_website);
 		if ($this->isColumnModified(AgentePeer::CA_EMAIL)) $criteria->add(AgentePeer::CA_EMAIL, $this->ca_email);
-		if ($this->isColumnModified(AgentePeer::CA_DIVULGACION)) $criteria->add(AgentePeer::CA_DIVULGACION, $this->ca_divulgacion);
+		if ($this->isColumnModified(AgentePeer::CA_TIPO)) $criteria->add(AgentePeer::CA_TIPO, $this->ca_tipo);
 		if ($this->isColumnModified(AgentePeer::CA_ACTIVO)) $criteria->add(AgentePeer::CA_ACTIVO, $this->ca_activo);
 
 		return $criteria;
@@ -1160,7 +1160,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 
 		$copyObj->setCaEmail($this->ca_email);
 
-		$copyObj->setCaDivulgacion($this->ca_divulgacion);
+		$copyObj->setCaTipo($this->ca_tipo);
 
 		$copyObj->setCaActivo($this->ca_activo);
 

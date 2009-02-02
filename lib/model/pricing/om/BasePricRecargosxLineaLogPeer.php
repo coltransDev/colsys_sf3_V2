@@ -1,91 +1,82 @@
 <?php
 
 /**
- * Base static class for performing query and update operations on the 'tb_cotcontinuacion' table.
+ * Base static class for performing query and update operations on the 'bs_pricrecargosxlinea' table.
  *
  * 
  *
- * @package    lib.model.cotizaciones.om
+ * @package    lib.model.pricing.om
  */
-abstract class BaseCotContinuacionPeer {
+abstract class BasePricRecargosxLineaLogPeer {
 
 	/** the default database name for this class */
 	const DATABASE_NAME = 'propel';
 
 	/** the table name for this class */
-	const TABLE_NAME = 'tb_cotcontinuacion';
+	const TABLE_NAME = 'bs_pricrecargosxlinea';
 
 	/** A class that can be returned by this peer. */
-	const CLASS_DEFAULT = 'lib.model.cotizaciones.CotContinuacion';
+	const CLASS_DEFAULT = 'lib.model.pricing.PricRecargosxLineaLog';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 19;
+	const NUM_COLUMNS = 16;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_IDCONTINUACION field */
-	const CA_IDCONTINUACION = 'tb_cotcontinuacion.CA_IDCONTINUACION';
+	/** the column name for the CA_IDTRAFICO field */
+	const CA_IDTRAFICO = 'bs_pricrecargosxlinea.CA_IDTRAFICO';
 
-	/** the column name for the CA_IDCOTIZACION field */
-	const CA_IDCOTIZACION = 'tb_cotcontinuacion.CA_IDCOTIZACION';
+	/** the column name for the CA_IDLINEA field */
+	const CA_IDLINEA = 'bs_pricrecargosxlinea.CA_IDLINEA';
 
-	/** the column name for the CA_TIPO field */
-	const CA_TIPO = 'tb_cotcontinuacion.CA_TIPO';
+	/** the column name for the CA_IDRECARGO field */
+	const CA_IDRECARGO = 'bs_pricrecargosxlinea.CA_IDRECARGO';
 
 	/** the column name for the CA_MODALIDAD field */
-	const CA_MODALIDAD = 'tb_cotcontinuacion.CA_MODALIDAD';
+	const CA_MODALIDAD = 'bs_pricrecargosxlinea.CA_MODALIDAD';
 
-	/** the column name for the CA_ORIGEN field */
-	const CA_ORIGEN = 'tb_cotcontinuacion.CA_ORIGEN';
+	/** the column name for the CA_IMPOEXPO field */
+	const CA_IMPOEXPO = 'bs_pricrecargosxlinea.CA_IMPOEXPO';
 
-	/** the column name for the CA_DESTINO field */
-	const CA_DESTINO = 'tb_cotcontinuacion.CA_DESTINO';
+	/** the column name for the CA_VLRRECARGO field */
+	const CA_VLRRECARGO = 'bs_pricrecargosxlinea.CA_VLRRECARGO';
 
-	/** the column name for the CA_IDCONCEPTO field */
-	const CA_IDCONCEPTO = 'tb_cotcontinuacion.CA_IDCONCEPTO';
+	/** the column name for the CA_APLICACION field */
+	const CA_APLICACION = 'bs_pricrecargosxlinea.CA_APLICACION';
 
-	/** the column name for the CA_IDMONEDA field */
-	const CA_IDMONEDA = 'tb_cotcontinuacion.CA_IDMONEDA';
+	/** the column name for the CA_VLRMINIMO field */
+	const CA_VLRMINIMO = 'bs_pricrecargosxlinea.CA_VLRMINIMO';
 
-	/** the column name for the CA_IDEQUIPO field */
-	const CA_IDEQUIPO = 'tb_cotcontinuacion.CA_IDEQUIPO';
-
-	/** the column name for the CA_TARIFA field */
-	const CA_TARIFA = 'tb_cotcontinuacion.CA_TARIFA';
-
-	/** the column name for the CA_VALOR_TAR field */
-	const CA_VALOR_TAR = 'tb_cotcontinuacion.CA_VALOR_TAR';
-
-	/** the column name for the CA_VALOR_MIN field */
-	const CA_VALOR_MIN = 'tb_cotcontinuacion.CA_VALOR_MIN';
-
-	/** the column name for the CA_FRECUENCIA field */
-	const CA_FRECUENCIA = 'tb_cotcontinuacion.CA_FRECUENCIA';
-
-	/** the column name for the CA_TIEMPOTRANSITO field */
-	const CA_TIEMPOTRANSITO = 'tb_cotcontinuacion.CA_TIEMPOTRANSITO';
+	/** the column name for the CA_APLICACION_MIN field */
+	const CA_APLICACION_MIN = 'bs_pricrecargosxlinea.CA_APLICACION_MIN';
 
 	/** the column name for the CA_OBSERVACIONES field */
-	const CA_OBSERVACIONES = 'tb_cotcontinuacion.CA_OBSERVACIONES';
+	const CA_OBSERVACIONES = 'bs_pricrecargosxlinea.CA_OBSERVACIONES';
+
+	/** the column name for the CA_FCHINICIO field */
+	const CA_FCHINICIO = 'bs_pricrecargosxlinea.CA_FCHINICIO';
+
+	/** the column name for the CA_FCHVENCIMIENTO field */
+	const CA_FCHVENCIMIENTO = 'bs_pricrecargosxlinea.CA_FCHVENCIMIENTO';
 
 	/** the column name for the CA_FCHCREADO field */
-	const CA_FCHCREADO = 'tb_cotcontinuacion.CA_FCHCREADO';
+	const CA_FCHCREADO = 'bs_pricrecargosxlinea.CA_FCHCREADO';
 
 	/** the column name for the CA_USUCREADO field */
-	const CA_USUCREADO = 'tb_cotcontinuacion.CA_USUCREADO';
+	const CA_USUCREADO = 'bs_pricrecargosxlinea.CA_USUCREADO';
 
-	/** the column name for the CA_FCHACTUALIZADO field */
-	const CA_FCHACTUALIZADO = 'tb_cotcontinuacion.CA_FCHACTUALIZADO';
+	/** the column name for the CA_IDMONEDA field */
+	const CA_IDMONEDA = 'bs_pricrecargosxlinea.CA_IDMONEDA';
 
-	/** the column name for the CA_USUACTUALIZADO field */
-	const CA_USUACTUALIZADO = 'tb_cotcontinuacion.CA_USUACTUALIZADO';
+	/** the column name for the CA_CONSECUTIVO field */
+	const CA_CONSECUTIVO = 'bs_pricrecargosxlinea.CA_CONSECUTIVO';
 
 	/**
-	 * An identiy map to hold any loaded instances of CotContinuacion objects.
+	 * An identiy map to hold any loaded instances of PricRecargosxLineaLog objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
 	 * queries.
-	 * @var        array CotContinuacion[]
+	 * @var        array PricRecargosxLineaLog[]
 	 */
 	public static $instances = array();
 
@@ -102,11 +93,11 @@ abstract class BaseCotContinuacionPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcontinuacion', 'CaIdcotizacion', 'CaTipo', 'CaModalidad', 'CaOrigen', 'CaDestino', 'CaIdconcepto', 'CaIdmoneda', 'CaIdequipo', 'CaTarifa', 'CaValorTar', 'CaValorMin', 'CaFrecuencia', 'CaTiempotransito', 'CaObservaciones', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcontinuacion', 'caIdcotizacion', 'caTipo', 'caModalidad', 'caOrigen', 'caDestino', 'caIdconcepto', 'caIdmoneda', 'caIdequipo', 'caTarifa', 'caValorTar', 'caValorMin', 'caFrecuencia', 'caTiempotransito', 'caObservaciones', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCONTINUACION, self::CA_IDCOTIZACION, self::CA_TIPO, self::CA_MODALIDAD, self::CA_ORIGEN, self::CA_DESTINO, self::CA_IDCONCEPTO, self::CA_IDMONEDA, self::CA_IDEQUIPO, self::CA_TARIFA, self::CA_VALOR_TAR, self::CA_VALOR_MIN, self::CA_FRECUENCIA, self::CA_TIEMPOTRANSITO, self::CA_OBSERVACIONES, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcontinuacion', 'ca_idcotizacion', 'ca_tipo', 'ca_modalidad', 'ca_origen', 'ca_destino', 'ca_idconcepto', 'ca_idmoneda', 'ca_idequipo', 'ca_tarifa', 'ca_valor_tar', 'ca_valor_min', 'ca_frecuencia', 'ca_tiempotransito', 'ca_observaciones', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaIdlinea', 'CaIdrecargo', 'CaModalidad', 'CaImpoexpo', 'CaVlrrecargo', 'CaAplicacion', 'CaVlrminimo', 'CaAplicacionMin', 'CaObservaciones', 'CaFchinicio', 'CaFchvencimiento', 'CaFchcreado', 'CaUsucreado', 'CaIdmoneda', 'CaConsecutivo', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtrafico', 'caIdlinea', 'caIdrecargo', 'caModalidad', 'caImpoexpo', 'caVlrrecargo', 'caAplicacion', 'caVlrminimo', 'caAplicacionMin', 'caObservaciones', 'caFchinicio', 'caFchvencimiento', 'caFchcreado', 'caUsucreado', 'caIdmoneda', 'caConsecutivo', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTRAFICO, self::CA_IDLINEA, self::CA_IDRECARGO, self::CA_MODALIDAD, self::CA_IMPOEXPO, self::CA_VLRRECARGO, self::CA_APLICACION, self::CA_VLRMINIMO, self::CA_APLICACION_MIN, self::CA_OBSERVACIONES, self::CA_FCHINICIO, self::CA_FCHVENCIMIENTO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_IDMONEDA, self::CA_CONSECUTIVO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_idlinea', 'ca_idrecargo', 'ca_modalidad', 'ca_impoexpo', 'ca_vlrrecargo', 'ca_aplicacion', 'ca_vlrminimo', 'ca_aplicacion_min', 'ca_observaciones', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_fchcreado', 'ca_usucreado', 'ca_idmoneda', 'ca_consecutivo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
 
 	/**
@@ -116,11 +107,11 @@ abstract class BaseCotContinuacionPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcontinuacion' => 0, 'CaIdcotizacion' => 1, 'CaTipo' => 2, 'CaModalidad' => 3, 'CaOrigen' => 4, 'CaDestino' => 5, 'CaIdconcepto' => 6, 'CaIdmoneda' => 7, 'CaIdequipo' => 8, 'CaTarifa' => 9, 'CaValorTar' => 10, 'CaValorMin' => 11, 'CaFrecuencia' => 12, 'CaTiempotransito' => 13, 'CaObservaciones' => 14, 'CaFchcreado' => 15, 'CaUsucreado' => 16, 'CaFchactualizado' => 17, 'CaUsuactualizado' => 18, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcontinuacion' => 0, 'caIdcotizacion' => 1, 'caTipo' => 2, 'caModalidad' => 3, 'caOrigen' => 4, 'caDestino' => 5, 'caIdconcepto' => 6, 'caIdmoneda' => 7, 'caIdequipo' => 8, 'caTarifa' => 9, 'caValorTar' => 10, 'caValorMin' => 11, 'caFrecuencia' => 12, 'caTiempotransito' => 13, 'caObservaciones' => 14, 'caFchcreado' => 15, 'caUsucreado' => 16, 'caFchactualizado' => 17, 'caUsuactualizado' => 18, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCONTINUACION => 0, self::CA_IDCOTIZACION => 1, self::CA_TIPO => 2, self::CA_MODALIDAD => 3, self::CA_ORIGEN => 4, self::CA_DESTINO => 5, self::CA_IDCONCEPTO => 6, self::CA_IDMONEDA => 7, self::CA_IDEQUIPO => 8, self::CA_TARIFA => 9, self::CA_VALOR_TAR => 10, self::CA_VALOR_MIN => 11, self::CA_FRECUENCIA => 12, self::CA_TIEMPOTRANSITO => 13, self::CA_OBSERVACIONES => 14, self::CA_FCHCREADO => 15, self::CA_USUCREADO => 16, self::CA_FCHACTUALIZADO => 17, self::CA_USUACTUALIZADO => 18, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcontinuacion' => 0, 'ca_idcotizacion' => 1, 'ca_tipo' => 2, 'ca_modalidad' => 3, 'ca_origen' => 4, 'ca_destino' => 5, 'ca_idconcepto' => 6, 'ca_idmoneda' => 7, 'ca_idequipo' => 8, 'ca_tarifa' => 9, 'ca_valor_tar' => 10, 'ca_valor_min' => 11, 'ca_frecuencia' => 12, 'ca_tiempotransito' => 13, 'ca_observaciones' => 14, 'ca_fchcreado' => 15, 'ca_usucreado' => 16, 'ca_fchactualizado' => 17, 'ca_usuactualizado' => 18, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaIdlinea' => 1, 'CaIdrecargo' => 2, 'CaModalidad' => 3, 'CaImpoexpo' => 4, 'CaVlrrecargo' => 5, 'CaAplicacion' => 6, 'CaVlrminimo' => 7, 'CaAplicacionMin' => 8, 'CaObservaciones' => 9, 'CaFchinicio' => 10, 'CaFchvencimiento' => 11, 'CaFchcreado' => 12, 'CaUsucreado' => 13, 'CaIdmoneda' => 14, 'CaConsecutivo' => 15, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtrafico' => 0, 'caIdlinea' => 1, 'caIdrecargo' => 2, 'caModalidad' => 3, 'caImpoexpo' => 4, 'caVlrrecargo' => 5, 'caAplicacion' => 6, 'caVlrminimo' => 7, 'caAplicacionMin' => 8, 'caObservaciones' => 9, 'caFchinicio' => 10, 'caFchvencimiento' => 11, 'caFchcreado' => 12, 'caUsucreado' => 13, 'caIdmoneda' => 14, 'caConsecutivo' => 15, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTRAFICO => 0, self::CA_IDLINEA => 1, self::CA_IDRECARGO => 2, self::CA_MODALIDAD => 3, self::CA_IMPOEXPO => 4, self::CA_VLRRECARGO => 5, self::CA_APLICACION => 6, self::CA_VLRMINIMO => 7, self::CA_APLICACION_MIN => 8, self::CA_OBSERVACIONES => 9, self::CA_FCHINICIO => 10, self::CA_FCHVENCIMIENTO => 11, self::CA_FCHCREADO => 12, self::CA_USUCREADO => 13, self::CA_IDMONEDA => 14, self::CA_CONSECUTIVO => 15, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_idlinea' => 1, 'ca_idrecargo' => 2, 'ca_modalidad' => 3, 'ca_impoexpo' => 4, 'ca_vlrrecargo' => 5, 'ca_aplicacion' => 6, 'ca_vlrminimo' => 7, 'ca_aplicacion_min' => 8, 'ca_observaciones' => 9, 'ca_fchinicio' => 10, 'ca_fchvencimiento' => 11, 'ca_fchcreado' => 12, 'ca_usucreado' => 13, 'ca_idmoneda' => 14, 'ca_consecutivo' => 15, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
 	);
 
 	/**
@@ -130,7 +121,7 @@ abstract class BaseCotContinuacionPeer {
 	public static function getMapBuilder()
 	{
 		if (self::$mapBuilder === null) {
-			self::$mapBuilder = new CotContinuacionMapBuilder();
+			self::$mapBuilder = new PricRecargosxLineaLogMapBuilder();
 		}
 		return self::$mapBuilder;
 	}
@@ -180,12 +171,12 @@ abstract class BaseCotContinuacionPeer {
 	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
 	 * </code>
 	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. CotContinuacionPeer::COLUMN_NAME).
+	 * @param      string $column The column name for current table. (i.e. PricRecargosxLineaLogPeer::COLUMN_NAME).
 	 * @return     string
 	 */
 	public static function alias($alias, $column)
 	{
-		return str_replace(CotContinuacionPeer::TABLE_NAME.'.', $alias.'.', $column);
+		return str_replace(PricRecargosxLineaLogPeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
 	/**
@@ -202,43 +193,37 @@ abstract class BaseCotContinuacionPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_IDCONTINUACION);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_IDTRAFICO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_IDCOTIZACION);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_IDLINEA);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_TIPO);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_IDRECARGO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_MODALIDAD);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_MODALIDAD);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_ORIGEN);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_IMPOEXPO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_DESTINO);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_VLRRECARGO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_IDCONCEPTO);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_APLICACION);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_IDMONEDA);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_VLRMINIMO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_IDEQUIPO);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_APLICACION_MIN);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_TARIFA);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_OBSERVACIONES);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_VALOR_TAR);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_FCHINICIO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_VALOR_MIN);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_FCHVENCIMIENTO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_FRECUENCIA);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_FCHCREADO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_TIEMPOTRANSITO);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_USUCREADO);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_OBSERVACIONES);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_IDMONEDA);
 
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_FCHCREADO);
-
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_USUCREADO);
-
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_FCHACTUALIZADO);
-
-		$criteria->addSelectColumn(CotContinuacionPeer::CA_USUACTUALIZADO);
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_CONSECUTIVO);
 
 	}
 
@@ -258,21 +243,21 @@ abstract class BaseCotContinuacionPeer {
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(CotContinuacionPeer::TABLE_NAME);
+		$criteria->setPrimaryTableName(PricRecargosxLineaLogPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
 		}
 
 		if (!$criteria->hasSelectClause()) {
-			CotContinuacionPeer::addSelectColumns($criteria);
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
 		}
 
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		// BasePeer returns a PDOStatement
@@ -291,7 +276,7 @@ abstract class BaseCotContinuacionPeer {
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      PropelPDO $con
-	 * @return     CotContinuacion
+	 * @return     PricRecargosxLineaLog
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -299,7 +284,7 @@ abstract class BaseCotContinuacionPeer {
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
-		$objects = CotContinuacionPeer::doSelect($critcopy, $con);
+		$objects = PricRecargosxLineaLogPeer::doSelect($critcopy, $con);
 		if ($objects) {
 			return $objects[0];
 		}
@@ -316,7 +301,7 @@ abstract class BaseCotContinuacionPeer {
 	 */
 	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
-		return CotContinuacionPeer::populateObjects(CotContinuacionPeer::doSelectStmt($criteria, $con));
+		return PricRecargosxLineaLogPeer::populateObjects(PricRecargosxLineaLogPeer::doSelectStmt($criteria, $con));
 	}
 	/**
 	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -334,12 +319,12 @@ abstract class BaseCotContinuacionPeer {
 	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		if (!$criteria->hasSelectClause()) {
 			$criteria = clone $criteria;
-			CotContinuacionPeer::addSelectColumns($criteria);
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
 		}
 
 		// Set the correct dbName
@@ -357,14 +342,14 @@ abstract class BaseCotContinuacionPeer {
 	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
 	 * and retrieveByPK*() calls.
 	 *
-	 * @param      CotContinuacion $value A CotContinuacion object.
+	 * @param      PricRecargosxLineaLog $value A PricRecargosxLineaLog object.
 	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool(CotContinuacion $obj, $key = null)
+	public static function addInstanceToPool(PricRecargosxLineaLog $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = (string) $obj->getCaIdcontinuacion();
+				$key = (string) $obj->getCaConsecutivo();
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -378,18 +363,18 @@ abstract class BaseCotContinuacionPeer {
 	 * methods in your stub classes -- you may need to explicitly remove objects
 	 * from the cache in order to prevent returning objects that no longer exist.
 	 *
-	 * @param      mixed $value A CotContinuacion object or a primary key value.
+	 * @param      mixed $value A PricRecargosxLineaLog object or a primary key value.
 	 */
 	public static function removeInstanceFromPool($value)
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
-			if (is_object($value) && $value instanceof CotContinuacion) {
-				$key = (string) $value->getCaIdcontinuacion();
+			if (is_object($value) && $value instanceof PricRecargosxLineaLog) {
+				$key = (string) $value->getCaConsecutivo();
 			} elseif (is_scalar($value)) {
 				// assume we've been passed a primary key
 				$key = (string) $value;
 			} else {
-				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or CotContinuacion object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or PricRecargosxLineaLog object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
 			}
 
@@ -404,7 +389,7 @@ abstract class BaseCotContinuacionPeer {
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
 	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     CotContinuacion Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+	 * @return     PricRecargosxLineaLog Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
 	 * @see        getPrimaryKeyHash()
 	 */
 	public static function getInstanceFromPool($key)
@@ -440,10 +425,10 @@ abstract class BaseCotContinuacionPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null) {
+		if ($row[$startcol + 15] === null) {
 			return null;
 		}
-		return (string) $row[$startcol + 0];
+		return (string) $row[$startcol + 15];
 	}
 
 	/**
@@ -458,12 +443,12 @@ abstract class BaseCotContinuacionPeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = CotContinuacionPeer::getOMClass();
+		$cls = PricRecargosxLineaLogPeer::getOMClass();
 		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key = CotContinuacionPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj = CotContinuacionPeer::getInstanceFromPool($key))) {
+			$key = PricRecargosxLineaLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj = PricRecargosxLineaLogPeer::getInstanceFromPool($key))) {
 				// We no longer rehydrate the object, since this can cause data loss.
 				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj->hydrate($row, 0, true); // rehydrate
@@ -473,7 +458,7 @@ abstract class BaseCotContinuacionPeer {
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
-				CotContinuacionPeer::addInstanceToPool($obj, $key);
+				PricRecargosxLineaLogPeer::addInstanceToPool($obj, $key);
 			} // if key exists
 		}
 		$stmt->closeCursor();
@@ -481,7 +466,7 @@ abstract class BaseCotContinuacionPeer {
 	}
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related Cotizacion table
+	 * Returns the number of rows matching criteria, joining the related Transportador table
 	 *
 	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -489,7 +474,7 @@ abstract class BaseCotContinuacionPeer {
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinCotizacion(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doCountJoinTransportador(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
@@ -497,14 +482,14 @@ abstract class BaseCotContinuacionPeer {
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(CotContinuacionPeer::TABLE_NAME);
+		$criteria->setPrimaryTableName(PricRecargosxLineaLogPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
 		}
 
 		if (!$criteria->hasSelectClause()) {
-			CotContinuacionPeer::addSelectColumns($criteria);
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
 		}
 
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
@@ -513,10 +498,10 @@ abstract class BaseCotContinuacionPeer {
 		$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(CotContinuacionPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
+		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -531,7 +516,7 @@ abstract class BaseCotContinuacionPeer {
 
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related Concepto table
+	 * Returns the number of rows matching criteria, joining the related TipoRecargo table
 	 *
 	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -539,7 +524,7 @@ abstract class BaseCotContinuacionPeer {
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinConcepto(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doCountJoinTipoRecargo(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
@@ -547,14 +532,14 @@ abstract class BaseCotContinuacionPeer {
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(CotContinuacionPeer::TABLE_NAME);
+		$criteria->setPrimaryTableName(PricRecargosxLineaLogPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
 		}
 
 		if (!$criteria->hasSelectClause()) {
-			CotContinuacionPeer::addSelectColumns($criteria);
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
 		}
 
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
@@ -563,10 +548,10 @@ abstract class BaseCotContinuacionPeer {
 		$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(CotContinuacionPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
 
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -581,15 +566,15 @@ abstract class BaseCotContinuacionPeer {
 
 
 	/**
-	 * Selects a collection of CotContinuacion objects pre-filled with their Cotizacion objects.
+	 * Selects a collection of PricRecargosxLineaLog objects pre-filled with their Transportador objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of CotContinuacion objects.
+	 * @return     array Array of PricRecargosxLineaLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinCotizacion(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinTransportador(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -598,45 +583,45 @@ abstract class BaseCotContinuacionPeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		CotContinuacionPeer::addSelectColumns($c);
-		$startcol = (CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS);
-		CotizacionPeer::addSelectColumns($c);
+		PricRecargosxLineaLogPeer::addSelectColumns($c);
+		$startcol = (PricRecargosxLineaLogPeer::NUM_COLUMNS - PricRecargosxLineaLogPeer::NUM_LAZY_LOAD_COLUMNS);
+		TransportadorPeer::addSelectColumns($c);
 
-		$c->addJoin(array(CotContinuacionPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
+		$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = CotContinuacionPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = CotContinuacionPeer::getInstanceFromPool($key1))) {
+			$key1 = PricRecargosxLineaLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxLineaLogPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
 				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$omClass = CotContinuacionPeer::getOMClass();
+				$omClass = PricRecargosxLineaLogPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
-				CotContinuacionPeer::addInstanceToPool($obj1, $key1);
+				PricRecargosxLineaLogPeer::addInstanceToPool($obj1, $key1);
 			} // if $obj1 already loaded
 
-			$key2 = CotizacionPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			$key2 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
-				$obj2 = CotizacionPeer::getInstanceFromPool($key2);
+				$obj2 = TransportadorPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$omClass = CotizacionPeer::getOMClass();
+					$omClass = TransportadorPeer::getOMClass();
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
-					CotizacionPeer::addInstanceToPool($obj2, $key2);
+					TransportadorPeer::addInstanceToPool($obj2, $key2);
 				} // if obj2 already loaded
 
-				// Add the $obj1 (CotContinuacion) to $obj2 (Cotizacion)
-				$obj2->addCotContinuacion($obj1);
+				// Add the $obj1 (PricRecargosxLineaLog) to $obj2 (Transportador)
+				$obj2->addPricRecargosxLineaLog($obj1);
 
 			} // if joined row was not null
 
@@ -648,15 +633,15 @@ abstract class BaseCotContinuacionPeer {
 
 
 	/**
-	 * Selects a collection of CotContinuacion objects pre-filled with their Concepto objects.
+	 * Selects a collection of PricRecargosxLineaLog objects pre-filled with their TipoRecargo objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of CotContinuacion objects.
+	 * @return     array Array of PricRecargosxLineaLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinConcepto(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinTipoRecargo(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -665,45 +650,45 @@ abstract class BaseCotContinuacionPeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		CotContinuacionPeer::addSelectColumns($c);
-		$startcol = (CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS);
-		ConceptoPeer::addSelectColumns($c);
+		PricRecargosxLineaLogPeer::addSelectColumns($c);
+		$startcol = (PricRecargosxLineaLogPeer::NUM_COLUMNS - PricRecargosxLineaLogPeer::NUM_LAZY_LOAD_COLUMNS);
+		TipoRecargoPeer::addSelectColumns($c);
 
-		$c->addJoin(array(CotContinuacionPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+		$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = CotContinuacionPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = CotContinuacionPeer::getInstanceFromPool($key1))) {
+			$key1 = PricRecargosxLineaLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxLineaLogPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
 				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$omClass = CotContinuacionPeer::getOMClass();
+				$omClass = PricRecargosxLineaLogPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
-				CotContinuacionPeer::addInstanceToPool($obj1, $key1);
+				PricRecargosxLineaLogPeer::addInstanceToPool($obj1, $key1);
 			} // if $obj1 already loaded
 
-			$key2 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			$key2 = TipoRecargoPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
-				$obj2 = ConceptoPeer::getInstanceFromPool($key2);
+				$obj2 = TipoRecargoPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$omClass = ConceptoPeer::getOMClass();
+					$omClass = TipoRecargoPeer::getOMClass();
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
-					ConceptoPeer::addInstanceToPool($obj2, $key2);
+					TipoRecargoPeer::addInstanceToPool($obj2, $key2);
 				} // if obj2 already loaded
 
-				// Add the $obj1 (CotContinuacion) to $obj2 (Concepto)
-				$obj2->addCotContinuacion($obj1);
+				// Add the $obj1 (PricRecargosxLineaLog) to $obj2 (TipoRecargo)
+				$obj2->addPricRecargosxLineaLog($obj1);
 
 			} // if joined row was not null
 
@@ -731,14 +716,14 @@ abstract class BaseCotContinuacionPeer {
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(CotContinuacionPeer::TABLE_NAME);
+		$criteria->setPrimaryTableName(PricRecargosxLineaLogPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
 		}
 
 		if (!$criteria->hasSelectClause()) {
-			CotContinuacionPeer::addSelectColumns($criteria);
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
 		}
 
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
@@ -747,11 +732,11 @@ abstract class BaseCotContinuacionPeer {
 		$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(CotContinuacionPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
-		$criteria->addJoin(array(CotContinuacionPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -764,12 +749,12 @@ abstract class BaseCotContinuacionPeer {
 	}
 
 	/**
-	 * Selects a collection of CotContinuacion objects pre-filled with all related objects.
+	 * Selects a collection of PricRecargosxLineaLog objects pre-filled with all related objects.
 	 *
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of CotContinuacion objects.
+	 * @return     array Array of PricRecargosxLineaLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -782,73 +767,73 @@ abstract class BaseCotContinuacionPeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		CotContinuacionPeer::addSelectColumns($c);
-		$startcol2 = (CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS);
+		PricRecargosxLineaLogPeer::addSelectColumns($c);
+		$startcol2 = (PricRecargosxLineaLogPeer::NUM_COLUMNS - PricRecargosxLineaLogPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		CotizacionPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + (CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS);
+		TransportadorPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		ConceptoPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + (ConceptoPeer::NUM_COLUMNS - ConceptoPeer::NUM_LAZY_LOAD_COLUMNS);
+		TipoRecargoPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TipoRecargoPeer::NUM_COLUMNS - TipoRecargoPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(array(CotContinuacionPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
-		$c->addJoin(array(CotContinuacionPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+		$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+		$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = CotContinuacionPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = CotContinuacionPeer::getInstanceFromPool($key1))) {
+			$key1 = PricRecargosxLineaLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxLineaLogPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
 				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$omClass = CotContinuacionPeer::getOMClass();
+				$omClass = PricRecargosxLineaLogPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
-				CotContinuacionPeer::addInstanceToPool($obj1, $key1);
+				PricRecargosxLineaLogPeer::addInstanceToPool($obj1, $key1);
 			} // if obj1 already loaded
 
-			// Add objects for joined Cotizacion rows
+			// Add objects for joined Transportador rows
 
-			$key2 = CotizacionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+			$key2 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 			if ($key2 !== null) {
-				$obj2 = CotizacionPeer::getInstanceFromPool($key2);
+				$obj2 = TransportadorPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$omClass = CotizacionPeer::getOMClass();
+					$omClass = TransportadorPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
-					CotizacionPeer::addInstanceToPool($obj2, $key2);
+					TransportadorPeer::addInstanceToPool($obj2, $key2);
 				} // if obj2 loaded
 
-				// Add the $obj1 (CotContinuacion) to the collection in $obj2 (Cotizacion)
-				$obj2->addCotContinuacion($obj1);
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj2 (Transportador)
+				$obj2->addPricRecargosxLineaLog($obj1);
 			} // if joined row not null
 
-			// Add objects for joined Concepto rows
+			// Add objects for joined TipoRecargo rows
 
-			$key3 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			$key3 = TipoRecargoPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 			if ($key3 !== null) {
-				$obj3 = ConceptoPeer::getInstanceFromPool($key3);
+				$obj3 = TipoRecargoPeer::getInstanceFromPool($key3);
 				if (!$obj3) {
 
-					$omClass = ConceptoPeer::getOMClass();
+					$omClass = TipoRecargoPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
-					ConceptoPeer::addInstanceToPool($obj3, $key3);
+					TipoRecargoPeer::addInstanceToPool($obj3, $key3);
 				} // if obj3 loaded
 
-				// Add the $obj1 (CotContinuacion) to the collection in $obj3 (Concepto)
-				$obj3->addCotContinuacion($obj1);
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj3 (TipoRecargo)
+				$obj3->addPricRecargosxLineaLog($obj1);
 			} // if joined row not null
 
 			$results[] = $obj1;
@@ -859,7 +844,7 @@ abstract class BaseCotContinuacionPeer {
 
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related Cotizacion table
+	 * Returns the number of rows matching criteria, joining the related Transportador table
 	 *
 	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -867,7 +852,7 @@ abstract class BaseCotContinuacionPeer {
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptCotizacion(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doCountJoinAllExceptTransportador(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
@@ -877,7 +862,7 @@ abstract class BaseCotContinuacionPeer {
 		}
 
 		if (!$criteria->hasSelectClause()) {
-			CotContinuacionPeer::addSelectColumns($criteria);
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
 		}
 
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
@@ -886,10 +871,10 @@ abstract class BaseCotContinuacionPeer {
 		$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
-				$criteria->addJoin(array(CotContinuacionPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+				$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -903,7 +888,7 @@ abstract class BaseCotContinuacionPeer {
 
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related Concepto table
+	 * Returns the number of rows matching criteria, joining the related TipoRecargo table
 	 *
 	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -911,7 +896,7 @@ abstract class BaseCotContinuacionPeer {
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptConcepto(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doCountJoinAllExceptTipoRecargo(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
@@ -921,7 +906,7 @@ abstract class BaseCotContinuacionPeer {
 		}
 
 		if (!$criteria->hasSelectClause()) {
-			CotContinuacionPeer::addSelectColumns($criteria);
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
 		}
 
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
@@ -930,10 +915,10 @@ abstract class BaseCotContinuacionPeer {
 		$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
-				$criteria->addJoin(array(CotContinuacionPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
+				$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -947,16 +932,16 @@ abstract class BaseCotContinuacionPeer {
 
 
 	/**
-	 * Selects a collection of CotContinuacion objects pre-filled with all related objects except Cotizacion.
+	 * Selects a collection of PricRecargosxLineaLog objects pre-filled with all related objects except Transportador.
 	 *
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of CotContinuacion objects.
+	 * @return     array Array of PricRecargosxLineaLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptCotizacion(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptTransportador(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -967,50 +952,50 @@ abstract class BaseCotContinuacionPeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		CotContinuacionPeer::addSelectColumns($c);
-		$startcol2 = (CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS);
+		PricRecargosxLineaLogPeer::addSelectColumns($c);
+		$startcol2 = (PricRecargosxLineaLogPeer::NUM_COLUMNS - PricRecargosxLineaLogPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		ConceptoPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + (ConceptoPeer::NUM_COLUMNS - ConceptoPeer::NUM_LAZY_LOAD_COLUMNS);
+		TipoRecargoPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (TipoRecargoPeer::NUM_COLUMNS - TipoRecargoPeer::NUM_LAZY_LOAD_COLUMNS);
 
-				$c->addJoin(array(CotContinuacionPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+				$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = CotContinuacionPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = CotContinuacionPeer::getInstanceFromPool($key1))) {
+			$key1 = PricRecargosxLineaLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxLineaLogPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
 				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$omClass = CotContinuacionPeer::getOMClass();
+				$omClass = PricRecargosxLineaLogPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
-				CotContinuacionPeer::addInstanceToPool($obj1, $key1);
+				PricRecargosxLineaLogPeer::addInstanceToPool($obj1, $key1);
 			} // if obj1 already loaded
 
-				// Add objects for joined Concepto rows
+				// Add objects for joined TipoRecargo rows
 
-				$key2 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				$key2 = TipoRecargoPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
-					$obj2 = ConceptoPeer::getInstanceFromPool($key2);
+					$obj2 = TipoRecargoPeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$omClass = ConceptoPeer::getOMClass();
+						$omClass = TipoRecargoPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
-					ConceptoPeer::addInstanceToPool($obj2, $key2);
+					TipoRecargoPeer::addInstanceToPool($obj2, $key2);
 				} // if $obj2 already loaded
 
-				// Add the $obj1 (CotContinuacion) to the collection in $obj2 (Concepto)
-				$obj2->addCotContinuacion($obj1);
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj2 (TipoRecargo)
+				$obj2->addPricRecargosxLineaLog($obj1);
 
 			} // if joined row is not null
 
@@ -1022,16 +1007,16 @@ abstract class BaseCotContinuacionPeer {
 
 
 	/**
-	 * Selects a collection of CotContinuacion objects pre-filled with all related objects except Concepto.
+	 * Selects a collection of PricRecargosxLineaLog objects pre-filled with all related objects except TipoRecargo.
 	 *
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of CotContinuacion objects.
+	 * @return     array Array of PricRecargosxLineaLog objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptConcepto(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptTipoRecargo(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -1042,50 +1027,50 @@ abstract class BaseCotContinuacionPeer {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		CotContinuacionPeer::addSelectColumns($c);
-		$startcol2 = (CotContinuacionPeer::NUM_COLUMNS - CotContinuacionPeer::NUM_LAZY_LOAD_COLUMNS);
+		PricRecargosxLineaLogPeer::addSelectColumns($c);
+		$startcol2 = (PricRecargosxLineaLogPeer::NUM_COLUMNS - PricRecargosxLineaLogPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		CotizacionPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + (CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS);
+		TransportadorPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
 
-				$c->addJoin(array(CotContinuacionPeer::CA_IDCOTIZACION,), array(CotizacionPeer::CA_IDCOTIZACION,), $join_behavior);
+				$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = CotContinuacionPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = CotContinuacionPeer::getInstanceFromPool($key1))) {
+			$key1 = PricRecargosxLineaLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxLineaLogPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
 				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$omClass = CotContinuacionPeer::getOMClass();
+				$omClass = PricRecargosxLineaLogPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
-				CotContinuacionPeer::addInstanceToPool($obj1, $key1);
+				PricRecargosxLineaLogPeer::addInstanceToPool($obj1, $key1);
 			} // if obj1 already loaded
 
-				// Add objects for joined Cotizacion rows
+				// Add objects for joined Transportador rows
 
-				$key2 = CotizacionPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				$key2 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
-					$obj2 = CotizacionPeer::getInstanceFromPool($key2);
+					$obj2 = TransportadorPeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$omClass = CotizacionPeer::getOMClass();
+						$omClass = TransportadorPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
-					CotizacionPeer::addInstanceToPool($obj2, $key2);
+					TransportadorPeer::addInstanceToPool($obj2, $key2);
 				} // if $obj2 already loaded
 
-				// Add the $obj1 (CotContinuacion) to the collection in $obj2 (Cotizacion)
-				$obj2->addCotContinuacion($obj1);
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj2 (Transportador)
+				$obj2->addPricRecargosxLineaLog($obj1);
 
 			} // if joined row is not null
 
@@ -1123,13 +1108,13 @@ abstract class BaseCotContinuacionPeer {
 	 */
 	public static function getOMClass()
 	{
-		return CotContinuacionPeer::CLASS_DEFAULT;
+		return PricRecargosxLineaLogPeer::CLASS_DEFAULT;
 	}
 
 	/**
-	 * Method perform an INSERT on the database, given a CotContinuacion or Criteria object.
+	 * Method perform an INSERT on the database, given a PricRecargosxLineaLog or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or CotContinuacion object containing data that is used to create the INSERT statement.
+	 * @param      mixed $values Criteria or PricRecargosxLineaLog object containing data that is used to create the INSERT statement.
 	 * @param      PropelPDO $con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -1138,17 +1123,13 @@ abstract class BaseCotContinuacionPeer {
 	public static function doInsert($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from CotContinuacion object
-		}
-
-		if ($criteria->containsKey(CotContinuacionPeer::CA_IDCONTINUACION) && $criteria->keyContainsValue(CotContinuacionPeer::CA_IDCONTINUACION) ) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ('.CotContinuacionPeer::CA_IDCONTINUACION.')');
+			$criteria = $values->buildCriteria(); // build Criteria from PricRecargosxLineaLog object
 		}
 
 
@@ -1170,9 +1151,9 @@ abstract class BaseCotContinuacionPeer {
 	}
 
 	/**
-	 * Method perform an UPDATE on the database, given a CotContinuacion or Criteria object.
+	 * Method perform an UPDATE on the database, given a PricRecargosxLineaLog or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or CotContinuacion object containing data that is used to create the UPDATE statement.
+	 * @param      mixed $values Criteria or PricRecargosxLineaLog object containing data that is used to create the UPDATE statement.
 	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -1181,7 +1162,7 @@ abstract class BaseCotContinuacionPeer {
 	public static function doUpdate($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -1189,10 +1170,10 @@ abstract class BaseCotContinuacionPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(CotContinuacionPeer::CA_IDCONTINUACION);
-			$selectCriteria->add(CotContinuacionPeer::CA_IDCONTINUACION, $criteria->remove(CotContinuacionPeer::CA_IDCONTINUACION), $comparison);
+			$comparison = $criteria->getComparison(PricRecargosxLineaLogPeer::CA_CONSECUTIVO);
+			$selectCriteria->add(PricRecargosxLineaLogPeer::CA_CONSECUTIVO, $criteria->remove(PricRecargosxLineaLogPeer::CA_CONSECUTIVO), $comparison);
 
-		} else { // $values is CotContinuacion object
+		} else { // $values is PricRecargosxLineaLog object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
 		}
@@ -1204,21 +1185,21 @@ abstract class BaseCotContinuacionPeer {
 	}
 
 	/**
-	 * Method to DELETE all rows from the tb_cotcontinuacion table.
+	 * Method to DELETE all rows from the bs_pricrecargosxlinea table.
 	 *
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
-			$affectedRows += BasePeer::doDeleteAll(CotContinuacionPeer::TABLE_NAME, $con);
+			$affectedRows += BasePeer::doDeleteAll(PricRecargosxLineaLogPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -1228,9 +1209,9 @@ abstract class BaseCotContinuacionPeer {
 	}
 
 	/**
-	 * Method perform a DELETE on the database, given a CotContinuacion or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a PricRecargosxLineaLog or Criteria object OR a primary key value.
 	 *
-	 * @param      mixed $values Criteria or CotContinuacion object or primary key or array of primary keys
+	 * @param      mixed $values Criteria or PricRecargosxLineaLog object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
 	 * @param      PropelPDO $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -1241,20 +1222,20 @@ abstract class BaseCotContinuacionPeer {
 	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
 			// invalidate the cache for all objects of this type, since we have no
 			// way of knowing (without running a query) what objects should be invalidated
 			// from the cache based on this Criteria.
-			CotContinuacionPeer::clearInstancePool();
+			PricRecargosxLineaLogPeer::clearInstancePool();
 
 			// rename for clarity
 			$criteria = clone $values;
-		} elseif ($values instanceof CotContinuacion) {
+		} elseif ($values instanceof PricRecargosxLineaLog) {
 			// invalidate the cache for this single object
-			CotContinuacionPeer::removeInstanceFromPool($values);
+			PricRecargosxLineaLogPeer::removeInstanceFromPool($values);
 			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else {
@@ -1263,11 +1244,11 @@ abstract class BaseCotContinuacionPeer {
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(CotContinuacionPeer::CA_IDCONTINUACION, (array) $values, Criteria::IN);
+			$criteria->add(PricRecargosxLineaLogPeer::CA_CONSECUTIVO, (array) $values, Criteria::IN);
 
 			foreach ((array) $values as $singleval) {
 				// we can invalidate the cache for this single object
-				CotContinuacionPeer::removeInstanceFromPool($singleval);
+				PricRecargosxLineaLogPeer::removeInstanceFromPool($singleval);
 			}
 		}
 
@@ -1292,24 +1273,24 @@ abstract class BaseCotContinuacionPeer {
 	}
 
 	/**
-	 * Validates all modified columns of given CotContinuacion object.
+	 * Validates all modified columns of given PricRecargosxLineaLog object.
 	 * If parameter $columns is either a single column name or an array of column names
 	 * than only those columns are validated.
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      CotContinuacion $obj The object to validate.
+	 * @param      PricRecargosxLineaLog $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(CotContinuacion $obj, $cols = null)
+	public static function doValidate(PricRecargosxLineaLog $obj, $cols = null)
 	{
 		$columns = array();
 
 		if ($cols) {
-			$dbMap = Propel::getDatabaseMap(CotContinuacionPeer::DATABASE_NAME);
-			$tableMap = $dbMap->getTable(CotContinuacionPeer::TABLE_NAME);
+			$dbMap = Propel::getDatabaseMap(PricRecargosxLineaLogPeer::DATABASE_NAME);
+			$tableMap = $dbMap->getTable(PricRecargosxLineaLogPeer::TABLE_NAME);
 
 			if (! is_array($cols)) {
 				$cols = array($cols);
@@ -1325,11 +1306,11 @@ abstract class BaseCotContinuacionPeer {
 
 		}
 
-		$res =  BasePeer::doValidate(CotContinuacionPeer::DATABASE_NAME, CotContinuacionPeer::TABLE_NAME, $columns);
+		$res =  BasePeer::doValidate(PricRecargosxLineaLogPeer::DATABASE_NAME, PricRecargosxLineaLogPeer::TABLE_NAME, $columns);
     if ($res !== true) {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
-            $col = CotContinuacionPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
+            $col = PricRecargosxLineaLogPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
         }
     }
 
@@ -1341,23 +1322,23 @@ abstract class BaseCotContinuacionPeer {
 	 *
 	 * @param      int $pk the primary key.
 	 * @param      PropelPDO $con the connection to use
-	 * @return     CotContinuacion
+	 * @return     PricRecargosxLineaLog
 	 */
 	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
 
-		if (null !== ($obj = CotContinuacionPeer::getInstanceFromPool((string) $pk))) {
+		if (null !== ($obj = PricRecargosxLineaLogPeer::getInstanceFromPool((string) $pk))) {
 			return $obj;
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria = new Criteria(CotContinuacionPeer::DATABASE_NAME);
-		$criteria->add(CotContinuacionPeer::CA_IDCONTINUACION, $pk);
+		$criteria = new Criteria(PricRecargosxLineaLogPeer::DATABASE_NAME);
+		$criteria->add(PricRecargosxLineaLogPeer::CA_CONSECUTIVO, $pk);
 
-		$v = CotContinuacionPeer::doSelect($criteria, $con);
+		$v = PricRecargosxLineaLogPeer::doSelect($criteria, $con);
 
 		return !empty($v) > 0 ? $v[0] : null;
 	}
@@ -1373,30 +1354,30 @@ abstract class BaseCotContinuacionPeer {
 	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(CotContinuacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$objs = null;
 		if (empty($pks)) {
 			$objs = array();
 		} else {
-			$criteria = new Criteria(CotContinuacionPeer::DATABASE_NAME);
-			$criteria->add(CotContinuacionPeer::CA_IDCONTINUACION, $pks, Criteria::IN);
-			$objs = CotContinuacionPeer::doSelect($criteria, $con);
+			$criteria = new Criteria(PricRecargosxLineaLogPeer::DATABASE_NAME);
+			$criteria->add(PricRecargosxLineaLogPeer::CA_CONSECUTIVO, $pks, Criteria::IN);
+			$objs = PricRecargosxLineaLogPeer::doSelect($criteria, $con);
 		}
 		return $objs;
 	}
 
-} // BaseCotContinuacionPeer
+} // BasePricRecargosxLineaLogPeer
 
 // This is the static code needed to register the MapBuilder for this table with the main Propel class.
 //
-// NOTE: This static code cannot call methods on the CotContinuacionPeer class, because it is not defined yet.
-// If you need to use overridden methods, you can add this code to the bottom of the CotContinuacionPeer class:
+// NOTE: This static code cannot call methods on the PricRecargosxLineaLogPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the PricRecargosxLineaLogPeer class:
 //
-// Propel::getDatabaseMap(CotContinuacionPeer::DATABASE_NAME)->addTableBuilder(CotContinuacionPeer::TABLE_NAME, CotContinuacionPeer::getMapBuilder());
+// Propel::getDatabaseMap(PricRecargosxLineaLogPeer::DATABASE_NAME)->addTableBuilder(PricRecargosxLineaLogPeer::TABLE_NAME, PricRecargosxLineaLogPeer::getMapBuilder());
 //
 // Doing so will effectively overwrite the registration below.
 
-Propel::getDatabaseMap(BaseCotContinuacionPeer::DATABASE_NAME)->addTableBuilder(BaseCotContinuacionPeer::TABLE_NAME, BaseCotContinuacionPeer::getMapBuilder());
+Propel::getDatabaseMap(BasePricRecargosxLineaLogPeer::DATABASE_NAME)->addTableBuilder(BasePricRecargosxLineaLogPeer::TABLE_NAME, BasePricRecargosxLineaLogPeer::getMapBuilder());
 

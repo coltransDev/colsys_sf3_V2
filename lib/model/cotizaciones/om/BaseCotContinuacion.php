@@ -21,10 +21,10 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	protected static $peer;
 
 	/**
-	 * The value for the oid field.
+	 * The value for the ca_idcontinuacion field.
 	 * @var        int
 	 */
-	protected $oid;
+	protected $ca_idcontinuacion;
 
 	/**
 	 * The value for the ca_idcotizacion field.
@@ -179,13 +179,13 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [oid] column value.
+	 * Get the [ca_idcontinuacion] column value.
 	 * 
 	 * @return     int
 	 */
-	public function getOid()
+	public function getCaIdcontinuacion()
 	{
-		return $this->oid;
+		return $this->ca_idcontinuacion;
 	}
 
 	/**
@@ -415,24 +415,24 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Set the value of [oid] column.
+	 * Set the value of [ca_idcontinuacion] column.
 	 * 
 	 * @param      int $v new value
 	 * @return     CotContinuacion The current object (for fluent API support)
 	 */
-	public function setOid($v)
+	public function setCaIdcontinuacion($v)
 	{
 		if ($v !== null) {
 			$v = (int) $v;
 		}
 
-		if ($this->oid !== $v) {
-			$this->oid = $v;
-			$this->modifiedColumns[] = CotContinuacionPeer::OID;
+		if ($this->ca_idcontinuacion !== $v) {
+			$this->ca_idcontinuacion = $v;
+			$this->modifiedColumns[] = CotContinuacionPeer::CA_IDCONTINUACION;
 		}
 
 		return $this;
-	} // setOid()
+	} // setCaIdcontinuacion()
 
 	/**
 	 * Set the value of [ca_idcotizacion] column.
@@ -897,7 +897,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->oid = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_idcontinuacion = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
 			$this->ca_idcotizacion = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
 			$this->ca_tipo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->ca_modalidad = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
@@ -1099,6 +1099,9 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 				$this->setConcepto($this->aConcepto);
 			}
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = CotContinuacionPeer::CA_IDCONTINUACION;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -1107,6 +1110,8 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
+
+					$this->setCaIdcontinuacion($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -1239,7 +1244,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getOid();
+				return $this->getCaIdcontinuacion();
 				break;
 			case 1:
 				return $this->getCaIdcotizacion();
@@ -1316,7 +1321,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		$keys = CotContinuacionPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getOid(),
+			$keys[0] => $this->getCaIdcontinuacion(),
 			$keys[1] => $this->getCaIdcotizacion(),
 			$keys[2] => $this->getCaTipo(),
 			$keys[3] => $this->getCaModalidad(),
@@ -1367,7 +1372,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setOid($value);
+				$this->setCaIdcontinuacion($value);
 				break;
 			case 1:
 				$this->setCaIdcotizacion($value);
@@ -1447,7 +1452,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		$keys = CotContinuacionPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setOid($arr[$keys[0]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdcontinuacion($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdcotizacion($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaTipo($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaModalidad($arr[$keys[3]]);
@@ -1477,7 +1482,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotContinuacionPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(CotContinuacionPeer::OID)) $criteria->add(CotContinuacionPeer::OID, $this->oid);
+		if ($this->isColumnModified(CotContinuacionPeer::CA_IDCONTINUACION)) $criteria->add(CotContinuacionPeer::CA_IDCONTINUACION, $this->ca_idcontinuacion);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_IDCOTIZACION)) $criteria->add(CotContinuacionPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_TIPO)) $criteria->add(CotContinuacionPeer::CA_TIPO, $this->ca_tipo);
 		if ($this->isColumnModified(CotContinuacionPeer::CA_MODALIDAD)) $criteria->add(CotContinuacionPeer::CA_MODALIDAD, $this->ca_modalidad);
@@ -1512,7 +1517,7 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(CotContinuacionPeer::DATABASE_NAME);
 
-		$criteria->add(CotContinuacionPeer::OID, $this->oid);
+		$criteria->add(CotContinuacionPeer::CA_IDCONTINUACION, $this->ca_idcontinuacion);
 
 		return $criteria;
 	}
@@ -1523,18 +1528,18 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	 */
 	public function getPrimaryKey()
 	{
-		return $this->getOid();
+		return $this->getCaIdcontinuacion();
 	}
 
 	/**
-	 * Generic method to set the primary key (oid column).
+	 * Generic method to set the primary key (ca_idcontinuacion column).
 	 *
 	 * @param      int $key Primary key.
 	 * @return     void
 	 */
 	public function setPrimaryKey($key)
 	{
-		$this->setOid($key);
+		$this->setCaIdcontinuacion($key);
 	}
 
 	/**
@@ -1549,8 +1554,6 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 	 */
 	public function copyInto($copyObj, $deepCopy = false)
 	{
-
-		$copyObj->setOid($this->oid);
 
 		$copyObj->setCaIdcotizacion($this->ca_idcotizacion);
 
@@ -1590,6 +1593,8 @@ abstract class BaseCotContinuacion extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
+
+		$copyObj->setCaIdcontinuacion(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
