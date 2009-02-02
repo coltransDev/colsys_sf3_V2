@@ -36,6 +36,7 @@ var seleccionarContacto = function(){
 		<?
 		if( isset($contacts) ){
 			$contactos = explode(",", $contacts);
+			$contactos = array_unique($contactos);
 			?>
 			<select name="contactos" id="contactos" size="8" onDblclick="seleccionarContacto()" >
 			<?

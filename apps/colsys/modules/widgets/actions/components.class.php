@@ -136,5 +136,44 @@ class widgetsComponents extends sfComponents
 		}
 	}
 	
+	
+	/**
+	* Muestra un select con las modalidades
+	*/
+	public function executeComerciales(){
+		if(!isset( $this->label )){
+			$this->label="";
+		}
+		if(!isset( $this->id )){
+			$this->id="";
+		}	
+		if(!isset( $this->allowBlank )){
+			$this->allowBlank="true";
+		}
+		
+		$comerciales = UsuarioPeer::getComerciales();
+		$this->comercialesJson = array();
+		foreach( $comerciales as $comercial ){
+			$this->comercialesJson[]= array("login"=>$comercial->getCaLogin(),
+											"nombre"=>utf8_encode($comercial->getCaNombre())
+										);
+		}
+		
+		$this->user = $this->getUser();		
+		
+		
+		if( isset($this->value) ){
+			$vendedor = UsuarioPeer::retrieveByPk($this->value);
+			$this->nombre=$vendedor->getCaNombre();
+			
+		}else{
+			$this->value="";
+			$this->nombre="";
+		}
+		
+		
+	}
+	
+	
 }
 ?>

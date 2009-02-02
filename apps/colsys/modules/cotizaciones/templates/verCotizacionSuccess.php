@@ -2,6 +2,15 @@
 use_helper("Javascript");
 
 $enBlanco = $cotizacion->enBlanco();
+
+
+$transport = array('foot', 'bike', 'car', 'plane');
+$mode = current($transport); // $mode = 'foot';
+$mode = next($transport);    // $mode = 'bike';
+$mode = next($transport);    // $mode = 'car';
+$mode = prev($transport);    // $mode = 'bike';
+$mode = end($transport);     // $mode = 'plane';
+
 ?>
 
 <div align="center">
@@ -27,7 +36,16 @@ $enBlanco = $cotizacion->enBlanco();
 							    'complete' => visual_effect('fade', 'indicator')							
 							
 						 ));
-	$contactos = $cotizacion->getCliente()->getCaConfirmar();		
+						 
+	$contactos = $cotizacion->getContacto()->getCaEmail();					 
+		
+	if( $contactos &&  $cotizacion->getCliente()->getCaConfirmar() ){
+		$contactos .= ","; 
+	}
+	if( $cotizacion->getCliente()->getCaConfirmar() ){
+		$contactos .=  $cotizacion->getCliente()->getCaConfirmar();
+	}
+	
 	include_component("general", "formEmail", array("subject"=>$asunto,"message"=>$mensaje,"contacts"=>$contactos));
 	?>
 	<br />

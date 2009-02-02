@@ -1,20 +1,18 @@
 <?
-	$contacto = $cotizacion->getContacto();
-	if (!$contacto) {
-		$contacto = new Contacto();	
-	}
-	$cliente = $contacto->getCliente();
-	if (!$cliente) {
-		$cliente = new Cliente();
-	}
-	$usuario = $cotizacion->getUsuario();
-	if (!$usuario) {
-		$usuario = new Usuario();
-	}
-	/*$productos = $cotizacion->getProductos();
-	if (!$productos) {
-		$producto = new Producto();
-	}*/
+$contacto = $cotizacion->getContacto();
+if (!$contacto) {
+	$contacto = new Contacto();	
+}
+$cliente = $contacto->getCliente();
+if (!$cliente) {
+	$cliente = new Cliente();
+}
+$usuario = $cotizacion->getUsuario();
+if (!$usuario) {
+	$usuario = new Usuario();
+}
+
+
 	
 ?>
 <div id="panel1" align="left"></div>
@@ -36,7 +34,9 @@ Ext.onReady(function(){
 	* Crea el objeto $object que contine el panel solicitado
 	*/
 	<?	
-	include_component("gestDocumental", "panelArchivos", 
+	if( $cotizacion->getCaIdcotizacion() ){
+	
+		include_component("gestDocumental", "panelArchivos", 
 						array("dataUrl"=>"cotizaciones/dataArchivosCotizacion?idcotizacion=".$cotizacion->getCaIdcotizacion(),
 							"viewUrl"=>"cotizaciones/verArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion(),
 							"deleteUrl"=>"cotizaciones/eliminarArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion(),
@@ -44,6 +44,7 @@ Ext.onReady(function(){
 							"closable"=>false, 
 							"uploadURL"=>"cotizaciones/adjuntarArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion() 
 						));
+	}
 	?>
 	/*
 	* ================  Panel de archivos adjuntos  =======================
@@ -193,8 +194,12 @@ Ext.onReady(function(){
 							
 							Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
 							Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
-							Ext.getCmp("usuario").setValue(record.get("vendedor"));
-							Ext.getCmp("vendedor").setValue(record.get("nombre_ven"));
+							
+							/*Ext.getCmp("usuario").setValue(record.get("vendedor"));
+							Ext.getCmp("vendedor_id").setValue(record.get("nombre_ven"));*/
+							Ext.getCmp("vendedor_id").setRawValue(record.get("nombre_ven"));
+							Ext.getCmp("vendedor_id").hiddenField.value = record.get("vendedor");	
+							
 							
 							Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
 							if( record.get("listaclinton")=="Sí" ){								
@@ -237,21 +242,11 @@ Ext.onReady(function(){
 					value: '<?=$contacto->getCaNombres().' '.$contacto->getCaPapellido().' '.$contacto->getCaSapellido()?>',
                     allowBlank:false,
 					readOnly: true
-				},{
-					id: 'usuario',
-					xtype:'hidden',
-					name: 'usuario',
-					value: '<?=$cotizacion->getCaUsuario()?>',
-                    allowBlank:false
-				},{
-					id: 'vendedor',
-					xtype:'textfield',
-					fieldLabel: 'Representante Comercial',
-					name: 'vendedor',
-					value: '<?=$usuario->getCaNombre()?>',
-                    allowBlank:false,
-					readOnly: true
-                }
+				},
+				<?
+				include_component("widgets", "comerciales" ,array("id"=>"vendedor", "label"=>"Representante Comercial", "allowBlank"=>"true", "value"=>$usuario->getCaLogin() ));
+				?>
+				
 				<?
 				if( !$cotizacion->getCaIdCotizacion() ){
 					echo ",";
@@ -441,8 +436,8 @@ Ext.onReady(function(){
 					if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
 					?>							
 					   grid_productos,
-					   grid_recargos,
-					   grid_contviajes,					
+					   grid_contviajes,			
+					   grid_recargos,					  		
 					   grid_seguros,
 					   grid_agentes
 					   

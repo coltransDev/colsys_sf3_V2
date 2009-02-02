@@ -139,21 +139,10 @@ class cotizacionesActions extends sfActions
 			$this->cotizacion->setCaDespedida( $textos['despedida'] );
 			$this->cotizacion->setCaAnexos( $textos['anexos'] );
 			$this->cotizacion->setCaUsuario($user);
+			
+			
 		}
 		
-		
-		
-		
-		/*$this->data = array();
-				 
-		$productos = $this->cotizacion->getCotProductos();
-		
-		foreach( $productos as $producto ){			
-			$row = array("origen"=>utf8_encode($producto->getOrigen()),
-						 "_is_leaf"=>true						
-						);	
-			$this->data[] = $row;			
-		}*/
 	}		
 
 	/*
@@ -174,13 +163,28 @@ class cotizacionesActions extends sfActions
 		if( $this->getRequestParameter( "empresa" ) ){
 			$cotizacion->setCaEmpresa( $this->getRequestParameter( "empresa" ) );		
 		}
+		
+		
+		if( $this->getRequestParameter( "vendedor" ) ){
+			$cotizacion->setCaUsuario( $this->getRequestParameter( "vendedor" ) );
+		}else{
+			if(!$cotizacion->getCaUsuario() || $cotizacion->getCaIdcontacto()!=$this->getRequestParameter( "idconcliente" ) ){
+				$contacto = ContactoPeer::retrieveByPk( $this->getRequestParameter( "idconcliente" ) );
+				$vendedor = $contacto->getCliente()->getCaVendedor();
+				if(!$vendedor){
+					$vendedor = "Comercial";
+				}
+				$cotizacion->setCaUsuario( $vendedor );			
+			}
+		}
+		
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
 		$cotizacion->setCaAsunto( utf8_encode($this->getRequestParameter( "asunto" )) );
 		$cotizacion->setCaSaludo( utf8_decode($this->getRequestParameter( "saludo" )) );
 		$cotizacion->setCaEntrada( utf8_decode($this->getRequestParameter( "entrada" )) );
 		$cotizacion->setCaDespedida( utf8_decode($this->getRequestParameter( "despedida" )) );
 		$cotizacion->setCaAnexos( utf8_decode($this->getRequestParameter( "anexos" )) );
-		$cotizacion->setCaUsuario( $this->getRequestParameter( "usuario" ) );
+		
 		$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
 		$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
 		
@@ -1186,11 +1190,26 @@ class cotizacionesActions extends sfActions
 		$c->setDistinct();
 		$stmt = CotRecargoPeer::doSelectStmt( $c );
 		
-		$this->recargos=array();
+		
 		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {
 			$grupos[$row[0]][]=$row[1];
 			$grupos[$row[0]] = array_unique( $grupos[$row[0]] );			
 		}
+		
+		//Recargos de OTM-DTA
+		$c = new Criteria();				
+		$c->add( CotContinuacionPeer::CA_IDCOTIZACION , $idcotizacion );				
+		$c->addSelectColumn( CotContinuacionPeer::CA_TIPO );		
+		$c->setDistinct();
+		$stmt = CotContinuacionPeer::doSelectStmt( $c );
+		
+		
+		while ( $row = $stmt->fetch(PDO::FETCH_NUM) ) {
+			$grupos[Constantes::TERRESTRE][]=$row[0];
+			$grupos[Constantes::TERRESTRE] = array_unique( $grupos[Constantes::TERRESTRE] );			
+		}
+		
+		$this->recargos=array();
 		
 		$id=100;	
 		
@@ -1198,7 +1217,7 @@ class cotizacionesActions extends sfActions
 			
 			foreach( $modalidades as $modalidad  ){
 				
-			
+				
 				$agrupamiento = utf8_encode($transporte." ".$modalidad);
 				
 				$c = new Criteria();		

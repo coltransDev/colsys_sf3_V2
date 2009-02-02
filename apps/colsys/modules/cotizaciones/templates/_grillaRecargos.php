@@ -236,6 +236,8 @@ grid_recargosOnBeforeedit = function( e ){
 			?>
 		];
 		
+		
+		
 		var recargosAereo = [
 			<?
 			$i=0;
@@ -250,11 +252,29 @@ grid_recargosOnBeforeedit = function( e ){
 			?>
 		];
 		
+		var recargosTerrestre = [
+			<?
+			$i=0;
+			foreach( $recargosTerrestre as $recargo ){
+				if( $i++!=0){
+					echo ",";
+				}
+			?>
+				['<?=$recargo->getCaIdRecargo()?>','<?=$recargo->getCaRecargo()?>']
+			<?
+			}
+			?>
+		];
+		
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
 		if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
 			ed.field.store.loadData( recargosAereo );
 		}else{
-			ed.field.store.loadData( recargosMaritimo );
+			if( e.record.data.transporte=="<?=Constantes::TERRESTRE?>" ){
+				ed.field.store.loadData( recargosTerrestre );
+			}else{
+				ed.field.store.loadData( recargosMaritimo );
+			}
 		}
 	
 	}

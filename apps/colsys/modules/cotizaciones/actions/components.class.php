@@ -67,6 +67,13 @@ class cotizacionesComponents extends sfComponents
 		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
 		$this->recargosMaritimo = TipoRecargoPeer::doSelect( $c );
 		
+		
+		$c = new Criteria();
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE, Constantes::TERRESTRE );	
+		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
+		$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_RECARGO );
+		$this->recargosTerrestre = TipoRecargoPeer::doSelect( $c );
+		
 		$c = new Criteria();
 		$c->add( TipoRecargoPeer::CA_TRANSPORTE, Constantes::AEREO);	
 		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
