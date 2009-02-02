@@ -261,11 +261,8 @@ var colModel = new Ext.grid.ColumnModel({
 			editor: new Ext.form.DateField({
 				format: 'Y/m/d'
 			})
-		} 
-								
-		<?
-		if( $modalidad!="LCL" ){ 
-		?>,{
+		} 								
+		,{
 			id: 'neta',
 			header: "Neta",
 			width: 80,
@@ -274,9 +271,7 @@ var colModel = new Ext.grid.ColumnModel({
 			dataIndex: 'neta',
 			editor: new Ext.form.NumberField()		
 		}
-		<?
-		}
-		?>
+		
 		,			
 		{
 			id: 'sugerida',
