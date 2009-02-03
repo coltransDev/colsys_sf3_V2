@@ -161,14 +161,14 @@ class widgetsComponents extends sfComponents
 		
 		$this->user = $this->getUser();		
 		
-		
+		$this->nombre="";
 		if( isset($this->value) ){
 			$vendedor = UsuarioPeer::retrieveByPk($this->value);
-			$this->nombre=$vendedor->getCaNombre();
-			
+			if( $vendedor ){
+				$this->nombre=$vendedor->getCaNombre();
+			}			
 		}else{
-			$this->value="";
-			$this->nombre="";
+			$this->value="";			
 		}
 		
 		
