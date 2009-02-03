@@ -252,10 +252,10 @@ grid_recargosOnBeforeedit = function( e ){
 			?>
 		];
 		
-		var recargosTerrestre = [
+		var recargosTerrestreOTM = [
 			<?
 			$i=0;
-			foreach( $recargosTerrestre as $recargo ){
+			foreach( $recargosTerrestreOTM as $recargo ){
 				if( $i++!=0){
 					echo ",";
 				}
@@ -270,8 +270,8 @@ grid_recargosOnBeforeedit = function( e ){
 		if( e.record.data.transporte=="<?=Constantes::AEREO?>" ){
 			ed.field.store.loadData( recargosAereo );
 		}else{
-			if( e.record.data.transporte=="<?=Constantes::TERRESTRE?>" ){
-				ed.field.store.loadData( recargosTerrestre );
+			if( e.record.data.transporte=="<?=Constantes::TERRESTRE?>" && ( e.record.data.modalidad=="OTM"||e.record.data.modalidad=="DTA") ){
+				ed.field.store.loadData( recargosTerrestreOTM );
 			}else{
 				ed.field.store.loadData( recargosMaritimo );
 			}

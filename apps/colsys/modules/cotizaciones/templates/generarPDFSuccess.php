@@ -1,7 +1,10 @@
 <?
 
 
+
 $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
+
+
 
 
 $pdf = new PDF (  );
@@ -15,10 +18,26 @@ $pdf->SetRightMargin(12);
 $pdf->SetAutoPageBreak(true, 28);
 $pdf->AddPage();
 $pdf->SetHeight(4);
-$pdf->SetFont('Arial','',10);
 
 
+switch( $cotizacion->getCafuente()){
+	case "Arial":		
+		$font = 'Arial';
+		break;
+	case "Calibri":
+		$pdf->AddFont('Calibri','','calibri.php');
+		$pdf->AddFont('Calibri','B','calibrib.php');
+		$font = 'Calibri';
+		break;
+	default:
+		$pdf->AddFont('Tahoma','','tahoma.php');
+		$pdf->AddFont('Tahoma','B','tahomab.php');
+		$font = 'Tahoma';
+		break;
 
+}
+
+$pdf->SetFont($font,'',10);
 
 $directorioAg = array();
 
@@ -37,7 +56,7 @@ $pdf->Cell(0, 4, str_replace(' D.C.','',$usuario->getCaSucursal()).', '.$dia.' d
 
 $pdf->Ln(8);
 $pdf->Cell(0, 4,$contacto->getCaSaludo(),0,1);
-$pdf->SetFont('Arial','',10);
+$pdf->SetFont($font,'',10);
 
 $pdf->Cell(0, 4, strtoupper($contacto->getNombre()),0,1);
 $cargo=null;
@@ -49,13 +68,13 @@ if ( $contacto->getCaCargo()!='' and $contacto->getCaDepartamento()!='') {
 	$cargo = $contacto->getCaDepartamento();
 }
 if ($cargo != '') {
-	$pdf->SetFont('Arial','',10);
+	$pdf->SetFont($font,'',10);
 	$pdf->Cell(0, 4, $cargo,0,1);
 }
 
-$pdf->SetFont('Arial','B',10);
+$pdf->SetFont($font,'B',10);
 $pdf->Cell(0, 4, strtoupper($cliente->getCaCompania()),0,1);
-$pdf->SetFont('Arial','',10);
+$pdf->SetFont($font,'',10);
 $pdf->Cell(0, 4, strtoupper($cliente->getCiudad()->getCaCiudad()) ,0,1);
 $pdf->Ln(8);
 $pdf->Cell(0, 4, 'Asunto : '.$cotizacion->getCaAsunto()." ".$cotizacion->getCaConsecutivo(),0,1);
@@ -63,13 +82,13 @@ $pdf->Cell(0, 4, 'Asunto : '.$cotizacion->getCaAsunto()." ".$cotizacion->getCaCo
 
 if($cotizacion->getCaUsuanulado()){
 	$pdf->SetTextColor(128,128,128);	
-	$pdf->SetFont('Arial','B',72);
+	$pdf->SetFont($font,'B',72);
 	$pdf->Write(5,'A N U L A D O ');
 	$pdf->SetTextColor(0,0,0);
 }
 
 
-$pdf->SetFont('Arial','',10);
+$pdf->SetFont($font,'',10);
 $pdf->Ln(4);
 $pdf->Cell(0, 4, $cotizacion->getCaSaludo(),0,1);
 $pdf->Ln(2);
@@ -102,11 +121,11 @@ foreach( $productos as $producto ):
 			$tituloTransporte = $producto->getCaTransporte();
 			
 			$pdf->Ln(4);
-			$pdf->SetFont('Arial','B',9);
+			$pdf->SetFont($font,'B',9);
 			$pdf->Cell(0, 4, 'TRANSPORTE DE CARGA INTERNACIONAL '.strtoupper($tituloTransporte), 0, 1, 'L');
 			$pdf->Ln(2);
 			$age_imp = true;
-			$pdf->SetFont('Arial','B',9);
+			$pdf->SetFont($font,'B',9);
 			$i=0; //Controla el espacio entre producto y producto
 		}		
 		
@@ -118,13 +137,13 @@ foreach( $productos as $producto ):
 		}else{
 			$pdf->Ln(6);
 		}
-		$pdf->SetFont('Arial','B',8);		
+		$pdf->SetFont($font,'B',8);		
 		$pdf->SetWidths(array(170));
 		$pdf->SetAligns(array("L"));
 		$pdf->SetStyles(array("B"));
 		$pdf->Row(array('Producto : '.$producto->getCaProducto()));
 		
-		$pdf->SetFont('Arial','B',8);
+		$pdf->SetFont($font,'B',8);
 		$pdf->SetWidths(array(40, 40, 45, 45));
 		$pdf->SetAligns(array_fill(0, 5, "C"));
 		$pdf->SetStyles(array_fill(0, 5, "B"));
@@ -133,11 +152,11 @@ foreach( $productos as $producto ):
 				
 		$pdf->SetStyles(array_fill(0, 5, ""));
 		$pdf->SetFills(array_fill(0, 5, 0));
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont($font,'',8);
 		$pdf->Row(array($producto->getCaImpoExpo(), $producto->getCaIncoterms(), $producto->getOrigen()->getCaCiudad()." - ".$producto->getOrigen()->getCaTrafico(),  $producto->getDestino()->getCaCiudad()." - ".$producto->getDestino()->getCaTrafico() ));		
 		
 		if( $linea && $producto->getCaPostularLinea()){
-			$pdf->SetFont('Arial','',8);
+			$pdf->SetFont($font,'',8);
 			$pdf->SetWidths(array(170));
 			$pdf->SetAligns(array_fill(0, 3, "L"));
 			$pdf->Row(array(($producto->getCaTransporte()==Constantes::AEREO?"Aérolinea: ":"Linea: ").$linea->getCaNombre()));			
@@ -226,6 +245,7 @@ foreach( $productos as $producto ):
 		$recargosGen = $producto->getRecargosGenerales();
 		
 		
+		
 		if( count($recargosGen)>0 ){
 			$imprimirObservaciones=false;
 			foreach( $recargosGen as $recargo ){
@@ -233,13 +253,12 @@ foreach( $productos as $producto ):
 					$imprimirObservaciones=true;
 				}
 			}
-		
 			$pdf->beginGroup(); 
 			$pdf->Ln(2);
-			$pdf->SetFont('Arial','B',8);
+			$pdf->SetFont($font,'B',8);
 			$pdf->Cell(0, 4, 'RECARGOS EN ORIGEN ', 0, 1, 'L', 0);
 			$pdf->Ln(2);
-			$pdf->SetFont('Arial','',7);
+			$pdf->SetFont($font,'',7);
 			
 			$titu_mem= array('Concepto',  'Tarifa' );			
 			if( $imprimirObservaciones ){
@@ -268,12 +287,11 @@ foreach( $productos as $producto ):
 				$pdf->Row($row);
 			}
 			$pdf->Ln(2);
-			$pdf->flushGroup(); 
+			$pdf->flushGroup(); 	
+			
 			
 		}
 			
-		
-		
 		//Imprime el tiempo de transito
 		if (strlen($producto->getCaFrecuencia())<>0){
 			array_push($widths,35);			
@@ -290,10 +308,12 @@ foreach( $productos as $producto ):
 			
 			array_push($datos,"Observaciones: ".$producto->getCaObservaciones()); 
 		}
-		$pdf->SetFont('Arial','',8);
+		$pdf->SetFont($font,'',8);
 		$pdf->SetWidths($widths);
 		$pdf->SetAligns(array_fill(0, 3, "L"));
-		$pdf->Row($datos);			
+		$pdf->Row($datos);	
+			
+			
 		
 			
 	endif; 
@@ -439,7 +459,7 @@ array_unique( $conceptos1 );
 array_unique( $trayectos1 );
 array_unique( $conceptos2 );
 array_unique( $trayectos2 );
-$pdf->SetFont('Arial','',7);
+$pdf->SetFont($font,'',7);
 if( count($tablaConceptos)>0 ){
 	$pdf->Ln(2);
 	$titulos = array_merge( array("Trayecto"),   $conceptos1);
@@ -517,10 +537,10 @@ foreach( $grupos as $key => $grupo ){
 		
 			$pdf->beginGroup(); 
 			$pdf->Ln(4);
-			$pdf->SetFont('Arial','B',8);
+			$pdf->SetFont($font,'B',8);
 			$pdf->Cell(0, 4, 'RECARGOS LOCALES '.strtoupper($key).' '.strtoupper($modalidad), 0, 1, 'L', 0);
 			$pdf->Ln(2);
-			$pdf->SetFont('Arial','',7);
+			$pdf->SetFont($font,'',7);
 			
 			$titu_mem= array('Concepto',  'Tarifa' );			
 			if( $imprimirObservaciones ){
@@ -592,9 +612,9 @@ if(count($continuaciones)>0){
 			if( $imprimirtitulo ){ // Se hace de esta manera para mantener el grupo 
 				$pdf->beginGroup(); 
 				$pdf->Ln(4);				
-				$pdf->SetFont('Arial','B',9);
+				$pdf->SetFont($font,'B',9);
 				$pdf->Cell(0, 4, 'SERVICIO DE CONTINUACIÓN DE VIAJE', 0, 1, 'L', 0);	
-				$pdf->SetFont('Arial','',7);
+				$pdf->SetFont($font,'',7);
 				$imprimirtitulo=false; 
 				$imprimiotitulo=true;
 			}
@@ -606,8 +626,8 @@ if(count($continuaciones)>0){
 				}
 				//Control impresión		
 				$pdf->Ln(4);						
-				$pdf->SetFont('Arial','B',8);			
-				$pdf->Cell(0, 4, ' 	OTM – OPERACIÓN DE TRANSPORTE MULTIMODAL', 0, 1, 'L', 0);
+				$pdf->SetFont($font,'B',8);			
+				$pdf->Cell(0, 4, '   OTM – OPERACIÓN DE TRANSPORTE MULTIMODAL', 0, 1, 'L', 0);
 			}	
 			
 			if( $continuacion->getCaTipo()=="DTA" ){
@@ -617,10 +637,10 @@ if(count($continuaciones)>0){
 				}
 				
 				$pdf->Ln(4);
-				$pdf->SetFont('Arial','B',8);
-				$pdf->Cell(0, 4, ' 	DTA – DECLARACIÓN DE TRÁNSITO ADUANERO', 0, 1, 'L', 0);				
+				$pdf->SetFont($font,'B',8);
+				$pdf->Cell(0, 4, '   DTA – DECLARACIÓN DE TRÁNSITO ADUANERO', 0, 1, 'L', 0);				
 			}	
-			$pdf->SetFont('Arial','',7);
+			$pdf->SetFont($font,'',7);
 			$pdf->Ln(4);
 			
 			$titu_mem= array('Origen', 'Destino','Mod.', 'Concepto', 'Tarifa');
@@ -677,10 +697,10 @@ if(count($continuaciones)>0){
 			
 				$pdf->beginGroup(); 
 				$pdf->Ln(4);
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont($font,'B',8);
 				$pdf->Cell(0, 4, 'RECARGOS' , 0, 1, 'L', 0);
 				$pdf->Ln(2);
-				$pdf->SetFont('Arial','',7);
+				$pdf->SetFont($font,'',7);
 				
 				$titu_mem= array('Concepto',  'Tarifa' );			
 				if( $imprimirObservaciones ){
@@ -738,9 +758,9 @@ if ( count($seguros)>0 ) {
 	$pdf->beginGroup(); 
 	
 	$pdf->Ln(4);	
-	$pdf->SetFont('Arial','B',9);
+	$pdf->SetFont($font,'B',9);
 	$pdf->Cell(0, 4, 'SEGURO INTERNACIONAL', 0, 1, 'L', 0);
-	$pdf->SetFont('Arial','',9);
+	$pdf->SetFont($font,'',9);
 	$pdf->Ln(2);
 	$i = 1;
 	$linea = "";
@@ -748,7 +768,7 @@ if ( count($seguros)>0 ) {
 	$pdf->beginGroup(); 
 		
 	$pdf->Ln(2);
-	$pdf->SetFont('Arial','',7);
+	$pdf->SetFont($font,'',7);
 	
 	$titu_mem= array('Transporte', 'Prima',  'Tarifa Mínima' , 'Obtención de la Póliza');			
 	if( $imprimirObservaciones ){
@@ -825,11 +845,11 @@ if( $cotizacion->getCaDatosag() ){
 	if( count($contactosAgente)>0 ){	
 		$pdf->beginGroup(); 
 		$pdf->Ln(2);
-		$pdf->SetFont('Arial','B',9);
+		$pdf->SetFont($font,'B',9);
 		$pdf->MultiCell(0, 4, "DIRECTORIO DE AGENTES", 0,'L',0);
 		
 		$pdf->Ln(4);
-		$pdf->SetFont('Arial','',9);
+		$pdf->SetFont($font,'',9);
 		
 		if( count($contactosAgente)==1 ){			
 			$pdf->MultiCell(0, 4, 'A continuación relacionamos los datos de nuestro agente encargado de coordinar los despachos:',0,1);
@@ -856,7 +876,7 @@ if( $cotizacion->getCaDatosag() ){
 				$idtrafico=$ciudad->getCaIdtrafico();
 				$trafico = $ciudad->getTrafico();
 				$pdf->Ln(1);
-				$pdf->SetFont('Arial','B',10);
+				$pdf->SetFont($font,'B',10);
 				$pdf->MultiCell(0, 3, '» '.$trafico->getCaNombre().' «',0,1);
 				$pdf->Ln(2);
 			}
@@ -864,17 +884,17 @@ if( $cotizacion->getCaDatosag() ){
 			if( $idagente != $agente->getCaidAgente() ){
 				$idagente = $agente->getCaidAgente();
 				
-				$pdf->SetFont('Arial','B',8);
+				$pdf->SetFont($font,'B',8);
 				$pdf->MultiCell(0, 3,$agente->getCaNombre(),0,1);
-				$pdf->SetFont('Arial','',8);			
+				$pdf->SetFont($font,'',8);			
 				$pdf->Ln(2);
 				$pdf->MultiCell(0, 3,"Contactos :",0,1);
 			   
 			}
 					
-			$pdf->SetFont('Arial','B',8);
+			$pdf->SetFont($font,'B',8);
 			$pdf->MultiCell(0, 3,$contacto->getCaNombre(),0,1);
-			$pdf->SetFont('Arial','',8);
+			$pdf->SetFont($font,'',8);
 			$pdf->MultiCell(0, 3,$contacto->getCaDireccion()." - ".$ciudad->getCaCiudad(),0,1);
 			$pdf->MultiCell(0, 3,"Teléfonos (".substr(strtoupper($ciudad->getCaIdtrafico()),3,3)." - ".substr(strtoupper($contacto->getCaIdciudad() ),4,4).") : ".$contacto->getCaTelefonos()." - Fax : ".$contacto->getCaFax(),0,1);
 			$pdf->MultiCell(0, 3,"Correo Electrónico :".$contacto->getCaEmail(),0,1);
@@ -890,7 +910,7 @@ if( $cotizacion->getCaDatosag() ){
 }
 
 
-$pdf->SetFont('Arial','',10);
+$pdf->SetFont($font,'',10);
 
 //Hace que el titulo tenga por lo menos 2 renglones
 if( $pdf->GetY()>$pdf->PageBreakTrigger-15 ){
@@ -906,9 +926,9 @@ $pdf->MultiCell(0, 4, 'Cordialmente,',0,1);
     
 
 $pdf->Ln(10);
-$pdf->SetFont('Arial','B',10);
+$pdf->SetFont($font,'B',10);
 $pdf->MultiCell(0, 4, strtoupper($usuario->getCaNombre()),0,1);
-$pdf->SetFont('Arial','',10);
+$pdf->SetFont($font,'',10);
 $pdf->MultiCell(0, 4, strtoupper($usuario->getCaCargo()),0,1);
 $pdf->MultiCell(0, 4, "COLTRANS S.A.",0,1);
 $pdf->MultiCell(0, 4, $sucursal->getCaDireccion(),0,1);
@@ -944,10 +964,10 @@ foreach($imprimirNotas as $val ) {
 		$pdf->Ln(2);
 	}	
 	
-	$pdf->SetFont('Arial','B',9);
+	$pdf->SetFont($font,'B',9);
 	$pdf->MultiCell(0, 4, $notas[$val."Titulo"], 0,'C',0);
 	$pdf->Ln(1);
-	$pdf->SetFont('Arial','',8);
+	$pdf->SetFont($font,'',8);
 	$pdf->MultiCell(0, 4, $notas[$val], 0,'J',0);
 }
 

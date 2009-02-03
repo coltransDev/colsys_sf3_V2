@@ -351,20 +351,37 @@ Ext.onReady(function(){
 		                }]
 				    }]
                 }
-				,{
-					id: 'cotizacionId',
-					xtype:'hidden',
-					name: 'cotizacionId',
-					value: '<?=$cotizacion->getCaIdcotizacion()?>',
-                    allowBlank:false
-				},{
-					id: 'idconcliente',
-					xtype:'hidden',
-					name: 'idconcliente',
-					value: '<?=$cotizacion->getCaIdcontacto()?>',
-                    allowBlank:false
-				}
-					]
+				
+				
+				]
+            },
+			
+			{
+                title:'Formato',
+                layout:'form',
+                defaults: {width: 230},
+                defaultType: 'textfield',
+
+                items: [	
+					new Ext.form.ComboBox({		
+						fieldLabel: 'Fuente',			
+						typeAhead: true,
+						forceSelection: true,
+						triggerAction: 'all',				
+						selectOnFocus: true,				
+						name: 'fuente',
+						id: 'fuente_id',	
+						lazyRender:true,
+						allowBlank: false,
+						value: '<?=$cotizacion->getCaFuente()?$cotizacion->getCaFuente():"Tahoma"?>',
+						listClass: 'x-combo-list-small',	
+						store : [						
+									['Arial', 'Arial'],
+									['Calibri', 'Calibri'],
+									['Tahoma', 'Tahoma']						
+							]
+					})				
+				]
             }
 			
 			],
