@@ -37,7 +37,7 @@ new Ext.form.ComboBox({
 			,
 			listeners:  {
 				render  : function( cmp ){					
-					cmp.setRawValue('<?=$nombre?>');
+					cmp.setRawValue('<?=$value?>');
 					cmp.hiddenField.value = '<?=$value?>';	
 				}
 			}
