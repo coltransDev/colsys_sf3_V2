@@ -22,6 +22,7 @@ class Constantes{
 	
 	const RECARGO_LOCAL = "Recargo Local";
 	const RECARGO_EN_ORIGEN = "Recargo en Origen";
+	const RECARGO_OTM_DTA = "Recargo OTM-DTA";
 	
 }
 ?>
