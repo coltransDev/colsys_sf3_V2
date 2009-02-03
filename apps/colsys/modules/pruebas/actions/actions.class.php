@@ -1505,5 +1505,13 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 		}
 	
 	} 
+	
+	
+	public function executeGenerarFuente(){
+		require( "D:\\Desarrollo\\colsys_sf12\\lib\\vendor\\FPDF\\font\\makefont\\makefont.php" );
+		MakeFont('D:\\Desarrollo\\sw\\ttf2pt1\\tahoma.ttf','D:\\Desarrollo\\sw\\ttf2pt1\\tahoma.afm','cp1252'); 
+		MakeFont('D:\\Desarrollo\\sw\\ttf2pt1\\tahomabd.ttf','D:\\Desarrollo\\sw\\ttf2pt1\\tahomab.afm','cp1252');
+		exit();
+	}
 }
 ?>
