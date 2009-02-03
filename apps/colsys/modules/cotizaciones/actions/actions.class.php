@@ -185,6 +185,10 @@ class cotizacionesActions extends sfActions
 		$cotizacion->setCaDespedida( utf8_decode($this->getRequestParameter( "despedida" )) );
 		$cotizacion->setCaAnexos( utf8_decode($this->getRequestParameter( "anexos" )) );
 		
+		if( $this->getRequestParameter( "fuente" ) ){
+			$cotizacion->setCaFuente( $this->getRequestParameter( "fuente" ) );
+		}
+		
 		$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
 		$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
 		
