@@ -104,6 +104,8 @@ class CotizacionMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_DATOSAG', 'CaDatosag', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_FUENTE', 'CaFuente', 'VARCHAR', false, null);
+
 	} // doBuild()
 
 } // CotizacionMapBuilder
