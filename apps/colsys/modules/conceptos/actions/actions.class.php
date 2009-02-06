@@ -10,6 +10,12 @@
  */
 class conceptosActions extends sfActions
 {
+	public function executeIndex(sfWebRequest $request){
+	
+	}
+	
+	/*
+  
   public function executeIndex(sfWebRequest $request)
   {
     $this->concepto_list = ConceptoPeer::doSelect(new Criteria());
@@ -68,4 +74,6 @@ class conceptosActions extends sfActions
       $this->redirect('conceptos/index');
     }
   }
+  */
 }
+?>
