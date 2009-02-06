@@ -78,7 +78,8 @@ class cotizacionesActions extends sfActions
 				break;	
 			case "sucursal":
 				$c->addJoin( CotizacionPeer::CA_USUARIO , UsuarioPeer::CA_LOGIN );
-				$c->add( UsuarioPeer::CA_SUCURSAL, "lower(".UsuarioPeer::CA_SUCURSAL.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
+				$c->addJoin( UsuarioPeer::CA_IDSUCURSAL , SucursalPeer::CA_IDSUCURSAL );
+				$c->add( SucursalPeer::CA_NOMBRE, "lower(".SucursalPeer::CA_NOMBRE.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
 		}	
 		$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL );
@@ -1181,6 +1182,7 @@ class cotizacionesActions extends sfActions
 			$grupos[$row[0]] = array_unique( $grupos[$row[0]] );	
 		}
 		
+		
 		/*
 		* Incluye grupos para los recargos que ya se han creado
 		*/
@@ -1201,6 +1203,8 @@ class cotizacionesActions extends sfActions
 		}
 		
 		//Recargos de OTM-DTA
+		
+		$tipo = Constantes::RECARGO_OTM_DTA;
 		$c = new Criteria();				
 		$c->add( CotContinuacionPeer::CA_IDCOTIZACION , $idcotizacion );				
 		$c->addSelectColumn( CotContinuacionPeer::CA_TIPO );		
@@ -1228,7 +1232,8 @@ class cotizacionesActions extends sfActions
 				$c->addJoin( CotRecargoPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO, Criteria::LEFT_JOIN );		
 				$c->add( CotRecargoPeer::CA_IDCOTIZACION , $idcotizacion );
 				$c->add( CotRecargoPeer::CA_MODALIDAD , $modalidad );
-				$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
+				$c->add( TipoRecargoPeer::CA_TIPO , Constantes::RECARGO_LOCAL );
+				$c->addOr( TipoRecargoPeer::CA_TIPO , Constantes::RECARGO_OTM_DTA );
 				$c->add( TipoRecargoPeer::CA_TRANSPORTE, $transporte );
 				
 				$c->addAscendingOrderbyColumn( TipoRecargoPeer::CA_TRANSPORTE );
@@ -1800,6 +1805,11 @@ class cotizacionesActions extends sfActions
 	}
 	
 	
+	/*
+	* Indice de ayuda
+	*/
+	public function executeAyuda(){
 	
+	}
 }
 ?>
