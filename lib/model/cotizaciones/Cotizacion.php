@@ -52,6 +52,30 @@ class Cotizacion extends BaseCotizacion
 	}
 	
 	/*
+	* Retorna los recargos locales de la cotización
+	* @author Andres Botero
+	*/
+	public function getRecargosOTMDTA( $modalidad=null ){	
+		$tipo = Constantes::RECARGO_OTM_DTA;
+		$c = new Criteria();		
+		$c->addJoin( CotRecargoPeer::CA_IDRECARGO, TipoRecargoPeer::CA_IDRECARGO, Criteria::LEFT_JOIN );		
+		$c->add( CotRecargoPeer::CA_IDCOTIZACION , $this->getCaIdcotizacion() );
+		$c->add( TipoRecargoPeer::CA_TIPO , $tipo );
+		
+		$c->add( TipoRecargoPeer::CA_TRANSPORTE , Constantes::TERRESTRE );
+		
+		if( $modalidad ){
+			$c->add( CotRecargoPeer::CA_MODALIDAD , $modalidad );
+		}
+		$c->setDistinct();		
+		//$c->addAscendingOrderByColumn( TipoRecargoPeer::CA_TRANSPORTE );
+		$c->addAscendingOrderByColumn( CotRecargoPeer::CA_MODALIDAD );
+		
+		return CotRecargoPeer::doSelect($c);		
+	}
+	
+	
+	/*
 	* Retorna verdadero si la cotización tiene no conceptos.
 	* @author Andres Botero
 	*/
