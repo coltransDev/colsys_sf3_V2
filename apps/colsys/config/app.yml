@@ -5,7 +5,7 @@ all:
      root:  C:\Desarrollo\digitalFile\
 
   smtp:
-    host: 10.192.1.30
+    host: 10.192.1.15
 #    user:  tasas_cambios
 #    passwd:  tasas_cambios
     port: 25
