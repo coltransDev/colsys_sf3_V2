@@ -49,7 +49,7 @@ function extModalidad($id="modalidad", $transporte, $impoexpo){
 		typeAhead: true,
 		forceSelection: true,
 		triggerAction: 'all',
-		emptyText:'Seleccione',
+		emptyText:'',
 		selectOnFocus: true,	
 		name: '$id',
 		id: '$id',
@@ -102,7 +102,7 @@ function extConcepto($id="concepto", $transporte, $modalidad=null){
 		typeAhead: true,
 		forceSelection: true,
 		triggerAction: 'all',
-		emptyText:'Seleccione',
+		emptyText:'',
 		selectOnFocus: true,					
 		hiddenName:'id$id',
 		id: '$id',
@@ -140,7 +140,7 @@ function extIncoterms($id="incoterms"){
 					typeAhead: true,
 					forceSelection: true,
 					triggerAction: 'all',
-					emptyText:'Seleccione',
+					emptyText:'',
 					selectOnFocus: true,					
 					name: '$id',
 					id: '$id',
@@ -164,7 +164,7 @@ function extImprimir($id="imprimir"){
 					typeAhead: true,
 					forceSelection: true,
 					triggerAction: 'all',
-					emptyText:'Seleccione',
+					emptyText:'',
 					selectOnFocus: true,					
 					name: '$id',
 					id: '$id',
@@ -176,13 +176,14 @@ function extImprimir($id="imprimir"){
 	return $html;					
 }
 
+/*
 function extOtmDta($id="otmdta"){		
 	$html = "new Ext.form.ComboBox({		
 					fieldLabel: 'Tipo',			
 					typeAhead: true,
 					forceSelection: true,
 					triggerAction: 'all',
-					emptyText:'Seleccione',
+					emptyText:'',
 					selectOnFocus: true,					
 					name: '$id',
 					id: '$id',
@@ -192,7 +193,7 @@ function extOtmDta($id="otmdta"){
 				})";
 	return $html;					
 }
-
+*/
 function extMonedas($id="", $selected="USD"){
 	$c=new Criteria();
 	$c->addAscendingOrderByColumn( MonedaPeer::CA_IDMONEDA );
@@ -223,7 +224,7 @@ function extRecargos($tipo="Recargo Local",$selected=""){
 		typeAhead: true,
 		forceSelection: true,
 		triggerAction: 'all',
-		emptyText:'Seleccione',
+		emptyText:'',
 		selectOnFocus: true,					
 		hiddenName:'idrecargo',
 		id: 'recargo',
@@ -296,7 +297,7 @@ function extTipoRecargo($id="tiporecargo"){
 					typeAhead: true,
 					forceSelection: true,
 					triggerAction: 'all',
-					emptyText:'Seleccione',
+					emptyText:'',
 					selectOnFocus: true,				
 					name: '$id',
 					id: '$id',
@@ -315,7 +316,7 @@ function extAplicaciones($id="aplicacion"){
 					typeAhead: true,
 					forceSelection: true,
 					triggerAction: 'all',
-					emptyText:'Seleccione',
+					emptyText:'',
 					selectOnFocus: true,				
 					name: '$id',
 					id: '$id',
