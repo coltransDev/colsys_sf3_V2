@@ -293,6 +293,7 @@ class PDF extends FPDF {
 		}
 		
 		$break = false;
+		//echo ($this->GetY()+$height)." ".$this->PageBreakTrigger." ";
 		if( $this->GetY()+$height>$this->PageBreakTrigger ){
 			$this->AddPage($this->CurOrientation);
 			$break = true;	
