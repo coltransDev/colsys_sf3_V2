@@ -24,19 +24,17 @@ use_helper("Object");
 		}
 	}
 </script>
-<table class="tableForm" width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" id="mainTable">		
+<table class="tableList" width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" >		
 	<tr>	
-		<th colspan="4" style='font-size: 12px; font-weight:bold;'>Sistema de Cotizaciones</th>		
-	</tr>
+		<th colspan="3" style='font-size: 12px; font-weight:bold;'>Sistema de Cotizaciones</th>
+    </tr>
 	<tr>	
-		<th colspan="4" style='font-size: 10px;'>Ingrese un criterio para realizar las busqueda</th>		
-	</tr>
+		<td colspan="3" style='font-size: 10px;'>Ingrese un criterio para realizar las busqueda</td>
+    </tr>
 	<tr>
-		<th width="16" rowspan="2">&nbsp;</th>
-		<td width="88" class="listar"><b>Buscar por:</b> <br />
-			<?=select_tag("criterio", options_for_select( array("mis_cotizaciones"=>"Mis Cotizaciones", "consecutivo"=>"Consecutivo", "nombre_del_cliente"=>"Nombre del Cliente", "nombre_del_contacto"=>"Nombre del Contacto", "asunto"=>"Asunto", "vendedor"=>"Vendedor", "numero_de_cotizacion"=>"N&uacute;mero de Cotizaci&oacute;n", "sucursal"=>"Sucursal"), "mis_cotizaciones" ), "size=7 onChange='cambiarVendedor(this)'" );?>		
-	  </td>
-		<td width="337" class="listar">&nbsp;
+		<td width="88" ><b>Buscar por:</b> <br />
+			<?=select_tag("criterio", options_for_select( array("mis_cotizaciones"=>"Mis Cotizaciones", "consecutivo"=>"Consecutivo", "nombre_del_cliente"=>"Nombre del Cliente", "nombre_del_contacto"=>"Nombre del Contacto", "asunto"=>"Asunto", "vendedor"=>"Vendedor", "numero_de_cotizacion"=>"N&uacute;mero de Cotizaci&oacute;n", "sucursal"=>"Sucursal"), "mis_cotizaciones" ), "size=7 onChange='cambiarVendedor(this)' " );?>	  </td>
+		<td width="337" >&nbsp;
 		  <div id="visible" style="display:none"><b>Que contenga la cadena:</b><br />
 			<div id="cadena"><?=input_tag("cadena", "", "size=60 ")?></div>
 			<div id="login" style="display:none">
@@ -45,10 +43,7 @@ use_helper("Object");
 			?>
 			</div>
 	  </div></td>
-	  <th width="64" rowspan="2"><input class="submit" type='submit' name='buscar' value=' Buscar' /></th>
-	</tr>
-	<tr style="HEIGHT:5">
-		<td class="captura" colspan="6"></td>
+	  <td width="64"  ><input  type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>
 </table>
 <?="</form>";?>

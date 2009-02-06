@@ -83,7 +83,7 @@ $pdf->Cell(0, 4, 'Asunto : '.$cotizacion->getCaAsunto()." ".$cotizacion->getCaCo
 
 if($cotizacion->getCaUsuanulado()){
 	$pdf->SetTextColor(128,128,128);	
-	$pdf->SetFont($font,'B',72);
+	$pdf->SetFont($font,'B',68);
 	$pdf->Write(5,'A N U L A D O ');
 	$pdf->SetTextColor(0,0,0);
 }
@@ -888,12 +888,11 @@ if(count($continuaciones)>0){
 		}
 				
 		$pdf->Row( $row	);		
-		
-		////echo $continuaciones[$i+1]->getCaTipo()." ".$continuacion->getCaTipo()."<br />";
+				
 		if( !isset( $continuaciones[$i+1] ) || $continuaciones[$i+1]->getCaTipo()!=$continuacion->getCaTipo() ){
 				
 			//Recargos OTM - DTA 			
-			$recargosLoc = $cotizacion->getRecargosLocales(Constantes::TERRESTRE,  $tipo );
+			$recargosLoc = $cotizacion->getRecargosOTMDTA( $tipo );
 			
 			if( count($recargosLoc)>0 ){
 			

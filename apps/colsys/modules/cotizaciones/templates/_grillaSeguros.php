@@ -242,7 +242,7 @@ function agregarFilaSeguros(){
 	storeSegurosCot.insert( 0, records );	
 	rec = storeSegurosCot.getAt(0);
 	rec.set("prima_tip", "%");
-	rec.set("moneda", "USD");
+	rec.set("idmoneda", "USD");
 	
 }
 

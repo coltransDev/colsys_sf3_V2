@@ -336,8 +336,10 @@ var grid_productosOnvalidateedit = function(e){
 						storeProductos.addSorted(newRec);
 						
 					}
-					rec.set("iditem", r.data.idconcepto);
-					e.value = r.data.concepto;				
+					rec.set("idmoneda", "USD");
+					rec.set("iditem", r.data.idconcepto);					
+					e.value = r.data.concepto;			
+						
 					return true;
 				}
 			}
@@ -623,7 +625,7 @@ var ventanaTarifario = function( record ){
 								   transporte: activeRecord.data.transporte,  
 								   modalidad: activeRecord.data.modalidad,   
 								   idconcepto: activeRecord.data.iditem,
-								   idopcion: activeRecord.data.idopcion,
+								   idopcion: '',
 								   producto: activeRecord.data.producto,
 								   tra_origen: activeRecord.data.tra_origen,
 								   tra_origen_value: activeRecord.data.tra_origen_value,
@@ -881,6 +883,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
 						});	
 						//newRec.id = rec.data.id+1; 										
 						storeProductos.addSorted(newRec);
+						newRec.set("idmoneda", "USD");
 					}						
 				}				
 			},			

@@ -1,5 +1,5 @@
 <?
-use_helper("Javascript");
+use_helper("Javascript", "MimeType");
 
 $enBlanco = $cotizacion->enBlanco();
 
@@ -51,10 +51,10 @@ $mode = end($transport);     // $mode = 'plane';
 	<br />
 	
 	
-	<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableForm">	
+	<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
 		<tr>
-			<td><div align="left"><strong>Adjuntos:</strong> 
-			</div></td>
+			<th><div align="left"><strong>Adjuntos:</strong> 
+			</div></th>
 		</tr>
 		<?php 
 		if( !$enBlanco ){

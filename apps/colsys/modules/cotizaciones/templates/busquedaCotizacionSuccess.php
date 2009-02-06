@@ -42,10 +42,10 @@ endif;
 <br />
 <br />
 
-<table class="tableForm" width="800px" border="1" id="mainTable">
+<table class="tableList" width="800px" border="1" id="mainTable">
 	<tr>
 		<th width="57" scope="col">Consecutivo</th>
-		<th width="668" scope="col">Cotizaci&oacute;n</th>
+		<th width="668" colspan="4" scope="col">Cotizaci&oacute;n</th>
 	</tr>
 	<?
 	
@@ -54,57 +54,57 @@ endif;
 		$cliente = $contacto->getCliente(); 
 	?>
 	<tr>
-		<td class="listar"><?=link_to("C".$cotizacion->getCaConsecutivo(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
-		<td class="invertir">
-			<table class="tableForm" width="100%" border="0">
-				<tbody>
-					<tr>
-						<td width="10%" class="listar"><b>Fch.Cotizacion:</b><br /><?=$cotizacion->getCaFchCreado()?></td>
-						<td width="45%" class="listar"><b>Cliente:</b><br /><?=$cliente?></td>
-						<td width="45%" class="listar"><b>Contacto:</b><br /><?=$contacto->getNombre()?></td>
-						<td class="listar">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="listar"><b>Solicitud:</b><br /><?=$cotizacion->getCaFchSolicitud()."<br />".$cotizacion->getCaHoraSolicitud()?></td>
-						<td class="listar"><b>Asunto:</b><br /><?=$cotizacion->getCaAsunto()?></td>
-						<td class="listar"><b>Vendedor:</b><br />
-						<?=$cotizacion->getCaUsuario()?></td>
-						<td class="listar">&nbsp;</td>
-					</tr>
-
-					<tr>
-						<td class="listar" colspan="4"><table class="tableForm" width="100%" border="0">
-						<? 
+	  <td rowspan="2"  ><?=link_to("C".$cotizacion->getCaConsecutivo(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
+	  <td ><b>Fch.Cotizacion:</b><br />
+      <?=$cotizacion->getCaFchCreado()?></td>
+      <td ><b>Cliente:</b><br />
+      <?=$cliente?></td>
+      <td ><b>Contacto:</b><br />
+      <?=$contacto->getNombre()?></td>
+	  <td ><b>Vendedor:</b><br />
+        <?=$cotizacion->getCaUsuario()?></td>
+	</tr>
+	<tr>
+	  <td colspan="4" >
+	  	<b>Trayectos:</b>
+	  	<table class="tableList" width="100%" border="1">
+        <? 
 						foreach( $cotizacion->getCotProductos() as $producto ){
 							$origen = $producto->getOrigen();
 							$destino = $producto->getDestino();
 						?>
-						<tr>
-							<td class="listar"><b><?=$producto->getCaImpoExpo()?></b></td>
-							<td class="listar" colspan=3><b><?=$producto->getCaProducto()?></b></td>
-							<td class="listar"><b><?=$producto->getCaTransporte()?></b></td>
-						</tr>
-						<tr>
-							<td class="invertir"><?=$producto->getCaModalidad()?></td>
-							<td class="invertir"><?=$origen->getTrafico()?></td>
-							<td class="invertir"><?=$origen->getCaCiudad()?></td>
-							<td class="invertir"><?=$destino->getTrafico()?></td>
-							<td class="invertir"><?=$destino->getCaCiudad()?></td>
-						</tr>
-						<tr>
-							<td class="invertir" colspan=5></td>
-						</tr>
-						<?
+        <tr>
+          <td width="33%" class="listar" >
+            <?=$producto->getCaImpoExpo()?>
+            &raquo;
+			
+            <?=$producto->getCaTransporte()?>
+            &raquo;
+            <?=$producto->getCaModalidad()?> [<?=$producto->getCaProducto()?>]</td>
+          <td width="35%" class="listar"><?=$origen->getTrafico()." ".$origen->getCaCiudad()?>
+            &raquo;
+            <?=$destino->getTrafico()." ".$destino->getCaCiudad()?></td>
+          </tr>
+       
+        <?
 							}
 						?>
-						</table></td>
-					</tr>
-				</tbody>
-			</table></td>
+      </table></td>
+    </tr>
+	
+	<?
+	}
+	if( count($pager->getResults())==0 ){
+	?>
+	<tr>
+		
+		<td  colspan="5" scope="col"><div align="center">No hay resultados</div></td>
 	</tr>
 	<?
-		}
+	}
 	?>
+	
+	
 </table>
 <br />
 <br />
