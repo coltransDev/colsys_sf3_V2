@@ -18,7 +18,11 @@ var seleccionarContacto = function(){
 	 
 }
 </script> 
-<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableForm">	
+<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
+	<tr>
+		<th colspan="2">Nuevo correo Electronico</th>
+
+	</tr>
 	<tr>
 		<td width="454"><div align="left"><strong>Remitente:</strong> <br />
 			<?
