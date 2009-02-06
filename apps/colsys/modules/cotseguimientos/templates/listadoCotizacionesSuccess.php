@@ -22,7 +22,7 @@ var record = Ext.data.Record.create([
 /*
 * Crea el store
 */
-var store = new Ext.data.Store({
+var store = new Ext.data.GroupingStore({
 	autoLoad : true,
 	reader: new Ext.data.JsonReader(
 		{	
@@ -34,7 +34,8 @@ var store = new Ext.data.Store({
 		record
 	),
 	proxy: new Ext.data.MemoryProxy( <?=json_encode(array("data"=>$data))?>),
-	sortInfo:{field: 'consecutivo', direction: "ASC"}
+	sortInfo:{field: 'consecutivo', direction: "ASC"},	
+	groupField: 'consecutivo'	
 });
 	
 
@@ -245,8 +246,9 @@ var panel = new Ext.grid.EditorGridPanel({
 			handler: guardarCambios
 		}
 	],		
-	view: new Ext.grid.GridView({
+	view: new Ext.grid.GroupingView({
 		 forceFit :true,
+		 enableGroupingMenu: false,
 		 getRowClass: function(  record,  index,  rowParams,  store ){			
 			
 			switch( record.data.estado ){
