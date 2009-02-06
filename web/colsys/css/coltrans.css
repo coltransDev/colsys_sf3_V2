@@ -10,19 +10,19 @@ body{
    margin-right:4px;
    background:#FFFFFF;
   
-}
-
-body{
-   font-family:verdana, arial, helvetica, serif;
+	font-family: verdana,arial,helvetica,serif;
    font-size:10px;
 }
 
-input, select, textarea {
-	font-family:verdana, arial, helvetica, serif;
+
+input, select, textarea {	
+	font-family: verdana,arial,helvetica,serif;
    	font-size:10px;	
-	padding:1px 3px;background:#fff url(../images/text-bg.gif) repeat-x 0 0;
+	padding:1px 3px;
+	background:#fff url(../images/text-bg.gif) repeat-x 0 0;
 	border:1px solid #B5B8C8;
 }
+
 
 
 input:focus, select:focus, textarea:focus {
@@ -30,16 +30,18 @@ input:focus, select:focus, textarea:focus {
 }
 
 
-
-p{
-   font-family:verdana, arial, helvetica, serif;
-   font-size:8px;
-}
-
 input.button, input.submit, input.reset{
    border: solid 1px #CCCCBB;
-
+   padding: 4px;  
 }
+
+
+p{
+   font-family: verdana,arial,helvetica,serif;
+   font-size:9px;
+}
+
+
 
 
 img{
@@ -81,25 +83,87 @@ form fieldset{
 * Estilos estandar para mostrar informacion en listas mediante una tabla
 */
 
-table.tableList{
-	border: 1px solid #C9C9C0 ;
+/*
+tables
+*/
+
+table.tableList {
+	background-color: #FFFFFF;	
+	padding: 0px;
+	border: 1px solid #CCCCCC;
 	border-spacing: 0px;	
-	border-collapse: collapse; 
+	border-collapse: collapse;        
+}
+
+table.tableList th {
+	margin: 0px;
+	padding: 6px 4px 2px 4px;
+	
+	
+	
+	/*
+	height: 25px;
+	font-size: 10px;
+	color: #FFFFFF;
+	background: #2E4B66;
+	*/
+	background: transparent url( ../images/layout/panel/white-top-bottom.gif) repeat-x scroll 0 -1px;
+	border:1px solid #99BBE8;
+	color:#15428B;
+	
+
+}
+
+/*
+* Colores que puede tomar una fila de acuerdo al status en que se encuentre
+*/
+
+table.tableList tr.yellow{
+	background-color:#FFFFCC;	
+}
+
+table.tableList tr.green{
+	background-color:#CEFFCE;	
+}
+
+table.tableList tr.blue{
+	background-color:#CEE7FF;	
+}
+
+table.tableList tr.orange{
+	background-color:#FFE4AE;	
+}
+
+table.tableList tr.pink{
+	background-color:#FFCCCC;	
+}
+
+table.tableList tr.rowt {
+	background-color: #E6E6E6;
+}
+
+table.tableList tr.row0 {
+	background-color: #F5F5F5;
+}
+table.tableList tr.row1 {
+	background-color: #FFF;
+}
+
+table.tableList tr.row0:hover {
+	background-color: #f1f1f1;
+}
+table.tableList tr.row1:hover {
+	background-color: #f1f1f1;
 }
 
 
-
-
-table.tableList th{
-   text-align:center;
-   background:#1D3F99;
-   color:#FFFFFF;
-}
 table.tableList td {
-	border-bottom: 1px solid #C9C9C0;
+	border-bottom: 1px solid #e5e5e5;
 	padding: 4px;
-	vertical-align:top;
+	color:#333333;
 }
+
+
 table.tableList td.captura {
    text-align:left;
    vertical-align:top;
@@ -126,11 +190,10 @@ table.tableList td.invertir {
    text-align:left;
    background:#D2D2D2;
    color:#000000;
-   vertical-align:top;
+   
 }
 table.tableList td.listar {
-   text-align:left;
-   vertical-align:top;
+   text-align:left;   
    background:#F0F0F0;
    color:#000000;
 }
@@ -175,124 +238,40 @@ table.tableList th.imprimir {
    color:#000000;
 }
 
-/*
-* Colores que puede tomar una fila de acuerdo al status en que se encuentre
-*/
 
-table.tableList tr.yellow{
-	background-color:#FFFFCC;	
-}
 
-table.tableList tr.green{
-	background-color:#CEFFCE;	
-}
+/** cpanel settings **/
 
-table.tableList tr.blue{
-	background-color:#CEE7FF;	
+#cpanel div.icon {
+	text-align: center;
+	margin-right: 5px;
+	float: left;
+	margin-bottom: 5px;
 }
 
-table.tableList tr.orange{
-	background-color:#FFCC66;	
+#cpanel div.icon a {
+	display: block;
+	float: left;
+	border: 1px solid #f0f0f0;
+	height: 97px;
+	width: 108px;
+	color: #666;
+	vertical-align: middle;
+	text-decoration: none;
 }
 
-table.tableList tr.pink{
-	background-color:#FFCCCC;	
+#cpanel div.icon a:hover {
+	border-left: 1px solid #eee;
+	border-top: 1px solid #eee;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	background: #f9f9f9;
+	color: #0B55C4;
 }
 
-/*
-* Estilos estandar para mostrar informacion en formularios mediante una tabla
-*/
+#cpanel img  { padding: 10px 0; margin: 0 auto; }
+#cpanel span { display: block; text-align: center; font-size:11px; }
 
-table.tableForm{
-	border: 1px solid #C9C9C0 ;
-	border-spacing: 0px;	
-	border-collapse: collapse; 
-}
-
-table.tableForm th{
-   text-align:center;
-   background:#1D3F99;
-   color:#FFFFFF;
-}
-table.tableForm td {
-	border-bottom: 1px solid #C9C9C0;
-	padding: 4px;
-	vertical-align:top;
-}
-table.tableForm td.captura {
-   text-align:left;
-   vertical-align:top;
-   background:#1D3F99;
-   color:#FFFFFF;
-}
-table.tableForm td.destacar {
-   text-align:left;
-   background:#FFFFC0;
-   color:#1D3F99;
-   vertical-align:top;
-}
-table.tableForm td.divisor {
-   text-align:center;
-   background:#000000;
-   color:#FFFFFF;
-}
-table.tableForm td.imprimir {
-   text-align:left;
-   background:#FFFFFF;
-   color:#000000;
-}
-table.tableForm td.invertir {
-   text-align:left;
-   background:#D2D2D2;
-   color:#000000;
-   vertical-align:top;
-}
-table.tableForm td.listar {
-   text-align:left;
-   vertical-align:top;
-   background:#F0F0F0;
-   color:#000000;
-}
-table.tableForm td.mostrar {
-   text-align: left;
-   background: #F0F0F0;
-   color: #000000;
-}
-table.tableForm td.partir {
-   font-weight:bold;
-   text-align:left;
-   vertical-align:top;
-   background:#1D3F99;
-   color:#FFFFFF;
-}
-table.tableForm td.periodo {
-   text-align:left;
-   background:#CCCCCC;
-   color:#000000;
-   vertical-align:top;
-}
-table.tableForm td.resaltar {
-   text-align:left;
-   background:#9999CC;
-   color:#000000;
-   vertical-align:top;
-}
-table.tableForm td.titulo {
-   text-align:center;
-   background:#1D3F99;
-   color:#FFFFFF;
-}
-table.tableForm td.valores {
-   text-align: right;
-   vertical-align: top;
-   background: #F0F0F0;
-   color: #000000;
-}
-table.tableForm th.imprimir {
-   text-align:center;
-   background:#FFFFFF;
-   color:#000000;
-}
 
 
 /*
@@ -513,7 +492,10 @@ a.toolbar:active {
 
 .btnComentarios{
 	padding-left:50px;
-	font-size:9px;		   
+	font-size:9px;
+	color:#676767;
+	
+	   
 }
 
 
@@ -546,3 +528,7 @@ a.toolbar:active {
 	margin: 10px;
 
 }
+
+
+
+
