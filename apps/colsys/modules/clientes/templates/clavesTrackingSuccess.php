@@ -1,5 +1,5 @@
 <div align="center">
-<table cellspacing="1" class="tableForm" >
+<table cellspacing="1" class="tableList" >
 	<tr>
 		<th colspan="5">Maestra de Contactos por Cliente</th>
 	</tr>
