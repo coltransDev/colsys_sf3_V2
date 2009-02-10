@@ -165,6 +165,12 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	protected $ca_fchcircular;
 
 	/**
+	 * The value for the ca_status field.
+	 * @var        string
+	 */
+	protected $ca_status;
+
+	/**
 	 * @var        Ciudad
 	 */
 	protected $aCiudad;
@@ -524,6 +530,16 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		} else {
 			return $dt->format($format);
 		}
+	}
+
+	/**
+	 * Get the [ca_status] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaStatus()
+	{
+		return $this->ca_status;
 	}
 
 	/**
@@ -1040,6 +1056,26 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	} // setCaFchcircular()
 
 	/**
+	 * Set the value of [ca_status] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Cliente The current object (for fluent API support)
+	 */
+	public function setCaStatus($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_status !== $v) {
+			$this->ca_status = $v;
+			$this->modifiedColumns[] = ClientePeer::CA_STATUS;
+		}
+
+		return $this;
+	} // setCaStatus()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -1100,6 +1136,7 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			$this->ca_idgrupo = ($row[$startcol + 21] !== null) ? (int) $row[$startcol + 21] : null;
 			$this->ca_listaclinton = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
 			$this->ca_fchcircular = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+			$this->ca_status = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1109,7 +1146,7 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 24; // 24 = ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 25; // 25 = ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cliente object", $e);
@@ -1596,6 +1633,9 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			case 23:
 				return $this->getCaFchcircular();
 				break;
+			case 24:
+				return $this->getCaStatus();
+				break;
 			default:
 				return null;
 				break;
@@ -1641,6 +1681,7 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			$keys[21] => $this->getCaIdgrupo(),
 			$keys[22] => $this->getCaListaclinton(),
 			$keys[23] => $this->getCaFchcircular(),
+			$keys[24] => $this->getCaStatus(),
 		);
 		return $result;
 	}
@@ -1744,6 +1785,9 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			case 23:
 				$this->setCaFchcircular($value);
 				break;
+			case 24:
+				$this->setCaStatus($value);
+				break;
 		} // switch()
 	}
 
@@ -1792,6 +1836,7 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[21], $arr)) $this->setCaIdgrupo($arr[$keys[21]]);
 		if (array_key_exists($keys[22], $arr)) $this->setCaListaclinton($arr[$keys[22]]);
 		if (array_key_exists($keys[23], $arr)) $this->setCaFchcircular($arr[$keys[23]]);
+		if (array_key_exists($keys[24], $arr)) $this->setCaStatus($arr[$keys[24]]);
 	}
 
 	/**
@@ -1827,6 +1872,7 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ClientePeer::CA_IDGRUPO)) $criteria->add(ClientePeer::CA_IDGRUPO, $this->ca_idgrupo);
 		if ($this->isColumnModified(ClientePeer::CA_LISTACLINTON)) $criteria->add(ClientePeer::CA_LISTACLINTON, $this->ca_listaclinton);
 		if ($this->isColumnModified(ClientePeer::CA_FCHCIRCULAR)) $criteria->add(ClientePeer::CA_FCHCIRCULAR, $this->ca_fchcircular);
+		if ($this->isColumnModified(ClientePeer::CA_STATUS)) $criteria->add(ClientePeer::CA_STATUS, $this->ca_status);
 
 		return $criteria;
 	}
@@ -1926,6 +1972,8 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		$copyObj->setCaListaclinton($this->ca_listaclinton);
 
 		$copyObj->setCaFchcircular($this->ca_fchcircular);
+
+		$copyObj->setCaStatus($this->ca_status);
 
 
 		if ($deepCopy) {
