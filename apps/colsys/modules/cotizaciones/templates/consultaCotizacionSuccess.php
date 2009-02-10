@@ -68,7 +68,8 @@ Ext.onReady(function(){
             {name: 'vendedor', mapping: 'ca_vendedor'},
             {name: 'nombre_ven', mapping: 'ca_nombre'},
 			{name: 'listaclinton', mapping: 'ca_listaclinton'},
-			{name: 'fchcircular', mapping: 'ca_fchcircular', type:'int'}
+			{name: 'fchcircular', mapping: 'ca_fchcircular', type:'int'},
+			{name: 'status', mapping: 'ca_status'}
         ])
     });
 
@@ -142,6 +143,11 @@ Ext.onReady(function(){
 							xtype:'hidden',
 							id: 'listaclinton'
 							
+		                },
+						{
+							xtype:'hidden',
+							id: 'status'
+							
 		                }
 						]
 				    },
@@ -191,7 +197,7 @@ Ext.onReady(function(){
 								this.collapse();
 								this.fireEvent('select', this, record, index);
 							}
-							
+							var mensaje = "";
 							Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
 							Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 							
@@ -202,22 +208,52 @@ Ext.onReady(function(){
 							
 							
 							Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
+							Ext.getCmp("status").setValue(record.get("status"));							
+							
+							if( record.get("status")=="Vetado" ){	
+								if( mensaje!=""){
+									mensaje+="<br />";
+								}
+								mensaje += "Este cliente se encuentra vetado";															
+							}
+							
 							if( record.get("listaclinton")=="Sí" ){								
-								Ext.MessageBox.alert("Alerta","Este cliente se encuentra en lista clinton");
+								//Ext.MessageBox.alert("Alerta","Este cliente se encuentra en lista clinton");
+								if( mensaje!=""){
+									mensaje+="<br />";
+								}
+								mensaje += "Este cliente se encuentra en lista clinton";	
 							}
 							
 							var fchcircular = record.get("fchcircular");
 							//alert( fchcircular);
 							if( !fchcircular ){
-								Ext.MessageBox.alert("Alerta","El cliente no tiene circular 170");
+								//Ext.MessageBox.alert("Alerta","El cliente no tiene circular 170");
+								if( mensaje!=""){
+									mensaje+="<br />";
+								}
+								mensaje += "El cliente no tiene circular 170";	
+								
 							}else{
 								if( fchcircular+(86400*365)<=<?=time()?> ){
-									Ext.MessageBox.alert("Alerta","La circular 170 se encuentra vencida");
+									if( mensaje!=""){
+										mensaje+="<br />";
+									}
+									mensaje += "La circular 170 se encuentra vencida";	
+									//Ext.MessageBox.alert("Alerta","La circular 170 se encuentra vencida");
 								}else{
 									if( fchcircular+(86400*335)<=<?=time()?> ){
-										Ext.MessageBox.alert("Alerta","La circular 170 se vencera en menos de 30 dias");
+										//Ext.MessageBox.alert("Alerta","La circular 170 se vencera en menos de 30 dias");
+										if( mensaje!=""){
+											mensaje+="<br />";
+										}
+										mensaje += "La circular 170 se vencera en menos de 30 dias";	
 									}
 								}
+							}
+							
+							if( mensaje!=""){
+								Ext.MessageBox.alert("Alerta", mensaje);
 							}
 														
 						}
@@ -391,6 +427,11 @@ Ext.onReady(function(){
 	            handler: function(){
 					if( Ext.getCmp("listaclinton").getValue()=="Sí" ){
 						Ext.MessageBox.alert("Alerta","Este cliente se encuentra en lista clinton");
+						return 0;
+					}
+					
+					if( Ext.getCmp("status").getValue()=="Vetado" ){
+						Ext.MessageBox.alert("Alerta","Este cliente se encuentra vetado");
 						return 0;
 					}
 	            	if( mainPanel.getForm().isValid() ){

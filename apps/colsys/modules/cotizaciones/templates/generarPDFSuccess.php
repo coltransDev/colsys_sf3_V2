@@ -561,8 +561,8 @@ for( $k=0; $k<count($transportes); $k++ ):
 		foreach( $conceptos as $concepto ){
 			array_push( $titulos, $concepto->getCaConcepto() );	
 		}
-		$width = 145/count($conceptos);	
-		$widths = array_merge(array(25), array_fill(0, count($conceptos), $width) );
+		$width = 142/count($conceptos);	
+		$widths = array_merge(array(27), array_fill(0, count($conceptos), $width) );
 		
 		$pdf->SetStyles(array_fill(0, count($conceptos)+1, "B"));
 		$pdf->SetFills(array_fill(0, count($conceptos)+1, 1));	
