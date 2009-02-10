@@ -10,30 +10,21 @@
  */
 class traficosActions extends sfActions
 {
-	/**
-	 * Redirige a la opcion
-	 * author: Andres Botero
-	 */
+	/*
+	* Muestra un formulario para seleccionar un rango de fechas y el cliente
+	* author: Andres Botero
+	*/
 	public function executeIndex()
 	{
-		$this->forward( "traficos", "seleccionCliente" );
-	}
-
-
-	/*
-	 * Muestra un formulario para seleccionar un rango de fechas y el cliente
-	 * author: Andres Botero
-	 */
-	public function executeSeleccionCliente(){
 		$this->modo = $this->getRequestParameter("modo");
 		$this->forward404unless( $this->modo );
 	}
-
+	
 	/*
-	 * permite ver el estado de cada  carga asi como las notificaciones avisos, status etc
-	 * author: Andres Botero
-	 */
-	public function executeVerEstatusCarga(){
+	* permite ver el estado de cada  carga asi como las notificaciones avisos, status etc
+	* author: Andres Botero
+	*/
+	public function executeVerStatusCarga(){
 		$this->idCliente = $this->getRequestParameter("idcliente");
 				
 		$this->modo = $this->getRequestParameter("modo");
@@ -47,41 +38,41 @@ class traficosActions extends sfActions
 				$this->forward404unless( $this->idCliente );	
 				$this->fechaInicial = $this->getRequestParameter("fechaInicial");
 				$this->fechaFinal = $this->getRequestParameter("fechaFinal");	
-				$this->reportes = ReportePeer::getReportesActivos( $this->modo ,  $this->idCliente );
+								
+				if( $this->modo=="maritimo" ){
+					$this->reportes = ReportePeer::getReportesActivosImpoMaritimo( $this->idCliente );
+				}
+				if( $this->modo=="aereo" ){
+					$this->reportes = ReportePeer::getReportesActivosImpoAereo( $this->idCliente );
+				}
+								
+				if( $this->modo=="expo" ){				
+					$this->reportes = ReportePeer::getReportesActivosExpo( $this->idCliente );
+				}
+				
 				$this->cliente = ClientePeer::retrieveByPk($this->idCliente );
 				break;
-			case "fecha";
-				$this->forward404unless( $this->modo );
-				$this->forward404unless( $this->idCliente );	
-				$this->fechaInicial = $this->getRequestParameter("fechaInicial");
-				$this->fechaFinal = $this->getRequestParameter("fechaFinal");				
-				$this->reportes = ReportePeer::getReportesByDate( $this->modo , $this->fechaInicial, $this->fechaFinal,  $this->idCliente );
-				$this->cliente = ClientePeer::retrieveByPk( $this->idCliente );
-				break;
+			
 			case "reporte";
 				
 				$c = new Criteria();
-				$c->add( ReportePeer::CA_CONSECUTIVO, "%".$this->getRequestParameter("numreporte")."%" , Criteria::LIKE );
-				
+				$c->add( ReportePeer::CA_CONSECUTIVO, "".$this->getRequestParameter("numreporte")."%" , Criteria::LIKE );				
+		
 				if( $this->modo=="maritimo" ){
-					$c->add( ReportePeer::CA_TRANSPORTE, "Marítimo" );
-					$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
-					$c->addOr( ReportePeer::CA_IMPOEXPO, "Triangulación" );
+					$c->add( ReportePeer::CA_TRANSPORTE, Constantes::MARITIMO );
+					$c->add( ReportePeer::CA_IMPOEXPO, Constantes::IMPORTACION );
+					$c->addOr( ReportePeer::CA_IMPOEXPO, Constantes::TRIANGULACION  );
 				}
 				
 				if( $this->modo=="aereo" ){
-					$c->add( ReportePeer::CA_TRANSPORTE, "Aéreo" );
-					$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
+					$c->add( ReportePeer::CA_TRANSPORTE, Constantes::AEREO );
+					$c->add( ReportePeer::CA_IMPOEXPO, Constantes::IMPORTACION );
+					$c->addOr( ReportePeer::CA_IMPOEXPO, Constantes::TRIANGULACION  );
 				}
 				
 				if( $this->modo=="expo" || $this->modo=="exportaciones" ){
-					$c->add( ReportePeer::CA_IMPOEXPO, "Exportación" );
-				}
-				
-				if( $this->modo=="impo" || $this->modo=="importaciones" ){
-					$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
-				}
-								
+					$c->add( ReportePeer::CA_IMPOEXPO, Constantes::EXPORTACION );
+				}												
 				
 				$c->addDescendingOrderByColumn(ReportePeer::CA_FCHDESPACHO );	
 				$this->reportes = ReportePeer::doSelect( $c );
@@ -92,6 +83,8 @@ class traficosActions extends sfActions
 				$this->reportes = array();
 				break;			
 		}	
+		
+		
 		
 					
 	}
@@ -271,7 +264,7 @@ class traficosActions extends sfActions
 				}
 			}	
 		}
-				
+								
 		$recips =  $this->getRequestParameter("cc") ;
 		if( is_array($recips) ){
 			foreach( $recips as $recip ){			
@@ -280,6 +273,10 @@ class traficosActions extends sfActions
 					$email->addCc( $recip ); 
 				}
 			}
+		}
+					
+		if ( $reporte->getCaSeguro()=="Sí" ) {
+			$email->addCc( "seguros@coltrans.com.co" ); 
 		}
 				
 		$email->addCc( $this->getUser()->getEmail() );
