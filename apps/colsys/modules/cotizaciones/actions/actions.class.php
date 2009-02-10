@@ -68,10 +68,7 @@ class cotizacionesActions extends sfActions
 				$c->add( CotizacionPeer::CA_ASUNTO, "lower(".CotizacionPeer::CA_ASUNTO.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
 			case "vendedor":	
-				$c->add( CotizacionPeer::CA_USUARIO, $login );			
-				
-				/*$c->addJoin( CotizacionPeer::CA_USUARIO, UsuarioPeer::CA_LOGIN );
-				$c->add( UsuarioPeer::CA_NOMBRE, "lower(".UsuarioPeer::CA_NOMBRE.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	*/
+				$c->add( CotizacionPeer::CA_USUARIO, $login );						
 				break;	
 			case "numero_de_cotizacion":
 				$c->add( CotizacionPeer::CA_IDCOTIZACION, "lower(".CotizacionPeer::CA_IDCOTIZACION.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
@@ -99,10 +96,7 @@ class cotizacionesActions extends sfActions
 		$this->criterio = $criterio;
 		$this->cadena = $cadena;
 		$this->login = $login;
-		
-		
-		
-			
+				
 	}
 
 	/**
@@ -180,7 +174,7 @@ class cotizacionesActions extends sfActions
 		}
 		
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
-		$cotizacion->setCaAsunto( utf8_encode($this->getRequestParameter( "asunto" )) );
+		$cotizacion->setCaAsunto( utf8_decode($this->getRequestParameter( "asunto" )) );
 		$cotizacion->setCaSaludo( utf8_decode($this->getRequestParameter( "saludo" )) );
 		$cotizacion->setCaEntrada( utf8_decode($this->getRequestParameter( "entrada" )) );
 		$cotizacion->setCaDespedida( utf8_decode($this->getRequestParameter( "despedida" )) );
@@ -595,7 +589,7 @@ class cotizacionesActions extends sfActions
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		$transporte= utf8_decode($this->getRequestParameter("transporte"));
 	
-		$producto->setCaProducto( $this->getRequestParameter("producto") );
+		$producto->setCaProducto( utf8_decode($this->getRequestParameter("producto")) );
 		$producto->setCaImpoexpo( $impoexpo );
 		$producto->setCaTransporte( $transporte );
 		$producto->setCaModalidad( $this->getRequestParameter("modalidad") );
@@ -1065,8 +1059,10 @@ class cotizacionesActions extends sfActions
 			}
 			
 			if( $tipo=="recargo" &&  $idconcepto && $idrecargo ){
+				
 				$recargo = CotRecargoPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion, $idconcepto, $idrecargo, $modalidad );
-				if( $recargo ){
+				
+				if( $recargo ){					
 					$recargo->delete();
 				}
 			}
