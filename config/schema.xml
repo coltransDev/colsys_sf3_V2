@@ -25,6 +25,7 @@
 		<column name="ca_idgrupo" type="integer" />
 		<column name="ca_listaclinton" type="varchar" />
 		<column name="ca_fchcircular" type="date" />
+		<column name="ca_status" type="varchar" />
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>
 		</foreign-key>
