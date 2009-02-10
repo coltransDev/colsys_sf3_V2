@@ -74,10 +74,10 @@ use_helper("Javascript");
 			<?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?>
 		</div></td>
 		<td><div align="left">
-			<?=Utils::replace($reporte->getOrigen())?>
+			<?=Utils::replace($reporte->getOrigen()->getCaCiudad())?>
 		</div></td>
 		<td><div align="left">
-			<?=Utils::replace($reporte->getDestino())?>
+			<?=Utils::replace($reporte->getDestino()->getCaCiudad())?>
 		</div></td>
 		<td><div align="left">
 			<?
@@ -87,7 +87,7 @@ use_helper("Javascript");
 				if($ver=="reporte"){			
 					echo $reporte->getCliente();
 				}else{
-					echo $reporte->getProveedor();
+					//echo $reporte->getProveedor();
 				}
 			}
 			

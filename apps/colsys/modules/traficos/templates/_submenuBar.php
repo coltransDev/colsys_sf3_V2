@@ -4,8 +4,8 @@
 if( $action!="seleccionCliente" ){
 	$button[0]["name"]="Inicio ";
 	$button[0]["tooltip"]="Pagina inicial del reporte de negocios";
-	$button[0]["image"]="22x22/home.gif"; 			
-	$button[0]["link"]= "traficos/seleccionCliente?modo=".$this->getRequestParameter("modo");	
+	$button[0]["image"]="22x22/gohome.gif"; 			
+	$button[0]["link"]= "traficos/index?modo=".$this->getRequestParameter("modo");	
 }
 
 switch($action){

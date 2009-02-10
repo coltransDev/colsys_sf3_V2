@@ -8,7 +8,7 @@ $avisos = $reporte->getRepAvisos();
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td width="26%"><strong>Informaci&oacute;n</strong></td>
-			<td width="44%"><div align="center"><strong>Historia</strong></div></td>
+			<td width="44%"><div align="center"><strong>Status</strong></div></td>
 			<td width="30%"><strong>Gestion documental </strong></td>
 		</tr>
 		<tr>
@@ -59,7 +59,7 @@ $avisos = $reporte->getRepAvisos();
 						
 						$txt = Utils::fechaMes(date("Y-m-d", $timestamp ))." ".date("h:i A", $timestamp )."&gt;&gt;".$status["etapa"];
 						if( $status["tipo"]=="status" || $status["tipo"]=="aviso" ){
-							echo link_popup( $txt, "traficos/verStatus?id=".$reporte->getCaIdReporte()."&emailid=".$status["emailid"]."&header=true", 800,600);						
+							//echo link_popup( $txt, "traficos/verStatus?id=".$reporte->getCaIdReporte()."&emailid=".$status["emailid"]."&header=true", 800,600);						
 						}else{
 							echo $txt;
 						}
@@ -102,12 +102,13 @@ $avisos = $reporte->getRepAvisos();
 			<td valign="top"><strong>
 				<?
 				if( $reporte->getCaTransporte()=="Marítimo" ){
-					echo link_popup(image_tag("22x22/edit_add.gif"),"traficos/nuevoMensaje?reporteId=".$reporte->getCaIdreporte()."&tipo=aviso&token=".md5(time()."aviso"), 800, 600);
+					//echo link_popup(image_tag("22x22/edit_add.gif"),"traficos/nuevoMensaje?reporteId=".$reporte->getCaIdreporte()."&tipo=aviso&token=".md5(time()."aviso"), 800, 600);
 					echo "Avisos";
 				}
 				?>
 
-<?=link_popup(image_tag("22x22/edit_add.gif"),"traficos/nuevoMensaje?reporteId=".$reporte->getCaIdreporte()."&tipo=status&token=".md5(time()."status"), 800, 600)?>
+<?
+//link_popup(image_tag("22x22/edit_add.gif"),"traficos/nuevoMensaje?reporteId=".$reporte->getCaIdreporte()."&tipo=status&token=".md5(time()."status"), 800, 600)?>
 Status </strong></td>
 		</tr>
 	</table>

@@ -231,6 +231,23 @@ echo nl2br($status->getCaIntroduccion());
 	<?
 	echo $status->getCaComentarios()?"<strong>NOTA</strong><br />".Utils::replace($status->getCaComentarios()):"";
 	?>
+	<br />
+	<br />
+	<?
+	
+	if( $status->getCaEtapa()=="Carga en Aeropuerto de Destino" 
+		|| $status->getCaEtapa()=="Carga con Reserva"
+		|| $status->getCaEtapa()=="Carga Embarcada"
+		|| $status->getCaEtapa()=="Carga con Demora"
+		|| $status->getCaEtapa()=="Carga Movilizada"
+		|| $status->getCaEtapa()=="Carga Inmovilizada"	
+		|| $status->getCaEtapa()=="Carga en Tránsito a Destino"	
+		){
+	?>
+	De acuerdo a las condiciones del contrato de transporte, la persona con derecho a la entrega deberá reclamar por escrito al transportista en caso de daño visible a la mercancía; a mas tardar a los catorce (14) días a partir de la fecha de manifiesto o llegada de la misma al país. 
+	<?
+	}
+	?>
 	<br /><br /><br />
 <?	
 if( $user ){

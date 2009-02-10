@@ -32,7 +32,7 @@ $introPreaviso="";
 $introConfirmacion="";
 		
 //Mensaje para cuando la carga se ha embarcado
-if( $reporte->getCaImpoExpo()=="Importación" ){
+if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
 	if( $reporte->getCaTransporte()=="Marítimo" ){
 		
 		
@@ -270,6 +270,8 @@ if( $reporte->getCaImpoExpo()=="Importación" ){
 				if( $repseguro ){
 					$segConf = explode(",", $repseguro->getCaSeguroConf() ); 
 					
+					
+					
 					foreach( $segConf as $dest ){
 						echo checkbox_tag("destinatarios[]", $dest, 1 )." &nbsp;Analista de Seguros<br />";						
 					}
@@ -316,7 +318,7 @@ if( $reporte->getCaImpoExpo()=="Importación" ){
 				
 				$origen = $reporte->getOrigen()->getCaCiudad();
 				$destino = $reporte->getDestino()->getCaCiudad();	
-				if( $reporte->getCaImpoExpo()=="Importación" ){
+				if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
 					$proveedor = $reporte->getProveedor();					
 					$asunto = $proveedor." / ".$cliente." [".$origen." -> ".$destino."] Id.: ".$reporte->getCaConsecutivo();					
 				}else{
@@ -343,7 +345,7 @@ if( $reporte->getCaImpoExpo()=="Importación" ){
 							</div></td>
 							<td width="35%">
 								<?
-								if( $reporte->getCaimpoExpo()=="Exportación" || ( $reporte->getCaimpoExpo()=="Importación" && $reporte->getCaTransporte()!="Aéreo") ){ //Segun ticket #608, impo aereo solo usa fch salida  
+								if( $reporte->getCaimpoExpo()=="Exportación" || ( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" && $reporte->getCaTransporte()!="Aéreo") ){ //Segun ticket #608, impo aereo solo usa fch salida  
 								?>
 								<div align="left"><strong>
 								<div id="est"></div>
