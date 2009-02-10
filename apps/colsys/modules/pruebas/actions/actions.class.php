@@ -188,10 +188,10 @@ class pruebasActions extends sfActions {
 	}
 	
 	public function executeSendEmail() {
-		exit("detenido");
+		//exit("detenido");
 		$c = new Criteria ( );
-		$c->add ( EmailPeer::CA_FCHENVIO, "2009-02-05 16:30:00", Criteria::GREATER_THAN );
-		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-02-06 11:00:00", Criteria::LESS_THAN );
+		$c->add ( EmailPeer::CA_FCHENVIO, "2009-02-10 09:20:00", Criteria::GREATER_THAN );
+		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-02-10 10:00:00", Criteria::LESS_THAN );
 		//$c->add( EmailPeer::CA_IDEMAIL, 188572);
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
 		
