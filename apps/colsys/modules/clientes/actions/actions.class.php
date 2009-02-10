@@ -256,6 +256,7 @@ class clientesActions extends sfActions
 		$c->addSelectColumn(UsuarioPeer::CA_NOMBRE );
 		$c->addSelectColumn(ClientePeer::CA_LISTACLINTON );
 		$c->addSelectColumn(ClientePeer::CA_FCHCIRCULAR );
+		$c->addSelectColumn(ClientePeer::CA_STATUS );
 		
 		$c->addJoin( ClientePeer::CA_IDCLIENTE, ContactoPeer::CA_IDCLIENTE );
 		$c->addJoin( ClientePeer::CA_VENDEDOR, UsuarioPeer::CA_LOGIN, Criteria::LEFT_JOIN );
@@ -278,7 +279,7 @@ class clientesActions extends sfActions
 			$row["ca_nombre"]=utf8_encode($row["ca_nombre"]);
 			$row["ca_cargo"]=utf8_encode($row["ca_cargo"]);
 			$row["ca_listaclinton"]=utf8_encode($row["ca_listaclinton"]);	
-			$row["ca_fchcircular"]=strtotime($row["ca_fchcircular"]);			      		
+			$row["ca_fchcircular"]=strtotime($row["ca_fchcircular"]);					      		
 			$this->clientes[] = $row;
 		}					
 		$this->setLayout("none");
