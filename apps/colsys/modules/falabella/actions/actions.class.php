@@ -300,11 +300,11 @@ class falabellaActions extends sfActions {
 			$salida.= number_format($detail->getCaCantidadMiles()*10000, 0, '', '')."|"; // 41
 			$salida.= $detail->getCaUnidadMedidadCantidad()."|"; // 42
 			$salida.= $detail->getCaDescripcionItem()."|"; // 43
-			$salida.= $detail->getCaCantidadPaquetesMiles()."|"; // 44
+			$salida.= number_format($detail->getCaCantidadPaquetesMiles()*10000, 0, '', '')."|"; // 44
 			$salida.= $detail->getCaUnidadMedidaPaquetes()."|"; // 45
-			$salida.= $detail->getCaCantidadVolumenMiles()."|"; // 46
+			$salida.= number_format($detail->getCaCantidadVolumenMiles()*10000, 0, '', '')."|"; // 46
 			$salida.= $detail->getCaUnidadMedidaVolumen()."|"; // 47
-			$salida.= $detail->getCaCantidadPesoMiles()."|"; // 48
+			$salida.= number_format($detail->getCaCantidadPesoMiles()*10000, 0, '', '')."|"; // 48
 			$salida.= $detail->getCaUnidadMedidaPeso()."|"; // 49
 			$salida.= "01-01|"; // Vessel 50
 			$salida.= "|"; // 51
