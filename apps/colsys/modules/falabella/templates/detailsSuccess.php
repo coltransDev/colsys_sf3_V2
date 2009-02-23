@@ -25,6 +25,24 @@ function repeat_cont(object){
 		}else if (target.checked || target.selected){
 			var src_name = source.value;
 			var trg_name = target.value;
+			var src_element1 = document.getElementById('num_paquete_' + src_name);
+			var trg_element1 = document.getElementById('num_paquete_' + trg_name);
+			trg_element1.value = src_element1.value; 
+			var src_element1 = document.getElementById('paq_unidades_' + src_name);
+			var trg_element1 = document.getElementById('paq_unidades_' + trg_name);
+			trg_element1.value = src_element1.value; 
+			var src_element1 = document.getElementById('peso_' + src_name);
+			var trg_element1 = document.getElementById('peso_' + trg_name);
+			trg_element1.value = src_element1.value; 
+			var src_element1 = document.getElementById('pes_unidades_' + src_name);
+			var trg_element1 = document.getElementById('pes_unidades_' + trg_name);
+			trg_element1.value = src_element1.value; 
+			var src_element1 = document.getElementById('volumen_' + src_name);
+			var trg_element1 = document.getElementById('volumen_' + trg_name);
+			trg_element1.value = src_element1.value; 
+			var src_element1 = document.getElementById('vol_unidades_' + src_name);
+			var trg_element1 = document.getElementById('vol_unidades_' + trg_name);
+			trg_element1.value = src_element1.value; 
 			var src_element1 = document.getElementById('cont_part1_' + src_name);
 			var trg_element1 = document.getElementById('cont_part1_' + trg_name);
 			trg_element1.value = src_element1.value; 
@@ -165,38 +183,35 @@ foreach( $details as $detail ){
 
 			echo select_tag("uni_unidades_".$detail->getCaSku(), options_for_select(array("PC"=>"Uni"), $detail->getCaUnidadMedidadCantidad(), "include_blank=true") );
 			echo observe_field("uni_unidades_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&uni_unidades='+value" ));
-			
 			?>		
 		</div></td>
 		<td>
 			<div align="right">
 				<?
-			echo input_tag("num_paquete_".$detail->getCaSku(), $detail->getCaCantidadPaquetesMiles(), "size=2");
+			echo input_tag("num_paquete_".$detail->getCaSku(), $detail->getCaCantidadPaquetesMiles(), "size=2 onchange='repeat_cont(this);'");
 			echo observe_field("num_paquete_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&num_paquetes='+value" ));
 			
-			echo select_tag("paq_unidades_".$detail->getCaSku(), options_for_select(array("CT"=>"Ctns"), $detail->getCaUnidadMedidaPaquetes(), "include_blank=true") );
+			echo select_tag("paq_unidades_".$detail->getCaSku(), options_for_select(array("CT"=>"Ctns"), $detail->getCaUnidadMedidaPaquetes(), "include_blank=true"), array("onchange" => "repeat_cont(this);") );
 			
 			echo observe_field("paq_unidades_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&paq_unidades='+value" ));
-			
 			?>		
 		</div></td>
 		<td><div align="right">
 			<?
-			echo input_tag("peso_".$detail->getCaSku(), $detail->getCaCantidadPesoMiles(), "size=2");
+			echo input_tag("peso_".$detail->getCaSku(), $detail->getCaCantidadPesoMiles(), "size=2 onchange='repeat_cont(this);'");
 			echo observe_field("peso_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&peso='+value" ));
 			
-			echo select_tag("pes_unidades_".$detail->getCaSku(), options_for_select(array("KG"=>"Kgs"), $detail->getCaUnidadMedidaPeso(), "include_blank=true") );
+			echo select_tag("pes_unidades_".$detail->getCaSku(), options_for_select(array("KG"=>"Kgs"), $detail->getCaUnidadMedidaPeso(), "include_blank=true"), array("onchange" => "repeat_cont(this);") );
 			
 			echo observe_field("pes_unidades_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&pes_unidades='+value" ));
-			
 			?>
 		</div></td>
 		<td><div align="right">
 			<?
-			echo input_tag("volumen_".$detail->getCaSku(), $detail->getCaCantidadVolumenMiles(), "size=2");
+			echo input_tag("volumen_".$detail->getCaSku(), $detail->getCaCantidadVolumenMiles(), "size=2 onchange='repeat_cont(this);'");
 			echo observe_field("volumen_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&volumen='+value" ));
 			
-			echo select_tag("vol_unidades_".$detail->getCaSku(), options_for_select(array("CR"=>"M&sup3;"), $detail->getCaUnidadMedidaVolumen(), "include_blank=true") );
+			echo select_tag("vol_unidades_".$detail->getCaSku(), options_for_select(array("CR"=>"M&sup3;"), $detail->getCaUnidadMedidaVolumen(), "include_blank=true"), array("onchange" => "repeat_cont(this);") );
 			
 			echo observe_field("vol_unidades_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&vol_unidades='+value" ));
 			?>
