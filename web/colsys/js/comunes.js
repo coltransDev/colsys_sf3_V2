@@ -154,3 +154,12 @@ function formatNumber(v){
 	}
 	return "" +  v;
 }
+
+
+function autoGrow( field ){
+	var rows = field.value.split("\n").length;
+	if(rows==0){
+		rows=1;
+	}
+	field.rows=rows;		
+}
