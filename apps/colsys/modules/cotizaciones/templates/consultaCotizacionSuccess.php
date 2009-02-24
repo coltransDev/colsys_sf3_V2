@@ -459,9 +459,8 @@ Ext.onReady(function(){
 						Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información básica de la cotización no es válida o está incompleta!');
 					}	            	
 	            }
-	        },{
-	            text: 'Cancelar'
-	        }]
+	        }
+			]
         }]
     });
 	mainPanel.render("panel1");

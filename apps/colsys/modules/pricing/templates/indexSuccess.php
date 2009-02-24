@@ -11,7 +11,7 @@ Ext.onReady(function(){
 	* Se muestra el panel de notificaciones 
 	*/
 	<?
-	include_component("pricing", "panelNoticias");		
+	include_component("pricing", "panelNoticias", array("opcion"=>$opcion));		
 	?>
 		   
 	//Ext.state.Manager.setProvider(new Ext.state.CookieProvider());

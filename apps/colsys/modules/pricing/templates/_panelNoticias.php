@@ -1,6 +1,5 @@
 <?
 use_helper("Ext2");
-	
 ?>
 var myData = <?=json_encode( array("data"=>$data, "total"=>count($data)) )?>;
 
@@ -138,6 +137,9 @@ var actualizarObservaciones=function( btn, text ){
 
 
 var gridOnRowcontextmenu =  function(grid, index, e){
+	<?
+	if( $opcion!="consulta" ){ 
+	?>
 	var r = grid.store.getAt(index);	
 	e.stopEvent(); //Evita que se despliegue el menu con el boton izquierdo
 	
@@ -196,6 +198,9 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 	this.ctxRow = this.view.getRow(index);
 	Ext.fly(this.ctxRow).addClass('x-node-ctx');
 	this.menu.showAt(e.getXY());
+	<?
+	}
+	?>
 		
 }
 
@@ -368,7 +373,9 @@ var gridNoticias = new Ext.grid.GridPanel({
 	closable: true,
 	id: 'panel-noticias',
 	height: 400,
-	
+	<?
+	if( $opcion!="consulta"){
+	?>
 	tbar: [			  	
 	{
 		text: 'Agregar',
@@ -377,6 +384,9 @@ var gridNoticias = new Ext.grid.GridPanel({
 		handler: agregarNoticia
 	}
 	],
+	<?
+	}
+	?>
 	
 	viewConfig: {
 		forceFit:true,

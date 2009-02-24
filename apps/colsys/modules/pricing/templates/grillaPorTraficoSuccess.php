@@ -269,9 +269,8 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: false,
 			groupable: false,							
 			dataIndex: 'neta',
-			editor: new Ext.form.NumberField()		
-		}
-		
+			editor: new Ext.form.NumberField( {decimalPrecision :3} )					
+		}		
 		,			
 		{
 			id: 'sugerida',
@@ -280,7 +279,7 @@ var colModel = new Ext.grid.ColumnModel({
 			sortable: false,
 			groupable: false,							
 			dataIndex: 'sugerida',
-			editor: new Ext.form.NumberField()			
+			editor: new Ext.form.NumberField( {decimalPrecision :3} )			
 		}
 		,		
 		{

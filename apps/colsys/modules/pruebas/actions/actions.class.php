@@ -707,8 +707,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 							
 							if( $recargo->getCaBaseunitario()=='Unidades Peso/Volumen' ){						
 								echo " OK <br />";
-								$pricrecargo->setCaAplicacion( 'x Kg ó 6 Dm³' );									
-								
+								$pricrecargo->setCaAplicacion( 'x Kg ó 6 Dm³' );
 							}
 										
 							if( $recargo->getCaBaseunitario()=='Cantidad de BLs/AWBs' ){
@@ -723,7 +722,6 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 							
 							if( $recargo->getCaBaseunitario()=="Número de Piezas" ){
 								$pricrecargo->setCaAplicacion( "x Pieza" );
-								
 							}					
 						}
 					}
@@ -764,9 +762,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 									
 					$pricrecargo->save();
 				}
-				
 				//----------------------
-				
 			}	
 			
 			
@@ -1513,5 +1509,119 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 		MakeFont('D:\\Desarrollo\\sw\\ttf2pt1\\tahomabd.ttf','D:\\Desarrollo\\sw\\ttf2pt1\\tahomab.afm','cp1252');
 		exit();
 	}
+	
+	
+	public function executeMatchNits(){
+		set_time_limit(0);
+		$path = "d:\\AlemaniaTotal.txt";
+		
+		$content = file_get_contents( $path ); 
+		
+		$this->nits = explode( "\n", $content );
+		
+		
+		
+	}
+	
+	
+	
+	public function executeImportarHelpdesk(){
+		
+		
+		$c = new Criteria();
+		//$c->add( ExoTicketPeer::STATUS, "Open" );
+		
+		$criterion = $c->getNewCriterion( ExoTicketPeer::OPENED, mktime(0,0,0,1,1,2009) , Criteria::GREATER_EQUAL );				
+		$criterion->addOr($c->getNewCriterion( ExoTicketPeer::STATUS, "Open" ));			
+		$c->add($criterion);
+				
+		
+		//$c->setLimit( 10 );
+		$tickets = ExoTicketPeer::doSelect( $c );
+		
+		foreach( $tickets as $ticket ){
+			//echo strtolower($ticket->getAdminUser())." ".utf8_decode($ticket->getTitle())."<br />";
+			
+			$hTicket = new HdeskTicket();
+			if( $ticket->getAdminUser()=="backups" ){
+				$hTicket->setCaLogin( "wjimenez" );
+				$hTicket->setCaAssignedto( "thomaspeters" );
+			}else{
+				$hTicket->setCaLogin( strtolower($ticket->getAdminUser()) );
+			}
+			
+			$hTicket->setCaOpened( date("Y-m-d" ,$ticket->getOpened() ) );
+			$hTicket->setCaTitle( utf8_decode($ticket->getTitle()) );
+			$hTicket->setCaText( utf8_decode($ticket->getText()) );
+			if( $ticket->getOwner() ){
+				$hTicket->setCaAssignedto( $ticket->getOwner() );
+			}
+			
+			if( $ticket->getStatus()=="Closed" ){
+				$hTicket->setCaAction("Cerrado");
+			}else{
+				$hTicket->setCaAction("Abierto");
+			}
+			
+			//echo utf8_decode($ticket->getGroup());
+			
+			$c = new Criteria();
+			$c->add( HdeskGroupPeer::CA_NAME , utf8_decode($ticket->getGroup()) );
+			$group =  HdeskGroupPeer::doSelectOne( $c );
+			
+			$hTicket->setCaIdgroup( $group->getCaIdgroup() );
+			
+			$hTicket->save();
+			
+			$responses = $ticket->getExoResponses();
+			
+			foreach( $responses as $response ){
+				$hresponse = new HdeskResponse();
+				$hresponse->setCaIdticket( $hTicket->getCaidticket() );
+				if( $response->getSname()=="admin" ){
+					$hresponse->setCaLogin( "falopez" );	
+					
+					
+				}else{
+					if( $response->getSname()=="backups"){
+						$hresponse->setCaLogin("wjimenez");
+					}else{				
+						$hresponse->setCaLogin( strtolower($response->getSname()) );
+					}
+				}
+				$hresponse->setCaText( utf8_decode($response->getComment()) );
+				$hresponse->setCaCreatedat( date("Y-m-d" ,$response->getPosted() ) );
+				$hresponse->save();
+				
+			}
+			
+			/*$usuario = UsuarioPeer::retrieveByPk( strtolower($ticket->getAdminUser()) );
+			if( !$usuario  && $ticket->getAdminUser()!= "backups"){
+				//echo strtolower($ticket->getAdminUser())." ".utf8_decode($ticket->getTitle())."<br />";
+				echo $ticket->getId()." ".$ticket->getOpened()." No existe ". $ticket->getAdminUser()."<br />";
+			}*/			
+		}
+		
+		/*
+		$c = new Criteria();
+		$c->add( ExoResponsePeer::POSTED, mktime(0,0,0,1,1,2009) , Criteria::GREATER_EQUAL );
+		$responses = ExoResponsePeer::doSelect( $c );
+		
+		foreach( $responses as $response ){
+			//echo strtolower($ticket->getAdminUser())." ".utf8_decode($ticket->getTitle())."<br />";
+			
+			$usuario = UsuarioPeer::retrieveByPk( strtolower($response->getSname()) );
+			if( !$usuario  && $response->getSname()!= "backups"){
+				//echo strtolower($ticket->getAdminUser())." ".utf8_decode($ticket->getTitle())."<br />";
+				echo $response->getId()." No existe ". $response->getSname()."<br />";
+			}			
+		}*/
+		
+		return sfView::NONE;
+	}
+	
 }
+
+
+
 ?>

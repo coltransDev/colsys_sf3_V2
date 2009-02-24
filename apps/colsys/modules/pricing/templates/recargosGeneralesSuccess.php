@@ -197,7 +197,8 @@ var colModel = new Ext.grid.ColumnModel({
 			editor: new Ext.form.NumberField({
 						name: 'valor_min',
 						allowBlank:false,
-						allowNegative: false
+						allowNegative: false,
+						decimalPrecision :3
 			})  
 		},
 		{
@@ -224,7 +225,8 @@ var colModel = new Ext.grid.ColumnModel({
 			editor: new Ext.form.NumberField({
 						name: 'valor_min',
 						allowBlank:false,
-						allowNegative: false
+						allowNegative: false,
+						decimalPrecision : 3
 			})  
 		},
 		{

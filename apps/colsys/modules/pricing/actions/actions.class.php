@@ -634,12 +634,20 @@ class pricingActions extends sfActions
 				$pricRecargo->setCaIdMoneda($this->getRequestParameter("moneda"));
 			}	
 			
-			if( $this->getRequestParameter("inicio")){
-				$pricRecargo->setCaFchinicio($this->getRequestParameter("inicio"));
+			if( $this->getRequestParameter("inicio")!==null ){
+				if( $this->getRequestParameter("inicio") ){
+					$pricRecargo->setCaFchinicio($this->getRequestParameter("inicio"));
+				}else{
+					$pricRecargo->setCaFchinicio( null );
+				}
 			}
 				
-			if( $this->getRequestParameter("vencimiento")){
-				$pricRecargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+			if( $this->getRequestParameter("vencimiento")!==null ){
+				if( $this->getRequestParameter("vencimiento") ){ 
+					$pricRecargo->setCaFchvencimiento($this->getRequestParameter("vencimiento"));
+				}else{
+					$pricRecargo->setCaFchvencimiento( null );
+				}
 			}
 			
 			if( $this->getRequestParameter("aplicacion")!==null){
