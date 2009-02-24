@@ -22,6 +22,8 @@ CREATE TABLE "tb_inomaestra_air"
 	"ca_observaciones" VARCHAR,
 	"ca_fchcreado" DATE,
 	"ca_usucreado" VARCHAR,
+	"ca_fchpreaviso" DATE,
+	"ca_fchllegada" DATE,
 	"ca_fchactualizado" DATE,
 	"ca_usuactualizado" VARCHAR,
 	"ca_fchliquidado" DATE,
@@ -35,8 +37,6 @@ COMMENT ON TABLE "tb_inomaestra_air" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_inomaestra_air" ADD CONSTRAINT "tb_inomaestra_air_FK_1" FOREIGN KEY ("ca_idlinea") REFERENCES "tb_transporlineas" ("ca_idlinea");
-
 -----------------------------------------------------------------------------
 -- tb_inoclientes_air
 -----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ CREATE TABLE "tb_inoclientes_air"
 	"ca_referencia" VARCHAR  NOT NULL,
 	"ca_idcliente" INTEGER  NOT NULL,
 	"ca_hawb" VARCHAR  NOT NULL,
-	"ca_idreporte" INTEGER,
+	"ca_idreporte" VARCHAR,
 	"ca_idproveedor" INTEGER,
 	"ca_proveedor" VARCHAR,
 	"ca_numpiezas" INTEGER,
@@ -69,12 +69,6 @@ COMMENT ON TABLE "tb_inoclientes_air" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_inoclientes_air" ADD CONSTRAINT "tb_inoclientes_air_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
-ALTER TABLE "tb_inoclientes_air" ADD CONSTRAINT "tb_inoclientes_air_FK_2" FOREIGN KEY ("ca_idproveedor") REFERENCES "tb_terceros" ("ca_idtercero");
-
-ALTER TABLE "tb_inoclientes_air" ADD CONSTRAINT "tb_inoclientes_air_FK_3" FOREIGN KEY ("ca_referencia") REFERENCES "tb_inomaestra_air" ("ca_referencia");
-
 -----------------------------------------------------------------------------
 -- tb_inoingresos_air
 -----------------------------------------------------------------------------
@@ -102,6 +96,14 @@ COMMENT ON TABLE "tb_inoingresos_air" IS '';
 
 
 SET search_path TO public;
+ALTER TABLE "tb_inomaestra_air" ADD CONSTRAINT "tb_inomaestra_air_FK_1" FOREIGN KEY ("ca_idlinea") REFERENCES "tb_transporlineas" ("ca_idlinea");
+
+ALTER TABLE "tb_inoclientes_air" ADD CONSTRAINT "tb_inoclientes_air_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_inoclientes_air" ADD CONSTRAINT "tb_inoclientes_air_FK_2" FOREIGN KEY ("ca_idproveedor") REFERENCES "tb_terceros" ("ca_idtercero");
+
+ALTER TABLE "tb_inoclientes_air" ADD CONSTRAINT "tb_inoclientes_air_FK_3" FOREIGN KEY ("ca_referencia") REFERENCES "tb_inomaestra_air" ("ca_referencia");
+
 ALTER TABLE "tb_inoingresos_air" ADD CONSTRAINT "tb_inoingresos_air_FK_1" FOREIGN KEY ("ca_referencia") REFERENCES "tb_inomaestra_air" ("ca_referencia");
 
 ALTER TABLE "tb_inoingresos_air" ADD CONSTRAINT "tb_inoingresos_air_FK_2" FOREIGN KEY ("ca_idcliente") REFERENCES "tb_clientes" ("ca_idcliente");

@@ -21,22 +21,16 @@ COMMENT ON TABLE "tb_fileimported" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_fileimported" ADD CONSTRAINT "tb_fileimported_FK_1" FOREIGN KEY ("ca_idfileheader") REFERENCES "tb_fileheader" ("ca_idfileheader");
-
 -----------------------------------------------------------------------------
 -- tb_fileheader
 -----------------------------------------------------------------------------
 
 DROP TABLE "tb_fileheader" CASCADE;
 
-DROP SEQUENCE "tb_fileheader_seq";
-
-CREATE SEQUENCE "tb_fileheader_seq";
-
 
 CREATE TABLE "tb_fileheader"
 (
-	"ca_idfileheader" INTEGER  NOT NULL,
+	"ca_idfileheader" serial  NOT NULL,
 	"ca_descripcion" VARCHAR  NOT NULL,
 	"ca_tipoarchivo" VARCHAR  NOT NULL,
 	"ca_separador" VARCHAR  NOT NULL,
@@ -58,15 +52,11 @@ SET search_path TO public;
 
 DROP TABLE "tb_filecolumns" CASCADE;
 
-DROP SEQUENCE "tb_filecolumns_seq";
-
-CREATE SEQUENCE "tb_filecolumns_seq";
-
 
 CREATE TABLE "tb_filecolumns"
 (
 	"ca_idfileheader" INTEGER  NOT NULL,
-	"ca_idcolumna" INTEGER  NOT NULL,
+	"ca_idcolumna" serial  NOT NULL,
 	"ca_columna" VARCHAR  NOT NULL,
 	"ca_label" VARCHAR  NOT NULL,
 	"ca_mascara" VARCHAR  NOT NULL,
@@ -85,4 +75,6 @@ COMMENT ON TABLE "tb_filecolumns" IS '';
 
 
 SET search_path TO public;
+ALTER TABLE "tb_fileimported" ADD CONSTRAINT "tb_fileimported_FK_1" FOREIGN KEY ("ca_idfileheader") REFERENCES "tb_fileheader" ("ca_idfileheader");
+
 ALTER TABLE "tb_filecolumns" ADD CONSTRAINT "tb_filecolumns_FK_1" FOREIGN KEY ("ca_idfileheader") REFERENCES "tb_fileheader" ("ca_idfileheader");

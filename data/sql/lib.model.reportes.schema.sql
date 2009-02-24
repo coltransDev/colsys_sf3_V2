@@ -5,14 +5,10 @@
 
 DROP TABLE "tb_reportes" CASCADE;
 
-DROP SEQUENCE "tb_reportes_seq";
-
-CREATE SEQUENCE "tb_reportes_seq";
-
 
 CREATE TABLE "tb_reportes"
 (
-	"ca_idreporte" INTEGER  NOT NULL,
+	"ca_idreporte" serial  NOT NULL,
 	"ca_fchreporte" DATE,
 	"ca_consecutivo" VARCHAR(10),
 	"ca_version" INTEGER,
@@ -62,6 +58,7 @@ CREATE TABLE "tb_reportes"
 	"ca_fchcerrado" TIMESTAMP,
 	"ca_usucerrado" VARCHAR,
 	"ca_colmas" VARCHAR,
+	"ca_propiedades" VARCHAR,
 	PRIMARY KEY ("ca_idreporte")
 );
 
@@ -69,14 +66,6 @@ COMMENT ON TABLE "tb_reportes" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_1" FOREIGN KEY ("ca_login") REFERENCES "control.tb_usuarios" ("ca_login");
-
-ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_2" FOREIGN KEY ("ca_idlinea") REFERENCES "tb_transporlineas" ("ca_idlinea");
-
-ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_3" FOREIGN KEY ("ca_idproveedor") REFERENCES "tb_terceros" ("ca_idtercero");
-
-ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_4" FOREIGN KEY ("ca_idagente") REFERENCES "tb_agentes" ("ca_idagente");
-
 -----------------------------------------------------------------------------
 -- tb_repavisos
 -----------------------------------------------------------------------------
@@ -112,10 +101,6 @@ COMMENT ON TABLE "tb_repavisos" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_repavisos" ADD CONSTRAINT "tb_repavisos_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
-ALTER TABLE "tb_repavisos" ADD CONSTRAINT "tb_repavisos_FK_2" FOREIGN KEY ("ca_idemail") REFERENCES "tb_emails" ("ca_idemail");
-
 -----------------------------------------------------------------------------
 -- tb_repstatus
 -----------------------------------------------------------------------------
@@ -156,10 +141,28 @@ COMMENT ON TABLE "tb_repstatus" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_repstatus" ADD CONSTRAINT "tb_repstatus_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+-----------------------------------------------------------------------------
+-- tb_repstatusrespuestas
+-----------------------------------------------------------------------------
 
-ALTER TABLE "tb_repstatus" ADD CONSTRAINT "tb_repstatus_FK_2" FOREIGN KEY ("ca_idemail") REFERENCES "tb_emails" ("ca_idemail");
+DROP TABLE "tb_repstatusrespuestas" CASCADE;
 
+
+CREATE TABLE "tb_repstatusrespuestas"
+(
+	"ca_idreporte" INTEGER  NOT NULL,
+	"ca_idemail" INTEGER  NOT NULL,
+	"ca_idrepstatusrespuestas" INTEGER  NOT NULL,
+	"ca_respuesta" VARCHAR,
+	"ca_email" VARCHAR,
+	"ca_fchcreado" TIMESTAMP,
+	PRIMARY KEY ("ca_idrepstatusrespuestas")
+);
+
+COMMENT ON TABLE "tb_repstatusrespuestas" IS '';
+
+
+SET search_path TO public;
 -----------------------------------------------------------------------------
 -- tb_repequipos
 -----------------------------------------------------------------------------
@@ -181,10 +184,6 @@ COMMENT ON TABLE "tb_repequipos" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_repequipos" ADD CONSTRAINT "tb_repequipos_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
-ALTER TABLE "tb_repequipos" ADD CONSTRAINT "tb_repequipos_FK_2" FOREIGN KEY ("ca_idconcepto") REFERENCES "tb_conceptos" ("ca_idconcepto");
-
 -----------------------------------------------------------------------------
 -- tb_repgastos
 -----------------------------------------------------------------------------
@@ -215,12 +214,6 @@ COMMENT ON TABLE "tb_repgastos" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_repgastos" ADD CONSTRAINT "tb_repgastos_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
-ALTER TABLE "tb_repgastos" ADD CONSTRAINT "tb_repgastos_FK_2" FOREIGN KEY ("ca_idconcepto") REFERENCES "tb_conceptos" ("ca_idconcepto");
-
-ALTER TABLE "tb_repgastos" ADD CONSTRAINT "tb_repgastos_FK_3" FOREIGN KEY ("ca_idrecargo") REFERENCES "tb_tiporecargo" ("ca_idrecargo");
-
 -----------------------------------------------------------------------------
 -- tb_repseguro
 -----------------------------------------------------------------------------
@@ -238,7 +231,7 @@ CREATE TABLE "tb_repseguro"
 	"ca_idmoneda_vta" VARCHAR  NOT NULL,
 	"ca_obtencionpoliza" NUMERIC  NOT NULL,
 	"ca_idmoneda_pol" VARCHAR  NOT NULL,
-	"ca_seguro_conf" NUMERIC  NOT NULL,
+	"ca_seguro_conf" VARCHAR  NOT NULL,
 	PRIMARY KEY ("ca_idreporte")
 );
 
@@ -246,8 +239,6 @@ COMMENT ON TABLE "tb_repseguro" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_repseguro" ADD CONSTRAINT "tb_repseguro_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
 -----------------------------------------------------------------------------
 -- tb_repaduanadet
 -----------------------------------------------------------------------------
@@ -277,10 +268,6 @@ COMMENT ON TABLE "tb_repaduanadet" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_repaduanadet" ADD CONSTRAINT "tb_repaduanadet_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
-ALTER TABLE "tb_repaduanadet" ADD CONSTRAINT "tb_repaduanadet_FK_2" FOREIGN KEY ("ca_idcosto") REFERENCES "tb_costos" ("ca_idcosto");
-
 -----------------------------------------------------------------------------
 -- tb_reptarifas
 -----------------------------------------------------------------------------
@@ -304,6 +291,10 @@ CREATE TABLE "tb_reptarifas"
 	"ca_cobrar_min" NUMERIC  NOT NULL,
 	"ca_cobrar_idm" VARCHAR(3)  NOT NULL,
 	"ca_observaciones" VARCHAR(255)  NOT NULL,
+	"ca_fchcreado" DATE,
+	"ca_usucreado" VARCHAR,
+	"ca_fchactualizado" DATE,
+	"ca_usuactualizado" VARCHAR,
 	PRIMARY KEY ("oid")
 );
 
@@ -311,10 +302,6 @@ COMMENT ON TABLE "tb_reptarifas" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_reptarifas" ADD CONSTRAINT "tb_reptarifas_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
-ALTER TABLE "tb_reptarifas" ADD CONSTRAINT "tb_reptarifas_FK_2" FOREIGN KEY ("ca_idconcepto") REFERENCES "tb_conceptos" ("ca_idconcepto");
-
 -----------------------------------------------------------------------------
 -- tb_repaduana
 -----------------------------------------------------------------------------
@@ -340,8 +327,6 @@ COMMENT ON TABLE "tb_repaduana" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_repaduana" ADD CONSTRAINT "tb_repaduana_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
 -----------------------------------------------------------------------------
 -- tb_repexpo
 -----------------------------------------------------------------------------
@@ -372,4 +357,46 @@ COMMENT ON TABLE "tb_repexpo" IS '';
 
 
 SET search_path TO public;
+ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_1" FOREIGN KEY ("ca_login") REFERENCES "control.tb_usuarios" ("ca_login");
+
+ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_2" FOREIGN KEY ("ca_idlinea") REFERENCES "tb_transporlineas" ("ca_idlinea");
+
+ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_3" FOREIGN KEY ("ca_idproveedor") REFERENCES "tb_terceros" ("ca_idtercero");
+
+ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_4" FOREIGN KEY ("ca_idagente") REFERENCES "tb_agentes" ("ca_idagente");
+
+ALTER TABLE "tb_reportes" ADD CONSTRAINT "tb_reportes_FK_5" FOREIGN KEY ("ca_idbodega") REFERENCES "tb_bodegas" ("ca_idbodega");
+
+ALTER TABLE "tb_repavisos" ADD CONSTRAINT "tb_repavisos_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_repavisos" ADD CONSTRAINT "tb_repavisos_FK_2" FOREIGN KEY ("ca_idemail") REFERENCES "tb_emails" ("ca_idemail");
+
+ALTER TABLE "tb_repstatus" ADD CONSTRAINT "tb_repstatus_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_repstatus" ADD CONSTRAINT "tb_repstatus_FK_2" FOREIGN KEY ("ca_idemail") REFERENCES "tb_emails" ("ca_idemail");
+
+ALTER TABLE "tb_repstatusrespuestas" ADD CONSTRAINT "tb_repstatusrespuestas_FK_1" FOREIGN KEY ("ca_idreporte","ca_idemail") REFERENCES "tb_repstatus" ("ca_idreporte","ca_idemail");
+
+ALTER TABLE "tb_repequipos" ADD CONSTRAINT "tb_repequipos_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_repequipos" ADD CONSTRAINT "tb_repequipos_FK_2" FOREIGN KEY ("ca_idconcepto") REFERENCES "tb_conceptos" ("ca_idconcepto");
+
+ALTER TABLE "tb_repgastos" ADD CONSTRAINT "tb_repgastos_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_repgastos" ADD CONSTRAINT "tb_repgastos_FK_2" FOREIGN KEY ("ca_idconcepto") REFERENCES "tb_conceptos" ("ca_idconcepto");
+
+ALTER TABLE "tb_repgastos" ADD CONSTRAINT "tb_repgastos_FK_3" FOREIGN KEY ("ca_idrecargo") REFERENCES "tb_tiporecargo" ("ca_idrecargo");
+
+ALTER TABLE "tb_repseguro" ADD CONSTRAINT "tb_repseguro_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_repaduanadet" ADD CONSTRAINT "tb_repaduanadet_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_repaduanadet" ADD CONSTRAINT "tb_repaduanadet_FK_2" FOREIGN KEY ("ca_idcosto") REFERENCES "tb_costos" ("ca_idcosto");
+
+ALTER TABLE "tb_reptarifas" ADD CONSTRAINT "tb_reptarifas_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_reptarifas" ADD CONSTRAINT "tb_reptarifas_FK_2" FOREIGN KEY ("ca_idconcepto") REFERENCES "tb_conceptos" ("ca_idconcepto");
+
+ALTER TABLE "tb_repaduana" ADD CONSTRAINT "tb_repaduana_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
 ALTER TABLE "tb_repexpo" ADD CONSTRAINT "tb_repexpo_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");

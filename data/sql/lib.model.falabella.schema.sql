@@ -42,6 +42,8 @@ CREATE TABLE "tb_falaheader"
 	"ca_manufacturer_contact" VARCHAR,
 	"ca_manufacturer_phone" VARCHAR,
 	"ca_manufacturer_fax" VARCHAR,
+	"ca_fchanulado" TIMESTAMP,
+	"ca_usuanulado" VARCHAR,
 	PRIMARY KEY ("ca_iddoc")
 );
 
@@ -65,6 +67,7 @@ CREATE TABLE "tb_faladetails"
 	"ca_num_cont_part2" VARCHAR,
 	"ca_num_cont_sell" VARCHAR,
 	"ca_container_iso" VARCHAR,
+	"ca_cantidad_pedido" INTEGER,
 	"ca_cantidad_miles" INTEGER,
 	"ca_unidad_medidad_cantidad" VARCHAR,
 	"ca_descripcion_item" VARCHAR,
@@ -81,8 +84,6 @@ COMMENT ON TABLE "tb_faladetails" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_faladetails" ADD CONSTRAINT "tb_faladetails_FK_1" FOREIGN KEY ("ca_iddoc") REFERENCES "tb_falaheader" ("ca_iddoc");
-
 -----------------------------------------------------------------------------
 -- tb_falainstructions
 -----------------------------------------------------------------------------
@@ -102,8 +103,6 @@ COMMENT ON TABLE "tb_falainstructions" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_falainstructions" ADD CONSTRAINT "tb_falainstructions_FK_1" FOREIGN KEY ("ca_iddoc") REFERENCES "tb_falaheader" ("ca_iddoc");
-
 -----------------------------------------------------------------------------
 -- tb_falashipmentinfo
 -----------------------------------------------------------------------------
@@ -161,4 +160,8 @@ COMMENT ON TABLE "tb_falashipmentinfo" IS '';
 
 
 SET search_path TO public;
+ALTER TABLE "tb_faladetails" ADD CONSTRAINT "tb_faladetails_FK_1" FOREIGN KEY ("ca_iddoc") REFERENCES "tb_falaheader" ("ca_iddoc");
+
+ALTER TABLE "tb_falainstructions" ADD CONSTRAINT "tb_falainstructions_FK_1" FOREIGN KEY ("ca_iddoc") REFERENCES "tb_falaheader" ("ca_iddoc");
+
 ALTER TABLE "tb_falashipmentinfo" ADD CONSTRAINT "tb_falashipmentinfo_FK_1" FOREIGN KEY ("ca_iddoc") REFERENCES "tb_falaheader" ("ca_iddoc");

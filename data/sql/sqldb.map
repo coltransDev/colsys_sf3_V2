@@ -11,3 +11,6 @@ lib.model.cotizaciones.schema.sql=propel
 lib.model.dataimport.schema.sql=propel
 lib.model.falabella.schema.sql=propel
 lib.model.pricing.schema.sql=propel
+lib.model.bavaria.schema.sql=propel
+lib.model.helpdesk.schema.sql=propel
+lib.model.sdnlist.schema.sql=propel

@@ -58,8 +58,6 @@ COMMENT ON TABLE "tb_inomaestra_sea" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_inomaestra_sea" ADD CONSTRAINT "tb_inomaestra_sea_FK_1" FOREIGN KEY ("ca_idlinea") REFERENCES "tb_transporlineas" ("ca_idlinea");
-
 -----------------------------------------------------------------------------
 -- tb_inoclientes_sea
 -----------------------------------------------------------------------------
@@ -102,12 +100,6 @@ COMMENT ON TABLE "tb_inoclientes_sea" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_inoclientes_sea" ADD CONSTRAINT "tb_inoclientes_sea_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
-
-ALTER TABLE "tb_inoclientes_sea" ADD CONSTRAINT "tb_inoclientes_sea_FK_2" FOREIGN KEY ("ca_idproveedor") REFERENCES "tb_terceros" ("ca_idtercero");
-
-ALTER TABLE "tb_inoclientes_sea" ADD CONSTRAINT "tb_inoclientes_sea_FK_3" FOREIGN KEY ("ca_referencia") REFERENCES "tb_inomaestra_sea" ("ca_referencia");
-
 -----------------------------------------------------------------------------
 -- tb_inoingresos_sea
 -----------------------------------------------------------------------------
@@ -138,10 +130,6 @@ COMMENT ON TABLE "tb_inoingresos_sea" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_inoingresos_sea" ADD CONSTRAINT "tb_inoingresos_sea_FK_1" FOREIGN KEY ("ca_referencia") REFERENCES "tb_inomaestra_sea" ("ca_referencia");
-
-ALTER TABLE "tb_inoingresos_sea" ADD CONSTRAINT "tb_inoingresos_sea_FK_2" FOREIGN KEY ("ca_idcliente") REFERENCES "tb_clientes" ("ca_idcliente");
-
 -----------------------------------------------------------------------------
 -- tb_inoavisos_sea
 -----------------------------------------------------------------------------
@@ -168,6 +156,18 @@ COMMENT ON TABLE "tb_inoavisos_sea" IS '';
 
 
 SET search_path TO public;
+ALTER TABLE "tb_inomaestra_sea" ADD CONSTRAINT "tb_inomaestra_sea_FK_1" FOREIGN KEY ("ca_idlinea") REFERENCES "tb_transporlineas" ("ca_idlinea");
+
+ALTER TABLE "tb_inoclientes_sea" ADD CONSTRAINT "tb_inoclientes_sea_FK_1" FOREIGN KEY ("ca_idreporte") REFERENCES "tb_reportes" ("ca_idreporte");
+
+ALTER TABLE "tb_inoclientes_sea" ADD CONSTRAINT "tb_inoclientes_sea_FK_2" FOREIGN KEY ("ca_idproveedor") REFERENCES "tb_terceros" ("ca_idtercero");
+
+ALTER TABLE "tb_inoclientes_sea" ADD CONSTRAINT "tb_inoclientes_sea_FK_3" FOREIGN KEY ("ca_referencia") REFERENCES "tb_inomaestra_sea" ("ca_referencia");
+
+ALTER TABLE "tb_inoingresos_sea" ADD CONSTRAINT "tb_inoingresos_sea_FK_1" FOREIGN KEY ("ca_referencia") REFERENCES "tb_inomaestra_sea" ("ca_referencia");
+
+ALTER TABLE "tb_inoingresos_sea" ADD CONSTRAINT "tb_inoingresos_sea_FK_2" FOREIGN KEY ("ca_idcliente") REFERENCES "tb_clientes" ("ca_idcliente");
+
 ALTER TABLE "tb_inoavisos_sea" ADD CONSTRAINT "tb_inoavisos_sea_FK_1" FOREIGN KEY ("ca_referencia") REFERENCES "tb_inomaestra_sea" ("ca_referencia");
 
 ALTER TABLE "tb_inoavisos_sea" ADD CONSTRAINT "tb_inoavisos_sea_FK_2" FOREIGN KEY ("ca_idcliente") REFERENCES "tb_clientes" ("ca_idcliente");

@@ -42,8 +42,6 @@ COMMENT ON TABLE "tb_brk_maestra" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_brk_maestra" ADD CONSTRAINT "tb_brk_maestra_FK_1" FOREIGN KEY ("ca_idcliente") REFERENCES "tb_clientes" ("ca_idcliente");
-
 -----------------------------------------------------------------------------
 -- tb_brk_evento
 -----------------------------------------------------------------------------
@@ -66,8 +64,6 @@ COMMENT ON TABLE "tb_brk_evento" IS '';
 
 
 SET search_path TO public;
-ALTER TABLE "tb_brk_evento" ADD CONSTRAINT "tb_brk_evento_FK_1" FOREIGN KEY ("ca_referencia") REFERENCES "tb_brk_maestra" ("ca_referencia");
-
 -----------------------------------------------------------------------------
 -- tb_brk_eventoextras
 -----------------------------------------------------------------------------
@@ -91,4 +87,8 @@ COMMENT ON TABLE "tb_brk_eventoextras" IS '';
 
 
 SET search_path TO public;
+ALTER TABLE "tb_brk_maestra" ADD CONSTRAINT "tb_brk_maestra_FK_1" FOREIGN KEY ("ca_idcliente") REFERENCES "tb_clientes" ("ca_idcliente");
+
+ALTER TABLE "tb_brk_evento" ADD CONSTRAINT "tb_brk_evento_FK_1" FOREIGN KEY ("ca_referencia") REFERENCES "tb_brk_maestra" ("ca_referencia");
+
 ALTER TABLE "tb_brk_eventoextras" ADD CONSTRAINT "tb_brk_eventoextras_FK_1" FOREIGN KEY ("ca_referencia") REFERENCES "tb_brk_maestra" ("ca_referencia");
