@@ -41,7 +41,7 @@ class CotContinuacion extends BaseCotContinuacion
 		$concepto = $this->getConcepto();
 		$equipo = $this->getEquipo();
 		
-		if( $concepto->getCaConcepto()!=$equipo ){
+		if( $concepto->getCaConcepto()!=$equipo && $equipo ){
 			$str= $concepto->getCaConcepto()." en ".$equipo;			
 		}else{
 			$str= $concepto->getCaConcepto();			
