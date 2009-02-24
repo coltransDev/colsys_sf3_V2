@@ -104,6 +104,46 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	private $lastCotizacionCriteria = null;
 
 	/**
+	 * @var        array HdeskTicket[] Collection to store aggregation of HdeskTicket objects.
+	 */
+	protected $collHdeskTickets;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collHdeskTickets.
+	 */
+	private $lastHdeskTicketCriteria = null;
+
+	/**
+	 * @var        array HdeskResponse[] Collection to store aggregation of HdeskResponse objects.
+	 */
+	protected $collHdeskResponses;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collHdeskResponses.
+	 */
+	private $lastHdeskResponseCriteria = null;
+
+	/**
+	 * @var        array HdeskUserGroup[] Collection to store aggregation of HdeskUserGroup objects.
+	 */
+	protected $collHdeskUserGroups;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collHdeskUserGroups.
+	 */
+	private $lastHdeskUserGroupCriteria = null;
+
+	/**
+	 * @var        array HdeskKBase[] Collection to store aggregation of HdeskKBase objects.
+	 */
+	protected $collHdeskKBases;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collHdeskKBases.
+	 */
+	private $lastHdeskKBaseCriteria = null;
+
+	/**
 	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
 	 */
 	protected $collReportes;
@@ -520,6 +560,18 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->collCotizacions = null;
 			$this->lastCotizacionCriteria = null;
 
+			$this->collHdeskTickets = null;
+			$this->lastHdeskTicketCriteria = null;
+
+			$this->collHdeskResponses = null;
+			$this->lastHdeskResponseCriteria = null;
+
+			$this->collHdeskUserGroups = null;
+			$this->lastHdeskUserGroupCriteria = null;
+
+			$this->collHdeskKBases = null;
+			$this->lastHdeskKBaseCriteria = null;
+
 			$this->collReportes = null;
 			$this->lastReporteCriteria = null;
 
@@ -666,6 +718,38 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collHdeskTickets !== null) {
+				foreach ($this->collHdeskTickets as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collHdeskResponses !== null) {
+				foreach ($this->collHdeskResponses as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collHdeskUserGroups !== null) {
+				foreach ($this->collHdeskUserGroups as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collHdeskKBases !== null) {
+				foreach ($this->collHdeskKBases as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collReportes !== null) {
 				foreach ($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -775,6 +859,38 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 
 				if ($this->collCotizacions !== null) {
 					foreach ($this->collCotizacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collHdeskTickets !== null) {
+					foreach ($this->collHdeskTickets as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collHdeskResponses !== null) {
+					foreach ($this->collHdeskResponses as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collHdeskUserGroups !== null) {
+					foreach ($this->collHdeskUserGroups as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collHdeskKBases !== null) {
+					foreach ($this->collHdeskKBases as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1070,6 +1186,30 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			foreach ($this->getCotizacions() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addCotizacion($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getHdeskTickets() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addHdeskTicket($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getHdeskResponses() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addHdeskResponse($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getHdeskUserGroups() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addHdeskUserGroup($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getHdeskKBases() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addHdeskKBase($relObj->copy($deepCopy));
 				}
 			}
 
@@ -1690,6 +1830,861 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collHdeskTickets collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addHdeskTickets()
+	 */
+	public function clearHdeskTickets()
+	{
+		$this->collHdeskTickets = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collHdeskTickets collection (array).
+	 *
+	 * By default this just sets the collHdeskTickets collection to an empty array (like clearcollHdeskTickets());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initHdeskTickets()
+	{
+		$this->collHdeskTickets = array();
+	}
+
+	/**
+	 * Gets an array of HdeskTicket objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously been saved, it will retrieve
+	 * related HdeskTickets from storage. If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array HdeskTicket[]
+	 * @throws     PropelException
+	 */
+	public function getHdeskTickets($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskTickets === null) {
+			if ($this->isNew()) {
+			   $this->collHdeskTickets = array();
+			} else {
+
+				$criteria->add(HdeskTicketPeer::CA_LOGIN, $this->ca_login);
+
+				HdeskTicketPeer::addSelectColumns($criteria);
+				$this->collHdeskTickets = HdeskTicketPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(HdeskTicketPeer::CA_LOGIN, $this->ca_login);
+
+				HdeskTicketPeer::addSelectColumns($criteria);
+				if (!isset($this->lastHdeskTicketCriteria) || !$this->lastHdeskTicketCriteria->equals($criteria)) {
+					$this->collHdeskTickets = HdeskTicketPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastHdeskTicketCriteria = $criteria;
+		return $this->collHdeskTickets;
+	}
+
+	/**
+	 * Returns the number of related HdeskTicket objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related HdeskTicket objects.
+	 * @throws     PropelException
+	 */
+	public function countHdeskTickets(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collHdeskTickets === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(HdeskTicketPeer::CA_LOGIN, $this->ca_login);
+
+				$count = HdeskTicketPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(HdeskTicketPeer::CA_LOGIN, $this->ca_login);
+
+				if (!isset($this->lastHdeskTicketCriteria) || !$this->lastHdeskTicketCriteria->equals($criteria)) {
+					$count = HdeskTicketPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collHdeskTickets);
+				}
+			} else {
+				$count = count($this->collHdeskTickets);
+			}
+		}
+		$this->lastHdeskTicketCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a HdeskTicket object to this object
+	 * through the HdeskTicket foreign key attribute.
+	 *
+	 * @param      HdeskTicket $l HdeskTicket
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addHdeskTicket(HdeskTicket $l)
+	{
+		if ($this->collHdeskTickets === null) {
+			$this->initHdeskTickets();
+		}
+		if (!in_array($l, $this->collHdeskTickets, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collHdeskTickets, $l);
+			$l->setUsuario($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Usuario is new, it will return
+	 * an empty collection; or if this Usuario has previously
+	 * been saved, it will retrieve related HdeskTickets from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Usuario.
+	 */
+	public function getHdeskTicketsJoinHdeskGroup($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskTickets === null) {
+			if ($this->isNew()) {
+				$this->collHdeskTickets = array();
+			} else {
+
+				$criteria->add(HdeskTicketPeer::CA_LOGIN, $this->ca_login);
+
+				$this->collHdeskTickets = HdeskTicketPeer::doSelectJoinHdeskGroup($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(HdeskTicketPeer::CA_LOGIN, $this->ca_login);
+
+			if (!isset($this->lastHdeskTicketCriteria) || !$this->lastHdeskTicketCriteria->equals($criteria)) {
+				$this->collHdeskTickets = HdeskTicketPeer::doSelectJoinHdeskGroup($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastHdeskTicketCriteria = $criteria;
+
+		return $this->collHdeskTickets;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Usuario is new, it will return
+	 * an empty collection; or if this Usuario has previously
+	 * been saved, it will retrieve related HdeskTickets from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Usuario.
+	 */
+	public function getHdeskTicketsJoinHdeskProject($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskTickets === null) {
+			if ($this->isNew()) {
+				$this->collHdeskTickets = array();
+			} else {
+
+				$criteria->add(HdeskTicketPeer::CA_LOGIN, $this->ca_login);
+
+				$this->collHdeskTickets = HdeskTicketPeer::doSelectJoinHdeskProject($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(HdeskTicketPeer::CA_LOGIN, $this->ca_login);
+
+			if (!isset($this->lastHdeskTicketCriteria) || !$this->lastHdeskTicketCriteria->equals($criteria)) {
+				$this->collHdeskTickets = HdeskTicketPeer::doSelectJoinHdeskProject($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastHdeskTicketCriteria = $criteria;
+
+		return $this->collHdeskTickets;
+	}
+
+	/**
+	 * Clears out the collHdeskResponses collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addHdeskResponses()
+	 */
+	public function clearHdeskResponses()
+	{
+		$this->collHdeskResponses = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collHdeskResponses collection (array).
+	 *
+	 * By default this just sets the collHdeskResponses collection to an empty array (like clearcollHdeskResponses());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initHdeskResponses()
+	{
+		$this->collHdeskResponses = array();
+	}
+
+	/**
+	 * Gets an array of HdeskResponse objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously been saved, it will retrieve
+	 * related HdeskResponses from storage. If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array HdeskResponse[]
+	 * @throws     PropelException
+	 */
+	public function getHdeskResponses($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskResponses === null) {
+			if ($this->isNew()) {
+			   $this->collHdeskResponses = array();
+			} else {
+
+				$criteria->add(HdeskResponsePeer::CA_LOGIN, $this->ca_login);
+
+				HdeskResponsePeer::addSelectColumns($criteria);
+				$this->collHdeskResponses = HdeskResponsePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(HdeskResponsePeer::CA_LOGIN, $this->ca_login);
+
+				HdeskResponsePeer::addSelectColumns($criteria);
+				if (!isset($this->lastHdeskResponseCriteria) || !$this->lastHdeskResponseCriteria->equals($criteria)) {
+					$this->collHdeskResponses = HdeskResponsePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastHdeskResponseCriteria = $criteria;
+		return $this->collHdeskResponses;
+	}
+
+	/**
+	 * Returns the number of related HdeskResponse objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related HdeskResponse objects.
+	 * @throws     PropelException
+	 */
+	public function countHdeskResponses(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collHdeskResponses === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(HdeskResponsePeer::CA_LOGIN, $this->ca_login);
+
+				$count = HdeskResponsePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(HdeskResponsePeer::CA_LOGIN, $this->ca_login);
+
+				if (!isset($this->lastHdeskResponseCriteria) || !$this->lastHdeskResponseCriteria->equals($criteria)) {
+					$count = HdeskResponsePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collHdeskResponses);
+				}
+			} else {
+				$count = count($this->collHdeskResponses);
+			}
+		}
+		$this->lastHdeskResponseCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a HdeskResponse object to this object
+	 * through the HdeskResponse foreign key attribute.
+	 *
+	 * @param      HdeskResponse $l HdeskResponse
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addHdeskResponse(HdeskResponse $l)
+	{
+		if ($this->collHdeskResponses === null) {
+			$this->initHdeskResponses();
+		}
+		if (!in_array($l, $this->collHdeskResponses, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collHdeskResponses, $l);
+			$l->setUsuario($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Usuario is new, it will return
+	 * an empty collection; or if this Usuario has previously
+	 * been saved, it will retrieve related HdeskResponses from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Usuario.
+	 */
+	public function getHdeskResponsesJoinHdeskTicket($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskResponses === null) {
+			if ($this->isNew()) {
+				$this->collHdeskResponses = array();
+			} else {
+
+				$criteria->add(HdeskResponsePeer::CA_LOGIN, $this->ca_login);
+
+				$this->collHdeskResponses = HdeskResponsePeer::doSelectJoinHdeskTicket($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(HdeskResponsePeer::CA_LOGIN, $this->ca_login);
+
+			if (!isset($this->lastHdeskResponseCriteria) || !$this->lastHdeskResponseCriteria->equals($criteria)) {
+				$this->collHdeskResponses = HdeskResponsePeer::doSelectJoinHdeskTicket($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastHdeskResponseCriteria = $criteria;
+
+		return $this->collHdeskResponses;
+	}
+
+	/**
+	 * Clears out the collHdeskUserGroups collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addHdeskUserGroups()
+	 */
+	public function clearHdeskUserGroups()
+	{
+		$this->collHdeskUserGroups = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collHdeskUserGroups collection (array).
+	 *
+	 * By default this just sets the collHdeskUserGroups collection to an empty array (like clearcollHdeskUserGroups());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initHdeskUserGroups()
+	{
+		$this->collHdeskUserGroups = array();
+	}
+
+	/**
+	 * Gets an array of HdeskUserGroup objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously been saved, it will retrieve
+	 * related HdeskUserGroups from storage. If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array HdeskUserGroup[]
+	 * @throws     PropelException
+	 */
+	public function getHdeskUserGroups($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskUserGroups === null) {
+			if ($this->isNew()) {
+			   $this->collHdeskUserGroups = array();
+			} else {
+
+				$criteria->add(HdeskUserGroupPeer::CA_LOGIN, $this->ca_login);
+
+				HdeskUserGroupPeer::addSelectColumns($criteria);
+				$this->collHdeskUserGroups = HdeskUserGroupPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(HdeskUserGroupPeer::CA_LOGIN, $this->ca_login);
+
+				HdeskUserGroupPeer::addSelectColumns($criteria);
+				if (!isset($this->lastHdeskUserGroupCriteria) || !$this->lastHdeskUserGroupCriteria->equals($criteria)) {
+					$this->collHdeskUserGroups = HdeskUserGroupPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastHdeskUserGroupCriteria = $criteria;
+		return $this->collHdeskUserGroups;
+	}
+
+	/**
+	 * Returns the number of related HdeskUserGroup objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related HdeskUserGroup objects.
+	 * @throws     PropelException
+	 */
+	public function countHdeskUserGroups(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collHdeskUserGroups === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(HdeskUserGroupPeer::CA_LOGIN, $this->ca_login);
+
+				$count = HdeskUserGroupPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(HdeskUserGroupPeer::CA_LOGIN, $this->ca_login);
+
+				if (!isset($this->lastHdeskUserGroupCriteria) || !$this->lastHdeskUserGroupCriteria->equals($criteria)) {
+					$count = HdeskUserGroupPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collHdeskUserGroups);
+				}
+			} else {
+				$count = count($this->collHdeskUserGroups);
+			}
+		}
+		$this->lastHdeskUserGroupCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a HdeskUserGroup object to this object
+	 * through the HdeskUserGroup foreign key attribute.
+	 *
+	 * @param      HdeskUserGroup $l HdeskUserGroup
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addHdeskUserGroup(HdeskUserGroup $l)
+	{
+		if ($this->collHdeskUserGroups === null) {
+			$this->initHdeskUserGroups();
+		}
+		if (!in_array($l, $this->collHdeskUserGroups, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collHdeskUserGroups, $l);
+			$l->setUsuario($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Usuario is new, it will return
+	 * an empty collection; or if this Usuario has previously
+	 * been saved, it will retrieve related HdeskUserGroups from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Usuario.
+	 */
+	public function getHdeskUserGroupsJoinHdeskGroup($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskUserGroups === null) {
+			if ($this->isNew()) {
+				$this->collHdeskUserGroups = array();
+			} else {
+
+				$criteria->add(HdeskUserGroupPeer::CA_LOGIN, $this->ca_login);
+
+				$this->collHdeskUserGroups = HdeskUserGroupPeer::doSelectJoinHdeskGroup($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(HdeskUserGroupPeer::CA_LOGIN, $this->ca_login);
+
+			if (!isset($this->lastHdeskUserGroupCriteria) || !$this->lastHdeskUserGroupCriteria->equals($criteria)) {
+				$this->collHdeskUserGroups = HdeskUserGroupPeer::doSelectJoinHdeskGroup($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastHdeskUserGroupCriteria = $criteria;
+
+		return $this->collHdeskUserGroups;
+	}
+
+	/**
+	 * Clears out the collHdeskKBases collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addHdeskKBases()
+	 */
+	public function clearHdeskKBases()
+	{
+		$this->collHdeskKBases = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collHdeskKBases collection (array).
+	 *
+	 * By default this just sets the collHdeskKBases collection to an empty array (like clearcollHdeskKBases());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initHdeskKBases()
+	{
+		$this->collHdeskKBases = array();
+	}
+
+	/**
+	 * Gets an array of HdeskKBase objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Usuario has previously been saved, it will retrieve
+	 * related HdeskKBases from storage. If this Usuario is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array HdeskKBase[]
+	 * @throws     PropelException
+	 */
+	public function getHdeskKBases($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskKBases === null) {
+			if ($this->isNew()) {
+			   $this->collHdeskKBases = array();
+			} else {
+
+				$criteria->add(HdeskKBasePeer::CA_LOGIN, $this->ca_login);
+
+				HdeskKBasePeer::addSelectColumns($criteria);
+				$this->collHdeskKBases = HdeskKBasePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(HdeskKBasePeer::CA_LOGIN, $this->ca_login);
+
+				HdeskKBasePeer::addSelectColumns($criteria);
+				if (!isset($this->lastHdeskKBaseCriteria) || !$this->lastHdeskKBaseCriteria->equals($criteria)) {
+					$this->collHdeskKBases = HdeskKBasePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastHdeskKBaseCriteria = $criteria;
+		return $this->collHdeskKBases;
+	}
+
+	/**
+	 * Returns the number of related HdeskKBase objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related HdeskKBase objects.
+	 * @throws     PropelException
+	 */
+	public function countHdeskKBases(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collHdeskKBases === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(HdeskKBasePeer::CA_LOGIN, $this->ca_login);
+
+				$count = HdeskKBasePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(HdeskKBasePeer::CA_LOGIN, $this->ca_login);
+
+				if (!isset($this->lastHdeskKBaseCriteria) || !$this->lastHdeskKBaseCriteria->equals($criteria)) {
+					$count = HdeskKBasePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collHdeskKBases);
+				}
+			} else {
+				$count = count($this->collHdeskKBases);
+			}
+		}
+		$this->lastHdeskKBaseCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a HdeskKBase object to this object
+	 * through the HdeskKBase foreign key attribute.
+	 *
+	 * @param      HdeskKBase $l HdeskKBase
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addHdeskKBase(HdeskKBase $l)
+	{
+		if ($this->collHdeskKBases === null) {
+			$this->initHdeskKBases();
+		}
+		if (!in_array($l, $this->collHdeskKBases, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collHdeskKBases, $l);
+			$l->setUsuario($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Usuario is new, it will return
+	 * an empty collection; or if this Usuario has previously
+	 * been saved, it will retrieve related HdeskKBases from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Usuario.
+	 */
+	public function getHdeskKBasesJoinHdeskKBaseCategory($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(UsuarioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskKBases === null) {
+			if ($this->isNew()) {
+				$this->collHdeskKBases = array();
+			} else {
+
+				$criteria->add(HdeskKBasePeer::CA_LOGIN, $this->ca_login);
+
+				$this->collHdeskKBases = HdeskKBasePeer::doSelectJoinHdeskKBaseCategory($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(HdeskKBasePeer::CA_LOGIN, $this->ca_login);
+
+			if (!isset($this->lastHdeskKBaseCriteria) || !$this->lastHdeskKBaseCriteria->equals($criteria)) {
+				$this->collHdeskKBases = HdeskKBasePeer::doSelectJoinHdeskKBaseCategory($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastHdeskKBaseCriteria = $criteria;
+
+		return $this->collHdeskKBases;
+	}
+
+	/**
 	 * Clears out the collReportes collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -2059,6 +3054,26 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collHdeskTickets) {
+				foreach ((array) $this->collHdeskTickets as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collHdeskResponses) {
+				foreach ((array) $this->collHdeskResponses as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collHdeskUserGroups) {
+				foreach ((array) $this->collHdeskUserGroups as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collHdeskKBases) {
+				foreach ((array) $this->collHdeskKBases as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collReportes) {
 				foreach ((array) $this->collReportes as $o) {
 					$o->clearAllReferences($deep);
@@ -2069,6 +3084,10 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		$this->collNivelesAccesos = null;
 		$this->collAccesoUsuarios = null;
 		$this->collCotizacions = null;
+		$this->collHdeskTickets = null;
+		$this->collHdeskResponses = null;
+		$this->collHdeskUserGroups = null;
+		$this->collHdeskKBases = null;
 		$this->collReportes = null;
 			$this->aSucursal = null;
 	}
