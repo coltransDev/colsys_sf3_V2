@@ -5,14 +5,14 @@ all:
      root:  C:\Desarrollo\digitalFile\
 
   smtp:
-#    host: 10.192.1.5
-#    user:  tasas_cambios
-#    passwd:  tasas_cambios
-#    public_ip: 200.14.235.62
-    host: smtp.colmas.com.co
-    user: bogota-aduana@colmas.com.co
-    passwd:  gbvFR5
+    host: 10.192.1.30
+#    host: smtp.colmas.com.co
+    user:  tasas_cambios
+#    user: bogota-aduana@colmas.com.co
+    passwd:  tasas_cambios
+#    passwd:  gbvFR5
     port: 25
+#    public_ip: 200.14.235.62
 
   ldap:
     host: 10.192.1.15

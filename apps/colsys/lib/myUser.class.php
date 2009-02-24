@@ -13,11 +13,11 @@ class myUser extends sfBasicSecurityUser
 		$user = UsuarioPeer::retrieveByPk( $userId );
 		
 		if( $user ){
-			$c = new Criteria();
+			/*$c = new Criteria();
 			$c->add( NivelesAccesoPeer::CA_LOGIN , $userId );
 			$c->add( NivelesAccesoPeer::CA_BASEDEDATOS , "Coltrans" );
 			$acceso = NivelesAccesoPeer::doSelectOne( $c );	
-			
+			*/
 			$sucursal = $user->getSucursal();
 						
 			
@@ -25,10 +25,19 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('nombre', $user->getCaNombre() );		
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );
+			
 			$this->setAttribute('extension', $user->getCaExtension() );
-			if( $acceso ){  				
-				$this->setAttribute('nivel_acceso', $acceso->getCaNivel() );
+			
+			$c = new Criteria();
+			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
+			$departamento = DepartamentoPeer::doSelectOne( $c );
+			if( $departamento ){
+				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}
+			
+			/*if( $acceso ){  				
+				$this->setAttribute('nivel_acceso', $acceso->getCaNivel() );
+			}*/
 		}				
 	}
 	
@@ -48,6 +57,10 @@ class myUser extends sfBasicSecurityUser
 		return $this->getAttribute('sucursal' );
 	}
 	
+	public function getIddepartamento(){
+		return $this->getAttribute('iddepartamento' );
+	}
+	
 	public function getCargo(){
 		return $this->getAttribute('cargo' );
 	}
@@ -57,8 +70,14 @@ class myUser extends sfBasicSecurityUser
 	}
 	
 	
-	public function getNivelAcceso(){		
-		return $this->getAttribute('nivel_acceso' );
+	public function getNivelAcceso( $rutina="" ){		
+		$acceso = AccesoUsuarioPeer::retrieveByPk( $rutina, $this->getUserId() );
+		
+		if( $acceso ){
+			return $acceso->getCaAcceso();
+		}else{
+			//Verifica acceso a grupos
+		}
 	}
 	
 	public function getGrupos( ){		

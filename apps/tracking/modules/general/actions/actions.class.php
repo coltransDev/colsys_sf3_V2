@@ -41,7 +41,8 @@ class generalActions extends sfActions
 		
 		$clientes = array();
  
-   		while ( $row = $stmt->fetch() ) {			
+   		while ( $row = $stmt->fetch() ) {	
+			$row['ca_compania']=utf8_encode($row['ca_compania']);		
       		$clientes[] = $row;
 		}		
 		

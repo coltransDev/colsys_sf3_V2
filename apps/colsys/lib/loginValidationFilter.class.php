@@ -12,7 +12,10 @@ class loginValidationFilter extends sfFilter
 				sfContext::getInstance()->getUser()->setAuthenticated(true);
 				sfContext::getInstance()->getResponse()->setHttpHeader('Cache-Control', "no-cache, no-store");
 				sfContext::getInstance()->getResponse()->setHttpHeader('Expires', sfContext::getInstance()->getResponse()->getDate(time()-86400));
-				// Execute next filter
+				
+				//$module = sfContext::getInstance()->getModuleName ();				
+				//$action = sfContext::getInstance()->getActionName ();
+				// Execute next filter				
 				$filterChain->execute();	
 				
 			}else{
