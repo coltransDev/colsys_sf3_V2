@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.helpdesk">
+	
+	
+	
+	<table name="helpdesk.tb_groups" phpName="HdeskGroup">
+		<column name="ca_idgroup" type="integer" required="true" primaryKey="true" autoIncrement="true" />	
+		<id-method-parameter value="helpdesk.tb_groups_id"/>
+		<column name="ca_iddepartament" type="integer" required="true" />			
+		<column name="ca_name" type="varchar" />				
+		<foreign-key foreignTable="control.tb_departamentos">
+			<reference local="ca_iddepartament" foreign="ca_iddepartamento"/>
+		</foreign-key>		
+	</table>
+	
+	<table name="helpdesk.tb_tickets" phpName="HdeskTicket">
+		<column name="ca_idticket" type="integer" required="true" primaryKey="true" autoIncrement="true" />	
+		<id-method-parameter value="helpdesk.tb_tickets_id"/>
+		<column name="ca_idgroup" type="integer" required="true" />			
+		<column name="ca_idproject" type="integer" required="true" />			
+		<column name="ca_login" type="varchar" />
+		<column name="ca_title" type="varchar" />		
+		<column name="ca_text" type="varchar" />
+		<column name="ca_priority" type="varchar" />
+		<column name="ca_opened" type="timestamp" />
+		<column name="ca_type" type="varchar" />
+		<column name="ca_assignedto" type="varchar" />
+		<column name="ca_action" type="varchar" />				
+		<foreign-key foreignTable="helpdesk.tb_groups">
+			<reference local="ca_idgroup" foreign="ca_idgroup"/>
+		</foreign-key>	
+		
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>	
+		
+		<foreign-key foreignTable="helpdesk.tb_projects">
+			<reference local="ca_idproject" foreign="ca_idproject"/>
+		</foreign-key>	
+	</table>
+		
+	<table name="helpdesk.tb_responses" phpName="HdeskResponse">
+		<column name="ca_idresponse" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="helpdesk.tb_responses_id"/>
+		<column name="ca_idticket" type="integer" required="true" />			
+		<column name="ca_responsetoresponse" type="integer" required="true" />		
+		<column name="ca_login" type="varchar" required="true" />		
+		<column name="ca_createdat" type="timestamp" required="true" />					
+		<column name="ca_text" type="varchar" />			
+		<foreign-key foreignTable="helpdesk.tb_tickets">
+			<reference local="ca_idticket" foreign="ca_idticket"/>
+		</foreign-key>		
+		
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>	
+	</table>
+	
+	<table name="helpdesk.tb_projects" phpName="HdeskProject">
+		<column name="ca_idproject" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="helpdesk.tb_projects_id"/>
+		<column name="ca_idgroup" type="integer" required="true" />			
+		<column name="ca_name" type="varchar" required="true" />		
+		<column name="ca_description" type="varchar"  />
+		<column name="ca_active" type="varchar"  />			
+		<foreign-key foreignTable="helpdesk.tb_groups">
+			<reference local="ca_idgroup" foreign="ca_idgroup"/>
+		</foreign-key>		
+	</table>
+	
+	<table name="helpdesk.tb_usersgroups" phpName="HdeskUserGroup">
+		<column name="ca_idgroup" type="integer" required="true" primaryKey="true" />			
+		<column name="ca_login" type="varchar" required="true" primaryKey="true" />					
+		<foreign-key foreignTable="helpdesk.tb_groups">
+			<reference local="ca_idgroup" foreign="ca_idgroup"/>
+		</foreign-key>		
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>		
+	</table>
+	
+	<table name="helpdesk.tb_kbase" phpName="HdeskKBase">
+		<column name="ca_idkbase" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="helpdesk.tb_kbase_id"/>
+		<column name="ca_idcategory" type="integer" required="true" />					
+		<column name="ca_login" type="varchar" required="true" />		
+		<column name="ca_createdat" type="timestamp" required="true" />					
+		<column name="ca_text" type="varchar" />			
+		<column name="ca_title" type="varchar" />	
+		<column name="ca_private" type="boolean" />
+		<foreign-key foreignTable="helpdesk.tb_kbasecategory">
+			<reference local="ca_idcategory" foreign="ca_idcategory"/>
+		</foreign-key>		
+		
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>	
+	</table>
+	
+	<table name="helpdesk.tb_kbasecategory" phpName="HdeskKBaseCategory">
+		<column name="ca_idcategory" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="helpdesk.tb_kbasecategory_id"/>
+		<column name="ca_parent" type="integer" required="true" />					
+		<column name="ca_name" type="varchar" required="true" />				
+	</table>
+
+</database>
