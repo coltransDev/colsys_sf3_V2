@@ -1,7 +1,0 @@
-fillin:
-  enabled: true  # Enable the form repopulation
-fields:
-  destinatario:
-    required:
-      msg:       requerido 
- 
