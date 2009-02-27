@@ -279,8 +279,8 @@ Ext.onReady(function(){
                     allowBlank:false,
 					readOnly: true
 				},
-				<?
-				include_component("widgets", "comerciales" ,array("id"=>"vendedor", "label"=>"Representante Comercial", "allowBlank"=>"true", "value"=>$usuario->getCaLogin() ));
+				<?				
+				include_component("widgets", "comerciales" ,array("id"=>"vendedor", "label"=>"Representante Comercial", "allowBlank"=>"true", "value"=>$usuario->getCaLogin(), "nivel"=>$nivel ));
 				?>
 				
 				<?

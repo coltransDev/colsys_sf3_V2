@@ -179,6 +179,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 			$c = new Criteria();
 			$c->addJoin( CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO );
 			$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+			$c->addAscendingOrderByColumn( ConceptoPeer::CA_CONCEPTO );
 			$opciones = $producto->getCotOpciones( $c );
 			
 			foreach( $opciones as $opcion ){
@@ -349,6 +350,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 			$c = new Criteria();
 			$c->addJoin( CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO );
 			$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+			$c->addAscendingOrderByColumn( ConceptoPeer::CA_CONCEPTO );
 			$opciones = $producto->getCotOpciones( $c );		
 			foreach( $opciones as $opcion ){
 				$concepto = $opcion->getConcepto();		
@@ -481,6 +483,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 			$c = new Criteria();
 			$c->addJoin( CotOpcionPeer::CA_IDCONCEPTO, ConceptoPeer::CA_IDCONCEPTO );
 			$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+			$c->addAscendingOrderByColumn( ConceptoPeer::CA_CONCEPTO );
 			$opciones = $producto->getCotOpciones( $c );		
 			$trayecto = $producto->getOrigen()->getCaCiudad()."\n".$producto->getDestino()->getCaCiudad();
 			if ($producto->getCaImprimir() == 'Concepto' ){		
@@ -555,6 +558,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 		$c = new Criteria();
 		$c->add(  ConceptoPeer::CA_IDCONCEPTO, $conceptos1, Criteria::IN );
 		$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+		$c->addAscendingOrderByColumn( ConceptoPeer::CA_CONCEPTO );
 		$conceptos = ConceptoPeer::doSelect( $c );
 		
 		$titulos =  array("Trayecto")  ;	
@@ -642,6 +646,8 @@ for( $k=0; $k<count($transportes); $k++ ):
 		$c = new Criteria();
 		$c->add(  ConceptoPeer::CA_IDCONCEPTO, $conceptos2, Criteria::IN );
 		$c->addAscendingOrderByColumn( ConceptoPeer::CA_LIMINFERIOR );
+		$c->addAscendingOrderByColumn( ConceptoPeer::CA_CONCEPTO );
+		
 		$conceptos = ConceptoPeer::doSelect( $c );
 			
 		$titulos = array_merge( array("Concepto\n "),   $trayectos2);
@@ -785,6 +791,8 @@ $c->addAscendingOrderByColumn( CotContinuacionPeer::CA_TIPO );
 $c->addAscendingOrderByColumn( CotContinuacionPeer::CA_MODALIDAD );
 $c->addAscendingOrderByColumn( CotContinuacionPeer::CA_ORIGEN );
 $c->addAscendingOrderByColumn( CotContinuacionPeer::CA_DESTINO );
+$c->addAscendingOrderByColumn( CotContinuacionPeer::CA_IDEQUIPO );
+$c->addAscendingOrderByColumn( CotContinuacionPeer::CA_IDCONCEPTO );
 $c->addAscendingOrderByColumn( CotContinuacionPeer::CA_TARIFA );
 $continuaciones = $cotizacion->getCotContinuacions( $c );
 
@@ -1164,6 +1172,41 @@ foreach($imprimirNotas as $val ) {
 	$pdf->MultiCell(0, 4, $notas[$val], 0,'J',0);
 }
 
+
+//Nota 
+
+$pdf->AddPage();
+
+$pdf->SetFont($font,'',14);
+$pdf->Cell(0, 4, "Bogotá, Febrero 10 de 2.009 ",0,1);
+
+
+$pdf->Ln(25);
+$pdf->SetFont($font,'B',16);
+$pdf->Cell(0, 4, "AVISO IMPORTANTE",0,1, "C");
+
+$pdf->Ln(4);
+$pdf->SetFont($font,'B',14);
+$pdf->Cell(0, 4, "APLAZAMIENTO ENTRADA EN VIGENCIA DEC. 2101-08",0,1, "C");
+
+
+$pdf->Ln(15);
+$pdf->SetFont($font,'',14);
+$pdf->Cell(0, 4, "Estimados Clientes y Usuarios:",0,1);
+
+$pdf->Ln(15);
+
+
+$pdf->MultiCell(0, 8, "Cordialmente informamos a ustedes que el gobierno nacional aplazó la entrada en vigencia del Decreto 2101 de 2008 - Proceso de Carga de Importación, el cual comenzará a regir a partir del 1o. de mayo de 2009. Esta información puede ser consultada por ustedes en la página web de la Dirección de Impuestos y Aduanas Nacionales DIAN.", 0,'J',0);
+
+$pdf->Ln(15);
+$pdf->Cell(0, 4, "Atentamente,",0,1);
+$pdf->Ln(10);
+$pdf->Cell(0, 4, "COLTRANS S.A.",0,1);
+$pdf->Ln(10);
+$pdf->Cell(0, 4, "Sandra Patricia Nieves",0,1);
+$pdf->Ln(4);
+$pdf->Cell(0, 4, "Gerente Comercial",0,1);
 	
 $pdf->Output ( $filename);
 if( !$filename ){ //Para evitar que salga la barra de depuracion
