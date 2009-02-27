@@ -151,6 +151,10 @@ class widgetsComponents extends sfComponents
 			$this->allowBlank="true";
 		}
 		
+		if(!isset( $this->nivel )){
+			$this->nivel=0;
+		}	
+		
 		$comerciales = UsuarioPeer::getComerciales();
 		$this->comercialesJson = array();
 		foreach( $comerciales as $comercial ){
