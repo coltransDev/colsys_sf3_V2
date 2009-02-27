@@ -17,7 +17,7 @@ new Ext.form.ComboBox({
 			//allowBlank:false,
 			listClass: 'x-combo-list-small',
 			allowBlank: <?=$allowBlank?>,			
-			disabled: <?=$user->getNivelAcceso()>0?"false":"true"?>,
+			disabled: <?=$nivel>0?"false":"true"?>,
 			store : new Ext.data.Store({
 				autoLoad : true,				
 				reader: new Ext.data.JsonReader(
