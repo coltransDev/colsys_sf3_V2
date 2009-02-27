@@ -19,7 +19,7 @@ if( $opcion!="consulta" ){
 		typeAhead: true,
 		forceSelection: true,
 		triggerAction: 'all',
-		emptyText:'Seleccione',
+		emptyText:'',
 		selectOnFocus: true,					
 		lazyRender:true,
 		allowBlank: false,
@@ -53,7 +53,7 @@ if( $opcion!="consulta" ){
 		typeAhead: true,
 		forceSelection: true,
 		triggerAction: 'all',
-		emptyText:'Seleccione',
+		emptyText:'',
 		selectOnFocus: true,					
 		lazyRender:true,
 		allowBlank: false,
@@ -81,6 +81,39 @@ if( $opcion!="consulta" ){
 	});
 	
 	
+	var comboConceptos = new Ext.form.ComboBox({			
+		typeAhead: true,
+		forceSelection: true,
+		triggerAction: 'all',
+		emptyText:'',
+		selectOnFocus: true,					
+		lazyRender:true,
+		allowBlank: false,
+		listClass: 'x-combo-list-small',
+		valueField:'idconcepto',
+		displayField:'concepto',
+		mode: 'local',	
+		store :  new Ext.data.SimpleStore({
+					fields: ['idconcepto', 'concepto'],
+					data : [
+						<?
+						$i=0;
+						foreach( $conceptos as $concepto ){
+							if( $i++!=0){
+								echo ",";
+							}
+						?>
+							['<?=$concepto->getCaIdconcepto()?>','<?=str_replace( "'", "\'", $concepto->getCaConcepto())?>']
+						<?
+						}
+						?>
+						,['9999','Recargo General']
+					]
+				})
+	
+	});
+	
+	
 	var datosAplicacion = [
 			<?
 			$i=0;
@@ -93,6 +126,7 @@ if( $opcion!="consulta" ){
 			<?
 			}
 			?>
+			,['']
 	];
 	
 	var comboAplicaciones = <?=include_component("widgets", "emptyCombo" ,array("id"=>""))?>;
@@ -113,8 +147,10 @@ var record = Ext.data.Record.create([
 	{name: 'idlinea', type: 'string'},	
 	{name: 'impoexpo', type: 'string'},	
 	{name: 'linea', type: 'string'},
-	{name: 'idrecargo', type: 'string'},
+	{name: 'idrecargo', type: 'string'},	
 	{name: 'recargo', type: 'string'},
+	{name: 'idconcepto', type: 'string'},
+	{name: 'concepto', type: 'string'},
 	{name: 'vlrrecargo', type: 'float'},
 	{name: 'vlrminimo', type: 'float'},
 	{name: 'aplicacion', type: 'string'},
@@ -190,6 +226,28 @@ var colModel = new Ext.grid.ColumnModel({
 			?>
 		}
 		,
+		<?		
+		if( $idtrafico=="99-999" && $transporte==Constantes::MARITIMO ){
+		?>
+		{
+			header: "Concepto",
+			width: 100,
+			sortable: false,	
+			hideable: false,		
+			dataIndex: 'concepto' 
+			<?
+			if( $opcion!="consulta" ){
+			?>
+			,
+			editor: comboConceptos 
+			<?
+			}
+			?>
+		}
+		,
+		<?
+		}
+		?>
 		{
 			header: "Valor",
 			width: 50,
@@ -363,6 +421,22 @@ var gridOnvalidateedit = function(e){
 		)		
 	}
 	
+	if( e.field == "concepto"){		
+		var rec = e.record;		   
+		var ed = this.colModel.getCellEditor(e.column, e.row);		
+		var store = ed.field.store;
+		
+	    store.each( function( r ){				
+				if( r.data.idconcepto==e.value ){						
+					rec.set("idconcepto", r.data.idconcepto);
+					
+					e.value = r.data.concepto;				
+					return true;
+				}
+			}
+		)		
+	}
+	
 	if( e.field == "linea"){		
 		var rec = e.record;		   
 		var ed = this.colModel.getCellEditor(e.column, e.row);		
@@ -457,8 +531,14 @@ function guardarRecargosPorLinea(){
 						
 		changes['id']=r.id;
 		changes['idlinea']=r.data.idlinea;										
- 	    changes['idrecargo']=r.data.idrecargo;											
-		
+ 	    changes['idrecargo']=r.data.idrecargo;	
+		<?		
+		if( $idtrafico=="99-999" && $transporte==Constantes::MARITIMO ){
+		?>										
+		changes['idconcepto']=r.data.idconcepto;
+		<?
+		}
+		?>
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
@@ -503,6 +583,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 						var id = this.ctxRecord.id;						
 						var idlinea = this.ctxRecord.data.idlinea;
 						var idrecargo = this.ctxRecord.data.idrecargo;
+						var idconcepto = this.ctxRecord.data.idconcepto;
 											
 						if( idrecargo ){
 							
@@ -515,6 +596,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 								params :	{									
 									idlinea: idlinea,									
 									idrecargo: idrecargo,
+									idconcepto: idconcepto,
 									id: id
 
 								},
