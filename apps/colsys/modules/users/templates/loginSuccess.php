@@ -1,6 +1,4 @@
-<?
-use_helper("Validation");
-?>
+
 <form action="<?=url_for("users/login")?>" method="post">
 <table width="200" border="1" class="tableForm">
 	<tr>
@@ -10,7 +8,7 @@ use_helper("Validation");
 		<td>Usuario:</td>
 		<td>
 		
-		<?=form_error("clave_invalida","No se ha podido iniciar sesion")?>
+		
 		<input type="text" name="username" />
 		</td>
 	</tr>
