@@ -54,7 +54,7 @@ $proyecto = $ticket->getHdeskProject();
   </tr>
   
   <tr>
-    <td width="50%" class="listar"><b>Reportado por:</b> <?=$ticket->getCaLogin()?></td>
+    <td width="50%" class="listar"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?></td>
     <td width="50%" class="listar"><b>Abierto </b> <?=$ticket->getCaOpened("Y-m-d H:i A")?> </td>
   </tr>  
  
@@ -81,7 +81,6 @@ $proyecto = $ticket->getHdeskProject();
 		<b>Proyecto: </b>
 		<?
 		if( $proyecto ){
-			
 			echo Utils::replace($proyecto->getCaName()); 
 		}
 		?>
@@ -98,7 +97,10 @@ $proyecto = $ticket->getHdeskProject();
 		<?
 		
 		if( $ticket->getCaAssignedTo() ){
-			echo $ticket->getCaAssignedTo();
+			$asignado = $ticket->getAssignedUser();
+			if( $asignado ){
+				echo $asignado->getCaNombre();
+			}
 		}else{
 			if( $nivel>0 && $ticket->getCaAction()=="Abierto" ){
 				echo link_to("Tomar asignaci&oacute;n" , "helpdesk/tomarAsignacion?id=".$ticket->getCaIdticket() );
@@ -114,8 +116,8 @@ $proyecto = $ticket->getHdeskProject();
 		<?=$ticket->getCaType()?>
 	</td>
     <td class="listar">
-		<b>Estado: 	</b>
-		<?=$ticket->getCaAction()?>
+		<b>Estado: 	</b>		
+		<?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","helpdesk/cerrarTicket?id=".$ticket->getcaidticket() ):""?>
 	</td>
   </tr>
   <tr>
