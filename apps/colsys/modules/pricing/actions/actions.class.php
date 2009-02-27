@@ -965,6 +965,12 @@ class pricingActions extends sfActions
 			$this->recargos = TipoRecargoPeer::doSelect( $c );
 			
 			$c = new Criteria();
+			$c->add( ConceptoPeer::CA_TRANSPORTE, $transporte);	
+			$c->add( ConceptoPeer::CA_MODALIDAD , $modalidad );
+			$c->addAscendingOrderByColumn( ConceptoPeer::CA_CONCEPTO );
+			$this->conceptos = ConceptoPeer::doSelect( $c );
+			
+			$c = new Criteria();
 			
 			if( $impoexpo==Constantes::IMPO ){			
 				$c->addJoin( TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );		
@@ -1036,6 +1042,8 @@ class pricingActions extends sfActions
 				'linea'=>$recargo->getTransportador()->getCaNombre(),
 				'idrecargo'=>$recargo->getCaIdrecargo(),
 				'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+				'idconcepto'=>$recargo->getCaIdconcepto(),
+				'concepto'=>$recargo->getCaIdconcepto()==9999?"Recargo General":utf8_encode($recargo->getConcepto()->getCaConcepto()),
 				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
 				'vlrminimo'=>$recargo->getCaVlrminimo(),
 				'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),
@@ -1084,16 +1092,21 @@ class pricingActions extends sfActions
 		$idtrafico = $this->getRequestParameter("idtrafico");
 		$idlinea = $this->getRequestParameter("idlinea");		
 		$idrecargo = $this->getRequestParameter("idrecargo");
+		$idconcepto = $this->getRequestParameter("idconcepto");
 		$modalidad = $this->getRequestParameter("modalidad");
 		$impoexpo = $this->getRequestParameter("impoexpo");
 		//echo $impoexpo;
+		
+		if( !$idconcepto ){
+			$idconcepto = 9999;
+		}
 		
 		$this->forward404Unless( $idtrafico );
 		$this->forward404Unless( $idlinea );
 		$this->forward404Unless( $modalidad );
 		$this->forward404Unless( $impoexpo );
 		
-		$recargo = PricRecargosxLineaPeer::retrieveByPk($idtrafico, $idlinea, $idrecargo , $modalidad, utf8_decode($impoexpo));
+		$recargo = PricRecargosxLineaPeer::retrieveByPk($idtrafico, $idlinea, $idrecargo, $idconcepto , $modalidad, utf8_decode($impoexpo));
 		if( !$recargo ){
 			
 			$recargo = new PricRecargosxLinea();
@@ -1108,6 +1121,11 @@ class pricingActions extends sfActions
 		$user = $this->getUser();
 		$recargo->setCaUsucreado( $user->getUserId() );
 		$recargo->setCaFchcreado( time() );
+		
+		
+		if( $this->getRequestParameter("idconcepto") ){
+			$recargo->setCaIdconcepto( $this->getRequestParameter("idconcepto") );
+		}
 		
 					
 		if( $this->getRequestParameter("vlrrecargo") ){
@@ -1149,15 +1167,21 @@ class pricingActions extends sfActions
 		$idtrafico = $this->getRequestParameter("idtrafico");
 		$idlinea = $this->getRequestParameter("idlinea");		
 		$idrecargo = $this->getRequestParameter("idrecargo");
+		$idconcepto = $this->getRequestParameter("idconcepto");
 		$modalidad = $this->getRequestParameter("modalidad");
 		$impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
+		
+		
+		if( !$idconcepto ){
+			$idconcepto = 9999;
+		}
 		
 		$this->forward404Unless( $idtrafico );
 		$this->forward404Unless( $idlinea );
 		$this->forward404Unless( $modalidad );
 		$this->forward404Unless( $impoexpo );
 		
-		$recargo = PricRecargosxLineaPeer::retrieveByPk($idtrafico, $idlinea, $idrecargo , $modalidad, $impoexpo);
+		$recargo = PricRecargosxLineaPeer::retrieveByPk($idtrafico, $idlinea, $idrecargo, $idconcepto , $modalidad, $impoexpo);
 				
 		$this->responseArray = array();
 		if( $recargo ){
