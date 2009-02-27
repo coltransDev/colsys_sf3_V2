@@ -12,20 +12,7 @@ class PDF extends FPDF {
 	private $grouping = false;
 	private $bufferGroup = array();
 	
-	/*
-    //Cabecera de página
-    function Header() {
-        $this->Ln(5);
-    }
-
-    //Pie de página
-    function Footer() {
-        //Posición: a 1,5 cm del final
-        $this->SetY(-15);
-        //Arial italic 8
-        $this->SetFont('Arial','I',8);
-        //Número de página
-    }*/
+	
 	
 	//Cabecera de página
     function Header() {
