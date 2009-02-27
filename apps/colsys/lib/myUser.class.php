@@ -70,7 +70,7 @@ class myUser extends sfBasicSecurityUser
 	}
 	
 	
-	public function getNivelAcceso( $rutina="" ){		
+	public function getNivelAcceso( $rutina ){		
 		$acceso = AccesoUsuarioPeer::retrieveByPk( $rutina, $this->getUserId() );
 		
 		if( $acceso ){
