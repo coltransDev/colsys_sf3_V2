@@ -1527,6 +1527,7 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 	
 	public function executeImportarHelpdesk(){
 		
+		exit();
 		
 		$c = new Criteria();
 		//$c->add( ExoTicketPeer::STATUS, "Open" );
@@ -1550,7 +1551,7 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 				$hTicket->setCaLogin( strtolower($ticket->getAdminUser()) );
 			}
 			
-			$hTicket->setCaOpened( date("Y-m-d" ,$ticket->getOpened() ) );
+			$hTicket->setCaOpened( date("Y-m-d h:i:s" ,$ticket->getOpened() ) );
 			$hTicket->setCaTitle( utf8_decode($ticket->getTitle()) );
 			$hTicket->setCaText( utf8_decode($ticket->getText()) );
 			if( $ticket->getOwner() ){
@@ -1590,7 +1591,7 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 					}
 				}
 				$hresponse->setCaText( utf8_decode($response->getComment()) );
-				$hresponse->setCaCreatedat( date("Y-m-d" ,$response->getPosted() ) );
+				$hresponse->setCaCreatedat( date("Y-m-d H:i:s" ,$response->getPosted() ) );
 				$hresponse->save();
 				
 			}
@@ -1619,6 +1620,85 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 		
 		return sfView::NONE;
 	}
+	
+	
+	
+	public function executeImportarHelpdeskRespuestas(){
+		exit();	
+		$c = new Criteria();
+		$tickets = HdeskTicketPeer::doSelect( $c );
+		
+		foreach( $tickets as $ticket ){
+			$text = str_replace("<br />", "<br>", $ticket->getCaText());
+			
+			echo $text;
+			
+			$ticket->setCaText( $text );
+			$ticket->save();
+			
+			/*if( !$ticket->getCaResponseTime() ){
+			
+				$logins = array(  );
+				
+				$c = new Criteria();		
+				$c->add( HdeskUserGroupPeer::CA_IDGROUP, $ticket->getCaIdgroup() );
+				$c->addAscendingOrderByColumn( HdeskUserGroupPeer::CA_LOGIN);
+				$usuarios = HdeskUserGroupPeer::doSelect( $c );		
+				foreach( $usuarios as $usuario ){
+					$logins[]=$usuario->getCaLogin();
+				}
+				
+				
+				$c = new Criteria();
+				$c->add( HdeskResponsePeer::CA_IDTICKET, $ticket->getcaIdticket() );
+				$c->add( HdeskResponsePeer::CA_LOGIN, $logins, Criteria::IN );
+				$c->addAscendingOrderByColumn( HdeskResponsePeer::CA_CREATEDAT );		
+				
+				$response = HdeskResponsePeer::doSelectOne( $c );
+				
+				if( $response ){
+					$ticket->setCaResponsetime($response->getcaCreatedat());
+					$ticket->save();
+				}
+			}*/
+		}
+		
+		
+		
+		return sfView::NONE;
+	}
+	
+	
+	
+	
+	public function executePermisosColsys(){
+		$c = new Criteria();		
+		$usuarios = UsuarioPeer::doSelect( $c );
+		
+		foreach( $usuarios as $usuario ){
+			$rutinas = explode("|", $usuario->getCaRutinas() );
+			if( in_array("0200220000", $rutinas)  ){
+				$rutinas[] = "0200240000";
+			}
+			
+			//$rutinas[] = "0500600000";
+			//$rutinas[] = "0500700000";
+			
+			$rutinas = array_unique( $rutinas );
+			sort($rutinas); 
+			$rutinasStr = implode("|", $rutinas );
+			if( $rutinasStr ){
+				$usuario->setCaRutinas( $rutinasStr );
+			}else{
+				$usuario->setCaRutinas( null );
+			}
+			echo $usuario->getCaLogin()." ".implode("|", $rutinas )." <br />";
+			$usuario->save();				
+			
+		}		
+	}
+	
+	
 	
 }
 
