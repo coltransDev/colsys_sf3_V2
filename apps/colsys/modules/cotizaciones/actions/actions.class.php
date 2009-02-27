@@ -11,6 +11,7 @@
 class cotizacionesActions extends sfActions
 {
 	
+	const RUTINA = "0200220000";
 	/*************************************************************************
 	* OPCIONES GENERALES
 	*
@@ -138,6 +139,8 @@ class cotizacionesActions extends sfActions
 			
 		}
 		
+		$this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
+		
 	}		
 
 	/*
@@ -199,6 +202,8 @@ class cotizacionesActions extends sfActions
 			$cotizacion->setCaUsuactualizado( $user_id );							
 		}
 		$cotizacion->save();
+		
+		
 		
 		$this->options = array();
 		$this->options['idcotizacion']=$cotizacion->getCaIdcotizacion();		
@@ -1113,7 +1118,7 @@ class cotizacionesActions extends sfActions
 			$recargo->setCaTipo( $this->getRequestParameter("tiporecargo") );
 		}*/
 		
-		if( $this->getRequestParameter("valor_tar") ){
+		if( $this->getRequestParameter("valor_tar")!==null ){
 			$recargo->setCaValorTar( $this->getRequestParameter("valor_tar") );
 		}
 		
@@ -1121,7 +1126,7 @@ class cotizacionesActions extends sfActions
 			$recargo->setCaAplicaTar( utf8_decode($this->getRequestParameter("aplica_tar")) );
 		}
 		
-		if( $this->getRequestParameter("valor_min") ){
+		if( $this->getRequestParameter("valor_min")!==null ){
 			$recargo->setCaValorMin( $this->getRequestParameter("valor_min") );
 		}
 		
