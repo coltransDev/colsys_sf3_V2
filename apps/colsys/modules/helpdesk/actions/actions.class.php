@@ -129,6 +129,7 @@ class helpdeskActions extends sfActions
 				$this->tickets = HdeskTicketPeer::doSelect( $c );
 				break;
 		}
+		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );
 	}
 	
 	/**
@@ -151,6 +152,13 @@ class helpdeskActions extends sfActions
 		if( !$this->nivel ){
 			$this->nivel = 0;
 		}
+						
+		if( $request->getParameter("format")=="email" ){
+			$this->setTemplate("verTicketEmail");
+			$this->setLayout("none");
+		}
+		
+		
 	}
 	
 	/**
@@ -192,17 +200,61 @@ class helpdeskActions extends sfActions
 	*/
 	public function executeGuardarRespuestaTicket(sfWebRequest $request){
 		
-		$this->ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("idticket") );
+		$ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("idticket") );
 		
 		$user = $this->getUser();
 		
 		$respuesta = new HdeskResponse();
 		$respuesta->setCaIdTicket( $request->getParameter("idticket") );
-		$respuesta->setCaText( $request->getParameter("comentario") );
+		$respuesta->setCaText( utf8_decode($request->getParameter("comentario")) );
 		$respuesta->setCaLogin( $user->getUserId() );
 		$respuesta->setCaCreatedat( time() );
 		$respuesta->save();
 		
+		$logins = array(  );
+		if( $ticket->getCaAssignedto() ){
+			$logins[]=$ticket->getCaAssignedto();
+		}else{
+			$c = new Criteria();		
+			$c->add( HdeskUserGroupPeer::CA_IDGROUP, $ticket->getCaIdgroup() );
+			$c->addAscendingOrderByColumn( HdeskUserGroupPeer::CA_LOGIN);
+			$usuarios = HdeskUserGroupPeer::doSelect( $c );		
+			foreach( $usuarios as $usuario ){
+				$logins[]=$usuario->getCaLogin();
+			}
+		}
+				
+		if( $ticket->getCaAssignedto()==$this->getUser()->getUserId() || in_array($this->getUser()->getUserId(),$logins ) ){
+			$ticket->setCaResponsetime( time() );
+			$ticket->save();
+		}
+		
+		
+		if( $k=array_search( $this->getUser()->getUserId(), $logins)!==false ){
+			unset($logins[$k]);
+		}
+		
+		$logins = array_unique( $logins );		
+		foreach( $logins as $login ){
+			$notificacion = new Notificacion();
+			$notificacion->setCaLogin( $login );
+			$notificacion->setCaUrl( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
+			$notificacion->setCaFchcreado( time() );
+			$notificacion->setCaUsucreado( $this->getUser()->getUserId() );
+			
+			$request->setParameter("id", $ticket->getCaIdticket() );
+			$request->setParameter("format", "email" );
+			
+			$notificacion->setCaTitulo( "Se ha creado una respuesta Ticket #".$ticket->getCaIdticket() );
+			$texto = "Se ha creado una respuesta \n\n<br /><br />" ;
+			
+			$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
+			
+			$notificacion->setCaTexto( $texto );
+			$notificacion->save();	
+		}
+		
+		$this->ticket = $ticket;
 		$this->setLayout("ajax");		
 	}
 	
@@ -283,12 +335,15 @@ class helpdeskActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeFormTicketGuardar(sfWebRequest $request){
-		
+		$update = false;
 		$user = $this->getUser();
 		if( $request->getParameter("idticket") ){
 			$ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("idticket") );
+			$update = true;
 		}else{
-			$ticket = new HdeskTicket();	
+			$ticket = new HdeskTicket();
+			$ticket->setCaLogin( $user->getUserId() );
+			$ticket->setCaOpened( time() );	
 		}
 			
 		$ticket->setCaIdgroup( $request->getParameter("area") );
@@ -311,9 +366,52 @@ class helpdeskActions extends sfActions
 			$ticket->setCaAssignedto( $request->getParameter("assignedto") );
 		}
 		
-		$ticket->setCaLogin( $user->getUserId() );
-		$ticket->setCaOpened( time() );
+		
 		$ticket->save();
+		
+		$logins = array( );
+		if( $ticket->getCaAssignedto() ){
+			$logins[]=$ticket->getCaAssignedto();
+		}else{
+			$c = new Criteria();		
+			$c->add( HdeskUserGroupPeer::CA_IDGROUP, $ticket->getCaIdgroup() );
+			$c->addAscendingOrderByColumn( HdeskUserGroupPeer::CA_LOGIN);
+			$usuarios = HdeskUserGroupPeer::doSelect( $c );		
+			foreach( $usuarios as $usuario ){
+				$logins[]=$usuario->getCaLogin();
+			}
+		}
+		
+		if( $k=array_search( $this->getUser()->getUserId(), $logins)!==false ){
+			unset($logins[$k]);
+		}
+		
+		$logins = array_unique( $logins );
+		foreach( $logins as $login ){ 
+			$notificacion = new Notificacion();
+			$notificacion->setCaLogin( $login );
+			$notificacion->setCaUrl( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
+			$notificacion->setCaFchcreado( time() );
+			$notificacion->setCaUsucreado( $this->getUser()->getUserId() );
+			
+			$request->setParameter("id", $ticket->getCaIdticket() );
+			$request->setParameter("format", "email" );
+			
+			if( !$update ){
+				$notificacion->setCaTitulo( "Nuevo ticket #".$ticket->getCaIdticket() );
+				
+				$texto = "Se ha creado un nuevo ticket \n\n<br /><br />" ;
+			}else{
+			
+				$notificacion->setCaTitulo( "Se ha editado el ticket #".$ticket->getCaIdticket() );
+				$texto = "Se ha editado el ticket \n\n<br /><br />" ;
+			}
+			
+			$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');			
+			$notificacion->setCaTexto( $texto );
+			$notificacion->save();		
+		}
+		
 		
 		$this->responseArray = array("idticket"=>$ticket->getCaIdticket(), "success"=>true);	
 		$this->setTemplate("responseTemplate");		
@@ -337,7 +435,68 @@ class helpdeskActions extends sfActions
 		
 	}
 	
+	/**
+	* Toma asignacion de un ticket 
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeCerrarTicket(sfWebRequest $request){
+		if( $request->getParameter("id") ){
+			$ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("id") );
+			$ticket->setCaAction( "Cerrado" );
+			$ticket->save();
+		}
+		$this->redirect("helpdesk/verTicket?id=".$request->getParameter("id"));
+		
+	}
 	
 	
+	public function executeLastPosts()
+	{
+	
+	  //error_reporting( E_ERROR );
+      	
+	  $feed = new sfRss201Feed();
+	
+	  $feed->initialize(array(
+		'title'       => 'Tickets disponibles',
+		'link'        => 'http://www.internetnews.com',
+		'authorEmail' => 'pclive@myblog.com',
+		'authorName'  => 'Peter Clive',
+		'description' => "aasdasdalkjalkjdalskjdaljdaljdalkjdalkjdaasdkjaljd",
+		'language' => 'en-us'
+	  ));
+		/*
+	  $c = new Criteria;
+	  $c->addDescendingOrderByColumn(PostPeer::CREATED_AT);
+	  $c->setLimit(5);
+	  $posts = PostPeer::doSelect($c);
+	
+	  foreach ($posts as $post)
+	  {*/
+		$item = new sfFeedItem();
+		$item->initialize(array(
+		  'title'       => "Titulo",
+		  'link'        => 'helpdesk/verTicket',
+		  //'authorName'  => 'Andres',
+		  //'authorEmail' => 'abotero@coltrans.com.co',
+		  //'pubDate'     => time(),
+		  //'uniqueId'    => "helpdesk/verTicket",
+		  'description' => "aasdasdalkjalkjdalskjdaljdaljdalkjdalkjdaasdkjaljd",
+		   'comments' => "aasdasda",
+		));
+	
+		$feed->addItem($item);
+		
+		
+		
+	
+		$feed->addItem($item);
+	  //}
+	  sfConfig::set('sf_web_debug', false) ;
+	 // $this->setLayout("none");	
+	  $this->feed = $feed;
+	}
+
 }
 ?>
