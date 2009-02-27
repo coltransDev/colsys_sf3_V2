@@ -62,6 +62,8 @@ class usersActions extends sfActions
 			}
 		}
 		
+		$this->setLayout("login");
+		
 		
 	}
 	
