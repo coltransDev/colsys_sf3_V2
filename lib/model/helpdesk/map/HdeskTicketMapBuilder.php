@@ -86,6 +86,8 @@ class HdeskTicketMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_ACTION', 'CaAction', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_RESPONSETIME', 'CaResponsetime', 'TIMESTAMP', false, null);
+
 	} // doBuild()
 
 } // HdeskTicketMapBuilder

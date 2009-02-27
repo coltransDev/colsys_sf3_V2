@@ -19,7 +19,7 @@ abstract class BasePricRecargosxLineaLogPeer {
 	const CLASS_DEFAULT = 'lib.model.pricing.PricRecargosxLineaLog';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 16;
+	const NUM_COLUMNS = 17;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -32,6 +32,9 @@ abstract class BasePricRecargosxLineaLogPeer {
 
 	/** the column name for the CA_IDRECARGO field */
 	const CA_IDRECARGO = 'bs_pricrecargosxlinea.CA_IDRECARGO';
+
+	/** the column name for the CA_IDCONCEPTO field */
+	const CA_IDCONCEPTO = 'bs_pricrecargosxlinea.CA_IDCONCEPTO';
 
 	/** the column name for the CA_MODALIDAD field */
 	const CA_MODALIDAD = 'bs_pricrecargosxlinea.CA_MODALIDAD';
@@ -93,11 +96,11 @@ abstract class BasePricRecargosxLineaLogPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaIdlinea', 'CaIdrecargo', 'CaModalidad', 'CaImpoexpo', 'CaVlrrecargo', 'CaAplicacion', 'CaVlrminimo', 'CaAplicacionMin', 'CaObservaciones', 'CaFchinicio', 'CaFchvencimiento', 'CaFchcreado', 'CaUsucreado', 'CaIdmoneda', 'CaConsecutivo', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtrafico', 'caIdlinea', 'caIdrecargo', 'caModalidad', 'caImpoexpo', 'caVlrrecargo', 'caAplicacion', 'caVlrminimo', 'caAplicacionMin', 'caObservaciones', 'caFchinicio', 'caFchvencimiento', 'caFchcreado', 'caUsucreado', 'caIdmoneda', 'caConsecutivo', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDTRAFICO, self::CA_IDLINEA, self::CA_IDRECARGO, self::CA_MODALIDAD, self::CA_IMPOEXPO, self::CA_VLRRECARGO, self::CA_APLICACION, self::CA_VLRMINIMO, self::CA_APLICACION_MIN, self::CA_OBSERVACIONES, self::CA_FCHINICIO, self::CA_FCHVENCIMIENTO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_IDMONEDA, self::CA_CONSECUTIVO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_idlinea', 'ca_idrecargo', 'ca_modalidad', 'ca_impoexpo', 'ca_vlrrecargo', 'ca_aplicacion', 'ca_vlrminimo', 'ca_aplicacion_min', 'ca_observaciones', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_fchcreado', 'ca_usucreado', 'ca_idmoneda', 'ca_consecutivo', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico', 'CaIdlinea', 'CaIdrecargo', 'CaIdconcepto', 'CaModalidad', 'CaImpoexpo', 'CaVlrrecargo', 'CaAplicacion', 'CaVlrminimo', 'CaAplicacionMin', 'CaObservaciones', 'CaFchinicio', 'CaFchvencimiento', 'CaFchcreado', 'CaUsucreado', 'CaIdmoneda', 'CaConsecutivo', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtrafico', 'caIdlinea', 'caIdrecargo', 'caIdconcepto', 'caModalidad', 'caImpoexpo', 'caVlrrecargo', 'caAplicacion', 'caVlrminimo', 'caAplicacionMin', 'caObservaciones', 'caFchinicio', 'caFchvencimiento', 'caFchcreado', 'caUsucreado', 'caIdmoneda', 'caConsecutivo', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTRAFICO, self::CA_IDLINEA, self::CA_IDRECARGO, self::CA_IDCONCEPTO, self::CA_MODALIDAD, self::CA_IMPOEXPO, self::CA_VLRRECARGO, self::CA_APLICACION, self::CA_VLRMINIMO, self::CA_APLICACION_MIN, self::CA_OBSERVACIONES, self::CA_FCHINICIO, self::CA_FCHVENCIMIENTO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_IDMONEDA, self::CA_CONSECUTIVO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico', 'ca_idlinea', 'ca_idrecargo', 'ca_idconcepto', 'ca_modalidad', 'ca_impoexpo', 'ca_vlrrecargo', 'ca_aplicacion', 'ca_vlrminimo', 'ca_aplicacion_min', 'ca_observaciones', 'ca_fchinicio', 'ca_fchvencimiento', 'ca_fchcreado', 'ca_usucreado', 'ca_idmoneda', 'ca_consecutivo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
 	);
 
 	/**
@@ -107,11 +110,11 @@ abstract class BasePricRecargosxLineaLogPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaIdlinea' => 1, 'CaIdrecargo' => 2, 'CaModalidad' => 3, 'CaImpoexpo' => 4, 'CaVlrrecargo' => 5, 'CaAplicacion' => 6, 'CaVlrminimo' => 7, 'CaAplicacionMin' => 8, 'CaObservaciones' => 9, 'CaFchinicio' => 10, 'CaFchvencimiento' => 11, 'CaFchcreado' => 12, 'CaUsucreado' => 13, 'CaIdmoneda' => 14, 'CaConsecutivo' => 15, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtrafico' => 0, 'caIdlinea' => 1, 'caIdrecargo' => 2, 'caModalidad' => 3, 'caImpoexpo' => 4, 'caVlrrecargo' => 5, 'caAplicacion' => 6, 'caVlrminimo' => 7, 'caAplicacionMin' => 8, 'caObservaciones' => 9, 'caFchinicio' => 10, 'caFchvencimiento' => 11, 'caFchcreado' => 12, 'caUsucreado' => 13, 'caIdmoneda' => 14, 'caConsecutivo' => 15, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDTRAFICO => 0, self::CA_IDLINEA => 1, self::CA_IDRECARGO => 2, self::CA_MODALIDAD => 3, self::CA_IMPOEXPO => 4, self::CA_VLRRECARGO => 5, self::CA_APLICACION => 6, self::CA_VLRMINIMO => 7, self::CA_APLICACION_MIN => 8, self::CA_OBSERVACIONES => 9, self::CA_FCHINICIO => 10, self::CA_FCHVENCIMIENTO => 11, self::CA_FCHCREADO => 12, self::CA_USUCREADO => 13, self::CA_IDMONEDA => 14, self::CA_CONSECUTIVO => 15, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_idlinea' => 1, 'ca_idrecargo' => 2, 'ca_modalidad' => 3, 'ca_impoexpo' => 4, 'ca_vlrrecargo' => 5, 'ca_aplicacion' => 6, 'ca_vlrminimo' => 7, 'ca_aplicacion_min' => 8, 'ca_observaciones' => 9, 'ca_fchinicio' => 10, 'ca_fchvencimiento' => 11, 'ca_fchcreado' => 12, 'ca_usucreado' => 13, 'ca_idmoneda' => 14, 'ca_consecutivo' => 15, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtrafico' => 0, 'CaIdlinea' => 1, 'CaIdrecargo' => 2, 'CaIdconcepto' => 3, 'CaModalidad' => 4, 'CaImpoexpo' => 5, 'CaVlrrecargo' => 6, 'CaAplicacion' => 7, 'CaVlrminimo' => 8, 'CaAplicacionMin' => 9, 'CaObservaciones' => 10, 'CaFchinicio' => 11, 'CaFchvencimiento' => 12, 'CaFchcreado' => 13, 'CaUsucreado' => 14, 'CaIdmoneda' => 15, 'CaConsecutivo' => 16, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtrafico' => 0, 'caIdlinea' => 1, 'caIdrecargo' => 2, 'caIdconcepto' => 3, 'caModalidad' => 4, 'caImpoexpo' => 5, 'caVlrrecargo' => 6, 'caAplicacion' => 7, 'caVlrminimo' => 8, 'caAplicacionMin' => 9, 'caObservaciones' => 10, 'caFchinicio' => 11, 'caFchvencimiento' => 12, 'caFchcreado' => 13, 'caUsucreado' => 14, 'caIdmoneda' => 15, 'caConsecutivo' => 16, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTRAFICO => 0, self::CA_IDLINEA => 1, self::CA_IDRECARGO => 2, self::CA_IDCONCEPTO => 3, self::CA_MODALIDAD => 4, self::CA_IMPOEXPO => 5, self::CA_VLRRECARGO => 6, self::CA_APLICACION => 7, self::CA_VLRMINIMO => 8, self::CA_APLICACION_MIN => 9, self::CA_OBSERVACIONES => 10, self::CA_FCHINICIO => 11, self::CA_FCHVENCIMIENTO => 12, self::CA_FCHCREADO => 13, self::CA_USUCREADO => 14, self::CA_IDMONEDA => 15, self::CA_CONSECUTIVO => 16, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtrafico' => 0, 'ca_idlinea' => 1, 'ca_idrecargo' => 2, 'ca_idconcepto' => 3, 'ca_modalidad' => 4, 'ca_impoexpo' => 5, 'ca_vlrrecargo' => 6, 'ca_aplicacion' => 7, 'ca_vlrminimo' => 8, 'ca_aplicacion_min' => 9, 'ca_observaciones' => 10, 'ca_fchinicio' => 11, 'ca_fchvencimiento' => 12, 'ca_fchcreado' => 13, 'ca_usucreado' => 14, 'ca_idmoneda' => 15, 'ca_consecutivo' => 16, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
 	);
 
 	/**
@@ -198,6 +201,8 @@ abstract class BasePricRecargosxLineaLogPeer {
 		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_IDLINEA);
 
 		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_IDRECARGO);
+
+		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_IDCONCEPTO);
 
 		$criteria->addSelectColumn(PricRecargosxLineaLogPeer::CA_MODALIDAD);
 
@@ -425,10 +430,10 @@ abstract class BasePricRecargosxLineaLogPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 15] === null) {
+		if ($row[$startcol + 16] === null) {
 			return null;
 		}
-		return (string) $row[$startcol + 15];
+		return (string) $row[$startcol + 16];
 	}
 
 	/**
@@ -552,6 +557,56 @@ abstract class BasePricRecargosxLineaLogPeer {
 		}
 
 		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Concepto table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinConcepto(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(PricRecargosxLineaLogPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
 
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -700,6 +755,73 @@ abstract class BasePricRecargosxLineaLogPeer {
 
 
 	/**
+	 * Selects a collection of PricRecargosxLineaLog objects pre-filled with their Concepto objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of PricRecargosxLineaLog objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinConcepto(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		PricRecargosxLineaLogPeer::addSelectColumns($c);
+		$startcol = (PricRecargosxLineaLogPeer::NUM_COLUMNS - PricRecargosxLineaLogPeer::NUM_LAZY_LOAD_COLUMNS);
+		ConceptoPeer::addSelectColumns($c);
+
+		$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = PricRecargosxLineaLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxLineaLogPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = PricRecargosxLineaLogPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				PricRecargosxLineaLogPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = ConceptoPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = ConceptoPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					ConceptoPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (PricRecargosxLineaLog) to $obj2 (Concepto)
+				$obj2->addPricRecargosxLineaLog($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
@@ -737,6 +859,7 @@ abstract class BasePricRecargosxLineaLogPeer {
 
 		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+		$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -776,8 +899,12 @@ abstract class BasePricRecargosxLineaLogPeer {
 		TipoRecargoPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (TipoRecargoPeer::NUM_COLUMNS - TipoRecargoPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		ConceptoPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (ConceptoPeer::NUM_COLUMNS - ConceptoPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 		$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+		$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -836,6 +963,26 @@ abstract class BasePricRecargosxLineaLogPeer {
 				$obj3->addPricRecargosxLineaLog($obj1);
 			} // if joined row not null
 
+			// Add objects for joined Concepto rows
+
+			$key4 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+			if ($key4 !== null) {
+				$obj4 = ConceptoPeer::getInstanceFromPool($key4);
+				if (!$obj4) {
+
+					$omClass = ConceptoPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					ConceptoPeer::addInstanceToPool($obj4, $key4);
+				} // if obj4 loaded
+
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj4 (Concepto)
+				$obj4->addPricRecargosxLineaLog($obj1);
+			} // if joined row not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -875,6 +1022,7 @@ abstract class BasePricRecargosxLineaLogPeer {
 		}
 	
 				$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+				$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -919,6 +1067,52 @@ abstract class BasePricRecargosxLineaLogPeer {
 		}
 	
 				$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+				$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Concepto table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptConcepto(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			PricRecargosxLineaLogPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(PricRecargosxLineaLogPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+				$criteria->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -958,7 +1152,11 @@ abstract class BasePricRecargosxLineaLogPeer {
 		TipoRecargoPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (TipoRecargoPeer::NUM_COLUMNS - TipoRecargoPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		ConceptoPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (ConceptoPeer::NUM_COLUMNS - ConceptoPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+				$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -999,6 +1197,27 @@ abstract class BasePricRecargosxLineaLogPeer {
 
 			} // if joined row is not null
 
+				// Add objects for joined Concepto rows
+
+				$key3 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = ConceptoPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = ConceptoPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					ConceptoPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj3 (Concepto)
+				$obj3->addPricRecargosxLineaLog($obj1);
+
+			} // if joined row is not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1033,7 +1252,11 @@ abstract class BasePricRecargosxLineaLogPeer {
 		TransportadorPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		ConceptoPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (ConceptoPeer::NUM_COLUMNS - ConceptoPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+				$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1071,6 +1294,127 @@ abstract class BasePricRecargosxLineaLogPeer {
 
 				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj2 (Transportador)
 				$obj2->addPricRecargosxLineaLog($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Concepto rows
+
+				$key3 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = ConceptoPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = ConceptoPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					ConceptoPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj3 (Concepto)
+				$obj3->addPricRecargosxLineaLog($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of PricRecargosxLineaLog objects pre-filled with all related objects except Concepto.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of PricRecargosxLineaLog objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptConcepto(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		PricRecargosxLineaLogPeer::addSelectColumns($c);
+		$startcol2 = (PricRecargosxLineaLogPeer::NUM_COLUMNS - PricRecargosxLineaLogPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		TransportadorPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		TipoRecargoPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TipoRecargoPeer::NUM_COLUMNS - TipoRecargoPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+				$c->addJoin(array(PricRecargosxLineaLogPeer::CA_IDRECARGO,), array(TipoRecargoPeer::CA_IDRECARGO,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = PricRecargosxLineaLogPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = PricRecargosxLineaLogPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = PricRecargosxLineaLogPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				PricRecargosxLineaLogPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Transportador rows
+
+				$key2 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = TransportadorPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = TransportadorPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					TransportadorPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj2 (Transportador)
+				$obj2->addPricRecargosxLineaLog($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined TipoRecargo rows
+
+				$key3 = TipoRecargoPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = TipoRecargoPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = TipoRecargoPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TipoRecargoPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (PricRecargosxLineaLog) to the collection in $obj3 (TipoRecargo)
+				$obj3->addPricRecargosxLineaLog($obj1);
 
 			} // if joined row is not null
 

@@ -1811,6 +1811,53 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 		return $this->collPricRecargosxLineas;
 	}
 
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Transportador is new, it will return
+	 * an empty collection; or if this Transportador has previously
+	 * been saved, it will retrieve related PricRecargosxLineas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Transportador.
+	 */
+	public function getPricRecargosxLineasJoinConcepto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportadorPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargosxLineas === null) {
+			if ($this->isNew()) {
+				$this->collPricRecargosxLineas = array();
+			} else {
+
+				$criteria->add(PricRecargosxLineaPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				$this->collPricRecargosxLineas = PricRecargosxLineaPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(PricRecargosxLineaPeer::CA_IDLINEA, $this->ca_idlinea);
+
+			if (!isset($this->lastPricRecargosxLineaCriteria) || !$this->lastPricRecargosxLineaCriteria->equals($criteria)) {
+				$this->collPricRecargosxLineas = PricRecargosxLineaPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastPricRecargosxLineaCriteria = $criteria;
+
+		return $this->collPricRecargosxLineas;
+	}
+
 	/**
 	 * Clears out the collPricRecargosxLineaLogs collection (array).
 	 *
@@ -2006,6 +2053,53 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 
 			if (!isset($this->lastPricRecargosxLineaLogCriteria) || !$this->lastPricRecargosxLineaLogCriteria->equals($criteria)) {
 				$this->collPricRecargosxLineaLogs = PricRecargosxLineaLogPeer::doSelectJoinTipoRecargo($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastPricRecargosxLineaLogCriteria = $criteria;
+
+		return $this->collPricRecargosxLineaLogs;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Transportador is new, it will return
+	 * an empty collection; or if this Transportador has previously
+	 * been saved, it will retrieve related PricRecargosxLineaLogs from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Transportador.
+	 */
+	public function getPricRecargosxLineaLogsJoinConcepto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportadorPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargosxLineaLogs === null) {
+			if ($this->isNew()) {
+				$this->collPricRecargosxLineaLogs = array();
+			} else {
+
+				$criteria->add(PricRecargosxLineaLogPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				$this->collPricRecargosxLineaLogs = PricRecargosxLineaLogPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(PricRecargosxLineaLogPeer::CA_IDLINEA, $this->ca_idlinea);
+
+			if (!isset($this->lastPricRecargosxLineaLogCriteria) || !$this->lastPricRecargosxLineaLogCriteria->equals($criteria)) {
+				$this->collPricRecargosxLineaLogs = PricRecargosxLineaLogPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastPricRecargosxLineaLogCriteria = $criteria;
