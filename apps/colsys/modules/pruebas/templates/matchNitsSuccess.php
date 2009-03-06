@@ -10,6 +10,8 @@
 
 <?
 foreach($nits as  $nit ){
+	
+	$nit = trim( $nit );
 	if( $nit ){
 		$cliente = ClientePeer::retrieveByPk( $nit );			
 	}else{

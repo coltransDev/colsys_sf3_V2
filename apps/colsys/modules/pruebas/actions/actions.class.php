@@ -9,155 +9,7 @@
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
 class pruebasActions extends sfActions {
-	/*
-	* 1. Match exacto
-	*/
-	public function executeMatch() {
-		set_time_limit ( 0 );
-		$c = new Criteria ( );
-		$c->add ( InoClientesAirPeer::CA_IDREPORTE, 0 );
-		$c->addDescendingOrderByColumn ( InoClientesAirPeer::CA_REFERENCIA );
-		$c->setLimit ( 100 );
-		
-		$inos = InoClientesAirPeer::doSelect ( $c );
-		
-		foreach ( $inos as $ino ) {
-			echo "<strong>Ref:</strong>" . $ino->getCaReferencia () . " <strong>AWB:</strong>" . $ino->getCaHawb () . "<br />";
-			
-			$c = new Criteria ( );
-			$c->addJoin ( RepAvisoPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
-			$c->addJoin ( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO );
-			$c->add ( RepAvisoPeer::CA_DOCTRANSPORTE, $ino->getCaHawb () );
-			$c->add ( ContactoPeer::CA_IDCLIENTE, $ino->getCaIdcliente () );
-			$c->add ( ReportePeer::CA_TRANSPORTE, "A%", Criteria::LIKE );
-			$c->setDistinct ();
-			$reps = ReportePeer::doSelect ( $c );
-			foreach ( $reps as $rep ) {
-				if (count ( $rep ) == 1) {
-					$ino->setCaIdReporte ( $rep->getCaIdReporte () );
-					$ino->save ();
-					echo "<h3>OK</h3>";
-				}
-				echo "<br />";
-			}
-		
-		}
-		return sfView::NONE;
-	}
 	
-	/*
-	* 2. Match por similitud
-	*/
-	public function executeMatchSimil() {
-		set_time_limit ( 0 );
-		$c = new Criteria ( );
-		$c->add ( InoClientesAirPeer::CA_IDREPORTE, 0 );
-		$c->addDescendingOrderByColumn ( InoClientesAirPeer::CA_REFERENCIA );
-		$c->setLimit ( 200 );
-		
-		$inos = InoClientesAirPeer::doSelect ( $c );
-		
-		foreach ( $inos as $ino ) {
-			echo "<strong>Ref:</strong>" . $ino->getCaReferencia () . " <strong>AWB:</strong>" . $ino->getCaHawb () . "<br />";
-			
-			$c = new Criteria ( );
-			$c->addJoin ( RepAvisoPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
-			$c->addJoin ( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO );
-			$fecha = Utils::addDays ( $ino->getCaFchCreado (), - 15 );
-			
-			$c->add ( ReportePeer::CA_FCHREPORTE, $fecha, Criteria::GREATER_EQUAL );
-			$c->addAnd ( ReportePeer::CA_FCHREPORTE, $ino->getCaFchCreado (), Criteria::LESS_EQUAL );
-			$c->add ( ContactoPeer::CA_IDCLIENTE, $ino->getCaIdcliente () );
-			$c->add ( ReportePeer::CA_TRANSPORTE, "A%", Criteria::LIKE );
-			$c->setDistinct ();
-			$reps = ReportePeer::doSelect ( $c );
-			foreach ( $reps as $rep ) {
-				echo $rep->getCaIdreporte () . " <strong>cons:</strong> " . $rep->getCaConsecutivo () . " v" . $rep->getCaVersion () . "<br />";
-				$avisos = $rep->getRepAvisos ();
-				foreach ( $avisos as $aviso ) {
-					echo " <strong>doc:</strong> " . $aviso->getCaDocTransporte () . " Fch Salida" . $aviso->getCaFchSalida ();
-				}
-				
-				if (count ( $rep ) == 1) {
-					$ino->setCaIdReporte ( $rep->getCaIdReporte () );
-					//	$ino->save();
-					echo "<h3>OK</h3>";
-				}
-				//print_r($rep);
-				echo "<br />";
-			}
-		
-		}
-		return sfView::NONE;
-	}
-	
-	/*
-	* 2. Match por Levenshtein
-	*/
-	public function executeMatchLev() {
-		set_time_limit ( 0 );
-		$c = new Criteria ( );
-		$c->add ( InoClientesAirPeer::CA_IDREPORTE, 0 );
-		$c->addDescendingOrderByColumn ( InoClientesAirPeer::CA_REFERENCIA );
-		$c->setLimit ( 100 );
-		
-		$inos = InoClientesAirPeer::doSelect ( $c );
-		
-		foreach ( $inos as $ino ) {
-			echo "<strong>Ref:</strong>" . $ino->getCaReferencia () . " <strong>AWB:</strong>" . $ino->getCaHawb () . "<br />";
-			
-			$c = new Criteria ( );
-			$c->addJoin ( RepAvisoPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
-			$c->addJoin ( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO );
-			$fecha = Utils::addDays ( $ino->getCaFchCreado (), - 30 );
-			
-			$c->add ( ReportePeer::CA_FCHREPORTE, $fecha, Criteria::GREATER_EQUAL );
-			$c->addAnd ( ReportePeer::CA_FCHREPORTE, $ino->getCaFchCreado (), Criteria::LESS_EQUAL );
-			$c->add ( ContactoPeer::CA_IDCLIENTE, $ino->getCaIdcliente () );
-			$c->add ( ReportePeer::CA_TRANSPORTE, "A%", Criteria::LIKE );
-			$c->setDistinct ();
-			$reps = ReportePeer::doSelect ( $c );
-			$obj = null;
-			$obj2 = null;
-			foreach ( $reps as $rep ) {
-				
-				$avisos = $rep->getRepAvisos ();
-				$masCorta = 99999999;
-				$obj = null;
-				$obj2 = null;
-				foreach ( $avisos as $aviso ) {
-					
-					$lev = levenshtein ( $aviso->getCaDocTransporte (), $ino->getCaHawb () );
-					if ($lev < $masCorta) {
-						$masCorta = $lev;
-						$obj = $rep;
-						$obj2 = $aviso;
-					}
-				
-				}
-				
-			/*
-				if( count($reps)==1 ){
-					$ino->setCaIdReporte( $rep->getCaIdReporte() ); 
-				//	$ino->save();
-					echo "<h3>OK</h3>";
-				}*/
-			//print_r($rep);
-			//echo "<br />";
-			}
-			if ($obj) {
-				$rep = $obj;
-				$aviso = $obj2;
-				echo $rep->getCaIdreporte () . " <strong>cons:</strong> " . $rep->getCaConsecutivo () . " v" . $rep->getCaVersion ();
-				echo " <strong>doc:</strong> " . $aviso->getCaDocTransporte () . " ";
-				echo "<h3>OK</h3>";
-			}
-			echo "<br />";
-		
-		}
-		return sfView::NONE;
-	}
-		
 	
 	public function executeEncoding() {
 		//$sql =  "SET NAMES  'LATIN1'";
@@ -1511,17 +1363,7 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 	}
 	
 	
-	public function executeMatchNits(){
-		set_time_limit(0);
-		$path = "d:\\AlemaniaTotal.txt";
-		
-		$content = file_get_contents( $path ); 
-		
-		$this->nits = explode( "\n", $content );
-		
-		
-		
-	}
+	
 	
 	
 	
@@ -1698,6 +1540,23 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 		}		
 	}
 	
+	
+	
+	public function executeMatchNits(){
+		
+		sfConfig::set('sf_web_debug', false) ;	
+		set_time_limit(0);
+		$path = "d:\\AlemaniaTotal.txt";
+		
+		$content = file_get_contents( $path ); 		
+		$this->nits = explode( "\n", $content );
+		
+		$this->setLayout("none");
+		
+		
+		
+		
+	}
 	
 	
 }
