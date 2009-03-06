@@ -10,7 +10,7 @@ concepto:
 # default rules
 homepage:
   url:   /
-  param: { module: default, action: index }
+  param: { module: users, action: login }
 
 default_symfony:
   url:   /symfony/:action/*

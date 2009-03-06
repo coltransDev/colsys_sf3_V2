@@ -9,9 +9,9 @@ default:
     keywords:     symfony, project
     language:     en	
 
-  stylesheets:    [coltrans,   yui/calendar/calendar, tooltips/tooltips, ext/css/ext-all, ext/css/xtheme-gray.css]
+  stylesheets:    [coltrans,   yui/calendar/calendar, tooltips/tooltips, ext/css/ext-all, ext/css/xtheme-gray.css, menu/uvumi-dropdown]
 
-  javascripts:    [comunes, tiny_mce/tiny_mce,  prototype/prototype, prototype/effects, prototype/controls  , prototype/scriptaculous, tooltips/tooltips, modalbox/modalbox,  yui/yahoo/yahoo, yui/event/event, yui/dom/dom, yui/calendar/calendar, ext/adapter/ext/ext-base, ext/ext-all]
+  javascripts:    [comunes, yui/yahoo/yahoo, yui/event/event, yui/dom/dom, yui/calendar/calendar, ext/adapter/ext/ext-base, ext/ext-all, menu/mootools-for-dropdown, menu/UvumiDropdown-compressed]
 
   has_layout:     on
   layout:         layout

@@ -34,19 +34,21 @@ all:
 #  user:
 #    class: myUser
 #
+#  storage:
+#    class: sfSessionStorage
+#    param:
+#      session_name: colsys  
+
   storage:
-    class: sfSessionStorage
+    class: mySessionStorage
     param:
       session_name: colsys
-  
-#    class: mySessionStorage
-#    param:
-#      db_table:    session_storage              # Name of the table storing the sessions
-#      database:    session               # Name of the database connection to use
-      # Optional parameters
-#      db_id_col:   sess_id              # Name of the column storing the session id
-#      db_data_col: sess_data            # Name of the column storing the session data
-#      db_time_col: sess_time            # Name of the column storing the session timestamp
+      db_table:     control.tb_sessions
+      database:     propel
+      db_id_col:    sess_id
+      db_data_col:  sess_data
+      db_time_col:  sess_time
+      db_maxinactive_col:  max_inactive
 
 #
 #  view_cache:
