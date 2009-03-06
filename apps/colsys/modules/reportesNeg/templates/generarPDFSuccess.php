@@ -322,7 +322,7 @@ if( ($reporteNegocio->getCaImpoExpo()=="Importación" && $reporteNegocio->getCaCo
 	$pdf->SetFills ( array (0, 0, 0, 0 ) );
 	$pdf->SetAligns ( array ("L", "L", "L", "L" ) );
 	$pdf->SetStyles ( array ("", "", "", "" ) );
-	$pdf->Row ( array ("21.1 Con Colmas:  " . $repaduana->getCaTransnacarga (), "21.2 Tipo:\n" . $repaduana->getCaTransnatipo (), "21.4 Coordinador:\n" . $repaduana->getCaCoordinador (), $repaduana->getCaInstrucciones () ) );
+	$pdf->Row ( array ("21.1 Con Colmas:  " . $repaduana->getCaTransnacarga (), "21.2 Tipo:\n" . $repaduana->getCaTransnatipo (), "" /*"21.4 Coordinador:\n" . $repaduana->getCaCoordinador ()*/, $repaduana->getCaInstrucciones () ) );
 }
 
 $pdf->Ln ( 3 );

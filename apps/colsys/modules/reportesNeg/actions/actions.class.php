@@ -308,6 +308,7 @@ class reportesNegActions extends sfActions
 			$idconcliente = $this->getRequestParameter( "idconcliente" );
 			
 			$contacto = ContactoPeer::retrieveByPk( $idconcliente );
+			
 			$cliente = $contacto->getCliente();						
 			
 			//Colocar lista de correo			
@@ -406,7 +407,7 @@ class reportesNegActions extends sfActions
 				if( $cliente->getCaVendedor() ){
 					$reporteNegocio->setCaLogin( $cliente->getCaVendedor() );  
 				}else{
-					$reporteNegocio->setCaLogin( $user_id );  
+					$reporteNegocio->setCaLogin( "Comercial" );  
 				}
 				
 			}
@@ -771,32 +772,32 @@ class reportesNegActions extends sfActions
 		}
 		
 		$neta_tar =  $this->getRequestParameter("neta_tar");
-		if( $neta_tar ){
+		if( $neta_tar!==null ){
 			$gasto->setCaNetaTar( $neta_tar );
 		}
 		
 		$neta_min =  $this->getRequestParameter("neta_min");
-		if( $neta_min ){
+		if( $neta_min!==null ){
 			$gasto->setCaNetaMin( $neta_min );
 		}
 		
 		$reportar_tar =  $this->getRequestParameter("reportar_tar");
-		if( $reportar_tar ){
+		if( $reportar_tar!==null ){
 			$gasto->setCaReportarTar( $reportar_tar );
 		}
 		
 		$reportar_min =  $this->getRequestParameter("reportar_min");
-		if( $reportar_min ){
+		if( $reportar_min!==null ){
 			$gasto->setCaReportarMin( $reportar_min );
 		}
 		
 		$cobrar_tar =  $this->getRequestParameter("cobrar_tar");
-		if( $cobrar_tar ){
+		if( $cobrar_tar!==null ){
 			$gasto->setCaCobrarTar( $cobrar_tar );
 		}
 						
 		$cobrar_min =  $this->getRequestParameter("cobrar_min");
-		if( $cobrar_min ){
+		if( $cobrar_min!==null ){
 			$gasto->setCaCobrarMin( $cobrar_min );
 		}	
 		
@@ -812,7 +813,7 @@ class reportesNegActions extends sfActions
 		
 		$observaciones =  $this->getRequestParameter("observaciones");
 		
-		if( $observaciones ){			
+		if( $observaciones!==null ){			
 			$gasto->setCaDetalles( $observaciones );
 		}	
 				
@@ -928,15 +929,15 @@ class reportesNegActions extends sfActions
 				$costo->setCaTipo(  $this->getRequestParameter("catipo") );		
 			}
 			
-			if( $this->getRequestParameter("netcosto") ){
+			if( $this->getRequestParameter("netcosto")!==null ){
 				$costo->setCaNetcosto( $this->getRequestParameter("netcosto") );				
 			}
 			
-			if( $this->getRequestParameter("vlrcosto") ){
+			if( $this->getRequestParameter("vlrcosto")!==null ){
 				$costo->setCaVlrcosto(  $this->getRequestParameter("vlrcosto") );
 			}
 			
-			if( $this->getRequestParameter("mincosto") ){
+			if( $this->getRequestParameter("mincosto")!==null ){
 				$costo->setCaMincosto(  $this->getRequestParameter("mincosto") );		
 			}
 			
@@ -1050,10 +1051,10 @@ class reportesNegActions extends sfActions
 		if( $this->getRequestParameter("cantidad") ){
 			$concepto->setCaCantidad( $this->getRequestParameter("cantidad") );				
 		}
-		if( $this->getRequestParameter("neta_tar") ){
+		if( $this->getRequestParameter("neta_tar")!==null ){
 			$concepto->setCaNetaTar(  $this->getRequestParameter("neta_tar") );
 		}
-		if( $this->getRequestParameter("neta_min") ){
+		if( $this->getRequestParameter("neta_min")!==null ){
 			$concepto->setCaNetaMin(  $this->getRequestParameter("neta_min") );
 		}
 
@@ -1061,26 +1062,26 @@ class reportesNegActions extends sfActions
 			$concepto->setCaNetaIdm(  $this->getRequestParameter("neta_idm") );				
 		}
 							
-		if( $this->getRequestParameter("reportar_tar") ){			
+		if( $this->getRequestParameter("reportar_tar")!==null ){			
 			$concepto->setCaReportarTar(  $this->getRequestParameter("reportar_tar") );
 		}
-		if( $this->getRequestParameter("reportar_min") ){
+		if( $this->getRequestParameter("reportar_min")!==null ){
 			$concepto->setCaReportarMin(  $this->getRequestParameter("reportar_min") );
 		}
 		if( $this->getRequestParameter("reportar_idm") ){
 			$concepto->setCaReportaridm(  $this->getRequestParameter("reportar_idm") );
 		}
-		if( $this->getRequestParameter("cobrar_tar") ){
+		if( $this->getRequestParameter("cobrar_tar")!==null ){
 			$concepto->setCaCobrarTar(  $this->getRequestParameter("cobrar_tar") );
 		}
-		if( $this->getRequestParameter("cobrar_min") ){
+		if( $this->getRequestParameter("cobrar_min")!==null ){
 			$concepto->setCaCobrarMin(  $this->getRequestParameter("cobrar_min") );
 		}
 		if( $this->getRequestParameter("cobrar_idm") ){ 
 			$concepto->setCaCobraridm(  $this->getRequestParameter("cobrar_idm") );
 		}
 		
-		if( $this->getRequestParameter("observaciones") ){
+		if( $this->getRequestParameter("observaciones")!==null ){
 			$concepto->setCaObservaciones(  $this->getRequestParameter("observaciones") );
 		}
 		

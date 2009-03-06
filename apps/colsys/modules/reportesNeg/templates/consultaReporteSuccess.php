@@ -266,7 +266,7 @@ use_helper("Javascript", "Object", "Validation");
 				echo $reporteNegocio->getCaColmas()
 				?>
 			</strong></td>
-			<td colspan="3" class="listar"><strong>16.&nbsp;Seguro&nbsp;con&nbsp;Anker:</strong><br />
+			<td colspan="3" class="listar"><strong>16.&nbsp;Seguro:</strong><br />
 				<?
 				echo $reporteNegocio->getCaSeguro()
 				?>			</td>

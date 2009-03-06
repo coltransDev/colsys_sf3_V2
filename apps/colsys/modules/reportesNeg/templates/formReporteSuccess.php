@@ -692,7 +692,7 @@ $cliente = $reporteNegocio->getCliente();
 		</tr>
 		
 		<tr>
-			<td class="invertir">19. Seguro Anker:<br />						
+			<td class="invertir">19. Seguro :<br />						
 					<?=radiobutton_tag("seguro" , "Si" , $reporteNegocio->getCaSeguro()=="Sí", "onClick=cambiarDisplay('formAseguradora','inline')")?>
 					S&iacute;&nbsp;&nbsp;&nbsp;&nbsp;
 	<?=radiobutton_tag("seguro" , "No" , $reporteNegocio->getCaSeguro()?$reporteNegocio->getCaSeguro()=="No":true , "onClick=cambiarDisplay('formAseguradora','none')" )?>
@@ -770,4 +770,58 @@ $cliente = $reporteNegocio->getCliente();
 <script language="JavaScript" type="text/javascript">		
 	cambiarTransporte( document.getElementById('transporte').value );
 	seleccionAgente();
+	Ext.onReady(function(){
+		Ext.getCmp("comboContactoCliente").addListener("select", function(combo, record, index){ // override default onSelect to do redirect	
+		
+				
+				/*if(this.fireEvent('beforeselect', this, record, index) !== false){
+					this.setValue(record.data[this.valueField || this.displayField]);
+					this.collapse();
+					this.fireEvent('select', this, record, index);
+				}*/
+				
+				
+				document.getElementById("con_cliente").value=record.data.nombre+" "+record.data.papellido+" "+record.data.sapellido;
+				document.getElementById("cliente").value=record.data.compania;		
+				document.getElementById("idconcliente").value=record.data.id;				
+				document.getElementById("preferencias_clie").value=record.data.preferencias;		
+				
+				for(i=0; i<10; i++){				
+					document.getElementById("contactos_"+i).value="";
+					document.getElementById("confirmar_"+i).checked=false;
+				}
+				
+				
+				var confirmar =  record.data.confirmar ;						
+				var brokenconfirmar=confirmar.split(",");			
+				
+				for(i=0; i<brokenconfirmar.length; i++){				
+					document.getElementById("contactos_"+i).value=brokenconfirmar[i];
+					document.getElementById("confirmar_"+i).checked=true;
+				}				
+					
+				if( record.data.listaclinton=="Sí" ){
+					alert("Este cliente se encuentra en lista Clinton");	
+				}	
+				document.getElementById("listaclinton").value=record.data.listaclinton;
+				
+				var fchcircular = record.get("fchcircular");
+				//alert( fchcircular);
+				if( !fchcircular ){
+					Ext.MessageBox.alert("Alerta","El cliente no tiene circular 170");
+				}else{
+					if( fchcircular+(86400*365)<=<?=time()?> ){
+						Ext.MessageBox.alert("Alerta","La circular 170 se encuentra vencida");
+					}else{
+						if( fchcircular+(86400*335)<=<?=time()?> ){
+							Ext.MessageBox.alert("Alerta","La circular 170 se vencera en menos de 30 dias");
+						}
+					}
+				}
+			   
+			}
+			
+	
+		);
+	});	
 </script>
