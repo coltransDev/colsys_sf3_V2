@@ -211,7 +211,7 @@ class helpdeskActions extends sfActions
 		$respuesta->setCaCreatedat( time() );
 		$respuesta->save();
 		
-		$logins = array(  );
+		$logins = array( $ticket->getCaLogin() );
 		if( $ticket->getCaAssignedto() ){
 			$logins[]=$ticket->getCaAssignedto();
 		}else{
