@@ -69,6 +69,24 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	protected $ca_extension;
 
 	/**
+	 * The value for the ca_authmethod field.
+	 * @var        string
+	 */
+	protected $ca_authmethod;
+
+	/**
+	 * The value for the ca_passwd field.
+	 * @var        string
+	 */
+	protected $ca_passwd;
+
+	/**
+	 * The value for the ca_salt field.
+	 * @var        string
+	 */
+	protected $ca_salt;
+
+	/**
 	 * @var        Sucursal
 	 */
 	protected $aSucursal;
@@ -278,6 +296,36 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [ca_authmethod] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaAuthmethod()
+	{
+		return $this->ca_authmethod;
+	}
+
+	/**
+	 * Get the [ca_passwd] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaPasswd()
+	{
+		return $this->ca_passwd;
+	}
+
+	/**
+	 * Get the [ca_salt] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaSalt()
+	{
+		return $this->ca_salt;
+	}
+
+	/**
 	 * Set the value of [ca_login] column.
 	 * 
 	 * @param      string $v new value
@@ -442,6 +490,66 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	} // setCaExtension()
 
 	/**
+	 * Set the value of [ca_authmethod] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Usuario The current object (for fluent API support)
+	 */
+	public function setCaAuthmethod($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_authmethod !== $v) {
+			$this->ca_authmethod = $v;
+			$this->modifiedColumns[] = UsuarioPeer::CA_AUTHMETHOD;
+		}
+
+		return $this;
+	} // setCaAuthmethod()
+
+	/**
+	 * Set the value of [ca_passwd] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Usuario The current object (for fluent API support)
+	 */
+	public function setCaPasswd($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_passwd !== $v) {
+			$this->ca_passwd = $v;
+			$this->modifiedColumns[] = UsuarioPeer::CA_PASSWD;
+		}
+
+		return $this;
+	} // setCaPasswd()
+
+	/**
+	 * Set the value of [ca_salt] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Usuario The current object (for fluent API support)
+	 */
+	public function setCaSalt($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_salt !== $v) {
+			$this->ca_salt = $v;
+			$this->modifiedColumns[] = UsuarioPeer::CA_SALT;
+		}
+
+		return $this;
+	} // setCaSalt()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -486,6 +594,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->ca_email = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
 			$this->ca_rutinas = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
 			$this->ca_extension = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_authmethod = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_passwd = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_salt = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -495,7 +606,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 8; // 8 = UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 11; // 11 = UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Usuario object", $e);
@@ -991,6 +1102,15 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			case 7:
 				return $this->getCaExtension();
 				break;
+			case 8:
+				return $this->getCaAuthmethod();
+				break;
+			case 9:
+				return $this->getCaPasswd();
+				break;
+			case 10:
+				return $this->getCaSalt();
+				break;
 			default:
 				return null;
 				break;
@@ -1020,6 +1140,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$keys[5] => $this->getCaEmail(),
 			$keys[6] => $this->getCaRutinas(),
 			$keys[7] => $this->getCaExtension(),
+			$keys[8] => $this->getCaAuthmethod(),
+			$keys[9] => $this->getCaPasswd(),
+			$keys[10] => $this->getCaSalt(),
 		);
 		return $result;
 	}
@@ -1075,6 +1198,15 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			case 7:
 				$this->setCaExtension($value);
 				break;
+			case 8:
+				$this->setCaAuthmethod($value);
+				break;
+			case 9:
+				$this->setCaPasswd($value);
+				break;
+			case 10:
+				$this->setCaSalt($value);
+				break;
 		} // switch()
 	}
 
@@ -1107,6 +1239,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[5], $arr)) $this->setCaEmail($arr[$keys[5]]);
 		if (array_key_exists($keys[6], $arr)) $this->setCaRutinas($arr[$keys[6]]);
 		if (array_key_exists($keys[7], $arr)) $this->setCaExtension($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaAuthmethod($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaPasswd($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaSalt($arr[$keys[10]]);
 	}
 
 	/**
@@ -1126,6 +1261,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(UsuarioPeer::CA_EMAIL)) $criteria->add(UsuarioPeer::CA_EMAIL, $this->ca_email);
 		if ($this->isColumnModified(UsuarioPeer::CA_RUTINAS)) $criteria->add(UsuarioPeer::CA_RUTINAS, $this->ca_rutinas);
 		if ($this->isColumnModified(UsuarioPeer::CA_EXTENSION)) $criteria->add(UsuarioPeer::CA_EXTENSION, $this->ca_extension);
+		if ($this->isColumnModified(UsuarioPeer::CA_AUTHMETHOD)) $criteria->add(UsuarioPeer::CA_AUTHMETHOD, $this->ca_authmethod);
+		if ($this->isColumnModified(UsuarioPeer::CA_PASSWD)) $criteria->add(UsuarioPeer::CA_PASSWD, $this->ca_passwd);
+		if ($this->isColumnModified(UsuarioPeer::CA_SALT)) $criteria->add(UsuarioPeer::CA_SALT, $this->ca_salt);
 
 		return $criteria;
 	}
@@ -1193,6 +1331,12 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		$copyObj->setCaRutinas($this->ca_rutinas);
 
 		$copyObj->setCaExtension($this->ca_extension);
+
+		$copyObj->setCaAuthmethod($this->ca_authmethod);
+
+		$copyObj->setCaPasswd($this->ca_passwd);
+
+		$copyObj->setCaSalt($this->ca_salt);
 
 
 		if ($deepCopy) {

@@ -80,6 +80,12 @@ class UsuarioMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_EXTENSION', 'CaExtension', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_AUTHMETHOD', 'CaAuthmethod', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_PASSWD', 'CaPasswd', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_SALT', 'CaSalt', 'VARCHAR', false, null);
+
 	} // doBuild()
 
 } // UsuarioMapBuilder
