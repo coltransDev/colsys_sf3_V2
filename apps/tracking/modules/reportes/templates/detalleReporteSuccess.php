@@ -66,10 +66,14 @@ $fileIdx = 0;
 	      <?=$reporte->getDestino ()?> 
 	    </div>		</td>
 	</tr>
+	<?
+	if( $reporte->getCaModalidad()!="COLOADING" && $reporte->getCaModalidad()!="LCL" ){	
+	?>	
 	<tr>
 		<td>
 		<div align="left">
 		  <?
+		  	
 				$transportador = $reporte->getTransportador ();
 				if ($transportador) {
 					?>
@@ -77,6 +81,7 @@ $fileIdx = 0;
 		  <?
 					echo $transportador->getCaNombre ();
 				}
+			
 				?>
 		  </div>		</td>
 		<td>
@@ -85,6 +90,7 @@ $fileIdx = 0;
 		  </div>		</td>
 	</tr>
 	<?
+	}
 	
 	$via = $reporte->getCaTransporte ();
 	$referencia = null;
@@ -202,6 +208,7 @@ $fileIdx = 0;
 		
 	<?
 	}
+	
 	
 	?>
 </table>
@@ -349,6 +356,16 @@ $statuss = $reporte->getHistorialStatus ();
 			<?
 			}
 		}
+	}
+	
+	if( $fileIdx==0 ){
+	?>
+	<tr>
+				<td width="70%">
+				<div align="center" class="info">No se han colocado archivos</div>
+				</td>
+			</tr>
+	<?
 	}
 	?>
 </table>

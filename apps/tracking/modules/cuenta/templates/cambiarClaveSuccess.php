@@ -15,7 +15,7 @@
 	echo $form;
 	?>	
 	<tr>
-		<td colspan="2"><div align="center"><?=submit_tag("Continuar", "class=button")?></div></td>
+		<td colspan="2"><div align="center"><input type="submit" class="button" value="Continuar" /></div></td>
 	</tr>
 </table>
 </form>
