@@ -27,6 +27,33 @@ class usersActions extends sfActions
 	*/
 	public function executeLogin($request)
 	{
+		//echo "login".session_id();
+		$response = sfContext::getInstance()->getResponse();
+		$response->addStylesheet("login");
+		
+		if($this->getUser()->isAuthenticated()){
+			$this->redirect("homepage/index");
+		}
+					
+		$this->form = new LoginForm();		
+		if ($request->isMethod('post')){		
+			$this->form->bind(
+				array(						
+						'username' => $request->getParameter('username'),
+						'passwd' => $request->getParameter('passwd')		
+					)
+				); 
+			if( $this->form->isValid() ){	
+				//Se valido correctamente			
+				$this->redirect("homepage/index");
+				//echo "OK";	
+			}
+		}
+								
+		//------------
+	
+		/*
+		
 		$username = $this->getRequestParameter("username");
 		$passwd = $this->getRequestParameter("password");		
 		if( $username && $passwd ){
@@ -61,11 +88,21 @@ class usersActions extends sfActions
 				echo "sin conexion";
 			}
 		}
-		
+		*/
 		$this->setLayout("login");
-		
-		
 	}
+	
+	/**
+	* Muestra un formulario donde un usuario puede iniciar sesion
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeLogout($request)
+	{
+		$this->getUser()->signOut();
+		$this->redirect("users/login");
+	}
+	
 	
 	
 	/*

@@ -1,25 +1,38 @@
 
 <form action="<?=url_for("users/login")?>" method="post">
-<table width="200" border="1" class="tableForm">
-	<tr>
-		<th colspan="2">&nbsp;</th>		
-	</tr>
-	<tr>
-		<td>Usuario:</td>
-		<td>
+<br />
+<br />
+
+
+<h3> Bienvenido a Colsys</h3>
+<br />		
+	<div class="box1" style="width:550px" align="center">
+		<table width="550px" border="0">
+		<tr>
+		  <td colspan="2">&nbsp;</td>
+		  </tr>
+		<tr>
+			<td width="169">
+			<?=image_tag("logo_colsys.gif")?>			</td>
+			<td width="371">
+				<div align="left">
+				<table >
+					<?
+					echo $form;
+					?>
+				</table>
+				</div>		  </td>
+		</tr>
+	
+		<tr>	
+			<td colspan="2"><div align="center"><input type="submit" value="Entrar" class="button" /></div></td>
+		</tr>
+	</table>
+	</div>
 		
-		
-		<input type="text" name="username" />
-		</td>
-	</tr>
-	<tr>
-		<td>Clave:</td>
-		<td><input type="password" name="password" /></td>
-	</tr>
-	<tr>
-		<td colspan="2"><div align="center">
-			<input type="submit" value="Entrar" />
-		</div></td>
-	</tr>
-</table>
+
+
 </form>
+<br />
+<br />
+<br />
