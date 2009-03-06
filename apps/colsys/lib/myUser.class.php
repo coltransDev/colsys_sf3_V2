@@ -11,15 +11,9 @@ class myUser extends sfBasicSecurityUser
 	public function setUserId( $userId  ){
 		$this->setAttribute('user_id', $userId );
 		$user = UsuarioPeer::retrieveByPk( $userId );
-		
-		if( $user ){
-			/*$c = new Criteria();
-			$c->add( NivelesAccesoPeer::CA_LOGIN , $userId );
-			$c->add( NivelesAccesoPeer::CA_BASEDEDATOS , "Coltrans" );
-			$acceso = NivelesAccesoPeer::doSelectOne( $c );	
-			*/
+				
+		if( $user ){		
 			$sucursal = $user->getSucursal();
-						
 			
 			$this->setAttribute('sucursal', $sucursal );
 			$this->setAttribute('nombre', $user->getCaNombre() );		
@@ -34,10 +28,6 @@ class myUser extends sfBasicSecurityUser
 			if( $departamento ){
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}
-			
-			/*if( $acceso ){  				
-				$this->setAttribute('nivel_acceso', $acceso->getCaNivel() );
-			}*/
 		}				
 	}
 	
@@ -88,7 +78,6 @@ class myUser extends sfBasicSecurityUser
 	public function setGrupos( $grupos ){		
 		$this->setAttribute('grupos', $grupos );
 	}
-	
 	
 	/*
 	* Añade un archivo en la lista de archivos del usuario para enviar por correo 
@@ -153,6 +142,89 @@ class myUser extends sfBasicSecurityUser
 		$log->setCaIpaddress( $_SERVER['REMOTE_ADDR'] );	
 		$log->save();
 	}*/
+	
+	/*
+	* Inicia la sesion, determina el tiempo maximo de inactividad y verifica
+	* los grupos a los que pertenece el usuario el el directorio LDAP
+	*/
+	public function signInNovell( $username )
+	{ 		
+		$user = UsuarioPeer::retrieveByPk( $username );
+		
+		if( $user ){	
+			
+			//Borra todos los grupos a los que pertenece  
+			$c = new Criteria();
+			$c->add( UsuarioGrupoPeer::CA_LOGIN, $username );
+			$accesos = UsuarioGrupoPeer::doSelect( $c );
+			foreach( $accesos as $acceso ){
+				$acceso->delete();			
+			}
+			
+			$this->setAttribute('user_id', $username );			
+			$this->setAuthenticated(true);							
+			$this->addCredential('colsys_user');
+			$this->setCulture('es_CO');			
+							
+			$sucursal = $user->getSucursal();			
+			$this->setAttribute('sucursal', $sucursal );
+			$this->setAttribute('nombre', $user->getCaNombre() );		
+			$this->setAttribute('email', $user->getCaEmail() );
+			$this->setAttribute('cargo', $user->getCaCargo() );			
+			$this->setAttribute('extension', $user->getCaExtension() );
+			
+			$c = new Criteria();
+			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
+			$departamento = DepartamentoPeer::doSelectOne( $c );
+			if( $departamento ){
+				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
+			}	
+			
+			$grupos = $this->getGrupos();	
+			
+			foreach( $grupos as $grupo ){
+				$usuarioGrupo = new UsuarioGrupo();
+				$usuarioGrupo->setCaLogin( $username );
+				$usuarioGrupo->setCaGrupo( $grupo );
+				$usuarioGrupo->save();
+			}						
+		}		
+	}
+	
+	
+	/*
+	* Cierra la sesion
+	*/
+	public function signOut()
+	{
+		//$this->getAttributeHolder()->removeNamespace('colsys_user');
+		$this->setAuthenticated(false);	
+		
+		$this->setAttribute('user_id', null);
+		$this->setAttribute('nombre', null);
+		$this->setAttribute('email', null);
+		$this->setAttribute('cargo', null);
+		$this->setAttribute('extension', null);
+		$this->setAttribute('iddepartamento', null);
+		
+		//setcookie("JSESSIONID", "" );	
+		
+			
+		$this->setAuthenticated(false);		
+		$this->clearCredentials();
+		//session_destroy();
+	}
+	
+	/*
+	* Sobrecarga la function isAuthenticated de la clase sfBasicSecurityUser para determinar si cumplio el maximo tiempo de sesion
+	*/
+	/*public function isAuthenticated(){
+		return parent::isAuthenticated();
+	}*/
+	
+	
+	
+	
 }
 
 ?>
