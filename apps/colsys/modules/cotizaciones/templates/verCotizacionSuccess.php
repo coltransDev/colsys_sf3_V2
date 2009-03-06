@@ -17,13 +17,9 @@ $mode = end($transport);     // $mode = 'plane';
 <script language="javascript">
 	function showEmailForm(){
 		if( document.getElementById('emailForm').style.display=="none"){ 
-			<?
-			echo visual_effect('BlindDown', 'emailForm');
-			?>
+			document.getElementById('emailForm').style.display="inline"
 		}else{
-			<?
-			echo visual_effect('BlindUp', 'emailForm');
-			?>
+			document.getElementById('emailForm').style.display="none"
 		}
 	}
 </script>

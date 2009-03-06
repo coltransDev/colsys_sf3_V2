@@ -119,6 +119,16 @@ class cotizacionesActions extends sfActions
 			$this->editable = $this->getRequestParameter("editable");	
 			$this->option = $this->getRequestParameter("option");
 			
+			$c = new Criteria();
+			$c->add(EmailPeer::CA_TIPO, "Envío de cotización");
+			$c->add(EmailPeer::CA_IDCASO,$cotizacion->getCaIdCotizacion()); 
+			$c->addAscendingOrderByColumn(EmailPeer::CA_FCHENVIO);
+			$emails = EmailPeer::doSelect( $c );
+			
+			if( count($emails)>0 ){
+				$this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdCotizacion());
+			}
+						
 			if($cotizacion->getCaUsuanulado()){
 				$this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdCotizacion());
 			}
@@ -161,7 +171,6 @@ class cotizacionesActions extends sfActions
 		if( $this->getRequestParameter( "empresa" ) ){
 			$cotizacion->setCaEmpresa( $this->getRequestParameter( "empresa" ) );		
 		}
-		
 		
 		if( $this->getRequestParameter( "vendedor" ) ){
 			$cotizacion->setCaUsuario( $this->getRequestParameter( "vendedor" ) );
@@ -796,8 +805,12 @@ class cotizacionesActions extends sfActions
 				$recargo->setCaAplicaMin( $aplica_min );
 			}	
 			
-			if( $observaciones ){
-				$recargo->setCaObservaciones( $observaciones );
+			if( $observaciones!==null ){
+				if( $observaciones ){
+					$recargo->setCaObservaciones( $observaciones );
+				}else{
+					$recargo->setCaObservaciones( null );				
+				}
 			}	
 			
 			if( $consecutivo ){

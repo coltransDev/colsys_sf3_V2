@@ -35,6 +35,19 @@ switch($action){
 		$button[3]["image"]="22x22/email.gif"; 			
 		$button[3]["link"]= "cotizaciones/verCotizacion?id=".$this->getRequestParameter("id");
 		$button[3]["onClick"]= "showEmailForm()";
+		
+		
+		$button[4]["name"]="Copiar ";
+		$button[4]["tooltip"]="Copia la cotizaci&oacute;n en una nueva cotizaci&oacute;n";
+		$button[4]["image"]="22x22/copy.gif"; 		
+		$button[4]["link"]= "cotizaciones/copiarCotizacion?idcotizacion=".$this->getRequestParameter("id");
+		
+		$button[5]["name"]="Anular ";
+		$button[5]["tooltip"]="Anula la cotizaci&oacute;n";
+		$button[5]["image"]="22x22/cancel.gif"; 		
+		$button[5]["link"]= "cotizaciones/anularCotizacion?idcotizacion=".$this->getRequestParameter("id");
+		$button[5]["confirm"]= "Esta seguro que desea anular esta cotización? ";
+		
 		break;	
 
 	case "consultaCotizacion":		
