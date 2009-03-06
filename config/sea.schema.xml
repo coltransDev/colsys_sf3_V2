@@ -132,5 +132,24 @@
 			<reference local="ca_idcliente" foreign="ca_idcliente"/>
 		</foreign-key>
 	</table>
+
+	<table name="tb_inoequipos_sea" phpName="InoEquiposSea">
+		<column name="ca_referencia" type="varchar" required="true" primaryKey="true" />			
+		<column name="ca_idconcepto" type="integer" required="true" />
+		<column name="ca_cantidad" type="numeric" required="true" />
+		<column name="ca_idequipo" type="varchar" required="true" primaryKey="true" />
+		<column name="ca_observaciones" type="varchar" />
+		<column name="ca_fchcreado" type="timestamp" required="true" />
+		<column name="ca_usucreado" type="varchar" required="true" />
+		<column name="ca_fchactualizado" type="timestamp" />
+		<column name="ca_usuactualizado" type="varchar" />
+		
+		<foreign-key foreignTable="tb_inomaestra_sea">
+			<reference local="ca_referencia" foreign="ca_referencia"/>
+		</foreign-key> 
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>
+	</table>
 	
 </database>
