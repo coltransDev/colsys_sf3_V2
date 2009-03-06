@@ -197,8 +197,10 @@
 	    <column name="ca_idtrafico" type="varchar" required="true" primaryKey="true" />		
 		<column name="ca_idlinea" type="varchar" required="true"  primaryKey="true"/>			
 		<column name="ca_idrecargo" type="integer" required="true" primaryKey="true"/>
+		<column name="ca_idconcepto" type="integer" required="true" primaryKey="true" />
 		<column name="ca_modalidad" type="varchar" required="true" primaryKey="true"/>
-		<column name="ca_impoexpo" type="varchar" required="true" primaryKey="true"/>				
+		<column name="ca_impoexpo" type="varchar" required="true" primaryKey="true"/>
+						
 		<column name="ca_vlrrecargo" type="numeric" />
 		<column name="ca_aplicacion" type="varchar" />	
 		<column name="ca_vlrminimo" type="numeric" />			
@@ -216,7 +218,12 @@
 		</foreign-key>		
 		<foreign-key foreignTable="tb_tiporecargo">
 			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
-		</foreign-key>										
+		</foreign-key>		
+		
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
+		</foreign-key>	
+										
 	</table>
 	
 	
@@ -225,6 +232,7 @@
 	    <column name="ca_idtrafico" type="varchar" required="true"  />	
 		<column name="ca_idlinea" type="varchar" required="true"  />			
 		<column name="ca_idrecargo" type="integer" required="true" />
+		<column name="ca_idconcepto" type="integer" required="true" />
 		<column name="ca_modalidad" type="varchar" required="true" />
 		<column name="ca_impoexpo" type="varchar" required="true" />				
 		<column name="ca_vlrrecargo" type="numeric" />
@@ -244,6 +252,10 @@
 		</foreign-key>	
 		<foreign-key foreignTable="tb_tiporecargo">
 			<reference local="ca_idrecargo" foreign="ca_idrecargo"/>
+		</foreign-key>	
+		
+		<foreign-key foreignTable="tb_conceptos">
+			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
 		</foreign-key>							
 	</table>
 	
