@@ -314,6 +314,16 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 	private $lastInoAvisosSeaCriteria = null;
 
 	/**
+	 * @var        array InoEquiposSea[] Collection to store aggregation of InoEquiposSea objects.
+	 */
+	protected $collInoEquiposSeas;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collInoEquiposSeas.
+	 */
+	private $lastInoEquiposSeaCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -2429,6 +2439,9 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 			$this->collInoAvisosSeas = null;
 			$this->lastInoAvisosSeaCriteria = null;
 
+			$this->collInoEquiposSeas = null;
+			$this->lastInoEquiposSeaCriteria = null;
+
 		} // if (deep)
 	}
 
@@ -2567,6 +2580,14 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collInoEquiposSeas !== null) {
+				foreach ($this->collInoEquiposSeas as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -2668,6 +2689,14 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 
 				if ($this->collInoAvisosSeas !== null) {
 					foreach ($this->collInoAvisosSeas as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collInoEquiposSeas !== null) {
+					foreach ($this->collInoEquiposSeas as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -3342,6 +3371,12 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 			foreach ($this->getInoAvisosSeas() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addInoAvisosSea($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getInoEquiposSeas() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoEquiposSea($relObj->copy($deepCopy));
 				}
 			}
 
@@ -4095,6 +4130,208 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collInoEquiposSeas collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoEquiposSeas()
+	 */
+	public function clearInoEquiposSeas()
+	{
+		$this->collInoEquiposSeas = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoEquiposSeas collection (array).
+	 *
+	 * By default this just sets the collInoEquiposSeas collection to an empty array (like clearcollInoEquiposSeas());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initInoEquiposSeas()
+	{
+		$this->collInoEquiposSeas = array();
+	}
+
+	/**
+	 * Gets an array of InoEquiposSea objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this InoMaestraSea has previously been saved, it will retrieve
+	 * related InoEquiposSeas from storage. If this InoMaestraSea is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array InoEquiposSea[]
+	 * @throws     PropelException
+	 */
+	public function getInoEquiposSeas($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(InoMaestraSeaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoEquiposSeas === null) {
+			if ($this->isNew()) {
+			   $this->collInoEquiposSeas = array();
+			} else {
+
+				$criteria->add(InoEquiposSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				InoEquiposSeaPeer::addSelectColumns($criteria);
+				$this->collInoEquiposSeas = InoEquiposSeaPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(InoEquiposSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				InoEquiposSeaPeer::addSelectColumns($criteria);
+				if (!isset($this->lastInoEquiposSeaCriteria) || !$this->lastInoEquiposSeaCriteria->equals($criteria)) {
+					$this->collInoEquiposSeas = InoEquiposSeaPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastInoEquiposSeaCriteria = $criteria;
+		return $this->collInoEquiposSeas;
+	}
+
+	/**
+	 * Returns the number of related InoEquiposSea objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoEquiposSea objects.
+	 * @throws     PropelException
+	 */
+	public function countInoEquiposSeas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(InoMaestraSeaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collInoEquiposSeas === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoEquiposSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				$count = InoEquiposSeaPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoEquiposSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				if (!isset($this->lastInoEquiposSeaCriteria) || !$this->lastInoEquiposSeaCriteria->equals($criteria)) {
+					$count = InoEquiposSeaPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoEquiposSeas);
+				}
+			} else {
+				$count = count($this->collInoEquiposSeas);
+			}
+		}
+		$this->lastInoEquiposSeaCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a InoEquiposSea object to this object
+	 * through the InoEquiposSea foreign key attribute.
+	 *
+	 * @param      InoEquiposSea $l InoEquiposSea
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addInoEquiposSea(InoEquiposSea $l)
+	{
+		if ($this->collInoEquiposSeas === null) {
+			$this->initInoEquiposSeas();
+		}
+		if (!in_array($l, $this->collInoEquiposSeas, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoEquiposSeas, $l);
+			$l->setInoMaestraSea($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this InoMaestraSea is new, it will return
+	 * an empty collection; or if this InoMaestraSea has previously
+	 * been saved, it will retrieve related InoEquiposSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in InoMaestraSea.
+	 */
+	public function getInoEquiposSeasJoinConcepto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(InoMaestraSeaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoEquiposSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoEquiposSeas = array();
+			} else {
+
+				$criteria->add(InoEquiposSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				$this->collInoEquiposSeas = InoEquiposSeaPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoEquiposSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+
+			if (!isset($this->lastInoEquiposSeaCriteria) || !$this->lastInoEquiposSeaCriteria->equals($criteria)) {
+				$this->collInoEquiposSeas = InoEquiposSeaPeer::doSelectJoinConcepto($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoEquiposSeaCriteria = $criteria;
+
+		return $this->collInoEquiposSeas;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -4121,11 +4358,17 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collInoEquiposSeas) {
+				foreach ((array) $this->collInoEquiposSeas as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
 		$this->collInoClientesSeas = null;
 		$this->collInoIngresosSeas = null;
 		$this->collInoAvisosSeas = null;
+		$this->collInoEquiposSeas = null;
 			$this->aTransportador = null;
 	}
 
