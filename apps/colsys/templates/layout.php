@@ -5,10 +5,42 @@
 <?php include_metas() ?>
 <?php include_title() ?>
 <link rel="shortcut icon" href="/favicon.ico" />
+
+
+
 </head>
 <body>
+	<div align="center">
+		<div class="header" align="center" >	
+			
+			
+			<div class="headerleft" ><?=image_tag("layout/header/head_left.gif")?></div>
+			<div class="headerright" ><?=image_tag("layout/header/head_right.gif")?></div>
+			<div class="topmenuwraper" >
+					<? 
+					include_component("menu", "menubar");
+					?>
+			</div>
+		</div>
+		
+		
+		
+	</div>
+	
+<br />
+
+
+
+
+<script type="text/javascript">
+var myMenu = new UvumiDropdown("dropdown-menu");
+</script>
+
+<br />
+<br />
+
 <? 
-include_component("bar", "submenubar");
+include_component("menu", "submenubar");
 ?>
 <br />
 <br />	
@@ -16,8 +48,14 @@ include_component("bar", "submenubar");
 
 
 
+<div class="footer">	
+	<div class="copyright">
+		Coltrans S.A. - Colmas LTDA. Todos los derechos reservados
+	</div>
+</div>	
+
 <script type="text/javascript" charset="utf-8">	
-	$$("a").each( function(input) {
+	/*$$("a").each( function(input) {
 		if(input.title){
 			new Tooltip(input, {backgroundColor: "#FC9", borderColor: "#C96", textColor: "#000", textShadowColor: "#FFF"});
 		}	
@@ -38,8 +76,12 @@ include_component("bar", "submenubar");
 		if(input.title){
 			new Tooltip(input, {backgroundColor: "#FC9", borderColor: "#C96", textColor: "#000", textShadowColor: "#FFF"});
 		}
-	});
+	});*/
 </script>
+
+
+
+
 
 </body>
 </html>
