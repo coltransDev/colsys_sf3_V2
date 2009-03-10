@@ -14,7 +14,7 @@ Options +FollowSymLinks +ExecCGI
   RewriteCond %{REQUEST_FILENAME} !-f
 
   # no, so we redirect to our front web controller
-  RewriteRule ^(.*)$ /colsys_sf/index.php [QSA,L]
+  RewriteRule ^(.*)$ /index.php [QSA,L]
 </IfModule>
 
 php_flag register_globals off
