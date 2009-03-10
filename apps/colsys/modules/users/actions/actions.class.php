@@ -49,46 +49,7 @@ class usersActions extends sfActions
 				//echo "OK";	
 			}
 		}
-								
-		//------------
-	
-		/*
 		
-		$username = $this->getRequestParameter("username");
-		$passwd = $this->getRequestParameter("password");		
-		if( $username && $passwd ){
-			$auth_user="cn=".$username.",o=coltrans_bog";			
-			$ldap_server=sfConfig::get("app_ldap_host");
-			
-			if($connect=ldap_connect($ldap_server)){
-				
-				if(@$bind=ldap_bind($connect, $auth_user, $passwd)){
-					$this->getUser()->signIn( $username );						
-					$sr = ldap_search($connect,"o=coltrans_bog" , "(&(objectclass=person)(cn=".$username."))" );
- 					$info = ldap_get_entries($connect, $sr);
-					$person = $info[0];					
-					$grupos = array();
-					foreach($person['groupmembership'] as $key=>$grupo ){						
-						if( $key!=="count"){
-							$grupo = str_replace(",o=coltrans_bog", "", $grupo);
-							$grupo = str_replace("cn=", "", $grupo);						
-							$grupos[]=$grupo;
-						}
-					}
-									
-										
-					$this->getUser()->setGrupos( $grupos );
-					
-					$this->redirect("users/frame");
-				}else{					
-					$this->getRequest()->setError("clave_invalida", "El usuario o la clave es incorrecta");					
-				}
-				ldap_close($connect);           
-			}else{
-				echo "sin conexion";
-			}
-		}
-		*/
 		$this->setLayout("login");
 	}
 	
