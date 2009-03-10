@@ -144,10 +144,10 @@ class myUser extends sfBasicSecurityUser
 	}*/
 	
 	/*
-	* Inicia la sesion, determina el tiempo maximo de inactividad y verifica
-	* los grupos a los que pertenece el usuario el el directorio LDAP
+	* Inicia la sesion y verifica a los grupos a los que pertenece
+	*  el usuario el el directorio LDAP
 	*/
-	public function signInNovell( $username )
+	public function signInLDAP( $username )
 	{ 		
 		$user = UsuarioPeer::retrieveByPk( $username );
 		
@@ -191,6 +191,49 @@ class myUser extends sfBasicSecurityUser
 		}		
 	}
 	
+	
+	/*
+	* Inicia la sesion usando un metodo alternativo para usarios sin novell
+	*/
+	public function signInAlternative( $username )
+	{ 		
+		$user = UsuarioPeer::retrieveByPk( $username );
+		
+		if( $user ){	
+						
+			$this->setAttribute('user_id', $username );			
+			$this->setAuthenticated(true);							
+			$this->addCredential('colsys_user');
+			$this->setCulture('es_CO');			
+							
+			$sucursal = $user->getSucursal();			
+			$this->setAttribute('sucursal', $sucursal );
+			$this->setAttribute('nombre', $user->getCaNombre() );		
+			$this->setAttribute('email', $user->getCaEmail() );
+			$this->setAttribute('cargo', $user->getCaCargo() );			
+			$this->setAttribute('extension', $user->getCaExtension() );
+			
+			$c = new Criteria();
+			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
+			$departamento = DepartamentoPeer::doSelectOne( $c );
+			if( $departamento ){
+				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
+			}
+						
+			/*
+			* En este caso los grupos no cambian dinamicamente como en el LDAP y semantienen en la BD
+			* en caso que el usuario inicie sesion con LDAP estos se borraran. 
+			*/
+			$grupos = array();
+			$c = new Criteria();
+			$c->add( UsuarioGrupoPeer::CA_LOGIN, $username );
+			$accesos = UsuarioGrupoPeer::doSelect( $c );
+			foreach( $accesos as $acceso ){
+				$grupos[] = $acceso->getCaGrupo();	
+			}
+											
+		}		
+	}
 	
 	/*
 	* Cierra la sesion
