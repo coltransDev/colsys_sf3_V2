@@ -40,4 +40,11 @@ class Usuario extends BaseUsuario
 	public function getCaSucursal(){
 		return $this->getSucursal()->getCaNombre();
 	}
+	
+	public function setPasswd( $passwd ){
+		$salt = hash("md5", uniqid(rand(), true));
+		$this->setCaPasswd( sha1( $passwd.$salt ) );
+		$this->setCaSalt( $salt );		
+				
+	}
 }

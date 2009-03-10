@@ -15,7 +15,7 @@ class Contacto extends BaseContacto
 	
 	public function getTrackingUser(){
 		$c = new Criteria();
-		$c->add( TrackingUserPeer::CA_IDCONTACTO, $this->getCaIdcontacto() );
+		$c->add( TrackingUserPeer::CA_EMAIL, $this->getCaEmail() );
 		$user = TrackingUserPeer::doSelectOne( $c );
 		return $user;
 	}
