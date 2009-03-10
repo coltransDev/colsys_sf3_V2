@@ -11,8 +11,6 @@ body{
 	padding: 0px;
 }
 
-
-
 .headerleft{	
 	float:left;	
 	width:auto;
@@ -26,40 +24,13 @@ body{
 }
 
 .header{
-	width:90%;	
+	width:95%;	
 	background:#F0F0F0;
 	background-position:bottom;
 	height: 26px;
 	background:url(../images/layout/header/header.gif);	
 
 }
-
-.topmenuwraper{
-	width:50%;
-}
-
-.topmenuwraper ul li{
-	list-style:none;
-	float:left;	
-}
-
-li.topmenu {	
-	padding-left:15px;
-	padding-right:15px;
-	padding-top:6px;
-	padding-bottom:6px;	
-}
-
-
-li.topmenu:hover {	
-	background:#3B556F;	
-}
-
-li.topmenu a{	
-	color:#FFFFFF;
-	font-size:11px;	
-}
-
 
 .footer {
 	border-top:1px solid #e4e4e4;
