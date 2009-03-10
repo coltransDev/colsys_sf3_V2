@@ -1,4 +1,4 @@
-<?
+ <?
 if( $parametros ){	
 	$parametro = $parametros[0];			
 	$ultimaCol = "T";
@@ -239,7 +239,12 @@ foreach( $reportes as $reporte ){
 	
 	if( $parametros ){
 		$parametro = $parametros[0];
-		$objPHPExcel->getActiveSheet()->setCellValue('T'.$i, $reporte->getProperty($parametro->getCaValor()) );
+		
+		$valor = explode(":",$parametro->getCaValor());
+		$name = $valor[0];
+		$type = $valor[1];
+		
+		$objPHPExcel->getActiveSheet()->setCellValue('T'.$i, $reporte->getProperty($name) );
 	}
 	
 	
