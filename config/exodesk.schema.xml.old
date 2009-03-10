@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="mysql_helpdesk" defaultIdMethod="native" noxsd="true" package="lib.model.exodesk">
+	
+	
+	
+
+	
+	<table name="phpdesk_tickets" phpName="ExoTicket">
+		<column name="id" type="integer" required="true" primaryKey="true" />			
+		<column name="group" type="varchar" required="true" />			
+		<column name="admin_user" type="varchar" required="true" />			
+		<column name="title" type="varchar" />
+		<column name="text" type="varchar" />
+		<column name="opened" type="integer" />				
+		<column name="status" type="varchar" />	
+		<column name="owner" type="varchar" />						
+	</table>
+		
+	<table name="phpdesk_responses" phpName="ExoResponse">
+		<column name="id" type="integer" required="true" primaryKey="true"  />
+		
+		<column name="tid" type="integer" required="true" />			
+		<column name="sname" type="varchar" required="true" />		
+		<column name="comment" type="varchar" required="true" />		
+		<column name="posted" type="integer" required="true" />					
+				
+		<foreign-key foreignTable="phpdesk_tickets">
+			<reference local="tid" foreign="id"/>
+		</foreign-key>				
+		
+	</table>
+	
+
+</database>
