@@ -4,6 +4,10 @@
 <?php include_http_metas() ?>
 <?php include_metas() ?>
 <?php include_title() ?>
+
+
+
+
 <link rel="shortcut icon" href="/favicon.ico" />
 
 
@@ -32,10 +36,6 @@
 
 
 
-<script type="text/javascript">
-var myMenu = new UvumiDropdown("dropdown-menu");
-</script>
-
 <br />
 <br />
 
@@ -53,6 +53,9 @@ include_component("menu", "submenubar");
 		Coltrans S.A. - Colmas LTDA. Todos los derechos reservados
 	</div>
 </div>	
+
+
+
 
 <script type="text/javascript" charset="utf-8">	
 	/*$$("a").each( function(input) {
