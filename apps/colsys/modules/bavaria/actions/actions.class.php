@@ -99,37 +99,44 @@ class bavariaActions extends sfActions {
 			$salida_one.= "1";  // 1
 			$salida_one.= "BA00";  // 2
 			$salida_one.= str_pad(substr($reporte->getCaOrdenClie(),1,10),10, " "); // 3
-			$salida_one.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
+			// $salida_one.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
+			$salida_one.= strlen($reporte->getProperty("numfactproveedor"))==0?"123456789012345":str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
 			$salida_one.= str_pad(null,10, " "); // 5
 			
 			$fchfactProveedor = Utils::transformDate($reporte->getProperty("fchfactproveedor"), $format="Ymd");
+			$fchfactProveedor = (strlen($fchfactProveedor)==0)?Utils::transformDate("2009-01-01", $format="Ymd"):$fchfactProveedor; //Datos de Prueba
 			$salida_one.= str_pad($fchfactProveedor,8, " "); // 6
 
 			$fchETS = ($status)?(Utils::transformDate($status->getCaFchsalida(), $format="Ymd")):null;
+			$fchETS = strlen($fchETS)==0?Utils::transformDate("2009-01-01", $format="Ymd"):$fchETS; //Datos de Prueba
 			$salida_one.= str_pad($fchETS,8, " "); // 7
 
 			$salida_one.= str_pad($reporte->getDoctransporte(),25, " "); // 8
 			$fchdoctransporte = Utils::transformDate($reporte->getProperty("fchdoctransporte"), $format="Ymd");
+			$fchdoctransporte = strlen($fchdoctransporte)==0?Utils::transformDate("2009-01-01", $format="Ymd"):$fchdoctransporte; //Datos de Prueba
 			$salida_one.= str_pad($fchdoctransporte,8, " "); // 9
 			$salida_one.= str_pad(null,8, " "); // 10
 			$salida_one.= str_pad(null,8, " "); // 11
 			$fchrecibocarga = Utils::transformDate($reporte->getProperty("fchrecibocarga"), $format="Ymd");
+			$fchrecibocarga = strlen($fchrecibocarga)==0?Utils::transformDate("2009-01-01", $format="Ymd"):$fchrecibocarga; //Datos de Prueba
 			$salida_one.= str_pad($fchrecibocarga,8, " "); // 12
 
 			$pesos = ($status)?explode("|",$status->getCaPeso()):null;
 			$salida_one.= str_pad($pesos[0],15, " "); // 13
-			$salida_one.= str_pad($cod_unipeso[$pesos[1]],15, " "); // 14
+			$salida_one.= str_pad($cod_unipeso[$pesos[1]],4, " "); // 14
 
 			$salida_one.= str_pad(null,15, " "); // 15
 			$salida_one.= str_pad($mod_transporte[$reporte->getCaTransporte()], 1, " " ); // 16
 
 			$piezas = ($status)?explode("|",$status->getCaPiezas()):null;
-			$salida_one.= str_pad($cod_embalaje[$piezas[1]],15, " "); // 17
+			$salida_one.= str_pad($cod_embalaje[$piezas[1]],2, " "); // 17
 			
-			$salida_one.= str_pad(null,10, " "); // 18 -> Empresa Transportadora
-			$salida_one.= str_pad(null,3, " "); // 19 -> Bandera Empresa Transportadora
+			// $salida_one.= str_pad(null,10, " "); // 18 -> Empresa Transportadora
+			$salida_one.= str_pad("4661",10, " "); // 18 -> Empresa Transportadora  //Datos de Prueba
+			// $salida_one.= str_pad(null,3, " "); // 19 -> Bandera Empresa Transportadora
+			$salida_one.= str_pad("149",3, " "); // 19 -> Bandera Empresa Transportadora
 			$salida_one.= str_pad($frm_embarque[$reporte->getCaModalidad()], 2, " " ); // 20
-			$salida_one.= str_pad("US",2, " "); // 21 -> Clave de Moneda
+			$salida_one.= str_pad(null,5, " "); // 21 -> Clave de Moneda
 			
 			$salida_one.= str_pad(null,117, " "); // Campos del 22 al 31
 			
@@ -143,18 +150,22 @@ class bavariaActions extends sfActions {
 			$salida_two.= "2";  // 1
 			$salida_two.= "BA00";  // 2
 			$salida_two.= str_pad(substr($reporte->getCaOrdenClie(),1,10),10, " "); // 3
-			$salida_two.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
+			// $salida_two.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
+			$salida_two.= strlen($reporte->getProperty("numfactproveedor"))==0?"123456789012345":str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
 			$salida_two.= str_pad(null,15, " "); // 5 -> Facturas Adicionales			
 			$fchfactProveedor = Utils::transformDate($reporte->getProperty("fchfactproveedor"), $format="Ymd");
+			$fchfactProveedor = strlen($fchfactProveedor)==0?Utils::transformDate("2009-01-01", $format="Ymd"):$fchfactProveedor; //Datos de Prueba
 			$salida_two.= str_pad($fchfactProveedor,8, " "); // 6
-			$salida_two.= str_pad(number_format($reporte->getProperty("vlrfactproveedor")*100, 0, '', ''),13, " "); // 7
+			// $salida_two.= str_pad(number_format($reporte->getProperty("vlrfactproveedor")*100, 0, '', ''),13, " "); // 7
+			$salida_two.= str_pad(number_format(42565*100, 0, '', ''),13, " "); // 7 Datos de Prueba
 			$salida_two.= "\r";
 			
 			foreach( $equipos as $equipo ){
 				$salida_tree.= "3";  // 1
 				$salida_tree.= "BA00";  // 2
 				$salida_tree.= str_pad(substr($reporte->getCaOrdenClie(),1,10),10, " "); // 3
-				$salida_tree.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
+				// $salida_tree.= str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
+				$salida_tree.= strlen($reporte->getProperty("numfactproveedor"))==0?"123456789012345":str_pad($reporte->getProperty("numfactproveedor"),15, " "); // 4
 				$salida_tree.= str_pad($equipo->getCaIdequipo(),25, " "); // 5
 				$fchLlegada = Utils::transformDate($status->getCaFchllegada(), $format="Ymd");
 				$salida_tree.= str_pad($fchLlegada,8, " "); // 6
