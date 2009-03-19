@@ -66,8 +66,17 @@ class myUser extends sfBasicSecurityUser
 		if( $acceso ){
 			return $acceso->getCaAcceso();
 		}else{
-			//Verifica acceso a grupos
+			$c = new Criteria();					
+			$c->addJoin( RutinaPeer::CA_RUTINA, AccesoGrupoPeer::CA_RUTINA , Criteria::LEFT_JOIN );		
+			$c->addJoin( AccesoGrupoPeer::CA_GRUPO, UsuarioGrupoPeer::CA_GRUPO , Criteria::LEFT_JOIN );	
+			
+			$c->add( UsuarioGrupoPeer::CA_LOGIN , $this->getUser()->getUserId() );		
+			$criterion = $c->getNewCriterion( UsuarioGrupoPeer::CA_LOGIN, $this->getUser()->getUserId() );								
+			$criterion->addOr($c->getNewCriterion( AccesoUsuarioPeer::CA_LOGIN, $this->getUser()->getUserId() ));	
+			$c->add($criterion);	
 		}
+		
+		return -1;
 	}
 	
 	public function getGrupos( ){		
