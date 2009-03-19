@@ -11,7 +11,7 @@
 class cotizacionesActions extends sfActions
 {
 	
-	const RUTINA = "0200220000";
+	const RUTINA = "12";
 	/*************************************************************************
 	* OPCIONES GENERALES
 	*
@@ -31,6 +31,14 @@ class cotizacionesActions extends sfActions
 		$criterion->addOr($c->getNewCriterion( UsuarioPeer::CA_DEPARTAMENTO , '%Comercial%', Criteria::LIKE ));
 		$c->add($criterion);
 		$this->comerciales = UsuarioPeer::doSelect( $c );	
+		
+		
+		$this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
+		
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}	
+		
 	}
 		
 	/*
@@ -150,7 +158,9 @@ class cotizacionesActions extends sfActions
 		}
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
-		
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}	
 	}		
 
 	/*
