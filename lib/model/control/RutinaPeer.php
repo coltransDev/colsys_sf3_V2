@@ -24,11 +24,12 @@ class RutinaPeer extends BaseRutinaPeer
 		$sql =  "SELECT nextval('control.tb_rutinas_id') as next";
 		
 		$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
-	
-		$stmt = $con->prepareStatement($sql);
-		$rs = $stmt->executeQuery();	 
-		$rs->next();
-		return str_pad($rs->getString('next'), 10 ,"0",STR_PAD_LEFT );
+		
+		$stmt = $con->prepare($sql);
+		$stmt->execute();	 	
+		$row = $stmt->fetch();
+		
+		return str_pad($row['next'], 10 ,"0",STR_PAD_LEFT );
 	}
 }
 ?>
