@@ -102,16 +102,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	private $lastTrayectoCriteria = null;
 
 	/**
-	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
-	 */
-	protected $collReportes;
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collReportes.
-	 */
-	private $lastReporteCriteria = null;
-
-	/**
 	 * @var        array ContactoAgente[] Collection to store aggregation of ContactoAgente objects.
 	 */
 	protected $collContactoAgentes;
@@ -120,6 +110,16 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	 * @var        Criteria The criteria used to select the current contents of collContactoAgentes.
 	 */
 	private $lastContactoAgenteCriteria = null;
+
+	/**
+	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
+	 */
+	protected $collReportes;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collReportes.
+	 */
+	private $lastReporteCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -615,11 +615,11 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->collTrayectos = null;
 			$this->lastTrayectoCriteria = null;
 
-			$this->collReportes = null;
-			$this->lastReporteCriteria = null;
-
 			$this->collContactoAgentes = null;
 			$this->lastContactoAgenteCriteria = null;
+
+			$this->collReportes = null;
+			$this->lastReporteCriteria = null;
 
 		} // if (deep)
 	}
@@ -748,16 +748,16 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				}
 			}
 
-			if ($this->collReportes !== null) {
-				foreach ($this->collReportes as $referrerFK) {
+			if ($this->collContactoAgentes !== null) {
+				foreach ($this->collContactoAgentes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
 				}
 			}
 
-			if ($this->collContactoAgentes !== null) {
-				foreach ($this->collContactoAgentes as $referrerFK) {
+			if ($this->collReportes !== null) {
+				foreach ($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -855,16 +855,16 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 					}
 				}
 
-				if ($this->collReportes !== null) {
-					foreach ($this->collReportes as $referrerFK) {
+				if ($this->collContactoAgentes !== null) {
+					foreach ($this->collContactoAgentes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
 					}
 				}
 
-				if ($this->collContactoAgentes !== null) {
-					foreach ($this->collContactoAgentes as $referrerFK) {
+				if ($this->collReportes !== null) {
+					foreach ($this->collReportes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1176,15 +1176,15 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				}
 			}
 
-			foreach ($this->getReportes() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addReporte($relObj->copy($deepCopy));
-				}
-			}
-
 			foreach ($this->getContactoAgentes() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addContactoAgente($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getReportes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addReporte($relObj->copy($deepCopy));
 				}
 			}
 
@@ -1486,6 +1486,208 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 		$this->lastTrayectoCriteria = $criteria;
 
 		return $this->collTrayectos;
+	}
+
+	/**
+	 * Clears out the collContactoAgentes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addContactoAgentes()
+	 */
+	public function clearContactoAgentes()
+	{
+		$this->collContactoAgentes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collContactoAgentes collection (array).
+	 *
+	 * By default this just sets the collContactoAgentes collection to an empty array (like clearcollContactoAgentes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initContactoAgentes()
+	{
+		$this->collContactoAgentes = array();
+	}
+
+	/**
+	 * Gets an array of ContactoAgente objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Agente has previously been saved, it will retrieve
+	 * related ContactoAgentes from storage. If this Agente is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array ContactoAgente[]
+	 * @throws     PropelException
+	 */
+	public function getContactoAgentes($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collContactoAgentes === null) {
+			if ($this->isNew()) {
+			   $this->collContactoAgentes = array();
+			} else {
+
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				ContactoAgentePeer::addSelectColumns($criteria);
+				$this->collContactoAgentes = ContactoAgentePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				ContactoAgentePeer::addSelectColumns($criteria);
+				if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
+					$this->collContactoAgentes = ContactoAgentePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastContactoAgenteCriteria = $criteria;
+		return $this->collContactoAgentes;
+	}
+
+	/**
+	 * Returns the number of related ContactoAgente objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related ContactoAgente objects.
+	 * @throws     PropelException
+	 */
+	public function countContactoAgentes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collContactoAgentes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				$count = ContactoAgentePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
+					$count = ContactoAgentePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collContactoAgentes);
+				}
+			} else {
+				$count = count($this->collContactoAgentes);
+			}
+		}
+		$this->lastContactoAgenteCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a ContactoAgente object to this object
+	 * through the ContactoAgente foreign key attribute.
+	 *
+	 * @param      ContactoAgente $l ContactoAgente
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addContactoAgente(ContactoAgente $l)
+	{
+		if ($this->collContactoAgentes === null) {
+			$this->initContactoAgentes();
+		}
+		if (!in_array($l, $this->collContactoAgentes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collContactoAgentes, $l);
+			$l->setAgente($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Agente is new, it will return
+	 * an empty collection; or if this Agente has previously
+	 * been saved, it will retrieve related ContactoAgentes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Agente.
+	 */
+	public function getContactoAgentesJoinCiudad($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collContactoAgentes === null) {
+			if ($this->isNew()) {
+				$this->collContactoAgentes = array();
+			} else {
+
+				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
+
+			if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
+				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastContactoAgenteCriteria = $criteria;
+
+		return $this->collContactoAgentes;
 	}
 
 	/**
@@ -1832,208 +2034,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Clears out the collContactoAgentes collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addContactoAgentes()
-	 */
-	public function clearContactoAgentes()
-	{
-		$this->collContactoAgentes = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collContactoAgentes collection (array).
-	 *
-	 * By default this just sets the collContactoAgentes collection to an empty array (like clearcollContactoAgentes());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initContactoAgentes()
-	{
-		$this->collContactoAgentes = array();
-	}
-
-	/**
-	 * Gets an array of ContactoAgente objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Agente has previously been saved, it will retrieve
-	 * related ContactoAgentes from storage. If this Agente is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array ContactoAgente[]
-	 * @throws     PropelException
-	 */
-	public function getContactoAgentes($criteria = null, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collContactoAgentes === null) {
-			if ($this->isNew()) {
-			   $this->collContactoAgentes = array();
-			} else {
-
-				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
-
-				ContactoAgentePeer::addSelectColumns($criteria);
-				$this->collContactoAgentes = ContactoAgentePeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
-
-				ContactoAgentePeer::addSelectColumns($criteria);
-				if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
-					$this->collContactoAgentes = ContactoAgentePeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastContactoAgenteCriteria = $criteria;
-		return $this->collContactoAgentes;
-	}
-
-	/**
-	 * Returns the number of related ContactoAgente objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related ContactoAgente objects.
-	 * @throws     PropelException
-	 */
-	public function countContactoAgentes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
-		} else {
-			$criteria = clone $criteria;
-		}
-
-		if ($distinct) {
-			$criteria->setDistinct();
-		}
-
-		$count = null;
-
-		if ($this->collContactoAgentes === null) {
-			if ($this->isNew()) {
-				$count = 0;
-			} else {
-
-				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
-
-				$count = ContactoAgentePeer::doCount($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
-
-				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
-
-				if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
-					$count = ContactoAgentePeer::doCount($criteria, $con);
-				} else {
-					$count = count($this->collContactoAgentes);
-				}
-			} else {
-				$count = count($this->collContactoAgentes);
-			}
-		}
-		$this->lastContactoAgenteCriteria = $criteria;
-		return $count;
-	}
-
-	/**
-	 * Method called to associate a ContactoAgente object to this object
-	 * through the ContactoAgente foreign key attribute.
-	 *
-	 * @param      ContactoAgente $l ContactoAgente
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addContactoAgente(ContactoAgente $l)
-	{
-		if ($this->collContactoAgentes === null) {
-			$this->initContactoAgentes();
-		}
-		if (!in_array($l, $this->collContactoAgentes, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collContactoAgentes, $l);
-			$l->setAgente($this);
-		}
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Agente is new, it will return
-	 * an empty collection; or if this Agente has previously
-	 * been saved, it will retrieve related ContactoAgentes from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Agente.
-	 */
-	public function getContactoAgentesJoinCiudad($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collContactoAgentes === null) {
-			if ($this->isNew()) {
-				$this->collContactoAgentes = array();
-			} else {
-
-				$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
-
-				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
-
-			if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
-				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinCiudad($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastContactoAgenteCriteria = $criteria;
-
-		return $this->collContactoAgentes;
-	}
-
-	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -2050,21 +2050,21 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
-			if ($this->collReportes) {
-				foreach ((array) $this->collReportes as $o) {
+			if ($this->collContactoAgentes) {
+				foreach ((array) $this->collContactoAgentes as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
-			if ($this->collContactoAgentes) {
-				foreach ((array) $this->collContactoAgentes as $o) {
+			if ($this->collReportes) {
+				foreach ((array) $this->collReportes as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 		} // if ($deep)
 
 		$this->collTrayectos = null;
-		$this->collReportes = null;
 		$this->collContactoAgentes = null;
+		$this->collReportes = null;
 			$this->aCiudad = null;
 	}
 
