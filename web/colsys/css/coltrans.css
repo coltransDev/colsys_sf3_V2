@@ -338,13 +338,9 @@ div.grey{
 	border: 1px solid #DDD;
 	width: 80px;
 	padding-top: 3px;
-	padding-bottom: 3px;
-	
-	
-
-	
-	
+	padding-bottom: 3px;	
 }
+
 .toolbar a.toolbar:hover {
 	color : #C64934;
 	border: 1px solid #c24733;
@@ -569,5 +565,38 @@ a.toolbar:active {
 }
 
 
+hr {
+  border: 1px;
+  width: 95%;  
+  background-color:#333333;
+  height:1px;
+}
+
+.story{
+	font-size: 11px;
+	text-align:left;
+	font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+	margin-left: 20px;
+	margin-right: 20px;	
+	
+}
+
+.story_coment{
+	font-size: 11px;
+	color: #2E4B66;
+	text-align:left;
+	cursor:pointer;
+}
+
+.response_status{
+	background:#ECEFF5;
+	width: 400px;
+	margin-top: 2px;
+	padding: 4px;
+}
+
+body.x-border-layout-ct{
+	background:#FFFFFF;
+}
 
 
