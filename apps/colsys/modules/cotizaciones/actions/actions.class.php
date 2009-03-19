@@ -547,7 +547,25 @@ class cotizacionesActions extends sfActions
 					$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
 					$newRecargo->save();
 				}			
-			}			
+			}	
+			
+			$recargos = $producto->getRecargosGenerales();		
+						
+			
+			foreach( $recargos as $recargo ){	
+				
+				$newRecargo = $recargo->copy( false );
+				$newRecargo->setCaIdCotizacion( $newCotizacion->getCaIdCotizacion() );
+				$newRecargo->setCaIdProducto(  $newProducto->getCaIdProducto() );
+				$newRecargo->setCaIdOpcion( $recargo->getCaIdOpcion() );
+				$newRecargo->setCaIdConcepto( $recargo->getCaIdConcepto() );
+				$newRecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
+				$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
+				$newRecargo->save();
+				
+				
+			}
+			
 		}
 		
 		$recargos = $cotizacion->getRecargosLocales();
@@ -560,7 +578,9 @@ class cotizacionesActions extends sfActions
 			$newRecargo->setCaIdRecargo( $recargo->getCaIdRecargo() );
 			$newRecargo->setCaModalidad( $recargo->getCaModalidad() );
 			$newRecargo->save();
-		}		
+		}	
+		
+			
 			
 		$seguros = $cotizacion->getCotSeguros();
 		foreach( $seguros as $seguro ){	
@@ -716,11 +736,11 @@ class cotizacionesActions extends sfActions
 			if( $idmoneda ){	
 				$opcion->setCaIdMoneda( $idmoneda );
 			}
-			if( $valor_tar ){
+			if( $valor_tar!==null ){
 				$opcion->setCaValorTar( $valor_tar );
 			}
 			
-			if( $valor_min ){
+			if( $valor_min!==null ){
 				$opcion->setCaValorMin( $valor_min );
 			}
 			
@@ -731,6 +751,7 @@ class cotizacionesActions extends sfActions
 			if( $aplica_min ){
 				$opcion->setCaAplicaMin( $aplica_min );
 			}
+			
 			if( $observaciones!==null ){
 				$opcion->setCaObservaciones( $observaciones );				
 			}	
@@ -767,7 +788,8 @@ class cotizacionesActions extends sfActions
 			}
 			$this->responseArray["idopcion"]=$idopcion;
 					
-			$recargo = CotRecargoPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion, $idconcepto, $iditem, $modalidad );										
+			$recargo = CotRecargoPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion, $idconcepto, $iditem, $modalidad );
+						
 			if( !$recargo ){			
 				$recargo = new CotRecargo();			
 				$recargo->setCaFchcreado( time() );
@@ -789,11 +811,11 @@ class cotizacionesActions extends sfActions
 			if( $idmoneda ){	
 				$recargo->setCaIdMoneda( $idmoneda );
 			}
-			if( $valor_tar ){
+			if( $valor_tar!==null ){
 				$recargo->setCaValorTar( $valor_tar );
 			}
 			
-			if( $valor_min ){
+			if( $valor_min!==null ){
 				$recargo->setCaValorMin( $valor_min );
 			}
 			

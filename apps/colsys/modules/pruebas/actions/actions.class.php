@@ -42,9 +42,12 @@ class pruebasActions extends sfActions {
 	public function executeSendEmail() {
 		//exit("detenido");
 		$c = new Criteria ( );
-		$c->add ( EmailPeer::CA_FCHENVIO, "2009-02-10 09:20:00", Criteria::GREATER_THAN );
-		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-02-10 10:00:00", Criteria::LESS_THAN );
-		//$c->add( EmailPeer::CA_IDEMAIL, 188572);
+		//$c->add ( EmailPeer::CA_FCHENVIO, "2009-02-10 09:20:00", Criteria::GREATER_THAN );
+		//$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-02-10 10:00:00", Criteria::LESS_THAN );
+		
+		
+		$c->add( EmailPeer::CA_IDEMAIL, 206521);
+		$c->addOr( EmailPeer::CA_IDEMAIL, 206545);
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
 		
 		$i = 0;
@@ -338,13 +341,9 @@ class pruebasActions extends sfActions {
 	
 	
 	public function executeDecodeFile(){
-		$file = 'SUkqAKhlAAD/////////////////87G0XRHZHRHRdEfI6I+R2R8jsj5HZHRdEdl0R8jojouiPkdG
-
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=archivo.tiff");
+		$file = 'LTR0Qk4ybk1jcWMta0FiMngtVkVpMDcxU1VjWmJfcG05T05XWF91YW1qTmpia255b2ZLSUc0NHlZejU3eEpXaUx3MkJ3RGUzb1ZoQk8yT0hYaVVrZ080RXl0ZEVLeFF2eTAydTVCclRLNG5Bek5zVWxDMVNoNWIxUW9sRjc1dmdlV3ZmcGhoQnU1MDBSMFI0U3NHQzFSckpKa29RTGh0TXM5ZHhGQ2lnem5XRGVFeXFfWldPU25wVlNGNW9rQ3ZlMkl5aEoyT29vVk51RUotbEVFM21lX0VteVNYOWFHTHRHN1dZT1BMNFRjMDVhLVpycm1uMEZQNEFIcVRidFVVSUt6UEQzSXQtdHdNUDVFYVRNNUdINkVoQWZmbE9oMjdtMmdndjVwbldRVG8u';
+		//header("Content-Type: application/octet-stream");
+		//header("Content-Disposition: attachment; filename=archivo.tiff");
 		echo base64_decode($file);
 		
 	}
@@ -1540,6 +1539,43 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 		}		
 	}
 	
+	public function executeMenusUsuario(){
+		$usuario =  UsuarioPeer::retrieveByPk( $this->getRequestParameter("login"));
+		$rutinas = explode("|", $usuario->getCaRutinas() );
+		
+		$c = new Criteria();
+		$c->add( RutinaPeer::CA_RUTINA, $rutinas, Criteria::IN  );
+		$c->addAscendingOrderByColumn( RutinaPeer::CA_GRUPO );
+		$c->addAscendingOrderByColumn( RutinaPeer::CA_OPCION );
+		$this->rutinas = RutinaPeer::doSelect( $c );			
+	}
+	
+	
+	public function executeFixMenus(){
+		
+		exit("OK");
+		$c = new Criteria();
+		$c->addAscendingOrderByColumn( RutinaPeer::CA_GRUPO );
+		$c->addAscendingOrderByColumn( RutinaPeer::CA_OPCION );
+		
+		$rutinas = RutinaPeer::doSelect( $c );
+		$i=1;
+		foreach( $rutinas as $rutina ){
+
+			$sql = "UPDATE control.tb_rutinasnew SET ca_rutina='$i' WHERE ca_rutina='".$rutina->getCaRutina()."'";
+			
+			$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
+		
+			$stmt = $con->prepare($sql);
+			$stmt->execute();
+			
+			$i++;	
+			
+			
+			
+		}
+		
+	}
 	
 	
 	public function executeMatchNits(){
@@ -1557,6 +1593,9 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 		
 		
 	}
+	
+	
+	
 	
 	
 }

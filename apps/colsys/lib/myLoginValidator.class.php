@@ -70,7 +70,7 @@ class myLoginValidator extends sfValidatorBase
 						}						
 					}else{
 						//Este procedimiento se hara por unos dias mientras se recopilan las claves del colsys anterior
-						$dbconn = pg_connect("host=10.192.1.127 port=5432 dbname=Coltrans user=".$username." password=".$passwd );
+						@$dbconn = pg_connect("host=10.192.1.127 port=5432 dbname=Coltrans user=".$username." password=".$passwd );
 						if( $dbconn ){
 							$usuario->setPasswd( $passwd );
 							$usuario->save();

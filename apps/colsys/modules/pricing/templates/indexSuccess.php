@@ -163,6 +163,11 @@ Ext.onReady(function(){
 
 		layout:'border',
 		items:[
+		  	new Ext.BoxComponent({ // raw
+                    region:'north',
+                    el: 'north',
+                    height:30
+                }),
 		   {
 				region:'west',
 				id:'west-panel',
@@ -234,7 +239,12 @@ Ext.onReady(function(){
 	
 	
 </script>
-<div id="traficos"></div>
+
+<div style="height:100%"></div>
+ <div id="north">
+   &nbsp;
+  </div>
+
 <div id="center1">
 	<br />	 	
 	<h3>&nbsp;&nbsp;&nbsp;Bienvenido al sistema de administracion del tarifario. </h3><br />

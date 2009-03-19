@@ -20,8 +20,8 @@ class reportesActions extends sfActions
 			
 		
 		$this->user = $this->getUser();	
-		$cliente = $this->reporte->getCliente();				
-		if( $cliente->getCaIdCliente()!= $this->getUser()->getClienteActivo() ){ // En este caso esta tratando de ver informacion que no es del cliente
+		$cliente = $this->reporte->getCliente();			
+		if( $cliente->getCaIdCliente()!= $this->getUser()->getClienteActivo() && $cliente->getCaIdgrupo()!= $this->getUser()->getClienteActivo()){ // En este caso esta tratando de ver informacion que no es del cliente
 			$this->forward404();			
 		}	
 		

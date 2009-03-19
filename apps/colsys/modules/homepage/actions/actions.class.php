@@ -18,5 +18,13 @@ class homepageActions extends sfActions
 	public function executeIndex(sfWebRequest $request)
 	{
 	
+		$c = new Criteria();
+		$c->add( ColNovedadPeer::CA_FCHARCHIVAR, date("Y-m-d"), Criteria::GREATER_EQUAL );
+		
+		$c->addDescendingOrderByColumn( ColNovedadPeer::CA_FCHPUBLICACION );
+		$c->addDescendingOrderByColumn( ColNovedadPeer::CA_FCHARCHIVAR );
+		$this->novedades = ColNovedadPeer::doSelect( $c ); 
+
+		
 	}
 }

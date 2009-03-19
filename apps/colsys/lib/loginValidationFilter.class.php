@@ -5,7 +5,7 @@ class loginValidationFilter extends sfFilter
 	{	
 		$module = sfContext::getInstance()->getModuleName ();				
 		$action = sfContext::getInstance()->getActionName ();
-		
+				//$filterChain->execute();	
 		if( $module=="users" && $action=="login" ){
 			$filterChain->execute();
 		}else{

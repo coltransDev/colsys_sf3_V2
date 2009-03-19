@@ -113,11 +113,10 @@ var colModel = new Ext.grid.ColumnModel({
 		},			
 		{
 			id: 'valor_tar',
-			header: "Valor Recargo",
-			renderer: Ext.util.Format.usMoney,
+			header: "Valor Recargo",			
 			width: 30,
 			sortable: true,
-			//renderer: Ext.util.Format.usMoney,
+			renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_tar',
 			hideable: false,
 			editor: new Ext.form.NumberField({
@@ -139,11 +138,10 @@ var colModel = new Ext.grid.ColumnModel({
 		},
 		{
 			id: 'valor_min',
-			header: "Mínimo",
-			renderer: Ext.util.Format.usMoney,
+			header: "Mínimo",			
 			width: 30,
 			sortable: true,
-			//renderer: Ext.util.Format.usMoney,
+			renderer: Ext.util.Format.usMoney,
 			dataIndex: 'valor_min',
 			hideable: false,
 			editor: new Ext.form.NumberField({

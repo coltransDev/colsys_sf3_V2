@@ -19,7 +19,8 @@ all:
     user: abotero
     passwd: krxo4578
 
-
+  ip:
+    trusted: 127.0.0.1 10.192.1 10.192.2
 #archivos de falabella
   falabella:
 #    input:  /home/falabella/OUT  

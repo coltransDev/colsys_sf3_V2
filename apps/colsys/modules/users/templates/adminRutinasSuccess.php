@@ -39,7 +39,7 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 	columns: [				
 		{
 			header: "Grupo",
-			width: 90,
+			width: 40,
 			sortable: true,	
 			hideable: false,		
 			dataIndex: 'grupo',			
@@ -48,7 +48,7 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 		,
 		{
 			header: "Opción",
-			width: 90,
+			width: 40,
 			sortable: true,	
 			hideable: false,		
 			dataIndex: 'opcion',
@@ -56,7 +56,7 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 		},		
 		{
 			header: "Descripcion",
-			width: 30,
+			width: 80,
 			sortable: true,	
 			hideable: false,		
 			dataIndex: 'descripcion',
@@ -65,7 +65,7 @@ var colModelSeguros = new Ext.grid.ColumnModel({
 		,
 		{
 			header: "Link",
-			width: 30,
+			width: 60,
 			sortable: true,	
 			hideable: false,		
 			dataIndex: 'programa',
@@ -99,7 +99,7 @@ var ventanaPermisos = function( record ){
 			//Se crea la ventana
 			
 			win = new Ext.Window({		
-			width       : 800,
+			width       : 830,
 			height      : 460,
 			closeAction :'close',
 			plain       : true,	
@@ -190,7 +190,7 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 			}				
 			]
 	});
-	this.menu.on('hide', this.onContextHide, this);
+	//this.menu.on('hide', this.onContextHide, this);
    
 	e.stopEvent();
 	if(this.ctxRow){

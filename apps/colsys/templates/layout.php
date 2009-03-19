@@ -20,7 +20,7 @@
 			
 			<div class="headerleft" ><?=image_tag("layout/header/head_left.gif")?></div>
 			<div class="headerright" ><?=image_tag("layout/header/head_right.gif")?></div>
-			<div class="topmenuwraper" >
+			<div class="topmenuwraper"  >
 					<? 
 					include_component("menu", "menubar");
 					?>

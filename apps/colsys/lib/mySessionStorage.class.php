@@ -101,9 +101,13 @@ class mySessionStorage  extends sfDatabaseSessionStorage
       $sessionRows = $stmt->fetchAll(PDO::FETCH_NUM);
       if (count($sessionRows) == 1)
       {	  	
-	  	//echo  " ultimo ".date("H:i:s", $sessionRows[0][1])." ".$sessionRows[0][2]." vencimiento ".date("H:i:s",$sessionRows[0][1]+$sessionRows[0][2])." actual ".date("H:i:s",time() );
+	  	
 	  	if( $sessionRows[0][1]+$sessionRows[0][2]>time() ) {
-	        return base64_decode($sessionRows[0][0]);
+			//echo pg_unescape_bytea($sessionRows[0][0]);
+			@$buf = fread($sessionRows[0][0], 2048);
+			@fclose($sessionRows[0][0]);
+	        return pg_unescape_bytea($buf);
+			//$sessionRows[0][0];
 		}else{		 
 			$this->sessionDestroy( $id );  
 			return "";
@@ -111,13 +115,26 @@ class mySessionStorage  extends sfDatabaseSessionStorage
       }
       else
       {
+	  	
+		$maxinactive = 900;
+		if( trim(sfConfig::get("app_ip_trusted"))  ){
+			$trusted = explode(" ", sfConfig::get("app_ip_trusted"));
+			
+			$ipsniff = new IPAddressSubnetSniffer( $trusted );
+		
+			if( $ipsniff->ip_is_allowed( $_SERVER['REMOTE_ADDR'] ) ){
+				$maxinactive = 3600;
+			}
+		}
+	  
         // session does not exist, create it
-        $sql = 'INSERT INTO '.$db_table.'('.$db_id_col.', '.$db_data_col.', '.$db_time_col.') VALUES (?, ?, ?)';
+        $sql = 'INSERT INTO '.$db_table.'('.$db_id_col.', '.$db_data_col.', '.$db_time_col.', '.$db_maxinactive_col.') VALUES (?, ?, ?, ?)';
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(1, $id, PDO::PARAM_STR);
         $stmt->bindValue(2, '', PDO::PARAM_STR);
         $stmt->bindValue(3, time(), PDO::PARAM_INT);
+		$stmt->bindValue(4, $maxinactive, PDO::PARAM_INT);
         $stmt->execute();
 
         return '';
@@ -142,7 +159,10 @@ class mySessionStorage  extends sfDatabaseSessionStorage
   public function sessionWrite($id, $data)
   {
   	
-  	$data = base64_encode( $data );
+  	$data = pg_escape_bytea($data);
+	
+	
+  	//$data = chunk_split( base64_encode( $data ) );
     // get table/column
     $db_table    = $this->options['db_table'];
     $db_data_col = $this->options['db_data_col'];

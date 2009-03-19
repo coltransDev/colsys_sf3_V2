@@ -103,7 +103,7 @@ all:
 #
 #    # Charset used for the response
 #    charset:                utf-8
-    charset:                iso8859-1
+    charset:                iso-8859-1
 #
 #    # Miscellaneous
 #    strip_comments:         on         # Remove comments in core framework classes as defined in the core_compile.yml

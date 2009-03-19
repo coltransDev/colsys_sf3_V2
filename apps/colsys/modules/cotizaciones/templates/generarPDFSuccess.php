@@ -534,6 +534,29 @@ for( $k=0; $k<count($transportes); $k++ ):
 				$contenido.=$textoRecargos;
 				if ($producto->getCaImprimir() == 'Concepto' ){	
 					$tablaConceptos[ $trayecto ][ $concepto->getCaIdConcepto() ] .= $contenido;
+					
+					$tablaConceptos[ $trayecto ][ "observaciones" ]="";
+					if( $producto->getCaFrecuencia() ){		
+						if($tablaConceptos[ $trayecto ][ "observaciones" ]!=""){
+							$tablaConceptos[ $trayecto ][ "observaciones" ] .= "\n";
+						}			
+						$tablaConceptos[ $trayecto ][ "observaciones" ] .= "Frec.: ".nl2br($producto->getCaFrecuencia());
+					}
+					
+					if( $producto->getCaTiempotransito() ){
+						if($tablaConceptos[ $trayecto ][ "observaciones" ]!=""){
+							$tablaConceptos[ $trayecto ][ "observaciones" ] .= "\n";
+						}	
+						$tablaConceptos[ $trayecto ][ "observaciones" ] .= "T.T.: ".nl2br($producto->getCaTiempotransito());
+					}
+					
+					if( $producto->getCaObservaciones() ){					
+						if($tablaConceptos[ $trayecto ][ "observaciones" ]!=""){
+							$tablaConceptos[ $trayecto ][ "observaciones" ] .= "\n";
+						}	
+						$tablaConceptos[ $trayecto ][ "observaciones" ] .= nl2br($producto->getCaObservaciones());
+					}					
+					
 				}else{
 					$tablaTrayectos[ $concepto->getCaIdConcepto() ][ $trayecto ] .= $contenido;
 				}
@@ -565,19 +588,22 @@ for( $k=0; $k<count($transportes); $k++ ):
 		foreach( $conceptos as $concepto ){
 			array_push( $titulos, $concepto->getCaConcepto() );	
 		}
-		$width = 142/count($conceptos);	
-		$widths = array_merge(array(27), array_fill(0, count($conceptos), $width) );
 		
-		$pdf->SetStyles(array_fill(0, count($conceptos)+1, "B"));
-		$pdf->SetFills(array_fill(0, count($conceptos)+1, 1));	
+		$titulos[] = "Obs.";
+		
+		$width = 150/(count($conceptos)+1);	
+		$widths = array_merge(array(20), array_fill(0, count($titulos), $width) );
+		$widths[]=27;
+		$pdf->SetStyles(array_fill(0, count($titulos)+1, "B"));
+		$pdf->SetFills(array_fill(0, count($titulos)+1, 1));	
 		$pdf->SetWidths( $widths );
-		$pdf->SetAligns(array_fill(0, count($conceptos)+1, "C"));
+		$pdf->SetAligns(array_fill(0, count($titulos)+1, "C"));
 		$pdf->Row( $titulos );	
 		
-		$pdf->SetStyles( array_merge(array("B"), array_fill(0, count($conceptos), "")));
-		$pdf->SetFills( array_merge( array_fill(0, count($conceptos)+1, 0)));	
+		$pdf->SetStyles( array_merge(array("B"), array_fill(0, count($titulos), "")));
+		$pdf->SetFills( array_merge( array_fill(0, count($titulos)+1, 0)));	
 		$pdf->SetWidths( $widths );
-		$pdf->SetAligns(array_fill(0, count($conceptos)+1, "C"));
+		$pdf->SetAligns(array_fill(0, count($titulos)+1, "C"));
 		foreach( $trayectos1 as $trayecto  ){
 			$row = array($trayecto);
 			foreach( $conceptos as $concepto){
@@ -587,6 +613,8 @@ for( $k=0; $k<count($transportes); $k++ ):
 					$row[$concepto->getCaConcepto()]=	" ";		
 				}
 			}	
+			$row["Observaciones"]=$tablaConceptos[$trayecto]["observaciones"];	
+			
 			$pdf->Row($row);	
 		}
 		$pdf->flushGroup(); 

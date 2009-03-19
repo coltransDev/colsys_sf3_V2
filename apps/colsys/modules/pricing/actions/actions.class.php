@@ -10,6 +10,8 @@
  */
 class pricingActions extends sfActions
 {
+
+	const RUTINA = "0500300000";
 	/**
 	* Executes index action
 	*
@@ -27,7 +29,13 @@ class pricingActions extends sfActions
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/myRowExpander",'last');
 		$response->addJavaScript("extExtras/NumberFieldMin",'last');
-		$response->addJavaScript("extExtras/CheckColumn",'last');		
+		$response->addJavaScript("extExtras/CheckColumn",'last');	
+		
+		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}	
 	}	
 	
 	/*********************************************************************
@@ -984,7 +992,7 @@ class pricingActions extends sfActions
 			$c->add( TrayectoPeer::CA_IMPOEXPO, $impoexpo );
 			$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 			$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
-			$c->add( TrayectoPeer::CA_ACTIVO, true );
+			//$c->add( TrayectoPeer::CA_ACTIVO, true );
 			$c->addAscendingOrderByColumn( TransportadorPeer::CA_NOMBRE );
 			$c->setDistinct();	
 			$this->lineas = TransportadorPeer::doSelect( $c );

@@ -10,12 +10,18 @@ function guardarCambios(){
 	guardarGrillaRutinaUsuarios();
 }
 
+
+
+
 new Ext.TabPanel({
     renderTo: Ext.getBody(),
     activeTab: 0,
 	title: '<?=$rutina->getCaOpcion()?>',
+	height: 385,
     items: [
 			grillaRutinaGrupos,
 			grillaRutinaUsuarios
 			]
 });
+
+

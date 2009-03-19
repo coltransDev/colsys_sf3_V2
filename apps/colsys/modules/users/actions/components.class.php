@@ -51,29 +51,35 @@ class usersComponents extends sfComponents
 		}
 		
 		$this->data=array();		
+		
+		$c = new Criteria();
+		$gruposGrp = GrupoPeer::doSelect( $c );
+		
 		$gruposLdap = array();
-		
-		
+		foreach( $gruposGrp as $grp ){
+			$gruposLdap[]=$grp->getCanombre();
+		}
+				
 		for($i=0; $i<$grupos['count'] ;$i++){
-			$grupo = $grupos[$i]["cn"][0];
-			if( isset( $accesos[$grupo] ) ){
-				$sel = true;
-				$nivel = $accesos[$grupo];
-				$nivel_val = $this->accesos[$nivel];				
-			}else{
-				$sel = false;
-				$nivel = "";
-				$nivel_val = "";
-			}						
-			
-						
-			$this->data[]=array('grupo'=>$grupo,
-								'sel'=>$sel,
-								'nivel'=>$nivel,
-								'nivel_val'=>utf8_encode($nivel_val)
-								);			
-		}		
-		
+			$grupo = $grupos[$i]["cn"][0];			
+			if( in_array($grupo, $gruposLdap )!==false ){				
+				if( isset( $accesos[$grupo] ) ){
+					$sel = true;
+					$nivel = $accesos[$grupo];
+					$nivel_val = $this->accesos[$nivel];				
+				}else{
+					$sel = false;
+					$nivel = "";
+					$nivel_val = "";
+				}						
+										
+				$this->data[]=array('grupo'=>$grupo,
+									'sel'=>$sel,
+									'nivel'=>$nivel,
+									'nivel_val'=>utf8_encode($nivel_val)
+								);	
+			}
+		}			
 	}
 	
 	/**
@@ -118,7 +124,7 @@ class usersComponents extends sfComponents
 		}
 		
 		$this->data=array();		
-		$gruposLdap = array();
+		
 		
 		//print_r( $usuarios );
 		for($i=0; $i<$usuarios['count'] ;$i++){
