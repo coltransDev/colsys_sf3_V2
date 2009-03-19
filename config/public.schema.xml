@@ -281,6 +281,19 @@
 	</table>	
 	
 	
-		
+	
+	<table name="tb_colnovedades" phpName="ColNovedad">				
+		<column name="ca_idnovedad" type="integer" required="true" primaryKey="true" autoIncrement="true"  />
+		<id-method-parameter value="tb_colnovedades_id"/>			
+		<column name="ca_fchpublicacion" type="date"  />	
+		<column name="ca_asunto" type="varchar"  />
+		<column name="ca_detalle" type="varchar"  />	
+		<column name="ca_fcharchivar" type="date"  />
+		<column name="ca_extension" type="varchar"  />
+		<column name="ca_header_file" type="varchar"  />
+		<column name="ca_content" type="blob"  />
+		<column name="ca_fchpublicado" type="timestamp"  />
+		<column name="ca_usupublicado" type="varchar"  />
+	</table>			
 		
 </database>
