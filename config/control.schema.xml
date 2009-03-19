@@ -62,7 +62,7 @@
 		</foreign-key>			
 	</table>
 	
-	<table name="control.tb_rutinas" phpName="Rutina">
+	<table name="control.tb_rutinasnew" phpName="Rutina">
 		<column name="ca_rutina" type="VARCHAR" required="VARCHAR" primaryKey="true"/>
 		<column name="ca_opcion" type="VARCHAR" />
 		<column name="ca_descripcion" type="VARCHAR" />
