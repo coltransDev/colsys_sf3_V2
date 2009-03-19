@@ -35,11 +35,7 @@ class menuComponents extends sfComponents
 		
 		$this->grupos = array();
 		
-		$c = new Criteria();		
-		//$opciones = explode( "|", $usuario->getCaRutinas() );
-		//$c->add( RutinaPeer::CA_RUTINA, $opciones, Criteria::IN );
-		//$rutinas = array("0200220000", "0500600000", "0500700000");
-		//$c->addAnd( RutinaPeer::CA_RUTINA, $rutinas, Criteria::IN );		
+		$c = new Criteria();					
 		$c->addJoin( RutinaPeer::CA_RUTINA, AccesoGrupoPeer::CA_RUTINA , Criteria::LEFT_JOIN );		
 		$c->addJoin( AccesoGrupoPeer::CA_GRUPO, UsuarioGrupoPeer::CA_GRUPO , Criteria::LEFT_JOIN );	
 		$c->addJoin( RutinaPeer::CA_RUTINA, AccesoUsuarioPeer::CA_RUTINA,  Criteria::LEFT_JOIN );
