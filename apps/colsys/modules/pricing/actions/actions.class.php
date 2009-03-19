@@ -11,18 +11,31 @@
 class pricingActions extends sfActions
 {
 
-	const RUTINA = "0500300000";
+	const RUTINA = "61";
 	/**
 	* Executes index action
 	*
 	*/
 	public function executeIndex()
 	{		
+		
+		$this->nivel = $this->getUser()->getNivelAcceso( pricingActions::RUTINA );
+		
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+		
+		if( $this->nivel==0 ){
+			$this->opcion = "consulta";
+		}
+			
+			echo $this->nivel;
+		
 		$this->modalidades_mar = ParametroPeer::retrieveByCaso( "CU051" );
 		$this->modalidades_aer = ParametroPeer::retrieveByCaso( "CU052" );
 		$this->modalidades_ter = ParametroPeer::retrieveByCaso( "CU053" );	
 		
-		$this->opcion = $this->getRequestParameter( "opcion" );
+		
 		
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/FileUploadField",'last');
