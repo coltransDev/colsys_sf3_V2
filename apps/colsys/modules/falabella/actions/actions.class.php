@@ -268,7 +268,7 @@ class falabellaActions extends sfActions {
 			$salida.= "|"; // Contact Number 9
 			$salida.= "|"; // Lloyd  10
 			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"AIR":$reporte->getIdnave() )."|"; // Vessel 11
-			$salida.= "|"; // Número de Viaje 12
+			$salida.= $fala_header->getCaNumViaje()."|"; // Número de Viaje 12
 			$salida.= "COLT|"; // Carrier 13
 			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"L":"")."|"; // Vessel 14
 			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"A":"S")."|"; // Vessel 15
