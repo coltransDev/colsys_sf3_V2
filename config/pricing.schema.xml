@@ -258,6 +258,22 @@
 			<reference local="ca_idconcepto" foreign="ca_idconcepto"/>
 		</foreign-key>							
 	</table>
+
+	<table name="tb_pricrecargosparametros" phpName="PricRecargoParametro">	   
+		<column name="ca_idlinea" type="varchar" required="true" primaryKey="true" />	
+		<column name="ca_transporte" type="varchar" required="true" primaryKey="true" />		
+		<column name="ca_modalidad" type="varchar" required="true" primaryKey="true" />
+		<column name="ca_impoexpo" type="varchar" required="true" primaryKey="true" />				
+		<column name="ca_concepto" type="varchar" />
+		<column name="ca_valor" type="varchar" />	
+		<column name="ca_observaciones" type="varchar" />		
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" />					
+		<foreign-key foreignTable="tb_transporlineas">
+			<reference local="ca_idlinea" foreign="ca_idlinea"/>
+		</foreign-key>			
+	</table>
+	
 	
 	<table name="tb_pricnotificaciones" phpName="PricNotificacion">		
 		<column name="ca_idnotificacion" type="integer" required="true"  primaryKey="true" autoIncrement="true"/>	
@@ -285,7 +301,37 @@
 			<reference local="ca_idgrupo" foreign="ca_idgrupo"/>
 		</foreign-key>
 	</table>	
-
+	
+	
+	<table name="tb_pricpatios" phpName="PricPatio">		
+		<column name="ca_idpatio" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+		<id-method-parameter value="tb_pricpatios"/>	
+		<column name="ca_nombre" type="varchar" />
+		<column name="ca_idciudad" type="varchar" />	
+		<column name="ca_direccion" type="varchar" />	
+		
+		<foreign-key foreignTable="tb_ciudades">
+			<reference local="ca_idciudad" foreign="ca_idciudad"/>
+		</foreign-key>
+	</table>	
+	
+	
+	<table name="tb_pricpatioslinea" phpName="PricPatioLinea">		
+		<column name="ca_idpatio" type="integer" required="true" primaryKey="true"/>
+		<column name="ca_idlinea" type="varchar"  required="true" primaryKey="true" />
+		<column name="ca_transporte" type="varchar"  required="true" primaryKey="true" />
+		<column name="ca_modalidad" type="varchar"  required="true" primaryKey="true" />
+		<column name="ca_impoexpo" type="varchar"  required="true" primaryKey="true" />
+		<column name="ca_observaciones" type="varchar" />	
+			
+		<foreign-key foreignTable="tb_pricpatios">
+			<reference local="ca_idpatio" foreign="ca_idpatio"/>
+		</foreign-key>
+		<foreign-key foreignTable="tb_transporlineas">
+			<reference local="ca_idlinea" foreign="ca_idlinea"/>
+		</foreign-key>	
+	</table>	
+	
 </database>
 
  

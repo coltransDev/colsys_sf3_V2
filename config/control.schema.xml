@@ -70,6 +70,15 @@
 		<column name="ca_grupo" type="VARCHAR" />		
 	</table>
 	
+	
+	<table name="control.tb_rutinas" phpName="RutinaOld">
+		<column name="ca_rutina" type="VARCHAR" required="VARCHAR" primaryKey="true"/>
+		<column name="ca_opcion" type="VARCHAR" />
+		<column name="ca_descripcion" type="VARCHAR" />
+		<column name="ca_programa" type="VARCHAR" />
+		<column name="ca_grupo" type="VARCHAR" />		
+	</table>
+	
 	<table name="control.tb_departamentos" phpName="Departamento">
 		<column name="ca_iddepartamento" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 		<id-method-parameter value="control.tb_departamentos_id"/>			
