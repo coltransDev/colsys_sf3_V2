@@ -31,19 +31,13 @@
 		
 	</div>
 	
-<br />
 
-
-
-
-<br />
-<br />
 
 <? 
 include_component("menu", "submenubar");
 ?>
 <br />
-<br />	
+
  <?php echo $sf_content ?>
 
 
