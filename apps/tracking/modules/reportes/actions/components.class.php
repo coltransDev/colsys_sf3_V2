@@ -58,6 +58,15 @@ class reportesComponents extends sfComponents
 				continue;
 			}
 			
+			$status = $reporte->getUltimoStatus();
+			
+			if( $reporte->getCaEtapaActual() == "Cierre de Documentos" && strtotime($status->getCaFchstatus("Y-m-d") )<=strtotime(date("Y-m-d"), time()-604800 )  ){	
+				$reporte->setCaEtapaActual("Carga Entregada");
+				$reporte->save();
+				continue;
+			}
+			
+			
 			$class= $reporte->getColorStatus();
 			
 			$origen = $reporte->getOrigen();
