@@ -156,7 +156,7 @@ class cotizacionesActions extends sfActions
 			
 			
 		}
-		
+		$this->user = $this->getUser();
 		$this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
 		if( $this->nivel==-1 ){
 			$this->forward404();
@@ -181,11 +181,16 @@ class cotizacionesActions extends sfActions
 		if( $this->getRequestParameter( "empresa" ) ){
 			$cotizacion->setCaEmpresa( $this->getRequestParameter( "empresa" ) );		
 		}
+			
 		
 		if( $this->getRequestParameter( "vendedor" ) ){
 			$cotizacion->setCaUsuario( $this->getRequestParameter( "vendedor" ) );
 		}else{
-			if(!$cotizacion->getCaUsuario() || $cotizacion->getCaIdcontacto()!=$this->getRequestParameter( "idconcliente" ) ){
+		
+			if( $this->getUser()->getIddepartamento()==5 ){ // Si es comercial le coloca la cotizacion
+				$cotizacion->setCaUsuario( $this->getUser()->getUserid() );		
+				
+			}elseif(!$cotizacion->getCaUsuario() || $cotizacion->getCaIdcontacto()!=$this->getRequestParameter( "idconcliente" ) ){
 				$contacto = ContactoPeer::retrieveByPk( $this->getRequestParameter( "idconcliente" ) );
 				$vendedor = $contacto->getCliente()->getCaVendedor();
 				if(!$vendedor){
@@ -194,6 +199,7 @@ class cotizacionesActions extends sfActions
 				$cotizacion->setCaUsuario( $vendedor );			
 			}
 		}
+		
 		
 		$cotizacion->setCaIdContacto( $this->getRequestParameter( "idconcliente" ) );
 		$cotizacion->setCaAsunto( utf8_decode($this->getRequestParameter( "asunto" )) );
@@ -447,12 +453,13 @@ class cotizacionesActions extends sfActions
 				}
 			}
 		}
-		$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
-		$usuario = UsuarioPeer::retrieveByPk( $this->getUser()->getUserId() );
-		
+		//$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
+		$mensaje = ($this->getRequestParameter("mensaje")."\n\n");
+		$usuario = UsuarioPeer::retrieveByPk( $this->getUser()->getUserId() );		
 				
 		$email->addCc( $this->getUser()->getEmail() );					
-		$email->setCaSubject( utf8_decode($this->getRequestParameter("asunto")) );		
+		//$email->setCaSubject( utf8_decode($this->getRequestParameter("asunto")) );		
+		$email->setCaSubject( ($this->getRequestParameter("asunto")) );		
 		$email->setCaBody( $mensaje.$usuario->getFirma() );
 		$email->setCaBodyhtml( Utils::replace($mensaje).$usuario->getFirmaHTML() );		
 		$email->save();
