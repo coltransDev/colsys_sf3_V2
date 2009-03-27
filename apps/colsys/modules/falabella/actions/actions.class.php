@@ -254,7 +254,8 @@ class falabellaActions extends sfActions {
 		
 		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
 		$this->forward404unless( $reporte );
-		
+
+		$status = $reporte->getUltimoStatus();
 		$salida = '';
 		foreach( $details as $detail ){
 			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 1
@@ -280,10 +281,14 @@ class falabellaActions extends sfActions {
 			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 21
 			$salida.= "UN|"; // Vessel 22
 			$salida.= $fala_header->getCaCodigoPuertoDescarga()."|"; // 23
-			$salida.= $reporte->getETS("Ymd")."|"; // 24
-			$salida.= $reporte->getETS("Ymd")."|"; // 25
-			$salida.= $reporte->getETA("Ymd")."|"; // 26
-			$salida.= $reporte->getETA("Ymd")."|"; // 27
+
+			$ets_mem= (strlen(trim($reporte->getETS("Ymd")))==0 and $status)?$status->getCaFchsalida("Ymd"):$reporte->getETS("Ymd");
+			$eta_mem= (strlen(trim($reporte->getETA("Ymd")))==0 and $status)?$status->getCaFchllegada("Ymd"):$reporte->getETA("Ymd");
+			$salida.= $ets_mem."|"; // 24
+			$salida.= $ets_mem."|"; // 25
+			$salida.= $eta_mem."|"; // 26
+			$salida.= $eta_mem."|"; // 27
+
 			$salida.= str_replace("-","",$detail->getCaNumContPart1())."|"; // Id Cont 4 Car  28
 			$salida.= str_replace("-","",$detail->getCaNumContPart2())."|"; // Id Cont 10 Car  29
 			$salida.= $detail->getCaNumContSell()."|"; // Sello de Cont Car  30
