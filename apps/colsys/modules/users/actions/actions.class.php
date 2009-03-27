@@ -10,6 +10,8 @@
  */
 class usersActions extends sfActions
 {
+	const RUTINA = "1";
+	const RUTINA_CONTROL = "72";
 	/**
 	* Executes index action
 	*
@@ -220,6 +222,8 @@ class usersActions extends sfActions
 		$this->responseArray = array("success"=>true);	
 		$this->setTemplate("responseTemplate");				
 	}	
+	
+	public function executeTomarControl(){}
 		
 		
 }
