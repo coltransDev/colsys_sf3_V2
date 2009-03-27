@@ -11,7 +11,7 @@ Ext.onReady(function(){
 	* Se muestra el panel de notificaciones 
 	*/
 	<?
-	include_component("pricing", "panelNoticias", array("opcion"=>$opcion));		
+	include_component("pricing", "panelNoticias");		
 	?>
 		   
 	//Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
@@ -41,9 +41,7 @@ Ext.onReady(function(){
 					*/
 					<?
 					$url = "pricing/recargosGenerales";
-					if( $opcion=="consulta" ){
-						$url.= "?opcion=consulta";
-					}
+					
 					?>
 					var url = '<?=url_for( $url )?>';						
 					break;
@@ -54,9 +52,7 @@ Ext.onReady(function(){
 					*/
 					<?
 					$url = "pricing/recargosPorLinea";
-					if( $opcion=="consulta" ){
-						$url.= "?opcion=consulta";
-					}
+					
 					?>
 					var url = '<?=url_for( $url )?>';						
 					break;	
@@ -66,9 +62,7 @@ Ext.onReady(function(){
 					*/
 					<?
 					$url = "pricing/adminTrayectos";
-					if( $opcion=="consulta" ){
-						$url.= "?opcion=consulta";
-					}						
+											
 					?>
 					var url = '<?=url_for( $url )?>';						
 					break;	
@@ -78,9 +72,7 @@ Ext.onReady(function(){
 					*/
 					<?
 					$url = "pricing/archivosPais";
-					if( $opcion=="consulta" ){
-						$url.= "?opcion=consulta";
-					}						
+									
 					?>
 					var url = '<?=url_for( $url )?>';						
 					break;								
@@ -91,9 +83,7 @@ Ext.onReady(function(){
 					*/	
 					<?
 					$url = "pricing/grillaPorTrafico";
-					if( $opcion=="consulta" ){
-						$url.= "?opcion=consulta";
-					}						
+										
 					?>						
 					var url = '<?=url_for( $url )?>';
 					break;						
@@ -114,7 +104,7 @@ Ext.onReady(function(){
 					var idlinea = "";							
 				}
 				
-				if( opcion=="fleteslinea" ){
+				if( opcion=="fleteslinea" || opcion=="reclin" ){
 					var idciudad = ""; 
 					var idlinea = nodeoptions[5];							
 				}
@@ -186,23 +176,23 @@ Ext.onReady(function(){
 				items: [
 					<?	
 										
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::IMPO, "transporte"=>Constantes::MARITIMO, "titulo"=>"Importaciones Marítimas"));						
+					include_component("pricing","panelConsultaCiudades", array( "impoexpo"=>Constantes::IMPO, "transporte"=>Constantes::MARITIMO, "titulo"=>"Importaciones Marítimas"));						
 					?>								
 					,
 					<?						
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::IMPO, "transporte"=>Constantes::AEREO, "titulo"=>"Importaciones Aéreas"));						
+					include_component("pricing","panelConsultaCiudades", array( "impoexpo"=>Constantes::IMPO, "transporte"=>Constantes::AEREO, "titulo"=>"Importaciones Aéreas"));						
 					?>								
 					,
 					<?						
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::EXPO, "transporte"=>Constantes::MARITIMO, "titulo"=>"Exportaciones Marítimas"));						
+					include_component("pricing","panelConsultaCiudades", array( "impoexpo"=>Constantes::EXPO, "transporte"=>Constantes::MARITIMO, "titulo"=>"Exportaciones Marítimas"));						
 					?>								
 					,
 					<?						
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::EXPO, "transporte"=>Constantes::AEREO, "titulo"=>"Exportaciones Aéreas"));						
+					include_component("pricing","panelConsultaCiudades", array( "impoexpo"=>Constantes::EXPO, "transporte"=>Constantes::AEREO, "titulo"=>"Exportaciones Aéreas"));						
 					?>								
 					,
 					<?						
-					include_component("pricing","panelConsultaCiudades", array("opcion"=>$opcion, "impoexpo"=>Constantes::IMPO, "transporte"=>"", "titulo"=>"Cargas Nacionales"));						
+					include_component("pricing","panelConsultaCiudades", array( "impoexpo"=>Constantes::IMPO, "transporte"=>"", "titulo"=>"Cargas Nacionales"));						
 					?>
 					
 					<?	

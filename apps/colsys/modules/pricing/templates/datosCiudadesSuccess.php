@@ -25,12 +25,35 @@ foreach( $results as $modalidad=>$grupos ){
 				$linea =  "linea";
 			}
 			?>
+			
+			<?
+			if( $nivel>0 ){
+			?>
 			{
 				text:'Recargos locales x <?=$linea?>',
 				id:'reclin_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>',		
-				leaf:true
-			},
+				leaf:false,
+				children:[
+					<?
+					$k=0;
+					foreach( $lineas[$modalidad] as $linea ){						
+						if( $k++!=0){
+							echo ",";
+						}					
+					?>
+					{
+						text:'<?=$linea->getCaSigla()?$linea->getCaSigla():$linea->getCaNombre()?>',	
+						id:'reclin_<?=$impoexpo?>_<?=$transporte?>_<?=$modalidad?>_99-999_<?=$linea->getCaIdlinea()?>',
+						leaf:true
+					}
+					<?
+					}				
+					?>					
+				]
+			},			
 			<?
+			}
+			
 			$j=0;
 			foreach( $grupos as $grupo=>$paises){
 				if( $j++!=0){
