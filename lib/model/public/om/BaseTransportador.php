@@ -101,6 +101,26 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 	private $lastPricRecargosxLineaLogCriteria = null;
 
 	/**
+	 * @var        array PricRecargoParametro[] Collection to store aggregation of PricRecargoParametro objects.
+	 */
+	protected $collPricRecargoParametros;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collPricRecargoParametros.
+	 */
+	private $lastPricRecargoParametroCriteria = null;
+
+	/**
+	 * @var        array PricPatioLinea[] Collection to store aggregation of PricPatioLinea objects.
+	 */
+	protected $collPricPatioLineas;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collPricPatioLineas.
+	 */
+	private $lastPricPatioLineaCriteria = null;
+
+	/**
 	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
 	 */
 	protected $collReportes;
@@ -432,6 +452,12 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 			$this->collPricRecargosxLineaLogs = null;
 			$this->lastPricRecargosxLineaLogCriteria = null;
 
+			$this->collPricRecargoParametros = null;
+			$this->lastPricRecargoParametroCriteria = null;
+
+			$this->collPricPatioLineas = null;
+			$this->lastPricPatioLineaCriteria = null;
+
 			$this->collReportes = null;
 			$this->lastReporteCriteria = null;
 
@@ -585,6 +611,22 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collPricRecargoParametros !== null) {
+				foreach ($this->collPricRecargoParametros as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collPricPatioLineas !== null) {
+				foreach ($this->collPricPatioLineas as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collReportes !== null) {
 				foreach ($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -706,6 +748,22 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 
 				if ($this->collPricRecargosxLineaLogs !== null) {
 					foreach ($this->collPricRecargosxLineaLogs as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collPricRecargoParametros !== null) {
+					foreach ($this->collPricRecargoParametros as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collPricPatioLineas !== null) {
+					foreach ($this->collPricPatioLineas as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -988,6 +1046,18 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 			foreach ($this->getPricRecargosxLineaLogs() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addPricRecargosxLineaLog($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getPricRecargoParametros() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPricRecargoParametro($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getPricPatioLineas() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPricPatioLinea($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2108,6 +2178,363 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collPricRecargoParametros collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPricRecargoParametros()
+	 */
+	public function clearPricRecargoParametros()
+	{
+		$this->collPricRecargoParametros = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPricRecargoParametros collection (array).
+	 *
+	 * By default this just sets the collPricRecargoParametros collection to an empty array (like clearcollPricRecargoParametros());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initPricRecargoParametros()
+	{
+		$this->collPricRecargoParametros = array();
+	}
+
+	/**
+	 * Gets an array of PricRecargoParametro objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Transportador has previously been saved, it will retrieve
+	 * related PricRecargoParametros from storage. If this Transportador is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array PricRecargoParametro[]
+	 * @throws     PropelException
+	 */
+	public function getPricRecargoParametros($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportadorPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricRecargoParametros === null) {
+			if ($this->isNew()) {
+			   $this->collPricRecargoParametros = array();
+			} else {
+
+				$criteria->add(PricRecargoParametroPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				PricRecargoParametroPeer::addSelectColumns($criteria);
+				$this->collPricRecargoParametros = PricRecargoParametroPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricRecargoParametroPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				PricRecargoParametroPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricRecargoParametroCriteria) || !$this->lastPricRecargoParametroCriteria->equals($criteria)) {
+					$this->collPricRecargoParametros = PricRecargoParametroPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricRecargoParametroCriteria = $criteria;
+		return $this->collPricRecargoParametros;
+	}
+
+	/**
+	 * Returns the number of related PricRecargoParametro objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related PricRecargoParametro objects.
+	 * @throws     PropelException
+	 */
+	public function countPricRecargoParametros(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportadorPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collPricRecargoParametros === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(PricRecargoParametroPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				$count = PricRecargoParametroPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(PricRecargoParametroPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				if (!isset($this->lastPricRecargoParametroCriteria) || !$this->lastPricRecargoParametroCriteria->equals($criteria)) {
+					$count = PricRecargoParametroPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collPricRecargoParametros);
+				}
+			} else {
+				$count = count($this->collPricRecargoParametros);
+			}
+		}
+		$this->lastPricRecargoParametroCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a PricRecargoParametro object to this object
+	 * through the PricRecargoParametro foreign key attribute.
+	 *
+	 * @param      PricRecargoParametro $l PricRecargoParametro
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricRecargoParametro(PricRecargoParametro $l)
+	{
+		if ($this->collPricRecargoParametros === null) {
+			$this->initPricRecargoParametros();
+		}
+		if (!in_array($l, $this->collPricRecargoParametros, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collPricRecargoParametros, $l);
+			$l->setTransportador($this);
+		}
+	}
+
+	/**
+	 * Clears out the collPricPatioLineas collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPricPatioLineas()
+	 */
+	public function clearPricPatioLineas()
+	{
+		$this->collPricPatioLineas = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPricPatioLineas collection (array).
+	 *
+	 * By default this just sets the collPricPatioLineas collection to an empty array (like clearcollPricPatioLineas());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initPricPatioLineas()
+	{
+		$this->collPricPatioLineas = array();
+	}
+
+	/**
+	 * Gets an array of PricPatioLinea objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Transportador has previously been saved, it will retrieve
+	 * related PricPatioLineas from storage. If this Transportador is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array PricPatioLinea[]
+	 * @throws     PropelException
+	 */
+	public function getPricPatioLineas($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportadorPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricPatioLineas === null) {
+			if ($this->isNew()) {
+			   $this->collPricPatioLineas = array();
+			} else {
+
+				$criteria->add(PricPatioLineaPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				PricPatioLineaPeer::addSelectColumns($criteria);
+				$this->collPricPatioLineas = PricPatioLineaPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricPatioLineaPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				PricPatioLineaPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricPatioLineaCriteria) || !$this->lastPricPatioLineaCriteria->equals($criteria)) {
+					$this->collPricPatioLineas = PricPatioLineaPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricPatioLineaCriteria = $criteria;
+		return $this->collPricPatioLineas;
+	}
+
+	/**
+	 * Returns the number of related PricPatioLinea objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related PricPatioLinea objects.
+	 * @throws     PropelException
+	 */
+	public function countPricPatioLineas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportadorPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collPricPatioLineas === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(PricPatioLineaPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				$count = PricPatioLineaPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(PricPatioLineaPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				if (!isset($this->lastPricPatioLineaCriteria) || !$this->lastPricPatioLineaCriteria->equals($criteria)) {
+					$count = PricPatioLineaPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collPricPatioLineas);
+				}
+			} else {
+				$count = count($this->collPricPatioLineas);
+			}
+		}
+		$this->lastPricPatioLineaCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a PricPatioLinea object to this object
+	 * through the PricPatioLinea foreign key attribute.
+	 *
+	 * @param      PricPatioLinea $l PricPatioLinea
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricPatioLinea(PricPatioLinea $l)
+	{
+		if ($this->collPricPatioLineas === null) {
+			$this->initPricPatioLineas();
+		}
+		if (!in_array($l, $this->collPricPatioLineas, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collPricPatioLineas, $l);
+			$l->setTransportador($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Transportador is new, it will return
+	 * an empty collection; or if this Transportador has previously
+	 * been saved, it will retrieve related PricPatioLineas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Transportador.
+	 */
+	public function getPricPatioLineasJoinPricPatio($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportadorPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricPatioLineas === null) {
+			if ($this->isNew()) {
+				$this->collPricPatioLineas = array();
+			} else {
+
+				$criteria->add(PricPatioLineaPeer::CA_IDLINEA, $this->ca_idlinea);
+
+				$this->collPricPatioLineas = PricPatioLineaPeer::doSelectJoinPricPatio($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(PricPatioLineaPeer::CA_IDLINEA, $this->ca_idlinea);
+
+			if (!isset($this->lastPricPatioLineaCriteria) || !$this->lastPricPatioLineaCriteria->equals($criteria)) {
+				$this->collPricPatioLineas = PricPatioLineaPeer::doSelectJoinPricPatio($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastPricPatioLineaCriteria = $criteria;
+
+		return $this->collPricPatioLineas;
+	}
+
+	/**
 	 * Clears out the collReportes collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -2642,6 +3069,16 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collPricRecargoParametros) {
+				foreach ((array) $this->collPricRecargoParametros as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collPricPatioLineas) {
+				foreach ((array) $this->collPricPatioLineas as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collReportes) {
 				foreach ((array) $this->collReportes as $o) {
 					$o->clearAllReferences($deep);
@@ -2659,6 +3096,8 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 		$this->collTrayectos = null;
 		$this->collPricRecargosxLineas = null;
 		$this->collPricRecargosxLineaLogs = null;
+		$this->collPricRecargoParametros = null;
+		$this->collPricPatioLineas = null;
 		$this->collReportes = null;
 		$this->collInoMaestraSeas = null;
 	}

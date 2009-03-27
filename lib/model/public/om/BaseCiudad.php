@@ -70,6 +70,16 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 	private $lastPricRecargosxCiudadLogCriteria = null;
 
 	/**
+	 * @var        array PricPatio[] Collection to store aggregation of PricPatio objects.
+	 */
+	protected $collPricPatios;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collPricPatios.
+	 */
+	private $lastPricPatioCriteria = null;
+
+	/**
 	 * @var        array Cliente[] Collection to store aggregation of Cliente objects.
 	 */
 	protected $collClientes;
@@ -379,6 +389,9 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			$this->collPricRecargosxCiudadLogs = null;
 			$this->lastPricRecargosxCiudadLogCriteria = null;
 
+			$this->collPricPatios = null;
+			$this->lastPricPatioCriteria = null;
+
 			$this->collClientes = null;
 			$this->lastClienteCriteria = null;
 
@@ -518,6 +531,14 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collPricPatios !== null) {
+				foreach ($this->collPricPatios as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collClientes !== null) {
 				foreach ($this->collClientes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -635,6 +656,14 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 
 				if ($this->collPricRecargosxCiudadLogs !== null) {
 					foreach ($this->collPricRecargosxCiudadLogs as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collPricPatios !== null) {
+					foreach ($this->collPricPatios as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -898,6 +927,12 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			foreach ($this->getPricRecargosxCiudadLogs() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addPricRecargosxCiudadLog($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getPricPatios() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPricPatio($relObj->copy($deepCopy));
 				}
 			}
 
@@ -1417,6 +1452,161 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		$this->lastPricRecargosxCiudadLogCriteria = $criteria;
 
 		return $this->collPricRecargosxCiudadLogs;
+	}
+
+	/**
+	 * Clears out the collPricPatios collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPricPatios()
+	 */
+	public function clearPricPatios()
+	{
+		$this->collPricPatios = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPricPatios collection (array).
+	 *
+	 * By default this just sets the collPricPatios collection to an empty array (like clearcollPricPatios());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initPricPatios()
+	{
+		$this->collPricPatios = array();
+	}
+
+	/**
+	 * Gets an array of PricPatio objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Ciudad has previously been saved, it will retrieve
+	 * related PricPatios from storage. If this Ciudad is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array PricPatio[]
+	 * @throws     PropelException
+	 */
+	public function getPricPatios($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPricPatios === null) {
+			if ($this->isNew()) {
+			   $this->collPricPatios = array();
+			} else {
+
+				$criteria->add(PricPatioPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				PricPatioPeer::addSelectColumns($criteria);
+				$this->collPricPatios = PricPatioPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PricPatioPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				PricPatioPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPricPatioCriteria) || !$this->lastPricPatioCriteria->equals($criteria)) {
+					$this->collPricPatios = PricPatioPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPricPatioCriteria = $criteria;
+		return $this->collPricPatios;
+	}
+
+	/**
+	 * Returns the number of related PricPatio objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related PricPatio objects.
+	 * @throws     PropelException
+	 */
+	public function countPricPatios(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collPricPatios === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(PricPatioPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				$count = PricPatioPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(PricPatioPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				if (!isset($this->lastPricPatioCriteria) || !$this->lastPricPatioCriteria->equals($criteria)) {
+					$count = PricPatioPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collPricPatios);
+				}
+			} else {
+				$count = count($this->collPricPatios);
+			}
+		}
+		$this->lastPricPatioCriteria = $criteria;
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a PricPatio object to this object
+	 * through the PricPatio foreign key attribute.
+	 *
+	 * @param      PricPatio $l PricPatio
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPricPatio(PricPatio $l)
+	{
+		if ($this->collPricPatios === null) {
+			$this->initPricPatios();
+		}
+		if (!in_array($l, $this->collPricPatios, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collPricPatios, $l);
+			$l->setCiudad($this);
+		}
 	}
 
 	/**
@@ -1953,6 +2143,11 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collPricPatios) {
+				foreach ((array) $this->collPricPatios as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collClientes) {
 				foreach ((array) $this->collClientes as $o) {
 					$o->clearAllReferences($deep);
@@ -1972,6 +2167,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 
 		$this->collPricRecargosxCiudads = null;
 		$this->collPricRecargosxCiudadLogs = null;
+		$this->collPricPatios = null;
 		$this->collClientes = null;
 		$this->collAgentes = null;
 		$this->collContactoAgentes = null;
