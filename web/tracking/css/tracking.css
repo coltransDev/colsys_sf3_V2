@@ -135,6 +135,10 @@ table.table1 tr.orange{
 	background-color:#FFE4AE;	
 }
 
+table.table1 tr.purple{
+	background-color:#9999CC;	
+}
+
 table.table1 tr.pink{
 	background-color:#FFCCCC;	
 }
@@ -317,6 +321,10 @@ color:#CCCCCC;
 
 .row_pink{
 	background-color:#FFCCCC !important;	
+}
+
+.row_purple{
+	background-color:#9999CC !important;	
 }
 
 #leyenda{
