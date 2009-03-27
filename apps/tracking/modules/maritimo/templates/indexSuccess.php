@@ -29,6 +29,9 @@ include_component("reportes", "listaReportes", array("impoexpo"=>Constantes::IMP
 		<tr class="orange">		
 			<td>Carga entregada</td>
 		</tr>
+		<tr class="purple">		
+			<td>Carga en transporte terrestre</td>
+		</tr>		
 		<tr class="pink">
 			<td>Orden Anulada </td>
 		</tr>
