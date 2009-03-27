@@ -10,7 +10,7 @@
  */
 class helpdeskActions extends sfActions
 {
-	const RUTINA = "0500600000";
+	const RUTINA = "39";
 			
 	/**
 	* Executes index action
