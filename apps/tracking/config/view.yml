@@ -9,7 +9,7 @@ default:
     keywords:     tracking, cargo
     language:     es
 
-  stylesheets:    [tracking, ext/css/ext-all, ext/css/xtheme-slate]
+  stylesheets:    [tracking, ext/css/ext-all, ext/css/xtheme-gray]
 
   javascripts:    [tracking, ext/adapter/ext/ext-base, ext/ext-all-debug, tracking ]
 
