@@ -203,9 +203,14 @@ Ext.onReady(function(){
 							
 							/*Ext.getCmp("usuario").setValue(record.get("vendedor"));
 							Ext.getCmp("vendedor_id").setValue(record.get("nombre_ven"));*/
-							Ext.getCmp("vendedor_id").setRawValue(record.get("nombre_ven"));
-							Ext.getCmp("vendedor_id").hiddenField.value = record.get("vendedor");	
-							
+							<?
+							if( $user->getIddepartamento()!=5 ){
+							?>							
+								Ext.getCmp("vendedor_id").setRawValue(record.get("nombre_ven"));
+								Ext.getCmp("vendedor_id").hiddenField.value = record.get("vendedor");	
+							<?
+							}
+							?>
 							
 							Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
 							Ext.getCmp("status").setValue(record.get("status"));							
