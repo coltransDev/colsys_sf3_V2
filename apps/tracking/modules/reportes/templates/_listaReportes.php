@@ -1,6 +1,9 @@
 <script type="text/javascript">
 	
 Ext.onReady(function(){
+	
+	
+
 	Ext.QuickTips.init();	
 	
 	/*
@@ -152,7 +155,16 @@ Ext.onReady(function(){
 		document.location.href = url;
 		
 	}
-		
+	
+	var rowdblclickHandler=function( grid , rowIndex, e ){
+		record =  panel.store.getAt( rowIndex );
+		if( typeof(record)!="undefined" ){
+			var url = "<?=url_for("reportes/detalleReporte")?>/rep/"+record.data.consecutivo;
+			
+			window.open( url );
+			
+		}
+	}	
 	/*
 	* Crea la grilla 
 	*/    
@@ -175,58 +187,64 @@ Ext.onReady(function(){
 					 } 
 		),
 		tbar: [			  
-		{
-			text: 'Abrir',
-			tooltip: 'Muestra mas datos del item seleccionado',
-			iconCls: 'application_go',  // reference to our css
-			id: 'bnt_open',
-			handler: abrirBtnHandler
-		},
-		{
-			text: 'Abrir en nueva ventana',
-			tooltip: 'Muestra mas datos del item seleccionado en una nueva ventana',
-			iconCls: 'application_double',  // reference to our css,
-			id: 'bnt_opennewwindow',
-			handler: abrirBtnHandler
-		}
-		,
-		{
-			text: 'Expandir todos',
-			tooltip: 'Expande el ultimo status de cada carga',
-			iconCls: 'application_add',  // reference to our css
-			handler: function(){
-				var count = panel.store.getCount();
-				for( var i = 0; i<count; i++ ){
-					 expander.expandRow(i);
-				}				
+			{
+				text: 'Abrir',
+				tooltip: 'Muestra mas datos del item seleccionado',
+				iconCls: 'application_go',  // reference to our css
+				id: 'bnt_open',
+				handler: abrirBtnHandler
+			},
+			{
+				text: 'Abrir en nueva ventana',
+				tooltip: 'Muestra mas datos del item seleccionado en una nueva ventana',
+				iconCls: 'application_double',  // reference to our css,
+				id: 'bnt_opennewwindow',
+				handler: abrirBtnHandler
 			}
-		}
-		,
-		{
-			text: 'Contraer todos',
-			tooltip: 'Esconde todos los comentarios',
-			iconCls: 'application_delete',  // reference to our css
-			handler: function(){
-				var count = panel.store.getCount();
-				for( var i = 0; i<count; i++ ){
-					 expander.collapseRow(i);
-				}				
+			,
+			{
+				text: 'Expandir todos',
+				tooltip: 'Expande el ultimo status de cada carga',
+				iconCls: 'application_add',  // reference to our css
+				handler: function(){
+					var count = panel.store.getCount();
+					for( var i = 0; i<count; i++ ){
+						 expander.expandRow(i);
+					}				
+				}
 			}
+			,
+			{
+				text: 'Contraer todos',
+				tooltip: 'Esconde todos los comentarios',
+				iconCls: 'application_delete',  // reference to our css
+				handler: function(){
+					var count = panel.store.getCount();
+					for( var i = 0; i<count; i++ ){
+						 expander.collapseRow(i);
+					}				
+				}
+			}
+			,
+			{
+				text: 'Excel',
+				tooltip: 'Importa los datos a una hoja de excel',
+				iconCls: 'page_excel',  // reference to our css
+				handler: excelBtnHandler
+			}
+		],
+		listeners:{
+			 rowdblclick : rowdblclickHandler
 		}
-		,
-		{
-			text: 'Excel',
-			tooltip: 'Importa los datos a una hoja de excel',
-			iconCls: 'page_excel',  // reference to our css
-			handler: excelBtnHandler
-		}
-		]
 	});
 	panel.render('grid-panel');
 
 	//panel.render(document.body);
 	panel.getSelectionModel().selectFirstRow();
+	panel.setWidth(Ext.getBody().getViewSize().width-40);
+
+
 });
 //
 </script>
-<div id="grid-panel"></div>
+<div id="grid-panel" style="margin:0 20px 0 20px"></div>

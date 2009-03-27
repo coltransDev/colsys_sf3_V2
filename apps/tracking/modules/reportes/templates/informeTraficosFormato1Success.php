@@ -1,4 +1,6 @@
- <?
+<?
+
+ 
 if( $parametros ){	
 	$parametro = $parametros[0];			
 	$ultimaCol = "T";
@@ -8,7 +10,7 @@ if( $parametros ){
 	$parametro = null;
 }
 
-error_reporting( E_ERROR );
+//error_reporting( E_ERROR );
 
 $objPHPExcel = new sfPhpExcel();
 
@@ -138,6 +140,10 @@ foreach( $reportes as $reporte ){
 		case "orange": //"Carga entregada"
 			$color = "FFCC99";
 			break;
+		case "purple": //"Carga en transito de destino"
+			$color = "9999CC";
+			break;
+			
 		case "pink": //"Orden Anulada"
 			$color = "FFCCCC";
 			break;
@@ -432,6 +438,16 @@ $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getLeft()->setBo
 $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);				
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, utf8_encode("Carga entregada") );
 $i++;
+
+$objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+$objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getFill()->getStartColor()->setRGB('9999CC');	
+$objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+$objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+$objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getLeft()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+$objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);			
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$i, utf8_encode("En transito terrestre") );
+$i++;
+
 
 $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);		
 $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getFill()->getStartColor()->setRGB('FFCCCC');	
