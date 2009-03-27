@@ -801,9 +801,14 @@ class Reporte extends BaseReporte
 		$etapa = $this->getCaEtapaActual(); 
 		
 		$status = $this->getUltimoStatus();
+				
+		
 		if( $status && $status->getCaFchstatus("Y-m-d")==date("Y-m-d") && $etapa!="Carga Embarcada" && $etapa!="ETA" && $etapa!="Orden Anulada" && $etapa!="Carga en Aeropuerto de Destino"){			
 			$etapa = "nuevo";			
 		}
+		
+		
+		
 		switch( $etapa ){				
 			case "Pendiente de Instrucciones":
 				$class = "yellow";
@@ -829,6 +834,18 @@ class Reporte extends BaseReporte
 				break;		
 			case "Carga en Aeropuerto de Destino":
 				$class = "orange";
+				break;	
+			case "Cierre de Documentos":
+				$class = "orange";
+				break;	
+			case "Carga en Transito Terrestre":
+				$class = "purple";
+				break;			
+			case "Cierre de Documentos":
+				$class = "orange";
+				break;	
+			case "Carga en Transito Terrestre":
+				$class = "purple";
 				break;	
 			default:				
 				$class = "";
