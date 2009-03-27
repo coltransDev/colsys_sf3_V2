@@ -1,8 +1,10 @@
-<div style="margin:30px;">
+<div style="margin: 0 30px 0 30px;">
 <?
 foreach( $categorias as $categoria ){
-	$c = new Criteria();
-	$c->add( HdeskKBasePeer::CA_PRIVATE, false );
+	$c = new Criteria();	
+	if( $nivel<=0 ){
+		//$c->add( HdeskKBasePeer::CA_PRIVATE, false );
+	}
 	$kbases = $categoria->getHdeskKBases( $c );
 	if( count($kbases)>0 ){
 ?>

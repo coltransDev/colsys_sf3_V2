@@ -4,7 +4,7 @@
 		<th ><?=$kbase->getCaTitle()?></th>
 	</tr>
 	<tr>
-		<td class="listar"><b>Reportado por:</b> <?=$kbase->getCaLogin()?></td>
+		<td class="listar"><b>Creado por:</b> <?=$kbase->getCaLogin()?></td>
 	</tr>
 	<tr>
 		<td class="listar"><b>Creado:</b> <?=$kbase->getCaCreatedat("Y-m-d")?></td>
