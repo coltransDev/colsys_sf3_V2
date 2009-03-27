@@ -92,10 +92,12 @@ class Email extends BaseEmail
 		if( $this->getCaAttachment() ){
 			$atchFiles = explode( "|",  $this->getCaAttachment() );
 			//Attachments	
-			foreach( $atchFiles as $file ){									
-				$sfFile = new Swift_File($file);
-				$attachment = new Swift_Message_Attachment($sfFile);		 
-				$mess->attach($attachment);				
+			foreach( $atchFiles as $file ){	
+				if( file_exists($file) ){								
+					$sfFile = new Swift_File($file);
+					$attachment = new Swift_Message_Attachment($sfFile);		 
+					$mess->attach($attachment);				
+				}
 			}
 		}
 		
