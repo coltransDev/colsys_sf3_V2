@@ -1,6 +1,6 @@
-<?
-
-?>
+<div align="center"><h3>Administración de permisos por usuario y grupo</h3></div>
+<br />
+<div id="panelAdmin" style="margin:0 20px 0 20px"></div>
 <script language="javascript" >
 /*
 * Crea el Record 
@@ -320,5 +320,5 @@ var panel = new Ext.grid.EditorGridPanel({
 
 });
 
-panel.render(document.body);
+panel.render("panelAdmin");
 </script>
