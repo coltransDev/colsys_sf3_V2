@@ -166,6 +166,11 @@ table.tableList tr.orange{
 	background-color:#FFE4AE;	
 }
 
+
+table.tableList tr.purple{
+	background-color:#9999CC;	
+}
+
 table.tableList tr.pink{
 	background-color:#FFCCCC;	
 }
@@ -325,10 +330,52 @@ div.grey{
 * Estilos para la barra de herramientas
 */
 
-.toolbar {
-	margin-right: 10px;
+
+.toolbar{
+	color: #333333;
+	background: #F0F0F0;	
+	margin-top: 0px;
+	margin-bottom: 0px; 
+	padding:0px;
+	height: 30px;
+	width:95%;
+	background-image: url(../images/layout/submenu/submenubg.gif);
+
+	
 }
 
+.toolbarbtnWraper{	
+  float:left;
+  margin-left: 5px;
+  padding: 2px 2px 2px 2px;	
+}
+
+.toolbar a.toolbarBtn{
+	padding-left: 4px;
+	padding-right: 4px;
+	
+	color: #333333;
+	display: block;
+	font-size:9px;
+	max-width: 100px;
+}
+
+.toolbar a.toolbarBtn:hover{
+	border: 1px solid #CCCCCC;
+	
+}
+
+.submenuleft{
+	float:left;
+}
+
+.submenuright{
+	float:right;	
+}
+
+
+
+/*
 .toolbar a.toolbar {
 	color: #333333;
 	text-decoration : none;
@@ -371,7 +418,7 @@ a.toolbar:hover {
 a.toolbar:active {
 	color : #FF9900;
 }
-
+*/
 
 
 /*
