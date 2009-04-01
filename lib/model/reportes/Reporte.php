@@ -267,8 +267,9 @@ class Reporte extends BaseReporte
 	* Retorna el un array de objetos Tercero de tipo proveedor asociado al reporte 
 	* @author Andres Botero
 	*/
-	public function getProveedores(){
-		if( $this->getCaIdProveedor() ){			
+	public function getProveedores(){		
+		
+		if( $this->getCaIdProveedor() && $this->getCaIdProveedor()!="''" ){			
 			$proveedores = explode("|",$this->getCaIdProveedor());
 			
 			$c = new Criteria();

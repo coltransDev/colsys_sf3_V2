@@ -2175,7 +2175,6 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				$count = count($this->collCotOpcions);
 			}
 		}
-		$this->lastCotOpcionCriteria = $criteria;
 		return $count;
 	}
 

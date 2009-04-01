@@ -2270,7 +2270,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				$count = count($this->collInoClientesAirs);
 			}
 		}
-		$this->lastInoClientesAirCriteria = $criteria;
 		return $count;
 	}
 
@@ -2519,7 +2518,6 @@ abstract class BaseInoMaestraAir extends BaseObject  implements Persistent {
 				$count = count($this->collInoIngresosAirs);
 			}
 		}
-		$this->lastInoIngresosAirCriteria = $criteria;
 		return $count;
 	}
 

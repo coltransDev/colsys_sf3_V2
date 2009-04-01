@@ -4205,7 +4205,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$count = count($this->collInoClientesAirs);
 			}
 		}
-		$this->lastInoClientesAirCriteria = $criteria;
 		return $count;
 	}
 
@@ -4454,7 +4453,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$count = count($this->collRepAvisos);
 			}
 		}
-		$this->lastRepAvisoCriteria = $criteria;
 		return $count;
 	}
 
@@ -4656,7 +4654,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$count = count($this->collRepStatuss);
 			}
 		}
-		$this->lastRepStatusCriteria = $criteria;
 		return $count;
 	}
 
@@ -4858,7 +4855,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$count = count($this->collRepEquipos);
 			}
 		}
-		$this->lastRepEquipoCriteria = $criteria;
 		return $count;
 	}
 
@@ -5060,7 +5056,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$count = count($this->collRepGastos);
 			}
 		}
-		$this->lastRepGastoCriteria = $criteria;
 		return $count;
 	}
 
@@ -5345,7 +5340,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$count = count($this->collRepCostos);
 			}
 		}
-		$this->lastRepCostoCriteria = $criteria;
 		return $count;
 	}
 
@@ -5547,7 +5541,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$count = count($this->collRepTarifas);
 			}
 		}
-		$this->lastRepTarifaCriteria = $criteria;
 		return $count;
 	}
 
@@ -5821,7 +5814,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$count = count($this->collInoClientesSeas);
 			}
 		}
-		$this->lastInoClientesSeaCriteria = $criteria;
 		return $count;
 	}
 

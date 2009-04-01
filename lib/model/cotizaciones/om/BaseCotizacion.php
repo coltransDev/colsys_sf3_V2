@@ -2322,7 +2322,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				$count = count($this->collCotProductos);
 			}
 		}
-		$this->lastCotProductoCriteria = $criteria;
 		return $count;
 	}
 
@@ -2524,7 +2523,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				$count = count($this->collCotContinuacions);
 			}
 		}
-		$this->lastCotContinuacionCriteria = $criteria;
 		return $count;
 	}
 
@@ -2726,7 +2724,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				$count = count($this->collCotSeguros);
 			}
 		}
-		$this->lastCotSeguroCriteria = $criteria;
 		return $count;
 	}
 
@@ -2928,7 +2925,6 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				$count = count($this->collCotArchivos);
 			}
 		}
-		$this->lastCotArchivoCriteria = $criteria;
 		return $count;
 	}
 

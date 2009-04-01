@@ -2534,7 +2534,6 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 				$count = count($this->collRepStatusRespuestas);
 			}
 		}
-		$this->lastRepStatusRespuestaCriteria = $criteria;
 		return $count;
 	}
 

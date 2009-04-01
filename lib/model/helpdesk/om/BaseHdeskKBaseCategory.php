@@ -876,7 +876,6 @@ abstract class BaseHdeskKBaseCategory extends BaseObject  implements Persistent 
 				$count = count($this->collHdeskKBases);
 			}
 		}
-		$this->lastHdeskKBaseCriteria = $criteria;
 		return $count;
 	}
 

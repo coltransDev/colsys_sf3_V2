@@ -1800,7 +1800,6 @@ abstract class BaseCotOpcion extends BaseObject  implements Persistent {
 				$count = count($this->collCotRecargos);
 			}
 		}
-		$this->lastCotRecargoCriteria = $criteria;
 		return $count;
 	}
 

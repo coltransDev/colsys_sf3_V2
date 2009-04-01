@@ -207,20 +207,12 @@ class ReportePeer extends BaseReportePeer
 	* @author: Andres Botero
 	*/
 	public static function getReportesActivosExpo( $idCliente , $criteria=false, $order="" ){
-				
+			
 		$c = new Criteria();
-		return $c;	
+		
 		$c->add( ClientePeer::CA_IDGRUPO, $idCliente );
 		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );	
 		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );
-				
-		if( $modo=="aereo"){
-			$c->addJoin( ReportePeer::CA_CONSECUTIVO, InoClientesAirPeer::CA_IDREPORTE, Criteria::LEFT_JOIN );
-			$c->addJoin( InoClientesAirPeer::CA_REFERENCIA, InoMaestraAirPeer::CA_REFERENCIA, Criteria::LEFT_JOIN );
-		}else{
-			$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE, Criteria::LEFT_JOIN );
-			$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA, Criteria::LEFT_JOIN );
-		}
 		
 		switch( $order ){
 			case "orden":
@@ -237,37 +229,8 @@ class ReportePeer extends BaseReportePeer
 		}
 				
 		$c->add( ReportePeer::CA_USUANULADO, null, Criteria::ISNULL );
-		if( $modo=="aereo"){
-			$criterion = $c->getNewCriterion( ReportePeer::CA_FCHREPORTE, "2008-10-01", Criteria::GREATER_THAN ); // // Se acordo esta fecha para empezar a operar en esta modalidad			
-			$criterion->addOr($c->getNewCriterion( ReportePeer::CA_FCHDESPACHO, "2008-10-01", Criteria::GREATER_THAN ));	
-		$c->addAnd($criterion);					
-		}else{
-			$criterion = $c->getNewCriterion( ReportePeer::CA_FCHREPORTE, "2008-04-01", Criteria::GREATER_THAN ); // // Se acordo esta fecha para empezar a operar en esta modalidad		
-			$criterion->addOr($c->getNewCriterion( ReportePeer::CA_FCHDESPACHO, "2008-04-01", Criteria::GREATER_THAN ));	
-		$c->addAnd($criterion);						
-		}
-		
-		
-				
-		if( $modo=="maritimo" ){
-			$c->add( ReportePeer::CA_TRANSPORTE, "Marítimo" );
-			$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
-		}
-		
-		if( $modo=="aereo" ){
-			$c->add( ReportePeer::CA_TRANSPORTE, "Aéreo" );
-			$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
-		}
-		
-		if($modo=="expo" || $modo=="exportaciones" ){
-			$c->add( ReportePeer::CA_IMPOEXPO, "Exportación" );
-		}
-		
-		if($modo=="impo" || $modo=="importaciones" ){
-			$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
-		}
-		
-		
+					
+		$c->add( ReportePeer::CA_IMPOEXPO, "Exportación" );
 		
 		if( $idCliente==860048626 ||$idCliente==830512518 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
 			$fecha =  date("Y-m-")."01";			
@@ -286,17 +249,9 @@ class ReportePeer extends BaseReportePeer
 			$fecha = Utils::addDays( date("Y-m-d"), $add );
 		}
 				
-		$criterion = $c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, null, Criteria::ISNULL );		
-		if( $modo=="aereo" ){
-			$criterion->addOr($c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, "Carga en Aeropuerto de Destino", Criteria::NOT_EQUAL));			
-			$criterion->addOr($c->getNewCriterion( InoMaestraAirPeer::CA_FCHLLEGADA, $fecha , Criteria::GREATER_EQUAL));
-			
-		}else{						
-			$criterion->addOr($c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada", Criteria::NOT_EQUAL));
-			$criterion->addOr($c->getNewCriterion( InoMaestraSeaPeer::CA_FCHCONFIRMACION, $fecha , Criteria::GREATER_EQUAL));
-		}			
-									
-		$c->addAnd($criterion);
+						
+		$c->add(ReportePeer::CA_ETAPA_ACTUAL, null, Criteria::ISNOTNULL);						
+		$c->addAnd(ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada", Criteria::NOT_EQUAL);
 		if( $criteria ){
 			return $c;
 		}else{			

@@ -1034,7 +1034,6 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskTickets);
 			}
 		}
-		$this->lastHdeskTicketCriteria = $criteria;
 		return $count;
 	}
 
@@ -1283,7 +1282,6 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskProjects);
 			}
 		}
-		$this->lastHdeskProjectCriteria = $criteria;
 		return $count;
 	}
 
@@ -1438,7 +1436,6 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskUserGroups);
 			}
 		}
-		$this->lastHdeskUserGroupCriteria = $criteria;
 		return $count;
 	}
 

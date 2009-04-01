@@ -1060,7 +1060,6 @@ abstract class BaseHdeskProject extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskTickets);
 			}
 		}
-		$this->lastHdeskTicketCriteria = $criteria;
 		return $count;
 	}
 

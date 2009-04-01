@@ -1654,7 +1654,6 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskResponses);
 			}
 		}
-		$this->lastHdeskResponseCriteria = $criteria;
 		return $count;
 	}
 
