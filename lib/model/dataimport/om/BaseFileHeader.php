@@ -1303,7 +1303,6 @@ abstract class BaseFileHeader extends BaseObject  implements Persistent {
 				$count = count($this->collFileImporteds);
 			}
 		}
-		$this->lastFileImportedCriteria = $criteria;
 		return $count;
 	}
 
@@ -1458,7 +1457,6 @@ abstract class BaseFileHeader extends BaseObject  implements Persistent {
 				$count = count($this->collFileColumns);
 			}
 		}
-		$this->lastFileColumnCriteria = $criteria;
 		return $count;
 	}
 

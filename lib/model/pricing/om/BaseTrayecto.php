@@ -1782,7 +1782,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 				$count = count($this->collPricFletes);
 			}
 		}
-		$this->lastPricFleteCriteria = $criteria;
 		return $count;
 	}
 
@@ -1984,7 +1983,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 				$count = count($this->collPricFleteLogs);
 			}
 		}
-		$this->lastPricFleteLogCriteria = $criteria;
 		return $count;
 	}
 
@@ -2186,7 +2184,6 @@ abstract class BaseTrayecto extends BaseObject  implements Persistent {
 				$count = count($this->collFletes);
 			}
 		}
-		$this->lastFleteCriteria = $criteria;
 		return $count;
 	}
 

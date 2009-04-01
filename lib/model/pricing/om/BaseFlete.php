@@ -1646,7 +1646,6 @@ abstract class BaseFlete extends BaseObject  implements Persistent {
 				$count = count($this->collRecargoFletes);
 			}
 		}
-		$this->lastRecargoFleteCriteria = $criteria;
 		return $count;
 	}
 

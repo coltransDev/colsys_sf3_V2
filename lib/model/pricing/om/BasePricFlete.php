@@ -1681,7 +1681,6 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargoxConceptos);
 			}
 		}
-		$this->lastPricRecargoxConceptoCriteria = $criteria;
 		return $count;
 	}
 
@@ -1897,7 +1896,6 @@ abstract class BasePricFlete extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargoxConceptoLogs);
 			}
 		}
-		$this->lastPricRecargoxConceptoLogCriteria = $criteria;
 		return $count;
 	}
 
