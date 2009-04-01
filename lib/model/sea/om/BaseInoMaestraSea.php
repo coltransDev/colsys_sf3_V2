@@ -3608,7 +3608,6 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 				$count = count($this->collInoClientesSeas);
 			}
 		}
-		$this->lastInoClientesSeaCriteria = $criteria;
 		return $count;
 	}
 
@@ -3857,7 +3856,6 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 				$count = count($this->collInoIngresosSeas);
 			}
 		}
-		$this->lastInoIngresosSeaCriteria = $criteria;
 		return $count;
 	}
 
@@ -4059,7 +4057,6 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 				$count = count($this->collInoAvisosSeas);
 			}
 		}
-		$this->lastInoAvisosSeaCriteria = $criteria;
 		return $count;
 	}
 
