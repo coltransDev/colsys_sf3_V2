@@ -2458,7 +2458,6 @@ abstract class BaseAduanaMaestra extends BaseObject  implements Persistent {
 				$count = count($this->collAduanaEventos);
 			}
 		}
-		$this->lastAduanaEventoCriteria = $criteria;
 		return $count;
 	}
 
@@ -2613,7 +2612,6 @@ abstract class BaseAduanaMaestra extends BaseObject  implements Persistent {
 				$count = count($this->collAduanaEventoExtras);
 			}
 		}
-		$this->lastAduanaEventoExtraCriteria = $criteria;
 		return $count;
 	}
 
