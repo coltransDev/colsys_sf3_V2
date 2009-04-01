@@ -13,6 +13,7 @@
 		<column name="ca_authmethod" type="varchar" />	
 		<column name="ca_passwd" type="varchar" />	
 		<column name="ca_salt" type="varchar" />	
+		<column name="ca_activo" type="boolean" />	
 		
 		
 		<foreign-key foreignTable="control.tb_sucursales">
