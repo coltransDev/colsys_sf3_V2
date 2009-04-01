@@ -1085,7 +1085,6 @@ abstract class BaseSdn extends BaseObject  implements Persistent {
 				$count = count($this->collSdnIds);
 			}
 		}
-		$this->lastSdnIdCriteria = $criteria;
 		return $count;
 	}
 
@@ -1240,7 +1239,6 @@ abstract class BaseSdn extends BaseObject  implements Persistent {
 				$count = count($this->collSdnAkas);
 			}
 		}
-		$this->lastSdnAkaCriteria = $criteria;
 		return $count;
 	}
 
@@ -1395,7 +1393,6 @@ abstract class BaseSdn extends BaseObject  implements Persistent {
 				$count = count($this->collSdnAddresss);
 			}
 		}
-		$this->lastSdnAddressCriteria = $criteria;
 		return $count;
 	}
 
