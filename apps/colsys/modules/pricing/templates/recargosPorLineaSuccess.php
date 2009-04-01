@@ -1,5 +1,5 @@
 <?
-if( $linea ){ 
+if( isset($linea) && $linea ){ 
 	$lineaStr = $linea->getCaSigla()?$linea->getCaSigla():$linea->getCaNombre();
 }else{
 	$lineaStr = "";
