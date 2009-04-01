@@ -86,6 +86,8 @@ class UsuarioMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_SALT', 'CaSalt', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
+
 	} // doBuild()
 
 } // UsuarioMapBuilder

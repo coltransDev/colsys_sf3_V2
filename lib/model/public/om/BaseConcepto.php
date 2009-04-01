@@ -1335,7 +1335,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collCotOpcions);
 			}
 		}
-		$this->lastCotOpcionCriteria = $criteria;
 		return $count;
 	}
 
@@ -1537,7 +1536,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collCotContinuacions);
 			}
 		}
-		$this->lastCotContinuacionCriteria = $criteria;
 		return $count;
 	}
 
@@ -1739,7 +1737,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collPricFletes);
 			}
 		}
-		$this->lastPricFleteCriteria = $criteria;
 		return $count;
 	}
 
@@ -1941,7 +1938,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collPricFleteLogs);
 			}
 		}
-		$this->lastPricFleteLogCriteria = $criteria;
 		return $count;
 	}
 
@@ -2143,7 +2139,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxLineas);
 			}
 		}
-		$this->lastPricRecargosxLineaCriteria = $criteria;
 		return $count;
 	}
 
@@ -2392,7 +2387,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxLineaLogs);
 			}
 		}
-		$this->lastPricRecargosxLineaLogCriteria = $criteria;
 		return $count;
 	}
 
@@ -2641,7 +2635,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collRepEquipos);
 			}
 		}
-		$this->lastRepEquipoCriteria = $criteria;
 		return $count;
 	}
 
@@ -2843,7 +2836,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collRepGastos);
 			}
 		}
-		$this->lastRepGastoCriteria = $criteria;
 		return $count;
 	}
 
@@ -3092,7 +3084,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collRepTarifas);
 			}
 		}
-		$this->lastRepTarifaCriteria = $criteria;
 		return $count;
 	}
 
@@ -3294,7 +3285,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$count = count($this->collFletes);
 			}
 		}
-		$this->lastFleteCriteria = $criteria;
 		return $count;
 	}
 

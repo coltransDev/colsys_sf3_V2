@@ -1574,7 +1574,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				$count = count($this->collEmailAttachments);
 			}
 		}
-		$this->lastEmailAttachmentCriteria = $criteria;
 		return $count;
 	}
 
@@ -1729,7 +1728,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				$count = count($this->collRepAvisos);
 			}
 		}
-		$this->lastRepAvisoCriteria = $criteria;
 		return $count;
 	}
 
@@ -1931,7 +1929,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				$count = count($this->collRepStatuss);
 			}
 		}
-		$this->lastRepStatusCriteria = $criteria;
 		return $count;
 	}
 

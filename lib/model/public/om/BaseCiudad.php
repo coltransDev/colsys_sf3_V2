@@ -1182,7 +1182,6 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxCiudads);
 			}
 		}
-		$this->lastPricRecargosxCiudadCriteria = $criteria;
 		return $count;
 	}
 
@@ -1384,7 +1383,6 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxCiudadLogs);
 			}
 		}
-		$this->lastPricRecargosxCiudadLogCriteria = $criteria;
 		return $count;
 	}
 
@@ -1586,7 +1584,6 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = count($this->collPricPatios);
 			}
 		}
-		$this->lastPricPatioCriteria = $criteria;
 		return $count;
 	}
 
@@ -1741,7 +1738,6 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = count($this->collClientes);
 			}
 		}
-		$this->lastClienteCriteria = $criteria;
 		return $count;
 	}
 
@@ -1896,7 +1892,6 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = count($this->collAgentes);
 			}
 		}
-		$this->lastAgenteCriteria = $criteria;
 		return $count;
 	}
 
@@ -2051,7 +2046,6 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = count($this->collContactoAgentes);
 			}
 		}
-		$this->lastContactoAgenteCriteria = $criteria;
 		return $count;
 	}
 

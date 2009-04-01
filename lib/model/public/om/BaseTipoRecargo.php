@@ -1431,7 +1431,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collCotRecargos);
 			}
 		}
-		$this->lastCotRecargoCriteria = $criteria;
 		return $count;
 	}
 
@@ -1633,7 +1632,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargoxConceptos);
 			}
 		}
-		$this->lastPricRecargoxConceptoCriteria = $criteria;
 		return $count;
 	}
 
@@ -1835,7 +1833,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargoxConceptoLogs);
 			}
 		}
-		$this->lastPricRecargoxConceptoLogCriteria = $criteria;
 		return $count;
 	}
 
@@ -2037,7 +2034,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxCiudads);
 			}
 		}
-		$this->lastPricRecargosxCiudadCriteria = $criteria;
 		return $count;
 	}
 
@@ -2239,7 +2235,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxCiudadLogs);
 			}
 		}
-		$this->lastPricRecargosxCiudadLogCriteria = $criteria;
 		return $count;
 	}
 
@@ -2441,7 +2436,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxLineas);
 			}
 		}
-		$this->lastPricRecargosxLineaCriteria = $criteria;
 		return $count;
 	}
 
@@ -2690,7 +2684,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxLineaLogs);
 			}
 		}
-		$this->lastPricRecargosxLineaLogCriteria = $criteria;
 		return $count;
 	}
 
@@ -2939,7 +2932,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collRepGastos);
 			}
 		}
-		$this->lastRepGastoCriteria = $criteria;
 		return $count;
 	}
 
@@ -3188,7 +3180,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collRecargoFletes);
 			}
 		}
-		$this->lastRecargoFleteCriteria = $criteria;
 		return $count;
 	}
 
@@ -3390,7 +3381,6 @@ abstract class BaseTipoRecargo extends BaseObject  implements Persistent {
 				$count = count($this->collRecargoFleteTrafs);
 			}
 		}
-		$this->lastRecargoFleteTrafCriteria = $criteria;
 		return $count;
 	}
 

@@ -863,7 +863,6 @@ abstract class BaseTraficoGrupo extends BaseObject  implements Persistent {
 				$count = count($this->collPricSeguros);
 			}
 		}
-		$this->lastPricSeguroCriteria = $criteria;
 		return $count;
 	}
 
@@ -1018,7 +1017,6 @@ abstract class BaseTraficoGrupo extends BaseObject  implements Persistent {
 				$count = count($this->collTraficos);
 			}
 		}
-		$this->lastTraficoCriteria = $criteria;
 		return $count;
 	}
 

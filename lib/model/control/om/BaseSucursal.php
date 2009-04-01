@@ -967,7 +967,6 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 				$count = count($this->collUsuarios);
 			}
 		}
-		$this->lastUsuarioCriteria = $criteria;
 		return $count;
 	}
 

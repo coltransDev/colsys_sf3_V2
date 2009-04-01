@@ -2247,7 +2247,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				$count = count($this->collAduanaMaestras);
 			}
 		}
-		$this->lastAduanaMaestraCriteria = $criteria;
 		return $count;
 	}
 
@@ -2402,7 +2401,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				$count = count($this->collInoIngresosAirs);
 			}
 		}
-		$this->lastInoIngresosAirCriteria = $criteria;
 		return $count;
 	}
 
@@ -2604,7 +2602,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				$count = count($this->collContactos);
 			}
 		}
-		$this->lastContactoCriteria = $criteria;
 		return $count;
 	}
 
@@ -2759,7 +2756,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				$count = count($this->collClienteStds);
 			}
 		}
-		$this->lastClienteStdCriteria = $criteria;
 		return $count;
 	}
 
@@ -2914,7 +2910,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				$count = count($this->collInoIngresosSeas);
 			}
 		}
-		$this->lastInoIngresosSeaCriteria = $criteria;
 		return $count;
 	}
 
@@ -3116,7 +3111,6 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				$count = count($this->collInoAvisosSeas);
 			}
 		}
-		$this->lastInoAvisosSeaCriteria = $criteria;
 		return $count;
 	}
 

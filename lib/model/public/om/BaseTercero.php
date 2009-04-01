@@ -1330,7 +1330,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$count = count($this->collInoClientesAirs);
 			}
 		}
-		$this->lastInoClientesAirCriteria = $criteria;
 		return $count;
 	}
 
@@ -1579,7 +1578,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$count = count($this->collReportes);
 			}
 		}
-		$this->lastReporteCriteria = $criteria;
 		return $count;
 	}
 
@@ -1922,7 +1920,6 @@ abstract class BaseTercero extends BaseObject  implements Persistent {
 				$count = count($this->collInoClientesSeas);
 			}
 		}
-		$this->lastInoClientesSeaCriteria = $criteria;
 		return $count;
 	}
 

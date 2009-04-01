@@ -876,7 +876,6 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskGroups);
 			}
 		}
-		$this->lastHdeskGroupCriteria = $criteria;
 		return $count;
 	}
 

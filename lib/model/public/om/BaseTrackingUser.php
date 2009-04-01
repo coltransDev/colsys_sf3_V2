@@ -1203,7 +1203,6 @@ abstract class BaseTrackingUser extends BaseObject  implements Persistent {
 				$count = count($this->collTrackingUserLogs);
 			}
 		}
-		$this->lastTrackingUserLogCriteria = $criteria;
 		return $count;
 	}
 

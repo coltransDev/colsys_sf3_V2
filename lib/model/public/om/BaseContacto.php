@@ -1770,7 +1770,6 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 				$count = count($this->collCotizacions);
 			}
 		}
-		$this->lastCotizacionCriteria = $criteria;
 		return $count;
 	}
 
@@ -1972,7 +1971,6 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 				$count = count($this->collTrackingUsers);
 			}
 		}
-		$this->lastTrackingUserCriteria = $criteria;
 		return $count;
 	}
 

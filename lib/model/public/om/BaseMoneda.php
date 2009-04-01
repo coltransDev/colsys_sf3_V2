@@ -871,7 +871,6 @@ abstract class BaseMoneda extends BaseObject  implements Persistent {
 				$count = count($this->collCotSeguros);
 			}
 		}
-		$this->lastCotSeguroCriteria = $criteria;
 		return $count;
 	}
 

@@ -2774,7 +2774,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 				$count = count($this->collFalaDetails);
 			}
 		}
-		$this->lastFalaDetailCriteria = $criteria;
 		return $count;
 	}
 
@@ -2929,7 +2928,6 @@ abstract class BaseFalaHeader extends BaseObject  implements Persistent {
 				$count = count($this->collFalaInstructions);
 			}
 		}
-		$this->lastFalaInstructionCriteria = $criteria;
 		return $count;
 	}
 

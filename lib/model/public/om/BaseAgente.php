@@ -1418,7 +1418,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$count = count($this->collTrayectos);
 			}
 		}
-		$this->lastTrayectoCriteria = $criteria;
 		return $count;
 	}
 
@@ -1620,7 +1619,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$count = count($this->collContactoAgentes);
 			}
 		}
-		$this->lastContactoAgenteCriteria = $criteria;
 		return $count;
 	}
 
@@ -1822,7 +1820,6 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 				$count = count($this->collReportes);
 			}
 		}
-		$this->lastReporteCriteria = $criteria;
 		return $count;
 	}
 

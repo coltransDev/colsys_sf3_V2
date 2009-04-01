@@ -924,7 +924,6 @@ abstract class BaseBodega extends BaseObject  implements Persistent {
 				$count = count($this->collReportes);
 			}
 		}
-		$this->lastReporteCriteria = $criteria;
 		return $count;
 	}
 

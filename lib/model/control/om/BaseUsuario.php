@@ -87,6 +87,12 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	protected $ca_salt;
 
 	/**
+	 * The value for the ca_activo field.
+	 * @var        boolean
+	 */
+	protected $ca_activo;
+
+	/**
 	 * @var        Sucursal
 	 */
 	protected $aSucursal;
@@ -326,6 +332,16 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [ca_activo] column value.
+	 * 
+	 * @return     boolean
+	 */
+	public function getCaActivo()
+	{
+		return $this->ca_activo;
+	}
+
+	/**
 	 * Set the value of [ca_login] column.
 	 * 
 	 * @param      string $v new value
@@ -550,6 +566,26 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 	} // setCaSalt()
 
 	/**
+	 * Set the value of [ca_activo] column.
+	 * 
+	 * @param      boolean $v new value
+	 * @return     Usuario The current object (for fluent API support)
+	 */
+	public function setCaActivo($v)
+	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
+
+		if ($this->ca_activo !== $v) {
+			$this->ca_activo = $v;
+			$this->modifiedColumns[] = UsuarioPeer::CA_ACTIVO;
+		}
+
+		return $this;
+	} // setCaActivo()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -597,6 +633,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$this->ca_authmethod = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
 			$this->ca_passwd = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->ca_salt = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_activo = ($row[$startcol + 11] !== null) ? (boolean) $row[$startcol + 11] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -606,7 +643,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 11; // 11 = UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 12; // 12 = UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Usuario object", $e);
@@ -1111,6 +1148,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			case 10:
 				return $this->getCaSalt();
 				break;
+			case 11:
+				return $this->getCaActivo();
+				break;
 			default:
 				return null;
 				break;
@@ -1143,6 +1183,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			$keys[8] => $this->getCaAuthmethod(),
 			$keys[9] => $this->getCaPasswd(),
 			$keys[10] => $this->getCaSalt(),
+			$keys[11] => $this->getCaActivo(),
 		);
 		return $result;
 	}
@@ -1207,6 +1248,9 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 			case 10:
 				$this->setCaSalt($value);
 				break;
+			case 11:
+				$this->setCaActivo($value);
+				break;
 		} // switch()
 	}
 
@@ -1242,6 +1286,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[8], $arr)) $this->setCaAuthmethod($arr[$keys[8]]);
 		if (array_key_exists($keys[9], $arr)) $this->setCaPasswd($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCaSalt($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaActivo($arr[$keys[11]]);
 	}
 
 	/**
@@ -1264,6 +1309,7 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(UsuarioPeer::CA_AUTHMETHOD)) $criteria->add(UsuarioPeer::CA_AUTHMETHOD, $this->ca_authmethod);
 		if ($this->isColumnModified(UsuarioPeer::CA_PASSWD)) $criteria->add(UsuarioPeer::CA_PASSWD, $this->ca_passwd);
 		if ($this->isColumnModified(UsuarioPeer::CA_SALT)) $criteria->add(UsuarioPeer::CA_SALT, $this->ca_salt);
+		if ($this->isColumnModified(UsuarioPeer::CA_ACTIVO)) $criteria->add(UsuarioPeer::CA_ACTIVO, $this->ca_activo);
 
 		return $criteria;
 	}
@@ -1337,6 +1383,8 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 		$copyObj->setCaPasswd($this->ca_passwd);
 
 		$copyObj->setCaSalt($this->ca_salt);
+
+		$copyObj->setCaActivo($this->ca_activo);
 
 
 		if ($deepCopy) {
@@ -1628,7 +1676,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collNivelesAccesos);
 			}
 		}
-		$this->lastNivelesAccesoCriteria = $criteria;
 		return $count;
 	}
 
@@ -1783,7 +1830,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collAccesoUsuarios);
 			}
 		}
-		$this->lastAccesoUsuarioCriteria = $criteria;
 		return $count;
 	}
 
@@ -1938,7 +1984,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collNotificacions);
 			}
 		}
-		$this->lastNotificacionCriteria = $criteria;
 		return $count;
 	}
 
@@ -2093,7 +2138,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collCotizacions);
 			}
 		}
-		$this->lastCotizacionCriteria = $criteria;
 		return $count;
 	}
 
@@ -2295,7 +2339,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskTickets);
 			}
 		}
-		$this->lastHdeskTicketCriteria = $criteria;
 		return $count;
 	}
 
@@ -2544,7 +2587,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskResponses);
 			}
 		}
-		$this->lastHdeskResponseCriteria = $criteria;
 		return $count;
 	}
 
@@ -2746,7 +2788,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskUserGroups);
 			}
 		}
-		$this->lastHdeskUserGroupCriteria = $criteria;
 		return $count;
 	}
 
@@ -2948,7 +2989,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collHdeskKBases);
 			}
 		}
-		$this->lastHdeskKBaseCriteria = $criteria;
 		return $count;
 	}
 
@@ -3150,7 +3190,6 @@ abstract class BaseUsuario extends BaseObject  implements Persistent {
 				$count = count($this->collReportes);
 			}
 		}
-		$this->lastReporteCriteria = $criteria;
 		return $count;
 	}
 

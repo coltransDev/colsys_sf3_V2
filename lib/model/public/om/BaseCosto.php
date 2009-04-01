@@ -1020,7 +1020,6 @@ abstract class BaseCosto extends BaseObject  implements Persistent {
 				$count = count($this->collRepCostos);
 			}
 		}
-		$this->lastRepCostoCriteria = $criteria;
 		return $count;
 	}
 

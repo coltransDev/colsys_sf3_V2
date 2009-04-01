@@ -1252,7 +1252,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collInoMaestraAirs);
 			}
 		}
-		$this->lastInoMaestraAirCriteria = $criteria;
 		return $count;
 	}
 
@@ -1407,7 +1406,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collCotProductos);
 			}
 		}
-		$this->lastCotProductoCriteria = $criteria;
 		return $count;
 	}
 
@@ -1609,7 +1607,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collTrayectos);
 			}
 		}
-		$this->lastTrayectoCriteria = $criteria;
 		return $count;
 	}
 
@@ -1811,7 +1808,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxLineas);
 			}
 		}
-		$this->lastPricRecargosxLineaCriteria = $criteria;
 		return $count;
 	}
 
@@ -2060,7 +2056,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargosxLineaLogs);
 			}
 		}
-		$this->lastPricRecargosxLineaLogCriteria = $criteria;
 		return $count;
 	}
 
@@ -2309,7 +2304,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collPricRecargoParametros);
 			}
 		}
-		$this->lastPricRecargoParametroCriteria = $criteria;
 		return $count;
 	}
 
@@ -2464,7 +2458,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collPricPatioLineas);
 			}
 		}
-		$this->lastPricPatioLineaCriteria = $criteria;
 		return $count;
 	}
 
@@ -2666,7 +2659,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collReportes);
 			}
 		}
-		$this->lastReporteCriteria = $criteria;
 		return $count;
 	}
 
@@ -3009,7 +3001,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$count = count($this->collInoMaestraSeas);
 			}
 		}
-		$this->lastInoMaestraSeaCriteria = $criteria;
 		return $count;
 	}
 
