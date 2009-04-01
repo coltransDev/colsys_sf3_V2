@@ -453,13 +453,13 @@ class cotizacionesActions extends sfActions
 				}
 			}
 		}
-		//$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
-		$mensaje = ($this->getRequestParameter("mensaje")."\n\n");
+		$mensaje = utf8_decode($this->getRequestParameter("mensaje")."\n\n");
+		//$mensaje = ($this->getRequestParameter("mensaje")."\n\n");
 		$usuario = UsuarioPeer::retrieveByPk( $this->getUser()->getUserId() );		
 				
 		$email->addCc( $this->getUser()->getEmail() );					
-		//$email->setCaSubject( utf8_decode($this->getRequestParameter("asunto")) );		
-		$email->setCaSubject( ($this->getRequestParameter("asunto")) );		
+		$email->setCaSubject( utf8_decode($this->getRequestParameter("asunto")) );		
+		//$email->setCaSubject( ($this->getRequestParameter("asunto")) );		
 		$email->setCaBody( $mensaje.$usuario->getFirma() );
 		$email->setCaBodyhtml( Utils::replace($mensaje).$usuario->getFirmaHTML() );		
 		$email->save();
