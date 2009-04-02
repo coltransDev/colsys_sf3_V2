@@ -88,7 +88,7 @@ class cotizacionesActions extends sfActions
 				$c->add( SucursalPeer::CA_NOMBRE, "lower(".SucursalPeer::CA_NOMBRE.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
 				break;	
 		}	
-		$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL );
+		//$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL );
 		$c->addDescendingOrderByColumn( CotizacionPeer::CA_IDCOTIZACION );	
 		$c->setLimit( 200 );
 		
