@@ -7,7 +7,7 @@ include_component("traficos", "TrackingViewer");
 include_component("traficos", "StatusGrid");
 include_component("traficos", "MainPanel");
 include_component("traficos", "QueryPanel");
-
+ 
 
 
 ?>	
