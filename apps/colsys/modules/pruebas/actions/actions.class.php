@@ -40,23 +40,62 @@ class pruebasActions extends sfActions {
 	}
 	
 	public function executeSendEmail() {
-		//exit("detenido");
+		exit("detenido");
 		$c = new Criteria ( );
-		//$c->add ( EmailPeer::CA_FCHENVIO, "2009-02-10 09:20:00", Criteria::GREATER_THAN );
-		//$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-02-10 10:00:00", Criteria::LESS_THAN );
+		$c->add ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:01", Criteria::GREATER_THAN );
+		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:00", Criteria::LESS_THAN );
 		
+		$c->add(  EmailPeer::CA_ADDRESS, "%bsnmedical%", Criteria::NOT_LIKE  );
+		$c->addAnd(  EmailPeer::CA_ADDRESS, "%willard%", Criteria::NOT_LIKE  );
 		
-		$c->add( EmailPeer::CA_IDEMAIL, 206521);
-		$c->addOr( EmailPeer::CA_IDEMAIL, 206545);
+		//$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:50:00", Criteria::LESS_THAN );		
+		
+		 
+		
+		$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
+		$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
+		
+		//$c->add( EmailPeer::CA_IDEMAIL, 206521);
+		//$c->addOr( EmailPeer::CA_IDEMAIL, 206545);
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
-		
+			
 		$i = 0;
 		$emails = EmailPeer::doSelect ( $c );
 		foreach ( $emails as $email ) {
+			//print_r( $email);
 			echo "<strong>Enviando " . $i ++ . "</strong>	emailid: " . $email->getCaIdEmail () . " Fch: " . $email->getCaFchEnvio () . " <br />From: " . $email->getCaFrom () . "<br />";
+				
+			$addresses = explode(",",$email->getCaAddress());			
+			foreach( $addresses as $key=>$address ){
+				if( strpos( $address, "coltrans.com.co" )!=false ){
+					unset( $addresses[$key] );
+				}
+			}
+			$email->setCaAddress( implode(",", $addresses) );
+						
+			$ccs = explode(",",$email->getCaCC());
+			
+			
+			foreach( $ccs as $key=>$address ){
+				if( strpos( $address, "coltrans.com.co" )!=false ){
+					unset( $addresses[$key] );
+				}
+			}
+			$email->setCaCc( implode(",", $addresses) );
+			
+			
+			echo "to: " . $email->getCaAddress () . "<br />";
 			echo "CC: " . $email->getCaCC () . "<br />";
 			echo "Subject" . $email->getCaSubject () . "<br />";
-			//echo $email->send()."<br /><br />";
+			
+			if( !$email->getCaBodyHtml() ){
+				$email->setCaBodyHtml( "Este mensaje se reenvia por problemas de visualizacion en env&acute;os anteriores <br />Si usted ya lo recibi&oacute; por favor haga caso omiso de este mensaje<br /><br />".$email->getCaBody() );
+				
+				$email->setCaBody("");
+			}
+			
+			
+			echo $email->send()."<br /><br />";
 		}
 		
 		return sfView::NONE;
@@ -1544,10 +1583,10 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 		$rutinas = explode("|", $usuario->getCaRutinas() );
 		
 		$c = new Criteria();
-		$c->add( RutinaPeer::CA_RUTINA, $rutinas, Criteria::IN  );
-		$c->addAscendingOrderByColumn( RutinaPeer::CA_GRUPO );
-		$c->addAscendingOrderByColumn( RutinaPeer::CA_OPCION );
-		$this->rutinas = RutinaPeer::doSelect( $c );			
+		$c->add( RutinaOldPeer::CA_RUTINA, $rutinas, Criteria::IN  );
+		$c->addAscendingOrderByColumn( RutinaOldPeer::CA_GRUPO );
+		$c->addAscendingOrderByColumn( RutinaOldPeer::CA_OPCION );
+		$this->rutinas = RutinaOldPeer::doSelect( $c );			
 	}
 	
 	
@@ -1596,6 +1635,172 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 	
 	
 	
+	
+	
+	
+	
+	public function executeCopiarTrayectos(){
+		$c = new Criteria();
+		
+		$c->addJoin(CiudadPeer::CA_IDTRAFICO, TraficoPeer::CA_IDTRAFICO );
+		$c->addJoin(TrayectoPeer::CA_ORIGEN, CiudadPeer::CA_IDCIUDAD );
+		$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
+		$c->add( TrayectoPeer::CA_TRANSPORTE, "Marítimo" );
+		$c->add( TrayectoPeer::CA_MODALIDAD, "LCL" );
+		$c->add( TrayectoPeer::CA_IDLINEA, 78 );
+		
+		
+		$c->add( TraficoPeer::CA_IDGRUPO , 6 );
+		$trayectos = TrayectoPeer::doSelect( $c );
+		$lineas = array(20, 87 , 86, 18, 14 , 123, 16, 121, 17, 8 );
+		$i = 1;
+		foreach( $trayectos as $trayecto ){
+			
+			foreach( $lineas as $linea ){ 
+			
+				$c = new Criteria();
+				$c->add( TrayectoPeer::CA_IMPOEXPO, "Importación" );
+				$c->add( TrayectoPeer::CA_TRANSPORTE, "Marítimo" );
+				$c->add( TrayectoPeer::CA_MODALIDAD, "FCL" );
+				$c->add( TrayectoPeer::CA_ORIGEN, $trayecto->getCaOrigen() );
+				$c->add( TrayectoPeer::CA_DESTINO, $trayecto->getCaDestino() );
+				$c->add( TrayectoPeer::CA_IDLINEA, $linea );
+				$tr =  TrayectoPeer::doSelectOne( $c );
+				
+				if( !$tr ){
+						
+					$trayectoNew = new Trayecto();
+					$trayectoNew->setCaTransporte( "Marítimo" );
+					$trayectoNew->setCaImpoexpo( "Importación" );
+					$trayectoNew->setCaOrigen( $trayecto->getCaOrigen() );
+					$trayectoNew->setCaDestino( $trayecto->getCaDestino() );
+					$trayectoNew->setCaModalidad( "FCL" );
+					$trayectoNew->setCaIdlinea( $linea );
+					$trayectoNew->setCaIdagente( 0 );
+					$trayectoNew->setCaFrecuencia( "-" );
+					$trayectoNew->setCaTiempotransito( "-" );
+					$trayectoNew->setCaFchcreado( time() );
+					$trayectoNew->setCaIdtarifas( 1 );			
+					$trayectoNew->save();
+					
+					$trayectoNew->setCaIdtarifas( $trayectoNew->getCaIdtrayecto() );
+					$trayectoNew->save();
+					echo "OK ".$linea." ".$trayecto->getOrigen()." ".$i++."<br />";
+					
+					
+					
+				}
+			}
+		}
+		
+		return sfView::NONE;
+	}
+	
+	
+	
+	public function executeCircularColsys(){
+		
+		exit();
+		$file =  sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."Circular_nuevos_costos_en_el_combustible.pdf";
+		
+		$txt = "Estimados señores:
+
+De acuerdo con información de las líneas navieras, adjunto nos permitimos enviar circular correspondiente a modificaciones en el Recargo por Combustible e implementación del GRI (General Rate Increase) a partir del 1 de abril de 2009.
+
+Cordialmente,
+
+COLTRANS S.A.
+Departamento Comercial
+";
+		
+		$c = new Criteria();
+		$c->addAscendingOrderByColumn( ContactoPeer::CA_IDCONTACTO  );
+		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE );
+		$c->addJoin( ClientePeer::CA_VENDEDOR, UsuarioPeer::CA_LOGIN );	
+		$c->add(UsuarioPeer::CA_IDSUCURSAL, "BOG" );
+		$c->add(ContactoPeer::CA_IDCONTACTO, 5718  , Criteria::GREATER_EQUAL );
+		$c->addAnd(ContactoPeer::CA_IDCONTACTO, 7942 , Criteria::LESS_EQUAL );
+		$c->add(ClientePeer::CA_STATUS, "Vetado", Criteria::NOT_EQUAL );
+		
+		//$c->setLimit(1);
+		
+		 
+		$c->setDistinct();
+		
+		$contactos = ContactoPeer::doSelect( $c );
+		$i=1;
+		foreach( $contactos as $contacto ){
+			if( $contacto->getCaEmail() ){
+				echo  ($i++)." ".$contacto->getCaIdcontacto()." ".$contacto->getCaEmail()."<br />"; 
+				
+				$email = new Email();
+				$email->setCaFrom("serclientebog@coltrans.com.co");
+				$email->setCaFromname("Coltrans S.A. - Servicio al cliente");
+				$email->setCaAddress($contacto->getCaEmail());
+				//$email->setCaAddress("abotero@coltrans.com.co");
+				$email->setCaSubject("Circular nuevos costos en el combustible y otros recargos a aplicar a partir 01 de Abril de 2009");
+				$email->setCaBody($txt);
+				$email->setCaBodyHtml(Utils::replace($txt) );
+				$email->setCaAttachment( $file );
+				$email->setCaTipo( "Circular combustible" );
+				$email->setCaIdcaso( 0 );
+				$email->setCaFchenvio( time() );
+				$email->setCaUsuenvio( "Administrador" );
+				//$email->save();
+				//$email->send();
+			}
+		}		
+		return sfView::NONE;
+	}
+	
+	
+	public function executeColocarLimitetiempo(){
+		exit();
+		$sql = "select * from pg_user";
+		$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME);
+		$stmt = $con->prepare($sql);
+		$stmt->execute();
+		while($row = $stmt->fetch() ){
+			if( $row['usename']!="postgres" && $row['usename']!="Administrador" ){
+				$sql = "ALTER ROLE \"".$row['usename']."\" SET statement_timeout=240000";
+				//echo $row['usename']."<br />";
+				echo $sql.";<br />";
+			}
+		}
+		return sfView::NONE;
+	}
+	
+	
+	public function executeHorasCotizaciones(){
+		
+		sfConfig::set('sf_web_debug', false) ;	
+		set_time_limit(0);
+		$path = "d:\\horascotizaciones.csv";
+		$i = 0;
+		$content = file_get_contents( $path ); 		
+		$rows = explode( "\n", $content );
+		foreach($rows as $row  ){
+			$row = explode(";" ,$row);
+			$c = new Criteria();
+			$c->add( CotizacionPeer::CA_CONSECUTIVO, $row[0] );
+			$cotizacion = CotizacionPeer::doSelectOne( $c );
+			if( !$cotizacion->getCaFchpresentacion() ){
+				echo (++$i)." ".$row[0];				
+				$cotizacion->setCaFchpresentacion(strtotime($row[2]));
+				$cotizacion->save();
+			}else{
+				//echo $row[0]." ".$cotizacion->getCaFchpresentacion()." ".$row[2]; 
+			}
+			
+			echo "<br />";
+		
+		}
+		return sfView::NONE;
+		
+		
+		
+		
+	}
 	
 	
 }

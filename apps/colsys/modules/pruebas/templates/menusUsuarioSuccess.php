@@ -12,6 +12,7 @@ foreach( $rutinas as $rutina ){
 		<td><?=$rutina->getCaGrupo()?></td>
 		<td><?=$rutina->getCaRutina()?></td>
 		<td><?=$rutina->getCaOpcion()?></td>
+		<td><?=$rutina->getCaPrograma()?></td>
 	</tr>
 <?
 }
