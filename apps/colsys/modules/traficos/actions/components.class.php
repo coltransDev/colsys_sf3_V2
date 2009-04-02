@@ -36,7 +36,7 @@ class traficosComponents extends sfComponents
 	/*
 	* 
 	*/
-	public function executeFeedViewer(){
+	public function executeTrackingViewer(){
 		
 	}
 	
@@ -50,8 +50,9 @@ class traficosComponents extends sfComponents
 	/*
 	* 
 	*/
-	public function executeFeedGrid(){
-			
+	public function executeStatusGrid(){
+		$this->impoexpo = $this->getRequestParameter("impoexpo");
+		$this->transporte = $this->getRequestParameter("transporte");		
 	}
 	
 		
@@ -66,7 +67,7 @@ class traficosComponents extends sfComponents
 	/*
 	* 
 	*/
-	public function executeFeedPanel(){
+	public function executeQueryPanel(){
 			
 	}
 	
