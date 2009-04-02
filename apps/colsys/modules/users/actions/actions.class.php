@@ -72,6 +72,12 @@ class usersActions extends sfActions
 	*/
 	public function executeAdminRutinas(){
 		
+		$this->nivel = $this->getUser()->getNivelAcceso( usersActions::RUTINA );
+			
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+		
 		
 		$response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/CheckColumn",'last');
@@ -100,6 +106,12 @@ class usersActions extends sfActions
 	* guarda los cambios en las rutinas 
 	*/
 	public function executeObserveAdminRutinas(){
+		
+		$this->nivel = $this->getUser()->getNivelAcceso( usersActions::RUTINA );			
+		if( $this->nivel<1 ){
+			$this->forward404();
+		}
+	
 		$rutina = $this->getRequestParameter( 'rutina' );
 		$grupo = $this->getRequestParameter( 'grupo' );
 		$opcion = $this->getRequestParameter( 'opcion' );
@@ -135,6 +147,11 @@ class usersActions extends sfActions
 	}
 	
 	public function executeEliminarAdminRutina(){
+		$this->nivel = $this->getUser()->getNivelAcceso( usersActions::RUTINA );			
+		if( $this->nivel<2 ){
+			$this->forward404();
+		}
+		
 		$rutina = $this->getRequestParameter( 'rutina' );	
 		$rutinaObj = RutinaPeer::retrieveByPk( $rutina );
 		if( $rutinaObj ){
@@ -153,6 +170,11 @@ class usersActions extends sfActions
 	* para seleccionar los permisos
 	*/
 	public function executePermisosRutinas(){
+		$this->nivel = $this->getUser()->getNivelAcceso( usersActions::RUTINA );			
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+				
 		$this->setLayout("ajax");
 		
 		$this->rutina = RutinaPeer::retrieveByPk($this->getRequestParameter("rutina"));
@@ -163,6 +185,10 @@ class usersActions extends sfActions
 	* Guarda los accesos de un grupo y su nivel de acceso a cada opción
 	*/
 	public function executeObserveRutinasGrupos(){
+		$this->nivel = $this->getUser()->getNivelAcceso( usersActions::RUTINA );			
+		if( $this->nivel<1 ){
+			$this->forward404();
+		}
 		$grupos=$this->getRequestParameter("grupos");
 		$this->forward404Unless( $grupos );
 		
@@ -195,6 +221,11 @@ class usersActions extends sfActions
 	* Guarda los accesos de un grupo y su nivel de acceso a cada opción
 	*/
 	public function executeObserveRutinasUsuarios(){
+		$this->nivel = $this->getUser()->getNivelAcceso( usersActions::RUTINA );			
+		if( $this->nivel<1 ){
+			$this->forward404();
+		}
+		
 		$usuarios=$this->getRequestParameter("usuarios");
 		$this->forward404Unless( $usuarios );
 		
@@ -223,7 +254,44 @@ class usersActions extends sfActions
 		$this->setTemplate("responseTemplate");				
 	}	
 	
-	public function executeTomarControl(){}
+	
+	/*
+	* Permite simular ser otro usuario, esto para facilitar la tarea de revisión de comisiones
+	* o hacer test de los programas.
+	*/
+	public function executeTomarControl( $request ){
+		
+		$this->nivel = $this->getUser()->getNivelAcceso( usersActions::RUTINA_CONTROL );			
+		if( $this->nivel<3 ){
+			$this->forward404();
+		}
+		
+		$this->form = new CambioUsuarioForm();	
+		
+		if ($request->isMethod('post')){
+			
+			$this->form->bind(
+				array(
+						'username' => $request->getParameter('username')
+						
+		
+					)
+				); 
+			
+			if ($this->form->isValid()){
+				
+				$username = $request->getParameter('username');				
+				$user = UsuarioPeer::retrieveByPk( $username );
+				if( $user->getCaAuthmethod()=="ldap" ){
+					$this->getUser()->signInLDAP( $username );				
+				}else{
+					$this->getUser()->signInAlternative( $username );					
+				}
+				$this->redirect("homepage/index");
+				
+			}
+		}
+	}
 		
 		
 }
