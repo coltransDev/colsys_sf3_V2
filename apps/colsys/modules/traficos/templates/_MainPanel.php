@@ -12,11 +12,11 @@ MainPanel = function(){
         region: 'south',
         cls:'preview',
         autoScroll: true,
-        listeners: FeedViewer.LinkInterceptor,
+        listeners: TrackingViewer.LinkInterceptor,
 
         tbar: [{
             id:'tab',
-            text: 'View in New Tab',
+            text: 'Ver en Nuevo Tab',
             iconCls: 'new-tab',
             disabled:true,
             handler : this.openTab,
@@ -25,7 +25,7 @@ MainPanel = function(){
         '-',
         {
             id:'win',
-            text: 'Go to Post',
+            text: 'Nuevo Rep. al Ext',
             iconCls: 'new-win',
             disabled:true,
             scope: this,
@@ -42,18 +42,11 @@ MainPanel = function(){
         }
     });
 
-    this.grid = new FeedGrid(this, {
-        tbar:[{
-            text:'Open All',
-            tooltip: {title:'Open All',text:'Opens all item in tabs'},
-            iconCls: 'tabs',
-            handler: this.openAll,
-            scope:this
-        },
-        '-',
+    this.grid = new StatusGrid(this, {
+        tbar:[
         {
             split:true,
-            text:'Reading Pane',
+            text:'Panel de lectura',
             tooltip: {title:'Reading Pane',text:'Show, move or hide the Reading Pane'},
             iconCls: 'preview-bottom',
             handler: this.movePreview.createDelegate(this, []),
@@ -62,21 +55,21 @@ MainPanel = function(){
                 cls:'reading-menu',
                 width:100,
                 items: [{
-                    text:'Bottom',
+                    text:'Abajo',
                     checked:true,
                     group:'rp-group',
                     checkHandler:this.movePreview,
                     scope:this,
                     iconCls:'preview-bottom'
                 },{
-                    text:'Right',
+                    text:'Derecha',
                     checked:false,
                     group:'rp-group',
                     checkHandler:this.movePreview,
                     scope:this,
                     iconCls:'preview-right'
                 },{
-                    text:'Hide',
+                    text:'No visible',
                     checked:false,
                     group:'rp-group',
                     checkHandler:this.movePreview,
@@ -87,9 +80,9 @@ MainPanel = function(){
         },
         '-',
         {
-            pressed: true,
+            pressed: false,
             enableToggle:true,
-            text:'Summary',
+            text:'Vista previa',
             tooltip: {title:'Post Summary',text:'View a short summary of each item in the list'},
             iconCls: 'summary',
             scope:this,
@@ -138,7 +131,7 @@ MainPanel = function(){
     this.gsm = this.grid.getSelectionModel();
 
     this.gsm.on('rowselect', function(sm, index, record){
-        FeedViewer.getTemplate().overwrite(this.preview.body, record.data);
+        TrackingViewer.getTemplate().overwrite(this.preview.body, record.data);
         var items = this.preview.topToolbar.items;
         items.get('tab').enable();
         items.get('win').enable();
@@ -158,6 +151,7 @@ Ext.extend(MainPanel, Ext.TabPanel, {
     },
 
     movePreview : function(m, pressed){
+		
         if(!m){ // cycle if not a menu item click
             var readMenu = Ext.menu.MenuMgr.get('reading-menu');
             readMenu.render();
@@ -178,21 +172,21 @@ Ext.extend(MainPanel, Ext.TabPanel, {
             var bot = Ext.getCmp('bottom-preview');
             var btn = this.grid.getTopToolbar().items.get(2);
             switch(m.text){
-                case 'Bottom':
+                case 'Abajo':
                     right.hide();
                     bot.add(preview);
                     bot.show();
                     bot.ownerCt.doLayout();
                     btn.setIconClass('preview-bottom');
                     break;
-                case 'Right':
+                case 'Derecha':
                     bot.hide();
                     right.add(preview);
                     right.show();
                     right.ownerCt.doLayout();
                     btn.setIconClass('preview-right');
                     break;
-                case 'Hide':
+                case 'No visible':
                     preview.ownerCt.hide();
                     preview.ownerCt.ownerCt.doLayout();
                     btn.setIconClass('preview-hide');
@@ -210,11 +204,11 @@ Ext.extend(MainPanel, Ext.TabPanel, {
             tab = new Ext.Panel({
                 id: id,
                 cls:'preview single-preview',
-                title: d.title,
-                tabTip: d.title,
-                html: FeedViewer.getTemplate().apply(d),
+                title: d.reporte,
+                tabTip: d.reporte,
+                html: TrackingViewer.getTemplate().apply(d),
                 closable:true,
-                listeners: FeedViewer.LinkInterceptor,
+                listeners: TrackingViewer.LinkInterceptor,
                 autoScroll:true,
                 border:true,
 
