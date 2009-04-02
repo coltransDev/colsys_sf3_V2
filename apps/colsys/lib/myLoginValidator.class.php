@@ -25,33 +25,8 @@ class myLoginValidator extends sfValidatorBase
 					$ldap_server=sfConfig::get("app_ldap_host");
 					
 					if($connect=ldap_connect($ldap_server)){						
-						if(@$bind=ldap_bind($connect, $auth_user, $passwd)){
-							
-							
-							$gruposArray = array();
-							
-							$gruposObj = GrupoPeer::doSelect( new Criteria() );
-							foreach( $gruposObj as $grupoObj ){
-								$gruposArray[]=$grupoObj->getCaNombre();
-							}						
-														
-							$sr = ldap_search($connect,"o=coltrans_bog" , "(&(objectclass=person)(cn=".$username."))" );
-							$info = ldap_get_entries($connect, $sr);
-							$person = $info[0];					
-							$grupos = array();
-							foreach($person['groupmembership'] as $key=>$grupo ){						
-								if( $key!=="count"){
-									$grupo = str_replace(",o=coltrans_bog", "", $grupo);
-									$grupo = strtolower(str_replace("cn=", "", $grupo));		
-									if( in_array( $grupo, $gruposArray ) ){													
-										$grupos[]=$grupo;
-									}
-								}
-							}																					
-							sfContext::getInstance()->getUser()->setGrupos( $grupos );							
-							
-							sfContext::getInstance()->getUser()->signInLDAP( $username );			
-							
+						if($bind=ldap_bind($connect, $auth_user, utf8_encode($passwd))){							
+							sfContext::getInstance()->getUser()->signInLDAP( $username );										
 														
 							return $values;
 						}

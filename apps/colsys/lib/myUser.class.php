@@ -63,17 +63,19 @@ class myUser extends sfBasicSecurityUser
 	public function getNivelAcceso( $rutina ){		
 		$acceso = AccesoUsuarioPeer::retrieveByPk( $rutina, $this->getUserId() );
 		
-		if( $acceso ){
+		if( $acceso ){			
 			return $acceso->getCaAcceso();
 		}else{
-			$c = new Criteria();					
-			$c->addJoin( RutinaPeer::CA_RUTINA, AccesoGrupoPeer::CA_RUTINA , Criteria::LEFT_JOIN );		
-			$c->addJoin( AccesoGrupoPeer::CA_GRUPO, UsuarioGrupoPeer::CA_GRUPO , Criteria::LEFT_JOIN );	
 			
-			$c->add( UsuarioGrupoPeer::CA_LOGIN , $this->getUser()->getUserId() );		
-			$criterion = $c->getNewCriterion( UsuarioGrupoPeer::CA_LOGIN, $this->getUser()->getUserId() );								
-			$criterion->addOr($c->getNewCriterion( AccesoUsuarioPeer::CA_LOGIN, $this->getUser()->getUserId() ));	
-			$c->add($criterion);	
+			$c = new Criteria();									
+			$c->addJoin( AccesoGrupoPeer::CA_GRUPO, UsuarioGrupoPeer::CA_GRUPO );				
+			$c->add( UsuarioGrupoPeer::CA_LOGIN , $this->getUserId() );
+			$c->add( AccesoGrupoPeer::CA_RUTINA , $rutina );
+			
+			$acceso = AccesoGrupoPeer::doSelectOne( $c );
+			if( $acceso ){				
+				return $acceso->getCaAcceso();
+			}		
 		}
 		
 		return -1;
@@ -162,42 +164,83 @@ class myUser extends sfBasicSecurityUser
 		
 		if( $user ){	
 			
-			//Borra todos los grupos a los que pertenece  
-			$c = new Criteria();
-			$c->add( UsuarioGrupoPeer::CA_LOGIN, $username );
-			$accesos = UsuarioGrupoPeer::doSelect( $c );
-			foreach( $accesos as $acceso ){
-				$acceso->delete();			
+			$gruposArray = array();
+			
+			$ldap_server=sfConfig::get("app_ldap_host");
+			$auth_user="cn=".sfConfig::get("app_ldap_user").",o=coltrans_bog";			
+					
+			$passwd =sfConfig::get("app_ldap_passwd");
+			
+			if($connect=ldap_connect($ldap_server)){						
+				if($bind=ldap_bind($connect, $auth_user, $passwd)){
+					
+					//Determina la pertenecia a los grupos en el serv. LDAP		
+					$gruposObj = GrupoPeer::doSelect( new Criteria() );
+					foreach( $gruposObj as $grupoObj ){
+						$gruposArray[]=$grupoObj->getCaNombre();
+					}						
+											
+					$sr = ldap_search($connect,"o=coltrans_bog" , "(&(objectclass=person)(cn=".$username."))" );
+					$info = ldap_get_entries($connect, $sr);										
+					$person = $info[0];		
+						
+					$grupos = array();
+					foreach($person['groupmembership'] as $key=>$grupo ){												
+						if( $key!=="count"){							
+							$grupo = str_replace(",o=coltrans_bog", "", $grupo);
+							$grupo = strtolower(str_replace("cn=", "", $grupo));		
+							if( in_array( $grupo, $gruposArray ) ){													
+								$grupos[]=$grupo;
+							}
+						}
+					}						
+					
+					
+					//Borra todos los grupos a los que pertenece  
+					$c = new Criteria();
+					$c->add( UsuarioGrupoPeer::CA_LOGIN, $username );
+					$accesos = UsuarioGrupoPeer::doSelect( $c );
+					foreach( $accesos as $acceso ){
+						$acceso->delete();			
+					}
+				
+					foreach( $grupos as $grupo ){
+						$usuarioGrupo = new UsuarioGrupo();
+						$usuarioGrupo->setCaLogin( $username );
+						$usuarioGrupo->setCaGrupo( $grupo );
+						$usuarioGrupo->save();
+					}	
+																									
+					$this->setGrupos( $grupos );	
+				
+					
+				
+					
+					$this->setAttribute('user_id', $username );			
+					$this->setAuthenticated(true);							
+					$this->addCredential('colsys_user');
+					$this->setCulture('es_CO');			
+									
+					$sucursal = $user->getSucursal();			
+					$this->setAttribute('sucursal', $sucursal );
+					$this->setAttribute('nombre', $user->getCaNombre() );		
+					$this->setAttribute('email', $user->getCaEmail() );
+					$this->setAttribute('cargo', $user->getCaCargo() );			
+					$this->setAttribute('extension', $user->getCaExtension() );
+					
+					$c = new Criteria();
+					$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
+					$departamento = DepartamentoPeer::doSelectOne( $c );
+					if( $departamento ){
+						$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
+					}	
+					
+										
+				}	
+		
 			}
+		}
 			
-			$this->setAttribute('user_id', $username );			
-			$this->setAuthenticated(true);							
-			$this->addCredential('colsys_user');
-			$this->setCulture('es_CO');			
-							
-			$sucursal = $user->getSucursal();			
-			$this->setAttribute('sucursal', $sucursal );
-			$this->setAttribute('nombre', $user->getCaNombre() );		
-			$this->setAttribute('email', $user->getCaEmail() );
-			$this->setAttribute('cargo', $user->getCaCargo() );			
-			$this->setAttribute('extension', $user->getCaExtension() );
-			
-			$c = new Criteria();
-			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
-			$departamento = DepartamentoPeer::doSelectOne( $c );
-			if( $departamento ){
-				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
-			}	
-			
-			$grupos = $this->getGrupos();	
-			
-			foreach( $grupos as $grupo ){
-				$usuarioGrupo = new UsuarioGrupo();
-				$usuarioGrupo->setCaLogin( $username );
-				$usuarioGrupo->setCaGrupo( $grupo );
-				$usuarioGrupo->save();
-			}						
-		}		
 	}
 	
 	
