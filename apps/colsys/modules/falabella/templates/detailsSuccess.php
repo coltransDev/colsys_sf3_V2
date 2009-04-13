@@ -28,7 +28,6 @@ function repeat_cont(object){
 			}
 			var src_name = source.value;
 			var trg_name = target.value;
-			alert(source.name + " - " + source.value + " <> " + target.name + " - " + target.value);  
 			var src_element0 = document.getElementById('num_paquete_' + src_name);
 			var trg_element0 = document.getElementById('num_paquete_' + trg_name);
 			trg_element0.value = src_element0.value; 
