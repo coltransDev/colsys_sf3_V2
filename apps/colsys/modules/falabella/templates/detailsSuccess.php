@@ -23,49 +23,63 @@ function repeat_cont(object){
 		if (target.type != 'checkbox' && target.type != 'select-one') {
 			continue;
 		}else if (target.checked || target.selected){
+			if (target.name.substring(0, 7) != 'repeat_'){
+				continue;
+			}
 			var src_name = source.value;
 			var trg_name = target.value;
-			var src_element1 = document.getElementById('num_paquete_' + src_name);
-			var trg_element1 = document.getElementById('num_paquete_' + trg_name);
-			trg_element1.value = src_element1.value; 
+			alert(source.name + " - " + source.value + " <> " + target.name + " - " + target.value);  
+			var src_element0 = document.getElementById('num_paquete_' + src_name);
+			var trg_element0 = document.getElementById('num_paquete_' + trg_name);
+			trg_element0.value = src_element0.value; 
 			var src_element1 = document.getElementById('paq_unidades_' + src_name);
 			var trg_element1 = document.getElementById('paq_unidades_' + trg_name);
 			trg_element1.value = src_element1.value; 
-			var src_element1 = document.getElementById('peso_' + src_name);
-			var trg_element1 = document.getElementById('peso_' + trg_name);
-			trg_element1.value = src_element1.value; 
-			var src_element1 = document.getElementById('pes_unidades_' + src_name);
-			var trg_element1 = document.getElementById('pes_unidades_' + trg_name);
-			trg_element1.value = src_element1.value; 
-			var src_element1 = document.getElementById('volumen_' + src_name);
-			var trg_element1 = document.getElementById('volumen_' + trg_name);
-			trg_element1.value = src_element1.value; 
-			var src_element1 = document.getElementById('vol_unidades_' + src_name);
-			var trg_element1 = document.getElementById('vol_unidades_' + trg_name);
-			trg_element1.value = src_element1.value; 
-			var src_element1 = document.getElementById('cont_part1_' + src_name);
-			var trg_element1 = document.getElementById('cont_part1_' + trg_name);
-			trg_element1.value = src_element1.value; 
-			var src_element2 = document.getElementById('cont_part2_' + src_name);
-			var trg_element2 = document.getElementById('cont_part2_' + trg_name);
+			var src_element2 = document.getElementById('peso_' + src_name);
+			var trg_element2 = document.getElementById('peso_' + trg_name);
 			trg_element2.value = src_element2.value; 
-			var src_element3 = document.getElementById('cont_sell_' + src_name);
-			var trg_element3 = document.getElementById('cont_sell_' + trg_name);
-			trg_element3.value = src_element3.value;
-			var src_element4 = document.getElementById('container_iso_' + src_name);
-			var trg_element4 = document.getElementById('container_iso_' + trg_name);
-			trg_element4.selectedIndex = src_element4.selectedIndex;
+			var src_element3 = document.getElementById('pes_unidades_' + src_name);
+			var trg_element3 = document.getElementById('pes_unidades_' + trg_name);
+			trg_element3.value = src_element3.value; 
+			var src_element4 = document.getElementById('volumen_' + src_name);
+			var trg_element4 = document.getElementById('volumen_' + trg_name);
+			trg_element4.value = src_element4.value; 
+			var src_element5 = document.getElementById('vol_unidades_' + src_name);
+			var trg_element5 = document.getElementById('vol_unidades_' + trg_name);
+			trg_element5.value = src_element5.value; 
+			var src_element6 = document.getElementById('cont_part1_' + src_name);
+			var trg_element6 = document.getElementById('cont_part1_' + trg_name);
+			trg_element6.value = src_element6.value; 
+			var src_element7 = document.getElementById('cont_part2_' + src_name);
+			var trg_element7 = document.getElementById('cont_part2_' + trg_name);
+			trg_element7.value = src_element7.value; 
+			var src_element8 = document.getElementById('cont_sell_' + src_name);
+			var trg_element8 = document.getElementById('cont_sell_' + trg_name);
+			trg_element8.value = src_element8.value;
+			var src_element9 = document.getElementById('container_iso_' + src_name);
+			var trg_element9 = document.getElementById('container_iso_' + trg_name);
+			trg_element9.selectedIndex = src_element9.selectedIndex;
 			var objname = document.getElementById('cont_part1_' + trg_name).name;
 			sku = objname.substring(objname.lastIndexOf('_')+1);
-			update_record(sku, trg_element1.value, trg_element2.value, trg_element3.value, trg_element4.value);
+
+			update_record(sku, trg_element0.value, trg_element1.value, trg_element2.value, trg_element3.value, trg_element4.value, trg_element5.value, trg_element6.value, trg_element7.value, trg_element8.value, trg_element9.value);
 		}
 	}
 }
 
-function update_record(sku , part1 , part2, sell, cont){
+function update_record(sku, npaq, puni, peso, pesu, volu, vuni, part1, part2, sell, cont){
 	<?
-	echo remote_function(array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$fala_header->getCaIddoc()."&sku='+sku+'&cont_part1='+part1+'&cont_part2='+part2+'&cont_sell='+sell+'&container_iso='+cont" ));
+	echo remote_function(array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$fala_header->getCaIddoc()."&sku='+sku+'&num_paquetes='+npaq+'&paq_unidades='+puni+'&peso='+peso+'&pes_unidades='+pesu+'&volumen='+volu+'&vol_unidades='+vuni+'&cont_part1='+part1+'&cont_part2='+part2+'&cont_sell='+sell+'&container_iso='+cont" ));
 	?>
+}
+
+function repeat_check(object){
+	for (cont=0; cont<form_details.elements.length; cont++){
+		nombre = form_details.elements[cont].name.substring(0, 7);
+		if (nombre = 'repeat_'){
+			form_details.elements[cont].checked = object.checked;
+		}
+	}
 }
 
 function export_file(){
@@ -164,6 +178,16 @@ function export_file(){
 		<th scope="col">Tipo</th>
 		<th scope="col">Dup</th>
 	</tr>
+	<tr>
+		<td align="left" colspan="7"></td>
+		<td><div align="right">
+			<?
+			echo checkbox_tag("all_repeat", null, false, array("onclick" => "repeat_check(this);"));
+			?>
+		</div></td>
+		<td align="left" colspan="5"></td>
+	</tr>
+	
 <?
 $tot_pedido = 0;
 $tot_carga = 0;
@@ -192,7 +216,6 @@ foreach( $details as $detail ){
 			echo observe_field("num_paquete_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&num_paquetes='+value" ));
 			
 			echo select_tag("paq_unidades_".$detail->getCaSku(), options_for_select(array("CT"=>"Ctns"), $detail->getCaUnidadMedidaPaquetes(), "include_blank=true"), array("onchange" => "repeat_cont(this);") );
-			
 			echo observe_field("paq_unidades_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&paq_unidades='+value" ));
 			?>		
 		</div></td>
@@ -202,7 +225,6 @@ foreach( $details as $detail ){
 			echo observe_field("peso_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&peso='+value" ));
 			
 			echo select_tag("pes_unidades_".$detail->getCaSku(), options_for_select(array("KG"=>"Kgs"), $detail->getCaUnidadMedidaPeso(), "include_blank=true"), array("onchange" => "repeat_cont(this);") );
-			
 			echo observe_field("pes_unidades_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&pes_unidades='+value" ));
 			?>
 		</div></td>
@@ -212,7 +234,6 @@ foreach( $details as $detail ){
 			echo observe_field("volumen_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&volumen='+value" ));
 			
 			echo select_tag("vol_unidades_".$detail->getCaSku(), options_for_select(array("CR"=>"M&sup3;"), $detail->getCaUnidadMedidaVolumen(), "include_blank=true"), array("onchange" => "repeat_cont(this);") );
-			
 			echo observe_field("vol_unidades_".$detail->getCaSku(), array("url"=>"falabella/observeDetail", "update"=>"result", "with"=>"'iddoc=".$detail->getCaIddoc()."&sku=".$detail->getCaSku()."&vol_unidades='+value" ));
 			?>
 		</div></td>
