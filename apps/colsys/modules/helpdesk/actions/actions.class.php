@@ -223,35 +223,36 @@ class helpdeskActions extends sfActions
 				$logins[]=$usuario->getCaLogin();
 			}
 		}
+			
+		
+		if( !$ticket->getCaResponsetime() ){		
+			if( $ticket->getCaAssignedto()==$this->getUser()->getUserId() || in_array($this->getUser()->getUserId(),$logins ) ){
 				
-		if( $ticket->getCaAssignedto()==$this->getUser()->getUserId() || in_array($this->getUser()->getUserId(),$logins ) ){
-			$ticket->setCaResponsetime( time() );
-			$ticket->save();
+				$ticket->setCaResponsetime( time() );
+				$ticket->save();
+			}
 		}
 		
-		
-		if( $k=array_search( $this->getUser()->getUserId(), $logins)!==false ){
-			unset($logins[$k]);
-		}
-		
-		$logins = array_unique( $logins );		
 		foreach( $logins as $login ){
-			$notificacion = new Notificacion();
-			$notificacion->setCaLogin( $login );
-			$notificacion->setCaUrl( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
-			$notificacion->setCaFchcreado( time() );
-			$notificacion->setCaUsucreado( $this->getUser()->getUserId() );
-			
-			$request->setParameter("id", $ticket->getCaIdticket() );
-			$request->setParameter("format", "email" );
-			
-			$notificacion->setCaTitulo( "Se ha creado una respuesta Ticket #".$ticket->getCaIdticket() );
-			$texto = "Se ha creado una respuesta \n\n<br /><br />" ;
-			
-			$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
-			
-			$notificacion->setCaTexto( $texto );
-			$notificacion->save();	
+		
+			if( $this->getUser()->getUserId()!=$login ){
+				$notificacion = new Notificacion();
+				$notificacion->setCaLogin( $login );
+				$notificacion->setCaUrl( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
+				$notificacion->setCaFchcreado( time() );
+				$notificacion->setCaUsucreado( $this->getUser()->getUserId() );
+				
+				$request->setParameter("id", $ticket->getCaIdticket() );
+				$request->setParameter("format", "email" );
+				
+				$notificacion->setCaTitulo( "Se ha creado una respuesta Ticket #".$ticket->getCaIdticket() );
+				$texto = "Se ha creado una respuesta \n\n<br /><br />" ;
+				
+				$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
+				
+				$notificacion->setCaTexto( $texto );
+				$notificacion->save();	
+			}
 		}
 		
 		$this->ticket = $ticket;
@@ -382,34 +383,34 @@ class helpdeskActions extends sfActions
 			}
 		}
 		
-		if( $k=array_search( $this->getUser()->getUserId(), $logins)!==false ){
-			unset($logins[$k]);
-		}
+		
 		
 		$logins = array_unique( $logins );
 		foreach( $logins as $login ){ 
-			$notificacion = new Notificacion();
-			$notificacion->setCaLogin( $login );
-			$notificacion->setCaUrl( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
-			$notificacion->setCaFchcreado( time() );
-			$notificacion->setCaUsucreado( $this->getUser()->getUserId() );
-			
-			$request->setParameter("id", $ticket->getCaIdticket() );
-			$request->setParameter("format", "email" );
-			
-			if( !$update ){
-				$notificacion->setCaTitulo( "Nuevo ticket #".$ticket->getCaIdticket() );
+			if( $this->getUser()->getUserId()!=$login ){
+				$notificacion = new Notificacion();
+				$notificacion->setCaLogin( $login );
+				$notificacion->setCaUrl( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
+				$notificacion->setCaFchcreado( time() );
+				$notificacion->setCaUsucreado( $this->getUser()->getUserId() );
 				
-				$texto = "Se ha creado un nuevo ticket \n\n<br /><br />" ;
-			}else{
-			
-				$notificacion->setCaTitulo( "Se ha editado el ticket #".$ticket->getCaIdticket() );
-				$texto = "Se ha editado el ticket \n\n<br /><br />" ;
-			}
-			
-			$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');			
-			$notificacion->setCaTexto( $texto );
-			$notificacion->save();		
+				$request->setParameter("id", $ticket->getCaIdticket() );
+				$request->setParameter("format", "email" );
+				
+				if( !$update ){
+					$notificacion->setCaTitulo( "Nuevo ticket #".$ticket->getCaIdticket() );
+					
+					$texto = "Se ha creado un nuevo ticket \n\n<br /><br />" ;
+				}else{
+				
+					$notificacion->setCaTitulo( "Se ha editado el ticket #".$ticket->getCaIdticket() );
+					$texto = "Se ha editado el ticket \n\n<br /><br />" ;
+				}
+				
+				$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');			
+				$notificacion->setCaTexto( $texto );
+				$notificacion->save();	
+			}	
 		}
 		
 		
