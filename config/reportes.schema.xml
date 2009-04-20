@@ -73,38 +73,11 @@
 		</foreign-key>
 	</table>
 	
-		
-	<table name="tb_repavisos" phpName="RepAviso">
-		<column name="ca_idreporte" type="integer" required="true" primaryKey="true"  />			
-		<column name="ca_idemail" type="integer" required="true" primaryKey="true" />		
-		<column name="ca_introduccion" type="varchar"  />	
-		<column name="ca_fchsalida" type="date" />
-		<column name="ca_fchllegada" type="date" />	
-		<column name="ca_fchcontinuacion" type="varchar" />				
-		<column name="ca_piezas" type="varchar" />
-		<column name="ca_peso" type="varchar" />	
-		<column name="ca_volumen" type="varchar" />
-		<column name="ca_fchenvio" type="timestamp" />								
-		<column name="ca_usuenvio" type="varchar" />
-		<column name="ca_doctransporte" type="varchar" />	
-		<column name="ca_idnave" type="varchar" />	
-		<column name="ca_notas" type="varchar" />
-		<column name="ca_etapa" type="varchar" />
-		<column name="ca_docmaster" type="varchar" />	
-		<column name="ca_equipos" type="varchar" />	
-		<column name="ca_horasalida" type="time" />	
-		<column name="ca_tipo" type="varchar" />	
-		<foreign-key foreignTable="tb_reportes">
-			<reference local="ca_idreporte" foreign="ca_idreporte"/>
-		</foreign-key>	
-		<foreign-key foreignTable="tb_emails">
-			<reference local="ca_idemail" foreign="ca_idemail"/>
-		</foreign-key>
-	</table>
-	
 	<table name="tb_repstatus" phpName="RepStatus">
-		<column name="ca_idreporte" type="integer" required="true" primaryKey="true"  />			
-		<column name="ca_idemail" type="integer" required="true" primaryKey="true" />	
+		<column name="ca_idstatus" type="integer" required="true"  autoIncrement="true" primaryKey="true" />	
+		<id-method-parameter value="tb_repstatus_id"/>
+		<column name="ca_idreporte" type="integer" required="true" />			
+		<column name="ca_idemail" type="integer"  />	
 		<column name="ca_fchstatus" type="date" />
 		<column name="ca_status" type="varchar" />
 		<column name="ca_comentarios" type="varchar" />
@@ -121,19 +94,34 @@
 		<column name="ca_volumen" type="varchar" />
 		<column name="ca_doctransporte" type="varchar" />	
 		<column name="ca_idnave" type="varchar" />
-		<column name="ca_docmaster" type="varchar" />	
-		<column name="ca_fchreserva" type="date" />
-		<column name="ca_fchcierrereserva" type="date" />
+		<column name="ca_docmaster" type="varchar" />
 		<column name="ca_equipos" type="varchar" />	
 		<column name="ca_horasalida" type="time" />	
 		<column name="ca_horallegada" type="time" />	
+		<column name="ca_idetapa" type="varchar" />
+		 
 		<foreign-key foreignTable="tb_reportes">		
 			<reference local="ca_idreporte" foreign="ca_idreporte"/>
 		</foreign-key>
   		<foreign-key foreignTable="tb_emails">
 			<reference local="ca_idemail" foreign="ca_idemail"/>
 		</foreign-key>	
+		<foreign-key foreignTable="tb_tracking_etapas">		
+			<reference local="ca_idetapa" foreign="ca_idetapa"/>
+		</foreign-key>
 	</table>
+	
+	
+	<table name="tb_tracking_etapas" phpName="TrackingEtapas">
+		<column name="ca_idetapa" type="varchar" required="true"   primaryKey="true" />	
+		<column name="ca_impoexpo" type="varchar" />			
+		<column name="ca_transporte" type="varchar"  />	
+		<column name="ca_etapa" type="varchar" />
+		<column name="ca_orden" type="varchar" />
+		<column name="ca_ttl" type="varchar" />
+		<column name="ca_class" type="varchar" />
+	</table>
+
 	
 	<table name="tb_repstatusrespuestas" phpName="RepStatusRespuesta">
 		<column name="ca_idreporte" type="integer" required="true" />			
