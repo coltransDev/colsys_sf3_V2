@@ -1,12 +1,15 @@
+<div align="center" >
 <br />
 <h3> Modulo de seguimiento de cotizaciones </h3>
 <br />
 <br />
+</div>
 <div align="center" id="container"></div>
 <script language="javascript">
 var tabs = new Ext.FormPanel({
 	labelWidth: 75,
-	border:false,
+	border:true,
+	fame:true,
 	width: 450,
 	standardSubmit: true,  
     id: 'formPanel',	
@@ -100,8 +103,8 @@ var tabs = new Ext.FormPanel({
 							triggerAction: 'all',
 							emptyText:'Seleccione',
 							selectOnFocus: true,
-							name: 'sucursal',
-							id: 'sucursal',							
+							hiddenName: 'sucursal',
+							id: 'sucursal_id',							
 							lazyRender:true,
 							listClass: 'x-combo-list-small',	
 							store: [
@@ -112,7 +115,7 @@ var tabs = new Ext.FormPanel({
 										echo ",";
 									}
 								?>
-									['<?=$sucursal->getCaNombre()?>', '<?=$sucursal->getCaNombre()?>']
+									['<?=$sucursal->getCaIdsucursal()?>', '<?=$sucursal->getCaNombre()?>']
 								<?
 								}
 								?>

@@ -14,7 +14,7 @@ var record = Ext.data.Record.create([
 	{name: 'consecutivo', type: 'string'},
 	{name: 'trayecto', type: 'string'},
 	{name: 'usuario', type: 'string'},
-	{name: 'estado', type: 'string'},
+	{name: 'estado', type: 'string'},	
 	{name: 'motivonoaprobado', type: 'string'}
 	
 ]);
@@ -48,7 +48,8 @@ var colModel = new Ext.grid.ColumnModel({
 			header: "Consecutivo",
 			width: 30,
 			sortable: true,	
-			hideable: false,		
+			hideable: false,
+			hidden: true,		
 			dataIndex: 'consecutivo'	
 		},
 		{
@@ -119,20 +120,18 @@ var colModel = new Ext.grid.ColumnModel({
 			width: 30,
 			sortable: true,	
 			hideable: false,		
-			dataIndex: 'motivonoaprobado',
-			editor: new Ext.form.ComboBox({								
-						typeAhead: true,
-						forceSelection: true,
-						triggerAction: 'all',
-						emptyText:'Seleccione',
-						selectOnFocus: true,																									
+			dataIndex: 'motivonoaprobado',			
+			editor: new Ext.form.TextField()
+			/*editor: new Ext.form.ComboBox({								
+						//typeAhead: false,
+						forceSelection : false,
+						//triggerAction: 'all',
+						hideTrigger : true, 
+						emptyText:'',
+						//selectOnFocus: true,																									
 						listClass: 'x-combo-list-small',
-						mode: 'local',
-						valueField:'valor',
-						displayField:'valor',
-						store :  new Ext.data.SimpleStore({
-								fields: ['valor', 'valor'],
-								data : [
+										
+						store :   [
 									<?
 									$i = 0;								
 									foreach( $motivos as $motivo ){
@@ -145,11 +144,11 @@ var colModel = new Ext.grid.ColumnModel({
 									}
 									?>
 									]
-							})
 						
 						
 						
-					})
+						
+					})*/
 		}
 		
 				
@@ -255,7 +254,7 @@ var panel = new Ext.grid.EditorGridPanel({
 				case "Negocio asignado":					
 					return "row_yellow";
 					break;
-				case "No aprobada":					
+				case "No aprobada":								
 					return "row_pink";
 					break;
 				default:
@@ -271,4 +270,6 @@ var panel = new Ext.grid.EditorGridPanel({
 });
 
 panel.render(document.body);
+panel.setWidth(Ext.getBody().getViewSize().width-10);
+
 </script>

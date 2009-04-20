@@ -10,6 +10,8 @@
  */
 class cotseguimientosActions extends sfActions
 {
+
+	const RUTINA = 19;
 	/**
 	* Executes index action
 	*
@@ -17,6 +19,18 @@ class cotseguimientosActions extends sfActions
 	*/
 	public function executeIndex($request)
 	{		
+		$this->nivel = $this->getUser()->getNivelAcceso( cotseguimientosActions::RUTINA );
+		
+		if( $this->nivel==-1 ){
+		//	$this->forward404();
+		}	
+		
+		
+		if( $this->nivel<1 ){
+			$this->redirect("cotseguimientos/listadoCotizaciones");
+		}	
+		
+		
 		$c = new Criteria();
 		$c->addJoin( UsuarioPeer::CA_LOGIN, CotizacionPeer::CA_USUARIO );
 		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );
@@ -59,7 +73,7 @@ class cotseguimientosActions extends sfActions
 		
 		if( $checkboxSucursal ){
 			$c->addJoin( CotizacionPeer::CA_USUARIO, UsuarioPeer::CA_LOGIN );	
-			$c->add(  UsuarioPeer::CA_SUCURSAL, $sucursal );	
+			$c->add(  UsuarioPeer::CA_IDSUCURSAL, $sucursal );	
 		}		
 		$c->addAscendingOrderByColumn( CotizacionPeer::CA_CONSECUTIVO );
 		$c->addJoin( CotizacionPeer::CA_IDCOTIZACION , CotProductoPeer::CA_IDCOTIZACION );
