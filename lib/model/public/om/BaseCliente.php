@@ -216,6 +216,16 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	private $lastClienteStdCriteria = null;
 
 	/**
+	 * @var        array InoClientesSea[] Collection to store aggregation of InoClientesSea objects.
+	 */
+	protected $collInoClientesSeas;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collInoClientesSeas.
+	 */
+	private $lastInoClientesSeaCriteria = null;
+
+	/**
 	 * @var        array InoIngresosSea[] Collection to store aggregation of InoIngresosSea objects.
 	 */
 	protected $collInoIngresosSeas;
@@ -1224,6 +1234,9 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			$this->collClienteStds = null;
 			$this->lastClienteStdCriteria = null;
 
+			$this->collInoClientesSeas = null;
+			$this->lastInoClientesSeaCriteria = null;
+
 			$this->collInoIngresosSeas = null;
 			$this->lastInoIngresosSeaCriteria = null;
 
@@ -1381,6 +1394,14 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collInoClientesSeas !== null) {
+				foreach ($this->collInoClientesSeas as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collInoIngresosSeas !== null) {
 				foreach ($this->collInoIngresosSeas as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -1506,6 +1527,14 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 
 				if ($this->collClienteStds !== null) {
 					foreach ($this->collClienteStds as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collInoClientesSeas !== null) {
+					foreach ($this->collInoClientesSeas as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -2002,6 +2031,12 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			foreach ($this->getClienteStds() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addClienteStd($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getInoClientesSeas() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoClientesSea($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2779,6 +2814,301 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collInoClientesSeas collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoClientesSeas()
+	 */
+	public function clearInoClientesSeas()
+	{
+		$this->collInoClientesSeas = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoClientesSeas collection (array).
+	 *
+	 * By default this just sets the collInoClientesSeas collection to an empty array (like clearcollInoClientesSeas());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initInoClientesSeas()
+	{
+		$this->collInoClientesSeas = array();
+	}
+
+	/**
+	 * Gets an array of InoClientesSea objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Cliente has previously been saved, it will retrieve
+	 * related InoClientesSeas from storage. If this Cliente is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array InoClientesSea[]
+	 * @throws     PropelException
+	 */
+	public function getInoClientesSeas($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ClientePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+			   $this->collInoClientesSeas = array();
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+				InoClientesSeaPeer::addSelectColumns($criteria);
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+				InoClientesSeaPeer::addSelectColumns($criteria);
+				if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+					$this->collInoClientesSeas = InoClientesSeaPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastInoClientesSeaCriteria = $criteria;
+		return $this->collInoClientesSeas;
+	}
+
+	/**
+	 * Returns the number of related InoClientesSea objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoClientesSea objects.
+	 * @throws     PropelException
+	 */
+	public function countInoClientesSeas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ClientePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+				$count = InoClientesSeaPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+				if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+					$count = InoClientesSeaPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoClientesSeas);
+				}
+			} else {
+				$count = count($this->collInoClientesSeas);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a InoClientesSea object to this object
+	 * through the InoClientesSea foreign key attribute.
+	 *
+	 * @param      InoClientesSea $l InoClientesSea
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addInoClientesSea(InoClientesSea $l)
+	{
+		if ($this->collInoClientesSeas === null) {
+			$this->initInoClientesSeas();
+		}
+		if (!in_array($l, $this->collInoClientesSeas, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoClientesSeas, $l);
+			$l->setCliente($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cliente is new, it will return
+	 * an empty collection; or if this Cliente has previously
+	 * been saved, it will retrieve related InoClientesSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Cliente.
+	 */
+	public function getInoClientesSeasJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ClientePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoClientesSeas = array();
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoClientesSeaCriteria = $criteria;
+
+		return $this->collInoClientesSeas;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cliente is new, it will return
+	 * an empty collection; or if this Cliente has previously
+	 * been saved, it will retrieve related InoClientesSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Cliente.
+	 */
+	public function getInoClientesSeasJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ClientePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoClientesSeas = array();
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoClientesSeaCriteria = $criteria;
+
+		return $this->collInoClientesSeas;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cliente is new, it will return
+	 * an empty collection; or if this Cliente has previously
+	 * been saved, it will retrieve related InoClientesSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Cliente.
+	 */
+	public function getInoClientesSeasJoinInoMaestraSea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ClientePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoClientesSeas = array();
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+
+			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinInoMaestraSea($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoClientesSeaCriteria = $criteria;
+
+		return $this->collInoClientesSeas;
+	}
+
+	/**
 	 * Clears out the collInoIngresosSeas collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -3212,6 +3542,11 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collInoClientesSeas) {
+				foreach ((array) $this->collInoClientesSeas as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collInoIngresosSeas) {
 				foreach ((array) $this->collInoIngresosSeas as $o) {
 					$o->clearAllReferences($deep);
@@ -3228,6 +3563,7 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		$this->collInoIngresosAirs = null;
 		$this->collContactos = null;
 		$this->collClienteStds = null;
+		$this->collInoClientesSeas = null;
 		$this->collInoIngresosSeas = null;
 		$this->collInoAvisosSeas = null;
 			$this->aCiudad = null;

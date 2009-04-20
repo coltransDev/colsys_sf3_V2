@@ -19,7 +19,7 @@ abstract class BaseTrackingUserLogPeer {
 	const CLASS_DEFAULT = 'lib.model.public.TrackingUserLog';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 6;
+	const NUM_COLUMNS = 7;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -42,6 +42,9 @@ abstract class BaseTrackingUserLogPeer {
 	/** the column name for the CA_IPADDRESS field */
 	const CA_IPADDRESS = 'tb_tracking_users_log.CA_IPADDRESS';
 
+	/** the column name for the CA_USERAGENT field */
+	const CA_USERAGENT = 'tb_tracking_users_log.CA_USERAGENT';
+
 	/**
 	 * An identiy map to hold any loaded instances of TrackingUserLog objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -63,11 +66,11 @@ abstract class BaseTrackingUserLogPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaId', 'CaEmail', 'CaFchevento', 'CaUrl', 'CaEvento', 'CaIpaddress', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caId', 'caEmail', 'caFchevento', 'caUrl', 'caEvento', 'caIpaddress', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_ID, self::CA_EMAIL, self::CA_FCHEVENTO, self::CA_URL, self::CA_EVENTO, self::CA_IPADDRESS, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_id', 'ca_email', 'ca_fchevento', 'ca_url', 'ca_evento', 'ca_ipaddress', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+		BasePeer::TYPE_PHPNAME => array ('CaId', 'CaEmail', 'CaFchevento', 'CaUrl', 'CaEvento', 'CaIpaddress', 'CaUseragent', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caId', 'caEmail', 'caFchevento', 'caUrl', 'caEvento', 'caIpaddress', 'caUseragent', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_ID, self::CA_EMAIL, self::CA_FCHEVENTO, self::CA_URL, self::CA_EVENTO, self::CA_IPADDRESS, self::CA_USERAGENT, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_id', 'ca_email', 'ca_fchevento', 'ca_url', 'ca_evento', 'ca_ipaddress', 'ca_useragent', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -77,11 +80,11 @@ abstract class BaseTrackingUserLogPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaId' => 0, 'CaEmail' => 1, 'CaFchevento' => 2, 'CaUrl' => 3, 'CaEvento' => 4, 'CaIpaddress' => 5, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caId' => 0, 'caEmail' => 1, 'caFchevento' => 2, 'caUrl' => 3, 'caEvento' => 4, 'caIpaddress' => 5, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_ID => 0, self::CA_EMAIL => 1, self::CA_FCHEVENTO => 2, self::CA_URL => 3, self::CA_EVENTO => 4, self::CA_IPADDRESS => 5, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_id' => 0, 'ca_email' => 1, 'ca_fchevento' => 2, 'ca_url' => 3, 'ca_evento' => 4, 'ca_ipaddress' => 5, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+		BasePeer::TYPE_PHPNAME => array ('CaId' => 0, 'CaEmail' => 1, 'CaFchevento' => 2, 'CaUrl' => 3, 'CaEvento' => 4, 'CaIpaddress' => 5, 'CaUseragent' => 6, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caId' => 0, 'caEmail' => 1, 'caFchevento' => 2, 'caUrl' => 3, 'caEvento' => 4, 'caIpaddress' => 5, 'caUseragent' => 6, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_ID => 0, self::CA_EMAIL => 1, self::CA_FCHEVENTO => 2, self::CA_URL => 3, self::CA_EVENTO => 4, self::CA_IPADDRESS => 5, self::CA_USERAGENT => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_id' => 0, 'ca_email' => 1, 'ca_fchevento' => 2, 'ca_url' => 3, 'ca_evento' => 4, 'ca_ipaddress' => 5, 'ca_useragent' => 6, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	/**
@@ -174,6 +177,8 @@ abstract class BaseTrackingUserLogPeer {
 		$criteria->addSelectColumn(TrackingUserLogPeer::CA_EVENTO);
 
 		$criteria->addSelectColumn(TrackingUserLogPeer::CA_IPADDRESS);
+
+		$criteria->addSelectColumn(TrackingUserLogPeer::CA_USERAGENT);
 
 	}
 

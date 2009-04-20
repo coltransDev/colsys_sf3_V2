@@ -66,7 +66,7 @@ class TransportadorMapBuilder implements MapBuilder {
 
 		$tMap->addPrimaryKey('CA_IDLINEA', 'CaIdlinea', 'INTEGER', true, null);
 
-		$tMap->addColumn('CA_IDTRANSPORTISTA', 'CaIdtransportista', 'NUMERIC', false, null);
+		$tMap->addForeignKey('CA_IDTRANSPORTISTA', 'CaIdtransportista', 'NUMERIC', 'tb_transportistas', 'CA_IDTRANSPORTISTA', false, null);
 
 		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 

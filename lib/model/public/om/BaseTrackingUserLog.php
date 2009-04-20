@@ -57,6 +57,12 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 	protected $ca_ipaddress;
 
 	/**
+	 * The value for the ca_useragent field.
+	 * @var        string
+	 */
+	protected $ca_useragent;
+
+	/**
 	 * @var        TrackingUser
 	 */
 	protected $aTrackingUser;
@@ -176,6 +182,16 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 	public function getCaIpaddress()
 	{
 		return $this->ca_ipaddress;
+	}
+
+	/**
+	 * Get the [ca_useragent] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUseragent()
+	{
+		return $this->ca_useragent;
 	}
 
 	/**
@@ -332,6 +348,26 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 	} // setCaIpaddress()
 
 	/**
+	 * Set the value of [ca_useragent] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     TrackingUserLog The current object (for fluent API support)
+	 */
+	public function setCaUseragent($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_useragent !== $v) {
+			$this->ca_useragent = $v;
+			$this->modifiedColumns[] = TrackingUserLogPeer::CA_USERAGENT;
+		}
+
+		return $this;
+	} // setCaUseragent()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -374,6 +410,7 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 			$this->ca_url = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->ca_evento = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->ca_ipaddress = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_useragent = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -383,7 +420,7 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 6; // 6 = TrackingUserLogPeer::NUM_COLUMNS - TrackingUserLogPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 7; // 7 = TrackingUserLogPeer::NUM_COLUMNS - TrackingUserLogPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating TrackingUserLog object", $e);
@@ -702,6 +739,9 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 			case 5:
 				return $this->getCaIpaddress();
 				break;
+			case 6:
+				return $this->getCaUseragent();
+				break;
 			default:
 				return null;
 				break;
@@ -729,6 +769,7 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 			$keys[3] => $this->getCaUrl(),
 			$keys[4] => $this->getCaEvento(),
 			$keys[5] => $this->getCaIpaddress(),
+			$keys[6] => $this->getCaUseragent(),
 		);
 		return $result;
 	}
@@ -778,6 +819,9 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 			case 5:
 				$this->setCaIpaddress($value);
 				break;
+			case 6:
+				$this->setCaUseragent($value);
+				break;
 		} // switch()
 	}
 
@@ -808,6 +852,7 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[3], $arr)) $this->setCaUrl($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaEvento($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaIpaddress($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaUseragent($arr[$keys[6]]);
 	}
 
 	/**
@@ -825,6 +870,7 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(TrackingUserLogPeer::CA_URL)) $criteria->add(TrackingUserLogPeer::CA_URL, $this->ca_url);
 		if ($this->isColumnModified(TrackingUserLogPeer::CA_EVENTO)) $criteria->add(TrackingUserLogPeer::CA_EVENTO, $this->ca_evento);
 		if ($this->isColumnModified(TrackingUserLogPeer::CA_IPADDRESS)) $criteria->add(TrackingUserLogPeer::CA_IPADDRESS, $this->ca_ipaddress);
+		if ($this->isColumnModified(TrackingUserLogPeer::CA_USERAGENT)) $criteria->add(TrackingUserLogPeer::CA_USERAGENT, $this->ca_useragent);
 
 		return $criteria;
 	}
@@ -888,6 +934,8 @@ abstract class BaseTrackingUserLog extends BaseObject  implements Persistent {
 		$copyObj->setCaEvento($this->ca_evento);
 
 		$copyObj->setCaIpaddress($this->ca_ipaddress);
+
+		$copyObj->setCaUseragent($this->ca_useragent);
 
 
 		$copyObj->setNew(true);

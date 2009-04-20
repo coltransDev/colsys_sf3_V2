@@ -51,6 +51,11 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 	protected $ca_transporte;
 
 	/**
+	 * @var        Transportista
+	 */
+	protected $aTransportista;
+
+	/**
 	 * @var        array InoMaestraAir[] Collection to store aggregation of InoMaestraAir objects.
 	 */
 	protected $collInoMaestraAirs;
@@ -261,6 +266,10 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = TransportadorPeer::CA_IDTRANSPORTISTA;
 		}
 
+		if ($this->aTransportista !== null && $this->aTransportista->getCaIdtransportista() !== $v) {
+			$this->aTransportista = null;
+		}
+
 		return $this;
 	} // setCaIdtransportista()
 
@@ -398,6 +407,9 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 	public function ensureConsistency()
 	{
 
+		if ($this->aTransportista !== null && $this->ca_idtransportista !== $this->aTransportista->getCaIdtransportista()) {
+			$this->aTransportista = null;
+		}
 	} // ensureConsistency
 
 	/**
@@ -437,6 +449,7 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 
 		if ($deep) {  // also de-associate any related objects?
 
+			$this->aTransportista = null;
 			$this->collInoMaestraAirs = null;
 			$this->lastInoMaestraAirCriteria = null;
 
@@ -548,6 +561,18 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
+
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aTransportista !== null) {
+				if ($this->aTransportista->isModified() || $this->aTransportista->isNew()) {
+					$affectedRows += $this->aTransportista->save($con);
+				}
+				$this->setTransportista($this->aTransportista);
+			}
 
 			if ($this->isNew() ) {
 				$this->modifiedColumns[] = TransportadorPeer::CA_IDLINEA;
@@ -707,6 +732,18 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 			$retval = null;
 
 			$failureMap = array();
+
+
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aTransportista !== null) {
+				if (!$this->aTransportista->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTransportista->getValidationFailures());
+				}
+			}
 
 
 			if (($retval = TransportadorPeer::doValidate($this, $columns)) !== true) {
@@ -1118,6 +1155,57 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 			self::$peer = new TransportadorPeer();
 		}
 		return self::$peer;
+	}
+
+	/**
+	 * Declares an association between this object and a Transportista object.
+	 *
+	 * @param      Transportista $v
+	 * @return     Transportador The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setTransportista(Transportista $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdtransportista(NULL);
+		} else {
+			$this->setCaIdtransportista($v->getCaIdtransportista());
+		}
+
+		$this->aTransportista = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Transportista object, it will not be re-added.
+		if ($v !== null) {
+			$v->addTransportador($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Transportista object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Transportista The associated Transportista object.
+	 * @throws     PropelException
+	 */
+	public function getTransportista(PropelPDO $con = null)
+	{
+		if ($this->aTransportista === null && (($this->ca_idtransportista !== "" && $this->ca_idtransportista !== null))) {
+			$c = new Criteria(TransportistaPeer::DATABASE_NAME);
+			$c->add(TransportistaPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+			$this->aTransportista = TransportistaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aTransportista->addTransportadors($this);
+			 */
+		}
+		return $this->aTransportista;
 	}
 
 	/**
@@ -3091,6 +3179,7 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 		$this->collPricPatioLineas = null;
 		$this->collReportes = null;
 		$this->collInoMaestraSeas = null;
+			$this->aTransportista = null;
 	}
 
 } // BaseTransportador

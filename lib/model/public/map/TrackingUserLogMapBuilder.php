@@ -76,6 +76,8 @@ class TrackingUserLogMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_IPADDRESS', 'CaIpaddress', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_USERAGENT', 'CaUseragent', 'VARCHAR', false, null);
+
 	} // doBuild()
 
 } // TrackingUserLogMapBuilder
