@@ -46,36 +46,31 @@ MainPanel = function(){
         tbar:[
         {
             split:true,
-            text:'Panel de lectura',
-            tooltip: {title:'Reading Pane',text:'Show, move or hide the Reading Pane'},
+            text:'Nuevo',
+            tooltip: {title:'Nuevo status',text:'Nueva confirmación de llegada'},
             iconCls: 'preview-bottom',
             handler: this.movePreview.createDelegate(this, []),
             menu:{
                 id:'reading-menu',
                 cls:'reading-menu',
-                width:100,
+                width:170,
                 items: [{
-                    text:'Abajo',
-                    checked:true,
-                    group:'rp-group',
-                    checkHandler:this.movePreview,
+                    text:'Confirmación de llegada',
+                   
+                    
+                      toggle:this.movePreview,
                     scope:this,
                     iconCls:'preview-bottom'
                 },{
-                    text:'Derecha',
-                    checked:false,
-                    group:'rp-group',
+                    text:'Confirmación OTM',
+                   
+                    
                     checkHandler:this.movePreview,
                     scope:this,
                     iconCls:'preview-right'
-                },{
-                    text:'No visible',
-                    checked:false,
-                    group:'rp-group',
-                    checkHandler:this.movePreview,
-                    scope:this,
-                    iconCls:'preview-hide'
-                }]
+                }
+				
+				]
             }
         },
         '-',
@@ -135,6 +130,11 @@ MainPanel = function(){
         var items = this.preview.topToolbar.items;
         items.get('tab').enable();
         items.get('win').enable();
+		
+		var statusListPanel = new StatusList();			
+		statusListPanel.render("status-list-div");			
+		statusListPanel.loadGrid( record.data.reporte );	
+		
     }, this, {buffer:250});
 
     this.grid.store.on('beforeload', this.preview.clear, this.preview);

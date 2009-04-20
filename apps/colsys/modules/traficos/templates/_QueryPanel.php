@@ -1,13 +1,9 @@
 <?
-use_helper( "Ext2" );
+
 ?>
 /*
- * Ext JS Library 2.2.1
- * Copyright(c) 2006-2009, Ext JS, LLC.
- * licensing@extjs.com
- * 
- * http://extjs.com/license
- */
+* Panel Lateral izquierdo 
+*/
 
 QueryPanel = function() {
     QueryPanel.superclass.constructor.call(this, {       
@@ -29,7 +25,9 @@ QueryPanel = function() {
 		}
 		,
 		items: [
-			<?=include_partial("FormPanelBusquedaCliente")?>
+			<?=include_partial("FormPanelBusquedaCliente")?>,
+			<?=include_partial("FormPanelBusquedaReporte")?>,
+			<?=include_partial("FormPanelBusquedaReferencia")?>
 		]
 
        

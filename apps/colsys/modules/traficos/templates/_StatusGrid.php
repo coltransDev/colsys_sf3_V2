@@ -12,7 +12,18 @@ var recordStatusGrid = Ext.data.Record.create([
 	{name: 'cliente', type: 'string'},
 	{name: 'status', type: 'string'},
 	{name: 'etapa', type: 'string'},
-	{name: 'class', type: 'string'}	
+	{name: 'referencia', type: 'string'},
+	{name: 'ets', type: 'string'},
+	{name: 'eta', type: 'string'},
+	{name: 'transporte', type: 'string'},
+	{name: 'modalidad', type: 'string'},
+	{name: 'orden', type: 'string'},
+	{name: 'doctransporte', type: 'string'},
+	{name: 'idnave', type: 'string'},
+	{name: 'piezas', type: 'string'},
+	{name: 'peso', type: 'string'},
+	{name: 'volumen', type: 'string'},	
+	{name: 'class', type: 'string'}		
 ]);
 
 StatusGrid = function(viewer, config) {
@@ -165,7 +176,20 @@ Ext.extend(StatusGrid, Ext.grid.GridPanel, {
             query: query,
 			param: param
         };
-        this.store.load();
+        this.store.load(
+			{
+				callback:function(){
+					if( query=="reporte" ){
+						Ext.getCmp("status-grid").store.each( function( r ){								
+								if( r.data.reporte==param ){
+									var idx =  this.store.indexOf( r );
+										Ext.getCmp("status-grid").getSelectionModel().selectRow(idx);								
+								}
+							}						
+						);
+					} 
+				}					  
+			});
     },
 
     togglePreview : function(show){

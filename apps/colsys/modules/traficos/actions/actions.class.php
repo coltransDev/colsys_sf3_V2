@@ -18,122 +18,178 @@ class traficosActions extends sfActions
 		$this->idCliente = $request->getParameter("idcliente");
 				
 		$this->impoexpo = $request->getParameter("impoexpo");
-		$this->transporte = $request->getParameter("transporte");
-		
-		
-		/*$this->ver = $this->getRequestParameter("ver");
-		
-		$this->reportes = array();*/
-		
-		/*
-		switch( $this->ver ){
-			case "activos":	
-				$this->forward404unless( $this->modo );
-				$this->forward404unless( $this->idCliente );	
-				$this->fechaInicial = $this->getRequestParameter("fechaInicial");
-				$this->fechaFinal = $this->getRequestParameter("fechaFinal");	
-				$this->reportes = ReportePeer::getReportesActivos( $this->modo ,  $this->idCliente );
-				$this->cliente = ClientePeer::retrieveByPk($this->idCliente );
-				break;
-			case "fecha";
-				$this->forward404unless( $this->modo );
-				$this->forward404unless( $this->idCliente );	
-				$this->fechaInicial = $this->getRequestParameter("fechaInicial");
-				$this->fechaFinal = $this->getRequestParameter("fechaFinal");				
-				$this->reportes = ReportePeer::getReportesByDate( $this->modo , $this->fechaInicial, $this->fechaFinal,  $this->idCliente );
-				$this->cliente = ClientePeer::retrieveByPk( $this->idCliente );
-				break;
-			case "reporte";
-				
-				$c = new Criteria();
-				$c->add( ReportePeer::CA_CONSECUTIVO, "".$this->getRequestParameter("numreporte")."%" , Criteria::LIKE );
-				
-				if( $this->modo=="maritimo" ){
-					$c->add( ReportePeer::CA_TRANSPORTE, "Marítimo" );
-					$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
-					$c->addOr( ReportePeer::CA_IMPOEXPO, "Triangulación" );
-				}
-				
-				if( $this->modo=="aereo" ){
-					$c->add( ReportePeer::CA_TRANSPORTE, "Aéreo" );
-					$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
-				}
-				
-				if( $this->modo=="expo" || $this->modo=="exportaciones" ){
-					$c->add( ReportePeer::CA_IMPOEXPO, "Exportación" );
-				}
-				
-				if( $this->modo=="impo" || $this->modo=="importaciones" ){
-					$c->add( ReportePeer::CA_IMPOEXPO, "Importación" );
-				}
-								
-				
-				$c->addDescendingOrderByColumn(ReportePeer::CA_FCHDESPACHO );	
-				$this->reportes = ReportePeer::doSelect( $c );
-				
-				
-				break;
-			default:
-				$this->reportes = array();
-				break;			
-		}	
-		*/
-		
-					
+		$this->transporte = $request->getParameter("transporte");					
 	}
 
 	/*
 	 * Muestra el estado del reporte cuando un usuario hace click sobre el
 	 * @author: Andres Botero
 	 */
-	public function executeListaReportes(){
+	public function executeListaReportes( $request ){
 		
 		$this->impoexpo = utf8_decode($this->getRequestParameter("impoexpo"));
 		$this->transporte = utf8_decode($this->getRequestParameter("transporte"));
 		$this->forward404Unless( $this->impoexpo );
 		$this->forward404Unless( $this->transporte );
 		
-		$idcliente = $this->getRequestParameter("param");
+		$query = $this->getRequestParameter("query");
+		$this->forward404Unless( $query );
 		$data = array();
+		$reportes = array();
 		
-		$reportes=array();
-		if( $this->impoexpo==Constantes::IMPO ){	
-			if( $this->transporte==Constantes::MARITIMO ){
-				$reportes = ReportePeer::getReportesActivosImpoMaritimo( $idcliente );
-			}
-			if( $this->transporte==Constantes::AEREO ){
-				$reportes = ReportePeer::getReportesActivosImpoAereo($idcliente );
-			}
+		if( $query=="reporte" ){
+			$c = new Criteria();
+			$c->add( ReportePeer::CA_CONSECUTIVO, $this->getRequestParameter("param")  );
+			$c->addDescendingOrderByColumn( ReportePeer::CA_VERSION );
+			$c->setLimit( 1 );
+			$reporteQuery = ReportePeer::doSelectOne( $c );			
+			//Se incluyen todos los reportes del cliente  
+			$idcliente = $reporteQuery->getCliente()->getCaIdcliente();
+			$query = "cliente"; 
+		}else{
+			$idcliente = $this->getRequestParameter("param");
+		}		
+		
+		
+		switch( $query ){
+			case "cliente":				
+						
+				if( $this->impoexpo==Constantes::IMPO ){	
+					if( $this->transporte==Constantes::MARITIMO ){
+						$reportes = ReportePeer::getReportesActivosImpoMaritimo( $idcliente );
+					}
+					if( $this->transporte==Constantes::AEREO ){
+						$reportes = ReportePeer::getReportesActivosImpoAereo($idcliente );
+					}
+				}				
+				
+				if( $this->impoexpo==Constantes::EXPO ){				
+					$reportes = ReportePeer::getReportesActivosExpo( $idcliente );
+				}		
+				break;	
+			case "referencia":				
+				$c = new Criteria();
+				$c->add( InoClientesSeaPeer::CA_REFERENCIA, $this->getRequestParameter("param") );		
+				$inoClientes = InoClientesSeaPeer::doSelect( $c );
+				$reportes = array();
+				foreach( $inoClientes as $inoCliente ){
+					$reportes[] = $inoCliente->getReporte(); 
+				}
+				break;						
 		}
 		
-		
-		if( $this->impoexpo==Constantes::EXPO ){				
-			$reportes = ReportePeer::getReportesActivosExpo( $idcliente );
+		if( isset( $reporteQuery ) ){
+			$reportes[] = $reporteQuery;
 		}
-		
 		foreach( $reportes as $reporte ){			
 			$status = $reporte->getUltimoStatus();
 			$proveedoresStr = $reporte->getProveedoresStr();
 			$data[]=array(
 				"reporte"=>$reporte->getCaConsecutivo(),
+				"class"=>$status?utf8_encode($status->getClass()):"",
 				"origen"=>utf8_encode($reporte->getOrigen()->getCaCiudad()),
 				"destino"=>utf8_encode($reporte->getDestino()->getCaCiudad()),
 				"proveedor"=>utf8_encode($proveedoresStr),
+				//"cliente"=>utf8_encode($reporte->getCliente()),
+				"transporte"=>utf8_encode($reporte->getCaTransporte()),
+				"modalidad"=>utf8_encode($reporte->getCaModalidad()),
 				"lastUpdate"=>$status?$status->getCaFchStatus("Y-m-d" ):"",
 				"status"=>$status?utf8_encode($status->getStatus()):"",
-				"etapa"=>$status?utf8_encode($status->getEtapa()):"",
-				"class"=>$status?utf8_encode($status->getClass()):""								
-			);
-			
-			
+				"etapa"=>$status?utf8_encode($status->getEtapa()):"",				
+				"ets"=>$status?utf8_encode($status->getCaFchsalida()):"",
+				"eta"=>$status?utf8_encode($status->getCaFchllegada()):"",
+				"doctransporte"=>$status?utf8_encode($status->getCaDoctransporte()):"",
+				"idnave"=>$status?utf8_encode($status->getCaIdnave()):"",
+				"piezas"=>$status?utf8_encode(str_replace("|", " ", $status->getCaPiezas() )):"",
+				"peso"=>$status?utf8_encode(str_replace("|", " ",$status->getCaPeso())):"",
+				"volumen"=>$status?utf8_encode(str_replace("|", " ",$status->getCaVolumen())):"",												
+			);			
 		}
-		
+				
+				
 		
 		$this->responseArray = array("total"=>count($data), "data"=>$data ,"success"=>true);	
 				
 		$this->setLayout("ajax");
 		$this->setTemplate( "responseTemplate" );	
 	}
+	
+	/*
+	 * Muestra el historial de los status de un reporte
+	 * @author: Andres Botero
+	 */
+	public function executeHistorialStatus(){
+		
+		$consecutivo = utf8_decode($this->getRequestParameter("reporte"));		
+		$this->forward404Unless( $consecutivo );	
+		
+		$c = new Criteria();
+		$c->addJoin( RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
+		$c->add( ReportePeer::CA_CONSECUTIVO, $consecutivo );	
+		$statusList = RepStatusPeer::doSelect( $c );
+		
+		$data = array();
+		foreach( $statusList as $status ){
+			$data[] = array( "idemail"=>$status->getCaIdemail(),
+							"status"=>utf8_encode($status->getStatus()),
+							"fchstatus"=>$status->getCaFchstatus(),
+							"etapa"=>utf8_encode($status->getCaEtapa())
+							 );
+		}	
+				
+		$this->responseArray = array("total"=>count($data), "data"=>$data ,"success"=>true);					
+		$this->setLayout("ajax");
+		$this->setTemplate( "responseTemplate" );	
+			
+	}
+	
+	
+	/*
+	* Muestra el listado de reportes sobre un campo de autocompletar 
+	* @author: Andres Botero
+	*/
+	public function executeListaReportesJSON( $request ){
+		$query = $request->getParameter( "query" );
+		$c = new Criteria();	
+		$c->add( ReportePeer::CA_CONSECUTIVO, $query."%", Criteria::LIKE );
+		$c->addAscendingOrderByColumn( ReportePeer::CA_CONSECUTIVO );
+		$c->setDistinct();	
+		$c->setLimit(50);		
+		$reportes = ReportePeer::doSelect( $c );
+		
+		$data = array();
+		foreach( $reportes as $reporte ){
+			$data[] = array( "consecutivo"=>$reporte->getCaConsecutivo() );
+		}
+		
+		$this->responseArray = array("total"=>count($data), "data"=>$data ,"success"=>true);					
+		$this->setLayout("ajax");
+		$this->setTemplate( "responseTemplate" );		
+		
+	}
+	
+	/*
+	* Muestra el listado de referencias sobre un campo de autocompletar 
+	* @author: Andres Botero
+	*/
+	public function executeListaReferenciasJSON( $request ){
+		$query = $request->getParameter( "query" );
+		$c = new Criteria();	
+		$c->add( InoMaestraSeaPeer::CA_REFERENCIA, $query."%", Criteria::LIKE );	
+		$c->setLimit(50);	
+		$referencias = InoMaestraSeaPeer::doSelect( $c );
+		
+		$data = array();
+		foreach( $referencias as $referencia ){
+			$data[] = array( "referencia"=>$referencia->getCaReferencia() );
+		}
+		
+		$this->responseArray = array("total"=>count($data), "data"=>$data ,"success"=>true);					
+		$this->setLayout("ajax");
+		$this->setTemplate( "responseTemplate" );		
+		
+	}
+	
 	
 }
 ?>

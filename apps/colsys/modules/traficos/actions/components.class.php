@@ -55,6 +55,13 @@ class traficosComponents extends sfComponents
 		$this->transporte = $this->getRequestParameter("transporte");		
 	}
 	
+	/*
+	* 
+	*/
+	public function executeStatusList(){
+	
+	}
+	
 		
 	
 	/*
@@ -68,6 +75,13 @@ class traficosComponents extends sfComponents
 	* 
 	*/
 	public function executeQueryPanel(){
+			
+	}
+	
+	/*
+	* 
+	*/
+	public function executePreviewPanel(){
 			
 	}
 	

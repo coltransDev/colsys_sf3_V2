@@ -1,10 +1,6 @@
 /*
- * Ext JS Library 2.2.1
- * Copyright(c) 2006-2009, Ext JS, LLC.
- * licensing@extjs.com
- * 
- * http://extjs.com/license
- */
+
+*/
 
 TrackingViewer = {};
 
@@ -42,7 +38,14 @@ Ext.onReady(function(){
             mainPanel
          ]
     });
+	TrackingViewer.getTemplate().overwrite( Ext.getCmp('main-tabs').preview.body , {});
+	
+  
    
+   
+   
+	
+	Ext.getCmp('status-grid').loadGrid('cliente','860003168');	
    
 });
 
