@@ -11,7 +11,7 @@ default:
 
   stylesheets:    [coltrans,   yui/calendar/calendar, tooltips/tooltips, ext/css/ext-all, ext/css/xtheme-gray.css, menu/menu]
 
-  javascripts:    [comunes, yui/yahoo/yahoo, yui/event/event, yui/dom/dom, yui/calendar/calendar, ext/adapter/ext/ext-base, ext/ext-all, menu/menu]
+  javascripts:    [comunes, yui/yahoo/yahoo, yui/event/event, yui/dom/dom, yui/calendar/calendar, ext/adapter/ext/ext-base, ext/ext-all-debug, menu/menu]
 
   has_layout:     on
   layout:         layout

@@ -6,8 +6,8 @@ all:
 
   smtp:
     host: 10.192.1.30
-    user:  tasas_cambios
-    passwd:  tasas_cambios
+#    user:  tasas_cambios
+#    passwd:  tasas_cambios
 #    host: smtp.colmas.com.co
 #    user: bogota-aduana@colmas.com.co
 #    passwd:  gbvFR5
