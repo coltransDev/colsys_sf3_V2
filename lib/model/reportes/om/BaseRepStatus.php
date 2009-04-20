@@ -21,6 +21,12 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	protected static $peer;
 
 	/**
+	 * The value for the ca_idstatus field.
+	 * @var        int
+	 */
+	protected $ca_idstatus;
+
+	/**
 	 * The value for the ca_idreporte field.
 	 * @var        int
 	 */
@@ -135,18 +141,6 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	protected $ca_docmaster;
 
 	/**
-	 * The value for the ca_fchreserva field.
-	 * @var        string
-	 */
-	protected $ca_fchreserva;
-
-	/**
-	 * The value for the ca_fchcierrereserva field.
-	 * @var        string
-	 */
-	protected $ca_fchcierrereserva;
-
-	/**
 	 * The value for the ca_equipos field.
 	 * @var        string
 	 */
@@ -165,6 +159,12 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	protected $ca_horallegada;
 
 	/**
+	 * The value for the ca_idetapa field.
+	 * @var        string
+	 */
+	protected $ca_idetapa;
+
+	/**
 	 * @var        Reporte
 	 */
 	protected $aReporte;
@@ -173,6 +173,11 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	 * @var        Email
 	 */
 	protected $aEmail;
+
+	/**
+	 * @var        TrackingEtapas
+	 */
+	protected $aTrackingEtapas;
 
 	/**
 	 * @var        array RepStatusRespuesta[] Collection to store aggregation of RepStatusRespuesta objects.
@@ -216,6 +221,16 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	 */
 	public function applyDefaultValues()
 	{
+	}
+
+	/**
+	 * Get the [ca_idstatus] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdstatus()
+	{
+		return $this->ca_idstatus;
 	}
 
 	/**
@@ -524,72 +539,6 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [optionally formatted] temporal [ca_fchreserva] column value.
-	 * 
-	 *
-	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the raw DateTime object will be returned.
-	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-	 * @throws     PropelException - if unable to parse/validate the date/time value.
-	 */
-	public function getCaFchreserva($format = 'Y-m-d')
-	{
-		if ($this->ca_fchreserva === null) {
-			return null;
-		}
-
-
-
-		try {
-			$dt = new DateTime($this->ca_fchreserva);
-		} catch (Exception $x) {
-			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchreserva, true), $x);
-		}
-
-		if ($format === null) {
-			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-			return $dt;
-		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $dt->format('U'));
-		} else {
-			return $dt->format($format);
-		}
-	}
-
-	/**
-	 * Get the [optionally formatted] temporal [ca_fchcierrereserva] column value.
-	 * 
-	 *
-	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the raw DateTime object will be returned.
-	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-	 * @throws     PropelException - if unable to parse/validate the date/time value.
-	 */
-	public function getCaFchcierrereserva($format = 'Y-m-d')
-	{
-		if ($this->ca_fchcierrereserva === null) {
-			return null;
-		}
-
-
-
-		try {
-			$dt = new DateTime($this->ca_fchcierrereserva);
-		} catch (Exception $x) {
-			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcierrereserva, true), $x);
-		}
-
-		if ($format === null) {
-			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-			return $dt;
-		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $dt->format('U'));
-		} else {
-			return $dt->format($format);
-		}
-	}
-
-	/**
 	 * Get the [ca_equipos] column value.
 	 * 
 	 * @return     string
@@ -664,6 +613,36 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			return $dt->format($format);
 		}
 	}
+
+	/**
+	 * Get the [ca_idetapa] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIdetapa()
+	{
+		return $this->ca_idetapa;
+	}
+
+	/**
+	 * Set the value of [ca_idstatus] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     RepStatus The current object (for fluent API support)
+	 */
+	public function setCaIdstatus($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idstatus !== $v) {
+			$this->ca_idstatus = $v;
+			$this->modifiedColumns[] = RepStatusPeer::CA_IDSTATUS;
+		}
+
+		return $this;
+	} // setCaIdstatus()
 
 	/**
 	 * Set the value of [ca_idreporte] column.
@@ -1199,104 +1178,6 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	} // setCaDocmaster()
 
 	/**
-	 * Sets the value of [ca_fchreserva] column to a normalized version of the date/time value specified.
-	 * 
-	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-	 *						be treated as NULL for temporal objects.
-	 * @return     RepStatus The current object (for fluent API support)
-	 */
-	public function setCaFchreserva($v)
-	{
-		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-		// -- which is unexpected, to say the least.
-		if ($v === null || $v === '') {
-			$dt = null;
-		} elseif ($v instanceof DateTime) {
-			$dt = $v;
-		} else {
-			// some string/numeric value passed; we normalize that so that we can
-			// validate it.
-			try {
-				if (is_numeric($v)) { // if it's a unix timestamp
-					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-					// We have to explicitly specify and then change the time zone because of a
-					// DateTime bug: http://bugs.php.net/bug.php?id=43003
-					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-				} else {
-					$dt = new DateTime($v);
-				}
-			} catch (Exception $x) {
-				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-			}
-		}
-
-		if ( $this->ca_fchreserva !== null || $dt !== null ) {
-			// (nested ifs are a little easier to read in this case)
-
-			$currNorm = ($this->ca_fchreserva !== null && $tmpDt = new DateTime($this->ca_fchreserva)) ? $tmpDt->format('Y-m-d') : null;
-			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
-
-			if ( ($currNorm !== $newNorm) // normalized values don't match 
-					)
-			{
-				$this->ca_fchreserva = ($dt ? $dt->format('Y-m-d') : null);
-				$this->modifiedColumns[] = RepStatusPeer::CA_FCHRESERVA;
-			}
-		} // if either are not null
-
-		return $this;
-	} // setCaFchreserva()
-
-	/**
-	 * Sets the value of [ca_fchcierrereserva] column to a normalized version of the date/time value specified.
-	 * 
-	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-	 *						be treated as NULL for temporal objects.
-	 * @return     RepStatus The current object (for fluent API support)
-	 */
-	public function setCaFchcierrereserva($v)
-	{
-		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-		// -- which is unexpected, to say the least.
-		if ($v === null || $v === '') {
-			$dt = null;
-		} elseif ($v instanceof DateTime) {
-			$dt = $v;
-		} else {
-			// some string/numeric value passed; we normalize that so that we can
-			// validate it.
-			try {
-				if (is_numeric($v)) { // if it's a unix timestamp
-					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-					// We have to explicitly specify and then change the time zone because of a
-					// DateTime bug: http://bugs.php.net/bug.php?id=43003
-					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-				} else {
-					$dt = new DateTime($v);
-				}
-			} catch (Exception $x) {
-				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-			}
-		}
-
-		if ( $this->ca_fchcierrereserva !== null || $dt !== null ) {
-			// (nested ifs are a little easier to read in this case)
-
-			$currNorm = ($this->ca_fchcierrereserva !== null && $tmpDt = new DateTime($this->ca_fchcierrereserva)) ? $tmpDt->format('Y-m-d') : null;
-			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
-
-			if ( ($currNorm !== $newNorm) // normalized values don't match 
-					)
-			{
-				$this->ca_fchcierrereserva = ($dt ? $dt->format('Y-m-d') : null);
-				$this->modifiedColumns[] = RepStatusPeer::CA_FCHCIERRERESERVA;
-			}
-		} // if either are not null
-
-		return $this;
-	} // setCaFchcierrereserva()
-
-	/**
 	 * Set the value of [ca_equipos] column.
 	 * 
 	 * @param      string $v new value
@@ -1415,6 +1296,30 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	} // setCaHorallegada()
 
 	/**
+	 * Set the value of [ca_idetapa] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     RepStatus The current object (for fluent API support)
+	 */
+	public function setCaIdetapa($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_idetapa !== $v) {
+			$this->ca_idetapa = $v;
+			$this->modifiedColumns[] = RepStatusPeer::CA_IDETAPA;
+		}
+
+		if ($this->aTrackingEtapas !== null && $this->aTrackingEtapas->getCaIdetapa() !== $v) {
+			$this->aTrackingEtapas = null;
+		}
+
+		return $this;
+	} // setCaIdetapa()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -1451,30 +1356,30 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_idreporte = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->ca_idemail = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-			$this->ca_fchstatus = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->ca_status = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_comentarios = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_fchrecibo = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_fchenvio = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_usuenvio = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-			$this->ca_etapa = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-			$this->ca_introduccion = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-			$this->ca_fchsalida = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-			$this->ca_fchllegada = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-			$this->ca_fchcontinuacion = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-			$this->ca_piezas = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-			$this->ca_peso = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-			$this->ca_volumen = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
-			$this->ca_doctransporte = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-			$this->ca_idnave = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
-			$this->ca_docmaster = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
-			$this->ca_fchreserva = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
-			$this->ca_fchcierrereserva = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
-			$this->ca_equipos = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
-			$this->ca_horasalida = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
-			$this->ca_horallegada = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+			$this->ca_idstatus = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_idreporte = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+			$this->ca_idemail = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+			$this->ca_fchstatus = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_status = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_comentarios = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_fchrecibo = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_fchenvio = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_usuenvio = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_etapa = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_introduccion = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_fchsalida = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_fchllegada = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_fchcontinuacion = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_piezas = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_peso = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_volumen = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_doctransporte = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+			$this->ca_idnave = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_docmaster = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_equipos = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_horasalida = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+			$this->ca_horallegada = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_idetapa = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1512,6 +1417,9 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		}
 		if ($this->aEmail !== null && $this->ca_idemail !== $this->aEmail->getCaIdemail()) {
 			$this->aEmail = null;
+		}
+		if ($this->aTrackingEtapas !== null && $this->ca_idetapa !== $this->aTrackingEtapas->getCaIdetapa()) {
+			$this->aTrackingEtapas = null;
 		}
 	} // ensureConsistency
 
@@ -1554,6 +1462,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 
 			$this->aReporte = null;
 			$this->aEmail = null;
+			$this->aTrackingEtapas = null;
 			$this->collRepStatusRespuestas = null;
 			$this->lastRepStatusRespuestaCriteria = null;
 
@@ -1661,6 +1570,16 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 				$this->setEmail($this->aEmail);
 			}
 
+			if ($this->aTrackingEtapas !== null) {
+				if ($this->aTrackingEtapas->isModified() || $this->aTrackingEtapas->isNew()) {
+					$affectedRows += $this->aTrackingEtapas->save($con);
+				}
+				$this->setTrackingEtapas($this->aTrackingEtapas);
+			}
+
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = RepStatusPeer::CA_IDSTATUS;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -1669,6 +1588,8 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
+
+					$this->setCaIdstatus($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -1769,6 +1690,12 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->aTrackingEtapas !== null) {
+				if (!$this->aTrackingEtapas->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTrackingEtapas->getValidationFailures());
+				}
+			}
+
 
 			if (($retval = RepStatusPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
@@ -1817,76 +1744,76 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdreporte();
+				return $this->getCaIdstatus();
 				break;
 			case 1:
-				return $this->getCaIdemail();
+				return $this->getCaIdreporte();
 				break;
 			case 2:
-				return $this->getCaFchstatus();
+				return $this->getCaIdemail();
 				break;
 			case 3:
-				return $this->getCaStatus();
+				return $this->getCaFchstatus();
 				break;
 			case 4:
-				return $this->getCaComentarios();
+				return $this->getCaStatus();
 				break;
 			case 5:
-				return $this->getCaFchrecibo();
+				return $this->getCaComentarios();
 				break;
 			case 6:
-				return $this->getCaFchenvio();
+				return $this->getCaFchrecibo();
 				break;
 			case 7:
-				return $this->getCaUsuenvio();
+				return $this->getCaFchenvio();
 				break;
 			case 8:
-				return $this->getCaEtapa();
+				return $this->getCaUsuenvio();
 				break;
 			case 9:
-				return $this->getCaIntroduccion();
+				return $this->getCaEtapa();
 				break;
 			case 10:
-				return $this->getCaFchsalida();
+				return $this->getCaIntroduccion();
 				break;
 			case 11:
-				return $this->getCaFchllegada();
+				return $this->getCaFchsalida();
 				break;
 			case 12:
-				return $this->getCaFchcontinuacion();
+				return $this->getCaFchllegada();
 				break;
 			case 13:
-				return $this->getCaPiezas();
+				return $this->getCaFchcontinuacion();
 				break;
 			case 14:
-				return $this->getCaPeso();
+				return $this->getCaPiezas();
 				break;
 			case 15:
-				return $this->getCaVolumen();
+				return $this->getCaPeso();
 				break;
 			case 16:
-				return $this->getCaDoctransporte();
+				return $this->getCaVolumen();
 				break;
 			case 17:
-				return $this->getCaIdnave();
+				return $this->getCaDoctransporte();
 				break;
 			case 18:
-				return $this->getCaDocmaster();
+				return $this->getCaIdnave();
 				break;
 			case 19:
-				return $this->getCaFchreserva();
+				return $this->getCaDocmaster();
 				break;
 			case 20:
-				return $this->getCaFchcierrereserva();
-				break;
-			case 21:
 				return $this->getCaEquipos();
 				break;
-			case 22:
+			case 21:
 				return $this->getCaHorasalida();
 				break;
-			case 23:
+			case 22:
 				return $this->getCaHorallegada();
+				break;
+			case 23:
+				return $this->getCaIdetapa();
 				break;
 			default:
 				return null;
@@ -1909,30 +1836,30 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	{
 		$keys = RepStatusPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdreporte(),
-			$keys[1] => $this->getCaIdemail(),
-			$keys[2] => $this->getCaFchstatus(),
-			$keys[3] => $this->getCaStatus(),
-			$keys[4] => $this->getCaComentarios(),
-			$keys[5] => $this->getCaFchrecibo(),
-			$keys[6] => $this->getCaFchenvio(),
-			$keys[7] => $this->getCaUsuenvio(),
-			$keys[8] => $this->getCaEtapa(),
-			$keys[9] => $this->getCaIntroduccion(),
-			$keys[10] => $this->getCaFchsalida(),
-			$keys[11] => $this->getCaFchllegada(),
-			$keys[12] => $this->getCaFchcontinuacion(),
-			$keys[13] => $this->getCaPiezas(),
-			$keys[14] => $this->getCaPeso(),
-			$keys[15] => $this->getCaVolumen(),
-			$keys[16] => $this->getCaDoctransporte(),
-			$keys[17] => $this->getCaIdnave(),
-			$keys[18] => $this->getCaDocmaster(),
-			$keys[19] => $this->getCaFchreserva(),
-			$keys[20] => $this->getCaFchcierrereserva(),
-			$keys[21] => $this->getCaEquipos(),
-			$keys[22] => $this->getCaHorasalida(),
-			$keys[23] => $this->getCaHorallegada(),
+			$keys[0] => $this->getCaIdstatus(),
+			$keys[1] => $this->getCaIdreporte(),
+			$keys[2] => $this->getCaIdemail(),
+			$keys[3] => $this->getCaFchstatus(),
+			$keys[4] => $this->getCaStatus(),
+			$keys[5] => $this->getCaComentarios(),
+			$keys[6] => $this->getCaFchrecibo(),
+			$keys[7] => $this->getCaFchenvio(),
+			$keys[8] => $this->getCaUsuenvio(),
+			$keys[9] => $this->getCaEtapa(),
+			$keys[10] => $this->getCaIntroduccion(),
+			$keys[11] => $this->getCaFchsalida(),
+			$keys[12] => $this->getCaFchllegada(),
+			$keys[13] => $this->getCaFchcontinuacion(),
+			$keys[14] => $this->getCaPiezas(),
+			$keys[15] => $this->getCaPeso(),
+			$keys[16] => $this->getCaVolumen(),
+			$keys[17] => $this->getCaDoctransporte(),
+			$keys[18] => $this->getCaIdnave(),
+			$keys[19] => $this->getCaDocmaster(),
+			$keys[20] => $this->getCaEquipos(),
+			$keys[21] => $this->getCaHorasalida(),
+			$keys[22] => $this->getCaHorallegada(),
+			$keys[23] => $this->getCaIdetapa(),
 		);
 		return $result;
 	}
@@ -1965,76 +1892,76 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdreporte($value);
+				$this->setCaIdstatus($value);
 				break;
 			case 1:
-				$this->setCaIdemail($value);
+				$this->setCaIdreporte($value);
 				break;
 			case 2:
-				$this->setCaFchstatus($value);
+				$this->setCaIdemail($value);
 				break;
 			case 3:
-				$this->setCaStatus($value);
+				$this->setCaFchstatus($value);
 				break;
 			case 4:
-				$this->setCaComentarios($value);
+				$this->setCaStatus($value);
 				break;
 			case 5:
-				$this->setCaFchrecibo($value);
+				$this->setCaComentarios($value);
 				break;
 			case 6:
-				$this->setCaFchenvio($value);
+				$this->setCaFchrecibo($value);
 				break;
 			case 7:
-				$this->setCaUsuenvio($value);
+				$this->setCaFchenvio($value);
 				break;
 			case 8:
-				$this->setCaEtapa($value);
+				$this->setCaUsuenvio($value);
 				break;
 			case 9:
-				$this->setCaIntroduccion($value);
+				$this->setCaEtapa($value);
 				break;
 			case 10:
-				$this->setCaFchsalida($value);
+				$this->setCaIntroduccion($value);
 				break;
 			case 11:
-				$this->setCaFchllegada($value);
+				$this->setCaFchsalida($value);
 				break;
 			case 12:
-				$this->setCaFchcontinuacion($value);
+				$this->setCaFchllegada($value);
 				break;
 			case 13:
-				$this->setCaPiezas($value);
+				$this->setCaFchcontinuacion($value);
 				break;
 			case 14:
-				$this->setCaPeso($value);
+				$this->setCaPiezas($value);
 				break;
 			case 15:
-				$this->setCaVolumen($value);
+				$this->setCaPeso($value);
 				break;
 			case 16:
-				$this->setCaDoctransporte($value);
+				$this->setCaVolumen($value);
 				break;
 			case 17:
-				$this->setCaIdnave($value);
+				$this->setCaDoctransporte($value);
 				break;
 			case 18:
-				$this->setCaDocmaster($value);
+				$this->setCaIdnave($value);
 				break;
 			case 19:
-				$this->setCaFchreserva($value);
+				$this->setCaDocmaster($value);
 				break;
 			case 20:
-				$this->setCaFchcierrereserva($value);
-				break;
-			case 21:
 				$this->setCaEquipos($value);
 				break;
-			case 22:
+			case 21:
 				$this->setCaHorasalida($value);
 				break;
-			case 23:
+			case 22:
 				$this->setCaHorallegada($value);
+				break;
+			case 23:
+				$this->setCaIdetapa($value);
 				break;
 		} // switch()
 	}
@@ -2060,30 +1987,30 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	{
 		$keys = RepStatusPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdreporte($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaIdemail($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaFchstatus($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaStatus($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaComentarios($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaFchrecibo($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaFchenvio($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaUsuenvio($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaEtapa($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaIntroduccion($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaFchsalida($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaFchllegada($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaFchcontinuacion($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaPiezas($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaPeso($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaVolumen($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaDoctransporte($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaIdnave($arr[$keys[17]]);
-		if (array_key_exists($keys[18], $arr)) $this->setCaDocmaster($arr[$keys[18]]);
-		if (array_key_exists($keys[19], $arr)) $this->setCaFchreserva($arr[$keys[19]]);
-		if (array_key_exists($keys[20], $arr)) $this->setCaFchcierrereserva($arr[$keys[20]]);
-		if (array_key_exists($keys[21], $arr)) $this->setCaEquipos($arr[$keys[21]]);
-		if (array_key_exists($keys[22], $arr)) $this->setCaHorasalida($arr[$keys[22]]);
-		if (array_key_exists($keys[23], $arr)) $this->setCaHorallegada($arr[$keys[23]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdstatus($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdreporte($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaIdemail($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaFchstatus($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaStatus($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaComentarios($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaFchrecibo($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaFchenvio($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaUsuenvio($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaEtapa($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaIntroduccion($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFchsalida($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaFchllegada($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaFchcontinuacion($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaPiezas($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaPeso($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaVolumen($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaDoctransporte($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaIdnave($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaDocmaster($arr[$keys[19]]);
+		if (array_key_exists($keys[20], $arr)) $this->setCaEquipos($arr[$keys[20]]);
+		if (array_key_exists($keys[21], $arr)) $this->setCaHorasalida($arr[$keys[21]]);
+		if (array_key_exists($keys[22], $arr)) $this->setCaHorallegada($arr[$keys[22]]);
+		if (array_key_exists($keys[23], $arr)) $this->setCaIdetapa($arr[$keys[23]]);
 	}
 
 	/**
@@ -2095,6 +2022,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(RepStatusPeer::DATABASE_NAME);
 
+		if ($this->isColumnModified(RepStatusPeer::CA_IDSTATUS)) $criteria->add(RepStatusPeer::CA_IDSTATUS, $this->ca_idstatus);
 		if ($this->isColumnModified(RepStatusPeer::CA_IDREPORTE)) $criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
 		if ($this->isColumnModified(RepStatusPeer::CA_IDEMAIL)) $criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
 		if ($this->isColumnModified(RepStatusPeer::CA_FCHSTATUS)) $criteria->add(RepStatusPeer::CA_FCHSTATUS, $this->ca_fchstatus);
@@ -2114,11 +2042,10 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(RepStatusPeer::CA_DOCTRANSPORTE)) $criteria->add(RepStatusPeer::CA_DOCTRANSPORTE, $this->ca_doctransporte);
 		if ($this->isColumnModified(RepStatusPeer::CA_IDNAVE)) $criteria->add(RepStatusPeer::CA_IDNAVE, $this->ca_idnave);
 		if ($this->isColumnModified(RepStatusPeer::CA_DOCMASTER)) $criteria->add(RepStatusPeer::CA_DOCMASTER, $this->ca_docmaster);
-		if ($this->isColumnModified(RepStatusPeer::CA_FCHRESERVA)) $criteria->add(RepStatusPeer::CA_FCHRESERVA, $this->ca_fchreserva);
-		if ($this->isColumnModified(RepStatusPeer::CA_FCHCIERRERESERVA)) $criteria->add(RepStatusPeer::CA_FCHCIERRERESERVA, $this->ca_fchcierrereserva);
 		if ($this->isColumnModified(RepStatusPeer::CA_EQUIPOS)) $criteria->add(RepStatusPeer::CA_EQUIPOS, $this->ca_equipos);
 		if ($this->isColumnModified(RepStatusPeer::CA_HORASALIDA)) $criteria->add(RepStatusPeer::CA_HORASALIDA, $this->ca_horasalida);
 		if ($this->isColumnModified(RepStatusPeer::CA_HORALLEGADA)) $criteria->add(RepStatusPeer::CA_HORALLEGADA, $this->ca_horallegada);
+		if ($this->isColumnModified(RepStatusPeer::CA_IDETAPA)) $criteria->add(RepStatusPeer::CA_IDETAPA, $this->ca_idetapa);
 
 		return $criteria;
 	}
@@ -2135,41 +2062,29 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(RepStatusPeer::DATABASE_NAME);
 
-		$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
-		$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
+		$criteria->add(RepStatusPeer::CA_IDSTATUS, $this->ca_idstatus);
 
 		return $criteria;
 	}
 
 	/**
-	 * Returns the composite primary key for this object.
-	 * The array elements will be in same order as specified in XML.
-	 * @return     array
+	 * Returns the primary key for this object (row).
+	 * @return     int
 	 */
 	public function getPrimaryKey()
 	{
-		$pks = array();
-
-		$pks[0] = $this->getCaIdreporte();
-
-		$pks[1] = $this->getCaIdemail();
-
-		return $pks;
+		return $this->getCaIdstatus();
 	}
 
 	/**
-	 * Set the [composite] primary key.
+	 * Generic method to set the primary key (ca_idstatus column).
 	 *
-	 * @param      array $keys The elements of the composite key (order must match the order in XML file).
+	 * @param      int $key Primary key.
 	 * @return     void
 	 */
-	public function setPrimaryKey($keys)
+	public function setPrimaryKey($key)
 	{
-
-		$this->setCaIdreporte($keys[0]);
-
-		$this->setCaIdemail($keys[1]);
-
+		$this->setCaIdstatus($key);
 	}
 
 	/**
@@ -2223,15 +2138,13 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 
 		$copyObj->setCaDocmaster($this->ca_docmaster);
 
-		$copyObj->setCaFchreserva($this->ca_fchreserva);
-
-		$copyObj->setCaFchcierrereserva($this->ca_fchcierrereserva);
-
 		$copyObj->setCaEquipos($this->ca_equipos);
 
 		$copyObj->setCaHorasalida($this->ca_horasalida);
 
 		$copyObj->setCaHorallegada($this->ca_horallegada);
+
+		$copyObj->setCaIdetapa($this->ca_idetapa);
 
 
 		if ($deepCopy) {
@@ -2249,6 +2162,8 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
+
+		$copyObj->setCaIdstatus(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -2390,6 +2305,57 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aEmail;
+	}
+
+	/**
+	 * Declares an association between this object and a TrackingEtapas object.
+	 *
+	 * @param      TrackingEtapas $v
+	 * @return     RepStatus The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setTrackingEtapas(TrackingEtapas $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdetapa(NULL);
+		} else {
+			$this->setCaIdetapa($v->getCaIdetapa());
+		}
+
+		$this->aTrackingEtapas = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the TrackingEtapas object, it will not be re-added.
+		if ($v !== null) {
+			$v->addRepStatus($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated TrackingEtapas object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     TrackingEtapas The associated TrackingEtapas object.
+	 * @throws     PropelException
+	 */
+	public function getTrackingEtapas(PropelPDO $con = null)
+	{
+		if ($this->aTrackingEtapas === null && (($this->ca_idetapa !== "" && $this->ca_idetapa !== null))) {
+			$c = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
+			$c->add(TrackingEtapasPeer::CA_IDETAPA, $this->ca_idetapa);
+			$this->aTrackingEtapas = TrackingEtapasPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aTrackingEtapas->addRepStatuss($this);
+			 */
+		}
+		return $this->aTrackingEtapas;
 	}
 
 	/**
@@ -2578,6 +2544,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		$this->collRepStatusRespuestas = null;
 			$this->aReporte = null;
 			$this->aEmail = null;
+			$this->aTrackingEtapas = null;
 	}
 
 } // BaseRepStatus

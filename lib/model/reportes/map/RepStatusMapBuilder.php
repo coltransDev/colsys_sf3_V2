@@ -60,11 +60,15 @@ class RepStatusMapBuilder implements MapBuilder {
 		$tMap->setPhpName('RepStatus');
 		$tMap->setClassname('RepStatus');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
 
-		$tMap->addForeignPrimaryKey('CA_IDREPORTE', 'CaIdreporte', 'INTEGER' , 'tb_reportes', 'CA_IDREPORTE', true, null);
+		$tMap->setPrimaryKeyMethodInfo('tb_repstatus_id');
 
-		$tMap->addForeignPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER' , 'tb_emails', 'CA_IDEMAIL', true, null);
+		$tMap->addPrimaryKey('CA_IDSTATUS', 'CaIdstatus', 'INTEGER', true, null);
+
+		$tMap->addForeignKey('CA_IDREPORTE', 'CaIdreporte', 'INTEGER', 'tb_reportes', 'CA_IDREPORTE', true, null);
+
+		$tMap->addForeignKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER', 'tb_emails', 'CA_IDEMAIL', false, null);
 
 		$tMap->addColumn('CA_FCHSTATUS', 'CaFchstatus', 'DATE', false, null);
 
@@ -100,15 +104,13 @@ class RepStatusMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_DOCMASTER', 'CaDocmaster', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHRESERVA', 'CaFchreserva', 'DATE', false, null);
-
-		$tMap->addColumn('CA_FCHCIERRERESERVA', 'CaFchcierrereserva', 'DATE', false, null);
-
 		$tMap->addColumn('CA_EQUIPOS', 'CaEquipos', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_HORASALIDA', 'CaHorasalida', 'TIME', false, null);
 
 		$tMap->addColumn('CA_HORALLEGADA', 'CaHorallegada', 'TIME', false, null);
+
+		$tMap->addForeignKey('CA_IDETAPA', 'CaIdetapa', 'VARCHAR', 'tb_tracking_etapas', 'CA_IDETAPA', false, null);
 
 	} // doBuild()
 

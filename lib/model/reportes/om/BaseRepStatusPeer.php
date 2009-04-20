@@ -24,6 +24,9 @@ abstract class BaseRepStatusPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
+	/** the column name for the CA_IDSTATUS field */
+	const CA_IDSTATUS = 'tb_repstatus.CA_IDSTATUS';
+
 	/** the column name for the CA_IDREPORTE field */
 	const CA_IDREPORTE = 'tb_repstatus.CA_IDREPORTE';
 
@@ -81,12 +84,6 @@ abstract class BaseRepStatusPeer {
 	/** the column name for the CA_DOCMASTER field */
 	const CA_DOCMASTER = 'tb_repstatus.CA_DOCMASTER';
 
-	/** the column name for the CA_FCHRESERVA field */
-	const CA_FCHRESERVA = 'tb_repstatus.CA_FCHRESERVA';
-
-	/** the column name for the CA_FCHCIERRERESERVA field */
-	const CA_FCHCIERRERESERVA = 'tb_repstatus.CA_FCHCIERRERESERVA';
-
 	/** the column name for the CA_EQUIPOS field */
 	const CA_EQUIPOS = 'tb_repstatus.CA_EQUIPOS';
 
@@ -95,6 +92,9 @@ abstract class BaseRepStatusPeer {
 
 	/** the column name for the CA_HORALLEGADA field */
 	const CA_HORALLEGADA = 'tb_repstatus.CA_HORALLEGADA';
+
+	/** the column name for the CA_IDETAPA field */
+	const CA_IDETAPA = 'tb_repstatus.CA_IDETAPA';
 
 	/**
 	 * An identiy map to hold any loaded instances of RepStatus objects.
@@ -117,10 +117,10 @@ abstract class BaseRepStatusPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdreporte', 'CaIdemail', 'CaFchstatus', 'CaStatus', 'CaComentarios', 'CaFchrecibo', 'CaFchenvio', 'CaUsuenvio', 'CaEtapa', 'CaIntroduccion', 'CaFchsalida', 'CaFchllegada', 'CaFchcontinuacion', 'CaPiezas', 'CaPeso', 'CaVolumen', 'CaDoctransporte', 'CaIdnave', 'CaDocmaster', 'CaFchreserva', 'CaFchcierrereserva', 'CaEquipos', 'CaHorasalida', 'CaHorallegada', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte', 'caIdemail', 'caFchstatus', 'caStatus', 'caComentarios', 'caFchrecibo', 'caFchenvio', 'caUsuenvio', 'caEtapa', 'caIntroduccion', 'caFchsalida', 'caFchllegada', 'caFchcontinuacion', 'caPiezas', 'caPeso', 'caVolumen', 'caDoctransporte', 'caIdnave', 'caDocmaster', 'caFchreserva', 'caFchcierrereserva', 'caEquipos', 'caHorasalida', 'caHorallegada', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE, self::CA_IDEMAIL, self::CA_FCHSTATUS, self::CA_STATUS, self::CA_COMENTARIOS, self::CA_FCHRECIBO, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_ETAPA, self::CA_INTRODUCCION, self::CA_FCHSALIDA, self::CA_FCHLLEGADA, self::CA_FCHCONTINUACION, self::CA_PIEZAS, self::CA_PESO, self::CA_VOLUMEN, self::CA_DOCTRANSPORTE, self::CA_IDNAVE, self::CA_DOCMASTER, self::CA_FCHRESERVA, self::CA_FCHCIERRERESERVA, self::CA_EQUIPOS, self::CA_HORASALIDA, self::CA_HORALLEGADA, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte', 'ca_idemail', 'ca_fchstatus', 'ca_status', 'ca_comentarios', 'ca_fchrecibo', 'ca_fchenvio', 'ca_usuenvio', 'ca_etapa', 'ca_introduccion', 'ca_fchsalida', 'ca_fchllegada', 'ca_fchcontinuacion', 'ca_piezas', 'ca_peso', 'ca_volumen', 'ca_doctransporte', 'ca_idnave', 'ca_docmaster', 'ca_fchreserva', 'ca_fchcierrereserva', 'ca_equipos', 'ca_horasalida', 'ca_horallegada', ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdstatus', 'CaIdreporte', 'CaIdemail', 'CaFchstatus', 'CaStatus', 'CaComentarios', 'CaFchrecibo', 'CaFchenvio', 'CaUsuenvio', 'CaEtapa', 'CaIntroduccion', 'CaFchsalida', 'CaFchllegada', 'CaFchcontinuacion', 'CaPiezas', 'CaPeso', 'CaVolumen', 'CaDoctransporte', 'CaIdnave', 'CaDocmaster', 'CaEquipos', 'CaHorasalida', 'CaHorallegada', 'CaIdetapa', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus', 'caIdreporte', 'caIdemail', 'caFchstatus', 'caStatus', 'caComentarios', 'caFchrecibo', 'caFchenvio', 'caUsuenvio', 'caEtapa', 'caIntroduccion', 'caFchsalida', 'caFchllegada', 'caFchcontinuacion', 'caPiezas', 'caPeso', 'caVolumen', 'caDoctransporte', 'caIdnave', 'caDocmaster', 'caEquipos', 'caHorasalida', 'caHorallegada', 'caIdetapa', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS, self::CA_IDREPORTE, self::CA_IDEMAIL, self::CA_FCHSTATUS, self::CA_STATUS, self::CA_COMENTARIOS, self::CA_FCHRECIBO, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_ETAPA, self::CA_INTRODUCCION, self::CA_FCHSALIDA, self::CA_FCHLLEGADA, self::CA_FCHCONTINUACION, self::CA_PIEZAS, self::CA_PESO, self::CA_VOLUMEN, self::CA_DOCTRANSPORTE, self::CA_IDNAVE, self::CA_DOCMASTER, self::CA_EQUIPOS, self::CA_HORASALIDA, self::CA_HORALLEGADA, self::CA_IDETAPA, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus', 'ca_idreporte', 'ca_idemail', 'ca_fchstatus', 'ca_status', 'ca_comentarios', 'ca_fchrecibo', 'ca_fchenvio', 'ca_usuenvio', 'ca_etapa', 'ca_introduccion', 'ca_fchsalida', 'ca_fchllegada', 'ca_fchcontinuacion', 'ca_piezas', 'ca_peso', 'ca_volumen', 'ca_doctransporte', 'ca_idnave', 'ca_docmaster', 'ca_equipos', 'ca_horasalida', 'ca_horallegada', 'ca_idetapa', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
 	);
 
@@ -131,10 +131,10 @@ abstract class BaseRepStatusPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdreporte' => 0, 'CaIdemail' => 1, 'CaFchstatus' => 2, 'CaStatus' => 3, 'CaComentarios' => 4, 'CaFchrecibo' => 5, 'CaFchenvio' => 6, 'CaUsuenvio' => 7, 'CaEtapa' => 8, 'CaIntroduccion' => 9, 'CaFchsalida' => 10, 'CaFchllegada' => 11, 'CaFchcontinuacion' => 12, 'CaPiezas' => 13, 'CaPeso' => 14, 'CaVolumen' => 15, 'CaDoctransporte' => 16, 'CaIdnave' => 17, 'CaDocmaster' => 18, 'CaFchreserva' => 19, 'CaFchcierrereserva' => 20, 'CaEquipos' => 21, 'CaHorasalida' => 22, 'CaHorallegada' => 23, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte' => 0, 'caIdemail' => 1, 'caFchstatus' => 2, 'caStatus' => 3, 'caComentarios' => 4, 'caFchrecibo' => 5, 'caFchenvio' => 6, 'caUsuenvio' => 7, 'caEtapa' => 8, 'caIntroduccion' => 9, 'caFchsalida' => 10, 'caFchllegada' => 11, 'caFchcontinuacion' => 12, 'caPiezas' => 13, 'caPeso' => 14, 'caVolumen' => 15, 'caDoctransporte' => 16, 'caIdnave' => 17, 'caDocmaster' => 18, 'caFchreserva' => 19, 'caFchcierrereserva' => 20, 'caEquipos' => 21, 'caHorasalida' => 22, 'caHorallegada' => 23, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE => 0, self::CA_IDEMAIL => 1, self::CA_FCHSTATUS => 2, self::CA_STATUS => 3, self::CA_COMENTARIOS => 4, self::CA_FCHRECIBO => 5, self::CA_FCHENVIO => 6, self::CA_USUENVIO => 7, self::CA_ETAPA => 8, self::CA_INTRODUCCION => 9, self::CA_FCHSALIDA => 10, self::CA_FCHLLEGADA => 11, self::CA_FCHCONTINUACION => 12, self::CA_PIEZAS => 13, self::CA_PESO => 14, self::CA_VOLUMEN => 15, self::CA_DOCTRANSPORTE => 16, self::CA_IDNAVE => 17, self::CA_DOCMASTER => 18, self::CA_FCHRESERVA => 19, self::CA_FCHCIERRERESERVA => 20, self::CA_EQUIPOS => 21, self::CA_HORASALIDA => 22, self::CA_HORALLEGADA => 23, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte' => 0, 'ca_idemail' => 1, 'ca_fchstatus' => 2, 'ca_status' => 3, 'ca_comentarios' => 4, 'ca_fchrecibo' => 5, 'ca_fchenvio' => 6, 'ca_usuenvio' => 7, 'ca_etapa' => 8, 'ca_introduccion' => 9, 'ca_fchsalida' => 10, 'ca_fchllegada' => 11, 'ca_fchcontinuacion' => 12, 'ca_piezas' => 13, 'ca_peso' => 14, 'ca_volumen' => 15, 'ca_doctransporte' => 16, 'ca_idnave' => 17, 'ca_docmaster' => 18, 'ca_fchreserva' => 19, 'ca_fchcierrereserva' => 20, 'ca_equipos' => 21, 'ca_horasalida' => 22, 'ca_horallegada' => 23, ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdstatus' => 0, 'CaIdreporte' => 1, 'CaIdemail' => 2, 'CaFchstatus' => 3, 'CaStatus' => 4, 'CaComentarios' => 5, 'CaFchrecibo' => 6, 'CaFchenvio' => 7, 'CaUsuenvio' => 8, 'CaEtapa' => 9, 'CaIntroduccion' => 10, 'CaFchsalida' => 11, 'CaFchllegada' => 12, 'CaFchcontinuacion' => 13, 'CaPiezas' => 14, 'CaPeso' => 15, 'CaVolumen' => 16, 'CaDoctransporte' => 17, 'CaIdnave' => 18, 'CaDocmaster' => 19, 'CaEquipos' => 20, 'CaHorasalida' => 21, 'CaHorallegada' => 22, 'CaIdetapa' => 23, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus' => 0, 'caIdreporte' => 1, 'caIdemail' => 2, 'caFchstatus' => 3, 'caStatus' => 4, 'caComentarios' => 5, 'caFchrecibo' => 6, 'caFchenvio' => 7, 'caUsuenvio' => 8, 'caEtapa' => 9, 'caIntroduccion' => 10, 'caFchsalida' => 11, 'caFchllegada' => 12, 'caFchcontinuacion' => 13, 'caPiezas' => 14, 'caPeso' => 15, 'caVolumen' => 16, 'caDoctransporte' => 17, 'caIdnave' => 18, 'caDocmaster' => 19, 'caEquipos' => 20, 'caHorasalida' => 21, 'caHorallegada' => 22, 'caIdetapa' => 23, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS => 0, self::CA_IDREPORTE => 1, self::CA_IDEMAIL => 2, self::CA_FCHSTATUS => 3, self::CA_STATUS => 4, self::CA_COMENTARIOS => 5, self::CA_FCHRECIBO => 6, self::CA_FCHENVIO => 7, self::CA_USUENVIO => 8, self::CA_ETAPA => 9, self::CA_INTRODUCCION => 10, self::CA_FCHSALIDA => 11, self::CA_FCHLLEGADA => 12, self::CA_FCHCONTINUACION => 13, self::CA_PIEZAS => 14, self::CA_PESO => 15, self::CA_VOLUMEN => 16, self::CA_DOCTRANSPORTE => 17, self::CA_IDNAVE => 18, self::CA_DOCMASTER => 19, self::CA_EQUIPOS => 20, self::CA_HORASALIDA => 21, self::CA_HORALLEGADA => 22, self::CA_IDETAPA => 23, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus' => 0, 'ca_idreporte' => 1, 'ca_idemail' => 2, 'ca_fchstatus' => 3, 'ca_status' => 4, 'ca_comentarios' => 5, 'ca_fchrecibo' => 6, 'ca_fchenvio' => 7, 'ca_usuenvio' => 8, 'ca_etapa' => 9, 'ca_introduccion' => 10, 'ca_fchsalida' => 11, 'ca_fchllegada' => 12, 'ca_fchcontinuacion' => 13, 'ca_piezas' => 14, 'ca_peso' => 15, 'ca_volumen' => 16, 'ca_doctransporte' => 17, 'ca_idnave' => 18, 'ca_docmaster' => 19, 'ca_equipos' => 20, 'ca_horasalida' => 21, 'ca_horallegada' => 22, 'ca_idetapa' => 23, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
 	);
 
@@ -217,6 +217,8 @@ abstract class BaseRepStatusPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
+		$criteria->addSelectColumn(RepStatusPeer::CA_IDSTATUS);
+
 		$criteria->addSelectColumn(RepStatusPeer::CA_IDREPORTE);
 
 		$criteria->addSelectColumn(RepStatusPeer::CA_IDEMAIL);
@@ -255,15 +257,13 @@ abstract class BaseRepStatusPeer {
 
 		$criteria->addSelectColumn(RepStatusPeer::CA_DOCMASTER);
 
-		$criteria->addSelectColumn(RepStatusPeer::CA_FCHRESERVA);
-
-		$criteria->addSelectColumn(RepStatusPeer::CA_FCHCIERRERESERVA);
-
 		$criteria->addSelectColumn(RepStatusPeer::CA_EQUIPOS);
 
 		$criteria->addSelectColumn(RepStatusPeer::CA_HORASALIDA);
 
 		$criteria->addSelectColumn(RepStatusPeer::CA_HORALLEGADA);
+
+		$criteria->addSelectColumn(RepStatusPeer::CA_IDETAPA);
 
 	}
 
@@ -389,7 +389,7 @@ abstract class BaseRepStatusPeer {
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = serialize(array((string) $obj->getCaIdreporte(), (string) $obj->getCaIdemail()));
+				$key = (string) $obj->getCaIdstatus();
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -409,10 +409,10 @@ abstract class BaseRepStatusPeer {
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof RepStatus) {
-				$key = serialize(array((string) $value->getCaIdreporte(), (string) $value->getCaIdemail()));
-			} elseif (is_array($value) && count($value) === 2) {
+				$key = (string) $value->getCaIdstatus();
+			} elseif (is_scalar($value)) {
 				// assume we've been passed a primary key
-				$key = serialize(array((string) $value[0], (string) $value[1]));
+				$key = (string) $value;
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or RepStatus object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -465,10 +465,10 @@ abstract class BaseRepStatusPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null) {
+		if ($row[$startcol + 0] === null) {
 			return null;
 		}
-		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1]));
+		return (string) $row[$startcol + 0];
 	}
 
 	/**
@@ -592,6 +592,56 @@ abstract class BaseRepStatusPeer {
 		}
 
 		$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related TrackingEtapas table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinTrackingEtapas(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(RepStatusPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -740,6 +790,73 @@ abstract class BaseRepStatusPeer {
 
 
 	/**
+	 * Selects a collection of RepStatus objects pre-filled with their TrackingEtapas objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of RepStatus objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinTrackingEtapas(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		RepStatusPeer::addSelectColumns($c);
+		$startcol = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
+		TrackingEtapasPeer::addSelectColumns($c);
+
+		$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = RepStatusPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = TrackingEtapasPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = TrackingEtapasPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					TrackingEtapasPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (RepStatus) to $obj2 (TrackingEtapas)
+				$obj2->addRepStatus($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
@@ -777,6 +894,7 @@ abstract class BaseRepStatusPeer {
 
 		$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+		$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -816,8 +934,12 @@ abstract class BaseRepStatusPeer {
 		EmailPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapasPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (TrackingEtapasPeer::NUM_COLUMNS - TrackingEtapasPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+		$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -876,6 +998,26 @@ abstract class BaseRepStatusPeer {
 				$obj3->addRepStatus($obj1);
 			} // if joined row not null
 
+			// Add objects for joined TrackingEtapas rows
+
+			$key4 = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+			if ($key4 !== null) {
+				$obj4 = TrackingEtapasPeer::getInstanceFromPool($key4);
+				if (!$obj4) {
+
+					$omClass = TrackingEtapasPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					TrackingEtapasPeer::addInstanceToPool($obj4, $key4);
+				} // if obj4 loaded
+
+				// Add the $obj1 (RepStatus) to the collection in $obj4 (TrackingEtapas)
+				$obj4->addRepStatus($obj1);
+			} // if joined row not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -915,6 +1057,7 @@ abstract class BaseRepStatusPeer {
 		}
 	
 				$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -959,6 +1102,52 @@ abstract class BaseRepStatusPeer {
 		}
 	
 				$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related TrackingEtapas table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptTrackingEtapas(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -998,7 +1187,11 @@ abstract class BaseRepStatusPeer {
 		EmailPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapasPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TrackingEtapasPeer::NUM_COLUMNS - TrackingEtapasPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1039,6 +1232,27 @@ abstract class BaseRepStatusPeer {
 
 			} // if joined row is not null
 
+				// Add objects for joined TrackingEtapas rows
+
+				$key3 = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = TrackingEtapasPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = TrackingEtapasPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TrackingEtapasPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (RepStatus) to the collection in $obj3 (TrackingEtapas)
+				$obj3->addRepStatus($obj1);
+
+			} // if joined row is not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1073,7 +1287,11 @@ abstract class BaseRepStatusPeer {
 		ReportePeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapasPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TrackingEtapasPeer::NUM_COLUMNS - TrackingEtapasPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1111,6 +1329,127 @@ abstract class BaseRepStatusPeer {
 
 				// Add the $obj1 (RepStatus) to the collection in $obj2 (Reporte)
 				$obj2->addRepStatus($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined TrackingEtapas rows
+
+				$key3 = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = TrackingEtapasPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = TrackingEtapasPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TrackingEtapasPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (RepStatus) to the collection in $obj3 (TrackingEtapas)
+				$obj3->addRepStatus($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of RepStatus objects pre-filled with all related objects except TrackingEtapas.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of RepStatus objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptTrackingEtapas(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		RepStatusPeer::addSelectColumns($c);
+		$startcol2 = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		ReportePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
+
+		EmailPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = RepStatusPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Reporte rows
+
+				$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = ReportePeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = ReportePeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (RepStatus) to the collection in $obj2 (Reporte)
+				$obj2->addRepStatus($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Email rows
+
+				$key3 = EmailPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = EmailPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = EmailPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					EmailPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (RepStatus) to the collection in $obj3 (Email)
+				$obj3->addRepStatus($obj1);
 
 			} // if joined row is not null
 
@@ -1172,6 +1511,10 @@ abstract class BaseRepStatusPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from RepStatus object
 		}
 
+		if ($criteria->containsKey(RepStatusPeer::CA_IDSTATUS) && $criteria->keyContainsValue(RepStatusPeer::CA_IDSTATUS) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.RepStatusPeer::CA_IDSTATUS.')');
+		}
+
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
@@ -1210,11 +1553,8 @@ abstract class BaseRepStatusPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(RepStatusPeer::CA_IDREPORTE);
-			$selectCriteria->add(RepStatusPeer::CA_IDREPORTE, $criteria->remove(RepStatusPeer::CA_IDREPORTE), $comparison);
-
-			$comparison = $criteria->getComparison(RepStatusPeer::CA_IDEMAIL);
-			$selectCriteria->add(RepStatusPeer::CA_IDEMAIL, $criteria->remove(RepStatusPeer::CA_IDEMAIL), $comparison);
+			$comparison = $criteria->getComparison(RepStatusPeer::CA_IDSTATUS);
+			$selectCriteria->add(RepStatusPeer::CA_IDSTATUS, $criteria->remove(RepStatusPeer::CA_IDSTATUS), $comparison);
 
 		} else { // $values is RepStatus object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -1287,22 +1627,11 @@ abstract class BaseRepStatusPeer {
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			// primary key is composite; we therefore, expect
-			// the primary key passed to be an array of pkey
-			// values
-			if (count($values) == count($values, COUNT_RECURSIVE)) {
-				// array is not multi-dimensional
-				$values = array($values);
-			}
+			$criteria->add(RepStatusPeer::CA_IDSTATUS, (array) $values, Criteria::IN);
 
-			foreach ($values as $value) {
-
-				$criterion = $criteria->getNewCriterion(RepStatusPeer::CA_IDREPORTE, $value[0]);
-				$criterion->addAnd($criteria->getNewCriterion(RepStatusPeer::CA_IDEMAIL, $value[1]));
-				$criteria->addOr($criterion);
-
-				// we can invalidate the cache for this single PK
-				RepStatusPeer::removeInstanceFromPool($value);
+			foreach ((array) $values as $singleval) {
+				// we can invalidate the cache for this single object
+				RepStatusPeer::removeInstanceFromPool($singleval);
 			}
 		}
 
@@ -1372,29 +1701,56 @@ abstract class BaseRepStatusPeer {
 	}
 
 	/**
-	 * Retrieve object using using composite pkey values.
-	 * @param      int $ca_idreporte
-	   @param      int $ca_idemail
-	   
-	 * @param      PropelPDO $con
+	 * Retrieve a single object by pkey.
+	 *
+	 * @param      int $pk the primary key.
+	 * @param      PropelPDO $con the connection to use
 	 * @return     RepStatus
 	 */
-	public static function retrieveByPK($ca_idreporte, $ca_idemail, PropelPDO $con = null) {
-		$key = serialize(array((string) $ca_idreporte, (string) $ca_idemail));
- 		if (null !== ($obj = RepStatusPeer::getInstanceFromPool($key))) {
- 			return $obj;
+	public static function retrieveByPK($pk, PropelPDO $con = null)
+	{
+
+		if (null !== ($obj = RepStatusPeer::getInstanceFromPool((string) $pk))) {
+			return $obj;
 		}
 
 		if ($con === null) {
 			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
+
 		$criteria = new Criteria(RepStatusPeer::DATABASE_NAME);
-		$criteria->add(RepStatusPeer::CA_IDREPORTE, $ca_idreporte);
-		$criteria->add(RepStatusPeer::CA_IDEMAIL, $ca_idemail);
+		$criteria->add(RepStatusPeer::CA_IDSTATUS, $pk);
+
 		$v = RepStatusPeer::doSelect($criteria, $con);
 
-		return !empty($v) ? $v[0] : null;
+		return !empty($v) > 0 ? $v[0] : null;
 	}
+
+	/**
+	 * Retrieve multiple objects by pkey.
+	 *
+	 * @param      array $pks List of primary keys
+	 * @param      PropelPDO $con the connection to use
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function retrieveByPKs($pks, PropelPDO $con = null)
+	{
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$objs = null;
+		if (empty($pks)) {
+			$objs = array();
+		} else {
+			$criteria = new Criteria(RepStatusPeer::DATABASE_NAME);
+			$criteria->add(RepStatusPeer::CA_IDSTATUS, $pks, Criteria::IN);
+			$objs = RepStatusPeer::doSelect($criteria, $con);
+		}
+		return $objs;
+	}
+
 } // BaseRepStatusPeer
 
 // This is the static code needed to register the MapBuilder for this table with the main Propel class.

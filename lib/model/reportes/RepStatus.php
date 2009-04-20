@@ -14,16 +14,60 @@ class RepStatus extends BaseRepStatus
 	* @author: Andres Botero
 	*/
 	public function getEtapa(){
-		$c=new Criteria();
-		$c->add( ParametroPeer::CA_CASOUSO, "CU045" );
-		$c->add( ParametroPeer::CA_IDENTIFICACION, $this->getCaEtapa() );		
-		$modalidad = ParametroPeer::doSelectOne( $c );
+		return $this->getCaEtapa();
+	}
+	
+	public function getClass(){
 		
-		if( $modalidad ){
-			return $modalidad->getCaValor();
-		}else{
-			return null;
-		}	
+		$etapa = $this->getCaEtapa();
+		if(  $this->getCaFchstatus("Y-m-d")==date("Y-m-d") && $this!="Carga Embarcada" && $etapa!="ETA" && $etapa!="Orden Anulada" && $etapa!="Carga en Aeropuerto de Destino"){			
+			$etapa = "nuevo";			
+		}
+		
+		switch( $etapa ){				
+			case "Pendiente de Instrucciones":
+				$class = "yellow";
+				break;
+			case "Carga Embarcada":
+				$class = "blue";
+				break;
+			case "ETA":
+				$class = "blue";
+				break;
+			
+			case "Carga en Tránsito a Destino":
+				$class = "blue";
+				break;	
+			case "Orden Anulada":
+				$class = "pink";
+				break;
+			case "nuevo":
+				$class = "green";
+				break;	
+			case "Carga Entregada":
+				$class = "orange";
+				break;		
+			case "Carga en Aeropuerto de Destino":
+				$class = "orange";
+				break;	
+			case "Cierre de Documentos":
+				$class = "orange";
+				break;	
+			case "Carga en Transito Terrestre":
+				$class = "purple";
+				break;			
+			case "Cierre de Documentos":
+				$class = "orange";
+				break;	
+			case "Carga en Transito Terrestre":
+				$class = "purple";
+				break;	
+			default:				
+				$class = "";
+				break;
+		 
+		}
+		return $class;
 	}
 	
 	public function getStatus(){		
@@ -144,6 +188,14 @@ class RepStatus extends BaseRepStatus
 		return $resultado;
 	}
 	
+	
+	
+	/*
+	* Envia el status, generalemte se usa despues de guardar
+	*/
+	public function send(){
+		echo "----->".$this->getCaIdstatus();			
+	}
 }
 
 ?>

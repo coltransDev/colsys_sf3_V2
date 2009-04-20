@@ -362,16 +362,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	private $lastInoClientesAirCriteria = null;
 
 	/**
-	 * @var        array RepAviso[] Collection to store aggregation of RepAviso objects.
-	 */
-	protected $collRepAvisos;
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collRepAvisos.
-	 */
-	private $lastRepAvisoCriteria = null;
-
-	/**
 	 * @var        array RepStatus[] Collection to store aggregation of RepStatus objects.
 	 */
 	protected $collRepStatuss;
@@ -2524,9 +2514,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->collInoClientesAirs = null;
 			$this->lastInoClientesAirCriteria = null;
 
-			$this->collRepAvisos = null;
-			$this->lastRepAvisoCriteria = null;
-
 			$this->collRepStatuss = null;
 			$this->lastRepStatusCriteria = null;
 
@@ -2700,14 +2687,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 			if ($this->collInoClientesAirs !== null) {
 				foreach ($this->collInoClientesAirs as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
-			}
-
-			if ($this->collRepAvisos !== null) {
-				foreach ($this->collRepAvisos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -2889,14 +2868,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 				if ($this->collInoClientesAirs !== null) {
 					foreach ($this->collInoClientesAirs as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
-
-				if ($this->collRepAvisos !== null) {
-					foreach ($this->collRepAvisos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -3714,12 +3685,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				}
 			}
 
-			foreach ($this->getRepAvisos() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addRepAviso($relObj->copy($deepCopy));
-				}
-			}
-
 			foreach ($this->getRepStatuss() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addRepStatus($relObj->copy($deepCopy));
@@ -4322,207 +4287,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Clears out the collRepAvisos collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addRepAvisos()
-	 */
-	public function clearRepAvisos()
-	{
-		$this->collRepAvisos = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collRepAvisos collection (array).
-	 *
-	 * By default this just sets the collRepAvisos collection to an empty array (like clearcollRepAvisos());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initRepAvisos()
-	{
-		$this->collRepAvisos = array();
-	}
-
-	/**
-	 * Gets an array of RepAviso objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously been saved, it will retrieve
-	 * related RepAvisos from storage. If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array RepAviso[]
-	 * @throws     PropelException
-	 */
-	public function getRepAvisos($criteria = null, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collRepAvisos === null) {
-			if ($this->isNew()) {
-			   $this->collRepAvisos = array();
-			} else {
-
-				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				RepAvisoPeer::addSelectColumns($criteria);
-				$this->collRepAvisos = RepAvisoPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				RepAvisoPeer::addSelectColumns($criteria);
-				if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
-					$this->collRepAvisos = RepAvisoPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastRepAvisoCriteria = $criteria;
-		return $this->collRepAvisos;
-	}
-
-	/**
-	 * Returns the number of related RepAviso objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related RepAviso objects.
-	 * @throws     PropelException
-	 */
-	public function countRepAvisos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
-		} else {
-			$criteria = clone $criteria;
-		}
-
-		if ($distinct) {
-			$criteria->setDistinct();
-		}
-
-		$count = null;
-
-		if ($this->collRepAvisos === null) {
-			if ($this->isNew()) {
-				$count = 0;
-			} else {
-
-				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				$count = RepAvisoPeer::doCount($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
-
-				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
-					$count = RepAvisoPeer::doCount($criteria, $con);
-				} else {
-					$count = count($this->collRepAvisos);
-				}
-			} else {
-				$count = count($this->collRepAvisos);
-			}
-		}
-		return $count;
-	}
-
-	/**
-	 * Method called to associate a RepAviso object to this object
-	 * through the RepAviso foreign key attribute.
-	 *
-	 * @param      RepAviso $l RepAviso
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addRepAviso(RepAviso $l)
-	{
-		if ($this->collRepAvisos === null) {
-			$this->initRepAvisos();
-		}
-		if (!in_array($l, $this->collRepAvisos, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collRepAvisos, $l);
-			$l->setReporte($this);
-		}
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte is new, it will return
-	 * an empty collection; or if this Reporte has previously
-	 * been saved, it will retrieve related RepAvisos from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Reporte.
-	 */
-	public function getRepAvisosJoinEmail($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collRepAvisos === null) {
-			if ($this->isNew()) {
-				$this->collRepAvisos = array();
-			} else {
-
-				$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				$this->collRepAvisos = RepAvisoPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(RepAvisoPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-			if (!isset($this->lastRepAvisoCriteria) || !$this->lastRepAvisoCriteria->equals($criteria)) {
-				$this->collRepAvisos = RepAvisoPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastRepAvisoCriteria = $criteria;
-
-		return $this->collRepAvisos;
-	}
-
-	/**
 	 * Clears out the collRepStatuss collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -4716,6 +4480,53 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
 				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastRepStatusCriteria = $criteria;
+
+		return $this->collRepStatuss;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Reporte is new, it will return
+	 * an empty collection; or if this Reporte has previously
+	 * been saved, it will retrieve related RepStatuss from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Reporte.
+	 */
+	public function getRepStatussJoinTrackingEtapas($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepStatuss === null) {
+			if ($this->isNew()) {
+				$this->collRepStatuss = array();
+			} else {
+
+				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapas($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapas($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepStatusCriteria = $criteria;
@@ -5895,6 +5706,53 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Reporte.
 	 */
+	public function getInoClientesSeasJoinCliente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoClientesSeas = array();
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinCliente($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoClientesSeaPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinCliente($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoClientesSeaCriteria = $criteria;
+
+		return $this->collInoClientesSeas;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Reporte is new, it will return
+	 * an empty collection; or if this Reporte has previously
+	 * been saved, it will retrieve related InoClientesSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Reporte.
+	 */
 	public function getInoClientesSeasJoinInoMaestraSea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
@@ -5947,11 +5805,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
-			if ($this->collRepAvisos) {
-				foreach ((array) $this->collRepAvisos as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
 			if ($this->collRepStatuss) {
 				foreach ((array) $this->collRepStatuss as $o) {
 					$o->clearAllReferences($deep);
@@ -5994,7 +5847,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		} // if ($deep)
 
 		$this->collInoClientesAirs = null;
-		$this->collRepAvisos = null;
 		$this->collRepStatuss = null;
 		$this->collRepEquipos = null;
 		$this->collRepGastos = null;

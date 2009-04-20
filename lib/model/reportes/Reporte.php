@@ -15,21 +15,120 @@ class Reporte extends BaseReporte
 	private $inoClientesSea=null;
 	
 	/*
+	* Agrega una nueva propiedad en la columna ca_propiedades, según CU059 
+	* @author: Andres Botero
+	*/	
+	public function setProperty( $param, $value ){
+		$array = sfToolkit::stringToArray( $this->getCaPropiedades() );	
+		$array[$param]=$value;
+		$str = "";
+				
+		foreach( $array as $key=>$value ){
+			if(strlen($str)>0){
+				$str.=" ";
+			}
+			$str.=$key."=".$value;
+		}
+		$this->setCaPropiedades( $str );
+	}
+	
+	/*
+	* Retorna una propiedad
+	* @author: Andres Botero
+	*/	
+	public function getProperty( $param ){
+		$array = sfToolkit::stringToArray( $this->getCaPropiedades() );			
+		return isset($array[$param])?$array[$param]:null;
+	}
+	
+	/*
 	* Retorna un array conteniendo los proovedores del reporte
 	* Author: Andres Botero
 	*/
-	public function getProovedores(){
-		$provId = $this->getCaIdproveedor();
-		$result = array();
-		if($provId){		
-			$provId = explode("|", $provId);
-			foreach( $provId as $id ){
-				$proovedor = TerceroPeer::retrieveByPk( $id );			
-				$result[]=$proovedor;
-			}			
-		}	
-		return $result;		
+	public function getProveedores(){
+		
+		if( $this->getcaImpoexpo()=="Importación"){
+			$provId = $this->getCaIdproveedor();	
+			if($provId){		
+				$provId = explode("|", $provId);
+				$c = new Criteria();
+				$c->add( TerceroPeer::CA_IDTERCERO, $provId, Criteria::IN );		
+				$proveedores = TerceroPeer::doSelect( $c );			
+				return $proveedores;
+			}	
+		}
+		return null;		
 	}	
+	
+	
+	/*
+	* Retorna un String conteniendo los proovedores del reporte
+	* Author: Andres Botero
+	*/
+	public function getProveedoresStr(){
+		$proveedoresStr="";
+		$proveedores = $this->getProveedores();		
+		foreach( $proveedores as $proveedor ){
+			if( $proveedoresStr ){
+				$proveedoresStr.=" - ";					
+			}
+			$proveedoresStr.= $proveedor->getCaNombre();					
+		}		
+		return $proveedoresStr;
+	}
+	
+	
+	/*
+	* Retorna el ultimo status segun el orden cronologico
+	* Author: Andres Botero
+	*/	
+	public function getUltimoStatus(){
+		if( $this->ultimoStatus ){
+			return $this->ultimoStatus;
+		}else{	
+			$c =new Criteria();
+			
+			$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );	
+			$c->addJoin( RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
+			$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
+			$c->setLimit(1);
+			
+			$this->ultimoStatus = RepStatusPeer::doSelectOne( $c );
+	
+			if( $this->ultimoStatus ){
+				return $this->ultimoStatus;
+			}else{
+				return null;
+			}
+		}
+	}
+	
+	
+	/*
+	* Retorna el objeto ciudad asociado al campo ca_origen
+	* Author: Andres Botero
+	*/
+	public function getOrigen(){
+		$c = new Criteria();
+		$c->add(  CiudadPeer::CA_IDCIUDAD, $this->getCaOrigen() );
+		return CiudadPeer::doSelectOne( $c );		
+	}
+	
+	
+	/*
+	* Retorna el objeto ciudad asociado al campo ca_destino
+	* Author: Andres Botero
+	*/
+	public function getDestino(){
+		$c = new Criteria();
+		$c->add(  CiudadPeer::CA_IDCIUDAD, $this->getCaDestino() );
+		return CiudadPeer::doSelectOne( $c );		
+	}
+	
+	/****************************************************************
+	* 
+	****************************************************************/
+	
 	
 	/*
 	* Retorna verdadero si es la ultima version del reporte de lo contrario retorna falso
@@ -51,6 +150,193 @@ class Reporte extends BaseReporte
 	}
 	
 	/*
+	* Retorna el color de acuerdo al estado que se encuentra en este momento la carga
+	* @author: Andres Botero
+	*/
+	public function getColorStatus(){
+		$etapa = $this->getCaEtapaActual(); 
+		
+		$status = $this->getUltimoStatus();
+				
+		
+		if( $status && $status->getCaFchstatus("Y-m-d")==date("Y-m-d") && $etapa!="Carga Embarcada" && $etapa!="ETA" && $etapa!="Orden Anulada" && $etapa!="Carga en Aeropuerto de Destino"){			
+			$etapa = "nuevo";			
+		}
+		
+		
+		
+		switch( $etapa ){				
+			case "Pendiente de Instrucciones":
+				$class = "yellow";
+				break;
+			case "Carga Embarcada":
+				$class = "blue";
+				break;
+			case "ETA":
+				$class = "blue";
+				break;
+			
+			case "Carga en Tránsito a Destino":
+				$class = "blue";
+				break;	
+			case "Orden Anulada":
+				$class = "pink";
+				break;
+			case "nuevo":
+				$class = "green";
+				break;	
+			case "Carga Entregada":
+				$class = "orange";
+				break;		
+			case "Carga en Aeropuerto de Destino":
+				$class = "orange";
+				break;	
+			case "Cierre de Documentos":
+				$class = "orange";
+				break;	
+			case "Carga en Transito Terrestre":
+				$class = "purple";
+				break;			
+			case "Cierre de Documentos":
+				$class = "orange";
+				break;	
+			case "Carga en Transito Terrestre":
+				$class = "purple";
+				break;	
+			default:				
+				$class = "";
+				break;
+		 
+		}
+		return $class;		
+	}
+	
+	/*
+	* Retorna un array con los status y las fechas (timestamp) correspondientes
+	* @author: Andres Botero
+	* */
+	public function getHistorialStatus(){
+		
+		if(!$this->historialStatus){
+			$this->historialStatus = array();
+			if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo"  ){
+				
+				$inoclientesSea = $this->getInoClientesSea();
+				
+				if( $inoclientesSea ){
+															
+					$refSea = $inoclientesSea->getInoMaestraSea();											
+					if( $refSea->getCaFchconfirmado( ) ){	
+						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["tipo"] = "status maritimo";
+						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["status"] = $inoclientesSea->getStatus(); 						
+						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["etapa"] = "Confirmacion de llegada";
+						$c = new Criteria();
+						$c->add( EmailPeer::CA_IDCASO , $inoclientesSea->getOid() );
+						$email = EmailPeer::doSelectOne( $c );
+						
+						if( $email ){
+							$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["emailid"] = $email->getCaIdEmail();				
+						}						
+					}						
+									
+					/*
+					* Status de OTM
+					*/
+					$statuss = $inoclientesSea->getStatuss();
+					foreach( $statuss as $status){			
+						if( $status->getCaAviso () ){
+							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
+							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status OTM";
+							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getCaAviso (); 
+							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = "";
+						}								 
+					}
+				}
+			}
+			
+			
+			$i=0; 					
+			$statuss = $this->getRepStatuss();		
+					
+			foreach( $statuss as $status){			
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status";
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getStatus (); 
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = $status->getCaEtapa ();
+							 
+			}		
+		
+			krsort ($this->historialStatus);
+		}	
+		return $this->historialStatus;		
+		
+	}		
+	
+	/*
+	* Retorna la fecha del ultimo status, avisos, referencia, otm, etc.
+	* @author Andres Botero	
+	*/
+	public function getFchUltimoStatus( $format="Y-m-d" ){
+		//Se puede mejorar sacando solamente el ultimo status
+		// la diversidad de las tablas hacen dificil un procedimiento estandar
+		$historial = $this->getHistorialStatus();
+		
+		if( count($historial)>0 ){			
+			reset($historial);			
+			return date( $format , key($historial) );
+		}
+		return "";								
+	}
+	
+	/*
+	* Retorna el objeto InoClientesSea asociado al reporte 
+	* @author Andres Botero
+	*/
+	public function getInoClientesSea(){
+		if( !$this->inoClientesSea ){
+			$c = new Criteria();
+			$c->addJoin( InoClientesSeaPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
+			$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );
+			$this->inoClientesSea = InoClientesSeaPeer::doSelectOne( $c );
+		}
+		return $this->inoClientesSea;
+	}
+	
+	/*
+	* Retorna el objeto InoClientesAir asociado al reporte 
+	* @author Andres Botero
+	*/
+	public function getInoClientesAir(){
+		
+		$c = new Criteria();
+		$c->add( InoClientesAirPeer::CA_IDREPORTE, $this->getCaConsecutivo()  );		
+		return InoClientesAirPeer::doSelectOne( $c );
+	}
+	
+	/*
+	* Retorna el ultimo texto en status, avisos, referencia, otm, etc.
+	* @author Andres Botero	
+	*/
+	public function getTextoStatus( ){
+		//Se puede mejorar sacando solamente el ultimo status
+		// la diversidad de las tablas hacen dificil un procedimiento estandar
+		$historial = $this->getHistorialStatus();		
+		if( count($historial)>0 ){	
+			ksort($historial);		
+			$ultimo = array_pop($historial);
+			return $ultimo['status'];
+		}
+		return "";								
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
 	* Retorna el numero de versiones existentes de este reporte
 	* Author: Andres Botero
 	*/
@@ -65,26 +351,7 @@ class Reporte extends BaseReporte
 		
 	}
 			
-	/*
-	* Retorna el objeto ciudad asociado al campo ca_origen
-	* Author: Andres Botero
-	*/
-	public function getOrigen(){
-		$c = new Criteria();
-		$c->add(  CiudadPeer::CA_IDCIUDAD, $this->getCaOrigen() );
-		return CiudadPeer::doSelectOne( $c );		
-	}
 	
-	
-	/*
-	* Retorna el objeto ciudad asociado al campo ca_destino
-	* Author: Andres Botero
-	*/
-	public function getDestino(){
-		$c = new Criteria();
-		$c->add(  CiudadPeer::CA_IDCIUDAD, $this->getCaDestino() );
-		return CiudadPeer::doSelectOne( $c );		
-	}
 	
 	/*
 	* Retorna el objeto ciudad asociado al campo ca_destino
@@ -139,30 +406,7 @@ class Reporte extends BaseReporte
 		return RepStatusPeer::doSelect( $criteria, $con );		
 	}
 	
-	/*
-	* Retorna el ultimo status segun el orden cronologico
-	* Author: Andres Botero
-	*/	
-	public function getUltimoStatus(){
-		if( $this->ultimoStatus ){
-			return $this->ultimoStatus;
-		}else{	
-			$c =new Criteria();
-			
-			$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );	
-			$c->addJoin( RepStatusPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
-			$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
-			$c->setLimit(1);
-			
-			$this->ultimoStatus = RepStatusPeer::doSelectOne( $c );
 	
-			if( $this->ultimoStatus ){
-				return $this->ultimoStatus;
-			}else{
-				return null;
-			}
-		}
-	}
 	
 	/*
 	* Retorna los avisos asociasdos al reporte , sobrecarga getRepAvisos en BaseReporte
@@ -263,50 +507,11 @@ class Reporte extends BaseReporte
 	
 	
 	
-/*
-	* Retorna el un array de objetos Tercero de tipo proveedor asociado al reporte 
-	* @author Andres Botero
-	*/
-	public function getProveedores(){		
-		
-		if( $this->getCaIdProveedor() && $this->getCaIdProveedor()!="''" ){			
-			$proveedores = explode("|",$this->getCaIdProveedor());
-			
-			$c = new Criteria();
-			$c->add( TerceroPeer::CA_IDTERCERO, $proveedores, Criteria::IN );		
-			$proveedor = TerceroPeer::doSelect( $c );	
-			return $proveedor;
-		}else{
-			return null;
-		}
-	}
+
 	
 	
 	
-	/*
-	* Retorna el objeto InoClientesSea asociado al reporte 
-	* @author Andres Botero
-	*/
-	public function getInoClientesSea(){
-		if( !$this->inoClientesSea ){
-			$c = new Criteria();
-			$c->addJoin( InoClientesSeaPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );
-			$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() );
-			$this->inoClientesSea = InoClientesSeaPeer::doSelectOne( $c );
-		}
-		return $this->inoClientesSea;
-	}
 	
-	/*
-	* Retorna el objeto InoClientesAir asociado al reporte 
-	* @author Andres Botero
-	*/
-	public function getInoClientesAir(){
-		
-		$c = new Criteria();
-		$c->add( InoClientesAirPeer::CA_IDREPORTE, $this->getCaConsecutivo()  );		
-		return InoClientesAirPeer::doSelectOne( $c );
-	}
 	
 	/*
 	* Retorna los objetos RepGasto asociados al reporte 
@@ -737,37 +942,9 @@ class Reporte extends BaseReporte
 		}					
 	}
 	
-	/*
-	* Retorna el ultimo texto en status, avisos, referencia, otm, etc.
-	* @author Andres Botero	
-	*/
-	public function getTextoStatus( ){
-		//Se puede mejorar sacando solamente el ultimo status
-		// la diversidad de las tablas hacen dificil un procedimiento estandar
-		$historial = $this->getHistorialStatus();		
-		if( count($historial)>0 ){	
-			ksort($historial);		
-			$ultimo = array_pop($historial);
-			return $ultimo['status'];
-		}
-		return "";								
-	}
 	
-	/*
-	* Retorna la fecha del ultimo status, avisos, referencia, otm, etc.
-	* @author Andres Botero	
-	*/
-	public function getFchUltimoStatus( $format="Y-m-d" ){
-		//Se puede mejorar sacando solamente el ultimo status
-		// la diversidad de las tablas hacen dificil un procedimiento estandar
-		$historial = $this->getHistorialStatus();
-		
-		if( count($historial)>0 ){			
-			reset($historial);			
-			return date( $format , key($historial) );
-		}
-		return "";								
-	}
+	
+	
 	
 	/*
 	* Retorna los archivos del directorio especificado
@@ -794,128 +971,7 @@ class Reporte extends BaseReporte
 		$this->setCaConfirmarClie( $str );
 	}
 	
-	/*
-	* Retorna el color de acuerdo al estado que se encuentra en este momento la carga
-	* @author: Andres Botero
-	*/
-	public function getColorStatus(){
-		$etapa = $this->getCaEtapaActual(); 
-		
-		$status = $this->getUltimoStatus();
-				
-		
-		if( $status && $status->getCaFchstatus("Y-m-d")==date("Y-m-d") && $etapa!="Carga Embarcada" && $etapa!="ETA" && $etapa!="Orden Anulada" && $etapa!="Carga en Aeropuerto de Destino"){			
-			$etapa = "nuevo";			
-		}
-		
-		
-		
-		switch( $etapa ){				
-			case "Pendiente de Instrucciones":
-				$class = "yellow";
-				break;
-			case "Carga Embarcada":
-				$class = "blue";
-				break;
-			case "ETA":
-				$class = "blue";
-				break;
-			
-			case "Carga en Tránsito a Destino":
-				$class = "blue";
-				break;	
-			case "Orden Anulada":
-				$class = "pink";
-				break;
-			case "nuevo":
-				$class = "green";
-				break;	
-			case "Carga Entregada":
-				$class = "orange";
-				break;		
-			case "Carga en Aeropuerto de Destino":
-				$class = "orange";
-				break;	
-			case "Cierre de Documentos":
-				$class = "orange";
-				break;	
-			case "Carga en Transito Terrestre":
-				$class = "purple";
-				break;			
-			case "Cierre de Documentos":
-				$class = "orange";
-				break;	
-			case "Carga en Transito Terrestre":
-				$class = "purple";
-				break;	
-			default:				
-				$class = "";
-				break;
-		 
-		}
-		return $class;		
-	}
 	
-	/*
-	* Retorna un array con los status y las fechas (timestamp) correspondientes
-	* @author: Andres Botero
-	* */
-	public function getHistorialStatus(){
-		
-		if(!$this->historialStatus){
-			$this->historialStatus = array();
-			if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo"  ){
-				
-				$inoclientesSea = $this->getInoClientesSea();
-				
-				if( $inoclientesSea ){
-															
-					$refSea = $inoclientesSea->getInoMaestraSea();											
-					if( $refSea->getCaFchconfirmado( ) ){	
-						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["tipo"] = "status maritimo";
-						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["status"] = $inoclientesSea->getStatus(); 						
-						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["etapa"] = "Confirmacion de llegada";
-						$c = new Criteria();
-						$c->add( EmailPeer::CA_IDCASO , $inoclientesSea->getOid() );
-						$email = EmailPeer::doSelectOne( $c );
-						
-						if( $email ){
-							$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["emailid"] = $email->getCaIdEmail();				
-						}						
-					}						
-									
-					/*
-					* Status de OTM
-					*/
-					$statuss = $inoclientesSea->getStatuss();
-					foreach( $statuss as $status){			
-						if( $status->getCaAviso () ){
-							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
-							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status OTM";
-							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getCaAviso (); 
-							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = "";
-						}								 
-					}
-				}
-			}
-			
-			
-			$i=0; 					
-			$statuss = $this->getRepStatuss();		
-					
-			foreach( $statuss as $status){			
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status";
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getStatus (); 
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = $status->getCaEtapa ();
-							 
-			}		
-		
-			krsort ($this->historialStatus);
-		}	
-		return $this->historialStatus;		
-		
-	}		
 	
 	/*
 	* Retorna true si se ha hecho el reporte al exterior
@@ -970,32 +1026,8 @@ class Reporte extends BaseReporte
 		return BodegaPeer::retrieveByPk( $this->getCaIdconsignar() );
 	}
 	
-	/*
-	* Agrega una nueva propiedad en la columna ca_propiedades, según CU059 
-	* @author: Andres Botero
-	*/	
-	public function setProperty( $param, $value ){
-		$array = sfToolkit::stringToArray( $this->getCaPropiedades() );	
-		$array[$param]=$value;
-		$str = "";
-				
-		foreach( $array as $key=>$value ){
-			if(strlen($str)>0){
-				$str.=" ";
-			}
-			$str.=$key."=".$value;
-		}
-		$this->setCaPropiedades( $str );
-	}
 	
-	/*
-	* Retorna una propiedad
-	* @author: Andres Botero
-	*/	
-	public function getProperty( $param ){
-		$array = sfToolkit::stringToArray( $this->getCaPropiedades() );			
-		return isset($array[$param])?$array[$param]:null;
-	}
+	
 	
 }
 
