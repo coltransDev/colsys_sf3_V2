@@ -187,6 +187,11 @@ abstract class BaseInoClientesSea extends BaseObject  implements Persistent {
 	protected $aTercero;
 
 	/**
+	 * @var        Cliente
+	 */
+	protected $aCliente;
+
+	/**
 	 * @var        InoMaestraSea
 	 */
 	protected $aInoMaestraSea;
@@ -636,6 +641,10 @@ abstract class BaseInoClientesSea extends BaseObject  implements Persistent {
 		if ($this->ca_idcliente !== $v) {
 			$this->ca_idcliente = $v;
 			$this->modifiedColumns[] = InoClientesSeaPeer::CA_IDCLIENTE;
+		}
+
+		if ($this->aCliente !== null && $this->aCliente->getCaIdcliente() !== $v) {
+			$this->aCliente = null;
 		}
 
 		return $this;
@@ -1323,6 +1332,9 @@ abstract class BaseInoClientesSea extends BaseObject  implements Persistent {
 		if ($this->aInoMaestraSea !== null && $this->ca_referencia !== $this->aInoMaestraSea->getCaReferencia()) {
 			$this->aInoMaestraSea = null;
 		}
+		if ($this->aCliente !== null && $this->ca_idcliente !== $this->aCliente->getCaIdcliente()) {
+			$this->aCliente = null;
+		}
 		if ($this->aReporte !== null && $this->ca_idreporte !== $this->aReporte->getCaIdreporte()) {
 			$this->aReporte = null;
 		}
@@ -1370,6 +1382,7 @@ abstract class BaseInoClientesSea extends BaseObject  implements Persistent {
 
 			$this->aReporte = null;
 			$this->aTercero = null;
+			$this->aCliente = null;
 			$this->aInoMaestraSea = null;
 		} // if (deep)
 	}
@@ -1473,6 +1486,13 @@ abstract class BaseInoClientesSea extends BaseObject  implements Persistent {
 					$affectedRows += $this->aTercero->save($con);
 				}
 				$this->setTercero($this->aTercero);
+			}
+
+			if ($this->aCliente !== null) {
+				if ($this->aCliente->isModified() || $this->aCliente->isNew()) {
+					$affectedRows += $this->aCliente->save($con);
+				}
+				$this->setCliente($this->aCliente);
 			}
 
 			if ($this->aInoMaestraSea !== null) {
@@ -1579,6 +1599,12 @@ abstract class BaseInoClientesSea extends BaseObject  implements Persistent {
 			if ($this->aTercero !== null) {
 				if (!$this->aTercero->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aTercero->getValidationFailures());
+				}
+			}
+
+			if ($this->aCliente !== null) {
+				if (!$this->aCliente->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aCliente->getValidationFailures());
 				}
 			}
 
@@ -2217,6 +2243,57 @@ abstract class BaseInoClientesSea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Declares an association between this object and a Cliente object.
+	 *
+	 * @param      Cliente $v
+	 * @return     InoClientesSea The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setCliente(Cliente $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdcliente(NULL);
+		} else {
+			$this->setCaIdcliente($v->getCaIdcliente());
+		}
+
+		$this->aCliente = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Cliente object, it will not be re-added.
+		if ($v !== null) {
+			$v->addInoClientesSea($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Cliente object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Cliente The associated Cliente object.
+	 * @throws     PropelException
+	 */
+	public function getCliente(PropelPDO $con = null)
+	{
+		if ($this->aCliente === null && ($this->ca_idcliente !== null)) {
+			$c = new Criteria(ClientePeer::DATABASE_NAME);
+			$c->add(ClientePeer::CA_IDCLIENTE, $this->ca_idcliente);
+			$this->aCliente = ClientePeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aCliente->addInoClientesSeas($this);
+			 */
+		}
+		return $this->aCliente;
+	}
+
+	/**
 	 * Declares an association between this object and a InoMaestraSea object.
 	 *
 	 * @param      InoMaestraSea $v
@@ -2283,6 +2360,7 @@ abstract class BaseInoClientesSea extends BaseObject  implements Persistent {
 
 			$this->aReporte = null;
 			$this->aTercero = null;
+			$this->aCliente = null;
 			$this->aInoMaestraSea = null;
 	}
 

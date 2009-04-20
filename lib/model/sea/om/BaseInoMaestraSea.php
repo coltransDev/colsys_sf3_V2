@@ -3724,6 +3724,53 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 		return $this->collInoClientesSeas;
 	}
 
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this InoMaestraSea is new, it will return
+	 * an empty collection; or if this InoMaestraSea has previously
+	 * been saved, it will retrieve related InoClientesSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in InoMaestraSea.
+	 */
+	public function getInoClientesSeasJoinCliente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(InoMaestraSeaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoClientesSeas = array();
+			} else {
+
+				$criteria->add(InoClientesSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinCliente($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoClientesSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+
+			if (!isset($this->lastInoClientesSeaCriteria) || !$this->lastInoClientesSeaCriteria->equals($criteria)) {
+				$this->collInoClientesSeas = InoClientesSeaPeer::doSelectJoinCliente($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoClientesSeaCriteria = $criteria;
+
+		return $this->collInoClientesSeas;
+	}
+
 	/**
 	 * Clears out the collInoIngresosSeas collection (array).
 	 *
@@ -4258,7 +4305,6 @@ abstract class BaseInoMaestraSea extends BaseObject  implements Persistent {
 				$count = count($this->collInoEquiposSeas);
 			}
 		}
-		$this->lastInoEquiposSeaCriteria = $criteria;
 		return $count;
 	}
 

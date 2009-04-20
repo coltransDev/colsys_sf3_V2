@@ -2,4 +2,6 @@
 
 class InoEquiposSea extends BaseInoEquiposSea
 {
+
 }
+?>

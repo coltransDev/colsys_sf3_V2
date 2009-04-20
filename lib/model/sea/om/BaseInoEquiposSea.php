@@ -34,7 +34,7 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 
 	/**
 	 * The value for the ca_cantidad field.
-	 * @var        string
+	 * @var        int
 	 */
 	protected $ca_cantidad;
 
@@ -83,6 +83,11 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 	 * @var        Concepto
 	 */
 	protected $aConcepto;
+
+	/**
+	 * @var        InoContratosSea one-to-one related InoContratosSea object
+	 */
+	protected $singleInoContratosSea;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -141,7 +146,7 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 	/**
 	 * Get the [ca_cantidad] column value.
 	 * 
-	 * @return     string
+	 * @return     int
 	 */
 	public function getCaCantidad()
 	{
@@ -305,13 +310,13 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 	/**
 	 * Set the value of [ca_cantidad] column.
 	 * 
-	 * @param      string $v new value
+	 * @param      int $v new value
 	 * @return     InoEquiposSea The current object (for fluent API support)
 	 */
 	public function setCaCantidad($v)
 	{
 		if ($v !== null) {
-			$v = (string) $v;
+			$v = (int) $v;
 		}
 
 		if ($this->ca_cantidad !== $v) {
@@ -539,7 +544,7 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 
 			$this->ca_referencia = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
 			$this->ca_idconcepto = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-			$this->ca_cantidad = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_cantidad = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
 			$this->ca_idequipo = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->ca_observaciones = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->ca_fchcreado = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
@@ -625,6 +630,8 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 
 			$this->aInoMaestraSea = null;
 			$this->aConcepto = null;
+			$this->singleInoContratosSea = null;
+
 		} // if (deep)
 	}
 
@@ -746,6 +753,12 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
+			if ($this->singleInoContratosSea !== null) {
+				if (!$this->singleInoContratosSea->isDeleted()) {
+						$affectedRows += $this->singleInoContratosSea->save($con);
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -834,6 +847,12 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->singleInoContratosSea !== null) {
+					if (!$this->singleInoContratosSea->validate($columns)) {
+						$failureMap = array_merge($failureMap, $this->singleInoContratosSea->getValidationFailures());
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -1121,6 +1140,19 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 		$copyObj->setCaUsuactualizado($this->ca_usuactualizado);
 
 
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			$relObj = $this->getInoContratosSea();
+			if ($relObj) {
+				$copyObj->setInoContratosSea($relObj->copy($deepCopy));
+			}
+
+		} // if ($deepCopy)
+
+
 		$copyObj->setNew(true);
 
 	}
@@ -1266,6 +1298,42 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Gets a single InoContratosSea object, which is related to this object by a one-to-one relationship.
+	 *
+	 * @param      PropelPDO $con
+	 * @return     InoContratosSea
+	 * @throws     PropelException
+	 */
+	public function getInoContratosSea(PropelPDO $con = null)
+	{
+
+		if ($this->singleInoContratosSea === null && !$this->isNew()) {
+			$this->singleInoContratosSea = InoContratosSeaPeer::retrieveByPK($this->ca_referencia, $this->ca_idequipo, $con);
+		}
+
+		return $this->singleInoContratosSea;
+	}
+
+	/**
+	 * Sets a single InoContratosSea object as related to this object by a one-to-one relationship.
+	 *
+	 * @param      InoContratosSea $l InoContratosSea
+	 * @return     InoEquiposSea The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setInoContratosSea(InoContratosSea $v)
+	{
+		$this->singleInoContratosSea = $v;
+
+		// Make sure that that the passed-in InoContratosSea isn't already associated with this object
+		if ($v->getInoEquiposSea() === null) {
+			$v->setInoEquiposSea($this);
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -1277,8 +1345,12 @@ abstract class BaseInoEquiposSea extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->singleInoContratosSea) {
+				$this->singleInoContratosSea->clearAllReferences($deep);
+			}
 		} // if ($deep)
 
+		$this->singleInoContratosSea = null;
 			$this->aInoMaestraSea = null;
 			$this->aConcepto = null;
 	}

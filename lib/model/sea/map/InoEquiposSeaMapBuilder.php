@@ -66,15 +66,15 @@ class InoEquiposSeaMapBuilder implements MapBuilder {
 
 		$tMap->addForeignKey('CA_IDCONCEPTO', 'CaIdconcepto', 'INTEGER', 'tb_conceptos', 'CA_IDCONCEPTO', true, null);
 
-		$tMap->addColumn('CA_CANTIDAD', 'CaCantidad', 'NUMERIC', true, null);
+		$tMap->addColumn('CA_CANTIDAD', 'CaCantidad', 'INTEGER', false, null);
 
 		$tMap->addPrimaryKey('CA_IDEQUIPO', 'CaIdequipo', 'VARCHAR', true, null);
 
 		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', true, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', true, null);
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', false, null);
 

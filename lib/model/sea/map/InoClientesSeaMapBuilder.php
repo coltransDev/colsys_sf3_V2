@@ -66,7 +66,7 @@ class InoClientesSeaMapBuilder implements MapBuilder {
 
 		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'VARCHAR' , 'tb_inomaestra_sea', 'CA_REFERENCIA', true, null);
 
-		$tMap->addPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'INTEGER', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'INTEGER' , 'tb_clientes', 'CA_IDCLIENTE', true, null);
 
 		$tMap->addPrimaryKey('CA_HBLS', 'CaHbls', 'VARCHAR', true, null);
 

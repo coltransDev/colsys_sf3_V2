@@ -616,6 +616,56 @@ abstract class BaseInoClientesSeaPeer {
 
 
 	/**
+	 * Returns the number of rows matching criteria, joining the related Cliente table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinCliente(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(InoClientesSeaPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesSeaPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesSeaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
 	 * Returns the number of rows matching criteria, joining the related InoMaestraSea table
 	 *
 	 * @param      Criteria $c
@@ -800,6 +850,73 @@ abstract class BaseInoClientesSeaPeer {
 
 
 	/**
+	 * Selects a collection of InoClientesSea objects pre-filled with their Cliente objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of InoClientesSea objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinCliente(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		InoClientesSeaPeer::addSelectColumns($c);
+		$startcol = (InoClientesSeaPeer::NUM_COLUMNS - InoClientesSeaPeer::NUM_LAZY_LOAD_COLUMNS);
+		ClientePeer::addSelectColumns($c);
+
+		$c->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesSeaPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesSeaPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = InoClientesSeaPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesSeaPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = ClientePeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = ClientePeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = ClientePeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					ClientePeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (InoClientesSea) to $obj2 (Cliente)
+				$obj2->addInoClientesSea($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
 	 * Selects a collection of InoClientesSea objects pre-filled with their InoMaestraSea objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -904,6 +1021,7 @@ abstract class BaseInoClientesSeaPeer {
 
 		$criteria->addJoin(array(InoClientesSeaPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$criteria->addJoin(array(InoClientesSeaPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+		$criteria->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
 		$criteria->addJoin(array(InoClientesSeaPeer::CA_REFERENCIA,), array(InoMaestraSeaPeer::CA_REFERENCIA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -944,11 +1062,15 @@ abstract class BaseInoClientesSeaPeer {
 		TerceroPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		ClientePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS);
+
 		InoMaestraSeaPeer::addSelectColumns($c);
-		$startcol5 = $startcol4 + (InoMaestraSeaPeer::NUM_COLUMNS - InoMaestraSeaPeer::NUM_LAZY_LOAD_COLUMNS);
+		$startcol6 = $startcol5 + (InoMaestraSeaPeer::NUM_COLUMNS - InoMaestraSeaPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		$c->addJoin(array(InoClientesSeaPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$c->addJoin(array(InoClientesSeaPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+		$c->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
 		$c->addJoin(array(InoClientesSeaPeer::CA_REFERENCIA,), array(InoMaestraSeaPeer::CA_REFERENCIA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1008,24 +1130,44 @@ abstract class BaseInoClientesSeaPeer {
 				$obj3->addInoClientesSea($obj1);
 			} // if joined row not null
 
-			// Add objects for joined InoMaestraSea rows
+			// Add objects for joined Cliente rows
 
-			$key4 = InoMaestraSeaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+			$key4 = ClientePeer::getPrimaryKeyHashFromRow($row, $startcol4);
 			if ($key4 !== null) {
-				$obj4 = InoMaestraSeaPeer::getInstanceFromPool($key4);
+				$obj4 = ClientePeer::getInstanceFromPool($key4);
 				if (!$obj4) {
 
-					$omClass = InoMaestraSeaPeer::getOMClass();
+					$omClass = ClientePeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
-					InoMaestraSeaPeer::addInstanceToPool($obj4, $key4);
+					ClientePeer::addInstanceToPool($obj4, $key4);
 				} // if obj4 loaded
 
-				// Add the $obj1 (InoClientesSea) to the collection in $obj4 (InoMaestraSea)
+				// Add the $obj1 (InoClientesSea) to the collection in $obj4 (Cliente)
 				$obj4->addInoClientesSea($obj1);
+			} // if joined row not null
+
+			// Add objects for joined InoMaestraSea rows
+
+			$key5 = InoMaestraSeaPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+			if ($key5 !== null) {
+				$obj5 = InoMaestraSeaPeer::getInstanceFromPool($key5);
+				if (!$obj5) {
+
+					$omClass = InoMaestraSeaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj5 = new $cls();
+					$obj5->hydrate($row, $startcol5);
+					InoMaestraSeaPeer::addInstanceToPool($obj5, $key5);
+				} // if obj5 loaded
+
+				// Add the $obj1 (InoClientesSea) to the collection in $obj5 (InoMaestraSea)
+				$obj5->addInoClientesSea($obj1);
 			} // if joined row not null
 
 			$results[] = $obj1;
@@ -1067,6 +1209,7 @@ abstract class BaseInoClientesSeaPeer {
 		}
 	
 				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
 				$criteria->addJoin(array(InoClientesSeaPeer::CA_REFERENCIA,), array(InoMaestraSeaPeer::CA_REFERENCIA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -1112,6 +1255,53 @@ abstract class BaseInoClientesSeaPeer {
 		}
 	
 				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
+				$criteria->addJoin(array(InoClientesSeaPeer::CA_REFERENCIA,), array(InoMaestraSeaPeer::CA_REFERENCIA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Cliente table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptCliente(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			InoClientesSeaPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(InoClientesSeaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$criteria->addJoin(array(InoClientesSeaPeer::CA_REFERENCIA,), array(InoMaestraSeaPeer::CA_REFERENCIA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -1158,6 +1348,7 @@ abstract class BaseInoClientesSeaPeer {
 	
 				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$criteria->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1197,10 +1388,14 @@ abstract class BaseInoClientesSeaPeer {
 		TerceroPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		ClientePeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS);
+
 		InoMaestraSeaPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + (InoMaestraSeaPeer::NUM_COLUMNS - InoMaestraSeaPeer::NUM_LAZY_LOAD_COLUMNS);
+		$startcol5 = $startcol4 + (InoMaestraSeaPeer::NUM_COLUMNS - InoMaestraSeaPeer::NUM_LAZY_LOAD_COLUMNS);
 
 				$c->addJoin(array(InoClientesSeaPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$c->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
 				$c->addJoin(array(InoClientesSeaPeer::CA_REFERENCIA,), array(InoMaestraSeaPeer::CA_REFERENCIA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
@@ -1242,24 +1437,45 @@ abstract class BaseInoClientesSeaPeer {
 
 			} // if joined row is not null
 
-				// Add objects for joined InoMaestraSea rows
+				// Add objects for joined Cliente rows
 
-				$key3 = InoMaestraSeaPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				$key3 = ClientePeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
-					$obj3 = InoMaestraSeaPeer::getInstanceFromPool($key3);
+					$obj3 = ClientePeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$omClass = InoMaestraSeaPeer::getOMClass();
+						$omClass = ClientePeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
-					InoMaestraSeaPeer::addInstanceToPool($obj3, $key3);
+					ClientePeer::addInstanceToPool($obj3, $key3);
 				} // if $obj3 already loaded
 
-				// Add the $obj1 (InoClientesSea) to the collection in $obj3 (InoMaestraSea)
+				// Add the $obj1 (InoClientesSea) to the collection in $obj3 (Cliente)
 				$obj3->addInoClientesSea($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined InoMaestraSea rows
+
+				$key4 = InoMaestraSeaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = InoMaestraSeaPeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = InoMaestraSeaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					InoMaestraSeaPeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (InoClientesSea) to the collection in $obj4 (InoMaestraSea)
+				$obj4->addInoClientesSea($obj1);
 
 			} // if joined row is not null
 
@@ -1297,10 +1513,14 @@ abstract class BaseInoClientesSeaPeer {
 		ReportePeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
 
+		ClientePeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS);
+
 		InoMaestraSeaPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + (InoMaestraSeaPeer::NUM_COLUMNS - InoMaestraSeaPeer::NUM_LAZY_LOAD_COLUMNS);
+		$startcol5 = $startcol4 + (InoMaestraSeaPeer::NUM_COLUMNS - InoMaestraSeaPeer::NUM_LAZY_LOAD_COLUMNS);
 
 				$c->addJoin(array(InoClientesSeaPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$c->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
 				$c->addJoin(array(InoClientesSeaPeer::CA_REFERENCIA,), array(InoMaestraSeaPeer::CA_REFERENCIA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
@@ -1342,24 +1562,45 @@ abstract class BaseInoClientesSeaPeer {
 
 			} // if joined row is not null
 
-				// Add objects for joined InoMaestraSea rows
+				// Add objects for joined Cliente rows
 
-				$key3 = InoMaestraSeaPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				$key3 = ClientePeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
-					$obj3 = InoMaestraSeaPeer::getInstanceFromPool($key3);
+					$obj3 = ClientePeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$omClass = InoMaestraSeaPeer::getOMClass();
+						$omClass = ClientePeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
-					InoMaestraSeaPeer::addInstanceToPool($obj3, $key3);
+					ClientePeer::addInstanceToPool($obj3, $key3);
 				} // if $obj3 already loaded
 
-				// Add the $obj1 (InoClientesSea) to the collection in $obj3 (InoMaestraSea)
+				// Add the $obj1 (InoClientesSea) to the collection in $obj3 (Cliente)
 				$obj3->addInoClientesSea($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined InoMaestraSea rows
+
+				$key4 = InoMaestraSeaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = InoMaestraSeaPeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = InoMaestraSeaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					InoMaestraSeaPeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (InoClientesSea) to the collection in $obj4 (InoMaestraSea)
+				$obj4->addInoClientesSea($obj1);
 
 			} // if joined row is not null
 
@@ -1371,7 +1612,7 @@ abstract class BaseInoClientesSeaPeer {
 
 
 	/**
-	 * Selects a collection of InoClientesSea objects pre-filled with all related objects except InoMaestraSea.
+	 * Selects a collection of InoClientesSea objects pre-filled with all related objects except Cliente.
 	 *
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -1380,7 +1621,7 @@ abstract class BaseInoClientesSeaPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptInoMaestraSea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptCliente(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -1400,8 +1641,12 @@ abstract class BaseInoClientesSeaPeer {
 		TerceroPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		InoMaestraSeaPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (InoMaestraSeaPeer::NUM_COLUMNS - InoMaestraSeaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(InoClientesSeaPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 				$c->addJoin(array(InoClientesSeaPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$c->addJoin(array(InoClientesSeaPeer::CA_REFERENCIA,), array(InoMaestraSeaPeer::CA_REFERENCIA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1460,6 +1705,152 @@ abstract class BaseInoClientesSeaPeer {
 
 				// Add the $obj1 (InoClientesSea) to the collection in $obj3 (Tercero)
 				$obj3->addInoClientesSea($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined InoMaestraSea rows
+
+				$key4 = InoMaestraSeaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = InoMaestraSeaPeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = InoMaestraSeaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					InoMaestraSeaPeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (InoClientesSea) to the collection in $obj4 (InoMaestraSea)
+				$obj4->addInoClientesSea($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of InoClientesSea objects pre-filled with all related objects except InoMaestraSea.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of InoClientesSea objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptInoMaestraSea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		InoClientesSeaPeer::addSelectColumns($c);
+		$startcol2 = (InoClientesSeaPeer::NUM_COLUMNS - InoClientesSeaPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		ReportePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
+
+		TerceroPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		ClientePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (ClientePeer::NUM_COLUMNS - ClientePeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(InoClientesSeaPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+				$c->addJoin(array(InoClientesSeaPeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$c->addJoin(array(InoClientesSeaPeer::CA_IDCLIENTE,), array(ClientePeer::CA_IDCLIENTE,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = InoClientesSeaPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = InoClientesSeaPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = InoClientesSeaPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				InoClientesSeaPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Reporte rows
+
+				$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = ReportePeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = ReportePeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					ReportePeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (InoClientesSea) to the collection in $obj2 (Reporte)
+				$obj2->addInoClientesSea($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Tercero rows
+
+				$key3 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = TerceroPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = TerceroPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TerceroPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (InoClientesSea) to the collection in $obj3 (Tercero)
+				$obj3->addInoClientesSea($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Cliente rows
+
+				$key4 = ClientePeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = ClientePeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = ClientePeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					ClientePeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (InoClientesSea) to the collection in $obj4 (Cliente)
+				$obj4->addInoClientesSea($obj1);
 
 			} // if joined row is not null
 
