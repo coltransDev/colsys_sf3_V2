@@ -1298,7 +1298,7 @@ class pruebasActions extends sfActions {
 	*/
 	public function executeFixTarifarioLCL(){
 		
-		exit();
+		exit("detenido");
 		$c = new Criteria();
 	
 		
@@ -1373,9 +1373,13 @@ class pruebasActions extends sfActions {
 	* Coloca la fecha de presentacion de acuerdo a los envios por email
 	*/
 	public function executeFixCotFchpresentacion(){
-		$sql = "SELECT ca_idcotizacion, ca_fchenvio 
+		
+		set_time_limit(0);
+		
+		$sql = "SELECT distinct ca_idcotizacion,  MIN(ca_fchenvio) as ca_fchenvio
 from tb_cotizaciones INNER JOIN  tb_emails ON tb_cotizaciones.ca_idcotizacion = tb_emails.ca_idcaso 
-WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL AND tb_emails.ca_fchenvio = (SELECT MIN(ca_fchenvio) from tb_emails a WHERE a.ca_idemail=tb_emails.ca_idemail )";
+WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
+group by ca_idcotizacion";
 		$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
 		
 		$stmt = $con->prepare($sql);
@@ -1385,11 +1389,11 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 			//print_r( $row );
 			$cotizacion = CotizacionPeer::retrieveByPk( $row['ca_idcotizacion']);
 			$cotizacion->setCaFchpresentacion(  $row['ca_fchenvio']);
-			$cotizacion->save();
+			//$cotizacion->save();
 			
-			echo "OK ".$cotizacion->getCaConsecutivo();
+			echo "OK ".$cotizacion->getCaConsecutivo()."<br />";
 		}
-	
+		return sfView::NONE;
 	} 
 	
 	
@@ -1397,7 +1401,7 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 		require( "D:\\Desarrollo\\colsys_sf12\\lib\\vendor\\FPDF\\font\\makefont\\makefont.php" );
 		MakeFont('D:\\Desarrollo\\sw\\ttf2pt1\\tahoma.ttf','D:\\Desarrollo\\sw\\ttf2pt1\\tahoma.afm','cp1252'); 
 		MakeFont('D:\\Desarrollo\\sw\\ttf2pt1\\tahomabd.ttf','D:\\Desarrollo\\sw\\ttf2pt1\\tahomab.afm','cp1252');
-		exit();
+		exit("detenido");
 	}
 	
 	
@@ -1407,7 +1411,7 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 	
 	public function executeImportarHelpdesk(){
 		
-		exit();
+		exit("detenido");
 		
 		$c = new Criteria();
 		//$c->add( ExoTicketPeer::STATUS, "Open" );
@@ -1504,7 +1508,7 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 	
 	
 	public function executeImportarHelpdeskRespuestas(){
-		exit();	
+		exit("detenido");	
 		$c = new Criteria();
 		$tickets = HdeskTicketPeer::doSelect( $c );
 		
@@ -1549,6 +1553,44 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 	}
 	
 	
+	
+	public function executeFixRespuestas(){
+		exit("detenido");
+		$c = new Criteria();
+		$tickets = HdeskTicketPeer::doSelect( $c );
+		
+		foreach( $tickets as $ticket ){			
+			if( !$ticket->getCaResponseTime() ){
+			
+				$logins = array(  );
+				
+				$c = new Criteria();		
+				$c->add( HdeskUserGroupPeer::CA_IDGROUP, $ticket->getCaIdgroup() );
+				$c->addAscendingOrderByColumn( HdeskUserGroupPeer::CA_LOGIN);
+				$usuarios = HdeskUserGroupPeer::doSelect( $c );		
+				foreach( $usuarios as $usuario ){
+					$logins[]=$usuario->getCaLogin();
+				}
+				
+				
+				$c = new Criteria();
+				$c->add( HdeskResponsePeer::CA_IDTICKET, $ticket->getcaIdticket() );
+				$c->add( HdeskResponsePeer::CA_LOGIN, $logins, Criteria::IN );
+				$c->addAscendingOrderByColumn( HdeskResponsePeer::CA_CREATEDAT );		
+				
+				$response = HdeskResponsePeer::doSelectOne( $c );
+				
+				if( $response ){
+					$ticket->setCaResponsetime($response->getcaCreatedat());
+					$ticket->save();
+				}
+			}
+		}
+		
+		
+		
+		return sfView::NONE;
+	}
 	
 	
 	public function executePermisosColsys(){
@@ -1700,7 +1742,7 @@ WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
 	
 	public function executeCircularColsys(){
 		
-		exit();
+		exit("detenido");
 		$file =  sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."Circular_nuevos_costos_en_el_combustible.pdf";
 		
 		$txt = "Estimados señores:
@@ -1755,7 +1797,7 @@ Departamento Comercial
 	
 	
 	public function executeColocarLimitetiempo(){
-		exit();
+		exit("detenido");
 		$sql = "select * from pg_user";
 		$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME);
 		$stmt = $con->prepare($sql);
@@ -1772,39 +1814,107 @@ Departamento Comercial
 	
 	
 	public function executeHorasCotizaciones(){
-		
+
 		sfConfig::set('sf_web_debug', false) ;	
 		set_time_limit(0);
 		$path = "d:\\horascotizaciones.csv";
 		$i = 0;
 		$content = file_get_contents( $path ); 		
 		$rows = explode( "\n", $content );
+		echo "OK ";
 		foreach($rows as $row  ){
 			$row = explode(";" ,$row);
 			$c = new Criteria();
 			$c->add( CotizacionPeer::CA_CONSECUTIVO, $row[0] );
 			$cotizacion = CotizacionPeer::doSelectOne( $c );
-			if( !$cotizacion->getCaFchpresentacion() ){
-				echo (++$i)." ".$row[0];				
-				$cotizacion->setCaFchpresentacion(strtotime($row[2]));
-				$cotizacion->save();
-			}else{
-				//echo $row[0]." ".$cotizacion->getCaFchpresentacion()." ".$row[2]; 
-			}
+			echo (++$i);
+			//if( !$cotizacion->getCaFchpresentacion() ){
+				if( trim($row[2]) ){
+					echo " ".$row[0]." -".$row[2];				
+					$cotizacion->setCaFchpresentacion($row[2]);
+					$cotizacion->save();
+				}
+			/*}else{
+				echo "fchpresentacion  ".$row[0]." ".$cotizacion->getCaFchpresentacion()." ".$row[2]; 
+			}*/
 			
 			echo "<br />";
 		
 		}
 		return sfView::NONE;
-		
-		
-		
-		
 	}
 	
+	
+	/*
+	* Busca las cargas que estan abiertas que ya se les habian hecho confirmacion de llegada. 
+	*/
+	public function executeFixCargasEntregadas(){
+		$c = new Criteria();
+		$c->add( ReportePeer::CA_IMPOEXPO, "Importación");
+		$c->add( ReportePeer::CA_TRANSPORTE, "Marítimo");		
+		$c->add( ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada", Criteria::NOT_EQUAL);	
+		$c->addAnd( ReportePeer::CA_ETAPA_ACTUAL, "", Criteria::NOT_EQUAL);	
+		$c->addAnd( ReportePeer::CA_ETAPA_ACTUAL, null, Criteria::ISNOTNULL);
+		$c->setLimit( 100 );		
+		$reportes = ReportePeer::doSelect( $c );
+				
+		foreach( $reportes as $reporte ){
+			if( $reporte->esUltimaVersion() ){ 
+				echo $reporte->getCaConsecutivo()." ".$reporte->getCaEtapaActual()."<br />";
+			}
+		}
+				
+		return sfView::NONE;
+	}
+	
+	
+	public function executeFixEtapasTracking(){
+		set_time_limit(0);
+		$c = new Criteria();
+		//$c->setLimit(2000);
+		$c->add( RepStatusPeer::CA_IDETAPA, null, Criteria::ISNULL );
+		$statusList = RepStatusPeer::doSelect( $c );
+		
+		$c = new Criteria();
+		$etapasObj = TrackingEtapasPeer::doSelect( $c );
+		
+		$etapas = array();
+				
+		foreach( $etapasObj as $etapa){
+			$etapas[$etapa->getCaImpoExpo()][$etapa->getCaTransporte()][trim($etapa->getCaEtapa())] = $etapa->getCaIdetapa();
+		}
+			
+		foreach( $statusList as $status ){
+			$reporte = $status->getReporte();
+			
+			if( $reporte->getCaImpoexpo()=="Triangulación" ){			 
+				$reporte->setCaImpoexpo("Importación");
+			}
+			if( $status->getEtapa()=="Carga Entregada" ){
+				$idetapa = "99999";
+				//print_r( $status );
+			}elseif( $status->getEtapa()=="Orden Anulada" ){
+				$idetapa = "00000";
+			}else{			
+				if( $reporte->getCaImpoexpo()=="Importación" ){
+					$idetapa = $etapas[$reporte->getCaImpoexpo()][$reporte->getCaTransporte()][$status->getEtapa()]; 				
+				}else{			
+					$idetapa = $etapas[$reporte->getCaImpoexpo()][''][$status->getEtapa()]; 			
+				}
+			}			
+			echo "###".$reporte->getCaConsecutivo()." ".$reporte->getCaImpoexpo()." ".$reporte->getCaTransporte()." ".$status->getEtapa()." ".$idetapa."<br />";		
+			
+			$status->setCaIdetapa( $idetapa );
+			$status->save();
+						
+									
+		}
+			
+	}
 	
 }
 
 
 
 ?>
+
