@@ -56,7 +56,8 @@ class dataImportActions extends sfActions
 			}
 		}
 		
-		$this->redirect("falabella/list");
+		//$this->redirect("falabella/list");
+		header("Location: /colsys_sf/falabella/list");
 		
 		
 	}
