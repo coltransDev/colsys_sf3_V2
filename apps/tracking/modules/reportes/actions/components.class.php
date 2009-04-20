@@ -40,11 +40,12 @@ class reportesComponents extends sfComponents
 			}
 		}
 		
+		
+		
+		
 		if( $this->impoexpo==Constantes::EXPO ){				
 			$reportes = ReportePeer::getReportesActivosExpo( $this->getUser()->getClienteActivo() );
 		}
-			
-				
 		
 		
 		$this->data=array();
@@ -83,9 +84,6 @@ class reportesComponents extends sfComponents
 				$destinoStr="";
 			}
 				
-			
-			
-		
 			$actualizado = $reporte->getFchUltimoStatus("Y-m-d" );
 			$status = $reporte->getTextoStatus();
 						

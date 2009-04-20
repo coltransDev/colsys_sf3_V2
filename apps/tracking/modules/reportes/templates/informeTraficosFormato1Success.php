@@ -154,7 +154,7 @@ foreach( $reportes as $reporte ){
 	}
 	
 	$proveedoresStr  ="";
-	$proveedores = $reporte->getProovedores();
+	$proveedores = $reporte->getProveedores();
 	foreach($proveedores as $proveedor ){
 		$proveedoresStr	.= (count($proveedores)>1?"* ":"").$proveedor->getCaNombre()."\n";
 	}
