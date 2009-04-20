@@ -134,7 +134,9 @@ class myUser extends sfBasicSecurityUser
 		$log->setCaFchevento(time());	
 		$log->setCaUrl(  $_SERVER['PATH_INFO'] );
 		$log->setCaEvento($event);
-		$log->setCaIpaddress( $_SERVER['REMOTE_ADDR'] );	
+		$log->setCaIpaddress( $_SERVER['REMOTE_ADDR'] );
+		$log->setCaUserAgent( $_SERVER['HTTP_USER_AGENT'] );
+		
 		$log->save();
 	}
 	
