@@ -21,6 +21,7 @@
 		<column name="ca_url" type="varchar" />
 		<column name="ca_evento" type="varchar" />
 		<column name="ca_ipaddress" type="varchar" />
+		<column name="ca_useragent" type="varchar" />
 	
 		<foreign-key foreignTable="tb_tracking_users">
 			<reference local="ca_email" foreign="ca_email"/>
