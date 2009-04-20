@@ -28,17 +28,17 @@
 					</div>
 				</div>
 				<?
-				/*
+				
 				?>
 				<div style="float:left;">
 					<div class="icon">
 		
 						<a href="<?=url_for("exportaciones/index")?>">
-							<img src="/colmasweb/administrator/templates/khepri/images/header/icon-48-frontpage.png" alt="Administrador de la página principal"  />					<span>Exportaciones</span></a>
+							<?=image_tag("48x48/icon-48-install.png")?>						<span>Exportaciones</span></a>
 					</div>
 				</div>
 				<?
-				*/
+				
 				?>
 				<div style="float:left;">
 					<div class="icon">
