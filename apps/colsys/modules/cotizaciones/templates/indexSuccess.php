@@ -6,7 +6,7 @@
 use_helper("Javascript");
 use_helper("Object");
 ?>
-<?=form_tag( "cotizaciones/busquedaCotizacion" )?>
+<form action="<?=url_for( "cotizaciones/busquedaCotizacion" )?>" method="post" >
 <script language="javascript">
 	function cambiarVendedor( field ){
 		if( field.value=="mis_cotizaciones" ){
@@ -46,4 +46,4 @@ use_helper("Object");
 	  <td width="64"  ><input  type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>
 </table>
-<?="</form>";?>
+</form>

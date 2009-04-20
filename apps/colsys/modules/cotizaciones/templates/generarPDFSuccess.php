@@ -208,7 +208,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 				$titulos = array('Concepto', 'Tarifas');
 				
 				if ($imprimirRecargos){
-					array_push($titulos, "Recargos por Flete");
+					array_push($titulos,  ($producto->getCaIncoterms()=="FCA - Free Carrier"?"Recargos en Origen":"Recargos por Flete") );
 				}
 				if ($imprimirObservaciones){
 					array_push($titulos, "Observaciones");

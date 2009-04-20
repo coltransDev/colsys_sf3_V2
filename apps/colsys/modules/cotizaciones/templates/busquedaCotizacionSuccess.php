@@ -1,7 +1,7 @@
 <?
 /*
-* Muestra los resultados de la busqueda del reporte de negocios 
-* @author Carlos G. López
+* Muestra los resultados de la busqueda de la cotización 
+* @author Andres Botero
 */	
 ?>
 <div align="center">

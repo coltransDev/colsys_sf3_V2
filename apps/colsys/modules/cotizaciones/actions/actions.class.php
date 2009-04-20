@@ -291,6 +291,17 @@ class cotizacionesActions extends sfActions
 			foreach( $productos as $producto ){				
 				if( $producto->getCaImpoexpo() == Constantes::IMPO ){
 					$paises[] = $producto->getOrigen()->getCaIdtrafico();
+					
+					//Esto es debido a que China y Hong Kong estan separado y no se 
+					//pueden unir por que se dañan los consecutivos de marítimo.
+					if( $producto->getOrigen()->getCaIdtrafico()=="CN-086" ){
+						$paises[] = "HK-852";
+					}
+					
+					if( $producto->getOrigen()->getCaIdtrafico()=="HK-852" ){
+						$paises[] = "CN-086";
+					}
+					
 				}else{
 					$paises[] = $producto->getDestino()->getCaIdtrafico();
 				}
@@ -970,7 +981,7 @@ class cotizacionesActions extends sfActions
 					$row['valor_min']=$recargo->getCaValorMin();
 					$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
 					$row['idmoneda']=$recargo->getCaIdmoneda();
-					$row['detalles']=$recargo->getCaObservaciones();
+					$row['detalles']=utf8_encode($recargo->getCaObservaciones());
 					$row['tipo']="recargo";		
 					$row['id']+=$j++;	
 					$row['parent']=$parent;	
@@ -1014,7 +1025,7 @@ class cotizacionesActions extends sfActions
 				$row['valor_min']=$recargo->getCaValorMin();
 				$row['aplica_min']=utf8_encode($recargo->getCaAplicaMin());
 				$row['idmoneda']=$recargo->getCaIdmoneda();
-				$row['detalles']=$recargo->getCaObservaciones();
+				$row['detalles']=utf8_encode($recargo->getCaObservaciones());
 				$row['tipo']="recargo";			
 				$row['id']+=$j++;	
 				$row['parent']=$parent;	
