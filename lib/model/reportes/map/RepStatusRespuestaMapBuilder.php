@@ -60,17 +60,19 @@ class RepStatusRespuestaMapBuilder implements MapBuilder {
 		$tMap->setPhpName('RepStatusRespuesta');
 		$tMap->setClassname('RepStatusRespuesta');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
 
-		$tMap->addForeignKey('CA_IDREPORTE', 'CaIdreporte', 'INTEGER', 'tb_repstatus', 'CA_IDREPORTE', true, null);
-
-		$tMap->addForeignKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER', 'tb_repstatus', 'CA_IDEMAIL', true, null);
+		$tMap->setPrimaryKeyMethodInfo('tb_repstatusrespuestas_id');
 
 		$tMap->addPrimaryKey('CA_IDREPSTATUSRESPUESTAS', 'CaIdrepstatusrespuestas', 'INTEGER', true, null);
+
+		$tMap->addForeignKey('CA_IDSTATUS', 'CaIdstatus', 'INTEGER', 'tb_repstatus', 'CA_IDSTATUS', true, null);
 
 		$tMap->addColumn('CA_RESPUESTA', 'CaRespuesta', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_EMAIL', 'CaEmail', 'VARCHAR', false, null);
+
+		$tMap->addForeignKey('CA_LOGIN', 'CaLogin', 'VARCHAR', 'control.tb_usuarios', 'CA_LOGIN', false, null);
 
 		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 

@@ -606,7 +606,7 @@ abstract class BaseRepStatusPeer {
 
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related TrackingEtapas table
+	 * Returns the number of rows matching criteria, joining the related TrackingEtapa table
 	 *
 	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -614,7 +614,7 @@ abstract class BaseRepStatusPeer {
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinTrackingEtapas(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doCountJoinTrackingEtapa(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
@@ -641,7 +641,7 @@ abstract class BaseRepStatusPeer {
 			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+		$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -790,7 +790,7 @@ abstract class BaseRepStatusPeer {
 
 
 	/**
-	 * Selects a collection of RepStatus objects pre-filled with their TrackingEtapas objects.
+	 * Selects a collection of RepStatus objects pre-filled with their TrackingEtapa objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -798,7 +798,7 @@ abstract class BaseRepStatusPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinTrackingEtapas(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinTrackingEtapa(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -809,9 +809,9 @@ abstract class BaseRepStatusPeer {
 
 		RepStatusPeer::addSelectColumns($c);
 		$startcol = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
-		TrackingEtapasPeer::addSelectColumns($c);
+		TrackingEtapaPeer::addSelectColumns($c);
 
-		$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+		$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -831,20 +831,20 @@ abstract class BaseRepStatusPeer {
 				RepStatusPeer::addInstanceToPool($obj1, $key1);
 			} // if $obj1 already loaded
 
-			$key2 = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			$key2 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
-				$obj2 = TrackingEtapasPeer::getInstanceFromPool($key2);
+				$obj2 = TrackingEtapaPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$omClass = TrackingEtapasPeer::getOMClass();
+					$omClass = TrackingEtapaPeer::getOMClass();
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
-					TrackingEtapasPeer::addInstanceToPool($obj2, $key2);
+					TrackingEtapaPeer::addInstanceToPool($obj2, $key2);
 				} // if obj2 already loaded
 
-				// Add the $obj1 (RepStatus) to $obj2 (TrackingEtapas)
+				// Add the $obj1 (RepStatus) to $obj2 (TrackingEtapa)
 				$obj2->addRepStatus($obj1);
 
 			} // if joined row was not null
@@ -894,7 +894,7 @@ abstract class BaseRepStatusPeer {
 
 		$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
-		$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+		$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -934,12 +934,12 @@ abstract class BaseRepStatusPeer {
 		EmailPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		TrackingEtapasPeer::addSelectColumns($c);
-		$startcol5 = $startcol4 + (TrackingEtapasPeer::NUM_COLUMNS - TrackingEtapasPeer::NUM_LAZY_LOAD_COLUMNS);
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
-		$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+		$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -998,23 +998,23 @@ abstract class BaseRepStatusPeer {
 				$obj3->addRepStatus($obj1);
 			} // if joined row not null
 
-			// Add objects for joined TrackingEtapas rows
+			// Add objects for joined TrackingEtapa rows
 
-			$key4 = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+			$key4 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
 			if ($key4 !== null) {
-				$obj4 = TrackingEtapasPeer::getInstanceFromPool($key4);
+				$obj4 = TrackingEtapaPeer::getInstanceFromPool($key4);
 				if (!$obj4) {
 
-					$omClass = TrackingEtapasPeer::getOMClass();
+					$omClass = TrackingEtapaPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
-					TrackingEtapasPeer::addInstanceToPool($obj4, $key4);
+					TrackingEtapaPeer::addInstanceToPool($obj4, $key4);
 				} // if obj4 loaded
 
-				// Add the $obj1 (RepStatus) to the collection in $obj4 (TrackingEtapas)
+				// Add the $obj1 (RepStatus) to the collection in $obj4 (TrackingEtapa)
 				$obj4->addRepStatus($obj1);
 			} // if joined row not null
 
@@ -1057,7 +1057,7 @@ abstract class BaseRepStatusPeer {
 		}
 	
 				$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
-				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1102,7 +1102,7 @@ abstract class BaseRepStatusPeer {
 		}
 	
 				$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
-				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1116,7 +1116,7 @@ abstract class BaseRepStatusPeer {
 
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related TrackingEtapas table
+	 * Returns the number of rows matching criteria, joining the related TrackingEtapa table
 	 *
 	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -1124,7 +1124,7 @@ abstract class BaseRepStatusPeer {
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinAllExceptTrackingEtapas(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doCountJoinAllExceptTrackingEtapa(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
@@ -1187,11 +1187,11 @@ abstract class BaseRepStatusPeer {
 		EmailPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		TrackingEtapasPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + (TrackingEtapasPeer::NUM_COLUMNS - TrackingEtapasPeer::NUM_LAZY_LOAD_COLUMNS);
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
 
 				$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
-				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1232,23 +1232,23 @@ abstract class BaseRepStatusPeer {
 
 			} // if joined row is not null
 
-				// Add objects for joined TrackingEtapas rows
+				// Add objects for joined TrackingEtapa rows
 
-				$key3 = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				$key3 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
-					$obj3 = TrackingEtapasPeer::getInstanceFromPool($key3);
+					$obj3 = TrackingEtapaPeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$omClass = TrackingEtapasPeer::getOMClass();
+						$omClass = TrackingEtapaPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
-					TrackingEtapasPeer::addInstanceToPool($obj3, $key3);
+					TrackingEtapaPeer::addInstanceToPool($obj3, $key3);
 				} // if $obj3 already loaded
 
-				// Add the $obj1 (RepStatus) to the collection in $obj3 (TrackingEtapas)
+				// Add the $obj1 (RepStatus) to the collection in $obj3 (TrackingEtapa)
 				$obj3->addRepStatus($obj1);
 
 			} // if joined row is not null
@@ -1287,11 +1287,11 @@ abstract class BaseRepStatusPeer {
 		ReportePeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		TrackingEtapasPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + (TrackingEtapasPeer::NUM_COLUMNS - TrackingEtapasPeer::NUM_LAZY_LOAD_COLUMNS);
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
 
 				$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
-				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapasPeer::CA_IDETAPA,), $join_behavior);
+				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1332,23 +1332,23 @@ abstract class BaseRepStatusPeer {
 
 			} // if joined row is not null
 
-				// Add objects for joined TrackingEtapas rows
+				// Add objects for joined TrackingEtapa rows
 
-				$key3 = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				$key3 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
-					$obj3 = TrackingEtapasPeer::getInstanceFromPool($key3);
+					$obj3 = TrackingEtapaPeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$omClass = TrackingEtapasPeer::getOMClass();
+						$omClass = TrackingEtapaPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
-					TrackingEtapasPeer::addInstanceToPool($obj3, $key3);
+					TrackingEtapaPeer::addInstanceToPool($obj3, $key3);
 				} // if $obj3 already loaded
 
-				// Add the $obj1 (RepStatus) to the collection in $obj3 (TrackingEtapas)
+				// Add the $obj1 (RepStatus) to the collection in $obj3 (TrackingEtapa)
 				$obj3->addRepStatus($obj1);
 
 			} // if joined row is not null
@@ -1361,7 +1361,7 @@ abstract class BaseRepStatusPeer {
 
 
 	/**
-	 * Selects a collection of RepStatus objects pre-filled with all related objects except TrackingEtapas.
+	 * Selects a collection of RepStatus objects pre-filled with all related objects except TrackingEtapa.
 	 *
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -1370,7 +1370,7 @@ abstract class BaseRepStatusPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptTrackingEtapas(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptTrackingEtapa(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 

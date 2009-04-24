@@ -249,6 +249,7 @@ class Reporte extends BaseReporte
 							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status OTM";
 							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getCaAviso (); 
 							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = "";
+								
 						}								 
 					}
 				}
@@ -260,9 +261,12 @@ class Reporte extends BaseReporte
 					
 			foreach( $statuss as $status){			
 				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["idstatus"] = $status->getCaIdstatus();
 				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status";
 				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getStatus (); 
 				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = $status->getCaEtapa ();
+				
+				
 							 
 			}		
 		

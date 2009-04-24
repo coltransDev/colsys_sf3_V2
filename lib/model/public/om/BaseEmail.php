@@ -1774,7 +1774,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Email.
 	 */
-	public function getRepStatussJoinTrackingEtapas($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public function getRepStatussJoinTrackingEtapa($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
 			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
@@ -1791,7 +1791,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 
 				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
 
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapas($criteria, $con, $join_behavior);
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
@@ -1801,7 +1801,7 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
 
 			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapas($criteria, $con, $join_behavior);
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepStatusCriteria = $criteria;

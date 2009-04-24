@@ -21,22 +21,16 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	protected static $peer;
 
 	/**
-	 * The value for the ca_idreporte field.
-	 * @var        int
-	 */
-	protected $ca_idreporte;
-
-	/**
-	 * The value for the ca_idemail field.
-	 * @var        int
-	 */
-	protected $ca_idemail;
-
-	/**
 	 * The value for the ca_idrepstatusrespuestas field.
 	 * @var        int
 	 */
 	protected $ca_idrepstatusrespuestas;
+
+	/**
+	 * The value for the ca_idstatus field.
+	 * @var        int
+	 */
+	protected $ca_idstatus;
 
 	/**
 	 * The value for the ca_respuesta field.
@@ -51,6 +45,12 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	protected $ca_email;
 
 	/**
+	 * The value for the ca_login field.
+	 * @var        string
+	 */
+	protected $ca_login;
+
+	/**
 	 * The value for the ca_fchcreado field.
 	 * @var        string
 	 */
@@ -60,6 +60,11 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	 * @var        RepStatus
 	 */
 	protected $aRepStatus;
+
+	/**
+	 * @var        Usuario
+	 */
+	protected $aUsuario;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -96,26 +101,6 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	}
 
 	/**
-	 * Get the [ca_idreporte] column value.
-	 * 
-	 * @return     int
-	 */
-	public function getCaIdreporte()
-	{
-		return $this->ca_idreporte;
-	}
-
-	/**
-	 * Get the [ca_idemail] column value.
-	 * 
-	 * @return     int
-	 */
-	public function getCaIdemail()
-	{
-		return $this->ca_idemail;
-	}
-
-	/**
 	 * Get the [ca_idrepstatusrespuestas] column value.
 	 * 
 	 * @return     int
@@ -123,6 +108,16 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	public function getCaIdrepstatusrespuestas()
 	{
 		return $this->ca_idrepstatusrespuestas;
+	}
+
+	/**
+	 * Get the [ca_idstatus] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdstatus()
+	{
+		return $this->ca_idstatus;
 	}
 
 	/**
@@ -143,6 +138,16 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	public function getCaEmail()
 	{
 		return $this->ca_email;
+	}
+
+	/**
+	 * Get the [ca_login] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaLogin()
+	{
+		return $this->ca_login;
 	}
 
 	/**
@@ -179,54 +184,6 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	}
 
 	/**
-	 * Set the value of [ca_idreporte] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     RepStatusRespuesta The current object (for fluent API support)
-	 */
-	public function setCaIdreporte($v)
-	{
-		if ($v !== null) {
-			$v = (int) $v;
-		}
-
-		if ($this->ca_idreporte !== $v) {
-			$this->ca_idreporte = $v;
-			$this->modifiedColumns[] = RepStatusRespuestaPeer::CA_IDREPORTE;
-		}
-
-		if ($this->aRepStatus !== null && $this->aRepStatus->getCaIdreporte() !== $v) {
-			$this->aRepStatus = null;
-		}
-
-		return $this;
-	} // setCaIdreporte()
-
-	/**
-	 * Set the value of [ca_idemail] column.
-	 * 
-	 * @param      int $v new value
-	 * @return     RepStatusRespuesta The current object (for fluent API support)
-	 */
-	public function setCaIdemail($v)
-	{
-		if ($v !== null) {
-			$v = (int) $v;
-		}
-
-		if ($this->ca_idemail !== $v) {
-			$this->ca_idemail = $v;
-			$this->modifiedColumns[] = RepStatusRespuestaPeer::CA_IDEMAIL;
-		}
-
-		if ($this->aRepStatus !== null && $this->aRepStatus->getCaIdemail() !== $v) {
-			$this->aRepStatus = null;
-		}
-
-		return $this;
-	} // setCaIdemail()
-
-	/**
 	 * Set the value of [ca_idrepstatusrespuestas] column.
 	 * 
 	 * @param      int $v new value
@@ -245,6 +202,30 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 
 		return $this;
 	} // setCaIdrepstatusrespuestas()
+
+	/**
+	 * Set the value of [ca_idstatus] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     RepStatusRespuesta The current object (for fluent API support)
+	 */
+	public function setCaIdstatus($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idstatus !== $v) {
+			$this->ca_idstatus = $v;
+			$this->modifiedColumns[] = RepStatusRespuestaPeer::CA_IDSTATUS;
+		}
+
+		if ($this->aRepStatus !== null && $this->aRepStatus->getCaIdstatus() !== $v) {
+			$this->aRepStatus = null;
+		}
+
+		return $this;
+	} // setCaIdstatus()
 
 	/**
 	 * Set the value of [ca_respuesta] column.
@@ -285,6 +266,30 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 
 		return $this;
 	} // setCaEmail()
+
+	/**
+	 * Set the value of [ca_login] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     RepStatusRespuesta The current object (for fluent API support)
+	 */
+	public function setCaLogin($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_login !== $v) {
+			$this->ca_login = $v;
+			$this->modifiedColumns[] = RepStatusRespuestaPeer::CA_LOGIN;
+		}
+
+		if ($this->aUsuario !== null && $this->aUsuario->getCaLogin() !== $v) {
+			$this->aUsuario = null;
+		}
+
+		return $this;
+	} // setCaLogin()
 
 	/**
 	 * Sets the value of [ca_fchcreado] column to a normalized version of the date/time value specified.
@@ -372,11 +377,11 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	{
 		try {
 
-			$this->ca_idreporte = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->ca_idemail = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-			$this->ca_idrepstatusrespuestas = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-			$this->ca_respuesta = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_email = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_idrepstatusrespuestas = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_idstatus = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+			$this->ca_respuesta = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_email = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_login = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->ca_fchcreado = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
 			$this->resetModified();
 
@@ -410,11 +415,11 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	public function ensureConsistency()
 	{
 
-		if ($this->aRepStatus !== null && $this->ca_idreporte !== $this->aRepStatus->getCaIdreporte()) {
+		if ($this->aRepStatus !== null && $this->ca_idstatus !== $this->aRepStatus->getCaIdstatus()) {
 			$this->aRepStatus = null;
 		}
-		if ($this->aRepStatus !== null && $this->ca_idemail !== $this->aRepStatus->getCaIdemail()) {
-			$this->aRepStatus = null;
+		if ($this->aUsuario !== null && $this->ca_login !== $this->aUsuario->getCaLogin()) {
+			$this->aUsuario = null;
 		}
 	} // ensureConsistency
 
@@ -456,6 +461,7 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 		if ($deep) {  // also de-associate any related objects?
 
 			$this->aRepStatus = null;
+			$this->aUsuario = null;
 		} // if (deep)
 	}
 
@@ -553,6 +559,16 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 				$this->setRepStatus($this->aRepStatus);
 			}
 
+			if ($this->aUsuario !== null) {
+				if ($this->aUsuario->isModified() || $this->aUsuario->isNew()) {
+					$affectedRows += $this->aUsuario->save($con);
+				}
+				$this->setUsuario($this->aUsuario);
+			}
+
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = RepStatusRespuestaPeer::CA_IDREPSTATUSRESPUESTAS;
+			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -561,6 +577,8 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
+
+					$this->setCaIdrepstatusrespuestas($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -647,6 +665,12 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 				}
 			}
 
+			if ($this->aUsuario !== null) {
+				if (!$this->aUsuario->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aUsuario->getValidationFailures());
+				}
+			}
+
 
 			if (($retval = RepStatusRespuestaPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
@@ -687,19 +711,19 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdreporte();
-				break;
-			case 1:
-				return $this->getCaIdemail();
-				break;
-			case 2:
 				return $this->getCaIdrepstatusrespuestas();
 				break;
-			case 3:
+			case 1:
+				return $this->getCaIdstatus();
+				break;
+			case 2:
 				return $this->getCaRespuesta();
 				break;
-			case 4:
+			case 3:
 				return $this->getCaEmail();
+				break;
+			case 4:
+				return $this->getCaLogin();
 				break;
 			case 5:
 				return $this->getCaFchcreado();
@@ -725,11 +749,11 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	{
 		$keys = RepStatusRespuestaPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdreporte(),
-			$keys[1] => $this->getCaIdemail(),
-			$keys[2] => $this->getCaIdrepstatusrespuestas(),
-			$keys[3] => $this->getCaRespuesta(),
-			$keys[4] => $this->getCaEmail(),
+			$keys[0] => $this->getCaIdrepstatusrespuestas(),
+			$keys[1] => $this->getCaIdstatus(),
+			$keys[2] => $this->getCaRespuesta(),
+			$keys[3] => $this->getCaEmail(),
+			$keys[4] => $this->getCaLogin(),
 			$keys[5] => $this->getCaFchcreado(),
 		);
 		return $result;
@@ -763,19 +787,19 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdreporte($value);
-				break;
-			case 1:
-				$this->setCaIdemail($value);
-				break;
-			case 2:
 				$this->setCaIdrepstatusrespuestas($value);
 				break;
-			case 3:
+			case 1:
+				$this->setCaIdstatus($value);
+				break;
+			case 2:
 				$this->setCaRespuesta($value);
 				break;
-			case 4:
+			case 3:
 				$this->setCaEmail($value);
+				break;
+			case 4:
+				$this->setCaLogin($value);
 				break;
 			case 5:
 				$this->setCaFchcreado($value);
@@ -804,11 +828,11 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	{
 		$keys = RepStatusRespuestaPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdreporte($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaIdemail($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaIdrepstatusrespuestas($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaRespuesta($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaEmail($arr[$keys[4]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdrepstatusrespuestas($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdstatus($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaRespuesta($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaEmail($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaLogin($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaFchcreado($arr[$keys[5]]);
 	}
 
@@ -821,11 +845,11 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	{
 		$criteria = new Criteria(RepStatusRespuestaPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(RepStatusRespuestaPeer::CA_IDREPORTE)) $criteria->add(RepStatusRespuestaPeer::CA_IDREPORTE, $this->ca_idreporte);
-		if ($this->isColumnModified(RepStatusRespuestaPeer::CA_IDEMAIL)) $criteria->add(RepStatusRespuestaPeer::CA_IDEMAIL, $this->ca_idemail);
 		if ($this->isColumnModified(RepStatusRespuestaPeer::CA_IDREPSTATUSRESPUESTAS)) $criteria->add(RepStatusRespuestaPeer::CA_IDREPSTATUSRESPUESTAS, $this->ca_idrepstatusrespuestas);
+		if ($this->isColumnModified(RepStatusRespuestaPeer::CA_IDSTATUS)) $criteria->add(RepStatusRespuestaPeer::CA_IDSTATUS, $this->ca_idstatus);
 		if ($this->isColumnModified(RepStatusRespuestaPeer::CA_RESPUESTA)) $criteria->add(RepStatusRespuestaPeer::CA_RESPUESTA, $this->ca_respuesta);
 		if ($this->isColumnModified(RepStatusRespuestaPeer::CA_EMAIL)) $criteria->add(RepStatusRespuestaPeer::CA_EMAIL, $this->ca_email);
+		if ($this->isColumnModified(RepStatusRespuestaPeer::CA_LOGIN)) $criteria->add(RepStatusRespuestaPeer::CA_LOGIN, $this->ca_login);
 		if ($this->isColumnModified(RepStatusRespuestaPeer::CA_FCHCREADO)) $criteria->add(RepStatusRespuestaPeer::CA_FCHCREADO, $this->ca_fchcreado);
 
 		return $criteria;
@@ -881,20 +905,20 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
-		$copyObj->setCaIdreporte($this->ca_idreporte);
-
-		$copyObj->setCaIdemail($this->ca_idemail);
-
-		$copyObj->setCaIdrepstatusrespuestas($this->ca_idrepstatusrespuestas);
+		$copyObj->setCaIdstatus($this->ca_idstatus);
 
 		$copyObj->setCaRespuesta($this->ca_respuesta);
 
 		$copyObj->setCaEmail($this->ca_email);
 
+		$copyObj->setCaLogin($this->ca_login);
+
 		$copyObj->setCaFchcreado($this->ca_fchcreado);
 
 
 		$copyObj->setNew(true);
+
+		$copyObj->setCaIdrepstatusrespuestas(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -946,15 +970,9 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	public function setRepStatus(RepStatus $v = null)
 	{
 		if ($v === null) {
-			$this->setCaIdreporte(NULL);
+			$this->setCaIdstatus(NULL);
 		} else {
-			$this->setCaIdreporte($v->getCaIdreporte());
-		}
-
-		if ($v === null) {
-			$this->setCaIdemail(NULL);
-		} else {
-			$this->setCaIdemail($v->getCaIdemail());
+			$this->setCaIdstatus($v->getCaIdstatus());
 		}
 
 		$this->aRepStatus = $v;
@@ -978,10 +996,9 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 	 */
 	public function getRepStatus(PropelPDO $con = null)
 	{
-		if ($this->aRepStatus === null && ($this->ca_idreporte !== null && $this->ca_idemail !== null)) {
+		if ($this->aRepStatus === null && ($this->ca_idstatus !== null)) {
 			$c = new Criteria(RepStatusPeer::DATABASE_NAME);
-			$c->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
-			$c->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
+			$c->add(RepStatusPeer::CA_IDSTATUS, $this->ca_idstatus);
 			$this->aRepStatus = RepStatusPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
 			   guarantee the related object contains a reference
@@ -992,6 +1009,57 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 			 */
 		}
 		return $this->aRepStatus;
+	}
+
+	/**
+	 * Declares an association between this object and a Usuario object.
+	 *
+	 * @param      Usuario $v
+	 * @return     RepStatusRespuesta The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setUsuario(Usuario $v = null)
+	{
+		if ($v === null) {
+			$this->setCaLogin(NULL);
+		} else {
+			$this->setCaLogin($v->getCaLogin());
+		}
+
+		$this->aUsuario = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Usuario object, it will not be re-added.
+		if ($v !== null) {
+			$v->addRepStatusRespuesta($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Usuario object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Usuario The associated Usuario object.
+	 * @throws     PropelException
+	 */
+	public function getUsuario(PropelPDO $con = null)
+	{
+		if ($this->aUsuario === null && (($this->ca_login !== "" && $this->ca_login !== null))) {
+			$c = new Criteria(UsuarioPeer::DATABASE_NAME);
+			$c->add(UsuarioPeer::CA_LOGIN, $this->ca_login);
+			$this->aUsuario = UsuarioPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aUsuario->addRepStatusRespuestas($this);
+			 */
+		}
+		return $this->aUsuario;
 	}
 
 	/**
@@ -1009,6 +1077,7 @@ abstract class BaseRepStatusRespuesta extends BaseObject  implements Persistent 
 		} // if ($deep)
 
 			$this->aRepStatus = null;
+			$this->aUsuario = null;
 	}
 
 } // BaseRepStatusRespuesta

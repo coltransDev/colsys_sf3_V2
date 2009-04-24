@@ -24,20 +24,20 @@ abstract class BaseRepStatusRespuestaPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_IDREPORTE field */
-	const CA_IDREPORTE = 'tb_repstatusrespuestas.CA_IDREPORTE';
-
-	/** the column name for the CA_IDEMAIL field */
-	const CA_IDEMAIL = 'tb_repstatusrespuestas.CA_IDEMAIL';
-
 	/** the column name for the CA_IDREPSTATUSRESPUESTAS field */
 	const CA_IDREPSTATUSRESPUESTAS = 'tb_repstatusrespuestas.CA_IDREPSTATUSRESPUESTAS';
+
+	/** the column name for the CA_IDSTATUS field */
+	const CA_IDSTATUS = 'tb_repstatusrespuestas.CA_IDSTATUS';
 
 	/** the column name for the CA_RESPUESTA field */
 	const CA_RESPUESTA = 'tb_repstatusrespuestas.CA_RESPUESTA';
 
 	/** the column name for the CA_EMAIL field */
 	const CA_EMAIL = 'tb_repstatusrespuestas.CA_EMAIL';
+
+	/** the column name for the CA_LOGIN field */
+	const CA_LOGIN = 'tb_repstatusrespuestas.CA_LOGIN';
 
 	/** the column name for the CA_FCHCREADO field */
 	const CA_FCHCREADO = 'tb_repstatusrespuestas.CA_FCHCREADO';
@@ -63,10 +63,10 @@ abstract class BaseRepStatusRespuestaPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdreporte', 'CaIdemail', 'CaIdrepstatusrespuestas', 'CaRespuesta', 'CaEmail', 'CaFchcreado', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte', 'caIdemail', 'caIdrepstatusrespuestas', 'caRespuesta', 'caEmail', 'caFchcreado', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE, self::CA_IDEMAIL, self::CA_IDREPSTATUSRESPUESTAS, self::CA_RESPUESTA, self::CA_EMAIL, self::CA_FCHCREADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte', 'ca_idemail', 'ca_idrepstatusrespuestas', 'ca_respuesta', 'ca_email', 'ca_fchcreado', ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdrepstatusrespuestas', 'CaIdstatus', 'CaRespuesta', 'CaEmail', 'CaLogin', 'CaFchcreado', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdrepstatusrespuestas', 'caIdstatus', 'caRespuesta', 'caEmail', 'caLogin', 'caFchcreado', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDREPSTATUSRESPUESTAS, self::CA_IDSTATUS, self::CA_RESPUESTA, self::CA_EMAIL, self::CA_LOGIN, self::CA_FCHCREADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idrepstatusrespuestas', 'ca_idstatus', 'ca_respuesta', 'ca_email', 'ca_login', 'ca_fchcreado', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
@@ -77,10 +77,10 @@ abstract class BaseRepStatusRespuestaPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdreporte' => 0, 'CaIdemail' => 1, 'CaIdrepstatusrespuestas' => 2, 'CaRespuesta' => 3, 'CaEmail' => 4, 'CaFchcreado' => 5, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte' => 0, 'caIdemail' => 1, 'caIdrepstatusrespuestas' => 2, 'caRespuesta' => 3, 'caEmail' => 4, 'caFchcreado' => 5, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE => 0, self::CA_IDEMAIL => 1, self::CA_IDREPSTATUSRESPUESTAS => 2, self::CA_RESPUESTA => 3, self::CA_EMAIL => 4, self::CA_FCHCREADO => 5, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte' => 0, 'ca_idemail' => 1, 'ca_idrepstatusrespuestas' => 2, 'ca_respuesta' => 3, 'ca_email' => 4, 'ca_fchcreado' => 5, ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdrepstatusrespuestas' => 0, 'CaIdstatus' => 1, 'CaRespuesta' => 2, 'CaEmail' => 3, 'CaLogin' => 4, 'CaFchcreado' => 5, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdrepstatusrespuestas' => 0, 'caIdstatus' => 1, 'caRespuesta' => 2, 'caEmail' => 3, 'caLogin' => 4, 'caFchcreado' => 5, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDREPSTATUSRESPUESTAS => 0, self::CA_IDSTATUS => 1, self::CA_RESPUESTA => 2, self::CA_EMAIL => 3, self::CA_LOGIN => 4, self::CA_FCHCREADO => 5, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idrepstatusrespuestas' => 0, 'ca_idstatus' => 1, 'ca_respuesta' => 2, 'ca_email' => 3, 'ca_login' => 4, 'ca_fchcreado' => 5, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
@@ -163,15 +163,15 @@ abstract class BaseRepStatusRespuestaPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
-		$criteria->addSelectColumn(RepStatusRespuestaPeer::CA_IDREPORTE);
-
-		$criteria->addSelectColumn(RepStatusRespuestaPeer::CA_IDEMAIL);
-
 		$criteria->addSelectColumn(RepStatusRespuestaPeer::CA_IDREPSTATUSRESPUESTAS);
+
+		$criteria->addSelectColumn(RepStatusRespuestaPeer::CA_IDSTATUS);
 
 		$criteria->addSelectColumn(RepStatusRespuestaPeer::CA_RESPUESTA);
 
 		$criteria->addSelectColumn(RepStatusRespuestaPeer::CA_EMAIL);
+
+		$criteria->addSelectColumn(RepStatusRespuestaPeer::CA_LOGIN);
 
 		$criteria->addSelectColumn(RepStatusRespuestaPeer::CA_FCHCREADO);
 
@@ -375,10 +375,10 @@ abstract class BaseRepStatusRespuestaPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 2] === null) {
+		if ($row[$startcol + 0] === null) {
 			return null;
 		}
-		return (string) $row[$startcol + 2];
+		return (string) $row[$startcol + 0];
 	}
 
 	/**
@@ -451,7 +451,57 @@ abstract class BaseRepStatusRespuestaPeer {
 			$con = Propel::getConnection(RepStatusRespuestaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(RepStatusRespuestaPeer::CA_IDREPORTE,RepStatusRespuestaPeer::CA_IDEMAIL,), array(RepStatusPeer::CA_IDREPORTE,RepStatusPeer::CA_IDEMAIL,), $join_behavior);
+		$criteria->addJoin(array(RepStatusRespuestaPeer::CA_IDSTATUS,), array(RepStatusPeer::CA_IDSTATUS,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Usuario table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinUsuario(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(RepStatusRespuestaPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusRespuestaPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusRespuestaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(RepStatusRespuestaPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -487,7 +537,7 @@ abstract class BaseRepStatusRespuestaPeer {
 		$startcol = (RepStatusRespuestaPeer::NUM_COLUMNS - RepStatusRespuestaPeer::NUM_LAZY_LOAD_COLUMNS);
 		RepStatusPeer::addSelectColumns($c);
 
-		$c->addJoin(array(RepStatusRespuestaPeer::CA_IDREPORTE,RepStatusRespuestaPeer::CA_IDEMAIL,), array(RepStatusPeer::CA_IDREPORTE,RepStatusPeer::CA_IDEMAIL,), $join_behavior);
+		$c->addJoin(array(RepStatusRespuestaPeer::CA_IDSTATUS,), array(RepStatusPeer::CA_IDSTATUS,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -521,6 +571,73 @@ abstract class BaseRepStatusRespuestaPeer {
 				} // if obj2 already loaded
 
 				// Add the $obj1 (RepStatusRespuesta) to $obj2 (RepStatus)
+				$obj2->addRepStatusRespuesta($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of RepStatusRespuesta objects pre-filled with their Usuario objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of RepStatusRespuesta objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinUsuario(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		RepStatusRespuestaPeer::addSelectColumns($c);
+		$startcol = (RepStatusRespuestaPeer::NUM_COLUMNS - RepStatusRespuestaPeer::NUM_LAZY_LOAD_COLUMNS);
+		UsuarioPeer::addSelectColumns($c);
+
+		$c->addJoin(array(RepStatusRespuestaPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusRespuestaPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusRespuestaPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = RepStatusRespuestaPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusRespuestaPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = UsuarioPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = UsuarioPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					UsuarioPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (RepStatusRespuesta) to $obj2 (Usuario)
 				$obj2->addRepStatusRespuesta($obj1);
 
 			} // if joined row was not null
@@ -568,7 +685,8 @@ abstract class BaseRepStatusRespuestaPeer {
 			$con = Propel::getConnection(RepStatusRespuestaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(RepStatusRespuestaPeer::CA_IDREPORTE,RepStatusRespuestaPeer::CA_IDEMAIL,), array(RepStatusPeer::CA_IDREPORTE,RepStatusPeer::CA_IDEMAIL,), $join_behavior);
+		$criteria->addJoin(array(RepStatusRespuestaPeer::CA_IDSTATUS,), array(RepStatusPeer::CA_IDSTATUS,), $join_behavior);
+		$criteria->addJoin(array(RepStatusRespuestaPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -605,7 +723,11 @@ abstract class BaseRepStatusRespuestaPeer {
 		RepStatusPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(array(RepStatusRespuestaPeer::CA_IDREPORTE,RepStatusRespuestaPeer::CA_IDEMAIL,), array(RepStatusPeer::CA_IDREPORTE,RepStatusPeer::CA_IDEMAIL,), $join_behavior);
+		UsuarioPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		$c->addJoin(array(RepStatusRespuestaPeer::CA_IDSTATUS,), array(RepStatusPeer::CA_IDSTATUS,), $join_behavior);
+		$c->addJoin(array(RepStatusRespuestaPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -643,6 +765,264 @@ abstract class BaseRepStatusRespuestaPeer {
 				// Add the $obj1 (RepStatusRespuesta) to the collection in $obj2 (RepStatus)
 				$obj2->addRepStatusRespuesta($obj1);
 			} // if joined row not null
+
+			// Add objects for joined Usuario rows
+
+			$key3 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = UsuarioPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = UsuarioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					UsuarioPeer::addInstanceToPool($obj3, $key3);
+				} // if obj3 loaded
+
+				// Add the $obj1 (RepStatusRespuesta) to the collection in $obj3 (Usuario)
+				$obj3->addRepStatusRespuesta($obj1);
+			} // if joined row not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related RepStatus table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptRepStatus(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusRespuestaPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusRespuestaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(RepStatusRespuestaPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Usuario table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptUsuario(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			RepStatusRespuestaPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(RepStatusRespuestaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(RepStatusRespuestaPeer::CA_IDSTATUS,), array(RepStatusPeer::CA_IDSTATUS,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Selects a collection of RepStatusRespuesta objects pre-filled with all related objects except RepStatus.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of RepStatusRespuesta objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptRepStatus(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		RepStatusRespuestaPeer::addSelectColumns($c);
+		$startcol2 = (RepStatusRespuestaPeer::NUM_COLUMNS - RepStatusRespuestaPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		UsuarioPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(RepStatusRespuestaPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusRespuestaPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusRespuestaPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = RepStatusRespuestaPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusRespuestaPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Usuario rows
+
+				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = UsuarioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					UsuarioPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (RepStatusRespuesta) to the collection in $obj2 (Usuario)
+				$obj2->addRepStatusRespuesta($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of RepStatusRespuesta objects pre-filled with all related objects except Usuario.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of RepStatusRespuesta objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptUsuario(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		RepStatusRespuestaPeer::addSelectColumns($c);
+		$startcol2 = (RepStatusRespuestaPeer::NUM_COLUMNS - RepStatusRespuestaPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		RepStatusPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(RepStatusRespuestaPeer::CA_IDSTATUS,), array(RepStatusPeer::CA_IDSTATUS,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = RepStatusRespuestaPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = RepStatusRespuestaPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = RepStatusRespuestaPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				RepStatusRespuestaPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined RepStatus rows
+
+				$key2 = RepStatusPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = RepStatusPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = RepStatusPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					RepStatusPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (RepStatusRespuesta) to the collection in $obj2 (RepStatus)
+				$obj2->addRepStatusRespuesta($obj1);
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
@@ -700,6 +1080,10 @@ abstract class BaseRepStatusRespuestaPeer {
 			$criteria = clone $values; // rename for clarity
 		} else {
 			$criteria = $values->buildCriteria(); // build Criteria from RepStatusRespuesta object
+		}
+
+		if ($criteria->containsKey(RepStatusRespuestaPeer::CA_IDREPSTATUSRESPUESTAS) && $criteria->keyContainsValue(RepStatusRespuestaPeer::CA_IDREPSTATUSRESPUESTAS) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.RepStatusRespuestaPeer::CA_IDREPSTATUSRESPUESTAS.')');
 		}
 
 

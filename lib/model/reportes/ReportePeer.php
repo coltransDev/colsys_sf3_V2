@@ -188,11 +188,13 @@ class ReportePeer extends BaseReportePeer
 			}			
 			$fecha = Utils::addDays( date("Y-m-d"), $add );
 		}
+		
+		
 			
 		$criterion = $c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, null, Criteria::ISNULL );				
 		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, "Carga en Aeropuerto de Destino", Criteria::NOT_EQUAL));			
 		$criterion->addOr($c->getNewCriterion( InoMaestraAirPeer::CA_FCHLLEGADA, $fecha , Criteria::GREATER_EQUAL));
-		$criterion->addOr($c->getNewCriterion( InoMaestraAirPeer::CA_FCHLLEGADA, null , Criteria::ISNULL));
+		//$criterion->addOr($c->getNewCriterion( InoMaestraAirPeer::CA_FCHLLEGADA, null , Criteria::ISNULL));
 											
 		$c->addAnd($criterion);
 		//echo "-------->".$c->toString();

@@ -74,32 +74,20 @@ class RepStatus extends BaseRepStatus
 		$resultado = "";	
 		$reporte = $this->getReporte();	
 		
+		switch( $this->getCaIdEtapa () ){
+			case "IMCPD":				
+				$txt = "La MN ".$this->getCaIdnave(). " arribó en ".$reporte->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $this->getCaFchllegada() )." con la orden en referencia a bordo.";	
+				
+				if( $this->getCaStatus() ){
+					$txt .="\n".ucfirst($this->getCaStatus());	
+				}
+				return $txt;	
+				break;
+		}
+		
+		
 		switch( $this->getCaEtapa () ){			
-			
-			/*case "Carga con Reserva":
-				$resultado= "Nuestra oficina ha hecho reserva";
-				if( $this->getCaFchreserva() ){
-					$resultado.= " para el ".Utils::fechaMes($this->getCaFchreserva());
-				}
-				if( $this->getCaIdNave() ){
-					if( $reporte->getCaTransporte()=="Aéreo" ){
-						$resultado.=" en el vuelo ".$this->getCaIdNave();
-					}else{
-						$resultado.=" en la MN ".$this->getCaIdNave();
-					}
-					$resultado.=$this->getCaIdNave();
-				}
-				if( $this->getCaFchcierrereserva() ){
-					$resultado.=" que tiene fecha de cierre: ".Utils::fechaMes($this->getCaFchcierrereserva());
-				}
-				if( $this->getCaFchsalida () ){
-					$resultado.=", la fecha estimada de zarpe: " . Utils::fechaMes($this->getCaFchsalida ());
-				}
-				if( $this->getCaFchllegada() ){
-				 	$resultado.= " y fecha estimada de arribo: ".Utils::fechaMes($this->getCaFchllegada());
-				}
-				$resultado.= $this->getCaStatus();
-				break;*/
+						
 			case "Carga Embarcada":	
 				if( strlen( $this->getCaStatus())>6  ){
 					$resultado = $this->getCaStatus();
@@ -193,8 +181,93 @@ class RepStatus extends BaseRepStatus
 	/*
 	* Envia el status, generalemte se usa despues de guardar
 	*/
-	public function send(){
-		echo "----->".$this->getCaIdstatus();			
+	public function send(array $addresses=array(), array $cc=array(), array $attachments = array(),  $options=array()){
+				
+		$user = sfContext::getInstance()->getUser();
+		
+		$email = new Email();	
+		
+		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email->setCaUsuenvio( $user->getUserId() );
+		
+		$email->setCaTipo( "Envío de Status" ); 	
+		
+		
+		$email->setCaIdcaso( $this->getCaIdreporte() );
+		$email->setCaFrom( $user->getEmail() );
+		$email->setCaFromname( $user->getNombre() );
+		
+		if( isset( $options['readreceipt'] ) && $options['readreceipt'] ){
+			$email->setCaReadReceipt( true );
+		}
+
+		$email->setCaReplyto( $user->getEmail() );
+				
+		
+		foreach( $addresses as $recip ){			
+			$recip = str_replace(" ", "", $recip );			
+			if( $recip ){
+				$email->addTo( $recip ); 
+			}
+		}			
+								
+		
+		foreach( $cc as $recip ){			
+			$recip = str_replace(" ", "", $recip );			
+			if( $recip ){
+				$email->addCc( $recip ); 
+			}
+		}
+		
+		$reporte = $this->getReporte();
+					
+		if ( $reporte->getCaSeguro()=="Sí" ) {
+			$email->addCc( "seguros@coltrans.com.co" ); 
+		}
+				
+		$email->addCc( $user->getEmail() );
+		
+		if( $this->getCaIdetapa()=="IMCPD" ){		
+			$inoCliente = $reporte->getInoClientesSea();		
+			$subject = "Confirmación de Llegada Ref:".$inoCliente->getCaReferencia()."/".$reporte->getCaConsecutivo()." Buque:".$this->getCaIdnave();
+		}else{
+			$subject = "Status ".$reporte->getCaConsecutivo().". Buque:".$this->getCaIdnave();
+		}
+		
+		
+		$email->setCaSubject( $subject );
+		
+		
+		
+		
+		if( $attachments ){		
+			$email->setCaAttachment( implode( "|", $attachments ) );
+		}
+		
+		if ( $reporte->getCaContinuacion() != 'N/A' ){
+			$recips = explode(",",$reporte->getCaContinuacionConf());			
+			foreach( $recips as $recip ){			
+				$recip = str_replace(" ", "", $recip );			
+				if( $recip ){					
+					$email->addCc( $recip ); 
+				}
+			}	   
+		}
+			
+		if ( $reporte->getCaColmas() == 'Sí'  ){
+			$cordinador = $reporte->getCliente()->getCoordinador(); 			 
+			if( $cordinador ){			
+				$email->addCc( $cordinador->getCaEmail() );				
+			}		  		   
+		}
+		
+		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
+		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
+		
+		$email->save(); 
+		$email->send(); 	
+		$this->setCaIdemail( $email->getCaIdemail() );
+		$this->save();
 	}
 }
 

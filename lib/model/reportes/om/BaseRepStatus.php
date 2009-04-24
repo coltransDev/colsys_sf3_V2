@@ -175,9 +175,9 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	protected $aEmail;
 
 	/**
-	 * @var        TrackingEtapas
+	 * @var        TrackingEtapa
 	 */
-	protected $aTrackingEtapas;
+	protected $aTrackingEtapa;
 
 	/**
 	 * @var        array RepStatusRespuesta[] Collection to store aggregation of RepStatusRespuesta objects.
@@ -1312,8 +1312,8 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = RepStatusPeer::CA_IDETAPA;
 		}
 
-		if ($this->aTrackingEtapas !== null && $this->aTrackingEtapas->getCaIdetapa() !== $v) {
-			$this->aTrackingEtapas = null;
+		if ($this->aTrackingEtapa !== null && $this->aTrackingEtapa->getCaIdetapa() !== $v) {
+			$this->aTrackingEtapa = null;
 		}
 
 		return $this;
@@ -1418,8 +1418,8 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		if ($this->aEmail !== null && $this->ca_idemail !== $this->aEmail->getCaIdemail()) {
 			$this->aEmail = null;
 		}
-		if ($this->aTrackingEtapas !== null && $this->ca_idetapa !== $this->aTrackingEtapas->getCaIdetapa()) {
-			$this->aTrackingEtapas = null;
+		if ($this->aTrackingEtapa !== null && $this->ca_idetapa !== $this->aTrackingEtapa->getCaIdetapa()) {
+			$this->aTrackingEtapa = null;
 		}
 	} // ensureConsistency
 
@@ -1462,7 +1462,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 
 			$this->aReporte = null;
 			$this->aEmail = null;
-			$this->aTrackingEtapas = null;
+			$this->aTrackingEtapa = null;
 			$this->collRepStatusRespuestas = null;
 			$this->lastRepStatusRespuestaCriteria = null;
 
@@ -1570,11 +1570,11 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 				$this->setEmail($this->aEmail);
 			}
 
-			if ($this->aTrackingEtapas !== null) {
-				if ($this->aTrackingEtapas->isModified() || $this->aTrackingEtapas->isNew()) {
-					$affectedRows += $this->aTrackingEtapas->save($con);
+			if ($this->aTrackingEtapa !== null) {
+				if ($this->aTrackingEtapa->isModified() || $this->aTrackingEtapa->isNew()) {
+					$affectedRows += $this->aTrackingEtapa->save($con);
 				}
-				$this->setTrackingEtapas($this->aTrackingEtapas);
+				$this->setTrackingEtapa($this->aTrackingEtapa);
 			}
 
 			if ($this->isNew() ) {
@@ -1690,9 +1690,9 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 				}
 			}
 
-			if ($this->aTrackingEtapas !== null) {
-				if (!$this->aTrackingEtapas->validate($columns)) {
-					$failureMap = array_merge($failureMap, $this->aTrackingEtapas->getValidationFailures());
+			if ($this->aTrackingEtapa !== null) {
+				if (!$this->aTrackingEtapa->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTrackingEtapa->getValidationFailures());
 				}
 			}
 
@@ -2308,13 +2308,13 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Declares an association between this object and a TrackingEtapas object.
+	 * Declares an association between this object and a TrackingEtapa object.
 	 *
-	 * @param      TrackingEtapas $v
+	 * @param      TrackingEtapa $v
 	 * @return     RepStatus The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setTrackingEtapas(TrackingEtapas $v = null)
+	public function setTrackingEtapa(TrackingEtapa $v = null)
 	{
 		if ($v === null) {
 			$this->setCaIdetapa(NULL);
@@ -2322,10 +2322,10 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			$this->setCaIdetapa($v->getCaIdetapa());
 		}
 
-		$this->aTrackingEtapas = $v;
+		$this->aTrackingEtapa = $v;
 
 		// Add binding for other direction of this n:n relationship.
-		// If this object has already been added to the TrackingEtapas object, it will not be re-added.
+		// If this object has already been added to the TrackingEtapa object, it will not be re-added.
 		if ($v !== null) {
 			$v->addRepStatus($this);
 		}
@@ -2335,27 +2335,27 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 
 
 	/**
-	 * Get the associated TrackingEtapas object
+	 * Get the associated TrackingEtapa object
 	 *
 	 * @param      PropelPDO Optional Connection object.
-	 * @return     TrackingEtapas The associated TrackingEtapas object.
+	 * @return     TrackingEtapa The associated TrackingEtapa object.
 	 * @throws     PropelException
 	 */
-	public function getTrackingEtapas(PropelPDO $con = null)
+	public function getTrackingEtapa(PropelPDO $con = null)
 	{
-		if ($this->aTrackingEtapas === null && (($this->ca_idetapa !== "" && $this->ca_idetapa !== null))) {
-			$c = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
-			$c->add(TrackingEtapasPeer::CA_IDETAPA, $this->ca_idetapa);
-			$this->aTrackingEtapas = TrackingEtapasPeer::doSelectOne($c, $con);
+		if ($this->aTrackingEtapa === null && (($this->ca_idetapa !== "" && $this->ca_idetapa !== null))) {
+			$c = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+			$c->add(TrackingEtapaPeer::CA_IDETAPA, $this->ca_idetapa);
+			$this->aTrackingEtapa = TrackingEtapaPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
 			   guarantee the related object contains a reference
 			   to this object.  This level of coupling may, however, be
 			   undesirable since it could result in an only partially populated collection
 			   in the referenced object.
-			   $this->aTrackingEtapas->addRepStatuss($this);
+			   $this->aTrackingEtapa->addRepStatuss($this);
 			 */
 		}
-		return $this->aTrackingEtapas;
+		return $this->aTrackingEtapa;
 	}
 
 	/**
@@ -2414,9 +2414,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			   $this->collRepStatusRespuestas = array();
 			} else {
 
-				$criteria->add(RepStatusRespuestaPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				$criteria->add(RepStatusRespuestaPeer::CA_IDEMAIL, $this->ca_idemail);
+				$criteria->add(RepStatusRespuestaPeer::CA_IDSTATUS, $this->ca_idstatus);
 
 				RepStatusRespuestaPeer::addSelectColumns($criteria);
 				$this->collRepStatusRespuestas = RepStatusRespuestaPeer::doSelect($criteria, $con);
@@ -2429,10 +2427,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepStatusRespuestaPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-
-				$criteria->add(RepStatusRespuestaPeer::CA_IDEMAIL, $this->ca_idemail);
+				$criteria->add(RepStatusRespuestaPeer::CA_IDSTATUS, $this->ca_idstatus);
 
 				RepStatusRespuestaPeer::addSelectColumns($criteria);
 				if (!isset($this->lastRepStatusRespuestaCriteria) || !$this->lastRepStatusRespuestaCriteria->equals($criteria)) {
@@ -2472,9 +2467,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 				$count = 0;
 			} else {
 
-				$criteria->add(RepStatusRespuestaPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				$criteria->add(RepStatusRespuestaPeer::CA_IDEMAIL, $this->ca_idemail);
+				$criteria->add(RepStatusRespuestaPeer::CA_IDSTATUS, $this->ca_idstatus);
 
 				$count = RepStatusRespuestaPeer::doCount($criteria, $con);
 			}
@@ -2486,10 +2479,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 				// one, just return count of the collection.
 
 
-				$criteria->add(RepStatusRespuestaPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-
-				$criteria->add(RepStatusRespuestaPeer::CA_IDEMAIL, $this->ca_idemail);
+				$criteria->add(RepStatusRespuestaPeer::CA_IDSTATUS, $this->ca_idstatus);
 
 				if (!isset($this->lastRepStatusRespuestaCriteria) || !$this->lastRepStatusRespuestaCriteria->equals($criteria)) {
 					$count = RepStatusRespuestaPeer::doCount($criteria, $con);
@@ -2522,6 +2512,53 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		}
 	}
 
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this RepStatus is new, it will return
+	 * an empty collection; or if this RepStatus has previously
+	 * been saved, it will retrieve related RepStatusRespuestas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in RepStatus.
+	 */
+	public function getRepStatusRespuestasJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(RepStatusPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepStatusRespuestas === null) {
+			if ($this->isNew()) {
+				$this->collRepStatusRespuestas = array();
+			} else {
+
+				$criteria->add(RepStatusRespuestaPeer::CA_IDSTATUS, $this->ca_idstatus);
+
+				$this->collRepStatusRespuestas = RepStatusRespuestaPeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(RepStatusRespuestaPeer::CA_IDSTATUS, $this->ca_idstatus);
+
+			if (!isset($this->lastRepStatusRespuestaCriteria) || !$this->lastRepStatusRespuestaCriteria->equals($criteria)) {
+				$this->collRepStatusRespuestas = RepStatusRespuestaPeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastRepStatusRespuestaCriteria = $criteria;
+
+		return $this->collRepStatusRespuestas;
+	}
+
 	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
@@ -2544,7 +2581,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		$this->collRepStatusRespuestas = null;
 			$this->aReporte = null;
 			$this->aEmail = null;
-			$this->aTrackingEtapas = null;
+			$this->aTrackingEtapa = null;
 	}
 
 } // BaseRepStatus
