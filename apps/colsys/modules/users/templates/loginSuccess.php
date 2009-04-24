@@ -1,5 +1,5 @@
 
-<form action="<?=url_for("users/login")?>" method="post">
+<form action="<?=url_for("users/login")?>" method="post" autocomplete="off">
 <br />
 <br />
 

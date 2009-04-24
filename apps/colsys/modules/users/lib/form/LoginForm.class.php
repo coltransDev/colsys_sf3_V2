@@ -9,10 +9,17 @@ class LoginForm extends sfForm{
 		  'passwd' => new sfWidgetFormInputPassword(),
 		));
 		
+		
 		$this->widgetSchema->setLabels(array(
 		  'username'    => 'Usuario',
 		  'passwd'   => 'Clave'
 		));
+		
+		$this->widgetSchema->setAttributes(array(
+		  "autocomplete"=>"off"
+		));
+		
+		
 		
 		
 		$this->setValidators(array(
