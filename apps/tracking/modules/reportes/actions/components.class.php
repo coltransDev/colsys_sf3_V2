@@ -17,8 +17,7 @@ class reportesComponents extends sfComponents
 	public function executeListaRespuestas()
 	{
 		$c = new Criteria();	
-		$c->add( RepStatusRespuestaPeer::CA_IDEMAIL, $this->idemail );	
-		$c->add( RepStatusRespuestaPeer::CA_IDREPORTE, $this->idreporte );	
+		$c->add( RepStatusRespuestaPeer::CA_IDSTATUS, $this->idstatus );	
 		$c->addAscendingOrderByColumn( RepStatusRespuestaPeer::CA_FCHCREADO );				
 		$this->respuestas = RepStatusRespuestaPeer::doSelect( $c );
 	}
@@ -61,12 +60,13 @@ class reportesComponents extends sfComponents
 			
 			$status = $reporte->getUltimoStatus();
 			
-			if( $reporte->getCaEtapaActual() == "Cierre de Documentos" && strtotime($status->getCaFchstatus("Y-m-d") )<=strtotime(date("Y-m-d"), time()-604800 )  ){	
-				$reporte->setCaEtapaActual("Carga Entregada");
-				$reporte->save();
-				continue;
+			if( $status ){
+				if( $reporte->getCaEtapaActual() == "Cierre de Documentos" && strtotime($status->getCaFchstatus("Y-m-d") )<=strtotime(date("Y-m-d"), time()-604800 )  ){	
+					$reporte->setCaEtapaActual("Carga Entregada");
+					$reporte->save();
+					continue;
+				}
 			}
-			
 			
 			$class= $reporte->getColorStatus();
 			

@@ -1,4 +1,4 @@
 <?
-include_component("reportes","listaRespuestas", array("idreporte"=>$idreporte, "idemail"=>$idemail ));
+include_component("reportes","listaRespuestas", array( "idstatus"=>$idstatus ));
 exit;
 ?>

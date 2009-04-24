@@ -12,7 +12,7 @@ $fileIdx = 0;
 		document.getElementById( "coment_status_txt_"+id ).style.display = "none";
 	}
 	
-	function guardar_comentario( id, idreporte, idemail ){
+	function guardar_comentario( id ){
 		cancelar_comentar( id );
 		
 		var txt = document.getElementById( "coment_status_field_"+id ).value;
@@ -22,13 +22,23 @@ $fileIdx = 0;
 				waitMsg: 'Guardando...',						
 				url: '<?=url_for("reportes/guardarRespuesta")?>', 														
 				params : {
-					idemail: idemail,
-					idreporte: idreporte, 
+					idstatus: id,					
 					comentario: txt
 				},
 										
 				callback :function(options, success, response){	
 					document.getElementById("coments_"+id).innerHTML = response.responseText; 
+					<?
+					if(!$user->getTrackingUser()){
+					?>
+					alert("El mensaje se ha enviado, proximamente recibirá una respuesta");
+					<?
+					}else{
+					?>
+					alert("El mensaje se ha enviado, se enviará una copia al cliente");
+					<?
+					}
+					?>
 				}	
 			 }
 		); 				
@@ -54,6 +64,17 @@ $fileIdx = 0;
 			echo $proveedoresStr;
 	        ?>		
         </div>		</td>
+	</tr>
+	<tr>
+		<td width="50%">
+		<div align="left"><b>Reporte:</b><br />
+		  <?=$reporte->getCaConsecutivo ()?>	  
+		  </div>		</td>
+		<td width="50%">
+		<div align="left"><b>Orden:<br />
+		</b>
+	      <?=$reporte->getCaOrdenClie()?> 
+	    </div>		</td>
 	</tr>
 	<tr>
 		<td width="50%">
@@ -245,21 +266,21 @@ $statuss = $reporte->getHistorialStatus ();
 				<?=Utils::replace ( $status["status"] )?>	
 				<br />			
 			</div>
-			<div id="coments_<?=$timestamp?>">
+			<div id="coments_<?=$status["idstatus"]?>">
 			<?
-			include_component("reportes","listaRespuestas", array("idreporte"=>$reporte->getCaIdreporte(), "idemail"=>$status['emailid'] ));
+			include_component("reportes","listaRespuestas", array("idstatus"=>$status['idstatus'] ));
 			?>
 			</div>
 			<?php 
-			if($trackingUser && false ){
+			if( $status['idstatus'] ){
 			?>
-			<div class="story_coment" id="coment_status_txt_<?=$timestamp?>" style="display:none" >
-				<textarea rows="1" cols="50" id="coment_status_field_<?=$timestamp?>" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
+			<div class="story_coment" id="coment_status_txt_<?=$status['idstatus']?>" style="display:none" >
+				<textarea rows="1" cols="50" id="coment_status_field_<?=$status['idstatus']?>" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
 				<br />
 				
-				<b><a onclick="guardar_comentario('<?=$timestamp?>', <?=$reporte->getCaIdreporte()?>, <?=$status['emailid']?>  )">Guardar</b></a> <b><a onclick="cancelar_comentar('<?=$timestamp?>')">Cancelar</a></b>
+				<b><a onclick="guardar_comentario( <?=$status['idstatus']?>  )">Guardar</b></a> <b><a onclick="cancelar_comentar('<?=$status['idstatus']?>')">Cancelar</a></b>
 			</div>	
-			<div class="story_coment" id="coment_status_<?=$timestamp?>" onclick="comentar('<?=$timestamp?>')">
+			<div class="story_coment" id="coment_status_<?=$status['idstatus']?>" onclick="comentar('<?=$status['idstatus']?>')">
 				<b>Respuesta</b>
 			</div>	
 			<?php 
@@ -268,7 +289,7 @@ $statuss = $reporte->getHistorialStatus ();
 	  </td>
 		<td width="11%"><?php
 			if( isset($status["emailid"]) ){
-				echo link_to ( image_tag ( "24x24/mail_post_to.gif" ), 'reportes/verEmail?idreporte='.$reporte->getCaIdreporte().'&email=' .$status["emailid"]  );
+				echo link_to ( image_tag ( "24x24/mail_post_to.gif" ), 'reportes/verEmail?email=' .$status["emailid"].'&idstatus='.$status["idstatus"]  );
 				
 				
 			}			
@@ -316,29 +337,8 @@ $statuss = $reporte->getHistorialStatus ();
 	
 	
 	//Los archivos en los attachments
-	
-	$repavisos = $reporte->getRepAvisos();
-	
-	
-	foreach( $repavisos as $repaviso ){
-		$email = $repaviso->getEmail();
-		$attachments = $email ->getEmailAttachments();
 		
-		foreach( $attachments as $attachment ){
-			$url = "general/attachmentViewer?idx=" . $attachment->getCaIdattachment() . "&token=" . md5 ( time().$attachment->getCaHeaderFile());
-		?>
-		<tr>
-			<td width="70%">
-			<div align="left" class="info"><?=mime_type_icon ( $attachment->getCaHeaderFile() )?>
-			
-			<a href="#" onClick="popup('<?=url_for($url)?>', '800', '600' , '')"><?=basename ( $attachment->getCaHeaderFile() )?></a>
-			</div>
-			</td>
-		</tr>
-		<?
-		}
-		 
-	}
+	
 	
 	$repstatuss = $reporte->getRepStatuss();	
 	foreach( $repstatuss as $repstatus ){
@@ -364,7 +364,7 @@ $statuss = $reporte->getHistorialStatus ();
 				<td width="70%">
 				<div align="center" class="info">No se han colocado archivos</div>
 				</td>
-			</tr>
+		</tr>
 	<?
 	}
 	?>
