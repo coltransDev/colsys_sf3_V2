@@ -84,6 +84,8 @@ class confirmacionesActions extends sfActions
 		
 		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."confirmaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
 		$this->textos = sfYaml::load($config);	
+		
+		
 	}
 	
 	/**
@@ -92,7 +94,9 @@ class confirmacionesActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeCrearStatus(sfWebRequest $request){	
-		//print_r( $_POST );
+		/*print_r( $_POST );
+		exit();
+		*/
 		
 		$referencia = InoMaestraSeaPeer::retrieveByPk( $request->getParameter( "id" ) );
 		$this->forward404Unless( $referencia );
@@ -102,9 +106,7 @@ class confirmacionesActions extends sfActions
 		$oids = $request->getParameter( "oid" );
 		
 		$inoClientes = array();
-		
-		
-		
+			
 		if( $modo=="conf" ){
 			
 			$referencia->setCaFchconfirmacion( $request->getParameter( "fchconfirmacion" ) );
@@ -121,32 +123,92 @@ class confirmacionesActions extends sfActions
 			$referencia->save();				
 		}
 		
+		/*
+		* attachments 
+		*/		
+		if( is_uploaded_file ( $_FILES['attachment']['tmp_name'] ) ){
+			$attachment = $_FILES['attachment'];
+		}else{
+			$attachment = null;
+		}
+		
 		foreach( $oids as $oid ){
+					
+			if( is_uploaded_file ( $_FILES['attachment_'.$oid]['tmp_name'] ) ){
+				$attachment2 = $_FILES['attachment_'.$oid];
+			}else{
+				$attachment2 = null;
+			}
+			
 			$inoCliente = InoClientesSeaPeer::retrieveByOID( $oid );
 			
 			$reporte = $inoCliente->getReporte();
+			$directory = $reporte->getDirectorio();
+			
+			if(!file_exists($directory)){
+				@mkdir( $directory ); 
+			}
+			
+			$attachments = array();
+			
+			if( $attachment ){
+				$file = $directory.DIRECTORY_SEPARATOR.$attachment['name'];
+				copy( $attachment['tmp_name'] , $file ); 
+				$attachments[] = $file;
+			}
+			
+			if( $attachment2 ){
+				$file = $directory.DIRECTORY_SEPARATOR.$attachment2['name'];
+				copy( $attachment2['tmp_name'] , $file ); 
+				$attachments[] = $file;
+			}
+							
 			$ultimostatus = $reporte->getUltimoStatus();
 						
 			$status = new RepStatus();
 						
 			$status->setCaIdReporte( $reporte->getCaIdreporte() );
 			$status->setCaFchStatus( date("Y-m-d H:i:s") );			
-			$status->setCaEtapa("Confirmación");
-			$status->setCaIntroduccion( "Confirmación " );
-			$status->setCaStatus( $this->getRequestParameter("email_body") );
+			$status->setCaIdEtapa("IMCPD");
+			$status->setCaIntroduccion( $this->getRequestParameter("intro_body") );
+			$status->setCaStatus( $this->getRequestParameter("mensaje_".$oid) );
 			$status->setCaComentarios( $this->getRequestParameter("notas") );			
 			$status->setCaFchenvio( date("Y-m-d H:i:s") );
 			$status->setCausuenvio( $this->getUser()->getUserId() );
-			$status->save();
-			$status->send();
 			
-			
+			if( $ultimostatus ){
+				$status->setCaPiezas( $ultimostatus->getCaPiezas() );
+				$status->setCaPeso( $ultimostatus->getCaPeso() );
+				$status->setCaVolumen( $ultimostatus->getCaVolumen() );
+				$status->setCaIdnave( $ultimostatus->getCaIdnave() );
+				$status->setCaFchsalida( $ultimostatus->getCaFchsalida() );
+				$status->setCaFchllegada( $ultimostatus->getCaFchllegada() );
+				$status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
+			}
 						
-		}
-		
-		
-		
-		
+			if( $modo=="conf" ){			
+				if( $referencia->getCaMnLlegada() ){
+					$status->setCaIdnave( $referencia->getCaMnLlegada() );
+				}else{
+					$status->setCaIdnave( $referencia->getCaMotonave() );
+				}
+				$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
+			}	
+			
+			$destinatarios = array();
+			
+			$checkbox = $request->getParameter("em_".$oid);
+			foreach($checkbox as $check ){				
+				$destinatarios[]=$request->getParameter("ar_".$oid."_".$check);
+			}
+					
+			$status->save();
+			$status->send($destinatarios, array(), $attachments );		
+			
+			$this->status = $status;	
+			$this->modo = $modo;	
+			$this->referencia = $referencia;			
+		}		
 		
 		/*
 		$status->setCaIdReporte( $this->reporteId );
@@ -223,18 +285,6 @@ class confirmacionesActions extends sfActions
 		*/
 	}
 	
-	public function executeVerStatus(sfWebRequest $request){
-		$this->status = RepStatusPeer::retrieveByPk( $request->getParameter("idstatus") );
-		$this->forward404Unless( $this->status );
-		
-		$this->reporte = $this->status->getReporte();
-		$this->inoCliente = $this->reporte->getInoClientesSea();
-		$this->inoMaestra = $this->inoCliente->getInoMaestraSea();
-		$this->cliente = $this->inoCliente->getCliente();
-		$this->setLayout("email");
-		
-		$this->user = UsuarioPeer::retrieveByPk( $this->getUser()->getUserId() );
-	}
 	
 }
 

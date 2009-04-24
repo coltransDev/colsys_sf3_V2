@@ -212,7 +212,7 @@ function habilitar(campo){
 			</tr>
 			<tr>
 				<td class="mostrar" colspan="4"><b>Introducción al Mensaje de Confirmación:</b><br>
-					<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeStatus']?>
+					<textarea name="intro_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeConf']?>
 </textarea></td>
 			</tr>
 			</tbody>
@@ -222,7 +222,7 @@ function habilitar(campo){
 			<tbody>
 				<tr>
 					<td class="mostrar" colspan="4"><b>Mensaje de Status:</b><br>
-						<textarea name="status_body" wrap="virtual" rows="3" cols="93">Respetado cliente buenos días:</textarea></td>
+						<textarea name="status_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeStatus']?></textarea></td>
 				</tr>
 			</tbody>
 		</table>
@@ -315,8 +315,8 @@ function habilitar(campo){
              		               $chequear = (isset($confirmar[$i]) and in_array($confirmar[$i],$emails) and $confirmar[$i]!="")?"checked='checked'":"";
 								
 								?>
-							<input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>[]' value='<?=isset($confirmar[$i])?$confirmar[$i]:""?>' size="35" maxlength="50" />
-							<input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=isset($confirmar[$i])?$confirmar[$i]:""?>' onchange='asignar_email(this);' <?=$chequear?>>
+							<input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($confirmar[$i])?$confirmar[$i]:""?>' size="35" maxlength="50" />
+							<input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  <?=$chequear?>>
 							<br />
 							<?
 								}
