@@ -46,7 +46,7 @@ class buscarActions extends sfActions
 					$c->addJoin( ReportePeer::CA_IDPROVEEDOR ,TerceroPeer::CA_IDTERCERO );
 					$c->add( TerceroPeer::CA_NOMBRE, TerceroPeer::CA_NOMBRE." LIKE '%".strtoupper($criterio)."%'", Criteria::CUSTOM );
 					break;
-				case "reporte":
+				case "reporte":					
 					$c->add(ReportePeer::CA_CONSECUTIVO, "%".$criterio."%", Criteria::LIKE );
 									
 					break;

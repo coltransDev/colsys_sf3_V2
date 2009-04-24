@@ -53,7 +53,7 @@
 			?>
         </div></td>
 		<td><div align="left" class="info">
-			<?=$reporte->getTercero()?>
+			<?=$reporte->getProveedoresStr()?>
 		</div></td>
 		<td>
 			<div align="left" class="info">
