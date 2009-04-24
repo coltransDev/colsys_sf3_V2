@@ -10,17 +10,17 @@
 	<tr>
 		<td class="mostrar"><?=$cliente->getCaIdCliente()?>
 		<?=$cliente->getCaDigito()?"-".$cliente->getCaDigito():""?></td>
-		<td  class="mostrar" width="430" colspan="4"><strong>
+		<td  class="mostrar" width="430" colspan="4"><b>
 			<?=$cliente->getCaCompania()?>
 			<br />
-			Direcci&oacute;n: </strong>
+			Direcci&oacute;n: </b>
 			<?=str_replace("|"," ",$cliente->getCaDireccion())?>
-			&nbsp;&nbsp;<strong>Localidad: </strong>
+			&nbsp;&nbsp;<b>Localidad: </b>
 			<?=$cliente->getCaLocalidad()?>
 			<br />
-			<strong>Tel&eacute;fonos: </strong>
+			<b>Tel&eacute;fonos: </b>
 			<?=$cliente->getCaTelefonos()?>
-			&nbsp;&nbsp;&nbsp;&nbsp;<strong>Fax: </strong>
+			&nbsp;&nbsp;&nbsp;&nbsp;<b>Fax: </b>
 			<?=$cliente->getCaFax()?></td>
 	</tr>
 	<?
@@ -29,8 +29,8 @@
 	?>
 	<tr>
 		<td rowspan="5" class="mostrar"></td>
-		<td class="mostrar"><strong><?=Utils::replace( $contacto->getCaSaludo() )?></strong></td>
-		<td colspan="3" class="mostrar"><strong><?=Utils::replace( $contacto->getNombre() )?></strong></td>
+		<td class="mostrar"><b><?=Utils::replace( $contacto->getCaSaludo() )?></b></td>
+		<td colspan="3" class="mostrar"><b><?=Utils::replace( $contacto->getNombre() )?></b></td>
 	</tr>
 	
 	<tr>
@@ -52,7 +52,7 @@
 			&nbsp;</td>
 	</tr>
 	<tr>
-		<td class="mostrar" colspan="2"><strong>Estado tracking</strong><br />
+		<td class="mostrar" colspan="2"><b>Estado tracking</b><br />
 		<?
 			$trackingUser = $contacto->getTrackingUser();
 			if( $trackingUser ){
@@ -77,7 +77,19 @@
 			que otros clientes puede ver
 			*/			
 			?></td>
-		<td class="mostrar" colspan="2">&nbsp;</td>
+		<td class="mostrar" colspan="2">
+			<b>Puede ver informaci&oacute;n de:<br /></b> 
+			<?
+			$c = new Criteria();
+			$c->add( ContactoPeer::CA_EMAIL, $contacto->getCaEmail() );
+			$cns = ContactoPeer::doSelect( $c );
+			
+			foreach( $cns as $cn ){
+				echo $cn->getCliente()?$cn->getCliente()->getCaCompania()."<br />":"";			
+			}
+			?>
+		
+		</td>
 	</tr>	
 	
 	<?

@@ -520,7 +520,7 @@ class clientesActions extends sfActions
 		$this->getRequest()->setParameter("empresa", $empresa);
 		
 		$email->setCaSubject( "Cliente con cambio de Estado, periodo:$inicio a $final en $empresa" );
-		$email->setCaBody(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstados') );
+		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstados') );
 		
 		$email->save();
 		$email->send();
@@ -569,7 +569,7 @@ class clientesActions extends sfActions
 		$this->getRequest()->setParameter("sucursal", $sucursal);
 		
 		$email->setCaSubject( "Cliente con Vencimiento de Circular 170 a : $inicio" );
-		$email->setCaBody(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircular') );
+		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircular') );
 		
 		$email->save();
 		$email->send();
@@ -834,7 +834,7 @@ class clientesActions extends sfActions
 						$email->addCc( $val );
 					}
 					$email->setCaSubject( "Verificación Clientes en Lista Clinton" );		
-					$email->setCaBody( $msn_mem );
+					$email->setCaBodyHtml( $msn_mem );
 					//$email->save(); //guarda el cuerpo del mensaje
 					//$email->send(); //envia el mensaje de correo	
 				}
@@ -879,7 +879,7 @@ class clientesActions extends sfActions
 		echo $msn_mem."\n\n";
 		
 		$email->setCaSubject( "Verificación Clientes en Lista Clinton" );		
-		$email->setCaBody( $msn_mem );
+		$email->setCaBodyHtml( $msn_mem );
 		//$email->save(); //guarda el cuerpo del mensaje
 		//$email->send(); //envia el mensaje de correo	
 		
