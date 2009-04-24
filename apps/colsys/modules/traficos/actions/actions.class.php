@@ -20,6 +20,49 @@ class traficosActions extends sfActions
 		$this->impoexpo = $request->getParameter("impoexpo");
 		$this->transporte = $request->getParameter("transporte");					
 	}
+	
+
+	/*
+	 * Plantillas para el correo de traficos 
+	 * @author: Andres Botero
+	 */	
+	public function executeVerStatus(){
+		
+		$this->status = RepStatusPeer::retrieveByPk( $this->getRequestParameter("idstatus") );		
+		$this->forward404Unless( $this->status );
+		$this->reporte = $this->status->getReporte();
+			
+		$this->setTemplate("emailDefaultStatus");	
+			
+		$etapa = $this->status->getTrackingEtapa();
+				
+		if( $etapa ){			
+			if( $etapa->getCaTemplate() ){			
+				$this->setTemplate($etapa->getCaTemplate());							
+			}				
+		} 
+		
+		$this->user = UsuarioPeer::retrieveByPk( $this->status->getCaUsuenvio() );
+				
+		$this->setLayout("email");		
+		/*			
+		if( $this->reporte->getCaImpoExpo()=="Exportación" ){			
+			if( $this->status->getCaEtapa()=="ETA"||$this->status->getCaEtapa()=="Carga Embarcada"|| $this->status->getCaEtapa()=="Carga con Reserva" ){
+				$this->setTemplate("emailAvisoExpo");					
+			}
+		}else{
+			if( $this->reporte->getCaTransporte()=="Marítimo" ){
+				if( $this->status->getCaEtapa()=="ETA" ){
+					$this->setTemplate("emailAvisoImpoMaritimo");		
+				}
+			}else{
+				if( $this->status->getCaEtapa()=="Carga Embarcada"|| $this->status->getCaEtapa()=="Carga con Reserva"  || $this->status->getCaEtapa()=="Carga en Aeropuerto de Destino" ){
+					$this->setTemplate("emailAvisoImpoAereo");		
+				}
+			}
+		}	*/
+				
+	}
 
 	/*
 	 * Muestra el estado del reporte cuando un usuario hace click sobre el
@@ -189,6 +232,8 @@ class traficosActions extends sfActions
 		$this->setTemplate( "responseTemplate" );		
 		
 	}
+	
+	
 	
 	
 }
