@@ -15,9 +15,15 @@ class loginActions extends sfActions
 	*
 	*/
 	public function executeIndex( $request )
-	{		
+	{	
+		if( !$this->getUser()->getAttribute("request_uri") ){
+			$this->getUser()->setAttribute("request_uri", $_SERVER['REQUEST_URI'] );	
+		}
+		
 		if($this->getUser()->isAuthenticated()){
+			
 			$this->redirect("homepage/index");
+			
 		}
 					
 		$this->form = new LoginForm();		
@@ -29,8 +35,9 @@ class loginActions extends sfActions
 					)
 				); 
 			if( $this->form->isValid() ){	
-				//Se valido correctamente			
-				$this->redirect("homepage/index");	
+				//Se valido correctamente		
+				$this->redirect("homepage/index");
+				
 			}
 		}
 	}
@@ -126,6 +133,8 @@ class loginActions extends sfActions
 					$user->save();
 					//Valida el usuario y lo ingresa al sistema			
 					$this->getUser()->signIn( $user );
+					
+									
 					$this->redirect( "homepage/index" );
 				}
 			}
@@ -153,9 +162,15 @@ class loginActions extends sfActions
 	* Muestra el formulario inicial para que los usuarios se autentiquen usando LDAP en Novell
 	*/
 	public function executeNovell( $request ){
-		
+						
 		if($this->getUser()->isAuthenticated()){
-			$this->redirect("homepage/index");
+			if( $this->getUser()->getAttribute("request_uri") ){					
+				$url = $this->getUser()->getAttribute("request_uri");					
+				$this->getUser()->setAttribute("request_uri", null );
+				$this->redirect( $url );
+			}else{
+				$this->redirect("homepage/index");
+			}
 		}
 					
 		$this->form = new LoginFormNovell();		
@@ -167,8 +182,16 @@ class loginActions extends sfActions
 					)
 				); 
 			if( $this->form->isValid() ){	
-				//Se valido correctamente			
-				$this->redirect("homepage/index");	
+				//Se valido correctamente	
+				
+				if( $this->getUser()->getAttribute("request_uri") ){					
+					$url = $this->getUser()->getAttribute("request_uri");					
+					$this->getUser()->setAttribute("request_uri", null );
+					$this->redirect( $url );
+				}else{
+					$this->redirect("homepage/index");
+				}
+		
 			}
 		}
 		
