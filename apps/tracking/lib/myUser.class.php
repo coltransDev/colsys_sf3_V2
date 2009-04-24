@@ -80,8 +80,16 @@ class myUser extends sfBasicSecurityUser
 		return $contacto;
 	}
 	
+	/*
+	* Retorna un objeto TrackingUser 
+	* o null encaso que el usuario se haya logeado por ldap
+	*/
 	public function getTrackingUser(){
 		return $this->getAttribute('trackingUser');
+	}
+	
+	public function getUserId(){
+		return $this->getAttribute('username');
 	}
 	
 	
