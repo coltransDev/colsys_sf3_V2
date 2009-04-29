@@ -1205,36 +1205,59 @@ foreach($imprimirNotas as $val ) {
 
 $pdf->AddPage();
 
-$pdf->SetFont($font,'',14);
-$pdf->Cell(0, 4, "Bogotá, Febrero 10 de 2.009 ",0,1);
-
-
-$pdf->Ln(25);
-$pdf->SetFont($font,'B',16);
-$pdf->Cell(0, 4, "AVISO IMPORTANTE",0,1, "C");
 
 $pdf->Ln(4);
 $pdf->SetFont($font,'B',14);
-$pdf->Cell(0, 4, "APLAZAMIENTO ENTRADA EN VIGENCIA DEC. 2101-08",0,1, "C");
+$pdf->Cell(0, 4, "CIRCULAR EXTERNA NO. 001",0,1, "C");
 
+$pdf->Ln(4);
+$pdf->SetFont($font,'',10);
+$pdf->Cell(0, 4, "27 de Abril de 2009",0,1);
+
+
+
+$pdf->Ln(10);
+$pdf->SetFont($font,'',10);
+$pdf->Cell(0, 4, "Apreciados Clientes,",0,1);
 
 $pdf->Ln(15);
-$pdf->SetFont($font,'',14);
-$pdf->Cell(0, 4, "Estimados Clientes y Usuarios:",0,1);
-
-$pdf->Ln(15);
 
 
-$pdf->MultiCell(0, 8, "Cordialmente informamos a ustedes que el gobierno nacional aplazó la entrada en vigencia del Decreto 2101 de 2008 - Proceso de Carga de Importación, el cual comenzará a regir a partir del 1o. de mayo de 2009. Esta información puede ser consultada por ustedes en la página web de la Dirección de Impuestos y Aduanas Nacionales DIAN.", 0,'J',0);
+$pdf->MultiCell(0, 5, "La presente es con el fin de  informarles las nuevas disposiciones  Aduaneras en el Marco Legal actual que es el Decreto 2101 del 13 de Junio de 2008 , Decreto 1039 del 26 de Marzo 2009 y la Resolución No. 7941 del 26 de Agosto de 2008, Resolución 3942 del 17 de Abril de 2009  en donde se modifica trámites semiautomatizados a procedimientos totalmente automatizados sin uso del papel en el Proceso de Importación Marítima, se tuvieron en cuenta lineamientos internacionales como el Marco Normativo de la OMA y acuerdos que en la actualidad Colombia está negociando.", 0,'J',0);
+
+$pdf->Ln(2);
+
+$pdf->MultiCell(0, 5, "Por lo anterior a partir del 1o. de Mayo 2009 es indispensable que los documentos de transporte contengan como mínimo la siguiente información: ", 0,'J',0);
+
+$pdf->Ln(2);
+
+$pdf->MultiCell(0, 5, 
+"• RUT ( Registro Único Tributario)  del Importador 
+• La indicación del Trámite o destino que se le dará a la mercancía una vez descargada en el lugar de llegada, ejemplo: 
+     -   Entrega en lugar de arribo
+     -   Transito Aduanero
+     -   Ingreso a depósito o Zona Franca después del descargue en el lugar de arribo
+     -   Descargue de mercancía directamente en el depósito o zona franca
+     -   Entrega Urgente
+• Descripción  genérica de la mercancía ;  NO es aceptada como descripción \" mercancías varias, mercancía según factura , misceláneas.. \" 
+• La DIAN tendrá la potestad de establecer en que eventos es necesario las partidas o  sub-partidas arancelarias de la mercancía   por acto oficial, como lo estipula en el Decreto 2101 art. 8 y la Resolución 7941 art 8 , hasta la fecha no se ha pronunciado la Aduana con los productos susceptibles del anterior requerimiento
+• Peso,  unidades de carga.  Cuando se trate de carga contenerizada es necesario el número de seguridad o precinto", 0,'J',0);
+
+
+$pdf->Ln(2);
+
+$pdf->MultiCell(0, 5, "Es recomendable que la información  descrita sea de conocimiento de los Exportadores, para el momento de la elaboración de los documentos de transporte. ", 0,'J',0);
+
+
 
 $pdf->Ln(15);
 $pdf->Cell(0, 4, "Atentamente,",0,1);
 $pdf->Ln(10);
 $pdf->Cell(0, 4, "COLTRANS S.A.",0,1);
-$pdf->Ln(10);
-$pdf->Cell(0, 4, "Sandra Patricia Nieves",0,1);
 $pdf->Ln(4);
-$pdf->Cell(0, 4, "Gerente Comercial",0,1);
+$pdf->Cell(0, 4, "DEPARTAMENTO MARITIMO",0,1);
+
+
 	
 $pdf->Output ( $filename);
 if( !$filename ){ //Para evitar que salga la barra de depuracion
