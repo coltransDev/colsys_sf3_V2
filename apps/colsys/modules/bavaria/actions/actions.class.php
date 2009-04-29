@@ -102,21 +102,21 @@ class bavariaActions extends sfActions {
 			$salida.= str_pad(null,10, " ")."|"; // 5
 			
 			$fchfactProveedor = Utils::transformDate($reporte->getProperty("fchfactproveedor"), $format="Ymd");
-			$fchfactProveedor = (strlen($fchfactProveedor)==0)?Utils::transformDate("2009-01-01", $format="Ymd"):$fchfactProveedor; //Datos de Prueba
+			$fchfactProveedor = (strlen($fchfactProveedor)==0)?Utils::transformDate("2009-04-01", $format="Ymd"):$fchfactProveedor; //Datos de Prueba
 			$salida.= str_pad($fchfactProveedor,8, " ")."|"; // 6
 
 			$fchETS = ($status)?(Utils::transformDate($status->getCaFchsalida(), $format="Ymd")):null;
-			$fchETS = strlen($fchETS)==0?Utils::transformDate("2009-01-01", $format="Ymd"):$fchETS; //Datos de Prueba
+			$fchETS = strlen($fchETS)==0?Utils::transformDate("2009-04-01", $format="Ymd"):$fchETS; //Datos de Prueba
 			$salida.= str_pad($fchETS,8, " ")."|"; // 7
 
 			$salida.= str_pad($reporte->getDoctransporte(),25, " ")."|"; // 8
 			$fchdoctransporte = Utils::transformDate($reporte->getProperty("fchdoctransporte"), $format="Ymd");
-			$fchdoctransporte = strlen($fchdoctransporte)==0?Utils::transformDate("2009-01-01", $format="Ymd"):$fchdoctransporte; //Datos de Prueba
+			$fchdoctransporte = strlen($fchdoctransporte)==0?Utils::transformDate("2009-04-01", $format="Ymd"):$fchdoctransporte; //Datos de Prueba
 			$salida.= str_pad($fchdoctransporte,8, " ")."|"; // 9
 			$salida.= str_pad(null,8, " ")."|"; // 10
 			$salida.= str_pad(null,8, " ")."|"; // 11
 			$fchrecibocarga = Utils::transformDate($reporte->getProperty("fchrecibocarga"), $format="Ymd");
-			$fchrecibocarga = strlen($fchrecibocarga)==0?Utils::transformDate("2009-01-01", $format="Ymd"):$fchrecibocarga; //Datos de Prueba
+			$fchrecibocarga = strlen($fchrecibocarga)==0?Utils::transformDate("2009-04-01", $format="Ymd"):$fchrecibocarga; //Datos de Prueba
 			$salida.= str_pad($fchrecibocarga,8, " ")."|"; // 12
 
 			$pesos = ($status)?explode("|",$status->getCaPeso()):null;
@@ -152,7 +152,7 @@ class bavariaActions extends sfActions {
 			$salida.= strlen($reporte->getProperty("numfactproveedor"))==0?"123456789012345|":str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
 			$salida.= str_pad(null,15, " ")."|"; // 5 -> Facturas Adicionales			
 			$fchfactProveedor = Utils::transformDate($reporte->getProperty("fchfactproveedor"), $format="Ymd");
-			$fchfactProveedor = strlen($fchfactProveedor)==0?Utils::transformDate("2009-01-01", $format="Ymd"):$fchfactProveedor; //Datos de Prueba
+			$fchfactProveedor = strlen($fchfactProveedor)==0?Utils::transformDate("2009-04-01", $format="Ymd"):$fchfactProveedor; //Datos de Prueba
 			$salida.= str_pad($fchfactProveedor,8, " ")."|"; // 6
 			// $salida.= str_pad(number_format($reporte->getProperty("vlrfactproveedor")*100, 0, '', ''),13, " ")."|"; // 7
 			$salida.= str_pad(number_format(42565*100, 0, '', ''),13, " "); // 7 Datos de Prueba
