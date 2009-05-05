@@ -29,7 +29,7 @@ EOF;
 	
 	
 	$c = new Criteria();
-	$c->add( NotificacionPeer::CA_IDEMAIL, null, Criteria::ISNULL);
+	$c->add( NotificacionPeer::CA_IDEMAIL, null, Criteria::ISNULL);		
 	$notificaciones = NotificacionPeer::doSelect( $c );
 	
 	foreach( $notificaciones as $notificacion ){
