@@ -4,8 +4,10 @@ class LoginForm extends sfForm{
 		//$this->setValidatorSchema(new RegisterValidatorSchema());
 		//$this->setWidgetSchema(new RegisterWidgetFormSchema());
 		
+		$username = new sfWidgetFormInput(array(), array("Autocomplete"=>"off"));
+		
 		$this->setWidgets(array(		  
-		  'username' => new sfWidgetFormInput(),
+		  'username' => $username,
 		  'passwd' => new sfWidgetFormInputPassword(),
 		));
 		

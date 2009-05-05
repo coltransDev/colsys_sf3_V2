@@ -99,7 +99,7 @@ class usersComponents extends sfComponents
 		
 						
 		$this->accesos = RutinaPeer::getAccesos();	
-			
+		/*	
 		$username = sfConfig::get("app_ldap_user");
 		$passwd = sfConfig::get("app_ldap_passwd");
 		$grupos=array();
@@ -121,11 +121,37 @@ class usersComponents extends sfComponents
 			}else{
 				echo "sin conexion";
 			}
-		}
+		}*/
 		
 		$this->data=array();		
 		
 		
+		$c = new Criteria();
+		$c->add( UsuarioPeer::CA_ACTIVO, true );
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_LOGIN );
+		$usuarios = UsuarioPeer::doSelect( $c );
+		
+		foreach( $usuarios as $usuario ){
+			if( isset( $accesos[$usuario->getCaLogin()] ) ){
+				$sel = true;
+				$nivel = $accesos[$usuario->getCaLogin()];
+				$nivel_val = $this->accesos[$nivel];				
+			}else{
+				$sel = false;
+				$nivel = "";
+				$nivel_val = "";
+			}		
+			
+			$this->data[]=array('login'=>utf8_encode($usuario->getCaLogin()),
+								'sel'=>$sel,
+								'nivel'=>$nivel,
+								'nivel_val'=>utf8_encode($nivel_val)
+								);	
+		}
+		
+		
+		
+		/*
 		//print_r( $usuarios );
 		for($i=0; $i<$usuarios['count'] ;$i++){
 			$usuario = $usuarios[$i]["cn"][0];
@@ -148,7 +174,7 @@ class usersComponents extends sfComponents
 								'nivel'=>$nivel,
 								'nivel_val'=>utf8_encode($nivel_val)
 								);			
-		}		
+		}		*/
 		
 		
 		
