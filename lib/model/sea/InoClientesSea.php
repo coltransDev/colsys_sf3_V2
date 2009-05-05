@@ -9,6 +9,7 @@
  */ 
 class InoClientesSea extends BaseInoClientesSea
 {
+	var $continuacion = null;
 	/*
 	* Retorna los objetos InoIngresosSea asociados al reporte
 	* @author Andres Botero
@@ -56,10 +57,26 @@ class InoClientesSea extends BaseInoClientesSea
 	public function getStatus(){
 		$refSea = $this->getInoMaestraSea();
 		if( $refSea->getCaFchconfirmado( ) ){						
-			$texto = "La MN ".($refSea->getCaMnLlegada(  ) ?$refSea->getCaMnLlegada(  ):$refSea->getCaMotonave())." arribó en ".$refSea->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $refSea->getCaFchconfirmacion() )." con la orden en referencia a bordo.\n". ucfirst($refSea->getCaMensaje()." ".$this->getCamensaje());			
+			$texto = "La MN ".($refSea->getCaMnLlegada(  ) ?$refSea->getCaMnLlegada(  ):$refSea->getCaMotonave())." arribó a ".$refSea->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $refSea->getCaFchconfirmacion() )." con la orden en referencia a bordo.\n". ucfirst($refSea->getCaMensaje()." ".$this->getCamensaje());			
 			return $texto;
 			
 		}	
+	}
+	
+	/*
+	* Retorna la ciudad de continuación de viaje
+	* author: Andres Botero
+	*/
+	public function getContinuacion(){
+		if( $this->continuacion ){
+			return $this->continuacion;
+		}else{
+			if( $this->getCaContinuacionDest() ){
+				$this->continuacion = CiudadPeer::retrieveByPk( $this->getCaContinuacionDest() );
+				return $this->continuacion;
+			}
+		}
+		return null;
 	}
 	
 	

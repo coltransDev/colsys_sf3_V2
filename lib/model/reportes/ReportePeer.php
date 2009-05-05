@@ -108,7 +108,8 @@ class ReportePeer extends BaseReportePeer
 			$today = date( "N" );
 			
 			if( $today==1 ){
-				$add = -7;	
+				$add = -7;
+				
 			}elseif( $today ==2 ){
 				$add = -6;
 			}else{
@@ -180,7 +181,7 @@ class ReportePeer extends BaseReportePeer
 			$today = date( "N" );
 			
 			if( $today==1 ){
-				$add = -7;	
+				$add = -8;	
 			}elseif( $today ==2 ){
 				$add = -6;
 			}else{

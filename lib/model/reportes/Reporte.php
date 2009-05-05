@@ -125,6 +125,17 @@ class Reporte extends BaseReporte
 		return CiudadPeer::doSelectOne( $c );		
 	}
 	
+	
+	/*
+	* Retorna el objeto ciudad asociado al campo ca_destino
+	* Author: Andres Botero
+	*/
+	public function getDestinoCont(){
+		$c = new Criteria();
+		$c->add(  CiudadPeer::CA_IDCIUDAD, $this->getCaContinuacionDest() );
+		return CiudadPeer::doSelectOne( $c );		
+	}
+	
 	/****************************************************************
 	* 
 	****************************************************************/
@@ -230,6 +241,8 @@ class Reporte extends BaseReporte
 						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["tipo"] = "status maritimo";
 						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["status"] = $inoclientesSea->getStatus(); 						
 						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["etapa"] = "Confirmacion de llegada";
+						
+
 						$c = new Criteria();
 						$c->add( EmailPeer::CA_IDCASO , $inoclientesSea->getOid() );
 						$email = EmailPeer::doSelectOne( $c );
@@ -243,6 +256,7 @@ class Reporte extends BaseReporte
 					* Status de OTM
 					*/
 					$statuss = $inoclientesSea->getStatuss();
+					//print_r( $statuss );
 					foreach( $statuss as $status){			
 						if( $status->getCaAviso () ){
 							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
@@ -264,10 +278,7 @@ class Reporte extends BaseReporte
 				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["idstatus"] = $status->getCaIdstatus();
 				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status";
 				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getStatus (); 
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = $status->getCaEtapa ();
-				
-				
-							 
+				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = $status->getCaEtapa ();	 
 			}		
 		
 			krsort ($this->historialStatus);
@@ -357,15 +368,7 @@ class Reporte extends BaseReporte
 			
 	
 	
-	/*
-	* Retorna el objeto ciudad asociado al campo ca_destino
-	* Author: Andres Botero
-	*/
-	public function getDestinoCont(){
-		$c = new Criteria();
-		$c->add(  CiudadPeer::CA_IDCIUDAD, $this->getCaContinuacionDest() );
-		return CiudadPeer::doSelectOne( $c );		
-	}
+	
 	
 	/*
 	* Retorna los status asociasdos al reporte , sobrecarga getRepStatuss en BaseReporte

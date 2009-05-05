@@ -19,7 +19,7 @@ abstract class BaseRepStatusPeer {
 	const CLASS_DEFAULT = 'lib.model.reportes.RepStatus';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 24;
+	const NUM_COLUMNS = 25;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -96,6 +96,9 @@ abstract class BaseRepStatusPeer {
 	/** the column name for the CA_IDETAPA field */
 	const CA_IDETAPA = 'tb_repstatus.CA_IDETAPA';
 
+	/** the column name for the CA_PROPIEDADES field */
+	const CA_PROPIEDADES = 'tb_repstatus.CA_PROPIEDADES';
+
 	/**
 	 * An identiy map to hold any loaded instances of RepStatus objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -117,11 +120,11 @@ abstract class BaseRepStatusPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdstatus', 'CaIdreporte', 'CaIdemail', 'CaFchstatus', 'CaStatus', 'CaComentarios', 'CaFchrecibo', 'CaFchenvio', 'CaUsuenvio', 'CaEtapa', 'CaIntroduccion', 'CaFchsalida', 'CaFchllegada', 'CaFchcontinuacion', 'CaPiezas', 'CaPeso', 'CaVolumen', 'CaDoctransporte', 'CaIdnave', 'CaDocmaster', 'CaEquipos', 'CaHorasalida', 'CaHorallegada', 'CaIdetapa', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus', 'caIdreporte', 'caIdemail', 'caFchstatus', 'caStatus', 'caComentarios', 'caFchrecibo', 'caFchenvio', 'caUsuenvio', 'caEtapa', 'caIntroduccion', 'caFchsalida', 'caFchllegada', 'caFchcontinuacion', 'caPiezas', 'caPeso', 'caVolumen', 'caDoctransporte', 'caIdnave', 'caDocmaster', 'caEquipos', 'caHorasalida', 'caHorallegada', 'caIdetapa', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS, self::CA_IDREPORTE, self::CA_IDEMAIL, self::CA_FCHSTATUS, self::CA_STATUS, self::CA_COMENTARIOS, self::CA_FCHRECIBO, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_ETAPA, self::CA_INTRODUCCION, self::CA_FCHSALIDA, self::CA_FCHLLEGADA, self::CA_FCHCONTINUACION, self::CA_PIEZAS, self::CA_PESO, self::CA_VOLUMEN, self::CA_DOCTRANSPORTE, self::CA_IDNAVE, self::CA_DOCMASTER, self::CA_EQUIPOS, self::CA_HORASALIDA, self::CA_HORALLEGADA, self::CA_IDETAPA, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus', 'ca_idreporte', 'ca_idemail', 'ca_fchstatus', 'ca_status', 'ca_comentarios', 'ca_fchrecibo', 'ca_fchenvio', 'ca_usuenvio', 'ca_etapa', 'ca_introduccion', 'ca_fchsalida', 'ca_fchllegada', 'ca_fchcontinuacion', 'ca_piezas', 'ca_peso', 'ca_volumen', 'ca_doctransporte', 'ca_idnave', 'ca_docmaster', 'ca_equipos', 'ca_horasalida', 'ca_horallegada', 'ca_idetapa', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdstatus', 'CaIdreporte', 'CaIdemail', 'CaFchstatus', 'CaStatus', 'CaComentarios', 'CaFchrecibo', 'CaFchenvio', 'CaUsuenvio', 'CaEtapa', 'CaIntroduccion', 'CaFchsalida', 'CaFchllegada', 'CaFchcontinuacion', 'CaPiezas', 'CaPeso', 'CaVolumen', 'CaDoctransporte', 'CaIdnave', 'CaDocmaster', 'CaEquipos', 'CaHorasalida', 'CaHorallegada', 'CaIdetapa', 'CaPropiedades', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus', 'caIdreporte', 'caIdemail', 'caFchstatus', 'caStatus', 'caComentarios', 'caFchrecibo', 'caFchenvio', 'caUsuenvio', 'caEtapa', 'caIntroduccion', 'caFchsalida', 'caFchllegada', 'caFchcontinuacion', 'caPiezas', 'caPeso', 'caVolumen', 'caDoctransporte', 'caIdnave', 'caDocmaster', 'caEquipos', 'caHorasalida', 'caHorallegada', 'caIdetapa', 'caPropiedades', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS, self::CA_IDREPORTE, self::CA_IDEMAIL, self::CA_FCHSTATUS, self::CA_STATUS, self::CA_COMENTARIOS, self::CA_FCHRECIBO, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_ETAPA, self::CA_INTRODUCCION, self::CA_FCHSALIDA, self::CA_FCHLLEGADA, self::CA_FCHCONTINUACION, self::CA_PIEZAS, self::CA_PESO, self::CA_VOLUMEN, self::CA_DOCTRANSPORTE, self::CA_IDNAVE, self::CA_DOCMASTER, self::CA_EQUIPOS, self::CA_HORASALIDA, self::CA_HORALLEGADA, self::CA_IDETAPA, self::CA_PROPIEDADES, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus', 'ca_idreporte', 'ca_idemail', 'ca_fchstatus', 'ca_status', 'ca_comentarios', 'ca_fchrecibo', 'ca_fchenvio', 'ca_usuenvio', 'ca_etapa', 'ca_introduccion', 'ca_fchsalida', 'ca_fchllegada', 'ca_fchcontinuacion', 'ca_piezas', 'ca_peso', 'ca_volumen', 'ca_doctransporte', 'ca_idnave', 'ca_docmaster', 'ca_equipos', 'ca_horasalida', 'ca_horallegada', 'ca_idetapa', 'ca_propiedades', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, )
 	);
 
 	/**
@@ -131,11 +134,11 @@ abstract class BaseRepStatusPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdstatus' => 0, 'CaIdreporte' => 1, 'CaIdemail' => 2, 'CaFchstatus' => 3, 'CaStatus' => 4, 'CaComentarios' => 5, 'CaFchrecibo' => 6, 'CaFchenvio' => 7, 'CaUsuenvio' => 8, 'CaEtapa' => 9, 'CaIntroduccion' => 10, 'CaFchsalida' => 11, 'CaFchllegada' => 12, 'CaFchcontinuacion' => 13, 'CaPiezas' => 14, 'CaPeso' => 15, 'CaVolumen' => 16, 'CaDoctransporte' => 17, 'CaIdnave' => 18, 'CaDocmaster' => 19, 'CaEquipos' => 20, 'CaHorasalida' => 21, 'CaHorallegada' => 22, 'CaIdetapa' => 23, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus' => 0, 'caIdreporte' => 1, 'caIdemail' => 2, 'caFchstatus' => 3, 'caStatus' => 4, 'caComentarios' => 5, 'caFchrecibo' => 6, 'caFchenvio' => 7, 'caUsuenvio' => 8, 'caEtapa' => 9, 'caIntroduccion' => 10, 'caFchsalida' => 11, 'caFchllegada' => 12, 'caFchcontinuacion' => 13, 'caPiezas' => 14, 'caPeso' => 15, 'caVolumen' => 16, 'caDoctransporte' => 17, 'caIdnave' => 18, 'caDocmaster' => 19, 'caEquipos' => 20, 'caHorasalida' => 21, 'caHorallegada' => 22, 'caIdetapa' => 23, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS => 0, self::CA_IDREPORTE => 1, self::CA_IDEMAIL => 2, self::CA_FCHSTATUS => 3, self::CA_STATUS => 4, self::CA_COMENTARIOS => 5, self::CA_FCHRECIBO => 6, self::CA_FCHENVIO => 7, self::CA_USUENVIO => 8, self::CA_ETAPA => 9, self::CA_INTRODUCCION => 10, self::CA_FCHSALIDA => 11, self::CA_FCHLLEGADA => 12, self::CA_FCHCONTINUACION => 13, self::CA_PIEZAS => 14, self::CA_PESO => 15, self::CA_VOLUMEN => 16, self::CA_DOCTRANSPORTE => 17, self::CA_IDNAVE => 18, self::CA_DOCMASTER => 19, self::CA_EQUIPOS => 20, self::CA_HORASALIDA => 21, self::CA_HORALLEGADA => 22, self::CA_IDETAPA => 23, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus' => 0, 'ca_idreporte' => 1, 'ca_idemail' => 2, 'ca_fchstatus' => 3, 'ca_status' => 4, 'ca_comentarios' => 5, 'ca_fchrecibo' => 6, 'ca_fchenvio' => 7, 'ca_usuenvio' => 8, 'ca_etapa' => 9, 'ca_introduccion' => 10, 'ca_fchsalida' => 11, 'ca_fchllegada' => 12, 'ca_fchcontinuacion' => 13, 'ca_piezas' => 14, 'ca_peso' => 15, 'ca_volumen' => 16, 'ca_doctransporte' => 17, 'ca_idnave' => 18, 'ca_docmaster' => 19, 'ca_equipos' => 20, 'ca_horasalida' => 21, 'ca_horallegada' => 22, 'ca_idetapa' => 23, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdstatus' => 0, 'CaIdreporte' => 1, 'CaIdemail' => 2, 'CaFchstatus' => 3, 'CaStatus' => 4, 'CaComentarios' => 5, 'CaFchrecibo' => 6, 'CaFchenvio' => 7, 'CaUsuenvio' => 8, 'CaEtapa' => 9, 'CaIntroduccion' => 10, 'CaFchsalida' => 11, 'CaFchllegada' => 12, 'CaFchcontinuacion' => 13, 'CaPiezas' => 14, 'CaPeso' => 15, 'CaVolumen' => 16, 'CaDoctransporte' => 17, 'CaIdnave' => 18, 'CaDocmaster' => 19, 'CaEquipos' => 20, 'CaHorasalida' => 21, 'CaHorallegada' => 22, 'CaIdetapa' => 23, 'CaPropiedades' => 24, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus' => 0, 'caIdreporte' => 1, 'caIdemail' => 2, 'caFchstatus' => 3, 'caStatus' => 4, 'caComentarios' => 5, 'caFchrecibo' => 6, 'caFchenvio' => 7, 'caUsuenvio' => 8, 'caEtapa' => 9, 'caIntroduccion' => 10, 'caFchsalida' => 11, 'caFchllegada' => 12, 'caFchcontinuacion' => 13, 'caPiezas' => 14, 'caPeso' => 15, 'caVolumen' => 16, 'caDoctransporte' => 17, 'caIdnave' => 18, 'caDocmaster' => 19, 'caEquipos' => 20, 'caHorasalida' => 21, 'caHorallegada' => 22, 'caIdetapa' => 23, 'caPropiedades' => 24, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS => 0, self::CA_IDREPORTE => 1, self::CA_IDEMAIL => 2, self::CA_FCHSTATUS => 3, self::CA_STATUS => 4, self::CA_COMENTARIOS => 5, self::CA_FCHRECIBO => 6, self::CA_FCHENVIO => 7, self::CA_USUENVIO => 8, self::CA_ETAPA => 9, self::CA_INTRODUCCION => 10, self::CA_FCHSALIDA => 11, self::CA_FCHLLEGADA => 12, self::CA_FCHCONTINUACION => 13, self::CA_PIEZAS => 14, self::CA_PESO => 15, self::CA_VOLUMEN => 16, self::CA_DOCTRANSPORTE => 17, self::CA_IDNAVE => 18, self::CA_DOCMASTER => 19, self::CA_EQUIPOS => 20, self::CA_HORASALIDA => 21, self::CA_HORALLEGADA => 22, self::CA_IDETAPA => 23, self::CA_PROPIEDADES => 24, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus' => 0, 'ca_idreporte' => 1, 'ca_idemail' => 2, 'ca_fchstatus' => 3, 'ca_status' => 4, 'ca_comentarios' => 5, 'ca_fchrecibo' => 6, 'ca_fchenvio' => 7, 'ca_usuenvio' => 8, 'ca_etapa' => 9, 'ca_introduccion' => 10, 'ca_fchsalida' => 11, 'ca_fchllegada' => 12, 'ca_fchcontinuacion' => 13, 'ca_piezas' => 14, 'ca_peso' => 15, 'ca_volumen' => 16, 'ca_doctransporte' => 17, 'ca_idnave' => 18, 'ca_docmaster' => 19, 'ca_equipos' => 20, 'ca_horasalida' => 21, 'ca_horallegada' => 22, 'ca_idetapa' => 23, 'ca_propiedades' => 24, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, )
 	);
 
 	/**
@@ -264,6 +267,8 @@ abstract class BaseRepStatusPeer {
 		$criteria->addSelectColumn(RepStatusPeer::CA_HORALLEGADA);
 
 		$criteria->addSelectColumn(RepStatusPeer::CA_IDETAPA);
+
+		$criteria->addSelectColumn(RepStatusPeer::CA_PROPIEDADES);
 
 	}
 

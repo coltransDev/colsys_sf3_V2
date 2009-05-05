@@ -9,6 +9,35 @@
  */ 
 class RepStatus extends BaseRepStatus
 {
+	var $bodega = null;
+	/*
+	* Agrega una nueva propiedad en la columna ca_propiedades, según CU059 
+	* @author: Andres Botero
+	*/	
+	public function setProperty( $param, $value ){
+		$array = sfToolkit::stringToArray( $this->getCaPropiedades() );	
+		$array[$param]=$value;
+		$str = "";
+				
+		foreach( $array as $key=>$value ){
+			if(strlen($str)>0){
+				$str.=" ";
+			}
+			$str.=$key."=".$value;
+		}
+		$this->setCaPropiedades( $str );
+	}
+	
+	/*
+	* Retorna una propiedad
+	* @author: Andres Botero
+	*/	
+	public function getProperty( $param ){
+		$array = sfToolkit::stringToArray( $this->getCaPropiedades() );			
+		return isset($array[$param])?$array[$param]:null;
+	}
+	
+	
 	/*
 	* Retorna la etapa del status
 	* @author: Andres Botero
@@ -18,7 +47,11 @@ class RepStatus extends BaseRepStatus
 	}
 	
 	public function getClass(){
-		
+		$etapa = $this->getTrackingEtapa();		
+		if( $etapa ){
+			return $etapa->getCaClass();
+		}
+		/*
 		$etapa = $this->getCaEtapa();
 		if(  $this->getCaFchstatus("Y-m-d")==date("Y-m-d") && $this!="Carga Embarcada" && $etapa!="ETA" && $etapa!="Orden Anulada" && $etapa!="Carga en Aeropuerto de Destino"){			
 			$etapa = "nuevo";			
@@ -67,25 +100,73 @@ class RepStatus extends BaseRepStatus
 				break;
 		 
 		}
-		return $class;
+		return $class;*/
 	}
 	
+	
+	/*
+	* Aplica la plantilla al status 
+	*/
+	private function applyTemplate( $template ){
+		
+		$result = "";
+		
+		$tpl = explode(" ", $template );
+			
+		foreach( $tpl as $t ){
+			if( $result ){
+				$result.=" ";
+			}
+			
+			if( substr($t,0,1)=="{" && substr($t,strlen($t)-1)=="}" ){
+				$evalExpr = substr($t,1,strlen($t)-2);
+				$evalExprArray = explode("_",$evalExpr);				
+				$str = "";
+				foreach( $evalExprArray as $eval ){					
+					$str .= "->get".ucfirst($eval)."()";					
+				}
+				eval("\$result .= \$this".$str.";");				
+			}else{				
+				$result.=$t;
+			}
+		}
+		
+		
+		return $result;		
+	}
+	
+	/*
+	* Retorna el texto del status de acuaerdo a la plantilla
+	*/	
 	public function getStatus(){		
 		$resultado = "";	
 		$reporte = $this->getReporte();	
-		
+		$etapa = $this->getTrackingEtapa();
+			
+		$txt = "";	
+		if( $etapa ){
+			$template = $etapa->getCaMessage();
+			if( $template ){
+				$txt = $this->applyTemplate( $template )."\n\n";
+			}		
+			
+		}		
+		return $txt."".$this->getCaStatus();
+		/*
 		switch( $this->getCaIdEtapa () ){
 			case "IMCPD":				
-				$txt = "La MN ".$this->getCaIdnave(). " arribó en ".$reporte->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $this->getCaFchllegada() )." con la orden en referencia a bordo.";	
+				$txt = "La MN ".$this->getCaIdnave(). " arribó a ".$reporte->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $this->getCaFchllegada() )." con la orden en referencia a bordo.";	
+				
+				
 				
 				if( $this->getCaStatus() ){
 					$txt .="\n".ucfirst($this->getCaStatus());	
 				}
 				return $txt;	
 				break;
-		}
+		}*/
 		
-		
+		/*
 		switch( $this->getCaEtapa () ){			
 						
 			case "Carga Embarcada":	
@@ -173,9 +254,22 @@ class RepStatus extends BaseRepStatus
 				$resultado = $this->getCaStatus();
 				break;	
 		}
-		return $resultado;
+		return $resultado;*/
 	}
 	
+	/*
+	* Envia el status, generalemte se usa despues de guardar
+	*/
+	public function getBodega(){
+		if( !$this->bodega ){			
+			$idbodega = $this->getProperty("idbodega");
+			if( $idbodega ){
+				$this->bodega = BodegaPeer::retrieveByPk( $idbodega );			
+			}
+		}
+		
+		return $this->bodega;
+	}
 	
 	
 	/*
@@ -227,19 +321,46 @@ class RepStatus extends BaseRepStatus
 				
 		$email->addCc( $user->getEmail() );
 		
+		
+		$etapa = $this->getTrackingEtapa();
+		
+		switch( $this->getCaIdetapa() ){
+			case "IMCPD":
+				$asunto = "Confirmación de Llegada ";
+				break;
+			case "IMCOL":
+				$asunto = "Confirmación de Llegada OTM ";
+				break;	
+			case "":
+				break;	
+			default: 
+				if( $etapa && $etapa->getCaDepartamento()=="OTM/DTA" ){
+					$asunto = "Status OTM ";
+				}else{
+					$asunto = "Status ";
+				}
+				break;
+		} 
+		
 		if( $this->getCaIdetapa()=="IMCPD" ){		
-			$inoCliente = $reporte->getInoClientesSea();		
-			$subject = "Confirmación de Llegada Ref:".$inoCliente->getCaReferencia()."/".$reporte->getCaConsecutivo()." Buque:".$this->getCaIdnave();
+			
 		}else{
-			$subject = "Status ".$reporte->getCaConsecutivo().". Buque:".$this->getCaIdnave();
+			
 		}
 		
-		
-		$email->setCaSubject( $subject );
-		
-		
-		
-		
+		$origen = $reporte->getOrigen()->getCaCiudad();
+		$destino = $reporte->getDestino()->getCaCiudad();
+		$cliente = $reporte->getCliente();	
+		if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
+			$proveedor = $reporte->getProveedoresStr();					
+			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] Id.: ".$reporte->getCaConsecutivo();					
+		}else{
+			$consignatario = $reporte->getConsignatario();
+			$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] Id.: ".$reporte->getCaConsecutivo();	
+		}
+				
+		$email->setCaSubject( $asunto );
+				
 		if( $attachments ){		
 			$email->setCaAttachment( implode( "|", $attachments ) );
 		}
@@ -263,7 +384,8 @@ class RepStatus extends BaseRepStatus
 		
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
-		
+		$email->setCaAddress("abotero@coltrans.com.co");
+		$email->setCaCc("");
 		$email->save(); 
 		$email->send(); 	
 		$this->setCaIdemail( $email->getCaIdemail() );

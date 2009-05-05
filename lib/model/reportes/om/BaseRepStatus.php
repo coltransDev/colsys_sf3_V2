@@ -165,6 +165,12 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	protected $ca_idetapa;
 
 	/**
+	 * The value for the ca_propiedades field.
+	 * @var        string
+	 */
+	protected $ca_propiedades;
+
+	/**
 	 * @var        Reporte
 	 */
 	protected $aReporte;
@@ -622,6 +628,16 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	public function getCaIdetapa()
 	{
 		return $this->ca_idetapa;
+	}
+
+	/**
+	 * Get the [ca_propiedades] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaPropiedades()
+	{
+		return $this->ca_propiedades;
 	}
 
 	/**
@@ -1320,6 +1336,26 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	} // setCaIdetapa()
 
 	/**
+	 * Set the value of [ca_propiedades] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     RepStatus The current object (for fluent API support)
+	 */
+	public function setCaPropiedades($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_propiedades !== $v) {
+			$this->ca_propiedades = $v;
+			$this->modifiedColumns[] = RepStatusPeer::CA_PROPIEDADES;
+		}
+
+		return $this;
+	} // setCaPropiedades()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -1380,6 +1416,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			$this->ca_horasalida = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
 			$this->ca_horallegada = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
 			$this->ca_idetapa = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+			$this->ca_propiedades = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1389,7 +1426,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 24; // 24 = RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 25; // 25 = RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating RepStatus object", $e);
@@ -1815,6 +1852,9 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			case 23:
 				return $this->getCaIdetapa();
 				break;
+			case 24:
+				return $this->getCaPropiedades();
+				break;
 			default:
 				return null;
 				break;
@@ -1860,6 +1900,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			$keys[21] => $this->getCaHorasalida(),
 			$keys[22] => $this->getCaHorallegada(),
 			$keys[23] => $this->getCaIdetapa(),
+			$keys[24] => $this->getCaPropiedades(),
 		);
 		return $result;
 	}
@@ -1963,6 +2004,9 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			case 23:
 				$this->setCaIdetapa($value);
 				break;
+			case 24:
+				$this->setCaPropiedades($value);
+				break;
 		} // switch()
 	}
 
@@ -2011,6 +2055,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[21], $arr)) $this->setCaHorasalida($arr[$keys[21]]);
 		if (array_key_exists($keys[22], $arr)) $this->setCaHorallegada($arr[$keys[22]]);
 		if (array_key_exists($keys[23], $arr)) $this->setCaIdetapa($arr[$keys[23]]);
+		if (array_key_exists($keys[24], $arr)) $this->setCaPropiedades($arr[$keys[24]]);
 	}
 
 	/**
@@ -2046,6 +2091,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(RepStatusPeer::CA_HORASALIDA)) $criteria->add(RepStatusPeer::CA_HORASALIDA, $this->ca_horasalida);
 		if ($this->isColumnModified(RepStatusPeer::CA_HORALLEGADA)) $criteria->add(RepStatusPeer::CA_HORALLEGADA, $this->ca_horallegada);
 		if ($this->isColumnModified(RepStatusPeer::CA_IDETAPA)) $criteria->add(RepStatusPeer::CA_IDETAPA, $this->ca_idetapa);
+		if ($this->isColumnModified(RepStatusPeer::CA_PROPIEDADES)) $criteria->add(RepStatusPeer::CA_PROPIEDADES, $this->ca_propiedades);
 
 		return $criteria;
 	}
@@ -2145,6 +2191,8 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		$copyObj->setCaHorallegada($this->ca_horallegada);
 
 		$copyObj->setCaIdetapa($this->ca_idetapa);
+
+		$copyObj->setCaPropiedades($this->ca_propiedades);
 
 
 		if ($deepCopy) {
