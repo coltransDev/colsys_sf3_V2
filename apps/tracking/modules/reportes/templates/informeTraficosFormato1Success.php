@@ -67,7 +67,7 @@ $i=3;
 $objPHPExcel->getActiveSheet()->setCellValue('A'.$i, 'Proovedor');
 $objPHPExcel->getActiveSheet()->setCellValue('B'.$i, 'Origen');
 $objPHPExcel->getActiveSheet()->setCellValue('C'.$i, 'Destino');
-$objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Incotemrs');
+$objPHPExcel->getActiveSheet()->setCellValue('D'.$i, 'Incoterms');
 $objPHPExcel->getActiveSheet()->setCellValue('E'.$i, 'ETS');
 $objPHPExcel->getActiveSheet()->setCellValue('F'.$i, 'ETA');
 if( $transporte==Constantes::MARITIMO ){
