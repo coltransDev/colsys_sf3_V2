@@ -5,7 +5,7 @@ class LoginFormNovell extends sfForm{
 		//$this->setWidgetSchema(new RegisterWidgetFormSchema());
 		
 		$this->setWidgets(array(		  
-		  'username' => new sfWidgetFormInput(),
+		  'username' => new sfWidgetFormInput(array(), array("Autocomplete"=>"off")),
 		  'passwd' => new sfWidgetFormInputPassword(),
 		));
 		
