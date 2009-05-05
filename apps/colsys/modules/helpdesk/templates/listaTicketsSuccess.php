@@ -28,9 +28,22 @@ for( $i =0 ; $i<$numtickets; $i++ ){
     <th width="88">Estado</th>
   </tr>    
   <?
-  }
+	}
+  	
+	$class="";
+  	if($ticket->getCaAction()!="Abierto"){
+	  	$class="blue";
+	}else{
+		if( $ticket->getCaPriority()=="Media"){
+			$class="yellow";
+		}
+		
+		if( $ticket->getCaPriority()=="Alta"){
+			$class="pink";
+		}
+	}
   ?>
-  <tr class="<?=$ticket->getCaAction()!="Abierto"?"blue":""?>">
+  <tr class="<?=$class?>">
     <td><?=link_to($ticket->getCaIdticket(),"helpdesk/verTicket?id=".$ticket->getCaIdticket())?></td>
     <td><?=link_to($ticket->getCaTitle(),"helpdesk/verTicket?id=".$ticket->getCaIdticket())?></td>
     <td><?=$ticket->getCaLogin()?></td>

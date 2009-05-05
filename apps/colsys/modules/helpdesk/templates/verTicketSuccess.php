@@ -56,6 +56,9 @@ $proyecto = $ticket->getHdeskProject();
   <tr>
     <td width="50%" class="listar"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?></td>
     <td width="50%" class="listar"><b>Abierto </b> <?=$ticket->getCaOpened("Y-m-d H:i A")?> </td>
+	<tr>
+    <td width="50%" class="listar"><b>Contacto:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getSucursal()->getCaNombre()." ".$ticket->getUsuario()->getCaExtension():"&nbsp;"?></td>
+    <td width="50%" class="listar">&nbsp; </td>
   </tr>  
  
    <tr>

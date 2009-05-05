@@ -64,7 +64,10 @@ class helpdeskActions extends sfActions
 				$c = new Criteria();
 				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_TITLE , "LOWER(".HdeskTicketPeer::CA_TITLE.") LIKE '%". strtolower($criterio)."%'", Criteria::CUSTOM );								
 				$criterion->addOr($c->getNewCriterion( HdeskTicketPeer::CA_TEXT , "LOWER(".HdeskTicketPeer::CA_TEXT.") LIKE '%". strtolower($criterio)."%'", Criteria::CUSTOM ));			
-				$c->add($criterion);			
+				$c->add($criterion);		
+				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );
+				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_ACTION );
+				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );		
 				$this->tickets = HdeskTicketPeer::doSelect( $c );
 				break;	
 			case "personalizada":
