@@ -160,7 +160,7 @@ class cotseguimientosActions extends sfActions
 		$fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
 		$fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
 	
-		$sql="SELECT count(*) as count, ca_estado, ca_motivonoaprobado FROM ".CotizacionPeer::TABLE_NAME." INNER JOIN ".UsuarioPeer::TABLE_NAME." ON ".CotizacionPeer::CA_USUARIO."=".UsuarioPeer::CA_LOGIN." ";
+		$sql="SELECT count(*) as count, ca_estado, ca_motivonoaprobado FROM (".CotizacionPeer::TABLE_NAME." INNER JOIN ".CotProductoPeer::TABLE_NAME." ON ".CotizacionPeer::CA_IDCOTIZACION."=".CotProductoPeer::CA_IDCOTIZACION." ) INNER JOIN ".UsuarioPeer::TABLE_NAME." ON ".CotizacionPeer::CA_USUARIO."=".UsuarioPeer::CA_LOGIN." ";
 		$sql.=" WHERE ".CotizacionPeer::CA_FCHCREADO." BETWEEN '".$fechaInicial."' AND '".$fechaFinal."' AND ca_estado IS NOT NULL ";
 		
 		
@@ -177,8 +177,8 @@ class cotseguimientosActions extends sfActions
 		}
 		
 		if( $checkboxSucursal ){
-			$this->sucursal = $request->getParameter( "sucursal" );
-			$sql.=" AND ".UsuarioPeer::CA_SUCURSAL."='".$this->sucursal."'";
+			$this->sucursal = $request->getParameter( "sucursal_est" );
+			$sql.=" AND ".UsuarioPeer::CA_IDSUCURSAL."='".$this->sucursal."'";
 		}else{
 			$this->sucursal = "";
 		}

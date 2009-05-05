@@ -2,6 +2,7 @@
 
 
 ?>
+<div align="center">
 <br>
 <h3>Estadisticas de cotizaciones <?=$fechaInicial?> <?=$fechaFinal?> <br>
 <?
@@ -16,11 +17,11 @@ if( $sucursal ){
 <br>
 <br>
 
-<table width="200" border="1" class="tableList">
+<table width="300" border="1" class="tableList">
 	<tr>
 		<th scope="col">Estado</th>
 		<th scope="col">Motivo</th>
-		<th scope="col">Cantidad</th>
+		<th scope="col">Cantidad de trayectos</th>
 	</tr>
 	<?
 	$total = 0;
@@ -43,3 +44,4 @@ if( $sucursal ){
 		<td><?=$total?></td>
 	</tr>
 </table>
+</div>

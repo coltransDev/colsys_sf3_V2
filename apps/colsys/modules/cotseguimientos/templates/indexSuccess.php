@@ -209,14 +209,16 @@ var tabs = new Ext.FormPanel({
 				defaultType: 'textfield',
 				collapsed: true,
 				checkboxName: "checkboxSucursal", 
-				items :[new Ext.form.ComboBox({		
+				items :[
+				
+					new Ext.form.ComboBox({		
 							fieldLabel: 'Nombre',
 							typeAhead: true,
 							forceSelection: true,
 							triggerAction: 'all',
 							emptyText:'Seleccione',
-							selectOnFocus: true,
-							name: 'sucursal',
+							selectOnFocus: true,							
+							hiddenName: 'sucursal_est',
 													
 							lazyRender:true,
 							listClass: 'x-combo-list-small',	
@@ -228,7 +230,7 @@ var tabs = new Ext.FormPanel({
 										echo ",";
 									}
 								?>
-									['<?=$sucursal->getCaNombre()?>', '<?=$sucursal->getCaNombre()?>']
+									['<?=$sucursal->getCaIdsucursal()?>', '<?=$sucursal->getCaNombre()?>']
 								<?
 								}
 								?>
