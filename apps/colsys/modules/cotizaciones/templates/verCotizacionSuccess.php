@@ -1,15 +1,7 @@
 <?
-use_helper("Javascript", "MimeType");
+use_helper( "MimeType");
 
 $enBlanco = $cotizacion->enBlanco();
-
-
-$transport = array('foot', 'bike', 'car', 'plane');
-$mode = current($transport); // $mode = 'foot';
-$mode = next($transport);    // $mode = 'bike';
-$mode = next($transport);    // $mode = 'car';
-$mode = prev($transport);    // $mode = 'bike';
-$mode = end($transport);     // $mode = 'plane';
 
 ?>
 
@@ -24,14 +16,15 @@ $mode = end($transport);     // $mode = 'plane';
 	}
 </script>
 <div id="emailForm"  style="display:<?=$enBlanco?"inline":"none"?>;">
+	<form name="form1" id="form1" method="post" action="<?=url_for("cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion())?>">
 	<?
 	//echo form_tag( "cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion() ); 
-	echo form_remote_tag(array("url"=>"cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion(), 
+	/*echo form_remote_tag(array("url"=>"cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion(), 
 								"update"=>"emailForm",
 								 'loading'  => visual_effect('appear', 'indicator'),
 							    'complete' => visual_effect('fade', 'indicator')							
 							
-						 ));
+						 ));*/
 						 
 	$contactos = $cotizacion->getContacto()->getCaEmail();					 
 		
@@ -66,13 +59,13 @@ $mode = end($transport);     // $mode = 'plane';
 		}
 		
 		$archivos = $cotizacion->getCotArchivos();
-		foreach($archivos as $archivo ){					
+		foreach( $archivos as $archivo ){					
 		
 		?>
 		<tr>
 			<td>
 				<div align="left">
-					<input type="checkbox" name="attachments[]" value="<?=$archivo->getCaIdarchivo()?>" checked="checked"> <?=$archivo->getCaNombre()?>
+					<input type="checkbox" name="attachments[]" value="<?=$archivo->getCaIdarchivo()?>" checked="checked"> <a href="#" onclick="window.open('<?=url_for("cotizaciones/verArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion()."&idarchivo=".$archivo->getCaIdarchivo())?>')"><?=$archivo->getCaNombre()?></a>
 				</div>
 			</td>
 		</tr>
