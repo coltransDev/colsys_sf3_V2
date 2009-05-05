@@ -99,6 +99,9 @@
 		<column name="ca_horasalida" type="time" />	
 		<column name="ca_horallegada" type="time" />	
 		<column name="ca_idetapa" type="varchar" />
+		<column name="ca_propiedades" type="varchar" />
+		
+		
 		 
 		<foreign-key foreignTable="tb_reportes">		
 			<reference local="ca_idreporte" foreign="ca_idreporte"/>
@@ -112,30 +115,36 @@
 	</table>
 	
 	
-	<table name="tb_tracking_etapas" phpName="TrackingEtapas">
+	<table name="tb_tracking_etapas" phpName="TrackingEtapa">
 		<column name="ca_idetapa" type="varchar" required="true"   primaryKey="true" />	
 		<column name="ca_impoexpo" type="varchar" />			
-		<column name="ca_transporte" type="varchar"  />	
+		<column name="ca_transporte" type="varchar"  />
+		<column name="ca_departamento" type="varchar"  />		
 		<column name="ca_etapa" type="varchar" />
 		<column name="ca_orden" type="varchar" />
 		<column name="ca_ttl" type="varchar" />
 		<column name="ca_class" type="varchar" />
+		<column name="ca_template" type="varchar" />
+		<column name="ca_message" type="varchar" />
+		<column name="ca_message_default" type="varchar" />
 	</table>
 
 	
 	<table name="tb_repstatusrespuestas" phpName="RepStatusRespuesta">
-		<column name="ca_idreporte" type="integer" required="true" />			
-		<column name="ca_idemail" type="integer" required="true" />	
-		<column name="ca_idrepstatusrespuestas" type="integer" primaryKey="true" />
+    	<column name="ca_idrepstatusrespuestas" type="integer" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="tb_repstatusrespuestas_id"/>
+		<column name="ca_idstatus" type="integer" required="true" />				
 		<column name="ca_respuesta" type="varchar" />
 		<column name="ca_email" type="varchar" />
+		<column name="ca_login" type="varchar" />
 		<column name="ca_fchcreado" type="timestamp" />
 			
 		<foreign-key foreignTable="tb_repstatus">		
-			<reference local="ca_idreporte" foreign="ca_idreporte"/>
-			<reference local="ca_idemail" foreign="ca_idemail"/>
+			<reference local="ca_idstatus" foreign="ca_idstatus"/>		
 		</foreign-key>
-  	
+  		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>	
 	</table>
 	
 	
