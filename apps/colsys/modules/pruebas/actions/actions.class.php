@@ -42,20 +42,20 @@ class pruebasActions extends sfActions {
 	public function executeSendEmail() {
 		exit("detenido");
 		$c = new Criteria ( );
-		$c->add ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:01", Criteria::GREATER_THAN );
+		/*$c->add ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:01", Criteria::GREATER_THAN );
 		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:00", Criteria::LESS_THAN );
 		
 		$c->add(  EmailPeer::CA_ADDRESS, "%bsnmedical%", Criteria::NOT_LIKE  );
 		$c->addAnd(  EmailPeer::CA_ADDRESS, "%willard%", Criteria::NOT_LIKE  );
-		
+		*/
 		//$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:50:00", Criteria::LESS_THAN );		
 		
 		 
 		
-		$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
-		$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
+		//$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
+		//$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
 		
-		//$c->add( EmailPeer::CA_IDEMAIL, 206521);
+		$c->add( EmailPeer::CA_IDEMAIL, 226480);
 		//$c->addOr( EmailPeer::CA_IDEMAIL, 206545);
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
 			
@@ -1552,11 +1552,13 @@ group by ca_idcotizacion";
 		return sfView::NONE;
 	}
 	
-	
-	
+	/*
+	* Coloca la hora de respuesta en tb_tickets
+	*/	
 	public function executeFixRespuestas(){
-		exit("detenido");
+		//exit("detenido");
 		$c = new Criteria();
+		$c->add( HdeskTicketPeer::CA_RESPONSETIME, null, Criteria::ISNULL );
 		$tickets = HdeskTicketPeer::doSelect( $c );
 		
 		foreach( $tickets as $ticket ){			
@@ -1876,7 +1878,7 @@ Departamento Comercial
 		$statusList = RepStatusPeer::doSelect( $c );
 		
 		$c = new Criteria();
-		$etapasObj = TrackingEtapasPeer::doSelect( $c );
+		$etapasObj = TrackingEtapaPeer::doSelect( $c );
 		
 		$etapas = array();
 				
@@ -1912,6 +1914,168 @@ Departamento Comercial
 			
 	}
 	
+	/*
+	Casos que paso olga lucia
+	*/
+	public function executeFixCasosTraficos(){
+		sfConfig::set('sf_web_debug', false) ;	
+		set_time_limit(0);
+		$path = "d:\\cierres.csv";
+		$i = 0;
+		$content = file_get_contents( $path ); 		
+		$rows = explode( "\n", $content );
+		echo "OK ";
+		foreach($rows as $row  ){
+			//$row = explode(";" ,$row);
+			
+			$c = new Criteria();
+			$c->add( ReportePeer::CA_CONSECUTIVO, trim($row) );
+			$c->addDescendingOrderByColumn( ReportePeer::CA_VERSION );
+			$reporte = ReportePeer::doSelectOne( $c );
+			//echo (++$i);
+			//if( !$cotizacion->getCaFchpresentacion() ){
+			if( $reporte ){
+						
+				//$reporte->setCaEtapaActual("Carga Entregada");
+				$reporte->setCaEtapaActual("Carga en Aeropuerto de Destino");
+				$reporte->save();
+				echo "<br />OK: ".$row."<br />";		
+			}else{
+				echo "Failure: ".$row."<br />";
+			}
+			/*}else{
+				echo "fchpresentacion  ".$row[0]." ".$cotizacion->getCaFchpresentacion()." ".$row[2]; 
+			}*/
+			
+			echo "<br />";
+		
+		}
+		return sfView::NONE;
+	}
+	
+	
+	public function executeFixCargaTransitoDestino(){
+		$c = new Criteria();
+		$c->add(ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada");
+		$c->add(ReportePeer::CA_CONSECUTIVO,'%-2009', Criteria::LIKE );
+		$c->add(ReportePeer::CA_IMPOEXPO, "Importación");
+		//$c->setLimit(500);
+		$reportes = ReportePeer::doSelect( $c );
+		set_time_limit(0);
+		foreach( $reportes as $reporte ){
+			$status = $reporte->getUltimoStatus();
+			if( $status ){
+				if( $status->getCaEtapa()=="Carga en Tránsito a Destino" ){
+					echo $reporte->getCaConsecutivo()." ".$reporte->getCaTransporte()."<br />";	
+				}
+			}
+		}
+	}
+	
+	
+	/*
+	* Copia los permisos del sistema anterior al nuevo sistema.
+	*/
+	public function executeCopiarPermisos(){
+		exit("detenido");
+		$c = new Criteria();
+		$c->add( UsuarioPeer::CA_IDSUCURSAL, "BOG", Criteria::NOT_EQUAL );
+		$c->add( UsuarioPeer::CA_ACTIVO, true );
+		$usuarios = UsuarioPeer::doSelect( $c );
+		set_time_limit(0);
+		foreach( $usuarios as $usuario ){
+		
+			if( $usuario->getCaRutinas() ){
+				echo "<br /> ".$usuario->getCaLogin()."<br />";
+				//print_r( $rutinasStr );
+				$rutinasArr = explode("|", $usuario->getCaRutinas() ); 	
+				$c = new Criteria();
+				$c->add( RutinaOldPeer::CA_RUTINA, $rutinasArr, Criteria::IN  );	
+				$rutinas = RutinaOldPeer::doSelect( $c );
+				if( $usuario->getCaDepartamento()!="Comercial"  && $usuario->getCaDepartamento()!="Servicio al Cliente"){
+				
+					$permisosArr = array(39, 38 );
+					
+					
+					foreach( $permisosArr as $per ){
+					
+						$permiso =AccesoUsuarioPeer:: retrieveByPk( $per, $usuario->getCaLogin() );
+							
+						if( !$permiso ){
+							$permiso = new AccesoUsuario();	
+							$permiso->setCaLogin( $usuario->getCaLogin() );
+							$permiso->setCaRutina( $per );							
+							$permiso->setCaAcceso( 0 );		
+							$permiso->save();						
+						}
+					}
+				}
+				/*
+				foreach( $rutinas as $rutina ){
+					$c = new Criteria();
+					$c->add( RutinaPeer::CA_GRUPO, $rutina->getCaGrupo() );
+					$c->add( RutinaPeer::CA_OPCION, $rutina->getCaOpcion() );
+					$rutinasNewsObj = RutinaPeer::doSelect( $c );
+					
+					foreach( $rutinasNewsObj as $rutinaNew ){
+						$permiso =AccesoUsuarioPeer:: retrieveByPk( $rutinaNew->getCaRutina(), $usuario->getCaLogin() );
+						
+						if( !$permiso ){
+							$permiso = new AccesoUsuario();	
+							$permiso->setCaLogin( $usuario->getCaLogin() );
+							$permiso->setCaRutina( $rutinaNew->getCaRutina() );							
+							$permiso->setCaAcceso( 0 );		
+							$permiso->save();						
+						}
+					}
+					
+					
+					
+				}*/
+				
+			}
+		}				
+	}	
+	
+	
+	/*
+	* Copia los permisos del sistema anterior al nuevo sistema.
+	*/
+	public function executeFixPermisosMaestraClientesVentas(){
+		exit("exit");
+		$c = new Criteria();
+		$c->add( UsuarioPeer::CA_IDSUCURSAL, "BOG", Criteria::NOT_EQUAL );
+		$c->add( UsuarioPeer::CA_ACTIVO, true );
+		$usuarios = UsuarioPeer::doSelect( $c );
+		
+		foreach( $usuarios as $usuario ){
+			//echo $usuario->getCaDepartamento();
+			if( $usuario->getCaDepartamento()=="Marítimo"){
+				$acceso = UsuarioGrupoPeer::retrieveByPk($usuario->getCaLogin(), "maritimo"	);
+				/*
+				$c = new Criteria();
+				$c->add( AccesoUsuarioPeer::CA_LOGIN, $usuario->getCaLogin() );
+				$c->add( AccesoUsuarioPeer::CA_ACCESO, 0 );
+				$accesosUsuarios = AccesoUsuarioPeer::doSelect( $c );
+				foreach( $accesosUsuarios as $accesosUsuario ){
+					$accesosUsuario->delete();
+				}*/
+				
+				//print_r( $accesosUsuario );
+				
+				if(!$acceso	){										
+					echo $usuario->getCaLogin()."<br />";
+										
+					$acceso = new UsuarioGrupo();
+					$acceso->setCaLogin($usuario->getCaLogin());
+					$acceso->setCaGrupo("maritimo");
+					$acceso->save();
+				}
+			}
+		}	
+		
+		return sfView::NONE;			
+	}	
 }
 
 
