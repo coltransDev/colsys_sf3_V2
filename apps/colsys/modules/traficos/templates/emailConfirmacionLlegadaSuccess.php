@@ -9,18 +9,20 @@ Señores:<br />
 <?=strtoupper($cliente->getCaCompania())?>
 </b><br />
 <br />
-<table width="100%" cellspacing="1" border="1">
+<?=Utils::replace($status->getCaIntroduccion());?>
+<br />
+
+
+<table width="100%" cellspacing="1" border="1" class="tableList">
 <?
 if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 ?>
-	<tr>
-		<td colspan="6"><?=Utils::replace($status->getCaIntroduccion());?></td>
-	</tr>
+	
 	<?
 					if ( $inoCliente->getCaNumorden() ) {
 					?>
 	<tr>
-		<td><b>Orden:</b></td>
+		<td width="23%"><b>Orden:</b></td>
 		<td colspan="5"><?=$inoCliente->getCaNumorden()?></td>
 	</tr>
 	<?
@@ -28,15 +30,17 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 					?>
 	<tr>
 		<td><b>Proveedor:</b></td>
-		<td colspan="5"><?=$inoCliente->getCaProveedor()?></td>
+		<td colspan="3"><?=$inoCliente->getCaProveedor()?></td>
+		<td><b>Referencia</b></td>
+		<td><?=$inoMaestra->getCaReferencia()?></td>
 	</tr>
 	<tr>
 		<td><b>Origen:</b></td>
-		<td><?=$inoMaestra->getOrigen()->getCaCiudad()?></td>
-		<td><b>Fch.Salida:</b></td>
-		<td><?=$inoMaestra->getCaFchembarque()?></td>
-		<td><b>Nombre del Buque:</b></td>
-		<td><?=$inoMaestra->getCaMnllegada()?></td>
+		<td width="4%"><?=$inoMaestra->getOrigen()->getCaCiudad()?></td>
+		<td width="23%"><b>Fch.Salida:</b></td>
+		<td width="14%"><?=$inoMaestra->getCaFchembarque()?></td>
+		<td width="28%"><b>Nombre del Buque:</b></td>
+		<td width="5%"><?=$inoMaestra->getCaMnllegada()?></td>
 	</tr>
 	<tr>
 		<td><b>Destino:</b></td>
@@ -45,8 +49,7 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 		<td><?=$inoMaestra->getCaFchconfirmacion()?>
 			<br />
 			<b>Hora: </b>
-			<?=$inoMaestra->getCaHoraconfirmacion()?>
-		</td>
+			<?=$inoMaestra->getCaHoraconfirmacion()?>		</td>
 		<?
 					if ( $inoMaestra->getCaFchdesconsolidacion() ) {
 					
@@ -56,7 +59,7 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 		<?	  
 					} else {
 					?>
-		<td colspan="2">&nbsp;</td>
+		<td width="3%" colspan="2">&nbsp;</td>
 		<?
 					}
 					?>
@@ -81,7 +84,9 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 		<td><b>Reg. Capitania:</b></td>
 		<td><?=$inoMaestra->getCaRegistrocap()?></td>
 		<td><b>Bandera:</b></td>
-		<td colspan="3"><?=$inoMaestra->getCaBandera()?></td>
+		<td><?=$inoMaestra->getCaBandera()?></td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
 	</tr>
 	<?
 	if ($status->getCaStatus() ){
@@ -99,7 +104,7 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 		if (count($equipos)> 0){
 		?>
 		<tr>
-			<td colspan="6"><table width="100%" cellspacing="1" border="1">
+			<td colspan="6"><table width="100%" cellspacing="1" border="1" class="tableList">
 					<tr>
 						<th colspan="4">Relación de Contenedores</th>
 					</tr>
@@ -133,16 +138,14 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 	?>
 	<tr>
 		<td><b>Orden :</b></td>
-		<td colspan="5"><?=$inoCliente->getCaNumorden()?>
-		</td>
+		<td colspan="5"><?=$inoCliente->getCaNumorden()?>		</td>
 	</tr>
 	<?
 	}
 	?>
 	<tr>
 		<td><b>Proveedor :</b></td>
-		<td colspan="5"><?=$inoCliente->getCaProveedor()?>
-		</td>
+		<td colspan="5"><?=$inoCliente->getCaProveedor()?>		</td>
 	</tr>
 	<tr>
 		<td><b>Origen:</b></td>
@@ -160,13 +163,13 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 	if( count( $statusList)>0 ){
 	?>
 	<tr>
-		<td colspan="6"><table width="100%" cellspacing="1" border="1">
+		<td colspan="6"><table width="100%" cellspacing="1" border="1" class="tableList">
 				<tr>
 					<th colspan="2">Status del Embarque</th>
 				</tr>
 				<tr>
-					<th>Fecha</th>
-					<th>Status</th>
+					<th width="24%">Fecha</th>
+					<th width="76%">Status</th>
 				</tr>				
 
 				<?

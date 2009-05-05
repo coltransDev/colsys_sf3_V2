@@ -63,6 +63,15 @@ class traficosActions extends sfActions
 		}	*/
 				
 	}
+	
+	/*
+	* Muestra un resumen de los status enviados al cliente
+	*/
+	public function executeVerHistorialStatus( $request ){
+		$this->forward404Unless( $this->getRequestParameter("idreporte") );
+		$this->reporte = ReportePeer::retrieveByPk( $this->getRequestParameter("idreporte") );		
+		$this->forward404Unless( $this->reporte );
+	}
 
 	/*
 	 * Muestra el estado del reporte cuando un usuario hace click sobre el
