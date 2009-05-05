@@ -17,7 +17,7 @@ class confirmacionesActions extends sfActions
 	*/
 	public function executeIndex(sfWebRequest $request)
 	{
-	
+		$this->modo = $request->getParameter( "modo" );
 	}
 	
 	
@@ -28,6 +28,7 @@ class confirmacionesActions extends sfActions
 	*/
 	public function executeBusqueda(sfWebRequest $request){
 		$criterio = $request->getParameter( "criterio" );
+		$this->modo = $request->getParameter( "modo" );
 		$cadena = str_replace("-",".",$request->getParameter( "cadena" ));
 		$c = new Criteria();
 		$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );
@@ -38,6 +39,7 @@ class confirmacionesActions extends sfActions
 		}
 		
 		$c->addDescendingOrderByColumn( InoMaestraSeaPeer::CA_REFERENCIA );	
+		$c->setDistinct();
 		$c->setLimit( 200 );
 		
 		$this->pager = new sfPropelPager('InoMaestraSea', 30);		
@@ -47,7 +49,7 @@ class confirmacionesActions extends sfActions
 		
 		if( count($this->pager->getResults())==1 && count($this->pager->getLinks())==1  ){
 			$referencias = $this->pager->getResults();
-			$this->redirect("confirmaciones/consulta?referencia=".$referencias[0]->getCaReferencia());
+			$this->redirect("confirmaciones/consulta?referencia=".str_replace(".", "-",$referencias[0]->getCaReferencia())."&modo=".$this->modo);
 		}
 		$this->criterio = $criterio;
 		$this->cadena = str_replace(".", "-",$cadena);		
@@ -59,7 +61,10 @@ class confirmacionesActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeConsulta(sfWebRequest $request){	
-	
+		
+		$response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("popcalendar",'last');
+		
 		$referenciaParam = str_replace("-",".",$request->getParameter( "referencia" ));		
 		$this->referencia = InoMaestraSeaPeer::retrieveByPk( $referenciaParam );		
 		$this->forward404Unless( $this->referencia );	
@@ -86,6 +91,27 @@ class confirmacionesActions extends sfActions
 		$this->textos = sfYaml::load($config);	
 		
 		
+		/*
+		* Etapas 
+		*/
+		$c = new Criteria();		
+		if( $this->modo=="otm" ){
+			$c->add( TrackingEtapaPeer::CA_DEPARTAMENTO, "OTM/DTA" );
+		}else{
+			$c->add( TrackingEtapaPeer::CA_DEPARTAMENTO, "Marítimo" );
+		}
+		$c->addAscendingOrderByColumn(TrackingEtapaPeer::CA_ORDEN);
+		$this->etapas = TrackingEtapaPeer::doSelect( $c );	
+		
+		if( $this->modo=="otm" ){
+			$c = new Criteria();
+			$tipos = array('Zona Franca', 'Zona Aduanera','Depósito Aduanero', 'Depósito Privado', 'Industria Militar');	
+			$c->add( BodegaPeer::CA_TIPO, $tipos , Criteria::IN);
+			$c->addAscendingOrderByColumn(  BodegaPeer::CA_TIPO );
+			$c->addAscendingOrderByColumn(  BodegaPeer::CA_NOMBRE );
+			
+			$this->bodegas = BodegaPeer::doSelect( $c );
+		}						
 	}
 	
 	/**
@@ -94,15 +120,12 @@ class confirmacionesActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeCrearStatus(sfWebRequest $request){	
-		/*print_r( $_POST );
-		exit();
-		*/
 		
-		$referencia = InoMaestraSeaPeer::retrieveByPk( $request->getParameter( "id" ) );
+		$referencia = InoMaestraSeaPeer::retrieveByPk( $request->getParameter( "referencia" ) );
 		$this->forward404Unless( $referencia );
 		
 		$modo = $request->getParameter( "modo" );
-		
+		$tipo_msg = $request->getParameter( "tipo_msg" );		
 		$oids = $request->getParameter( "oid" );
 		
 		$inoClientes = array();
@@ -168,10 +191,19 @@ class confirmacionesActions extends sfActions
 			$status = new RepStatus();
 						
 			$status->setCaIdReporte( $reporte->getCaIdreporte() );
-			$status->setCaFchStatus( date("Y-m-d H:i:s") );			
-			$status->setCaIdEtapa("IMCPD");
-			$status->setCaIntroduccion( $this->getRequestParameter("intro_body") );
-			$status->setCaStatus( $this->getRequestParameter("mensaje_".$oid) );
+			$status->setCaFchStatus( time() );	
+			
+			if( $tipo_msg=="Conf" ){
+				$status->setCaIntroduccion( $this->getRequestParameter("intro_body") );
+				$status->setCaStatus( $this->getRequestParameter("mensaje_".$oid) );
+			}else{
+				$status->setCaIntroduccion( $this->getRequestParameter("status_body_intro") );				
+				$mensaje = $this->getRequestParameter("status_body");
+				if( $this->getRequestParameter("mensaje_".$oid) ){
+					$mensaje .= "\n".$this->getRequestParameter("mensaje_".$oid);
+				}
+				$status->setCaStatus( $mensaje );			
+			}
 			$status->setCaComentarios( $this->getRequestParameter("notas") );			
 			$status->setCaFchenvio( date("Y-m-d H:i:s") );
 			$status->setCausuenvio( $this->getUser()->getUserId() );
@@ -185,16 +217,42 @@ class confirmacionesActions extends sfActions
 				$status->setCaFchllegada( $ultimostatus->getCaFchllegada() );
 				$status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
 			}
-						
-			if( $modo=="conf" ){			
-				if( $referencia->getCaMnLlegada() ){
-					$status->setCaIdnave( $referencia->getCaMnLlegada() );
-				}else{
-					$status->setCaIdnave( $referencia->getCaMotonave() );
-				}
-				$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
-			}	
 			
+			
+			
+			switch( $modo ){
+				case "conf":
+					if( $tipo_msg=="Conf" ){
+						$status->setCaIdEtapa("IMCPD");
+					}else{
+						$status->setCaIdEtapa("88888");
+					}
+					
+					if( $referencia->getCaMnLlegada() ){
+						$status->setCaIdnave( $referencia->getCaMnLlegada() );
+					}else{
+						$status->setCaIdnave( $referencia->getCaMotonave() );
+					}
+					$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
+					
+					break;
+				case "otm":				
+					$etapa =  $this->getRequestParameter("tipo_".$oid);
+					
+					if( $etapa=="IMCOL" ){
+						$idbodega = $this->getRequestParameter("bodega_".$oid); 						
+						$status->setCaFchcontinuacion($this->getRequestParameter("fchllegada_".$oid));	
+						$status->setProperty("idbodega", $idbodega);				
+					}
+					
+					
+					$status->setCaIdEtapa($etapa);
+					break;				
+				default:	
+					$status->setCaIdEtapa("88888");
+					break;	
+			}
+						
 			$destinatarios = array();
 			
 			$checkbox = $request->getParameter("em_".$oid);

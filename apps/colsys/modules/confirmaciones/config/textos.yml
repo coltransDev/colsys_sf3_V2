@@ -4,8 +4,16 @@
 mensajeConf: |
   Respetado cliente buenos días, confirmamos la llegada de su carga con la siguiente información.
 
-mensajeStatus: |
+mensajeStatusIntro: |
   Respetado cliente buenos días: 
+
+mensajeStatus: |
+  Reemplazar con el Status
+  
+mensajeConfOTM: |
+  Respetado cliente buenos días, nos complace suministrarle nueva información en relación a su carga en OTM. 
+mensajeCierreOTM: |  
+  Confirmamos cierre y finalización de los documentos del proceso de OTM, los cuales se encuentran en nuestras oficinas para la correspondiente liberación.  
   
 mensajeConfOTMCliente: |
   Como requisito indispensable para efectuar el OTM necesitamos los siguientes documentos:

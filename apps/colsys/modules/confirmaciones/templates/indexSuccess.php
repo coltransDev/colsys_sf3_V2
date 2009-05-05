@@ -1,7 +1,7 @@
 <div align="center">
 	
 	<br />
-	<form action="<?=url_for( "confirmaciones/busqueda" )?>" method="post" >
+	<form action="<?=url_for( "confirmaciones/busqueda?modo=".$modo )?>" method="post" >
 	<table class="tableList" width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" >		
 		<tr>	
 			<th colspan="3" style='font-size: 12px; font-weight:bold;'> Módulo de Confirmaciones de Llegada</th>

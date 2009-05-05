@@ -11,6 +11,10 @@ if( $cadena ){
 	$url.="&cadena=".str_replace(".", "-",$cadena);
 }
 
+if( $modo ){
+	$url.="&modo=".$modo;
+}
+
 
 if ($pager->haveToPaginate()):   
 	if ($pager->getPage() != 1):				
@@ -52,7 +56,7 @@ endif;
 		$destino = $referencia->getDestino();	
 	?>
 	<tr>
-	  <td rowspan="2"  ><?=link_to($referencia->getCaReferencia(), "confirmaciones/consulta?referencia=".str_replace(".", "-", $referencia->getCaReferencia()))?></td>
+	  <td rowspan="2"  ><?=link_to($referencia->getCaReferencia(), "confirmaciones/consulta?referencia=".str_replace(".", "-", $referencia->getCaReferencia())."&modo=".$modo)?></td>
 	  <td ><?=$linea->getCaNombre()?></td>
       </tr>
 	<tr>
