@@ -1,20 +1,19 @@
 <div align="center">
-	
-	<table width="90%" border="0">
+
+<table width="539" border="1" class="tableList">
 	<tr>
-		<td width="50%"><?=image_tag("layout/homepage/colsys_homepage.png")?></td>
-		<td width="50%">&nbsp;</td>
+		<th width="529"  >&nbsp;</th>
 	</tr>
 	<tr>
-		<td valign="top">
+		
+		<td class="mostrar"><div style="padding:25px" align="center"><?=image_tag("logo_colsys_big.gif"); ?></div>		</td>
+	</tr>
+	<tr>
+		<th width="529"><div align="center"><b>Directorio</b></div></th>
+	</tr>
+	<tr>
+		<td >
 			<table width="100%" border="0" >
-				<tr>
-					<td ><div align="left"><?=image_tag("layout/homepage/directorio.jpg")?></div></td>
-				</tr>				
-				<tr>
-					<td>
-						<div class="homePanel">
-						<table width="100%" border="0" >
 						<tr>
 							<td colspan="2">
 								<div align="center"><b>Para acceder al directorio haga <a href="#" onClick="window.open('http://correo.coltrans.com.co/eGuide')"> click aca</a>
@@ -56,46 +55,27 @@
 								</ul>
 						</div></td>
 						</table>
-					
-						</div>
-					</td>
-				</tr>
-				<tr>
-					
-				</tr>
-
-				
-			</table>
-
-		</td>
-		<td valign="top">
-			<table width="100%" border="0" >
-				<tr>
-					<td ><div align="left"><?=image_tag("layout/homepage/novedades.jpg")?></div></td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<div class="homePanel" style="max-height:100px; overflow:auto;">
-						<?
-						foreach( $novedades as $novedad ){
-						?>			
-							<br /><br />
-							<?=image_tag("16x16/post.gif")?><b><?=$novedad->getCaFchpublicacion("Y-m-d")?> <?=$novedad->getCaAsunto()?></b>
-							<br />
-							<hr />
-							<div class="story">
-							<?=nl2br($novedad->getCaDetalle())?>
-							</div>
-						<?	
-						}
-						?>
-						</div>
-					</td>
-				</tr>							
-			</table>
-		
 		</td>
 	</tr>
+	<tr>
+		<th width="529"><div align="center"><b>Novedades del sistema Colsys</b></div></th>
+	</tr>
+	<tr>
+		<td >
+		<?
+		foreach( $novedades as $novedad ){
+		?>			
+			<br /><br />
+			<?=image_tag("16x16/post.gif")?><b><?=$novedad->getCaFchpublicacion("Y-m-d")?> <?=$novedad->getCaAsunto()?></b>
+			<br />
+			<hr />
+			<div class="story">
+			<?=nl2br($novedad->getCaDetalle())?>
+			</div>
+		<?	
+		}
+		?>
+		</td>
+	</tr>	
 </table>
-
 </div>
