@@ -880,8 +880,8 @@ class clientesActions extends sfActions
 		
 		$email->setCaSubject( "Verificación Clientes en Lista Clinton" );		
 		$email->setCaBodyHtml( $msn_mem );
-		//$email->save(); //guarda el cuerpo del mensaje
-		//$email->send(); //envia el mensaje de correo	
+		$email->save(); //guarda el cuerpo del mensaje
+		$email->send(); //envia el mensaje de correo	
 		
 		if (isset($ultimo)){
 			$ultimo->setCaValor2($nueva_fecha);
