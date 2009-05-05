@@ -918,11 +918,11 @@ class pricingActions extends sfActions
 		$recargo->setCaFchcreado( time() );
 		
 					
-		if( $this->getRequestParameter("vlrrecargo") ){
+		if( $this->getRequestParameter("vlrrecargo")!==null ){
 			$recargo->setCaVlrrecargo( $this->getRequestParameter("vlrrecargo") );
 		}
 		
-		if( $this->getRequestParameter("vlrminimo") ){
+		if( $this->getRequestParameter("vlrminimo")!==null ){
 			$recargo->setCaVlrminimo( $this->getRequestParameter("vlrminimo") );
 		}		
 		
@@ -1196,11 +1196,11 @@ class pricingActions extends sfActions
 		}
 		
 					
-		if( $this->getRequestParameter("vlrrecargo") ){
+		if( $this->getRequestParameter("vlrrecargo")!==null ){
 			$recargo->setCaVlrrecargo( $this->getRequestParameter("vlrrecargo") );
 		}
 		
-		if( $this->getRequestParameter("vlrminimo") ){
+		if( $this->getRequestParameter("vlrminimo")!==null ){
 			$recargo->setCaVlrminimo( $this->getRequestParameter("vlrminimo") );
 		}		
 		
