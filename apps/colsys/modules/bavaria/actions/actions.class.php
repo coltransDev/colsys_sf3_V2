@@ -136,13 +136,18 @@ class bavariaActions extends sfActions {
 			$salida.= str_pad($frm_embarque[$reporte->getCaModalidad()], 2, " " )."|"; // 20
 			$salida.= str_pad(null,5, " ")."|"; // 21 -> Clave de Moneda
 			
-			$salida.= str_pad(null,117, " ")."|"; // Campos del 22 al 31
+			$spaces = array(15,13,13,13,13,13,13,5,11,8); // Campos del 22 al 31
+			foreach( $spaces as $space ){
+				$salida.= str_pad(null,$space, " ")."|";
+			}
 			
 			$salida.= str_pad((($piezas[1]=="Bultos")?$piezas[0]:null),15, " ")."|"; // 32
 			$salida.= str_pad((($piezas[1]=="Pallets")?$piezas[0]:null),13, " ")."|"; // 33
 			
-			$salida.= str_pad(null,673, " "); // Campos del 34 al 55
-			
+			$spaces = array(1,2,90,8,8,8,8,90,2,25,8,255,8,8,8,8,7,80,10,18,10,11); // Campos del 34 al 55
+			foreach( $spaces as $space ){
+				$salida.= str_pad(null,$space, " ")."|";
+			}
 			$salida.= "\r";
 
 			$salida.= "2|";  // 1
@@ -167,7 +172,12 @@ class bavariaActions extends sfActions {
 				$salida.= str_pad($equipo->getCaIdequipo(),25, " ")."|"; // 5
 				$fchLlegada = Utils::transformDate($status->getCaFchllegada(), $format="Ymd");
 				$salida.= str_pad($fchLlegada,8, " ")."|"; // 6
-				$salida.= str_pad(null,42, " ")."|"; // Campos del 7 al 10
+
+				$spaces = array(13,8,13,8); // Campos del 7 al 10
+				foreach( $spaces as $space ){
+					$salida.= str_pad(null,$space, " ")."|";
+				}
+				
 				$salida.= str_pad($tipo_contenedor[$equipo->getCaIdconcepto()], 1, " " )."|"; // 11
 				$salida.= str_pad(null,1, " ")."|"; // 12
 				$salida.= "\r";
