@@ -77,6 +77,9 @@ class bavariaActions extends sfActions {
 		
 		set_time_limit(0);
 		foreach( $reportes as $reporte ){
+			//print_r($reporte);
+			
+			//print_r (get_class_methods(get_class($reporte)));
 			if( !$reporte->esUltimaVersion() ){
 				continue;				
 			}	
@@ -140,6 +143,7 @@ class bavariaActions extends sfActions {
 			foreach( $spaces as $space ){
 				$salida.= str_pad(null,$space, " ")."|";
 			}
+			unset($space);
 			
 			$salida.= str_pad((($piezas[1]=="Bultos")?$piezas[0]:null),15, " ")."|"; // 32
 			$salida.= str_pad((($piezas[1]=="Pallets")?$piezas[0]:null),13, " ")."|"; // 33
@@ -149,6 +153,7 @@ class bavariaActions extends sfActions {
 				$salida.= str_pad(null,$space, " ")."|";
 			}
 			$salida.= "\r";
+			unset($space);
 
 			$salida.= "2|";  // 1
 			$salida.= "BA00|";  // 2
@@ -162,6 +167,7 @@ class bavariaActions extends sfActions {
 			// $salida.= str_pad(number_format($reporte->getProperty("vlrfactproveedor")*100, 0, '', ''),13, " ")."|"; // 7
 			$salida.= str_pad(number_format(42565*100, 0, '', ''),13, " "); // 7 Datos de Prueba
 			$salida.= "\r";
+			unset($space);
 			
 			foreach( $equipos as $equipo ){
 				$salida.= "3|";  // 1
@@ -181,6 +187,7 @@ class bavariaActions extends sfActions {
 				$salida.= str_pad($tipo_contenedor[$equipo->getCaIdconcepto()], 1, " " )."|"; // 11
 				$salida.= str_pad(null,1, " ")."|"; // 12
 				$salida.= "\r";
+				unset($space);
 			}
 			
 		}	
@@ -195,6 +202,7 @@ class bavariaActions extends sfActions {
 			/*$fala_header->setCaProcesado(true);
 			$fala_header->save();*/
 		}
+		echo "asd";
 
 		return sfView::NONE;
 		
