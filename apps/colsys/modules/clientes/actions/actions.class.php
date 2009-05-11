@@ -835,8 +835,8 @@ class clientesActions extends sfActions
 					}
 					$email->setCaSubject( "Verificación Clientes en Lista Clinton" );		
 					$email->setCaBodyHtml( $msn_mem );
-					//$email->save(); //guarda el cuerpo del mensaje
-					//$email->send(); //envia el mensaje de correo	
+					$email->save(); //guarda el cuerpo del mensaje
+					$email->send(); //envia el mensaje de correo	
 				}
 				if ($row["ca_vendedor"] != '') {
 					$user = UsuarioPeer::retrieveByPk($row["ca_vendedor"]);	
