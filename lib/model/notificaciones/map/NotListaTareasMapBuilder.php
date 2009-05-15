@@ -2,7 +2,7 @@
 
 
 /**
- * This class adds structure of 'helpdesk.tb_groups' table to 'propel' DatabaseMap object.
+ * This class adds structure of 'notificaciones.tb_listatareas' table to 'propel' DatabaseMap object.
  *
  *
  *
@@ -11,14 +11,14 @@
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  *
- * @package    lib.model.helpdesk.map
+ * @package    lib.model.notificaciones.map
  */
-class HdeskGroupMapBuilder implements MapBuilder {
+class NotListaTareasMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = 'lib.model.helpdesk.map.HdeskGroupMapBuilder';
+	const CLASS_NAME = 'lib.model.notificaciones.map.NotListaTareasMapBuilder';
 
 	/**
 	 * The database map.
@@ -54,24 +54,20 @@ class HdeskGroupMapBuilder implements MapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap(HdeskGroupPeer::DATABASE_NAME);
+		$this->dbMap = Propel::getDatabaseMap(NotListaTareasPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable(HdeskGroupPeer::TABLE_NAME);
-		$tMap->setPhpName('HdeskGroup');
-		$tMap->setClassname('HdeskGroup');
+		$tMap = $this->dbMap->addTable(NotListaTareasPeer::TABLE_NAME);
+		$tMap->setPhpName('NotListaTareas');
+		$tMap->setClassname('NotListaTareas');
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('helpdesk.tb_groups_id');
+		$tMap->setPrimaryKeyMethodInfo('notificaciones.tb_listatareas_id');
 
-		$tMap->addPrimaryKey('CA_IDGROUP', 'CaIdgroup', 'INTEGER', true, null);
+		$tMap->addPrimaryKey('CA_IDLISTATAREA', 'CaIdlistatarea', 'INTEGER', true, null);
 
-		$tMap->addForeignKey('CA_IDDEPARTAMENT', 'CaIddepartament', 'INTEGER', 'control.tb_departamentos', 'CA_IDDEPARTAMENTO', true, null);
-
-		$tMap->addColumn('CA_NAME', 'CaName', 'VARCHAR', false, null);
-
-		$tMap->addColumn('CA_MAXRESPONSETIME', 'CaMaxresponsetime', 'INTEGER', false, null);
+		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
 	} // doBuild()
 
-} // HdeskGroupMapBuilder
+} // NotListaTareasMapBuilder

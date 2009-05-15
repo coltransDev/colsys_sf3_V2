@@ -67,13 +67,15 @@ class Reporte extends BaseReporte
 	*/
 	public function getProveedoresStr(){
 		$proveedoresStr="";
-		$proveedores = $this->getProveedores();		
-		foreach( $proveedores as $proveedor ){
-			if( $proveedoresStr ){
-				$proveedoresStr.=" - ";					
-			}
-			$proveedoresStr.= $proveedor->getCaNombre();					
-		}		
+		$proveedores = $this->getProveedores();	
+		if( $proveedores ){	
+			foreach( $proveedores as $proveedor ){
+				if( $proveedoresStr ){
+					$proveedoresStr.=" - ";					
+				}
+				$proveedoresStr.= $proveedor->getCaNombre();					
+			}	
+		}	
 		return $proveedoresStr;
 	}
 	
@@ -165,6 +167,17 @@ class Reporte extends BaseReporte
 	* @author: Andres Botero
 	*/
 	public function getColorStatus(){
+		$etapa = $this->getTrackingEtapa();		
+		if( $etapa && $etapa->getCaClass()){
+			return $etapa->getCaClass();
+		}
+		
+		if( $this->getCaFchUltstatus("Y-m-d")==date("Y-m-d") ){
+			return "green";
+		}
+		
+		return "";
+		/*
 		$etapa = $this->getCaEtapaActual(); 
 		
 		$status = $this->getUltimoStatus();
@@ -219,7 +232,7 @@ class Reporte extends BaseReporte
 				break;
 		 
 		}
-		return $class;		
+		return $class;		*/
 	}
 	
 	/*

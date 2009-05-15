@@ -57,7 +57,7 @@ class InoClientesSea extends BaseInoClientesSea
 	public function getStatus(){
 		$refSea = $this->getInoMaestraSea();
 		if( $refSea->getCaFchconfirmado( ) ){						
-			$texto = "La MN ".($refSea->getCaMnLlegada(  ) ?$refSea->getCaMnLlegada(  ):$refSea->getCaMotonave())." arribó a ".$refSea->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $refSea->getCaFchconfirmacion() )." con la orden en referencia a bordo.\n". ucfirst($refSea->getCaMensaje()." ".$this->getCamensaje());			
+			$texto = "La MN ".($refSea->getCaMnLlegada(  ) ?$refSea->getCaMnLlegada(  ):$refSea->getCaMotonave())." arribó a ".$refSea->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $refSea->getCaFchconfirmacion() )." con la orden en referencia a bordo.\n". ucfirst($this->getCamensaje());			
 			return $texto;
 			
 		}	

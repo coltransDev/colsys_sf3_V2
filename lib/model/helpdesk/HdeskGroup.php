@@ -2,4 +2,6 @@
 
 class HdeskGroup extends BaseHdeskGroup
 {
+	
 }
+?>

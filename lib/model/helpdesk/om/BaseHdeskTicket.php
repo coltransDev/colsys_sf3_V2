@@ -93,6 +93,12 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 	protected $ca_responsetime;
 
 	/**
+	 * The value for the ca_idtarea field.
+	 * @var        int
+	 */
+	protected $ca_idtarea;
+
+	/**
 	 * @var        HdeskGroup
 	 */
 	protected $aHdeskGroup;
@@ -106,6 +112,11 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 	 * @var        HdeskProject
 	 */
 	protected $aHdeskProject;
+
+	/**
+	 * @var        NotTarea
+	 */
+	protected $aNotTarea;
 
 	/**
 	 * @var        array HdeskResponse[] Collection to store aggregation of HdeskResponse objects.
@@ -315,6 +326,16 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 		} else {
 			return $dt->format($format);
 		}
+	}
+
+	/**
+	 * Get the [ca_idtarea] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdtarea()
+	{
+		return $this->ca_idtarea;
 	}
 
 	/**
@@ -628,6 +649,30 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 	} // setCaResponsetime()
 
 	/**
+	 * Set the value of [ca_idtarea] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     HdeskTicket The current object (for fluent API support)
+	 */
+	public function setCaIdtarea($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idtarea !== $v) {
+			$this->ca_idtarea = $v;
+			$this->modifiedColumns[] = HdeskTicketPeer::CA_IDTAREA;
+		}
+
+		if ($this->aNotTarea !== null && $this->aNotTarea->getCaIdtarea() !== $v) {
+			$this->aNotTarea = null;
+		}
+
+		return $this;
+	} // setCaIdtarea()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -676,6 +721,7 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			$this->ca_assignedto = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->ca_action = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->ca_responsetime = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_idtarea = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -685,7 +731,7 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 12; // 12 = HdeskTicketPeer::NUM_COLUMNS - HdeskTicketPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 13; // 13 = HdeskTicketPeer::NUM_COLUMNS - HdeskTicketPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating HdeskTicket object", $e);
@@ -716,6 +762,9 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 		}
 		if ($this->aUsuario !== null && $this->ca_login !== $this->aUsuario->getCaLogin()) {
 			$this->aUsuario = null;
+		}
+		if ($this->aNotTarea !== null && $this->ca_idtarea !== $this->aNotTarea->getCaIdtarea()) {
+			$this->aNotTarea = null;
 		}
 	} // ensureConsistency
 
@@ -759,6 +808,7 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			$this->aHdeskGroup = null;
 			$this->aUsuario = null;
 			$this->aHdeskProject = null;
+			$this->aNotTarea = null;
 			$this->collHdeskResponses = null;
 			$this->lastHdeskResponseCriteria = null;
 
@@ -871,6 +921,13 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 					$affectedRows += $this->aHdeskProject->save($con);
 				}
 				$this->setHdeskProject($this->aHdeskProject);
+			}
+
+			if ($this->aNotTarea !== null) {
+				if ($this->aNotTarea->isModified() || $this->aNotTarea->isNew()) {
+					$affectedRows += $this->aNotTarea->save($con);
+				}
+				$this->setNotTarea($this->aNotTarea);
 			}
 
 			if ($this->isNew() ) {
@@ -992,6 +1049,12 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->aNotTarea !== null) {
+				if (!$this->aNotTarea->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aNotTarea->getValidationFailures());
+				}
+			}
+
 
 			if (($retval = HdeskTicketPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
@@ -1075,6 +1138,9 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			case 11:
 				return $this->getCaResponsetime();
 				break;
+			case 12:
+				return $this->getCaIdtarea();
+				break;
 			default:
 				return null;
 				break;
@@ -1108,6 +1174,7 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			$keys[9] => $this->getCaAssignedto(),
 			$keys[10] => $this->getCaAction(),
 			$keys[11] => $this->getCaResponsetime(),
+			$keys[12] => $this->getCaIdtarea(),
 		);
 		return $result;
 	}
@@ -1175,6 +1242,9 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			case 11:
 				$this->setCaResponsetime($value);
 				break;
+			case 12:
+				$this->setCaIdtarea($value);
+				break;
 		} // switch()
 	}
 
@@ -1211,6 +1281,7 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[9], $arr)) $this->setCaAssignedto($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCaAction($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setCaResponsetime($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaIdtarea($arr[$keys[12]]);
 	}
 
 	/**
@@ -1234,6 +1305,7 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(HdeskTicketPeer::CA_ASSIGNEDTO)) $criteria->add(HdeskTicketPeer::CA_ASSIGNEDTO, $this->ca_assignedto);
 		if ($this->isColumnModified(HdeskTicketPeer::CA_ACTION)) $criteria->add(HdeskTicketPeer::CA_ACTION, $this->ca_action);
 		if ($this->isColumnModified(HdeskTicketPeer::CA_RESPONSETIME)) $criteria->add(HdeskTicketPeer::CA_RESPONSETIME, $this->ca_responsetime);
+		if ($this->isColumnModified(HdeskTicketPeer::CA_IDTAREA)) $criteria->add(HdeskTicketPeer::CA_IDTAREA, $this->ca_idtarea);
 
 		return $criteria;
 	}
@@ -1309,6 +1381,8 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 		$copyObj->setCaAction($this->ca_action);
 
 		$copyObj->setCaResponsetime($this->ca_responsetime);
+
+		$copyObj->setCaIdtarea($this->ca_idtarea);
 
 
 		if ($deepCopy) {
@@ -1520,6 +1594,57 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aHdeskProject;
+	}
+
+	/**
+	 * Declares an association between this object and a NotTarea object.
+	 *
+	 * @param      NotTarea $v
+	 * @return     HdeskTicket The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setNotTarea(NotTarea $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdtarea(NULL);
+		} else {
+			$this->setCaIdtarea($v->getCaIdtarea());
+		}
+
+		$this->aNotTarea = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the NotTarea object, it will not be re-added.
+		if ($v !== null) {
+			$v->addHdeskTicket($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated NotTarea object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     NotTarea The associated NotTarea object.
+	 * @throws     PropelException
+	 */
+	public function getNotTarea(PropelPDO $con = null)
+	{
+		if ($this->aNotTarea === null && ($this->ca_idtarea !== null)) {
+			$c = new Criteria(NotTareaPeer::DATABASE_NAME);
+			$c->add(NotTareaPeer::CA_IDTAREA, $this->ca_idtarea);
+			$this->aNotTarea = NotTareaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNotTarea->addHdeskTickets($this);
+			 */
+		}
+		return $this->aNotTarea;
 	}
 
 	/**
@@ -1746,6 +1871,7 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			$this->aHdeskGroup = null;
 			$this->aUsuario = null;
 			$this->aHdeskProject = null;
+			$this->aNotTarea = null;
 	}
 
 } // BaseHdeskTicket

@@ -66,15 +66,13 @@ class ReportePeer extends BaseReportePeer
 	*/
 	public static function getReportesActivosImpoMaritimo( $idCliente , $criteria=false, $order="" ){
 				
-		$c = new Criteria();
-		
+		$c = new Criteria();		
 		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );	
-		$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE, Criteria::LEFT_JOIN );
-		$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA, Criteria::LEFT_JOIN );			
+		//$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE, Criteria::LEFT_JOIN );
+		//$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA, Criteria::LEFT_JOIN );			
 		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );
 				
-		$c->add( ClientePeer::CA_IDGRUPO, $idCliente );
-						
+		$c->add( ClientePeer::CA_IDGRUPO, $idCliente );						
 		$c->add( ReportePeer::CA_TRANSPORTE, Constantes::MARITIMO );
 		$c->add( ReportePeer::CA_IMPOEXPO, Constantes::IMPO );
 		$c->addOr( ReportePeer::CA_IMPOEXPO, Constantes::TRIANGULACION );
@@ -94,10 +92,11 @@ class ReportePeer extends BaseReportePeer
 		}
 						
 		$c->add( ReportePeer::CA_USUANULADO, null, Criteria::ISNULL );
-						
+		/*				
 		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHREPORTE, "2008-04-01", Criteria::GREATER_THAN ); // // Se acordo esta fecha para empezar a operar en esta modalidad		
 		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_FCHDESPACHO, "2008-04-01", Criteria::GREATER_THAN ));	
-		$c->addAnd($criterion);						
+		$c->addAnd($criterion);		
+		*/				
 				
 		
 				
@@ -118,12 +117,11 @@ class ReportePeer extends BaseReportePeer
 			$fecha = Utils::addDays( date("Y-m-d"), $add );
 		}
 				
-		$criterion = $c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, null, Criteria::ISNULL );		
-							
-		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada", Criteria::NOT_EQUAL));
-		$criterion->addOr($c->getNewCriterion( InoMaestraSeaPeer::CA_FCHCONFIRMACION, $fecha , Criteria::GREATER_EQUAL));
-									
-		$c->addAnd($criterion);		
+				
+		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHULTSTATUS, $fecha , Criteria::GREATER_EQUAL );	
+		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, "99999",  Criteria::NOT_EQUAL  ));
+		$c->add($criterion);
+		
 		//$c->setLimit( 5 );		
 		if( $criteria ){
 			return $c;
@@ -191,14 +189,12 @@ class ReportePeer extends BaseReportePeer
 		}
 		
 		
-			
-		$criterion = $c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, null, Criteria::ISNULL );				
-		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_ETAPA_ACTUAL, "Carga en Aeropuerto de Destino", Criteria::NOT_EQUAL));			
-		$criterion->addOr($c->getNewCriterion( InoMaestraAirPeer::CA_FCHLLEGADA, $fecha , Criteria::GREATER_EQUAL));
-		//$criterion->addOr($c->getNewCriterion( InoMaestraAirPeer::CA_FCHLLEGADA, null , Criteria::ISNULL));
-											
-		$c->addAnd($criterion);
-		//echo "-------->".$c->toString();
+		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHULTSTATUS, $fecha , Criteria::GREATER_EQUAL );	
+		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, "99999",  Criteria::NOT_EQUAL  ));
+		$c->add($criterion);
+		
+		
+		
 		if( $criteria ){
 			return $c;
 		}else{			
@@ -213,12 +209,10 @@ class ReportePeer extends BaseReportePeer
 	*/
 	public static function getReportesActivosExpo( $idCliente , $criteria=false, $order="" ){
 			
-		$c = new Criteria();
-		
+		$c = new Criteria();		
 		$c->add( ClientePeer::CA_IDGRUPO, $idCliente );
 		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );	
-		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );
-		
+		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );				
 		switch( $order ){
 			case "orden":
 				$c->addAscendingOrderByColumn(ReportePeer::CA_ORDEN_CLIE);	
@@ -249,14 +243,14 @@ class ReportePeer extends BaseReportePeer
 				$add = -6;
 			}else{
 				$add = -5;
-			}
-			
+			}			
 			$fecha = Utils::addDays( date("Y-m-d"), $add );
 		}
 				
-						
-		$c->add(ReportePeer::CA_ETAPA_ACTUAL, null, Criteria::ISNOTNULL);						
-		$c->addAnd(ReportePeer::CA_ETAPA_ACTUAL, "Carga Entregada", Criteria::NOT_EQUAL);
+		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHULTSTATUS, $fecha , Criteria::GREATER_EQUAL );	
+		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, "99999",  Criteria::NOT_EQUAL  ));
+		$c->add($criterion);
+		
 		if( $criteria ){
 			return $c;
 		}else{			

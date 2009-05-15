@@ -47,4 +47,11 @@ class Usuario extends BaseUsuario
 		$this->setCaSalt( $salt );		
 				
 	}
+	
+	public function checkPasswd( $passwd ){
+		
+		
+		return $this->getCapasswd()==sha1($passwd.$this->getCaSalt() );	
+				
+	}
 }

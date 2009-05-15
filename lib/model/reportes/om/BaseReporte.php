@@ -327,6 +327,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	protected $ca_propiedades;
 
 	/**
+	 * The value for the ca_idetapa field.
+	 * @var        string
+	 */
+	protected $ca_idetapa;
+
+	/**
+	 * The value for the ca_fchultstatus field.
+	 * @var        string
+	 */
+	protected $ca_fchultstatus;
+
+	/**
 	 * @var        Usuario
 	 */
 	protected $aUsuario;
@@ -350,6 +362,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * @var        Bodega
 	 */
 	protected $aBodega;
+
+	/**
+	 * @var        TrackingEtapa
+	 */
+	protected $aTrackingEtapa;
 
 	/**
 	 * @var        array InoClientesAir[] Collection to store aggregation of InoClientesAir objects.
@@ -1116,6 +1133,49 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	public function getCaPropiedades()
 	{
 		return $this->ca_propiedades;
+	}
+
+	/**
+	 * Get the [ca_idetapa] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIdetapa()
+	{
+		return $this->ca_idetapa;
+	}
+
+	/**
+	 * Get the [optionally formatted] temporal [ca_fchultstatus] column value.
+	 * 
+	 *
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
+	 */
+	public function getCaFchultstatus($format = 'Y-m-d H:i:s')
+	{
+		if ($this->ca_fchultstatus === null) {
+			return null;
+		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchultstatus);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchultstatus, true), $x);
+		}
+
+		if ($format === null) {
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $dt->format('U'));
+		} else {
+			return $dt->format($format);
+		}
 	}
 
 	/**
@@ -2333,6 +2393,79 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	} // setCaPropiedades()
 
 	/**
+	 * Set the value of [ca_idetapa] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Reporte The current object (for fluent API support)
+	 */
+	public function setCaIdetapa($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_idetapa !== $v) {
+			$this->ca_idetapa = $v;
+			$this->modifiedColumns[] = ReportePeer::CA_IDETAPA;
+		}
+
+		if ($this->aTrackingEtapa !== null && $this->aTrackingEtapa->getCaIdetapa() !== $v) {
+			$this->aTrackingEtapa = null;
+		}
+
+		return $this;
+	} // setCaIdetapa()
+
+	/**
+	 * Sets the value of [ca_fchultstatus] column to a normalized version of the date/time value specified.
+	 * 
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Reporte The current object (for fluent API support)
+	 */
+	public function setCaFchultstatus($v)
+	{
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->ca_fchultstatus !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchultstatus !== null && $tmpDt = new DateTime($this->ca_fchultstatus)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchultstatus = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = ReportePeer::CA_FCHULTSTATUS;
+			}
+		} // if either are not null
+
+		return $this;
+	} // setCaFchultstatus()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -2420,6 +2553,8 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->ca_usucerrado = ($row[$startcol + 48] !== null) ? (string) $row[$startcol + 48] : null;
 			$this->ca_colmas = ($row[$startcol + 49] !== null) ? (string) $row[$startcol + 49] : null;
 			$this->ca_propiedades = ($row[$startcol + 50] !== null) ? (string) $row[$startcol + 50] : null;
+			$this->ca_idetapa = ($row[$startcol + 51] !== null) ? (string) $row[$startcol + 51] : null;
+			$this->ca_fchultstatus = ($row[$startcol + 52] !== null) ? (string) $row[$startcol + 52] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -2429,7 +2564,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 51; // 51 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 53; // 53 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Reporte object", $e);
@@ -2466,6 +2601,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		}
 		if ($this->aUsuario !== null && $this->ca_login !== $this->aUsuario->getCaLogin()) {
 			$this->aUsuario = null;
+		}
+		if ($this->aTrackingEtapa !== null && $this->ca_idetapa !== $this->aTrackingEtapa->getCaIdetapa()) {
+			$this->aTrackingEtapa = null;
 		}
 	} // ensureConsistency
 
@@ -2511,6 +2649,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aTercero = null;
 			$this->aAgente = null;
 			$this->aBodega = null;
+			$this->aTrackingEtapa = null;
 			$this->collInoClientesAirs = null;
 			$this->lastInoClientesAirCriteria = null;
 
@@ -2661,6 +2800,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 					$affectedRows += $this->aBodega->save($con);
 				}
 				$this->setBodega($this->aBodega);
+			}
+
+			if ($this->aTrackingEtapa !== null) {
+				if ($this->aTrackingEtapa->isModified() || $this->aTrackingEtapa->isNew()) {
+					$affectedRows += $this->aTrackingEtapa->save($con);
+				}
+				$this->setTrackingEtapa($this->aTrackingEtapa);
 			}
 
 			if ($this->isNew() ) {
@@ -2857,6 +3003,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			if ($this->aBodega !== null) {
 				if (!$this->aBodega->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aBodega->getValidationFailures());
+				}
+			}
+
+			if ($this->aTrackingEtapa !== null) {
+				if (!$this->aTrackingEtapa->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTrackingEtapa->getValidationFailures());
 				}
 			}
 
@@ -3126,6 +3278,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			case 50:
 				return $this->getCaPropiedades();
 				break;
+			case 51:
+				return $this->getCaIdetapa();
+				break;
+			case 52:
+				return $this->getCaFchultstatus();
+				break;
 			default:
 				return null;
 				break;
@@ -3198,6 +3356,8 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$keys[48] => $this->getCaUsucerrado(),
 			$keys[49] => $this->getCaColmas(),
 			$keys[50] => $this->getCaPropiedades(),
+			$keys[51] => $this->getCaIdetapa(),
+			$keys[52] => $this->getCaFchultstatus(),
 		);
 		return $result;
 	}
@@ -3382,6 +3542,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			case 50:
 				$this->setCaPropiedades($value);
 				break;
+			case 51:
+				$this->setCaIdetapa($value);
+				break;
+			case 52:
+				$this->setCaFchultstatus($value);
+				break;
 		} // switch()
 	}
 
@@ -3457,6 +3623,8 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[48], $arr)) $this->setCaUsucerrado($arr[$keys[48]]);
 		if (array_key_exists($keys[49], $arr)) $this->setCaColmas($arr[$keys[49]]);
 		if (array_key_exists($keys[50], $arr)) $this->setCaPropiedades($arr[$keys[50]]);
+		if (array_key_exists($keys[51], $arr)) $this->setCaIdetapa($arr[$keys[51]]);
+		if (array_key_exists($keys[52], $arr)) $this->setCaFchultstatus($arr[$keys[52]]);
 	}
 
 	/**
@@ -3519,6 +3687,8 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ReportePeer::CA_USUCERRADO)) $criteria->add(ReportePeer::CA_USUCERRADO, $this->ca_usucerrado);
 		if ($this->isColumnModified(ReportePeer::CA_COLMAS)) $criteria->add(ReportePeer::CA_COLMAS, $this->ca_colmas);
 		if ($this->isColumnModified(ReportePeer::CA_PROPIEDADES)) $criteria->add(ReportePeer::CA_PROPIEDADES, $this->ca_propiedades);
+		if ($this->isColumnModified(ReportePeer::CA_IDETAPA)) $criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+		if ($this->isColumnModified(ReportePeer::CA_FCHULTSTATUS)) $criteria->add(ReportePeer::CA_FCHULTSTATUS, $this->ca_fchultstatus);
 
 		return $criteria;
 	}
@@ -3672,6 +3842,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		$copyObj->setCaColmas($this->ca_colmas);
 
 		$copyObj->setCaPropiedades($this->ca_propiedades);
+
+		$copyObj->setCaIdetapa($this->ca_idetapa);
+
+		$copyObj->setCaFchultstatus($this->ca_fchultstatus);
 
 
 		if ($deepCopy) {
@@ -4036,6 +4210,57 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aBodega;
+	}
+
+	/**
+	 * Declares an association between this object and a TrackingEtapa object.
+	 *
+	 * @param      TrackingEtapa $v
+	 * @return     Reporte The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setTrackingEtapa(TrackingEtapa $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdetapa(NULL);
+		} else {
+			$this->setCaIdetapa($v->getCaIdetapa());
+		}
+
+		$this->aTrackingEtapa = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the TrackingEtapa object, it will not be re-added.
+		if ($v !== null) {
+			$v->addReporte($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated TrackingEtapa object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     TrackingEtapa The associated TrackingEtapa object.
+	 * @throws     PropelException
+	 */
+	public function getTrackingEtapa(PropelPDO $con = null)
+	{
+		if ($this->aTrackingEtapa === null && (($this->ca_idetapa !== "" && $this->ca_idetapa !== null))) {
+			$c = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+			$c->add(TrackingEtapaPeer::CA_IDETAPA, $this->ca_idetapa);
+			$this->aTrackingEtapa = TrackingEtapaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aTrackingEtapa->addReportes($this);
+			 */
+		}
+		return $this->aTrackingEtapa;
 	}
 
 	/**
@@ -5861,6 +6086,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aTercero = null;
 			$this->aAgente = null;
 			$this->aBodega = null;
+			$this->aTrackingEtapa = null;
 	}
 
 } // BaseReporte

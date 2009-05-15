@@ -19,7 +19,7 @@ abstract class BaseHdeskTicketPeer {
 	const CLASS_DEFAULT = 'lib.model.helpdesk.HdeskTicket';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 12;
+	const NUM_COLUMNS = 13;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -60,6 +60,9 @@ abstract class BaseHdeskTicketPeer {
 	/** the column name for the CA_RESPONSETIME field */
 	const CA_RESPONSETIME = 'helpdesk.tb_tickets.CA_RESPONSETIME';
 
+	/** the column name for the CA_IDTAREA field */
+	const CA_IDTAREA = 'helpdesk.tb_tickets.CA_IDTAREA';
+
 	/**
 	 * An identiy map to hold any loaded instances of HdeskTicket objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -81,11 +84,11 @@ abstract class BaseHdeskTicketPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdticket', 'CaIdgroup', 'CaIdproject', 'CaLogin', 'CaTitle', 'CaText', 'CaPriority', 'CaOpened', 'CaType', 'CaAssignedto', 'CaAction', 'CaResponsetime', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdticket', 'caIdgroup', 'caIdproject', 'caLogin', 'caTitle', 'caText', 'caPriority', 'caOpened', 'caType', 'caAssignedto', 'caAction', 'caResponsetime', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDTICKET, self::CA_IDGROUP, self::CA_IDPROJECT, self::CA_LOGIN, self::CA_TITLE, self::CA_TEXT, self::CA_PRIORITY, self::CA_OPENED, self::CA_TYPE, self::CA_ASSIGNEDTO, self::CA_ACTION, self::CA_RESPONSETIME, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idticket', 'ca_idgroup', 'ca_idproject', 'ca_login', 'ca_title', 'ca_text', 'ca_priority', 'ca_opened', 'ca_type', 'ca_assignedto', 'ca_action', 'ca_responsetime', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdticket', 'CaIdgroup', 'CaIdproject', 'CaLogin', 'CaTitle', 'CaText', 'CaPriority', 'CaOpened', 'CaType', 'CaAssignedto', 'CaAction', 'CaResponsetime', 'CaIdtarea', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdticket', 'caIdgroup', 'caIdproject', 'caLogin', 'caTitle', 'caText', 'caPriority', 'caOpened', 'caType', 'caAssignedto', 'caAction', 'caResponsetime', 'caIdtarea', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTICKET, self::CA_IDGROUP, self::CA_IDPROJECT, self::CA_LOGIN, self::CA_TITLE, self::CA_TEXT, self::CA_PRIORITY, self::CA_OPENED, self::CA_TYPE, self::CA_ASSIGNEDTO, self::CA_ACTION, self::CA_RESPONSETIME, self::CA_IDTAREA, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idticket', 'ca_idgroup', 'ca_idproject', 'ca_login', 'ca_title', 'ca_text', 'ca_priority', 'ca_opened', 'ca_type', 'ca_assignedto', 'ca_action', 'ca_responsetime', 'ca_idtarea', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
 	/**
@@ -95,11 +98,11 @@ abstract class BaseHdeskTicketPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdticket' => 0, 'CaIdgroup' => 1, 'CaIdproject' => 2, 'CaLogin' => 3, 'CaTitle' => 4, 'CaText' => 5, 'CaPriority' => 6, 'CaOpened' => 7, 'CaType' => 8, 'CaAssignedto' => 9, 'CaAction' => 10, 'CaResponsetime' => 11, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdticket' => 0, 'caIdgroup' => 1, 'caIdproject' => 2, 'caLogin' => 3, 'caTitle' => 4, 'caText' => 5, 'caPriority' => 6, 'caOpened' => 7, 'caType' => 8, 'caAssignedto' => 9, 'caAction' => 10, 'caResponsetime' => 11, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDTICKET => 0, self::CA_IDGROUP => 1, self::CA_IDPROJECT => 2, self::CA_LOGIN => 3, self::CA_TITLE => 4, self::CA_TEXT => 5, self::CA_PRIORITY => 6, self::CA_OPENED => 7, self::CA_TYPE => 8, self::CA_ASSIGNEDTO => 9, self::CA_ACTION => 10, self::CA_RESPONSETIME => 11, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idticket' => 0, 'ca_idgroup' => 1, 'ca_idproject' => 2, 'ca_login' => 3, 'ca_title' => 4, 'ca_text' => 5, 'ca_priority' => 6, 'ca_opened' => 7, 'ca_type' => 8, 'ca_assignedto' => 9, 'ca_action' => 10, 'ca_responsetime' => 11, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdticket' => 0, 'CaIdgroup' => 1, 'CaIdproject' => 2, 'CaLogin' => 3, 'CaTitle' => 4, 'CaText' => 5, 'CaPriority' => 6, 'CaOpened' => 7, 'CaType' => 8, 'CaAssignedto' => 9, 'CaAction' => 10, 'CaResponsetime' => 11, 'CaIdtarea' => 12, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdticket' => 0, 'caIdgroup' => 1, 'caIdproject' => 2, 'caLogin' => 3, 'caTitle' => 4, 'caText' => 5, 'caPriority' => 6, 'caOpened' => 7, 'caType' => 8, 'caAssignedto' => 9, 'caAction' => 10, 'caResponsetime' => 11, 'caIdtarea' => 12, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTICKET => 0, self::CA_IDGROUP => 1, self::CA_IDPROJECT => 2, self::CA_LOGIN => 3, self::CA_TITLE => 4, self::CA_TEXT => 5, self::CA_PRIORITY => 6, self::CA_OPENED => 7, self::CA_TYPE => 8, self::CA_ASSIGNEDTO => 9, self::CA_ACTION => 10, self::CA_RESPONSETIME => 11, self::CA_IDTAREA => 12, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idticket' => 0, 'ca_idgroup' => 1, 'ca_idproject' => 2, 'ca_login' => 3, 'ca_title' => 4, 'ca_text' => 5, 'ca_priority' => 6, 'ca_opened' => 7, 'ca_type' => 8, 'ca_assignedto' => 9, 'ca_action' => 10, 'ca_responsetime' => 11, 'ca_idtarea' => 12, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
 	/**
@@ -204,6 +207,8 @@ abstract class BaseHdeskTicketPeer {
 		$criteria->addSelectColumn(HdeskTicketPeer::CA_ACTION);
 
 		$criteria->addSelectColumn(HdeskTicketPeer::CA_RESPONSETIME);
+
+		$criteria->addSelectColumn(HdeskTicketPeer::CA_IDTAREA);
 
 	}
 
@@ -596,6 +601,56 @@ abstract class BaseHdeskTicketPeer {
 
 
 	/**
+	 * Returns the number of rows matching criteria, joining the related NotTarea table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(HdeskTicketPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			HdeskTicketPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(HdeskTicketPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
 	 * Selects a collection of HdeskTicket objects pre-filled with their HdeskGroup objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -797,6 +852,73 @@ abstract class BaseHdeskTicketPeer {
 
 
 	/**
+	 * Selects a collection of HdeskTicket objects pre-filled with their NotTarea objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of HdeskTicket objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		HdeskTicketPeer::addSelectColumns($c);
+		$startcol = (HdeskTicketPeer::NUM_COLUMNS - HdeskTicketPeer::NUM_LAZY_LOAD_COLUMNS);
+		NotTareaPeer::addSelectColumns($c);
+
+		$c->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = HdeskTicketPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = HdeskTicketPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = HdeskTicketPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				HdeskTicketPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = NotTareaPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = NotTareaPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					NotTareaPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (HdeskTicket) to $obj2 (NotTarea)
+				$obj2->addHdeskTicket($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
@@ -835,6 +957,7 @@ abstract class BaseHdeskTicketPeer {
 		$criteria->addJoin(array(HdeskTicketPeer::CA_IDGROUP,), array(HdeskGroupPeer::CA_IDGROUP,), $join_behavior);
 		$criteria->addJoin(array(HdeskTicketPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 		$criteria->addJoin(array(HdeskTicketPeer::CA_IDPROJECT,), array(HdeskProjectPeer::CA_IDPROJECT,), $join_behavior);
+		$criteria->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -877,9 +1000,13 @@ abstract class BaseHdeskTicketPeer {
 		HdeskProjectPeer::addSelectColumns($c);
 		$startcol5 = $startcol4 + (HdeskProjectPeer::NUM_COLUMNS - HdeskProjectPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		NotTareaPeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		$c->addJoin(array(HdeskTicketPeer::CA_IDGROUP,), array(HdeskGroupPeer::CA_IDGROUP,), $join_behavior);
 		$c->addJoin(array(HdeskTicketPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 		$c->addJoin(array(HdeskTicketPeer::CA_IDPROJECT,), array(HdeskProjectPeer::CA_IDPROJECT,), $join_behavior);
+		$c->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -958,6 +1085,26 @@ abstract class BaseHdeskTicketPeer {
 				$obj4->addHdeskTicket($obj1);
 			} // if joined row not null
 
+			// Add objects for joined NotTarea rows
+
+			$key5 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol5);
+			if ($key5 !== null) {
+				$obj5 = NotTareaPeer::getInstanceFromPool($key5);
+				if (!$obj5) {
+
+					$omClass = NotTareaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj5 = new $cls();
+					$obj5->hydrate($row, $startcol5);
+					NotTareaPeer::addInstanceToPool($obj5, $key5);
+				} // if obj5 loaded
+
+				// Add the $obj1 (HdeskTicket) to the collection in $obj5 (NotTarea)
+				$obj5->addHdeskTicket($obj1);
+			} // if joined row not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -998,6 +1145,7 @@ abstract class BaseHdeskTicketPeer {
 	
 				$criteria->addJoin(array(HdeskTicketPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 				$criteria->addJoin(array(HdeskTicketPeer::CA_IDPROJECT,), array(HdeskProjectPeer::CA_IDPROJECT,), $join_behavior);
+				$criteria->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1043,6 +1191,7 @@ abstract class BaseHdeskTicketPeer {
 	
 				$criteria->addJoin(array(HdeskTicketPeer::CA_IDGROUP,), array(HdeskGroupPeer::CA_IDGROUP,), $join_behavior);
 				$criteria->addJoin(array(HdeskTicketPeer::CA_IDPROJECT,), array(HdeskProjectPeer::CA_IDPROJECT,), $join_behavior);
+				$criteria->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1088,6 +1237,53 @@ abstract class BaseHdeskTicketPeer {
 	
 				$criteria->addJoin(array(HdeskTicketPeer::CA_IDGROUP,), array(HdeskGroupPeer::CA_IDGROUP,), $join_behavior);
 				$criteria->addJoin(array(HdeskTicketPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+				$criteria->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related NotTarea table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			HdeskTicketPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(HdeskTicketPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(HdeskTicketPeer::CA_IDGROUP,), array(HdeskGroupPeer::CA_IDGROUP,), $join_behavior);
+				$criteria->addJoin(array(HdeskTicketPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+				$criteria->addJoin(array(HdeskTicketPeer::CA_IDPROJECT,), array(HdeskProjectPeer::CA_IDPROJECT,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1130,8 +1326,12 @@ abstract class BaseHdeskTicketPeer {
 		HdeskProjectPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (HdeskProjectPeer::NUM_COLUMNS - HdeskProjectPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		NotTareaPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(HdeskTicketPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 				$c->addJoin(array(HdeskTicketPeer::CA_IDPROJECT,), array(HdeskProjectPeer::CA_IDPROJECT,), $join_behavior);
+				$c->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1193,6 +1393,27 @@ abstract class BaseHdeskTicketPeer {
 
 			} // if joined row is not null
 
+				// Add objects for joined NotTarea rows
+
+				$key4 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = NotTareaPeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = NotTareaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					NotTareaPeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (HdeskTicket) to the collection in $obj4 (NotTarea)
+				$obj4->addHdeskTicket($obj1);
+
+			} // if joined row is not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1230,8 +1451,12 @@ abstract class BaseHdeskTicketPeer {
 		HdeskProjectPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (HdeskProjectPeer::NUM_COLUMNS - HdeskProjectPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		NotTareaPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(HdeskTicketPeer::CA_IDGROUP,), array(HdeskGroupPeer::CA_IDGROUP,), $join_behavior);
 				$c->addJoin(array(HdeskTicketPeer::CA_IDPROJECT,), array(HdeskProjectPeer::CA_IDPROJECT,), $join_behavior);
+				$c->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1293,6 +1518,27 @@ abstract class BaseHdeskTicketPeer {
 
 			} // if joined row is not null
 
+				// Add objects for joined NotTarea rows
+
+				$key4 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = NotTareaPeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = NotTareaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					NotTareaPeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (HdeskTicket) to the collection in $obj4 (NotTarea)
+				$obj4->addHdeskTicket($obj1);
+
+			} // if joined row is not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1330,8 +1576,12 @@ abstract class BaseHdeskTicketPeer {
 		UsuarioPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		NotTareaPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(HdeskTicketPeer::CA_IDGROUP,), array(HdeskGroupPeer::CA_IDGROUP,), $join_behavior);
 				$c->addJoin(array(HdeskTicketPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+				$c->addJoin(array(HdeskTicketPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1390,6 +1640,152 @@ abstract class BaseHdeskTicketPeer {
 
 				// Add the $obj1 (HdeskTicket) to the collection in $obj3 (Usuario)
 				$obj3->addHdeskTicket($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined NotTarea rows
+
+				$key4 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = NotTareaPeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = NotTareaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					NotTareaPeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (HdeskTicket) to the collection in $obj4 (NotTarea)
+				$obj4->addHdeskTicket($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of HdeskTicket objects pre-filled with all related objects except NotTarea.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of HdeskTicket objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		HdeskTicketPeer::addSelectColumns($c);
+		$startcol2 = (HdeskTicketPeer::NUM_COLUMNS - HdeskTicketPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		HdeskGroupPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (HdeskGroupPeer::NUM_COLUMNS - HdeskGroupPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		UsuarioPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		HdeskProjectPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (HdeskProjectPeer::NUM_COLUMNS - HdeskProjectPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(HdeskTicketPeer::CA_IDGROUP,), array(HdeskGroupPeer::CA_IDGROUP,), $join_behavior);
+				$c->addJoin(array(HdeskTicketPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+				$c->addJoin(array(HdeskTicketPeer::CA_IDPROJECT,), array(HdeskProjectPeer::CA_IDPROJECT,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = HdeskTicketPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = HdeskTicketPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = HdeskTicketPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				HdeskTicketPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined HdeskGroup rows
+
+				$key2 = HdeskGroupPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = HdeskGroupPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = HdeskGroupPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					HdeskGroupPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (HdeskTicket) to the collection in $obj2 (HdeskGroup)
+				$obj2->addHdeskTicket($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Usuario rows
+
+				$key3 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = UsuarioPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = UsuarioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					UsuarioPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (HdeskTicket) to the collection in $obj3 (Usuario)
+				$obj3->addHdeskTicket($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined HdeskProject rows
+
+				$key4 = HdeskProjectPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = HdeskProjectPeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = HdeskProjectPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					HdeskProjectPeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (HdeskTicket) to the collection in $obj4 (HdeskProject)
+				$obj4->addHdeskTicket($obj1);
 
 			} // if joined row is not null
 

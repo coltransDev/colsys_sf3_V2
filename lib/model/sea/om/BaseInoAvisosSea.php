@@ -81,6 +81,11 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 	protected $ca_usuenvio;
 
 	/**
+	 * @var        InoClientesSea
+	 */
+	protected $aInoClientesSea;
+
+	/**
 	 * @var        InoMaestraSea
 	 */
 	protected $aInoMaestraSea;
@@ -89,6 +94,11 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 	 * @var        Cliente
 	 */
 	protected $aCliente;
+
+	/**
+	 * @var        Email
+	 */
+	protected $aEmail;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -310,6 +320,10 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoAvisosSeaPeer::CA_REFERENCIA;
 		}
 
+		if ($this->aInoClientesSea !== null && $this->aInoClientesSea->getCaReferencia() !== $v) {
+			$this->aInoClientesSea = null;
+		}
+
 		if ($this->aInoMaestraSea !== null && $this->aInoMaestraSea->getCaReferencia() !== $v) {
 			$this->aInoMaestraSea = null;
 		}
@@ -332,6 +346,10 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 		if ($this->ca_idcliente !== $v) {
 			$this->ca_idcliente = $v;
 			$this->modifiedColumns[] = InoAvisosSeaPeer::CA_IDCLIENTE;
+		}
+
+		if ($this->aInoClientesSea !== null && $this->aInoClientesSea->getCaIdcliente() !== $v) {
+			$this->aInoClientesSea = null;
 		}
 
 		if ($this->aCliente !== null && $this->aCliente->getCaIdcliente() !== $v) {
@@ -358,6 +376,10 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 			$this->modifiedColumns[] = InoAvisosSeaPeer::CA_HBLS;
 		}
 
+		if ($this->aInoClientesSea !== null && $this->aInoClientesSea->getCaHbls() !== $v) {
+			$this->aInoClientesSea = null;
+		}
+
 		return $this;
 	} // setCaHbls()
 
@@ -376,6 +398,10 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 		if ($this->ca_idemail !== $v) {
 			$this->ca_idemail = $v;
 			$this->modifiedColumns[] = InoAvisosSeaPeer::CA_IDEMAIL;
+		}
+
+		if ($this->aEmail !== null && $this->aEmail->getCaIdemail() !== $v) {
+			$this->aEmail = null;
 		}
 
 		return $this;
@@ -667,11 +693,23 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 	public function ensureConsistency()
 	{
 
+		if ($this->aInoClientesSea !== null && $this->ca_referencia !== $this->aInoClientesSea->getCaReferencia()) {
+			$this->aInoClientesSea = null;
+		}
 		if ($this->aInoMaestraSea !== null && $this->ca_referencia !== $this->aInoMaestraSea->getCaReferencia()) {
 			$this->aInoMaestraSea = null;
 		}
+		if ($this->aInoClientesSea !== null && $this->ca_idcliente !== $this->aInoClientesSea->getCaIdcliente()) {
+			$this->aInoClientesSea = null;
+		}
 		if ($this->aCliente !== null && $this->ca_idcliente !== $this->aCliente->getCaIdcliente()) {
 			$this->aCliente = null;
+		}
+		if ($this->aInoClientesSea !== null && $this->ca_hbls !== $this->aInoClientesSea->getCaHbls()) {
+			$this->aInoClientesSea = null;
+		}
+		if ($this->aEmail !== null && $this->ca_idemail !== $this->aEmail->getCaIdemail()) {
+			$this->aEmail = null;
 		}
 	} // ensureConsistency
 
@@ -712,8 +750,10 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 
 		if ($deep) {  // also de-associate any related objects?
 
+			$this->aInoClientesSea = null;
 			$this->aInoMaestraSea = null;
 			$this->aCliente = null;
+			$this->aEmail = null;
 		} // if (deep)
 	}
 
@@ -804,6 +844,13 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 			// method.  This object relates to these object(s) by a
 			// foreign key reference.
 
+			if ($this->aInoClientesSea !== null) {
+				if ($this->aInoClientesSea->isModified() || $this->aInoClientesSea->isNew()) {
+					$affectedRows += $this->aInoClientesSea->save($con);
+				}
+				$this->setInoClientesSea($this->aInoClientesSea);
+			}
+
 			if ($this->aInoMaestraSea !== null) {
 				if ($this->aInoMaestraSea->isModified() || $this->aInoMaestraSea->isNew()) {
 					$affectedRows += $this->aInoMaestraSea->save($con);
@@ -816,6 +863,13 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 					$affectedRows += $this->aCliente->save($con);
 				}
 				$this->setCliente($this->aCliente);
+			}
+
+			if ($this->aEmail !== null) {
+				if ($this->aEmail->isModified() || $this->aEmail->isNew()) {
+					$affectedRows += $this->aEmail->save($con);
+				}
+				$this->setEmail($this->aEmail);
 			}
 
 
@@ -906,6 +960,12 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 			// method.  This object relates to these object(s) by a
 			// foreign key reference.
 
+			if ($this->aInoClientesSea !== null) {
+				if (!$this->aInoClientesSea->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aInoClientesSea->getValidationFailures());
+				}
+			}
+
 			if ($this->aInoMaestraSea !== null) {
 				if (!$this->aInoMaestraSea->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aInoMaestraSea->getValidationFailures());
@@ -915,6 +975,12 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 			if ($this->aCliente !== null) {
 				if (!$this->aCliente->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aCliente->getValidationFailures());
+				}
+			}
+
+			if ($this->aEmail !== null) {
+				if (!$this->aEmail->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aEmail->getValidationFailures());
 				}
 			}
 
@@ -1274,6 +1340,71 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Declares an association between this object and a InoClientesSea object.
+	 *
+	 * @param      InoClientesSea $v
+	 * @return     InoAvisosSea The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setInoClientesSea(InoClientesSea $v = null)
+	{
+		if ($v === null) {
+			$this->setCaReferencia(NULL);
+		} else {
+			$this->setCaReferencia($v->getCaReferencia());
+		}
+
+		if ($v === null) {
+			$this->setCaIdcliente(NULL);
+		} else {
+			$this->setCaIdcliente($v->getCaIdcliente());
+		}
+
+		if ($v === null) {
+			$this->setCaHbls(NULL);
+		} else {
+			$this->setCaHbls($v->getCaHbls());
+		}
+
+		$this->aInoClientesSea = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the InoClientesSea object, it will not be re-added.
+		if ($v !== null) {
+			$v->addInoAvisosSea($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated InoClientesSea object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     InoClientesSea The associated InoClientesSea object.
+	 * @throws     PropelException
+	 */
+	public function getInoClientesSea(PropelPDO $con = null)
+	{
+		if ($this->aInoClientesSea === null && (($this->ca_referencia !== "" && $this->ca_referencia !== null) && $this->ca_idcliente !== null && ($this->ca_hbls !== "" && $this->ca_hbls !== null))) {
+			$c = new Criteria(InoClientesSeaPeer::DATABASE_NAME);
+			$c->add(InoClientesSeaPeer::CA_REFERENCIA, $this->ca_referencia);
+			$c->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->ca_idcliente);
+			$c->add(InoClientesSeaPeer::CA_HBLS, $this->ca_hbls);
+			$this->aInoClientesSea = InoClientesSeaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aInoClientesSea->addInoAvisosSeas($this);
+			 */
+		}
+		return $this->aInoClientesSea;
+	}
+
+	/**
 	 * Declares an association between this object and a InoMaestraSea object.
 	 *
 	 * @param      InoMaestraSea $v
@@ -1376,6 +1507,57 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Declares an association between this object and a Email object.
+	 *
+	 * @param      Email $v
+	 * @return     InoAvisosSea The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setEmail(Email $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdemail(NULL);
+		} else {
+			$this->setCaIdemail($v->getCaIdemail());
+		}
+
+		$this->aEmail = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Email object, it will not be re-added.
+		if ($v !== null) {
+			$v->addInoAvisosSea($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Email object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Email The associated Email object.
+	 * @throws     PropelException
+	 */
+	public function getEmail(PropelPDO $con = null)
+	{
+		if ($this->aEmail === null && ($this->ca_idemail !== null)) {
+			$c = new Criteria(EmailPeer::DATABASE_NAME);
+			$c->add(EmailPeer::CA_IDEMAIL, $this->ca_idemail);
+			$this->aEmail = EmailPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aEmail->addInoAvisosSeas($this);
+			 */
+		}
+		return $this->aEmail;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -1389,8 +1571,10 @@ abstract class BaseInoAvisosSea extends BaseObject  implements Persistent {
 		if ($deep) {
 		} // if ($deep)
 
+			$this->aInoClientesSea = null;
 			$this->aInoMaestraSea = null;
 			$this->aCliente = null;
+			$this->aEmail = null;
 	}
 
 } // BaseInoAvisosSea

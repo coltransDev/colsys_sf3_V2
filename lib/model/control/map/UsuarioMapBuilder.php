@@ -88,6 +88,8 @@ class UsuarioMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
 
+		$tMap->addColumn('CA_FORCECHANGE', 'CaForcechange', 'BOOLEAN', false, null);
+
 	} // doBuild()
 
 } // UsuarioMapBuilder

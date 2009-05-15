@@ -39,6 +39,12 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 	protected $ca_name;
 
 	/**
+	 * The value for the ca_maxresponsetime field.
+	 * @var        int
+	 */
+	protected $ca_maxresponsetime;
+
+	/**
 	 * @var        Departamento
 	 */
 	protected $aDepartamento;
@@ -138,6 +144,16 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [ca_maxresponsetime] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaMaxresponsetime()
+	{
+		return $this->ca_maxresponsetime;
+	}
+
+	/**
 	 * Set the value of [ca_idgroup] column.
 	 * 
 	 * @param      int $v new value
@@ -202,6 +218,26 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 	} // setCaName()
 
 	/**
+	 * Set the value of [ca_maxresponsetime] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     HdeskGroup The current object (for fluent API support)
+	 */
+	public function setCaMaxresponsetime($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_maxresponsetime !== $v) {
+			$this->ca_maxresponsetime = $v;
+			$this->modifiedColumns[] = HdeskGroupPeer::CA_MAXRESPONSETIME;
+		}
+
+		return $this;
+	} // setCaMaxresponsetime()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -241,6 +277,7 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 			$this->ca_idgroup = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
 			$this->ca_iddepartament = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
 			$this->ca_name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_maxresponsetime = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -250,7 +287,7 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 3; // 3 = HdeskGroupPeer::NUM_COLUMNS - HdeskGroupPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 4; // 4 = HdeskGroupPeer::NUM_COLUMNS - HdeskGroupPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating HdeskGroup object", $e);
@@ -617,6 +654,9 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 			case 2:
 				return $this->getCaName();
 				break;
+			case 3:
+				return $this->getCaMaxresponsetime();
+				break;
 			default:
 				return null;
 				break;
@@ -641,6 +681,7 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 			$keys[0] => $this->getCaIdgroup(),
 			$keys[1] => $this->getCaIddepartament(),
 			$keys[2] => $this->getCaName(),
+			$keys[3] => $this->getCaMaxresponsetime(),
 		);
 		return $result;
 	}
@@ -681,6 +722,9 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 			case 2:
 				$this->setCaName($value);
 				break;
+			case 3:
+				$this->setCaMaxresponsetime($value);
+				break;
 		} // switch()
 	}
 
@@ -708,6 +752,7 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdgroup($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaIddepartament($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaName($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaMaxresponsetime($arr[$keys[3]]);
 	}
 
 	/**
@@ -722,6 +767,7 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(HdeskGroupPeer::CA_IDGROUP)) $criteria->add(HdeskGroupPeer::CA_IDGROUP, $this->ca_idgroup);
 		if ($this->isColumnModified(HdeskGroupPeer::CA_IDDEPARTAMENT)) $criteria->add(HdeskGroupPeer::CA_IDDEPARTAMENT, $this->ca_iddepartament);
 		if ($this->isColumnModified(HdeskGroupPeer::CA_NAME)) $criteria->add(HdeskGroupPeer::CA_NAME, $this->ca_name);
+		if ($this->isColumnModified(HdeskGroupPeer::CA_MAXRESPONSETIME)) $criteria->add(HdeskGroupPeer::CA_MAXRESPONSETIME, $this->ca_maxresponsetime);
 
 		return $criteria;
 	}
@@ -779,6 +825,8 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 		$copyObj->setCaIddepartament($this->ca_iddepartament);
 
 		$copyObj->setCaName($this->ca_name);
+
+		$copyObj->setCaMaxresponsetime($this->ca_maxresponsetime);
 
 
 		if ($deepCopy) {
@@ -1143,6 +1191,53 @@ abstract class BaseHdeskGroup extends BaseObject  implements Persistent {
 
 			if (!isset($this->lastHdeskTicketCriteria) || !$this->lastHdeskTicketCriteria->equals($criteria)) {
 				$this->collHdeskTickets = HdeskTicketPeer::doSelectJoinHdeskProject($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastHdeskTicketCriteria = $criteria;
+
+		return $this->collHdeskTickets;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this HdeskGroup is new, it will return
+	 * an empty collection; or if this HdeskGroup has previously
+	 * been saved, it will retrieve related HdeskTickets from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in HdeskGroup.
+	 */
+	public function getHdeskTicketsJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(HdeskGroupPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collHdeskTickets === null) {
+			if ($this->isNew()) {
+				$this->collHdeskTickets = array();
+			} else {
+
+				$criteria->add(HdeskTicketPeer::CA_IDGROUP, $this->ca_idgroup);
+
+				$this->collHdeskTickets = HdeskTicketPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(HdeskTicketPeer::CA_IDGROUP, $this->ca_idgroup);
+
+			if (!isset($this->lastHdeskTicketCriteria) || !$this->lastHdeskTicketCriteria->equals($criteria)) {
+				$this->collHdeskTickets = HdeskTicketPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastHdeskTicketCriteria = $criteria;

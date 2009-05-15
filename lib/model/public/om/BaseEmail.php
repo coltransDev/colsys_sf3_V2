@@ -131,6 +131,16 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	private $lastRepStatusCriteria = null;
 
 	/**
+	 * @var        array InoAvisosSea[] Collection to store aggregation of InoAvisosSea objects.
+	 */
+	protected $collInoAvisosSeas;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collInoAvisosSeas.
+	 */
+	private $lastInoAvisosSeaCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -795,6 +805,9 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			$this->collRepStatuss = null;
 			$this->lastRepStatusCriteria = null;
 
+			$this->collInoAvisosSeas = null;
+			$this->lastInoAvisosSeaCriteria = null;
+
 		} // if (deep)
 	}
 
@@ -918,6 +931,14 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collInoAvisosSeas !== null) {
+				foreach ($this->collInoAvisosSeas as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -999,6 +1020,14 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 
 				if ($this->collRepStatuss !== null) {
 					foreach ($this->collRepStatuss as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collInoAvisosSeas !== null) {
+					foreach ($this->collInoAvisosSeas as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1357,6 +1386,12 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 			foreach ($this->getRepStatuss() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addRepStatus($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getInoAvisosSeas() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoAvisosSea($relObj->copy($deepCopy));
 				}
 			}
 
@@ -1810,6 +1845,301 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collInoAvisosSeas collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoAvisosSeas()
+	 */
+	public function clearInoAvisosSeas()
+	{
+		$this->collInoAvisosSeas = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoAvisosSeas collection (array).
+	 *
+	 * By default this just sets the collInoAvisosSeas collection to an empty array (like clearcollInoAvisosSeas());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initInoAvisosSeas()
+	{
+		$this->collInoAvisosSeas = array();
+	}
+
+	/**
+	 * Gets an array of InoAvisosSea objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Email has previously been saved, it will retrieve
+	 * related InoAvisosSeas from storage. If this Email is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array InoAvisosSea[]
+	 * @throws     PropelException
+	 */
+	public function getInoAvisosSeas($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoAvisosSeas === null) {
+			if ($this->isNew()) {
+			   $this->collInoAvisosSeas = array();
+			} else {
+
+				$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				InoAvisosSeaPeer::addSelectColumns($criteria);
+				$this->collInoAvisosSeas = InoAvisosSeaPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				InoAvisosSeaPeer::addSelectColumns($criteria);
+				if (!isset($this->lastInoAvisosSeaCriteria) || !$this->lastInoAvisosSeaCriteria->equals($criteria)) {
+					$this->collInoAvisosSeas = InoAvisosSeaPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastInoAvisosSeaCriteria = $criteria;
+		return $this->collInoAvisosSeas;
+	}
+
+	/**
+	 * Returns the number of related InoAvisosSea objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoAvisosSea objects.
+	 * @throws     PropelException
+	 */
+	public function countInoAvisosSeas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collInoAvisosSeas === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				$count = InoAvisosSeaPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				if (!isset($this->lastInoAvisosSeaCriteria) || !$this->lastInoAvisosSeaCriteria->equals($criteria)) {
+					$count = InoAvisosSeaPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoAvisosSeas);
+				}
+			} else {
+				$count = count($this->collInoAvisosSeas);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a InoAvisosSea object to this object
+	 * through the InoAvisosSea foreign key attribute.
+	 *
+	 * @param      InoAvisosSea $l InoAvisosSea
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addInoAvisosSea(InoAvisosSea $l)
+	{
+		if ($this->collInoAvisosSeas === null) {
+			$this->initInoAvisosSeas();
+		}
+		if (!in_array($l, $this->collInoAvisosSeas, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoAvisosSeas, $l);
+			$l->setEmail($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Email is new, it will return
+	 * an empty collection; or if this Email has previously
+	 * been saved, it will retrieve related InoAvisosSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Email.
+	 */
+	public function getInoAvisosSeasJoinInoClientesSea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoAvisosSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoAvisosSeas = array();
+			} else {
+
+				$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				$this->collInoAvisosSeas = InoAvisosSeaPeer::doSelectJoinInoClientesSea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+			if (!isset($this->lastInoAvisosSeaCriteria) || !$this->lastInoAvisosSeaCriteria->equals($criteria)) {
+				$this->collInoAvisosSeas = InoAvisosSeaPeer::doSelectJoinInoClientesSea($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoAvisosSeaCriteria = $criteria;
+
+		return $this->collInoAvisosSeas;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Email is new, it will return
+	 * an empty collection; or if this Email has previously
+	 * been saved, it will retrieve related InoAvisosSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Email.
+	 */
+	public function getInoAvisosSeasJoinInoMaestraSea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoAvisosSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoAvisosSeas = array();
+			} else {
+
+				$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				$this->collInoAvisosSeas = InoAvisosSeaPeer::doSelectJoinInoMaestraSea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+			if (!isset($this->lastInoAvisosSeaCriteria) || !$this->lastInoAvisosSeaCriteria->equals($criteria)) {
+				$this->collInoAvisosSeas = InoAvisosSeaPeer::doSelectJoinInoMaestraSea($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoAvisosSeaCriteria = $criteria;
+
+		return $this->collInoAvisosSeas;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Email is new, it will return
+	 * an empty collection; or if this Email has previously
+	 * been saved, it will retrieve related InoAvisosSeas from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Email.
+	 */
+	public function getInoAvisosSeasJoinCliente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoAvisosSeas === null) {
+			if ($this->isNew()) {
+				$this->collInoAvisosSeas = array();
+			} else {
+
+				$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+				$this->collInoAvisosSeas = InoAvisosSeaPeer::doSelectJoinCliente($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoAvisosSeaPeer::CA_IDEMAIL, $this->ca_idemail);
+
+			if (!isset($this->lastInoAvisosSeaCriteria) || !$this->lastInoAvisosSeaCriteria->equals($criteria)) {
+				$this->collInoAvisosSeas = InoAvisosSeaPeer::doSelectJoinCliente($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoAvisosSeaCriteria = $criteria;
+
+		return $this->collInoAvisosSeas;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -1831,10 +2161,16 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collInoAvisosSeas) {
+				foreach ((array) $this->collInoAvisosSeas as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
 		$this->collEmailAttachments = null;
 		$this->collRepStatuss = null;
+		$this->collInoAvisosSeas = null;
 	}
 
 } // BaseEmail

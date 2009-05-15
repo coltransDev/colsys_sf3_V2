@@ -2,7 +2,7 @@
 
 
 /**
- * This class adds structure of 'helpdesk.tb_groups' table to 'propel' DatabaseMap object.
+ * This class adds structure of 'notificaciones.tb_tareas_asignaciones' table to 'propel' DatabaseMap object.
  *
  *
  *
@@ -11,14 +11,14 @@
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  *
- * @package    lib.model.helpdesk.map
+ * @package    lib.model.notificaciones.map
  */
-class HdeskGroupMapBuilder implements MapBuilder {
+class NotTareaAsignacionMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = 'lib.model.helpdesk.map.HdeskGroupMapBuilder';
+	const CLASS_NAME = 'lib.model.notificaciones.map.NotTareaAsignacionMapBuilder';
 
 	/**
 	 * The database map.
@@ -54,24 +54,18 @@ class HdeskGroupMapBuilder implements MapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap(HdeskGroupPeer::DATABASE_NAME);
+		$this->dbMap = Propel::getDatabaseMap(NotTareaAsignacionPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable(HdeskGroupPeer::TABLE_NAME);
-		$tMap->setPhpName('HdeskGroup');
-		$tMap->setClassname('HdeskGroup');
+		$tMap = $this->dbMap->addTable(NotTareaAsignacionPeer::TABLE_NAME);
+		$tMap->setPhpName('NotTareaAsignacion');
+		$tMap->setClassname('NotTareaAsignacion');
 
-		$tMap->setUseIdGenerator(true);
+		$tMap->setUseIdGenerator(false);
 
-		$tMap->setPrimaryKeyMethodInfo('helpdesk.tb_groups_id');
+		$tMap->addForeignPrimaryKey('CA_IDTAREA', 'CaIdtarea', 'INTEGER' , 'notificaciones.tb_tareas', 'CA_IDTAREA', true, null);
 
-		$tMap->addPrimaryKey('CA_IDGROUP', 'CaIdgroup', 'INTEGER', true, null);
-
-		$tMap->addForeignKey('CA_IDDEPARTAMENT', 'CaIddepartament', 'INTEGER', 'control.tb_departamentos', 'CA_IDDEPARTAMENTO', true, null);
-
-		$tMap->addColumn('CA_NAME', 'CaName', 'VARCHAR', false, null);
-
-		$tMap->addColumn('CA_MAXRESPONSETIME', 'CaMaxresponsetime', 'INTEGER', false, null);
+		$tMap->addForeignPrimaryKey('CA_LOGIN', 'CaLogin', 'VARCHAR' , 'control.tb_usuarios', 'CA_LOGIN', true, null);
 
 	} // doBuild()
 
-} // HdeskGroupMapBuilder
+} // NotTareaAsignacionMapBuilder

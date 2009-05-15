@@ -19,7 +19,7 @@ abstract class BaseReportePeer {
 	const CLASS_DEFAULT = 'lib.model.reportes.Reporte';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 51;
+	const NUM_COLUMNS = 53;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -177,6 +177,12 @@ abstract class BaseReportePeer {
 	/** the column name for the CA_PROPIEDADES field */
 	const CA_PROPIEDADES = 'tb_reportes.CA_PROPIEDADES';
 
+	/** the column name for the CA_IDETAPA field */
+	const CA_IDETAPA = 'tb_reportes.CA_IDETAPA';
+
+	/** the column name for the CA_FCHULTSTATUS field */
+	const CA_FCHULTSTATUS = 'tb_reportes.CA_FCHULTSTATUS';
+
 	/**
 	 * An identiy map to hold any loaded instances of Reporte objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -198,11 +204,11 @@ abstract class BaseReportePeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdreporte', 'CaFchreporte', 'CaConsecutivo', 'CaVersion', 'CaIdcotizacion', 'CaOrigen', 'CaDestino', 'CaImpoexpo', 'CaFchdespacho', 'CaIdagente', 'CaIncoterms', 'CaMercanciaDesc', 'CaIdproveedor', 'CaOrdenProv', 'CaIdconcliente', 'CaOrdenClie', 'CaConfirmarClie', 'CaIdrepresentante', 'CaInformarRepr', 'CaIdconsignatario', 'CaInformarCons', 'CaIdnotify', 'CaInformarNoti', 'CaNotify', 'CaTransporte', 'CaModalidad', 'CaSeguro', 'CaLiberacion', 'CaTiempocredito', 'CaPreferenciasClie', 'CaInstrucciones', 'CaIdlinea', 'CaIdconsignar', 'CaIdconsignarmaster', 'CaIdbodega', 'CaMastersame', 'CaContinuacion', 'CaContinuacionDest', 'CaContinuacionConf', 'CaEtapaActual', 'CaLogin', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchanulado', 'CaUsuanulado', 'CaFchcerrado', 'CaUsucerrado', 'CaColmas', 'CaPropiedades', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte', 'caFchreporte', 'caConsecutivo', 'caVersion', 'caIdcotizacion', 'caOrigen', 'caDestino', 'caImpoexpo', 'caFchdespacho', 'caIdagente', 'caIncoterms', 'caMercanciaDesc', 'caIdproveedor', 'caOrdenProv', 'caIdconcliente', 'caOrdenClie', 'caConfirmarClie', 'caIdrepresentante', 'caInformarRepr', 'caIdconsignatario', 'caInformarCons', 'caIdnotify', 'caInformarNoti', 'caNotify', 'caTransporte', 'caModalidad', 'caSeguro', 'caLiberacion', 'caTiempocredito', 'caPreferenciasClie', 'caInstrucciones', 'caIdlinea', 'caIdconsignar', 'caIdconsignarmaster', 'caIdbodega', 'caMastersame', 'caContinuacion', 'caContinuacionDest', 'caContinuacionConf', 'caEtapaActual', 'caLogin', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caFchanulado', 'caUsuanulado', 'caFchcerrado', 'caUsucerrado', 'caColmas', 'caPropiedades', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE, self::CA_FCHREPORTE, self::CA_CONSECUTIVO, self::CA_VERSION, self::CA_IDCOTIZACION, self::CA_ORIGEN, self::CA_DESTINO, self::CA_IMPOEXPO, self::CA_FCHDESPACHO, self::CA_IDAGENTE, self::CA_INCOTERMS, self::CA_MERCANCIA_DESC, self::CA_IDPROVEEDOR, self::CA_ORDEN_PROV, self::CA_IDCONCLIENTE, self::CA_ORDEN_CLIE, self::CA_CONFIRMAR_CLIE, self::CA_IDREPRESENTANTE, self::CA_INFORMAR_REPR, self::CA_IDCONSIGNATARIO, self::CA_INFORMAR_CONS, self::CA_IDNOTIFY, self::CA_INFORMAR_NOTI, self::CA_NOTIFY, self::CA_TRANSPORTE, self::CA_MODALIDAD, self::CA_SEGURO, self::CA_LIBERACION, self::CA_TIEMPOCREDITO, self::CA_PREFERENCIAS_CLIE, self::CA_INSTRUCCIONES, self::CA_IDLINEA, self::CA_IDCONSIGNAR, self::CA_IDCONSIGNARMASTER, self::CA_IDBODEGA, self::CA_MASTERSAME, self::CA_CONTINUACION, self::CA_CONTINUACION_DEST, self::CA_CONTINUACION_CONF, self::CA_ETAPA_ACTUAL, self::CA_LOGIN, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_FCHANULADO, self::CA_USUANULADO, self::CA_FCHCERRADO, self::CA_USUCERRADO, self::CA_COLMAS, self::CA_PROPIEDADES, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte', 'ca_fchreporte', 'ca_consecutivo', 'ca_version', 'ca_idcotizacion', 'ca_origen', 'ca_destino', 'ca_impoexpo', 'ca_fchdespacho', 'ca_idagente', 'ca_incoterms', 'ca_mercancia_desc', 'ca_idproveedor', 'ca_orden_prov', 'ca_idconcliente', 'ca_orden_clie', 'ca_confirmar_clie', 'ca_idrepresentante', 'ca_informar_repr', 'ca_idconsignatario', 'ca_informar_cons', 'ca_idnotify', 'ca_informar_noti', 'ca_notify', 'ca_transporte', 'ca_modalidad', 'ca_seguro', 'ca_liberacion', 'ca_tiempocredito', 'ca_preferencias_clie', 'ca_instrucciones', 'ca_idlinea', 'ca_idconsignar', 'ca_idconsignarmaster', 'ca_idbodega', 'ca_mastersame', 'ca_continuacion', 'ca_continuacion_dest', 'ca_continuacion_conf', 'ca_etapa_actual', 'ca_login', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fchanulado', 'ca_usuanulado', 'ca_fchcerrado', 'ca_usucerrado', 'ca_colmas', 'ca_propiedades', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdreporte', 'CaFchreporte', 'CaConsecutivo', 'CaVersion', 'CaIdcotizacion', 'CaOrigen', 'CaDestino', 'CaImpoexpo', 'CaFchdespacho', 'CaIdagente', 'CaIncoterms', 'CaMercanciaDesc', 'CaIdproveedor', 'CaOrdenProv', 'CaIdconcliente', 'CaOrdenClie', 'CaConfirmarClie', 'CaIdrepresentante', 'CaInformarRepr', 'CaIdconsignatario', 'CaInformarCons', 'CaIdnotify', 'CaInformarNoti', 'CaNotify', 'CaTransporte', 'CaModalidad', 'CaSeguro', 'CaLiberacion', 'CaTiempocredito', 'CaPreferenciasClie', 'CaInstrucciones', 'CaIdlinea', 'CaIdconsignar', 'CaIdconsignarmaster', 'CaIdbodega', 'CaMastersame', 'CaContinuacion', 'CaContinuacionDest', 'CaContinuacionConf', 'CaEtapaActual', 'CaLogin', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchanulado', 'CaUsuanulado', 'CaFchcerrado', 'CaUsucerrado', 'CaColmas', 'CaPropiedades', 'CaIdetapa', 'CaFchultstatus', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte', 'caFchreporte', 'caConsecutivo', 'caVersion', 'caIdcotizacion', 'caOrigen', 'caDestino', 'caImpoexpo', 'caFchdespacho', 'caIdagente', 'caIncoterms', 'caMercanciaDesc', 'caIdproveedor', 'caOrdenProv', 'caIdconcliente', 'caOrdenClie', 'caConfirmarClie', 'caIdrepresentante', 'caInformarRepr', 'caIdconsignatario', 'caInformarCons', 'caIdnotify', 'caInformarNoti', 'caNotify', 'caTransporte', 'caModalidad', 'caSeguro', 'caLiberacion', 'caTiempocredito', 'caPreferenciasClie', 'caInstrucciones', 'caIdlinea', 'caIdconsignar', 'caIdconsignarmaster', 'caIdbodega', 'caMastersame', 'caContinuacion', 'caContinuacionDest', 'caContinuacionConf', 'caEtapaActual', 'caLogin', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caFchanulado', 'caUsuanulado', 'caFchcerrado', 'caUsucerrado', 'caColmas', 'caPropiedades', 'caIdetapa', 'caFchultstatus', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE, self::CA_FCHREPORTE, self::CA_CONSECUTIVO, self::CA_VERSION, self::CA_IDCOTIZACION, self::CA_ORIGEN, self::CA_DESTINO, self::CA_IMPOEXPO, self::CA_FCHDESPACHO, self::CA_IDAGENTE, self::CA_INCOTERMS, self::CA_MERCANCIA_DESC, self::CA_IDPROVEEDOR, self::CA_ORDEN_PROV, self::CA_IDCONCLIENTE, self::CA_ORDEN_CLIE, self::CA_CONFIRMAR_CLIE, self::CA_IDREPRESENTANTE, self::CA_INFORMAR_REPR, self::CA_IDCONSIGNATARIO, self::CA_INFORMAR_CONS, self::CA_IDNOTIFY, self::CA_INFORMAR_NOTI, self::CA_NOTIFY, self::CA_TRANSPORTE, self::CA_MODALIDAD, self::CA_SEGURO, self::CA_LIBERACION, self::CA_TIEMPOCREDITO, self::CA_PREFERENCIAS_CLIE, self::CA_INSTRUCCIONES, self::CA_IDLINEA, self::CA_IDCONSIGNAR, self::CA_IDCONSIGNARMASTER, self::CA_IDBODEGA, self::CA_MASTERSAME, self::CA_CONTINUACION, self::CA_CONTINUACION_DEST, self::CA_CONTINUACION_CONF, self::CA_ETAPA_ACTUAL, self::CA_LOGIN, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_FCHANULADO, self::CA_USUANULADO, self::CA_FCHCERRADO, self::CA_USUCERRADO, self::CA_COLMAS, self::CA_PROPIEDADES, self::CA_IDETAPA, self::CA_FCHULTSTATUS, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte', 'ca_fchreporte', 'ca_consecutivo', 'ca_version', 'ca_idcotizacion', 'ca_origen', 'ca_destino', 'ca_impoexpo', 'ca_fchdespacho', 'ca_idagente', 'ca_incoterms', 'ca_mercancia_desc', 'ca_idproveedor', 'ca_orden_prov', 'ca_idconcliente', 'ca_orden_clie', 'ca_confirmar_clie', 'ca_idrepresentante', 'ca_informar_repr', 'ca_idconsignatario', 'ca_informar_cons', 'ca_idnotify', 'ca_informar_noti', 'ca_notify', 'ca_transporte', 'ca_modalidad', 'ca_seguro', 'ca_liberacion', 'ca_tiempocredito', 'ca_preferencias_clie', 'ca_instrucciones', 'ca_idlinea', 'ca_idconsignar', 'ca_idconsignarmaster', 'ca_idbodega', 'ca_mastersame', 'ca_continuacion', 'ca_continuacion_dest', 'ca_continuacion_conf', 'ca_etapa_actual', 'ca_login', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fchanulado', 'ca_usuanulado', 'ca_fchcerrado', 'ca_usucerrado', 'ca_colmas', 'ca_propiedades', 'ca_idetapa', 'ca_fchultstatus', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, )
 	);
 
 	/**
@@ -212,11 +218,11 @@ abstract class BaseReportePeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdreporte' => 0, 'CaFchreporte' => 1, 'CaConsecutivo' => 2, 'CaVersion' => 3, 'CaIdcotizacion' => 4, 'CaOrigen' => 5, 'CaDestino' => 6, 'CaImpoexpo' => 7, 'CaFchdespacho' => 8, 'CaIdagente' => 9, 'CaIncoterms' => 10, 'CaMercanciaDesc' => 11, 'CaIdproveedor' => 12, 'CaOrdenProv' => 13, 'CaIdconcliente' => 14, 'CaOrdenClie' => 15, 'CaConfirmarClie' => 16, 'CaIdrepresentante' => 17, 'CaInformarRepr' => 18, 'CaIdconsignatario' => 19, 'CaInformarCons' => 20, 'CaIdnotify' => 21, 'CaInformarNoti' => 22, 'CaNotify' => 23, 'CaTransporte' => 24, 'CaModalidad' => 25, 'CaSeguro' => 26, 'CaLiberacion' => 27, 'CaTiempocredito' => 28, 'CaPreferenciasClie' => 29, 'CaInstrucciones' => 30, 'CaIdlinea' => 31, 'CaIdconsignar' => 32, 'CaIdconsignarmaster' => 33, 'CaIdbodega' => 34, 'CaMastersame' => 35, 'CaContinuacion' => 36, 'CaContinuacionDest' => 37, 'CaContinuacionConf' => 38, 'CaEtapaActual' => 39, 'CaLogin' => 40, 'CaFchcreado' => 41, 'CaUsucreado' => 42, 'CaFchactualizado' => 43, 'CaUsuactualizado' => 44, 'CaFchanulado' => 45, 'CaUsuanulado' => 46, 'CaFchcerrado' => 47, 'CaUsucerrado' => 48, 'CaColmas' => 49, 'CaPropiedades' => 50, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte' => 0, 'caFchreporte' => 1, 'caConsecutivo' => 2, 'caVersion' => 3, 'caIdcotizacion' => 4, 'caOrigen' => 5, 'caDestino' => 6, 'caImpoexpo' => 7, 'caFchdespacho' => 8, 'caIdagente' => 9, 'caIncoterms' => 10, 'caMercanciaDesc' => 11, 'caIdproveedor' => 12, 'caOrdenProv' => 13, 'caIdconcliente' => 14, 'caOrdenClie' => 15, 'caConfirmarClie' => 16, 'caIdrepresentante' => 17, 'caInformarRepr' => 18, 'caIdconsignatario' => 19, 'caInformarCons' => 20, 'caIdnotify' => 21, 'caInformarNoti' => 22, 'caNotify' => 23, 'caTransporte' => 24, 'caModalidad' => 25, 'caSeguro' => 26, 'caLiberacion' => 27, 'caTiempocredito' => 28, 'caPreferenciasClie' => 29, 'caInstrucciones' => 30, 'caIdlinea' => 31, 'caIdconsignar' => 32, 'caIdconsignarmaster' => 33, 'caIdbodega' => 34, 'caMastersame' => 35, 'caContinuacion' => 36, 'caContinuacionDest' => 37, 'caContinuacionConf' => 38, 'caEtapaActual' => 39, 'caLogin' => 40, 'caFchcreado' => 41, 'caUsucreado' => 42, 'caFchactualizado' => 43, 'caUsuactualizado' => 44, 'caFchanulado' => 45, 'caUsuanulado' => 46, 'caFchcerrado' => 47, 'caUsucerrado' => 48, 'caColmas' => 49, 'caPropiedades' => 50, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE => 0, self::CA_FCHREPORTE => 1, self::CA_CONSECUTIVO => 2, self::CA_VERSION => 3, self::CA_IDCOTIZACION => 4, self::CA_ORIGEN => 5, self::CA_DESTINO => 6, self::CA_IMPOEXPO => 7, self::CA_FCHDESPACHO => 8, self::CA_IDAGENTE => 9, self::CA_INCOTERMS => 10, self::CA_MERCANCIA_DESC => 11, self::CA_IDPROVEEDOR => 12, self::CA_ORDEN_PROV => 13, self::CA_IDCONCLIENTE => 14, self::CA_ORDEN_CLIE => 15, self::CA_CONFIRMAR_CLIE => 16, self::CA_IDREPRESENTANTE => 17, self::CA_INFORMAR_REPR => 18, self::CA_IDCONSIGNATARIO => 19, self::CA_INFORMAR_CONS => 20, self::CA_IDNOTIFY => 21, self::CA_INFORMAR_NOTI => 22, self::CA_NOTIFY => 23, self::CA_TRANSPORTE => 24, self::CA_MODALIDAD => 25, self::CA_SEGURO => 26, self::CA_LIBERACION => 27, self::CA_TIEMPOCREDITO => 28, self::CA_PREFERENCIAS_CLIE => 29, self::CA_INSTRUCCIONES => 30, self::CA_IDLINEA => 31, self::CA_IDCONSIGNAR => 32, self::CA_IDCONSIGNARMASTER => 33, self::CA_IDBODEGA => 34, self::CA_MASTERSAME => 35, self::CA_CONTINUACION => 36, self::CA_CONTINUACION_DEST => 37, self::CA_CONTINUACION_CONF => 38, self::CA_ETAPA_ACTUAL => 39, self::CA_LOGIN => 40, self::CA_FCHCREADO => 41, self::CA_USUCREADO => 42, self::CA_FCHACTUALIZADO => 43, self::CA_USUACTUALIZADO => 44, self::CA_FCHANULADO => 45, self::CA_USUANULADO => 46, self::CA_FCHCERRADO => 47, self::CA_USUCERRADO => 48, self::CA_COLMAS => 49, self::CA_PROPIEDADES => 50, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte' => 0, 'ca_fchreporte' => 1, 'ca_consecutivo' => 2, 'ca_version' => 3, 'ca_idcotizacion' => 4, 'ca_origen' => 5, 'ca_destino' => 6, 'ca_impoexpo' => 7, 'ca_fchdespacho' => 8, 'ca_idagente' => 9, 'ca_incoterms' => 10, 'ca_mercancia_desc' => 11, 'ca_idproveedor' => 12, 'ca_orden_prov' => 13, 'ca_idconcliente' => 14, 'ca_orden_clie' => 15, 'ca_confirmar_clie' => 16, 'ca_idrepresentante' => 17, 'ca_informar_repr' => 18, 'ca_idconsignatario' => 19, 'ca_informar_cons' => 20, 'ca_idnotify' => 21, 'ca_informar_noti' => 22, 'ca_notify' => 23, 'ca_transporte' => 24, 'ca_modalidad' => 25, 'ca_seguro' => 26, 'ca_liberacion' => 27, 'ca_tiempocredito' => 28, 'ca_preferencias_clie' => 29, 'ca_instrucciones' => 30, 'ca_idlinea' => 31, 'ca_idconsignar' => 32, 'ca_idconsignarmaster' => 33, 'ca_idbodega' => 34, 'ca_mastersame' => 35, 'ca_continuacion' => 36, 'ca_continuacion_dest' => 37, 'ca_continuacion_conf' => 38, 'ca_etapa_actual' => 39, 'ca_login' => 40, 'ca_fchcreado' => 41, 'ca_usucreado' => 42, 'ca_fchactualizado' => 43, 'ca_usuactualizado' => 44, 'ca_fchanulado' => 45, 'ca_usuanulado' => 46, 'ca_fchcerrado' => 47, 'ca_usucerrado' => 48, 'ca_colmas' => 49, 'ca_propiedades' => 50, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdreporte' => 0, 'CaFchreporte' => 1, 'CaConsecutivo' => 2, 'CaVersion' => 3, 'CaIdcotizacion' => 4, 'CaOrigen' => 5, 'CaDestino' => 6, 'CaImpoexpo' => 7, 'CaFchdespacho' => 8, 'CaIdagente' => 9, 'CaIncoterms' => 10, 'CaMercanciaDesc' => 11, 'CaIdproveedor' => 12, 'CaOrdenProv' => 13, 'CaIdconcliente' => 14, 'CaOrdenClie' => 15, 'CaConfirmarClie' => 16, 'CaIdrepresentante' => 17, 'CaInformarRepr' => 18, 'CaIdconsignatario' => 19, 'CaInformarCons' => 20, 'CaIdnotify' => 21, 'CaInformarNoti' => 22, 'CaNotify' => 23, 'CaTransporte' => 24, 'CaModalidad' => 25, 'CaSeguro' => 26, 'CaLiberacion' => 27, 'CaTiempocredito' => 28, 'CaPreferenciasClie' => 29, 'CaInstrucciones' => 30, 'CaIdlinea' => 31, 'CaIdconsignar' => 32, 'CaIdconsignarmaster' => 33, 'CaIdbodega' => 34, 'CaMastersame' => 35, 'CaContinuacion' => 36, 'CaContinuacionDest' => 37, 'CaContinuacionConf' => 38, 'CaEtapaActual' => 39, 'CaLogin' => 40, 'CaFchcreado' => 41, 'CaUsucreado' => 42, 'CaFchactualizado' => 43, 'CaUsuactualizado' => 44, 'CaFchanulado' => 45, 'CaUsuanulado' => 46, 'CaFchcerrado' => 47, 'CaUsucerrado' => 48, 'CaColmas' => 49, 'CaPropiedades' => 50, 'CaIdetapa' => 51, 'CaFchultstatus' => 52, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte' => 0, 'caFchreporte' => 1, 'caConsecutivo' => 2, 'caVersion' => 3, 'caIdcotizacion' => 4, 'caOrigen' => 5, 'caDestino' => 6, 'caImpoexpo' => 7, 'caFchdespacho' => 8, 'caIdagente' => 9, 'caIncoterms' => 10, 'caMercanciaDesc' => 11, 'caIdproveedor' => 12, 'caOrdenProv' => 13, 'caIdconcliente' => 14, 'caOrdenClie' => 15, 'caConfirmarClie' => 16, 'caIdrepresentante' => 17, 'caInformarRepr' => 18, 'caIdconsignatario' => 19, 'caInformarCons' => 20, 'caIdnotify' => 21, 'caInformarNoti' => 22, 'caNotify' => 23, 'caTransporte' => 24, 'caModalidad' => 25, 'caSeguro' => 26, 'caLiberacion' => 27, 'caTiempocredito' => 28, 'caPreferenciasClie' => 29, 'caInstrucciones' => 30, 'caIdlinea' => 31, 'caIdconsignar' => 32, 'caIdconsignarmaster' => 33, 'caIdbodega' => 34, 'caMastersame' => 35, 'caContinuacion' => 36, 'caContinuacionDest' => 37, 'caContinuacionConf' => 38, 'caEtapaActual' => 39, 'caLogin' => 40, 'caFchcreado' => 41, 'caUsucreado' => 42, 'caFchactualizado' => 43, 'caUsuactualizado' => 44, 'caFchanulado' => 45, 'caUsuanulado' => 46, 'caFchcerrado' => 47, 'caUsucerrado' => 48, 'caColmas' => 49, 'caPropiedades' => 50, 'caIdetapa' => 51, 'caFchultstatus' => 52, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDREPORTE => 0, self::CA_FCHREPORTE => 1, self::CA_CONSECUTIVO => 2, self::CA_VERSION => 3, self::CA_IDCOTIZACION => 4, self::CA_ORIGEN => 5, self::CA_DESTINO => 6, self::CA_IMPOEXPO => 7, self::CA_FCHDESPACHO => 8, self::CA_IDAGENTE => 9, self::CA_INCOTERMS => 10, self::CA_MERCANCIA_DESC => 11, self::CA_IDPROVEEDOR => 12, self::CA_ORDEN_PROV => 13, self::CA_IDCONCLIENTE => 14, self::CA_ORDEN_CLIE => 15, self::CA_CONFIRMAR_CLIE => 16, self::CA_IDREPRESENTANTE => 17, self::CA_INFORMAR_REPR => 18, self::CA_IDCONSIGNATARIO => 19, self::CA_INFORMAR_CONS => 20, self::CA_IDNOTIFY => 21, self::CA_INFORMAR_NOTI => 22, self::CA_NOTIFY => 23, self::CA_TRANSPORTE => 24, self::CA_MODALIDAD => 25, self::CA_SEGURO => 26, self::CA_LIBERACION => 27, self::CA_TIEMPOCREDITO => 28, self::CA_PREFERENCIAS_CLIE => 29, self::CA_INSTRUCCIONES => 30, self::CA_IDLINEA => 31, self::CA_IDCONSIGNAR => 32, self::CA_IDCONSIGNARMASTER => 33, self::CA_IDBODEGA => 34, self::CA_MASTERSAME => 35, self::CA_CONTINUACION => 36, self::CA_CONTINUACION_DEST => 37, self::CA_CONTINUACION_CONF => 38, self::CA_ETAPA_ACTUAL => 39, self::CA_LOGIN => 40, self::CA_FCHCREADO => 41, self::CA_USUCREADO => 42, self::CA_FCHACTUALIZADO => 43, self::CA_USUACTUALIZADO => 44, self::CA_FCHANULADO => 45, self::CA_USUANULADO => 46, self::CA_FCHCERRADO => 47, self::CA_USUCERRADO => 48, self::CA_COLMAS => 49, self::CA_PROPIEDADES => 50, self::CA_IDETAPA => 51, self::CA_FCHULTSTATUS => 52, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idreporte' => 0, 'ca_fchreporte' => 1, 'ca_consecutivo' => 2, 'ca_version' => 3, 'ca_idcotizacion' => 4, 'ca_origen' => 5, 'ca_destino' => 6, 'ca_impoexpo' => 7, 'ca_fchdespacho' => 8, 'ca_idagente' => 9, 'ca_incoterms' => 10, 'ca_mercancia_desc' => 11, 'ca_idproveedor' => 12, 'ca_orden_prov' => 13, 'ca_idconcliente' => 14, 'ca_orden_clie' => 15, 'ca_confirmar_clie' => 16, 'ca_idrepresentante' => 17, 'ca_informar_repr' => 18, 'ca_idconsignatario' => 19, 'ca_informar_cons' => 20, 'ca_idnotify' => 21, 'ca_informar_noti' => 22, 'ca_notify' => 23, 'ca_transporte' => 24, 'ca_modalidad' => 25, 'ca_seguro' => 26, 'ca_liberacion' => 27, 'ca_tiempocredito' => 28, 'ca_preferencias_clie' => 29, 'ca_instrucciones' => 30, 'ca_idlinea' => 31, 'ca_idconsignar' => 32, 'ca_idconsignarmaster' => 33, 'ca_idbodega' => 34, 'ca_mastersame' => 35, 'ca_continuacion' => 36, 'ca_continuacion_dest' => 37, 'ca_continuacion_conf' => 38, 'ca_etapa_actual' => 39, 'ca_login' => 40, 'ca_fchcreado' => 41, 'ca_usucreado' => 42, 'ca_fchactualizado' => 43, 'ca_usuactualizado' => 44, 'ca_fchanulado' => 45, 'ca_usuanulado' => 46, 'ca_fchcerrado' => 47, 'ca_usucerrado' => 48, 'ca_colmas' => 49, 'ca_propiedades' => 50, 'ca_idetapa' => 51, 'ca_fchultstatus' => 52, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, )
 	);
 
 	/**
@@ -399,6 +405,10 @@ abstract class BaseReportePeer {
 		$criteria->addSelectColumn(ReportePeer::CA_COLMAS);
 
 		$criteria->addSelectColumn(ReportePeer::CA_PROPIEDADES);
+
+		$criteria->addSelectColumn(ReportePeer::CA_IDETAPA);
+
+		$criteria->addSelectColumn(ReportePeer::CA_FCHULTSTATUS);
 
 	}
 
@@ -891,6 +901,56 @@ abstract class BaseReportePeer {
 
 
 	/**
+	 * Returns the number of rows matching criteria, joining the related TrackingEtapa table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinTrackingEtapa(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			ReportePeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
 	 * Selects a collection of Reporte objects pre-filled with their Usuario objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -1226,6 +1286,73 @@ abstract class BaseReportePeer {
 
 
 	/**
+	 * Selects a collection of Reporte objects pre-filled with their TrackingEtapa objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of Reporte objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinTrackingEtapa(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		ReportePeer::addSelectColumns($c);
+		$startcol = (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
+		TrackingEtapaPeer::addSelectColumns($c);
+
+		$c->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = ReportePeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				ReportePeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = TrackingEtapaPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = TrackingEtapaPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					TrackingEtapaPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (Reporte) to $obj2 (TrackingEtapa)
+				$obj2->addReporte($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
@@ -1266,6 +1393,7 @@ abstract class BaseReportePeer {
 		$criteria->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 		$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 		$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+		$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1314,11 +1442,15 @@ abstract class BaseReportePeer {
 		BodegaPeer::addSelectColumns($c);
 		$startcol7 = $startcol6 + (BodegaPeer::NUM_COLUMNS - BodegaPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol8 = $startcol7 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		$c->addJoin(array(ReportePeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 		$c->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 		$c->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 		$c->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 		$c->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+		$c->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -1437,6 +1569,26 @@ abstract class BaseReportePeer {
 				$obj6->addReporte($obj1);
 			} // if joined row not null
 
+			// Add objects for joined TrackingEtapa rows
+
+			$key7 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
+			if ($key7 !== null) {
+				$obj7 = TrackingEtapaPeer::getInstanceFromPool($key7);
+				if (!$obj7) {
+
+					$omClass = TrackingEtapaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj7 = new $cls();
+					$obj7->hydrate($row, $startcol7);
+					TrackingEtapaPeer::addInstanceToPool($obj7, $key7);
+				} // if obj7 loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj7 (TrackingEtapa)
+				$obj7->addReporte($obj1);
+			} // if joined row not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1479,6 +1631,7 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1526,6 +1679,7 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1573,6 +1727,7 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1620,6 +1775,7 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1667,6 +1823,55 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related TrackingEtapa table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptTrackingEtapa(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			ReportePeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(ReportePeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
+				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1715,10 +1920,14 @@ abstract class BaseReportePeer {
 		BodegaPeer::addSelectColumns($c);
 		$startcol6 = $startcol5 + (BodegaPeer::NUM_COLUMNS - BodegaPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1822,6 +2031,27 @@ abstract class BaseReportePeer {
 
 			} // if joined row is not null
 
+				// Add objects for joined TrackingEtapa rows
+
+				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
+				if ($key6 !== null) {
+					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
+					if (!$obj6) {
+	
+						$omClass = TrackingEtapaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj6 = new $cls();
+					$obj6->hydrate($row, $startcol6);
+					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
+				} // if $obj6 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
+				$obj6->addReporte($obj1);
+
+			} // if joined row is not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1865,10 +2095,14 @@ abstract class BaseReportePeer {
 		BodegaPeer::addSelectColumns($c);
 		$startcol6 = $startcol5 + (BodegaPeer::NUM_COLUMNS - BodegaPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(ReportePeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1972,6 +2206,27 @@ abstract class BaseReportePeer {
 
 			} // if joined row is not null
 
+				// Add objects for joined TrackingEtapa rows
+
+				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
+				if ($key6 !== null) {
+					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
+					if (!$obj6) {
+	
+						$omClass = TrackingEtapaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj6 = new $cls();
+					$obj6->hydrate($row, $startcol6);
+					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
+				} // if $obj6 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
+				$obj6->addReporte($obj1);
+
+			} // if joined row is not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -2015,10 +2270,14 @@ abstract class BaseReportePeer {
 		BodegaPeer::addSelectColumns($c);
 		$startcol6 = $startcol5 + (BodegaPeer::NUM_COLUMNS - BodegaPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(ReportePeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -2122,6 +2381,27 @@ abstract class BaseReportePeer {
 
 			} // if joined row is not null
 
+				// Add objects for joined TrackingEtapa rows
+
+				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
+				if ($key6 !== null) {
+					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
+					if (!$obj6) {
+	
+						$omClass = TrackingEtapaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj6 = new $cls();
+					$obj6->hydrate($row, $startcol6);
+					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
+				} // if $obj6 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
+				$obj6->addReporte($obj1);
+
+			} // if joined row is not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -2165,10 +2445,14 @@ abstract class BaseReportePeer {
 		BodegaPeer::addSelectColumns($c);
 		$startcol6 = $startcol5 + (BodegaPeer::NUM_COLUMNS - BodegaPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(ReportePeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -2272,6 +2556,27 @@ abstract class BaseReportePeer {
 
 			} // if joined row is not null
 
+				// Add objects for joined TrackingEtapa rows
+
+				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
+				if ($key6 !== null) {
+					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
+					if (!$obj6) {
+	
+						$omClass = TrackingEtapaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj6 = new $cls();
+					$obj6->hydrate($row, $startcol6);
+					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
+				} // if $obj6 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
+				$obj6->addReporte($obj1);
+
+			} // if joined row is not null
+
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -2315,10 +2620,14 @@ abstract class BaseReportePeer {
 		AgentePeer::addSelectColumns($c);
 		$startcol6 = $startcol5 + (AgentePeer::NUM_COLUMNS - AgentePeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TrackingEtapaPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(ReportePeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 				$c->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -2419,6 +2728,202 @@ abstract class BaseReportePeer {
 
 				// Add the $obj1 (Reporte) to the collection in $obj5 (Agente)
 				$obj5->addReporte($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined TrackingEtapa rows
+
+				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
+				if ($key6 !== null) {
+					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
+					if (!$obj6) {
+	
+						$omClass = TrackingEtapaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj6 = new $cls();
+					$obj6->hydrate($row, $startcol6);
+					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
+				} // if $obj6 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
+				$obj6->addReporte($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of Reporte objects pre-filled with all related objects except TrackingEtapa.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of Reporte objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptTrackingEtapa(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		ReportePeer::addSelectColumns($c);
+		$startcol2 = (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
+
+		UsuarioPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		TransportadorPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		TerceroPeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (TerceroPeer::NUM_COLUMNS - TerceroPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		AgentePeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (AgentePeer::NUM_COLUMNS - AgentePeer::NUM_LAZY_LOAD_COLUMNS);
+
+		BodegaPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (BodegaPeer::NUM_COLUMNS - BodegaPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(ReportePeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
+				$c->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = ReportePeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				ReportePeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Usuario rows
+
+				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = UsuarioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					UsuarioPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj2 (Usuario)
+				$obj2->addReporte($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Transportador rows
+
+				$key3 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = TransportadorPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = TransportadorPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TransportadorPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj3 (Transportador)
+				$obj3->addReporte($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Tercero rows
+
+				$key4 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+				if ($key4 !== null) {
+					$obj4 = TerceroPeer::getInstanceFromPool($key4);
+					if (!$obj4) {
+	
+						$omClass = TerceroPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					TerceroPeer::addInstanceToPool($obj4, $key4);
+				} // if $obj4 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj4 (Tercero)
+				$obj4->addReporte($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Agente rows
+
+				$key5 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol5);
+				if ($key5 !== null) {
+					$obj5 = AgentePeer::getInstanceFromPool($key5);
+					if (!$obj5) {
+	
+						$omClass = AgentePeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj5 = new $cls();
+					$obj5->hydrate($row, $startcol5);
+					AgentePeer::addInstanceToPool($obj5, $key5);
+				} // if $obj5 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj5 (Agente)
+				$obj5->addReporte($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Bodega rows
+
+				$key6 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
+				if ($key6 !== null) {
+					$obj6 = BodegaPeer::getInstanceFromPool($key6);
+					if (!$obj6) {
+	
+						$omClass = BodegaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj6 = new $cls();
+					$obj6->hydrate($row, $startcol6);
+					BodegaPeer::addInstanceToPool($obj6, $key6);
+				} // if $obj6 already loaded
+
+				// Add the $obj1 (Reporte) to the collection in $obj6 (Bodega)
+				$obj6->addReporte($obj1);
 
 			} // if joined row is not null
 

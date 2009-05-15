@@ -136,125 +136,44 @@ class RepStatus extends BaseRepStatus
 	}
 	
 	/*
-	* Retorna el texto del status de acuaerdo a la plantilla
-	*/	
-	public function getStatus(){		
-		$resultado = "";	
-		$reporte = $this->getReporte();	
-		$etapa = $this->getTrackingEtapa();
-			
+	* 
+	*/
+	public function getTxtStatus(  ){			
+		$etapa = $this->getTrackingEtapa();			
 		$txt = "";	
 		if( $etapa ){
 			$template = $etapa->getCaMessage();
 			if( $template ){
 				$txt = $this->applyTemplate( $template )."\n\n";
-			}		
-			
-		}		
-		return $txt."".$this->getCaStatus();
-		/*
-		switch( $this->getCaIdEtapa () ){
-			case "IMCPD":				
-				$txt = "La MN ".$this->getCaIdnave(). " arribó a ".$reporte->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $this->getCaFchllegada() )." con la orden en referencia a bordo.";	
-				
-				
-				
-				if( $this->getCaStatus() ){
-					$txt .="\n".ucfirst($this->getCaStatus());	
-				}
-				return $txt;	
-				break;
-		}*/
-		
-		/*
-		switch( $this->getCaEtapa () ){			
-						
-			case "Carga Embarcada":	
-				if( strlen( $this->getCaStatus())>6  ){
-					$resultado = $this->getCaStatus();
-				}else{
-					if( $reporte->getCaTransporte()=="Aéreo" ){
-						$resultado = "Nuestra oficina nos informa que el vuelo " . $this->getCaIdnave () . " salió ";
-						if( $this->getCaFchsalida () ){
-							$resultado.= " el " . Utils::fechaMes($this->getCaFchsalida ()) ; 
-						}
-						$resultado.= " con la orden en referencia a bordo ";
-						if( $this->getCaFchllegada() ) {
-							$resultado.= ",la fecha estimada de arribo es el ".Utils::fechaMes($this->getCaFchllegada()).".";				
-						}
-					}
-					if( $reporte->getCaTransporte()=="Marítimo" ){						
-						$resultado = "Nuestra oficina nos informa que la MN " . $this->getCaIdnave () . " zarpò ";
-						if( $this->getCaFchsalida () ){
-							$resultado.= " el " . Utils::fechaMes($this->getCaFchsalida ()) ; 
-						}
-						$resultado.= " con la orden en referencia a bordo ";
-						if( $this->getCaFchllegada() ) {
-							$resultado.= ",la fecha estimada de arribo es el ".Utils::fechaMes($this->getCaFchllegada()).".";				
-						}
-					}
-				}
-				
-				break;	
-			case "ETA":	
-				if( strlen( $this->getCaStatus())>6  ){
-					$resultado = $this->getCaStatus();
-				}else{
-					if( $reporte->getCaTransporte()=="Aéreo" ){
-						$resultado = "Nuestra oficina nos informa que el vuelo " . $this->getCaIdnave () . " salió ";
-						if( $this->getCaFchsalida () ){
-							$resultado.= " el " . Utils::fechaMes($this->getCaFchsalida ()) ; 
-						}
-						$resultado.= " con la orden en referencia a bordo ";
-						if( $this->getCaFchllegada() ) {
-							$resultado.= ",la fecha estimada de arribo es el ".Utils::fechaMes($this->getCaFchllegada()).".";				
-						}
-					}
-					if( $reporte->getCaTransporte()=="Marítimo" ){						
-						$resultado = "Nuestra oficina nos informa que la MN " . $this->getCaIdnave () . " zarpò ";
-						if( $this->getCaFchsalida () ){
-							$resultado.= " el " . Utils::fechaMes($this->getCaFchsalida ()) ; 
-						}
-						$resultado.= " con la orden en referencia a bordo ";
-						if( $this->getCaFchllegada() ) {
-							$resultado.= ",la fecha estimada de arribo es el ".Utils::fechaMes($this->getCaFchllegada()).".";				
-						}
-					}
-				}
-				
-				break;	
-			case "Carga en Puerto de Destino":	
-				if( strlen( $this->getCaStatus())>6  ){
-					$resultado = $this->getCaStatus();
-				}else{					
-					if( $reporte->getCaTransporte()=="Marítimo" ){						
-						$resultado = $this->getCaStatus();
-					}
-				}
-				
-				break;	
-			case "Carga en Aeropuerto de Destino":	
-				if( strlen( $this->getCaStatus())>6  ){
-					$resultado = $this->getCaStatus();
-				}else{
-					if( $reporte->getCaTransporte()=="Aéreo" ){
-						$resultado = "Nuestra oficina nos informa que el vuelo " . $this->getCaIdnave () . " llegó ";
-						if( $this->getCaFchllegada () ){
-							$resultado.= " el " . Utils::fechaMes($this->getCaFchllegada ()) ; 
-						}
-						$resultado.= " con la orden en referencia a bordo ";
-						
-					}
-					
-				}
-				
-				break;			
-						
-			default:			
-				$resultado = $this->getCaStatus();
-				break;	
+			}					
 		}
-		return $resultado;*/
+		return $txt;		
+	}
+	
+	/*
+	* Aplica el texto al status
+	*/
+	public function setStatus( $status ){		
+		
+		$txt = $this->getTxtStatus();			
+		if( $txt ){
+			$txt.="\n";
+		}
+				
+		$this->setCaStatus( $txt.$status );
+				
+	}
+	
+	/*
+	* Retorna el texto del status de acuaerdo a la plantilla
+	*/	
+	public function getStatus(){				
+		if( $this->getCaStatus() ){
+			return $this->getCaStatus();
+		}else{
+			return $this->getTxtStatus();
+		}
+		
 	}
 	
 	/*
@@ -327,11 +246,12 @@ class RepStatus extends BaseRepStatus
 		switch( $this->getCaIdetapa() ){
 			case "IMCPD":
 				$asunto = "Confirmación de Llegada ";
-				break;
+				break;				
 			case "IMCOL":
 				$asunto = "Confirmación de Llegada OTM ";
 				break;	
-			case "":
+			case "99999":
+				$asunto = "Cierre";
 				break;	
 			default: 
 				if( $etapa && $etapa->getCaDepartamento()=="OTM/DTA" ){
@@ -364,15 +284,17 @@ class RepStatus extends BaseRepStatus
 		if( $attachments ){		
 			$email->setCaAttachment( implode( "|", $attachments ) );
 		}
-		
+				
 		if ( $reporte->getCaContinuacion() != 'N/A' ){
-			$recips = explode(",",$reporte->getCaContinuacionConf());			
-			foreach( $recips as $recip ){			
-				$recip = str_replace(" ", "", $recip );			
-				if( $recip ){					
-					$email->addCc( $recip ); 
-				}
-			}	   
+			if( ($etapa && $etapa->getCaDepartamento()!="OTM/DTA") || !$etapa ){
+				$recips = explode(",",$reporte->getCaContinuacionConf());			
+				foreach( $recips as $recip ){			
+					$recip = str_replace(" ", "", $recip );			
+					if( $recip ){					
+						$email->addCc( $recip ); 
+					}
+				}	   
+			}
 		}
 			
 		if ( $reporte->getCaColmas() == 'Sí'  ){
@@ -384,8 +306,8 @@ class RepStatus extends BaseRepStatus
 		
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
-		$email->setCaAddress("abotero@coltrans.com.co");
-		$email->setCaCc("");
+		/*$email->setCaAddress("abotero@coltrans.com.co");
+		$email->setCaCc("");*/
 		$email->save(); 
 		$email->send(); 	
 		$this->setCaIdemail( $email->getCaIdemail() );

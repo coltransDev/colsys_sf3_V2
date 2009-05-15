@@ -62,13 +62,17 @@ class InoAvisosSeaMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(false);
 
+		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'VARCHAR' , 'tb_inoclientes_sea', 'CA_REFERENCIA', true, null);
+
 		$tMap->addForeignPrimaryKey('CA_REFERENCIA', 'CaReferencia', 'VARCHAR' , 'tb_inomaestra_sea', 'CA_REFERENCIA', true, null);
+
+		$tMap->addForeignPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'INTEGER' , 'tb_inoclientes_sea', 'CA_IDCLIENTE', true, null);
 
 		$tMap->addForeignPrimaryKey('CA_IDCLIENTE', 'CaIdcliente', 'INTEGER' , 'tb_clientes', 'CA_IDCLIENTE', true, null);
 
-		$tMap->addPrimaryKey('CA_HBLS', 'CaHbls', 'VARCHAR', true, null);
+		$tMap->addForeignPrimaryKey('CA_HBLS', 'CaHbls', 'VARCHAR' , 'tb_inoclientes_sea', 'CA_HBLS', true, null);
 
-		$tMap->addPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER', true, null);
+		$tMap->addForeignPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER' , 'tb_emails', 'CA_IDEMAIL', true, null);
 
 		$tMap->addColumn('CA_FCHAVISO', 'CaFchaviso', 'DATE', false, null);
 

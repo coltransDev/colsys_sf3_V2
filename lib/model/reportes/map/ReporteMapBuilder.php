@@ -166,6 +166,10 @@ class ReporteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_PROPIEDADES', 'CaPropiedades', 'VARCHAR', false, null);
 
+		$tMap->addForeignKey('CA_IDETAPA', 'CaIdetapa', 'VARCHAR', 'tb_tracking_etapas', 'CA_IDETAPA', false, null);
+
+		$tMap->addColumn('CA_FCHULTSTATUS', 'CaFchultstatus', 'TIMESTAMP', false, null);
+
 	} // doBuild()
 
 } // ReporteMapBuilder
