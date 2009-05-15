@@ -50,6 +50,13 @@ all:
       db_time_col:  sess_time
       db_maxinactive_col:  max_inactive
 
+  routing:
+    class: sfPatternRouting
+    param:
+      generate_shortest_url:            true
+      extra_parameters_as_query_string: true
+      lazy_routes_deserialize:          true
+      lookup_cache_dedicated_keys:      true
 #
 #  view_cache:
 #    class: sfFileCache
