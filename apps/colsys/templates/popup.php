@@ -7,6 +7,10 @@
 <link rel="shortcut icon" href="/favicon.ico" />
 </head>
 <body>
-<div align="center" id="content"> <?php echo $sf_content ?> </div>
+<div align="center" id="content">
+<? 
+include_component("menu", "submenubar");
+?>
+ <?php echo $sf_content ?> </div>
 </body>
 </html>
