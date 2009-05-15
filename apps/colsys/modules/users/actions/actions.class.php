@@ -226,7 +226,7 @@ class usersActions extends sfActions
 			$this->forward404();
 		}
 		
-		$usuarios=$this->getRequestParameter("usuarios");
+		$usuarios=utf8_decode($this->getRequestParameter("usuarios"));
 		$this->forward404Unless( $usuarios );
 		
 		$rutina=$this->getRequestParameter("rutina");
@@ -292,6 +292,7 @@ class usersActions extends sfActions
 			}
 		}
 	}
+	
 	
 	
 		
