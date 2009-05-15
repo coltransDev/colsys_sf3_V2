@@ -145,9 +145,14 @@ class generalActions extends sfActions
 	}
 	
 	/*
-	* Muestra un formulario de acceso al directorio (e-guide)	
+	* Permite ver un email
 	*/
-	public function executeEguide(){
+	public function executeVerEmail( $request ){
+		$this->email = EmailPeer::retrieveByPk($request->getParameter("id"));
+		$this->forward404Unless( $this->email );		
+		$this->user = UsuarioPeer::retrieveByPk( $this->email->getCaUsuEnvio() );
+		
+		$this->setLayout("popup");	
 		
 	}
 	
