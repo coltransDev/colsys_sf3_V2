@@ -46,13 +46,44 @@ class adminUsersActions extends sfActions
 			$this->usuario->setPasswd( $request->getParameter("passwd1") );
 		}
 		
-		$this->usuario->save();
-		
-		
-		
-		
+		$this->usuario->save();		
 	 
 	}
+	
+	/*
+	* Permite cambiar el password de un usuario que se autentica por BD
+	*/
+	public function executeChangePasswd( $request ){
+		$this->form = new CambioClaveForm();	
+		
+		if ($request->isMethod('post')){
+			
+			$this->form->bind(
+				array(
+						'clave_ant' => $request->getParameter('clave_ant'),
+						'clave1' => $request->getParameter('clave1'),
+						'clave2' => $request->getParameter('clave2')
+		
+					)
+				); 
+			
+			if ($this->form->isValid()){
+				$user = $this->getUser()->getUserId();
+				$user = UsuarioPeer::retrieveByPk( $this->getUser()->getUserId() );
+				$user->setPasswd( $this->getRequestParameter("clave1") );
+				$user->setCaForcechange( false );
+				$user->save();
+				
+				$this->getUser()->setAttribute('forcechange', false);
+								
+				$this->setTemplate("changePasswdOk");					
+				
+			}
+		}	
+		
+		
+	}
+	
 	
 	
 }
