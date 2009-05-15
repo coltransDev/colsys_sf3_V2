@@ -29,19 +29,52 @@ class confirmacionesActions extends sfActions
 	public function executeBusqueda(sfWebRequest $request){
 		$criterio = $request->getParameter( "criterio" );
 		$this->modo = $request->getParameter( "modo" );
-		$cadena = str_replace("-",".",$request->getParameter( "cadena" ));
+		$cadena = $request->getParameter( "cadena" );
+		
+		if(!$cadena){
+			$this->redirect("confirmaciones/index?modo=".$this->modo);		
+		}
+		
 		$c = new Criteria();
-		$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );
+		$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA, Criteria::LEFT_JOIN );
 		switch( $criterio ){
 			case "referencia":
 				$c->add( InoMaestraSeaPeer::CA_REFERENCIA, $cadena."%", Criteria::LIKE );	
+				break;
+			case "reporte":
+				$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );  
+				$c->addJoin( InoClientesSeaPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );  				$c->add( ReportePeer::CA_CONSECUTIVO, $cadena."%", Criteria::LIKE );	
+				break;
+			case "blmaster":
+				$c->add( InoMaestraSeaPeer::CA_MBLS, $cadena."%", Criteria::LIKE );	
+				break;
+			case "motonave":
+				$c->add( InoMaestraSeaPeer::CA_MOTONAVE, $cadena."%", Criteria::LIKE );	
+				$c->addOr( InoMaestraSeaPeer::CA_MNLLEGADA, $cadena."%", Criteria::LIKE );	
+				break;
+			case "hbl":
+				$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );  	
+				$c->add( InoClientesSeaPeer::CA_HBLS, $cadena."%", Criteria::LIKE );				
+				break;
+			case "cliente":
+				$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );  
+				$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE ); 				$c->add( ClientePeer::CA_COMPANIA, strtoupper($cadena)."%", Criteria::LIKE );
+				break;
+			case "idcliente":
+				$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );  
+				$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE ); 				
+				$c->add( ClientePeer::CA_IDCLIENTE, $cadena."%", Criteria::LIKE );
+				break;
+			case "contenedor":
+				$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoEquiposSeaPeer::CA_REFERENCIA );  
+				$c->add( InoEquiposSeaPeer::CA_IDEQUIPO, $cadena."%", Criteria::LIKE );
 				break;
 		}
 		
 		$c->addDescendingOrderByColumn( InoMaestraSeaPeer::CA_REFERENCIA );	
 		$c->setDistinct();
 		$c->setLimit( 200 );
-		
+				
 		$this->pager = new sfPropelPager('InoMaestraSea', 30);		
 		$this->pager->setCriteria($c);	
 		$this->pager->setPage($this->getRequestParameter('page', 1));			
@@ -111,7 +144,22 @@ class confirmacionesActions extends sfActions
 			$c->addAscendingOrderByColumn(  BodegaPeer::CA_NOMBRE );
 			
 			$this->bodegas = BodegaPeer::doSelect( $c );
-		}						
+		}else{		
+			/*
+			* Confirmaciones de llegada de puerto
+			*/
+			$c = new Criteria();
+			$c->add( EmailPeer::CA_TIPO, 'Not.Llegada' );	
+			$c->addOr( EmailPeer::CA_TIPO, 'Not.Desconsolidación' );	
+			
+			$c->add( EmailPeer::CA_SUBJECT, '%'.$this->referencia->getCaReferencia().'%' , Criteria::LIKE );				
+			$this->confirmaciones = EmailPeer::doSelect( $c );
+		}
+		
+		
+		
+		
+								
 	}
 	
 	/**
@@ -120,7 +168,6 @@ class confirmacionesActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeCrearStatus(sfWebRequest $request){	
-		
 		$referencia = InoMaestraSeaPeer::retrieveByPk( $request->getParameter( "referencia" ) );
 		$this->forward404Unless( $referencia );
 		
@@ -193,17 +240,7 @@ class confirmacionesActions extends sfActions
 			$status->setCaIdReporte( $reporte->getCaIdreporte() );
 			$status->setCaFchStatus( time() );	
 			
-			if( $tipo_msg=="Conf" ){
-				$status->setCaIntroduccion( $this->getRequestParameter("intro_body") );
-				$status->setCaStatus( $this->getRequestParameter("mensaje_".$oid) );
-			}else{
-				$status->setCaIntroduccion( $this->getRequestParameter("status_body_intro") );				
-				$mensaje = $this->getRequestParameter("status_body");
-				if( $this->getRequestParameter("mensaje_".$oid) ){
-					$mensaje .= "\n".$this->getRequestParameter("mensaje_".$oid);
-				}
-				$status->setCaStatus( $mensaje );			
-			}
+			
 			$status->setCaComentarios( $this->getRequestParameter("notas") );			
 			$status->setCaFchenvio( date("Y-m-d H:i:s") );
 			$status->setCausuenvio( $this->getUser()->getUserId() );
@@ -222,8 +259,9 @@ class confirmacionesActions extends sfActions
 			
 			switch( $modo ){
 				case "conf":
-					if( $tipo_msg=="Conf" ){
+					if( $tipo_msg=="Conf" ){						
 						$status->setCaIdEtapa("IMCPD");
+						
 					}else{
 						$status->setCaIdEtapa("88888");
 					}
@@ -244,14 +282,27 @@ class confirmacionesActions extends sfActions
 						$status->setCaFchcontinuacion($this->getRequestParameter("fchllegada_".$oid));	
 						$status->setProperty("idbodega", $idbodega);				
 					}
-					
-					
+										
 					$status->setCaIdEtapa($etapa);
 					break;				
 				default:	
 					$status->setCaIdEtapa("88888");
 					break;	
 			}
+			
+			if( $tipo_msg=="Conf" ){
+				$status->setCaIntroduccion( $this->getRequestParameter("intro_body") );
+				$status->setStatus( $this->getRequestParameter("mensaje_".$oid) );
+			}else{
+				$status->setCaIntroduccion( $this->getRequestParameter("status_body_intro") );				
+				$mensaje = $this->getRequestParameter("status_body");
+				if( $this->getRequestParameter("mensaje_".$oid) ){
+					$mensaje .= "\n".$this->getRequestParameter("mensaje_".$oid);
+				}
+				$status->setStatus( $mensaje );			
+			}
+						
+					
 						
 			$destinatarios = array();
 			
@@ -259,88 +310,27 @@ class confirmacionesActions extends sfActions
 			foreach($checkbox as $check ){				
 				$destinatarios[]=$request->getParameter("ar_".$oid."_".$check);
 			}
-					
+							
 			$status->save();
+			
+			/*
+			* Cierra el caso en caso de no tener continuacion
+			* Se guarda despues de guardar el status por que si no el trigger 
+			* se ejecuta y coloca otra etapa
+			*/
+			/*
+			if( $tipo_msg=="Conf" && $reporte->getCaContinuacion()=='N/A' ){				
+				$reporte->setCaIdEtapa("99999");
+				$reporte->save();
+			}	*/
+			
 			$status->send($destinatarios, array(), $attachments );		
 			
 			$this->status = $status;	
 			$this->modo = $modo;	
 			$this->referencia = $referencia;			
-		}		
+		}				
 		
-		/*
-		$status->setCaIdReporte( $this->reporteId );
-		$status->setCaFchStatus( date("Y-m-d H:i:s") );
-		$status->setCaIntroduccion( Utils::replace( $this->getRequestParameter("introduccion") ) );
-		$status->setCaIdEmail( $email->getCaIdemail() );
-		$status->setCaStatus( $this->getRequestParameter("mensaje") );
-		$status->setCaComentarios( $this->getRequestParameter("notas", '-') );
-		$status->setCaEtapa( $this->getRequestParameter("etapa") );
-		$status->setCaFchrecibo( $this->getRequestParameter("fchrecibo")." ".$this->getRequestParameter("horarecibo") );
-		$status->setCaFchenvio( date("Y-m-d H:i:s") );
-		$status->setCausuenvio( $user->getUserId() );
-		
-		
-		$this->getRequest()->setParameter("id", $reporte->getCaIdreporte());
-		$this->getRequest()->setParameter("emailid", $email->getCaIdemail());	
-				
-		
-			
-		$piezas = $this->getRequestParameter("piezas")."|".$this->getRequestParameter("tipo_piezas");
-		$peso = $this->getRequestParameter("peso")."|".$this->getRequestParameter("tipo_peso");
-		$volumen = $this->getRequestParameter("volumen")."|".$this->getRequestParameter("tipo_volumen");
-		
-		if($this->getRequestParameter("piezas")){
-			$status->setCaPiezas( $piezas );
-		}
-		
-		if($this->getRequestParameter("peso")){
-			$status->setCaPeso( $peso );
-		}
-		if($this->getRequestParameter("volumen")){
-			$status->setCaVolumen( $volumen );
-		}	
-		
-		if( $this->getRequestParameter("doctransporte") ){
-			$status->setCaDoctransporte( $this->getRequestParameter("doctransporte") );
-		}
-		
-		if( $this->getRequestParameter("docmaster") ){
-			$status->setCaDocmaster( $this->getRequestParameter("docmaster") );
-		}
-		
-		if( $this->getRequestParameter("idnave") ){
-			$status->setCaIdnave( $this->getRequestParameter("idnave") );
-		}
-		
-		if( $this->getRequestParameter("fchsalida") ){
-			$status->setCaFchsalida( $this->getRequestParameter("fchsalida") );
-		}
-		if( $this->getRequestParameter("fchllegada") ){
-			$status->setCaFchllegada( $this->getRequestParameter("fchllegada") );
-		}
-		
-		if( $this->getRequestParameter("horasalida") ){	
-			$status->setCaHorasalida( $this->getRequestParameter("horasalida") );
-		}
-		
-		if( $this->getRequestParameter("horallegada") ){
-			$status->setCaHorallegada( $this->getRequestParameter("horallegada") );
-		}
-			
-		if( $this->getRequestParameter("fchcontinuacion") && $reporte->getCaContinuacion()!="N/A" ){
-			$status->setCaFchcontinuacion( $this->getRequestParameter("fchcontinuacion") );
-		}
-		
-		if (!$rs->Open("insert into tb_inoavisos_sea (ca_referencia, ca_idcliente, ca_hbls, ca_idemail, ca_fchaviso, ca_aviso, ca_fchenvio, ca_usuenvio) select ca_referencia, ca_idcliente, ca_hbls, $id_email, '".date("Y-M-d")."', '".$$personal."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_inoclientes_sea where oid = ".$oid[$i])) {
-			echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-			echo "<script>document.location.href = 'confirmaciones.php';</script>";
-			exit;
-			}
-			enviar_email($mail, $rs, $id_email, $i, $_FILES);                                           // Llamado a la función que envia los emails
-		}
-		
-		*/
 	}
 	
 	

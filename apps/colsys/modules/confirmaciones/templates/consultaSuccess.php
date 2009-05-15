@@ -1,4 +1,12 @@
 <?
+
+$c = new Criteria();
+$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE );
+$c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );
+if( $modo=="otm"){
+	$c->add( InoClientesSeaPeer::CA_CONTINUACION, 'N/A', Criteria::NOT_EQUAL );
+}
+$inoClientes = $referencia->getInoClientesSeas( $c );
 switch( $modo ){
 	case "otm":
 		$titulo = "Módulo de Avisos de OTM";
@@ -11,7 +19,38 @@ switch( $modo ){
 ?>
 <script language="javascript" type="text/javascript">
 
-function validarFormConfirmacion(){
+function validarFormConfirmacion(){	
+	<?
+	if( $modo=="otm"){
+	?>
+	var oids = new Array (
+	<?
+	$i = 0;
+	foreach( $inoClientes as $inoCliente ){
+		if( $i++!=0 ){
+			echo ",";
+		}
+		echo $inoCliente->getOid();
+	}
+	?>
+	);
+	
+	for( var i=0 ; i<oids.length ; i++ ){		
+		var checkbox = document.getElementById("checkbox_"+oids[i]);		
+		if( checkbox.checked ){					
+			if( document.getElementById("divmessage_"+oids[i]).innerHTML=="" && document.getElementById("mensaje_"+oids[i]).value=="" ){
+				alert("Por favor coloque un mensaje para el status");
+				document.getElementById("mensaje_"+oids[i]).focus();
+				return false;
+			}
+		}
+	}	
+	return true;
+	
+	
+	<?	
+	}else{
+	?>
    if (document.getElementById('confirmacion_tbl').style.display == 'block'){
 	  if (!chkDate(document.form1.fchconfirmacion))
 		  alert('Debe Especificar la Fecha de llegada de la Carga');
@@ -25,8 +64,10 @@ function validarFormConfirmacion(){
 		  alert('Ingrese la Bandera del Buque');
 	  else if (document.form1.mnllegada.value == '')
 		  alert('Ingrese el nombre de la Motonoave de Llegada');
-	  else
-		  return (true);
+	  else{
+		  alert("asd");
+		  return (true);		  
+	  }
 	  return (false);
    }else{
 	  if (document.form1.status_body.value == '')
@@ -35,6 +76,9 @@ function validarFormConfirmacion(){
 		  return (true);
 	  return (false);
    }
+   <?
+   }
+   ?>
 }
  
 /*function asignar_email(campo){
@@ -46,8 +90,9 @@ function validarFormConfirmacion(){
    else {
 	  campo.value = '' };
 }*/
-function habilitar(campo){
-   objeto = document.getElementById('tb_' + campo.value);
+function habilitar( oid ){
+   objeto = document.getElementById('tb_' + oid);
+   campo = document.getElementById('checkbox_' + oid);
    if(campo.checked) {
 	  objeto.style.display = "inline";
    }
@@ -57,17 +102,23 @@ function habilitar(campo){
 }
 
 
-function mostrar(campo){
-	
-    cadena = campo.getAttribute('NAME');
-    indice = cadena.substring(cadena.indexOf('_') + 1, cadena.length);
-	objeto_1 = document.getElementById('divfchllegada_' + indice);
-	objeto_2 = document.getElementById('divbodega_' + indice);
-	objeto_3 = document.getElementById('divmessage_' + indice);
-	objeto_4 = document.getElementById('mensaje_' + indice);
+function mostrar(oid){
 	
 	
-	switch( campo.value ){
+	eval('var tipo = document.form1.tipo_'+oid );
+	var value='';	
+	for (i=0;i<tipo.length;i++){
+		  if ( tipo[i].checked ){
+				 value = tipo[i].value;
+		  }
+	} 
+	
+	objeto_1 = document.getElementById('divfchllegada_' + oid);
+	objeto_2 = document.getElementById('divbodega_' + oid);
+	objeto_3 = document.getElementById('divmessage_' + oid);
+	objeto_4 = document.getElementById('mensaje_' + oid);
+		
+	switch( value ){
 		<?
 		foreach( $etapas as $etapa ){
 		?>
@@ -82,7 +133,7 @@ function mostrar(campo){
 			break;
 	}
 	
-	switch( campo.value ){
+	switch( value ){
 		<?
 		foreach( $etapas as $etapa ){
 		?>
@@ -107,7 +158,7 @@ function mostrar(campo){
 	
 	
 			
-	if(campo.value == "IMCOL") {
+	if(value == "IMCOL") {
 		objeto_1.style.display = 'inline';
 		objeto_2.style.display = 'inline';
 	}
@@ -122,7 +173,7 @@ function mostrar(campo){
 <div align="center">
 	<form action='<?=url_for("confirmaciones/crearStatus?modo=".$modo)?>' method="post" enctype='multipart/form-data' name='form1' id="form1" onsubmit='return validarFormConfirmacion();'>
 		<input type="hidden" name="referencia" value="<?=$referencia->getCaReferencia()?>" />
-		<table width="650" cellspacing="1" class="tableList">
+		<table cellspacing="1" class="tableList" width="90%">
 			<tr>
 				<td class="partir" colspan="7"><div align="center">COLTRANS S.A.<br />
 						<?
@@ -131,14 +182,14 @@ function mostrar(campo){
 					</div></td>
 			</tr>
 			<tr>
-				<td class="partir">&nbsp;</td>
-				<td class="partir">Referencia:</td>
+				<td width="6%" class="partir">&nbsp;</td>
+				<td width="13%" class="partir">Referencia:</td>
 				<td class="listar" style='font-size: 11px; font-weight:bold;' colspan="2"><?=$referencia->getCaReferencia()?></td>
-				<td class="partir">Fecha de Registro :</td>
-				<td style='font-size: 11px; text-align: center;' class="listar"><span class="listar" style="font-size: 11px; font-weight:bold;">
+				<td width="53%" class="partir">Fecha de Registro :</td>
+				<td width="4%" class="listar" style='font-size: 11px; text-align: center;'><span class="listar" style="font-size: 11px; font-weight:bold;">
 					<?=$referencia->getCaFchreferencia()?>
 					</span></td>
-				<td width="44" rowspan="7" class="listar"></td>
+				<td width="3%" rowspan="7" class="listar"></td>
 			</tr>
 			<tr>
 				<td class="partir">&nbsp;</td>
@@ -151,10 +202,10 @@ function mostrar(campo){
 				<td class="partir" style='text-align: center; vertical-align:top;'>Importación<br />
 					&nbsp;<br />
 					&nbsp;</td>
-				<td class="listar" style='font-size: 11px; text-align: center; font-weight:bold;' width="160"><?=$origen->getCaCiudad()?></td>
-				<td class="listar" style='font-size: 11px; text-align: center; font-weight:bold;' width="160"><?=$origen->getTrafico()?></td>
-				<td class="listar" style='font-size: 11px; text-align: center; font-weight:bold;' width="160"><?=$destino->getCaCiudad()?></td>
-				<td class="listar" style='font-size: 11px; text-align: center; font-weight:bold;' width="160"><?=$destino->getTrafico()?></td>
+				<td width="14%" class="listar" style='font-size: 11px; text-align: center; font-weight:bold;'><?=$origen->getCaCiudad()?></td>
+				<td width="7%" class="listar" style='font-size: 11px; text-align: center; font-weight:bold;'><?=$origen->getTrafico()?></td>
+				<td class="listar" style='font-size: 11px; text-align: center; font-weight:bold;'><?=$destino->getCaCiudad()?></td>
+				<td class="listar" style='font-size: 11px; text-align: center; font-weight:bold;'><?=$destino->getTrafico()?></td>
 			</tr>
 			<tr>
 				<td class="partir">&nbsp;</td>
@@ -181,7 +232,7 @@ function mostrar(campo){
 					
 					if( count($inoEquipos)>0 ){
 					?>
-					<table width="100%" cellspacing="0" style='letter-spacing:-1px;'>
+					<table cellspacing="0" style='letter-spacing:-1px;' width="100%">
 						<tr>
 							<th>Concepto</th>
 							<th>Cantidad</th>
@@ -194,12 +245,12 @@ function mostrar(campo){
 							$inoContrato = $inoEquipo->getInoContratosSea();
 						?>
 						<tr>
-							<td width="124" class="listar"><?=$inoEquipo->getConcepto()->getCaConcepto()?></td>
-							<td width="64" class="listar"><?=$inoEquipo->getCaCantidad()?></td>
-							<td width="123" class="listar"><?=$inoEquipo->getCaIdequipo()?></td>
-							<td width="54" class="listar"><?=$inoContrato?$inoContrato->getCaIdcontrato():"&nbsp;"?></td>
-							<td width="55" class="listar"><?=$inoContrato?$inoContrato->getCaFchcontrato():"&nbsp;"?></td>
-							<td width="140" class="listar"><?=$inoContrato?$inoContrato->getCaObservaciones():"&nbsp;"?></td>
+							<td  class="listar"><?=$inoEquipo->getConcepto()->getCaConcepto()?></td>
+							<td  class="listar"><?=$inoEquipo->getCaCantidad()?></td>
+							<td  class="listar"><?=$inoEquipo->getCaIdequipo()?></td>
+							<td  class="listar"><?=$inoContrato?$inoContrato->getCaIdcontrato():"&nbsp;"?></td>
+							<td  class="listar"><?=$inoContrato?$inoContrato->getCaFchcontrato():"&nbsp;"?></td>
+							<td  class="listar"><?=$inoContrato?$inoContrato->getCaObservaciones():"&nbsp;"?></td>
 						</tr>
 						<?
 						
@@ -215,8 +266,7 @@ function mostrar(campo){
 					}else{
 						echo "&nbsp;";
 					}
-					?>
-				</td>
+					?>				</td>
 			</tr>
 			<tr>
 				<td class="partir">&nbsp;</td>
@@ -247,14 +297,15 @@ function mostrar(campo){
 				<td class="partir">&nbsp;</td>
 				<td class="partir"><input name="tipo_msg" value="Conf" checked="checked" onclick="document.getElementById('confirmacion_tbl').style.display='block';document.getElementById('status_tbl').style.display='none'" type="radio">
 					Confirmación:</td>
-				<td class="mostrar" colspan="4" rowspan="2"><table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
+				<td class="mostrar" colspan="4" rowspan="2">
+					<table id="confirmacion_tbl" style="display: block;" cellspacing="1" width="100%">
 						<tbody>
 							<tr>
 								<td class="mostrar">Fecha Confirmación:<br>
-									<input name="fchconfirmacion" value="<?=$referencia->getCaFchconfirmado("Y-m-d")?>
+									<input name="fchconfirmacion" value="<?=$referencia->getCaFchconfirmacion("Y-m-d")?>
 					" size="12" onkeydown="chkDate(this)" ondblclick="popUpCalendar(this, this, 'yyyy-mm-dd')" type="text"></td>
 								<td class="mostrar">Hora en Formato 24h:<br>
-									<input name="horaconfirmacion" value="<?=$referencia->getCaFchconfirmado("H:i:s")?>" onblur="CheckTime(this)" size="9" maxlength="8" type="text">
+									<input name="horaconfirmacion" value="<?=$referencia->getCaHoraconfirmacion()?>" onblur="CheckTime(this)" size="9" maxlength="8" type="text">
 									00-23hrs</td>
 								<td class="mostrar">Registro Aduanero:<br>
 									<input name="registroadu" value="<?=$referencia->getCaRegistroadu()?>" size="22" maxlength="20" type="text"></td>
@@ -282,10 +333,9 @@ function mostrar(campo){
 						<tbody>
 							<tr>
 								<td class="mostrar" colspan="4"><b>Introducci&oacute;n al Status:</b><br>
-									<textarea name="status_body_intro" wrap="virtual" rows="1" cols="93"><?=$textos['mensajeStatusIntro']?>
+									<textarea name="status_body_intro" wrap="virtual" rows="2" cols="93"><?=$textos['mensajeStatusIntro']?>
 </textarea></td>
 							</tr>
-							
 							<tr>
 								<td class="mostrar" colspan="4"><b>Mensaje de Status:</b><br>
 									<textarea name="status_body" wrap="virtual" rows="3" cols="93"><?=$textos['mensajeStatus']?>
@@ -293,7 +343,7 @@ function mostrar(campo){
 							</tr>
 						</tbody>
 					</table></td>
-				<td class="mostrar" rowspan="6">&nbsp;</td>
+				<td class="mostrar" rowspan="7">&nbsp;</td>
 			</tr>
 			<tr>
 				<td class="partir">&nbsp;</td>
@@ -306,29 +356,57 @@ function mostrar(campo){
 			<tr>
 				<td class="partir">&nbsp;</td>
 				<td class="partir">Adjuntar&nbsp;Archivo:</td>
-				<td class="mostrar" colspan="3"><input type='file' name='attachment' size="75" />
-				</td>
-				<td class="mostrar"></td>
+				<td class="mostrar" colspan="4"><input type='file' name='attachment' size="65" />				</td>
 			</tr>
 			<tr>
-				<td class="imprimir" colspan="7">&nbsp;</td>
+				<td class="listar" colspan="7">&nbsp;</td>
 			</tr>
+			<?
+			if( isset($confirmaciones) && $confirmaciones ){
+			?>
+			<tr>
+				<td class="listar" colspan="7">
+					<b>Otras Comunicaciones</b>
+					<table width="100%" border="0" class="tableList">
+						<tr>
+							<th width="18%" >Fecha</th>							
+							<th width="60%" >Asunto</th>
+							<th width="22%" >Ver email</th>
+							
+						</tr>
+						<?
+						foreach( $confirmaciones as $confirmacion ){
+						?>
+						<tr>
+							<td><?=$confirmacion->getCaFchenvio()?></td>							
+							<td><?=$confirmacion->getCaSubject()?></td>
+							<td>
+							<?
+							if( $confirmacion->getCaIdemail() ){
+								echo "<a href='#' onClick=window.open('".url_for("general/verEmail?id=".$confirmacion->getCaIdemail())."')>".image_tag("22x22/email.gif")."</a>";
+							}else{	
+								echo "&nbsp;";
+							}
+							?></td>
+							
+						</tr>
+						<?
+						}
+						?>
+					</table>
+
+				</td>
+			</tr>
+			<?
+			}
+			?>
 			<tr>
 				<th class="titulo" colspan="7">Seleccione los Clientes para enviar Confirmación</th>
 			</tr>
 			<tr height="5">
-				<td class="captura" colspan="7"></td>
+				<td class="captura" colspan="7">&nbsp;</td>
 			</tr>
 			<?
-			
-			$c = new Criteria();
-			$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE );
-			$c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );
-			if( $modo=="otm"){
-				$c->add( InoClientesSeaPeer::CA_CONTINUACION, 'N/A', Criteria::NOT_EQUAL );
-			}
-			$inoClientes = $referencia->getInoClientesSeas( $c );
-			
 			foreach( $inoClientes as $inoCliente ){
 				$cliente = $inoCliente->getCliente();
 				$reporte = $inoCliente->getReporte();
@@ -339,41 +417,46 @@ function mostrar(campo){
 				<td class="listar" style='font-size: 11px; vertical-align:bottom'><span class="listar" style="font-size: 11px; vertical-align:bottom"><b>Id Cliente:</b><br />
 					<?=number_format($inoCliente->getCaIdCliente())?>
 					</span></td>
-				<td class="listar" style='font-size: 11px;' colspan="4"><b>Nombre del Cliente:</b><br />
+				<td class="listar" style='font-size: 11px;' colspan="3"><b>Nombre del Cliente:</b><br />
 					<?=Utils::replace($cliente->getCaCompania())?></td>
-				<td class="listar"><?
+				<td class="listar" >
+					<div align="right">
+					<?
 					if( $reporte ){
 					?>
-					<input type="checkbox" name='oid[]' onclick='habilitar(this);' value="<?=$inoCliente->getOid()?>" />
-					<?
+					
+						<input type="checkbox" name='oid[]' onclick="habilitar('<?=$inoCliente->getOid()?>');" id="checkbox_<?=$inoCliente->getOid()?>"  value="<?=$inoCliente->getOid()?>" />
+						<?
 					}
-					?>
-				</td>
+					?>				
+					</div></td>
 			</tr>
 			<?
 			if( $reporte ){
 			?>
 			<tr>
-				<td class="invertir" colspan="7"><table id="tb_<?=$inoCliente->getOid()?>" style='display: none' width="100%" cellspacing="1">
-						<tr>
-							<td width="29%" class="listar"><b>Vendedor:</b><br />
-								<?=$inoCliente->getCaLogin()?></td>
-							<td width="9%" class="listar"><b>HBL:</b><br />
-								<?=$inoCliente->getCaHbls()?></td>
-							<td width="23%" class="listar"><b>No.Piezas:</b><br />
-								<?=Utils::formatNumber($inoCliente->getCaNumpiezas())?></td>
-							<td width="5%" class="listar"><b>Peso en Kilos:</b><br />
-								<?=Utils::formatNumber($inoCliente->getCaPeso())?></td>
-							<td width="34%" class="listar"><b>Volumen CMB:</b><br />
-								<?=Utils::formatNumber($inoCliente->getCaVolumen())?></td>
-						</tr>
-						<tr>
-							<td class="listar"><b>ID Proveedor:</b><br />
-								<?=$inoCliente->getCaIdproveedor()?></td>
-							<td class="listar" colspan="2"><b>Proveedor:</b><br />
-								<?=$inoCliente->getCaProveedor()?></td>
-							<td class="listar" colspan="2" valign="top" rowspan="<?=$modo=="otm"?4:2?>" valign="2"><b>Correos Electrónicos a enviar Confirmación:</b><br />
-								<?								
+			
+			<td class="invertir" colspan="7">
+				<table id="tb_<?=$inoCliente->getOid()?>" style='display:none' cellspacing="1" width="100%">
+				<tr>
+					<td width="24%" class="listar"><b>Vendedor:</b><br />
+							<?=$inoCliente->getCaLogin()?></td>
+					<td width="13%" class="listar"><b>HBL:</b><br />
+							<?=$inoCliente->getCaHbls()?></td>
+					<td width="26%" class="listar"><b>No.Piezas:</b><br />
+							<?=Utils::formatNumber($inoCliente->getCaNumpiezas())?></td>
+					<td width="6%" class="listar"><b>Peso en Kilos:</b><br />
+							<?=Utils::formatNumber($inoCliente->getCaPeso())?></td>
+					<td width="31%" class="listar"><b>Volumen CMB:</b><br />
+							<?=Utils::formatNumber($inoCliente->getCaVolumen())?></td>
+				</tr>
+				<tr>
+					<td class="listar"><b>ID Proveedor:</b><br />
+							<?=$inoCliente->getCaIdproveedor()?></td>
+					<td class="listar" colspan="2"><b>Proveedor:</b><br />
+							<?=$inoCliente->getCaProveedor()?></td>
+					<td class="listar" colspan="2" valign="top" rowspan="<?=$modo=="otm"?4:2?>" ><b>Correos Electr&oacute;nicos a enviar Confirmaci&oacute;n:</b><br />
+							<?								
 								$confirmar = $reporte?explode(",", $reporte->getCaConfirmarclie()):array();
                        			$emails = explode(",", $cliente->getCaConfirmar());
 								
@@ -382,42 +465,48 @@ function mostrar(campo){
              		               $chequear = (isset($confirmar[$i]) and in_array($confirmar[$i],$emails) and $confirmar[$i]!="")?"checked='checked'":"";
 								
 								?>
-								<input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($confirmar[$i])?$confirmar[$i]:""?>' size="35" maxlength="50" />
-								<input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  <?=$chequear?>>
-								<br />
-								<?
+							<input id="ar_<?=$inoCliente->getOid()?>_<?=$i?>" type='text' name='ar_<?=$inoCliente->getOid()?>_<?=$i?>' value='<?=isset($confirmar[$i])?$confirmar[$i]:""?>' size="35" maxlength="50" />
+							<input id="em_<?=$inoCliente->getOid()?>_<?=$i?>" type="checkbox" name='em_<?=$inoCliente->getOid()?>[]' value='<?=$i?>'  <?=$chequear?> />
+							<br />
+							<?
 								}
-								?>
-							</td>
-						</tr>
-						<?
+								?>					</td>
+				</tr>
+				<?
 						if( $modo=="otm" ){
 						?>
-						<tr>
-							<td class="listar"><?
-						$i = 0;
-						foreach( $etapas as $etapa ){
-						
-						?>
-								<input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '<?=$etapa->getCaIdEtapa()?>' <?=($i++==0)?'checked="checked"':''?> onclick='mostrar(this);' />
+				<tr>
+					<td class="listar"><?						
+						if( $reporte->getCaIdetapa()!='99999' ){
+							$i = 0;
+							foreach( $etapas as $etapa ){
+							
+							?>
+								<input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '<?=$etapa->getCaIdEtapa()?>' <?=($i++==0)?'checked="checked"':''?> onclick="mostrar('<?=$inoCliente->getOid()?>');" />
 								<?=Utils::replace($etapa->getCaEtapa())?>
 								<br />
 								<?
-						}
+							}
 						?>
-								<input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '88888' checked="checked" onclick='mostrar(this);' />
-								Status<br />
-								<input name='tipo_<?=$inoCliente->getOid()?>'  id='tipo_<?=$inoCliente->getOid()?>' type='radio'  value = '99999' onclick='mostrar(this);' />
-								Cierre </td>
-							<td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
-								<?=$inoCliente->getContinuacion()?$inoCliente->getContinuacion()->getcaCiudad():""?></td>
-							<td class="listar" style='vertical-align:bottom;'><div id="divfchllegada_<?=$inoCliente->getOid()?>"> <b>Fecha llegada:</b><br />
+						
+						<input name='tipo_<?=$inoCliente->getOid()?>'  id='tipo_<?=$inoCliente->getOid()?>' type='radio'  value = '99999' onclick="mostrar('<?=$inoCliente->getOid()?>');" />
+						Cierre<br />
+					<?
+					}
+					?>
+							<input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '88888' checked="checked" onclick="mostrar('<?=$inoCliente->getOid()?>');" />
+							
+							
+						Status						 </td>
+					<td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
+							<?=$inoCliente->getContinuacion()?$inoCliente->getContinuacion()->getcaCiudad():""?></td>
+					<td class="listar" style='vertical-align:bottom;'><div id="divfchllegada_<?=$inoCliente->getOid()?>"> <b>Fecha llegada:</b><br />
 									<input  type='text' name='fchllegada_<?=$inoCliente->getOid()?>' value='<?=date("Y-m-d")?>' size="12" onkeydown="chkDate(this)" ondblclick="popUpCalendar(this, this, 'yyyy-mm-dd')" />
-								</div>
-								  </td>
-						</tr>
-						<tr>
-							<td class="listar" colspan="3" style='vertical-align:bottom;'><div id="divbodega_<?=$inoCliente->getOid()?>"> <b>Bodega:</b><br />
+						</div>
+						  </td>
+				</tr>
+				<tr>
+					<td class="listar" colspan="3" style='vertical-align:bottom;'><div id="divbodega_<?=$inoCliente->getOid()?>"> <b>Bodega:</b><br />
 									<select name='bodega_<?=$inoCliente->getOid()?>'>
 										<?
 								foreach($bodegas as $bodega){ 
@@ -429,10 +518,10 @@ function mostrar(campo){
 								}
 								?>
 									</select>
-								</div>
-								  </td>
-						</tr>
-						<?
+						</div>
+						  </td>
+				</tr>
+				<?
 							}
 							
 							
@@ -455,26 +544,27 @@ function mostrar(campo){
 							}
 						
 						?>
-						<tr>
-							<td class="listar" colspan="3"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
-								<div id="divmessage_<?=$inoCliente->getOid()?>"></div>
-								<textarea name='mensaje_<?=$inoCliente->getOid()?>' id='mensaje_<?=$inoCliente->getOid()?>' wrap="virtual" rows="5" cols="65"><?=$inoCliente->getCaMensaje().$mensaje?>
-</textarea></td>
-						</tr>
-						<tr>
-							<td class="invertir">Adjunto para Cliente : </td>
-							<td class="mostrar" colspan="4"><input type='file' name='attachment_<?=$inoCliente->getOid()?>' size="75" /></td>
-						</tr>
-					</table></td>
-			</tr>	
+				<tr>
+					<td class="listar" colspan="3"><b>Ingrese mensaje exclusivo para este cliente:</b><br />
+							<div id="divmessage_<?=$inoCliente->getOid()?>"></div>
+						<textarea name='mensaje_<?=$inoCliente->getOid()?>' id='mensaje_<?=$inoCliente->getOid()?>' wrap="virtual" rows="5" cols="65"><?=$inoCliente->getCaMensaje().$mensaje?>
+				</textarea></td>
+				</tr>
+				<tr>
+					<td class="invertir">Adjunto para Cliente : </td>
+					<td class="mostrar" colspan="4"><input type='file' name='attachment_<?=$inoCliente->getOid()?>' size="75" /></td>
+				</tr>
+			</table>			</td>
+			</tr>
+			
 			<?
 			$statusList = $reporte->getRepStatuss();
 			
 					if( count( $statusList )>0 ){
 			?>
-			<tr id="rowstatusinfo_<?=$inoCliente->getOid()?>">				
-				<td colspan="7"><a href="#rowstatusinfo_<?=$inoCliente->getOid()?>" onclick="window.open('<?=url_for("traficos/verHistorialStatus?idreporte=".$reporte->getCaidreporte() )?>')">Ver historial de status</a></td>
-			</tr>		
+			<tr id="rowstatusinfo_<?=$inoCliente->getOid()?>">
+				<td colspan="7" class="invertir"><a href="#rowstatusinfo_<?=$inoCliente->getOid()?>" onclick="window.open('<?=url_for("traficos/verHistorialStatus?idreporte=".$reporte->getCaidreporte() )?>')">Ver historial de status</a></td>
+			</tr>
 			<?		
 					}
 				}else{//if( $reporte )
@@ -488,7 +578,7 @@ function mostrar(campo){
 			}
 			?>
 			<tr height="5">
-				<td class="invertir" colspan="7"></td>
+				<td class="invertir" colspan="7">&nbsp;</td>
 			</tr>
 			<tr>
 				<td class="mostrar" colspan="7"><b>Ingrese mensaje adicional para el correo:</b><br />
@@ -502,8 +592,22 @@ function mostrar(campo){
 		<table cellspacing="10">
 			<tr>
 				<th><input class="submit" type='submit' name='accion' value='Enviar Correo' /></th>
-				<th><input class="button" type='button' name='boton' value=' Regresar ' onclick='javascript:document.location.href = &quot;confirma_otm.php&quot;' /></th>
+				<th><input class="button" type='button' name='boton' value=' Regresar ' onclick="javascript:document.location.href = '<?=url_for("confirmaciones/index?modo=".$modo)?>'" /></th>
 			</tr>
 		</table>
 	</form>
 </div>
+<script language="javascript" type="text/javascript">
+	<?
+	foreach( $inoClientes as $inoCliente ){
+		if( $modo=="otm" ){
+	?>	
+			mostrar( '<?=$inoCliente->getOid()?>' );
+	<?
+	}
+	?>
+	habilitar( '<?=$inoCliente->getOid()?>' );	
+	<?
+	}
+	?>
+</script>

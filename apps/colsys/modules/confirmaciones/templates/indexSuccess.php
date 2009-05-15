@@ -11,7 +11,8 @@
 		</tr>
 		<tr>
 			<td width="88" ><b>Buscar por:</b> <br />
-				<?=select_tag("criterio", options_for_select( array("referencia"=>"Número de referencia", "reporte"=>"Número de reporte", "blmaster"=>"BL Master", "motonave"=>"Motonave", "contenedor"=>"No. Contenedor", "blhijo"=>"BL Hijo", "cliente"=>"Nombre del cliente", "NIT"=>"idcliente"), "referencia" ), "size=7" );?>	  </td>
+				<?=select_tag("criterio", options_for_select( array("referencia"=>"Número de referencia", "reporte"=>"Número de reporte", "blmaster"=>"BL Master", "motonave"=>"Motonave", "contenedor"=>"No. Contenedor", "hbl"=>"HBL", "cliente"=>"Nombre del cliente", "NIT"=>"idcliente"), "referencia" ), "size=7" );?>	  
+			</td>
 			<td width="337" >&nbsp;
 			  <b>Que contenga la cadena:</b><br />
 			  <div id="cadena"><?=input_tag("cadena", "", "size=60 ")?></div>
