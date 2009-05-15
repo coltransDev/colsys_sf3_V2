@@ -95,13 +95,13 @@ class myUser extends sfBasicSecurityUser
 	* o realizar otras tareas
 	*/
 	public function addFile($file, $idx=null){		
-		$userFiles=$this->getAttribute('userFiles');
+		$userFiles=explode("|",$this->getAttribute('userFiles'));
 		if( !$idx ){		
 			$idx=count( $userFiles );
 		}
 		
 		$userFiles[$idx] = $file;
-		$this->setAttribute('userFiles', $userFiles );
+		$this->setAttribute('userFiles', implode("|",$userFiles) );
 		return $idx;
 	}
 		
@@ -110,7 +110,7 @@ class myUser extends sfBasicSecurityUser
 	* o realizar otras tareas
 	*/
 	public function getFile( $k ){
-		$userFiles=$this->getAttribute('userFiles');
+		$userFiles=explode("|",$this->getAttribute('userFiles'));
 		if( isset($userFiles[$k]) ){
 			return $userFiles[$k];
 		} 		
@@ -121,7 +121,7 @@ class myUser extends sfBasicSecurityUser
 	* o realizar otras tareas
 	*/
 	public function getFiles( ){
-		return $this->getAttribute('userFiles');
+		return explode("|",$this->getAttribute('userFiles'));
 	}
 	
 	/*
@@ -129,7 +129,7 @@ class myUser extends sfBasicSecurityUser
 	* o realizar otras tareas
 	*/
 	public function clearFiles(){
-		$this->setAttribute('userFiles', array() );
+		$this->setAttribute('userFiles', "" );
 	}
 	
 	public function log( $event, $module, $action ){
@@ -227,7 +227,7 @@ class myUser extends sfBasicSecurityUser
 					$this->setAttribute('email', $user->getCaEmail() );
 					$this->setAttribute('cargo', $user->getCaCargo() );			
 					$this->setAttribute('extension', $user->getCaExtension() );
-					
+					$this->setAttribute('forcechange', false );					
 					$c = new Criteria();
 					$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
 					$departamento = DepartamentoPeer::doSelectOne( $c );
@@ -264,6 +264,8 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );			
 			$this->setAttribute('extension', $user->getCaExtension() );
+			
+			$this->setAttribute('forcechange', $user->getCaForcechange() );
 			
 			$c = new Criteria();
 			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
