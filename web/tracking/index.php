@@ -17,7 +17,7 @@ sfContext::getInstance()->getController()->dispatch();
 ##IP_CHECK##
 require_once(dirname(__FILE__).'/../../config/ProjectConfiguration.class.php');
 
-$configuration = ProjectConfiguration::getApplicationConfiguration('tracking', 'prod', true);
+$configuration = ProjectConfiguration::getApplicationConfiguration('tracking', 'dev', true);
 sfContext::createInstance($configuration)->dispatch();
 
 
