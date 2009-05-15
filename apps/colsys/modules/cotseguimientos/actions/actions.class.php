@@ -39,7 +39,9 @@ class cotseguimientosActions extends sfActions
 		
 		$c = new Criteria();
 		$c->addAscendingOrderByColumn( SucursalPeer::CA_NOMBRE );
-		$this->sucursales = SucursalPeer::doSelect( $c );		
+		$this->sucursales = SucursalPeer::doSelect( $c );
+		
+		$this->estados = ParametroPeer::retrieveByCaso( "CU068" );		
 	}
 	
 	/*
@@ -49,6 +51,10 @@ class cotseguimientosActions extends sfActions
 	*/
 	public function executeListadoCotizaciones($request)
 	{		
+		$fechaInicialCons = Utils::parseDate($request->getParameter("fechaInicialCons"));
+		$fechaFinalCons = Utils::parseDate($request->getParameter("fechaFinalCons"));
+		$estadoCons = $request->getParameter("estadoCons");
+		
 		$checkboxConsecutivo = $request->getParameter("checkboxConsecutivo");
 		$checkboxSucursal = $request->getParameter("checkboxSucursal");
 		$checkboxVendedor = $request->getParameter("checkboxVendedor");
@@ -77,8 +83,24 @@ class cotseguimientosActions extends sfActions
 		}		
 		$c->addAscendingOrderByColumn( CotizacionPeer::CA_CONSECUTIVO );
 		$c->addJoin( CotizacionPeer::CA_IDCOTIZACION , CotProductoPeer::CA_IDCOTIZACION );
-		$c->add( CotProductoPeer::CA_ESTADO , Cotizacion::EN_SEGUIMIENTO  );
+		
 		$c->add( CotizacionPeer::CA_CONSECUTIVO, null, Criteria::ISNOTNULL );
+		
+		if( $estadoCons ){
+			$c->add( CotProductoPeer::CA_ESTADO , $estadoCons  );	
+		}else{
+			$c->add( CotProductoPeer::CA_ESTADO , Cotizacion::EN_SEGUIMIENTO  );
+		}
+		
+		if( $fechaInicialCons ){
+			$c->add( CotizacionPeer::CA_FCHCREADO,$fechaInicialCons , Criteria::GREATER_EQUAL );
+		}
+		
+		if( $fechaFinalCons ){
+			$c->addAnd( CotizacionPeer::CA_FCHCREADO,$fechaFinalCons , Criteria::LESS_EQUAL );
+		}
+		
+		
 		$c->setDistinct();
 				
 		$cotizaciones = CotizacionPeer::doSelect( $c );

@@ -26,6 +26,67 @@ var tabs = new Ext.FormPanel({
 
 			items: [
 			{
+				xtype:'datefield',
+				checkboxToggle:true,
+				fieldLabel: 'Fecha Inicial',
+				autoHeight:true,
+				name : 'fechaInicialCons',
+				defaults: {width: 300},
+				defaultType: 'textfield',
+				collapsed: true,
+				value: '<?=date("Y-m-")."01"?>',
+				allowBlank: false		 
+				
+			},
+			{
+				xtype:'datefield',
+				checkboxToggle:true,
+				fieldLabel: 'Fecha final',
+				autoHeight:true,
+				name : 'fechaFinalCons',
+				defaults: {width: 300},
+				defaultType: 'textfield',
+				collapsed: true,
+				value: '<?=date("Y-m-d")?>',
+				allowBlank: false					 
+				
+			},
+			new Ext.form.ComboBox({								
+						typeAhead: true,
+						forceSelection: true,
+						triggerAction: 'all',
+						fieldLabel: 'Estado',
+						emptyText:'',
+						selectOnFocus: true,																									
+						listClass: 'x-combo-list-small',
+						mode: 'local',
+						valueField:'valor',
+						displayField:'valor',
+						hiddenName:'estadoCons',
+						name:'estadoCons',
+						store :  new Ext.data.SimpleStore({
+								fields: ['valor', 'valor'],
+								data : [
+									<?
+									$i = 0;								
+									foreach( $estados as $estado ){
+										if($i++!=0){
+											echo ",";
+										}
+									?>
+										['<?=$estado->getCaValor()?>', '<?=$estado->getCaValor()?>']
+									<?
+									}
+									?>
+									]
+							})
+						
+						
+						
+					})
+			
+			,
+			{
 				xtype:'fieldset',
 				checkboxToggle:true,
 				title: 'Consulta por consecutivo',
