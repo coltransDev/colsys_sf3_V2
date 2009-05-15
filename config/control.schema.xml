@@ -14,6 +14,7 @@
 		<column name="ca_passwd" type="varchar" />	
 		<column name="ca_salt" type="varchar" />	
 		<column name="ca_activo" type="boolean" />	
+		<column name="ca_forcechange" type="boolean" />	
 		
 		
 		<foreign-key foreignTable="control.tb_sucursales">
@@ -86,24 +87,7 @@
 		<column name="ca_nombre" type="varchar" />			
 		<column name="ca_inhelpdesk" type="boolean" />	
 	</table>
-	
-	<table name="control.tb_notificaciones" phpName="Notificacion">
-		<column name="ca_idnotificacion" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-		<id-method-parameter value="control.tb_notificaciones_id"/>			
-		<column name="ca_url" type="varchar" />			
-		<column name="ca_titulo" type="varchar" />
-		<column name="ca_texto" type="varchar" />
-		<column name="ca_login" type="varchar" />
-		<column name="ca_limite" type="timestamp" />	
-		<column name="ca_leido" type="boolean" />	
-		<column name="ca_fchcreado" type="timestamp" />	
-		<column name="ca_usucreado" type="varchar" />
-		<column name="ca_idemail" type="integer" />
-		<foreign-key foreignTable="control.tb_usuarios">
-			<reference local="ca_login" foreign="ca_login"/>
-		</foreign-key>						
-	</table>	
-	
+		
 	<table name="control.tb_grupos" phpName="Grupo">				
 		<column name="ca_nombre" type="varchar" primaryKey="true"/>					
 	</table>

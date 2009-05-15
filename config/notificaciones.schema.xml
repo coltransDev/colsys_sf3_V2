@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.notificaciones">
+	<table name="notificaciones.tb_notificaciones" phpName="Notificacion">
+		<column name="ca_idnotificacion" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="notificaciones.tb_notificaciones_id"/>			
+		<column name="ca_url" type="varchar" />			
+		<column name="ca_titulo" type="varchar" />
+		<column name="ca_texto" type="varchar" />
+		<column name="ca_login" type="varchar" />		
+		<column name="ca_leido" type="boolean" />	
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" />
+		<column name="ca_idemail" type="integer" />
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>						
+	</table>	
+	
+	
+	<table name="notificaciones.tb_listatareas" phpName="NotListaTareas">
+		<column name="ca_idlistatarea" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="notificaciones.tb_listatareas_id"/>			
+		<column name="ca_nombre" type="varchar" />								
+	</table>	
+	
+	<table name="notificaciones.tb_tareas" phpName="NotTarea">
+		<column name="ca_idtarea" type="integer" required="true" primaryKey="true" autoIncrement="true" />		
+		<id-method-parameter value="notificaciones.tb_tareas_id"/>			
+		<column name="ca_idlistatarea" type="integer" />		
+		<column name="ca_url" type="varchar" />			
+		<column name="ca_titulo" type="varchar" />
+		<column name="ca_texto" type="varchar" />
+		<column name="ca_fchvencimiento" type="timestamp" />		
+		<column name="ca_fchterminada" type="timestamp" />	
+		<column name="ca_prioridad" type="integer" />
+		<column name="ca_fchcreado" type="timestamp" />	
+		<column name="ca_usucreado" type="varchar" />
+		
+		<foreign-key foreignTable="notificaciones.tb_listatareas">
+			<reference local="ca_idlistatarea" foreign="ca_idlistatarea"/>
+		</foreign-key>								
+	</table>
+	
+	<table name="notificaciones.tb_tareas_asignaciones" phpName="NotTareaAsignacion">			
+		<column name="ca_idtarea" type="integer" primaryKey="true"/>		
+		<column name="ca_login" type="varchar"  primaryKey="true"/>						
+		<foreign-key foreignTable="notificaciones.tb_tareas">
+			<reference local="ca_idtarea" foreign="ca_idtarea"/>
+		</foreign-key>	
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>									
+	</table>
+			
+</database>

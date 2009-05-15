@@ -128,12 +128,21 @@
 		<column name="ca_fchenvio" type="timestamp" />
 		<column name="ca_usuenvio" type="varchar" />
 		
+		
+		<foreign-key foreignTable="tb_inoclientes_sea">
+			<reference local="ca_referencia" foreign="ca_referencia"/>
+			<reference local="ca_idcliente" foreign="ca_idcliente"/>
+			<reference local="ca_hbls" foreign="ca_hbls"/>			
+		</foreign-key> 
 		<foreign-key foreignTable="tb_inomaestra_sea">
 			<reference local="ca_referencia" foreign="ca_referencia"/>
 		</foreign-key> 
 		<foreign-key foreignTable="tb_clientes">
 			<reference local="ca_idcliente" foreign="ca_idcliente"/>
 		</foreign-key>
+		<foreign-key foreignTable="tb_emails">
+			<reference local="ca_idemail" foreign="ca_idemail"/>
+		</foreign-key>	
 	</table>
 	
 	

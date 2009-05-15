@@ -52,6 +52,8 @@
 		<column name="ca_usucerrado" type="varchar" />
 		<column name="ca_colmas" type="varchar" />
 		<column name="ca_propiedades" type="varchar" />
+		<column name="ca_idetapa" type="varchar" />
+		<column name="ca_fchultstatus" type="timestamp" />
 		<foreign-key foreignTable="control.tb_usuarios">
 			<reference local="ca_login" foreign="ca_login"/>
 		</foreign-key>	
@@ -70,6 +72,9 @@
 		
 		<foreign-key foreignTable="tb_bodegas">
 			<reference local="ca_idbodega" foreign="ca_idbodega"/>
+		</foreign-key>
+		<foreign-key foreignTable="tb_tracking_etapas">		
+			<reference local="ca_idetapa" foreign="ca_idetapa"/>
 		</foreign-key>
 	</table>
 	
