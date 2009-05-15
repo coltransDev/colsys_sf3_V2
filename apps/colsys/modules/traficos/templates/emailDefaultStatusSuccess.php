@@ -84,37 +84,71 @@ $cliente = $reporte->getCliente();
 	}		
 	
 	if( $reporte->getCaModalidad()=="FCL" ){
-		$equipos = $reporte->getRepEquipos();
-		
-		if (count($equipos)> 0){
-		?>
-		<tr>
-			<td colspan="6">
-				<table width="100%" cellspacing="0" border="1" class="tableList">
-					<tr>
-						<th colspan="4">Relación de Contenedores</th>
-					</tr>
-					<tr>
-						<th>Concepto</th>
-						<th>Cantidad</th>
-						<th>ID Equipo</th>
-						<th>Observaciones</th>
-					</tr>
-					<?				
-					foreach( $equipos as $equipo ){
-					?>
-					<tr>
-						<td><?=$equipo->getConcepto()->getCaConcepto()?></td>
-						<td><?=$equipo->getCaCantidad()?></td>
-						<td><?=$equipo->getCaIdequipo()?></td>
-						<td><?=$equipo->getCaObservaciones()?$equipo->getCaObservaciones():"&nbsp;"?></td>
-					</tr>
-					<?
-					}
-					?>
-				</table></td>
-		</tr>
-		<?
+		if( $inoCliente ){		
+			$referencia = $inoCliente->getInoMaestraSea();
+			$equipos = $referencia->getInoEquiposSeas();
+			?>
+			<tr>
+				<td colspan="6">
+					<table width="100%" cellspacing="0" border="1" class="tableList">
+						<tr>
+							<th colspan="4">Relación de Contenedores</th>
+						</tr>
+						<tr>
+							<th>Concepto</th>
+							<th>Cantidad</th>
+							<th>ID Equipo</th>
+							<th>Observaciones</th>
+						</tr>
+						<?				
+						foreach( $equipos as $equipo ){
+						?>
+						<tr>
+							<td><?=$equipo->getConcepto()->getCaConcepto()?></td>
+							<td><?=$equipo->getCaCantidad()?></td>
+							<td><?=$equipo->getCaIdequipo()?></td>
+							<td><?=$equipo->getCaObservaciones()?$equipo->getCaObservaciones():"&nbsp;"?></td>
+						</tr>
+						<?
+						}
+						?>
+					</table></td>
+			</tr>
+			<?
+		}else{
+	
+			$equipos = $reporte->getRepEquipos();
+			
+			if (count($equipos)> 0){
+			?>
+			<tr>
+				<td colspan="6">
+					<table width="100%" cellspacing="0" border="1" class="tableList">
+						<tr>
+							<th colspan="4">Relación de Contenedores</th>
+						</tr>
+						<tr>
+							<th>Concepto</th>
+							<th>Cantidad</th>
+							<th>ID Equipo</th>
+							<th>Observaciones</th>
+						</tr>
+						<?				
+						foreach( $equipos as $equipo ){
+						?>
+						<tr>
+							<td><?=$equipo->getConcepto()->getCaConcepto()?></td>
+							<td><?=$equipo->getCaCantidad()?></td>
+							<td><?=$equipo->getCaIdequipo()?></td>
+							<td><?=$equipo->getCaObservaciones()?$equipo->getCaObservaciones():"&nbsp;"?></td>
+						</tr>
+						<?
+						}
+						?>
+					</table></td>
+			</tr>
+			<?
+			}
 		}
 	}
 	?>

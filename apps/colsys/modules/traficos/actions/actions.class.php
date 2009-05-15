@@ -71,6 +71,7 @@ class traficosActions extends sfActions
 		$this->forward404Unless( $this->getRequestParameter("idreporte") );
 		$this->reporte = ReportePeer::retrieveByPk( $this->getRequestParameter("idreporte") );		
 		$this->forward404Unless( $this->reporte );
+		$this->setLayout("popup");
 	}
 
 	/*
