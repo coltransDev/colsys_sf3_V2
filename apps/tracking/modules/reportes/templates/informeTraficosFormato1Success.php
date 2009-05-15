@@ -115,7 +115,7 @@ foreach( $reportes as $reporte ){
 		continue;
 	}
 	
-	if( !$reporte->getCaEtapaActual() ){
+	if( !$reporte->getCaIdEtapa() ){
 		continue;
 	}
 	

@@ -50,7 +50,7 @@ class reportesComponents extends sfComponents
 		$this->data=array();
 		
 		foreach( $reportes as $reporte ){
-			if( !$reporte->getCaEtapaActual() ){
+			if( !$reporte->getCaIdEtapa() ){
 				continue;
 			}
 	
@@ -60,13 +60,6 @@ class reportesComponents extends sfComponents
 			
 			$status = $reporte->getUltimoStatus();
 			
-			if( $status ){
-				if( $reporte->getCaEtapaActual() == "Cierre de Documentos" && strtotime($status->getCaFchstatus("Y-m-d") )<=strtotime(date("Y-m-d"), time()-604800 )  ){	
-					$reporte->setCaEtapaActual("Carga Entregada");
-					$reporte->save();
-					continue;
-				}
-			}
 			
 			$class= $reporte->getColorStatus();
 			
@@ -85,26 +78,28 @@ class reportesComponents extends sfComponents
 			}
 				
 			$actualizado = $reporte->getFchUltimoStatus("Y-m-d" );
-			$status = $reporte->getTextoStatus();
+			
 						
 			$proveedoresStr ="";
 			$proveedores = $reporte->getProveedores();
-			foreach( $proveedores as $proveedor ){
-				if( $proveedoresStr ){
-					$proveedoresStr.=" - ";					
+			if( $proveedores ){
+				foreach( $proveedores as $proveedor ){
+					if( $proveedoresStr ){
+						$proveedoresStr.=" - ";					
+					}
+					$proveedoresStr.= $proveedor->getCaNombre();					
 				}
-				$proveedoresStr.= $proveedor->getCaNombre();					
 			}
 			
 			$this->data[] = array(
 								"consecutivo"=>$reporte->getCaConsecutivo(),
 								"origen"=>utf8_encode($origenStr),
 								"destino"=>utf8_encode($destinoStr),
-								"ETS"=>$reporte->getETS(),
-								"ETA"=>$reporte->getETA(),
+								"ETS"=>$status?$status->getCaFchsalida():"" ,
+								"ETA"=>$status?$status->getCaFchllegada():"",
 								"orden"=>utf8_encode($reporte->getCaOrdenClie()),
 								"proveedor"=>utf8_encode( $proveedoresStr ),
-								"status"=>utf8_encode($status),
+								"status"=>$status?utf8_encode($status->getstatus()):"",
 								"actualizado"=>$actualizado,								
 								"style"=>$reporte->getColorStatus()
 							);

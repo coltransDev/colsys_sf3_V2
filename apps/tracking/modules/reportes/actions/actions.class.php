@@ -105,7 +105,104 @@ class reportesActions extends sfActions
 		}
 		$respuesta->save();
 		
-		if( $user ){ // FIX-ME Se crea una notificacion
+		
+		$c = new Criteria( );
+		$c->add( RepStatusRespuestaPeer::CA_IDSTATUS, $status->getCaIdStatus() );
+		$c->addAscendingOrderByColumn( RepStatusRespuestaPeer::CA_FCHCREADO );
+		$respuestas = RepStatusRespuestaPeer::doSelect( $c );
+		
+		$correosCliente = array();
+		$logins = array();
+		foreach( $respuestas as $respuesta ){
+			
+			if( $respuesta->getCaEmail() ){
+				$correosCliente[]=$respuesta->getCaEmail();
+			}else{
+				$logins[] = $respuesta->getCaLogin();
+			}
+		}
+		//Le informa al vendedor
+		$logins[] = $reporte->getCaLogin(); 
+		
+		
+		
+		/*
+		Notifica a todas las personas de Coltrans  y Colmas
+		*/			
+		$email = new Email();
+		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email->setCaUsuenvio( "Administrador" );
+		
+		$email->setCaTipo( "Respuesta a Status" ); 	
+		
+		$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() ); //
+		$email->setCaFrom( "colsys_notificaciones" );
+		$email->setCaFromname( "Respuesta a status desde pagina Web" );
+											
+		if( is_array($logins) ){
+			foreach( $logins as $login ){			
+				$usuario = UsuarioPeer::retrieveByPk( $login );
+				$email->addTo( $usuario->getCaEmail() ); 				
+			}	
+		}
+		
+		$recips = explode( ",", $reporte->getCaConfirmarClie() );									
+		if( is_array($recips) ){
+			foreach( $recips as $recip ){			
+				$recip = str_replace(" ", "", $recip );			
+				if( $recip && strpos($recip, "coltrans.com.co")!==false){
+					$email->addTo( $recip ); 
+				}
+			}	
+		}
+				
+		if ( $reporte->getCaContinuacion() != 'N/A' ){
+			if( ($etapa && $etapa->getCaDepartamento()!="OTM/DTA") || !$etapa ){
+				$recips = explode(",",$reporte->getCaContinuacionConf());			
+				foreach( $recips as $recip ){			
+					$recip = str_replace(" ", "", $recip );			
+					if( $recip ){					
+						$email->addCc( $recip ); 
+					}
+				}	   
+			}
+		}
+			
+		if ( $reporte->getCaColmas() == 'Sí'  ){
+			$cordinador = $reporte->getCliente()->getCoordinador(); 			 
+			if( $cordinador ){			
+				$email->addCc( $cordinador->getCaEmail() );				
+			}		  		   
+		}
+							
+		$email->setCaSubject( "Respuesta a status desde Tracking" );
+				
+		$txt = "Reporte: \n\n".$reporte->getCaConsecutivo()." ".$reporte->getCliente()->getCaCompania()."\n"."Respuesta: \n".$comentario."\n\nStatus: \n".$status->getStatus()."";
+		
+		foreach( $respuestas as $respuesta ){
+			$txt .= " - ".$respuesta->getCaRespuesta()."\n\n";			
+		}
+		
+		$txt.="\n\nPara responder haga click en el siguiente vinculo:\n\n ";
+		
+		$link ="https://www.coltrans.com.co/tracking/reportes/detalleReporte/rep/".$reporte->getCaConsecutivo()."/idstatus/".$idstatus;
+		
+		$linkHtml= "<a href='$link'>$link</a>";
+		
+		$email->setCaBody( $txt.$link );
+		$email->setCaBodyHtml( Utils::replace($txt).$linkHtml );		
+		$email->save(); 		
+		$email->send();
+		
+		$email->setCaAddress("abotero@coltrans.com.co");	
+		$email->setCaCc("abotero@coltrans.com.co");				
+		$email->send();
+		
+		
+		/*
+		Notifica al cliente
+		*/	
+		if( count( $correosCliente )>0 ){
 			$email = new Email();
 			$email->setCaFchenvio( date("Y-m-d H:i:s") );
 			$email->setCaUsuenvio( "Administrador" );
@@ -115,78 +212,31 @@ class reportesActions extends sfActions
 			$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() ); //
 			$email->setCaFrom( "colsys_notificaciones" );
 			$email->setCaFromname( "Respuesta a status desde pagina Web" );
-				
-			/*		
-			$recips = explode( ",", $reporte->getCaConfirmarClie() );									
-			if( is_array($recips) ){
-				foreach( $recips as $recip ){			
-					$recip = str_replace(" ", "", $recip );			
-					if( $recip && strpos($recip, "coltrans.com.co")!==false){
-						$email->addTo( $recip ); 
-					}
-				}	
+			
+			foreach( $correosCliente as $recip ){			
+				$recip = str_replace(" ", "", $recip );					
+				$email->addTo( $recip ); 			
 			}
-						
-			if ($this->getRequestParameter("copiar_cont")){
-				$recips = explode(",",$reporte->getCaContinuacionConf());			
-				foreach( $recips as $recip ){			
-					$recip = str_replace(" ", "", $recip );			
-					if( $recip && strpos($recip, "coltrans.com.co")!==false ){					
-						//$email->addCc( $recip ); 
-					}
-				}	   
-			}
-							
-			if ($this->getRequestParameter("copiar_adua")){
-				$cordinador = $reporte->getCliente()->getCoordinador(); 	
-			 
-				if( $cordinador ){			
-					//$email->addCc( $cordinador->getCaEmail() );				
-				}		  		   
-			}
-						*/
 			$email->setCaSubject( "Respuesta a status desde Tracking" );
-			
-			$email->setCaAddress("abotero@coltrans.com.co"); //--------
-			$txt = "Reporte: \n\n".$reporte->getCaConsecutivo()." ".$reporte->getCliente()->getCaCompania()."\n"."Respuesta: \n".$comentario."\n\nStatus: \n".$status->getStatus()."\n\nPara responder haga click en el siguiente vinculo:\n\n";
-			
-			$link ="https://www.coltrans.com.co/tracking/reportes/detalleReporte/rep/".$reporte->getCaConsecutivo()."/idstatus/".$idstatus;
-			
-			$linkHtml= "<a href='$link'>$link</a>";
-			
 			$email->setCaBody( $txt.$link );
-			$email->setCaBodyHtml( Utils::replace($txt).$linkHtml );		
-			$email->save(); 
+			$email->setCaBodyHtml( Utils::replace($txt).$linkHtml );
+				
+			$email->save(); 			
 			$email->send();
 			
+			$email->setCaAddress("abotero@coltrans.com.co");	
+			$email->setCaCc("abotero@coltrans.com.co");				
+			$email->send();
 			
-		}else{ // Se envia un email al usuario
-			 $email = new Email();
-			$email->setCaFchenvio( date("Y-m-d H:i:s") );
-			$email->setCaUsuenvio( "Administrador" );
-			
-			$email->setCaTipo( "Respuesta a Status" ); 	
-			
-			$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() ); //
-			$email->setCaFrom( "colsys_notificaciones" );
-			$email->setCaFromname( "Respuesta a status desde pagina Web" );
-									
-			$email->setCaSubject( "Respuesta a status desde Tracking" );
-			
-			$email->setCaAddress("abotero@coltrans.com.co"); //--------
-			$txt = "Reporte: \n\n".$reporte->getCaConsecutivo()." ".$reporte->getCliente()->getCaCompania()."\n"."Respuesta: \n".$comentario."\n\nStatus: \n".$status->getStatus()."\n\nPara responder haga click en el siguiente vinculo:\n\n";
-			
-			$link ="https://www.coltrans.com.co/tracking/reportes/detalleReporte/rep/".$reporte->getCaConsecutivo()."/idstatus/".$idstatus;
-			
-			$linkHtml= "<a href='$link'>$link</a>";
-			
-			$email->setCaBody( $txt.$link );
-			$email->setCaBodyHtml( Utils::replace($txt).$linkHtml );		
-			$email->save(); 
-			$email->send();	
-		}		
+		}
 		
-		$this->idreporte = $idreporte;
+		
+		if( $user ){ // FIX-ME Se crea una tarea
+					
+		}	
+			
+		
+		$this->idreporte = $reporte->getCaIdreporte();
 		$this->idstatus = $idstatus;
 		
 	}

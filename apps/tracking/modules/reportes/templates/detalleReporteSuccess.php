@@ -235,7 +235,9 @@ $fileIdx = 0;
 </table>
 <br />
 <?
-$statuss = $reporte->getHistorialStatus ();
+$c = new Criteria();
+$c->addAscendingOrderByColumn( RepStatusPeer::CA_FCHSTATUS );
+$statuss = $reporte->getRepStatuss();
 
 ?>
 <table width="90%" border="1" class="table1">
@@ -252,35 +254,36 @@ $statuss = $reporte->getHistorialStatus ();
 		<td><b>Opciones</b></td>
 	</tr>
 	<?
+	$i = 0;
 	if( count($statuss) ){
-		foreach( $statuss as $timestamp=>$status ){
+		foreach( $statuss as $status ){
 	?>
 	
 	<tr>
 		<td width="16%" valign="top">
-		<div align="left" class="story"><?=Utils::fechaMes(date("Y-m-d", $timestamp ))." ".date("h:i A", $timestamp ) ?> 
+		<div align="left" class="story"><?=Utils::fechaMes( $status->getCaFchstatus("Y-m-d") )." ".$status->getCaFchstatus("h:i A") ?> 
 		</div>
 	  </td>
 		<td width="73%">			
 			<div class="story">			
-				<?=Utils::replace ( $status["status"] )?>	
+				<?=Utils::replace ( $status->getStatus() )?>	
 				<br />			
 			</div>
-			<div id="coments_<?=$status["idstatus"]?>">
+			<div id="coments_<?=$status->getCaIdStatus()?>">
 			<?
-			include_component("reportes","listaRespuestas", array("idstatus"=>$status['idstatus'] ));
+			include_component("reportes","listaRespuestas", array("idstatus"=>$status->getCaIdStatus() ));
 			?>
 			</div>
 			<?php 
-			if( $status['idstatus'] ){
+			if( $status->getCaIdStatus() &&  $i++==0 ){
 			?>
-			<div class="story_coment" id="coment_status_txt_<?=$status['idstatus']?>" style="display:none" >
-				<textarea rows="1" cols="50" id="coment_status_field_<?=$status['idstatus']?>" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
+			<div class="story_coment" id="coment_status_txt_<?=$status->getCaIdStatus()?>" style="display:none" >
+				<textarea rows="1" cols="50" id="coment_status_field_<?=$status->getCaIdStatus()?>" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
 				<br />
 				
-				<b><a onclick="guardar_comentario( <?=$status['idstatus']?>  )">Guardar</b></a> <b><a onclick="cancelar_comentar('<?=$status['idstatus']?>')">Cancelar</a></b>
+				<b><a onclick="guardar_comentario( <?=$status->getCaIdStatus()?>  )">Guardar</b></a> <b><a onclick="cancelar_comentar('<?=$status->getCaIdStatus()?>')">Cancelar</a></b>
 			</div>	
-			<div class="story_coment" id="coment_status_<?=$status['idstatus']?>" onclick="comentar('<?=$status['idstatus']?>')">
+			<div class="story_coment" id="coment_status_<?=$status->getCaIdStatus()?>" onclick="comentar('<?=$status->getCaIdStatus()?>')">
 				<b>Respuesta</b>
 			</div>	
 			<?php 
@@ -288,10 +291,8 @@ $statuss = $reporte->getHistorialStatus ();
 			?>
 	  </td>
 		<td width="11%"><?php
-			if( isset($status["emailid"]) ){
-				echo link_to ( image_tag ( "24x24/mail_post_to.gif" ), 'reportes/verEmail?email=' .$status["emailid"].'&idstatus='.$status["idstatus"]  );
-				
-				
+			if( $status->getCaIdEmail() ){
+				echo link_to ( image_tag ( "24x24/mail_post_to.gif" ), 'reportes/verEmail?email=' .$status->getCaIdEmail().'&idstatus='.$status->getCaIdStatus()  );				
 			}			
 			?></td>
 	</tr>
