@@ -40,9 +40,9 @@
 						<td><div align="left">Para llamar desde <b>Cali</b> a <br>
 								<ul>
 
-									<li><b>Bogotá:</b> 804 11 + Ext.</li>
-									<li><b>Medellín:</b> 804 44 + Ext.</li>
-									<li><b>B/quilla.:</b> 804 55 + Ext.</li>
+									<li><b>Bogotá:</b> 84 11 + Ext.</li>
+									<li><b>Medellín:</b> 84 44 + Ext.</li>
+									<li><b>B/quilla.:</b> 84 55 + Ext.</li>
 								</ul>
 
 						</div></td>
