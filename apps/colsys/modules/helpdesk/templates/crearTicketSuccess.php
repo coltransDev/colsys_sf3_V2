@@ -381,7 +381,7 @@ var mainPanel = new Ext.FormPanel({
 	],
 
 	buttons: [{
-		text: 'Guardar',
+		text: 'Enviar',
 		handler: function(){
 					
 	            	if( mainPanel.getForm().isValid() ){
@@ -454,7 +454,25 @@ if( $grupo ){
 	form.findField("area").hiddenField.value = <?=$grupo->getCaIdgroup()?>;		
 	
 	form.findField("departamento").setValue('<?=$departamento->getCaNombre()?>');
-	form.findField("departamento").hiddenField.value = <?=$departamento->getCaIddepartamento()?>;		
+	form.findField("departamento").hiddenField.value = <?=$departamento->getCaIddepartamento()?>;	
+	form.findField("area").store.baseParams = {
+							departamento: <?=$departamento->getCaIddepartamento()?>
+						};
+	form.findField("area").store.reload();		
+	
+	proyecto = Ext.getCmp('proyecto_id');									
+	proyecto.store.baseParams = {
+		idgrupo: <?=$grupo->getCaIdgroup()?>
+	};
+	proyecto.store.load();	
+	
+	assignedto = Ext.getCmp('assignedto_id');											
+	assignedto.store.baseParams = {
+		idgrupo: <?=$grupo->getCaIdgroup()?>
+	};
+	assignedto.store.load();
+	
+	
 <?
 	
 }
@@ -462,7 +480,8 @@ if( $grupo ){
 if( $proyecto ){
 	?>
 	form.findField("project").setValue('<?=$proyecto->getCaName()?>');
-	form.findField("project").hiddenField.value = <?=$proyecto->getCaIdproject()?>;		
+	form.findField("project").hiddenField.value = <?=$proyecto->getCaIdproject()?>;	
+	
 	<?
 }
 ?>

@@ -1,13 +1,19 @@
 <?php
 
 /**
- * helpdesk actions.
- *
- * @package    colsys
- * @subpackage helpdesk
- * @author     Your name here
- * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
- */
+* helpdesk actions.
+*
+* @package    colsys
+* @subpackage helpdesk
+* @author     Andrés Botero
+* @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
+*
+* Niveles de acceso 
+* 0 Solo tickets puestos por el usuario.
+* 1 Tickets de su grupo o área unicamente.
+* 2 Acceso a los tickets de su departamento. 
+* 3 Acceso a todo.
+*/ 
 class helpdeskActions extends sfActions
 {
 	const RUTINA = "39";
@@ -47,8 +53,11 @@ class helpdeskActions extends sfActions
 	*/
 	public function executeListaTickets(sfWebRequest $request){
 		
+		$nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );		
 		$opcion = $request->getParameter("opcion");
 		$criterio = $request->getParameter("criterio");
+		
+		$c = new Criteria();
 				
 		switch($opcion){
 			case "numero":
@@ -57,21 +66,20 @@ class helpdeskActions extends sfActions
 					if( $ticket ){
 						$this->redirect( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
 					}
-				}
-				$this->tickets = array();
+				}				
 				break;				
 			case "criterio":
-				$c = new Criteria();
+				
 				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_TITLE , "LOWER(".HdeskTicketPeer::CA_TITLE.") LIKE '%". strtolower($criterio)."%'", Criteria::CUSTOM );								
 				$criterion->addOr($c->getNewCriterion( HdeskTicketPeer::CA_TEXT , "LOWER(".HdeskTicketPeer::CA_TEXT.") LIKE '%". strtolower($criterio)."%'", Criteria::CUSTOM ));			
 				$c->add($criterion);		
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_ACTION );
 				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );		
-				$this->tickets = HdeskTicketPeer::doSelect( $c );
+				
 				break;	
 			case "personalizada":
-				$c = new Criteria();
+				
 				
 				if( $request->getParameter("departamento") ){
 					$c->addJoin( HdeskTicketPeer::CA_IDGROUP, HdeskGroupPeer::CA_IDGROUP );	
@@ -110,11 +118,11 @@ class helpdeskActions extends sfActions
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_ACTION );
 				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );							
-				$this->tickets = HdeskTicketPeer::doSelect( $c );
+					
 				break;
 			
 			case "group":
-				$c = new Criteria();
+				
 				$c->addJoin( HdeskTicketPeer::CA_IDGROUP, HdeskUserGroupPeer::CA_IDGROUP);
 				$c->add( HdeskUserGroupPeer::CA_LOGIN, $this->getUser()->getUserId() ); 
 				if( $request->getParameter("assigned") ){ 
@@ -128,10 +136,40 @@ class helpdeskActions extends sfActions
 				$c->add( HdeskTicketPeer::CA_ACTION, "Abierto" );
 				
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );				
-				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );	
-				$this->tickets = HdeskTicketPeer::doSelect( $c );
+				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );					
 				break;
 		}
+		
+		
+		/*
+		* Aplica restricciones de acuerdo al nivel de acceso.
+		*/
+		switch( $nivel ){
+			case 0:
+				$c->add( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );	
+				break;
+			case 1:
+				$c->addJoin( HdeskTicketPeer::CA_IDGROUP, HdeskUserGroupPeer::CA_IDGROUP );
+				
+				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );				
+				$criterion->addOr($c->getNewCriterion( HdeskUserGroupPeer::CA_LOGIN, $this->getUser()->getUserid() ));	
+																
+				$c->addAnd($criterion);					
+				break;
+			case 2:					
+				$c->add( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );					
+				$c->addJoin( HdeskTicketPeer::CA_IDGROUP, HdeskGroupPeer::CA_IDGROUP );
+				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );				
+				$criterion->addOr($c->getNewCriterion( HdeskGroupPeer::CA_IDDEPARTAMENT, $this->getUser()->getIddepartamento() ));														
+				$c->addAnd($criterion);	
+		}
+		
+		
+		$c->setDistinct();	
+		$this->tickets = HdeskTicketPeer::doSelect( $c );
+		
+		
+		
 		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );
 	}
 	
@@ -142,19 +180,47 @@ class helpdeskActions extends sfActions
 	*/
 	public function executeVerTicket(sfWebRequest $request){
 
-		$this->ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("id") );
 		
-		$this->forward404Unless( $this->ticket );
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );		
 		$this->iddepartamento = $this->getUser()->getIddepartamento();	
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );		
-		$this->iddepartamento = $this->getUser()->getIddepartamento();	
-		
+				
 		if( !$this->nivel ){
 			$this->nivel = 0;
 		}
+		
+		
+			
+		
+		/*
+		* Aplica restricciones de acuerdo al nivel de acceso.
+		*/
+		$c = new Criteria();
+		$c->add( HdeskTicketPeer::CA_IDTICKET, $request->getParameter("id") );
+		switch( $this->nivel ){
+			case 0:
+				$c->add( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );	
+				break;
+			case 1:
+				$c->addJoin( HdeskTicketPeer::CA_IDGROUP, HdeskUserGroupPeer::CA_IDGROUP );
+				
+				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );				
+				$criterion->addOr($c->getNewCriterion( HdeskUserGroupPeer::CA_LOGIN, $this->getUser()->getUserid() ));														
+				$c->addAnd($criterion);					
+				break;
+			case 2:					
+				$c->add( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );					
+				$c->addJoin( HdeskTicketPeer::CA_IDGROUP, HdeskGroupPeer::CA_IDGROUP );
+				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );				
+				$criterion->addOr($c->getNewCriterion( HdeskGroupPeer::CA_IDDEPARTAMENT, $this->getUser()->getIddepartamento() ));														
+				$c->addAnd($criterion);	
+		}
+		
+		$this->ticket = HdeskTicketPeer::doSelectOne( $c );		
+		$this->forward404Unless( $this->ticket );	
+		
+		
 						
 		if( $request->getParameter("format")=="email" ){
 			$this->setTemplate("verTicketEmail");
@@ -170,7 +236,35 @@ class helpdeskActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeCrearTicket( sfWebRequest $request ){
-		$this->ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("id") );
+		
+		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );	
+		if( !$this->nivel ){
+			$this->nivel = 0;
+		}
+		
+		$c = new Criteria();
+		$c->add( HdeskTicketPeer::CA_IDTICKET, $request->getParameter("id") );
+		switch( $this->nivel ){
+			case 0:
+				$c->add( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );	
+				break;
+			case 1:
+				$c->addJoin( HdeskTicketPeer::CA_IDGROUP, HdeskUserGroupPeer::CA_IDGROUP );
+				
+				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );				
+				$criterion->addOr($c->getNewCriterion( HdeskUserGroupPeer::CA_LOGIN, $this->getUser()->getUserid() ));														
+				$c->addAnd($criterion);					
+				break;
+			case 2:					
+				$c->add( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );					
+				$c->addJoin( HdeskTicketPeer::CA_IDGROUP, HdeskGroupPeer::CA_IDGROUP );
+				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_LOGIN, $this->getUser()->getUserid() );				
+				$criterion->addOr($c->getNewCriterion( HdeskGroupPeer::CA_IDDEPARTAMENT, $this->getUser()->getIddepartamento() ));														
+				$c->addAnd($criterion);	
+		}
+		
+		$this->ticket = HdeskTicketPeer::doSelectOne( $c );	
+		
 		
 		if( !$this->ticket ){
 			$this->ticket = new HdeskTicket();
@@ -188,12 +282,10 @@ class helpdeskActions extends sfActions
 										);		
 		}
 		
-		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );		
+			
 		$this->iddepartamento = $this->getUser()->getIddepartamento();
 				
-		if( !$this->nivel ){
-			$this->nivel = 0;
-		}
+		
 	}
 	
 	/**
@@ -248,7 +340,7 @@ class helpdeskActions extends sfActions
 				$request->setParameter("id", $ticket->getCaIdticket() );
 				$request->setParameter("format", "email" );
 				
-				$notificacion->setCaTitulo( "Se ha creado una respuesta Ticket #".$ticket->getCaIdticket() );
+				$notificacion->setCaTitulo( "Nueva respuesta Ticket #".$ticket->getCaIdticket()." [".$ticket->getCaTitle()."]" );
 				$texto = "Se ha creado una respuesta \n\n<br /><br />" ;
 				
 				$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
@@ -271,10 +363,11 @@ class helpdeskActions extends sfActions
 	public function executeDatosAreas(sfWebRequest $request){
 		$departamento = $request->getParameter("departamento");
 		$gruposArray = array();
-		
+			
 		if( $departamento ){
 			$c = new Criteria();		
 			$c->add( HdeskGroupPeer::CA_IDDEPARTAMENT, $departamento );
+					
 			$grupos = HdeskGroupPeer::doSelect( $c );			
 			foreach( $grupos as $grupo ){
 				$gruposArray[] = array("idgrupo"=>$grupo->getCaIdgroup(), "nombre"=>utf8_encode($grupo->getCaname()));
@@ -298,6 +391,7 @@ class helpdeskActions extends sfActions
 		if( $idgrupo ){
 			$c = new Criteria();		
 			$c->add( HdeskProjectPeer::CA_IDGROUP, $idgrupo );
+			$c->addAscendingOrderByColumn( HdeskProjectPeer::CA_NAME );
 			$proyectos = HdeskProjectPeer::doSelect( $c );			
 			foreach( $proyectos as $proyecto ){
 				$proyectosArray[] = array("idproyecto"=>$proyecto->getCaIdproject(), "nombre"=>utf8_encode($proyecto->getCaname()));
@@ -369,51 +463,40 @@ class helpdeskActions extends sfActions
 		if( $request->getParameter("assignedto") ){
 			$ticket->setCaAssignedto( $request->getParameter("assignedto") );
 		}
-		
-		
+				
 		$ticket->save();
-		
-		$logins = array( );
-		if( $ticket->getCaAssignedto() ){
-			$logins[]=$ticket->getCaAssignedto();
+				
+		if( !$update ){			
+			$request->setParameter("id", $ticket->getCaIdticket() );
+			$request->setParameter("format", "email" );
+			$titulo = "Nuevo Ticket #".$ticket->getCaIdticket()." [".$ticket->getCaTitle()."]";		
+				
+			$texto = "Se ha creado un nuevo ticket \n\n<br /><br />" ;			
+			$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');	
+			
+			$grupo = $ticket->getHdeskGroup();
+			/*
+			* Se crea la tarea para los miembros del grupo. 
+			*/
+			$tarea = new NotTarea(); 
+			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$ticket->getCaIdticket() );
+			$tarea->setCaIdlistatarea( 3 );
+			$tarea->setCaFchcreado( time() );			
+			$tarea->setCaFchvencimiento( time()+$grupo->getCaMaxresponsetime() );
+			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+			$tarea->setCaTitulo( $titulo );		
+			$tarea->setCaTexto( $texto );
+			$tarea->save();	
+			$ticket->setCaIdtarea( $tarea->getCaIdtarea() );
+			$ticket->save();	
 		}else{
-			$c = new Criteria();		
-			$c->add( HdeskUserGroupPeer::CA_IDGROUP, $ticket->getCaIdgroup() );
-			$c->addAscendingOrderByColumn( HdeskUserGroupPeer::CA_LOGIN);
-			$usuarios = HdeskUserGroupPeer::doSelect( $c );		
-			foreach( $usuarios as $usuario ){
-				$logins[]=$usuario->getCaLogin();
-			}
+			$tarea = $ticket->getNotTarea(); 
 		}
 		
-		
-		
-		$logins = array_unique( $logins );
-		foreach( $logins as $login ){ 
-			if( $this->getUser()->getUserId()!=$login ){
-				$notificacion = new Notificacion();
-				$notificacion->setCaLogin( $login );
-				$notificacion->setCaUrl( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
-				$notificacion->setCaFchcreado( time() );
-				$notificacion->setCaUsucreado( $this->getUser()->getUserId() );
-				
-				$request->setParameter("id", $ticket->getCaIdticket() );
-				$request->setParameter("format", "email" );
-				
-				if( !$update ){
-					$notificacion->setCaTitulo( "Nuevo ticket #".$ticket->getCaIdticket() );
-					
-					$texto = "Se ha creado un nuevo ticket \n\n<br /><br />" ;
-				}else{
-				
-					$notificacion->setCaTitulo( "Se ha editado el ticket #".$ticket->getCaIdticket() );
-					$texto = "Se ha editado el ticket \n\n<br /><br />" ;
-				}
-				
-				$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');			
-				$notificacion->setCaTexto( $texto );
-				$notificacion->save();	
-			}	
+		if( $tarea ){				
+			//Verifica las asignaciones de la tarea. 							
+			$loginsAsignaciones = $ticket->getLoginsGroup();					
+			$tarea->setAsignaciones( $loginsAsignaciones );				
 		}
 		
 		
@@ -434,6 +517,10 @@ class helpdeskActions extends sfActions
 			$ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("id") );
 			$ticket->setCaAssignedto( $this->getUser()->getUserId() );
 			$ticket->save();
+			$tarea = $ticket->getNotTarea(); 
+			if( $tarea ){														
+				$tarea->setAsignaciones( array( $this->getUser()->getUserId() ) );	
+			}		
 		}
 		$this->redirect("helpdesk/verTicket?id=".$request->getParameter("id"));
 		
