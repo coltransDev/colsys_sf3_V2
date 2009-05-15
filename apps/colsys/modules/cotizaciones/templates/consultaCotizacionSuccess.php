@@ -445,7 +445,7 @@ Ext.onReady(function(){
 	            							 	waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
 												success:function(response,options){														
 													<?
-													if( !$cotizacion->getCaIdcotizacion() ){
+													if( !$cotizacion->getCaIdcotizacion() || !$cotizacion->getCaFchsolicitud() ){
 													?>
 														document.location='<?=url_for("cotizaciones/consultaCotizacion?id=")?>'+options.result.idcotizacion;
 													<?
@@ -470,7 +470,7 @@ Ext.onReady(function(){
     });
 	mainPanel.render("panel1");
      <?
-	 if( $cotizacion->getCaIdcotizacion() && $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
+	 if( $cotizacion->getCaIdcotizacion() && $cotizacion->getCaFchsolicitud() && $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
 	 	
 		 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
 			 include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));
