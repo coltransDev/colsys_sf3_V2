@@ -1,55 +1,49 @@
 <?php
 
 /**
- * Base static class for performing query and update operations on the 'tb_tracking_etapas' table.
+ * Base static class for performing query and update operations on the 'control.tb_rutinas' table.
  *
  * 
  *
- * @package    lib.model.reportes.om
+ * @package    lib.model.control.om
  */
-abstract class BaseTrackingEtapasPeer {
+abstract class BaseRutinaOldPeer {
 
 	/** the default database name for this class */
 	const DATABASE_NAME = 'propel';
 
 	/** the table name for this class */
-	const TABLE_NAME = 'tb_tracking_etapas';
+	const TABLE_NAME = 'control.tb_rutinas';
 
 	/** A class that can be returned by this peer. */
-	const CLASS_DEFAULT = 'lib.model.reportes.TrackingEtapas';
+	const CLASS_DEFAULT = 'lib.model.control.RutinaOld';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 7;
+	const NUM_COLUMNS = 5;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_IDETAPA field */
-	const CA_IDETAPA = 'tb_tracking_etapas.CA_IDETAPA';
+	/** the column name for the CA_RUTINA field */
+	const CA_RUTINA = 'control.tb_rutinas.CA_RUTINA';
 
-	/** the column name for the CA_IMPOEXPO field */
-	const CA_IMPOEXPO = 'tb_tracking_etapas.CA_IMPOEXPO';
+	/** the column name for the CA_OPCION field */
+	const CA_OPCION = 'control.tb_rutinas.CA_OPCION';
 
-	/** the column name for the CA_TRANSPORTE field */
-	const CA_TRANSPORTE = 'tb_tracking_etapas.CA_TRANSPORTE';
+	/** the column name for the CA_DESCRIPCION field */
+	const CA_DESCRIPCION = 'control.tb_rutinas.CA_DESCRIPCION';
 
-	/** the column name for the CA_ETAPA field */
-	const CA_ETAPA = 'tb_tracking_etapas.CA_ETAPA';
+	/** the column name for the CA_PROGRAMA field */
+	const CA_PROGRAMA = 'control.tb_rutinas.CA_PROGRAMA';
 
-	/** the column name for the CA_ORDEN field */
-	const CA_ORDEN = 'tb_tracking_etapas.CA_ORDEN';
-
-	/** the column name for the CA_TTL field */
-	const CA_TTL = 'tb_tracking_etapas.CA_TTL';
-
-	/** the column name for the CA_CLASS field */
-	const CA_CLASS = 'tb_tracking_etapas.CA_CLASS';
+	/** the column name for the CA_GRUPO field */
+	const CA_GRUPO = 'control.tb_rutinas.CA_GRUPO';
 
 	/**
-	 * An identiy map to hold any loaded instances of TrackingEtapas objects.
+	 * An identiy map to hold any loaded instances of RutinaOld objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
 	 * queries.
-	 * @var        array TrackingEtapas[]
+	 * @var        array RutinaOld[]
 	 */
 	public static $instances = array();
 
@@ -66,11 +60,11 @@ abstract class BaseTrackingEtapasPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdetapa', 'CaImpoexpo', 'CaTransporte', 'CaEtapa', 'CaOrden', 'CaTtl', 'CaClass', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdetapa', 'caImpoexpo', 'caTransporte', 'caEtapa', 'caOrden', 'caTtl', 'caClass', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDETAPA, self::CA_IMPOEXPO, self::CA_TRANSPORTE, self::CA_ETAPA, self::CA_ORDEN, self::CA_TTL, self::CA_CLASS, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idetapa', 'ca_impoexpo', 'ca_transporte', 'ca_etapa', 'ca_orden', 'ca_ttl', 'ca_class', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+		BasePeer::TYPE_PHPNAME => array ('CaRutina', 'CaOpcion', 'CaDescripcion', 'CaPrograma', 'CaGrupo', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caRutina', 'caOpcion', 'caDescripcion', 'caPrograma', 'caGrupo', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_RUTINA, self::CA_OPCION, self::CA_DESCRIPCION, self::CA_PROGRAMA, self::CA_GRUPO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_rutina', 'ca_opcion', 'ca_descripcion', 'ca_programa', 'ca_grupo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
 	/**
@@ -80,11 +74,11 @@ abstract class BaseTrackingEtapasPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdetapa' => 0, 'CaImpoexpo' => 1, 'CaTransporte' => 2, 'CaEtapa' => 3, 'CaOrden' => 4, 'CaTtl' => 5, 'CaClass' => 6, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdetapa' => 0, 'caImpoexpo' => 1, 'caTransporte' => 2, 'caEtapa' => 3, 'caOrden' => 4, 'caTtl' => 5, 'caClass' => 6, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDETAPA => 0, self::CA_IMPOEXPO => 1, self::CA_TRANSPORTE => 2, self::CA_ETAPA => 3, self::CA_ORDEN => 4, self::CA_TTL => 5, self::CA_CLASS => 6, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idetapa' => 0, 'ca_impoexpo' => 1, 'ca_transporte' => 2, 'ca_etapa' => 3, 'ca_orden' => 4, 'ca_ttl' => 5, 'ca_class' => 6, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+		BasePeer::TYPE_PHPNAME => array ('CaRutina' => 0, 'CaOpcion' => 1, 'CaDescripcion' => 2, 'CaPrograma' => 3, 'CaGrupo' => 4, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caRutina' => 0, 'caOpcion' => 1, 'caDescripcion' => 2, 'caPrograma' => 3, 'caGrupo' => 4, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_RUTINA => 0, self::CA_OPCION => 1, self::CA_DESCRIPCION => 2, self::CA_PROGRAMA => 3, self::CA_GRUPO => 4, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_rutina' => 0, 'ca_opcion' => 1, 'ca_descripcion' => 2, 'ca_programa' => 3, 'ca_grupo' => 4, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
 	/**
@@ -94,7 +88,7 @@ abstract class BaseTrackingEtapasPeer {
 	public static function getMapBuilder()
 	{
 		if (self::$mapBuilder === null) {
-			self::$mapBuilder = new TrackingEtapasMapBuilder();
+			self::$mapBuilder = new RutinaOldMapBuilder();
 		}
 		return self::$mapBuilder;
 	}
@@ -144,12 +138,12 @@ abstract class BaseTrackingEtapasPeer {
 	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
 	 * </code>
 	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. TrackingEtapasPeer::COLUMN_NAME).
+	 * @param      string $column The column name for current table. (i.e. RutinaOldPeer::COLUMN_NAME).
 	 * @return     string
 	 */
 	public static function alias($alias, $column)
 	{
-		return str_replace(TrackingEtapasPeer::TABLE_NAME.'.', $alias.'.', $column);
+		return str_replace(RutinaOldPeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
 	/**
@@ -166,19 +160,15 @@ abstract class BaseTrackingEtapasPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
-		$criteria->addSelectColumn(TrackingEtapasPeer::CA_IDETAPA);
+		$criteria->addSelectColumn(RutinaOldPeer::CA_RUTINA);
 
-		$criteria->addSelectColumn(TrackingEtapasPeer::CA_IMPOEXPO);
+		$criteria->addSelectColumn(RutinaOldPeer::CA_OPCION);
 
-		$criteria->addSelectColumn(TrackingEtapasPeer::CA_TRANSPORTE);
+		$criteria->addSelectColumn(RutinaOldPeer::CA_DESCRIPCION);
 
-		$criteria->addSelectColumn(TrackingEtapasPeer::CA_ETAPA);
+		$criteria->addSelectColumn(RutinaOldPeer::CA_PROGRAMA);
 
-		$criteria->addSelectColumn(TrackingEtapasPeer::CA_ORDEN);
-
-		$criteria->addSelectColumn(TrackingEtapasPeer::CA_TTL);
-
-		$criteria->addSelectColumn(TrackingEtapasPeer::CA_CLASS);
+		$criteria->addSelectColumn(RutinaOldPeer::CA_GRUPO);
 
 	}
 
@@ -198,21 +188,21 @@ abstract class BaseTrackingEtapasPeer {
 		// We need to set the primary table name, since in the case that there are no WHERE columns
 		// it will be impossible for the BasePeer::createSelectSql() method to determine which
 		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(TrackingEtapasPeer::TABLE_NAME);
+		$criteria->setPrimaryTableName(RutinaOldPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
 		}
 
 		if (!$criteria->hasSelectClause()) {
-			TrackingEtapasPeer::addSelectColumns($criteria);
+			RutinaOldPeer::addSelectColumns($criteria);
 		}
 
 		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
 		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
 
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(RutinaOldPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		// BasePeer returns a PDOStatement
@@ -231,7 +221,7 @@ abstract class BaseTrackingEtapasPeer {
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      PropelPDO $con
-	 * @return     TrackingEtapas
+	 * @return     RutinaOld
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
@@ -239,7 +229,7 @@ abstract class BaseTrackingEtapasPeer {
 	{
 		$critcopy = clone $criteria;
 		$critcopy->setLimit(1);
-		$objects = TrackingEtapasPeer::doSelect($critcopy, $con);
+		$objects = RutinaOldPeer::doSelect($critcopy, $con);
 		if ($objects) {
 			return $objects[0];
 		}
@@ -256,7 +246,7 @@ abstract class BaseTrackingEtapasPeer {
 	 */
 	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
-		return TrackingEtapasPeer::populateObjects(TrackingEtapasPeer::doSelectStmt($criteria, $con));
+		return RutinaOldPeer::populateObjects(RutinaOldPeer::doSelectStmt($criteria, $con));
 	}
 	/**
 	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
@@ -274,12 +264,12 @@ abstract class BaseTrackingEtapasPeer {
 	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(RutinaOldPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		if (!$criteria->hasSelectClause()) {
 			$criteria = clone $criteria;
-			TrackingEtapasPeer::addSelectColumns($criteria);
+			RutinaOldPeer::addSelectColumns($criteria);
 		}
 
 		// Set the correct dbName
@@ -297,14 +287,14 @@ abstract class BaseTrackingEtapasPeer {
 	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
 	 * and retrieveByPK*() calls.
 	 *
-	 * @param      TrackingEtapas $value A TrackingEtapas object.
+	 * @param      RutinaOld $value A RutinaOld object.
 	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool(TrackingEtapas $obj, $key = null)
+	public static function addInstanceToPool(RutinaOld $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = (string) $obj->getCaIdetapa();
+				$key = (string) $obj->getCaRutina();
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -318,18 +308,18 @@ abstract class BaseTrackingEtapasPeer {
 	 * methods in your stub classes -- you may need to explicitly remove objects
 	 * from the cache in order to prevent returning objects that no longer exist.
 	 *
-	 * @param      mixed $value A TrackingEtapas object or a primary key value.
+	 * @param      mixed $value A RutinaOld object or a primary key value.
 	 */
 	public static function removeInstanceFromPool($value)
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
-			if (is_object($value) && $value instanceof TrackingEtapas) {
-				$key = (string) $value->getCaIdetapa();
+			if (is_object($value) && $value instanceof RutinaOld) {
+				$key = (string) $value->getCaRutina();
 			} elseif (is_scalar($value)) {
 				// assume we've been passed a primary key
 				$key = (string) $value;
 			} else {
-				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or TrackingEtapas object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
+				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or RutinaOld object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
 			}
 
@@ -344,7 +334,7 @@ abstract class BaseTrackingEtapasPeer {
 	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
 	 *
 	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     TrackingEtapas Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
+	 * @return     RutinaOld Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
 	 * @see        getPrimaryKeyHash()
 	 */
 	public static function getInstanceFromPool($key)
@@ -398,12 +388,12 @@ abstract class BaseTrackingEtapasPeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = TrackingEtapasPeer::getOMClass();
+		$cls = RutinaOldPeer::getOMClass();
 		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key = TrackingEtapasPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj = TrackingEtapasPeer::getInstanceFromPool($key))) {
+			$key = RutinaOldPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj = RutinaOldPeer::getInstanceFromPool($key))) {
 				// We no longer rehydrate the object, since this can cause data loss.
 				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj->hydrate($row, 0, true); // rehydrate
@@ -413,7 +403,7 @@ abstract class BaseTrackingEtapasPeer {
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
-				TrackingEtapasPeer::addInstanceToPool($obj, $key);
+				RutinaOldPeer::addInstanceToPool($obj, $key);
 			} // if key exists
 		}
 		$stmt->closeCursor();
@@ -447,13 +437,13 @@ abstract class BaseTrackingEtapasPeer {
 	 */
 	public static function getOMClass()
 	{
-		return TrackingEtapasPeer::CLASS_DEFAULT;
+		return RutinaOldPeer::CLASS_DEFAULT;
 	}
 
 	/**
-	 * Method perform an INSERT on the database, given a TrackingEtapas or Criteria object.
+	 * Method perform an INSERT on the database, given a RutinaOld or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or TrackingEtapas object containing data that is used to create the INSERT statement.
+	 * @param      mixed $values Criteria or RutinaOld object containing data that is used to create the INSERT statement.
 	 * @param      PropelPDO $con the PropelPDO connection to use
 	 * @return     mixed The new primary key.
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -462,13 +452,13 @@ abstract class BaseTrackingEtapasPeer {
 	public static function doInsert($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(RutinaOldPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from TrackingEtapas object
+			$criteria = $values->buildCriteria(); // build Criteria from RutinaOld object
 		}
 
 
@@ -490,9 +480,9 @@ abstract class BaseTrackingEtapasPeer {
 	}
 
 	/**
-	 * Method perform an UPDATE on the database, given a TrackingEtapas or Criteria object.
+	 * Method perform an UPDATE on the database, given a RutinaOld or Criteria object.
 	 *
-	 * @param      mixed $values Criteria or TrackingEtapas object containing data that is used to create the UPDATE statement.
+	 * @param      mixed $values Criteria or RutinaOld object containing data that is used to create the UPDATE statement.
 	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 * @throws     PropelException Any exceptions caught during processing will be
@@ -501,7 +491,7 @@ abstract class BaseTrackingEtapasPeer {
 	public static function doUpdate($values, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(RutinaOldPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
@@ -509,10 +499,10 @@ abstract class BaseTrackingEtapasPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(TrackingEtapasPeer::CA_IDETAPA);
-			$selectCriteria->add(TrackingEtapasPeer::CA_IDETAPA, $criteria->remove(TrackingEtapasPeer::CA_IDETAPA), $comparison);
+			$comparison = $criteria->getComparison(RutinaOldPeer::CA_RUTINA);
+			$selectCriteria->add(RutinaOldPeer::CA_RUTINA, $criteria->remove(RutinaOldPeer::CA_RUTINA), $comparison);
 
-		} else { // $values is TrackingEtapas object
+		} else { // $values is RutinaOld object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
 		}
@@ -524,21 +514,21 @@ abstract class BaseTrackingEtapasPeer {
 	}
 
 	/**
-	 * Method to DELETE all rows from the tb_tracking_etapas table.
+	 * Method to DELETE all rows from the control.tb_rutinas table.
 	 *
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(RutinaOldPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		$affectedRows = 0; // initialize var to track total num of affected rows
 		try {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
-			$affectedRows += BasePeer::doDeleteAll(TrackingEtapasPeer::TABLE_NAME, $con);
+			$affectedRows += BasePeer::doDeleteAll(RutinaOldPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -548,9 +538,9 @@ abstract class BaseTrackingEtapasPeer {
 	}
 
 	/**
-	 * Method perform a DELETE on the database, given a TrackingEtapas or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a RutinaOld or Criteria object OR a primary key value.
 	 *
-	 * @param      mixed $values Criteria or TrackingEtapas object or primary key or array of primary keys
+	 * @param      mixed $values Criteria or RutinaOld object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
 	 * @param      PropelPDO $con the connection to use
 	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -561,20 +551,20 @@ abstract class BaseTrackingEtapasPeer {
 	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(RutinaOldPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
 			// invalidate the cache for all objects of this type, since we have no
 			// way of knowing (without running a query) what objects should be invalidated
 			// from the cache based on this Criteria.
-			TrackingEtapasPeer::clearInstancePool();
+			RutinaOldPeer::clearInstancePool();
 
 			// rename for clarity
 			$criteria = clone $values;
-		} elseif ($values instanceof TrackingEtapas) {
+		} elseif ($values instanceof RutinaOld) {
 			// invalidate the cache for this single object
-			TrackingEtapasPeer::removeInstanceFromPool($values);
+			RutinaOldPeer::removeInstanceFromPool($values);
 			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
 		} else {
@@ -583,11 +573,11 @@ abstract class BaseTrackingEtapasPeer {
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(TrackingEtapasPeer::CA_IDETAPA, (array) $values, Criteria::IN);
+			$criteria->add(RutinaOldPeer::CA_RUTINA, (array) $values, Criteria::IN);
 
 			foreach ((array) $values as $singleval) {
 				// we can invalidate the cache for this single object
-				TrackingEtapasPeer::removeInstanceFromPool($singleval);
+				RutinaOldPeer::removeInstanceFromPool($singleval);
 			}
 		}
 
@@ -612,24 +602,24 @@ abstract class BaseTrackingEtapasPeer {
 	}
 
 	/**
-	 * Validates all modified columns of given TrackingEtapas object.
+	 * Validates all modified columns of given RutinaOld object.
 	 * If parameter $columns is either a single column name or an array of column names
 	 * than only those columns are validated.
 	 *
 	 * NOTICE: This does not apply to primary or foreign keys for now.
 	 *
-	 * @param      TrackingEtapas $obj The object to validate.
+	 * @param      RutinaOld $obj The object to validate.
 	 * @param      mixed $cols Column name or array of column names.
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(TrackingEtapas $obj, $cols = null)
+	public static function doValidate(RutinaOld $obj, $cols = null)
 	{
 		$columns = array();
 
 		if ($cols) {
-			$dbMap = Propel::getDatabaseMap(TrackingEtapasPeer::DATABASE_NAME);
-			$tableMap = $dbMap->getTable(TrackingEtapasPeer::TABLE_NAME);
+			$dbMap = Propel::getDatabaseMap(RutinaOldPeer::DATABASE_NAME);
+			$tableMap = $dbMap->getTable(RutinaOldPeer::TABLE_NAME);
 
 			if (! is_array($cols)) {
 				$cols = array($cols);
@@ -645,11 +635,11 @@ abstract class BaseTrackingEtapasPeer {
 
 		}
 
-		$res =  BasePeer::doValidate(TrackingEtapasPeer::DATABASE_NAME, TrackingEtapasPeer::TABLE_NAME, $columns);
+		$res =  BasePeer::doValidate(RutinaOldPeer::DATABASE_NAME, RutinaOldPeer::TABLE_NAME, $columns);
     if ($res !== true) {
         $request = sfContext::getInstance()->getRequest();
         foreach ($res as $failed) {
-            $col = TrackingEtapasPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
+            $col = RutinaOldPeer::translateFieldname($failed->getColumn(), BasePeer::TYPE_COLNAME, BasePeer::TYPE_PHPNAME);
         }
     }
 
@@ -661,23 +651,23 @@ abstract class BaseTrackingEtapasPeer {
 	 *
 	 * @param      string $pk the primary key.
 	 * @param      PropelPDO $con the connection to use
-	 * @return     TrackingEtapas
+	 * @return     RutinaOld
 	 */
 	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
 
-		if (null !== ($obj = TrackingEtapasPeer::getInstanceFromPool((string) $pk))) {
+		if (null !== ($obj = RutinaOldPeer::getInstanceFromPool((string) $pk))) {
 			return $obj;
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(RutinaOldPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
-		$criteria->add(TrackingEtapasPeer::CA_IDETAPA, $pk);
+		$criteria = new Criteria(RutinaOldPeer::DATABASE_NAME);
+		$criteria->add(RutinaOldPeer::CA_RUTINA, $pk);
 
-		$v = TrackingEtapasPeer::doSelect($criteria, $con);
+		$v = RutinaOldPeer::doSelect($criteria, $con);
 
 		return !empty($v) > 0 ? $v[0] : null;
 	}
@@ -693,30 +683,30 @@ abstract class BaseTrackingEtapasPeer {
 	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(RutinaOldPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$objs = null;
 		if (empty($pks)) {
 			$objs = array();
 		} else {
-			$criteria = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
-			$criteria->add(TrackingEtapasPeer::CA_IDETAPA, $pks, Criteria::IN);
-			$objs = TrackingEtapasPeer::doSelect($criteria, $con);
+			$criteria = new Criteria(RutinaOldPeer::DATABASE_NAME);
+			$criteria->add(RutinaOldPeer::CA_RUTINA, $pks, Criteria::IN);
+			$objs = RutinaOldPeer::doSelect($criteria, $con);
 		}
 		return $objs;
 	}
 
-} // BaseTrackingEtapasPeer
+} // BaseRutinaOldPeer
 
 // This is the static code needed to register the MapBuilder for this table with the main Propel class.
 //
-// NOTE: This static code cannot call methods on the TrackingEtapasPeer class, because it is not defined yet.
-// If you need to use overridden methods, you can add this code to the bottom of the TrackingEtapasPeer class:
+// NOTE: This static code cannot call methods on the RutinaOldPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the RutinaOldPeer class:
 //
-// Propel::getDatabaseMap(TrackingEtapasPeer::DATABASE_NAME)->addTableBuilder(TrackingEtapasPeer::TABLE_NAME, TrackingEtapasPeer::getMapBuilder());
+// Propel::getDatabaseMap(RutinaOldPeer::DATABASE_NAME)->addTableBuilder(RutinaOldPeer::TABLE_NAME, RutinaOldPeer::getMapBuilder());
 //
 // Doing so will effectively overwrite the registration below.
 
-Propel::getDatabaseMap(BaseTrackingEtapasPeer::DATABASE_NAME)->addTableBuilder(BaseTrackingEtapasPeer::TABLE_NAME, BaseTrackingEtapasPeer::getMapBuilder());
+Propel::getDatabaseMap(BaseRutinaOldPeer::DATABASE_NAME)->addTableBuilder(BaseRutinaOldPeer::TABLE_NAME, BaseRutinaOldPeer::getMapBuilder());
 

@@ -7,16 +7,16 @@
  *
  * @package    lib.model.reportes.om
  */
-abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
+abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 
 
-  const PEER = 'TrackingEtapasPeer';
+  const PEER = 'TrackingEtapaPeer';
 
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
 	 * that calling code may not be able to identify.
-	 * @var        TrackingEtapasPeer
+	 * @var        TrackingEtapaPeer
 	 */
 	protected static $peer;
 
@@ -37,6 +37,12 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * @var        string
 	 */
 	protected $ca_transporte;
+
+	/**
+	 * The value for the ca_departamento field.
+	 * @var        string
+	 */
+	protected $ca_departamento;
 
 	/**
 	 * The value for the ca_etapa field.
@@ -63,6 +69,34 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	protected $ca_class;
 
 	/**
+	 * The value for the ca_template field.
+	 * @var        string
+	 */
+	protected $ca_template;
+
+	/**
+	 * The value for the ca_message field.
+	 * @var        string
+	 */
+	protected $ca_message;
+
+	/**
+	 * The value for the ca_message_default field.
+	 * @var        string
+	 */
+	protected $ca_message_default;
+
+	/**
+	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
+	 */
+	protected $collReportes;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collReportes.
+	 */
+	private $lastReporteCriteria = null;
+
+	/**
 	 * @var        array RepStatus[] Collection to store aggregation of RepStatus objects.
 	 */
 	protected $collRepStatuss;
@@ -87,7 +121,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	protected $alreadyInValidation = false;
 
 	/**
-	 * Initializes internal state of BaseTrackingEtapas object.
+	 * Initializes internal state of BaseTrackingEtapa object.
 	 * @see        applyDefaults()
 	 */
 	public function __construct()
@@ -137,6 +171,16 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [ca_departamento] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaDepartamento()
+	{
+		return $this->ca_departamento;
+	}
+
+	/**
 	 * Get the [ca_etapa] column value.
 	 * 
 	 * @return     string
@@ -177,10 +221,40 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [ca_template] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaTemplate()
+	{
+		return $this->ca_template;
+	}
+
+	/**
+	 * Get the [ca_message] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaMessage()
+	{
+		return $this->ca_message;
+	}
+
+	/**
+	 * Get the [ca_message_default] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaMessageDefault()
+	{
+		return $this->ca_message_default;
+	}
+
+	/**
 	 * Set the value of [ca_idetapa] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     TrackingEtapas The current object (for fluent API support)
+	 * @return     TrackingEtapa The current object (for fluent API support)
 	 */
 	public function setCaIdetapa($v)
 	{
@@ -190,7 +264,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		if ($this->ca_idetapa !== $v) {
 			$this->ca_idetapa = $v;
-			$this->modifiedColumns[] = TrackingEtapasPeer::CA_IDETAPA;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_IDETAPA;
 		}
 
 		return $this;
@@ -200,7 +274,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * Set the value of [ca_impoexpo] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     TrackingEtapas The current object (for fluent API support)
+	 * @return     TrackingEtapa The current object (for fluent API support)
 	 */
 	public function setCaImpoexpo($v)
 	{
@@ -210,7 +284,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		if ($this->ca_impoexpo !== $v) {
 			$this->ca_impoexpo = $v;
-			$this->modifiedColumns[] = TrackingEtapasPeer::CA_IMPOEXPO;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_IMPOEXPO;
 		}
 
 		return $this;
@@ -220,7 +294,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * Set the value of [ca_transporte] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     TrackingEtapas The current object (for fluent API support)
+	 * @return     TrackingEtapa The current object (for fluent API support)
 	 */
 	public function setCaTransporte($v)
 	{
@@ -230,17 +304,37 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		if ($this->ca_transporte !== $v) {
 			$this->ca_transporte = $v;
-			$this->modifiedColumns[] = TrackingEtapasPeer::CA_TRANSPORTE;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_TRANSPORTE;
 		}
 
 		return $this;
 	} // setCaTransporte()
 
 	/**
+	 * Set the value of [ca_departamento] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     TrackingEtapa The current object (for fluent API support)
+	 */
+	public function setCaDepartamento($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_departamento !== $v) {
+			$this->ca_departamento = $v;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_DEPARTAMENTO;
+		}
+
+		return $this;
+	} // setCaDepartamento()
+
+	/**
 	 * Set the value of [ca_etapa] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     TrackingEtapas The current object (for fluent API support)
+	 * @return     TrackingEtapa The current object (for fluent API support)
 	 */
 	public function setCaEtapa($v)
 	{
@@ -250,7 +344,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		if ($this->ca_etapa !== $v) {
 			$this->ca_etapa = $v;
-			$this->modifiedColumns[] = TrackingEtapasPeer::CA_ETAPA;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_ETAPA;
 		}
 
 		return $this;
@@ -260,7 +354,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * Set the value of [ca_orden] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     TrackingEtapas The current object (for fluent API support)
+	 * @return     TrackingEtapa The current object (for fluent API support)
 	 */
 	public function setCaOrden($v)
 	{
@@ -270,7 +364,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		if ($this->ca_orden !== $v) {
 			$this->ca_orden = $v;
-			$this->modifiedColumns[] = TrackingEtapasPeer::CA_ORDEN;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_ORDEN;
 		}
 
 		return $this;
@@ -280,7 +374,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * Set the value of [ca_ttl] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     TrackingEtapas The current object (for fluent API support)
+	 * @return     TrackingEtapa The current object (for fluent API support)
 	 */
 	public function setCaTtl($v)
 	{
@@ -290,7 +384,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		if ($this->ca_ttl !== $v) {
 			$this->ca_ttl = $v;
-			$this->modifiedColumns[] = TrackingEtapasPeer::CA_TTL;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_TTL;
 		}
 
 		return $this;
@@ -300,7 +394,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * Set the value of [ca_class] column.
 	 * 
 	 * @param      string $v new value
-	 * @return     TrackingEtapas The current object (for fluent API support)
+	 * @return     TrackingEtapa The current object (for fluent API support)
 	 */
 	public function setCaClass($v)
 	{
@@ -310,11 +404,71 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		if ($this->ca_class !== $v) {
 			$this->ca_class = $v;
-			$this->modifiedColumns[] = TrackingEtapasPeer::CA_CLASS;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_CLASS;
 		}
 
 		return $this;
 	} // setCaClass()
+
+	/**
+	 * Set the value of [ca_template] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     TrackingEtapa The current object (for fluent API support)
+	 */
+	public function setCaTemplate($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_template !== $v) {
+			$this->ca_template = $v;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_TEMPLATE;
+		}
+
+		return $this;
+	} // setCaTemplate()
+
+	/**
+	 * Set the value of [ca_message] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     TrackingEtapa The current object (for fluent API support)
+	 */
+	public function setCaMessage($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_message !== $v) {
+			$this->ca_message = $v;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_MESSAGE;
+		}
+
+		return $this;
+	} // setCaMessage()
+
+	/**
+	 * Set the value of [ca_message_default] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     TrackingEtapa The current object (for fluent API support)
+	 */
+	public function setCaMessageDefault($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_message_default !== $v) {
+			$this->ca_message_default = $v;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_MESSAGE_DEFAULT;
+		}
+
+		return $this;
+	} // setCaMessageDefault()
 
 	/**
 	 * Indicates whether the columns in this object are only set to default values.
@@ -356,10 +510,14 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 			$this->ca_idetapa = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
 			$this->ca_impoexpo = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
 			$this->ca_transporte = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->ca_etapa = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_orden = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_ttl = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_class = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_departamento = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_etapa = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_orden = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_ttl = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_class = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_template = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_message = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_message_default = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -369,10 +527,10 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 7; // 7 = TrackingEtapasPeer::NUM_COLUMNS - TrackingEtapasPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 11; // 11 = TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
-			throw new PropelException("Error populating TrackingEtapas object", $e);
+			throw new PropelException("Error populating TrackingEtapa object", $e);
 		}
 	}
 
@@ -415,13 +573,13 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(TrackingEtapaPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		// We don't need to alter the object instance pool; we're just modifying this instance
 		// already in the pool.
 
-		$stmt = TrackingEtapasPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$stmt = TrackingEtapaPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 		$stmt->closeCursor();
 		if (!$row) {
@@ -430,6 +588,9 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 		$this->hydrate($row, 0, true); // rehydrate
 
 		if ($deep) {  // also de-associate any related objects?
+
+			$this->collReportes = null;
+			$this->lastReporteCriteria = null;
 
 			$this->collRepStatuss = null;
 			$this->lastRepStatusCriteria = null;
@@ -453,12 +614,12 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(TrackingEtapaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		
 		$con->beginTransaction();
 		try {
-			TrackingEtapasPeer::doDelete($this, $con);
+			TrackingEtapaPeer::doDelete($this, $con);
 			$this->setDeleted(true);
 			$con->commit();
 		} catch (PropelException $e) {
@@ -487,14 +648,14 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(TrackingEtapasPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(TrackingEtapaPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 		
 		$con->beginTransaction();
 		try {
 			$affectedRows = $this->doSave($con);
 			$con->commit();
-			TrackingEtapasPeer::addInstanceToPool($this);
+			TrackingEtapaPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollBack();
@@ -523,17 +684,25 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$pk = TrackingEtapasPeer::doInsert($this, $con);
+					$pk = TrackingEtapaPeer::doInsert($this, $con);
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
 
 					$this->setNew(false);
 				} else {
-					$affectedRows += TrackingEtapasPeer::doUpdate($this, $con);
+					$affectedRows += TrackingEtapaPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+			}
+
+			if ($this->collReportes !== null) {
+				foreach ($this->collReportes as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
 			}
 
 			if ($this->collRepStatuss !== null) {
@@ -610,10 +779,18 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 			$failureMap = array();
 
 
-			if (($retval = TrackingEtapasPeer::doValidate($this, $columns)) !== true) {
+			if (($retval = TrackingEtapaPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collReportes !== null) {
+					foreach ($this->collReportes as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 				if ($this->collRepStatuss !== null) {
 					foreach ($this->collRepStatuss as $referrerFK) {
@@ -641,7 +818,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = TrackingEtapasPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = TrackingEtapaPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		$field = $this->getByPosition($pos);
 		return $field;
 	}
@@ -666,16 +843,28 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 				return $this->getCaTransporte();
 				break;
 			case 3:
-				return $this->getCaEtapa();
+				return $this->getCaDepartamento();
 				break;
 			case 4:
-				return $this->getCaOrden();
+				return $this->getCaEtapa();
 				break;
 			case 5:
-				return $this->getCaTtl();
+				return $this->getCaOrden();
 				break;
 			case 6:
+				return $this->getCaTtl();
+				break;
+			case 7:
 				return $this->getCaClass();
+				break;
+			case 8:
+				return $this->getCaTemplate();
+				break;
+			case 9:
+				return $this->getCaMessage();
+				break;
+			case 10:
+				return $this->getCaMessageDefault();
 				break;
 			default:
 				return null;
@@ -696,15 +885,19 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 */
 	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
-		$keys = TrackingEtapasPeer::getFieldNames($keyType);
+		$keys = TrackingEtapaPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getCaIdetapa(),
 			$keys[1] => $this->getCaImpoexpo(),
 			$keys[2] => $this->getCaTransporte(),
-			$keys[3] => $this->getCaEtapa(),
-			$keys[4] => $this->getCaOrden(),
-			$keys[5] => $this->getCaTtl(),
-			$keys[6] => $this->getCaClass(),
+			$keys[3] => $this->getCaDepartamento(),
+			$keys[4] => $this->getCaEtapa(),
+			$keys[5] => $this->getCaOrden(),
+			$keys[6] => $this->getCaTtl(),
+			$keys[7] => $this->getCaClass(),
+			$keys[8] => $this->getCaTemplate(),
+			$keys[9] => $this->getCaMessage(),
+			$keys[10] => $this->getCaMessageDefault(),
 		);
 		return $result;
 	}
@@ -721,7 +914,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = TrackingEtapasPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = TrackingEtapaPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		return $this->setByPosition($pos, $value);
 	}
 
@@ -746,16 +939,28 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 				$this->setCaTransporte($value);
 				break;
 			case 3:
-				$this->setCaEtapa($value);
+				$this->setCaDepartamento($value);
 				break;
 			case 4:
-				$this->setCaOrden($value);
+				$this->setCaEtapa($value);
 				break;
 			case 5:
-				$this->setCaTtl($value);
+				$this->setCaOrden($value);
 				break;
 			case 6:
+				$this->setCaTtl($value);
+				break;
+			case 7:
 				$this->setCaClass($value);
+				break;
+			case 8:
+				$this->setCaTemplate($value);
+				break;
+			case 9:
+				$this->setCaMessage($value);
+				break;
+			case 10:
+				$this->setCaMessageDefault($value);
 				break;
 		} // switch()
 	}
@@ -779,15 +984,19 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 */
 	public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
 	{
-		$keys = TrackingEtapasPeer::getFieldNames($keyType);
+		$keys = TrackingEtapaPeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdetapa($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaImpoexpo($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaTransporte($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaEtapa($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaOrden($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaTtl($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaClass($arr[$keys[6]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaDepartamento($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaEtapa($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaOrden($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaTtl($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaClass($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaTemplate($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaMessage($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaMessageDefault($arr[$keys[10]]);
 	}
 
 	/**
@@ -797,15 +1006,19 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 */
 	public function buildCriteria()
 	{
-		$criteria = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
+		$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(TrackingEtapasPeer::CA_IDETAPA)) $criteria->add(TrackingEtapasPeer::CA_IDETAPA, $this->ca_idetapa);
-		if ($this->isColumnModified(TrackingEtapasPeer::CA_IMPOEXPO)) $criteria->add(TrackingEtapasPeer::CA_IMPOEXPO, $this->ca_impoexpo);
-		if ($this->isColumnModified(TrackingEtapasPeer::CA_TRANSPORTE)) $criteria->add(TrackingEtapasPeer::CA_TRANSPORTE, $this->ca_transporte);
-		if ($this->isColumnModified(TrackingEtapasPeer::CA_ETAPA)) $criteria->add(TrackingEtapasPeer::CA_ETAPA, $this->ca_etapa);
-		if ($this->isColumnModified(TrackingEtapasPeer::CA_ORDEN)) $criteria->add(TrackingEtapasPeer::CA_ORDEN, $this->ca_orden);
-		if ($this->isColumnModified(TrackingEtapasPeer::CA_TTL)) $criteria->add(TrackingEtapasPeer::CA_TTL, $this->ca_ttl);
-		if ($this->isColumnModified(TrackingEtapasPeer::CA_CLASS)) $criteria->add(TrackingEtapasPeer::CA_CLASS, $this->ca_class);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_IDETAPA)) $criteria->add(TrackingEtapaPeer::CA_IDETAPA, $this->ca_idetapa);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_IMPOEXPO)) $criteria->add(TrackingEtapaPeer::CA_IMPOEXPO, $this->ca_impoexpo);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_TRANSPORTE)) $criteria->add(TrackingEtapaPeer::CA_TRANSPORTE, $this->ca_transporte);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_DEPARTAMENTO)) $criteria->add(TrackingEtapaPeer::CA_DEPARTAMENTO, $this->ca_departamento);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_ETAPA)) $criteria->add(TrackingEtapaPeer::CA_ETAPA, $this->ca_etapa);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_ORDEN)) $criteria->add(TrackingEtapaPeer::CA_ORDEN, $this->ca_orden);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_TTL)) $criteria->add(TrackingEtapaPeer::CA_TTL, $this->ca_ttl);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_CLASS)) $criteria->add(TrackingEtapaPeer::CA_CLASS, $this->ca_class);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_TEMPLATE)) $criteria->add(TrackingEtapaPeer::CA_TEMPLATE, $this->ca_template);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_MESSAGE)) $criteria->add(TrackingEtapaPeer::CA_MESSAGE, $this->ca_message);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_MESSAGE_DEFAULT)) $criteria->add(TrackingEtapaPeer::CA_MESSAGE_DEFAULT, $this->ca_message_default);
 
 		return $criteria;
 	}
@@ -820,9 +1033,9 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 */
 	public function buildPkeyCriteria()
 	{
-		$criteria = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
+		$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
 
-		$criteria->add(TrackingEtapasPeer::CA_IDETAPA, $this->ca_idetapa);
+		$criteria->add(TrackingEtapaPeer::CA_IDETAPA, $this->ca_idetapa);
 
 		return $criteria;
 	}
@@ -853,7 +1066,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * If desired, this method can also make copies of all associated (fkey referrers)
 	 * objects.
 	 *
-	 * @param      object $copyObj An object of TrackingEtapas (or compatible) type.
+	 * @param      object $copyObj An object of TrackingEtapa (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
 	 * @throws     PropelException
 	 */
@@ -866,6 +1079,8 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		$copyObj->setCaTransporte($this->ca_transporte);
 
+		$copyObj->setCaDepartamento($this->ca_departamento);
+
 		$copyObj->setCaEtapa($this->ca_etapa);
 
 		$copyObj->setCaOrden($this->ca_orden);
@@ -874,11 +1089,23 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 
 		$copyObj->setCaClass($this->ca_class);
 
+		$copyObj->setCaTemplate($this->ca_template);
+
+		$copyObj->setCaMessage($this->ca_message);
+
+		$copyObj->setCaMessageDefault($this->ca_message_default);
+
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
+
+			foreach ($this->getReportes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addReporte($relObj->copy($deepCopy));
+				}
+			}
 
 			foreach ($this->getRepStatuss() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -902,7 +1129,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * objects.
 	 *
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @return     TrackingEtapas Clone of current object.
+	 * @return     TrackingEtapa Clone of current object.
 	 * @throws     PropelException
 	 */
 	public function copy($deepCopy = false)
@@ -921,14 +1148,403 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * same instance for all member of this class. The method could therefore
 	 * be static, but this would prevent one from overriding the behavior.
 	 *
-	 * @return     TrackingEtapasPeer
+	 * @return     TrackingEtapaPeer
 	 */
 	public function getPeer()
 	{
 		if (self::$peer === null) {
-			self::$peer = new TrackingEtapasPeer();
+			self::$peer = new TrackingEtapaPeer();
 		}
 		return self::$peer;
+	}
+
+	/**
+	 * Clears out the collReportes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addReportes()
+	 */
+	public function clearReportes()
+	{
+		$this->collReportes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collReportes collection (array).
+	 *
+	 * By default this just sets the collReportes collection to an empty array (like clearcollReportes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initReportes()
+	{
+		$this->collReportes = array();
+	}
+
+	/**
+	 * Gets an array of Reporte objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this TrackingEtapa has previously been saved, it will retrieve
+	 * related Reportes from storage. If this TrackingEtapa is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array Reporte[]
+	 * @throws     PropelException
+	 */
+	public function getReportes($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+			   $this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				ReportePeer::addSelectColumns($criteria);
+				$this->collReportes = ReportePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				ReportePeer::addSelectColumns($criteria);
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$this->collReportes = ReportePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+		return $this->collReportes;
+	}
+
+	/**
+	 * Returns the number of related Reporte objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Reporte objects.
+	 * @throws     PropelException
+	 */
+	public function countReportes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				$count = ReportePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$count = ReportePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collReportes);
+				}
+			} else {
+				$count = count($this->collReportes);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a Reporte object to this object
+	 * through the Reporte foreign key attribute.
+	 *
+	 * @param      Reporte $l Reporte
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addReporte(Reporte $l)
+	{
+		if ($this->collReportes === null) {
+			$this->initReportes();
+		}
+		if (!in_array($l, $this->collReportes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collReportes, $l);
+			$l->setTrackingEtapa($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TrackingEtapa is new, it will return
+	 * an empty collection; or if this TrackingEtapa has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TrackingEtapa.
+	 */
+	public function getReportesJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TrackingEtapa is new, it will return
+	 * an empty collection; or if this TrackingEtapa has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TrackingEtapa.
+	 */
+	public function getReportesJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TrackingEtapa is new, it will return
+	 * an empty collection; or if this TrackingEtapa has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TrackingEtapa.
+	 */
+	public function getReportesJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TrackingEtapa is new, it will return
+	 * an empty collection; or if this TrackingEtapa has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TrackingEtapa.
+	 */
+	public function getReportesJoinAgente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TrackingEtapa is new, it will return
+	 * an empty collection; or if this TrackingEtapa has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TrackingEtapa.
+	 */
+	public function getReportesJoinBodega($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
 	}
 
 	/**
@@ -963,8 +1579,8 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	 * Gets an array of RepStatus objects which contain a foreign key that references this object.
 	 *
 	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this TrackingEtapas has previously been saved, it will retrieve
-	 * related RepStatuss from storage. If this TrackingEtapas is new, it will return
+	 * Otherwise if this TrackingEtapa has previously been saved, it will retrieve
+	 * related RepStatuss from storage. If this TrackingEtapa is new, it will return
 	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
 	 * @param      PropelPDO $con
@@ -975,7 +1591,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	public function getRepStatuss($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
-			$criteria = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1024,7 +1640,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	public function countRepStatuss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
-			$criteria = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
 		} else {
 			$criteria = clone $criteria;
 		}
@@ -1081,7 +1697,7 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 		}
 		if (!in_array($l, $this->collRepStatuss, true)) { // only add it if the **same** object is not already associated
 			array_push($this->collRepStatuss, $l);
-			$l->setTrackingEtapas($this);
+			$l->setTrackingEtapa($this);
 		}
 	}
 
@@ -1089,18 +1705,18 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	/**
 	 * If this collection has already been initialized with
 	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TrackingEtapas is new, it will return
-	 * an empty collection; or if this TrackingEtapas has previously
+	 * Otherwise if this TrackingEtapa is new, it will return
+	 * an empty collection; or if this TrackingEtapa has previously
 	 * been saved, it will retrieve related RepStatuss from storage.
 	 *
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
-	 * actually need in TrackingEtapas.
+	 * actually need in TrackingEtapa.
 	 */
 	public function getRepStatussJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
-			$criteria = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1136,18 +1752,18 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	/**
 	 * If this collection has already been initialized with
 	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TrackingEtapas is new, it will return
-	 * an empty collection; or if this TrackingEtapas has previously
+	 * Otherwise if this TrackingEtapa is new, it will return
+	 * an empty collection; or if this TrackingEtapa has previously
 	 * been saved, it will retrieve related RepStatuss from storage.
 	 *
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
-	 * actually need in TrackingEtapas.
+	 * actually need in TrackingEtapa.
 	 */
 	public function getRepStatussJoinEmail($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
-			$criteria = new Criteria(TrackingEtapasPeer::DATABASE_NAME);
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
 		}
 		elseif ($criteria instanceof Criteria)
 		{
@@ -1191,6 +1807,11 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collReportes) {
+				foreach ((array) $this->collReportes as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collRepStatuss) {
 				foreach ((array) $this->collRepStatuss as $o) {
 					$o->clearAllReferences($deep);
@@ -1198,7 +1819,8 @@ abstract class BaseTrackingEtapas extends BaseObject  implements Persistent {
 			}
 		} // if ($deep)
 
+		$this->collReportes = null;
 		$this->collRepStatuss = null;
 	}
 
-} // BaseTrackingEtapas
+} // BaseTrackingEtapa

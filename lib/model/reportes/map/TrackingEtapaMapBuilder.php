@@ -13,12 +13,12 @@
  *
  * @package    lib.model.reportes.map
  */
-class TrackingEtapasMapBuilder implements MapBuilder {
+class TrackingEtapaMapBuilder implements MapBuilder {
 
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = 'lib.model.reportes.map.TrackingEtapasMapBuilder';
+	const CLASS_NAME = 'lib.model.reportes.map.TrackingEtapaMapBuilder';
 
 	/**
 	 * The database map.
@@ -54,11 +54,11 @@ class TrackingEtapasMapBuilder implements MapBuilder {
 	 */
 	public function doBuild()
 	{
-		$this->dbMap = Propel::getDatabaseMap(TrackingEtapasPeer::DATABASE_NAME);
+		$this->dbMap = Propel::getDatabaseMap(TrackingEtapaPeer::DATABASE_NAME);
 
-		$tMap = $this->dbMap->addTable(TrackingEtapasPeer::TABLE_NAME);
-		$tMap->setPhpName('TrackingEtapas');
-		$tMap->setClassname('TrackingEtapas');
+		$tMap = $this->dbMap->addTable(TrackingEtapaPeer::TABLE_NAME);
+		$tMap->setPhpName('TrackingEtapa');
+		$tMap->setClassname('TrackingEtapa');
 
 		$tMap->setUseIdGenerator(false);
 
@@ -68,6 +68,8 @@ class TrackingEtapasMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_DEPARTAMENTO', 'CaDepartamento', 'VARCHAR', false, null);
+
 		$tMap->addColumn('CA_ETAPA', 'CaEtapa', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_ORDEN', 'CaOrden', 'VARCHAR', false, null);
@@ -76,6 +78,12 @@ class TrackingEtapasMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_CLASS', 'CaClass', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_TEMPLATE', 'CaTemplate', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_MESSAGE', 'CaMessage', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_MESSAGE_DEFAULT', 'CaMessageDefault', 'VARCHAR', false, null);
+
 	} // doBuild()
 
-} // TrackingEtapasMapBuilder
+} // TrackingEtapaMapBuilder
