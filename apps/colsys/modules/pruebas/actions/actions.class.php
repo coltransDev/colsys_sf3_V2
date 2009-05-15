@@ -2076,6 +2076,330 @@ Departamento Comercial
 		
 		return sfView::NONE;			
 	}	
+	
+	/******************************************************************
+	*
+	*  Estos procedimientos se usan para estandarizar el proceso del tracking
+	*
+	******************************************************************/
+	/*
+	* Aplica la plantilla de la etapa al status
+	*/
+	public function executeAplicarPlantilla(){
+		exit();
+		$c = new Criteria();
+		//$c->add( RepStatusPeer::CA_STATUS, null, Criteria::ISNULL );
+		$c->add( RepStatusPeer::CA_USUENVIO, 'ajsanchez' );		
+		$statusList = RepStatusPeer::doSelect( $c );		
+		
+		foreach( $statusList as $status ){
+			/*
+			echo $status->getCaIdStatus()." -->".$status->getTxtStatus();
+			echo "<br />--------<br />";
+			echo "->".$status->getCaStatus();
+			echo "<br /><br />";*/
+			
+			$resultado = $status->getTxtStatus();
+			
+			if( $status->getCaStatus() ){
+				$resultado .= "\n".$status->getCaStatus();
+			}
+			echo $status->getCaIdStatus()." -->".$status->getCaStatus(  );
+			echo "<br /><br />";
+			if( $resultado ){
+				$status->setCaStatus( $resultado );
+				//$status->save();
+			}
+		}		
+	}
+	
+	
+	
+	/*
+	*  Este procedimiento crea un status para cada confirmacion de llegada
+	* Ejecutado el 7 mayo a las 7:48PM ( CA_FCHCONFIRMADO 2009-01-01 - 2009-04-15 ) se crearon los status  125229 - 128323
+	* Ejecutado 11 May a las 12:12 2009-04-16  ( CA_FCHCONFIRMADO 2009-04-16 - ... ) se crearon los status  128791 - 129545
+	* Se borraron todos los status 	12 mayo 11:13
+	* se crean todos x CrearStatusMaritimo
+	*/
+	public function executeCrearStatusConfirmaciones(){
+		exit("detenido");
+		set_time_limit( 0 );
+		$c = new Criteria(); //CaFchconfirmado
+		//$c->addJoin(  InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA );
+		
+		$c->add( InoMaestraSeaPeer::CA_FCHCONFIRMADO, '2009-04-16',  Criteria::GREATER_EQUAL);	
+		//$c->addAnd( InoMaestraSeaPeer::CA_FCHCONFIRMADO, '2009-04-15', Criteria::LESS_EQUAL );
+		$c->add( InoMaestraSeaPeer::CA_REFERENCIA, '4%', Criteria::LIKE);
+		$c->addOr( InoMaestraSeaPeer::CA_REFERENCIA, '5%', Criteria::LIKE);
+		//$c->setLimit( 100 );
+		$c->addAscendingOrderByColumn( InoMaestraSeaPeer::CA_FCHCONFIRMADO );
+		$referencias = InoMaestraSeaPeer::doSelect( $c );
+		$file="d:\\logCrearStatusConfirmaciones.txt";
+		$fp = fopen ($file, 'w+'); 
+		foreach( $referencias as $referencia ){
+			if( $referencia->getCaFchconfirmado( ) ){	
+				$inoClientes = $referencia->getInoClientesSeas();
+				$i = 0;
+				foreach( $inoClientes as $inoCliente ){
+					$reporte = $inoCliente->getReporte();
+					
+					echo "<br />".$referencia->getCaReferencia()." ";
+					
+					if( $reporte ){
+						$status = new RepStatus();
+						$status->setCaIdetapa("IMCOL");
+						$status->setCaIdReporte( $reporte->getCaIdreporte() );
+												
+						$texto = "La MN ".($referencia->getCaMnLlegada(  ) ?$referencia->getCaMnLlegada(  ):$referencia->getCaMotonave())." arribó a ".$referencia->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $referencia->getCaFchconfirmacion() )." con la orden en referencia a bordo.\n". ucfirst($inoCliente->getCamensaje());
+						
+						echo "<br /> $i ".$texto;
+						
+						$status->setCaStatus( $texto );	
+												
+						$ultimostatus = $reporte->getUltimoStatus( );	
+						if( $ultimostatus ){					
+							$status->setCaPiezas( $ultimostatus->getCaPiezas() );
+							$status->setCaPeso( $ultimostatus->getCaPeso() );
+							$status->setCaVolumen( $ultimostatus->getCaVolumen() );
+							$status->setCaFchsalida( $ultimostatus->getCaFchsalida() );
+							$status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
+						}
+						$status->setCaIdnave( ($referencia->getCaMnLlegada(  ) ?$referencia->getCaMnLlegada(  ):$referencia->getCaMotonave()) );
+						
+						$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
+						
+						$status->setCaFchenvio( $referencia->getCaFchconfirmado() );
+						$status->setCausuenvio( $referencia->getCaUsuconfirmado() );
+						$status->setCaFchStatus( $referencia->getCaFchconfirmado() );
+						//$status->save();
+						fwrite($fp, $referencia->getCaReferencia()."\r\n");
+					}
+				}
+			}			
+		}
+		fclose ($fp); 		
+	}
+	
+	/*
+	*  Este procedimiento crea un status para cada confirmación de maritimo. 
+    * Ejecutado 11 May a las 12:19   ( CA_FCHENVIO, '2009-01-01' - ... ) se crearon los status  129549 - 133400
+	* se borraron 129549 - 133400 12 mayo 11:13
+	* Ejecutado 12 May a las 11:15AM   ( CA_FCHENVIO, '2009-01-01' - 2009-01-31) se crearon los status    133740 - 135577 -   excepto {134440, 133880}
+	
+	* Ejecutado 12 May a las 11:38AM   ( CA_FCHENVIO, '2009-02-01' - 2009-03-31) se crearon los status    135581 - 138741  excepto {138459, 136664, 136131 }   total 3154
+	* Ejecutado 12 May a las 11:57AM   ( CA_FCHENVIO, '2009-04-01' - 2009-04-30) se crearon los status   138747  - 140472  excepto {140240, 139951, 138990, 138928 }   
+	* Ejecutado 12 May a las 12:01PM   ( CA_FCHENVIO, '2009-05-01' - ...) se crearon los status   140479  - 141011  excepto { }   
+	*/
+	public function executeCrearStatusMaritimo(){
+		exit("detenido");
+		set_time_limit( 0 );
+		$c = new Criteria(); //CaFchconfirmado
+		//$c->addJoin(  InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA );
+		
+		$c->add( InoAvisosSeaPeer::CA_FCHENVIO, '2009-05-01',  Criteria::GREATER_EQUAL);	
+		//$c->addAnd( InoAvisosSeaPeer::CA_FCHENVIO, '2009-04-30', Criteria::LESS_EQUAL );
+		
+		//$c->add( InoAvisosSeaPeer::CA_FCHENVIO, '2009-01-01',  Criteria::GREATER_EQUAL);	;
+		
+		/*$c->add( InoAvisosSeaPeer::CA_AVISO, '', Criteria::NOT_EQUAL );
+		$c->addAnd( InoAvisosSeaPeer::CA_AVISO, '%Como requisito indispensable para efectuar el OTM necesitamos los siguientes documentos:%', Criteria::NOT_LIKE );
+		*/
+		
+				
+		//$c->setLimit( 100 );
+		$c->addAscendingOrderByColumn( InoAvisosSeaPeer::CA_FCHENVIO );
+		$avisos = InoAvisosSeaPeer::doSelect( $c );
+		
+		//echo "-----------> count avisos ".count( $avisos )." <-";
+		$file="d:\\logCrearStatusMaritimo.txt";
+		$fp = fopen ($file, 'w+'); 
+		$i=0;
+		foreach( $avisos as $aviso ){
+			$inoCliente = $aviso->getInoClientesSea();
+			if( $inoCliente ){	
+				$reporte = $inoCliente->getReporte();
+				$referencia = $inoCliente->getInoMaestraSea();
+				if( $reporte ){																
+					$texto = $aviso->getCaAviso();
+					$email = $aviso->getEmail();
+					if( $email && strpos($email->getCaSubject(), "Confirmación de Llegada")!==false ){
+						$texto = "La MN ".($referencia->getCaMnLlegada(  ) ?$referencia->getCaMnLlegada(  ):$referencia->getCaMotonave())." arribó a ".$referencia->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $referencia->getCaFchconfirmacion() )." con la orden en referencia a bordo.\n". ucfirst($inoCliente->getCamensaje());
+												
+						$idetapa = "IMCOL";
+					}else{						
+						if( strpos($texto, "Confirmamos cierre y finalización de los documentos del proceso de OTM")!==false ){
+							$idetapa = "99999";
+						}elseif( strpos($texto, "Confirmamos el cargue y despacho de la")!==false){
+							$idetapa = "IMCMP";							
+						}elseif( strpos($texto, "Informamos que los documentos correspondientes al trámite OTM")!==false){
+							$idetapa = "IMPOD";								
+						}else{
+							$idetapa = "88888";
+						}						
+					}
+										
+					if( strlen($texto )>3){	
+						echo "<br />  ".($i++)." ".$idetapa." ".$texto;
+						$status = new RepStatus();						
+						$status->setCaIdetapa($idetapa);
+						$status->setCaIdReporte( $reporte->getCaIdreporte() );
+						$status->setCaStatus( $texto );	
+												
+						$ultimostatus = $reporte->getUltimoStatus( );	
+						if( $ultimostatus ){					
+							$status->setCaPiezas( $ultimostatus->getCaPiezas() );
+							$status->setCaPeso( $ultimostatus->getCaPeso() );
+							$status->setCaVolumen( $ultimostatus->getCaVolumen() );
+							$status->setCaFchsalida( $ultimostatus->getCaFchsalida() );
+							$status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
+							if( $idetapa=="IMCOL" ){
+								$status->setCaIdnave( ($referencia->getCaMnLlegada(  ) ?$referencia->getCaMnLlegada(  ):$referencia->getCaMotonave()) );
+								$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
+						
+						
+							}else{							
+								$status->setCaIdnave( $ultimostatus->getCaIdnave() );						
+								$status->setCaFchllegada( $ultimostatus->getCaFchllegada() );						
+							}
+						}
+						
+						$status->setCaIdemail( $aviso->getCaIdemail() );
+						$status->setCaFchenvio( $aviso->getCaFchenvio() );
+						$status->setCausuenvio( $aviso->getCaUsuenvio() );
+						$status->setCaFchStatus( $aviso->getCaFchaviso() );
+						$status->save();
+						fwrite($fp, $aviso->getCaReferencia()." ".$status->getCaIdstatus()."\r\n");
+					}						
+				}
+			}
+		}
+		fclose ($fp); 
+	}
+	
+	/*
+	*  Este procedimiento crea un status de cierre en cada uno de los reportes que ya 
+	*  se confirmaron
+	*/
+	public function executeActFchStatus(){
+		set_time_limit(0);
+		exit();
+		$c = new Criteria();
+		$c->addJoin( ReportePeer::CA_IDREPORTE, RepStatusPeer::CA_IDREPORTE );
+		$c->add( RepStatusPeer::CA_FCHENVIO, '2009-05-01', Criteria::GREATER_EQUAL );
+		$c->addHaving( $c->getNewCriterion(RepStatusPeer::CA_FCHENVIO, RepStatusPeer::CA_FCHENVIO.'=max('.RepStatusPeer::CA_FCHENVIO.')', Criteria::CUSTOM ) );
+				
+		$c->addGroupByColumn(RepStatusPeer::CA_IDSTATUS);
+		$c->addGroupByColumn(RepStatusPeer::CA_IDREPORTE);
+		$c->addGroupByColumn(RepStatusPeer::CA_IDEMAIL);
+		$c->addGroupByColumn(RepStatusPeer::CA_FCHSTATUS);
+		$c->addGroupByColumn(RepStatusPeer::CA_STATUS);
+		$c->addGroupByColumn(RepStatusPeer::CA_COMENTARIOS);
+		$c->addGroupByColumn(RepStatusPeer::CA_ETAPA);
+		$c->addGroupByColumn(RepStatusPeer::CA_FCHRECIBO);
+		$c->addGroupByColumn(RepStatusPeer::CA_FCHENVIO);
+		$c->addGroupByColumn(RepStatusPeer::CA_USUENVIO);
+		$c->addGroupByColumn(RepStatusPeer::CA_INTRODUCCION);
+		$c->addGroupByColumn(RepStatusPeer::CA_FCHSALIDA);
+		$c->addGroupByColumn(RepStatusPeer::CA_FCHLLEGADA);
+		$c->addGroupByColumn(RepStatusPeer::CA_FCHCONTINUACION);
+		$c->addGroupByColumn(RepStatusPeer::CA_PIEZAS);
+		$c->addGroupByColumn(RepStatusPeer::CA_PESO);
+		$c->addGroupByColumn(RepStatusPeer::CA_VOLUMEN);
+		$c->addGroupByColumn(RepStatusPeer::CA_DOCTRANSPORTE);
+		$c->addGroupByColumn(RepStatusPeer::CA_DOCMASTER);
+		$c->addGroupByColumn(RepStatusPeer::CA_IDNAVE);
+		$c->addGroupByColumn(RepStatusPeer::CA_EQUIPOS);
+		$c->addGroupByColumn(RepStatusPeer::CA_HORASALIDA);
+		$c->addGroupByColumn(RepStatusPeer::CA_HORALLEGADA);
+		$c->addGroupByColumn(RepStatusPeer::CA_IDETAPA);
+		$c->addGroupByColumn(RepStatusPeer::CA_PROPIEDADES);
+		$status = RepStatusPeer::doSelect( $c );
+		
+		foreach( $status as  $status ){
+			$reporte = $status->getReporte();
+			if( $status->getCaFchenvio() ){
+				echo $reporte->getCaConsecutivo()." ult ".$reporte->getCaFchUltstatus()." ".$status->getCaFchenvio()."<br />";				
+				$reporte->setCaFchUltstatus(  $status->getCaFchenvio() );
+				$reporte->save();
+			}						
+		}						
+	}
+	
+	
+	/*
+	*  coloca la etapa actual y la ultima actualizacion
+	*/
+	public function executeActualizarEtapa(){
+		set_time_limit(0);
+		$c = new Criteria();
+		$c->add( ReportePeer::CA_IDETAPA , null, Criteria::ISNULL );
+		$c->addAscendingOrderByColumn( ReportePeer::CA_IDREPORTE );
+		//$c->setLimit(1000);
+		$reportes = ReportePeer::doSelect( $c );
+		foreach( $reportes as $reporte ){							
+			if( $reporte->esUltimaVersion()  ){
+				$ultimoStatus = $reporte->getUltimoStatus();		
+				
+				if( $ultimoStatus ){
+					if( $reporte->getCaEtapaActual()=="Carga Entregada"){
+						$reporte->setCaIdetapa( "99999" );
+					}else{			
+						$reporte->setCaIdetapa( $ultimoStatus->getCaIdetapa() );
+					}
+					$reporte->setCaFchultstatus( $ultimoStatus->getCaFchenvio() );
+					$reporte->save();
+				}else{
+					if( $reporte->getCaEtapaActual()=="Carga Entregada" || $reporte->getCaEtapaActual()=="Carga en Aeropuerto de Destino" ){
+						$reporte->setCaIdetapa( "99999" );
+					}
+					
+					if( $reporte->getCaEtapaActual()=="Contacto con nuestro Agente" && 
+						$reporte->getCaTransporte()=="Aéreo" ){
+						$reporte->setCaIdetapa( "IACAG" );
+					}		
+					
+					if( $reporte->getCaEtapaActual()=="Contacto con nuestro Agente" && 
+						$reporte->getCaTransporte()=="Marítimo" ){
+						$reporte->setCaIdetapa( "IMCAG" );
+					}	
+					$reporte->save();				
+				}
+								
+				if( !$reporte->getCaUsuanulado()){
+					echo $reporte->getcaConsecutivo()." ".$reporte->getCaIdetapa()." ".$reporte->getCaEtapaActual()."<br />";
+				}
+			}
+		}
+	}
+	
+	/******************************************************************
+	*
+	*  Crea sentencias SQL Para crear foreign key en todos los 
+	*  campos usucreado usuactualizado
+	*
+	******************************************************************/
+	public function executeCrearFKUsuarios(){
+		$sql = "SELECT * FROM information_schema.columns 
+where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schema = 'public'";
+		
+		$con = Propel::getConnection(TasaAlaicoPeer::DATABASE_NAME);
+		$stmt = $con->prepare($sql);
+		$stmt->execute();
+		while ($row = $stmt->fetch()){
+		
+			$sql = "ALTER TABLE ".$row['table_name']."
+  ADD CONSTRAINT fk_".$row['table_name']."_tbusuarios_".$row['column_name']." FOREIGN KEY (".$row['column_name'].")
+      REFERENCES control.tb_usuarios (ca_login) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION;";
+			echo $sql."<br />";
+		} 
+		
+		return sfView::NONE;
+	}
+	
+	
+	
 }
 
 
