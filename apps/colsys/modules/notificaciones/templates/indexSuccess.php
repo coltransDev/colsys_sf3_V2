@@ -19,7 +19,7 @@ foreach( $listaTareas as $lista ){
 	?>
 	<tr>
 		<td><?=$tarea->getCaTitulo()?></td>
-		<td><?=$tarea->getCaUrl()?></td>
+		<td><a href="<?=$tarea->getCaUrl()?>">Click aca</a></td>
 		<td><?=$tarea->getCaFchcreado()?></td>
 		<td><?=$tarea->getCaFchvencimiento()?></td>
 		<td>&nbsp;</td>
