@@ -323,8 +323,11 @@ class helpdeskActions extends sfActions
 		if( !$ticket->getCaResponsetime() ){		
 			if( $ticket->getCaAssignedto()==$this->getUser()->getUserId() || in_array($this->getUser()->getUserId(),$logins ) ){
 				
-				$ticket->setCaResponsetime( time() );
-				$ticket->save();
+				$tarea = $ticket->getNotTarea(); 
+				if( $tarea ){
+					$tarea->setCaFchterminada( time() );	
+					$tarea->save();
+				}				
 			}
 		}
 		
@@ -480,15 +483,16 @@ class helpdeskActions extends sfActions
 			*/
 			$tarea = new NotTarea(); 
 			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$ticket->getCaIdticket() );
-			$tarea->setCaIdlistatarea( 3 );
+			$tarea->setCaIdlistatarea( 1 );
 			$tarea->setCaFchcreado( time() );			
 			$tarea->setCaFchvencimiento( time()+$grupo->getCaMaxresponsetime() );
 			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $texto );
-			$tarea->save();	
+			$tarea->save();
+				
 			$ticket->setCaIdtarea( $tarea->getCaIdtarea() );
-			$ticket->save();	
+			$ticket->save();			
 		}else{
 			$tarea = $ticket->getNotTarea(); 
 		}
@@ -497,8 +501,11 @@ class helpdeskActions extends sfActions
 			//Verifica las asignaciones de la tarea. 							
 			$loginsAsignaciones = $ticket->getLoginsGroup();					
 			$tarea->setAsignaciones( $loginsAsignaciones );				
-		}
+		}		
 		
+		if( !$update ){		
+			$tarea->notificar();
+		}
 		
 		$this->responseArray = array("idticket"=>$ticket->getCaIdticket(), "success"=>true);	
 		$this->setTemplate("responseTemplate");		
