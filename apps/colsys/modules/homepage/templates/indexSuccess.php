@@ -1,81 +1,82 @@
-<div align="center">
 
-<table width="539" border="1" class="tableList">
-	<tr>
-		<th width="529"  >&nbsp;</th>
-	</tr>
-	<tr>
+
+
+<div align="center" class="content">
 		
-		<td class="mostrar"><div style="padding:25px" align="center"><?=image_tag("logo_colsys_big.gif"); ?></div>		</td>
-	</tr>
-	<tr>
-		<th width="529"><div align="center"><b>Directorio</b></div></th>
-	</tr>
-	<tr>
-		<td >
-			<table width="100%" border="0" >
-						<tr>
-							<td colspan="2">
-								<div align="center"><b>Para acceder al directorio haga <a href="#" onClick="window.open('http://correo.coltrans.com.co/eGuide')"> click aca</a>
-									</b>
-									</div></td>
-							</tr>
-						<td><div align="left">Para llamar desde <b>Bogotá</b> a <br>
-								<ul>
-									<li><b>Medellín:</b> 804 44 + Ext.</li>
-									<li><b>Cali:</b> 804 22 + Ext.</li>
-									<li><b>B/quilla.:</b> 804 55 + Ext.</li>
-								</ul>
-						</div></td>
-						<td><div align="left">Para llamar desde <b>Medellín</b> a <br>
-								<ul>
-									<li><b>Bogotá:</b> 804 11 + Ext.</li>
-									<li><b>Cali:</b> 804 22 + Ext.</li>
+	<div id="manual-top"></div>
+	<div id="manual">
+		<ul id="manual-nav">
+			
+			
+			<li class="group" id="li_intro"> 
+				<a class="group-title" onclick="mostrarGrupo('intro')">Introducci&oacute;n</a>				
+			</li>			
+			<li class="group" id="li_aplicaciones"> 
+				<a class="group-title" onclick="mostrarGrupo('aplicaciones')">Aplicaciones Disponibles</a>				
+			</li>
+			<li class="group" id="li_tareas"> 
+				<a class="group-title" onclick="mostrarGrupo('tareas')">Tareas pendientes</a>				
+			</li>
+			<li class="group" id="li_directorio"> 
+				<a class="group-title" onclick="mostrarGrupo('directorio')">Directorio</a>				
+			</li>
+			<li class="group" id="li_novedades"> 
+				<a class="group-title" onclick="mostrarGrupo('novedades')">Novedades</a>				
+			</li>
+		</ul>
+		<div id="content-homepage-top"></div>
+		<div id="content-wrap">			
+			<div id="content-homepage">											
+			</div>			
+		</div>
+		<div id="content-homepage-bottom"></div>
+		<div class="clear-fix"></div>
+	</div>
+	<div id="manual-bottom"></div>
 
-									<li><b>B/quilla.:</b> 804 55 + Ext.</li>
-								</ul>
-						</div></td>
-					</tr>
-					<tr>
-						<td><div align="left">Para llamar desde <b>Cali</b> a <br>
-								<ul>
-
-									<li><b>Bogotá:</b> 84 11 + Ext.</li>
-									<li><b>Medellín:</b> 84 44 + Ext.</li>
-									<li><b>B/quilla.:</b> 84 55 + Ext.</li>
-								</ul>
-
-						</div></td>
-						<td><div align="left">Para llamar desde <b>Barranquilla</b> a <br>
-								<ul>
-									<li><b>Bogotá:</b> 711 11 + Ext.</li>
-									<li><b>Medellín:</b> 711 44 + Ext.</li>
-
-									<li><b>Cali.:</b> 711 22 + Ext.</li>
-								</ul>
-						</div></td>
-						</table>
-		</td>
-	</tr>
-	<tr>
-		<th width="529"><div align="center"><b>Novedades del sistema Colsys</b></div></th>
-	</tr>
-	<tr>
-		<td >
-		<?
-		foreach( $novedades as $novedad ){
-		?>			
-			<br /><br />
-			<?=image_tag("16x16/post.gif")?><b><?=$novedad->getCaFchpublicacion("Y-m-d")?> <?=$novedad->getCaAsunto()?></b>
-			<br />
-			<hr />
-			<div class="story">
-			<?=nl2br($novedad->getCaDetalle())?>
-			</div>
-		<?	
-		}
-		?>
-		</td>
-	</tr>	
-</table>
 </div>
+
+
+<!-- Contenidos para las secciones -->
+
+<!-- Introduccion -->
+
+<div id="intro" style="display:none">
+	<div align="center"><?=image_tag("layout/homepage/logo_colsys.gif");?></div>
+</div>
+
+<div id="aplicaciones" style="display:none">
+	<h1>Aplicaciones</h1>
+</div>
+
+<div id="tareas" style="display:none">
+	<h1>Tareas</h1>
+</div>
+
+<div id="directorio" style="display:none">
+	<?=include_partial("homepage/directorio")?>
+</div>
+
+<div id="novedades" style="display:none">
+	<?=include_component("homepage","novedades")?>
+</div>
+
+
+<script language="javascript" type="text/javascript">
+	function mostrarGrupo( idgrupo ){
+		//alert(idgrupo);
+		var childs = document.getElementById("manual-nav" ).getElementsByTagName("li");
+		
+		for( var i = 0; i < childs.length; i++ )
+		{		 
+			childs[i].setAttribute("class","group");
+		}
+		
+		document.getElementById("li_"+idgrupo ).setAttribute("class","group group-active");		
+		document.getElementById("content-homepage" ).innerHTML = document.getElementById( idgrupo ).innerHTML;		
+		
+	}
+	
+	
+	mostrarGrupo("intro");
+</script>
