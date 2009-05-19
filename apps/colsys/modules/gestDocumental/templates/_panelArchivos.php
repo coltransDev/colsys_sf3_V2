@@ -174,6 +174,17 @@ echo (isset($object)&&$object)?"var ".$object." = ":"";
 						var s = l != 1 ? 's' : '';
 						panel.setTitle('Simple DataView ('+l+' item'+s+' selected)');*/
 					}
+				}, 
+				
+				 dblclick : {
+					fn: function(dv,nodes){
+						var fv = Ext.getCmp("file-view");	
+						records =  fv.getSelectedRecords();			
+						for( var i=0;i< records.length; i++){				
+							//popup( "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo );
+							document.location.href = "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo;
+						}
+					}
 				}
 			}
 		}),
@@ -200,8 +211,8 @@ echo (isset($object)&&$object)?"var ".$object." = ":"";
 				var fv = Ext.getCmp("file-view");	
 				records =  fv.getSelectedRecords();			
 				for( var i=0;i< records.length; i++){				
-					popup( "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo );
-					//document.location.href = "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo;
+					//popup( "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo );
+					document.location.href = "<?=url_for($viewUrl)?>?idarchivo="+records[i].data.idarchivo;
 				}
 			}
 		}
