@@ -43,7 +43,8 @@ class confirmacionesActions extends sfActions
 				break;
 			case "reporte":
 				$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );  
-				$c->addJoin( InoClientesSeaPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );  				$c->add( ReportePeer::CA_CONSECUTIVO, $cadena."%", Criteria::LIKE );	
+				$c->addJoin( InoClientesSeaPeer::CA_IDREPORTE, ReportePeer::CA_IDREPORTE );  				
+				$c->add( ReportePeer::CA_CONSECUTIVO, $cadena."%", Criteria::LIKE );	
 				break;
 			case "blmaster":
 				$c->add( InoMaestraSeaPeer::CA_MBLS, $cadena."%", Criteria::LIKE );	
@@ -58,7 +59,8 @@ class confirmacionesActions extends sfActions
 				break;
 			case "cliente":
 				$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );  
-				$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE ); 				$c->add( ClientePeer::CA_COMPANIA, strtoupper($cadena)."%", Criteria::LIKE );
+				$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE ); 				
+				$c->add( ClientePeer::CA_COMPANIA, strtoupper($cadena)."%", Criteria::LIKE );
 				break;
 			case "idcliente":
 				$c->addJoin( InoMaestraSeaPeer::CA_REFERENCIA, InoClientesSeaPeer::CA_REFERENCIA );  
@@ -253,6 +255,7 @@ class confirmacionesActions extends sfActions
 				$status->setCaFchsalida( $ultimostatus->getCaFchsalida() );
 				$status->setCaFchllegada( $ultimostatus->getCaFchllegada() );
 				$status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
+				$status->setCaDoctransporte( $ultimostatus->getCaDoctransporte() );
 			}
 			
 			
@@ -271,7 +274,8 @@ class confirmacionesActions extends sfActions
 					}else{
 						$status->setCaIdnave( $referencia->getCaMotonave() );
 					}
-					$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
+					$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );					
+					
 					
 					break;
 				case "otm":				
