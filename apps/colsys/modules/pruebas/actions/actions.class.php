@@ -2398,6 +2398,33 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 		return sfView::NONE;
 	}
 	
+	/*
+	* Unifica dos opciones del programa en una sola y copia los permisos de la anterior en la nueva.
+	*/
+	public function executeUnificarPermisos(){
+		
+		$c = new Criteria();
+		$c->addJoin( UsuarioPeer::CA_LOGIN, AccesoUsuarioPeer::CA_LOGIN );
+		$c->addJoin( AccesoUsuarioPeer::CA_RUTINA, 40 );
+		$usuarios = UsuarioPeer::doSelect( $c );
+		
+		foreach( $usuarios as $usuario ){
+			$permiso =AccesoUsuarioPeer:: retrieveByPk( 43, $usuario->getCaLogin() );
+										
+			if( !$permiso ){
+				$permiso = new AccesoUsuario();	
+				$permiso->setCaLogin( $usuario->getCaLogin() );
+				$permiso->setCaRutina( 43 );							
+				$permiso->setCaAcceso( 0 );		
+				echo $usuario->getCaLogin() ."<br />";
+				$permiso->save();						
+			}		
+		}
+		
+		return sfView::NONE;
+		
+				
+	}
 	
 	
 }
