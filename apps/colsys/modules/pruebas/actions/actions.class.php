@@ -2427,6 +2427,83 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 	}
 	
 	
+	/*
+	* Crea una tarea para cada ticket. 	
+	*/
+	public function executeAsignarTareaHelpdesk( $request ){
+		exit();
+		set_time_limit( 0 );
+		$c = new Criteria();
+		$c->add( HdeskTicketPeer::CA_IDTAREA, null, Criteria::ISNULL );
+		$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDTICKET );
+		$tickets = HdeskTicketPeer::doSelect( $c );
+		
+		foreach( $tickets as $ticket ){
+			
+			$request->setParameter("id", $ticket->getCaIdticket() );
+			$request->setParameter("format", "email" );
+			$titulo = "Nuevo Ticket #".$ticket->getCaIdticket()." [".$ticket->getCaTitle()."]";		
+				
+			$texto = "Se ha creado un nuevo ticket \n\n<br /><br />" ;			
+			$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
+			
+			$grupo = $ticket->getHdeskGroup();
+			
+			$tarea = new NotTarea(); 
+			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$ticket->getCaIdticket() );
+			$tarea->setCaIdlistatarea( 1 );
+			$tarea->setCaFchcreado( $ticket->getCaOpened() );						
+			$tarea->setCaFchvencimiento( strtotime( $ticket->getCaOpened() )+$grupo->getCaMaxresponsetime() );
+			
+			
+			if( $ticket->getCaResponsetime() ){
+				$tarea->setCaFchterminada( $ticket->getCaResponsetime() );
+			}
+			
+			
+			$tarea->setCaUsucreado( $ticket->getCaLogin() );
+			$tarea->setCaTitulo( $titulo );		
+			$tarea->setCaTexto( $texto );
+			$tarea->save();
+			
+			$ticket->setCaIdtarea( $tarea->getCaIdtarea() );
+			$ticket->save();
+			
+			if( $ticket->getCaAssignedTo() ){
+				$tarea->setAsignaciones( array( $ticket->getCaAssignedTo() ) );		
+			}else{
+				$loginsAsignaciones = $ticket->getLoginsGroup();					
+				$tarea->setAsignaciones( $loginsAsignaciones );	
+			}
+		}
+		$this->setTemplate("blank");
+		
+		/**/
+	}
+	
+	
+	public function executeQuitarTareasSrThomas(){
+		
+		exit();
+		$c = new Criteria();
+		$c->addJoin(NotTareaAsignacionPeer::CA_IDTAREA,  NotTareaPeer::CA_IDTAREA );
+		$c->add( NotTareaAsignacionPeer::CA_LOGIN, 'tpeters' );
+		$c->add( NotTareaPeer::CA_FCHTERMINADA, NULL , Criteria::ISNULL);
+		$c->setDistinct();
+		$tareas = NotTareaPeer::doSelect( $c );
+		
+		foreach( $tareas as $tarea ){
+			echo $tarea->getCaIdtarea()."<br />";
+			$tarea->setCaFchterminada( $tarea->getCaFchvencimiento() );
+			$tarea->save();
+		}
+		
+		$this->setTemplate("blank");
+		
+	
+	} 
+	
+	
 }
 
 
