@@ -2,35 +2,60 @@
 * Estilos para la página principal
 */
 
-#manual {
-    margin: auto;
+
+#manual-wrap {
+    
     background-color: #c0c0c0;
-    text-align: left;
-    width: 880px;
+    
+    width: 80%;
+	min-width: 700px;
     background: transparent url(../images/layout/homepage/bd-bg2.jpg) repeat scroll 0 0;
-    padding: 20px;
+    
+}
+
+#manual {
+    margin: auto;    
+    text-align: left;    
+    padding: 0 20px 0 20px;
     margin-top: 0;
     margin-bottom: 0;
+	min-width: 600px;
 }
 
-#manual-top, #manual-bottom {
-  height: 6px;
+#corner-manual-topleft, #corner-manual-bottomleft{
+	float:left;	
 }
 
-#manual-top {
-  background: transparent url(../images/layout/homepage/bd-bg2-top.jpg) no-repeat center bottom;
+#corner-manual-topright, #corner-manual-bottomright{
+	float:right;	
 }
 
-#manual-bottom {
-  background: transparent url(../images/layout/homepage/bd-bg2-bottom.jpg) no-repeat center bottom;
+#manual-top {	
+	background-color: #062A7D;	
+	height: 8px;   
+	width: 80%;
+	min-width: 700px;
+	
+	
+	
+}
+
+#manual-bottom {	
+	background-color: #062A7D;	
+	height: 8px;   
+	width: 80%;
+	min-width: 700px;
 }
 
 
 #manual-nav {
-    width: 230px;
+    width: 25%;
     float: left;
     padding: 20px 0;
-    margin: 0;
+    margin:  0 0 0 0;
+	/*border:#FF0000 1px solid;*/
+	
+	
 }
 
 /* main group styling */
@@ -118,41 +143,49 @@
 
 /* content area styling */
 #content-wrap {
-    width: 630px;
+    /*min-width: 350px;*/
+	width: 75%;
     float: right;
     position: relative;
-    padding: 10px;
-    background-color: #fff;
-	
+    /*padding: 10px;*/
+    background-color: #fff;		
 }
-
-#content-homepage {
-    overflow: auto;
-    height: 200px;
-    padding: 0 10px;
-}
-
-
 
 #content-homepage-top {
-  background: transparent url(../images/layout/homepage/content-bg2-top.jpg) no-repeat center bottom;
-  height: 6px;
-  float: right; 
-  
-  width: 650px;
-  
+	background-color:#FFFFFF;  
+	height: 6px;
+	float: right;   
+	width: 75%;
+	margin-top: 10px;
 }
 
 #content-homepage-bottom {
-  background: transparent url(../images/layout/homepage/content-bg2-bottom.jpg) no-repeat center bottom;
-  height: 6px;
-  text-align:right;  
-  clear:right;
+ background-color:#FFFFFF;  
+  height: 6px;   
   float: right;
-   width: 650px;
-  
-  
+  width: 75%;   
+  margin-bottom: 10px;
 }
+
+
+#content-homepage {
+    overflow: auto;
+    height: 300px;
+    padding: 15px ;	
+}
+
+
+#corner-content-topright, #corner-content-bottomright{
+	float:right;
+}
+
+
+#corner-content-topleft, #corner-content-bottomleft{
+	float:left;
+}
+
+
+
 
 /* primary headings */
 #content-homepage h1 {
@@ -210,15 +243,7 @@
 }
 
 
-.box-corner {
-    background-image: url('../images/layout/homepage/box-corners.gif');
-    display: none;
-    width: 11px;
-    height: 11px;
-    position: absolute;
-    font-size: 1px;
-    line-height: 6px;
-    overflow: hidden;
-    zoom:1;
-}
+
+
+
 
