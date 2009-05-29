@@ -97,8 +97,7 @@ $proyecto = $ticket->getHdeskProject();
 	</td>
     <td class="listar">
 		<b>Asignado a:</b> 
-		<?
-		
+		<?		
 		if( $ticket->getCaAssignedTo() ){
 			$asignado = $ticket->getAssignedUser();
 			if( $asignado ){
@@ -108,8 +107,7 @@ $proyecto = $ticket->getHdeskProject();
 			if( $nivel>0 && $ticket->getCaAction()=="Abierto" ){
 				echo link_to("Tomar asignaci&oacute;n" , "helpdesk/tomarAsignacion?id=".$ticket->getCaIdticket() );
 			}
-		}
-		
+		}		
 		?>
 	</td>
   </tr>
@@ -123,6 +121,35 @@ $proyecto = $ticket->getHdeskProject();
 		<?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","helpdesk/cerrarTicket?id=".$ticket->getcaidticket() ):""?>
 	</td>
   </tr>
+  <?
+  if( in_array($user->getUserId(), $loginsGrupo ) ){
+  ?>
+   <tr>
+    <td class="listar">
+		<b>Seguimiento: </b> 
+		<br />
+		<?
+		$tarea = $ticket->getTareaSeguimiento();
+		
+		if( $ticket->getCaAction()=="Abierto" ){
+		?>
+		<?=link_to($tarea&&!$tarea->getCaFchterminada()?$tarea->getCaFchVencimiento("Y-m-d"):"Nuevo seguimiento", "helpdesk/nuevoSeguimiento?id=".$ticket->getCaIdticket() );
+		}
+		?>
+		
+		
+		<?=$tarea&&!$tarea->getCaFchterminada()?link_to(image_tag("16x16/button_cancel.gif"), "helpdesk/eliminarSeguimiento?id=".$ticket->getCaIdticket() ):""?>
+		
+		
+	</td>
+    <td class="listar">&nbsp;
+		
+	</td>
+  </tr>
+  <?
+  }
+  ?>
+  
   <tr>
     <td class="listar" colspan="2"><b>Descripci&oacute;n</b></td>
   </tr>

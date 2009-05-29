@@ -25,6 +25,13 @@ switch($action){
 		$button[2]["link"]= "helpdesk/crearTicket?id=".$this->getRequestParameter("id")."&token=".md5(time());
 		
 		break;
+	case "nuevoSeguimiento":
+		$button[2]["name"]="Volver";
+		$button[2]["tooltip"]="Volver al ticket";
+		$button[2]["image"]="22x22/1leftarrow.gif"; 			
+		$button[2]["link"]= "helpdesk/verTicket?id=".$this->getRequestParameter("id")."&token=".md5(time());
+		
+		break;	
 			
 }
 

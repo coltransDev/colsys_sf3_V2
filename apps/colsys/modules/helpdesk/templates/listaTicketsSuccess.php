@@ -67,10 +67,20 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 	<td><?=$ticket->getCaPriority()?></td>
 	<td>
 		<?	
-		$ticket->getCaAssignedto();
+		echo $ticket->getCaAssignedto();
 		?>
 	</td>
-    <td><?=$ticket->getCaResponsetime("Y-m-d h:i A")?></td>
+    <td>
+		<?
+		$tarea = $ticket->getNotTarea(); 
+		if( $tarea ){
+			echo $tarea->getCaFchterminada(  );	
+		
+		}else{
+			echo "&nbsp;";
+		}	
+		//$ticket->getCaResponsetime("Y-m-d h:i A")
+		?></td>
     <td><?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","helpdesk/cerrarTicket?id=".$ticket->getCaidticket() ):""?></td>
   </tr> 
 	<?

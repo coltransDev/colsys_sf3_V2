@@ -51,8 +51,16 @@ class cotseguimientosActions extends sfActions
 	*/
 	public function executeListadoCotizaciones($request)
 	{		
-		$fechaInicialCons = Utils::parseDate($request->getParameter("fechaInicialCons"));
-		$fechaFinalCons = Utils::parseDate($request->getParameter("fechaFinalCons"));
+		if( $request->getParameter("fechaInicialCons") ){
+			$fechaInicialCons = Utils::parseDate($request->getParameter("fechaInicialCons"));
+		}else{
+			$fechaInicialCons = null;
+		}
+		if( $request->getParameter("fechaFinalCons") ){
+			$fechaFinalCons = Utils::parseDate($request->getParameter("fechaFinalCons"));
+		}else{
+			$fechaFinalCons = "";
+		}
 		$estadoCons = $request->getParameter("estadoCons");
 		
 		$checkboxConsecutivo = $request->getParameter("checkboxConsecutivo");

@@ -180,8 +180,6 @@ class helpdeskActions extends sfActions
 	*/
 	public function executeVerTicket(sfWebRequest $request){
 
-		
-		
 		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );		
 		$this->iddepartamento = $this->getUser()->getIddepartamento();	
 		
@@ -189,10 +187,7 @@ class helpdeskActions extends sfActions
 		if( !$this->nivel ){
 			$this->nivel = 0;
 		}
-		
-		
-			
-		
+	
 		/*
 		* Aplica restricciones de acuerdo al nivel de acceso.
 		*/
@@ -219,13 +214,25 @@ class helpdeskActions extends sfActions
 		
 		$this->ticket = HdeskTicketPeer::doSelectOne( $c );		
 		$this->forward404Unless( $this->ticket );	
-		
-		
-						
+								
 		if( $request->getParameter("format")=="email" ){
 			$this->setTemplate("verTicketEmail");
 			$this->setLayout("none");
 		}
+		
+		
+		$this->loginsGrupo = array();
+		$c = new Criteria();		
+		$c->add( HdeskUserGroupPeer::CA_IDGROUP, $this->ticket->getCaIdgroup() );
+		$c->addAscendingOrderByColumn( HdeskUserGroupPeer::CA_LOGIN);
+		$usuarios = HdeskUserGroupPeer::doSelect( $c );		
+		foreach( $usuarios as $usuario ){
+			$this->loginsGrupo[]=$usuario->getCaLogin();
+		}
+		
+		
+		$this->user = $this->getUser();
+		
 		
 		
 	}
@@ -320,16 +327,19 @@ class helpdeskActions extends sfActions
 		}
 			
 		
-		if( !$ticket->getCaResponsetime() ){		
-			if( $ticket->getCaAssignedto()==$this->getUser()->getUserId() || in_array($this->getUser()->getUserId(),$logins ) ){
+		
+		if( $ticket->getCaAssignedto()==$this->getUser()->getUserId() || in_array($this->getUser()->getUserId(),$logins ) ){
+			
+				$tarea = $ticket->getTareaIdg(); 
 				
-				$tarea = $ticket->getNotTarea(); 
 				if( $tarea ){
-					$tarea->setCaFchterminada( time() );	
-					$tarea->save();
+					if( !$tarea->getCaFchterminada() ){
+						$tarea->setCaFchterminada( time() );	
+						$tarea->save();
+					}
 				}				
-			}
 		}
+		
 		
 		foreach( $logins as $login ){
 		
@@ -543,9 +553,66 @@ class helpdeskActions extends sfActions
 			$ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("id") );
 			$ticket->setCaAction( "Cerrado" );
 			$ticket->save();
+			
+			$tarea = $ticket->getTareaSeguimiento();
+			if( $tarea ){
+				$tarea->setCaFchterminada(time());
+				$tarea->save();
+			}
 		}
 		$this->redirect("helpdesk/verTicket?id=".$request->getParameter("id"));
 		
+	}
+	
+	public function executeNuevoSeguimiento(sfWebRequest $request){
+		$this->ticket = null;
+		if( $request->getParameter("id") ){
+			$this->ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("id") );
+		}	
+		
+		$this->forward404Unless( $this->ticket );
+		
+		$seguimiento = $request->getParameter("seguimiento");
+		
+		if( $seguimiento ){			
+			$titulo = "Seguimiento Ticket # ".$this->ticket->getCaIdticket()." [".$this->ticket->getCaTitle()."]";
+			
+			$texto = "Usted ha programado un seguimiento para el ticket # ".$this->ticket->getCaIdticket()." [".$this->ticket->getCaTitle()."]";
+			$tarea = $this->ticket->getTareaSeguimiento();
+			if( !$tarea ){
+				$tarea = new NotTarea(); 
+			}
+			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$this->ticket->getCaIdticket() );
+			$tarea->setCaIdlistatarea( 5 );
+			$tarea->setCaFchcreado( time() );			
+			$tarea->setCaFchvencimiento( $seguimiento." 23:59:59" );
+			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+			$tarea->setCaTitulo( $titulo );		
+			$tarea->setCaTexto( $texto );
+			$tarea->save();	
+			
+			$tarea->setAsignaciones(array($this->getUser()->getUserId()));
+			$this->ticket->setCaidseguimiento( $tarea->getCaIdtarea() );
+			$this->ticket->save();
+			$this->redirect("/helpdesk/verTicket?id=".$this->ticket->getCaIdticket());
+			
+		}		
+	}
+	
+	
+	public function executeEliminarSeguimiento(sfWebRequest $request){
+		$this->ticket = null;
+		if( $request->getParameter("id") ){
+			$this->ticket = HdeskTicketPeer::retrieveByPk( $request->getParameter("id") );
+		}	
+		
+		$this->forward404Unless( $this->ticket );
+		
+		$tarea = $this->ticket->getTareaSeguimiento();
+		if( $tarea ){
+			$tarea->delete();
+		}
+		$this->redirect("/helpdesk/verTicket?id=".$this->ticket->getCaIdticket());
 	}
 	
 	

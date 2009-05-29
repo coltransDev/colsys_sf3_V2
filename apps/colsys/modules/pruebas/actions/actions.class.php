@@ -40,7 +40,7 @@ class pruebasActions extends sfActions {
 	}
 	
 	public function executeSendEmail() {
-		exit("detenido");
+		//exit("detenido");
 		$c = new Criteria ( );
 		/*$c->add ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:01", Criteria::GREATER_THAN );
 		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:00", Criteria::LESS_THAN );
@@ -55,8 +55,9 @@ class pruebasActions extends sfActions {
 		//$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
 		//$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
 		
-		$c->add( EmailPeer::CA_IDEMAIL, 226480);
-		//$c->addOr( EmailPeer::CA_IDEMAIL, 206545);
+		$c->add( EmailPeer::CA_IDEMAIL, 240411);
+		$c->addOr( EmailPeer::CA_IDEMAIL, 240610);
+		$c->addOr( EmailPeer::CA_IDEMAIL, 240656);
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
 			
 		$i = 0;
@@ -66,22 +67,22 @@ class pruebasActions extends sfActions {
 			echo "<strong>Enviando " . $i ++ . "</strong>	emailid: " . $email->getCaIdEmail () . " Fch: " . $email->getCaFchEnvio () . " <br />From: " . $email->getCaFrom () . "<br />";
 				
 			$addresses = explode(",",$email->getCaAddress());			
-			foreach( $addresses as $key=>$address ){
+			/*foreach( $addresses as $key=>$address ){
 				if( strpos( $address, "coltrans.com.co" )!=false ){
 					unset( $addresses[$key] );
 				}
-			}
+			}*/
 			$email->setCaAddress( implode(",", $addresses) );
 						
 			$ccs = explode(",",$email->getCaCC());
 			
-			
+			/*
 			foreach( $ccs as $key=>$address ){
 				if( strpos( $address, "coltrans.com.co" )!=false ){
 					unset( $addresses[$key] );
 				}
-			}
-			$email->setCaCc( implode(",", $addresses) );
+			}*/
+			$email->setCaCc( implode(",", $ccs) );
 			
 			
 			echo "to: " . $email->getCaAddress () . "<br />";
@@ -2481,7 +2482,9 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 		/**/
 	}
 	
-	
+	/*
+	* Tareas de backup que ya se cumplieron
+	*/
 	public function executeQuitarTareasSrThomas(){
 		
 		exit();
@@ -2496,14 +2499,51 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 			echo $tarea->getCaIdtarea()."<br />";
 			$tarea->setCaFchterminada( $tarea->getCaFchvencimiento() );
 			$tarea->save();
-		}
-		
+		}		
 		$this->setTemplate("blank");
-		
-	
 	} 
 	
-	
+	/*
+	*
+	*/	
+	public function executeCrearTareasCotizaciones1erTrimestre(){
+		exit();
+		set_time_limit( 0 );
+		$c = new Criteria();
+		$c->add( CotizacionPeer::CA_CONSECUTIVO, '%2009', Criteria::LIKE );
+		$c->add( CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, null, Criteria::ISNOTNULL);
+		$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNOTNULL);
+
+		//$c->add( CotizacionPeer::CA_FCHCREADO, '2009-04-01', Criteria::GREATER_EQUAL );	
+		
+		$c->addAscendingOrderByColumn( CotizacionPeer::CA_IDCOTIZACION );				
+		$cotizaciones = CotizacionPeer::doSelect( $c );
+				
+		foreach( $cotizaciones as $cotizacion ){	
+			echo $cotizacion->getCaConsecutivo()."<br />";
+			$tarea = $cotizacion->getTareaIDGEnvioOportuno( );	
+			$tarea->delete();	
+			/*if( $cotizacion->getCafchSolicitud() ){
+				$fchCreado = $cotizacion->getCafchSolicitud()." ".$cotizacion->getCaHoraSolicitud();
+			}else{
+				$fchCreado = $cotizacion->getCaFchcreado( );
+			}
+			$tarea = $cotizacion->crearTareaIDGEnvioOportuno( $fchCreado );	
+			if( $tarea ){
+				if( $cotizacion->getCaFchpresentacion( ) ){
+					$tarea->setCaFchterminada( $cotizacion->getCaFchpresentacion() );					
+				}
+				//else{
+				//	$tarea->setCaFchterminada( $tarea->getCaFchvencimiento() );
+				//}
+				$tarea->save();
+			} 	*/		
+		}	
+		
+		$this->setTemplate("blank");
+						
+	}
+		
 }
 
 

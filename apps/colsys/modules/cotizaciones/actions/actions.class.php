@@ -126,7 +126,7 @@ class cotizacionesActions extends sfActions
 			$this->forward404Unless( $cotizacion );					
 			$this->editable = $this->getRequestParameter("editable");	
 			$this->option = $this->getRequestParameter("option");
-			
+			/*
 			$c = new Criteria();
 			$c->add(EmailPeer::CA_TIPO, "Envío de cotización");
 			$c->add(EmailPeer::CA_IDCASO,$cotizacion->getCaIdCotizacion()); 
@@ -134,8 +134,15 @@ class cotizacionesActions extends sfActions
 			$emails = EmailPeer::doSelect( $c );
 			
 			if( count($emails)>0 ){
+			
+			}*/
+			
+			
+			$this->tarea = $cotizacion->getTareaIDGEnvioOportuno();
+			if( $this->tarea && $this->tarea->getCafchterminada() ){
 				$this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdCotizacion());
 			}
+			
 						
 			if($cotizacion->getCaUsuanulado()){
 				$this->redirect("cotizaciones/verCotizacion?id=".$cotizacion->getCaIdCotizacion());
@@ -153,6 +160,8 @@ class cotizacionesActions extends sfActions
 			$this->cotizacion->setCaDespedida( $textos['despedida'] );
 			$this->cotizacion->setCaAnexos( $textos['anexos'] );
 			$this->cotizacion->setCaUsuario($user);
+			
+			$this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
 			
 			
 		}
@@ -211,13 +220,8 @@ class cotizacionesActions extends sfActions
 		if( $this->getRequestParameter( "fuente" ) ){
 			$cotizacion->setCaFuente( $this->getRequestParameter( "fuente" ) );
 		}
+						
 		
-		$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
-		$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
-		
-		if( $this->getRequestParameter( "fchPresentacion" ) ){
-			$cotizacion->setCaFchpresentacion( $this->getRequestParameter( "fchPresentacion" )." ".$this->getRequestParameter( "horaPresentacion" ) );
-		}
 		
 		if( !$cotizacion->getCaIdCotizacion() ){ 
 			$cotizacion->setCaFchcreado( time() );	
@@ -226,10 +230,35 @@ class cotizacionesActions extends sfActions
 			$cotizacion->setCaFchactualizado( time() );	
 			$cotizacion->setCaUsuactualizado( $user_id );							
 		}
-		$cotizacion->save();
+		$cotizacion->save();	
+		
+		if( $this->getRequestParameter( "fchSolicitud" ) ){
+			$cotizacion->crearTareaIDGEnvioOportuno( $this->getRequestParameter( "fchSolicitud" )." ".$this->getRequestParameter( "horaSolicitud" ));
+			//$cotizacion->setCaFchSolicitud( $this->getRequestParameter( "fchSolicitud" ) );
+			//$cotizacion->setCaHoraSolicitud( $this->getRequestParameter( "horaSolicitud" ) );
+		}
+		
+		
+		if( $this->getRequestParameter( "fchPresentacion" ) ){
+			$cotizacion->setFchpresentacion( $this->getRequestParameter( "fchPresentacion" )." ".$this->getRequestParameter( "horaPresentacion" ) );			
+			
+		}
+		
+		if( $this->getRequestParameter( "observaciones_idg" )!==null ){
+			$tarea = $cotizacion->getTareaIDGEnvioOportuno();
+			$tarea->setCaObservaciones( $this->getRequestParameter( "observaciones_idg" ) );
+			$tarea->save();
+		}
+						
+		if( !$this->getRequestParameter("cotizacionId") ){
+			$tarea = $cotizacion->getTareaIDGEnvioOportuno(); //Crea la tarea si no existe
+			//$tarea->notificar();
+		}
 		
 		
 		
+		
+			
 		$this->options = array();
 		$this->options['idcotizacion']=$cotizacion->getCaIdcotizacion();		
 		$this->options['success']=true;
@@ -248,6 +277,12 @@ class cotizacionesActions extends sfActions
 		$cotizacion->setCaFchanulado(time());
 		$cotizacion->setCaUsuanulado($this->getUser()->getUserId());
 		$cotizacion->save();
+		
+		$tarea = $cotizacion->getTareaIDGEnvioOportuno(); 
+		if( $tarea ){
+			$tarea->delete();
+		}
+		
 		$this->redirect("cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdCotizacion());	
 	}
 	
@@ -286,9 +321,10 @@ class cotizacionesActions extends sfActions
 		
 		$productos = $cotizacion->getCotProductos();
 		
+		$lejanoOriente = false;
 		if( $mostrarTodos ){
 			$paises = array();
-			foreach( $productos as $producto ){				
+			foreach( $productos as $producto ){								
 				if( $producto->getCaImpoexpo() == Constantes::IMPO ){
 					$paises[] = $producto->getOrigen()->getCaIdtrafico();
 					
@@ -302,6 +338,11 @@ class cotizacionesActions extends sfActions
 						$paises[] = "CN-086";
 					}
 					
+					$trafico = $producto->getOrigen()->getTrafico();
+					if( $trafico->getCaIdgrupo()==6 ){
+						$lejanoOriente = true;
+					}
+															
 				}else{
 					$paises[] = $producto->getDestino()->getCaIdtrafico();
 				}
@@ -327,14 +368,37 @@ class cotizacionesActions extends sfActions
 		if( $mostrarTodos ){
 			$c->addJoin( ContactoAgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
 			$criterion = $c->getNewCriterion( CiudadPeer::CA_IDTRAFICO, $paises, Criteria::IN );
+					
 		}else{		
 			$criterion = $c->getNewCriterion( ContactoAgentePeer::CA_IDCIUDAD, $ciudades, Criteria::IN );
 		}								
-		$criterion->addOr($c->getNewCriterion( ContactoAgentePeer::CA_IDCONTACTO, $datosag, Criteria::IN ));			
+		$criterion->addOr($c->getNewCriterion( ContactoAgentePeer::CA_IDCONTACTO, $datosag, Criteria::IN ));	
+					
 		$c->add($criterion);	
+			
 		$c->add( ContactoAgentePeer::CA_ACTIVO, true );	
 		$c->add( AgentePeer::CA_ACTIVO, true );	
 		$contactos = ContactoAgentePeer::doSelect( $c );
+		
+		/*
+		* Muestra todos los contactos de ASW 
+		*/
+		
+		if( $lejanoOriente ){		
+			$c = new Criteria();
+			$c->addJoin( ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE );	
+			$c->addJoin( AgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );		
+			$c->addJoin( CiudadPeer::CA_IDTRAFICO, TraficoPeer::CA_IDTRAFICO );
+			$c->add( TraficoPeer::CA_IDGRUPO, 6 );
+			$c->add( AgentePeer::CA_NOMBRE, "AIR SEA WORLDWIDE%" ,Criteria::LIKE );
+			$c->add( ContactoAgentePeer::CA_ACTIVO, true );	
+			$c->add( AgentePeer::CA_ACTIVO, true );				
+			$contactosAg = ContactoAgentePeer::doSelect( $c );
+			$contactos = array_merge( $contactos, $contactosAg );
+			
+			
+		}
+		
 				
 		$agentes = array();
 		
@@ -357,8 +421,6 @@ class cotizacionesActions extends sfActions
 									 'operacion'=>utf8_encode(str_replace("|", " ", $contacto->getCaTransporte())),
 									 'ciudad'=>utf8_encode($ciudad->getCaCiudad()),
 									  'sugerido'=>$contacto->getCaSugerido()
-									
-      									
       		);		
 		}
 		
@@ -386,6 +448,7 @@ class cotizacionesActions extends sfActions
 		$this->asunto = sprintf( $textos['asuntoEmail'], $this->cotizacion->getCaConsecutivo() );
 		$this->mensaje = sprintf( $textos['mensajeEmail'], $this->cotizacion->getContacto()->getNombre(), $this->cotizacion->getCaConsecutivo() );
 		
+		$this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno(); 
 				
 	}
 	/*
@@ -425,9 +488,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeEnviarCotizacionEmail(){
 		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
-		
-		
-								
+										
 		$user = $this->getUser();
 					
 		//Crea el correo electronico
@@ -519,13 +580,20 @@ class cotizacionesActions extends sfActions
 		$email->save(); //guarda el cuerpo del mensaje
 		$this->error = $email->send();	
 		if(!$this->error){
-			if( !$this->cotizacion->getCaFchPresentacion() ){
-				$this->cotizacion->setCaFchPresentacion(time());	
-				$this->cotizacion->save();						
+			$tarea  = $this->cotizacion->getTareaIDGEnvioOportuno();
+					
+			$observaciones_idg = $this->getRequestParameter("observaciones_idg");
+			
+			if( $observaciones_idg!==null ){
+				$tarea->setCaObservaciones( $observaciones_idg );		
 			}
-		}
-		
-		
+			if( $tarea ){			
+				if( !$tarea->getCaFchterminada() ){
+					$tarea->setCaFchterminada( time() );									
+				}			
+			}
+			$tarea->save();
+		}		
 	}
 	
 	
@@ -541,6 +609,8 @@ class cotizacionesActions extends sfActions
 		$user = $this->getUser();		
 		$sig = CotizacionPeer::siguienteConsecutivo( date("Y") );			
 		$newCotizacion->setCaConsecutivo( $sig ); 
+		//$newCotizacion->setCaFchpresentacion(null);
+		$newCotizacion->setCaIdgEnvioOportuno(null);
 		$newCotizacion->setCaFchpresentacion(null);
 		$newCotizacion->setCaHorasolicitud(null);
 		$newCotizacion->setCaFchsolicitud(null);		
@@ -548,6 +618,7 @@ class cotizacionesActions extends sfActions
 		$newCotizacion->setCaUsucreado( $user->getUserId() );
 		$newCotizacion->setCaFchactualizado( null );
 		$newCotizacion->setCaUsuactualizado( null );
+		
 	
 		$newCotizacion->save();
 		

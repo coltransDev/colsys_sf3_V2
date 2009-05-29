@@ -179,7 +179,7 @@ class confirmacionesActions extends sfActions
 		
 		$inoClientes = array();
 			
-		if( $modo=="conf" ){
+		if( $modo=="conf" && $tipo_msg=="Conf" ){
 			
 			$referencia->setCaFchconfirmacion( $request->getParameter( "fchconfirmacion" ) );
 			$referencia->setCaHoraconfirmacion( $request->getParameter( "horaconfirmacion" ) );

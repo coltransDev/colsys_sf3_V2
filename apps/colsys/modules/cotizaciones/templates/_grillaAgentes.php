@@ -229,7 +229,7 @@ var grid_agentes = new Ext.grid.EditorGridPanel({
 			}
 			var btn = Ext.getCmp('mostrartodos-btn');
 			if( btn.getText()=='Mostrar todos'){			
-				btn.setText( "Mostrar pertinetes" );
+				btn.setText( "Mostrar pertinentes" );
 				storeAgentes.baseParams = {mostrarTodos:true};
 			}else{
 				btn.setText( "Mostrar todos" );

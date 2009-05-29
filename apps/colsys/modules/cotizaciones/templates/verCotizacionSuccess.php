@@ -73,6 +73,41 @@ $enBlanco = $cotizacion->enBlanco();
 		}
 		?>
 	</table>	
+	<br />
+	<?	 
+	if( $tarea && !$tarea->getCafchterminada() ){
+	?>
+	<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
+		<tr>
+			<th><div align="left"><strong>IDG Oferta y Contrataci&oacute;n:</strong> 
+			</div></th>
+		</tr>		
+		<tr>
+			<td>
+				Tiempo restante
+				<?			
+				$festivos = Utils::getFestivos();
+				$diff = $tarea->getTiempoRestante( $festivos );					
+				if( substr($diff, 0,1)=="-" ){
+					echo "<span class='rojo'>".$diff."</span>";
+				}else{
+					echo $diff;			
+				}
+				?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Observaciones
+				<input type="text" value="<?=$tarea->getCaObservaciones()?>" name="observaciones_idg" size="100" />
+			</td>
+		</tr>		
+	</table>	
+	<br />
+	<?
+	}
+	?>
+
 	<div align="center"><input type="submit" name="commit" value="Enviar" /></div><br /><br />
 	
 </div>
@@ -94,15 +129,21 @@ if( count($emails)>0 ){
 	<tr >
 		<th>Fecha Envio</th>			
 		<th>Asunto</th>			
-		<th>Destinatarios</th>			
+		<th>Destinatarios</th>		
+		<th>Email</th>			
 	</tr>
 <?
 	foreach( $emails as $email ){
 		?>
 		<tr >
 			<td><?=$email->getCaFchEnvio()?></td>			
-			<td><?=$email->getCaSubject()?></td>			
-			<td><?=$email->getCaAddress()?></td>			
+			<td>			
+			<?=$email->getCaSubject()?></td>			
+			<td><?=$email->getCaAddress()?></td>
+			
+			<td>
+				<a href='#' onClick=window.open('<?=url_for("general/verEmail?id=".$email->getCaIdemail())?>')><?=image_tag("22x22/email.gif")?></a>
+			</td>			
 		</tr>
 		<?
 	}

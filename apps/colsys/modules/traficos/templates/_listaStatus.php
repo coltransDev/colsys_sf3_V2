@@ -15,16 +15,6 @@
 	</tr>				
 	<?
 	$i=0;
-	/*$statuss = $reporte->getHistorialStatus();					
-	foreach( $statuss as $timestamp=>$statusH ){
-	?>
-	<tr>
-		<td valign="top"><?=$i==0?"<b>":""?><?=Utils::fechaMes(date("Y-m-d", $timestamp ))?><?=$i==0?"</b>":""?></td>
-		<td valign="top"><?=$i==0?"<b>":""?><?=nl2br($statusH["status"])?><?=$i==0?"</b>":""?></td>
-	</tr>
-	<?
-		$i++;
-	}*/
 	
 	
 	foreach( $statusList as $lstatus ){ 

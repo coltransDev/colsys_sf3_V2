@@ -157,7 +157,7 @@ Ext.onReady(function(){
 							xtype:'datefield',
 							fieldLabel: 'Fecha de Solicitud',
 							name: 'fchSolicitud',
-							value: '<?=$cotizacion->getCaFchsolicitud()?>',
+							value: '<?=$tarea?$tarea->getCaFchcreado("Y-m-d"):""?>',
 							format: "Y-m-d", 
 							allowBlank:false,
 							width: 120
@@ -168,7 +168,7 @@ Ext.onReady(function(){
 							xtype:'timefield',
 							fieldLabel: 'Hora de Solicitud',
 							name: 'horaSolicitud',
-							value: '<?=$cotizacion->getCaHoraSolicitud()?>',
+							value: '<?=$tarea?$tarea->getCaFchcreado("H:i:s"):""?>',
 							format: "H:i:s", 
 							allowBlank:false,
 							width: 140
@@ -349,7 +349,7 @@ Ext.onReady(function(){
 				]
             },
 			{
-                title:'Seguimientos',
+                title:'IDG',
                 layout:'form',
                 defaults: {width: 420},
 
@@ -363,7 +363,7 @@ Ext.onReady(function(){
 				    },
 				    layoutConfig: {
 				        // The total column count must be specified here
-				        columns: 3
+				        columns: 2
 				    },
 				    items: [
 					{
@@ -372,25 +372,43 @@ Ext.onReady(function(){
 							xtype:'datefield',
 							fieldLabel: 'Fecha de Presentación',
 							name: 'fchPresentacion',
-							value: '<?=$cotizacion->getCaFchpresentacion("Y-m-d")?>',
+							value: '<?=$cotizacion->getFchpresentacion("Y-m-d")?>',
 							format: "Y-m-d", 
 							allowBlank:true,
-							<?=$cotizacion->getCaFchpresentacion()?" disabled  : true, ":""?>
-							width: 120
-		                }]
-				    },{
-		                layout: 'form',
-		                items: [{
+							<?=$cotizacion->getFchpresentacion()?" disabled  : true, ":""?>
+							width: 120		                
+						},
+						
+						{
 							xtype:'timefield',
 							fieldLabel: 'Hora de Presentación',
 							name: 'horaPresentacion',
-							value: '<?=$cotizacion->getCaFchpresentacion("H:i:s")?>',
+							value: '<?=$cotizacion->getFchpresentacion("H:i:s")?>',
 							format: "H:i:s", 
 							allowBlank:true,
-							<?=$cotizacion->getCaFchpresentacion()?"disabled : true, ":""?>
+							<?=$cotizacion->getFchpresentacion()?"disabled : true, ":""?>
 							width: 100
-		                }]
-				    }]
+		                }
+						,{
+							xtype:'textfield',
+							width: 400,
+							fieldLabel: 'Observaciones',
+							name: 'observaciones_idg',
+							value: '<?=$tarea?$tarea->getCaObservaciones():""?>',
+							allowBlank:true
+						}
+						
+						]
+				    }
+					
+					
+					
+					
+					
+					
+					
+					
+					]
                 }
 				
 				
@@ -445,7 +463,7 @@ Ext.onReady(function(){
 	            							 	waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
 												success:function(response,options){														
 													<?
-													if( !$cotizacion->getCaIdcotizacion() || !$cotizacion->getCaFchsolicitud() ){
+													if( !$cotizacion->getCaIdcotizacion() || !$tarea ){
 													?>
 														document.location='<?=url_for("cotizaciones/consultaCotizacion?id=")?>'+options.result.idcotizacion;
 													<?
@@ -470,7 +488,7 @@ Ext.onReady(function(){
     });
 	mainPanel.render("panel1");
      <?
-	 if( $cotizacion->getCaIdcotizacion() && $cotizacion->getCaFchsolicitud() && $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
+	 if( $cotizacion->getCaIdcotizacion() && $tarea && $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
 	 	
 		 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){	
 			 include_component("cotizaciones","grillaProductos",array("cotizacion"=>$cotizacion));

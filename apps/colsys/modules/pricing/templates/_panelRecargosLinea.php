@@ -1,4 +1,8 @@
 <?
+/*
+Panel de recargos locales x naviera recargos x linea 
+*/
+
 use_helper("Ext2");
 
 if( $transporte==Constantes::MARITIMO ){ 
@@ -277,7 +281,11 @@ var colModel = new Ext.grid.ColumnModel({
 			<?
 			}
 			?>
-		},
+		}
+		<?
+		if( $modalidad!="FCL" ){
+		?>
+		,
 		{
 			header: "Mínimo",
 			width: 50,
@@ -321,11 +329,25 @@ var colModel = new Ext.grid.ColumnModel({
 			<?
 			}
 			?>
-		},
+		}
+		<?
+		}
+		?>
+		,
 		{
 			id: 'observaciones',
 			header: "Observaciones",
-			width: 100,
+			<?
+			if( $modalidad!="FCL" ){
+			?>	
+			width: 260, 
+			<?
+			}else{
+			?>
+			width: 100, 
+			<?
+			}
+			?>
 			sortable: false,
 			dataIndex: 'observaciones',
 			hideable: false,
