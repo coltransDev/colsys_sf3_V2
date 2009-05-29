@@ -117,26 +117,132 @@ class Utils{
 	from php.net
 	give the number of days from a date
 	*/
-	static function numeroDeDias($fecha, $ahora=""){
-		$day=substr($fecha,8,2);
-		$month=substr($fecha,5,2);
-		$year=substr($fecha,2,2);
+	static function diffTime($fecha, $ahora=""){		
 		
-		$opening = mktime(0, 0, 0, $month, $day, $year);
-		
+		$opening = strtotime($fecha);		
 		
 		if(!$ahora){
 			$now = time();
 		}
-		else{
-			$ahora = Utils::parseDate( $ahora, "Y-m-d" );
-			$now=mktime (0,0,0,substr($ahora,5,2),substr($ahora,8,2),substr($ahora,0,4));		
+		else{			
+			$now = strtotime($ahora);
 		}
+				
+		$second = $now-$opening;	
 			
-		$diff = ceil(($now-$opening ) / (86400));
-		
+		$diff = Utils::getHumanTime( $second );
 		return $diff;
 	}
+	
+	
+	/**
+	* Convierte el numero de segundos en dias, horas, minutos y segundos
+	*/
+	static function getHumanTime( $second, $include_days = false ){		
+				
+		
+		if( $second / (86400) >=0 ){						
+			$vlr = "";
+		}else{			
+			$vlr = "-";			
+		}
+		
+		$second = abs($second);
+		
+		if( $include_days ){
+			$dias = floor($second / (86400));				
+			$second = abs($second % 86400);
+		}
+		
+		$horas = floor( $second/3600 );
+		
+		$second =  $second%3600;
+		
+		$minutos = floor( $second/60 );
+				
+		$diff=$vlr;
+		
+		if( $include_days && $dias ){
+			$diff .= $dias." días ";
+		}
+		if( $horas ){	
+			$diff.= $horas." horas ";
+		}
+		if( $minutos ){		
+			$diff.= $minutos." min. ";
+		}
+		return $diff;
+	}
+	
+	
+	/*
+	* Busca todos los dias festivos de un año en adelante
+	* @author: Andres Botero
+	*/	
+	static function getFestivos( $aa=null ){	
+		$c = new Criteria();
+		if( $aa ){
+			$c->add( FestivoPeer::CA_FCHFESTIVO, $aa."-01-01", Criteria::GRATER_EQUAL );
+		}
+		$festivos = FestivoPeer::doSelect( $c );
+		$result = array();
+		foreach( $festivos as $festivo ){
+			$result[]=$festivo->getCaFchFestivo(); 
+		}
+		return $result;
+		
+		
+	}
+	
+	
+	/*
+	* Retorna el tiempo en segundos entre dos fechas teniendo en cuenta las horas habiles( 8a5 sin festivos).
+	* @author: Carlos Lopez
+	*/	
+	static function diffTimeWorkingHours($festiv, $inicio, $final){		
+		
+		$difer = 0;
+		$sig = 1;
+		if( $inicio>$final ){
+			$tmp = $inicio;
+			$inicio = $final;
+			$final = $tmp;
+			$sig = -1;
+		}
+		
+		
+		//echo "<br />--------------------------------------------------<br />";
+		
+		$start = strtotime($inicio);
+		$final = strtotime($final);
+		while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)){
+			
+		   //echo "<br />".date("Y-m-d H:i", $start)." ".$difer;			
+		   list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");	   
+		   if (date("N", $start)> 5){                                    // Evalua si es un fin de semana		   	
+			   $start = mktime(8,0,0,$mes,$dia+1,$ano);
+			   continue;
+		   }else if (in_array(date("Y-m-d", $start),$festiv)){           // Evalua si es un día festivo
+			   $start = mktime(8,0,0,$mes,$dia+1,$ano);
+			     
+			   continue;
+		   }else if ($start < mktime(8,0,0,$mes,$dia,$ano)){             // Evalua si es antes de las 8:00 am
+			   $start = mktime(8,0,0,$mes,$dia,$ano);
+			   continue;
+		   }else if ($start > mktime(16,59,0,$mes,$dia,$ano)){            // Evalua si es después de las 5:00 pm
+			   $start = mktime(8,0,0,$mes,$dia+1,$ano);
+			   continue;
+		   }else{
+		 
+			   $difer+=60;
+			   $start+=60;
+		   }
+		// echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
+		}
+		return $sig*$difer;
+	}
+	
+	
 	
 	
 	public static function getMonth( $m ){
