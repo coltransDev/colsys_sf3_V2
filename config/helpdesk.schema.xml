@@ -26,9 +26,9 @@
 		<column name="ca_opened" type="timestamp" />
 		<column name="ca_type" type="varchar" />
 		<column name="ca_assignedto" type="varchar" />
-		<column name="ca_action" type="varchar" />		
-		<column name="ca_responsetime" type="timestamp" />
+		<column name="ca_action" type="varchar" />				
 		<column name="ca_idtarea" type="integer" />
+		<column name="ca_idseguimiento" type="integer" />	
 				
 		<foreign-key foreignTable="helpdesk.tb_groups">
 			<reference local="ca_idgroup" foreign="ca_idgroup"/>

@@ -309,6 +309,10 @@
 		<column name="ca_content" type="blob"  />
 		<column name="ca_fchpublicado" type="timestamp"  />
 		<column name="ca_usupublicado" type="varchar"  />
+	</table>		
+	
+	<table name="tb_festivos" phpName="Festivo">				
+		<column name="ca_fchfestivo" type="date" required="true" primaryKey="true"  />		
 	</table>			
 		
 </database>

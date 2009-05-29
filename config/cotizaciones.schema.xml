@@ -13,9 +13,9 @@
 		<column name="ca_despedida" type="varchar"   />	
 		<column name="ca_usuario" type="varchar"   />	
 		<column name="ca_anexos" type="varchar"   />		
-		<column name="ca_fchcreado" type="date"   />	
+		<column name="ca_fchcreado" type="timestamp"   />	
 		<column name="ca_usucreado" type="varchar"   />	
-		<column name="ca_fchactualizado" type="date"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />	
 		<column name="ca_usuactualizado" type="varchar"   />	
 		<column name="ca_fchsolicitud" type="date"   />	
 		<column name="ca_horasolicitud" type="time"   />
@@ -25,10 +25,16 @@
 		<column name="ca_empresa" type="varchar"   />	
 		<column name="ca_datosag" type="varchar"   />
 		<column name="ca_fuente" type="varchar"   />		
-		
+		<column name="ca_idg_envio_oportuno" type="integer"   />		
+				
 		<foreign-key foreignTable="tb_concliente">
 			<reference local="ca_idcontacto" foreign="ca_idcontacto"/>
 		</foreign-key>	
+		
+		<foreign-key foreignTable="notificaciones.tb_tareas">
+			<reference local="ca_idg_envio_oportuno" foreign="ca_idtarea"/>
+		</foreign-key>	
+		
 		<foreign-key foreignTable="control.tb_usuarios">
 			<reference local="ca_usuario" foreign="ca_login"/>
 		</foreign-key>					

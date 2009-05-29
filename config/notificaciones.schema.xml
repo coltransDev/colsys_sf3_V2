@@ -20,7 +20,8 @@
 	<table name="notificaciones.tb_listatareas" phpName="NotListaTareas">
 		<column name="ca_idlistatarea" type="integer" required="true" primaryKey="true" autoIncrement="true" />
 		<id-method-parameter value="notificaciones.tb_listatareas_id"/>			
-		<column name="ca_nombre" type="varchar" />								
+		<column name="ca_nombre" type="varchar" />	
+		<column name="ca_descripcion" type="varchar" />								
 	</table>	
 	
 	<table name="notificaciones.tb_tareas" phpName="NotTarea">
@@ -35,7 +36,7 @@
 		<column name="ca_prioridad" type="integer" />
 		<column name="ca_fchcreado" type="timestamp" />	
 		<column name="ca_usucreado" type="varchar" />
-		
+		<column name="ca_observaciones" type="varchar" />		
 		<foreign-key foreignTable="notificaciones.tb_listatareas">
 			<reference local="ca_idlistatarea" foreign="ca_idlistatarea"/>
 		</foreign-key>								
