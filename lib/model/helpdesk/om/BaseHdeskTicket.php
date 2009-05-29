@@ -87,16 +87,16 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 	protected $ca_action;
 
 	/**
-	 * The value for the ca_responsetime field.
-	 * @var        string
-	 */
-	protected $ca_responsetime;
-
-	/**
 	 * The value for the ca_idtarea field.
 	 * @var        int
 	 */
 	protected $ca_idtarea;
+
+	/**
+	 * The value for the ca_idseguimiento field.
+	 * @var        int
+	 */
+	protected $ca_idseguimiento;
 
 	/**
 	 * @var        HdeskGroup
@@ -296,39 +296,6 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [optionally formatted] temporal [ca_responsetime] column value.
-	 * 
-	 *
-	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the raw DateTime object will be returned.
-	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-	 * @throws     PropelException - if unable to parse/validate the date/time value.
-	 */
-	public function getCaResponsetime($format = 'Y-m-d H:i:s')
-	{
-		if ($this->ca_responsetime === null) {
-			return null;
-		}
-
-
-
-		try {
-			$dt = new DateTime($this->ca_responsetime);
-		} catch (Exception $x) {
-			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_responsetime, true), $x);
-		}
-
-		if ($format === null) {
-			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-			return $dt;
-		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $dt->format('U'));
-		} else {
-			return $dt->format($format);
-		}
-	}
-
-	/**
 	 * Get the [ca_idtarea] column value.
 	 * 
 	 * @return     int
@@ -336,6 +303,16 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 	public function getCaIdtarea()
 	{
 		return $this->ca_idtarea;
+	}
+
+	/**
+	 * Get the [ca_idseguimiento] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdseguimiento()
+	{
+		return $this->ca_idseguimiento;
 	}
 
 	/**
@@ -600,55 +577,6 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 	} // setCaAction()
 
 	/**
-	 * Sets the value of [ca_responsetime] column to a normalized version of the date/time value specified.
-	 * 
-	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-	 *						be treated as NULL for temporal objects.
-	 * @return     HdeskTicket The current object (for fluent API support)
-	 */
-	public function setCaResponsetime($v)
-	{
-		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-		// -- which is unexpected, to say the least.
-		if ($v === null || $v === '') {
-			$dt = null;
-		} elseif ($v instanceof DateTime) {
-			$dt = $v;
-		} else {
-			// some string/numeric value passed; we normalize that so that we can
-			// validate it.
-			try {
-				if (is_numeric($v)) { // if it's a unix timestamp
-					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-					// We have to explicitly specify and then change the time zone because of a
-					// DateTime bug: http://bugs.php.net/bug.php?id=43003
-					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-				} else {
-					$dt = new DateTime($v);
-				}
-			} catch (Exception $x) {
-				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-			}
-		}
-
-		if ( $this->ca_responsetime !== null || $dt !== null ) {
-			// (nested ifs are a little easier to read in this case)
-
-			$currNorm = ($this->ca_responsetime !== null && $tmpDt = new DateTime($this->ca_responsetime)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
-			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
-
-			if ( ($currNorm !== $newNorm) // normalized values don't match 
-					)
-			{
-				$this->ca_responsetime = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
-				$this->modifiedColumns[] = HdeskTicketPeer::CA_RESPONSETIME;
-			}
-		} // if either are not null
-
-		return $this;
-	} // setCaResponsetime()
-
-	/**
 	 * Set the value of [ca_idtarea] column.
 	 * 
 	 * @param      int $v new value
@@ -671,6 +599,26 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 
 		return $this;
 	} // setCaIdtarea()
+
+	/**
+	 * Set the value of [ca_idseguimiento] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     HdeskTicket The current object (for fluent API support)
+	 */
+	public function setCaIdseguimiento($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idseguimiento !== $v) {
+			$this->ca_idseguimiento = $v;
+			$this->modifiedColumns[] = HdeskTicketPeer::CA_IDSEGUIMIENTO;
+		}
+
+		return $this;
+	} // setCaIdseguimiento()
 
 	/**
 	 * Indicates whether the columns in this object are only set to default values.
@@ -720,8 +668,8 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			$this->ca_type = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
 			$this->ca_assignedto = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->ca_action = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-			$this->ca_responsetime = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-			$this->ca_idtarea = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
+			$this->ca_idtarea = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
+			$this->ca_idseguimiento = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1136,10 +1084,10 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 				return $this->getCaAction();
 				break;
 			case 11:
-				return $this->getCaResponsetime();
+				return $this->getCaIdtarea();
 				break;
 			case 12:
-				return $this->getCaIdtarea();
+				return $this->getCaIdseguimiento();
 				break;
 			default:
 				return null;
@@ -1173,8 +1121,8 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 			$keys[8] => $this->getCaType(),
 			$keys[9] => $this->getCaAssignedto(),
 			$keys[10] => $this->getCaAction(),
-			$keys[11] => $this->getCaResponsetime(),
-			$keys[12] => $this->getCaIdtarea(),
+			$keys[11] => $this->getCaIdtarea(),
+			$keys[12] => $this->getCaIdseguimiento(),
 		);
 		return $result;
 	}
@@ -1240,10 +1188,10 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 				$this->setCaAction($value);
 				break;
 			case 11:
-				$this->setCaResponsetime($value);
+				$this->setCaIdtarea($value);
 				break;
 			case 12:
-				$this->setCaIdtarea($value);
+				$this->setCaIdseguimiento($value);
 				break;
 		} // switch()
 	}
@@ -1280,8 +1228,8 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[8], $arr)) $this->setCaType($arr[$keys[8]]);
 		if (array_key_exists($keys[9], $arr)) $this->setCaAssignedto($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCaAction($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaResponsetime($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaIdtarea($arr[$keys[12]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaIdtarea($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaIdseguimiento($arr[$keys[12]]);
 	}
 
 	/**
@@ -1304,8 +1252,8 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(HdeskTicketPeer::CA_TYPE)) $criteria->add(HdeskTicketPeer::CA_TYPE, $this->ca_type);
 		if ($this->isColumnModified(HdeskTicketPeer::CA_ASSIGNEDTO)) $criteria->add(HdeskTicketPeer::CA_ASSIGNEDTO, $this->ca_assignedto);
 		if ($this->isColumnModified(HdeskTicketPeer::CA_ACTION)) $criteria->add(HdeskTicketPeer::CA_ACTION, $this->ca_action);
-		if ($this->isColumnModified(HdeskTicketPeer::CA_RESPONSETIME)) $criteria->add(HdeskTicketPeer::CA_RESPONSETIME, $this->ca_responsetime);
 		if ($this->isColumnModified(HdeskTicketPeer::CA_IDTAREA)) $criteria->add(HdeskTicketPeer::CA_IDTAREA, $this->ca_idtarea);
+		if ($this->isColumnModified(HdeskTicketPeer::CA_IDSEGUIMIENTO)) $criteria->add(HdeskTicketPeer::CA_IDSEGUIMIENTO, $this->ca_idseguimiento);
 
 		return $criteria;
 	}
@@ -1380,9 +1328,9 @@ abstract class BaseHdeskTicket extends BaseObject  implements Persistent {
 
 		$copyObj->setCaAction($this->ca_action);
 
-		$copyObj->setCaResponsetime($this->ca_responsetime);
-
 		$copyObj->setCaIdtarea($this->ca_idtarea);
+
+		$copyObj->setCaIdseguimiento($this->ca_idseguimiento);
 
 
 		if ($deepCopy) {

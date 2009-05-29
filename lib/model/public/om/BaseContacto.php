@@ -1804,6 +1804,53 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in Contacto.
 	 */
+	public function getCotizacionsJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ContactoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotizacions === null) {
+			if ($this->isNew()) {
+				$this->collCotizacions = array();
+			} else {
+
+				$criteria->add(CotizacionPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+
+				$this->collCotizacions = CotizacionPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotizacionPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+
+			if (!isset($this->lastCotizacionCriteria) || !$this->lastCotizacionCriteria->equals($criteria)) {
+				$this->collCotizacions = CotizacionPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotizacionCriteria = $criteria;
+
+		return $this->collCotizacions;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Contacto is new, it will return
+	 * an empty collection; or if this Contacto has previously
+	 * been saved, it will retrieve related Cotizacions from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Contacto.
+	 */
 	public function getCotizacionsJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {

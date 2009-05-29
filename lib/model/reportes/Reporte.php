@@ -235,85 +235,15 @@ class Reporte extends BaseReporte
 		return $class;		*/
 	}
 	
-	/*
-	* Retorna un array con los status y las fechas (timestamp) correspondientes
-	* @author: Andres Botero
-	* */
-	public function getHistorialStatus(){
 		
-		if(!$this->historialStatus){
-			$this->historialStatus = array();
-			if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo"  ){
-				
-				$inoclientesSea = $this->getInoClientesSea();
-				
-				if( $inoclientesSea ){
-															
-					$refSea = $inoclientesSea->getInoMaestraSea();											
-					if( $refSea->getCaFchconfirmado( ) ){	
-						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["tipo"] = "status maritimo";
-						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["status"] = $inoclientesSea->getStatus(); 						
-						$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["etapa"] = "Confirmacion de llegada";
-						
-
-						$c = new Criteria();
-						$c->add( EmailPeer::CA_IDCASO , $inoclientesSea->getOid() );
-						$email = EmailPeer::doSelectOne( $c );
-						
-						if( $email ){
-							$this->historialStatus[strtotime($refSea->getCaFchconfirmado( ))]["emailid"] = $email->getCaIdEmail();				
-						}						
-					}						
-									
-					/*
-					* Status de OTM
-					*/
-					$statuss = $inoclientesSea->getStatuss();
-					//print_r( $statuss );
-					foreach( $statuss as $status){			
-						if( $status->getCaAviso () ){
-							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
-							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status OTM";
-							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getCaAviso (); 
-							$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = "";
-								
-						}								 
-					}
-				}
-			}
-			
-			
-			$i=0; 					
-			$statuss = $this->getRepStatuss();		
-					
-			foreach( $statuss as $status){			
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["emailid"] = $status->getCaIdEmail();
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["idstatus"] = $status->getCaIdstatus();
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["tipo"] = "status";
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["status"] = $status->getStatus (); 
-				$this->historialStatus[strtotime($status->getCaFchEnvio ())]["etapa"] = $status->getCaEtapa ();	 
-			}		
-		
-			krsort ($this->historialStatus);
-		}	
-		return $this->historialStatus;		
-		
-	}		
 	
 	/*
 	* Retorna la fecha del ultimo status, avisos, referencia, otm, etc.
 	* @author Andres Botero	
 	*/
 	public function getFchUltimoStatus( $format="Y-m-d" ){
-		//Se puede mejorar sacando solamente el ultimo status
-		// la diversidad de las tablas hacen dificil un procedimiento estandar
-		$historial = $this->getHistorialStatus();
+		return $this->getCaFchultstatus( $format );
 		
-		if( count($historial)>0 ){			
-			reset($historial);			
-			return date( $format , key($historial) );
-		}
-		return "";								
 	}
 	
 	/*
@@ -566,14 +496,12 @@ class Reporte extends BaseReporte
 		$c = new Criteria();
 		$c->addJoin(  RepCostoPeer::CA_IDCOSTO,  CostoPeer::CA_IDCOSTO  );
 		$c->addAscendingOrderByColumn( RepCostoPeer::OID );
-		
-		
+				
 		$c->add( CostoPeer::CA_IMPOEXPO , "Aduanas" );
 				
 		if( $this->getCaImpoExpo()=="Exportación" ){
 			$c->addOr( CostoPeer::CA_IMPOEXPO , "Exportacion" );
-		}
-				
+		}				
 		return $this->getRepCostos( $c );	
 	}
 	
@@ -705,17 +633,7 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getPiezas(){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){
-			$inoclientesSea = $this->getInoClientesSea();
-						
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();					
-				if( $refSea->getCaFchconfirmado(  ) ){					
-					return str_replace("|"," ",$inoclientesSea->getCaNumpiezas());
-				}				
-			}
-			
-		}
+		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaPiezas());
@@ -730,17 +648,7 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getPeso(){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){
-			$inoclientesSea = $this->getInoClientesSea();
-					
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();					
-				if( $refSea->getCaFchconfirmado(  ) ){					
-					return $inoclientesSea->getCaPeso()." Kilos";
-				}				
-			}
-			
-		}
+		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaPeso());
@@ -754,15 +662,7 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getVolumen(){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){
-			$inoclientesSea = $this->getInoClientesSea();						
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();					
-				if( $refSea->getCaFchconfirmado(  ) ){					
-					return $inoclientesSea->getCaVolumen()." M&sup3;";
-				}				
-			}			
-		}
+	
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaVolumen());
@@ -776,16 +676,7 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getDoctransporte(){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){
-			$inoclientesSea = $this->getInoClientesSea();
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();					
-				if( $refSea->getCaFchconfirmado(  ) ){					
-					return str_replace("|"," ",$inoclientesSea->getCaHbls());
-				}
-				
-			}
-		}
+		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return $status->getCaDoctransporte();
@@ -813,15 +704,7 @@ class Reporte extends BaseReporte
 	*/
 		
 	public function getETS( $format="Y-m-d" ){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){			
-			$inoclientesSea = $this->getInoClientesSea();			
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();					
-				if( $refSea->getCaFchconfirmado(  ) ){
-					return $refSea->getCaFchEmbarque( $format );
-				}
-			}
-		}
+		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return $status->getCaFchsalida( $format );
@@ -836,17 +719,8 @@ class Reporte extends BaseReporte
 	*/
 	public function getETA( $format="Y-m-d" ){
 		
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){			
-			$inoclientesSea = $this->getInoClientesSea();			
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();					
-				if( $refSea->getCaFchconfirmado(  ) ){
-					return $refSea->getCaFchconfirmacion( $format );
-				}
-			}
-		}
-		$status = $this->getUltimoStatus();
 		
+		$status = $this->getUltimoStatus();		
 		if( $status ){		
 			return $status->getCaFchllegada( $format );
 		}			
@@ -872,19 +746,7 @@ class Reporte extends BaseReporte
 	* Author: Andres Botero
 	*/
 	public function getIdNave( ){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){			
-			$inoclientesSea = $this->getInoClientesSea();			
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();					
-				if( $refSea->getCaFchconfirmado(  ) ){
-					if( $refSea->getCaMnLlegada(  ) ){
-						return $refSea->getCaMnLlegada(  );
-					}else{
-						return $refSea->getCaMotonave(  );
-					}
-				}
-			}
-		}
+		
 		$status = $this->getUltimoStatus();
 		
 		if( $status ){		
@@ -892,77 +754,6 @@ class Reporte extends BaseReporte
 		}			
 		return null;	
 	}
-	
-	
-	/*
-	* Devuelve la fecha de embarque del reporte que se encuentra en la referencia
-	* @author Andres Botero	
-	*/
-	public function getFchEmbarque( $format="Y-m-d" ){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){			
-			$inoclientesSea = $this->getInoClientesSea();			
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();	
-				return $refSea->getCaFchEmbarque( $format );
-			}
-		}
-	}
-	
-	
-	/*
-	* Devuelve la fecha de arribo del reporte que se encuentra en la referencia
-	* @author Andres Botero	
-	*/
-	public function getFcharribo( $format="Y-m-d" ){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){			
-			$inoclientesSea = $this->getInoClientesSea();			
-			if( $inoclientesSea ){
-				$refSea = $inoclientesSea->getInoMaestraSea();	
-				return $refSea->getCaFcharribo( $format );
-			}
-		}
-	}
-	
-	/*
-	* Retorna el ultimo cambio realizado en status, avisos, referencia, otm, etc.
-	* @author Andres Botero	
-	*/
-	public function getUltimaActualizacion( $format="Y-m-d" ){
-		if( $this->getCaImpoexpo()=="Importación" && $this->getCaTransporte()=="Marítimo" ){
-			$inoclientesSea = $this->getInoClientesSea();
-			if( $inoclientesSea ){
-				$statusOTM = $inoclientesSea->getUltimoStatusOTM();
-				if( $statusOTM ){
-					return $statusOTM->getCaFchaviso($format);
-				}else{
-					$refSea = $inoclientesSea->getInoMaestraSea();	
-					if( $refSea->getCaFchconfirmado( $format ) ){
-						return $refSea->getCaFchconfirmado( $format );
-					}					
-				}
-			}
-		}
-		$aviso = $this->getUltimoAviso();		
-		$status = $this->getUltimoStatus();
-				
-		if( $aviso && $status ){
-			if( Utils::compararFechas( $aviso->getCaFchEnvio("Y-m-d"), $status->getCaFchStatus("Y-m-d") )>=0 ){
-				return $aviso->getCaFchEnvio( $format );
-			}else{
-				return $status->getCaFchStatus( $format );
-			}											
-		}else{
-			if( $aviso ){
-				return $aviso->getCaFchEnvio( $format );
-			}
-			
-			if( $status ){
-				return $status->getCaFchStatus( $format );
-			}
-		}					
-	}
-	
-	
 	
 	
 	

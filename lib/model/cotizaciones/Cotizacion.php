@@ -10,6 +10,7 @@
 class Cotizacion extends BaseCotizacion
 {	
 	const EN_SEGUIMIENTO = "En seguimiento";  
+	const TIEMPO_IDG_ENTREGA_OPORTUNA = 43200; //12 h  
 	
 	public function getId(){
 		return $this->getCaIdcotizacion();
@@ -74,7 +75,7 @@ class Cotizacion extends BaseCotizacion
 		return CotRecargoPeer::doSelect($c);		
 	}
 	
-	
+		
 	/*
 	* Retorna verdadero si la cotización tiene no conceptos.
 	* @author Andres Botero
@@ -87,8 +88,88 @@ class Cotizacion extends BaseCotizacion
 		$count+=count($continuacion);
 		$seguros = $this->getCotSeguros();
 		$count+=count($seguros);
-		return $count==0;
+		return $count==0;		
+	}
+	
+	
+	
+	public function getTareaIDGEnvioOportuno(){
+				
+		$tarea=null;
+		if( $this->getCaIdgEnvioOportuno() ){
+			$tarea = NotTareaPeer::retrieveByPk( $this->getCaIdgEnvioOportuno() );
+		}
+		return $tarea;
+	}
+	
+	/*
+	*  Crea una nueva tarea IDG Envio Oportuno para la cotizacion
+	*/	
+	public function crearTareaIDGEnvioOportuno( $fchCreado ){
+		
+		$tarea = $this->getTareaIDGEnvioOportuno();	
+		if( !$tarea ){
+		
+			$titulo = "Cotización ".$this->getCaConsecutivo()." ".$this->getCliente()->getCaCompania();
+			$texto = "Debe enviar esta cotizacion por email o colocar la fecha de presentación para cumplir esta tarea.";
+		
+			$tarea = new NotTarea();	
+			$tarea->setCaIdListaTarea( 2 );		
+			$tarea->setCaUrl( "/cotizaciones/consultaCotizacion?id=".$this->getCaIdCotizacion() );					
+			
+			$tarea->setCaUsucreado( $this->getCaUsucreado() );
+			$tarea->setCaTitulo( $titulo );		
+			$tarea->setCaTexto( $texto );
+			$tarea->setCaFchcreado(  $fchCreado );			
+			$tarea->setCaFchvencimiento( strtotime( $fchCreado )+Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
+			$tarea->save();
+				
+			$this->setCaIdgEnvioOportuno( $tarea->getCaIdtarea() );
+			$this->save();			
+		}
+		
+		
+		$tarea->setCaFchcreado(  $fchCreado );			
+		$tarea->setCaFchvencimiento( strtotime( $fchCreado )+Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
+		$tarea->save();
+		
+		if( $tarea ){					
+			$loginsAsignaciones = array( $this->getCaUsucreado(), $this->getCaUsuario() );	
+			if( $this->getCaUsuactualizado() ){
+				$loginsAsignaciones[]=$this->getCaUsuactualizado();
+			}						
+			$tarea->setAsignaciones( $loginsAsignaciones );				
+		}
+		
+		return $tarea;	
+						
+			
 		
 	}
+	/*
+	*
+	*/
+	
+	public function setFchPresentacion( $fchEnvio ){		
+		$tarea = $this->getTareaIDGEnvioOportuno();		
+		$tarea->setCaFchterminada( $fchEnvio );
+		$tarea->save();
+	}
+	
+	
+	public function getFchpresentacion( $format=null ){		
+		$tarea = $this->getTareaIDGEnvioOportuno();	
+		if( $tarea ){	
+			return $tarea->getCaFchterminada( $format );
+		}else{
+			return null;
+		}
+		
+	}
+	
+	
+	
+	
+	
 }
 ?>

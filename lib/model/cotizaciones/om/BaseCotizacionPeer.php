@@ -19,7 +19,7 @@ abstract class BaseCotizacionPeer {
 	const CLASS_DEFAULT = 'lib.model.cotizaciones.Cotizacion';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 21;
+	const NUM_COLUMNS = 22;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -87,6 +87,9 @@ abstract class BaseCotizacionPeer {
 	/** the column name for the CA_FUENTE field */
 	const CA_FUENTE = 'tb_cotizaciones.CA_FUENTE';
 
+	/** the column name for the CA_IDG_ENVIO_OPORTUNO field */
+	const CA_IDG_ENVIO_OPORTUNO = 'tb_cotizaciones.CA_IDG_ENVIO_OPORTUNO';
+
 	/**
 	 * An identiy map to hold any loaded instances of Cotizacion objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -108,11 +111,11 @@ abstract class BaseCotizacionPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdcontacto', 'CaConsecutivo', 'CaAsunto', 'CaSaludo', 'CaEntrada', 'CaDespedida', 'CaUsuario', 'CaAnexos', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchsolicitud', 'CaHorasolicitud', 'CaFchpresentacion', 'CaFchanulado', 'CaUsuanulado', 'CaEmpresa', 'CaDatosag', 'CaFuente', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion', 'caIdcontacto', 'caConsecutivo', 'caAsunto', 'caSaludo', 'caEntrada', 'caDespedida', 'caUsuario', 'caAnexos', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caFchsolicitud', 'caHorasolicitud', 'caFchpresentacion', 'caFchanulado', 'caUsuanulado', 'caEmpresa', 'caDatosag', 'caFuente', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION, self::CA_IDCONTACTO, self::CA_CONSECUTIVO, self::CA_ASUNTO, self::CA_SALUDO, self::CA_ENTRADA, self::CA_DESPEDIDA, self::CA_USUARIO, self::CA_ANEXOS, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_FCHSOLICITUD, self::CA_HORASOLICITUD, self::CA_FCHPRESENTACION, self::CA_FCHANULADO, self::CA_USUANULADO, self::CA_EMPRESA, self::CA_DATOSAG, self::CA_FUENTE, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idcontacto', 'ca_consecutivo', 'ca_asunto', 'ca_saludo', 'ca_entrada', 'ca_despedida', 'ca_usuario', 'ca_anexos', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fchsolicitud', 'ca_horasolicitud', 'ca_fchpresentacion', 'ca_fchanulado', 'ca_usuanulado', 'ca_empresa', 'ca_datosag', 'ca_fuente', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion', 'CaIdcontacto', 'CaConsecutivo', 'CaAsunto', 'CaSaludo', 'CaEntrada', 'CaDespedida', 'CaUsuario', 'CaAnexos', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchsolicitud', 'CaHorasolicitud', 'CaFchpresentacion', 'CaFchanulado', 'CaUsuanulado', 'CaEmpresa', 'CaDatosag', 'CaFuente', 'CaIdgEnvioOportuno', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion', 'caIdcontacto', 'caConsecutivo', 'caAsunto', 'caSaludo', 'caEntrada', 'caDespedida', 'caUsuario', 'caAnexos', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caFchsolicitud', 'caHorasolicitud', 'caFchpresentacion', 'caFchanulado', 'caUsuanulado', 'caEmpresa', 'caDatosag', 'caFuente', 'caIdgEnvioOportuno', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION, self::CA_IDCONTACTO, self::CA_CONSECUTIVO, self::CA_ASUNTO, self::CA_SALUDO, self::CA_ENTRADA, self::CA_DESPEDIDA, self::CA_USUARIO, self::CA_ANEXOS, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_FCHSOLICITUD, self::CA_HORASOLICITUD, self::CA_FCHPRESENTACION, self::CA_FCHANULADO, self::CA_USUANULADO, self::CA_EMPRESA, self::CA_DATOSAG, self::CA_FUENTE, self::CA_IDG_ENVIO_OPORTUNO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion', 'ca_idcontacto', 'ca_consecutivo', 'ca_asunto', 'ca_saludo', 'ca_entrada', 'ca_despedida', 'ca_usuario', 'ca_anexos', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fchsolicitud', 'ca_horasolicitud', 'ca_fchpresentacion', 'ca_fchanulado', 'ca_usuanulado', 'ca_empresa', 'ca_datosag', 'ca_fuente', 'ca_idg_envio_oportuno', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, )
 	);
 
 	/**
@@ -122,11 +125,11 @@ abstract class BaseCotizacionPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdcontacto' => 1, 'CaConsecutivo' => 2, 'CaAsunto' => 3, 'CaSaludo' => 4, 'CaEntrada' => 5, 'CaDespedida' => 6, 'CaUsuario' => 7, 'CaAnexos' => 8, 'CaFchcreado' => 9, 'CaUsucreado' => 10, 'CaFchactualizado' => 11, 'CaUsuactualizado' => 12, 'CaFchsolicitud' => 13, 'CaHorasolicitud' => 14, 'CaFchpresentacion' => 15, 'CaFchanulado' => 16, 'CaUsuanulado' => 17, 'CaEmpresa' => 18, 'CaDatosag' => 19, 'CaFuente' => 20, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion' => 0, 'caIdcontacto' => 1, 'caConsecutivo' => 2, 'caAsunto' => 3, 'caSaludo' => 4, 'caEntrada' => 5, 'caDespedida' => 6, 'caUsuario' => 7, 'caAnexos' => 8, 'caFchcreado' => 9, 'caUsucreado' => 10, 'caFchactualizado' => 11, 'caUsuactualizado' => 12, 'caFchsolicitud' => 13, 'caHorasolicitud' => 14, 'caFchpresentacion' => 15, 'caFchanulado' => 16, 'caUsuanulado' => 17, 'caEmpresa' => 18, 'caDatosag' => 19, 'caFuente' => 20, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION => 0, self::CA_IDCONTACTO => 1, self::CA_CONSECUTIVO => 2, self::CA_ASUNTO => 3, self::CA_SALUDO => 4, self::CA_ENTRADA => 5, self::CA_DESPEDIDA => 6, self::CA_USUARIO => 7, self::CA_ANEXOS => 8, self::CA_FCHCREADO => 9, self::CA_USUCREADO => 10, self::CA_FCHACTUALIZADO => 11, self::CA_USUACTUALIZADO => 12, self::CA_FCHSOLICITUD => 13, self::CA_HORASOLICITUD => 14, self::CA_FCHPRESENTACION => 15, self::CA_FCHANULADO => 16, self::CA_USUANULADO => 17, self::CA_EMPRESA => 18, self::CA_DATOSAG => 19, self::CA_FUENTE => 20, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idcontacto' => 1, 'ca_consecutivo' => 2, 'ca_asunto' => 3, 'ca_saludo' => 4, 'ca_entrada' => 5, 'ca_despedida' => 6, 'ca_usuario' => 7, 'ca_anexos' => 8, 'ca_fchcreado' => 9, 'ca_usucreado' => 10, 'ca_fchactualizado' => 11, 'ca_usuactualizado' => 12, 'ca_fchsolicitud' => 13, 'ca_horasolicitud' => 14, 'ca_fchpresentacion' => 15, 'ca_fchanulado' => 16, 'ca_usuanulado' => 17, 'ca_empresa' => 18, 'ca_datosag' => 19, 'ca_fuente' => 20, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcotizacion' => 0, 'CaIdcontacto' => 1, 'CaConsecutivo' => 2, 'CaAsunto' => 3, 'CaSaludo' => 4, 'CaEntrada' => 5, 'CaDespedida' => 6, 'CaUsuario' => 7, 'CaAnexos' => 8, 'CaFchcreado' => 9, 'CaUsucreado' => 10, 'CaFchactualizado' => 11, 'CaUsuactualizado' => 12, 'CaFchsolicitud' => 13, 'CaHorasolicitud' => 14, 'CaFchpresentacion' => 15, 'CaFchanulado' => 16, 'CaUsuanulado' => 17, 'CaEmpresa' => 18, 'CaDatosag' => 19, 'CaFuente' => 20, 'CaIdgEnvioOportuno' => 21, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcotizacion' => 0, 'caIdcontacto' => 1, 'caConsecutivo' => 2, 'caAsunto' => 3, 'caSaludo' => 4, 'caEntrada' => 5, 'caDespedida' => 6, 'caUsuario' => 7, 'caAnexos' => 8, 'caFchcreado' => 9, 'caUsucreado' => 10, 'caFchactualizado' => 11, 'caUsuactualizado' => 12, 'caFchsolicitud' => 13, 'caHorasolicitud' => 14, 'caFchpresentacion' => 15, 'caFchanulado' => 16, 'caUsuanulado' => 17, 'caEmpresa' => 18, 'caDatosag' => 19, 'caFuente' => 20, 'caIdgEnvioOportuno' => 21, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCOTIZACION => 0, self::CA_IDCONTACTO => 1, self::CA_CONSECUTIVO => 2, self::CA_ASUNTO => 3, self::CA_SALUDO => 4, self::CA_ENTRADA => 5, self::CA_DESPEDIDA => 6, self::CA_USUARIO => 7, self::CA_ANEXOS => 8, self::CA_FCHCREADO => 9, self::CA_USUCREADO => 10, self::CA_FCHACTUALIZADO => 11, self::CA_USUACTUALIZADO => 12, self::CA_FCHSOLICITUD => 13, self::CA_HORASOLICITUD => 14, self::CA_FCHPRESENTACION => 15, self::CA_FCHANULADO => 16, self::CA_USUANULADO => 17, self::CA_EMPRESA => 18, self::CA_DATOSAG => 19, self::CA_FUENTE => 20, self::CA_IDG_ENVIO_OPORTUNO => 21, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcotizacion' => 0, 'ca_idcontacto' => 1, 'ca_consecutivo' => 2, 'ca_asunto' => 3, 'ca_saludo' => 4, 'ca_entrada' => 5, 'ca_despedida' => 6, 'ca_usuario' => 7, 'ca_anexos' => 8, 'ca_fchcreado' => 9, 'ca_usucreado' => 10, 'ca_fchactualizado' => 11, 'ca_usuactualizado' => 12, 'ca_fchsolicitud' => 13, 'ca_horasolicitud' => 14, 'ca_fchpresentacion' => 15, 'ca_fchanulado' => 16, 'ca_usuanulado' => 17, 'ca_empresa' => 18, 'ca_datosag' => 19, 'ca_fuente' => 20, 'ca_idg_envio_oportuno' => 21, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, )
 	);
 
 	/**
@@ -249,6 +252,8 @@ abstract class BaseCotizacionPeer {
 		$criteria->addSelectColumn(CotizacionPeer::CA_DATOSAG);
 
 		$criteria->addSelectColumn(CotizacionPeer::CA_FUENTE);
+
+		$criteria->addSelectColumn(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO);
 
 	}
 
@@ -541,6 +546,56 @@ abstract class BaseCotizacionPeer {
 
 
 	/**
+	 * Returns the number of rows matching criteria, joining the related NotTarea table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(CotizacionPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			CotizacionPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
 	 * Returns the number of rows matching criteria, joining the related Usuario table
 	 *
 	 * @param      Criteria $c
@@ -658,6 +713,73 @@ abstract class BaseCotizacionPeer {
 
 
 	/**
+	 * Selects a collection of Cotizacion objects pre-filled with their NotTarea objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of Cotizacion objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		CotizacionPeer::addSelectColumns($c);
+		$startcol = (CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS);
+		NotTareaPeer::addSelectColumns($c);
+
+		$c->addJoin(array(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = CotizacionPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = CotizacionPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = CotizacionPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				CotizacionPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = NotTareaPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = NotTareaPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					NotTareaPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (Cotizacion) to $obj2 (NotTarea)
+				$obj2->addCotizacion($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
 	 * Selects a collection of Cotizacion objects pre-filled with their Usuario objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -761,6 +883,7 @@ abstract class BaseCotizacionPeer {
 		}
 
 		$criteria->addJoin(array(CotizacionPeer::CA_IDCONTACTO,), array(ContactoPeer::CA_IDCONTACTO,), $join_behavior);
+		$criteria->addJoin(array(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$criteria->addJoin(array(CotizacionPeer::CA_USUARIO,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -798,10 +921,14 @@ abstract class BaseCotizacionPeer {
 		ContactoPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (ContactoPeer::NUM_COLUMNS - ContactoPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		NotTareaPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		UsuarioPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+		$startcol5 = $startcol4 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
 
 		$c->addJoin(array(CotizacionPeer::CA_IDCONTACTO,), array(ContactoPeer::CA_IDCONTACTO,), $join_behavior);
+		$c->addJoin(array(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$c->addJoin(array(CotizacionPeer::CA_USUARIO,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -841,24 +968,44 @@ abstract class BaseCotizacionPeer {
 				$obj2->addCotizacion($obj1);
 			} // if joined row not null
 
-			// Add objects for joined Usuario rows
+			// Add objects for joined NotTarea rows
 
-			$key3 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			$key3 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 			if ($key3 !== null) {
-				$obj3 = UsuarioPeer::getInstanceFromPool($key3);
+				$obj3 = NotTareaPeer::getInstanceFromPool($key3);
 				if (!$obj3) {
 
-					$omClass = UsuarioPeer::getOMClass();
+					$omClass = NotTareaPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
-					UsuarioPeer::addInstanceToPool($obj3, $key3);
+					NotTareaPeer::addInstanceToPool($obj3, $key3);
 				} // if obj3 loaded
 
-				// Add the $obj1 (Cotizacion) to the collection in $obj3 (Usuario)
+				// Add the $obj1 (Cotizacion) to the collection in $obj3 (NotTarea)
 				$obj3->addCotizacion($obj1);
+			} // if joined row not null
+
+			// Add objects for joined Usuario rows
+
+			$key4 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol4);
+			if ($key4 !== null) {
+				$obj4 = UsuarioPeer::getInstanceFromPool($key4);
+				if (!$obj4) {
+
+					$omClass = UsuarioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj4 = new $cls();
+					$obj4->hydrate($row, $startcol4);
+					UsuarioPeer::addInstanceToPool($obj4, $key4);
+				} // if obj4 loaded
+
+				// Add the $obj1 (Cotizacion) to the collection in $obj4 (Usuario)
+				$obj4->addCotizacion($obj1);
 			} // if joined row not null
 
 			$results[] = $obj1;
@@ -899,6 +1046,52 @@ abstract class BaseCotizacionPeer {
 			$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
+				$criteria->addJoin(array(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+				$criteria->addJoin(array(CotizacionPeer::CA_USUARIO,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related NotTarea table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			CotizacionPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(CotizacionPeer::CA_IDCONTACTO,), array(ContactoPeer::CA_IDCONTACTO,), $join_behavior);
 				$criteria->addJoin(array(CotizacionPeer::CA_USUARIO,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -944,6 +1137,7 @@ abstract class BaseCotizacionPeer {
 		}
 	
 				$criteria->addJoin(array(CotizacionPeer::CA_IDCONTACTO,), array(ContactoPeer::CA_IDCONTACTO,), $join_behavior);
+				$criteria->addJoin(array(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -980,9 +1174,13 @@ abstract class BaseCotizacionPeer {
 		CotizacionPeer::addSelectColumns($c);
 		$startcol2 = (CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		UsuarioPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+		NotTareaPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		UsuarioPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 				$c->addJoin(array(CotizacionPeer::CA_USUARIO,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
@@ -1003,24 +1201,45 @@ abstract class BaseCotizacionPeer {
 				CotizacionPeer::addInstanceToPool($obj1, $key1);
 			} // if obj1 already loaded
 
-				// Add objects for joined Usuario rows
+				// Add objects for joined NotTarea rows
 
-				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				$key2 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
-					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
+					$obj2 = NotTareaPeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$omClass = UsuarioPeer::getOMClass();
+						$omClass = NotTareaPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
-					UsuarioPeer::addInstanceToPool($obj2, $key2);
+					NotTareaPeer::addInstanceToPool($obj2, $key2);
 				} // if $obj2 already loaded
 
-				// Add the $obj1 (Cotizacion) to the collection in $obj2 (Usuario)
+				// Add the $obj1 (Cotizacion) to the collection in $obj2 (NotTarea)
 				$obj2->addCotizacion($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Usuario rows
+
+				$key3 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = UsuarioPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = UsuarioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					UsuarioPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (Cotizacion) to the collection in $obj3 (Usuario)
+				$obj3->addCotizacion($obj1);
 
 			} // if joined row is not null
 
@@ -1032,7 +1251,7 @@ abstract class BaseCotizacionPeer {
 
 
 	/**
-	 * Selects a collection of Cotizacion objects pre-filled with all related objects except Usuario.
+	 * Selects a collection of Cotizacion objects pre-filled with all related objects except NotTarea.
 	 *
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -1041,7 +1260,7 @@ abstract class BaseCotizacionPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptUsuario(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -1058,7 +1277,11 @@ abstract class BaseCotizacionPeer {
 		ContactoPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (ContactoPeer::NUM_COLUMNS - ContactoPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		UsuarioPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+
 				$c->addJoin(array(CotizacionPeer::CA_IDCONTACTO,), array(ContactoPeer::CA_IDCONTACTO,), $join_behavior);
+				$c->addJoin(array(CotizacionPeer::CA_USUARIO,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1096,6 +1319,127 @@ abstract class BaseCotizacionPeer {
 
 				// Add the $obj1 (Cotizacion) to the collection in $obj2 (Contacto)
 				$obj2->addCotizacion($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined Usuario rows
+
+				$key3 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = UsuarioPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = UsuarioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					UsuarioPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (Cotizacion) to the collection in $obj3 (Usuario)
+				$obj3->addCotizacion($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of Cotizacion objects pre-filled with all related objects except Usuario.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of Cotizacion objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptUsuario(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		CotizacionPeer::addSelectColumns($c);
+		$startcol2 = (CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		ContactoPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (ContactoPeer::NUM_COLUMNS - ContactoPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		NotTareaPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(CotizacionPeer::CA_IDCONTACTO,), array(ContactoPeer::CA_IDCONTACTO,), $join_behavior);
+				$c->addJoin(array(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = CotizacionPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = CotizacionPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = CotizacionPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				CotizacionPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Contacto rows
+
+				$key2 = ContactoPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = ContactoPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = ContactoPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					ContactoPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (Cotizacion) to the collection in $obj2 (Contacto)
+				$obj2->addCotizacion($obj1);
+
+			} // if joined row is not null
+
+				// Add objects for joined NotTarea rows
+
+				$key3 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+				if ($key3 !== null) {
+					$obj3 = NotTareaPeer::getInstanceFromPool($key3);
+					if (!$obj3) {
+	
+						$omClass = NotTareaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					NotTareaPeer::addInstanceToPool($obj3, $key3);
+				} // if $obj3 already loaded
+
+				// Add the $obj1 (Cotizacion) to the collection in $obj3 (NotTarea)
+				$obj3->addCotizacion($obj1);
 
 			} // if joined row is not null
 

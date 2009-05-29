@@ -19,7 +19,7 @@ abstract class BaseNotListaTareasPeer {
 	const CLASS_DEFAULT = 'lib.model.notificaciones.NotListaTareas';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 2;
+	const NUM_COLUMNS = 3;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -29,6 +29,9 @@ abstract class BaseNotListaTareasPeer {
 
 	/** the column name for the CA_NOMBRE field */
 	const CA_NOMBRE = 'notificaciones.tb_listatareas.CA_NOMBRE';
+
+	/** the column name for the CA_DESCRIPCION field */
+	const CA_DESCRIPCION = 'notificaciones.tb_listatareas.CA_DESCRIPCION';
 
 	/**
 	 * An identiy map to hold any loaded instances of NotListaTareas objects.
@@ -51,11 +54,11 @@ abstract class BaseNotListaTareasPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdlistatarea', 'CaNombre', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdlistatarea', 'caNombre', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDLISTATAREA, self::CA_NOMBRE, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idlistatarea', 'ca_nombre', ),
-		BasePeer::TYPE_NUM => array (0, 1, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdlistatarea', 'CaNombre', 'CaDescripcion', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdlistatarea', 'caNombre', 'caDescripcion', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDLISTATAREA, self::CA_NOMBRE, self::CA_DESCRIPCION, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idlistatarea', 'ca_nombre', 'ca_descripcion', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, )
 	);
 
 	/**
@@ -65,11 +68,11 @@ abstract class BaseNotListaTareasPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdlistatarea' => 0, 'CaNombre' => 1, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdlistatarea' => 0, 'caNombre' => 1, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDLISTATAREA => 0, self::CA_NOMBRE => 1, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idlistatarea' => 0, 'ca_nombre' => 1, ),
-		BasePeer::TYPE_NUM => array (0, 1, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdlistatarea' => 0, 'CaNombre' => 1, 'CaDescripcion' => 2, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdlistatarea' => 0, 'caNombre' => 1, 'caDescripcion' => 2, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDLISTATAREA => 0, self::CA_NOMBRE => 1, self::CA_DESCRIPCION => 2, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idlistatarea' => 0, 'ca_nombre' => 1, 'ca_descripcion' => 2, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, )
 	);
 
 	/**
@@ -154,6 +157,8 @@ abstract class BaseNotListaTareasPeer {
 		$criteria->addSelectColumn(NotListaTareasPeer::CA_IDLISTATAREA);
 
 		$criteria->addSelectColumn(NotListaTareasPeer::CA_NOMBRE);
+
+		$criteria->addSelectColumn(NotListaTareasPeer::CA_DESCRIPCION);
 
 	}
 

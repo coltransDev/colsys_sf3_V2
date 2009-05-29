@@ -33,6 +33,12 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 	protected $ca_nombre;
 
 	/**
+	 * The value for the ca_descripcion field.
+	 * @var        string
+	 */
+	protected $ca_descripcion;
+
+	/**
 	 * @var        array NotTarea[] Collection to store aggregation of NotTarea objects.
 	 */
 	protected $collNotTareas;
@@ -97,6 +103,16 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [ca_descripcion] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaDescripcion()
+	{
+		return $this->ca_descripcion;
+	}
+
+	/**
 	 * Set the value of [ca_idlistatarea] column.
 	 * 
 	 * @param      int $v new value
@@ -137,6 +153,26 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 	} // setCaNombre()
 
 	/**
+	 * Set the value of [ca_descripcion] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     NotListaTareas The current object (for fluent API support)
+	 */
+	public function setCaDescripcion($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_descripcion !== $v) {
+			$this->ca_descripcion = $v;
+			$this->modifiedColumns[] = NotListaTareasPeer::CA_DESCRIPCION;
+		}
+
+		return $this;
+	} // setCaDescripcion()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -175,6 +211,7 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 
 			$this->ca_idlistatarea = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
 			$this->ca_nombre = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->ca_descripcion = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -184,7 +221,7 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 2; // 2 = NotListaTareasPeer::NUM_COLUMNS - NotListaTareasPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 3; // 3 = NotListaTareasPeer::NUM_COLUMNS - NotListaTareasPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating NotListaTareas object", $e);
@@ -482,6 +519,9 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 			case 1:
 				return $this->getCaNombre();
 				break;
+			case 2:
+				return $this->getCaDescripcion();
+				break;
 			default:
 				return null;
 				break;
@@ -505,6 +545,7 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 		$result = array(
 			$keys[0] => $this->getCaIdlistatarea(),
 			$keys[1] => $this->getCaNombre(),
+			$keys[2] => $this->getCaDescripcion(),
 		);
 		return $result;
 	}
@@ -542,6 +583,9 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 			case 1:
 				$this->setCaNombre($value);
 				break;
+			case 2:
+				$this->setCaDescripcion($value);
+				break;
 		} // switch()
 	}
 
@@ -568,6 +612,7 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdlistatarea($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaNombre($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaDescripcion($arr[$keys[2]]);
 	}
 
 	/**
@@ -581,6 +626,7 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 
 		if ($this->isColumnModified(NotListaTareasPeer::CA_IDLISTATAREA)) $criteria->add(NotListaTareasPeer::CA_IDLISTATAREA, $this->ca_idlistatarea);
 		if ($this->isColumnModified(NotListaTareasPeer::CA_NOMBRE)) $criteria->add(NotListaTareasPeer::CA_NOMBRE, $this->ca_nombre);
+		if ($this->isColumnModified(NotListaTareasPeer::CA_DESCRIPCION)) $criteria->add(NotListaTareasPeer::CA_DESCRIPCION, $this->ca_descripcion);
 
 		return $criteria;
 	}
@@ -636,6 +682,8 @@ abstract class BaseNotListaTareas extends BaseObject  implements Persistent {
 	{
 
 		$copyObj->setCaNombre($this->ca_nombre);
+
+		$copyObj->setCaDescripcion($this->ca_descripcion);
 
 
 		if ($deepCopy) {

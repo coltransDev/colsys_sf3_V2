@@ -82,11 +82,11 @@ class CotizacionMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_ANEXOS', 'CaAnexos', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'DATE', false, null);
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
 
 		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'DATE', false, null);
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', false, null);
 
 		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
@@ -105,6 +105,8 @@ class CotizacionMapBuilder implements MapBuilder {
 		$tMap->addColumn('CA_DATOSAG', 'CaDatosag', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_FUENTE', 'CaFuente', 'VARCHAR', false, null);
+
+		$tMap->addForeignKey('CA_IDG_ENVIO_OPORTUNO', 'CaIdgEnvioOportuno', 'INTEGER', 'notificaciones.tb_tareas', 'CA_IDTAREA', false, null);
 
 	} // doBuild()
 

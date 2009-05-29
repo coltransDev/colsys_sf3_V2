@@ -84,6 +84,8 @@ class NotTareaMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_OBSERVACIONES', 'CaObservaciones', 'VARCHAR', false, null);
+
 	} // doBuild()
 
 } // NotTareaMapBuilder

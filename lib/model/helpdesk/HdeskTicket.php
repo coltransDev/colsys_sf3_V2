@@ -17,11 +17,11 @@ class HdeskTicket extends BaseHdeskTicket
 	*/	
 	public function getLoginsGroup(){
 		$loginsAsignaciones = array( );
-		if( $ticket->getCaAssignedto() ){
-			$loginsAsignaciones[]=$ticket->getCaAssignedto();
+		if( $this->getCaAssignedto() ){
+			$loginsAsignaciones[]=$this->getCaAssignedto();
 		}else{
 			$c = new Criteria();		
-			$c->add( HdeskUserGroupPeer::CA_IDGROUP, $ticket->getCaIdgroup() );
+			$c->add( HdeskUserGroupPeer::CA_IDGROUP, $this->getCaIdgroup() );
 			$c->addAscendingOrderByColumn( HdeskUserGroupPeer::CA_LOGIN);
 			$usuarios = HdeskUserGroupPeer::doSelect( $c );		
 			foreach( $usuarios as $usuario ){
@@ -30,6 +30,27 @@ class HdeskTicket extends BaseHdeskTicket
 		}
 		return array_unique( $loginsAsignaciones );
 	}
+	
+	
+	public function getTareaSeguimiento(){
+				
+		$tarea=null;
+		if( $this->getCaIdseguimiento() ){
+			$tarea = NotTareaPeer::retrieveByPk( $this->getCaIdseguimiento() );
+		}		
+		return $tarea;
+	}
+	
+	public function getTareaIdg(){
+		
+		$tarea=null;
+		if( $this->getCaIdtarea() ){
+			$tarea = NotTareaPeer::retrieveByPk( $this->getCaIdtarea() );			
+		}		
+		return $tarea;
+	}
+	
+	
 	
 }
 ?>

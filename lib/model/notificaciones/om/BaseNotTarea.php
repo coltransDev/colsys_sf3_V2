@@ -81,9 +81,25 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	protected $ca_usucreado;
 
 	/**
+	 * The value for the ca_observaciones field.
+	 * @var        string
+	 */
+	protected $ca_observaciones;
+
+	/**
 	 * @var        NotListaTareas
 	 */
 	protected $aNotListaTareas;
+
+	/**
+	 * @var        array Cotizacion[] Collection to store aggregation of Cotizacion objects.
+	 */
+	protected $collCotizacions;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collCotizacions.
+	 */
+	private $lastCotizacionCriteria = null;
 
 	/**
 	 * @var        array HdeskTicket[] Collection to store aggregation of HdeskTicket objects.
@@ -306,6 +322,16 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	public function getCaUsucreado()
 	{
 		return $this->ca_usucreado;
+	}
+
+	/**
+	 * Get the [ca_observaciones] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaObservaciones()
+	{
+		return $this->ca_observaciones;
 	}
 
 	/**
@@ -600,6 +626,26 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	} // setCaUsucreado()
 
 	/**
+	 * Set the value of [ca_observaciones] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     NotTarea The current object (for fluent API support)
+	 */
+	public function setCaObservaciones($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_observaciones !== $v) {
+			$this->ca_observaciones = $v;
+			$this->modifiedColumns[] = NotTareaPeer::CA_OBSERVACIONES;
+		}
+
+		return $this;
+	} // setCaObservaciones()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -646,6 +692,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$this->ca_prioridad = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
 			$this->ca_fchcreado = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
 			$this->ca_usucreado = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_observaciones = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -655,7 +702,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 10; // 10 = NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 11; // 11 = NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating NotTarea object", $e);
@@ -721,6 +768,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		if ($deep) {  // also de-associate any related objects?
 
 			$this->aNotListaTareas = null;
+			$this->collCotizacions = null;
+			$this->lastCotizacionCriteria = null;
+
 			$this->collHdeskTickets = null;
 			$this->lastHdeskTicketCriteria = null;
 
@@ -846,6 +896,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
+			if ($this->collCotizacions !== null) {
+				foreach ($this->collCotizacions as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collHdeskTickets !== null) {
 				foreach ($this->collHdeskTickets as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -945,6 +1003,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			}
 
 
+				if ($this->collCotizacions !== null) {
+					foreach ($this->collCotizacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
 				if ($this->collHdeskTickets !== null) {
 					foreach ($this->collHdeskTickets as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
@@ -1024,6 +1090,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			case 9:
 				return $this->getCaUsucreado();
 				break;
+			case 10:
+				return $this->getCaObservaciones();
+				break;
 			default:
 				return null;
 				break;
@@ -1055,6 +1124,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$keys[7] => $this->getCaPrioridad(),
 			$keys[8] => $this->getCaFchcreado(),
 			$keys[9] => $this->getCaUsucreado(),
+			$keys[10] => $this->getCaObservaciones(),
 		);
 		return $result;
 	}
@@ -1116,6 +1186,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			case 9:
 				$this->setCaUsucreado($value);
 				break;
+			case 10:
+				$this->setCaObservaciones($value);
+				break;
 		} // switch()
 	}
 
@@ -1150,6 +1223,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[7], $arr)) $this->setCaPrioridad($arr[$keys[7]]);
 		if (array_key_exists($keys[8], $arr)) $this->setCaFchcreado($arr[$keys[8]]);
 		if (array_key_exists($keys[9], $arr)) $this->setCaUsucreado($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaObservaciones($arr[$keys[10]]);
 	}
 
 	/**
@@ -1171,6 +1245,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(NotTareaPeer::CA_PRIORIDAD)) $criteria->add(NotTareaPeer::CA_PRIORIDAD, $this->ca_prioridad);
 		if ($this->isColumnModified(NotTareaPeer::CA_FCHCREADO)) $criteria->add(NotTareaPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(NotTareaPeer::CA_USUCREADO)) $criteria->add(NotTareaPeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(NotTareaPeer::CA_OBSERVACIONES)) $criteria->add(NotTareaPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 
 		return $criteria;
 	}
@@ -1243,11 +1318,19 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 
 		$copyObj->setCaUsucreado($this->ca_usucreado);
 
+		$copyObj->setCaObservaciones($this->ca_observaciones);
+
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
+
+			foreach ($this->getCotizacions() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotizacion($relObj->copy($deepCopy));
+				}
+			}
 
 			foreach ($this->getHdeskTickets() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1357,6 +1440,254 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aNotListaTareas;
+	}
+
+	/**
+	 * Clears out the collCotizacions collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotizacions()
+	 */
+	public function clearCotizacions()
+	{
+		$this->collCotizacions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotizacions collection (array).
+	 *
+	 * By default this just sets the collCotizacions collection to an empty array (like clearcollCotizacions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initCotizacions()
+	{
+		$this->collCotizacions = array();
+	}
+
+	/**
+	 * Gets an array of Cotizacion objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NotTarea has previously been saved, it will retrieve
+	 * related Cotizacions from storage. If this NotTarea is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array Cotizacion[]
+	 * @throws     PropelException
+	 */
+	public function getCotizacions($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotizacions === null) {
+			if ($this->isNew()) {
+			   $this->collCotizacions = array();
+			} else {
+
+				$criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idtarea);
+
+				CotizacionPeer::addSelectColumns($criteria);
+				$this->collCotizacions = CotizacionPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idtarea);
+
+				CotizacionPeer::addSelectColumns($criteria);
+				if (!isset($this->lastCotizacionCriteria) || !$this->lastCotizacionCriteria->equals($criteria)) {
+					$this->collCotizacions = CotizacionPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastCotizacionCriteria = $criteria;
+		return $this->collCotizacions;
+	}
+
+	/**
+	 * Returns the number of related Cotizacion objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Cotizacion objects.
+	 * @throws     PropelException
+	 */
+	public function countCotizacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collCotizacions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idtarea);
+
+				$count = CotizacionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idtarea);
+
+				if (!isset($this->lastCotizacionCriteria) || !$this->lastCotizacionCriteria->equals($criteria)) {
+					$count = CotizacionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotizacions);
+				}
+			} else {
+				$count = count($this->collCotizacions);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a Cotizacion object to this object
+	 * through the Cotizacion foreign key attribute.
+	 *
+	 * @param      Cotizacion $l Cotizacion
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addCotizacion(Cotizacion $l)
+	{
+		if ($this->collCotizacions === null) {
+			$this->initCotizacions();
+		}
+		if (!in_array($l, $this->collCotizacions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotizacions, $l);
+			$l->setNotTarea($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related Cotizacions from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getCotizacionsJoinContacto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotizacions === null) {
+			if ($this->isNew()) {
+				$this->collCotizacions = array();
+			} else {
+
+				$criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idtarea);
+
+				$this->collCotizacions = CotizacionPeer::doSelectJoinContacto($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idtarea);
+
+			if (!isset($this->lastCotizacionCriteria) || !$this->lastCotizacionCriteria->equals($criteria)) {
+				$this->collCotizacions = CotizacionPeer::doSelectJoinContacto($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotizacionCriteria = $criteria;
+
+		return $this->collCotizacions;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related Cotizacions from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getCotizacionsJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotizacions === null) {
+			if ($this->isNew()) {
+				$this->collCotizacions = array();
+			} else {
+
+				$criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idtarea);
+
+				$this->collCotizacions = CotizacionPeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idtarea);
+
+			if (!isset($this->lastCotizacionCriteria) || !$this->lastCotizacionCriteria->equals($criteria)) {
+				$this->collCotizacions = CotizacionPeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotizacionCriteria = $criteria;
+
+		return $this->collCotizacions;
 	}
 
 	/**
@@ -1867,6 +2198,11 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collCotizacions) {
+				foreach ((array) $this->collCotizacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collHdeskTickets) {
 				foreach ((array) $this->collHdeskTickets as $o) {
 					$o->clearAllReferences($deep);
@@ -1879,6 +2215,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			}
 		} // if ($deep)
 
+		$this->collCotizacions = null;
 		$this->collHdeskTickets = null;
 		$this->collNotTareaAsignacions = null;
 			$this->aNotListaTareas = null;

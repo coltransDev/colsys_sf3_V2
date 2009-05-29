@@ -147,9 +147,20 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	protected $ca_fuente;
 
 	/**
+	 * The value for the ca_idg_envio_oportuno field.
+	 * @var        int
+	 */
+	protected $ca_idg_envio_oportuno;
+
+	/**
 	 * @var        Contacto
 	 */
 	protected $aContacto;
+
+	/**
+	 * @var        NotTarea
+	 */
+	protected $aNotTarea;
 
 	/**
 	 * @var        Usuario
@@ -329,7 +340,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
 	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
-	public function getCaFchcreado($format = 'Y-m-d')
+	public function getCaFchcreado($format = 'Y-m-d H:i:s')
 	{
 		if ($this->ca_fchcreado === null) {
 			return null;
@@ -372,7 +383,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
 	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
-	public function getCaFchactualizado($format = 'Y-m-d')
+	public function getCaFchactualizado($format = 'Y-m-d H:i:s')
 	{
 		if ($this->ca_fchactualizado === null) {
 			return null;
@@ -576,6 +587,16 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	public function getCaFuente()
 	{
 		return $this->ca_fuente;
+	}
+
+	/**
+	 * Get the [ca_idg_envio_oportuno] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdgEnvioOportuno()
+	{
+		return $this->ca_idg_envio_oportuno;
 	}
 
 	/**
@@ -801,13 +822,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ( $this->ca_fchcreado !== null || $dt !== null ) {
 			// (nested ifs are a little easier to read in this case)
 
-			$currNorm = ($this->ca_fchcreado !== null && $tmpDt = new DateTime($this->ca_fchcreado)) ? $tmpDt->format('Y-m-d') : null;
-			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+			$currNorm = ($this->ca_fchcreado !== null && $tmpDt = new DateTime($this->ca_fchcreado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
 
 			if ( ($currNorm !== $newNorm) // normalized values don't match 
 					)
 			{
-				$this->ca_fchcreado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->ca_fchcreado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
 				$this->modifiedColumns[] = CotizacionPeer::CA_FCHCREADO;
 			}
 		} // if either are not null
@@ -870,13 +891,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ( $this->ca_fchactualizado !== null || $dt !== null ) {
 			// (nested ifs are a little easier to read in this case)
 
-			$currNorm = ($this->ca_fchactualizado !== null && $tmpDt = new DateTime($this->ca_fchactualizado)) ? $tmpDt->format('Y-m-d') : null;
-			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+			$currNorm = ($this->ca_fchactualizado !== null && $tmpDt = new DateTime($this->ca_fchactualizado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
 
 			if ( ($currNorm !== $newNorm) // normalized values don't match 
 					)
 			{
-				$this->ca_fchactualizado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->ca_fchactualizado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
 				$this->modifiedColumns[] = CotizacionPeer::CA_FCHACTUALIZADO;
 			}
 		} // if either are not null
@@ -1181,6 +1202,30 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	} // setCaFuente()
 
 	/**
+	 * Set the value of [ca_idg_envio_oportuno] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     Cotizacion The current object (for fluent API support)
+	 */
+	public function setCaIdgEnvioOportuno($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idg_envio_oportuno !== $v) {
+			$this->ca_idg_envio_oportuno = $v;
+			$this->modifiedColumns[] = CotizacionPeer::CA_IDG_ENVIO_OPORTUNO;
+		}
+
+		if ($this->aNotTarea !== null && $this->aNotTarea->getCaIdtarea() !== $v) {
+			$this->aNotTarea = null;
+		}
+
+		return $this;
+	} // setCaIdgEnvioOportuno()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -1238,6 +1283,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->ca_empresa = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
 			$this->ca_datosag = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
 			$this->ca_fuente = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_idg_envio_oportuno = ($row[$startcol + 21] !== null) ? (int) $row[$startcol + 21] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1247,7 +1293,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 21; // 21 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 22; // 22 = CotizacionPeer::NUM_COLUMNS - CotizacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cotizacion object", $e);
@@ -1275,6 +1321,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		}
 		if ($this->aUsuario !== null && $this->ca_usuario !== $this->aUsuario->getCaLogin()) {
 			$this->aUsuario = null;
+		}
+		if ($this->aNotTarea !== null && $this->ca_idg_envio_oportuno !== $this->aNotTarea->getCaIdtarea()) {
+			$this->aNotTarea = null;
 		}
 	} // ensureConsistency
 
@@ -1316,6 +1365,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ($deep) {  // also de-associate any related objects?
 
 			$this->aContacto = null;
+			$this->aNotTarea = null;
 			$this->aUsuario = null;
 			$this->collCotProductos = null;
 			$this->lastCotProductoCriteria = null;
@@ -1424,6 +1474,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 					$affectedRows += $this->aContacto->save($con);
 				}
 				$this->setContacto($this->aContacto);
+			}
+
+			if ($this->aNotTarea !== null) {
+				if ($this->aNotTarea->isModified() || $this->aNotTarea->isNew()) {
+					$affectedRows += $this->aNotTarea->save($con);
+				}
+				$this->setNotTarea($this->aNotTarea);
 			}
 
 			if ($this->aUsuario !== null) {
@@ -1561,6 +1618,12 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			if ($this->aContacto !== null) {
 				if (!$this->aContacto->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aContacto->getValidationFailures());
+				}
+			}
+
+			if ($this->aNotTarea !== null) {
+				if (!$this->aNotTarea->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aNotTarea->getValidationFailures());
 				}
 			}
 
@@ -1704,6 +1767,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 20:
 				return $this->getCaFuente();
 				break;
+			case 21:
+				return $this->getCaIdgEnvioOportuno();
+				break;
 			default:
 				return null;
 				break;
@@ -1746,6 +1812,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$keys[18] => $this->getCaEmpresa(),
 			$keys[19] => $this->getCaDatosag(),
 			$keys[20] => $this->getCaFuente(),
+			$keys[21] => $this->getCaIdgEnvioOportuno(),
 		);
 		return $result;
 	}
@@ -1840,6 +1907,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			case 20:
 				$this->setCaFuente($value);
 				break;
+			case 21:
+				$this->setCaIdgEnvioOportuno($value);
+				break;
 		} // switch()
 	}
 
@@ -1885,6 +1955,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[18], $arr)) $this->setCaEmpresa($arr[$keys[18]]);
 		if (array_key_exists($keys[19], $arr)) $this->setCaDatosag($arr[$keys[19]]);
 		if (array_key_exists($keys[20], $arr)) $this->setCaFuente($arr[$keys[20]]);
+		if (array_key_exists($keys[21], $arr)) $this->setCaIdgEnvioOportuno($arr[$keys[21]]);
 	}
 
 	/**
@@ -1917,6 +1988,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotizacionPeer::CA_EMPRESA)) $criteria->add(CotizacionPeer::CA_EMPRESA, $this->ca_empresa);
 		if ($this->isColumnModified(CotizacionPeer::CA_DATOSAG)) $criteria->add(CotizacionPeer::CA_DATOSAG, $this->ca_datosag);
 		if ($this->isColumnModified(CotizacionPeer::CA_FUENTE)) $criteria->add(CotizacionPeer::CA_FUENTE, $this->ca_fuente);
+		if ($this->isColumnModified(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO)) $criteria->add(CotizacionPeer::CA_IDG_ENVIO_OPORTUNO, $this->ca_idg_envio_oportuno);
 
 		return $criteria;
 	}
@@ -2010,6 +2082,8 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$copyObj->setCaDatosag($this->ca_datosag);
 
 		$copyObj->setCaFuente($this->ca_fuente);
+
+		$copyObj->setCaIdgEnvioOportuno($this->ca_idg_envio_oportuno);
 
 
 		if ($deepCopy) {
@@ -2137,6 +2211,57 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aContacto;
+	}
+
+	/**
+	 * Declares an association between this object and a NotTarea object.
+	 *
+	 * @param      NotTarea $v
+	 * @return     Cotizacion The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setNotTarea(NotTarea $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdgEnvioOportuno(NULL);
+		} else {
+			$this->setCaIdgEnvioOportuno($v->getCaIdtarea());
+		}
+
+		$this->aNotTarea = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the NotTarea object, it will not be re-added.
+		if ($v !== null) {
+			$v->addCotizacion($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated NotTarea object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     NotTarea The associated NotTarea object.
+	 * @throws     PropelException
+	 */
+	public function getNotTarea(PropelPDO $con = null)
+	{
+		if ($this->aNotTarea === null && ($this->ca_idg_envio_oportuno !== null)) {
+			$c = new Criteria(NotTareaPeer::DATABASE_NAME);
+			$c->add(NotTareaPeer::CA_IDTAREA, $this->ca_idg_envio_oportuno);
+			$this->aNotTarea = NotTareaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNotTarea->addCotizacions($this);
+			 */
+		}
+		return $this->aNotTarea;
 	}
 
 	/**
@@ -2986,6 +3111,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		$this->collCotSeguros = null;
 		$this->collCotArchivos = null;
 			$this->aContacto = null;
+			$this->aNotTarea = null;
 			$this->aUsuario = null;
 	}
 

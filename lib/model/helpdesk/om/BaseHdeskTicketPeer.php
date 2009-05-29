@@ -57,11 +57,11 @@ abstract class BaseHdeskTicketPeer {
 	/** the column name for the CA_ACTION field */
 	const CA_ACTION = 'helpdesk.tb_tickets.CA_ACTION';
 
-	/** the column name for the CA_RESPONSETIME field */
-	const CA_RESPONSETIME = 'helpdesk.tb_tickets.CA_RESPONSETIME';
-
 	/** the column name for the CA_IDTAREA field */
 	const CA_IDTAREA = 'helpdesk.tb_tickets.CA_IDTAREA';
+
+	/** the column name for the CA_IDSEGUIMIENTO field */
+	const CA_IDSEGUIMIENTO = 'helpdesk.tb_tickets.CA_IDSEGUIMIENTO';
 
 	/**
 	 * An identiy map to hold any loaded instances of HdeskTicket objects.
@@ -84,10 +84,10 @@ abstract class BaseHdeskTicketPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdticket', 'CaIdgroup', 'CaIdproject', 'CaLogin', 'CaTitle', 'CaText', 'CaPriority', 'CaOpened', 'CaType', 'CaAssignedto', 'CaAction', 'CaResponsetime', 'CaIdtarea', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdticket', 'caIdgroup', 'caIdproject', 'caLogin', 'caTitle', 'caText', 'caPriority', 'caOpened', 'caType', 'caAssignedto', 'caAction', 'caResponsetime', 'caIdtarea', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDTICKET, self::CA_IDGROUP, self::CA_IDPROJECT, self::CA_LOGIN, self::CA_TITLE, self::CA_TEXT, self::CA_PRIORITY, self::CA_OPENED, self::CA_TYPE, self::CA_ASSIGNEDTO, self::CA_ACTION, self::CA_RESPONSETIME, self::CA_IDTAREA, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idticket', 'ca_idgroup', 'ca_idproject', 'ca_login', 'ca_title', 'ca_text', 'ca_priority', 'ca_opened', 'ca_type', 'ca_assignedto', 'ca_action', 'ca_responsetime', 'ca_idtarea', ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdticket', 'CaIdgroup', 'CaIdproject', 'CaLogin', 'CaTitle', 'CaText', 'CaPriority', 'CaOpened', 'CaType', 'CaAssignedto', 'CaAction', 'CaIdtarea', 'CaIdseguimiento', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdticket', 'caIdgroup', 'caIdproject', 'caLogin', 'caTitle', 'caText', 'caPriority', 'caOpened', 'caType', 'caAssignedto', 'caAction', 'caIdtarea', 'caIdseguimiento', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTICKET, self::CA_IDGROUP, self::CA_IDPROJECT, self::CA_LOGIN, self::CA_TITLE, self::CA_TEXT, self::CA_PRIORITY, self::CA_OPENED, self::CA_TYPE, self::CA_ASSIGNEDTO, self::CA_ACTION, self::CA_IDTAREA, self::CA_IDSEGUIMIENTO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idticket', 'ca_idgroup', 'ca_idproject', 'ca_login', 'ca_title', 'ca_text', 'ca_priority', 'ca_opened', 'ca_type', 'ca_assignedto', 'ca_action', 'ca_idtarea', 'ca_idseguimiento', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
@@ -98,10 +98,10 @@ abstract class BaseHdeskTicketPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdticket' => 0, 'CaIdgroup' => 1, 'CaIdproject' => 2, 'CaLogin' => 3, 'CaTitle' => 4, 'CaText' => 5, 'CaPriority' => 6, 'CaOpened' => 7, 'CaType' => 8, 'CaAssignedto' => 9, 'CaAction' => 10, 'CaResponsetime' => 11, 'CaIdtarea' => 12, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdticket' => 0, 'caIdgroup' => 1, 'caIdproject' => 2, 'caLogin' => 3, 'caTitle' => 4, 'caText' => 5, 'caPriority' => 6, 'caOpened' => 7, 'caType' => 8, 'caAssignedto' => 9, 'caAction' => 10, 'caResponsetime' => 11, 'caIdtarea' => 12, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDTICKET => 0, self::CA_IDGROUP => 1, self::CA_IDPROJECT => 2, self::CA_LOGIN => 3, self::CA_TITLE => 4, self::CA_TEXT => 5, self::CA_PRIORITY => 6, self::CA_OPENED => 7, self::CA_TYPE => 8, self::CA_ASSIGNEDTO => 9, self::CA_ACTION => 10, self::CA_RESPONSETIME => 11, self::CA_IDTAREA => 12, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idticket' => 0, 'ca_idgroup' => 1, 'ca_idproject' => 2, 'ca_login' => 3, 'ca_title' => 4, 'ca_text' => 5, 'ca_priority' => 6, 'ca_opened' => 7, 'ca_type' => 8, 'ca_assignedto' => 9, 'ca_action' => 10, 'ca_responsetime' => 11, 'ca_idtarea' => 12, ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdticket' => 0, 'CaIdgroup' => 1, 'CaIdproject' => 2, 'CaLogin' => 3, 'CaTitle' => 4, 'CaText' => 5, 'CaPriority' => 6, 'CaOpened' => 7, 'CaType' => 8, 'CaAssignedto' => 9, 'CaAction' => 10, 'CaIdtarea' => 11, 'CaIdseguimiento' => 12, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdticket' => 0, 'caIdgroup' => 1, 'caIdproject' => 2, 'caLogin' => 3, 'caTitle' => 4, 'caText' => 5, 'caPriority' => 6, 'caOpened' => 7, 'caType' => 8, 'caAssignedto' => 9, 'caAction' => 10, 'caIdtarea' => 11, 'caIdseguimiento' => 12, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTICKET => 0, self::CA_IDGROUP => 1, self::CA_IDPROJECT => 2, self::CA_LOGIN => 3, self::CA_TITLE => 4, self::CA_TEXT => 5, self::CA_PRIORITY => 6, self::CA_OPENED => 7, self::CA_TYPE => 8, self::CA_ASSIGNEDTO => 9, self::CA_ACTION => 10, self::CA_IDTAREA => 11, self::CA_IDSEGUIMIENTO => 12, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idticket' => 0, 'ca_idgroup' => 1, 'ca_idproject' => 2, 'ca_login' => 3, 'ca_title' => 4, 'ca_text' => 5, 'ca_priority' => 6, 'ca_opened' => 7, 'ca_type' => 8, 'ca_assignedto' => 9, 'ca_action' => 10, 'ca_idtarea' => 11, 'ca_idseguimiento' => 12, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
@@ -206,9 +206,9 @@ abstract class BaseHdeskTicketPeer {
 
 		$criteria->addSelectColumn(HdeskTicketPeer::CA_ACTION);
 
-		$criteria->addSelectColumn(HdeskTicketPeer::CA_RESPONSETIME);
-
 		$criteria->addSelectColumn(HdeskTicketPeer::CA_IDTAREA);
+
+		$criteria->addSelectColumn(HdeskTicketPeer::CA_IDSEGUIMIENTO);
 
 	}
 

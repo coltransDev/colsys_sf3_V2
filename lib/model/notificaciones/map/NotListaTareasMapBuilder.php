@@ -68,6 +68,8 @@ class NotListaTareasMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_DESCRIPCION', 'CaDescripcion', 'VARCHAR', false, null);
+
 	} // doBuild()
 
 } // NotListaTareasMapBuilder
