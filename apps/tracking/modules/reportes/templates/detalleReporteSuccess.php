@@ -156,7 +156,16 @@ $fileIdx = 0;
 	</tr>
 		<?
 	if ($referencia) {
-
+	?>
+	<tr>
+		<td>
+		<div align="left"><b>Referencia:</b><br />
+        <?=$referencia->getCaReferencia ()?>
+	    </div>		</td>
+		<td>
+		&nbsp;	</td>
+	</tr>
+	<?
 		if ($via =="Marítimo" &&$referencia->getCaFchLiberacion ()) {
 			?>
 	<tr>
@@ -199,9 +208,7 @@ $fileIdx = 0;
 	        <?=$ingreso->getCaReccaja () ? $ingreso->getCaReccaja () : "&nbsp;"?>
 		    </div>		</td>
 		<td>
-		<div align="left"><b>Referencia:</b><br />
-        <?=$referencia->getCaReferencia ()?>
-	    </div>		</td>
+		&nbsp;	</td>
 	</tr>	  
 	
 	  		<?

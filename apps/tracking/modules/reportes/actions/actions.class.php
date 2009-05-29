@@ -93,7 +93,7 @@ class reportesActions extends sfActions
 					
 		$respuesta  = new RepStatusRespuesta();
 		$respuesta->setCaIdstatus( $idstatus );
-		$respuesta->setCaRespuesta( $comentario );
+		$respuesta->setCaRespuesta( utf8_decode($comentario) );
 		$respuesta->setCaFchcreado( time() );
 		
 		$user = $this->getUser()->getTrackingUser();	
