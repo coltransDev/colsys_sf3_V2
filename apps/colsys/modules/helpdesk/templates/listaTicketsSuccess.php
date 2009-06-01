@@ -7,31 +7,38 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 	
 	if( $ticket->getCaIdgroup()!=$grupo ){ 	
 		$grupo = $ticket->getCaIdgroup();
-			 
+		$ticketsAbiertos = 0;
+		$ticketsSinRespuesta = 0;			 
 	?>
-<br />
-<br />
-
-<table width="95%" border="1" class="tableList">
-  <tr>
-    <th colspan="10"><?=$ticket->getHdeskGroup()->getCaName()?></th>
-    </tr>    
-  <tr>
-    <th width="76">Ticket # </th>
-    <th width="223">Titulo</th>
-    <th width="69">Usuario</th>
-    <th width="72">Fecha</th>
-    <th width="58">Tipo</th>
-	<th width="58">Proyecto</th>
-	<th width="110">Prioridad</th>
-	<th width="110">Asignado a</th>
-    <th width="132">Fecha Respuesta </th>
-    <th width="88">Estado</th>
-  </tr>    
-  <?
+		<br />
+		<br />
+		
+		<table width="95%" border="1" class="tableList">
+		  <tr>
+			<th colspan="10"><?=$ticket->getHdeskGroup()->getCaName()?></th>
+			</tr>    
+		  <tr>
+			<th width="76">Ticket # </th>
+			<th width="223">Titulo</th>
+			<th width="69">Usuario</th>
+			<th width="72">Fecha</th>
+			<th width="58">Tipo</th>
+			<th width="58">Proyecto</th>
+			<th width="110">Prioridad</th>
+			<th width="110">Asignado a</th>
+			<th width="132">Fecha Respuesta </th>
+			<th width="88">Estado</th>
+		  </tr>    
+		  <?
 	}
   	
 	$class="";
+	
+	if($ticket->getCaAction()=="Abierto"){
+		$ticketsAbiertos++;
+	}
+		
+	
   	if($ticket->getCaAction()!="Abierto"){
 	  	$class="blue";
 	}else{
@@ -48,7 +55,7 @@ for( $i =0 ; $i<$numtickets; $i++ ){
     <td><?=link_to($ticket->getCaIdticket(),"helpdesk/verTicket?id=".$ticket->getCaIdticket())?></td>
     <td><?=link_to($ticket->getCaTitle(),"helpdesk/verTicket?id=".$ticket->getCaIdticket())?></td>
     <td><?=$ticket->getCaLogin()?></td>
-    <td><?=$ticket->getCaOpened("Y-m-d")?></td>
+    <td><?=Utils::fechaMes($ticket->getCaOpened("Y-m-d"))?></td>
     <td><?=$ticket->getCaType()?></td>
 	<td>
 		<?
@@ -73,13 +80,14 @@ for( $i =0 ; $i<$numtickets; $i++ ){
     <td>
 		<?
 		$tarea = $ticket->getNotTarea(); 
-		if( $tarea ){
-			echo $tarea->getCaFchterminada(  );	
+		if( $tarea && $tarea->getCaFchterminada() ){
+			echo Utils::fechaMes($tarea->getCaFchterminada("Y-m-d"))." ".$tarea->getCaFchterminada("H:i");	
 		
 		}else{
 			echo "&nbsp;";
-		}	
-		//$ticket->getCaResponsetime("Y-m-d h:i A")
+			$ticketsSinRespuesta++;
+			
+		}			
 		?></td>
     <td><?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","helpdesk/cerrarTicket?id=".$ticket->getCaidticket() ):""?></td>
   </tr> 
@@ -87,6 +95,10 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 	if( !isset($tickets[$i+1])||$tickets[$i+1]->getCaIdgroup()!=$grupo ){ 
 	?>
 </table>
+<br />
+<b>Ticket Abiertos:</b> <?=$ticketsAbiertos?> <b>Tickets Sin Respuesta:</b> <?=$ticketsSinRespuesta?>		
+<br /><br />
+
 <?
 	}
 ?>

@@ -24,10 +24,14 @@ Vista previa
     <th colspan="2" scope="col">&nbsp;<b><?=Utils::replace($ticket->getCaTitle())?></b></th>
   </tr>
   
-  <tr>
-    <td width="50%" class="listar"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getcaNombre():$ticket->getCaLogin()?></td>
-    <td width="50%" class="listar"><b>Abierto </b> <?=$ticket->getCaOpened("Y-m-d H:i A")?> </td>
-  </tr>  
+ <tr>
+    <td width="50%" class="listar"><b>Reportado por:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getCaNombre():$ticket->getCaLogin()?></td>
+    <td width="50%" class="listar"><b>Abierto </b> <?=Utils::fechaMes($ticket->getCaOpened("Y-m-d"))." ".$ticket->getCaOpened("H:i:s");	?> </td>
+	</tr>
+	<tr>
+    <td width="50%" class="listar"><b>Contacto:</b> <?=$ticket->getUsuario()?$ticket->getUsuario()->getSucursal()->getCaNombre()." ".$ticket->getUsuario()->getCaExtension():"&nbsp;"?></td>
+    <td width="50%" class="listar">&nbsp; </td>
+  </tr>
  
    <tr>
     <td class="listar"><b>Departamento:</b>
