@@ -243,6 +243,46 @@ class Utils{
 	}
 	
 	
+	/*
+	* Retorna el timestamp añadiendo el numero de segundos a la fecha de inicio 
+	* teniendo en cuenta las horas habiles( 8a5 sin festivos).
+	* @author: Andres Botero
+	*/	
+	static function addTimeWorkingHours($festiv, $inicio, $segundos ){		
+		
+		$result = 0;			
+		$start = strtotime($inicio);		
+		$time = ($segundos/60)*60;
+		$segundos = $segundos%60;
+			
+		while ( $time>0 ){
+		   list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");	   
+		   if (date("N", $start)> 5){                                    // Evalua si es un fin de semana		   	
+			   $start = mktime(8,0,0,$mes,$dia+1,$ano);
+			   continue;
+		   }else if (in_array(date("Y-m-d", $start),$festiv)){           // Evalua si es un día festivo
+			   $start = mktime(8,0,0,$mes,$dia+1,$ano);
+			     
+			   continue;
+		   }else if ($start < mktime(8,0,0,$mes,$dia,$ano)){             // Evalua si es antes de las 8:00 am
+			   $start = mktime(8,0,0,$mes,$dia,$ano);
+			   continue;
+		   }else if ($start > mktime(16,59,0,$mes,$dia,$ano)){            // Evalua si es después de las 5:00 pm
+			   $start = mktime(8,0,0,$mes,$dia+1,$ano);
+			   continue;
+		   }else{
+			   $start+=60;
+		   }		   
+		   $time -= 60;		   
+		}
+				
+		$start+=$segundos;		
+		return $start;
+	}
+	
+	
+	
+	
 	
 	
 	public static function getMonth( $m ){
