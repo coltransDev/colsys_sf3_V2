@@ -51,6 +51,12 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	protected $ca_texto;
 
 	/**
+	 * The value for the ca_fchvisible field.
+	 * @var        string
+	 */
+	protected $ca_fchvisible;
+
+	/**
 	 * The value for the ca_fchvencimiento field.
 	 * @var        string
 	 */
@@ -61,6 +67,12 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	 * @var        string
 	 */
 	protected $ca_fchterminada;
+
+	/**
+	 * The value for the ca_usuterminada field.
+	 * @var        string
+	 */
+	protected $ca_usuterminada;
 
 	/**
 	 * The value for the ca_prioridad field.
@@ -120,6 +132,16 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	 * @var        Criteria The criteria used to select the current contents of collNotTareaAsignacions.
 	 */
 	private $lastNotTareaAsignacionCriteria = null;
+
+	/**
+	 * @var        array RepAsignacion[] Collection to store aggregation of RepAsignacion objects.
+	 */
+	protected $collRepAsignacions;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collRepAsignacions.
+	 */
+	private $lastRepAsignacionCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -206,6 +228,39 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [optionally formatted] temporal [ca_fchvisible] column value.
+	 * 
+	 *
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
+	 */
+	public function getCaFchvisible($format = 'Y-m-d H:i:s')
+	{
+		if ($this->ca_fchvisible === null) {
+			return null;
+		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchvisible);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchvisible, true), $x);
+		}
+
+		if ($format === null) {
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $dt->format('U'));
+		} else {
+			return $dt->format($format);
+		}
+	}
+
+	/**
 	 * Get the [optionally formatted] temporal [ca_fchvencimiento] column value.
 	 * 
 	 *
@@ -269,6 +324,16 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		} else {
 			return $dt->format($format);
 		}
+	}
+
+	/**
+	 * Get the [ca_usuterminada] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsuterminada()
+	{
+		return $this->ca_usuterminada;
 	}
 
 	/**
@@ -439,6 +504,55 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	} // setCaTexto()
 
 	/**
+	 * Sets the value of [ca_fchvisible] column to a normalized version of the date/time value specified.
+	 * 
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     NotTarea The current object (for fluent API support)
+	 */
+	public function setCaFchvisible($v)
+	{
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->ca_fchvisible !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchvisible !== null && $tmpDt = new DateTime($this->ca_fchvisible)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchvisible = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = NotTareaPeer::CA_FCHVISIBLE;
+			}
+		} // if either are not null
+
+		return $this;
+	} // setCaFchvisible()
+
+	/**
 	 * Sets the value of [ca_fchvencimiento] column to a normalized version of the date/time value specified.
 	 * 
 	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
@@ -535,6 +649,26 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 
 		return $this;
 	} // setCaFchterminada()
+
+	/**
+	 * Set the value of [ca_usuterminada] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     NotTarea The current object (for fluent API support)
+	 */
+	public function setCaUsuterminada($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_usuterminada !== $v) {
+			$this->ca_usuterminada = $v;
+			$this->modifiedColumns[] = NotTareaPeer::CA_USUTERMINADA;
+		}
+
+		return $this;
+	} // setCaUsuterminada()
 
 	/**
 	 * Set the value of [ca_prioridad] column.
@@ -687,12 +821,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$this->ca_url = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->ca_titulo = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->ca_texto = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_fchvencimiento = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_fchterminada = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_prioridad = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
-			$this->ca_fchcreado = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-			$this->ca_usucreado = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-			$this->ca_observaciones = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_fchvisible = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_fchvencimiento = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_fchterminada = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_usuterminada = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_prioridad = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+			$this->ca_fchcreado = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_usucreado = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_observaciones = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -702,7 +838,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 11; // 11 = NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 13; // 13 = NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating NotTarea object", $e);
@@ -776,6 +912,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 
 			$this->collNotTareaAsignacions = null;
 			$this->lastNotTareaAsignacionCriteria = null;
+
+			$this->collRepAsignacions = null;
+			$this->lastRepAsignacionCriteria = null;
 
 		} // if (deep)
 	}
@@ -920,6 +1059,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collRepAsignacions !== null) {
+				foreach ($this->collRepAsignacions as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -1027,6 +1174,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 					}
 				}
 
+				if ($this->collRepAsignacions !== null) {
+					foreach ($this->collRepAsignacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
 
 			$this->alreadyInValidation = false;
 		}
@@ -1076,21 +1231,27 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				return $this->getCaTexto();
 				break;
 			case 5:
-				return $this->getCaFchvencimiento();
+				return $this->getCaFchvisible();
 				break;
 			case 6:
-				return $this->getCaFchterminada();
+				return $this->getCaFchvencimiento();
 				break;
 			case 7:
-				return $this->getCaPrioridad();
+				return $this->getCaFchterminada();
 				break;
 			case 8:
-				return $this->getCaFchcreado();
+				return $this->getCaUsuterminada();
 				break;
 			case 9:
-				return $this->getCaUsucreado();
+				return $this->getCaPrioridad();
 				break;
 			case 10:
+				return $this->getCaFchcreado();
+				break;
+			case 11:
+				return $this->getCaUsucreado();
+				break;
+			case 12:
 				return $this->getCaObservaciones();
 				break;
 			default:
@@ -1119,12 +1280,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$keys[2] => $this->getCaUrl(),
 			$keys[3] => $this->getCaTitulo(),
 			$keys[4] => $this->getCaTexto(),
-			$keys[5] => $this->getCaFchvencimiento(),
-			$keys[6] => $this->getCaFchterminada(),
-			$keys[7] => $this->getCaPrioridad(),
-			$keys[8] => $this->getCaFchcreado(),
-			$keys[9] => $this->getCaUsucreado(),
-			$keys[10] => $this->getCaObservaciones(),
+			$keys[5] => $this->getCaFchvisible(),
+			$keys[6] => $this->getCaFchvencimiento(),
+			$keys[7] => $this->getCaFchterminada(),
+			$keys[8] => $this->getCaUsuterminada(),
+			$keys[9] => $this->getCaPrioridad(),
+			$keys[10] => $this->getCaFchcreado(),
+			$keys[11] => $this->getCaUsucreado(),
+			$keys[12] => $this->getCaObservaciones(),
 		);
 		return $result;
 	}
@@ -1172,21 +1335,27 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				$this->setCaTexto($value);
 				break;
 			case 5:
-				$this->setCaFchvencimiento($value);
+				$this->setCaFchvisible($value);
 				break;
 			case 6:
-				$this->setCaFchterminada($value);
+				$this->setCaFchvencimiento($value);
 				break;
 			case 7:
-				$this->setCaPrioridad($value);
+				$this->setCaFchterminada($value);
 				break;
 			case 8:
-				$this->setCaFchcreado($value);
+				$this->setCaUsuterminada($value);
 				break;
 			case 9:
-				$this->setCaUsucreado($value);
+				$this->setCaPrioridad($value);
 				break;
 			case 10:
+				$this->setCaFchcreado($value);
+				break;
+			case 11:
+				$this->setCaUsucreado($value);
+				break;
+			case 12:
 				$this->setCaObservaciones($value);
 				break;
 		} // switch()
@@ -1218,12 +1387,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[2], $arr)) $this->setCaUrl($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaTitulo($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaTexto($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaFchvencimiento($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaFchterminada($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaPrioridad($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaFchcreado($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaUsucreado($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaObservaciones($arr[$keys[10]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaFchvisible($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaFchvencimiento($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaFchterminada($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaUsuterminada($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaPrioridad($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaFchcreado($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaUsucreado($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaObservaciones($arr[$keys[12]]);
 	}
 
 	/**
@@ -1240,8 +1411,10 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(NotTareaPeer::CA_URL)) $criteria->add(NotTareaPeer::CA_URL, $this->ca_url);
 		if ($this->isColumnModified(NotTareaPeer::CA_TITULO)) $criteria->add(NotTareaPeer::CA_TITULO, $this->ca_titulo);
 		if ($this->isColumnModified(NotTareaPeer::CA_TEXTO)) $criteria->add(NotTareaPeer::CA_TEXTO, $this->ca_texto);
+		if ($this->isColumnModified(NotTareaPeer::CA_FCHVISIBLE)) $criteria->add(NotTareaPeer::CA_FCHVISIBLE, $this->ca_fchvisible);
 		if ($this->isColumnModified(NotTareaPeer::CA_FCHVENCIMIENTO)) $criteria->add(NotTareaPeer::CA_FCHVENCIMIENTO, $this->ca_fchvencimiento);
 		if ($this->isColumnModified(NotTareaPeer::CA_FCHTERMINADA)) $criteria->add(NotTareaPeer::CA_FCHTERMINADA, $this->ca_fchterminada);
+		if ($this->isColumnModified(NotTareaPeer::CA_USUTERMINADA)) $criteria->add(NotTareaPeer::CA_USUTERMINADA, $this->ca_usuterminada);
 		if ($this->isColumnModified(NotTareaPeer::CA_PRIORIDAD)) $criteria->add(NotTareaPeer::CA_PRIORIDAD, $this->ca_prioridad);
 		if ($this->isColumnModified(NotTareaPeer::CA_FCHCREADO)) $criteria->add(NotTareaPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(NotTareaPeer::CA_USUCREADO)) $criteria->add(NotTareaPeer::CA_USUCREADO, $this->ca_usucreado);
@@ -1308,9 +1481,13 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 
 		$copyObj->setCaTexto($this->ca_texto);
 
+		$copyObj->setCaFchvisible($this->ca_fchvisible);
+
 		$copyObj->setCaFchvencimiento($this->ca_fchvencimiento);
 
 		$copyObj->setCaFchterminada($this->ca_fchterminada);
+
+		$copyObj->setCaUsuterminada($this->ca_usuterminada);
 
 		$copyObj->setCaPrioridad($this->ca_prioridad);
 
@@ -1341,6 +1518,12 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			foreach ($this->getNotTareaAsignacions() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addNotTareaAsignacion($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getRepAsignacions() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepAsignacion($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2187,6 +2370,207 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collRepAsignacions collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepAsignacions()
+	 */
+	public function clearRepAsignacions()
+	{
+		$this->collRepAsignacions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepAsignacions collection (array).
+	 *
+	 * By default this just sets the collRepAsignacions collection to an empty array (like clearcollRepAsignacions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initRepAsignacions()
+	{
+		$this->collRepAsignacions = array();
+	}
+
+	/**
+	 * Gets an array of RepAsignacion objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NotTarea has previously been saved, it will retrieve
+	 * related RepAsignacions from storage. If this NotTarea is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array RepAsignacion[]
+	 * @throws     PropelException
+	 */
+	public function getRepAsignacions($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepAsignacions === null) {
+			if ($this->isNew()) {
+			   $this->collRepAsignacions = array();
+			} else {
+
+				$criteria->add(RepAsignacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				RepAsignacionPeer::addSelectColumns($criteria);
+				$this->collRepAsignacions = RepAsignacionPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(RepAsignacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				RepAsignacionPeer::addSelectColumns($criteria);
+				if (!isset($this->lastRepAsignacionCriteria) || !$this->lastRepAsignacionCriteria->equals($criteria)) {
+					$this->collRepAsignacions = RepAsignacionPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastRepAsignacionCriteria = $criteria;
+		return $this->collRepAsignacions;
+	}
+
+	/**
+	 * Returns the number of related RepAsignacion objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepAsignacion objects.
+	 * @throws     PropelException
+	 */
+	public function countRepAsignacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collRepAsignacions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepAsignacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				$count = RepAsignacionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepAsignacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				if (!isset($this->lastRepAsignacionCriteria) || !$this->lastRepAsignacionCriteria->equals($criteria)) {
+					$count = RepAsignacionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepAsignacions);
+				}
+			} else {
+				$count = count($this->collRepAsignacions);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a RepAsignacion object to this object
+	 * through the RepAsignacion foreign key attribute.
+	 *
+	 * @param      RepAsignacion $l RepAsignacion
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addRepAsignacion(RepAsignacion $l)
+	{
+		if ($this->collRepAsignacions === null) {
+			$this->initRepAsignacions();
+		}
+		if (!in_array($l, $this->collRepAsignacions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepAsignacions, $l);
+			$l->setNotTarea($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related RepAsignacions from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getRepAsignacionsJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepAsignacions === null) {
+			if ($this->isNew()) {
+				$this->collRepAsignacions = array();
+			} else {
+
+				$criteria->add(RepAsignacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				$this->collRepAsignacions = RepAsignacionPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(RepAsignacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+			if (!isset($this->lastRepAsignacionCriteria) || !$this->lastRepAsignacionCriteria->equals($criteria)) {
+				$this->collRepAsignacions = RepAsignacionPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastRepAsignacionCriteria = $criteria;
+
+		return $this->collRepAsignacions;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -2213,11 +2597,17 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collRepAsignacions) {
+				foreach ((array) $this->collRepAsignacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
 		$this->collCotizacions = null;
 		$this->collHdeskTickets = null;
 		$this->collNotTareaAsignacions = null;
+		$this->collRepAsignacions = null;
 			$this->aNotListaTareas = null;
 	}
 

@@ -170,6 +170,8 @@ class ReporteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_FCHULTSTATUS', 'CaFchultstatus', 'TIMESTAMP', false, null);
 
+		$tMap->addColumn('CA_IDTAREA_REXT', 'CaIdtareaRext', 'INTEGER', false, null);
+
 	} // doBuild()
 
 } // ReporteMapBuilder

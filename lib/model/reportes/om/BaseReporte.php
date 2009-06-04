@@ -339,6 +339,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	protected $ca_fchultstatus;
 
 	/**
+	 * The value for the ca_idtarea_rext field.
+	 * @var        int
+	 */
+	protected $ca_idtarea_rext;
+
+	/**
 	 * @var        Usuario
 	 */
 	protected $aUsuario;
@@ -442,6 +448,16 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * @var        RepExpo one-to-one related RepExpo object
 	 */
 	protected $singleRepExpo;
+
+	/**
+	 * @var        array RepAsignacion[] Collection to store aggregation of RepAsignacion objects.
+	 */
+	protected $collRepAsignacions;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collRepAsignacions.
+	 */
+	private $lastRepAsignacionCriteria = null;
 
 	/**
 	 * @var        array InoClientesSea[] Collection to store aggregation of InoClientesSea objects.
@@ -1176,6 +1192,16 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		} else {
 			return $dt->format($format);
 		}
+	}
+
+	/**
+	 * Get the [ca_idtarea_rext] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdtareaRext()
+	{
+		return $this->ca_idtarea_rext;
 	}
 
 	/**
@@ -2466,6 +2492,26 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	} // setCaFchultstatus()
 
 	/**
+	 * Set the value of [ca_idtarea_rext] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     Reporte The current object (for fluent API support)
+	 */
+	public function setCaIdtareaRext($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idtarea_rext !== $v) {
+			$this->ca_idtarea_rext = $v;
+			$this->modifiedColumns[] = ReportePeer::CA_IDTAREA_REXT;
+		}
+
+		return $this;
+	} // setCaIdtareaRext()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -2555,6 +2601,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->ca_propiedades = ($row[$startcol + 50] !== null) ? (string) $row[$startcol + 50] : null;
 			$this->ca_idetapa = ($row[$startcol + 51] !== null) ? (string) $row[$startcol + 51] : null;
 			$this->ca_fchultstatus = ($row[$startcol + 52] !== null) ? (string) $row[$startcol + 52] : null;
+			$this->ca_idtarea_rext = ($row[$startcol + 53] !== null) ? (int) $row[$startcol + 53] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -2564,7 +2611,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 53; // 53 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 54; // 54 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Reporte object", $e);
@@ -2673,6 +2720,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->singleRepAduana = null;
 
 			$this->singleRepExpo = null;
+
+			$this->collRepAsignacions = null;
+			$this->lastRepAsignacionCriteria = null;
 
 			$this->collInoClientesSeas = null;
 			$this->lastInoClientesSeaCriteria = null;
@@ -2897,6 +2947,14 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collRepAsignacions !== null) {
+				foreach ($this->collRepAsignacions as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collInoClientesSeas !== null) {
 				foreach ($this->collInoClientesSeas as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -3081,6 +3139,14 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				if ($this->singleRepExpo !== null) {
 					if (!$this->singleRepExpo->validate($columns)) {
 						$failureMap = array_merge($failureMap, $this->singleRepExpo->getValidationFailures());
+					}
+				}
+
+				if ($this->collRepAsignacions !== null) {
+					foreach ($this->collRepAsignacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
 					}
 				}
 
@@ -3284,6 +3350,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			case 52:
 				return $this->getCaFchultstatus();
 				break;
+			case 53:
+				return $this->getCaIdtareaRext();
+				break;
 			default:
 				return null;
 				break;
@@ -3358,6 +3427,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$keys[50] => $this->getCaPropiedades(),
 			$keys[51] => $this->getCaIdetapa(),
 			$keys[52] => $this->getCaFchultstatus(),
+			$keys[53] => $this->getCaIdtareaRext(),
 		);
 		return $result;
 	}
@@ -3548,6 +3618,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			case 52:
 				$this->setCaFchultstatus($value);
 				break;
+			case 53:
+				$this->setCaIdtareaRext($value);
+				break;
 		} // switch()
 	}
 
@@ -3625,6 +3698,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[50], $arr)) $this->setCaPropiedades($arr[$keys[50]]);
 		if (array_key_exists($keys[51], $arr)) $this->setCaIdetapa($arr[$keys[51]]);
 		if (array_key_exists($keys[52], $arr)) $this->setCaFchultstatus($arr[$keys[52]]);
+		if (array_key_exists($keys[53], $arr)) $this->setCaIdtareaRext($arr[$keys[53]]);
 	}
 
 	/**
@@ -3689,6 +3763,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ReportePeer::CA_PROPIEDADES)) $criteria->add(ReportePeer::CA_PROPIEDADES, $this->ca_propiedades);
 		if ($this->isColumnModified(ReportePeer::CA_IDETAPA)) $criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
 		if ($this->isColumnModified(ReportePeer::CA_FCHULTSTATUS)) $criteria->add(ReportePeer::CA_FCHULTSTATUS, $this->ca_fchultstatus);
+		if ($this->isColumnModified(ReportePeer::CA_IDTAREA_REXT)) $criteria->add(ReportePeer::CA_IDTAREA_REXT, $this->ca_idtarea_rext);
 
 		return $criteria;
 	}
@@ -3847,6 +3922,8 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 		$copyObj->setCaFchultstatus($this->ca_fchultstatus);
 
+		$copyObj->setCaIdtareaRext($this->ca_idtarea_rext);
+
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -3902,6 +3979,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$relObj = $this->getRepExpo();
 			if ($relObj) {
 				$copyObj->setRepExpo($relObj->copy($deepCopy));
+			}
+
+			foreach ($this->getRepAsignacions() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepAsignacion($relObj->copy($deepCopy));
+				}
 			}
 
 			foreach ($this->getInoClientesSeas() as $relObj) {
@@ -5719,6 +5802,207 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collRepAsignacions collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepAsignacions()
+	 */
+	public function clearRepAsignacions()
+	{
+		$this->collRepAsignacions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepAsignacions collection (array).
+	 *
+	 * By default this just sets the collRepAsignacions collection to an empty array (like clearcollRepAsignacions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initRepAsignacions()
+	{
+		$this->collRepAsignacions = array();
+	}
+
+	/**
+	 * Gets an array of RepAsignacion objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related RepAsignacions from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array RepAsignacion[]
+	 * @throws     PropelException
+	 */
+	public function getRepAsignacions($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepAsignacions === null) {
+			if ($this->isNew()) {
+			   $this->collRepAsignacions = array();
+			} else {
+
+				$criteria->add(RepAsignacionPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				RepAsignacionPeer::addSelectColumns($criteria);
+				$this->collRepAsignacions = RepAsignacionPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(RepAsignacionPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				RepAsignacionPeer::addSelectColumns($criteria);
+				if (!isset($this->lastRepAsignacionCriteria) || !$this->lastRepAsignacionCriteria->equals($criteria)) {
+					$this->collRepAsignacions = RepAsignacionPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastRepAsignacionCriteria = $criteria;
+		return $this->collRepAsignacions;
+	}
+
+	/**
+	 * Returns the number of related RepAsignacion objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepAsignacion objects.
+	 * @throws     PropelException
+	 */
+	public function countRepAsignacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collRepAsignacions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepAsignacionPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = RepAsignacionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepAsignacionPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastRepAsignacionCriteria) || !$this->lastRepAsignacionCriteria->equals($criteria)) {
+					$count = RepAsignacionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepAsignacions);
+				}
+			} else {
+				$count = count($this->collRepAsignacions);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a RepAsignacion object to this object
+	 * through the RepAsignacion foreign key attribute.
+	 *
+	 * @param      RepAsignacion $l RepAsignacion
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addRepAsignacion(RepAsignacion $l)
+	{
+		if ($this->collRepAsignacions === null) {
+			$this->initRepAsignacions();
+		}
+		if (!in_array($l, $this->collRepAsignacions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepAsignacions, $l);
+			$l->setReporte($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Reporte is new, it will return
+	 * an empty collection; or if this Reporte has previously
+	 * been saved, it will retrieve related RepAsignacions from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Reporte.
+	 */
+	public function getRepAsignacionsJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepAsignacions === null) {
+			if ($this->isNew()) {
+				$this->collRepAsignacions = array();
+			} else {
+
+				$criteria->add(RepAsignacionPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$this->collRepAsignacions = RepAsignacionPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(RepAsignacionPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+			if (!isset($this->lastRepAsignacionCriteria) || !$this->lastRepAsignacionCriteria->equals($criteria)) {
+				$this->collRepAsignacions = RepAsignacionPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastRepAsignacionCriteria = $criteria;
+
+		return $this->collRepAsignacions;
+	}
+
+	/**
 	 * Clears out the collInoClientesSeas collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -6064,6 +6348,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			if ($this->singleRepExpo) {
 				$this->singleRepExpo->clearAllReferences($deep);
 			}
+			if ($this->collRepAsignacions) {
+				foreach ((array) $this->collRepAsignacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collInoClientesSeas) {
 				foreach ((array) $this->collInoClientesSeas as $o) {
 					$o->clearAllReferences($deep);
@@ -6080,6 +6369,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		$this->collRepTarifas = null;
 		$this->singleRepAduana = null;
 		$this->singleRepExpo = null;
+		$this->collRepAsignacions = null;
 		$this->collInoClientesSeas = null;
 			$this->aUsuario = null;
 			$this->aTransportador = null;

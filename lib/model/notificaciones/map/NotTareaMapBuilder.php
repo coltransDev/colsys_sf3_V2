@@ -74,9 +74,13 @@ class NotTareaMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_TEXTO', 'CaTexto', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_FCHVISIBLE', 'CaFchvisible', 'TIMESTAMP', false, null);
+
 		$tMap->addColumn('CA_FCHVENCIMIENTO', 'CaFchvencimiento', 'TIMESTAMP', false, null);
 
 		$tMap->addColumn('CA_FCHTERMINADA', 'CaFchterminada', 'TIMESTAMP', false, null);
+
+		$tMap->addColumn('CA_USUTERMINADA', 'CaUsuterminada', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_PRIORIDAD', 'CaPrioridad', 'INTEGER', false, null);
 

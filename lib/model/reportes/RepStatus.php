@@ -50,57 +50,7 @@ class RepStatus extends BaseRepStatus
 		$etapa = $this->getTrackingEtapa();		
 		if( $etapa ){
 			return $etapa->getCaClass();
-		}
-		/*
-		$etapa = $this->getCaEtapa();
-		if(  $this->getCaFchstatus("Y-m-d")==date("Y-m-d") && $this!="Carga Embarcada" && $etapa!="ETA" && $etapa!="Orden Anulada" && $etapa!="Carga en Aeropuerto de Destino"){			
-			$etapa = "nuevo";			
-		}
-		
-		switch( $etapa ){				
-			case "Pendiente de Instrucciones":
-				$class = "yellow";
-				break;
-			case "Carga Embarcada":
-				$class = "blue";
-				break;
-			case "ETA":
-				$class = "blue";
-				break;
-			
-			case "Carga en Tránsito a Destino":
-				$class = "blue";
-				break;	
-			case "Orden Anulada":
-				$class = "pink";
-				break;
-			case "nuevo":
-				$class = "green";
-				break;	
-			case "Carga Entregada":
-				$class = "orange";
-				break;		
-			case "Carga en Aeropuerto de Destino":
-				$class = "orange";
-				break;	
-			case "Cierre de Documentos":
-				$class = "orange";
-				break;	
-			case "Carga en Transito Terrestre":
-				$class = "purple";
-				break;			
-			case "Cierre de Documentos":
-				$class = "orange";
-				break;	
-			case "Carga en Transito Terrestre":
-				$class = "purple";
-				break;	
-			default:				
-				$class = "";
-				break;
-		 
-		}
-		return $class;*/
+		}		
 	}
 	
 	
@@ -272,7 +222,7 @@ class RepStatus extends BaseRepStatus
 		$destino = $reporte->getDestino()->getCaCiudad();
 		$cliente = $reporte->getCliente();	
 		if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
-			$proveedor = $reporte->getProveedoresStr();					
+			$proveedor = substr($reporte->getProveedoresStr(),0,130);					
 			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] Id.: ".$reporte->getCaConsecutivo();					
 		}else{
 			$consignatario = $reporte->getConsignatario();

@@ -27,6 +27,9 @@ class NotTarea extends BaseNotTarea
 	* Crea notificaciones para los usuarios
 	*/
 	public function notificar( ){
+		
+		$lista = $this->getNotListaTareas();
+		
 		$c = new Criteria();
 		$c->add( NotTareaAsignacionPeer::CA_IDTAREA, $this->getCaIdtarea() );
 		$asignaciones = NotTareaAsignacionPeer::doSelect( $c );
@@ -41,7 +44,11 @@ class NotTarea extends BaseNotTarea
 			$notificacion->setCaUsucreado( $this->getCaUsucreado() );
 						
 			$notificacion->setCaTitulo( $this->getCaTitulo() );
-			$texto = "Tiene una tarea pendiente con vencimiento en ".$this->getCaFchvencimiento()." \n\n<br /><br />" ;
+			$texto = "Tiene una tarea pendiente con vencimiento en ".Utils::fechaMes($this->getCaFchvencimiento("Y-m-d"))." ".$this->getCaFchvencimiento("H:i:s")." \n\n<br /><br />" ;
+			
+			$texto .= "<a href='https://www.coltrans.com.co/notificaciones/realizarTarea/id/".$this->getCaIdtarea()."'>Haga click aca para realizarla </a> \n\n<br /><br />" ;
+			
+			$texto .= "Descripción de la tarea: <br /><b>".$lista->getCaNombre()."</b><br /> ".$lista->getCaDescripcion()." \n\n<br /><br />" ;
 			
 			$texto .= $this->getCaTexto();
 			
@@ -57,7 +64,13 @@ class NotTarea extends BaseNotTarea
 	public function getTiempoRestante( $festivos  ){
 		//echo "<br /> <b>Ini. ".date("Y-m-d H:i:s")." <br />Ven. ".$this->getCaFchvencimiento()."</b><br />";
 		return Utils::getHumanTime(Utils::diffTimeWorkingHours( $festivos, date("Y-m-d H:i:s"), $this->getCaFchvencimiento() ));
-		
+	}
+	
+	/*
+	* Tiempo restante para terminar la tarea
+	*/
+	public function getTiempo( $festivos  ){		
+		return Utils::getHumanTime(Utils::diffTimeWorkingHours( $festivos, $this->getCaFchcreado(), $this->getCaFchvencimiento() ));
 	}
 	
 	
@@ -79,6 +92,23 @@ class NotTarea extends BaseNotTarea
 				return "Critica";
 				break;		
 		}
+	}
+	
+	public function getUsuarios(){
+		$c = new Criteria();
+		$c->add( NotTareaAsignacionPeer::CA_IDTAREA, $this->getCaIdtarea() );
+		$asignaciones = NotTareaAsignacionPeer::doSelect( $c );
+		
+		
+		$loginsAsignaciones = array();
+		foreach( $asignaciones as $asignacion ){
+			$loginsAsignaciones[]=$asignacion->getCaLogin();
+		}
+		
+		$c = new Criteria();
+		$c->add( UsuarioPeer::CA_LOGIN, $loginsAsignaciones, Criteria::IN );
+		return UsuarioPeer::doSelect( $c );
+		
 		
 	}
 	

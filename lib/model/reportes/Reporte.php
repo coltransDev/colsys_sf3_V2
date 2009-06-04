@@ -176,63 +176,7 @@ class Reporte extends BaseReporte
 			return "green";
 		}
 		
-		return "";
-		/*
-		$etapa = $this->getCaEtapaActual(); 
-		
-		$status = $this->getUltimoStatus();
-				
-		
-		if( $status && $status->getCaFchstatus("Y-m-d")==date("Y-m-d") && $etapa!="Carga Embarcada" && $etapa!="ETA" && $etapa!="Orden Anulada" && $etapa!="Carga en Aeropuerto de Destino"){			
-			$etapa = "nuevo";			
-		}
-		
-		
-		
-		switch( $etapa ){				
-			case "Pendiente de Instrucciones":
-				$class = "yellow";
-				break;
-			case "Carga Embarcada":
-				$class = "blue";
-				break;
-			case "ETA":
-				$class = "blue";
-				break;
-			
-			case "Carga en Tránsito a Destino":
-				$class = "blue";
-				break;	
-			case "Orden Anulada":
-				$class = "pink";
-				break;
-			case "nuevo":
-				$class = "green";
-				break;	
-			case "Carga Entregada":
-				$class = "orange";
-				break;		
-			case "Carga en Aeropuerto de Destino":
-				$class = "orange";
-				break;	
-			case "Cierre de Documentos":
-				$class = "orange";
-				break;	
-			case "Carga en Transito Terrestre":
-				$class = "purple";
-				break;			
-			case "Cierre de Documentos":
-				$class = "orange";
-				break;	
-			case "Carga en Transito Terrestre":
-				$class = "purple";
-				break;	
-			default:				
-				$class = "";
-				break;
-		 
-		}
-		return $class;		*/
+		return "";		
 	}
 	
 		
@@ -276,23 +220,12 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getTextoStatus( ){
-		//Se puede mejorar sacando solamente el ultimo status
-		// la diversidad de las tablas hacen dificil un procedimiento estandar
-		$historial = $this->getHistorialStatus();		
-		if( count($historial)>0 ){	
-			ksort($historial);		
-			$ultimo = array_pop($historial);
-			return $ultimo['status'];
-		}
-		return "";								
+		$status = $this->getUltimostatus();
+		
+		if( $status ){
+			return $status->getStatus();
+		}							
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	/*
 	* Retorna el numero de versiones existentes de este reporte
@@ -308,10 +241,6 @@ class Reporte extends BaseReporte
 		return $count;
 		
 	}
-			
-	
-	
-	
 	
 	/*
 	* Retorna los status asociasdos al reporte , sobrecarga getRepStatuss en BaseReporte
@@ -355,56 +284,6 @@ class Reporte extends BaseReporte
 				
 		return RepStatusPeer::doSelect( $criteria, $con );		
 	}
-	
-	
-	
-	/*
-	* Retorna los avisos asociasdos al reporte , sobrecarga getRepAvisos en BaseReporte
-	* Author: Andres Botero
-	*/
-	/*public function getRepAvisos( $criteria = null, PropelPDO $con = null ){
-		
-		if ($criteria === null) {
-			$criteria = new Criteria();
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-		
-		$criteria->add( RepAvisoPeer::CA_IDREPORTE, $this->getCaIdreporte() );
-		$criteria->addDescendingOrderByColumn( RepAvisoPeer::CA_FCHENVIO );
-			
-		return RepAvisoPeer::doSelect( $criteria, $con );		
-	}*/
-	
-	/*
-	* Retorna el ultimo aviso segun el orden cronologico
-	* Author: Andres Botero
-	*/	
-	/*public function getUltimoAviso(){
-		if( $this->ultimoAviso ){
-			return $this->ultimoAviso;
-		}else{	
-			$c =new Criteria();
-			$c->add( RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte() );
-			$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
-			$c->add( RepStatusPeer::CA_ETAPA, "ETA");
-			
-			$c->setLimit(1);
-			
-			$aviso = RepStatusPeer::doSelectOne( $c );
-			
-			$this->ultimoAviso = $aviso;
-			
-			if( $this->ultimoAviso ){
-				return $this->ultimoAviso;
-			}else{
-				return null;
-			}
-		}
-	}*/
-	
 	
 	
 	/*
@@ -453,16 +332,7 @@ class Reporte extends BaseReporte
 		$consignee = TerceroPeer::doSelectOne( $c );	
 		return $consignee;
 	}
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
+		
 	/*
 	* Retorna los objetos RepGasto asociados al reporte 
 	* @author Andres Botero
@@ -633,7 +503,6 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getPiezas(){
-		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaPiezas());
@@ -648,7 +517,6 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getPeso(){
-		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaPeso());
@@ -662,7 +530,6 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getVolumen(){
-	
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return str_replace("|"," ",$status->getCaVolumen());
@@ -676,7 +543,6 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getDoctransporte(){
-		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return $status->getCaDoctransporte();
@@ -704,7 +570,6 @@ class Reporte extends BaseReporte
 	*/
 		
 	public function getETS( $format="Y-m-d" ){
-		
 		$status = $this->getUltimoStatus();
 		if( $status ){		
 			return $status->getCaFchsalida( $format );
@@ -717,9 +582,7 @@ class Reporte extends BaseReporte
 	* Devuelve la fecha estimada de llegada del reporte
 	* @author Andres Botero	
 	*/
-	public function getETA( $format="Y-m-d" ){
-		
-		
+	public function getETA( $format="Y-m-d" ){		
 		$status = $this->getUltimoStatus();		
 		if( $status ){		
 			return $status->getCaFchllegada( $format );
@@ -746,7 +609,6 @@ class Reporte extends BaseReporte
 	* Author: Andres Botero
 	*/
 	public function getIdNave( ){
-		
 		$status = $this->getUltimoStatus();
 		
 		if( $status ){		
@@ -791,7 +653,13 @@ class Reporte extends BaseReporte
 	public function getReporteExterior(){
 		$c = new Criteria();
 		$c->addJoin( EmailPeer::CA_IDCASO, ReportePeer::CA_IDREPORTE );
-		$c->add( EmailPeer::CA_TIPO, "Rep.MarítimoExterior");
+		
+		if( $this->getCaTransporte()==Constantes::MARITIMO ){
+			$c->add( EmailPeer::CA_TIPO, "Rep.MarítimoExterior");
+		}else{
+			$c->add( EmailPeer::CA_TIPO, "Rep.AéreoExterior");
+		}
+				
 		$c->add( ReportePeer::CA_CONSECUTIVO, $this->getCaConsecutivo() ); 
 		$count = EmailPeer::doCount( $c );				
 		return $count>0;		
