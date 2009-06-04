@@ -6,7 +6,7 @@ class NotificacionesTask extends sfPropelBaseTask
   {
     $this->namespace        = 'colsys';
     $this->name             = 'notificaciones';
-    $this->briefDescription = 'Genera Reporte Mensual de los Clientes que se les vence su Circular 170';
+    $this->briefDescription = 'Envia notificaciones via email';
     $this->detailedDescription = <<<EOF
 The [circularClientes|INFO] task does things.
 Call it with:
