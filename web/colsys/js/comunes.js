@@ -163,3 +163,17 @@ function autoGrow( field ){
 	}
 	field.rows=rows;		
 }
+
+
+var expandCollapse = function( obj , id, classname ){
+	target = document.getElementById(id);
+	
+	//alert( target.style.display );
+	if( target.style.display=="none" ){
+		target.style.display="inline";		
+		obj.className=classname+"_expanded";
+	}else{
+		target.style.display="none";		
+		obj.className=classname+"_collapsed";
+	}	
+}
