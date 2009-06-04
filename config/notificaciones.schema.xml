@@ -30,9 +30,11 @@
 		<column name="ca_idlistatarea" type="integer" />		
 		<column name="ca_url" type="varchar" />			
 		<column name="ca_titulo" type="varchar" />
-		<column name="ca_texto" type="varchar" />
+		<column name="ca_texto" type="varchar" />		
+		<column name="ca_fchvisible" type="timestamp" />		
 		<column name="ca_fchvencimiento" type="timestamp" />		
 		<column name="ca_fchterminada" type="timestamp" />	
+		<column name="ca_usuterminada" type="varchar" />
 		<column name="ca_prioridad" type="integer" />
 		<column name="ca_fchcreado" type="timestamp" />	
 		<column name="ca_usucreado" type="varchar" />

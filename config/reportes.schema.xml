@@ -54,6 +54,8 @@
 		<column name="ca_propiedades" type="varchar" />
 		<column name="ca_idetapa" type="varchar" />
 		<column name="ca_fchultstatus" type="timestamp" />
+		<column name="ca_idtarea_rext" type="integer" />
+		
 		<foreign-key foreignTable="control.tb_usuarios">
 			<reference local="ca_login" foreign="ca_login"/>
 		</foreign-key>	
@@ -310,7 +312,19 @@
 	</table>
 	
 	
+	<table name="tb_repasignaciones" phpName="RepAsignacion" defaultIdMethod="none">	
+		
+		<column name="ca_idreporte" type="integer" required="true" primaryKey="true" />	
+		<column name="ca_idtarea"  type="integer" required="true" primaryKey="true"   />						
+		<foreign-key foreignTable="tb_reportes">
+			<reference local="ca_idreporte" foreign="ca_idreporte"/>
+		</foreign-key>	
+		<foreign-key foreignTable="notificaciones.tb_tareas">
+			<reference local="ca_idtarea" foreign="ca_idtarea"/>
+		</foreign-key>			
+	</table>
 	
+
 	
 	
 	
