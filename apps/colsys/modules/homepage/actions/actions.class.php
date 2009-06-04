@@ -21,6 +21,7 @@ class homepageActions extends sfActions
 		$c = new Criteria();
 		$c->addJoin( NotTareaPeer::CA_IDTAREA,   NotTareaAsignacionPeer::CA_IDTAREA );			
 		$c->add( NotTareaPeer::CA_FCHTERMINADA, null, Criteria::ISNULL );	
+		$c->add( NotTareaPeer::CA_FCHVISIBLE, date("Y-m-d H:i:s"), Criteria::LESS_EQUAL );	
 		$c->add( NotTareaAsignacionPeer::CA_LOGIN, $this->getUser()->getUserId() );
 		$c->setDistinct();
 		$this->numtareas = NotTareaPeer::doCount( $c );

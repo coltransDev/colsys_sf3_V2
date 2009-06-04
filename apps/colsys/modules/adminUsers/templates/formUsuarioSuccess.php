@@ -4,9 +4,11 @@
 		if( field.value=="ldap" ){			
 			document.getElementById("passwd1").disabled=true;
 			document.getElementById("passwd2").disabled=true;
+			document.getElementById("forcechange").disabled=true;
 		}else{
 			document.getElementById("passwd1").disabled=false;
 			document.getElementById("passwd2").disabled=false;
+			document.getElementById("forcechange").disabled=false;
 		}	
 	}
 	
@@ -48,6 +50,12 @@
 		<td><b>Confirmaci&oacute;n Contrase&ntilde;a</b></td>
 		<td>
 			<input type="password" name="passwd2" id="passwd2" Autocomplete="off"  />		</td>
+	</tr>
+	
+	<tr>
+		<td><b>Forzar cambio en el proximo inicio de sesión</b></td>
+		<td>
+			<input type="checkbox" name="forcechange" id="forcechange"  <?=$usuario->getCaForcechange()?'checked="checked"':''?>/>		</td>
 	</tr>
 	<tr>
 		<td colspan="2"><div align="center"><input type="submit" value="Guardar" /></div></td>

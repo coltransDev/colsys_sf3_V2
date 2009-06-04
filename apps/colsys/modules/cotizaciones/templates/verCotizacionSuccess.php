@@ -5,7 +5,7 @@ $enBlanco = $cotizacion->enBlanco();
 
 ?>
 
-<div align="center">
+<div align="center"> 
 <script language="javascript">
 	function showEmailForm(){
 		if( document.getElementById('emailForm').style.display=="none"){ 
@@ -75,36 +75,74 @@ $enBlanco = $cotizacion->enBlanco();
 	</table>	
 	<br />
 	<?	 
-	if( $tarea && !$tarea->getCafchterminada() ){
-	?>
-	<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
-		<tr>
-			<th><div align="left"><strong>IDG Oferta y Contrataci&oacute;n:</strong> 
-			</div></th>
-		</tr>		
-		<tr>
-			<td>
-				Tiempo restante
-				<?			
-				$festivos = Utils::getFestivos();
-				$diff = $tarea->getTiempoRestante( $festivos );					
-				if( substr($diff, 0,1)=="-" ){
-					echo "<span class='rojo'>".$diff."</span>";
-				}else{
-					echo $diff;			
-				}
-				?>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				Observaciones
-				<input type="text" value="<?=$tarea->getCaObservaciones()?>" name="observaciones_idg" size="100" />
-			</td>
-		</tr>		
-	</table>	
-	<br />
-	<?
+	if( $tarea ){
+		if( !$tarea->getCafchterminada() ){
+		?>
+		<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
+			<tr>
+				<th><div align="left"><strong>IDG Oferta y Contrataci&oacute;n:</strong> 
+				</div></th>
+			</tr>		
+			<tr>
+				<td>
+					Tiempo restante
+					<?			
+					$festivos = Utils::getFestivos();
+					$diff = $tarea->getTiempoRestante( $festivos );					
+					if( substr($diff, 0,1)=="-" ){
+						echo "<span class='rojo'>".$diff."</span>";
+					}else{
+						echo $diff;			
+					}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Observaciones
+					<input type="text" value="<?=$tarea->getCaObservaciones()?>" name="observaciones_idg" size="100" />
+				</td>
+			</tr>		
+		</table>	
+		<br />
+		<?
+		}else{
+		?>
+		<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
+			<tr>
+				<th><div align="left"><strong>IDG Oferta y Contrataci&oacute;n:</strong> 
+				</div></th>
+			</tr>		
+			<tr>
+				<td>					
+					<b>Fecha de solicitud:</b> <?=Utils::fechaMes( $tarea->getCafchcreado("Y-m-d") ) ?>  <?=$tarea->getCafchcreado("H:i:s")?>
+					<br />
+					<b>Fecha de presentaci&oacute;n:</b> <?=Utils::fechaMes( $tarea->getCafchterminada("Y-m-d") ) ?> <?=$tarea->getCafchterminada("H:i:s")?>	
+					<br />
+					<b>Horas habiles:</b> 
+					<?
+					$festivos = Utils::getFestivos();
+					echo $tarea->getTiempo( $festivos );				
+					?>
+									
+				</td>
+			</tr>
+			<?
+			if($tarea->getCaObservaciones() ){
+			?>
+			<tr>
+				<td>
+					Observaciones: 
+					<?=$tarea->getCaObservaciones()?>
+				</td>
+			</tr>
+			<?
+			}
+			?>		
+		</table>	
+		<br />
+		<?		
+		}
 	}
 	?>
 

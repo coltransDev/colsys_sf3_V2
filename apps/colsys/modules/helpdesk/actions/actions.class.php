@@ -334,7 +334,8 @@ class helpdeskActions extends sfActions
 				
 				if( $tarea ){
 					if( !$tarea->getCaFchterminada() ){
-						$tarea->setCaFchterminada( time() );	
+						$tarea->setCaFchterminada( time() );
+						$tarea->setCaUsuterminada( $this->getUser()->getUserId() );	
 						$tarea->save();
 					}
 				}				
@@ -494,8 +495,14 @@ class helpdeskActions extends sfActions
 			$tarea = new NotTarea(); 
 			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$ticket->getCaIdticket() );
 			$tarea->setCaIdlistatarea( 1 );
-			$tarea->setCaFchcreado( time() );			
-			$tarea->setCaFchvencimiento( time()+$grupo->getCaMaxresponsetime() );
+			$tarea->setCaFchcreado( time() );	
+			
+			$festivos = Utils::getFestivos();
+			
+			
+			
+			$fchVencimiento = Utils::addTimeWorkingHours( $festivos , date("Y-m-d H:i:s"), $grupo->getCaMaxresponsetime());										
+			$tarea->setCaFchvencimiento( $fchVencimiento );
 			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $texto );
@@ -557,6 +564,7 @@ class helpdeskActions extends sfActions
 			$tarea = $ticket->getTareaSeguimiento();
 			if( $tarea ){
 				$tarea->setCaFchterminada(time());
+				$tarea->setCaUsuterminada( $this->getUser()->getUserId() );	
 				$tarea->save();
 			}
 		}
@@ -581,12 +589,20 @@ class helpdeskActions extends sfActions
 			$tarea = $this->ticket->getTareaSeguimiento();
 			if( !$tarea ){
 				$tarea = new NotTarea(); 
+				$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+				$tarea->setCaFchcreado( time() );
 			}
 			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$this->ticket->getCaIdticket() );
 			$tarea->setCaIdlistatarea( 5 );
-			$tarea->setCaFchcreado( time() );			
+				
+			
+			$fchvisible = $request->getParameter("fchvisible");
+			if( $fchvisible ){
+				$tarea->setCaFchvisible( $fchvisible." 00:00:00" );
+			}
+					
 			$tarea->setCaFchvencimiento( $seguimiento." 23:59:59" );
-			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+			
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $texto );
 			$tarea->save();	

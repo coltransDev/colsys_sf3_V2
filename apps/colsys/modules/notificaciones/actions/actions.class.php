@@ -17,11 +17,33 @@ class notificacionesActions extends sfActions
 	*/
 	public function executeIndex(sfWebRequest $request)
 	{
-		$c = new Criteria();
-		$c->addJoin( NotTareaPeer::CA_IDLISTATAREA, NotListaTareasPeer::CA_IDLISTATAREA );
-		$c->add( NotTareaPeer::CA_FCHTERMINADA, null, Criteria::ISNULL );	
-		$c->setDistinct();			
-		$this->listaTareas = NotListaTareasPeer::doSelect( $c );
+	
 	}
+	
+	
+	/**
+	* Redirige al usuario a la url definida en la tarea si la tarea ni se ha cumplido
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeRealizarTarea(sfWebRequest $request)
+	{
+		$id = $request->getParameter("id");
+		$this->forward404Unless( $id );
+		
+		$tarea = NotTareaPeer::retrieveByPk( $id );
+		$this->forward404Unless( $tarea );
+		
+		
+		if( !$tarea->getCaFchterminada() ){
+			$this->redirect( $tarea->getCaUrl() );
+		}
+						
+		$this->tarea = $tarea;		
+		
+		
+		
+	}
+	
 }
 ?>

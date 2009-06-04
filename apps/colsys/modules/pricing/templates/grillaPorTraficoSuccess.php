@@ -516,9 +516,8 @@ var seleccionarConcepto = function(){
 					
 	store.each(function(r){
 		if( tipo=="concepto" ){ 
-			if( r.data.iditem==iditem && r.data.tipo==tipo ){
-				//alert( r.data.neta+" "+ r.data.minima );
-				if( !(r.data.neta=="" && r.data.minima=="") ){//Evita que se seleccionen escalas que no se han creado por que no se necesitan
+			if( r.data.iditem==iditem && r.data.tipo==tipo ){				
+				if( !(r.data.neta=="" && r.data.sugerida=="") ){//Evita que se seleccionen escalas que no se han creado por que no se necesitan
 				
 					r.set('sel', true);
 				}

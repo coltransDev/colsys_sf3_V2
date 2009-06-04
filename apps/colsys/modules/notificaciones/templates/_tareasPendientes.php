@@ -4,30 +4,32 @@ $festivos = Utils::getFestivos();
 
 if( count($listaTareas)>0 ){
 	foreach( $listaTareas as $lista ){
+		$tareas = $lista->getTareasPendientes( $user );	
 	?>
 	<br />
-	<h3><?=$lista->getCaNombre()?></h3>
 	
-	<?=$lista->getCaDescripcion()?>
-	<br />
-	<br />
+	<div class="taskListHead_<?=count($listaTareas)==1?"expanded":"collapsed"?>" onclick="expandCollapse( this, 'taskListBody_<?=$lista->getCaIdlistatarea()?>', 'taskListHead')">
+	<h3><?=$lista->getCaNombre()?> (<?=count($tareas)?> Tarea<?=count($tareas)!=1?"s":""?>)</h3>
+	</div>	
+	<div class="nota"><?=$lista->getCaDescripcion()?></div>
+	<br />	
+	
+	<div id="taskListBody_<?=$lista->getCaIdlistatarea()?>" style="display:<?=count($listaTareas)==1?"inline":"none"?>">
 	<table width="100%" border="1" class="tableList" >	
 		<tr>
-			<th width="22%" >Tarea</th>
-			<th width="11%" >Enlace</th>
-			<th width="19%" >Fecha Creaci&oacute;n</th>
-			<th width="18%" >Vencimiento</th>
-			<th width="21%" >Tiempo restante *</th>
-			<th width="9%" >Prioridad</th>
+			<th width="42%" >Tarea</th>
+			<th width="9%" >Enlace</th>
+			<th width="23%" >Vencimiento</th>
+			<th width="18%" >Tiempo restante *</th>
+			<th width="8%" >Prioridad</th>
 		</tr>
 		<?
-		$tareas = $lista->getTareasPendientes( $user );	
+		
 		foreach( $tareas as $tarea ){
 		?>
 		<tr>
 			<td><?=$tarea->getCaTitulo()?></td>
-			<td><a href="<?=$tarea->getCaUrl()?>">Click aca</a></td>
-			<td><?=Utils::fechaMes($tarea->getCaFchcreado("Y-m-d"))." ".$tarea->getCaFchcreado("H:i:s")?></td>
+			<td><a href="<?=url_for("notificaciones/realizarTarea?id=".$tarea->getCaIdtarea())?>">Click aca</a></td>
 			<td><?=Utils::fechaMes($tarea->getCaFchvencimiento("Y-m-d"))." ".$tarea->getCaFchvencimiento("H:i:s")?></td>
 			<td>
 				<?			
@@ -44,12 +46,13 @@ if( count($listaTareas)>0 ){
 		}
 		?>
 	</table>	
+	</div>
 	<?
 	}
 	?>
 	<br />
 	<br />
-	* Tiempo restante teniendo en cuenta las horas habiles.
+	<div class="nota">* Tiempo restante teniendo en cuenta las horas habiles.</div>
 	<?
 }else{
 ?>

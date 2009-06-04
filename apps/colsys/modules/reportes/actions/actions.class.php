@@ -18,7 +18,135 @@ class reportesActions extends sfActions
 	public function executeIndex()
 	{	
 		
-	}		
+	}	
+	
+	
+	/**
+	* @author Andres Botero
+	*/
+	public function executeVerReporte( $request )
+	{	
+		if( $request->getParameter( "id" ) ){
+			$reporte = ReportePeer::retrieveByPk($request->getParameter( "id" ));
+			
+		}		
+		$this->forward404Unless( $reporte );		
+		
+		$this->asignaciones = $reporte->getRepasignacions();
+		$this->ultimoReporte = 80037;
+					
+		if( $reporte->getCaIdreporte()>$this->ultimoReporte && false ){ // El ultimo reporte antes de empezar a controlar las impresiones										
+				/*
+				* Usuarios de traficos 
+				* A estos usuarios se les debe crear una tarea para que envien el Rep al exterior 
+				*/
+				
+				/*$c = new Criteria();				
+				if( $reporte->getCaImpoExpo()==Constantes::IMPO ){			
+					if( $reporte->getCaTransporte()==Constantes::MARITIMO ){		
+						$c->add( UsuarioPeer::CA_DEPARTAMENTO, "Tráficos" );				
+					}else{
+						$c->add( UsuarioPeer::CA_DEPARTAMENTO, "Aéreo" );					
+					}
+				}else{
+					$c->add( UsuarioPeer::CA_DEPARTAMENTO, "Exportaciones" );				
+				}								
+				$c->add( UsuarioPeer::CA_IDSUCURSAL, $this->getUser()->getSucursal()->getCaIdSucursal() );
+				$c->add( UsuarioPeer::CA_ACTIVO, true );
+				$usuarios  = UsuarioPeer::doSelect( $c );
+				$grupos["traficos"] = array();
+				foreach(  $usuarios as $usuario ){			
+					$grupos["traficos"][] = $usuario->getCaLogin();
+				}*/
+			
+			
+			
+			
+			
+			
+			
+			
+			/*
+			if( count($this->asignaciones)==0 ){
+				
+				$tarea = new NotTarea(); 
+				$tarea->setCaUrl( "/reportes/verReporte/id/".$reporte->getCaIdreporte() );
+				$tarea->setCaIdlistatarea( 6 );
+				$tarea->setCaFchcreado( time() );		
+				$festivos = Utils::getFestivos();	
+				$tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
+				$tarea->setCaUsucreado( "Administrador" );
+				$tarea->setCaTitulo( "Reporte ".$reporte->getCaConsecutivo() );		
+				$tarea->setCaTexto( "Prueba" );
+				
+				
+				
+				$grupos["vendedor"] = array( $reporte->getCaLogin() );			
+												
+				if( $reporte->getCaColmas()=="Sí" ){
+					$repAduana = $reporte->getRepAduana(); 
+					if( $repAduana && $repAduana->getCaCoordinador() ){
+						$grupos["colmas"] = array($repAduana->getCaCoordinador());	
+					}
+				}
+				
+				if( $reporte->getCaSeguro()=="Sí" ){
+					$repSeguro = $reporte->getRepSeguro(); 
+					if( $repSeguro && $repSeguro->getCaSeguroConf() ){
+						$grupos["seguros"] = array($repSeguro->getCaSeguroConf());	
+					}
+				}
+					
+				
+				if( $reporte->getCaContinuacion()!="N/A" ){
+					
+					if( $reporte->getCaContinuacionConf() ){
+						$grupos["otm"] = array( $reporte->getCaContinuacionConf());	
+					}
+				}	
+				
+				$this->asignaciones = array(); 
+				foreach( $grupos as $logins ){ 			
+					$newTarea = $tarea->copy();
+					$newTarea->save();
+					$newTarea->setAsignaciones( $logins );		
+									
+					$asignacion = new RepAsignacion();
+					$asignacion->setCaIdreporte( $reporte->getCaIdreporte() );			
+					$asignacion->setCaIdtarea( $newTarea->getCaIdtarea() );
+					$asignacion->save();
+					$this->asignaciones[] = $asignacion;
+					//$newTarea->notificar();				
+								
+				}
+			}*/
+			
+			/* Marca como finalizada una tarea */
+			/*
+			$c = new Criteria();
+			$c->addJoin( NotTareaPeer::CA_IDTAREA, NotTareaAsignacionPeer::CA_IDTAREA );
+			$c->addJoin( NotTareaPeer::CA_IDTAREA, RepAsignacionPeer::CA_IDTAREA );
+			$c->add( NotTareaAsignacionPeer::CA_LOGIN, $this->getUser()->getUserId() );
+			$c->add( RepAsignacionPeer::CA_IDREPORTE, $reporte->getCaIdreporte() );		
+			$c->setDistinct();
+			
+			$tareas = NotTareaPeer::doSelect( $c );
+			
+			foreach( $tareas as $tarea ){
+				if( $tarea && !$tarea->getCaFchterminada() ){
+					$tarea->setCaFchterminada( time() );
+					$tarea->setCaUsuterminada( $this->getUser()->getUserId() );				
+					$tarea->save();
+				}
+			}*/		
+		}
+		$this->reporte = $reporte;
+		
+		
+		
+		
+		
+	}	
 }
 
 ?>

@@ -46,6 +46,13 @@ class adminUsersActions extends sfActions
 			$this->usuario->setPasswd( $request->getParameter("passwd1") );
 		}
 		
+		
+		if( $request->getParameter("forcechange") ){
+			$this->usuario->setCaForcechange( true );
+		}else{
+			$this->usuario->setCaForcechange( false );
+		}
+		
 		$this->usuario->save();		
 	 
 	}
