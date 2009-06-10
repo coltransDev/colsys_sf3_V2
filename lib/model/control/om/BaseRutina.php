@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Base class that represents a row from the 'control.tb_rutinasnew' table.
+ * Base class that represents a row from the 'control.tb_rutinas' table.
  *
  * 
  *
@@ -49,6 +49,16 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 	 * @var        string
 	 */
 	protected $ca_grupo;
+
+	/**
+	 * @var        array RutinaNivel[] Collection to store aggregation of RutinaNivel objects.
+	 */
+	protected $collRutinaNivels;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collRutinaNivels.
+	 */
+	private $lastRutinaNivelCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -347,6 +357,9 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 
 		if ($deep) {  // also de-associate any related objects?
 
+			$this->collRutinaNivels = null;
+			$this->lastRutinaNivelCriteria = null;
+
 		} // if (deep)
 	}
 
@@ -449,6 +462,14 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
+			if ($this->collRutinaNivels !== null) {
+				foreach ($this->collRutinaNivels as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -519,6 +540,14 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collRutinaNivels !== null) {
+					foreach ($this->collRutinaNivels as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -750,6 +779,20 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 		$copyObj->setCaGrupo($this->ca_grupo);
 
 
+		if ($deepCopy) {
+			// important: temporarily setNew(false) because this affects the behavior of
+			// the getter/setter methods for fkey referrer objects.
+			$copyObj->setNew(false);
+
+			foreach ($this->getRutinaNivels() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRutinaNivel($relObj->copy($deepCopy));
+				}
+			}
+
+		} // if ($deepCopy)
+
+
 		$copyObj->setNew(true);
 
 	}
@@ -793,6 +836,160 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collRutinaNivels collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRutinaNivels()
+	 */
+	public function clearRutinaNivels()
+	{
+		$this->collRutinaNivels = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRutinaNivels collection (array).
+	 *
+	 * By default this just sets the collRutinaNivels collection to an empty array (like clearcollRutinaNivels());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initRutinaNivels()
+	{
+		$this->collRutinaNivels = array();
+	}
+
+	/**
+	 * Gets an array of RutinaNivel objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Rutina has previously been saved, it will retrieve
+	 * related RutinaNivels from storage. If this Rutina is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array RutinaNivel[]
+	 * @throws     PropelException
+	 */
+	public function getRutinaNivels($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(RutinaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRutinaNivels === null) {
+			if ($this->isNew()) {
+			   $this->collRutinaNivels = array();
+			} else {
+
+				$criteria->add(RutinaNivelPeer::CA_RUTINA, $this->ca_rutina);
+
+				RutinaNivelPeer::addSelectColumns($criteria);
+				$this->collRutinaNivels = RutinaNivelPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(RutinaNivelPeer::CA_RUTINA, $this->ca_rutina);
+
+				RutinaNivelPeer::addSelectColumns($criteria);
+				if (!isset($this->lastRutinaNivelCriteria) || !$this->lastRutinaNivelCriteria->equals($criteria)) {
+					$this->collRutinaNivels = RutinaNivelPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastRutinaNivelCriteria = $criteria;
+		return $this->collRutinaNivels;
+	}
+
+	/**
+	 * Returns the number of related RutinaNivel objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RutinaNivel objects.
+	 * @throws     PropelException
+	 */
+	public function countRutinaNivels(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(RutinaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collRutinaNivels === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RutinaNivelPeer::CA_RUTINA, $this->ca_rutina);
+
+				$count = RutinaNivelPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RutinaNivelPeer::CA_RUTINA, $this->ca_rutina);
+
+				if (!isset($this->lastRutinaNivelCriteria) || !$this->lastRutinaNivelCriteria->equals($criteria)) {
+					$count = RutinaNivelPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRutinaNivels);
+				}
+			} else {
+				$count = count($this->collRutinaNivels);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a RutinaNivel object to this object
+	 * through the RutinaNivel foreign key attribute.
+	 *
+	 * @param      RutinaNivel $l RutinaNivel
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addRutinaNivel(RutinaNivel $l)
+	{
+		if ($this->collRutinaNivels === null) {
+			$this->initRutinaNivels();
+		}
+		if (!in_array($l, $this->collRutinaNivels, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRutinaNivels, $l);
+			$l->setRutina($this);
+		}
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -804,8 +1001,14 @@ abstract class BaseRutina extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collRutinaNivels) {
+				foreach ((array) $this->collRutinaNivels as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
+		$this->collRutinaNivels = null;
 	}
 
 } // BaseRutina

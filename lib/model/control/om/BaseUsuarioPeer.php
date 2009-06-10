@@ -19,7 +19,7 @@ abstract class BaseUsuarioPeer {
 	const CLASS_DEFAULT = 'lib.model.control.Usuario';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 13;
+	const NUM_COLUMNS = 14;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -63,6 +63,9 @@ abstract class BaseUsuarioPeer {
 	/** the column name for the CA_FORCECHANGE field */
 	const CA_FORCECHANGE = 'control.tb_usuarios.CA_FORCECHANGE';
 
+	/** the column name for the CA_SUCURSAL field */
+	const CA_SUCURSAL = 'control.tb_usuarios.CA_SUCURSAL';
+
 	/**
 	 * An identiy map to hold any loaded instances of Usuario objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -84,11 +87,11 @@ abstract class BaseUsuarioPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaLogin', 'CaNombre', 'CaCargo', 'CaDepartamento', 'CaIdsucursal', 'CaEmail', 'CaRutinas', 'CaExtension', 'CaAuthmethod', 'CaPasswd', 'CaSalt', 'CaActivo', 'CaForcechange', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caLogin', 'caNombre', 'caCargo', 'caDepartamento', 'caIdsucursal', 'caEmail', 'caRutinas', 'caExtension', 'caAuthmethod', 'caPasswd', 'caSalt', 'caActivo', 'caForcechange', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_LOGIN, self::CA_NOMBRE, self::CA_CARGO, self::CA_DEPARTAMENTO, self::CA_IDSUCURSAL, self::CA_EMAIL, self::CA_RUTINAS, self::CA_EXTENSION, self::CA_AUTHMETHOD, self::CA_PASSWD, self::CA_SALT, self::CA_ACTIVO, self::CA_FORCECHANGE, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_login', 'ca_nombre', 'ca_cargo', 'ca_departamento', 'ca_idsucursal', 'ca_email', 'ca_rutinas', 'ca_extension', 'ca_authmethod', 'ca_passwd', 'ca_salt', 'ca_activo', 'ca_forcechange', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+		BasePeer::TYPE_PHPNAME => array ('CaLogin', 'CaNombre', 'CaCargo', 'CaDepartamento', 'CaIdsucursal', 'CaEmail', 'CaRutinas', 'CaExtension', 'CaAuthmethod', 'CaPasswd', 'CaSalt', 'CaActivo', 'CaForcechange', 'CaSucursal', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caLogin', 'caNombre', 'caCargo', 'caDepartamento', 'caIdsucursal', 'caEmail', 'caRutinas', 'caExtension', 'caAuthmethod', 'caPasswd', 'caSalt', 'caActivo', 'caForcechange', 'caSucursal', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_LOGIN, self::CA_NOMBRE, self::CA_CARGO, self::CA_DEPARTAMENTO, self::CA_IDSUCURSAL, self::CA_EMAIL, self::CA_RUTINAS, self::CA_EXTENSION, self::CA_AUTHMETHOD, self::CA_PASSWD, self::CA_SALT, self::CA_ACTIVO, self::CA_FORCECHANGE, self::CA_SUCURSAL, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_login', 'ca_nombre', 'ca_cargo', 'ca_departamento', 'ca_idsucursal', 'ca_email', 'ca_rutinas', 'ca_extension', 'ca_authmethod', 'ca_passwd', 'ca_salt', 'ca_activo', 'ca_forcechange', 'ca_sucursal', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
 	);
 
 	/**
@@ -98,11 +101,11 @@ abstract class BaseUsuarioPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaLogin' => 0, 'CaNombre' => 1, 'CaCargo' => 2, 'CaDepartamento' => 3, 'CaIdsucursal' => 4, 'CaEmail' => 5, 'CaRutinas' => 6, 'CaExtension' => 7, 'CaAuthmethod' => 8, 'CaPasswd' => 9, 'CaSalt' => 10, 'CaActivo' => 11, 'CaForcechange' => 12, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caLogin' => 0, 'caNombre' => 1, 'caCargo' => 2, 'caDepartamento' => 3, 'caIdsucursal' => 4, 'caEmail' => 5, 'caRutinas' => 6, 'caExtension' => 7, 'caAuthmethod' => 8, 'caPasswd' => 9, 'caSalt' => 10, 'caActivo' => 11, 'caForcechange' => 12, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_LOGIN => 0, self::CA_NOMBRE => 1, self::CA_CARGO => 2, self::CA_DEPARTAMENTO => 3, self::CA_IDSUCURSAL => 4, self::CA_EMAIL => 5, self::CA_RUTINAS => 6, self::CA_EXTENSION => 7, self::CA_AUTHMETHOD => 8, self::CA_PASSWD => 9, self::CA_SALT => 10, self::CA_ACTIVO => 11, self::CA_FORCECHANGE => 12, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_login' => 0, 'ca_nombre' => 1, 'ca_cargo' => 2, 'ca_departamento' => 3, 'ca_idsucursal' => 4, 'ca_email' => 5, 'ca_rutinas' => 6, 'ca_extension' => 7, 'ca_authmethod' => 8, 'ca_passwd' => 9, 'ca_salt' => 10, 'ca_activo' => 11, 'ca_forcechange' => 12, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+		BasePeer::TYPE_PHPNAME => array ('CaLogin' => 0, 'CaNombre' => 1, 'CaCargo' => 2, 'CaDepartamento' => 3, 'CaIdsucursal' => 4, 'CaEmail' => 5, 'CaRutinas' => 6, 'CaExtension' => 7, 'CaAuthmethod' => 8, 'CaPasswd' => 9, 'CaSalt' => 10, 'CaActivo' => 11, 'CaForcechange' => 12, 'CaSucursal' => 13, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caLogin' => 0, 'caNombre' => 1, 'caCargo' => 2, 'caDepartamento' => 3, 'caIdsucursal' => 4, 'caEmail' => 5, 'caRutinas' => 6, 'caExtension' => 7, 'caAuthmethod' => 8, 'caPasswd' => 9, 'caSalt' => 10, 'caActivo' => 11, 'caForcechange' => 12, 'caSucursal' => 13, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_LOGIN => 0, self::CA_NOMBRE => 1, self::CA_CARGO => 2, self::CA_DEPARTAMENTO => 3, self::CA_IDSUCURSAL => 4, self::CA_EMAIL => 5, self::CA_RUTINAS => 6, self::CA_EXTENSION => 7, self::CA_AUTHMETHOD => 8, self::CA_PASSWD => 9, self::CA_SALT => 10, self::CA_ACTIVO => 11, self::CA_FORCECHANGE => 12, self::CA_SUCURSAL => 13, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_login' => 0, 'ca_nombre' => 1, 'ca_cargo' => 2, 'ca_departamento' => 3, 'ca_idsucursal' => 4, 'ca_email' => 5, 'ca_rutinas' => 6, 'ca_extension' => 7, 'ca_authmethod' => 8, 'ca_passwd' => 9, 'ca_salt' => 10, 'ca_activo' => 11, 'ca_forcechange' => 12, 'ca_sucursal' => 13, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
 	);
 
 	/**
@@ -209,6 +212,8 @@ abstract class BaseUsuarioPeer {
 		$criteria->addSelectColumn(UsuarioPeer::CA_ACTIVO);
 
 		$criteria->addSelectColumn(UsuarioPeer::CA_FORCECHANGE);
+
+		$criteria->addSelectColumn(UsuarioPeer::CA_SUCURSAL);
 
 	}
 
@@ -735,10 +740,6 @@ abstract class BaseUsuarioPeer {
 			$criteria = clone $values; // rename for clarity
 		} else {
 			$criteria = $values->buildCriteria(); // build Criteria from Usuario object
-		}
-
-		if ($criteria->containsKey(UsuarioPeer::CA_LOGIN) && $criteria->keyContainsValue(UsuarioPeer::CA_LOGIN) ) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ('.UsuarioPeer::CA_LOGIN.')');
 		}
 
 

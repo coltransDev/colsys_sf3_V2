@@ -8,7 +8,7 @@ class ReporteExteriorTask extends sfPropelBaseTask
 	$this->name             = 'reporteExterior';
 	$this->briefDescription = 'Genera una tarea para que se cree el reporte al exterior';
 	$this->detailedDescription = <<<EOF
-The [circularClientes|INFO] task does things.
+The [reporteExterior|INFO] task does things.
 Call it with:
 
 [php symfony reporteExterior|INFO]
@@ -21,25 +21,26 @@ EOF;
 
 	protected function execute($arguments = array(), $options = array()){
 		$configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'batch', true );
-		
-		//sfContext::createInstance($configuration)->dispatch();
-				
+					
 		$databaseManager = new sfDatabaseManager($configuration);
 		$databaseManager->loadConfiguration();
 		
 		
 		$c = new Criteria();
-		$c->add( ReportePeer::CA_IDTAREA_REXT, null, Criteria::ISNULL);
+		//$c->add( ReportePeer::CA_IDTAREA_REXT, null, Criteria::ISNULL);
 		$c->add( ReportePeer::CA_IMPOEXPO, Constantes::IMPO );	
-		$c->add( ReportePeer::CA_FCHCREADO, '2009-06-02' , Criteria::GREATER_EQUAL);		
+		$c->add( ReportePeer::CA_FCHCREADO, '2009-06-04' , Criteria::GREATER_EQUAL);	
+		//$c->add( ReportePeer::CA_CONSECUTIVO, '8146-2009');		
 		
-		$c->setLimit( 10 );
+			
 		
 		$reportes = ReportePeer::doSelect( $c );
 				
 		foreach( $reportes as $reporte ){
-			if( $reporte->esUltimaVersion() ){				
-				if( !$reporte->getCaIdTareaRext() && !$reporte->getReporteExterior() ){
+			
+			if( $reporte->esUltimaVersion() && !$reporte->getEsAG() && !$reporte->getCaUsuanulado() ){							
+				if( !$reporte->getCaIdTareaRext() && !$reporte->getReporteExterior()  ){
+					
 					if( $reporte->getCaImpoExpo()==Constantes::IMPO ){			
 						$tarea = new NotTarea(); 						
 						if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
@@ -77,9 +78,9 @@ EOF;
 						foreach(  $usuarios as $usuario ){			
 							$logins[] = $usuario->getCaLogin();
 						}
-						//$logins = array("abotero");
+						$logins = array("abotero");
 						$tarea->setAsignaciones( $logins );	
-						$tarea->notificar( );			
+						//$tarea->notificar();			
 						
 						$reporte->setCaIdtareaRext( $tarea->getCaIdtarea() );
 						$reporte->save();
@@ -87,6 +88,7 @@ EOF;
 					}						
 				}
 			}else{
+				echo $reporte->getCaConsecutivo()."\n";		
 				if( $reporte->getCaIdTareaRext() ){
 					$tarea = NotTareaPeer::retrieveByPk( $reporte->getCaIdTareaRext() );
 					if( $tarea ){

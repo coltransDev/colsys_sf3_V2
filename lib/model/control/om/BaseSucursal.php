@@ -730,7 +730,7 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(SucursalPeer::DATABASE_NAME);
 
-		$criteria->add(SucursalPeer::CA_NOMBRE, $this->ca_nombre);
+		$criteria->add(SucursalPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 
 		return $criteria;
 	}
@@ -741,18 +741,18 @@ abstract class BaseSucursal extends BaseObject  implements Persistent {
 	 */
 	public function getPrimaryKey()
 	{
-		return $this->getCaNombre();
+		return $this->getCaIdsucursal();
 	}
 
 	/**
-	 * Generic method to set the primary key (ca_nombre column).
+	 * Generic method to set the primary key (ca_idsucursal column).
 	 *
 	 * @param      string $key Primary key.
 	 * @return     void
 	 */
 	public function setPrimaryKey($key)
 	{
-		$this->setCaNombre($key);
+		$this->setCaIdsucursal($key);
 	}
 
 	/**

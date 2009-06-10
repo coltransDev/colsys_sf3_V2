@@ -2,7 +2,7 @@
 
 
 /**
- * This class adds structure of 'control.tb_rutinas' table to 'propel' DatabaseMap object.
+ * This class adds structure of 'control.tb_rutinas_old' table to 'propel' DatabaseMap object.
  *
  *
  *

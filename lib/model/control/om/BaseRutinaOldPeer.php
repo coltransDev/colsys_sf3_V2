@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Base static class for performing query and update operations on the 'control.tb_rutinas' table.
+ * Base static class for performing query and update operations on the 'control.tb_rutinas_old' table.
  *
  * 
  *
@@ -13,7 +13,7 @@ abstract class BaseRutinaOldPeer {
 	const DATABASE_NAME = 'propel';
 
 	/** the table name for this class */
-	const TABLE_NAME = 'control.tb_rutinas';
+	const TABLE_NAME = 'control.tb_rutinas_old';
 
 	/** A class that can be returned by this peer. */
 	const CLASS_DEFAULT = 'lib.model.control.RutinaOld';
@@ -25,19 +25,19 @@ abstract class BaseRutinaOldPeer {
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 	/** the column name for the CA_RUTINA field */
-	const CA_RUTINA = 'control.tb_rutinas.CA_RUTINA';
+	const CA_RUTINA = 'control.tb_rutinas_old.CA_RUTINA';
 
 	/** the column name for the CA_OPCION field */
-	const CA_OPCION = 'control.tb_rutinas.CA_OPCION';
+	const CA_OPCION = 'control.tb_rutinas_old.CA_OPCION';
 
 	/** the column name for the CA_DESCRIPCION field */
-	const CA_DESCRIPCION = 'control.tb_rutinas.CA_DESCRIPCION';
+	const CA_DESCRIPCION = 'control.tb_rutinas_old.CA_DESCRIPCION';
 
 	/** the column name for the CA_PROGRAMA field */
-	const CA_PROGRAMA = 'control.tb_rutinas.CA_PROGRAMA';
+	const CA_PROGRAMA = 'control.tb_rutinas_old.CA_PROGRAMA';
 
 	/** the column name for the CA_GRUPO field */
-	const CA_GRUPO = 'control.tb_rutinas.CA_GRUPO';
+	const CA_GRUPO = 'control.tb_rutinas_old.CA_GRUPO';
 
 	/**
 	 * An identiy map to hold any loaded instances of RutinaOld objects.
@@ -514,7 +514,7 @@ abstract class BaseRutinaOldPeer {
 	}
 
 	/**
-	 * Method to DELETE all rows from the control.tb_rutinas table.
+	 * Method to DELETE all rows from the control.tb_rutinas_old table.
 	 *
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */

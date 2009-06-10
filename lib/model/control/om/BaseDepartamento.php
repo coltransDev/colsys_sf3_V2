@@ -39,6 +39,16 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 	protected $ca_inhelpdesk;
 
 	/**
+	 * @var        array Perfil[] Collection to store aggregation of Perfil objects.
+	 */
+	protected $collPerfils;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collPerfils.
+	 */
+	private $lastPerfilCriteria = null;
+
+	/**
 	 * @var        array HdeskGroup[] Collection to store aggregation of HdeskGroup objects.
 	 */
 	protected $collHdeskGroups;
@@ -283,6 +293,9 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 
 		if ($deep) {  // also de-associate any related objects?
 
+			$this->collPerfils = null;
+			$this->lastPerfilCriteria = null;
+
 			$this->collHdeskGroups = null;
 			$this->lastHdeskGroupCriteria = null;
 
@@ -393,6 +406,14 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
+			if ($this->collPerfils !== null) {
+				foreach ($this->collPerfils as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collHdeskGroups !== null) {
 				foreach ($this->collHdeskGroups as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -471,6 +492,14 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collPerfils !== null) {
+					foreach ($this->collPerfils as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 				if ($this->collHdeskGroups !== null) {
 					foreach ($this->collHdeskGroups as $referrerFK) {
@@ -691,6 +720,12 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
+			foreach ($this->getPerfils() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addPerfil($relObj->copy($deepCopy));
+				}
+			}
+
 			foreach ($this->getHdeskGroups() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addHdeskGroup($relObj->copy($deepCopy));
@@ -742,6 +777,160 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 			self::$peer = new DepartamentoPeer();
 		}
 		return self::$peer;
+	}
+
+	/**
+	 * Clears out the collPerfils collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addPerfils()
+	 */
+	public function clearPerfils()
+	{
+		$this->collPerfils = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collPerfils collection (array).
+	 *
+	 * By default this just sets the collPerfils collection to an empty array (like clearcollPerfils());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initPerfils()
+	{
+		$this->collPerfils = array();
+	}
+
+	/**
+	 * Gets an array of Perfil objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Departamento has previously been saved, it will retrieve
+	 * related Perfils from storage. If this Departamento is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array Perfil[]
+	 * @throws     PropelException
+	 */
+	public function getPerfils($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(DepartamentoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collPerfils === null) {
+			if ($this->isNew()) {
+			   $this->collPerfils = array();
+			} else {
+
+				$criteria->add(PerfilPeer::CA_DEPARTAMENTO, $this->ca_nombre);
+
+				PerfilPeer::addSelectColumns($criteria);
+				$this->collPerfils = PerfilPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(PerfilPeer::CA_DEPARTAMENTO, $this->ca_nombre);
+
+				PerfilPeer::addSelectColumns($criteria);
+				if (!isset($this->lastPerfilCriteria) || !$this->lastPerfilCriteria->equals($criteria)) {
+					$this->collPerfils = PerfilPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastPerfilCriteria = $criteria;
+		return $this->collPerfils;
+	}
+
+	/**
+	 * Returns the number of related Perfil objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Perfil objects.
+	 * @throws     PropelException
+	 */
+	public function countPerfils(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(DepartamentoPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collPerfils === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(PerfilPeer::CA_DEPARTAMENTO, $this->ca_nombre);
+
+				$count = PerfilPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(PerfilPeer::CA_DEPARTAMENTO, $this->ca_nombre);
+
+				if (!isset($this->lastPerfilCriteria) || !$this->lastPerfilCriteria->equals($criteria)) {
+					$count = PerfilPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collPerfils);
+				}
+			} else {
+				$count = count($this->collPerfils);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a Perfil object to this object
+	 * through the Perfil foreign key attribute.
+	 *
+	 * @param      Perfil $l Perfil
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addPerfil(Perfil $l)
+	{
+		if ($this->collPerfils === null) {
+			$this->initPerfils();
+		}
+		if (!in_array($l, $this->collPerfils, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collPerfils, $l);
+			$l->setDepartamento($this);
+		}
 	}
 
 	/**
@@ -910,6 +1099,11 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collPerfils) {
+				foreach ((array) $this->collPerfils as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collHdeskGroups) {
 				foreach ((array) $this->collHdeskGroups as $o) {
 					$o->clearAllReferences($deep);
@@ -917,6 +1111,7 @@ abstract class BaseDepartamento extends BaseObject  implements Persistent {
 			}
 		} // if ($deep)
 
+		$this->collPerfils = null;
 		$this->collHdeskGroups = null;
 	}
 

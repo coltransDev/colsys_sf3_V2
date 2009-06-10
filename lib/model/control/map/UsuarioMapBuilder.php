@@ -60,9 +60,7 @@ class UsuarioMapBuilder implements MapBuilder {
 		$tMap->setPhpName('Usuario');
 		$tMap->setClassname('Usuario');
 
-		$tMap->setUseIdGenerator(true);
-
-		$tMap->setPrimaryKeyMethodInfo('control.tb_usuarios_ca_login_seq');
+		$tMap->setUseIdGenerator(false);
 
 		$tMap->addPrimaryKey('CA_LOGIN', 'CaLogin', 'VARCHAR', true, null);
 
@@ -89,6 +87,8 @@ class UsuarioMapBuilder implements MapBuilder {
 		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
 
 		$tMap->addColumn('CA_FORCECHANGE', 'CaForcechange', 'BOOLEAN', false, null);
+
+		$tMap->addColumn('CA_SUCURSAL', 'CaSucursal', 'VARCHAR', false, null);
 
 	} // doBuild()
 

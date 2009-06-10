@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Base class that represents a row from the 'control.tb_rutinas' table.
+ * Base class that represents a row from the 'control.tb_rutinas_old' table.
  *
  * 
  *

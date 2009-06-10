@@ -670,10 +670,10 @@ class Reporte extends BaseReporte
 	* Author: Andres Botero
 	*/
 	public function getEsAG(){
-		if( $this->getCaIncoterms() ){
-			return false;
+		if( $this->getCaColmas()=='' ){
+			return true;
 		}else{
-			return true;		
+			return false;		
 		}
 	}
 	

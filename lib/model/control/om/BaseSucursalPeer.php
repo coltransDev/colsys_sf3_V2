@@ -294,7 +294,7 @@ abstract class BaseSucursalPeer {
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = (string) $obj->getCaNombre();
+				$key = (string) $obj->getCaIdsucursal();
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -314,7 +314,7 @@ abstract class BaseSucursalPeer {
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof Sucursal) {
-				$key = (string) $value->getCaNombre();
+				$key = (string) $value->getCaIdsucursal();
 			} elseif (is_scalar($value)) {
 				// assume we've been passed a primary key
 				$key = (string) $value;
@@ -370,10 +370,10 @@ abstract class BaseSucursalPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 1] === null) {
+		if ($row[$startcol + 0] === null) {
 			return null;
 		}
-		return (string) $row[$startcol + 1];
+		return (string) $row[$startcol + 0];
 	}
 
 	/**
@@ -499,8 +499,8 @@ abstract class BaseSucursalPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(SucursalPeer::CA_NOMBRE);
-			$selectCriteria->add(SucursalPeer::CA_NOMBRE, $criteria->remove(SucursalPeer::CA_NOMBRE), $comparison);
+			$comparison = $criteria->getComparison(SucursalPeer::CA_IDSUCURSAL);
+			$selectCriteria->add(SucursalPeer::CA_IDSUCURSAL, $criteria->remove(SucursalPeer::CA_IDSUCURSAL), $comparison);
 
 		} else { // $values is Sucursal object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -573,7 +573,7 @@ abstract class BaseSucursalPeer {
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(SucursalPeer::CA_NOMBRE, (array) $values, Criteria::IN);
+			$criteria->add(SucursalPeer::CA_IDSUCURSAL, (array) $values, Criteria::IN);
 
 			foreach ((array) $values as $singleval) {
 				// we can invalidate the cache for this single object
@@ -665,7 +665,7 @@ abstract class BaseSucursalPeer {
 		}
 
 		$criteria = new Criteria(SucursalPeer::DATABASE_NAME);
-		$criteria->add(SucursalPeer::CA_NOMBRE, $pk);
+		$criteria->add(SucursalPeer::CA_IDSUCURSAL, $pk);
 
 		$v = SucursalPeer::doSelect($criteria, $con);
 
@@ -691,7 +691,7 @@ abstract class BaseSucursalPeer {
 			$objs = array();
 		} else {
 			$criteria = new Criteria(SucursalPeer::DATABASE_NAME);
-			$criteria->add(SucursalPeer::CA_NOMBRE, $pks, Criteria::IN);
+			$criteria->add(SucursalPeer::CA_IDSUCURSAL, $pks, Criteria::IN);
 			$objs = SucursalPeer::doSelect($criteria, $con);
 		}
 		return $objs;
