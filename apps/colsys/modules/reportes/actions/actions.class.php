@@ -35,13 +35,13 @@ class reportesActions extends sfActions
 		$this->asignaciones = $reporte->getRepasignacions();
 		$this->ultimoReporte = 80037;
 					
-		if( $reporte->getCaIdreporte()>$this->ultimoReporte && false ){ // El ultimo reporte antes de empezar a controlar las impresiones										
+		if( $reporte->getCaIdreporte()>$this->ultimoReporte  ){ // El ultimo reporte antes de empezar a controlar las impresiones										
 				/*
 				* Usuarios de traficos 
 				* A estos usuarios se les debe crear una tarea para que envien el Rep al exterior 
 				*/
 				
-				/*$c = new Criteria();				
+				$c = new Criteria();				
 				if( $reporte->getCaImpoExpo()==Constantes::IMPO ){			
 					if( $reporte->getCaTransporte()==Constantes::MARITIMO ){		
 						$c->add( UsuarioPeer::CA_DEPARTAMENTO, "Tráficos" );				
@@ -57,7 +57,7 @@ class reportesActions extends sfActions
 				$grupos["traficos"] = array();
 				foreach(  $usuarios as $usuario ){			
 					$grupos["traficos"][] = $usuario->getCaLogin();
-				}*/
+				}
 			
 			
 			
@@ -66,7 +66,7 @@ class reportesActions extends sfActions
 			
 			
 			
-			/*
+			
 			if( count($this->asignaciones)==0 ){
 				
 				$tarea = new NotTarea(); 
@@ -116,13 +116,13 @@ class reportesActions extends sfActions
 					$asignacion->setCaIdtarea( $newTarea->getCaIdtarea() );
 					$asignacion->save();
 					$this->asignaciones[] = $asignacion;
-					//$newTarea->notificar();				
+					$newTarea->notificar();				
 								
 				}
-			}*/
+			}
 			
 			/* Marca como finalizada una tarea */
-			/*
+			
 			$c = new Criteria();
 			$c->addJoin( NotTareaPeer::CA_IDTAREA, NotTareaAsignacionPeer::CA_IDTAREA );
 			$c->addJoin( NotTareaPeer::CA_IDTAREA, RepAsignacionPeer::CA_IDTAREA );
@@ -138,7 +138,7 @@ class reportesActions extends sfActions
 					$tarea->setCaUsuterminada( $this->getUser()->getUserId() );				
 					$tarea->save();
 				}
-			}*/		
+			}		
 		}
 		$this->reporte = $reporte;
 		

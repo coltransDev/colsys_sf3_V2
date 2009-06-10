@@ -116,7 +116,7 @@ class mySessionStorage  extends sfDatabaseSessionStorage
       else
       {
 	  	
-		$maxinactive = 900;
+		$maxinactive = 1800;
 		if( trim(sfConfig::get("app_ip_trusted"))  ){
 			$trusted = explode(" ", sfConfig::get("app_ip_trusted"));
 			

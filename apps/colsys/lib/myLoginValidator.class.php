@@ -19,13 +19,17 @@ class myLoginValidator extends sfValidatorBase
 			
 			$usuario = UsuarioPeer::retrieveByPk( $username );
 			if( $usuario && $usuario->getCaActivo() ){
-				if( $usuario->getCaAuthmethod()=="ldap" ){
+				if( $usuario->getCaAuthmethod()=="ldap" || $usuario->getCaAuthmethod()=="ldapP"){
 					$auth_user="cn=".$username.",o=coltrans_bog";						
 					$ldap_server=sfConfig::get("app_ldap_host");
 					
 					if( $connect=ldap_connect($ldap_server)){						
-						if(@$bind=ldap_bind($connect, $auth_user, utf8_encode($passwd))){							
-							sfContext::getInstance()->getUser()->signInLDAP( $username );										
+						if(@$bind=ldap_bind($connect, $auth_user, utf8_encode($passwd))){	
+							if( $usuario->getCaAuthmethod()=="ldap" ){						
+								sfContext::getInstance()->getUser()->signInLDAP( $username );
+							}else{
+								sfContext::getInstance()->getUser()->signInLDAPPerfiles( $username );
+							}										
 														
 							return $values;
 						}

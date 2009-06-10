@@ -1,25 +1,25 @@
-<div align="center">
-<table class="tableList" >
+<div class="content"  align="center">
+<br />
+<h3>Administraci&oacute;n de Perfiles</h3>
+<br />
+<br />
+
+
+<table class="tableList" width="90%" >
 <tr >
-	<th>Login</th>
-	<th>Nombre</th>
-	<th>Extensi&oacute;n</th>
-	<th>Cargo</th>
-	<th>Departamento</th>
-	<th>Activo</th>
-	<th>Metodo de Autenticaci&oacute;n</th>
+	<th width="12%">Perfil</th>
+	<th width="49%">Descripci&oacute;n</th>	
+	<th width="25%">Departamento</th>	
+	<th width="14%">Opciones</th>
 </tr>
 <?
-foreach( $usuarios as $usuario ){
+foreach( $perfiles as $perfil ){
 ?>
-<tr <?=$usuario->getCaActivo()?"":"class='row0'"?>>
-	<td ><a href="<?=url_for("adminUsers/formUsuario?login=".$usuario->getCaLogin())?>"><?=$usuario->getCaLogin()?></a></td>
-	<td><a href="<?=url_for("adminUsers/formUsuario?login=".$usuario->getCaLogin())?>"><?=$usuario->getCaNombre()?></a></td>
-	<td><?=$usuario->getCaExtension()?></td>
-	<td><?=$usuario->getCaCargo()?></td>
-	<td><?=$usuario->getCaDepartamento()?></td>
-	<td><?=$usuario->getCaActivo()?"Activo":"Inactivo"?></td>
-	<td><?=strtoupper($usuario->getCaAuthmethod())?></td>
+<tr >
+	<td><a href="<?=url_for("adminPerfiles/formPerfil?perfil=".$perfil->getCaPerfil())?>"><?=$perfil->getCaNombre()?></a></td>
+	<td><?=$perfil->getCaDescripcion()?></td>
+	<td><?=$perfil->getCaDepartamento()?></td>
+	<td><?=link_to(image_tag("16x16/unlock.gif")."Permisos", "adminPerfiles/formPermisos?perfil=".$perfil->getCaPerfil())?>&nbsp;<?=link_to(image_tag("16x16/add_user.gif")."Usuarios", "adminPerfiles/formUsers?perfil=".$perfil->getCaPerfil())?></td>
 </tr>
 <?
 }

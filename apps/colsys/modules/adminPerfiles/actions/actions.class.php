@@ -18,76 +18,160 @@ class adminPerfilesActions extends sfActions
 	public function executeIndex(sfWebRequest $request)
 	{
 		$c = new Criteria();
+		$c->addAscendingOrderByColumn( PerfilPeer::CA_DEPARTAMENTO );
+		$c->addAscendingOrderByColumn( PerfilPeer::CA_NOMBRE );
+		$this->perfiles = PerfilPeer::doSelect( $c );
+	}
+	
+	/*
+	*
+	*/
+	public function executeFormPerfil( $request ){
+		$this->perfil = PerfilPeer::retrieveByPk( $request->getParameter("perfil") );
+		if( !$this->perfil ){
+			$this->perfil = new Perfil();
+		}
+	 
+	 	$c = new Criteria();
+		$c->addAscendingOrderByColumn( DepartamentoPeer::CA_NOMBRE );
+		$this->departamentos = DepartamentoPeer::doSelect( $c );
+	}
+	
+	/*
+	*
+	*/
+	public function executeGuardarPerfil( $request ){
+		$perfil = PerfilPeer::retrieveByPk( $request->getParameter("perfil") );
+		if( !$perfil ){
+			$perfil = new Perfil();
+			$idperfil = str_replace(" ", "-", strtolower( $request->getParameter("nombre") ));
+			$perfil->setCaPerfil( $idperfil );
+		}
+						
+		$perfil->setCaNombre( $request->getParameter("nombre") );		
+		$perfil->setCaDescripcion( $request->getParameter("descripcion") );	
+		if( $request->getParameter("departamento") ){	
+			$perfil->setCaDepartamento( $request->getParameter("departamento") );		
+		}else{
+			$perfil->setCaDepartamento( null );		
+		}
+		$perfil->save();
+	 	
+		
+		$this->redirect("adminPerfiles/index" );
+		
+	}
+	
+	/*
+	*
+	*/
+	public function executeFormPermisos( $request ){
+		$this->perfil = PerfilPeer::retrieveByPk( $request->getParameter("perfil") );
+		$this->forward404Unless( $this->perfil );
+	 
+		
+		$c = new Criteria();
+		$c->add( AccesoPerfilPeer::CA_PERFIL, $this->perfil->getCaPerfil() );
+		$accesos = AccesoPerfilPeer::doSelect( $c );
+		
+		$this->accesos = array();
+		foreach( $accesos as $acceso ){
+			$this->accesos[ $acceso->getCaRutina() ] = $acceso->getCaAcceso();
+		}	
+		
+			
+	}
+	
+	
+	/*
+	*
+	*/
+	public function executeGuardarPermisos( $request ){
+		$this->perfil = PerfilPeer::retrieveByPk( $request->getParameter("perfil") );
+		$this->forward404Unless( $this->perfil );
+	 
+		
+		$c = new Criteria();
+		$c->add( AccesoPerfilPeer::CA_PERFIL, $this->perfil->getCaPerfil() );
+		$accesos = AccesoPerfilPeer::doSelect( $c );
+				
+		foreach( $accesos as $acceso ){
+			$acceso->delete();
+		}
+		
+		$accesosForm = $request->getParameter( "acceso" );
+		$niveles = $request->getParameter( "nivel" );
+		
+		foreach( $accesosForm as $key=>$accesoForm ){
+			$acceso = new AccesoPerfil();
+			$acceso->setCaPerfil(  $this->perfil->getCaPerfil() );
+			$acceso->setCaRutina( $key );
+			$acceso->setCaAcceso( $niveles[$key] );
+			$acceso->save();
+		}
+		
+		$this->redirect("adminPerfiles/formPerfil?perfil=".$this->perfil->getCaPerfil() );
+	}
+	
+	/*
+	*
+	*/
+	public function executeFormUsers( $request ){
+		$this->perfil = PerfilPeer::retrieveByPk( $request->getParameter("perfil") );
+		$this->forward404Unless( $this->perfil );
+	 
+	 	
+		$c = new Criteria();
+		$c->add( UsuarioPeer::CA_ACTIVO, true );
 		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );
 		$this->usuarios = UsuarioPeer::doSelect( $c );
+		
+		
+		$c = new Criteria();
+		$c->add( UsuarioPerfilPeer::CA_PERFIL, $this->perfil->getCaPerfil() );
+		$perfilesUsuario = UsuarioPerfilPeer::doSelect( $c );
+		
+		$this->usuariosPerfil = array();
+		foreach( $perfilesUsuario as $perfilUsuario ){
+			$this->usuariosPerfil[  ] = $perfilUsuario->getCaLogin();
+		}		
 	}
 	
 	/*
 	*
 	*/
-	public function executeFormUsuario( $request ){
-		$this->usuario = UsuarioPeer::retrieveByPk( $request->getParameter("login") );
-		$this->forward404Unless( $this->usuario );
-	 
+	public function executeGuardarPerfilesUsuario( $request ){
+		$this->perfil = PerfilPeer::retrieveByPk( $request->getParameter("perfil") );
+		$this->forward404Unless( $this->perfil );
+	 	
+		$c = new Criteria();
+		$c->add( UsuarioPerfilPeer::CA_PERFIL, $this->perfil->getCaPerfil() );
+		$perfilesUsuario = UsuarioPerfilPeer::doSelect( $c );
+						
+		foreach( $perfilesUsuario as $perfilUsuario ){		
+			$perfilUsuario->delete();
+		}		
+		
+		$logins = $request->getParameter( "logins");
+		
+		
+		foreach( $logins as $login ){
+			$usuarioPerfil = new UsuarioPerfil();
+			$usuarioPerfil->setCaPerfil( $this->perfil->getCaPerfil() );
+			$usuarioPerfil->setCaLogin( $login );
+			$usuarioPerfil->save();
+			
+		}
+		
+		
+		$this->redirect("adminPerfiles/formPerfil?perfil=".$this->perfil->getCaPerfil() );
+		
+		
 	}
 	
-	/*
-	*
-	*/
-	public function executeGuardarUsuario( $request ){
-		$this->usuario = UsuarioPeer::retrieveByPk( $request->getParameter("login") );
-		$this->forward404Unless( $this->usuario );
-		
-		if( $request->getParameter("auth_method") ){
-			$this->usuario->setCaAuthMethod( $request->getParameter("auth_method") );
-		}
-		
-		if( $request->getParameter("passwd1") && $request->getParameter("passwd1")==$request->getParameter("passwd2") ){
-			$this->usuario->setPasswd( $request->getParameter("passwd1") );
-		}
-		
-		
-		if( $request->getParameter("forcechange") ){
-			$this->usuario->setCaForcechange( true );
-		}else{
-			$this->usuario->setCaForcechange( false );
-		}
-		
-		$this->usuario->save();		
-	 
-	}
 	
-	/*
-	* Permite cambiar el password de un usuario que se autentica por BD
-	*/
-	public function executeChangePasswd( $request ){
-		$this->form = new CambioClaveForm();	
-		
-		if ($request->isMethod('post')){
-			
-			$this->form->bind(
-				array(
-						'clave_ant' => $request->getParameter('clave_ant'),
-						'clave1' => $request->getParameter('clave1'),
-						'clave2' => $request->getParameter('clave2')
-		
-					)
-				); 
-			
-			if ($this->form->isValid()){
-				$user = $this->getUser()->getUserId();
-				$user = UsuarioPeer::retrieveByPk( $this->getUser()->getUserId() );
-				$user->setPasswd( $this->getRequestParameter("clave1") );
-				$user->setCaForcechange( false );
-				$user->save();
-				
-				$this->getUser()->setAttribute('forcechange', false);
-								
-				$this->setTemplate("changePasswdOk");					
-				
-			}
-		}	
-	}	
+	
+	
 	
 }
 ?>

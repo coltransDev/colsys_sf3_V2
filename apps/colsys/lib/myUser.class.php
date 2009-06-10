@@ -19,8 +19,9 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('nombre', $user->getCaNombre() );		
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );
-			
 			$this->setAttribute('extension', $user->getCaExtension() );
+			
+			
 			
 			$c = new Criteria();
 			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
@@ -63,18 +64,29 @@ class myUser extends sfBasicSecurityUser
 	public function getNivelAcceso( $rutina ){		
 		$acceso = AccesoUsuarioPeer::retrieveByPk( $rutina, $this->getUserId() );
 		
-		if( $acceso ){			
+		if( $acceso ){					
 			return $acceso->getCaAcceso();
 		}else{
-			
-			$c = new Criteria();									
-			$c->addJoin( AccesoGrupoPeer::CA_GRUPO, UsuarioGrupoPeer::CA_GRUPO );				
-			$c->add( UsuarioGrupoPeer::CA_LOGIN , $this->getUserId() );
-			$c->add( AccesoGrupoPeer::CA_RUTINA , $rutina );
-			
-			$acceso = AccesoGrupoPeer::doSelectOne( $c );
-			if( $acceso ){				
-				return $acceso->getCaAcceso();
+			if( $this->getAttribute('authmethod')=="ldapP" ){						
+				$c = new Criteria();									
+				$c->addJoin( AccesoPerfilPeer::CA_PERFIL, UsuarioPerfilPeer::CA_PERFIL );				
+				$c->add( UsuarioPerfilPeer::CA_LOGIN , $this->getUserId() );
+				$c->add( AccesoPerfilPeer::CA_RUTINA , $rutina );
+				
+				$acceso = AccesoPerfilPeer::doSelectOne( $c );
+				if( $acceso ){				
+					return $acceso->getCaAcceso();
+				}
+			}else{
+				$c = new Criteria();									
+				$c->addJoin( AccesoGrupoPeer::CA_GRUPO, UsuarioGrupoPeer::CA_GRUPO );				
+				$c->add( UsuarioGrupoPeer::CA_LOGIN , $this->getUserId() );
+				$c->add( AccesoGrupoPeer::CA_RUTINA , $rutina );
+				
+				$acceso = AccesoGrupoPeer::doSelectOne( $c );
+				if( $acceso ){				
+					return $acceso->getCaAcceso();
+				}
 			}		
 		}
 		
@@ -227,6 +239,7 @@ class myUser extends sfBasicSecurityUser
 					$this->setAttribute('email', $user->getCaEmail() );
 					$this->setAttribute('cargo', $user->getCaCargo() );			
 					$this->setAttribute('extension', $user->getCaExtension() );
+					$this->setAttribute('authmethod', $user->getCaAuthmethod() );
 					$this->setAttribute('forcechange', false );					
 					$c = new Criteria();
 					$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
@@ -240,8 +253,46 @@ class myUser extends sfBasicSecurityUser
 		
 			}
 		}
+	}
+	
+	
+	
+	/*
+	* Inicia la sesion y verifica a los grupos a los que pertenece
+	*  el usuario el el directorio LDAP
+	*/
+	public function signInLDAPPerfiles( $username )
+	{ 		
+		$user = UsuarioPeer::retrieveByPk( $username );
+		
+		if( $user ){				
+			$this->setAttribute('user_id', $username );			
+			$this->setAuthenticated(true);							
+			$this->addCredential('colsys_user');
+			$this->setCulture('es_CO');			
+							
+			$sucursal = $user->getSucursal();			
+			$this->setAttribute('sucursal', $sucursal );
+			$this->setAttribute('nombre', $user->getCaNombre() );		
+			$this->setAttribute('email', $user->getCaEmail() );
+			$this->setAttribute('cargo', $user->getCaCargo() );			
+			$this->setAttribute('extension', $user->getCaExtension() );
+			$this->setAttribute('authmethod', $user->getCaAuthmethod() );
+			$this->setAttribute('forcechange', false );					
+			$c = new Criteria();
+			$c->add(DepartamentoPeer::CA_NOMBRE, $user->getCaDepartamento() );
+			$departamento = DepartamentoPeer::doSelectOne( $c );
+			if( $departamento ){
+				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
+			}									
+			
+		}
 			
 	}
+	
+	
+	
+	
 	
 	
 	/*
@@ -264,7 +315,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );			
 			$this->setAttribute('extension', $user->getCaExtension() );
-			
+			$this->setAttribute('authmethod', $user->getCaAuthmethod() );			
 			$this->setAttribute('forcechange', $user->getCaForcechange() );
 			
 			$c = new Criteria();
@@ -303,6 +354,7 @@ class myUser extends sfBasicSecurityUser
 		$this->setAttribute('cargo', null);
 		$this->setAttribute('extension', null);
 		$this->setAttribute('iddepartamento', null);
+		$this->setAttribute('authmethod', null);
 		
 		//setcookie("JSESSIONID", "" );	
 		
