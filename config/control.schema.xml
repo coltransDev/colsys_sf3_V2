@@ -2,7 +2,7 @@
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.control">
 	
 	<table name="control.tb_usuarios" phpName="Usuario">
-		<column name="ca_login" type="varchar" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_login" type="varchar" required="true" primaryKey="true"  />			
 		<column name="ca_nombre" type="varchar" />		
 		<column name="ca_cargo" type="varchar" size="10" />	
 		<column name="ca_departamento" type="varchar" />
@@ -15,7 +15,7 @@
 		<column name="ca_salt" type="varchar" />	
 		<column name="ca_activo" type="boolean" />	
 		<column name="ca_forcechange" type="boolean" />	
-		
+		<column name="ca_sucursal" type="varchar" />	
 		
 		<foreign-key foreignTable="control.tb_sucursales">
 			<reference local="ca_idsucursal" foreign="ca_idsucursal"/>
@@ -32,8 +32,8 @@
 	</table>
 	
 	<table name="control.tb_sucursales" phpName="Sucursal">
-		<column name="ca_idsucursal" type="VARCHAR" size="3"/>
-		<column name="ca_nombre" type="VARCHAR" size="50" required="true" primaryKey="true"/>
+		<column name="ca_idsucursal" type="VARCHAR" size="3"  primaryKey="true"/>
+		<column name="ca_nombre" type="VARCHAR" size="50" required="true"/>
 		<column name="ca_telefono" type="VARCHAR" size="50"/>
 		<column name="ca_fax" type="VARCHAR" size="100"/>
 		<column name="ca_direccion" type="VARCHAR" size="100"/>
@@ -64,7 +64,7 @@
 		</foreign-key>			
 	</table>
 	
-	<table name="control.tb_rutinasnew" phpName="Rutina">
+	<table name="control.tb_rutinas" phpName="Rutina">
 		<column name="ca_rutina" type="VARCHAR" required="VARCHAR" primaryKey="true"/>
 		<column name="ca_opcion" type="VARCHAR" />
 		<column name="ca_descripcion" type="VARCHAR" />
@@ -73,7 +73,7 @@
 	</table>
 	
 	
-	<table name="control.tb_rutinas" phpName="RutinaOld">
+	<table name="control.tb_rutinas_old" phpName="RutinaOld">
 		<column name="ca_rutina" type="VARCHAR" required="VARCHAR" primaryKey="true"/>
 		<column name="ca_opcion" type="VARCHAR" />
 		<column name="ca_descripcion" type="VARCHAR" />
@@ -96,5 +96,50 @@
 		<column name="ca_login" type="varchar" primaryKey="true"/>	
 		<column name="ca_grupo" type="varchar" primaryKey="true"/>				
 	</table>
+	
+	
+	<table name="control.tb_perfiles" phpName="Perfil">				
+		<column name="ca_perfil" type="varchar" primaryKey="true"/>	
+		<column name="ca_nombre" type="varchar" />	
+		<column name="ca_descripcion" type="varchar" />	
+		<column name="ca_departamento" type="varchar" />
+		
+		<foreign-key foreignTable="control.tb_departamentos">
+			<reference local="ca_departamento" foreign="ca_nombre"/>
+		</foreign-key>						
+	</table>
+	
+	
+	<table name="control.tb_accesos_perfiles" phpName="AccesoPerfil">				
+		<column name="ca_rutina" type="varchar" primaryKey="true"/>	
+		<column name="ca_perfil" type="varchar" primaryKey="true"/>			
+		<column name="ca_acceso" type="integer" />	
+		<foreign-key foreignTable="control.tb_perfiles">
+			<reference local="ca_perfil" foreign="ca_perfil"/>
+		</foreign-key>				
+	</table>
+	
+	<table name="control.tb_usuarios_perfil" phpName="UsuarioPerfil">				
+		<column name="ca_login" type="varchar" primaryKey="true"/>	
+		<column name="ca_perfil" type="varchar" primaryKey="true"/>		
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>	
+		<foreign-key foreignTable="control.tb_perfiles">
+			<reference local="ca_perfil" foreign="ca_perfil"/>
+		</foreign-key>			
+	</table>
+	
+	
+	<table name="control.tb_rutinas_niveles" phpName="RutinaNivel">				
+		<column name="ca_rutina" type="varchar" primaryKey="true"/>	
+		<column name="ca_nivel" type="varchar" primaryKey="true"/>		
+		<column name="ca_valor" type="varchar" />
+		<foreign-key foreignTable="control.tb_rutinas">
+			<reference local="ca_rutina" foreign="ca_rutina"/>
+		</foreign-key>	
 			
+	</table>
+		
+		
 </database>
