@@ -28,20 +28,7 @@ class clientesComponents extends sfComponents
 
 	}
 	
-	/*
-	* Muestra un campo que permite autocompletar el nombre del cliente usando JSON y el id lo guarda 
-	 en el atributo id.
-	*/
-	public function executeComboClientes()
-	{
-		$response = sfContext::getInstance()->getResponse();
-		$response->addJavascript('components/comboClientes');		
-		
-		if($this->idcliente){
-			$this->cliente = ClientePeer::retrieveByPk( $this->cliente );
-		}		
-
-	}
+	
 	
 	public function executeComboConsignatario()
 	{

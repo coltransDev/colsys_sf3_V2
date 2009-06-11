@@ -28,7 +28,7 @@ Ext.onReady(function(){
     });
 	
 	var resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><strong>{nombre}</strong><br /><span><br />{ciudad} - {pais}</span> </div></tpl>' 
+        '<tpl for="."><div class="search-item"><b>{nombre}</b><br /><span><br />{ciudad} - {pais}</span> </div></tpl>' 
 			
     );
     

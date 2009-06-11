@@ -64,12 +64,12 @@ if( count($gastos) || $editable ){
 	foreach( $gastos as $gasto ){
 	?>
 	<tr  style='background:#F0F0F0' >
-		<td ><div align="left"><strong>
+		<td ><div align="left"><b>
 			<?=$gasto->getTipoRecargo()->getCaRecargo()?>
-		</strong></div></td>
-		<td ><div align="left"><strong>
+		</b></div></td>
+		<td ><div align="left"><b>
 			<?=$gasto->getConcepto()->getCaConcepto()?>
-		</strong></div></td>
+		</b></div></td>
 		<td >
 			<div id="aplicacion_<?=$gasto->getOid()?>_div" align="center" style="display:inline" 
 				<?

@@ -12,7 +12,7 @@ use_helper("Modalbox");
 	<table cellspacing="1" cellpadding="5" width="450" border="0" class="tableForm">
 			<tbody>
 				<tr>
-					<th colspan="3"><strong>Ingrese un criterio para realizar las busqueda</strong></th>
+					<th colspan="3"><b>Ingrese un criterio para realizar las busqueda</b></th>
 					<th>
 					<?
 					if( $opcion=="consignatario" || $opcion=="notify" ){
@@ -23,11 +23,11 @@ use_helper("Modalbox");
 				</tr>
 				<tr>
 					<th rowspan="2">&nbsp;</th>
-					<td rowspan="2"><strong>Buscar por:</strong><br />
+					<td rowspan="2"><b>Buscar por:</b><br />
 						<?=select_tag("modalidad", options_for_select(array("tercero"=>"Nombre del Cliente","contacto"=>"Nombre del Contacto" ,"id"=>"Numero de identificacion" ), "tercero" ), "size=4" )?>						
 						 
 					</td>
-					<td><strong>Que contenga la cadena:</strong><br />
+					<td><b>Que contenga la cadena:</b><br />
 						<?=input_tag("criterio", null, "size=60")?>
 					</td>
 					<th rowspan="2">

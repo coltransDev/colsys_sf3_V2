@@ -42,7 +42,7 @@ $enBlanco = $cotizacion->enBlanco();
 	
 	<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
 		<tr>
-			<th><div align="left"><strong>Adjuntos:</strong> 
+			<th><div align="left"><b>Adjuntos:</b> 
 			</div></th>
 		</tr>
 		<?php 
@@ -80,7 +80,7 @@ $enBlanco = $cotizacion->enBlanco();
 		?>
 		<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
 			<tr>
-				<th><div align="left"><strong>IDG Oferta y Contrataci&oacute;n:</strong> 
+				<th><div align="left"><b>IDG Oferta y Contrataci&oacute;n:</b> 
 				</div></th>
 			</tr>		
 			<tr>
@@ -110,7 +110,7 @@ $enBlanco = $cotizacion->enBlanco();
 		?>
 		<table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
 			<tr>
-				<th><div align="left"><strong>IDG Oferta y Contrataci&oacute;n:</strong> 
+				<th><div align="left"><b>IDG Oferta y Contrataci&oacute;n:</b> 
 				</div></th>
 			</tr>		
 			<tr>

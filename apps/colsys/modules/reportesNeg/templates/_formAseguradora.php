@@ -47,7 +47,7 @@ $repseguro = $reporteNegocio->getRepSeguro();
 				</table></td>
 	</tr>-->
 	<tr>
-		<td class="listar"><strong>19.1 Valor Asegurado:</strong><br />
+		<td class="listar"><b>19.1 Valor Asegurado:</b><br />
 				<?
 				if( $editable ){
 					echo form_error("vlrasegurado");
@@ -61,7 +61,7 @@ $repseguro = $reporteNegocio->getRepSeguro();
 				
 				?>				
 				</td>
-		<td class="listar"><strong> 19.2 Obtenci&oacute;n P&oacute;liza:</strong><br />
+		<td class="listar"><b> 19.2 Obtenci&oacute;n P&oacute;liza:</b><br />
 			<?
 				if( $editable ){
 					echo form_error("obtencionpoliza");
@@ -72,7 +72,7 @@ $repseguro = $reporteNegocio->getRepSeguro();
 					echo $repseguro->getCaObtencionpoliza()." ".$repseguro->getCaIdmonedaPol();
 				}
 				?></td>
-		<td class="listar"><strong>19.3 Prima Venta:</strong>
+		<td class="listar"><b>19.3 Prima Venta:</b>
 			<?
 			if( $editable ){
 				echo form_error("primaventa");

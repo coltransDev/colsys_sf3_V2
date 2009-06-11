@@ -46,15 +46,15 @@ if( $opcion=="maritimo" ){
 			<td colspan="3" class="mostrar"><?=$ingreso->getCliente()->getCaCompania()?></td>
 		</tr>
 		<tr class="row0">
-			<td width="46%" class="mostrar"><div align="left"><strong>Factura</strong><br />
+			<td width="46%" class="mostrar"><div align="left"><b>Factura</b><br />
 				<?=$ingreso->getCaFactura()?>
 			</div></td>
-			<td colspan="2" class="mostrar"><div align="left"><strong>Fecha factura</strong><br />
+			<td colspan="2" class="mostrar"><div align="left"><b>Fecha factura</b><br />
 				<?=$ingreso->getCaFchfactura()?>
 			</div></td>
 		</tr>
 		<tr class="row1">
-			<td colspan="3" class="mostrar"><strong>Imagen de la factura </strong></td>
+			<td colspan="3" class="mostrar"><b>Imagen de la factura </b></td>
 		</tr>
 		<tr class="row1">
 			<td colspan="3">
@@ -110,15 +110,15 @@ if( $opcion=="aereo" ){
 			<td colspan="3" class="mostrar"><?=$ingreso->getCliente()->getCaCompania()?></td>
 		</tr>
 		<tr class="row0">
-			<td width="46%" class="mostrar"><div align="left"><strong>Factura</strong><br />
+			<td width="46%" class="mostrar"><div align="left"><b>Factura</b><br />
 				<?=$ingreso->getCaFactura()?>
 			</div></td>
-			<td colspan="2" class="mostrar"><div align="left"><strong>Fecha factura</strong><br />
+			<td colspan="2" class="mostrar"><div align="left"><b>Fecha factura</b><br />
 				<?=$ingreso->getCaFchfactura()?>
 			</div></td>
 		</tr>
 		<tr class="row1">
-			<td colspan="3" class="mostrar"><strong>Imagen de la factura </strong></td>
+			<td colspan="3" class="mostrar"><b>Imagen de la factura </b></td>
 		</tr>
 		<tr class="row1">
 			<td colspan="3">

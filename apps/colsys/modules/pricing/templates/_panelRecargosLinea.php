@@ -595,7 +595,7 @@ var actualizarObservaciones=function( btn, text ){
 		var record = store.getAt(activeRow); 
 		record.set("observaciones", text);
 		
-		document.getElementById("obs_"+record.get("_id")).innerHTML  = "<strong>Observaciones:</strong> "+text;		
+		document.getElementById("obs_"+record.get("_id")).innerHTML  = "<b>Observaciones:</b> "+text;		
 	}
 }	
 

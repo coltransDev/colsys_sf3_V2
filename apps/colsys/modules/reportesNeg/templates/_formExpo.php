@@ -5,7 +5,7 @@
 <table width="100%">	
 	<tr>
 		<td width="213" class="listar">
-			<strong>Piezas:</strong><br>
+			<b>Piezas:</b><br>
 			<?
 			$piezasExp = explode("|",  $repexpo->getCaPiezas() );
 			if( $editable ){
@@ -17,7 +17,7 @@
 			}	
 			?>		
 		</td>
-		<td width="201" class="listar"><strong>Peso:</strong> <br />			
+		<td width="201" class="listar"><b>Peso:</b> <br />			
 		<?
 			$pesoExp = explode("|",  $repexpo->getCaPeso() );
 			if(!isset($pesoExp[1])){
@@ -31,7 +31,7 @@
 				echo Utils::formatNumber( $repexpo->getCaPeso() )." ".$pesoExp[1];
 			}	
 			?>		</td>
-		<td width="283" class="listar"><strong>Volumen: </strong><br>
+		<td width="283" class="listar"><b>Volumen: </b><br>
 		<?
 			$volumenExp = explode("|",  $repexpo->getCaVolumen() );
 			if(!isset($volumenExp[1])){
@@ -58,7 +58,7 @@
 			?></td>
 		<td width="167" class="listar">
 			
-			<strong>Dimensiones:</strong> (cant;largoxanchoxalto en metros) <br />	
+			<b>Dimensiones:</b> (cant;largoxanchoxalto en metros) <br />	
 			<?
 			if( $editable ){
 				echo form_error("dimensiones");
@@ -71,7 +71,7 @@
 	</tr>
 	<tr>
 		<td colspan="2" class="listar"> 
-			<strong>Valor de Carga (USD):</strong><br />
+			<b>Valor de Carga (USD):</b><br />
 			<?
 			if( $editable ){
 				echo form_error("valorCarga");			
@@ -83,7 +83,7 @@
 			?>
 		
 		</td>
-		<td colspan="2" class="listar" valign="top"><strong>SIA:</strong><br />
+		<td colspan="2" class="listar" valign="top"><b>SIA:</b><br />
 			<?
 			if( $editable ){
 				echo select_tag("sia", objects_for_select($sias, "getId", "getCaNombre" , $repexpo->getCaIdsia()) );
@@ -96,7 +96,7 @@
 	<tr>
 		<td class="listar" >
 			<div id="emisionbl">
-			<strong>Lugar de emisi&oacute;n BL</strong><br />			
+			<b>Lugar de emisi&oacute;n BL</b><br />			
 			<?
 			if( $editable ){
 				echo select_tag("emisionbl", options_for_select(array(""=>"","Origen"=>"Origen", "Destino"=>"Destino"), $repexpo->getCaEmisionbl()));
@@ -107,7 +107,7 @@
 			</div>			</td>
 		<td class="listar">
 			<div id="cuantosbl">
-			<strong>Cuantos BL? </strong><br />			
+			<b>Cuantos BL? </b><br />			
 			<?
 			if( $editable ){
 				echo input_tag("numbl", $repexpo->getCaNumbl());
@@ -116,7 +116,7 @@
 			}
 			?>
 			</div>		</td>
-		<td class="listar" colspan="2"><strong>Tipo de exportaci&oacute;n: </strong><br>
+		<td class="listar" colspan="2"><b>Tipo de exportaci&oacute;n: </b><br>
 			<?
 			if( $editable ){	
 				echo select_tag("tipoexpo", objects_for_select($tiposexpo, "getCaIdentificacion","getCavalor", $repexpo->getCaTipoexpo()));
@@ -127,7 +127,7 @@
 	</tr>
 	<tr>
 		<td class="listar" >
-			<strong>Motonave/Vuelo</strong><br />
+			<b>Motonave/Vuelo</b><br />
 		<?
 			if( $editable ){
 				echo input_tag("motonave", $repexpo->getCaMotonave(), "size=30" );
@@ -136,7 +136,7 @@
 			}
 				
 			?>		</td>
-		<td class="listar"><strong>Solicitud anticipo</strong><br />
+		<td class="listar"><b>Solicitud anticipo</b><br />
 			<?
 			if( $editable ){
 				echo radiobutton_tag("anticipo" , "Si" , $repexpo->getCaAnticipo()?$repexpo->getCaAnticipo()=="S&iacute;":true );

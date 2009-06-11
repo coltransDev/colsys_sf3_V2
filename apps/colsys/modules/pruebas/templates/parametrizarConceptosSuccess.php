@@ -18,7 +18,7 @@
 			<?
 			foreach($fletes as $flete ){
 				$concepto = $flete->getConcepto();
-				echo "<strong>".$concepto->getCaConcepto()."</strong><br>";
+				echo "<b>".$concepto->getCaConcepto()."</b><br>";
 				
 				$recargos = $flete->getRecargoFletes();
 				

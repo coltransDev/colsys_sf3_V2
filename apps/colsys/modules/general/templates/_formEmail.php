@@ -24,7 +24,7 @@ var seleccionarContacto = function(){
 
 	</tr>
 	<tr>
-		<td width="454"><div align="left"><strong>Remitente:</strong> <br />
+		<td width="454"><div align="left"><b>Remitente:</b> <br />
 			<?
 				echo "".$user->getNombre()." &lt;".$user->getEmail()."&gt;";
 				?>
@@ -32,7 +32,7 @@ var seleccionarContacto = function(){
 	    <td width="246">Contactos</td>
 	</tr>
 	<tr>
-		<td><div align="left"><strong>Destinatario:</strong> (Por favor separe varios destinatarios con comas)<br>		
+		<td><div align="left"><b>Destinatario:</b> (Por favor separe varios destinatarios con comas)<br>		
 				
 				<input type="text" name="destinatario" id="destinatario" size="100" onfocus="textFocus='destinatario'"  />
 		</div></td>
@@ -57,31 +57,27 @@ var seleccionarContacto = function(){
 		</td>
 	</tr>
 	<tr>
-		<td><div align="left"><strong>CC</strong>
+		<td><div align="left"><b>CC</b>
 				<br>
 				<input type="text" name="cc" id="cc" size="100" onfocus="textFocus='cc'"  />
 				
 		</div></td>
     </tr>
 	<tr>
-		<td><div align="left"><strong>Asunto:</strong><br />
-				<?				
+		<td><div align="left"><b>Asunto:</b><br />
+			<input type="text" name="asunto" id="asunto" size="100" value="<?=isset($subject)?$subject:""?>" />
 			
-			echo input_tag("asunto", isset($subject)?$subject:"" , "size=100");
-			?>
 		</div></td>
     </tr>
 	<tr>
-		<td><div align="left"><strong>Solicitar Acuse de recibo:</strong> <br />
-				<?=checkbox_tag("readreceipt", "true", true);?>
+		<td><div align="left"><b>Solicitar Acuse de recibo:</b> <br />
+			<input type="checkbox" name="readreceipt" value="true" checked="checked" />	
 		</div></td>
     </tr>
 	<tr>
 		<td colspan="2">
-			<div align="left"><strong>Mensaje</strong><br>
-				<?				
-		echo textarea_tag("mensaje",isset($message)?$message:"", array('size'=>'120x5','rich'=>false, 'width'=>620, 'height'=>'150' ));
-		?>
+			<div align="left"><b>Mensaje</b><br>
+				<textarea name="mensaje" cols="140" rows="10" ><?=isset($message)?$message:""?></textarea>			
 		</div></td>
     </tr>
 </table>

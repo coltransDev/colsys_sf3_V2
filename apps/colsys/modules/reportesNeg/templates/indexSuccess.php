@@ -11,7 +11,7 @@ use_helper("Javascript");
 <?=form_tag( "reportesNeg/busquedaReporte?modo=".$modo	)?>
 <table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" id="mainTable">		
 	<tr>	
-		<th colspan="5" style='font-size: 12px; font-weight:bold;'><b><strong>Ingrese un criterio para realizar las busqueda</strong></b>		</th>		
+		<th colspan="5" style='font-size: 12px; font-weight:bold;'><b><b>Ingrese un criterio para realizar las busqueda</b></b>		</th>		
 	</tr>
 	<tr>
 		

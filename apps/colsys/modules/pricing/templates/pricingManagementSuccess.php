@@ -146,7 +146,7 @@ Controller = function()
 		  lazyRender : false, 
 		  width: 15,	
 		  tpl : new Ext.Template(
-			  '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class=\'btnComentarios\' id=\'obs_{_id}\'><strong>Observaciones:</strong> {observaciones}</div></p>' 
+			  '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class=\'btnComentarios\' id=\'obs_{_id}\'><b>Observaciones:</b> {observaciones}</div></p>' 
 			 
 		  )
 		});
@@ -396,7 +396,7 @@ Controller = function()
 				var record = store.getAt(activeRow); 
 				record.set("observaciones", text);
 				
-				document.getElementById("obs_"+record.get("_id")).innerHTML  = "<strong>Observaciones:</strong> "+text;		
+				document.getElementById("obs_"+record.get("_id")).innerHTML  = "<b>Observaciones:</b> "+text;		
 			}
 		}	
   

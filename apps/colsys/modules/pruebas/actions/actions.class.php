@@ -64,7 +64,7 @@ class pruebasActions extends sfActions {
 		$emails = EmailPeer::doSelect ( $c );
 		foreach ( $emails as $email ) {
 			//print_r( $email);
-			echo "<strong>Enviando " . $i ++ . "</strong>	emailid: " . $email->getCaIdEmail () . " Fch: " . $email->getCaFchEnvio () . " <br />From: " . $email->getCaFrom () . "<br />";
+			echo "<b>Enviando " . $i ++ . "</b>	emailid: " . $email->getCaIdEmail () . " Fch: " . $email->getCaFchEnvio () . " <br />From: " . $email->getCaFrom () . "<br />";
 				
 			$addresses = explode(",",$email->getCaAddress());			
 			/*foreach( $addresses as $key=>$address ){
@@ -270,7 +270,7 @@ class pruebasActions extends sfActions {
 							$fechaSalida = "2008-".$mes."-".$diaStr;
 							echo $status->getCaIdEmail()." ";
 							echo $status->getCaStatus()."<br />";
-							echo "<strong>".$fechaSalida."</strong><br /><br />";
+							echo "<b>".$fechaSalida."</b><br /><br />";
 							//$status->setCaFchSalida( $fechaSalida );
 							//$status->save();
 							$i++;				
@@ -286,11 +286,11 @@ class pruebasActions extends sfActions {
 								
 								echo $status->getCaIdEmail()." ";
 								echo $status->getCaStatus()."<br />";
-								echo "<strong> 2-> ".$fechaSalida."</strong><br /><br />";
+								echo "<b> 2-> ".$fechaSalida."</b><br /><br />";
 								
 								//$status->setCaFchSalida( $fechaSalida );
 								//$status->save();
-								echo "<strong>".$fechaSalida."</strong><br /><br />";	
+								echo "<b>".$fechaSalida."</b><br /><br />";	
 								$i++;			
 							}
 						}						
@@ -310,7 +310,7 @@ class pruebasActions extends sfActions {
 							
 							$fechaSalida = "2008-".$mes."-".$diaStr;
 							echo $status->getCaStatus()."<br />";
-							echo "<strong>".$fechaSalida."</strong><br /><br />";
+							echo "<b>".$fechaSalida."</b><br /><br />";
 							$status->setCaFchSalida( $fechaSalida );
 							$status->save();
 							$i++;				
@@ -324,11 +324,11 @@ class pruebasActions extends sfActions {
 								$fechaSalida = "2008-".$mes."-".$diaStr;
 								
 								//echo $status->getCaStatus()."<br />";
-								echo "<strong> 2-> ".$fechaSalida."</strong><br /><br />";
+								echo "<b> 2-> ".$fechaSalida."</b><br /><br />";
 								
 								$status->setCaFchSalida( $fechaSalida );
 								$status->save();
-								echo "<strong>".$fechaSalida."</strong><br /><br />";	
+								echo "<b>".$fechaSalida."</b><br /><br />";	
 								$i++;			
 							}
 						}						
@@ -355,7 +355,7 @@ class pruebasActions extends sfActions {
 							
 							$fechaSalida = "2008-".$mesStr."-".$diaStr;
 							
-							echo "<strong>".$fechaSalida."</strong><br /><br />";
+							echo "<b>".$fechaSalida."</b><br /><br />";
 							//$status->setCaFchSalida( $fechaSalida );
 							//$status->save();
 							$i++;				
@@ -413,7 +413,7 @@ class pruebasActions extends sfActions {
 			if( $reporte ){
 				$inoair->setCaIdReporte( $reporte->getCaConsecutivo() );
 				$inoair->save();
-				echo "<strong> OK</strong>".$reporte->getCaConsecutivo();
+				echo "<b> OK</b>".$reporte->getCaConsecutivo();
 			}else{
 				$c = new Criteria();
 				$c->add( ReportePeer::CA_IDREPORTE,  $inoair->getCaIdReporte() );
@@ -423,7 +423,7 @@ class pruebasActions extends sfActions {
 				if( $reporte ){
 					$inoair->setCaIdReporte( $reporte->getCaConsecutivo() );
 					$inoair->save();
-					echo "<strong> OK2</strong> ".$reporte->getCaConsecutivo();
+					echo "<b> OK2</b> ".$reporte->getCaConsecutivo();
 				}else{
 					$inoair->setCaIdReporte( null );
 					$inoair->save();
@@ -1251,7 +1251,7 @@ class pruebasActions extends sfActions {
 			
 			
 				
-			$initialTag='<font face="verdana,geneva" size="3"><strong><font color="#000080" style="background-color: #ffffff">';
+			$initialTag='<font face="verdana,geneva" size="3"><b><font color="#000080" style="background-color: #ffffff">';
 			$finalTag="</font";
 			$vigencia=Utils::getInformation($string, $initialTag, $finalTag);
 						

@@ -96,10 +96,10 @@ function export_file(){
 <table width="80%" border="0" cellspacing="0" cellpadding="0">
 	
 	<tr>
-		<td colspan="6"><strong>Proovedor:</strong><br /><?php echo $fala_header->getCaNombreProveedor() ?></td>
+		<td colspan="6"><b>Proovedor:</b><br /><?php echo $fala_header->getCaNombreProveedor() ?></td>
 	</tr>
 	<tr>
-		<td><strong>Traer reporte:</strong><br /><?=input_tag("reporte", $fala_header->getCaReporte())?>
+		<td><b>Traer reporte:</b><br /><?=input_tag("reporte", $fala_header->getCaReporte())?>
 		<?=button_to_remote("Buscar",array("url"=>"falabella/buscarReporte", 
 											"update"=>"resultadoReporte",
 											"with"=>"'iddoc=".$fala_header->getCaIddoc()."&reporte='+document.getElementById('reporte').value",
@@ -108,7 +108,7 @@ function export_file(){
 											)
 											)?><br />
 			<div id="resultadoReporte"></div>		</td>
-		<td><strong>Número del Viaje:</strong><br /><?
+		<td><b>Número del Viaje:</b><br /><?
 			echo input_tag("num_viaje", $fala_header->getCaNumViaje(), "size=12");
 			echo observe_field("num_viaje", array("url"=>"falabella/observeHeader",
 												"update"=>"result",
@@ -118,7 +118,7 @@ function export_file(){
 												)
 												)?></td>
 
-		<td><strong>Codigo estandard Transportista:</strong><br /><?
+		<td><b>Codigo estandard Transportista:</b><br /><?
 			echo input_tag("cod_carrier", $fala_header->getCaCodCarrier(), "size=4 readOnly=true");
 			echo observe_field("cod_carrier", array("url"=>"falabella/observeHeader",
 												"update"=>"result",
@@ -128,7 +128,7 @@ function export_file(){
 												)
 												)?></td>
 
-		<td><strong>Container Mode:</strong><br /><?
+		<td><b>Container Mode:</b><br /><?
 			echo select_tag("container_mode", options_for_select(array("LCL"=>"LCL","CY/CY"=>"CY/CY","CFS/CFS"=>"CFS/CFS","CFS/CY"=>"CFS/CY"), $fala_header->getCaContainerMode(), "include_blank=true") );
 			echo observe_field("container_mode", array("url"=>"falabella/observeHeader",
 												"update"=>"result",
@@ -138,7 +138,7 @@ function export_file(){
 												)
 												)?></td>
 
-		<td><strong>Numero de Factura:</strong><br /><?
+		<td><b>Numero de Factura:</b><br /><?
 			echo input_tag("numero_invoice", $fala_header->getCaProformaNumber(), "size=25 readOnly=true");
 			echo observe_field("numero_invoice", array("url"=>"falabella/observeHeader",
 												"update"=>"result",
@@ -148,7 +148,7 @@ function export_file(){
 												)
 												)?></td>
 
-		<td><strong>Monto de Factura:</strong><br /><?
+		<td><b>Monto de Factura:</b><br /><?
 			echo input_tag("monto_invoice", $fala_header->getCaMontoInvoiceMiles(), "size=18");
 			echo observe_field("monto_invoice", array("url"=>"falabella/observeHeader",
 												"update"=>"result",

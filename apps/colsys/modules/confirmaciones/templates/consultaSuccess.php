@@ -477,7 +477,7 @@ function mostrar(oid){
 						?>
 				<tr>
 					<td class="listar"><?						
-						if( $reporte->getCaIdetapa()!='99999' ){
+						//if( $reporte->getCaIdetapa()!='99999' ){
 							$i = 0;
 							foreach( $etapas as $etapa ){
 							
@@ -492,7 +492,7 @@ function mostrar(oid){
 						<input name='tipo_<?=$inoCliente->getOid()?>'  id='tipo_<?=$inoCliente->getOid()?>' type='radio'  value = '99999' onclick="mostrar('<?=$inoCliente->getOid()?>');" />
 						Cierre<br />
 					<?
-					}
+					//}
 					?>
 							<input name='tipo_<?=$inoCliente->getOid()?>' id='tipo_<?=$inoCliente->getOid()?>' type='radio' value = '88888' checked="checked" onclick="mostrar('<?=$inoCliente->getOid()?>');" />
 							

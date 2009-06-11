@@ -388,7 +388,7 @@ $cliente = $reporteNegocio->getCliente();
 	}
 </script>
 <?php echo form_error('name') ?>
-<h3>Reporte de Negocio de <?=$modo=="expo"?"<strong>Exportaci&oacute;n</strong>":"<strong>Importaci&oacute;n</strong>"?></h3>
+<h3>Reporte de Negocio de <?=$modo=="expo"?"<b>Exportaci&oacute;n</b>":"<b>Importaci&oacute;n</b>"?></h3>
 <br>
 <br>
 <?=form_tag("reportesNeg/formReporteGuardar?modo=".$modo, "name=reporteForm id=reporteForm onSubmit='return verificarListaClinton()'")?>
@@ -749,9 +749,9 @@ $cliente = $reporteNegocio->getCliente();
 			
 		?>
 			</span></td>
-			<td colspan="2" class="listar">Elaboro: <strong>
+			<td colspan="2" class="listar">Elaboro: <b>
 				<?=$user->getUserid()?>
-			</strong> </td>
+			</b> </td>
 		</tr>
 	</tbody>
 </table>

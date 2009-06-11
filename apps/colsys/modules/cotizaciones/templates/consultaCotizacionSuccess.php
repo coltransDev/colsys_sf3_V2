@@ -76,7 +76,7 @@ Ext.onReady(function(){
 	//var data_productos = <?//json_encode();?>
 	
 	var resultTpl = new Ext.XTemplate( 
-        '<tpl for="."><div class="search-item"><strong>{compania}</strong><br /><span>{nombre} {papellido} {sapellido} <br />{cargo}</span> </div></tpl>' 
+        '<tpl for="."><div class="search-item"><b>{compania}</b><br /><span>{nombre} {papellido} {sapellido} <br />{cargo}</span> </div></tpl>' 
     );
 
 

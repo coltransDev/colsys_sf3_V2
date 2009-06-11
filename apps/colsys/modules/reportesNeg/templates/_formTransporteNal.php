@@ -3,8 +3,8 @@ $repaduana = $reporteNegocio->getRepAduana();
 ?>
 <table cellspacing="0" cellpadding="0" width="100%">
 	<tr>
-		<td class="listar"><strong>Transporte Nacional</strong></td>
-		<td class="listar" rowspan="3"><strong>20.3 Instrucciones Especiales para Transporte Terrestre:</strong><br />
+		<td class="listar"><b>Transporte Nacional</b></td>
+		<td class="listar" rowspan="3"><b>20.3 Instrucciones Especiales para Transporte Terrestre:</b><br />
 			<?
 			if($editable){
 				echo textarea_tag("instrucciones", $repaduana->getCaInstrucciones(), "size=80x5 wrap=virtual");			
@@ -19,7 +19,7 @@ $repaduana = $reporteNegocio->getRepAduana();
 			<?
 			if( $reporteNegocio->getcaImpoExpo()=="Importación" ){
 				?>
-				<strong>20.1 Con Colmas:</strong>								
+				<b>20.1 Con Colmas:</b>								
 				<?
 				if($editable){		
 					echo select_tag("transnacarga", options_for_select(array("S&iacute;"=>"S&iacute;", "No"=>"No"), $repaduana->getCaTransnacarga() ));
@@ -30,7 +30,7 @@ $repaduana = $reporteNegocio->getRepAduana();
 			?>										</td>
 	</tr>
 	<tr>
-		<td class="listar"><strong>20.2 Tipo:</strong>						
+		<td class="listar"><b>20.2 Tipo:</b>						
 			<?
 			if($editable){	
 				echo select_tag("transnatipo", objects_for_select( $transnatipo, "getCaValor", "getCaValor" , $repaduana->getCaTransnatipo() ));

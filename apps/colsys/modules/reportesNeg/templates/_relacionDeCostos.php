@@ -20,7 +20,7 @@ if( count($costos)>0 || $editable ){
 	foreach( $costos as $costo ){
 	?>
 	<tr  style='background:#F0F0F0' >
-		<td valign="top" ><strong><?=$costo->getCosto()->getCaCosto()?></strong></td>
+		<td valign="top" ><b><?=$costo->getCosto()->getCaCosto()?></b></td>
 		<td valign="top">
 		
 		<div id="tipo_<?=$costo->getOid()?>_div" align="center" style="display:inline" 

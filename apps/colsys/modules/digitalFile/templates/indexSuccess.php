@@ -32,7 +32,7 @@ use_helper("Javascript");
 				</tr>
 			<tr>
 				<td width="66%" class="mostrar">Tipo de busqueda </td>
-				<td width="34%" class="mostrar"><strong>Buscar por:</strong><br />
+				<td width="34%" class="mostrar"><b>Buscar por:</b><br />
 					<select size="4" name="opcion">
 						<option value="ca_referencia" selected="selected">N&uacute;mero de Referencia</option>
 						

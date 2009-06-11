@@ -9,7 +9,7 @@ echo input_hidden_tag("factura" , $factura );
 		<td colspan="2" >&nbsp;</td>
 	</tr>
 	<tr>
-		<td width="50%"><div align="right"><strong>Buscar archivo </strong></div></td>
+		<td width="50%"><div align="right"><b>Buscar archivo </b></div></td>
 		<td width="50%"><?php echo input_file_tag('file') ?></td>
 	</tr>
 	<?

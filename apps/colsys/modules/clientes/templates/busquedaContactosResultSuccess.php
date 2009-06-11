@@ -52,7 +52,7 @@
 			foreach( $contactos as $contacto ){
 	?>
 	<tr onclick="javascript:seleccionTercero('<?=isset($formName)?$formName:""?>', <?=$i?>)" style="cursor:pointer" >
-		<td class="listar"><strong><?=$contacto->getNombre() ?> </strong><br /></td>
+		<td class="listar"><b><?=$contacto->getNombre() ?> </b><br /></td>
 		<td class="listar"><?=str_replace("|" , " " , $cliente->getCaDireccion()) ?> </td>
 		<td class="listar"><?=$contacto->getCaTelefonos() ?></td>
 		<td class="listar">

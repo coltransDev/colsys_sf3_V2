@@ -59,7 +59,7 @@ if( count($conceptos)>0 || $editable ){
 	foreach( $conceptos as $concepto ){
 	?>
 	<tr  style='background:#F0F0F0' >
-		<td ><strong><?=$concepto->getConcepto()->getCaConcepto()?></strong></td>	
+		<td ><b><?=$concepto->getConcepto()->getCaConcepto()?></b></td>	
 		<?
 		if( $reporteNegocio->getCaTransporte()=="Marítimo" ){
 		?>		

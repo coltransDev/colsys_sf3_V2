@@ -10,15 +10,7 @@
  */
 class gestDocumentalComponents extends sfComponents
 {
-	/*
-	* Muestra las referencias que el usuario ha buscado
-	* @author: Andres Botero
-	*/
-	public function executeVerArchivosReporte(){				
-		$this->files=$this->reporte->getFiles();					
-		$this->user = $this->getUser();		
-		$this->user->clearFiles();				
-	}
+	
 	
 	/*
 	* Muestra un panel con los archivos seleccionados 

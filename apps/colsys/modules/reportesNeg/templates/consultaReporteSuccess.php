@@ -14,16 +14,16 @@ use_helper("Javascript", "Object", "Validation");
 		</tr>
 		<tr>
 			<th width="173" class="titulo">&nbsp;</th>
-			<td width="122" class="mostrar"><div align="center"><strong>Reporte No.:</strong><br />
+			<td width="122" class="mostrar"><div align="center"><b>Reporte No.:</b><br />
 							<?=$reporteNegocio->getCaConsecutivo()?>
 			</div></td>
-			<td width="90" class="mostrar" ><div align="center"><span class="titulo"><strong>Fecha</strong></span><br />
+			<td width="90" class="mostrar" ><div align="center"><span class="titulo"><b>Fecha</b></span><br />
 							<?=Utils::fechaMes($reporteNegocio->getCaFchreporte())?>
 			</div></td>
-			<td width="107" class="mostrar"><div align="center"><strong>Versi&oacute;n No.</strong>:<br />
+			<td width="107" class="mostrar"><div align="center"><b>Versi&oacute;n No.</b>:<br />
 							<?=$reporteNegocio->getCaVersion()."/".$reporteNegocio->numVersiones()?>
 			</div></td>
-			<td width="85" class="mostrar"><div align="left"><strong>Cotizaci&oacute;n</strong><br /><?=$reporteNegocio->getCaIdCotizacion()?>
+			<td width="85" class="mostrar"><div align="left"><b>Cotizaci&oacute;n</b><br /><?=$reporteNegocio->getCaIdCotizacion()?>
 </div></td>
 			<?
 		/*$cotProducto = $reporteNegocio->getCotProducto();
@@ -45,9 +45,9 @@ use_helper("Javascript", "Object", "Validation");
 			<th class="titulo" colspan="6">INFORMACION GENERAL</th>
 		</tr>
 		<tr>
-			<td class="captura" style="vertical-align: top;"><strong>1.&nbsp;Impor/Exportaci&oacute;n</strong></td>
-			<td colspan="2" class="captura"><div align="center"><strong>2.Origen</strong></div></td>
-			<td colspan="3" class="captura"><div align="center"><strong>3. Destino </strong></div></td>
+			<td class="captura" style="vertical-align: top;"><b>1.&nbsp;Impor/Exportaci&oacute;n</b></td>
+			<td colspan="2" class="captura"><div align="center"><b>2.Origen</b></div></td>
+			<td colspan="3" class="captura"><div align="center"><b>3. Destino </b></div></td>
 		</tr>
 		<tr>
 			<td class="captura" style="vertical-align: top;"><div align="center">
@@ -61,10 +61,10 @@ use_helper("Javascript", "Object", "Validation");
 			</div></td>
 		</tr>
 		<tr>
-			<td rowspan="2" class="captura" valign="top"><div align="center"><strong>4. Fecha Despacho:</strong><br />
+			<td rowspan="2" class="captura" valign="top"><div align="center"><b>4. Fecha Despacho:</b><br />
 							<?=Utils::fechaMes($reporteNegocio->getCaFchdespacho())?>
 			</div></td>
-			<td height="46" colspan="4" class="mostrar"><strong>5. Agente: </strong><br />
+			<td height="46" colspan="4" class="mostrar"><b>5. Agente: </b><br />
 					<span class="listar">
 						<?=$reporteNegocio->getAgente()?$reporteNegocio->getAgente():"Directo"?>
 			</span></td>
@@ -86,11 +86,11 @@ use_helper("Javascript", "Object", "Validation");
 				</table>			</td>
 		</tr>
 		<tr>
-			<td colspan="4" class="mostrar"><strong>6. Descripci&oacute;n de la Mercanc&iacute;a:</strong><br />				
+			<td colspan="4" class="mostrar"><b>6. Descripci&oacute;n de la Mercanc&iacute;a:</b><br />				
 				<?=Utils::replace($reporteNegocio->getCaMercanciaDesc())?>			</td>
 		</tr>
 		<tr>
-			<td class="captura" valign="top"><strong>Cliente</strong></td>
+			<td class="captura" valign="top"><b>Cliente</b></td>
 			<td colspan="5" class="mostrar">		
 				<?											
 				$contacto = $reporteNegocio->getContacto();
@@ -101,22 +101,22 @@ use_helper("Javascript", "Object", "Validation");
 				<table cellspacing="1" width="500" border="0">
 					<tbody>
 						<tr>
-							<td width="220" colspan="2"><strong>8. Nombre:</strong><br />
+							<td width="220" colspan="2"><b>8. Nombre:</b><br />
 								<?=Utils::replace($cliente->getCaCompania())?></td>
-							<td width="280" colspan="2"><strong>8.1 Orden:</strong><br />								
+							<td width="280" colspan="2"><b>8.1 Orden:</b><br />								
 								<?=$reporteNegocio->getCaOrdenClie()?></td>
 						</tr>
 						<tr>
-							<td colspan="2"><strong>8.2 Contacto:</strong><br />
+							<td colspan="2"><b>8.2 Contacto:</b><br />
 								<?=Utils::replace($contacto->getNombre())?> </td>
-							<td colspan="2"><strong>8.3 Direcci&oacute;n:</strong><br />
+							<td colspan="2"><b>8.3 Direcci&oacute;n:</b><br />
 								<?=str_replace("|", " ", Utils::replace($cliente->getCaDireccion()))." ".Utils::replace($cliente->getCaComplemento())?></td>
 						</tr>
 						<tr>
-							<td><strong>8.4 Tel&eacute;fono:</strong><br />
+							<td><b>8.4 Tel&eacute;fono:</b><br />
 								<?=$contacto->getCaTelefonos()?></td>
-							<td><strong>8.5 Fax:</strong><br /><?=$contacto->getCaFax()?></td>
-							<td colspan="2"><strong>8.6 Correo   Electr&oacute;nico:</strong><br />
+							<td><b>8.5 Fax:</b><br /><?=$contacto->getCaFax()?></td>
+							<td colspan="2"><b>8.6 Correo   Electr&oacute;nico:</b><br />
 								<?=$contacto->getCaEmail()?></td>
 						</tr>
 					</tbody>
@@ -126,7 +126,7 @@ use_helper("Javascript", "Object", "Validation");
 				?>			</td>
 		</tr>
 		<tr>
-			<td class="captura" valign="top"><strong>Consignatario:</strong></td>
+			<td class="captura" valign="top"><b>Consignatario:</b></td>
 			<td colspan="5" class="mostrar">
 				<?
 				$consignatario = $reporteNegocio->getConsignatario();
@@ -134,27 +134,27 @@ use_helper("Javascript", "Object", "Validation");
 				?>
 				<table cellspacing="0" cellpadding="0">
 					<tr>
-						<td colspan="2"><strong>9.1 Nombre:					
-							</strong><br />
+						<td colspan="2"><b>9.1 Nombre:					
+							</b><br />
 							
 						<?=Utils::replace($consignatario->getCaNombre())?></td>
-						<td><strong>9.1 Enviar Informaci&oacute;n</strong>:<br />
+						<td><b>9.1 Enviar Informaci&oacute;n</b>:<br />
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<?=Utils::replace( $reporteNegocio->getCaInformarCons() )?>						</td>
 					</tr>
 					<tr>
-						<td colspan="2"><strong>9.1.2 Contacto:</strong><br />
+						<td colspan="2"><b>9.1.2 Contacto:</b><br />
 							<?=Utils::replace($consignatario->getCaContacto())?>							</td>
-						<td><strong>9.1.3 Direcci&oacute;n:</strong><br />
+						<td><b>9.1.3 Direcci&oacute;n:</b><br />
 							<?=Utils::replace($consignatario->getCaDireccion())?>							</td>
 					</tr>
 					<tr>
-						<td><strong>9.1.4 Tel&eacute;fono</strong>:<br />
+						<td><b>9.1.4 Tel&eacute;fono</b>:<br />
 							<?=$consignatario->getCaTelefonos()?>					</td>
-						<td><strong>9.1.5 Fax</strong>:<br />
+						<td><b>9.1.5 Fax</b>:<br />
 							<?=$consignatario->getCaFax()?>					</td>
-						<td><strong>9.1.6 Correo Electr&oacute;nico</strong>:<br />
+						<td><b>9.1.6 Correo Electr&oacute;nico</b>:<br />
 							<?=$consignatario->getCaEmail()?>					</td>
 					</tr>				
 				</table>
@@ -167,32 +167,32 @@ use_helper("Javascript", "Object", "Validation");
 				if( $notify ){
 				?>
 		<tr>
-			<td class="captura" valign="top"><strong>Notify:</strong></td>
+			<td class="captura" valign="top"><b>Notify:</b></td>
 			<td colspan="5" class="mostrar">
 				
 				<table cellspacing="0" cellpadding="0">
 					<tr>
-						<td colspan="2"><strong>9.1 Nombre:					
-							</strong><br />
+						<td colspan="2"><b>9.1 Nombre:					
+							</b><br />
 							
 						<?=Utils::replace($notify->getCaNombre())?></td>
-						<td><strong>9.2 Enviar Informaci&oacute;n</strong>:<br />
+						<td><b>9.2 Enviar Informaci&oacute;n</b>:<br />
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<?=Utils::replace( $reporteNegocio->getCaInformarNoti() )?>						</td>
 					</tr>
 					<tr>
-						<td colspan="2"><strong>9.1.2 Contacto:</strong><br />
+						<td colspan="2"><b>9.1.2 Contacto:</b><br />
 							<?=Utils::replace($notify->getCaContacto())?>							</td>
-						<td><strong>9.2.3 Direcci&oacute;n:</strong><br />
+						<td><b>9.2.3 Direcci&oacute;n:</b><br />
 							<?=Utils::replace($notify->getCaDireccion())?>							</td>
 					</tr>
 					<tr>
-						<td><strong>9.2.4 Tel&eacute;fono</strong>:<br />
+						<td><b>9.2.4 Tel&eacute;fono</b>:<br />
 							<?=$notify->getCaTelefonos()?>					</td>
-						<td><strong>9.2.5 Fax</strong>:<br />
+						<td><b>9.2.5 Fax</b>:<br />
 							<?=$notify->getCaFax()?>					</td>
-						<td><strong>9.2.6 Correo Electr&oacute;nico</strong>:<br />
+						<td><b>9.2.6 Correo Electr&oacute;nico</b>:<br />
 							<?=$notify->getCaEmail()?>					</td>
 					</tr>				
 				</table>
@@ -204,7 +204,7 @@ use_helper("Javascript", "Object", "Validation");
 		if( $modo=="expo" ){
 		?>
 		<tr>
-			<td valign="top" class="captura"><strong>Informaci&oacute;n de exportaciones </strong></td>
+			<td valign="top" class="captura"><b>Informaci&oacute;n de exportaciones </b></td>
 			<td colspan="5" class="mostrar">
 			<?				
 			include_component("reportesNeg","formExpo", array("reporteNegocio"=>$reporteNegocio, "editable"=>false));				
@@ -215,29 +215,29 @@ use_helper("Javascript", "Object", "Validation");
 		}
 		?>		
 		<tr>
-			<td rowspan="3" class="captura" valign="top"><strong>Instrucciones:</strong></td>
-			<td class="listar" colspan="5"><strong>11.1 Preferencias del Cliente:</strong><br />
+			<td rowspan="3" class="captura" valign="top"><b>Instrucciones:</b></td>
+			<td class="listar" colspan="5"><b>11.1 Preferencias del Cliente:</b><br />
 			<?=Utils::replace($reporteNegocio->getCaPreferenciasClie())?></td>
 		</tr>
 		<tr>
 			<td class="listar" colspan="5">
-				<strong>11.2 Instrucciones Especiales para el Agente:</strong>
+				<b>11.2 Instrucciones Especiales para el Agente:</b>
 				
 				<br />
 				<?=Utils::replace($reporteNegocio->getCaInstrucciones())?></td>
 		</tr>
 		<tr>
 			<td height="28" colspan="5" class="listar">
-				<strong>11.3 Copiar comunicaciones a:</strong><br />
+				<b>11.3 Copiar comunicaciones a:</b><br />
 				<?=$reporteNegocio->getCaConfirmarClie() ?>
 				
 			</td>
 		</tr>
 		<tr>
-			<td rowspan="4" valign="top" class="captura"><strong>12. Transporte:</strong><br /><?=Utils::replace($reporteNegocio->getCaTransporte())?>			</td>
-			<td colspan="2" class="listar"><strong>13. Modalidad <br />
-			</strong><?=$reporteNegocio->getCaModalidad()?></td>
-			<td colspan="3" class="listar"><strong>14.1 L&iacute;nea Transporte:</strong>			
+			<td rowspan="4" valign="top" class="captura"><b>12. Transporte:</b><br /><?=Utils::replace($reporteNegocio->getCaTransporte())?>			</td>
+			<td colspan="2" class="listar"><b>13. Modalidad <br />
+			</b><?=$reporteNegocio->getCaModalidad()?></td>
+			<td colspan="3" class="listar"><b>14.1 L&iacute;nea Transporte:</b>			
 			<br />
 			<?
 			$transporte = $reporteNegocio->getTransportador();
@@ -252,7 +252,7 @@ use_helper("Javascript", "Object", "Validation");
 				if( $repexpo->getCaIdlineaterrestre() ){
 					?>
 					<br />
-					<strong>14.2 Linea de transporte terrestre:</strong><br />
+					<b>14.2 Linea de transporte terrestre:</b><br />
 					<?
 					echo $repexpo->getTransportadorTerrestre();
 				}				
@@ -261,25 +261,25 @@ use_helper("Javascript", "Object", "Validation");
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2" class="listar"><strong>15. Transporte terrestre <br /> 
+			<td colspan="2" class="listar"><b>15. Transporte terrestre <br /> 
 				<?
 				echo $reporteNegocio->getCaColmas()
 				?>
-			</strong></td>
-			<td colspan="3" class="listar"><strong>16.&nbsp;Seguro:</strong><br />
+			</b></td>
+			<td colspan="3" class="listar"><b>16.&nbsp;Seguro:</b><br />
 				<?
 				echo $reporteNegocio->getCaSeguro()
 				?>			</td>
 		</tr>
 		<tr>
-			<td colspan="2" class="listar"><strong>Incoterms<br />
-			</strong><?=$reporteNegocio->getCaIncoterms()?></td>
-			<td colspan="3" class="listar"><strong>Consignar MAWB/BL a :<br />
-			</strong><?=$reporteNegocio->getConsignarmaster()?></td>
+			<td colspan="2" class="listar"><b>Incoterms<br />
+			</b><?=$reporteNegocio->getCaIncoterms()?></td>
+			<td colspan="3" class="listar"><b>Consignar MAWB/BL a :<br />
+			</b><?=$reporteNegocio->getConsignarmaster()?></td>
 		</tr>
 		<tr>
-			<td colspan="2" class="listar"><strong>Consignar HAWB/HBL a :<br />
-			</strong><?=$reporteNegocio->getConsignar()?></td>
+			<td colspan="2" class="listar"><b>Consignar HAWB/HBL a :<br />
+			</b><?=$reporteNegocio->getConsignar()?></td>
 			<td colspan="3" class="listar">&nbsp;</td>
 		</tr>
 		<?
@@ -288,7 +288,7 @@ use_helper("Javascript", "Object", "Validation");
 		?>
 		
 		<tr>
-			<td valign="top" class="captura"><strong>Transporte terrestre nacional: </strong></td>
+			<td valign="top" class="captura"><b>Transporte terrestre nacional: </b></td>
 			<td colspan="5" class="listar">
 				<?		
 				include_component("reportesNeg", "formTransporteNal", array("reporteNegocio"=>$reporteNegocio, "editable"=>false));				
@@ -299,7 +299,7 @@ use_helper("Javascript", "Object", "Validation");
 		if( $reporteNegocio->getCaSeguro() == "Sí"  ){			
 		?>
 		<tr>
-			<td valign="top" class="captura"><strong> Informaci&oacute;n para la aseguradora </strong></td>
+			<td valign="top" class="captura"><b> Informaci&oacute;n para la aseguradora </b></td>
 			<td colspan="5" class="listar">
 				<?									
 				include_partial("reportesNeg/formAseguradora", array("reporteNegocio"=>$reporteNegocio, "editable"=>false));				
@@ -316,7 +316,7 @@ use_helper("Javascript", "Object", "Validation");
 		
 			
 		<tr>
-			<td class="invertir" colspan="7"><div align="center"><strong>CONCEPTOS EMBARQUE </strong></div></td>
+			<td class="invertir" colspan="7"><div align="center"><b>CONCEPTOS EMBARQUE </b></div></td>
 		</tr>
 		<tr>
 			<td class="invertir" colspan="7">
@@ -347,7 +347,7 @@ use_helper("Javascript", "Object", "Validation");
 			
 	   ?>
 		<tr>
-			<td class="invertir" colspan="7"><div align="center"><strong>RELACI&Oacute;N DE RECARGOS </strong></div></td>
+			<td class="invertir" colspan="7"><div align="center"><b>RELACI&Oacute;N DE RECARGOS </b></div></td>
 		</tr>
 		<tr>
 			<td class="invertir" colspan="7">				
@@ -409,7 +409,7 @@ use_helper("Javascript", "Object", "Validation");
 	if( ($reporteNegocio->getCaImpoExpo()=="Importación" && $reporteNegocio->getCaColmas()=="Sí") || ($reporteNegocio->getCaImpoExpo()=="Exportación" && $repexpo->getCaIdSia()==17 ) ){
 	?>
 		<tr>
-			<td class="invertir" colspan="7"><div align="center"><strong>CONCEPTOS DE COBRO EN AGENCIAMIENTO COLMAS SIA LTDA.</strong></div></td>
+			<td class="invertir" colspan="7"><div align="center"><b>CONCEPTOS DE COBRO EN AGENCIAMIENTO COLMAS SIA LTDA.</b></div></td>
 		</tr>
 		<tr>
 			<td class="invertir" colspan="7">
@@ -445,18 +445,18 @@ use_helper("Javascript", "Object", "Validation");
 			<table cellspacing="1" width="100%">
 				<tbody>
 					<tr>
-						<td class="listar"><strong>Ciudad :</strong><br />
+						<td class="listar"><b>Ciudad :</b><br />
 								<?=$sucursal?$sucursal->getCaNombre():""?>
 								</td>
-						<td class="listar"><strong>Elabor&oacute; :</strong><br />
+						<td class="listar"><b>Elabor&oacute; :</b><br />
 								<center>
 									<?=$reporteNegocio->getCaUsucreado()?>
 								</center></td>
-						<td class="listar"><strong>Fecha:</strong><br />
+						<td class="listar"><b>Fecha:</b><br />
 								<center>									
 									<?=$reporteNegocio->getCaFchcreado()?>
 								</center></td>
-						<td colspan="2" class="listar"><strong>Rep. Comercial:</strong><br />
+						<td colspan="2" class="listar"><b>Rep. Comercial:</b><br />
 								<center>
 									<?=$usuario->getCaNombre()?>
 								</center></td>

@@ -39,7 +39,7 @@ if( $sucursal ){
 	?>
 	
 	<tr>
-		<td><strong>Total</strong></td>
+		<td><b>Total</b></td>
 		<td>&nbsp;</td>
 		<td><?=$total?></td>
 	</tr>

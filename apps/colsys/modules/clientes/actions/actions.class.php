@@ -286,36 +286,7 @@ class clientesActions extends sfActions
 	}
 	
 	
-	/*
-	* 
-	*/
 	
-	public function executeListaClientesJSON(){
-		$criterio =  $this->getRequestParameter("query");
-		$c = new Criteria();
-		$c->addSelectColumn(ClientePeer::CA_IDCLIENTE );
-		$c->addSelectColumn(ClientePeer::CA_COMPANIA );		
-		$c->addSelectColumn(ClientePeer::CA_PREFERENCIAS );
-		$c->addSelectColumn(ClientePeer::CA_CONFIRMAR );
-		
-		$c->setDistinct();			
-		$c->add( ClientePeer::CA_COMPANIA , "lower(".ClientePeer::CA_COMPANIA.") LIKE '%".strtolower( $criterio )."%'", Criteria::CUSTOM );	
-		
-		$c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );		
-		$c->setLimit(40);
-		$stmt = ClientePeer::doSelectStmt( $c );
-		
-		$this->clientes = array();
- 
-   		while ( $row = $stmt->fetch( PDO::FETCH_NUM ) ) {
-      		$this->clientes[] = array('ca_idcliente'=>$row[0],
-                                      'ca_compania'=>utf8_encode($row[1]),
-									  'ca_preferencias'=>utf8_encode($row[2]),
-									  'ca_confirmar'=>utf8_encode($row[3]),
-                                 );
-		}					
-		$this->setLayout("none");
-	}
 	
 	
 	public function executeListaConsignatariosJSON(){

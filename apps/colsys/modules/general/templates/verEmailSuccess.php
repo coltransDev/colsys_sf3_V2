@@ -5,42 +5,42 @@
 			<th colspan="2">CORREO ELECTR&Oacute;NICO ENVIADO</th>
 		</tr>
 		<tr>
-			<td><div align="left"><strong>Fecha de Enviado:</strong><br>
+			<td><div align="left"><b>Fecha de Enviado:</b><br>
 					<?=$email->getCaFchenvio()?>
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="left"><strong>Usuario que Envi&oacute;:</strong><br>
+			<td><div align="left"><b>Usuario que Envi&oacute;:</b><br>
 					<?=$email->getCaUsuenvio()?>
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="left"><strong>Nombre del Usuario:</strong><br>
+			<td><div align="left"><b>Nombre del Usuario:</b><br>
 					<?=$user->getCaNombre()?>
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="left"><strong>Email del Usuario:</strong><br>
+			<td><div align="left"><b>Email del Usuario:</b><br>
 					<?=$user->getCaEmail()?>
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="left"><strong>Destinatarios:</strong><br>
+			<td><div align="left"><b>Destinatarios:</b><br>
 					<?=$email->getCaAddress()?>
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="left"><strong>CC.:</strong><br>
+			<td><div align="left"><b>CC.:</b><br>
 						<?=$email->getCaCc()?>
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="left"><strong>Asunto:</strong><br>
+			<td><div align="left"><b>Asunto:</b><br>
 					<?=$email->getCaSubject()?>
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="left"><strong>Mensaje:</strong><br>
+			<td><div align="left"><b>Mensaje:</b><br>
 					<?=$email->getCaBodyHtml()?$email->getCaBodyHtml():$email->getCaBody()?>
 			</div></td>
 		</tr>

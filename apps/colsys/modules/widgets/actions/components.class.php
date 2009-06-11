@@ -178,6 +178,24 @@ class widgetsComponents extends sfComponents
 		
 	}
 	
+	/*
+	* Muestra un campo que permite autocompletar el nombre del cliente usando JSON y el id lo guarda 
+	 en el atributo id.
+	*/
+	public function executeComboClientes()
+	{		
+		if($this->idcliente){
+			$this->cliente = ClientePeer::retrieveByPk( $this->cliente );
+		}		
+	}
 	
+	
+	/*
+	* Muestra un campo que permite autocompletar el numero de reporte.
+	*/
+	public function executeComboReportes()
+	{
+		
+	}
 }
 ?>
