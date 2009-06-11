@@ -106,14 +106,14 @@ class myUser extends sfBasicSecurityUser
 	* Añade un archivo en la lista de archivos del usuario para enviar por correo 
 	* o realizar otras tareas
 	*/
-	public function addFile($file, $idx=null){		
-		$userFiles=explode("|",$this->getAttribute('userFiles'));
-		if( !$idx ){		
-			$idx=count( $userFiles );
-		}
+	public function addFile( $file ){		
+		$userFiles=$this->getAttribute('userFiles');
+		srand( time() );
+		$idx=md5(count( $userFiles ).time().rand());
 		
+				
 		$userFiles[$idx] = $file;
-		$this->setAttribute('userFiles', implode("|",$userFiles) );
+		$this->setAttribute('userFiles', $userFiles );
 		return $idx;
 	}
 		
@@ -122,7 +122,7 @@ class myUser extends sfBasicSecurityUser
 	* o realizar otras tareas
 	*/
 	public function getFile( $k ){
-		$userFiles=explode("|",$this->getAttribute('userFiles'));
+		$userFiles=$this->getAttribute('userFiles');
 		if( isset($userFiles[$k]) ){
 			return $userFiles[$k];
 		} 		
@@ -133,7 +133,7 @@ class myUser extends sfBasicSecurityUser
 	* o realizar otras tareas
 	*/
 	public function getFiles( ){
-		return explode("|",$this->getAttribute('userFiles'));
+		return $this->getAttribute('userFiles');
 	}
 	
 	/*
@@ -141,7 +141,7 @@ class myUser extends sfBasicSecurityUser
 	* o realizar otras tareas
 	*/
 	public function clearFiles(){
-		$this->setAttribute('userFiles', "" );
+		$this->setAttribute('userFiles', array() );
 	}
 	
 	public function log( $event, $module, $action ){
