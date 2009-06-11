@@ -5,7 +5,7 @@ use_helper("MimeType");
 
 ?>
 <div class="content" >
-<form action="<?=url_for("traficos/enviarCorreoTraficos")?>" method="post">
+<form action="<?=url_for("traficos/enviarCorreoTraficos?reporte=".$consecutivo)?>" method="post">
 <input type="hidden" name="idcliente" id="idcliente" value="<?=$idCliente?>" />
 <input type="hidden" name="modo" id="modo" value="<?=$modo?>" />
 
@@ -117,6 +117,8 @@ foreach( $reportes as $reporte ){
 }
 	?>
 </table>
+<br />
+
 <div align="center"><input type="submit" class="button" value="Enviar" /></div>
 </form>
 </div>
