@@ -33,9 +33,9 @@ var storeNoticias = new Ext.data.GroupingStore({
 		recordNoticias
 	),
 	proxy: new Ext.data.MemoryProxy( myData )		
-	/*,
-	sortInfo:{field: 'ciudad', direction: "ASC"}
-	*/
+	,
+	sortInfo:{field: 'fchcreado', direction: "DESC"}
+	
 	
 });
 	
@@ -351,7 +351,7 @@ function editarNoticia( rec ){
 var applyRowClass =  function(record, rowIndex, p, ds) {
 	
 	var xf = Ext.util.Format;
-	p.body = xf.ellipsis(xf.stripTags(record.data.mensaje), 200) ;
+	p.body = xf.stripTags(record.data.mensaje) ;
 	return 'x-grid3-row-expanded';	
 }
 
