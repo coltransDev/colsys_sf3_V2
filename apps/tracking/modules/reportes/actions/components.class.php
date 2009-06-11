@@ -38,10 +38,7 @@ class reportesComponents extends sfComponents
 				$reportes = ReportePeer::getReportesActivosImpoAereo( $this->getUser()->getClienteActivo() );
 			}
 		}
-		
-		
-		
-		
+				
 		if( $this->impoexpo==Constantes::EXPO ){				
 			$reportes = ReportePeer::getReportesActivosExpo( $this->getUser()->getClienteActivo() );
 		}
