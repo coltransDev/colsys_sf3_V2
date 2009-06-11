@@ -117,5 +117,5 @@ all:
 #    # ORM
 #    orm:                    propel
 #    # enable 1.0 compatibility
-    compat_10:              on
+#    compat_10:              on
 
