@@ -67,9 +67,7 @@ class ReportePeer extends BaseReportePeer
 	public static function getReportesActivosImpoMaritimo( $idCliente , $criteria=false, $order="" ){
 				
 		$c = new Criteria();		
-		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );	
-		//$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE, Criteria::LEFT_JOIN );
-		//$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA, Criteria::LEFT_JOIN );			
+		$c->addJoin( ReportePeer::CA_IDCONCLIENTE, ContactoPeer::CA_IDCONTACTO, Criteria::LEFT_JOIN );						
 		$c->addJoin( ContactoPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE, Criteria::LEFT_JOIN );
 				
 		$c->add( ClientePeer::CA_IDGRUPO, $idCliente );						
@@ -92,13 +90,7 @@ class ReportePeer extends BaseReportePeer
 		}
 						
 		$c->add( ReportePeer::CA_USUANULADO, null, Criteria::ISNULL );
-		/*				
-		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHREPORTE, "2008-04-01", Criteria::GREATER_THAN ); // // Se acordo esta fecha para empezar a operar en esta modalidad		
-		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_FCHDESPACHO, "2008-04-01", Criteria::GREATER_THAN ));	
-		$c->addAnd($criterion);		
-		*/				
-				
-		
+			
 				
 		if( $idCliente==860048626 ||$idCliente==830512518 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
 			$fecha =  date("Y-m-")."01";			
@@ -120,6 +112,7 @@ class ReportePeer extends BaseReportePeer
 				
 		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHULTSTATUS, $fecha , Criteria::GREATER_EQUAL );	
 		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, "99999",  Criteria::NOT_EQUAL  ));
+		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, null,  Criteria::ISNULL  ));
 		$c->add($criterion);
 		
 		//$c->setLimit( 5 );		
@@ -164,10 +157,7 @@ class ReportePeer extends BaseReportePeer
 				
 		$c->add( ReportePeer::CA_USUANULADO, null, Criteria::ISNULL );
 		
-		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHREPORTE, "2008-10-01", Criteria::GREATER_THAN ); // // Se acordo esta fecha para empezar a operar en esta modalidad			
-		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_FCHDESPACHO, "2008-10-01", Criteria::GREATER_THAN ));	
-		$c->addAnd($criterion);					
-				
+					
 		$c->add( ReportePeer::CA_TRANSPORTE, Constantes::AEREO );
 		$c->add( ReportePeer::CA_IMPOEXPO, Constantes::IMPO );
 		$c->addOr( ReportePeer::CA_IMPOEXPO, Constantes::TRIANGULACION );
@@ -191,9 +181,8 @@ class ReportePeer extends BaseReportePeer
 		
 		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHULTSTATUS, $fecha , Criteria::GREATER_EQUAL );	
 		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, "99999",  Criteria::NOT_EQUAL  ));
+		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, null,  Criteria::ISNULL  ));
 		$c->add($criterion);
-		
-		
 		
 		if( $criteria ){
 			return $c;
@@ -249,6 +238,7 @@ class ReportePeer extends BaseReportePeer
 				
 		$criterion = $c->getNewCriterion( ReportePeer::CA_FCHULTSTATUS, $fecha , Criteria::GREATER_EQUAL );	
 		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, "99999",  Criteria::NOT_EQUAL  ));
+		$criterion->addOr($c->getNewCriterion( ReportePeer::CA_IDETAPA, null,  Criteria::ISNULL  ));
 		$c->add($criterion);
 		
 		if( $criteria ){
