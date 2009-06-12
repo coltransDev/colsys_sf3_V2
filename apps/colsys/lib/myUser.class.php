@@ -13,9 +13,9 @@ class myUser extends sfBasicSecurityUser
 		$user = UsuarioPeer::retrieveByPk( $userId );
 				
 		if( $user ){		
-			$sucursal = $user->getSucursal();
-			
-			$this->setAttribute('sucursal', $sucursal );
+			//$sucursal = $user->getSucursal();
+						
+			$this->setAttribute('idsucursal',  $user->getCaIdsucursal() );		
 			$this->setAttribute('nombre', $user->getCaNombre() );		
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );
@@ -44,8 +44,8 @@ class myUser extends sfBasicSecurityUser
 		return $this->getAttribute('nombre' );
 	}
 	
-	public function getSucursal(){
-		return $this->getAttribute('sucursal' );
+	public function getIdSucursal(){
+		return $this->getAttribute('idsucursal' );
 	}
 	
 	public function getIddepartamento(){
@@ -106,13 +106,31 @@ class myUser extends sfBasicSecurityUser
 	* Añade un archivo en la lista de archivos del usuario para enviar por correo 
 	* o realizar otras tareas
 	*/
-	public function addFile( $file ){		
-		$userFiles=$this->getAttribute('userFiles');
-		srand( time() );
-		$idx=md5(count( $userFiles ).time().rand());
 		
-				
-		$userFiles[$idx] = $file;
+	/*
+	* Añade un archivo en la lista de archivos del usuario para enviar por correo 
+	* o realizar otras tareas
+	*/
+	/*public function addFile($file){				
+		
+		$userFiles=explode("|",$this->getAttribute('userFiles'));
+						
+		$idx=md5(count( $userFiles ).time().rand());
+						
+		$userFiles[$idx] = base64_encode($file);
+		echo  implode("|",$userFiles);
+		//$this->setAttribute('userFiles', implode("|",$userFiles) );
+		return $idx;
+	}*/
+	
+	public function addFile($file){				
+		
+		$userFiles=$this->getAttribute('userFiles');
+						
+		$idx=md5(count( $userFiles ).time().rand());
+						
+		$userFiles[$idx] = base64_encode($file);
+		
 		$this->setAttribute('userFiles', $userFiles );
 		return $idx;
 	}
@@ -121,10 +139,10 @@ class myUser extends sfBasicSecurityUser
 	* Retorna un archivo en la lista de archivos del usuario para enviar por correo 
 	* o realizar otras tareas
 	*/
-	public function getFile( $k ){
+	public function getFile( $k ){		
 		$userFiles=$this->getAttribute('userFiles');
 		if( isset($userFiles[$k]) ){
-			return $userFiles[$k];
+			return base64_decode($userFiles[$k]);
 		} 		
 	}
 	
@@ -132,7 +150,13 @@ class myUser extends sfBasicSecurityUser
 	* Retorna todos los archivos en la lista de archivos del usuario para enviar por correo 
 	* o realizar otras tareas
 	*/
-	public function getFiles( ){
+	public function getFiles( ){		
+		$files = $this->getAttribute('userFiles');
+		
+		foreach( $files as $key =>$file ){
+			$files[$key] =  base64_decode($files[$k]);
+		}
+		
 		return $this->getAttribute('userFiles');
 	}
 	
@@ -143,6 +167,10 @@ class myUser extends sfBasicSecurityUser
 	public function clearFiles(){
 		$this->setAttribute('userFiles', array() );
 	}
+	
+	
+	
+	
 	
 	public function log( $event, $module, $action ){
 		$log = new usuarioLog();
@@ -234,7 +262,7 @@ class myUser extends sfBasicSecurityUser
 					$this->setCulture('es_CO');			
 									
 					$sucursal = $user->getSucursal();			
-					$this->setAttribute('sucursal', $sucursal );
+					$this->setAttribute('idsucursal',  $user->getCaIdsucursal() );
 					$this->setAttribute('nombre', $user->getCaNombre() );		
 					$this->setAttribute('email', $user->getCaEmail() );
 					$this->setAttribute('cargo', $user->getCaCargo() );			
@@ -272,7 +300,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setCulture('es_CO');			
 							
 			$sucursal = $user->getSucursal();			
-			$this->setAttribute('sucursal', $sucursal );
+			$this->setAttribute('idsucursal',  $user->getCaIdsucursal() );
 			$this->setAttribute('nombre', $user->getCaNombre() );		
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );			
@@ -310,7 +338,7 @@ class myUser extends sfBasicSecurityUser
 			$this->setCulture('es_CO');			
 							
 			$sucursal = $user->getSucursal();			
-			$this->setAttribute('sucursal', $sucursal );
+			$this->setAttribute('idsucursal',  $user->getCaIdsucursal() );
 			$this->setAttribute('nombre', $user->getCaNombre() );		
 			$this->setAttribute('email', $user->getCaEmail() );
 			$this->setAttribute('cargo', $user->getCaCargo() );			
