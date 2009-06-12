@@ -33,7 +33,7 @@ class menuComponents extends sfComponents
 			
 		$this->grupos = array();
 		
-		if( $usuario->getCaAuthMethod()=="ldapP" ){
+		if( $usuario && $usuario->getCaAuthMethod()=="ldapP" ){
 			$c = new Criteria();					
 			$c->addJoin( RutinaPeer::CA_RUTINA, AccesoPerfilPeer::CA_RUTINA , Criteria::LEFT_JOIN );		
 			$c->addJoin( AccesoPerfilPeer::CA_PERFIL, UsuarioPerfilPeer::CA_PERFIL , Criteria::LEFT_JOIN );	
