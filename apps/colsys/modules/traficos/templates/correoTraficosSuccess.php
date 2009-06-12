@@ -29,7 +29,12 @@ $message.=$usuario->getFirma();
 
 $contactos =  $cliente->getCaConfirmar();
 
+
+
 include_component("general", "formEmail", array("subject"=>$subject, "message"=>$message, "contacts"=>$contactos));
+
+
+
 ?>
 </div>
 </<br />
@@ -106,7 +111,8 @@ foreach( $reportes as $reporte ){
 				<?
 				echo mime_type_icon( basename($file) );
 				?>
-				<a href="#" onclick="popup('<?=url_for("traficos/fileViewer?idx=".$fileIdx."&token=".md5(time().basename($file)))?>')"  ><?=basename( $file )?></a>  
+				<a href="#" onclick="popup('<?=url_for("traficos/fileViewer?idx=".$fileIdx."&token=".md5(time().basename($file)))?>')"  ><?=basename( $file )?></a>  <br />
+
 				<?				
 			}
 			?></div>

@@ -97,13 +97,15 @@ use_helper("MimeType");
 		<th width="17%" scope="col"><div align="left">Etapa actual </div></th>
 	</tr>
 	<?
-	foreach( $reportes as $reporte ){
+	$ultReporte = null;
+	$numReportes = 0;
+	foreach( $reportes as $reporte ){		
 		if( !$reporte->esUltimaVersion() ){
 			continue;
-		}
-		
-		$class= $reporte->getColorStatus();
-		
+		}	
+		$numReportes++;		
+		$ultReporte=  $reporte->getCaIdreporte();	
+		$class= $reporte->getColorStatus();		
 	?>
 	<tr class="<?=$class?>" id="tr_<?=$reporte->getCaIdreporte()?>" onclick="actualizar('<?=$reporte->getCaIdreporte()?>')" style="cursor:pointer">
 		<td>
@@ -188,6 +190,10 @@ use_helper("MimeType");
 <iframe name="uploadFrame" id="uploadFrame" width="600" height="400" style="display:none"  ></iframe>
 
 <?
+if( $numReportes==1 ){
+	$idreporte = $ultReporte;
+}
+
 if( $idreporte ){
 ?>
 <script language="javascript" type="text/javascript" >

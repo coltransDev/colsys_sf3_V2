@@ -36,9 +36,9 @@ class traficosActions extends sfActions
 		$this->modo = $this->getRequestParameter("modo");
 		$this->forward404unless( $this->modo );
 		
-		$this->ver = $this->getRequestParameter("ver");
+		
 			
-		if( $this->ver=="reporte" ){
+		if( $this->getRequestParameter("reporte") ){
 			$consecutivo = $this->getRequestParameter("reporte");
 			
 			if( !$consecutivo ){
@@ -71,6 +71,7 @@ class traficosActions extends sfActions
 			$this->cliente = ClientePeer::retrieveByPk( $this->idCliente );			
 			$this->forward404unless( $this->cliente );	
 			$this->idreporte = null;
+			$reporte = null;
 		}
 			
 				
@@ -103,16 +104,7 @@ class traficosActions extends sfActions
 		}					
 		$this->getUser()->clearFiles();	
 	}
-
-	/*
-	 * Muestra el estado del reporte cuando un usuario hace click sobre el
-	 * @author: Andres Botero
-	 */
-	public function executeInfoReporte(){
-		$reporteId = $this->getRequestParameter("reporteId");
-		$this->reporte = ReportePeer::retrieveByPk( $reporteId );
-		$this->forward404Unless( $this->reporte );
-	}
+	
 
 	
 	/***********************************************************************************
@@ -123,29 +115,82 @@ class traficosActions extends sfActions
 	 * Muestra un formario para agregar un nuevo status u aviso a un reporte
 	 * @author: Andres Botero
 	 */
-	public function executeNuevoMensaje(){
-
-		$this->tipo = $this->getRequestParameter("tipo"); //aviso status
-		$this->forward404Unless( $this->tipo );
-		$reporteId = $this->getRequestParameter("reporteId");
-		$this->reporte = ReportePeer::retrieveByPk( $reporteId );
+	public function executeNuevoStatus( $request ){
+						
+		$this->form = new NuevoStatusForm();
+		
+		$idreporte = $this->getRequestParameter("idreporte");
+		$this->forward404Unless( $idreporte );
+		$this->reporte = ReportePeer::retrieveByPk( $idreporte );
 		$this->forward404Unless( $this->reporte );
-
-		$this->setLayout("popup");
+				
+		if ($request->isMethod('post')){		
+		
+			$bindValues = array();
+			
+			for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
+				$bindValues["cc_".$i] = $request->getParameter("cc_".$i);
+			}
+			
+			$this->form->bind( $bindValues ); 
+			if( $this->form->isValid() ){	
+				//Se valido correctamente			
+				//$this->redirect("homepage/index");
+				echo "OK";	
+			}
+				
+		}else{
+			
+			//Etapas			
+			$c = new Criteria();
+			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, $this->reporte->getCaImpoexpo() );		
+			$c->addOr( TrackingEtapaPeer::CA_IMPOEXPO, null, Criteria::ISNULL );			
+			if( $this->reporte->getCaImpoexpo()==Constantes::IMPO ){
+				$c->add( TrackingEtapaPeer::CA_TRANSPORTE, $this->reporte->getCaTransporte() );	
+				$c->addOr( TrackingEtapaPeer::CA_TRANSPORTE, null, Criteria::ISNULL );		
+			}
+			$c->addAscendingOrderByColumn( TrackingEtapaPeer::CA_ORDEN );				
+			
+			$this->form->setCriteriaIdEtapa( $c );		
+			
+			
+			// Tipos de piezas			
+			$this->form->setCriteriaPiezas( ParametroPeer::getCriteriaByCu( "CU047" ) );	
+			$this->form->setCriteriaPeso( ParametroPeer::getCriteriaByCu( "CU049" ) );	
+			
+			if( $this->reporte->getCaTransporte()==Constantes::MARITIMO){
+				$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU050" ) );	
+				
+			}
+			
+			if( $this->reporte->getCaTransporte()==Constantes::AEREO ){
+				$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU058" ) );		
+			}		
+			
+			$this->form->configure();	
+		}
+		
+		/*
+		
+		$this->tipo = $this->getRequestParameter("tipo"); //aviso status
+		
+		
+		
 		$c = new Criteria();	
-		if( $this->reporte->getCaImpoExpo()=="Triangulación" ){	
-			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, "Importación" );
+		if( $this->reporte->getCaImpoExpo()==Constantes::TRIANGULACION ){	
+			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, Constantes::IMPO );
 		}else{
 			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, $this->reporte->getCaImpoExpo() );
 		}	
 		$c->addOr( TrackingEtapaPeer::CA_IMPOEXPO, null, Criteria::ISNULL );
-		if( $this->reporte->getCaImpoExpo()=="Importación"||$this->reporte->getCaImpoExpo()=="Triangulación" ){
+		
+		if( $this->reporte->getCaImpoExpo()==Constantes::IMPO||$this->reporte->getCaImpoExpo()==Constantes::TRIANGULACION ){
 			$c->add( TrackingEtapaPeer::CA_TRANSPORTE, $this->reporte->getCaTransporte() );
 			$c->addOr( TrackingEtapaPeer::CA_TRANSPORTE, null, Criteria::ISNULL );			
 		}
 		$c->addAscendingOrderByColumn( TrackingEtapaPeer::CA_ORDEN );
 		$this->etapas = TrackingEtapaPeer::doSelect( $c );
-
+		
 		if( $this->reporte->getCaIdAgente() ){
 			$c = new Criteria();
 			$c->add( ContactoAgentePeer::CA_IDAGENTE , $this->reporte->getCaIdAgente() );
@@ -189,19 +234,12 @@ class traficosActions extends sfActions
 		$c->setDistinct();
 		$this->parametros = ParametroPeer::doSelect( $c );
 				
-		
+		*/
 		
 		
 			
 	}
 
-	/*
-	 * Retoma el error producido en NuevoMensajeSubmit
-	 * @author: Andres Botero
-	 */
-	public function handleErrorNuevoMensajeSubmit(){
-		$this->forward("traficos", "nuevoMensaje");
-	}
 
 	/*
 	 * Guarda el mensaje y actualiza el estatus
@@ -417,9 +455,6 @@ class traficosActions extends sfActions
 			$status->setCaFchcontinuacion( $this->getRequestParameter("fchcontinuacion") );
 		}
 		
-	
-		
-		
 		//borra los equipos viejos
 		$repequipos = $reporte->getRepEquipos();
 		foreach( $repequipos as $equipo ){
@@ -443,8 +478,6 @@ class traficosActions extends sfActions
 			}			
 		}
 		
-				
-		
 		$c = new Criteria();
 		$c->addJoin( ParametroPeer::CA_IDENTIFICACION, ClientePeer::CA_IDGRUPO );
 		$c->add( ClientePeer::CA_IDGRUPO, $reporte->getCliente()->getCaIdCliente() );
@@ -463,9 +496,6 @@ class traficosActions extends sfActions
 			}
 		}
 		
-		
-		
-		
 		$reporte->save();
 		
 		if( $reporte->getCaImpoExpo()=="Exportación" ){ 	
@@ -481,7 +511,6 @@ class traficosActions extends sfActions
 		
 		$email->setCaBody(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
 			
-				
 		$email->save(); //guarda el cuerpo del mensaje
 		$this->error = $email->send();	
 		
@@ -522,7 +551,7 @@ class traficosActions extends sfActions
 		$this->modo = $this->getRequestParameter("modo");
 		$this->cliente = ClientePeer::retrieveByPk( $this->idCliente );
 		
-		$this->ver = $this->getRequestParameter("ver");
+		
 		
 		$this->forward404Unless( $this->cliente );
 		$this->forward404unless( $this->modo );
@@ -553,10 +582,13 @@ class traficosActions extends sfActions
 	 * @author: Andres Botero
 	 */
 	public function executeCorreoTraficos(){
+		
+		
 		$idCliente = $this->getRequestParameter("idcliente");
 		$this->idCliente = $idCliente;		
 		$this->modo = $this->getRequestParameter("modo");
-		$this->ver = $this->getRequestParameter("ver");
+		
+		$this->consecutivo = $this->getRequestParameter("reporte");
 		$this->forward404unless( $this->modo );
 		$this->forward404unless( $this->idCliente );
 		
@@ -577,7 +609,10 @@ class traficosActions extends sfActions
 		
 
 		$this->user = $this->getUser();
+		
 		$this->usuario = UsuarioPeer::retrieveByPk( $this->user->getUserId() );
+		
+		$this->user->clearFiles();
 	}
 			
 	/*
@@ -590,7 +625,8 @@ class traficosActions extends sfActions
 		$idCliente = $this->getRequestParameter("idcliente");
 		$this->idCliente = $idCliente;		
 		$this->modo = $this->getRequestParameter("modo");
-		$this->ver = $this->getRequestParameter("ver");
+		
+		$this->consecutivo = $this->getRequestParameter("reporte");
 		
 		$cliente = ClientePeer::retrieveByPk( $idCliente );
 		$adjuntar_excel = $this->getRequestParameter("adjuntar_excel");
@@ -716,6 +752,8 @@ class traficosActions extends sfActions
 		
 		//toma el valor del id del reporte, la referencia u otro objeto que se desee guardar
 		// y determina el directorio
+		
+		
 		$idreporte = $this->getRequestParameter( "idreporte" );
 		if( $idreporte ){
 			$reporte = ReportePeer::retrieveBypk( $idreporte );
@@ -734,9 +772,8 @@ class traficosActions extends sfActions
 			//mueve el archivo
 			move_uploaded_file($_FILES['file']['tmp_name'], $destPath);
 			
-			$this->setLayout("none");
-		
-		}
+			$this->setLayout("none");		
+		}		
 		  		
 	}
 	/*
@@ -749,6 +786,7 @@ class traficosActions extends sfActions
 		$this->forward404Unless( $idreporte );
 		$this->reporte = ReportePeer::retrieveBypk( $idreporte );
 		$this->forward404Unless( $this->reporte );
+		$this->getUser()->clearFiles();	
 	}
 	
 	
