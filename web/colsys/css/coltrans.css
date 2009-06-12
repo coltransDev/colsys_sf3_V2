@@ -92,7 +92,7 @@ a:active {
 }
 a:visited {
    text-decoration: none;
-   color: #990033;
+   color: #062A7D;
 }
 
 .form_error
@@ -668,7 +668,7 @@ Estilos usados en el programa de traficos
 }
 
 div.post-info{
-    background:#f1f2f4;
+    background:#F9FAFB;
     padding:5px;
     border:1px solid #dadadb;
 	margin: 12px,
