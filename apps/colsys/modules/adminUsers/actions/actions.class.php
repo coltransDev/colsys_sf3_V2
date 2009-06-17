@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 /**
  * adminUsers actions.
@@ -82,8 +82,6 @@ class adminUsersActions extends sfActions
 			$usuario->setCaSucursal( $sucursal->getCaNombre() );
 			
 		}
-		
-		
 		
 		if( $request->getParameter("auth_method") ){
 			$usuario->setCaAuthMethod( $request->getParameter("auth_method") );
