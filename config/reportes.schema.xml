@@ -134,6 +134,8 @@
 		<column name="ca_template" type="varchar" />
 		<column name="ca_message" type="varchar" />
 		<column name="ca_message_default" type="varchar" />
+		<column name="ca_intro" type="varchar" />
+		<column name="ca_title" type="varchar" />
 	</table>
 
 	
