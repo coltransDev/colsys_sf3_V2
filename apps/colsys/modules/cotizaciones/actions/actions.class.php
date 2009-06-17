@@ -800,7 +800,8 @@ class cotizacionesActions extends sfActions
 		$valor_min = $this->getRequestParameter("valor_min");
 		$aplica_tar = utf8_decode($this->getRequestParameter("aplica_tar"));
 		$aplica_min = utf8_decode($this->getRequestParameter("aplica_min"));
-		$observaciones = utf8_decode($this->getRequestParameter("detalles"));
+		$observaciones = $this->getRequestParameter("detalles");
+		
 		$consecutivo = $this->getRequestParameter("consecutivo"); //Consecutivo tarifario
 		
 		$tipo = $this->getRequestParameter("tipo");
@@ -852,7 +853,7 @@ class cotizacionesActions extends sfActions
 			}
 			
 			if( $observaciones!==null ){
-				$opcion->setCaObservaciones( $observaciones );				
+				$opcion->setCaObservaciones( utf8_decode($observaciones) );				
 			}	
 			
 			if( $consecutivo ){
@@ -928,7 +929,7 @@ class cotizacionesActions extends sfActions
 			
 			if( $observaciones!==null ){
 				if( $observaciones ){
-					$recargo->setCaObservaciones( $observaciones );
+					$recargo->setCaObservaciones( utf8_decode($observaciones) );
 				}else{
 					$recargo->setCaObservaciones( null );				
 				}
