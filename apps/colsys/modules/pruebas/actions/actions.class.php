@@ -2544,9 +2544,64 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 						
 	}
 		
+	
+	/*
+	Lista de los permisos de los usuarios 
+	*/
+	public function executeListaOpciones(){
+		$c = new Criteria();
+		$c->addAscendingOrderByColumn( RutinaPeer::CA_GRUPO );
+		$this->opciones = RutinaPeer::doSelect( $c );
+	
+	
+	}
+	
+	/*
+	Lista de los permisos de los usuarios 
+	*/
+	public function executeListaAccesoUsuarios(){
+		
+		
+		$rutina = $this->getRequestParameter("rutina");
+		$this->rutina = RutinaPeer::retrieveByPk( $rutina );
+		$c = new Criteria();					
+		
+		//$c->addJoin( RutinaPeer::CA_RUTINA, AccesoGrupoPeer::CA_RUTINA , Criteria::LEFT_JOIN );		
+		
+			
+		$c->addJoin( UsuarioPeer::CA_LOGIN, UsuarioGrupoPeer::CA_LOGIN,  Criteria::LEFT_JOIN );		
+		$c->addJoin( UsuarioGrupoPeer::CA_GRUPO, AccesoGrupoPeer::CA_GRUPO, Criteria::LEFT_JOIN );		
+				
+		$c->addJoin( UsuarioPeer::CA_LOGIN, AccesoUsuarioPeer::CA_LOGIN,  Criteria::LEFT_JOIN );		
+				
+		
+		
+		
+		$criterion = $c->getNewCriterion( AccesoGrupoPeer::CA_RUTINA, $rutina );								
+		$criterion->addOr($c->getNewCriterion( AccesoUsuarioPeer::CA_RUTINA, $rutina ));	
+		$c->add($criterion);			
+		
+		$c->add(  AccesoUsuarioPeer::CA_ACCESO, 0 , Criteria::GREATER_EQUAL );
+		$c->addOr(  AccesoUsuarioPeer::CA_ACCESO, null , Criteria::ISNULL );
+		
+		$c->add(  AccesoGrupoPeer::CA_ACCESO, 0 , Criteria::GREATER_EQUAL );
+		$c->addOr(  AccesoGrupoPeer::CA_ACCESO, null , Criteria::ISNULL );
+		
+		$c->setDistinct();	
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_IDSUCURSAL );	
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_DEPARTAMENTO );
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_CARGO );
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );	
+		$this->usuarios = UsuarioPeer::doSelect( $c );
+	
+	
+	}
+	
+	
+		
+		
 }
 
 
 
 ?>
-
