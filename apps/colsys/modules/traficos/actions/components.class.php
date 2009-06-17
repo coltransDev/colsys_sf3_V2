@@ -16,6 +16,7 @@ class traficosComponents extends sfComponents
 	*/		
 	public function executeInfoReporte(){
 		$this->statusList = $this->reporte->getRepStatuss();
+		$this->modo = $this->getRequestParameter("modo");
 	} 
 	
 	
@@ -25,8 +26,26 @@ class traficosComponents extends sfComponents
 	*/
 	public function executeVerArchivosReporte(){				
 		$this->files=$this->reporte->getFiles();					
-		$this->user = $this->getUser();		
+		$this->user = $this->getUser();				
 		
+	}
+	
+	/*
+	* Muestra una lista de todos los status, esta se incluye en los status del cliente y en la accion verHistorialStatus
+	*/
+	public function executeListaStatus( ){			
+		if( !isset( $this->linkEmail ) ){
+			$this->linkEmail = false;
+		}	
+		
+		$c = new Criteria();
+		$c = new Criteria();
+		if(  isset($this->endDate)  ){
+			$c->add( RepStatusPeer::CA_FCHENVIO , $this->endDate, Criteria::LESS_EQUAL );
+		}
+		
+		$c->addDescendingOrderByColumn( RepStatusPeer::CA_FCHENVIO );
+		$this->statusList = $this->reporte->getRepstatuss( $c );	
 	}
 	
 }

@@ -35,9 +35,7 @@ class traficosActions extends sfActions
 				
 		$this->modo = $this->getRequestParameter("modo");
 		$this->forward404unless( $this->modo );
-		
-		
-			
+					
 		if( $this->getRequestParameter("reporte") ){
 			$consecutivo = $this->getRequestParameter("reporte");
 			
@@ -56,7 +54,7 @@ class traficosActions extends sfActions
 				$this->forward404();
 			}
 			
-			if( $this->modo=="expo" && $reporte->getCaTransporte()!=Constantes::EXPO ){
+			if( $this->modo=="expo" && $reporte->getCaImpoexpo()!=Constantes::EXPO ){
 				$this->forward404();
 			}
 			
@@ -121,9 +119,72 @@ class traficosActions extends sfActions
 		
 		$idreporte = $this->getRequestParameter("idreporte");
 		$this->forward404Unless( $idreporte );
-		$this->reporte = ReportePeer::retrieveByPk( $idreporte );
-		$this->forward404Unless( $this->reporte );
+		$reporte = ReportePeer::retrieveByPk( $idreporte );
+		$this->forward404Unless( $reporte );
+		
+		$this->modo = $this->getRequestParameter("modo");
+		$this->forward404unless( $this->modo );
+		
+		$this->tipo = $this->getRequestParameter("tipo");
+		
+		$this->user = $this->getUser();
+		
+		$this->getRequest()->setParameter("reporte", $reporte->getCaConsecutivo());
 				
+		
+		/*
+		* Configuracion de la forma
+		*/
+		
+		//Etapas			
+		$c = new Criteria();
+		$c->add( TrackingEtapaPeer::CA_IMPOEXPO, $reporte->getCaImpoexpo() );		
+		$c->addOr( TrackingEtapaPeer::CA_IMPOEXPO, null, Criteria::ISNULL );			
+		if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
+			$c->add( TrackingEtapaPeer::CA_TRANSPORTE, $reporte->getCaTransporte() );	
+			$c->addOr( TrackingEtapaPeer::CA_TRANSPORTE, null, Criteria::ISNULL );		
+		}
+		$c->add( TrackingEtapaPeer::CA_DEPARTAMENTO, "Tráficos" );
+		$c->addOr( TrackingEtapaPeer::CA_DEPARTAMENTO, null, Criteria::ISNULL  );
+		$c->addAscendingOrderByColumn( TrackingEtapaPeer::CA_ORDEN );				
+		
+		$this->form->setCriteriaIdEtapa( $c );		
+		$this->etapas = TrackingEtapaPeer::doSelect( $c );	
+		
+		// Tipos de piezas			
+		$this->form->setCriteriaPiezas( ParametroPeer::getCriteriaByCu( "CU047" ) );	
+		$this->form->setCriteriaPeso( ParametroPeer::getCriteriaByCu( "CU049" ) );	
+		
+		if( $reporte->getCaTransporte()==Constantes::MARITIMO){
+			$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU050" ) );				
+		}
+		
+		if( $reporte->getCaTransporte()==Constantes::AEREO ){
+			$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU058" ) );		
+		}	
+		
+		$c = new Criteria();
+		$c->add(ConceptoPeer::CA_MODALIDAD, "FCL" );
+		$this->form->setCriteriaConceptos( $c );		
+		
+		
+				
+		//Busca los parametros definidos en CU059 
+		//Campos personalizados por cliente	
+		$c = new Criteria();
+		$c->addJoin( ParametroPeer::CA_IDENTIFICACION, ClientePeer::CA_IDGRUPO );
+		$c->add( ClientePeer::CA_IDGRUPO, $reporte->getCliente()->getCaIdCliente() );
+		$c->add( ParametroPeer::CA_CASOUSO, "CU059" );		
+		$c->setDistinct();
+		$parametros = ParametroPeer::doSelect( $c );			
+		
+		$this->form->setWidgetsClientes( $parametros );
+		
+		$this->form->configure();	
+		/*
+		* Fin de la configuración
+		*/
+		
 		if ($request->isMethod('post')){		
 		
 			$bindValues = array();
@@ -132,327 +193,158 @@ class traficosActions extends sfActions
 				$bindValues["cc_".$i] = $request->getParameter("cc_".$i);
 			}
 			
+			$bindValues["idetapa"] = $request->getParameter("idetapa");
+			
+			$bindValues["fchsalida"] = $request->getParameter("fchsalida");
+			$bindValues["horasalida"] = $request->getParameter("horasalida");
+			$bindValues["fchllegada"] = $request->getParameter("fchllegada");
+			$bindValues["fchcontinuacion"] = $request->getParameter("fchcontinuacion");
+			$bindValues["piezas"] = $request->getParameter("piezas");
+			$bindValues["un_piezas"] = $request->getParameter("un_piezas");
+			$bindValues["peso"] = $request->getParameter("peso");
+			$bindValues["un_peso"] = $request->getParameter("un_peso");
+			$bindValues["volumen"] = $request->getParameter("volumen");
+			$bindValues["un_volumen"] = $request->getParameter("un_volumen");			
+			$bindValues["doctransporte"] = $request->getParameter("doctransporte");
+			$bindValues["idnave"] = $request->getParameter("idnave");
+			
+			//$bindValues["asunto"] = $request->getParameter("asunto");
+			$bindValues["introduccion"] = $request->getParameter("introduccion");
+			$bindValues["mensaje"] = $request->getParameter("mensaje");
+			$bindValues["notas"] = $request->getParameter("notas");
+			
+			$bindValues["mensaje_mask"] = $request->getParameter("mensaje_mask");
+			
+			$bindValues["datosbl"] = $request->getParameter("datosbl");		
+			
+			$bindValues["fchrecibo"] = $request->getParameter("fchrecibo");
+			$bindValues["horarecibo"] = $request->getParameter("horarecibo");
+						
+			for( $i=0; $i<NuevoStatusForm::NUM_EQUIPOS ; $i++ ){
+				$bindValues["equipos_tipo_".$i] = $request->getParameter("equipos_tipo_".$i);
+				$bindValues["equipos_serial_".$i] = $request->getParameter("equipos_serial_".$i);
+				$bindValues["equipos_cant_".$i] = $request->getParameter("equipos_cant_".$i);
+			}
+			
+			$widgets = $this->form->getWidgetsClientes();
+			
+			foreach( $widgets as $name=>$val ){						
+				$bindValues[$name] = $request->getParameter($name);		
+			}
 			$this->form->bind( $bindValues ); 
-			if( $this->form->isValid() ){	
-				//Se valido correctamente			
-				//$this->redirect("homepage/index");
-				echo "OK";	
-			}
-				
-		}else{
-			
-			//Etapas			
-			$c = new Criteria();
-			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, $this->reporte->getCaImpoexpo() );		
-			$c->addOr( TrackingEtapaPeer::CA_IMPOEXPO, null, Criteria::ISNULL );			
-			if( $this->reporte->getCaImpoexpo()==Constantes::IMPO ){
-				$c->add( TrackingEtapaPeer::CA_TRANSPORTE, $this->reporte->getCaTransporte() );	
-				$c->addOr( TrackingEtapaPeer::CA_TRANSPORTE, null, Criteria::ISNULL );		
-			}
-			$c->addAscendingOrderByColumn( TrackingEtapaPeer::CA_ORDEN );				
-			
-			$this->form->setCriteriaIdEtapa( $c );		
-			
-			
-			// Tipos de piezas			
-			$this->form->setCriteriaPiezas( ParametroPeer::getCriteriaByCu( "CU047" ) );	
-			$this->form->setCriteriaPeso( ParametroPeer::getCriteriaByCu( "CU049" ) );	
-			
-			if( $this->reporte->getCaTransporte()==Constantes::MARITIMO){
-				$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU050" ) );	
-				
-			}
-			
-			if( $this->reporte->getCaTransporte()==Constantes::AEREO ){
-				$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU058" ) );		
-			}		
-			
-			$this->form->configure();	
+			if( $this->form->isValid() ){					
+				$this->executeGuardarStatus( $request );				
+			}				
 		}
+					
+		
+		
+		$this->ultStatus = $reporte->getUltimoStatus();	
+		
+		$this->reporte = $reporte;
+		
 		
 		/*
-		
-		$this->tipo = $this->getRequestParameter("tipo"); //aviso status
-		
-		
-		
-		$c = new Criteria();	
-		if( $this->reporte->getCaImpoExpo()==Constantes::TRIANGULACION ){	
-			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, Constantes::IMPO );
-		}else{
-			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, $this->reporte->getCaImpoExpo() );
-		}	
-		$c->addOr( TrackingEtapaPeer::CA_IMPOEXPO, null, Criteria::ISNULL );
-		
-		if( $this->reporte->getCaImpoExpo()==Constantes::IMPO||$this->reporte->getCaImpoExpo()==Constantes::TRIANGULACION ){
-			$c->add( TrackingEtapaPeer::CA_TRANSPORTE, $this->reporte->getCaTransporte() );
-			$c->addOr( TrackingEtapaPeer::CA_TRANSPORTE, null, Criteria::ISNULL );			
-		}
-		$c->addAscendingOrderByColumn( TrackingEtapaPeer::CA_ORDEN );
-		$this->etapas = TrackingEtapaPeer::doSelect( $c );
-		
-		if( $this->reporte->getCaIdAgente() ){
-			$c = new Criteria();
-			$c->add( ContactoAgentePeer::CA_IDAGENTE , $this->reporte->getCaIdAgente() );
-			$c->add( ContactoAgentePeer::CA_IMPOEXPO , $this->reporte->getCaImpoexpo() );
-			$c->add( ContactoAgentePeer::CA_TRANSPORTE , $this->reporte->getCaTransporte() );
-			$c->addAscendingOrderByColumn( ContactoAgentePeer::CA_NOMBRE );
-			$this->contactosAg = ContactoAgentePeer::doSelect( $c );
-		}
-		$this->user = $this->getuser();
+		Archivos del reporte
+		*/		
 		$this->user->clearFiles();
-		
-		if( $this->reporte->getCaModalidad()=="FCL" ){
-			$c = new Criteria();
-			$c->add(ConceptoPeer::CA_MODALIDAD, "FCL" );
-			$this->equipos = ConceptoPeer::doSelect( $c );
-		}
-
 		//Busca los archivos del reporte
 		$this->files=$this->reporte->getFiles();
 				
-		$this->tipo_piezas = ParametroPeer::retrieveByCaso( "CU047" );	
-		$this->tipo_pesos = ParametroPeer::retrieveByCaso( "CU049" );			
-		if( $this->reporte->getCaTransporte()=="Marítimo" ){
-			$this->tipo_volumen = ParametroPeer::retrieveByCaso( "CU050" );	
-		}
-		if( $this->reporte->getCaTransporte()=="Aéreo" ){
-			$this->tipo_volumen = ParametroPeer::retrieveByCaso( "CU058" );	
-		}
-		
-		
-		$this->cliente = $this->reporte->getCliente();
-		$this->user = $this->getUser();
-		//Busca los parametrus definidos en CU059 que sean tengan la propeiedad 
-		
-		
-		
-		$c = new Criteria();
-		$c->addJoin( ParametroPeer::CA_IDENTIFICACION, ClientePeer::CA_IDGRUPO );
-		$c->add( ClientePeer::CA_IDGRUPO, $this->cliente->getCaIdCliente() );
-		$c->add( ParametroPeer::CA_CASOUSO, "CU059" );		
-		$c->setDistinct();
-		$this->parametros = ParametroPeer::doSelect( $c );
-				
-		*/
 		
 		
 			
 	}
-
-
+	
+	
 	/*
 	 * Guarda el mensaje y actualiza el estatus
 	 * @author: Andres Botero
 	 */
-	public function executeNuevoMensajeSubmit(){
-		$this->reporteId = $this->getRequestParameter("reporteId");
-		$reporte = ReportePeer::retrieveByPk( $this->reporteId );
+	private function executeGuardarStatus( $request ){
+		$idreporte = $this->getRequestParameter("idreporte");
+		$this->forward404Unless( $idreporte );
+		$reporte = ReportePeer::retrieveByPk( $idreporte );
 		$this->forward404Unless( $reporte );
-	
-
+		
+		$this->modo = $this->getRequestParameter("modo");
+		$this->forward404unless( $this->modo );
+		
 		$user = $this->getUser();
-		
-		/*
-		* Validaciones
-		*/
-		$error = false;
-		
-		if( $this->getRequestParameter("etapa")=="IAETA"|| $this->getRequestParameter("etapa")=="IMETA" || $this->getRequestParameter("etapa")=="EEETA" ){
-			
-			if(!$this->getRequestParameter("piezas")){
-				$this->getRequest()->setError("piezas", "requerido");			
-				$error=true;	
-			}
-		
-			if(!$this->getRequestParameter("peso")){
-				$this->getRequest()->setError("peso", "requerido");			
-				$error=true;	
-			}
-			
-			if(!$this->getRequestParameter("volumen")){
-				$this->getRequest()->setError("volumen", "requerido");			
-				$error=true;	
-			}
-			
-			if(!$this->getRequestParameter("fchsalida")){
-				$this->getRequest()->setError("fchsalida", "requerido");			
-				$error=true;	
-			}
-			
-			if(!$this->getRequestParameter("fchllegada")){
-				$this->getRequest()->setError("fchllegada", "requerido");			
-				$error=true;	
-			}
-			
-			if(!$this->getRequestParameter("doctransporte")){
-				$this->getRequest()->setError("doctransporte", "requerido");			
-				$error=true;	
-			}
-			
-			if(!$this->getRequestParameter("idnave")){
-				$this->getRequest()->setError("idnave", "requerido");			
-				$error=true;	
-			}
-		}
-		
-				
-		
-		if(!$this->getRequestParameter("fchrecibo")){
-			$this->getRequest()->setError("fchrecibo", "requerido");			
-			$error=true;	
-		}
-		
-		if(!$this->getRequestParameter("horarecibo")){
-			$this->getRequest()->setError("horarecibo", "requerido");			
-			$error=true;	
-		}
-		
-		
-		if( $error ){
-			$this->handleErrorNuevoMensajeSubmit();
-			return false;
-		}
-		//print_r($user);
-		//Crea el correo electronico
-		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
-		$email->setCaUsuenvio( $user->getUserId() );
-		
-		$email->setCaTipo( "Envío de Status" ); 	
-				
-		$email->setCaIdcaso( $this->reporteId );
-		$email->setCaFrom( $user->getEmail() );
-		$email->setCaFromname( $user->getNombre() );
-		
-		if( $this->getRequestParameter("readreceipt") ){
-			$email->setCaReadReceipt( $this->getRequestParameter("readreceipt") );
-		}
-
-		$email->setCaReplyto( $user->getEmail() );
-				
-		$recips = $this->getRequestParameter("destinatarios");									
-		if( is_array($recips) ){
-			foreach( $recips as $recip ){			
-				$recip = str_replace(" ", "", $recip );			
-				if( $recip ){
-					$email->addTo( $recip ); 
-				}
-			}	
-		}
-								
-		$recips =  $this->getRequestParameter("cc") ;
-		if( is_array($recips) ){
-			foreach( $recips as $recip ){			
-				$recip = str_replace(" ", "", $recip );			
-				if( $recip ){
-					$email->addCc( $recip ); 
-				}
-			}
-		}
-					
-		if ( $reporte->getCaSeguro()=="Sí" ) {
-			$email->addCc( "seguros@coltrans.com.co" ); 
-		}
-				
-		$email->addCc( $this->getUser()->getEmail() );
-					
-		$email->setCaSubject( $this->getRequestParameter("asunto") );
-		$attachments = $this->getRequestParameter( "attachments" );
-		if( $attachments ){
-			foreach( $attachments as $attachment){
-				$email->AddAttachment( base64_decode( $attachment ) );
-			}
-		}
-		
-		if ($this->getRequestParameter("copiar_cont")){
-			$coordinador = null;	
-			if( $reporte->getCaContinuacionConf() ){					
-				$coordinador = UsuarioPeer::retrieveByPk($reporte->getCaContinuacionConf());
-			}
-			if( $coordinador ){						
-				$email->addCc( $coordinador->getCaEmail() );				
-			}	  
-		}
-			
-		if ($this->getRequestParameter("copiar_adua")){
-							
-		 	$repaduana = $reporte->getRepAduana();				
-			$coordinador = null;
-			if( $repaduana ){					
-				$coordinador = UsuarioPeer::retrieveByPk($repaduana->getCaCoordinador());
-			}
-			if( $coordinador ){						
-				$email->addCc( $coordinador->getCaEmail() );				
-			}		  		   
-		}
-
-
-		$email->setCaBody("-");		
-		$email->save(); 		
 				
 		$status = new RepStatus();
-		$status->setCaIdReporte( $this->reporteId );
+		$status->setCaIdReporte( $reporte->getCaIdreporte() );
 		$status->setCaFchStatus( date("Y-m-d H:i:s") );
-		$status->setCaIntroduccion( Utils::replace( $this->getRequestParameter("introduccion") ) );
-		$status->setCaIdEmail( $email->getCaIdemail() );
-		$status->setCaStatus( $this->getRequestParameter("mensaje") );
-		$status->setCaComentarios( $this->getRequestParameter("notas", '-') );
-		$status->setCaIdEtapa( $this->getRequestParameter("etapa") );
-		$status->setCaFchrecibo( $this->getRequestParameter("fchrecibo")." ".$this->getRequestParameter("horarecibo") );
+		$status->setCaIntroduccion( Utils::replace( $request->getParameter("introduccion") ) );	
+		$status->setCaStatus( $request->getParameter("mensaje") );
+		if( $request->getParameter("notas") ){ 
+			$status->setCaComentarios( $request->getParameter("notas") );
+		}
+		$status->setCaIdEtapa( $request->getParameter("idetapa") );
+		
+		if( $request->getParameter("fchrecibo") ){			
+			$horaRecibo =  $request->getParameter("horarecibo");		
+			if( !$horaRecibo['minute'] ){
+				$horaRecibo['minute']='00';
+			}
+			$horaRecibo = implode(":", $horaRecibo );
+			$status->setCaFchrecibo( Utils::parseDate($request->getParameter("fchrecibo"), "Y-m-d")." ".$horaRecibo );
+		}
 		$status->setCaFchenvio( date("Y-m-d H:i:s") );
 		$status->setCausuenvio( $user->getUserId() );
-		
-		
-		$this->getRequest()->setParameter("id", $reporte->getCaIdreporte());
-		$this->getRequest()->setParameter("emailid", $email->getCaIdemail());	
 				
 		
 			
-		$piezas = $this->getRequestParameter("piezas")."|".$this->getRequestParameter("tipo_piezas");
-		$peso = $this->getRequestParameter("peso")."|".$this->getRequestParameter("tipo_peso");
-		$volumen = $this->getRequestParameter("volumen")."|".$this->getRequestParameter("tipo_volumen");
+		$piezas = $request->getParameter("piezas")."|".$request->getParameter("un_piezas");
+		$peso = $request->getParameter("peso")."|".$request->getParameter("un_peso");
+		$volumen = $request->getParameter("volumen")."|".$request->getParameter("un_volumen");
 		
-		if($this->getRequestParameter("piezas")){
+		if($request->getParameter("piezas")){
 			$status->setCaPiezas( $piezas );
 		}
 		
-		if($this->getRequestParameter("peso")){
+		if($request->getParameter("peso")){
 			$status->setCaPeso( $peso );
 		}
-		if($this->getRequestParameter("volumen")){
+		if($request->getParameter("volumen")){
 			$status->setCaVolumen( $volumen );
 		}	
 		
-		if( $this->getRequestParameter("doctransporte") ){
-			$status->setCaDoctransporte( $this->getRequestParameter("doctransporte") );
+		if( $request->getParameter("doctransporte") ){
+			$status->setCaDoctransporte( $request->getParameter("doctransporte") );
+		}
+					
+		if( $request->getParameter("docmaster") ){
+			$status->setCaDocmaster( $request->getParameter("docmaster") );
 		}
 		
-		if( $this->getRequestParameter("docmaster") ){
-			$status->setCaDocmaster( $this->getRequestParameter("docmaster") );
+		
+		if( $request->getParameter("idnave") ){
+			$status->setCaIdnave( $request->getParameter("idnave") );
 		}
 		
-		if( $this->getRequestParameter("idnave") ){
-			$status->setCaIdnave( $this->getRequestParameter("idnave") );
+		if( $request->getParameter("fchsalida") ){
+			$status->setCaFchsalida( Utils::parseDate($request->getParameter("fchsalida")) );
+		}
+		if( $request->getParameter("fchllegada") ){
+			$status->setCaFchllegada( Utils::parseDate($request->getParameter("fchllegada")) );
 		}
 		
-		if( $this->getRequestParameter("fchsalida") ){
-			$status->setCaFchsalida( $this->getRequestParameter("fchsalida") );
-		}
-		if( $this->getRequestParameter("fchllegada") ){
-			$status->setCaFchllegada( $this->getRequestParameter("fchllegada") );
-		}
-		
-		if( $this->getRequestParameter("horasalida") ){	
-			$status->setCaHorasalida( $this->getRequestParameter("horasalida") );
+		if( $request->getParameter("horasalida") ){	
+			$horasalida =  $request->getParameter("horasalida");		
+			if( !$horasalida['minute'] ){
+				$horasalida['minute']='00';
+			}
+			$horasalida = implode(":", $horasalida );
+			$status->setCaHorasalida( $horasalida );
 		}
 		
-		if( $this->getRequestParameter("horallegada") ){
-			$status->setCaHorallegada( $this->getRequestParameter("horallegada") );
+		if( $request->getParameter("horallegada") ){
+			$status->setCaHorallegada( $request->getParameter("horallegada") );
 		}
 			
-		if( $this->getRequestParameter("fchcontinuacion") && $reporte->getCaContinuacion()!="N/A" ){
-			$status->setCaFchcontinuacion( $this->getRequestParameter("fchcontinuacion") );
+		if( $request->getParameter("fchcontinuacion") && $reporte->getCaContinuacion()!="N/A" ){
+			$status->setCaFchcontinuacion( Utils::parseDate($request->getParameter("fchcontinuacion")) );
 		}
 		
 		//borra los equipos viejos
@@ -461,22 +353,20 @@ class traficosActions extends sfActions
 			$equipo->delete();
 		}
 		
-		$equipos = $this->getRequestParameter("equipos");		
-		if( $equipos ){			
-			foreach( $equipos as $equipo ){
-				if( $equipo['cant']!=0 ){
-					$repequipo = new RepEquipo();
-					$repequipo->setCaIdReporte( $reporte->getCaIdreporte() );
-					$repequipo->setCaIdConcepto( $equipo['tipo'] );
-					$repequipo->setCaCantidad( $equipo['cant'] );					
-					$repequipo->save();
-					if( $reporte->getcaImpoExpo()=="Exportación" ){
-						$repequipo->setCaIdEquipo( $equipo['serial'] );
-						
-					}				
+		for( $i=0; $i<NuevoStatusForm::NUM_EQUIPOS ; $i++ ){
+			
+			if( $request->getParameter("equipos_tipo_".$i) && $request->getParameter("equipos_cant_".$i) ){				
+				$repequipo = new RepEquipo();
+				$repequipo->setCaIdReporte( $reporte->getCaIdreporte() );				
+				$repequipo->setCaIdConcepto( $request->getParameter("equipos_tipo_".$i) );				
+				$repequipo->setCaCantidad( $request->getParameter("equipos_cant_".$i) );	
+				if( $reporte->getCaImpoExpo()==Constantes::EXPO ){
+					$repequipo->setCaIdEquipo( $request->getParameter("equipos_serial_".$i) );
 				}
-			}			
+				$repequipo->save();
+			}
 		}
+			
 		
 		$c = new Criteria();
 		$c->addJoin( ParametroPeer::CA_IDENTIFICACION, ClientePeer::CA_IDGRUPO );
@@ -490,33 +380,41 @@ class traficosActions extends sfActions
 			$valor = explode(":",$parametro->getCaValor());
 			$name = $valor[0];
 			$type = $valor[1];						
-			if( $this->getRequestParameter($name ) ){		
+			if( $request->getParameter($name ) ){		
 					
-				$reporte->setProperty($name, $this->getRequestParameter($name));
+				$reporte->setProperty($name, $request->getParameter($name));
 			}
 		}
 		
 		$reporte->save();
 		
-		if( $reporte->getCaImpoExpo()=="Exportación" ){ 	
+		if( $reporte->getCaImpoExpo()==Constantes::EXPO ){ 	
 			$repExpo = $reporte->getRepexpo();		
-			if( $this->getRequestParameter("datosbl") ){
-				$repExpo->setCaDatosBl( $this->getRequestParameter("datosbl") );
+			if( $request->getParameter("datosbl") ){
+				$repExpo->setCaDatosBl( $request->getParameter("datosbl") );
 			}	
 			$repExpo->save();	
 		}			
+		
 					
 		$status->save();
+		$status->send();
 		
 		
-		$email->setCaBody(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
-			
-		$email->save(); //guarda el cuerpo del mensaje
-		$this->error = $email->send();	
+		//$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 		
-		
-		return sfView::SUCCESS;
-
+	}
+	
+	
+	
+	
+	/*
+	* Muestra un resumen de los status enviados al cliente
+	*/
+	public function executeVerHistorialStatus( $request ){
+		$this->forward404Unless( $this->getRequestParameter("idreporte") );
+		$this->reporte = ReportePeer::retrieveByPk( $this->getRequestParameter("idreporte") );		
+		$this->forward404Unless( $this->reporte );
 	}
 	
 	
@@ -706,37 +604,52 @@ class traficosActions extends sfActions
 	* Plantillas para el correo de traficos 
 	************************************************************************************/
 		
+	/*
+	 * Plantillas para el correo de traficos 
+	 * @author: Andres Botero
+	 */	
 	public function executeVerStatus(){
 		
-		$this->status = RepStatusPeer::retrieveByIdEmail( $this->getRequestParameter("emailid") );		
+		$this->status = RepStatusPeer::retrieveByPk( $this->getRequestParameter("idstatus") );		
 		$this->forward404Unless( $this->status );
 		$this->reporte = $this->status->getReporte();
-		$this->header = $this->getRequestParameter("header");
+			
+		$this->setTemplate("emailDefaultStatus");	
+			
+		$etapa = $this->status->getTrackingEtapa();
+					
+		if( $etapa ){			
+			if( $etapa->getCaTemplate() ){			
+				$this->setTemplate($etapa->getCaTemplate());							
+			}				
+		} 
 		
-		$email = $this->status->getEmail();
-		if( $email ){		
-			$this->user = UsuarioPeer::retrieveByPk( $email->getCaUsuEnvio() );
-		}
+		$this->etapa = $etapa;
+		
+		
+		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."traficos".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
+		$this->textos = sfYaml::load($config);	
+		
+		
+		$this->user = UsuarioPeer::retrieveByPk( $this->status->getCaUsuenvio() );
+				
 		$this->setLayout("email");		
-		
-		$etapa = $this->status->getTrackingEtapa( );
-		$etapaStr = $etapa?$etapa->getCaEtapa():"";
-		
+		/*			
 		if( $this->reporte->getCaImpoExpo()=="Exportación" ){			
-			if( $etapaStr=="ETA"||$etapaStr=="Carga Embarcada"|| $etapaStr=="Carga con Reserva" ){
+			if( $this->status->getCaEtapa()=="ETA"||$this->status->getCaEtapa()=="Carga Embarcada"|| $this->status->getCaEtapa()=="Carga con Reserva" ){
 				$this->setTemplate("emailAvisoExpo");					
 			}
 		}else{
 			if( $this->reporte->getCaTransporte()=="Marítimo" ){
-				if( $etapaStr=="ETA" ){
+				if( $this->status->getCaEtapa()=="ETA" ){
 					$this->setTemplate("emailAvisoImpoMaritimo");		
 				}
 			}else{
-				if( $etapaStr=="Carga Embarcada"|| $etapaStr=="Carga con Reserva"  || $etapaStr=="Carga en Aeropuerto de Destino" ){
+				if( $this->status->getCaEtapa()=="Carga Embarcada"|| $this->status->getCaEtapa()=="Carga con Reserva"  || $this->status->getCaEtapa()=="Carga en Aeropuerto de Destino" ){
 					$this->setTemplate("emailAvisoImpoAereo");		
 				}
 			}
-		}	
+		}	*/
 				
 	}
 	

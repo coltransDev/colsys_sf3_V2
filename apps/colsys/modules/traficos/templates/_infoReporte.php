@@ -70,12 +70,12 @@
 				<br />
 				<?
 				if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-					echo link_to(image_tag("22x22/edit_add.gif")." Aviso" ,"traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&tipo=aviso&token=".md5(time()));
+					echo link_to(image_tag("22x22/edit_add.gif")." Aviso" ,"traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=aviso&token=".md5(time()));
 					
 				}
 				?>
 
-<?=link_to(image_tag("22x22/edit_add.gif")." Status","traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&tipo=status&token=".md5(time()))?>
+<?=link_to(image_tag("22x22/edit_add.gif")." Status","traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=status&token=".md5(time()))?>
 			</div>
 		
 		</td>

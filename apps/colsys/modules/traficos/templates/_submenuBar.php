@@ -34,6 +34,13 @@ switch($action){
 		$button[2]["link"]= "traficos/listaStatus?modo=".$this->getRequestParameter("modo")."&idcliente=".$this->getRequestParameter("idcliente")."&reporte=".$this->getRequestParameter("reporte");	
 		break;
 	
+	case "nuevoStatus":
+		$button[2]["name"]="Volver";
+		$button[2]["tooltip"]="Vuelve a la pagina anterior";
+		$button[2]["image"]="22x22/1leftarrow.gif"; 			
+		$button[2]["link"]= "traficos/listaStatus?modo=".$this->getRequestParameter("modo")."&reporte=".$this->getRequestParameter("reporte");	
+		break;
+	
 
 	
 
