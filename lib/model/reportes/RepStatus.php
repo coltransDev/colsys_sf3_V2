@@ -200,6 +200,12 @@ class RepStatus extends BaseRepStatus
 			case "IMCOL":
 				$asunto = "Confirmación de Llegada OTM ";
 				break;	
+			case "IACAD":
+				$asunto = "Confirmación de Llegada ";
+				break;		
+			case "IMETA":
+				$asunto = "Aviso ";
+				break;		
 			case "99999":
 				$asunto = "Cierre";
 				break;	
@@ -256,8 +262,8 @@ class RepStatus extends BaseRepStatus
 		
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
-		/*$email->setCaAddress("abotero@coltrans.com.co");
-		$email->setCaCc("");*/
+		$email->setCaAddress("abotero@coltrans.com.co");
+		$email->setCaCc("");
 		$email->save(); 
 		$email->send(); 	
 		$this->setCaIdemail( $email->getCaIdemail() );

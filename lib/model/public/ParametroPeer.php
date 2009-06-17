@@ -20,15 +20,15 @@ class ParametroPeer extends BaseParametroPeer
 		if( $valor1 ){
 			$c->add( ParametroPeer::CA_VALOR, "%".$valor1."%", Criteria::LIKE );
 		}
-		
+
 		if( $valor2 ){
 			$c->add( ParametroPeer::CA_VALOR2, "%".$valor2."%", Criteria::LIKE );
 		}
-		
+
 		if( $id ){
 			$c->add( ParametroPeer::CA_IDENTIFICACION, $id);
 		}
-		
+
 		$c->addAscendingOrderByColumn( ParametroPeer::CA_IDENTIFICACION );
 		return $c;
 	}

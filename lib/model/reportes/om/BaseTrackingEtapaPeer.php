@@ -19,7 +19,7 @@ abstract class BaseTrackingEtapaPeer {
 	const CLASS_DEFAULT = 'lib.model.reportes.TrackingEtapa';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 11;
+	const NUM_COLUMNS = 13;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -57,6 +57,12 @@ abstract class BaseTrackingEtapaPeer {
 	/** the column name for the CA_MESSAGE_DEFAULT field */
 	const CA_MESSAGE_DEFAULT = 'tb_tracking_etapas.CA_MESSAGE_DEFAULT';
 
+	/** the column name for the CA_INTRO field */
+	const CA_INTRO = 'tb_tracking_etapas.CA_INTRO';
+
+	/** the column name for the CA_TITLE field */
+	const CA_TITLE = 'tb_tracking_etapas.CA_TITLE';
+
 	/**
 	 * An identiy map to hold any loaded instances of TrackingEtapa objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -78,11 +84,11 @@ abstract class BaseTrackingEtapaPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdetapa', 'CaImpoexpo', 'CaTransporte', 'CaDepartamento', 'CaEtapa', 'CaOrden', 'CaTtl', 'CaClass', 'CaTemplate', 'CaMessage', 'CaMessageDefault', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdetapa', 'caImpoexpo', 'caTransporte', 'caDepartamento', 'caEtapa', 'caOrden', 'caTtl', 'caClass', 'caTemplate', 'caMessage', 'caMessageDefault', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDETAPA, self::CA_IMPOEXPO, self::CA_TRANSPORTE, self::CA_DEPARTAMENTO, self::CA_ETAPA, self::CA_ORDEN, self::CA_TTL, self::CA_CLASS, self::CA_TEMPLATE, self::CA_MESSAGE, self::CA_MESSAGE_DEFAULT, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idetapa', 'ca_impoexpo', 'ca_transporte', 'ca_departamento', 'ca_etapa', 'ca_orden', 'ca_ttl', 'ca_class', 'ca_template', 'ca_message', 'ca_message_default', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdetapa', 'CaImpoexpo', 'CaTransporte', 'CaDepartamento', 'CaEtapa', 'CaOrden', 'CaTtl', 'CaClass', 'CaTemplate', 'CaMessage', 'CaMessageDefault', 'CaIntro', 'CaTitle', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdetapa', 'caImpoexpo', 'caTransporte', 'caDepartamento', 'caEtapa', 'caOrden', 'caTtl', 'caClass', 'caTemplate', 'caMessage', 'caMessageDefault', 'caIntro', 'caTitle', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDETAPA, self::CA_IMPOEXPO, self::CA_TRANSPORTE, self::CA_DEPARTAMENTO, self::CA_ETAPA, self::CA_ORDEN, self::CA_TTL, self::CA_CLASS, self::CA_TEMPLATE, self::CA_MESSAGE, self::CA_MESSAGE_DEFAULT, self::CA_INTRO, self::CA_TITLE, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idetapa', 'ca_impoexpo', 'ca_transporte', 'ca_departamento', 'ca_etapa', 'ca_orden', 'ca_ttl', 'ca_class', 'ca_template', 'ca_message', 'ca_message_default', 'ca_intro', 'ca_title', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
 	/**
@@ -92,11 +98,11 @@ abstract class BaseTrackingEtapaPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdetapa' => 0, 'CaImpoexpo' => 1, 'CaTransporte' => 2, 'CaDepartamento' => 3, 'CaEtapa' => 4, 'CaOrden' => 5, 'CaTtl' => 6, 'CaClass' => 7, 'CaTemplate' => 8, 'CaMessage' => 9, 'CaMessageDefault' => 10, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdetapa' => 0, 'caImpoexpo' => 1, 'caTransporte' => 2, 'caDepartamento' => 3, 'caEtapa' => 4, 'caOrden' => 5, 'caTtl' => 6, 'caClass' => 7, 'caTemplate' => 8, 'caMessage' => 9, 'caMessageDefault' => 10, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDETAPA => 0, self::CA_IMPOEXPO => 1, self::CA_TRANSPORTE => 2, self::CA_DEPARTAMENTO => 3, self::CA_ETAPA => 4, self::CA_ORDEN => 5, self::CA_TTL => 6, self::CA_CLASS => 7, self::CA_TEMPLATE => 8, self::CA_MESSAGE => 9, self::CA_MESSAGE_DEFAULT => 10, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idetapa' => 0, 'ca_impoexpo' => 1, 'ca_transporte' => 2, 'ca_departamento' => 3, 'ca_etapa' => 4, 'ca_orden' => 5, 'ca_ttl' => 6, 'ca_class' => 7, 'ca_template' => 8, 'ca_message' => 9, 'ca_message_default' => 10, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdetapa' => 0, 'CaImpoexpo' => 1, 'CaTransporte' => 2, 'CaDepartamento' => 3, 'CaEtapa' => 4, 'CaOrden' => 5, 'CaTtl' => 6, 'CaClass' => 7, 'CaTemplate' => 8, 'CaMessage' => 9, 'CaMessageDefault' => 10, 'CaIntro' => 11, 'CaTitle' => 12, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdetapa' => 0, 'caImpoexpo' => 1, 'caTransporte' => 2, 'caDepartamento' => 3, 'caEtapa' => 4, 'caOrden' => 5, 'caTtl' => 6, 'caClass' => 7, 'caTemplate' => 8, 'caMessage' => 9, 'caMessageDefault' => 10, 'caIntro' => 11, 'caTitle' => 12, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDETAPA => 0, self::CA_IMPOEXPO => 1, self::CA_TRANSPORTE => 2, self::CA_DEPARTAMENTO => 3, self::CA_ETAPA => 4, self::CA_ORDEN => 5, self::CA_TTL => 6, self::CA_CLASS => 7, self::CA_TEMPLATE => 8, self::CA_MESSAGE => 9, self::CA_MESSAGE_DEFAULT => 10, self::CA_INTRO => 11, self::CA_TITLE => 12, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idetapa' => 0, 'ca_impoexpo' => 1, 'ca_transporte' => 2, 'ca_departamento' => 3, 'ca_etapa' => 4, 'ca_orden' => 5, 'ca_ttl' => 6, 'ca_class' => 7, 'ca_template' => 8, 'ca_message' => 9, 'ca_message_default' => 10, 'ca_intro' => 11, 'ca_title' => 12, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
 	);
 
 	/**
@@ -199,6 +205,10 @@ abstract class BaseTrackingEtapaPeer {
 		$criteria->addSelectColumn(TrackingEtapaPeer::CA_MESSAGE);
 
 		$criteria->addSelectColumn(TrackingEtapaPeer::CA_MESSAGE_DEFAULT);
+
+		$criteria->addSelectColumn(TrackingEtapaPeer::CA_INTRO);
+
+		$criteria->addSelectColumn(TrackingEtapaPeer::CA_TITLE);
 
 	}
 

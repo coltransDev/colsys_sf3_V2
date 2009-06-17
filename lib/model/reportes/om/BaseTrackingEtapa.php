@@ -87,6 +87,18 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 	protected $ca_message_default;
 
 	/**
+	 * The value for the ca_intro field.
+	 * @var        string
+	 */
+	protected $ca_intro;
+
+	/**
+	 * The value for the ca_title field.
+	 * @var        string
+	 */
+	protected $ca_title;
+
+	/**
 	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
 	 */
 	protected $collReportes;
@@ -248,6 +260,26 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 	public function getCaMessageDefault()
 	{
 		return $this->ca_message_default;
+	}
+
+	/**
+	 * Get the [ca_intro] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIntro()
+	{
+		return $this->ca_intro;
+	}
+
+	/**
+	 * Get the [ca_title] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaTitle()
+	{
+		return $this->ca_title;
 	}
 
 	/**
@@ -471,6 +503,46 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 	} // setCaMessageDefault()
 
 	/**
+	 * Set the value of [ca_intro] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     TrackingEtapa The current object (for fluent API support)
+	 */
+	public function setCaIntro($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_intro !== $v) {
+			$this->ca_intro = $v;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_INTRO;
+		}
+
+		return $this;
+	} // setCaIntro()
+
+	/**
+	 * Set the value of [ca_title] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     TrackingEtapa The current object (for fluent API support)
+	 */
+	public function setCaTitle($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_title !== $v) {
+			$this->ca_title = $v;
+			$this->modifiedColumns[] = TrackingEtapaPeer::CA_TITLE;
+		}
+
+		return $this;
+	} // setCaTitle()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -518,6 +590,8 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 			$this->ca_template = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
 			$this->ca_message = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->ca_message_default = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_intro = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_title = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -527,7 +601,7 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 11; // 11 = TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 13; // 13 = TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating TrackingEtapa object", $e);
@@ -866,6 +940,12 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 			case 10:
 				return $this->getCaMessageDefault();
 				break;
+			case 11:
+				return $this->getCaIntro();
+				break;
+			case 12:
+				return $this->getCaTitle();
+				break;
 			default:
 				return null;
 				break;
@@ -898,6 +978,8 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 			$keys[8] => $this->getCaTemplate(),
 			$keys[9] => $this->getCaMessage(),
 			$keys[10] => $this->getCaMessageDefault(),
+			$keys[11] => $this->getCaIntro(),
+			$keys[12] => $this->getCaTitle(),
 		);
 		return $result;
 	}
@@ -962,6 +1044,12 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 			case 10:
 				$this->setCaMessageDefault($value);
 				break;
+			case 11:
+				$this->setCaIntro($value);
+				break;
+			case 12:
+				$this->setCaTitle($value);
+				break;
 		} // switch()
 	}
 
@@ -997,6 +1085,8 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[8], $arr)) $this->setCaTemplate($arr[$keys[8]]);
 		if (array_key_exists($keys[9], $arr)) $this->setCaMessage($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCaMessageDefault($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaIntro($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaTitle($arr[$keys[12]]);
 	}
 
 	/**
@@ -1019,6 +1109,8 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(TrackingEtapaPeer::CA_TEMPLATE)) $criteria->add(TrackingEtapaPeer::CA_TEMPLATE, $this->ca_template);
 		if ($this->isColumnModified(TrackingEtapaPeer::CA_MESSAGE)) $criteria->add(TrackingEtapaPeer::CA_MESSAGE, $this->ca_message);
 		if ($this->isColumnModified(TrackingEtapaPeer::CA_MESSAGE_DEFAULT)) $criteria->add(TrackingEtapaPeer::CA_MESSAGE_DEFAULT, $this->ca_message_default);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_INTRO)) $criteria->add(TrackingEtapaPeer::CA_INTRO, $this->ca_intro);
+		if ($this->isColumnModified(TrackingEtapaPeer::CA_TITLE)) $criteria->add(TrackingEtapaPeer::CA_TITLE, $this->ca_title);
 
 		return $criteria;
 	}
@@ -1094,6 +1186,10 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 		$copyObj->setCaMessage($this->ca_message);
 
 		$copyObj->setCaMessageDefault($this->ca_message_default);
+
+		$copyObj->setCaIntro($this->ca_intro);
+
+		$copyObj->setCaTitle($this->ca_title);
 
 
 		if ($deepCopy) {

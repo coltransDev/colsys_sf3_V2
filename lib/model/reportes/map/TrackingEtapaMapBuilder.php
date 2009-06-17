@@ -84,6 +84,10 @@ class TrackingEtapaMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_MESSAGE_DEFAULT', 'CaMessageDefault', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_INTRO', 'CaIntro', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_TITLE', 'CaTitle', 'VARCHAR', false, null);
+
 	} // doBuild()
 
 } // TrackingEtapaMapBuilder
