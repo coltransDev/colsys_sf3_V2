@@ -95,11 +95,6 @@ a:visited {
    color: #062A7D;
 }
 
-.form_error
-{  
-  color: #d8732f;
-}
-
 
 form fieldset{
 	border-width:1px;
@@ -699,4 +694,13 @@ div.post-info{
 
 .rojo{
 	color: #FF0000;
+}
+
+/*
+Errores
+*/
+
+ul.error_list{
+	background-color:#FF0000;
+	color:#FFFFFF;	
 }
