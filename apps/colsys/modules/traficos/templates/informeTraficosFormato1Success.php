@@ -1,10 +1,16 @@
 <?
+
+$cols = array("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AB","AC","AD","AE","AF","AG");
+
+
+$ultimaCol = "S";
+
 if( $parametros ){	
-	$parametro = $parametros[0];			
-	$ultimaCol = "T";
-	
+	$key = array_search( $ultimaCol , $cols ); 	
+	$ultimaCol = $cols[$key+count($parametros)];
+		
 }else{
-	$ultimaCol = "S";
+	
 	$parametro = null;
 }
 
@@ -99,9 +105,16 @@ $objPHPExcel->getActiveSheet()->setCellValue('R'.$i, 'Actualizado');
 $objPHPExcel->getActiveSheet()->setCellValue('S'.$i, 'Ref. Coltrans');
 
 
-if( $parametro ){			
-	$objPHPExcel->getActiveSheet()->setCellValue('T'.$i, utf8_encode($parametro->getCaValor2()) );
+if( $parametros ){
+	$idx = 1;
+	foreach( $parametros as $parametro  ){					
+		$col = $cols[$key+$idx];		
+		$objPHPExcel->getActiveSheet()->setCellValue($col.$i, utf8_encode($parametro->getCaValor2()) );	
+		$idx++;
+	}
 }
+
+
 
 $i++;
 
@@ -245,13 +258,20 @@ foreach( $reportes as $reporte ){
 	
 	
 	if( $parametros ){
-		$parametro = $parametros[0];
 		
-		$valor = explode(":",$parametro->getCaValor());
-		$name = $valor[0];
-		$type = $valor[1];	
 		
-		$objPHPExcel->getActiveSheet()->setCellValue('T'.$i, $reporte->getProperty( $name ) );
+		$idx = 1;
+		foreach( $parametros as $parametro  ){					
+						
+			$valor = explode(":",$parametro->getCaValor());
+			$name = $valor[0];
+			$type = $valor[1];	
+					
+			$col = $cols[$key+$idx];
+			
+			$objPHPExcel->getActiveSheet()->setCellValue($col.$i, $reporte->getProperty( $name ) );			
+			$idx++;
+		}
 	}
 	
 	
@@ -392,10 +412,10 @@ $objPHPExcel->getActiveSheet()->getColumnDimension('S')->setWidth(13);
 $objPHPExcel->getActiveSheet()->getColumnDimension('T')->setWidth(17);
 
 
-// Leyenda		
+// Convenciones		
 $i+=2;
 	
-$objPHPExcel->getActiveSheet()->setCellValue('A'.$i, utf8_encode("Leyenda") );
+$objPHPExcel->getActiveSheet()->setCellValue('A'.$i, utf8_encode("Convenciones") );
 $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getFont()->setBold(true);
 $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 $objPHPExcel->getActiveSheet()->getStyle('A'.$i)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);

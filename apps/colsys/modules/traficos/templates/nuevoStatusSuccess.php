@@ -43,17 +43,18 @@ function mostrar(oid){
 		  }
 	} 
 	
-	divmensaje = document.getElementById('divmensaje');
-	mensaje = document.form1.mensaje;
-	mensaje_mask = document.form1.mensaje_mask;
+	var divmensaje = document.getElementById('divmensaje');
+	var mensaje = document.form1.mensaje;
+	var mensaje_mask = document.form1.mensaje_mask;
 		
 	switch( value ){
 		<?
 		foreach( $etapas as $etapa ){
 		?>
 		case '<?=$etapa->getCaIdetapa()?>':
-			divmensaje.innerHTML = '<?=$etapa->getCaMessage()?>';
-			mensaje_mask.value = '<?=$etapa->getCaMessage()?>';			
+			var val = '<?=str_replace("\n", "<br />", $etapa->getCaMessage())?>';			
+			divmensaje.innerHTML = val.split("<br />").join("\n");
+			mensaje_mask.value = val.split("<br />").join("\n");		
 			break;
 		<?
 		}
@@ -70,7 +71,8 @@ function mostrar(oid){
 			foreach( $etapas as $etapa ){
 			?>
 			case '<?=$etapa->getCaIdetapa()?>':
-				mensaje.value = '<?=$etapa->getCaMessageDefault()?>';
+				var val = '<?=str_replace("\n", "<br />", $etapa->getCaMessageDefault())?>';
+				mensaje.value = val.split("<br />").join("\n");
 				break;
 			<?
 			}
@@ -89,21 +91,29 @@ function mostrar(oid){
 			if( $etapa->getCaIntro() ){
 			?>
 			case '<?=$etapa->getCaIdetapa()?>':
-				document.form1.introduccion.value = '<?=$etapa->getCaIntro()?>';
+				var val = '<?=str_replace("\n", "<br />", $etapa->getCaIntro())?>';
+				document.form1.introduccion.value = val.split("<br />").join("\n");
 				
 				break;
 			<?
 			}
 		}
+		if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 		?>
 		case 'EECEM':
-				document.form1.introduccion.value = '<?=$saludoAviso?>';				
+				var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
+				document.form1.introduccion.value = val.split("<br />").join("\n");			
 				break;
 		case 'EEETA':
-				document.form1.introduccion.value = '<?=$saludoAviso?>';				
+				var val = '<?=str_replace("\n", "<br />", $saludoAviso)?>';
+				document.form1.introduccion.value = val.split("<br />").join("\n");				
 				break;
+		<?
+		}
+		?>
 		default:
-			document.form1.introduccion.value = '<?=$saludo?>';
+			var val = '<?=str_replace("\n", "<br />", $saludo)?>';
+			document.form1.introduccion.value = val.split("<br />").join("\n");				
 			break;
 	}
 	
@@ -120,7 +130,19 @@ function mostrar(oid){
 <?
 echo $form['mensaje_dirty']->render();
 echo $form['mensaje_mask']->render();
+
+if( !sfConfig::get("app_smtp_user") ){
 ?>
+
+<?=image_tag("22x22/alert.gif")?>La autenticación SMTP se encuentra desactivada, es posible que sus mensajes no lleguen al destinatario.
+<br />
+<br />
+
+
+<?
+}
+?>
+
 
 
 <table width="60%" border="0" class="tableList">
@@ -143,25 +165,55 @@ echo $form['mensaje_mask']->render();
 		<td width="50%" >				
 			 <div align="left"><b>Reporte:</b><br /><?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?></div>		</td>	
 	</tr>
+	<?
+	if($user->getIdSucursal()=="BOG"){
+	?>
+	<tr>
+		<td valign="top"><b>Remitente:</b>
+			<?
+			echo $form['remitente']->renderError(); 			
+			echo $form['remitente']->render();		
+			?>		
+		</td>
+		<td valign="top">&nbsp;</td>
+	</tr>
+	<?
+	}
+	?>
 	<tr>
 		<td valign="top">
 			<div align="left"><b>Enviar a: </b><br />
 					<?		
-			
+			$destinatarios = $form->getDestinatarios();
+			for( $i=0; $i< count($destinatarios) ; $i++ ){					
+				 echo $form['destinatarios_'.$i]->renderError(); 
+				 $form->setDefault('destinatarios_'.$i, 1 ); 	
+				 echo $form['destinatarios_'.$i]->render().$form['destinatarios_'.$i]->renderLabel()."<br />";
+			}
+			/*
 			$contacto = $reporte->getContacto();	
 			//echo checkbox_tag("destinatarios[]", $contacto->getCaEmail() , 1)." &nbsp;".$contacto->getCaNombres()." ".$contacto->getCaPApellido()."<br />";	
 			if( $reporte->getCaConfirmarclie() ){
 				$contactosClie = explode(",",$reporte->getCaConfirmarclie());
 				
 				foreach( $contactosClie as $contacto ){
+					if( isset($destinatarios) ){
+						if( array_search($contacto, $destinatarios )){
+							$option = 'checked="checked"';
+						}else{
+							$option = '';
+						}
+					}else{
+						$option = 'checked="checked"';
+					}
 					?>
-				<input type="checkbox" name="destinatarios[]" value="<?=$contacto?>" checked="checked"/>
+				<input type="checkbox" name="destinatarios[]" value="<?=$contacto?>" <?=$option?> />
 				<?=$contacto?>
 				<br />
 				<?
 					
 				}
-			}
+			}*/
 						
 			/*
 			if ( $reporte->getCaContinuacion()!="N/A" ) {
@@ -390,7 +442,8 @@ echo $form['mensaje_mask']->render();
 					<tr>
 						<td colspan="3">
 						
-							<?
+							<div align="left">
+								<?
 							 echo "<b>".$val["label"].":</b><br />"; 
 							 echo $form[$name]->renderError(); 
 							 if( $ultStatus ){	
@@ -398,7 +451,7 @@ echo $form['mensaje_mask']->render();
 							 }
 							 echo $form[$name]->render();
 							 ?>
-						</td>
+								</div></td>
 					</tr>						
 			<?
 				}
@@ -536,15 +589,24 @@ echo $form['mensaje_mask']->render();
 	?>
 	<tr>
 		<td colspan="2">
-			<b>Adjuntar documento:</b>
-			<?			
+			<div align="left"><b>Adjuntar documento:</b><br />
+				
+					<?		
 			foreach( $files as $file ){
-				$fileIdx = $user->addFile( $file );
-				echo checkbox_tag("attachments[]", base64_encode($file) )." ".mime_type_icon( basename($file) )." ".link_popup(basename( $file ),"traficos/fileViewer?idx=".$fileIdx."&token=".md5(time().basename($file)),"800","600" )."</br>";
+				$fileIdx = $user->addFile( $file );				
+				if(  array_search( $file, $att )!==false ){
+					$option = 'checked="checked"';					
+				}else{
+					$option = '';
+				}
+				?>
+				<input type="checkbox" name="attachments[]" value="<?=$fileIdx?>"  <?=$option?> />  
+				<?
+				echo mime_type_icon( basename($file) )." ".link_to(basename( $file ),"traficos/fileViewer?idx=".$fileIdx."&token=".md5(time().basename($file)) )."</br>";
 
 			}
 			?>
-		</td>
+				</div></td>
 	</tr>
 	<?
 	}

@@ -10,6 +10,7 @@ class NuevoStatusForm extends sfForm{
 	private $criteriaPeso = null;
 	private $criteriaVolumen = null;
 	private $criteriaConcepto = null;
+	private $destinatarios = array();
 	private $widgetsClientes = array();
 	
 	public function configure(){
@@ -19,6 +20,10 @@ class NuevoStatusForm extends sfForm{
 		$widgets = array();		
 		$validator = array();	
 		
+		$destinatarios = $this->getDestinatarios();
+		for( $i=0; $i< count($destinatarios) ; $i++ ){
+			$widgets["destinatarios_".$i] = new sfWidgetFormInputCheckbox(array(), array("size"=>60, "style"=>"margin-bottom:3px", "value"=>trim($destinatarios[$i])));
+		}
 		
 		for( $i=0; $i< self::NUM_CC ; $i++ ){
 			$widgets["cc_".$i] = new sfWidgetFormInput(array(), array("size"=>60, "style"=>"margin-bottom:3px"));			
@@ -34,7 +39,9 @@ class NuevoStatusForm extends sfForm{
 															array("onChange"=>"mostrar()")
 															);
 		
-		
+		$widgets['remitente'] = new sfWidgetFormChoice(array(
+															  'choices' => array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co'),
+															));
 										
 		//$widgets['asunto'] = new sfWidgetFormInput(array(), array("size"=>145 ));
 		$widgets['introduccion'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
@@ -114,11 +121,25 @@ class NuevoStatusForm extends sfForm{
 		}
 		
 		$this->setWidgets( $widgets );
+		
+		for( $i=0; $i< count($destinatarios) ; $i++ ){
+			
+			$this->widgetSchema->setLabel("destinatarios_".$i, $destinatarios[$i]);
+		}
+		
+		for( $i=0; $i< count($destinatarios) ; $i++ ){
+			$validator["destinatarios_".$i] =new sfValidatorEmail( array('required' => false ), 
+														array('invalid' => 'La dirección es invalida'));
+		}
 			
 		for( $i=0; $i< self::NUM_CC ; $i++ ){
 			$validator["cc_".$i] =new sfValidatorEmail( array('required' => false ), 
 														array('invalid' => 'La dirección es invalida'));
 		}
+		
+		
+		$validator["remitente"] =new sfValidatorEmail( array('required' => false ), 
+														array('invalid' => 'La dirección es invalida'));
 		
 		$validator['idetapa'] = new sfValidatorString(array('required' => true ), 
 														array('required' => 'La etapa es obligatoria'));
@@ -234,12 +255,21 @@ class NuevoStatusForm extends sfForm{
 		$this->criteriaVolumen = $c;			
 	}
 	
+	public function setDestinatarios( $c ){
+		$this->destinatarios = $c;			
+	}
+	
+	
 	public function setCriteriaConceptos( $c ){
 		$this->criteriaConcepto = $c;		
 	}
 	
 	public function getWidgetsClientes( ){
 		return $this->widgetsClientes;
+	}
+	
+	public function getDestinatarios( ){
+		return $this->destinatarios;
 	}
 	
 	public function setWidgetsClientes( $parametros ){

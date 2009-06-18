@@ -1,7 +1,7 @@
 <table width="100%" border="0">
 	<tr>
 		<td width="26%" valign="top">
-		<div class="post-info">
+		<div class="post-info" align="left">
 		 	<b>Informaci&oacute;n general</b><br />				
 			<?
 					if( $reporte->getEsAG() ){
@@ -43,30 +43,13 @@
 		</div>
 		</td>
 		<td width="46%" valign="top">
-			<div class="post-info">
+			<div class="post-info" align="left">
 				<b>Historial</b><br />
+				<div id="hist_<?=$reporte->getCaIdreporte()?>"></div>		
 				<?
-				foreach( $statusList as $status ){
-					$txt = "<b>".Utils::fechaMes( $status->getCaFchstatus("Y-m-d") )." ".$status->getCaFchstatus("h:i A" )."&gt;&gt;". $status->getTrackingEtapa()->getCaEtapa()."</b>
-					";
-					if( $status->getCaIdemail() ){
-						?>
-						<a href='#' onClick='window.open("<?=url_for("general/verEmail?id=".$status->getCaIdemail())?>")' ><?=$txt?></a>	
-						<?			
-					}else{
-						echo $txt;
-					}
-					
-					$statusTxt = $status->getStatus();					
-					?>
-					<br />
-					<?=$status->getStatus()?> 
-					
-					<br />
-					<?
-				}
+				//include_component("traficos", "historialStatus", array("reporte"=>$reporte));
 				?>
-				
+						
 				<br />
 				<?
 				if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
@@ -80,7 +63,7 @@
 		
 		</td>
 		<td width="28%" valign="top">
-			<div class="post-info">
+			<div class="post-info" align="left">
 		 	<b>Documentos</b><br />	
 				
 			<?

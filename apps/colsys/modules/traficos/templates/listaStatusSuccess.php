@@ -21,6 +21,25 @@ use_helper("MimeType");
 		
 		if( document.getElementById('infotr_'+id).style.display=='none' ){
 			document.getElementById('infotr_'+id).style.display = '';
+			
+			histContent = document.getElementById('hist_'+id);
+			
+			if( histContent.innerHTML=="" ){	
+				histContent.innerHTML = "<div id='indicator'></div>";			
+				Ext.Ajax.request({
+					url: '<?=url_for("traficos/historialStatus");?>',
+					params: {							
+						idreporte: id
+					},
+					success: function(xhr) {			
+						histContent.innerHTML = xhr.responseText;
+						
+					},
+					failure: function() {
+						Ext.Msg.alert("Error", "Server communication failure");
+					}
+				});	
+			}
 		}else{
 			document.getElementById('infotr_'+id).style.display = 'none';
 		}						
@@ -144,7 +163,7 @@ use_helper("MimeType");
 		</div></td>
 	</tr>
 	<tr  style="display:none" id="infotr_<?=$reporte->getCaIdreporte()?>" >
-		<td colspan="7"  > 			 
+		<td colspan="7"  > 				
 			<?
 			include_component("traficos", "infoReporte", array( "reporte"=>$reporte ));
 			?>

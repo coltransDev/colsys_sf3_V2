@@ -103,7 +103,15 @@ class traficosActions extends sfActions
 		$this->getUser()->clearFiles();	
 	}
 	
-
+	
+	/*
+	* Muestra un resumen de los status enviados al cliente
+	*/
+	public function executeHistorialStatus( $request ){
+		$this->forward404Unless( $this->getRequestParameter("idreporte") );
+		$this->reporte = ReportePeer::retrieveByPk( $this->getRequestParameter("idreporte") );		
+		$this->forward404Unless( $this->reporte );
+	}
 	
 	/***********************************************************************************
 	* Creación de status
@@ -114,8 +122,6 @@ class traficosActions extends sfActions
 	 * @author: Andres Botero
 	 */
 	public function executeNuevoStatus( $request ){
-						
-		$this->form = new NuevoStatusForm();
 		
 		$idreporte = $this->getRequestParameter("idreporte");
 		$this->forward404Unless( $idreporte );
@@ -130,12 +136,19 @@ class traficosActions extends sfActions
 		$this->user = $this->getUser();
 		
 		$this->getRequest()->setParameter("reporte", $reporte->getCaConsecutivo());
-				
+		
+		if( $this->getRequestParameter("destinatarios") ){
+			$this->destinatarios = $this->getRequestParameter("destinatarios");
+		}
 		
 		/*
 		* Configuracion de la forma
 		*/
 		
+		$this->form = new NuevoStatusForm();
+		if( $reporte->getCaConfirmarclie() ){
+				$this->form->setDestinatarios( explode(",",$reporte->getCaConfirmarclie()) );
+		}
 		//Etapas			
 		$c = new Criteria();
 		$c->add( TrackingEtapaPeer::CA_IMPOEXPO, $reporte->getCaImpoexpo() );		
@@ -188,11 +201,17 @@ class traficosActions extends sfActions
 		if ($request->isMethod('post')){		
 		
 			$bindValues = array();
-			
-			for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
-				$bindValues["cc_".$i] = $request->getParameter("cc_".$i);
+						
+			$destinatarios = $this->form->getDestinatarios();
+			for( $i=0; $i< count($destinatarios) ; $i++ ){		
+				$bindValues["destinatarios_".$i] = trim($request->getParameter("destinatarios_".$i));					 
 			}
 			
+			for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
+				$bindValues["cc_".$i] = trim($request->getParameter("cc_".$i));
+			}
+						
+			$bindValues["remitente"] = $request->getParameter("remitente");
 			$bindValues["idetapa"] = $request->getParameter("idetapa");
 			
 			$bindValues["fchsalida"] = $request->getParameter("fchsalida");
@@ -246,7 +265,19 @@ class traficosActions extends sfActions
 		
 		/*
 		Archivos del reporte
-		*/		
+		*/
+		
+		//Para recuperar los archivos seleccionados
+		$attachments = $this->getRequestParameter( "attachments" );
+		$this->att = array();
+		if( $attachments ){
+			foreach( $attachments as $attachment){				
+				$this->att[]=$this->user->getFile( $attachment );
+				
+			}
+		}
+				
+				
 		$this->user->clearFiles();
 		//Busca los archivos del reporte
 		$this->files=$this->reporte->getFiles();
@@ -292,8 +323,6 @@ class traficosActions extends sfActions
 		}
 		$status->setCaFchenvio( date("Y-m-d H:i:s") );
 		$status->setCausuenvio( $user->getUserId() );
-				
-		
 			
 		$piezas = $request->getParameter("piezas")."|".$request->getParameter("un_piezas");
 		$peso = $request->getParameter("peso")."|".$request->getParameter("un_peso");
@@ -395,13 +424,46 @@ class traficosActions extends sfActions
 			}	
 			$repExpo->save();	
 		}			
-		
-					
+						
 		$status->save();
-		$status->send();
 		
 		
-		//$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
+		$address = array();			
+		foreach( $_POST as $key=>$val ){					
+			if( substr($key,0,14 )=="destinatarios_" ){
+				if( $request->getParameter($key) ){
+					$address[] = trim($request->getParameter($key));					 
+				}
+			}
+		}
+		
+		
+		$cc = array();
+		for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
+			if( $request->getParameter("cc_".$i) ){
+				$cc[] = trim($request->getParameter("cc_".$i));
+			}
+		}
+		
+		
+		
+		$user = $this->getUser();
+		$attachments = $this->getRequestParameter( "attachments" );
+		$att = array();
+		if( $attachments ){
+			foreach( $attachments as $attachment){				
+				$att[]=$user->getFile( $attachment );
+				
+			}
+		}
+		
+		$options["from"] =  $request->getParameter("remitente");
+			
+		$address = array();
+		$status->send($address, $cc,  $att, $options);
+		
+		
+		$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 		
 	}
 	
@@ -467,7 +529,15 @@ class traficosActions extends sfActions
 		}		
 		
 		
-		$this->parametros = ParametroPeer::retrieveByCaso( "CU059", null , null, $this->idCliente );
+		//$this->parametros = ParametroPeer::retrieveByCaso( "CU059", null , null, $this->idCliente );
+		
+		$c = new Criteria();
+		$c->addJoin( ParametroPeer::CA_IDENTIFICACION, ClientePeer::CA_IDGRUPO );
+		$c->add( ClientePeer::CA_IDGRUPO, $this->cliente->getCaIdCliente() );
+		$c->add( ParametroPeer::CA_CASOUSO, "CU059" );		
+		$c->setDistinct();
+		$this->parametros = ParametroPeer::doSelect( $c );
+		
 		
 		$this->filename = $this->getRequestParameter("filename");
 		
