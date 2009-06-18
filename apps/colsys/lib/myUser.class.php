@@ -140,7 +140,7 @@ class myUser extends sfBasicSecurityUser
 	* o realizar otras tareas
 	*/
 	public function getFile( $k ){		
-		$userFiles=$this->getAttribute('userFiles');
+		$userFiles=$this->getAttribute('userFiles');		
 		if( isset($userFiles[$k]) ){
 			return base64_decode($userFiles[$k]);
 		} 		
