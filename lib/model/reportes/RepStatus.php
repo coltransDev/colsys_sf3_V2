@@ -154,10 +154,15 @@ class RepStatus extends BaseRepStatus
 		$email->setCaUsuenvio( $user->getUserId() );
 		
 		$email->setCaTipo( "Envío de Status" ); 	
-		
-		
+			
 		$email->setCaIdcaso( $this->getCaIdreporte() );
-		$email->setCaFrom( $user->getEmail() );
+		
+		
+		if(isset($options["from"]) && $options["from"] ){
+			$email->setCaFrom( $options["from"] );
+		}else{
+			$email->setCaFrom( $user->getEmail() );
+		}
 		$email->setCaFromname( $user->getNombre() );
 		
 		if( isset( $options['readreceipt'] ) && $options['readreceipt'] ){
@@ -187,8 +192,13 @@ class RepStatus extends BaseRepStatus
 		if ( $reporte->getCaSeguro()=="Sí" ) {
 			$email->addCc( "seguros@coltrans.com.co" ); 
 		}
-				
-		$email->addCc( $user->getEmail() );
+		
+		
+		if(isset($options["from"]) && $options["from"] ){
+			$email->addCc( $options["from"] );
+		}else{				
+			$email->addCc( $user->getEmail() );
+		}
 		
 		
 		$etapa = $this->getTrackingEtapa();
