@@ -103,7 +103,11 @@ form fieldset{
 	background-color:#EEEEEE;	
 }
 
-
+#indicator{
+	background:url(../images/ajax-loader.gif);
+	width: 24px;
+	height: 24px;
+}
 
 
 /*
