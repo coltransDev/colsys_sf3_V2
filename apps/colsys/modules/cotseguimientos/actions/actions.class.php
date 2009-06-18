@@ -108,7 +108,7 @@ class cotseguimientosActions extends sfActions
 			$c->addAnd( CotizacionPeer::CA_FCHCREADO,$fechaFinalCons , Criteria::LESS_EQUAL );
 		}
 		
-		
+		$c->add(CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL);
 		$c->setDistinct();
 				
 		$cotizaciones = CotizacionPeer::doSelect( $c );
