@@ -31,15 +31,7 @@ class gestDocumentalActions extends sfActions
 		
 	
 	
-	/*
-	* Permite ver el contenido de un archivo
-	* author: Andres Botero
-	*/	
-	public function executeFileViewer(){
-		$idx = $this->getRequestParameter("idx"); 
-		$this->name = $this->getUser()->getFile( $idx );
-		$this->setLayout("none");
-	}
+	
 	
 }
 ?>
