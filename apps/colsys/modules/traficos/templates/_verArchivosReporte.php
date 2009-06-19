@@ -6,14 +6,14 @@ use_helper("MimeType");
 <ul>
 <?
 foreach( $files as $file ){
-	$fileIdx = $user->addFile( $file );
+	//$fileIdx = $user->addFile( $file );
 	?>
 	<li>
 		<?=mime_type_icon( basename($file) )?> 
-		<a href="#" onclick="popup('<?=url_for("traficos/fileViewer?idx=".$fileIdx."&token=".md5(time().basename($file)))?>')"><?=basename( $file )?></a> 
+		<a href="#" onclick="popup('<?=url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) )?>')"><?=basename( $file )?></a> 
 		
 		
-		<a href="#" onclick="eliminarArchivos('<?=$reporte->getCaIdreporte()?>', '<?=$fileIdx?>')"><?=image_tag("16x16/delete.gif")?></a>
+		<a href="#" onclick="eliminarArchivos('<?=$reporte->getCaIdreporte()?>', '<?=base64_encode(basename($file))?>')"><?=image_tag("16x16/delete.gif")?></a>
 		
 	</li>
 	<?

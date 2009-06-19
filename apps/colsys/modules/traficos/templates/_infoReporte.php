@@ -4,9 +4,9 @@
 		<div class="post-info" align="left">
 		 	<b>Informaci&oacute;n general</b><br />				
 			<?
-					if( $reporte->getEsAG() ){
+					/*if( $reporte->getEsAG() ){
 						echo "<b>Reporte AG<br /></b>";
-					}
+					}*/
 										
 					if( $reporte->getCaUsuAnulado() ){
 						echo "<b>Anulado por:</b> ".$reporte->getCaUsuAnulado()." ".$reporte->getCaFchAnulado();

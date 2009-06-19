@@ -593,17 +593,16 @@ if( !sfConfig::get("app_smtp_user") ){
 				
 					<?		
 			foreach( $files as $file ){
-				$fileIdx = $user->addFile( $file );				
+				
 				if(  array_search( $file, $att )!==false ){
 					$option = 'checked="checked"';					
 				}else{
 					$option = '';
 				}
 				?>
-				<input type="checkbox" name="attachments[]" value="<?=$fileIdx?>"  <?=$option?> />  
+				<input type="checkbox" name="attachments[]" value="<?=base64_encode($file)?>"  <?=$option?> />  
 				<?
-				echo mime_type_icon( basename($file) )." ".link_to(basename( $file ),"traficos/fileViewer?idx=".$fileIdx."&token=".md5(time().basename($file)) )."</br>";
-
+				echo mime_type_icon( basename($file) )." ".link_to(basename( $file ), url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) ) )."</br>";				
 			}
 			?>
 				</div></td>

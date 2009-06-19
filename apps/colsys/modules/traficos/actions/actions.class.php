@@ -100,7 +100,7 @@ class traficosActions extends sfActions
 				$this->reportes[] = $reporte;
 			}
 		}					
-		$this->getUser()->clearFiles();	
+		//$this->getUser()->clearFiles();	
 	}
 	
 	
@@ -276,9 +276,7 @@ class traficosActions extends sfActions
 				
 			}
 		}
-				
-				
-		$this->user->clearFiles();
+		
 		//Busca los archivos del reporte
 		$this->files=$this->reporte->getFiles();
 				
@@ -452,14 +450,14 @@ class traficosActions extends sfActions
 		$att = array();
 		if( $attachments ){
 			foreach( $attachments as $attachment){				
-				$att[]=$user->getFile( $attachment );
+				$att[]=base64_decode( $attachment );
 				
 			}
 		}
 		
 		$options["from"] =  $request->getParameter("remitente");
 			
-		$address = array();
+		//$address = array();
 		$status->send($address, $cc,  $att, $options);
 		
 		
@@ -580,7 +578,7 @@ class traficosActions extends sfActions
 		
 		$this->usuario = UsuarioPeer::retrieveByPk( $this->user->getUserId() );
 		
-		$this->user->clearFiles();
+		
 	}
 			
 	/*
@@ -658,14 +656,22 @@ class traficosActions extends sfActions
 		$attachments = $this->getRequestParameter( "attachments" );
 		if( $attachments ){
 			foreach( $attachments as $attachment){
-				$email->AddAttachment( base64_decode( $attachment ) );
+				$params = explode("_", $attachment );
+				$idreporte = $params[0];				
+				$reporte = ReportePeer::retrieveBypk( $idreporte );
+				$this->forward404Unless( $reporte );
+								
+				$file = base64_decode($params[1]);				
+				$directory = $reporte->getDirectorio();
+				 
+				$name = $directory.DIRECTORY_SEPARATOR.$file;	
+				$email->AddAttachment(  $name  );
 			}
-		}		
-				
-		$email->setCaBody( $this->getRequestParameter("mensaje")) ;
+		}
 		
-		$email->setCaBodyHtml( Utils::replace($this->getRequestParameter("mensaje"))) ;
-			
+				
+		$email->setCaBody( $this->getRequestParameter("mensaje"));		
+		$email->setCaBodyHtml( Utils::replace($this->getRequestParameter("mensaje"))) ;			
 		$email->save();
 		$email->send();		
 	}
@@ -769,7 +775,7 @@ class traficosActions extends sfActions
 		$this->forward404Unless( $idreporte );
 		$this->reporte = ReportePeer::retrieveBypk( $idreporte );
 		$this->forward404Unless( $this->reporte );
-		$this->getUser()->clearFiles();	
+		//$this->getUser()->clearFiles();	
 	}
 	
 	
@@ -778,12 +784,36 @@ class traficosActions extends sfActions
 	* author: Andres Botero
 	*/
 	public function executeEliminarArchivosReporte(){		
-		$idx = $this->getRequestParameter("idxArchivo"); 
-		$name = $this->getUser()->getFile( $idx );	
+	
+		$idreporte = $this->getRequestParameter( "idreporte" );
+		$this->forward404Unless( $idreporte );
+		$reporte = ReportePeer::retrieveBypk( $idreporte );
+		$this->forward404Unless( $reporte );				
+		$file = base64_decode($this->getRequestParameter("file"));
+		
+		$directory = $reporte->getDirectorio();
+		 
+		$name = $directory.DIRECTORY_SEPARATOR.$file;	
 		unlink( $name );
 		return sfView::NONE;		
 	}
 	
+	
+	/*
+	* Permite ver el contenido de un archivo
+	* author: Andres Botero
+	*/	
+	public function executeFileViewer(){
+		$idreporte = $this->getRequestParameter( "idreporte" );
+		$this->forward404Unless( $idreporte );
+		$reporte = ReportePeer::retrieveBypk( $idreporte );
+		$this->forward404Unless( $reporte );				
+		$file = base64_decode($this->getRequestParameter("file"));
+		
+		$directory = $reporte->getDirectorio();			
+		$this->name = $directory.DIRECTORY_SEPARATOR.$file;
+		$this->setLayout("none");
+	}
 	
 	/***********************************************************************************
 	* 

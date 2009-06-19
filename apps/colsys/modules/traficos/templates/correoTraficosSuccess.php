@@ -105,15 +105,11 @@ foreach( $reportes as $reporte ){
 			<div align="left"><b>Adjuntar documento :</b><br />
 			<?			
 			foreach( $files as $file ){
-				$fileIdx = $user->addFile( $file );
+				//$fileIdx = $user->addFile( $file );
 				?>
-				<input type="checkbox" name="attachments[]" value="<?=base64_encode($file)?>" />
+				<input type="checkbox" name="attachments[]" value="<?=$reporte->getCaIdreporte()."_".base64_encode(basename($file))?>" />
 				<?
-				echo mime_type_icon( basename($file) );
-				?>
-				<a href="#" onclick="popup('<?=url_for("traficos/fileViewer?idx=".$fileIdx."&token=".md5(time().basename($file)))?>')"  ><?=basename( $file )?></a>  <br />
-
-				<?				
+				echo mime_type_icon( basename($file) )." ".link_to(basename( $file ), url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) ) )."<br />";				
 			}
 			?></div>
 		</td>

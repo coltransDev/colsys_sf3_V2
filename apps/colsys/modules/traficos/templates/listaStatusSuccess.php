@@ -68,13 +68,13 @@ use_helper("MimeType");
 	}
 	
 	
-	function eliminarArchivos( idreporte, idxArchivo ){
+	function eliminarArchivos( idreporte, file ){
 		if( confirm("Esta seguro que desea eliminar este archivo?") ){
 			Ext.Ajax.request({
 				url: '<?=url_for("traficos/eliminarArchivosReporte");?>',
 				params: {							
 					idreporte: idreporte,
-					idxArchivo: idxArchivo
+					file: file
 				},
 				success: function(xhr) {			
 					actualizarArchivos( idreporte );
