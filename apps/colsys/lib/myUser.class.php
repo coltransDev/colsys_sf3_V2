@@ -102,27 +102,12 @@ class myUser extends sfBasicSecurityUser
 		$this->setAttribute('grupos', $grupos );
 	}
 	
-	/*
-	* Añade un archivo en la lista de archivos del usuario para enviar por correo 
-	* o realizar otras tareas
-	*/
-		
-	/*
-	* Añade un archivo en la lista de archivos del usuario para enviar por correo 
-	* o realizar otras tareas
-	*/
-	/*public function addFile($file){				
-		
-		$userFiles=explode("|",$this->getAttribute('userFiles'));
-						
-		$idx=md5(count( $userFiles ).time().rand());
-						
-		$userFiles[$idx] = base64_encode($file);
-		echo  implode("|",$userFiles);
-		//$this->setAttribute('userFiles', implode("|",$userFiles) );
-		return $idx;
-	}*/
 	
+		
+	/*
+	* Añade un archivo en la lista de archivos del usuario para enviar por correo 
+	* o realizar otras tareas
+	*/		
 	public function addFile($file){				
 		
 		$userFiles=$this->getAttribute('userFiles');
