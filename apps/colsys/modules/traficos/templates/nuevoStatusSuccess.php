@@ -169,13 +169,13 @@ if( !sfConfig::get("app_smtp_user") ){
 	if($user->getIdSucursal()=="BOG"){
 	?>
 	<tr>
-		<td valign="top"><b>Remitente:</b>
+		<td valign="top"><div align="left"><b>Remitente:</b>
 			<?
 			echo $form['remitente']->renderError(); 			
 			echo $form['remitente']->render();		
 			?>		
-		</td>
-		<td valign="top">&nbsp;</td>
+		</div></td>
+		<td valign="top"><div align="left">&nbsp;</div></td>
 	</tr>
 	<?
 	}

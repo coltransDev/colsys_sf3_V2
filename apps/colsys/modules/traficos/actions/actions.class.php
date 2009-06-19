@@ -24,7 +24,10 @@ class traficosActions extends sfActions
 	 */
 	public function executeIndex()
 	{
-		$this->modo = $this->getRequestParameter("modo");
+		$this->modo = $this->getRequestParameter("modo");		
+		if( !$this->modo ){
+			$this->forward( "traficos", "seleccionModo" );	
+		}
 		
 		if( $this->modo=="maritimo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
@@ -37,8 +40,18 @@ class traficosActions extends sfActions
 		}		
 		if( $this->nivel==-1 ){
 			$this->forward404();
-		}	
-		$this->forward404unless( $this->modo );
+		}			
+	}
+	
+	/**
+	 * Muestra un formulario para seleccionar un rango de fechas y el cliente
+	 * @author: Andres Botero
+	 */
+	public function executeSeleccionModo()
+	{		
+		$this->nivelMaritimo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
+		$this->nivelAereo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
+		$this->nivelExpo = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );		
 	}
 
 
