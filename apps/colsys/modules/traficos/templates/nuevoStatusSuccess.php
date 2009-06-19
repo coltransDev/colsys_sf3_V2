@@ -269,7 +269,9 @@ if( !sfConfig::get("app_smtp_user") ){
 				 	$form->setDefault('idetapa', "IMETA" ); 	
 				}
 			 }else{
-				$form->setDefault('idetapa', $ultStatus->getCaIdetapa() ); 			 
+			 	if( $ultStatus ){
+					$form->setDefault('idetapa', $ultStatus->getCaIdetapa() ); 			 
+				}
 			 }
 			 echo $form['idetapa']->render();
 			 ?>		

@@ -53,7 +53,7 @@ use_helper("MimeType");
 	
 	function actualizarArchivos( idreporte ){
 		Ext.Ajax.request({
-			url: '<?=url_for("traficos/listaArchivosReporte");?>',
+			url: '<?=url_for("traficos/listaArchivosReporte?modo=".$modo);?>',
 			params: {							
 				idreporte: idreporte
 			},
@@ -165,7 +165,7 @@ use_helper("MimeType");
 	<tr  style="display:none" id="infotr_<?=$reporte->getCaIdreporte()?>" >
 		<td colspan="7"  > 				
 			<?
-			include_component("traficos", "infoReporte", array( "reporte"=>$reporte ));
+			include_component("traficos", "infoReporte", array( "reporte"=>$reporte, "nivel"=>$nivel ));
 			?>
 		</td>
 	</tr>

@@ -26,7 +26,6 @@ class traficosComponents extends sfComponents
 	public function executeVerArchivosReporte(){				
 		$this->files=$this->reporte->getFiles();					
 		$this->user = $this->getUser();				
-		
 	}
 	
 	/*

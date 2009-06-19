@@ -52,13 +52,15 @@
 						
 				<br />
 				<?
-				if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-					echo link_to(image_tag("22x22/edit_add.gif")." Aviso" ,"traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=aviso&token=".md5(time()));
-					
-				}
+				
+				if( $nivel>0 ){
+					if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+						echo link_to(image_tag("22x22/edit_add.gif")." Aviso" ,"traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=aviso&token=".md5(time()));
+						
+					}
+					echo link_to(image_tag("22x22/edit_add.gif")." Status","traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=status&token=".md5(time()));
+				}	
 				?>
-
-<?=link_to(image_tag("22x22/edit_add.gif")." Status","traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=status&token=".md5(time()))?>
 			</div>
 		
 		</td>
@@ -79,7 +81,7 @@
 				</li></ul>
 				<div id="archivosReporte_<?=$reporte->getCaIdReporte()?>" >
 				<?
-				include_component("traficos", "verArchivosReporte", array("reporte"=>$reporte));				
+				include_component("traficos", "verArchivosReporte", array("reporte"=>$reporte, "nivel"=>$nivel));				
 				?>
 				</div>
 				

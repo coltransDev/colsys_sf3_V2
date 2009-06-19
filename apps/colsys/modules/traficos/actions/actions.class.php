@@ -10,7 +10,10 @@
  */
 class traficosActions extends sfActions
 {
-
+	
+	const RUTINA_MARITIMO = "78";
+	const RUTINA_AEREO = "79";
+	const RUTINA_EXPO = "80";
 	/***********************************************************************************
 	* Pagina inicial y consulta de reportes
 	************************************************************************************/
@@ -22,6 +25,19 @@ class traficosActions extends sfActions
 	public function executeIndex()
 	{
 		$this->modo = $this->getRequestParameter("modo");
+		
+		if( $this->modo=="maritimo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
+		}		
+		if( $this->modo=="aereo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
+		}		
+		if( $this->modo=="expo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
+		}		
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}	
 		$this->forward404unless( $this->modo );
 	}
 
@@ -34,6 +50,20 @@ class traficosActions extends sfActions
 		$this->idCliente = $this->getRequestParameter("idcliente");
 				
 		$this->modo = $this->getRequestParameter("modo");
+		if( $this->modo=="maritimo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
+		}		
+		if( $this->modo=="aereo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
+		}		
+		if( $this->modo=="expo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
+		}		
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+		
+		
 		$this->forward404unless( $this->modo );
 					
 		if( $this->getRequestParameter("reporte") ){
@@ -122,6 +152,21 @@ class traficosActions extends sfActions
 	 * @author: Andres Botero
 	 */
 	public function executeNuevoStatus( $request ){
+		
+		$this->modo = $request->getParameter( "modo" );
+		$this->forward404unless( $this->modo );		
+		if( $this->modo=="maritimo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
+		}		
+		if( $this->modo=="aereo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
+		}		
+		if( $this->modo=="expo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
+		}		
+		if( $this->nivel<1 ){
+			$this->forward404();
+		}	
 		
 		$idreporte = $this->getRequestParameter("idreporte");
 		$this->forward404Unless( $idreporte );
@@ -771,11 +816,28 @@ class traficosActions extends sfActions
 	*/
 	
 	public function executeListaArchivosReporte( $request ){
-		$idreporte = $this->getRequestParameter( "idreporte" );
+		$idreporte = $request->getParameter( "idreporte" );
 		$this->forward404Unless( $idreporte );
 		$this->reporte = ReportePeer::retrieveBypk( $idreporte );
 		$this->forward404Unless( $this->reporte );
-		//$this->getUser()->clearFiles();	
+			
+		$this->modo = $request->getParameter( "modo" );
+		$this->forward404unless( $this->modo );		
+		if( $this->modo=="maritimo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
+		}		
+		if( $this->modo=="aereo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
+		}		
+		if( $this->modo=="expo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
+		}		
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}	
+		
+		
+		
 	}
 	
 	

@@ -12,8 +12,13 @@ foreach( $files as $file ){
 		<?=mime_type_icon( basename($file) )?> 
 		<a href="#" onclick="popup('<?=url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) )?>')"><?=basename( $file )?></a> 
 		
-		
+		<?
+		if( $nivel>0 ){
+		?>
 		<a href="#" onclick="eliminarArchivos('<?=$reporte->getCaIdreporte()?>', '<?=base64_encode(basename($file))?>')"><?=image_tag("16x16/delete.gif")?></a>
+		<?
+		}
+		?>
 		
 	</li>
 	<?
@@ -21,11 +26,11 @@ foreach( $files as $file ){
 	
 }
 
-$token = md5(time());
 ?>
 </ul>
-
-
+<?
+if( $nivel>0 ){
+?>
 <form action="<?=url_for("traficos/cargarArchivo")?>"  target="uploadFrame" enctype="multipart/form-data" method="post" />
 	<input type="hidden" name="idreporte" value="<?=$reporte->getCaIdreporte()?>" />
 <table width="100%" border="0" class="tableForm">
@@ -35,19 +40,14 @@ $token = md5(time());
 		<td width="50%">
 			<input type="file" name="file" />
 		</td>
-	</tr>
-	<?
-	
-	?>
-	
-	
-	<?
-	
-	?>
+	</tr>	
 	<tr>
 		<td colspan="2"><div align="center"><input type="submit" class="button" value="Subir" /></div></td>
 	</tr>
 </table>
 </form>
+<?
+}
+?>
 
 
