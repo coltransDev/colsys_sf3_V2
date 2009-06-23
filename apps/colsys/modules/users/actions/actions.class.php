@@ -294,7 +294,12 @@ class usersActions extends sfActions
 	}
 	
 	
+	/*
+	* Informa al usuario que no tiene acceso
+	*/
+	public function executeNoAccess( $request ){
 	
+	}
 		
 }
 ?>
