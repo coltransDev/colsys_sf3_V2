@@ -1,5 +1,5 @@
 <?
-
+use_helper("ExtCalendar");
 $c = new Criteria();
 $c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, ClientePeer::CA_IDCLIENTE );
 $c->addAscendingOrderByColumn( ClientePeer::CA_COMPANIA );
@@ -20,39 +20,42 @@ switch( $modo ){
 <script language="javascript" type="text/javascript">
 
 function validarFormConfirmacion(){	
+	
 	<?
 	if( $modo=="otm"){
-	?>
-	var oids = new Array (
-	<?
-	$i = 0;
-	foreach( $inoClientes as $inoCliente ){
-		if( $i++!=0 ){
-			echo ",";
-		}
-		echo $inoCliente->getOid();
-	}
-	?>
-	);
-	
-	for( var i=0 ; i<oids.length ; i++ ){		
-		var checkbox = document.getElementById("checkbox_"+oids[i]);		
-		if( checkbox.checked ){					
-			if( document.getElementById("divmessage_"+oids[i]).innerHTML=="" && document.getElementById("mensaje_"+oids[i]).value=="" ){
-				alert("Por favor coloque un mensaje para el status");
-				document.getElementById("mensaje_"+oids[i]).focus();
-				return false;
+		?>
+		var oids = new Array (
+		<?
+		$i = 0;
+		foreach( $inoClientes as $inoCliente ){
+			if( $i++!=0 ){
+				echo ",";
 			}
+			echo $inoCliente->getOid();
 		}
-	}	
-	return true;
-	
-	
-	<?	
+		?>
+		);
+		
+		for( var i=0 ; i<oids.length ; i++ ){		
+			var checkbox = document.getElementById("checkbox_"+oids[i]);		
+			if( checkbox.checked ){					
+				if( document.getElementById("divmessage_"+oids[i]).innerHTML=="" && document.getElementById("mensaje_"+oids[i]).value=="" ){
+					alert("Por favor coloque un mensaje para el status");
+					document.getElementById("mensaje_"+oids[i]).focus();
+					return false;
+				}
+			}
+		}	
+		return true;
+		
+		
+		<?	
 	}else{
 	?>
+	
    if (document.getElementById('confirmacion_tbl').style.display == 'block'){
-	  if (!chkDate(document.form1.fchconfirmacion))
+   		
+	  if ( document.form1.fchconfirmacion.value == '')
 		  alert('Debe Especificar la Fecha de llegada de la Carga');
 	  else if (document.form1.horaconfirmacion.value == '')
 		  alert('Debe Especificar la Hora exacta de llegada de la Carga');
@@ -64,8 +67,7 @@ function validarFormConfirmacion(){
 		  alert('Ingrese la Bandera del Buque');
 	  else if (document.form1.mnllegada.value == '')
 		  alert('Ingrese el nombre de la Motonoave de Llegada');
-	  else{
-		  alert("asd");
+	  else{		  
 		  return (true);		  
 	  }
 	  return (false);
@@ -302,23 +304,33 @@ function mostrar(oid){
 						<tbody>
 							<tr>
 								<td class="mostrar">Fecha Confirmación:<br>
-									<input name="fchconfirmacion" value="<?=$referencia->getCaFchconfirmacion("Y-m-d")?>
-					" size="12" onkeydown="chkDate(this)" ondblclick="popUpCalendar(this, this, 'yyyy-mm-dd')" type="text"></td>
+									<?
+									echo extDatePicker('fchconfirmacion', $referencia->getCaFchconfirmacion("Y-m-d"));
+									?>
+										
+								</td>								
+							
 								<td class="mostrar">Hora en Formato 24h:<br>
 									<input name="horaconfirmacion" value="<?=$referencia->getCaHoraconfirmacion()?>" onblur="CheckTime(this)" size="9" maxlength="8" type="text">
 									00-23hrs</td>
 								<td class="mostrar">Registro Aduanero:<br>
 									<input name="registroadu" value="<?=$referencia->getCaRegistroadu()?>" size="22" maxlength="20" type="text"></td>
-								<td class="mostrar">Fecha Registro:<br>
-									<input name="fchregistroadu" value="<?=$referencia->getCaFchregistroadu()?>" size="12" onkeydown="chkDate(this)" ondblclick="popUpCalendar(this, this, 'yyyy-mm-dd')" type="text"></td>
+								<td class="mostrar">Fecha Registro:<br>									
+									<?
+									echo extDatePicker('fchregistroadu', $referencia->getCaFchregistroadu("Y-m-d"));
+									?>									
+									</td>
 							</tr>
 							<tr>
 								<td class="mostrar">Reg. Capitania:<br>
 									<input name="registrocap" value="<?=$referencia->getCaRegistrocap()?>" size="20" maxlength="20" type="text"></td>
 								<td class="mostrar">Bandera:<br>
 									<input name="bandera" value="<?=$referencia->getCaBandera()?>" size="20" maxlength="20" type="text"></td>
-								<td class="mostrar">Fecha Desconsolidación:<br>
-									<input name="fchdesconsolidacion" value="<?=$referencia->getCaFchdesconsolidacion()?>" size="12" onkeydown="chkDate(this)" ondblclick="popUpCalendar(this, this, 'yyyy-mm-dd')" type="text"></td>
+								<td class="mostrar">Fecha Desconsolidación:<br>								
+									<?
+									echo extDatePicker('fchdesconsolidacion', $referencia->getCaFchdesconsolidacion("Y-m-d"));
+									?>	
+								</td>
 								<td class="mostrar">Motonave Llegada:<br>
 									<input name="mnllegada" value="<?=$referencia->getCaMnllegada()?>" size="20" maxlength="50" type="text"></td>
 							</tr>
@@ -501,8 +513,15 @@ function mostrar(oid){
 					<td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
 							<?=$inoCliente->getContinuacion()?$inoCliente->getContinuacion()->getcaCiudad():""?></td>
 					<td class="listar" style='vertical-align:bottom;'><div id="divfchllegada_<?=$inoCliente->getOid()?>"> <b>Fecha llegada:</b><br />
-									<input  type='text' name='fchllegada_<?=$inoCliente->getOid()?>' value='<?=date("Y-m-d")?>' size="12" onkeydown="chkDate(this)" ondblclick="popUpCalendar(this, this, 'yyyy-mm-dd')" />
+									
+									<?
+									extDatePicker('fchllegada_'.$inoCliente->getOid(), date("Y-m-d"));
+									?>
 						</div>
+						
+						<?
+						echo extDatePicker('fchllegada_'.$inoCliente->getOid(), date("Y-m-d"));
+						?>
 						  </td>
 				</tr>
 				<tr>

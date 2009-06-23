@@ -73,6 +73,10 @@ class confirmacionesActions extends sfActions
 				break;
 		}
 		
+		if( $this->modo =="otm" ){
+			$c->add( InoClientesSeaPeer::CA_CONTINUACION, 'N/A', Criteria::NOT_EQUAL );
+		}
+		
 		$c->addDescendingOrderByColumn( InoMaestraSeaPeer::CA_REFERENCIA );	
 		$c->setDistinct();
 		$c->setLimit( 200 );
@@ -97,8 +101,8 @@ class confirmacionesActions extends sfActions
 	*/
 	public function executeConsulta(sfWebRequest $request){	
 		
-		$response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("popcalendar",'last');
+		//$response = sfContext::getInstance()->getResponse();
+		//$response->addJavaScript("popcalendar",'last');
 		
 		$referenciaParam = str_replace("-",".",$request->getParameter( "referencia" ));		
 		$this->referencia = InoMaestraSeaPeer::retrieveByPk( $referenciaParam );		
@@ -180,15 +184,20 @@ class confirmacionesActions extends sfActions
 		$inoClientes = array();
 			
 		if( $modo=="conf" && $tipo_msg=="Conf" ){
-			
-			$referencia->setCaFchconfirmacion( $request->getParameter( "fchconfirmacion" ) );
+			if( $request->getParameter( "fchconfirmacion" ) ){	
+				$referencia->setCaFchconfirmacion( Utils::parseDate($request->getParameter( "fchconfirmacion" )) );
+			}
 			$referencia->setCaHoraconfirmacion( $request->getParameter( "horaconfirmacion" ) );
 			$referencia->setCaRegistroadu( $request->getParameter( "registroadu" ) );
-			$referencia->setCaFchregistroadu( $request->getParameter( "fchregistroadu" ) );
+			if( $request->getParameter( "fchregistroadu" ) ){
+				$referencia->setCaFchregistroadu( Utils::parseDate($request->getParameter( "fchregistroadu" )) );
+			}
 			$referencia->setCaRegistrocap( $request->getParameter( "registrocap" ) );
 			$referencia->setCaBandera( $request->getParameter( "bandera" ) );
 			$referencia->setCaMensaje( $request->getParameter( "email_body" ) );
-			$referencia->setCaFchdesconsolidacion( $request->getParameter( "fchdesconsolidacion" ) );
+			if( $request->getParameter( "fchdesconsolidacion" ) ){
+				$referencia->setCaFchdesconsolidacion( Utils::parseDate($request->getParameter( "fchdesconsolidacion" )) );
+			}		
 			$referencia->setCaMnllegada( $request->getParameter( "mnllegada" ) );
 			$referencia->setCaFchconfirmado( time() );
 			$referencia->setCaUsuconfirmado( $this->getUser()->getUserId() );
@@ -283,7 +292,7 @@ class confirmacionesActions extends sfActions
 					
 					if( $etapa=="IMCOL" ){
 						$idbodega = $this->getRequestParameter("bodega_".$oid); 						
-						$status->setCaFchcontinuacion($this->getRequestParameter("fchllegada_".$oid));	
+						$status->setCaFchcontinuacion( Utils::parseDate($this->getRequestParameter("fchllegada_".$oid)));	
 						$status->setProperty("idbodega", $idbodega);				
 					}
 										
