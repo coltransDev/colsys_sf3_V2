@@ -99,6 +99,8 @@
 		<column name="ca_hbls" type="varchar" required="true" primaryKey="true"  />
 		<column name="ca_factura" type="varchar"   required="true" primaryKey="true" />		
 		<column name="ca_fchfactura" type="date" />
+		<column name="ca_idmoneda" type="varchar" />
+		<column name="ca_neto" type="numeric" />
 		<column name="ca_valor" type="numeric" />
 		<column name="ca_reccaja" type="varchar" />
 		<column name="ca_fchpago" type="date" />
