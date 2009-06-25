@@ -245,7 +245,7 @@ class confirmacionesActions extends sfActions
 			}
 							
 			$ultimostatus = $reporte->getUltimoStatus();
-						
+			
 			$status = new RepStatus();
 						
 			$status->setCaIdReporte( $reporte->getCaIdreporte() );
@@ -269,11 +269,12 @@ class confirmacionesActions extends sfActions
 			
 			
 			
+			
 			switch( $modo ){
 				case "conf":
 					if( $tipo_msg=="Conf" ){						
 						$status->setCaIdEtapa("IMCPD");
-						
+						$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );
 					}else{
 						$status->setCaIdEtapa("88888");
 					}
@@ -283,7 +284,7 @@ class confirmacionesActions extends sfActions
 					}else{
 						$status->setCaIdnave( $referencia->getCaMotonave() );
 					}
-					$status->setCaFchllegada( $referencia->getCaFchconfirmacion() );					
+										
 					
 					
 					break;
@@ -315,8 +316,6 @@ class confirmacionesActions extends sfActions
 				$status->setStatus( $mensaje );			
 			}
 						
-					
-						
 			$destinatarios = array();
 			
 			$checkbox = $request->getParameter("em_".$oid);
@@ -324,19 +323,7 @@ class confirmacionesActions extends sfActions
 				$destinatarios[]=$request->getParameter("ar_".$oid."_".$check);
 			}
 							
-			$status->save();
-			
-			/*
-			* Cierra el caso en caso de no tener continuacion
-			* Se guarda despues de guardar el status por que si no el trigger 
-			* se ejecuta y coloca otra etapa
-			*/
-			/*
-			if( $tipo_msg=="Conf" && $reporte->getCaContinuacion()=='N/A' ){				
-				$reporte->setCaIdEtapa("99999");
-				$reporte->save();
-			}	*/
-			
+			$status->save();			
 			$status->send($destinatarios, array(), $attachments );		
 			
 			$this->status = $status;	
