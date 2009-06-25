@@ -101,7 +101,6 @@ class bavariaActions extends sfActions {
 			$salida.= "BA00|";  // 2
 			$salida.= str_pad(substr($reporte->getCaOrdenClie(),0,10),10, " ")."|"; // 3
 			$salida.= str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
-			$salida.= strlen($reporte->getProperty("numfactproveedor"))==0?"123456789012345|":str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
 			$salida.= str_pad(null,10, " ")."|"; // 5
 			
 			$fchfactProveedor = Utils::transformDate($reporte->getProperty("fchfactproveedor"), $format="Ymd");
@@ -139,8 +138,8 @@ class bavariaActions extends sfActions {
 			}
 			unset($space);
 			
-			$salida.= str_pad((($piezas[1]!="Pallets")?$piezas[0]:null),15, "0")."|"; // 32
-			$salida.= str_pad((($piezas[1]=="Pallets")?$piezas[0]:null),13, "0")."|"; // 33
+			$salida.= str_pad((($piezas[1]!="Pallets")?$piezas[0]:null),15, " ")."|"; // 32
+			$salida.= str_pad((($piezas[1]=="Pallets")?$piezas[0]:null),13, " ")."|"; // 33
 			
 			$spaces = array(1,2,90,8,8,8,8,90,2,25,8,255,8,8,8,8,7,80,10,18,10,11); // Campos del 34 al 55
 			foreach( $spaces as $space ){
