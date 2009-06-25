@@ -126,7 +126,7 @@ class bavariaActions extends sfActions {
 			$salida.= str_pad($pesos[0],15, " ")."|"; // 13
 			$salida.= str_pad($cod_unipeso[$pesos[1]],4, " ")."|"; // 14
 
-			$salida.= str_pad(null,15, " ")."|"; // 15
+			$salida.= str_pad($pesos[0],15, " ")."|"; // 15
 			$salida.= str_pad($mod_transporte[$reporte->getCaTransporte()], 1, " " )."|"; // 16
 
 			$piezas = ($status)?explode("|",$status->getCaPiezas()):null;
@@ -145,7 +145,7 @@ class bavariaActions extends sfActions {
 			}
 			unset($space);
 			
-			$salida.= str_pad((($piezas[1]=="Bultos")?$piezas[0]:null),15, " ")."|"; // 32
+			$salida.= str_pad((($piezas[1]!="Pallets")?$piezas[0]:null),15, " ")."|"; // 32
 			$salida.= str_pad((($piezas[1]=="Pallets")?$piezas[0]:null),13, " ")."|"; // 33
 			
 			$spaces = array(1,2,90,8,8,8,8,90,2,25,8,255,8,8,8,8,7,80,10,18,10,11); // Campos del 34 al 55
