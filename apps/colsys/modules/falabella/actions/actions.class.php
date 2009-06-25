@@ -165,7 +165,7 @@ class falabellaActions extends sfActions {
 	* Permite anular la Orden de Pedido
 	*/
 	public function executeAnularOrden(){
-		$fala_header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
+		$fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($fala_header);
 		$fala_header->setCaFchanulado(date("d M Y H:i:s"));
 		$fala_header->setCaUsuanulado($this->getUser()->getUserId());
@@ -177,7 +177,7 @@ class falabellaActions extends sfActions {
 	* Permite Duplicar un registro de la Orden de Pedido 
 	*/
 	public function executeDuplicateRecord(){
-		$faladetail = FalaDetailPeer::retrieveByPk( $this->getRequestParameter ( 'iddoc' ), $this->getRequestParameter ( 'sku' ));
+		$faladetail = FalaDetailPeer::retrieveByPk( base64_decode($this->getRequestParameter ( 'iddoc' )), $this->getRequestParameter ( 'sku' ));
 		$this->forward404Unless($faladetail);
 		$doc_mem = $this->getRequestParameter ( 'iddoc' );
 		$sku_mem = $faladetail->getSkuNeto();
@@ -328,6 +328,100 @@ class falabellaActions extends sfActions {
 			$salida.= $fala_header->getCaProformaNumber();// 64
 			$salida.= "\r\n";			
 		}	
+		$directory=sfConfig::get('app_falabella_output');
+		$filename = $directory.DIRECTORY_SEPARATOR.'ASN'.date('ymdHis').'.txt';
+		$handle = fopen($filename , 'w');	
+		
+		if (fwrite($handle, $salida) === FALSE) {
+			echo "No se puede escribir al archivo {filename}";
+			exit;
+		}else{
+			$fala_header->setCaProcesado(true);
+			$fala_header->save();
+		}
+    	$this->redirect("falabella/list");
+	}
+	
+	/*
+	* Genera el archivo de facturacion
+	*/
+	public function executeGenerarFactura(){
+		
+		$fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
+		$this->forward404Unless($fala_header);
+		
+		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
+		$this->forward404unless( $reporte );
+
+		$c = new Criteria();
+		$c->addSelectColumn(InoClientesSeaPeer::CA_REFERENCIA );
+		$c->addSelectColumn(InoClientesSeaPeer::CA_IDCLIENTE );
+		$c->addSelectColumn(InoClientesSeaPeer::CA_HBLS );
+		$c->addSelectColumn(InoClientesSeaPeer::CA_IDREPORTE );
+		$c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
+		
+		$c->addSelectColumn(InoIngresosSeaPeer::CA_FACTURA );
+		$c->addSelectColumn(InoIngresosSeaPeer::CA_FCHFACTURA );
+		$c->addSelectColumn(InoIngresosSeaPeer::CA_TCAMBIO );
+		$c->addSelectColumn(InoIngresosSeaPeer::CA_IDMONEDA );
+		$c->addSelectColumn(InoIngresosSeaPeer::CA_VALOR );
+		
+		$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE );
+		$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoIngresosSeaPeer::CA_REFERENCIA );
+		$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, InoIngresosSeaPeer::CA_IDCLIENTE );
+		$c->addJoin( InoClientesSeaPeer::CA_HBLS, InoIngresosSeaPeer::CA_HBLS );
+		
+		$c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
+		$stmt = InoClientesSeaPeer::doSelectStmt( $c );
+		// print_r($stmt);
+		
+		$salida = '';
+		while ( $row = $stmt->fetch() ) {
+			$salida.= "88|"; // 1
+			$salida.= "800024075|"; // 2
+			$salida.= "8|"; // 3
+			$salida.= "900017447|"; // 4
+			$salida.= "8|"; // 5
+			$salida.= $row["ca_factura"]."|"; // 6
+			$salida.= "|"; // 7
+			list($anno,$mes,$dia) = sscanf($row["ca_fchfactura"],"%d-%d-%d");
+			$emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+			$salida.= $emision."|"; // 8
+			list($anno,$mes,$dia) = sscanf($row["ca_fchfactura"],"%d-%d-%d");
+			$vencimiento = date("Ymd", mktime(0,0,0,$mes+1,$dia,$anno));
+			$salida.= $vencimiento."|"; // 9
+			$salida.= $row["ca_idmoneda"]."|"; // 10
+			$salida.= $row["ca_tcambio"]."|"; // 11
+			$val_iva= round($row["ca_valor"] * 0.16,0);
+			$val_total = round($row["ca_valor"] + $val_iva,0);
+			$salida.= number_format($val_total*10000, 0, '', '')."|"; // 12
+			$salida.= number_format($row["ca_valor"]*10000, 0, '', '')."|"; // 13
+			$salida.= number_format($val_iva*10000, 0, '', '')."|"; // 14
+			$salida.= "|"; // 15 Concepto
+			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 16
+			$salida.= "|"; // 17 Embarque
+			$salida.= "|"; // 18 Valor del Embarque
+			$salida.= "|"; // 19
+			$salida.= "|"; // 20
+			$salida.= "|"; // 21
+			$salida.= "|"; // 22
+			$salida.= "|"; // 23
+			$salida.= "|"; // 24
+			$salida.= "|"; // 25
+			$salida.= "0|"; // 26
+			$salida.= "|"; // 27
+			$salida.= "\r\n";
+
+			$salida.= "13|"; // 1
+			$salida.= "800024075|"; // 2
+			$salida.= "8|"; // 3
+			$salida.= $row["ca_factura"]."|"; // 4
+			$salida.= "|"; // 5 Concepto del IVA
+			$salida.= number_format($val_iva*10000, 0, '', '')."|"; // 6
+			$salida.= "\r\n";
+			
+		}
+		die($salida);
 		$directory=sfConfig::get('app_falabella_output');
 		$filename = $directory.DIRECTORY_SEPARATOR.'ASN'.date('ymdHis').'.txt';
 		$handle = fopen($filename , 'w');	

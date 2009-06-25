@@ -1,40 +1,37 @@
 <?
-use_helper("Javascript", "Validation");
-?>
 
+?>
+<div class="content" align="center" >
 <script language="javascript">
 	function showEmailForm(){
 		if( document.getElementById('emailForm').style.display=="none"){ 
-			<?
-			echo visual_effect('BlindDown', 'emailForm');
-			?>
+			document.getElementById('emailForm').style.display="inline";
 		}else{
-			<?
-			echo visual_effect('BlindUp', 'emailForm');
-			?>
+			document.getElementById('emailForm').style.display="none";
 		}
 	}
 </script>
 <div id="emailForm" align="left" style="display:none;">
+	<form action="#" onSubmit="return false;"> 
 	<?
-	echo form_remote_tag(array("url"=>"falabella/enviarEmail?iddoc=".base64_encode($header->getCaIdDoc()), 
+	/*echo form_remote_tag(array("url"=>"falabella/enviarEmail?iddoc=".base64_encode($header->getCaIdDoc()), 
 								"update"=>"emailForm",
 								 'loading'  => visual_effect('appear', 'indicator'),
 							    'complete' => visual_effect('fade', 'indicator')							
 							
-						 ));
+						 ));*/
 	include_component("general", "formEmail");
 	?>
 	<br />
-	<div align="left"><?=submit_tag("Enviar");?></div><br /><br />
+	<div align="left"><input type="submit" value="Enviar" /></div><br /><br />
 
 </div>
 
-<table cellspacing="0" cellpadding="0" class="tableForm">
+<table cellspacing="0" cellpadding="0" class="tableList">
 	
 	
 	<tr >
-		<td colspan="4" ><div align="center"><b>Shipper    &amp; Forwarder Shipping Instructions</b></div></td>
+		<th colspan="4" ><div align="center"><b>Shipper    &amp; Forwarder Shipping Instructions</b></div></th>
 	</tr>
 	<tr >
 		<td  ></td>

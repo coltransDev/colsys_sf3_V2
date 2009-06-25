@@ -19,10 +19,16 @@ switch($action){
 		$button[1]["link"]= "#";
 		$button[1]["onClick"]= "export_file()";				
 
-		$button[2]["name"]="Anular";
-		$button[2]["tooltip"]="Anular la Orden de Pedido";
-		$button[2]["image"]="22x22/cancel.gif"; 			
-		$button[2]["link"]= "falabella/anularOrden?iddoc=".$this->getRequestParameter("iddoc");				
+		$button[2]["name"]="Facturaci&oacute;n";
+		$button[2]["tooltip"]="Exportar informaci&oacute;n de Facturaci&oacute;n en la carpeta IN";
+		$button[2]["image"]="22x22/kexi_kexi.gif"; 			
+		$button[2]["link"]= "#";
+		$button[2]["onClick"]= "factura_file()";				
+		
+		$button[3]["name"]="Anular";
+		$button[3]["tooltip"]="Anular la Orden de Pedido";
+		$button[3]["image"]="22x22/cancel.gif"; 			
+		$button[3]["link"]= "falabella/anularOrden?iddoc=".$this->getRequestParameter("iddoc");				
 		
 		break;	
 	case "shippingInstructions":	
