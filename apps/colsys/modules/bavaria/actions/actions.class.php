@@ -100,26 +100,22 @@ class bavariaActions extends sfActions {
 			$salida.= "1|";  // 1
 			$salida.= "BA00|";  // 2
 			$salida.= str_pad(substr($reporte->getCaOrdenClie(),0,10),10, " ")."|"; // 3
-			// $salida.= str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
+			$salida.= str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
 			$salida.= strlen($reporte->getProperty("numfactproveedor"))==0?"123456789012345|":str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
 			$salida.= str_pad(null,10, " ")."|"; // 5
 			
 			$fchfactProveedor = Utils::transformDate($reporte->getProperty("fchfactproveedor"), $format="Ymd");
-			$fchfactProveedor = (strlen($fchfactProveedor)==0)?Utils::transformDate("2009-04-01", $format="Ymd"):$fchfactProveedor; //Datos de Prueba
 			$salida.= str_pad($fchfactProveedor,8, " ")."|"; // 6
 
 			$fchETS = ($status)?(Utils::transformDate($status->getCaFchsalida(), $format="Ymd")):null;
-			$fchETS = strlen($fchETS)==0?Utils::transformDate("2009-04-01", $format="Ymd"):$fchETS; //Datos de Prueba
 			$salida.= str_pad($fchETS,8, " ")."|"; // 7
 
 			$salida.= str_pad($reporte->getDoctransporte(),25, " ")."|"; // 8
 			$fchdoctransporte = Utils::transformDate($reporte->getProperty("fchdoctransporte"), $format="Ymd");
-			$fchdoctransporte = strlen($fchdoctransporte)==0?Utils::transformDate("2009-04-01", $format="Ymd"):$fchdoctransporte; //Datos de Prueba
 			$salida.= str_pad($fchdoctransporte,8, " ")."|"; // 9
 			$salida.= str_pad(null,8, " ")."|"; // 10
 			$salida.= str_pad(null,8, " ")."|"; // 11
 			$fchrecibocarga = Utils::transformDate($reporte->getProperty("fchrecibocarga"), $format="Ymd");
-			$fchrecibocarga = strlen($fchrecibocarga)==0?Utils::transformDate("2009-04-01", $format="Ymd"):$fchrecibocarga; //Datos de Prueba
 			$salida.= str_pad($fchrecibocarga,8, " ")."|"; // 12
 
 			$pesos = ($status)?explode("|",$status->getCaPeso()):null;
@@ -132,10 +128,8 @@ class bavariaActions extends sfActions {
 			$piezas = ($status)?explode("|",$status->getCaPiezas()):null;
 			$salida.= str_pad($cod_embalaje[$piezas[1]],2, " ")."|"; // 17
 			
-			// $salida.= str_pad(null,10, " ")."|"; // 18 -> Empresa Transportadora
-			$salida.= str_pad("4661",10, " ")."|"; // 18 -> Empresa Transportadora  //Datos de Prueba
-			// $salida.= str_pad(null,3, " ")."|"; // 19 -> Bandera Empresa Transportadora
-			$salida.= str_pad("149",3, " ")."|"; // 19 -> Bandera Empresa Transportadora
+			$salida.= str_pad(null,10, " ")."|"; // 18 -> Empresa Transportadora
+			$salida.= str_pad(null,3, " ")."|"; // 19 -> Bandera Empresa Transportadora
 			$salida.= str_pad($frm_embarque[$reporte->getCaModalidad()], 2, " " )."|"; // 20
 			$salida.= str_pad(null,5, " ")."|"; // 21 -> Clave de Moneda
 			
@@ -145,8 +139,8 @@ class bavariaActions extends sfActions {
 			}
 			unset($space);
 			
-			$salida.= str_pad((($piezas[1]!="Pallets")?$piezas[0]:null),15, " ")."|"; // 32
-			$salida.= str_pad((($piezas[1]=="Pallets")?$piezas[0]:null),13, " ")."|"; // 33
+			$salida.= str_pad((($piezas[1]!="Pallets")?$piezas[0]:null),15, "0")."|"; // 32
+			$salida.= str_pad((($piezas[1]=="Pallets")?$piezas[0]:null),13, "0")."|"; // 33
 			
 			$spaces = array(1,2,90,8,8,8,8,90,2,25,8,255,8,8,8,8,7,80,10,18,10,11); // Campos del 34 al 55
 			foreach( $spaces as $space ){
@@ -158,14 +152,11 @@ class bavariaActions extends sfActions {
 			$salida.= "2|";  // 1
 			$salida.= "BA00|";  // 2
 			$salida.= str_pad(substr($reporte->getCaOrdenClie(),0,10),10, " ")."|"; // 3
-			// $salida.= str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
-			$salida.= strlen($reporte->getProperty("numfactproveedor"))==0?"123456789012345|":str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
+			$salida.= str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
 			$salida.= str_pad(null,15, " ")."|"; // 5 -> Facturas Adicionales			
 			$fchfactProveedor = Utils::transformDate($reporte->getProperty("fchfactproveedor"), $format="Ymd");
-			$fchfactProveedor = strlen($fchfactProveedor)==0?Utils::transformDate("2009-04-01", $format="Ymd"):$fchfactProveedor; //Datos de Prueba
 			$salida.= str_pad($fchfactProveedor,8, " ")."|"; // 6
-			// $salida.= str_pad(number_format($reporte->getProperty("vlrfactproveedor")*100, 0, '', ''),13, " ")."|"; // 7
-			$salida.= str_pad(number_format(42565*100, 0, '', ''),13, " "); // 7 Datos de Prueba
+			$salida.= str_pad(number_format($reporte->getProperty("vlrfactproveedor")*100, 0, '', ''),13, " ")."|"; // 7
 			$salida.= "\r";
 			unset($space);
 			
@@ -173,23 +164,19 @@ class bavariaActions extends sfActions {
 				$salida.= "3|";  // 1
 				$salida.= "BA00|";  // 2
 				$salida.= str_pad(substr($reporte->getCaOrdenClie(),0,10),10, " ")."|"; // 3
-				// $salida.= str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
-				$salida.= strlen($reporte->getProperty("numfactproveedor"))==0?"123456789012345|":str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
+				$salida.= str_pad($reporte->getProperty("numfactproveedor"),15, " ")."|"; // 4
 				$salida.= str_pad($equipo->getCaIdequipo(),25, " ")."|"; // 5
 				$fchLlegada = Utils::transformDate($status->getCaFchllegada(), $format="Ymd");
 				$salida.= str_pad($fchLlegada,8, " ")."|"; // 6
-
 				$spaces = array(13,8,13,8); // Campos del 7 al 10
 				foreach( $spaces as $space ){
 					$salida.= str_pad(null,$space, " ")."|";
 				}
-				
 				$salida.= str_pad($tipo_contenedor[$equipo->getCaIdconcepto()], 1, " " )."|"; // 11
 				$salida.= str_pad(null,1, " ")."|"; // 12
 				$salida.= "\r";
 				unset($space);
 			}
-			
 		}	
 		$directory= sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
 		$filename = $directory.DIRECTORY_SEPARATOR.'notificacion.txt';
@@ -199,13 +186,10 @@ class bavariaActions extends sfActions {
 			echo "No se puede escribir al archivo {filename}";
 			exit;
 		}else{
-			/*$fala_header->setCaProcesado(true);
-			$fala_header->save();*/
+			// $fala_header->setCaProcesado(true);
+			// $fala_header->save();
 		}
-		echo "asd";
-
 		return sfView::NONE;
-		
 	}
 	
 	/*
