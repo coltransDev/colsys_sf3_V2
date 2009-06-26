@@ -101,8 +101,12 @@ class reportesActions extends sfActions
 				$tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
 				$tarea->setCaPrioridad( 1 );
 				$tarea->setCaUsucreado( "Administrador" );
-				$tarea->setCaTitulo( "Crear Reporte al Ext. RN ".$reporte->getCaConsecutivo() );		
-				$tarea->setCaTexto( "" );									
+				
+				$titulo = "Crear Reporte al Ext. RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
+				
+				
+				$tarea->setCaTitulo( $titulo );		
+				$tarea->setCaTexto( "Debe crear el reporte al exterior del reporte de negocio en referencia para cumplir esta tarea" );									
 				$tarea->save();
 				
 				$vendedor = UsuarioPeer::retrieveByPk( $reporte->getCaLogin() );
@@ -152,8 +156,9 @@ class reportesActions extends sfActions
 		$festivos = Utils::getFestivos();	
 		$tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
 		$tarea->setCaUsucreado( "Administrador" );
-		$tarea->setCaTitulo( "Reporte ".$reporte->getCaConsecutivo() );		
-		$tarea->setCaTexto( "Prueba" );
+		$titulo = "Se ha creado el RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
+		$tarea->setCaTitulo( $titulo );		
+		$tarea->setCaTexto( "Debe abrir el reporte haciendo click en el link para cumplir esta tarea" );
 		
 		
 		
