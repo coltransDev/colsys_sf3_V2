@@ -153,31 +153,23 @@ class myUser extends sfBasicSecurityUser
 		$this->setAttribute('userFiles', array() );
 	}
 	
-	
-	
-	
-	
-	public function log( $event, $module, $action ){
-		$log = new usuarioLog();
-		$log->setCaLogin( $this->getUserId() );
-		$log->setCaEvent( $event );
-		$log->setCaModule( $module );
-		$log->setCaAction( $action );
-		$log->save();
-	}
-	
+		
 	/*
 	* Registra un evento para el usuario
 	*/
-	/*public function log( $event ){	
-		$log = new TrackingUserLog();
-		$log->setCaEmail( $this->getAttribute('email') );
+	public function log( $event ){	
+		
+		$log = new UsuarioLog();
+		$log->setCaLogin( $this->getUserId() );
 		$log->setCaFchevento(time());	
-		$log->setCaUrl(  $_SERVER['PATH_INFO'] );
-		$log->setCaEvento($event);
-		$log->setCaIpaddress( $_SERVER['REMOTE_ADDR'] );	
+		$log->setCaUrl(  $_SERVER['REQUEST_URI'] );
+		$log->setCaEvent($event);
+		$log->setCaIpaddress( $_SERVER['REMOTE_ADDR'] );
+		$log->setCaUserAgent( $_SERVER['HTTP_USER_AGENT'] );		
 		$log->save();
-	}*/
+	}
+	
+	
 	
 	/*
 	* Inicia la sesion y verifica a los grupos a los que pertenece
