@@ -2039,6 +2039,37 @@ Departamento Comercial
 	}	
 	
 	
+	
+	/*
+	* Copia los permisos de las opciones de menu repetidas y coloca un nivel de acceso 0 en la que era de consulta
+	*/
+	public function executeCopiarPermisosPerfiles(){
+		exit("detenido");
+		$c = new Criteria();
+		//$c->add( UsuarioPeer::CA_IDSUCURSAL, "BOG", Criteria::NOT_EQUAL );
+		$c->add( UsuarioPeer::CA_ACTIVO, true );
+		$usuarios = UsuarioPeer::doSelect( $c );
+		set_time_limit(0);
+				
+		foreach( $usuarios as $usuario ){			
+			$acceso = AccesoUsuarioPeer::retrieveByPk( 3, $usuario->getCaLogin() );
+			if( $acceso ){
+				$newAcceso = AccesoUsuarioPeer::retrieveByPk( 2 , $usuario->getCaLogin() );
+				
+				echo $usuario->getCaLogin()."<br />" ;	
+				if( !$newAcceso ){
+					$newAcceso = 	new AccesoUsuario();
+					$newAcceso->setCaLogin( $usuario->getCaLogin() );
+					$newAcceso->setCaRutina( 2 );
+					$newAcceso->setCaAcceso( 0 );
+					$newAcceso->save();
+				}
+			}			
+		}	
+		$this->setTemplate("blank");			
+	}
+	
+		
 	/*
 	* Copia los permisos del sistema anterior al nuevo sistema.
 	*/
@@ -2561,22 +2592,17 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 	*/
 	public function executeListaAccesoUsuarios(){
 		
-		
 		$rutina = $this->getRequestParameter("rutina");
 		$this->rutina = RutinaPeer::retrieveByPk( $rutina );
 		$c = new Criteria();					
 		
 		//$c->addJoin( RutinaPeer::CA_RUTINA, AccesoGrupoPeer::CA_RUTINA , Criteria::LEFT_JOIN );		
-		
-			
+					
 		$c->addJoin( UsuarioPeer::CA_LOGIN, UsuarioGrupoPeer::CA_LOGIN,  Criteria::LEFT_JOIN );		
 		$c->addJoin( UsuarioGrupoPeer::CA_GRUPO, AccesoGrupoPeer::CA_GRUPO, Criteria::LEFT_JOIN );		
 				
 		$c->addJoin( UsuarioPeer::CA_LOGIN, AccesoUsuarioPeer::CA_LOGIN,  Criteria::LEFT_JOIN );		
-				
-		
-		
-		
+					
 		$criterion = $c->getNewCriterion( AccesoGrupoPeer::CA_RUTINA, $rutina );								
 		$criterion->addOr($c->getNewCriterion( AccesoUsuarioPeer::CA_RUTINA, $rutina ));	
 		$c->add($criterion);			
@@ -2592,10 +2618,12 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 		$c->addAscendingOrderByColumn( UsuarioPeer::CA_DEPARTAMENTO );
 		$c->addAscendingOrderByColumn( UsuarioPeer::CA_CARGO );
 		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );	
-		$this->usuarios = UsuarioPeer::doSelect( $c );
-	
-	
+		$this->usuarios = UsuarioPeer::doSelect( $c );	
 	}
+	
+	
+	
+	
 	
 	
 		
