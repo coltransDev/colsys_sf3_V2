@@ -140,6 +140,21 @@
 		</foreign-key>	
 			
 	</table>
+	
+	<table name="control.tb_usuarios_log" phpName="UsuarioLog">
+		<id-method-parameter value="control.tb_usuarios_log_id"/>
+		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_login" type="varchar" />	
+		<column name="ca_fchevento" type="timestamp" />		
+		<column name="ca_url" type="varchar" />
+		<column name="ca_event" type="varchar" />
+		<column name="ca_ipaddress" type="varchar" />
+		<column name="ca_useragent" type="varchar" />
+	
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>	
+	</table>
 		
 		
 </database>

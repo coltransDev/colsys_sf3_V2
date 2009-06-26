@@ -107,7 +107,7 @@
 		<column name="ca_horallegada" type="time" />	
 		<column name="ca_idetapa" type="varchar" />
 		<column name="ca_propiedades" type="varchar" />
-		
+		<column name="ca_idseguimiento" type="integer"  />
 		
 		 
 		<foreign-key foreignTable="tb_reportes">		
@@ -118,6 +118,10 @@
 		</foreign-key>	
 		<foreign-key foreignTable="tb_tracking_etapas">		
 			<reference local="ca_idetapa" foreign="ca_idetapa"/>
+		</foreign-key>
+		
+		<foreign-key foreignTable="notificaciones.tb_tareas">		
+			<reference local="ca_idseguimiento" foreign="ca_idtarea"/>
 		</foreign-key>
 	</table>
 	
