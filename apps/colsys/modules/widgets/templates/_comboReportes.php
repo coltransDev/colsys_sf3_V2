@@ -52,7 +52,7 @@ if( isset($transporte)){
 			
     );*/
     
-    var search = new Ext.form.ComboBox({
+    var comboReporte = new Ext.form.ComboBox({
         store: ds,
 		 id: 'reporte',
         displayField:'consecutivo',

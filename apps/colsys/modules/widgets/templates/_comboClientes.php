@@ -2,7 +2,9 @@
 <div style="display:none">
 	<input type="text" name="idcliente" id="idcliente" value="<?=isset($cliente)?$cliente->getCaIdCliente():""?>" size="11" readonly="readonly" />
 </div>	
-<input type="text" name="cliente" id="cliente" value="<?=isset($cliente)?$cliente->getCaCompania():""?>" size="50" Autocomplete="off" />			
+<input type="hidden" name="cliente" id="cliente" value="<?=isset($cliente)?$cliente->getCaCompania():""?>" size="50" Autocomplete="off" />	
+
+<div id="comboClientes"></div>		
 
 <script language="javascript">
  Ext.onReady(function(){
@@ -30,7 +32,7 @@
 			
     );
     
-    var search = new Ext.form.ComboBox({
+    var comboClientes = new Ext.form.ComboBox({
         store: ds,
 		id:'cliente',
         displayField:'compania',
@@ -41,7 +43,8 @@
 		minChars: 1,
         hideTrigger:false,
         tpl: resultTpl,
-        applyTo: 'cliente',
+        //applyTo: 'cliente',
+		renderTo:"comboClientes",
         itemSelector: 'div.search-item',		
 	    emptyText:'Escriba el nombre del cliente...',		
 	    forceSelection:true,		
@@ -77,5 +80,8 @@
            
         }
     });
+	
+	
+	
 });
 </script>						
