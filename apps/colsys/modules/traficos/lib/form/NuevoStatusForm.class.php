@@ -63,9 +63,9 @@ class NuevoStatusForm extends sfForm{
 		$widgets['fchcontinuacion'] = new sfWidgetFormExtDate();
 		
 		
-		$widgets['doctransporte'] = new sfWidgetFormInput(array(), array("size"=>40 ));
-		$widgets['docmaster'] = new sfWidgetFormInput(array(), array("size"=>40 ));
-		$widgets['idnave'] = new sfWidgetFormInput(array(), array("size"=>40 ));
+		$widgets['doctransporte'] = new sfWidgetFormInput(array(), array("size"=>40, "maxlength"=>50 ));
+		$widgets['docmaster'] = new sfWidgetFormInput(array(), array("size"=>40, "maxlength"=>100 ));
+		$widgets['idnave'] = new sfWidgetFormInput(array(), array("size"=>40, "maxlength"=>50 ));
 		
 		$widgets['un_piezas'] = new sfWidgetFormPropelChoice(array(
 															  'model' => 'Parametro',
@@ -119,6 +119,12 @@ class NuevoStatusForm extends sfForm{
 				$validator[$name] = new sfValidatorString(array('required' => false ) ) ;			
 			}				
 		}
+		
+		//Seguimientos		
+		$widgets["prog_seguimiento"] = new sfWidgetFormInputCheckbox( array(), array("onClick"=>"crearSeguimiento()") );
+		$widgets["fchseguimiento"] = new sfWidgetFormExtDate();
+		$widgets['txtseguimiento'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
+		
 		
 		$this->setWidgets( $widgets );
 		
@@ -201,10 +207,23 @@ class NuevoStatusForm extends sfForm{
 		
 		$validator['datosbl'] = new sfValidatorString(array('required' => false ), 
 														array('required' => 'Por favor coloque los datos para reclamar el BL en destino'));
+														
+		$validator['prog_seguimiento'] = new sfValidatorString(array('required' => false ) );												
+		
+		$validator['fchseguimiento'] = new sfValidatorDate(array('required' => false ), 
+														array('required' => 'Por favor coloque en una fecha valida'));	
+		$validator['txtseguimiento'] = new sfValidatorString(array('required' => false ), 
+														array('required' => 'Por favor coloque un texto para el seguimiento'));
+														
+																												
 		
 		//echo isset($validator['fchdoctransporte'])."<br />";															
 		$this->setValidators( $validator );
 		
+		
+		$this->validatorSchema->setPostValidator(
+		  new sfValidatorSchemaCompare('fchrecordar', '<=', 'fchseguimiento', array(), array("invalid"=>"Esta fecha debe ser menor que la fecha de seguimiento"))
+		);
 				
 	}	
 	
@@ -233,6 +252,11 @@ class NuevoStatusForm extends sfForm{
 		if( $taintedValues["idetapa"]!="IAETA" ){
 			$this->validatorSchema['fchrecibo']->setOption('required', true);
 			$this->validatorSchema['horarecibo']->setOption('required', true);
+		}
+		
+		if( $taintedValues["prog_seguimiento"] ){
+			$this->validatorSchema['fchseguimiento']->setOption('required', true);
+			$this->validatorSchema['txtseguimiento']->setOption('required', true);
 		}
 		
 		parent::bind($taintedValues,  $taintedFiles);

@@ -27,12 +27,11 @@ if( date("G")<12 ){
 ?>
 <script language="javascript" type="text/javascript">
 
-
-function validarMensaje(){
+var validarMensaje=function(){
 	document.form1.mensaje_dirty.value = "1";
 }
 
-function mostrar(oid){
+var mostrar=function( oid ){
 		
 	var tipo = document.form1.idetapa;
 	var value='';	
@@ -117,9 +116,15 @@ function mostrar(oid){
 			break;
 	}
 	
-	
-	
 }
+
+var crearSeguimiento=function(){
+	if(document.getElementById("prog_seguimiento").checked){
+		document.getElementById("row_seguimiento").style.display="";
+	}else{
+		document.getElementById("row_seguimiento").style.display="none";
+	}
+}	
 
 </script>
 
@@ -627,6 +632,30 @@ if( !sfConfig::get("app_smtp_user") ){
 		</div></td>
 		</tr>
 	<tr>
+		<td colspan="2"><div align="left"><b>Programar seguimiento:</b>
+			<?
+			 echo $form['prog_seguimiento']->renderError(); 
+			 echo $form['prog_seguimiento']->render();
+			 ?>
+			 
+			 </div></td>
+	</tr>
+	<tr>
+		<td colspan="2" id="row_seguimiento"><div align="left"><b>Fecha seguimiento:</b>
+				<?
+			 echo $form['fchseguimiento']->renderError(); 
+			 echo $form['fchseguimiento']->render();
+			 ?>
+		</div>			
+		<br />
+		<div align="left"><b>Recordar sobre:</b>
+				<?
+			 echo $form['txtseguimiento']->renderError(); 
+			 echo $form['txtseguimiento']->render();
+			 ?>
+			</div></td>
+		</tr>
+	<tr>
 		<td colspan="2"><div align="center">
 			<input type="submit" value="Enviar" class="button" />&nbsp;
 			
@@ -641,4 +670,5 @@ if( !sfConfig::get("app_smtp_user") ){
 </div>
 <script language="javascript" type="text/javascript">
 	mostrar();
+	crearSeguimiento();
 </script>

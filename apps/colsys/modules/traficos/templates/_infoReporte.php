@@ -3,16 +3,11 @@
 		<td width="26%" valign="top">
 		<div class="post-info" align="left">
 		 	<b>Informaci&oacute;n general</b><br />				
-			<?
-					/*if( $reporte->getEsAG() ){
-						echo "<b>Reporte AG<br /></b>";
-					}*/
-										
+			<?					
 					if( $reporte->getCaUsuAnulado() ){
 						echo "<b>Anulado por:</b> ".$reporte->getCaUsuAnulado()." ".$reporte->getCaFchAnulado();
 					}
-					?>
-				     <?=!$reporte->getEsAG()&&$reporte->getCaImpoExpo()=="Importación"&&!$reporte->getReporteExterior()?"<b>No se ha creado reporte al exterior<br /></b>":""?>					
+					?>					
 					<b>Transporte:</b> <?=$reporte->getCaTransporte()?><br />
 					<b>Modalidad:</b> <?=$reporte->getCaModalidad()?><br />					
 					<b>Orden:</b> <?=$reporte->getCaOrdenClie()?>				
@@ -38,18 +33,21 @@
 					<b>Peso:</b> <?=$reporte->getPeso()?><br />
 					<b>Volumen:</b> <?=$reporte->getVolumen()?><br />
 					<b>HBL:</b> <?=$reporte->getDocTransporte()?><br />	
-					<b>MN:</b> <?=$reporte->getIdNave()?><br />
+					<b>MN:</b> <?=$reporte->getIdNave()
+										
+					?><br />
 			
 		</div>
 		</td>
 		<td width="46%" valign="top">
 			<div class="post-info" align="left">
 				<b>Historial</b><br />
-				<div id="hist_<?=$reporte->getCaIdreporte()?>"></div>		
+				<div id="hist_<?=$reporte->getCaIdreporte()?>">
 				<?
-				//include_component("traficos", "historialStatus", array("reporte"=>$reporte));
+				include_component("traficos", "historialStatus", array("reporte"=>$reporte));
 				?>
-						
+				</div>		
+										
 				<br />
 				<?
 				

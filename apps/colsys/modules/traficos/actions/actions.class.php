@@ -137,6 +137,7 @@ class traficosActions extends sfActions
 			foreach( $this->reportes as $rep ){
 				if( $reporte->getCaIdreporte()==$rep->getCaIdreporte() ){
 					$flag=true;
+					break;
 				}	
 			}		
 			if( !$flag ){
@@ -144,6 +145,30 @@ class traficosActions extends sfActions
 			}
 		}					
 		//$this->getUser()->clearFiles();	
+	}
+	
+	
+	/*
+	* Muestra la información de los reporte
+	*/
+	public function executeInfoReporte( $request ){
+		$this->forward404Unless( $this->getRequestParameter("idreporte") );
+		$this->reporte = ReportePeer::retrieveByPk( $this->getRequestParameter("idreporte") );		
+		$this->forward404Unless( $this->reporte );
+		
+		$this->modo = $this->getRequestParameter("modo");
+		if( $this->modo=="maritimo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
+		}		
+		if( $this->modo=="aereo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
+		}		
+		if( $this->modo=="expo" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
+		}		
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
 	}
 	
 	
@@ -307,6 +332,12 @@ class traficosActions extends sfActions
 			
 			foreach( $widgets as $name=>$val ){						
 				$bindValues[$name] = $request->getParameter($name);		
+			}
+			
+			$bindValues["prog_seguimiento"] = $request->getParameter("prog_seguimiento");
+			if( $request->getParameter("prog_seguimiento") ){
+				$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
+				$bindValues["txtseguimiento"] = $request->getParameter("txtseguimiento");
 			}
 			$this->form->bind( $bindValues ); 
 			if( $this->form->isValid() ){					
@@ -519,8 +550,29 @@ class traficosActions extends sfActions
 		$status->send($address, $cc,  $att, $options);
 		
 		
-		$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 		
+		if( $request->getParameter("prog_seguimiento") ){
+			
+			$titulo = "Seguimiento RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
+			$texto = "";			
+			$tarea = new NotTarea(); 
+			$tarea->setCaUrl( "/traficos/listaStatus/modo/maritimo/reporte/".$reporte->getCaConsecutivo() );
+			$tarea->setCaIdlistatarea( 3 );
+			$tarea->setCaFchcreado( time() );								
+			$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
+			$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );
+			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+			$tarea->setCaTitulo( $titulo );		
+			$tarea->setCaTexto( $request->getParameter("txtseguimiento") );
+			$tarea->save();
+			$loginsAsignaciones = array( $this->getUser()->getUserId() );
+			$tarea->setAsignaciones( $loginsAsignaciones );	
+			
+			$status->setCaIdseguimiento( $tarea->getCaIdtarea() );
+			$status->save();
+				
+		}				
+		$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 	}
 	
 	
@@ -767,24 +819,7 @@ class traficosActions extends sfActions
 		
 		$this->user = UsuarioPeer::retrieveByPk( $this->status->getCaUsuenvio() );
 				
-		$this->setLayout("email");		
-		/*			
-		if( $this->reporte->getCaImpoExpo()=="Exportación" ){			
-			if( $this->status->getCaEtapa()=="ETA"||$this->status->getCaEtapa()=="Carga Embarcada"|| $this->status->getCaEtapa()=="Carga con Reserva" ){
-				$this->setTemplate("emailAvisoExpo");					
-			}
-		}else{
-			if( $this->reporte->getCaTransporte()=="Marítimo" ){
-				if( $this->status->getCaEtapa()=="ETA" ){
-					$this->setTemplate("emailAvisoImpoMaritimo");		
-				}
-			}else{
-				if( $this->status->getCaEtapa()=="Carga Embarcada"|| $this->status->getCaEtapa()=="Carga con Reserva"  || $this->status->getCaEtapa()=="Carga en Aeropuerto de Destino" ){
-					$this->setTemplate("emailAvisoImpoAereo");		
-				}
-			}
-		}	*/
-				
+		$this->setLayout("email");								
 	}
 	
 	/***********************************************************************************
@@ -809,7 +844,6 @@ class traficosActions extends sfActions
 			$directory = $reporte->getDirectorio();
 			
 			$this->idreporte = $idreporte;
-			
 						
 			if( !is_dir($directory) ){			
 				@mkdir($directory, 0777);			
@@ -820,8 +854,7 @@ class traficosActions extends sfActions
 			move_uploaded_file($_FILES['file']['tmp_name'], $destPath);
 			
 			$this->setLayout("none");		
-		}		
-		  		
+		}	
 	}
 	/*
 	* Ejecuta la accion de cargar el archivo en el iframe, en la forma CargarArchivoForm
@@ -848,9 +881,6 @@ class traficosActions extends sfActions
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}	
-		
-		
-		
 	}
 	
 	
