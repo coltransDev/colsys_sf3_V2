@@ -48,6 +48,8 @@ class pricingActions extends sfActions
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}	
+		
+		$this->directory = sfConfig::get("app_digitalFile_pricing");
 	}	
 	
 	/*********************************************************************

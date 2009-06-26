@@ -49,6 +49,15 @@ class pricingComponents extends sfComponents
 		
 	}
 	
+	
+	/*
+	* Muestra la informacion del panel de cargas nacionales
+	* @author: Andres Botero 
+	*/
+	public function executePanelCargasNacionales(){
+		
+	}
+	
 	/*
 	* Muestra información como deposito, liberacion o creditoen la parte 
 	* superior del panel de recargos locales

@@ -192,7 +192,7 @@ Ext.onReady(function(){
 					?>								
 					,
 					<?						
-					include_component("pricing","panelConsultaCiudades", array( "impoexpo"=>Constantes::IMPO, "transporte"=>"", "titulo"=>"Cargas Nacionales"));						
+					include_component("pricing","panelCargasNacionales", array( "impoexpo"=>Constantes::IMPO, "transporte"=>"", "titulo"=>"Cargas Nacionales"));						
 					?>
 					
 					<?	
@@ -248,4 +248,22 @@ Ext.onReady(function(){
 	<div id="panel-noticias-wrap" >
 		<div id="panel-noticias" ></div>
 	</div>
+</div>
+
+<div id="listaArchivos">
+	<?
+	
+	$files = sfFinder::type('file')->maxDepth(0)->in($directory);
+	foreach( $files as $file ){
+	?>
+	<a href="#" onclick='javascript:window.open("/uploads/<?=basename($file)?>")'>
+		<b><?=basename($file)?></b>
+	</a>
+	<br />
+	<br />
+	<?
+	}
+	?>
+
+	
 </div>
