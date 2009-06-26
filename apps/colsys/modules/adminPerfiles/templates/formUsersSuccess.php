@@ -9,7 +9,7 @@
 		<th>&nbsp;</th>
 		</tr>
 	<tr>
-		<td >Descripci&oacute;n:
+		<td ><b>Descripci&oacute;n:</b>
 			<?=$perfil->getCaDescripcion()?></td>
 		</tr>
 	<tr>

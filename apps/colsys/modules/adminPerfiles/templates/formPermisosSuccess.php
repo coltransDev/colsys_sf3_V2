@@ -10,7 +10,7 @@
 		<th>&nbsp;</th>
 		</tr>
 	<tr>
-		<td width="50%">Descripci&oacute;n:
+		<td width="50%"><b>Descripci&oacute;n:</b>
 			<?=$perfil->getCaDescripcion()?></td>
 		</tr>
 	<tr>

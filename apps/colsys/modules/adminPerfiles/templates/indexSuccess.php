@@ -7,18 +7,19 @@
 
 <table class="tableList" width="90%" >
 <tr >
-	<th width="12%">Perfil</th>
+	<th width="12%">Departamento</th>	
+	<th width="25%">Perfil</th>
 	<th width="49%">Descripci&oacute;n</th>	
-	<th width="25%">Departamento</th>	
 	<th width="14%">Opciones</th>
 </tr>
 <?
 foreach( $perfiles as $perfil ){
 ?>
 <tr >
+	<td><?=$perfil->getCaDepartamento()?></td>
 	<td><a href="<?=url_for("adminPerfiles/formPerfil?perfil=".$perfil->getCaPerfil())?>"><?=$perfil->getCaNombre()?></a></td>
 	<td><?=$perfil->getCaDescripcion()?></td>
-	<td><?=$perfil->getCaDepartamento()?></td>
+	
 	<td><?=link_to(image_tag("16x16/unlock.gif")."Permisos", "adminPerfiles/formPermisos?perfil=".$perfil->getCaPerfil())?>&nbsp;<?=link_to(image_tag("16x16/add_user.gif")."Usuarios", "adminPerfiles/formUsers?perfil=".$perfil->getCaPerfil())?></td>
 </tr>
 <?
