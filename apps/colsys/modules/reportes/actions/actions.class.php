@@ -27,126 +27,181 @@ class reportesActions extends sfActions
 	public function executeVerReporte( $request )
 	{	
 		if( $request->getParameter( "id" ) ){
-			$reporte = ReportePeer::retrieveByPk($request->getParameter( "id" ));
+			$reporte = ReportePeer::retrieveByPk($request->getParameter( "id" ));			
+		}	
+						
+		$this->forward404Unless( $reporte );		
+						
+		$this->getUser()->log( "Consulta Reporte" );
+		
+		$c = new Criteria();
+		$c->add( UsuarioLogPeer::CA_URL, "/reportes/verReporte/id/".$reporte->getCaIdreporte()."%", Criteria::LIKE );
+		$c->addOr( UsuarioLogPeer::CA_URL, "/reportes/verReporte?id=".$reporte->getCaIdreporte()."%", Criteria::LIKE );
+		$c->addDescendingOrderByColumn( UsuarioLogPeer::CA_FCHEVENTO );
+		$this->logs = UsuarioLogPeer::doSelect( $c );	
+		
+		
+		/* Marca como finalizada una tarea */
+		
+		$c = new Criteria();
+		$c->addJoin( NotTareaPeer::CA_IDTAREA, NotTareaAsignacionPeer::CA_IDTAREA );
+		$c->addJoin( NotTareaPeer::CA_IDTAREA, RepAsignacionPeer::CA_IDTAREA );
+		$c->add( NotTareaAsignacionPeer::CA_LOGIN, $this->getUser()->getUserId() );
+		$c->add( RepAsignacionPeer::CA_IDREPORTE, $reporte->getCaIdreporte() );		
+		$c->setDistinct();		
+		$tareas = NotTareaPeer::doSelect( $c );
+		
+		foreach( $tareas as $tarea ){
+			if( $tarea && !$tarea->getCaFchterminada() ){
+				$tarea->setCaFchterminada( time() );
+				$tarea->setCaUsuterminada( $this->getUser()->getUserId() );				
+				$tarea->save();
+			}
+		}
+			
+		$this->reporte = $reporte;						
+	}	
+	
+	/**
+	* Envia una notificacion a los usuarios relacionados en el reporte	
+	* @author Andres Botero
+	*/
+	public function executeEnviarNotificacion( $request ){
+		
+		if( $request->getParameter( "idreporte" ) ){
+			$reporte = ReportePeer::retrieveByPk($request->getParameter( "idreporte" ));
 			
 		}		
 		$this->forward404Unless( $reporte );		
 		
-		$this->asignaciones = $reporte->getRepasignacions();
-		$this->ultimoReporte = 80037;
-					
-		if( $reporte->getCaIdreporte()>$this->ultimoReporte  ){ // El ultimo reporte antes de empezar a controlar las impresiones										
-				/*
-				* Usuarios de traficos 
-				* A estos usuarios se les debe crear una tarea para que envien el Rep al exterior 
-				*/
-				
-				$c = new Criteria();				
-				if( $reporte->getCaImpoExpo()==Constantes::IMPO ){			
-					if( $reporte->getCaTransporte()==Constantes::MARITIMO ){		
-						$c->add( UsuarioPeer::CA_DEPARTAMENTO, "Tráficos" );				
-					}else{
-						$c->add( UsuarioPeer::CA_DEPARTAMENTO, "Aéreo" );					
-					}
-				}else{
-					$c->add( UsuarioPeer::CA_DEPARTAMENTO, "Exportaciones" );				
-				}								
-				$c->add( UsuarioPeer::CA_IDSUCURSAL, $this->getUser()->getSucursal()->getCaIdSucursal() );
-				$c->add( UsuarioPeer::CA_ACTIVO, true );
-				$usuarios  = UsuarioPeer::doSelect( $c );
-				$grupos["traficos"] = array();
-				foreach(  $usuarios as $usuario ){			
-					$grupos["traficos"][] = $usuario->getCaLogin();
+		
+		
+		$usuarios  = $reporte->getUsuariosOperativos();
+		
+		$this->gruposCrearReporte = array();
+		if( $reporte->getCaImpoExpo()==Constantes::IMPO ){		
+			
+			
+			
+			if( !$reporte->getReporteExterior()  ){
+				if( $reporte->getCaIdTareaRext() ){
+					$tarea = NotTareaPeer::retrieveByPk( $reporte->getCaIdTareaRext() );
+					$tarea->delete();
 				}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			if( count($this->asignaciones)==0 ){
+				$tarea = new NotTarea(); 						
+				if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+					$tarea->setCaUrl( "/colsys_php/traficos_sea.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
+				}else{
+					$tarea->setCaUrl( "/colsys_php/traficos_air.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
+				}
 				
-				$tarea = new NotTarea(); 
-				$tarea->setCaUrl( "/reportes/verReporte/id/".$reporte->getCaIdreporte() );
-				$tarea->setCaIdlistatarea( 6 );
+				$tarea->setCaIdlistatarea( 4 );
 				$tarea->setCaFchcreado( time() );		
 				$festivos = Utils::getFestivos();	
 				$tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
+				$tarea->setCaPrioridad( 1 );
 				$tarea->setCaUsucreado( "Administrador" );
-				$tarea->setCaTitulo( "Reporte ".$reporte->getCaConsecutivo() );		
-				$tarea->setCaTexto( "Prueba" );
+				$tarea->setCaTitulo( "Crear Reporte al Ext. RN ".$reporte->getCaConsecutivo() );		
+				$tarea->setCaTexto( "" );									
+				$tarea->save();
 				
+				$vendedor = UsuarioPeer::retrieveByPk( $reporte->getCaLogin() );
 				
-				
-				$grupos["vendedor"] = array( $reporte->getCaLogin() );			
-												
-				if( $reporte->getCaColmas()=="Sí" ){
-					$repAduana = $reporte->getRepAduana(); 
-					if( $repAduana && $repAduana->getCaCoordinador() ){
-						$grupos["colmas"] = array($repAduana->getCaCoordinador());	
-					}
+				/*
+				* Asigna la tarea a los usuarios de traficos
+				*/
+							
+				$logins = array();
+				foreach(  $usuarios as $usuario ){			
+					$logins[] = $usuario->getCaLogin();
 				}
+				//$logins = array("abotero");
+				$tarea->setAsignaciones( $logins );	
+				//$tarea->notificar();			
 				
-				if( $reporte->getCaSeguro()=="Sí" ){
-					$repSeguro = $reporte->getRepSeguro(); 
-					if( $repSeguro && $repSeguro->getCaSeguroConf() ){
-						$grupos["seguros"] = array($repSeguro->getCaSeguroConf());	
-					}
-				}
-					
-				
-				if( $reporte->getCaContinuacion()!="N/A" ){
-					
-					if( $reporte->getCaContinuacionConf() ){
-						$grupos["otm"] = array( $reporte->getCaContinuacionConf());	
-					}
-				}	
-				
-				$this->asignaciones = array(); 
-				foreach( $grupos as $logins ){ 			
-					$newTarea = $tarea->copy();
-					$newTarea->save();
-					$newTarea->setAsignaciones( $logins );		
-									
-					$asignacion = new RepAsignacion();
-					$asignacion->setCaIdreporte( $reporte->getCaIdreporte() );			
-					$asignacion->setCaIdtarea( $newTarea->getCaIdtarea() );
-					$asignacion->save();
-					$this->asignaciones[] = $asignacion;
-					$newTarea->notificar();				
-								
-				}
+				$reporte->setCaIdtareaRext( $tarea->getCaIdtarea() );
+				$reporte->save();
+				$this->gruposCrearReporte = $logins;
 			}
+		}else{
+			/*
+			* Usuarios de traficos 
+			* A estos usuarios se les debe crear una tarea para que envien el Rep al exterior 
+			*/
+					
 			
-			/* Marca como finalizada una tarea */
-			
-			$c = new Criteria();
-			$c->addJoin( NotTareaPeer::CA_IDTAREA, NotTareaAsignacionPeer::CA_IDTAREA );
-			$c->addJoin( NotTareaPeer::CA_IDTAREA, RepAsignacionPeer::CA_IDTAREA );
-			$c->add( NotTareaAsignacionPeer::CA_LOGIN, $this->getUser()->getUserId() );
-			$c->add( RepAsignacionPeer::CA_IDREPORTE, $reporte->getCaIdreporte() );		
-			$c->setDistinct();
-			
-			$tareas = NotTareaPeer::doSelect( $c );
-			
-			foreach( $tareas as $tarea ){
-				if( $tarea && !$tarea->getCaFchterminada() ){
-					$tarea->setCaFchterminada( time() );
-					$tarea->setCaUsuterminada( $this->getUser()->getUserId() );				
-					$tarea->save();
-				}
-			}		
+			$grupos["exportaciones"] = array();
+			foreach(  $usuarios as $usuario ){			
+				$grupos["exportaciones"][] = $usuario->getCaLogin();
+			}
 		}
-		$this->reporte = $reporte;
+		
+		
+		$asignaciones = $reporte->getRepasignacions();		
+		
+		foreach( $asignaciones as $asignacion ){
+			$asignacion->delete();
+		}
+		
+		
+			
+		$tarea = new NotTarea(); 
+		$tarea->setCaUrl( "/reportes/verReporte/id/".$reporte->getCaIdreporte() );
+		$tarea->setCaIdlistatarea( 6 );
+		$tarea->setCaFchcreado( time() );		
+		$festivos = Utils::getFestivos();	
+		$tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
+		$tarea->setCaUsucreado( "Administrador" );
+		$tarea->setCaTitulo( "Reporte ".$reporte->getCaConsecutivo() );		
+		$tarea->setCaTexto( "Prueba" );
 		
 		
 		
+		$grupos["vendedor"] = array( $reporte->getCaLogin() );			
+										
+		if( $reporte->getCaColmas()=="Sí" ){
+			$repAduana = $reporte->getRepAduana(); 
+			if( $repAduana && $repAduana->getCaCoordinador() ){
+				$grupos["colmas"] = array($repAduana->getCaCoordinador());	
+			}
+		}
+		
+		if( $reporte->getCaSeguro()=="Sí" ){
+			$repSeguro = $reporte->getRepSeguro(); 
+			if( $repSeguro && $repSeguro->getCaSeguroConf() ){
+				$grupos["seguros"] = array($repSeguro->getCaSeguroConf());	
+			}
+		}
+			
+		
+		if( $reporte->getCaContinuacion()!="N/A" ){
+			
+			if( $reporte->getCaContinuacionConf() ){
+				$grupos["otm"] = array( $reporte->getCaContinuacionConf());	
+			}
+		}	
+		
+		$this->asignaciones = array(); 
+		foreach( $grupos as $logins ){ 			
+			$newTarea = $tarea->copy();
+			$newTarea->save();
+			$newTarea->setAsignaciones( $logins );		
+							
+			$asignacion = new RepAsignacion();
+			$asignacion->setCaIdreporte( $reporte->getCaIdreporte() );			
+			$asignacion->setCaIdtarea( $newTarea->getCaIdtarea() );
+			$asignacion->save();
+			$this->asignaciones[] = $asignacion;
+			//$newTarea->notificar();				
+						
+		}
+		
+		$this->gruposVerReporte = $grupos;
 		
 		
-	}	
+		
+		//$this->redirect( "/reportes/verReporte?id=".$reporte->getCaIdreporte() );
+	}
 }
 
 ?>
