@@ -273,7 +273,8 @@ var tipos = new Ext.form.ComboBox({
 				["Tarea", "Tarea"],
 				["Mejora", "Mejora"],
 				["Defecto", "Defecto"],
-				["Control", "Control"]			
+				["Control", "Control"],
+				["Invalido", "Invalido"]		
 			]
 });
 
@@ -292,8 +293,7 @@ var acciones = new Ext.form.ComboBox({
 	allowBlank: true,
 	listClass: 'x-combo-list-small',	
 	store : [			
-				["Abierto", "Abierto"],				
-				["Invalido", "Invalido"],
+				["Abierto", "Abierto"],								
 				["Cerrado", "Cerrado"]			
 			]
 });
