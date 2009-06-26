@@ -11,31 +11,25 @@
 	<br />
 	<br />
 	<?
-	if( $reporte->getCaIdreporte()>$ultimoReporte  ){
+	if( count( $logs )>0  ){
 	?>
-	<table width='1072' cellspacing="1" border="0" class="tableList">
+	<a href="#registro_aperturas" onclick="document.getElementById('registro_aperturas').style.display=''">Ver registro de aperturas</a>
+	<div id="registro_aperturas" style="max-height:150px; width:830px; overflow:auto; display:none" >
+	<h3>Registro de aperturas</h3>
+	<br />
+	<table width='800' cellspacing="1" border="0" class="tableList">
 		<tr>
 			<th width="311" >Usuario </th>
-			<th width="270" >Le&iacute;do</th>
-			<th width="239" >Le&iacute;do Por</th>
-			<th width="239" >Fecha Le&iacute;do </th>
+			<th width="270" >Abierto</th>
+			
 		</tr>
 		<?		
-		foreach( $asignaciones as $asignacion ){
-			$tarea = $asignacion->getNotTarea();
-			$usuarios = $tarea->getUsuarios(); 
+		foreach( $logs as $log ){
+			$usuario = $log->getUsuario();			
 		?>
 		<tr>
-			<td > 
-				<?
-				foreach( $usuarios as $usuario ){
-					echo Utils::replace($usuario->getCaNombre())."<br />";
-				}
-				?>			</td>
-			<td > 
-				<?=$tarea->getCaFchterminada()?image_tag("16x16/button_ok.gif")." Si":image_tag("16x16/button_cancel.gif")." No"?>			</td>
-			<td ><?=$tarea->getCaUsuterminada()?$tarea->getCaUsuterminada():"&nbsp;"?></td>
-			<td ><?=$tarea->getCaFchterminada()?Utils::fechaMes($tarea->getCaFchterminada("Y-m-d"))." ".$tarea->getCaFchterminada("H:i:s"):"&nbsp;"?></td>
+			<td ><?=Utils::replace($usuario->getCaNombre())?></td>
+			<td ><?=Utils::fechaMes($log->getCaFchEvento("Y-m-d"))." ".$log->getCaFchEvento("H:i:s")?></td>
 		</tr>
 		<?
 		}
@@ -44,6 +38,7 @@
 	<?
 	}
 	?>
+	</div>
 	<br>
 	
 </div>
