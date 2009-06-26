@@ -706,6 +706,33 @@ class Reporte extends BaseReporte
 	}
 	
 	
+	/*
+	* Retorna los usuarios de operativos traficos
+	*/
+	
+	public function getUsuariosOperativos(){
+	
+		$usuario = UsuarioPeer::retrieveByPk( $this->getCaUsucreado() );
+	
+		$c = new Criteria();
+		$c->addJoin( UsuarioPeer::CA_LOGIN, UsuarioPerfilPeer::CA_LOGIN );				
+		if( $this->getCaImpoExpo()==Constantes::IMPO ){			
+			if( $this->getCaTransporte()==Constantes::MARITIMO ){		
+				$c->add( UsuarioPerfilPeer::CA_PERFIL, "operativo-traficos" );				
+			}else{
+				$c->add( UsuarioPerfilPeer::CA_PERFIL, "operativo-aereo" );					
+			}
+		}else{
+			$c->add( UsuarioPerfilPeer::CA_PERFIL, "operativo-expo" );				
+		}								
+		$c->add( UsuarioPeer::CA_IDSUCURSAL, $usuario->getCaIdsucursal()  );
+		$c->add( UsuarioPeer::CA_ACTIVO, true );
+		return  UsuarioPeer::doSelect( $c );
+	}
+	
+	
+	
+	
 	
 	
 }

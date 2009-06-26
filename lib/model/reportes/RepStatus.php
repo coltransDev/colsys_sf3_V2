@@ -239,7 +239,7 @@ class RepStatus extends BaseRepStatus
 		$cliente = $reporte->getCliente();	
 		if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
 			$proveedor = substr($reporte->getProveedoresStr(),0,130);					
-			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] Id.: ".$reporte->getCaConsecutivo();					
+			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie()." Id.: ".$reporte->getCaConsecutivo();					
 		}else{
 			$consignatario = $reporte->getConsignatario();
 			$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] Id.: ".$reporte->getCaConsecutivo();	
@@ -271,10 +271,10 @@ class RepStatus extends BaseRepStatus
 		}
 		
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
-		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );
+		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );				
+		$email->save(); 					
 		$email->setCaAddress("abotero@coltrans.com.co");
 		$email->setCaCc("");
-		$email->save(); 
 		$email->send(); 	
 		$this->setCaIdemail( $email->getCaIdemail() );
 		$this->save();

@@ -134,6 +134,16 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	private $lastNotTareaAsignacionCriteria = null;
 
 	/**
+	 * @var        array RepStatus[] Collection to store aggregation of RepStatus objects.
+	 */
+	protected $collRepStatuss;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collRepStatuss.
+	 */
+	private $lastRepStatusCriteria = null;
+
+	/**
 	 * @var        array RepAsignacion[] Collection to store aggregation of RepAsignacion objects.
 	 */
 	protected $collRepAsignacions;
@@ -913,6 +923,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$this->collNotTareaAsignacions = null;
 			$this->lastNotTareaAsignacionCriteria = null;
 
+			$this->collRepStatuss = null;
+			$this->lastRepStatusCriteria = null;
+
 			$this->collRepAsignacions = null;
 			$this->lastRepAsignacionCriteria = null;
 
@@ -1059,6 +1072,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collRepStatuss !== null) {
+				foreach ($this->collRepStatuss as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collRepAsignacions !== null) {
 				foreach ($this->collRepAsignacions as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -1168,6 +1189,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 
 				if ($this->collNotTareaAsignacions !== null) {
 					foreach ($this->collNotTareaAsignacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collRepStatuss !== null) {
+					foreach ($this->collRepStatuss as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1518,6 +1547,12 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			foreach ($this->getNotTareaAsignacions() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addNotTareaAsignacion($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getRepStatuss() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addRepStatus($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2370,6 +2405,301 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collRepStatuss collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addRepStatuss()
+	 */
+	public function clearRepStatuss()
+	{
+		$this->collRepStatuss = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collRepStatuss collection (array).
+	 *
+	 * By default this just sets the collRepStatuss collection to an empty array (like clearcollRepStatuss());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initRepStatuss()
+	{
+		$this->collRepStatuss = array();
+	}
+
+	/**
+	 * Gets an array of RepStatus objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NotTarea has previously been saved, it will retrieve
+	 * related RepStatuss from storage. If this NotTarea is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array RepStatus[]
+	 * @throws     PropelException
+	 */
+	public function getRepStatuss($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepStatuss === null) {
+			if ($this->isNew()) {
+			   $this->collRepStatuss = array();
+			} else {
+
+				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				RepStatusPeer::addSelectColumns($criteria);
+				$this->collRepStatuss = RepStatusPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				RepStatusPeer::addSelectColumns($criteria);
+				if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
+					$this->collRepStatuss = RepStatusPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastRepStatusCriteria = $criteria;
+		return $this->collRepStatuss;
+	}
+
+	/**
+	 * Returns the number of related RepStatus objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related RepStatus objects.
+	 * @throws     PropelException
+	 */
+	public function countRepStatuss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collRepStatuss === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				$count = RepStatusPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
+					$count = RepStatusPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collRepStatuss);
+				}
+			} else {
+				$count = count($this->collRepStatuss);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a RepStatus object to this object
+	 * through the RepStatus foreign key attribute.
+	 *
+	 * @param      RepStatus $l RepStatus
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addRepStatus(RepStatus $l)
+	{
+		if ($this->collRepStatuss === null) {
+			$this->initRepStatuss();
+		}
+		if (!in_array($l, $this->collRepStatuss, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collRepStatuss, $l);
+			$l->setNotTarea($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related RepStatuss from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getRepStatussJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepStatuss === null) {
+			if ($this->isNew()) {
+				$this->collRepStatuss = array();
+			} else {
+
+				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastRepStatusCriteria = $criteria;
+
+		return $this->collRepStatuss;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related RepStatuss from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getRepStatussJoinEmail($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepStatuss === null) {
+			if ($this->isNew()) {
+				$this->collRepStatuss = array();
+			} else {
+
+				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastRepStatusCriteria = $criteria;
+
+		return $this->collRepStatuss;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related RepStatuss from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getRepStatussJoinTrackingEtapa($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collRepStatuss === null) {
+			if ($this->isNew()) {
+				$this->collRepStatuss = array();
+			} else {
+
+				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
+				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastRepStatusCriteria = $criteria;
+
+		return $this->collRepStatuss;
+	}
+
+	/**
 	 * Clears out the collRepAsignacions collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -2597,6 +2927,11 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collRepStatuss) {
+				foreach ((array) $this->collRepStatuss as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collRepAsignacions) {
 				foreach ((array) $this->collRepAsignacions as $o) {
 					$o->clearAllReferences($deep);
@@ -2607,6 +2942,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		$this->collCotizacions = null;
 		$this->collHdeskTickets = null;
 		$this->collNotTareaAsignacions = null;
+		$this->collRepStatuss = null;
 		$this->collRepAsignacions = null;
 			$this->aNotListaTareas = null;
 	}

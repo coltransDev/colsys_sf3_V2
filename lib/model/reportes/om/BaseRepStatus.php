@@ -171,6 +171,12 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	protected $ca_propiedades;
 
 	/**
+	 * The value for the ca_idseguimiento field.
+	 * @var        int
+	 */
+	protected $ca_idseguimiento;
+
+	/**
 	 * @var        Reporte
 	 */
 	protected $aReporte;
@@ -184,6 +190,11 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	 * @var        TrackingEtapa
 	 */
 	protected $aTrackingEtapa;
+
+	/**
+	 * @var        NotTarea
+	 */
+	protected $aNotTarea;
 
 	/**
 	 * @var        array RepStatusRespuesta[] Collection to store aggregation of RepStatusRespuesta objects.
@@ -638,6 +649,16 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	public function getCaPropiedades()
 	{
 		return $this->ca_propiedades;
+	}
+
+	/**
+	 * Get the [ca_idseguimiento] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdseguimiento()
+	{
+		return $this->ca_idseguimiento;
 	}
 
 	/**
@@ -1356,6 +1377,30 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 	} // setCaPropiedades()
 
 	/**
+	 * Set the value of [ca_idseguimiento] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     RepStatus The current object (for fluent API support)
+	 */
+	public function setCaIdseguimiento($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idseguimiento !== $v) {
+			$this->ca_idseguimiento = $v;
+			$this->modifiedColumns[] = RepStatusPeer::CA_IDSEGUIMIENTO;
+		}
+
+		if ($this->aNotTarea !== null && $this->aNotTarea->getCaIdtarea() !== $v) {
+			$this->aNotTarea = null;
+		}
+
+		return $this;
+	} // setCaIdseguimiento()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -1417,6 +1462,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			$this->ca_horallegada = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
 			$this->ca_idetapa = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
 			$this->ca_propiedades = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+			$this->ca_idseguimiento = ($row[$startcol + 25] !== null) ? (int) $row[$startcol + 25] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1426,7 +1472,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 25; // 25 = RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 26; // 26 = RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating RepStatus object", $e);
@@ -1457,6 +1503,9 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		}
 		if ($this->aTrackingEtapa !== null && $this->ca_idetapa !== $this->aTrackingEtapa->getCaIdetapa()) {
 			$this->aTrackingEtapa = null;
+		}
+		if ($this->aNotTarea !== null && $this->ca_idseguimiento !== $this->aNotTarea->getCaIdtarea()) {
+			$this->aNotTarea = null;
 		}
 	} // ensureConsistency
 
@@ -1500,6 +1549,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			$this->aReporte = null;
 			$this->aEmail = null;
 			$this->aTrackingEtapa = null;
+			$this->aNotTarea = null;
 			$this->collRepStatusRespuestas = null;
 			$this->lastRepStatusRespuestaCriteria = null;
 
@@ -1612,6 +1662,13 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 					$affectedRows += $this->aTrackingEtapa->save($con);
 				}
 				$this->setTrackingEtapa($this->aTrackingEtapa);
+			}
+
+			if ($this->aNotTarea !== null) {
+				if ($this->aNotTarea->isModified() || $this->aNotTarea->isNew()) {
+					$affectedRows += $this->aNotTarea->save($con);
+				}
+				$this->setNotTarea($this->aNotTarea);
 			}
 
 			if ($this->isNew() ) {
@@ -1730,6 +1787,12 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			if ($this->aTrackingEtapa !== null) {
 				if (!$this->aTrackingEtapa->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aTrackingEtapa->getValidationFailures());
+				}
+			}
+
+			if ($this->aNotTarea !== null) {
+				if (!$this->aNotTarea->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aNotTarea->getValidationFailures());
 				}
 			}
 
@@ -1855,6 +1918,9 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			case 24:
 				return $this->getCaPropiedades();
 				break;
+			case 25:
+				return $this->getCaIdseguimiento();
+				break;
 			default:
 				return null;
 				break;
@@ -1901,6 +1967,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			$keys[22] => $this->getCaHorallegada(),
 			$keys[23] => $this->getCaIdetapa(),
 			$keys[24] => $this->getCaPropiedades(),
+			$keys[25] => $this->getCaIdseguimiento(),
 		);
 		return $result;
 	}
@@ -2007,6 +2074,9 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			case 24:
 				$this->setCaPropiedades($value);
 				break;
+			case 25:
+				$this->setCaIdseguimiento($value);
+				break;
 		} // switch()
 	}
 
@@ -2056,6 +2126,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[22], $arr)) $this->setCaHorallegada($arr[$keys[22]]);
 		if (array_key_exists($keys[23], $arr)) $this->setCaIdetapa($arr[$keys[23]]);
 		if (array_key_exists($keys[24], $arr)) $this->setCaPropiedades($arr[$keys[24]]);
+		if (array_key_exists($keys[25], $arr)) $this->setCaIdseguimiento($arr[$keys[25]]);
 	}
 
 	/**
@@ -2092,6 +2163,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(RepStatusPeer::CA_HORALLEGADA)) $criteria->add(RepStatusPeer::CA_HORALLEGADA, $this->ca_horallegada);
 		if ($this->isColumnModified(RepStatusPeer::CA_IDETAPA)) $criteria->add(RepStatusPeer::CA_IDETAPA, $this->ca_idetapa);
 		if ($this->isColumnModified(RepStatusPeer::CA_PROPIEDADES)) $criteria->add(RepStatusPeer::CA_PROPIEDADES, $this->ca_propiedades);
+		if ($this->isColumnModified(RepStatusPeer::CA_IDSEGUIMIENTO)) $criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idseguimiento);
 
 		return $criteria;
 	}
@@ -2193,6 +2265,8 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 		$copyObj->setCaIdetapa($this->ca_idetapa);
 
 		$copyObj->setCaPropiedades($this->ca_propiedades);
+
+		$copyObj->setCaIdseguimiento($this->ca_idseguimiento);
 
 
 		if ($deepCopy) {
@@ -2404,6 +2478,57 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aTrackingEtapa;
+	}
+
+	/**
+	 * Declares an association between this object and a NotTarea object.
+	 *
+	 * @param      NotTarea $v
+	 * @return     RepStatus The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setNotTarea(NotTarea $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdseguimiento(NULL);
+		} else {
+			$this->setCaIdseguimiento($v->getCaIdtarea());
+		}
+
+		$this->aNotTarea = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the NotTarea object, it will not be re-added.
+		if ($v !== null) {
+			$v->addRepStatus($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated NotTarea object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     NotTarea The associated NotTarea object.
+	 * @throws     PropelException
+	 */
+	public function getNotTarea(PropelPDO $con = null)
+	{
+		if ($this->aNotTarea === null && ($this->ca_idseguimiento !== null)) {
+			$c = new Criteria(NotTareaPeer::DATABASE_NAME);
+			$c->add(NotTareaPeer::CA_IDTAREA, $this->ca_idseguimiento);
+			$this->aNotTarea = NotTareaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNotTarea->addRepStatuss($this);
+			 */
+		}
+		return $this->aNotTarea;
 	}
 
 	/**
@@ -2630,6 +2755,7 @@ abstract class BaseRepStatus extends BaseObject  implements Persistent {
 			$this->aReporte = null;
 			$this->aEmail = null;
 			$this->aTrackingEtapa = null;
+			$this->aNotTarea = null;
 	}
 
 } // BaseRepStatus
