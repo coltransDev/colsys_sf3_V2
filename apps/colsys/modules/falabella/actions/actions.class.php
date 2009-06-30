@@ -423,7 +423,7 @@ class falabellaActions extends sfActions {
 		}
 		die($salida);
 		$directory=sfConfig::get('app_falabella_output');
-		$filename = $directory.DIRECTORY_SEPARATOR.'ASN'.date('ymdHis').'.txt';
+		$filename = $directory.DIRECTORY_SEPARATOR.'FAC'.date('ymdHis').'.txt';
 		$handle = fopen($filename , 'w');	
 		
 		if (fwrite($handle, $salida) === FALSE) {
