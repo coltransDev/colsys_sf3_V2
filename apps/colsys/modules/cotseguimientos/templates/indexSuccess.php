@@ -60,12 +60,12 @@ var tabs = new Ext.FormPanel({
 						selectOnFocus: true,																									
 						listClass: 'x-combo-list-small',
 						mode: 'local',
-						valueField:'valor',
+						valueField:'etapa',
 						displayField:'valor',
 						hiddenName:'estadoCons',
 						name:'estadoCons',
 						store :  new Ext.data.SimpleStore({
-								fields: ['valor', 'valor'],
+								fields: ['etapa', 'valor'],
 								data : [
 									<?
 									$i = 0;								
@@ -74,7 +74,7 @@ var tabs = new Ext.FormPanel({
 											echo ",";
 										}
 									?>
-										['<?=$estado->getCaValor()?>', '<?=$estado->getCaValor()?>']
+										['<?=$estado->getCaValor()?>', '<?=$estado->getCaValor2()?>']
 									<?
 									}
 									?>

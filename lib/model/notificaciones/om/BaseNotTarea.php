@@ -114,6 +114,16 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	private $lastCotizacionCriteria = null;
 
 	/**
+	 * @var        array CotProducto[] Collection to store aggregation of CotProducto objects.
+	 */
+	protected $collCotProductos;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collCotProductos.
+	 */
+	private $lastCotProductoCriteria = null;
+
+	/**
 	 * @var        array HdeskTicket[] Collection to store aggregation of HdeskTicket objects.
 	 */
 	protected $collHdeskTickets;
@@ -917,6 +927,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$this->collCotizacions = null;
 			$this->lastCotizacionCriteria = null;
 
+			$this->collCotProductos = null;
+			$this->lastCotProductoCriteria = null;
+
 			$this->collHdeskTickets = null;
 			$this->lastHdeskTicketCriteria = null;
 
@@ -1056,6 +1069,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collCotProductos !== null) {
+				foreach ($this->collCotProductos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collHdeskTickets !== null) {
 				foreach ($this->collHdeskTickets as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -1173,6 +1194,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 
 				if ($this->collCotizacions !== null) {
 					foreach ($this->collCotizacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collCotProductos !== null) {
+					foreach ($this->collCotProductos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1535,6 +1564,12 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			foreach ($this->getCotizacions() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addCotizacion($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getCotProductos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotProducto($relObj->copy($deepCopy));
 				}
 			}
 
@@ -1906,6 +1941,254 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		$this->lastCotizacionCriteria = $criteria;
 
 		return $this->collCotizacions;
+	}
+
+	/**
+	 * Clears out the collCotProductos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotProductos()
+	 */
+	public function clearCotProductos()
+	{
+		$this->collCotProductos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotProductos collection (array).
+	 *
+	 * By default this just sets the collCotProductos collection to an empty array (like clearcollCotProductos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initCotProductos()
+	{
+		$this->collCotProductos = array();
+	}
+
+	/**
+	 * Gets an array of CotProducto objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NotTarea has previously been saved, it will retrieve
+	 * related CotProductos from storage. If this NotTarea is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array CotProducto[]
+	 * @throws     PropelException
+	 */
+	public function getCotProductos($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotProductos === null) {
+			if ($this->isNew()) {
+			   $this->collCotProductos = array();
+			} else {
+
+				$criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				CotProductoPeer::addSelectColumns($criteria);
+				$this->collCotProductos = CotProductoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				CotProductoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
+					$this->collCotProductos = CotProductoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastCotProductoCriteria = $criteria;
+		return $this->collCotProductos;
+	}
+
+	/**
+	 * Returns the number of related CotProducto objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotProducto objects.
+	 * @throws     PropelException
+	 */
+	public function countCotProductos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collCotProductos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				$count = CotProductoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
+					$count = CotProductoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotProductos);
+				}
+			} else {
+				$count = count($this->collCotProductos);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a CotProducto object to this object
+	 * through the CotProducto foreign key attribute.
+	 *
+	 * @param      CotProducto $l CotProducto
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addCotProducto(CotProducto $l)
+	{
+		if ($this->collCotProductos === null) {
+			$this->initCotProductos();
+		}
+		if (!in_array($l, $this->collCotProductos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotProductos, $l);
+			$l->setNotTarea($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related CotProductos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getCotProductosJoinCotizacion($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotProductos === null) {
+			if ($this->isNew()) {
+				$this->collCotProductos = array();
+			} else {
+
+				$criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				$this->collCotProductos = CotProductoPeer::doSelectJoinCotizacion($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
+
+			if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
+				$this->collCotProductos = CotProductoPeer::doSelectJoinCotizacion($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotProductoCriteria = $criteria;
+
+		return $this->collCotProductos;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related CotProductos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getCotProductosJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotProductos === null) {
+			if ($this->isNew()) {
+				$this->collCotProductos = array();
+			} else {
+
+				$criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				$this->collCotProductos = CotProductoPeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
+
+			if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
+				$this->collCotProductos = CotProductoPeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotProductoCriteria = $criteria;
+
+		return $this->collCotProductos;
 	}
 
 	/**
@@ -2917,6 +3200,11 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collCotProductos) {
+				foreach ((array) $this->collCotProductos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collHdeskTickets) {
 				foreach ((array) $this->collHdeskTickets as $o) {
 					$o->clearAllReferences($deep);
@@ -2940,6 +3228,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		} // if ($deep)
 
 		$this->collCotizacions = null;
+		$this->collCotProductos = null;
 		$this->collHdeskTickets = null;
 		$this->collNotTareaAsignacions = null;
 		$this->collRepStatuss = null;

@@ -65,8 +65,8 @@
 		<column name="ca_datosag" type="varchar"   />
 		<column name="ca_idlinea" type="integer"   />
 		<column name="ca_postularlinea" type="boolean"   />
-		<column name="ca_estado" type="varchar"   />
-		<column name="ca_motivonoaprobado" type="varchar"   />
+		<column name="ca_etapa" type="varchar"   />
+		<column name="ca_idtarea" type="integer"   />	
 		
 		<foreign-key foreignTable="tb_cotizaciones">
 			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
@@ -74,6 +74,10 @@
 		<foreign-key foreignTable="tb_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>
+		
+		<foreign-key foreignTable="notificaciones.tb_tareas">
+			<reference local="ca_idtarea" foreign="ca_idtarea"/>
+		</foreign-key>			
 	</table>
 	
 	
@@ -209,7 +213,32 @@
 					
 		<foreign-key foreignTable="tb_cotizaciones">
 			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
-		</foreign-key>	
-								
+		</foreign-key>									
 	</table>
+	
+	<table name="tb_cotseguimientos" phpName="CotSeguimiento">		
+		
+		<column name="ca_idcotizacion" type="integer" required="true"  primaryKey="true" />
+		<column name="ca_idproducto" type="integer" required="true"  primaryKey="true" />
+		<column name="ca_fchseguimiento" type="timestamp" primaryKey="true"/>
+		<column name="ca_login" type="varchar" required="true" />			
+		<column name="ca_seguimiento" type="varchar" />
+		<column name="ca_etapa" type="varchar" />						
+					
+		<foreign-key foreignTable="tb_cotizaciones">
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
+		</foreign-key>	
+		
+		<foreign-key foreignTable="tb_cotproductos">			
+			<reference local="ca_idproducto" foreign="ca_idproducto"/>
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
+		</foreign-key>
+		
+		<foreign-key foreignTable="control.tb_usuarios">
+			<reference local="ca_login" foreign="ca_login"/>
+		</foreign-key>										
+	</table>
+
+	
+	
 </database>

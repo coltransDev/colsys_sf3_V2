@@ -208,6 +208,16 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	private $lastCotArchivoCriteria = null;
 
 	/**
+	 * @var        array CotSeguimiento[] Collection to store aggregation of CotSeguimiento objects.
+	 */
+	protected $collCotSeguimientos;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collCotSeguimientos.
+	 */
+	private $lastCotSeguimientoCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -1379,6 +1389,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->collCotArchivos = null;
 			$this->lastCotArchivoCriteria = null;
 
+			$this->collCotSeguimientos = null;
+			$this->lastCotSeguimientoCriteria = null;
+
 		} // if (deep)
 	}
 
@@ -1544,6 +1557,14 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collCotSeguimientos !== null) {
+				foreach ($this->collCotSeguimientos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -1665,6 +1686,14 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 				if ($this->collCotArchivos !== null) {
 					foreach ($this->collCotArchivos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collCotSeguimientos !== null) {
+					foreach ($this->collCotSeguimientos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -2115,6 +2144,12 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				}
 			}
 
+			foreach ($this->getCotSeguimientos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotSeguimiento($relObj->copy($deepCopy));
+				}
+			}
+
 		} // if ($deepCopy)
 
 
@@ -2509,6 +2544,53 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 			if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
 				$this->collCotProductos = CotProductoPeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotProductoCriteria = $criteria;
+
+		return $this->collCotProductos;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cotizacion is new, it will return
+	 * an empty collection; or if this Cotizacion has previously
+	 * been saved, it will retrieve related CotProductos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Cotizacion.
+	 */
+	public function getCotProductosJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotProductos === null) {
+			if ($this->isNew()) {
+				$this->collCotProductos = array();
+			} else {
+
+				$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$this->collCotProductos = CotProductoPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotProductoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+			if (!isset($this->lastCotProductoCriteria) || !$this->lastCotProductoCriteria->equals($criteria)) {
+				$this->collCotProductos = CotProductoPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastCotProductoCriteria = $criteria;
@@ -3073,6 +3155,254 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collCotSeguimientos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotSeguimientos()
+	 */
+	public function clearCotSeguimientos()
+	{
+		$this->collCotSeguimientos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotSeguimientos collection (array).
+	 *
+	 * By default this just sets the collCotSeguimientos collection to an empty array (like clearcollCotSeguimientos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initCotSeguimientos()
+	{
+		$this->collCotSeguimientos = array();
+	}
+
+	/**
+	 * Gets an array of CotSeguimiento objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Cotizacion has previously been saved, it will retrieve
+	 * related CotSeguimientos from storage. If this Cotizacion is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array CotSeguimiento[]
+	 * @throws     PropelException
+	 */
+	public function getCotSeguimientos($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotSeguimientos === null) {
+			if ($this->isNew()) {
+			   $this->collCotSeguimientos = array();
+			} else {
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				CotSeguimientoPeer::addSelectColumns($criteria);
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				CotSeguimientoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastCotSeguimientoCriteria) || !$this->lastCotSeguimientoCriteria->equals($criteria)) {
+					$this->collCotSeguimientos = CotSeguimientoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastCotSeguimientoCriteria = $criteria;
+		return $this->collCotSeguimientos;
+	}
+
+	/**
+	 * Returns the number of related CotSeguimiento objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotSeguimiento objects.
+	 * @throws     PropelException
+	 */
+	public function countCotSeguimientos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collCotSeguimientos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$count = CotSeguimientoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				if (!isset($this->lastCotSeguimientoCriteria) || !$this->lastCotSeguimientoCriteria->equals($criteria)) {
+					$count = CotSeguimientoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotSeguimientos);
+				}
+			} else {
+				$count = count($this->collCotSeguimientos);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a CotSeguimiento object to this object
+	 * through the CotSeguimiento foreign key attribute.
+	 *
+	 * @param      CotSeguimiento $l CotSeguimiento
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addCotSeguimiento(CotSeguimiento $l)
+	{
+		if ($this->collCotSeguimientos === null) {
+			$this->initCotSeguimientos();
+		}
+		if (!in_array($l, $this->collCotSeguimientos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotSeguimientos, $l);
+			$l->setCotizacion($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cotizacion is new, it will return
+	 * an empty collection; or if this Cotizacion has previously
+	 * been saved, it will retrieve related CotSeguimientos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Cotizacion.
+	 */
+	public function getCotSeguimientosJoinCotProducto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotSeguimientos === null) {
+			if ($this->isNew()) {
+				$this->collCotSeguimientos = array();
+			} else {
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelectJoinCotProducto($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+			if (!isset($this->lastCotSeguimientoCriteria) || !$this->lastCotSeguimientoCriteria->equals($criteria)) {
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelectJoinCotProducto($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotSeguimientoCriteria = $criteria;
+
+		return $this->collCotSeguimientos;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Cotizacion is new, it will return
+	 * an empty collection; or if this Cotizacion has previously
+	 * been saved, it will retrieve related CotSeguimientos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Cotizacion.
+	 */
+	public function getCotSeguimientosJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotSeguimientos === null) {
+			if ($this->isNew()) {
+				$this->collCotSeguimientos = array();
+			} else {
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+			if (!isset($this->lastCotSeguimientoCriteria) || !$this->lastCotSeguimientoCriteria->equals($criteria)) {
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotSeguimientoCriteria = $criteria;
+
+		return $this->collCotSeguimientos;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -3104,12 +3434,18 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collCotSeguimientos) {
+				foreach ((array) $this->collCotSeguimientos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
 		$this->collCotProductos = null;
 		$this->collCotContinuacions = null;
 		$this->collCotSeguros = null;
 		$this->collCotArchivos = null;
+		$this->collCotSeguimientos = null;
 			$this->aContacto = null;
 			$this->aNotTarea = null;
 			$this->aUsuario = null;

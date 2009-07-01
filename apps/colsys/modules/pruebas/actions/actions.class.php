@@ -40,7 +40,7 @@ class pruebasActions extends sfActions {
 	}
 	
 	public function executeSendEmail() {
-		//exit("detenido");
+		exit("detenido");
 		$c = new Criteria ( );
 		/*$c->add ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:01", Criteria::GREATER_THAN );
 		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:00", Criteria::LESS_THAN );
@@ -55,9 +55,9 @@ class pruebasActions extends sfActions {
 		//$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
 		//$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
 		
-		$c->add( EmailPeer::CA_IDEMAIL, 240411);
-		$c->addOr( EmailPeer::CA_IDEMAIL, 240610);
-		$c->addOr( EmailPeer::CA_IDEMAIL, 240656);
+		$c->add( EmailPeer::CA_IDEMAIL, 256626);
+		/*$c->addOr( EmailPeer::CA_IDEMAIL, 240610);
+		$c->addOr( EmailPeer::CA_IDEMAIL, 240656);*/
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
 			
 		$i = 0;
@@ -90,8 +90,8 @@ class pruebasActions extends sfActions {
 			echo "Subject" . $email->getCaSubject () . "<br />";
 			
 			if( !$email->getCaBodyHtml() ){
-				$email->setCaBodyHtml( "Este mensaje se reenvia por problemas de visualizacion en env&acute;os anteriores <br />Si usted ya lo recibi&oacute; por favor haga caso omiso de este mensaje<br /><br />".$email->getCaBody() );
-				
+				/*"Este mensaje se reenvia por problemas de visualizacion en env&acute;os anteriores <br />Si usted ya lo recibi&oacute; por favor haga caso omiso de este mensaje<br /><br />".*/
+				$email->setCaBodyHtml( $email->getCaBody() );				
 				$email->setCaBody("");
 			}
 			
@@ -2622,6 +2622,58 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 	}
 	
 	
+	
+	/*
+	Actualiza la etapa en las cotizaciones
+	*/
+	public function executeActEtapaCotizaciones(){
+		set_time_limit(0);
+		$c = new Criteria();
+		$c->add( CotProductoPeer::CA_ESTADO, null, Criteria::ISNOTNULL );
+		$c->add( CotProductoPeer::CA_ETAPA, null, Criteria::ISNULL );
+		$productos = CotProductoPeer::doSelect( $c );
+		
+		foreach( $productos as $producto ){
+		
+			switch( $producto->getCaEstado() ){
+				case "En seguimiento  ":
+					$etapa = "SEG";
+					break;
+				case "Negocio asignado":
+					$etapa = "APR";
+					break;
+				case "No aprobada     ":
+					$etapa = "NAP";
+					break;
+				
+			}
+			
+			if( $etapa!="SEG" ){
+			
+				$cotizacion = $producto->getCotizacion();
+				$seguimiento = new CotSeguimiento();
+				$seguimiento->setCaIdcotizacion( $producto->getCaIdcotizacion() );
+				$seguimiento->setCaIdproducto( $producto->getCaIdproducto() );		
+				$seguimiento->setCaLogin( $cotizacion->getCausuario() );
+				$seguimiento->setCaFchseguimiento( time() );
+				if(  $producto->getCaMotivonoaprobado() ){
+					$seguimiento->setCaSeguimiento( $producto->getCaMotivonoaprobado() );
+				}
+				
+				
+				
+				$seguimiento->setCaEtapa( $etapa );
+				$seguimiento->save();
+			}
+			$producto->setCaEtapa( $etapa );
+			$producto->save();
+			
+			
+			
+		}
+		
+		$this->setTemplate("blank");
+	}
 	
 	
 	

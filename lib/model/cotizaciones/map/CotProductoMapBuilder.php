@@ -108,9 +108,9 @@ class CotProductoMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_POSTULARLINEA', 'CaPostularlinea', 'BOOLEAN', false, null);
 
-		$tMap->addColumn('CA_ESTADO', 'CaEstado', 'VARCHAR', false, null);
+		$tMap->addColumn('CA_ETAPA', 'CaEtapa', 'VARCHAR', false, null);
 
-		$tMap->addColumn('CA_MOTIVONOAPROBADO', 'CaMotivonoaprobado', 'VARCHAR', false, null);
+		$tMap->addForeignKey('CA_IDTAREA', 'CaIdtarea', 'INTEGER', 'notificaciones.tb_tareas', 'CA_IDTAREA', false, null);
 
 	} // doBuild()
 

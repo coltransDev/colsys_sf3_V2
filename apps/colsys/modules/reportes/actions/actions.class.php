@@ -121,7 +121,7 @@ class reportesActions extends sfActions
 				}
 				//$logins = array("abotero");
 				$tarea->setAsignaciones( $logins );	
-				//$tarea->notificar();			
+				$tarea->notificar();			
 				
 				$reporte->setCaIdtareaRext( $tarea->getCaIdtarea() );
 				$reporte->save();
@@ -191,21 +191,14 @@ class reportesActions extends sfActions
 			$newTarea = $tarea->copy();
 			$newTarea->save();
 			$newTarea->setAsignaciones( $logins );		
-							
-			$asignacion = new RepAsignacion();
-			$asignacion->setCaIdreporte( $reporte->getCaIdreporte() );			
-			$asignacion->setCaIdtarea( $newTarea->getCaIdtarea() );
-			$asignacion->save();
-			$this->asignaciones[] = $asignacion;
-			//$newTarea->notificar();				
+					
+			$this->asignaciones[] = $logins;
+			$newTarea->notificar();				
 						
 		}
 		
-		$this->gruposVerReporte = $grupos;
-		
-		
-		
-		//$this->redirect( "/reportes/verReporte?id=".$reporte->getCaIdreporte() );
+		$this->gruposVerReporte = $grupos;		
+		$this->reporte = $reporte;		
 	}
 }
 

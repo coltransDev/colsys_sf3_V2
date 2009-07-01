@@ -15,7 +15,8 @@ var record = Ext.data.Record.create([
 	{name: 'trayecto', type: 'string'},
 	{name: 'usuario', type: 'string'},
 	{name: 'estado', type: 'string'},	
-	{name: 'motivonoaprobado', type: 'string'}
+	{name: 'seguimiento', type: 'string'},
+	{name: 'etapa', type: 'string'},
 	
 ]);
    		
@@ -75,6 +76,15 @@ var colModel = new Ext.grid.ColumnModel({
 			hideable: false,		
 			dataIndex: 'usuario'
 		}
+		,		
+		{
+			header: "Etapa",
+			width: 30,
+			sortable: true,	
+			hideable: false,
+			hidden: true,				
+			dataIndex: 'etapa'
+		}
 		,
 		{
 			header: "Estado",
@@ -90,10 +100,10 @@ var colModel = new Ext.grid.ColumnModel({
 						selectOnFocus: true,																									
 						listClass: 'x-combo-list-small',
 						mode: 'local',
-						valueField:'valor',
+						valueField:'etapa',
 						displayField:'valor',
 						store :  new Ext.data.SimpleStore({
-								fields: ['valor', 'valor'],
+								fields: ['etapa', 'valor'],
 								data : [
 									<?
 									$i = 0;								
@@ -102,7 +112,7 @@ var colModel = new Ext.grid.ColumnModel({
 											echo ",";
 										}
 									?>
-										['<?=$estado->getCaValor()?>', '<?=$estado->getCaValor()?>']
+										['<?=$estado->getCaValor()?>', '<?=$estado->getCaValor2()?>']
 									<?
 									}
 									?>
@@ -116,53 +126,16 @@ var colModel = new Ext.grid.ColumnModel({
 		}
 		,
 		{
-			header: "Motivo no aprobado",
+			header: "Seguimiento",
 			width: 30,
 			sortable: true,	
 			hideable: false,		
-			dataIndex: 'motivonoaprobado',			
-			editor: new Ext.form.TextField()
-			/*editor: new Ext.form.ComboBox({								
-						//typeAhead: false,
-						forceSelection : false,
-						//triggerAction: 'all',
-						hideTrigger : true, 
-						emptyText:'',
-						//selectOnFocus: true,																									
-						listClass: 'x-combo-list-small',
-										
-						store :   [
-									<?
-									$i = 0;								
-									foreach( $motivos as $motivo ){
-										if($i++!=0){
-											echo ",";
-										}
-									?>
-										['<?=$motivo->getCaValor()?>', '<?=$motivo->getCaValor()?>']
-									<?
-									}
-									?>
-									]
-						
-						
-						
-						
-					})*/
+			dataIndex: 'seguimiento',			
+			editor: new Ext.form.TextField()			
 		}
 		
 				
-	],	
-	isCellEditable: function(colIndex, rowIndex) {	
-		var record = store.getAt(rowIndex);
-		var field = this.getDataIndex(colIndex);
-		
-		if( field=="motivonoaprobado" && record.data.estado!="No aprobada" ){
-			return false;
-		}
-		
-		return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, colIndex, rowIndex);		
-	}
+	]
 	
 });
 
@@ -179,7 +152,7 @@ function guardarCambios(){
 	//Validacion
 	for( var i=0; i< lenght; i++){
 		r = records[i];			
-		if(r.data.estado=="No aprobada" && r.data.motivonoaprobado==""){
+		if(r.data.estado=="No Aprobada" && r.data.seguimiento==""){
 			alert("Por favor indique el motivo por el cual la cotización no fue aprobada en todos los casos");
 			return false;
 		}
@@ -192,7 +165,8 @@ function guardarCambios(){
 		
 		changes['idcotizacion']=r.data.idcotizacion;
 		changes['idproducto']=r.data.idproducto;
-											
+		changes['etapa']=r.data.etapa;	
+		changes['seguimiento']=r.data.seguimiento;								
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   
@@ -217,10 +191,23 @@ function guardarCambios(){
 }
 
 
-var gridAfterEdit = function( e ){
-	if( e.field=="estado" && e.record.data.estado!="No aprobado" ){
-		e.record.set("motivonoaprobado", "");
-	} 
+var gridValidateEdit = function( e ){	
+	var rec = e.record;		   
+	var ed = this.colModel.getCellEditor(e.column, e.row);		
+	var store = ed.field.store;
+	if( e.field == "estado"){
+		store.each( function( r ){	    		
+				if( r.data.etapa==e.value ){									
+					rec.set("etapa", r.data.etapa );
+					e.value = r.data.valor;								
+					return true;
+				}
+			}
+		);	
+	}else{
+		return true;
+	}	
+	
 }
 	
 /*
@@ -265,7 +252,8 @@ var panel = new Ext.grid.EditorGridPanel({
 		
 	}),
 	listeners:{
-		 afteredit : gridAfterEdit
+		validateedit: gridValidateEdit
+		
 	}
 });
 

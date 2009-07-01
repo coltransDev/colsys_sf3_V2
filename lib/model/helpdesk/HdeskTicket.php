@@ -31,6 +31,13 @@ class HdeskTicket extends BaseHdeskTicket
 		return array_unique( $loginsAsignaciones );
 	}
 	
+	public function getLastResponse(){
+		$c = new Criteria();
+		$c->add( HdeskResponsePeer::CA_IDTICKET, $this->getCaIdticket() );
+		$c->addDescendingOrderByColumn( HdeskResponsePeer::CA_CREATEDAT );
+		return HdeskResponsePeer::doSelectOne( $c );
+	}
+	
 	
 	public function getTareaSeguimiento(){
 				

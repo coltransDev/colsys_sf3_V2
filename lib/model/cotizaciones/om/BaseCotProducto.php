@@ -153,16 +153,16 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	protected $ca_postularlinea;
 
 	/**
-	 * The value for the ca_estado field.
+	 * The value for the ca_etapa field.
 	 * @var        string
 	 */
-	protected $ca_estado;
+	protected $ca_etapa;
 
 	/**
-	 * The value for the ca_motivonoaprobado field.
-	 * @var        string
+	 * The value for the ca_idtarea field.
+	 * @var        int
 	 */
-	protected $ca_motivonoaprobado;
+	protected $ca_idtarea;
 
 	/**
 	 * @var        Cotizacion
@@ -175,6 +175,11 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	protected $aTransportador;
 
 	/**
+	 * @var        NotTarea
+	 */
+	protected $aNotTarea;
+
+	/**
 	 * @var        array CotOpcion[] Collection to store aggregation of CotOpcion objects.
 	 */
 	protected $collCotOpcions;
@@ -183,6 +188,16 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	 * @var        Criteria The criteria used to select the current contents of collCotOpcions.
 	 */
 	private $lastCotOpcionCriteria = null;
+
+	/**
+	 * @var        array CotSeguimiento[] Collection to store aggregation of CotSeguimiento objects.
+	 */
+	protected $collCotSeguimientos;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collCotSeguimientos.
+	 */
+	private $lastCotSeguimientoCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -485,23 +500,23 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [ca_estado] column value.
+	 * Get the [ca_etapa] column value.
 	 * 
 	 * @return     string
 	 */
-	public function getCaEstado()
+	public function getCaEtapa()
 	{
-		return $this->ca_estado;
+		return $this->ca_etapa;
 	}
 
 	/**
-	 * Get the [ca_motivonoaprobado] column value.
+	 * Get the [ca_idtarea] column value.
 	 * 
-	 * @return     string
+	 * @return     int
 	 */
-	public function getCaMotivonoaprobado()
+	public function getCaIdtarea()
 	{
-		return $this->ca_motivonoaprobado;
+		return $this->ca_idtarea;
 	}
 
 	/**
@@ -1011,44 +1026,48 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	} // setCaPostularlinea()
 
 	/**
-	 * Set the value of [ca_estado] column.
+	 * Set the value of [ca_etapa] column.
 	 * 
 	 * @param      string $v new value
 	 * @return     CotProducto The current object (for fluent API support)
 	 */
-	public function setCaEstado($v)
+	public function setCaEtapa($v)
 	{
 		if ($v !== null) {
 			$v = (string) $v;
 		}
 
-		if ($this->ca_estado !== $v) {
-			$this->ca_estado = $v;
-			$this->modifiedColumns[] = CotProductoPeer::CA_ESTADO;
+		if ($this->ca_etapa !== $v) {
+			$this->ca_etapa = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_ETAPA;
 		}
 
 		return $this;
-	} // setCaEstado()
+	} // setCaEtapa()
 
 	/**
-	 * Set the value of [ca_motivonoaprobado] column.
+	 * Set the value of [ca_idtarea] column.
 	 * 
-	 * @param      string $v new value
+	 * @param      int $v new value
 	 * @return     CotProducto The current object (for fluent API support)
 	 */
-	public function setCaMotivonoaprobado($v)
+	public function setCaIdtarea($v)
 	{
 		if ($v !== null) {
-			$v = (string) $v;
+			$v = (int) $v;
 		}
 
-		if ($this->ca_motivonoaprobado !== $v) {
-			$this->ca_motivonoaprobado = $v;
-			$this->modifiedColumns[] = CotProductoPeer::CA_MOTIVONOAPROBADO;
+		if ($this->ca_idtarea !== $v) {
+			$this->ca_idtarea = $v;
+			$this->modifiedColumns[] = CotProductoPeer::CA_IDTAREA;
+		}
+
+		if ($this->aNotTarea !== null && $this->aNotTarea->getCaIdtarea() !== $v) {
+			$this->aNotTarea = null;
 		}
 
 		return $this;
-	} // setCaMotivonoaprobado()
+	} // setCaIdtarea()
 
 	/**
 	 * Indicates whether the columns in this object are only set to default values.
@@ -1109,8 +1128,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			$this->ca_datosag = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
 			$this->ca_idlinea = ($row[$startcol + 20] !== null) ? (int) $row[$startcol + 20] : null;
 			$this->ca_postularlinea = ($row[$startcol + 21] !== null) ? (boolean) $row[$startcol + 21] : null;
-			$this->ca_estado = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
-			$this->ca_motivonoaprobado = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+			$this->ca_etapa = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_idtarea = ($row[$startcol + 23] !== null) ? (int) $row[$startcol + 23] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1148,6 +1167,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		}
 		if ($this->aTransportador !== null && $this->ca_idlinea !== $this->aTransportador->getCaIdlinea()) {
 			$this->aTransportador = null;
+		}
+		if ($this->aNotTarea !== null && $this->ca_idtarea !== $this->aNotTarea->getCaIdtarea()) {
+			$this->aNotTarea = null;
 		}
 	} // ensureConsistency
 
@@ -1190,8 +1212,12 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 			$this->aCotizacion = null;
 			$this->aTransportador = null;
+			$this->aNotTarea = null;
 			$this->collCotOpcions = null;
 			$this->lastCotOpcionCriteria = null;
+
+			$this->collCotSeguimientos = null;
+			$this->lastCotSeguimientoCriteria = null;
 
 		} // if (deep)
 	}
@@ -1297,6 +1323,13 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				$this->setTransportador($this->aTransportador);
 			}
 
+			if ($this->aNotTarea !== null) {
+				if ($this->aNotTarea->isModified() || $this->aNotTarea->isNew()) {
+					$affectedRows += $this->aNotTarea->save($con);
+				}
+				$this->setNotTarea($this->aNotTarea);
+			}
+
 			if ($this->isNew() ) {
 				$this->modifiedColumns[] = CotProductoPeer::CA_IDPRODUCTO;
 			}
@@ -1321,6 +1354,14 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 			if ($this->collCotOpcions !== null) {
 				foreach ($this->collCotOpcions as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collCotSeguimientos !== null) {
+				foreach ($this->collCotSeguimientos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1410,6 +1451,12 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->aNotTarea !== null) {
+				if (!$this->aNotTarea->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aNotTarea->getValidationFailures());
+				}
+			}
+
 
 			if (($retval = CotProductoPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
@@ -1418,6 +1465,14 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 				if ($this->collCotOpcions !== null) {
 					foreach ($this->collCotOpcions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collCotSeguimientos !== null) {
+					foreach ($this->collCotSeguimientos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1524,10 +1579,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				return $this->getCaPostularlinea();
 				break;
 			case 22:
-				return $this->getCaEstado();
+				return $this->getCaEtapa();
 				break;
 			case 23:
-				return $this->getCaMotivonoaprobado();
+				return $this->getCaIdtarea();
 				break;
 			default:
 				return null;
@@ -1572,8 +1627,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			$keys[19] => $this->getCaDatosag(),
 			$keys[20] => $this->getCaIdlinea(),
 			$keys[21] => $this->getCaPostularlinea(),
-			$keys[22] => $this->getCaEstado(),
-			$keys[23] => $this->getCaMotivonoaprobado(),
+			$keys[22] => $this->getCaEtapa(),
+			$keys[23] => $this->getCaIdtarea(),
 		);
 		return $result;
 	}
@@ -1672,10 +1727,10 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 				$this->setCaPostularlinea($value);
 				break;
 			case 22:
-				$this->setCaEstado($value);
+				$this->setCaEtapa($value);
 				break;
 			case 23:
-				$this->setCaMotivonoaprobado($value);
+				$this->setCaIdtarea($value);
 				break;
 		} // switch()
 	}
@@ -1723,8 +1778,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[19], $arr)) $this->setCaDatosag($arr[$keys[19]]);
 		if (array_key_exists($keys[20], $arr)) $this->setCaIdlinea($arr[$keys[20]]);
 		if (array_key_exists($keys[21], $arr)) $this->setCaPostularlinea($arr[$keys[21]]);
-		if (array_key_exists($keys[22], $arr)) $this->setCaEstado($arr[$keys[22]]);
-		if (array_key_exists($keys[23], $arr)) $this->setCaMotivonoaprobado($arr[$keys[23]]);
+		if (array_key_exists($keys[22], $arr)) $this->setCaEtapa($arr[$keys[22]]);
+		if (array_key_exists($keys[23], $arr)) $this->setCaIdtarea($arr[$keys[23]]);
 	}
 
 	/**
@@ -1758,8 +1813,8 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(CotProductoPeer::CA_DATOSAG)) $criteria->add(CotProductoPeer::CA_DATOSAG, $this->ca_datosag);
 		if ($this->isColumnModified(CotProductoPeer::CA_IDLINEA)) $criteria->add(CotProductoPeer::CA_IDLINEA, $this->ca_idlinea);
 		if ($this->isColumnModified(CotProductoPeer::CA_POSTULARLINEA)) $criteria->add(CotProductoPeer::CA_POSTULARLINEA, $this->ca_postularlinea);
-		if ($this->isColumnModified(CotProductoPeer::CA_ESTADO)) $criteria->add(CotProductoPeer::CA_ESTADO, $this->ca_estado);
-		if ($this->isColumnModified(CotProductoPeer::CA_MOTIVONOAPROBADO)) $criteria->add(CotProductoPeer::CA_MOTIVONOAPROBADO, $this->ca_motivonoaprobado);
+		if ($this->isColumnModified(CotProductoPeer::CA_ETAPA)) $criteria->add(CotProductoPeer::CA_ETAPA, $this->ca_etapa);
+		if ($this->isColumnModified(CotProductoPeer::CA_IDTAREA)) $criteria->add(CotProductoPeer::CA_IDTAREA, $this->ca_idtarea);
 
 		return $criteria;
 	}
@@ -1868,9 +1923,9 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 
 		$copyObj->setCaPostularlinea($this->ca_postularlinea);
 
-		$copyObj->setCaEstado($this->ca_estado);
+		$copyObj->setCaEtapa($this->ca_etapa);
 
-		$copyObj->setCaMotivonoaprobado($this->ca_motivonoaprobado);
+		$copyObj->setCaIdtarea($this->ca_idtarea);
 
 
 		if ($deepCopy) {
@@ -1881,6 +1936,12 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			foreach ($this->getCotOpcions() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addCotOpcion($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getCotSeguimientos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotSeguimiento($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2031,6 +2092,57 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aTransportador;
+	}
+
+	/**
+	 * Declares an association between this object and a NotTarea object.
+	 *
+	 * @param      NotTarea $v
+	 * @return     CotProducto The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setNotTarea(NotTarea $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdtarea(NULL);
+		} else {
+			$this->setCaIdtarea($v->getCaIdtarea());
+		}
+
+		$this->aNotTarea = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the NotTarea object, it will not be re-added.
+		if ($v !== null) {
+			$v->addCotProducto($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated NotTarea object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     NotTarea The associated NotTarea object.
+	 * @throws     PropelException
+	 */
+	public function getNotTarea(PropelPDO $con = null)
+	{
+		if ($this->aNotTarea === null && ($this->ca_idtarea !== null)) {
+			$c = new Criteria(NotTareaPeer::DATABASE_NAME);
+			$c->add(NotTareaPeer::CA_IDTAREA, $this->ca_idtarea);
+			$this->aNotTarea = NotTareaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNotTarea->addCotProductos($this);
+			 */
+		}
+		return $this->aNotTarea;
 	}
 
 	/**
@@ -2249,6 +2361,272 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collCotSeguimientos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotSeguimientos()
+	 */
+	public function clearCotSeguimientos()
+	{
+		$this->collCotSeguimientos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotSeguimientos collection (array).
+	 *
+	 * By default this just sets the collCotSeguimientos collection to an empty array (like clearcollCotSeguimientos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initCotSeguimientos()
+	{
+		$this->collCotSeguimientos = array();
+	}
+
+	/**
+	 * Gets an array of CotSeguimiento objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this CotProducto has previously been saved, it will retrieve
+	 * related CotSeguimientos from storage. If this CotProducto is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array CotSeguimiento[]
+	 * @throws     PropelException
+	 */
+	public function getCotSeguimientos($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotSeguimientos === null) {
+			if ($this->isNew()) {
+			   $this->collCotSeguimientos = array();
+			} else {
+
+				$criteria->add(CotSeguimientoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				CotSeguimientoPeer::addSelectColumns($criteria);
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(CotSeguimientoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				CotSeguimientoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastCotSeguimientoCriteria) || !$this->lastCotSeguimientoCriteria->equals($criteria)) {
+					$this->collCotSeguimientos = CotSeguimientoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastCotSeguimientoCriteria = $criteria;
+		return $this->collCotSeguimientos;
+	}
+
+	/**
+	 * Returns the number of related CotSeguimiento objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotSeguimiento objects.
+	 * @throws     PropelException
+	 */
+	public function countCotSeguimientos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collCotSeguimientos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotSeguimientoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$count = CotSeguimientoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotSeguimientoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				if (!isset($this->lastCotSeguimientoCriteria) || !$this->lastCotSeguimientoCriteria->equals($criteria)) {
+					$count = CotSeguimientoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotSeguimientos);
+				}
+			} else {
+				$count = count($this->collCotSeguimientos);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a CotSeguimiento object to this object
+	 * through the CotSeguimiento foreign key attribute.
+	 *
+	 * @param      CotSeguimiento $l CotSeguimiento
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addCotSeguimiento(CotSeguimiento $l)
+	{
+		if ($this->collCotSeguimientos === null) {
+			$this->initCotSeguimientos();
+		}
+		if (!in_array($l, $this->collCotSeguimientos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotSeguimientos, $l);
+			$l->setCotProducto($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this CotProducto is new, it will return
+	 * an empty collection; or if this CotProducto has previously
+	 * been saved, it will retrieve related CotSeguimientos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in CotProducto.
+	 */
+	public function getCotSeguimientosJoinCotizacion($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotSeguimientos === null) {
+			if ($this->isNew()) {
+				$this->collCotSeguimientos = array();
+			} else {
+
+				$criteria->add(CotSeguimientoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelectJoinCotizacion($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotSeguimientoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+
+			$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+			if (!isset($this->lastCotSeguimientoCriteria) || !$this->lastCotSeguimientoCriteria->equals($criteria)) {
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelectJoinCotizacion($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotSeguimientoCriteria = $criteria;
+
+		return $this->collCotSeguimientos;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this CotProducto is new, it will return
+	 * an empty collection; or if this CotProducto has previously
+	 * been saved, it will retrieve related CotSeguimientos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in CotProducto.
+	 */
+	public function getCotSeguimientosJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotProductoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotSeguimientos === null) {
+			if ($this->isNew()) {
+				$this->collCotSeguimientos = array();
+			} else {
+
+				$criteria->add(CotSeguimientoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+
+				$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotSeguimientoPeer::CA_IDPRODUCTO, $this->ca_idproducto);
+
+			$criteria->add(CotSeguimientoPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+			if (!isset($this->lastCotSeguimientoCriteria) || !$this->lastCotSeguimientoCriteria->equals($criteria)) {
+				$this->collCotSeguimientos = CotSeguimientoPeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotSeguimientoCriteria = $criteria;
+
+		return $this->collCotSeguimientos;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -2265,11 +2643,18 @@ abstract class BaseCotProducto extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collCotSeguimientos) {
+				foreach ((array) $this->collCotSeguimientos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
 		$this->collCotOpcions = null;
+		$this->collCotSeguimientos = null;
 			$this->aCotizacion = null;
 			$this->aTransportador = null;
+			$this->aNotTarea = null;
 	}
 
 } // BaseCotProducto

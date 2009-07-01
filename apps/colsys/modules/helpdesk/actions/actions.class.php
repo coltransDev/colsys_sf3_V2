@@ -72,8 +72,9 @@ class helpdeskActions extends sfActions
 				
 				$criterion = $c->getNewCriterion( HdeskTicketPeer::CA_TITLE , "LOWER(".HdeskTicketPeer::CA_TITLE.") LIKE '%". strtolower($criterio)."%'", Criteria::CUSTOM );								
 				$criterion->addOr($c->getNewCriterion( HdeskTicketPeer::CA_TEXT , "LOWER(".HdeskTicketPeer::CA_TEXT.") LIKE '%". strtolower($criterio)."%'", Criteria::CUSTOM ));			
-				$c->add($criterion);		
+				$c->add($criterion);						
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );
+				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_IDPROJECT );
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_ACTION );
 				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );		
 				
@@ -116,6 +117,7 @@ class helpdeskActions extends sfActions
 				}
 				
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );
+				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_IDPROJECT );
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_ACTION );
 				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );							
 					
@@ -135,7 +137,8 @@ class helpdeskActions extends sfActions
 				
 				$c->add( HdeskTicketPeer::CA_ACTION, "Abierto" );
 				
-				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );				
+				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );	
+				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_IDPROJECT );			
 				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );					
 				break;
 		}
@@ -459,7 +462,9 @@ class helpdeskActions extends sfActions
 		}
 			
 		$ticket->setCaIdgroup( $request->getParameter("area") );
-		$ticket->setCaIdProject( $request->getParameter("project") );
+		if( $request->getParameter("project") ){
+			$ticket->setCaIdProject( $request->getParameter("project") );
+		}
 		$ticket->setCaTitle( utf8_decode($request->getParameter("title")) );
 		$ticket->setCaText( utf8_decode($request->getParameter("text")) );
 		

@@ -65,6 +65,8 @@ class Utils{
 	
 	public static function fechaMes($fecha){
 		$newfecha = Utils::parseDate($fecha);
+		
+
 		$mes = substr($newfecha,5,2);
 		return Utils::getMonth($mes)."-".substr($newfecha,8,2)."-".substr($newfecha,0,4);
 	}

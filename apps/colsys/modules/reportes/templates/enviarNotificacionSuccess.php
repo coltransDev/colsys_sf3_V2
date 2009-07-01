@@ -2,6 +2,8 @@
 <h1>Se ha enviado una notificación a los siguientes destinatarios:</h1>
 <br />
 
+<h3><?=link_to( "<h3>haga click aca para volver</h3>","/reportes/verReporte?id=".$reporte->getCaIdreporte() );?></h3>
+
 <table width="50%" border="0" class="tableList">
 
 <tr>
@@ -47,5 +49,8 @@ foreach( $gruposCrearReporte as $login ){
 }
 ?>
 </table>
+
+
+
 
 </div>

@@ -170,21 +170,21 @@ if( !sfConfig::get("app_smtp_user") ){
 		<td width="50%" >				
 			 <div align="left"><b>Reporte:</b><br /><?=$reporte->getCaConsecutivo()." V".$reporte->getCaVersion()?></div>		</td>	
 	</tr>
-	<?
-	if($user->getIdSucursal()=="BOG"){
-	?>
+	
 	<tr>
 		<td valign="top"><div align="left"><b>Remitente:</b>
 			<?
-			echo $form['remitente']->renderError(); 			
-			echo $form['remitente']->render();		
-			?>		
+			if($user->getIdSucursal()=="BOG" && $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaImpoexpo()==Constantes::IMPO ){			
+				echo $form['remitente']->renderError(); 			
+				echo $form['remitente']->render();					
+			}else{
+				echo $usuario->getCaNombre()." &lt;".$usuario->getCaEmail()."&gt;";
+			}
+			?>	
 		</div></td>
 		<td valign="top"><div align="left">&nbsp;</div></td>
 	</tr>
-	<?
-	}
-	?>
+	
 	<tr>
 		<td valign="top">
 			<div align="left"><b>Enviar a: </b><br />

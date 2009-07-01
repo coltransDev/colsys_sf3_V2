@@ -15,6 +15,7 @@ if (!$usuario) {
 
 	
 ?>
+<div class="content">
 <div id="panel1" align="left"></div>
 <div id="panel2" align="left"></div>
 <script language="javascript" type="text/javascript">
@@ -558,4 +559,4 @@ Ext.onReady(function(){
     
 });
 </script>
-
+</div>

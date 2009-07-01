@@ -20,7 +20,6 @@ if( $sucursal ){
 <table width="300" border="1" class="tableList">
 	<tr>
 		<th scope="col">Estado</th>
-		<th scope="col">Motivo</th>
 		<th scope="col">Cantidad de trayectos</th>
 	</tr>
 	<?
@@ -29,8 +28,7 @@ if( $sucursal ){
 	
 	?>	
 	<tr>
-		<td><?=$row["ca_estado"]?></td>
-		<td><?=$row["ca_motivonoaprobado"]?></td>
+		<td><?=$row["ca_etapa"]?></td>
 		<td><?=$row["count"]?></td>
 	</tr>	
 	<?	
@@ -40,7 +38,6 @@ if( $sucursal ){
 	
 	<tr>
 		<td><b>Total</b></td>
-		<td>&nbsp;</td>
 		<td><?=$total?></td>
 	</tr>
 </table>

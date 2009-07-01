@@ -11,7 +11,7 @@
 class cotizacionesActions extends sfActions
 {
 	
-	const RUTINA = "12";
+	const RUTINA = 12;
 	/*************************************************************************
 	* OPCIONES GENERALES
 	*

@@ -31,16 +31,26 @@ class traficosActions extends sfActions
 		
 		if( $this->modo=="maritimo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_MARITIMO );
+			
+			$this->impoexpo=Constantes::IMPO;
+			$this->transporte=Constantes::MARITIMO;
 		}		
 		if( $this->modo=="aereo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_AEREO );
+			$this->impoexpo=Constantes::IMPO;
+			$this->transporte=Constantes::AEREO;
 		}		
 		if( $this->modo=="expo" ){
 			$this->nivel = $this->getUser()->getNivelAcceso( traficosActions::RUTINA_EXPO );
+			$this->impoexpo=Constantes::EXPO;
+			$this->transporte=null;
 		}		
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}			
+				
+		
+		
 	}
 	
 	/**
@@ -370,7 +380,7 @@ class traficosActions extends sfActions
 		$this->files=$this->reporte->getFiles();
 				
 		
-		
+		$this->usuario = UsuarioPeer::retrieveByPk( $this->getuser()->getUserId() );
 			
 	}
 	

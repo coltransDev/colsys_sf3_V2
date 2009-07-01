@@ -2146,8 +2146,8 @@ class pricingActions extends sfActions
 		if( !$notificacion ){
 			$notificacion = new PricNotificacion();
 		}
-		$notificacion->setCaTitulo($titulo);
-		$notificacion->setCaMensaje($mensaje);
+		$notificacion->setCaTitulo(utf8_decode($titulo));
+		$notificacion->setCaMensaje(utf8_decode($mensaje));
 		$notificacion->setCaCaducidad($caducidad);
 		$notificacion->setCaUsucreado($user->getUserId());
 		

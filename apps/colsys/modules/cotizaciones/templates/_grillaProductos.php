@@ -445,7 +445,7 @@ var crearVentanaProducto=function( record ){
 		}),
 
 		buttons: [{
-			text     : 'Guardar',
+			text     : 'Guardar',			
 			handler: function(){
 				var fp = Ext.getCmp("producto-form");									
 				if( fp.getForm().isValid() ){
@@ -1049,6 +1049,10 @@ function guardarGridProductos(){
 		}
 	}
 	
+	var numResponses = 0;
+	
+	Ext.getCmp('guardarbtn').disable();
+	
 	for( var i=0; i< lenght; i++){
 		r = records[i];					
 		var changes = r.getChanges();
@@ -1086,7 +1090,7 @@ function guardarGridProductos(){
 					rec.commit();	
 					
 					//Se coloca el id del padre en la bd
-					storeProductos.each( function(r){
+					storeProductos.each( function(r){						
 						if(r.data.parent == rec.data.parent && r.data.tipo=="recargo"  ){							
 							r.set("idopcion", res.idopcion );		
 						}
@@ -1095,7 +1099,8 @@ function guardarGridProductos(){
 			 }
 		); 		
 	}	
-	
+	Ext.getCmp('guardarbtn').enable();
+		
 }
 
 /*
@@ -1237,7 +1242,8 @@ var grid_productos = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el tarifario',
 		iconCls: 'disk',  // reference to our css
-		handler: guardarItems
+		handler: guardarItems,
+		id     : 'guardarbtn'
 	},
 	{
 		text: 'Agregar trayecto',

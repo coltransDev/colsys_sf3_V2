@@ -11,7 +11,9 @@
 class cotseguimientosActions extends sfActions
 {
 
-	const RUTINA = 19;
+	const RUTINA = 12;
+	
+	
 	/**
 	* Executes index action
 	*
@@ -41,7 +43,8 @@ class cotseguimientosActions extends sfActions
 		$c->addAscendingOrderByColumn( SucursalPeer::CA_NOMBRE );
 		$this->sucursales = SucursalPeer::doSelect( $c );
 		
-		$this->estados = ParametroPeer::retrieveByCaso( "CU068" );		
+		$this->estados = ParametroPeer::retrieveByCaso( "CU074" );		
+		
 	}
 	
 	/*
@@ -51,6 +54,8 @@ class cotseguimientosActions extends sfActions
 	*/
 	public function executeListadoCotizaciones($request)
 	{		
+		$this->nivel = $this->getUser()->getNivelAcceso( cotseguimientosActions::RUTINA );
+		
 		if( $request->getParameter("fechaInicialCons") ){
 			$fechaInicialCons = Utils::parseDate($request->getParameter("fechaInicialCons"));
 		}else{
@@ -66,7 +71,8 @@ class cotseguimientosActions extends sfActions
 		$checkboxConsecutivo = $request->getParameter("checkboxConsecutivo");
 		$checkboxSucursal = $request->getParameter("checkboxSucursal");
 		$checkboxVendedor = $request->getParameter("checkboxVendedor");
-		if( $checkboxConsecutivo || $checkboxSucursal || $checkboxVendedor ){			
+
+		if( $this->nivel>=1 || ($checkboxConsecutivo || $checkboxSucursal || $checkboxVendedor) ){			
 			$login = $this->getRequestParameter("login");
 			$sucursal = $this->getRequestParameter("sucursal");
 			$consecutivo = $this->getRequestParameter("consecutivo");
@@ -94,10 +100,11 @@ class cotseguimientosActions extends sfActions
 		
 		$c->add( CotizacionPeer::CA_CONSECUTIVO, null, Criteria::ISNOTNULL );
 		
+				
 		if( $estadoCons ){
-			$c->add( CotProductoPeer::CA_ESTADO , $estadoCons  );	
+			$c->add( CotProductoPeer::CA_ETAPA , $estadoCons  );	
 		}else{
-			$c->add( CotProductoPeer::CA_ESTADO , Cotizacion::EN_SEGUIMIENTO  );
+			$c->add( CotProductoPeer::CA_ETAPA , Cotizacion::EN_SEGUIMIENTO  );
 		}
 		
 		if( $fechaInicialCons ){
@@ -137,7 +144,17 @@ class cotseguimientosActions extends sfActions
 					$trayecto .= " » ".$linea->getCaNombre();
 				}
 				
-				
+				$estado = $producto->getEtapa();
+				$ultSeguimiento = $producto->getUltSeguimiento();
+				if( $ultSeguimiento ){
+					
+					$etapa = $ultSeguimiento->getCaEtapa();
+					$seguimiento = $ultSeguimiento->getCaSeguimiento();
+				}else{
+					
+					$etapa = "";
+					$seguimiento = "";
+				}
 				
 				$this->data[] = array("id"=>$cotizacion->getCaIdCotizacion()."-".$producto->getCaIdProducto(),				
 									"idcotizacion"=>$cotizacion->getCaIdCotizacion(),
@@ -149,14 +166,14 @@ class cotseguimientosActions extends sfActions
 									"consecutivo"=>str_pad($cotizacion->getCaConsecutivo(),5,"0",STR_PAD_LEFT),
 									"cliente"=>utf8_encode($cliente->getCaCompania()),									
 									"usuario"=>$cotizacion->getCaUsuario(),
-									"estado"=>$producto->getCaEstado(),
-									"motivonoaprobado"=>$producto->getCaMotivonoaprobado()				
+									"etapa"=>utf8_encode($etapa),
+									"estado"=>utf8_encode($estado),
+									"seguimiento"=>utf8_encode($seguimiento)
 							);
 			}
 		} 
 				
-		$this->estados = ParametroPeer::retrieveByCaso( "CU068" );
-		$this->motivos = ParametroPeer::retrieveByCaso( "CU069" );					
+		$this->estados = ParametroPeer::retrieveByCaso( "CU074" );						
 	}
 	/**
 	* guarda los cambios realizados en la grilla
@@ -167,16 +184,27 @@ class cotseguimientosActions extends sfActions
 		$cotproducto = CotProductoPeer::retrieveByPk( $request->getParameter("idproducto"),$request->getParameter("idcotizacion") );
 		$this->forward404Unless( $cotproducto );
 		
+		$etapa = $request->getparameter( "etapa" );
 		$estado = $request->getparameter( "estado" );
-		$motivonoaprobado = $request->getparameter( "motivonoaprobado" );
-		if( $estado ){
-			$cotproducto->setCaEstado( $estado );			
+		$seguimientoTxt = $request->getparameter( "seguimiento" );
+		if( $etapa ){
+			
+			$seguimiento = new CotSeguimiento();
+			$seguimiento->setCaIdcotizacion( $cotproducto->getCaIdcotizacion() );
+			$seguimiento->setCaIdproducto( $cotproducto->getCaIdProducto()  );		
+			$seguimiento->setCaLogin( $this->getUser()->getUserId() );
+			$seguimiento->setCaFchseguimiento( time() );
+			if( $seguimiento!==null ){		
+				$seguimiento->setCaSeguimiento( utf8_decode($seguimientoTxt) );
+			}
+			$seguimiento->setCaEtapa( $etapa );
+			$seguimiento->save();	
+			$cotproducto->setCaEtapa( $etapa );	
+			$cotproducto->save();			
 		}
 		
-		if( $motivonoaprobado!==null ){
-			$cotproducto->setCaMotivonoaprobado( utf8_decode($motivonoaprobado) );			
-		}
-		$cotproducto->save();
+		
+		
 		$this->responseArray = array( "success"=>true,"idcotizacion"=>$cotproducto->getCaIdcotizacion(), "idproducto"=>$cotproducto->getCaIdproducto() );
 		$this->setTemplate( "responseTemplate" );		
 	}
@@ -190,7 +218,7 @@ class cotseguimientosActions extends sfActions
 		$fechaInicial = Utils::parseDate($request->getParameter("fechaInicial"));
 		$fechaFinal = Utils::parseDate($request->getParameter("fechaFinal"));
 	
-		$sql="SELECT count(*) as count, ca_estado, ca_motivonoaprobado FROM (".CotizacionPeer::TABLE_NAME." INNER JOIN ".CotProductoPeer::TABLE_NAME." ON ".CotizacionPeer::CA_IDCOTIZACION."=".CotProductoPeer::CA_IDCOTIZACION." ) INNER JOIN ".UsuarioPeer::TABLE_NAME." ON ".CotizacionPeer::CA_USUARIO."=".UsuarioPeer::CA_LOGIN." ";
+		$sql="SELECT count(*) as count, ca_etapa FROM (".CotizacionPeer::TABLE_NAME." INNER JOIN ".CotProductoPeer::TABLE_NAME." ON ".CotizacionPeer::CA_IDCOTIZACION."=".CotProductoPeer::CA_IDCOTIZACION." ) INNER JOIN ".UsuarioPeer::TABLE_NAME." ON ".CotizacionPeer::CA_USUARIO."=".UsuarioPeer::CA_LOGIN." ";
 		$sql.=" WHERE ".CotizacionPeer::CA_FCHCREADO." BETWEEN '".$fechaInicial."' AND '".$fechaFinal."' AND ca_estado IS NOT NULL ";
 		
 		
@@ -213,7 +241,7 @@ class cotseguimientosActions extends sfActions
 			$this->sucursal = "";
 		}
 		
-		$sql.=" GROUP BY ca_estado, ca_motivonoaprobado";		
+		$sql.=" GROUP BY ca_etapa";		
 		//print_r( $_POST );
 		
 		$con = Propel::getConnection(CotizacionPeer::DATABASE_NAME);
@@ -225,7 +253,100 @@ class cotseguimientosActions extends sfActions
 		
 	}
 	
-
+	
+	
+	public function executeVerSeguimiento( $request ){
+		$this->cotizacion = CotizacionPeer::retrieveByPk( $request->getParameter("idcotizacion") );
+		$this->forward404Unless( $this->cotizacion );
+		
+		
+		$this->productos = $this->cotizacion->getCotProductos();
+			
+		/*
+		*/
+	}
+	
+	
+	public function executeFormSeguimiento( $request ){
+		$this->cotizacion = CotizacionPeer::retrieveByPk( $request->getParameter("idcotizacion") );
+		$this->forward404Unless( $this->cotizacion );
+		
+		$this->producto = CotProductoPeer::retrieveByPk( $request->getParameter("idproducto"), $request->getParameter("idcotizacion") );
+		$this->forward404Unless( $this->producto );
+		
+		$this->ultSeguimiento = $this->producto->getUltSeguimiento();
+		$this->form = new SeguimientoForm();				
+		$this->form->setCriteriaEtapas( ParametroPeer::getCriteriaByCu( "CU074" ) );	
+		$this->form->configure();
+		
+		if ($request->isMethod('post')){	
+		
+			$bindValues = array();
+			$bindValues["seguimiento"] = $request->getParameter("seguimiento"); 
+			$bindValues["etapa"] = $request->getParameter("etapa"); 			
+			$bindValues["prog_seguimiento"] = $request->getParameter("prog_seguimiento");
+			if( $request->getParameter("prog_seguimiento") ){
+				$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");				
+			}
+			
+			$this->form->bind( $bindValues );
+			
+			if( $this->form->isValid() ){					
+				$this->executeGuardarSeguimiento( $request );				
+				return sfView::SUCCESS;
+			}				
+		}
+	}
+	
+	public function executeGuardarSeguimiento( $request ){
+		$cotizacion = CotizacionPeer::retrieveByPk( $request->getParameter("idcotizacion") );
+		$this->forward404Unless( $cotizacion );
+		
+		$producto = CotProductoPeer::retrieveByPk( $request->getParameter("idproducto"), $request->getParameter("idcotizacion") );
+		$this->forward404Unless( $producto );
+		
+		if( $producto->getCaIdtarea() ){
+			$tarea  = NotTareaPeer::retrieveByPk( $producto->getCaIdtarea() );
+			$tarea->setCaFchterminada( time() );
+			$tarea->save();
+		}
+		
+		
+		$seguimiento = new CotSeguimiento();
+		$seguimiento->setCaIdcotizacion( $cotizacion->getCaIdcotizacion() );
+		$seguimiento->setCaIdproducto( $request->getParameter("idproducto") );		
+		$seguimiento->setCaLogin( $this->getUser()->getUserId() );
+		$seguimiento->setCaFchseguimiento( time() );
+		$seguimiento->setCaSeguimiento( $request->getParameter("seguimiento") );
+		$seguimiento->setCaEtapa( $request->getParameter("etapa") );
+		$seguimiento->save();
+		
+		if( $request->getParameter("prog_seguimiento") ){
+			
+			$titulo = "Seguimiento Cotización ".$cotizacion->getCaConsecutivo()." ".$cotizacion->getCliente()->getCaCompania()."";
+			$texto = "Ha programado un seguimiento para una cotización, por favor haga click en el link para realizar esta tarea";			
+			$tarea = new NotTarea(); 
+			$tarea->setCaUrl( "/cotseguimientos/verSeguimiento/idcotizacion/".$cotizacion->getCaIdcotizacion() );
+			$tarea->setCaIdlistatarea( 7 );
+			$tarea->setCaFchcreado( time() );								
+			$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
+			$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );
+			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+			$tarea->setCaTitulo( $titulo );		
+			$tarea->setCaTexto( $texto );
+			$tarea->save();
+			$loginsAsignaciones = array( $this->getUser()->getUserId() );
+			$tarea->setAsignaciones( $loginsAsignaciones );	
+			
+			
+			$producto->setCaIdtarea( $tarea->getCaIdtarea() );
+			$producto->save();
+				
+		}	
+		
+		$this->redirect( "cotseguimientos/verSeguimiento?idcotizacion=".$this->cotizacion->getCaIdcotizacion() );
+	}
+	
 
 }
 ?>

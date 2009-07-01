@@ -10,12 +10,25 @@ if( !$session_id ){
 	exit("");
 }
 
+
+
+require( '../../../config/ProjectConfiguration.class.php' );
+
+$config = '../../../config/databases.yml';
+$databaseConfig = sfYaml::load($config);	
+
+
 $database = "Coltrans"; 
 
+$dsn = $databaseConfig['all']['propel']['param']['dsn'];
 
-$usuarioDb = "Administrador";
-$password = "sistemassrv";
-$servidor = "localhost";
+
+$dsn =  substr( $dsn,  strpos( $dsn, "dbname")+7 );
+$principal = substr( $dsn, 0,  strpos( $dsn, ";") );
+$servidor = substr( $dsn,  strlen( $principal )+6 );
+$usuarioDb = $databaseConfig['all']['propel']['param']['username'];
+$password = $databaseConfig['all']['propel']['param']['password'];
+
 
 /*
 $usuarioDb = "Administrador";
@@ -23,7 +36,7 @@ $password = "cglti\$col91";
 $servidor = "10.192.1.127";
 */
 
-$principal = "Coltrans";
+
 
 if( isset($programa) ){ //Si esta definido quiere decir que esta en una opcion del menu
 	$nivel = -1;

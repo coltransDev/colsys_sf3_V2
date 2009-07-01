@@ -9,7 +9,7 @@
  */ 
 class Cotizacion extends BaseCotizacion
 {	
-	const EN_SEGUIMIENTO = "En seguimiento";  
+	const EN_SEGUIMIENTO = "SEG";  
 	const TIEMPO_IDG_ENTREGA_OPORTUNA = 43200; //12 h  
 	
 	public function getId(){

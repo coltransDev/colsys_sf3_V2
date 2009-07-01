@@ -2,6 +2,9 @@
 <?
 $numtickets = count( $tickets );
 $grupo = null;
+$lastProject = null;
+$project = null;
+
 for( $i =0 ; $i<$numtickets; $i++ ){
 	$ticket = $tickets[$i];
 	
@@ -23,10 +26,12 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 			<th width="69">Usuario</th>
 			<th width="72">Fecha</th>
 			<th width="58">Tipo</th>
-			<th width="58">Proyecto</th>
+			
 			<th width="110">Prioridad</th>
 			<th width="110">Asignado a</th>
-			<th width="132">Fecha Respuesta </th>
+			<th width="95">Fecha Respuesta </th>
+			<th width="95">Fecha ult.seguimiento </th>
+			
 			<th width="88">Estado</th>
 		  </tr>    
 		  <?
@@ -50,33 +55,50 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 			$class="pink";
 		}
 	}
+	
+	
+	if( $ticket->getHdeskProject() ){
+		$project = $ticket->getHdeskProject()->getCaName();
+	}else{
+		$project = "";
+	}
+		
+	if(  $lastProject!=$project || $lastProject===null ){
+		$lastProject = $project;
+  ?>   
+  <tr class="row0">
+  	<td colspan="10"><b>
+	<?
+		if( $ticket->getHdeskProject() ){			
+			
+			if( $nivel>0 ){
+				echo link_to($project ,"helpdesk/listaTickets?opcion=personalizada&project=".$ticket->getHdeskProject()->getCaIdproject());
+			}else{
+				echo $project;
+			}
+		}else{			
+			echo "Sin proyecto asignado";
+		}
+		?></b>
+	</td>
+  </tr>
+  <?
+  }
   ?>
+  
   <tr class="<?=$class?>">
     <td><?=link_to($ticket->getCaIdticket(),"helpdesk/verTicket?id=".$ticket->getCaIdticket())?></td>
     <td><?=link_to($ticket->getCaTitle(),"helpdesk/verTicket?id=".$ticket->getCaIdticket())?></td>
     <td><?=$ticket->getCaLogin()?></td>
     <td><?=Utils::fechaMes($ticket->getCaOpened("Y-m-d"))?></td>
     <td><?=$ticket->getCaType()?></td>
-	<td>
-		<?
-		if( $ticket->getHdeskProject() ){
-			$project = $ticket->getHdeskProject()->getCaName();
-			if( $nivel>0 ){
-				echo link_to($project ,"helpdesk/listaTickets?opcion=personalizada&project=".$ticket->getHdeskProject()->getCaIdproject());
-			}else{
-				echo $project;
-			}
-		}else{
-			echo "&nbsp;";
-		}
-		
-		?></td>
+	
 	<td><?=$ticket->getCaPriority()?></td>
 	<td>
 		<?	
 		echo $ticket->getCaAssignedto();
-		?>
-	</td>
+		?>	</td>
+	
     <td>
 		<?
 		$tarea = $ticket->getNotTarea(); 
@@ -88,7 +110,18 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 			$ticketsSinRespuesta++;
 			
 		}			
-		?></td>
+		?>
+	</td>
+	<td>
+		<?
+		$response = $ticket->getLastResponse();
+		if( $response ){			
+			echo Utils::fechaMes($response->getCaCreatedat("Y-m-d"))." ".$response->getCaCreatedat("H:i");
+		}else{
+			echo "&nbsp;";
+		}
+		?>
+	</td>	
     <td><?=$ticket->getCaAction()?> <?=$nivel>0&&$ticket->getCaAction()=="Abierto"?link_to("Cerrar","helpdesk/cerrarTicket?id=".$ticket->getCaidticket() ):""?></td>
   </tr> 
 	<?
