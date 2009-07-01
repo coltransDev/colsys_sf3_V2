@@ -1,0 +1,79 @@
+
+<!-- ONE STEP TO INSTALL USER PLUGINS:
+
+   1.  Put the coding into the BODY of your HTML document  -->
+
+<!-- STEP ONE: Copy this code into the BODY of your HTML document  -->
+
+<BODY>
+
+<CENTER>
+<SCRIPT LANGUAGE="JavaScript">
+
+<!-- This script and many more are available free online at -->
+<!-- The JavaScript Source!! http://javascript.internet.com -->
+
+<!-- Begin
+numPlugins = navigator.plugins.length;
+if (numPlugins > 0)
+document.writeln("<b><font size=+3>Installed plug-ins</font></b><br>");
+else
+document.writeln("<b><font size=+2>No plug-ins ");
+document.writeln("are installed.</font></b><br>");
+document.writeln("<hr>");
+for (i = 0; i < numPlugins; i++) {
+plugin = navigator.plugins[i];
+document.write("<center><font size=+1><b>");
+document.write(plugin.name);
+document.writeln("</b></font></center><br>");
+document.writeln("<dl>");
+document.writeln("<dd>File name:");
+document.write(plugin.filename);
+document.write("<dd><br>");
+document.write(plugin.description);
+document.writeln("</dl>");
+document.writeln("<p>");
+document.writeln("<table width=100% border=2 cellpadding=5>");
+document.writeln("<tr>");
+document.writeln("<th width=20%><font size=-1>Mime Type</font></th>");
+document.writeln("<th width=50%><font size=-1>Description</font></th>");
+document.writeln("<th width=20%><font size=-1>Suffixes</font></th>");
+document.writeln("<th><font size=-1>Enabled</th>");
+document.writeln("</tr>");
+numTypes = plugin.length;
+for (j = 0; j < numTypes; j++) {
+mimetype = plugin[j];
+if (mimetype) {
+enabled = "No";
+enabledPlugin = mimetype.enabledPlugin;
+if (enabledPlugin && (enabledPlugin.name == plugin.name))
+enabled = "Yes";
+document.writeln("<tr align=center>");
+document.writeln("<td>");
+document.write(mimetype.type);
+document.writeln("</td>");
+document.writeln("<td>");
+document.write(mimetype.description);
+document.writeln("</td>");
+document.writeln("<td>");
+document.write(mimetype.suffixes);
+document.writeln("</td>");
+document.writeln("<td>");
+document.writeln(enabled);
+document.writeln("</td>");
+document.writeln("</tr>");
+   }
+}
+document.write("</table>");
+document.write("<p><hr><p>");
+}
+// End -->
+</SCRIPT>
+</CENTER>
+
+<p><center>
+<font face="arial, helvetica" size="-2">Free JavaScripts provided<br>
+by <a href="http://javascriptsource.com">The JavaScript Source</a></font>
+</center><p>
+
+<!-- Script Size:  2.31 KB  -->

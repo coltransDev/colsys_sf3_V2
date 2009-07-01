@@ -1,0 +1,270 @@
+
+---------- AGENTES.PHP
+
+---------- AGENTES_CONS.PHP
+
+---------- CIUDADES.PHP
+
+---------- CLIENTES.PHP
+[356]			 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fchcompromiso' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- CLIENTES_ADM.PHP
+[364]			 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fchcompromiso' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- COLUMNAS.PHP
+
+---------- COMISIONES.PHP
+
+---------- CONCEPTOS.PHP
+
+---------- CONCLIENTE.PHP
+
+---------- CONCLIENTE_ADM.PHP
+
+---------- CONFIRMACIONES.PHP
+[58]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[59]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[288]		        echo "  <TD Class=mostrar>Fecha Confirmación:<BR><INPUT TYPE='TEXT' NAME='fchconfirmacion' VALUE='".$rs->Value('ca_fchconfirmacion')."' SIZE=12 ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[291]		        echo "  <TD Class=mostrar>Fecha Registro:<BR><INPUT TYPE='TEXT' NAME='fchregistroadu' VALUE='".$rs->Value('ca_fchregistroadu')."' SIZE=12 ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[297]		        echo "  <TD Class=mostrar>Fecha Desconsolidación:<BR><INPUT TYPE='TEXT' NAME='fchdesconsolidacion' VALUE='".$rs->Value('ca_fchdesconsolidacion')."' SIZE=12 ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- CONTACTOS.PHP
+
+---------- CONTRASENA.PHP
+
+---------- COSTOS.PHP
+
+---------- COTIZACION.PHP
+
+---------- COTIZACIONES.PHP
+[331]			 echo "  <TD Class=listar><INPUT TYPE='TEXT' NAME='fchcotizacion' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[446]			 echo "  <TD Class=listar><INPUT TYPE='TEXT' NAME='fchcotizacion' SIZE=12 VALUE='".$rs->Value('ca_fchcotizacion')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- COTIZACIONES_OLD.PHP
+[476]		     echo "  <TD Class=mostrar COLSPAN=2><B>Fecha de Cotización :</B><BR><CENTER><INPUT TYPE='TEXT' READONLY NAME='fchcotizacion' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+
+---------- EMAILLIB.PHP
+
+---------- ENCCLIENTE.PHP
+[250]			 echo "  <TD Class=mostrar COLSPAN=2>Fecha de la Visita : <INPUT TYPE='TEXT' NAME='fchvisita' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- ENTRADA.PHP
+
+---------- FINDCLIENTE.PHP
+
+---------- FINDCONTACTO.PHP
+
+---------- FINDCOTIZACION.PHP
+
+---------- FINDTERCERO.PHP
+
+---------- FINDTRAYECTO.PHP
+
+---------- FLETES.PHP
+[292]             echo "  <TD Class=mostrar style='text-align: center;'><B>Inicio Vigencia:</B><BR><INPUT TYPE='TEXT' NAME='fchinicio' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[293]             echo "  <TD Class=mostrar style='text-align: center;'><B>Final Vigencia:</B><BR><INPUT TYPE='TEXT' NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[407]             echo "  <TD Class=mostrar style='text-align: center;'><B>Inicio Vigencia:</B><BR><INPUT TYPE='TEXT' NAME='fchinicio' SIZE=12 VALUE='".$rs->Value('ca_fchinicio')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[408]             echo "  <TD Class=mostrar style='text-align: center;'><B>Final Vigencia:</B><BR><INPUT TYPE='TEXT' NAME='fchvencimiento' SIZE=12 VALUE='".$rs->Value('ca_fchvencimiento')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- GASTOS.PHP
+
+---------- GRASUCURSALFCL.PHP
+
+---------- GRASUCURSALLCL.PHP
+
+---------- GRATRAFICOS.PHP
+
+---------- GRATRAFICOSFCL.PHP
+
+---------- GRATRAFICOSLCL.PHP
+
+---------- GRAUTILIDAD.PHP
+
+---------- GRUPOS.PHP
+
+---------- INDICE.PHP
+
+---------- INOSEA.PHP
+[59]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[60]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[537]			 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fchcompromiso' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[623]			 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fchcompromiso' SIZE=12 VALUE='".$rs->Value('ca_fchcompromiso')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[792]             echo "  <TD Class=listar>Fecha Factura:<BR><INPUT TYPE='TEXT' NAME='fchfactura' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[930]             echo "  <TD Class=listar>Fecha Factura:<BR><INPUT TYPE='TEXT' NAME='fchfactura' VALUE='".$rs->Value('ca_fchfactura')."' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1133]             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' NAME='fchfactura[]' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1140]             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' NAME='fchfactura[]' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1147]             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' NAME='fchfactura[]' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1278]	             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' NAME='fchfactura[]' VALUE='".$rs->Value('ca_fchfactura')."' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1288]             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' NAME='fchfactura[]' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1588]             echo "  <TD Class=mostrar COLSPAN=2>Fecha de Registro : <INPUT TYPE='TEXT' NAME='fchreferencia' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1621]             echo "  <TD Class=mostrar>Fecha Estim.Embarque:<BR><INPUT TYPE='TEXT' NAME='fchembarque' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1622]             echo "  <TD Class=mostrar>Fecha Estim.Arribo:<BR><INPUT TYPE='TEXT' NAME='fcharribo' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1841]             echo "  <TD Class=mostrar COLSPAN=2>Fecha de Registro : <INPUT TYPE='TEXT' NAME='fchreferencia' SIZE=12 VALUE='".$rs->Value('ca_fchreferencia')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1890]             echo "  <TD Class=mostrar>Fecha Estim.Embarque:<BR><INPUT TYPE='TEXT' NAME='fchembarque' VALUE='".$rs->Value('ca_fchembarque')."' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[1891]             echo "  <TD Class=mostrar>Fecha Estim.Arribo:<BR><INPUT TYPE='TEXT' NAME='fcharribo' VALUE='".$rs->Value('ca_fcharribo')."' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- INOSEA_ABRIR.PHP
+[58]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[59]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- INOSEA_CONS.PHP
+[58]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[59]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- INOSEA_GERE.PHP
+[58]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[59]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- LIBERACIONES.PHP
+
+---------- LIBERACIONES_CONS.PHP
+
+---------- LOGIN.PHP
+
+---------- MONEDAS.PHP
+
+---------- OLDREPORTEVTAS.PHP
+
+---------- PLANILLAS.PHP
+[126]             echo "  <TD Class=mostrar>Inicio de vigencia<BR><INPUT TYPE='TEXT' NAME='fchinicio' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[127]             echo "  <TD Class=mostrar>Vencimiento<BR><INPUT TYPE='TEXT' NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- RECARGOS.PHP
+[156]             echo "  <TD Class=mostrar>Inicio<BR><INPUT TYPE='TEXT' DISABLED NAME='fchinicio' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[157]             echo "  <TD Class=mostrar>Vencimiento<BR><INPUT TYPE='TEXT' DISABLED NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[336]             echo "  <TD Class=mostrar>Inicio<BR><INPUT TYPE='TEXT' ".($rs->Value('ca_aplicacion')=='Permanente'?'DISABLED':'')." NAME='fchinicio' SIZE=12 VALUE='".$rs->Value('ca_fchinicio')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[337]             echo "  <TD Class=mostrar>Vencimiento<BR><INPUT TYPE='TEXT' ".($rs->Value('ca_aplicacion')=='Permanente'?'DISABLED':'')." NAME='fchvencimiento' SIZE=12 VALUE='".$rs->Value('ca_fchvencimiento')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- RECARGOSXTRAF.PHP
+[329]             echo "  <TD Class=listar>Inicio<BR><INPUT TYPE='TEXT' DISABLED NAME='fchinicio' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[330]             echo "  <TD Class=listar>Vencimiento<BR><INPUT TYPE='TEXT' DISABLED NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[536]             echo "  <TD Class=mostrar>Inicio<BR><INPUT TYPE='TEXT' ".($rs->Value('ca_aplicacion')=='Permanente'?'DISABLED':'')." NAME='fchinicio' SIZE=12 VALUE='".$rs->Value('ca_fchinicio')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[537]             echo "  <TD Class=mostrar>Vencimiento<BR><INPUT TYPE='TEXT' ".($rs->Value('ca_aplicacion')=='Permanente'?'DISABLED':'')." NAME='fchvencimiento' SIZE=12 VALUE='".$rs->Value('ca_fchvencimiento')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- RECARGOS_CONS.PHP
+
+---------- REPAUDITORIA.PHP
+
+---------- REPCARGA.PHP
+
+---------- REPCOMISIONES.PHP
+
+---------- REPFACTURACION.PHP
+
+---------- REPGERENCIA.PHP
+
+---------- REPNAVIERAS.PHP
+
+---------- REPORTEADOR.PHP
+
+---------- REPORTENEGOCIO.PHP
+[62]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[63]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[218]			 echo "  <TD Class=titulo style='text-align:left; vertical-align:top;' ROWSPAN=2>4. Fecha Despacho:<BR><CENTER><INPUT TYPE='TEXT' NAME='fchdespacho' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+[452]			 echo "  <TD Class=titulo style='text-align:left; vertical-align:top;' ROWSPAN=2>4. Fecha Despacho:<BR><CENTER><INPUT TYPE='TEXT' NAME='fchdespacho' SIZE=12 VALUE='".$rs->Value('ca_fchdespacho')."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+
+---------- REPREFERENCIA.PHP
+
+---------- REPRESENTANTES.PHP
+
+---------- REPTRAFICOS.PHP
+
+---------- RESULTADO.PHP
+[2][356]			 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' READONLY NAME='fchcompromiso' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[5][364]			 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' READONLY NAME='fchcompromiso' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[8][58]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' READONLY NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[9][59]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' READONLY NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[10][288]		        echo "  <TD Class=mostrar>Fecha Confirmación:<BR><INPUT TYPE='TEXT' READONLY NAME='fchconfirmacion' VALUE='".$rs->Value('ca_fchconfirmacion')."' SIZE=12 ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[11][291]		        echo "  <TD Class=mostrar>Fecha Registro:<BR><INPUT TYPE='TEXT' READONLY NAME='fchregistroadu' VALUE='".$rs->Value('ca_fchregistroadu')."' SIZE=12 ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[12][297]		        echo "  <TD Class=mostrar>Fecha Desconsolidación:<BR><INPUT TYPE='TEXT' READONLY NAME='fchdesconsolidacion' VALUE='".$rs->Value('ca_fchdesconsolidacion')."' SIZE=12 ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[15][331]			 echo "  <TD Class=listar><INPUT TYPE='TEXT' READONLY NAME='fchcotizacion' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[16][446]			 echo "  <TD Class=listar><INPUT TYPE='TEXT' READONLY NAME='fchcotizacion' SIZE=12 VALUE='".$rs->Value('ca_fchcotizacion')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[19][250]			 echo "  <TD Class=mostrar COLSPAN=2>Fecha de la Visita : <INPUT TYPE='TEXT' READONLY NAME='fchvisita' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[22][292]             echo "  <TD Class=mostrar style='text-align: center;'><B>Inicio Vigencia:</B><BR><INPUT TYPE='TEXT' READONLY NAME='fchinicio' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[23][293]             echo "  <TD Class=mostrar style='text-align: center;'><B>Final Vigencia:</B><BR><INPUT TYPE='TEXT' READONLY NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[24][407]             echo "  <TD Class=mostrar style='text-align: center;'><B>Inicio Vigencia:</B><BR><INPUT TYPE='TEXT' READONLY NAME='fchinicio' SIZE=12 VALUE='".$rs->Value('ca_fchinicio')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[25][408]             echo "  <TD Class=mostrar style='text-align: center;'><B>Final Vigencia:</B><BR><INPUT TYPE='TEXT' READONLY NAME='fchvencimiento' SIZE=12 VALUE='".$rs->Value('ca_fchvencimiento')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[28][59]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' READONLY NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[29][60]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' READONLY NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[30][537]			 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' READONLY NAME='fchcompromiso' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[31][623]			 echo "  <TD Class=mostrar><INPUT TYPE='TEXT' READONLY NAME='fchcompromiso' SIZE=12 VALUE='".$rs->Value('ca_fchcompromiso')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[32][792]             echo "  <TD Class=listar>Fecha Factura:<BR><INPUT TYPE='TEXT' READONLY NAME='fchfactura' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[33][930]             echo "  <TD Class=listar>Fecha Factura:<BR><INPUT TYPE='TEXT' READONLY NAME='fchfactura' VALUE='".$rs->Value('ca_fchfactura')."' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[34][1133]             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' READONLY NAME='fchfactura[]' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[35][1140]             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' READONLY NAME='fchfactura[]' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[36][1147]             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' READONLY NAME='fchfactura[]' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[37][1278]	             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' READONLY NAME='fchfactura[]' VALUE='".$rs->Value('ca_fchfactura')."' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[38][1288]             echo "  <TD Class=mostrar>Fecha Factura:<BR><INPUT TYPE='TEXT' READONLY NAME='fchfactura[]' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[39][1588]//             echo "  <TD Class=mostrar COLSPAN=2>Fecha de Registro : <INPUT TYPE='TEXT' NAME='fchreferencia' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYUP='chkDate(this)' ONKEYPRESS='javascript:if(event.keyCode==13)return false;' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[40][1589]             echo "  <TD Class=mostrar COLSPAN=2>Fecha de Registro : <INPUT TYPE='TEXT' NAME='fchreferencia' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[41][1622]             echo "  <TD Class=mostrar>Fecha Estim.Embarque:<BR><INPUT TYPE='TEXT' READONLY NAME='fchembarque' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[42][1623]             echo "  <TD Class=mostrar>Fecha Estim.Arribo:<BR><INPUT TYPE='TEXT' READONLY NAME='fcharribo' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[43][1842]             echo "  <TD Class=mostrar COLSPAN=2>Fecha de Registro : <INPUT TYPE='TEXT' READONLY NAME='fchreferencia' SIZE=12 VALUE='".$rs->Value('ca_fchreferencia')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[44][1891]             echo "  <TD Class=mostrar>Fecha Estim.Embarque:<BR><INPUT TYPE='TEXT' READONLY NAME='fchembarque' VALUE='".$rs->Value('ca_fchembarque')."' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[45][1892]             echo "  <TD Class=mostrar>Fecha Estim.Arribo:<BR><INPUT TYPE='TEXT' READONLY NAME='fcharribo' VALUE='".$rs->Value('ca_fcharribo')."' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[48][58]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' READONLY NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[49][59]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' READONLY NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[52][58]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' READONLY NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[53][59]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' READONLY NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[56][58]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' READONLY NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[57][59]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' READONLY NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[60][126]             echo "  <TD Class=mostrar>Inicio de vigencia<BR><INPUT TYPE='TEXT' READONLY NAME='fchinicio' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[61][127]             echo "  <TD Class=mostrar>Vencimiento<BR><INPUT TYPE='TEXT' READONLY NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[64][156]             echo "  <TD Class=mostrar>Inicio<BR><INPUT TYPE='TEXT' DISABLED READONLY NAME='fchinicio' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[65][157]             echo "  <TD Class=mostrar>Vencimiento<BR><INPUT TYPE='TEXT' DISABLED READONLY NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[66][336]             echo "  <TD Class=mostrar>Inicio<BR><INPUT TYPE='TEXT' ".($rs->Value('ca_aplicacion')=='Permanente'?'DISABLED':'')." READONLY NAME='fchinicio' SIZE=12 VALUE='".$rs->Value('ca_fchinicio')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[67][337]             echo "  <TD Class=mostrar>Vencimiento<BR><INPUT TYPE='TEXT' ".($rs->Value('ca_aplicacion')=='Permanente'?'DISABLED':'')." READONLY NAME='fchvencimiento' SIZE=12 VALUE='".$rs->Value('ca_fchvencimiento')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[70][329]             echo "  <TD Class=listar>Inicio<BR><INPUT TYPE='TEXT' DISABLED READONLY NAME='fchinicio' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[71][330]             echo "  <TD Class=listar>Vencimiento<BR><INPUT TYPE='TEXT' DISABLED READONLY NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[72][536]             echo "  <TD Class=mostrar>Inicio<BR><INPUT TYPE='TEXT' ".($rs->Value('ca_aplicacion')=='Permanente'?'DISABLED':'')." READONLY NAME='fchinicio' SIZE=12 VALUE='".$rs->Value('ca_fchinicio')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[73][537]             echo "  <TD Class=mostrar>Vencimiento<BR><INPUT TYPE='TEXT' ".($rs->Value('ca_aplicacion')=='Permanente'?'DISABLED':'')." READONLY NAME='fchvencimiento' SIZE=12 VALUE='".$rs->Value('ca_fchvencimiento')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[76][62]	echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' READONLY NAME='fchinicial' SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[77][63]	echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' READONLY NAME='fchfinal' SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[78][218]			 echo "  <TD Class=titulo style='text-align:left; vertical-align:top;' ROWSPAN=2>4. Fecha Despacho:<BR><CENTER><INPUT TYPE='TEXT' READONLY NAME='fchdespacho' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+[79][452]			 echo "  <TD Class=titulo style='text-align:left; vertical-align:top;' ROWSPAN=2>4. Fecha Despacho:<BR><CENTER><INPUT TYPE='TEXT' READONLY NAME='fchdespacho' SIZE=12 VALUE='".$rs->Value('ca_fchdespacho')."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+[82][184]    echo "  <TD Class=mostrar COLSPAN=2><B>Fecha :</B><BR><CENTER><INPUT TYPE='TEXT' READONLY NAME='fchcotizacion' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+[85][184]    echo "  <TD Class=mostrar COLSPAN=2><B>Fecha :</B><BR><CENTER><INPUT TYPE='TEXT' READONLY NAME='fchcotizacion' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+[88][459]             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' READONLY NAME='fchcreado' SIZE=12 VALUE='".date("Y-m-d")."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[95][225]				echo "  <TD Class=mostrar style='text-align: center;'><B>Inicio Vigencia:</B><BR><INPUT TYPE='TEXT' READONLY NAME='fchinicio_f' SIZE=12 VALUE='".$ini_mem."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[96][226]				echo "  <TD Class=mostrar style='text-align: center;'><B>Final Vigencia:</B><BR><INPUT TYPE='TEXT' READONLY NAME='fchvencimiento_f' SIZE=12 VALUE='".$ven_mem."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[97][317]		            echo "  <TD Class=invertir>Inicio<BR><INPUT ID=fchinicio_$j TYPE='TEXT' ".($rs->Value('ca_aplicacion')!='Temporal'?'DISABLED':'')." READONLY NAME='reg_".$rs->Value('ca_oid_r')."[fchinicio]' SIZE=12 VALUE='".$ini_mem."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[98][318]		            echo "  <TD Class=invertir>Vencimiento<BR><INPUT ID=fchvencimiento_$j TYPE='TEXT' ".($rs->Value('ca_aplicacion')!='Temporal'?'DISABLED':'')." READONLY NAME='reg_".$rs->Value('ca_oid_r')."[fchvencimiento]' SIZE=12 VALUE='".$ven_mem."' ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[99][385]		            echo "  <TD Class=imprimir>Inicio<BR><INPUT ID=fchinicio_$z TYPE='TEXT' DISABLED READONLY NAME='reg_nuevo_".$z."[fchinicio]' VALUE='".date(date("Y")."-".date("m")."-"."01")."' SIZE=12 ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[100][386]		            echo "  <TD Class=imprimir>Vencimiento<BR><INPUT ID=fchvencimiento_$z TYPE='TEXT' DISABLED READONLY NAME='reg_nuevo_".$z."[fchvencimiento]' VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' SIZE=12 ONCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- SALIDA.PHP
+
+---------- SEGMENTO.PHP
+
+---------- TARIFARIO.PHP
+[184]    echo "  <TD Class=mostrar COLSPAN=2><B>Fecha :</B><BR><CENTER><INPUT TYPE='TEXT' NAME='fchcotizacion' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+
+---------- TARIFARIO_CONS.PHP
+[184]    echo "  <TD Class=mostrar COLSPAN=2><B>Fecha :</B><BR><CENTER><INPUT TYPE='TEXT' NAME='fchcotizacion' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
+
+---------- TERCEROS.PHP
+
+---------- TIPORECARGO.PHP
+
+---------- TITULO.PHP
+
+---------- TRAFICOS.PHP
+
+---------- TRANSPORCONTAC.PHP
+
+---------- TRANSPORLINEAS.PHP
+
+---------- TRANSPORTISTAS.PHP
+
+---------- TRAYECTOS.PHP
+[459]             echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fchcreado' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- UPTARIFARIO.PHP
+[225]				echo "  <TD Class=mostrar style='text-align: center;'><B>Inicio Vigencia:</B><BR><INPUT TYPE='TEXT' NAME='fchinicio_f' SIZE=12 VALUE='".$ini_mem."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[226]				echo "  <TD Class=mostrar style='text-align: center;'><B>Final Vigencia:</B><BR><INPUT TYPE='TEXT' NAME='fchvencimiento_f' SIZE=12 VALUE='".$ven_mem."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[317]		            echo "  <TD Class=invertir>Inicio<BR><INPUT ID=fchinicio_$j TYPE='TEXT' ".($rs->Value('ca_aplicacion')!='Temporal'?'DISABLED':'')." NAME='reg_".$rs->Value('ca_oid_r')."[fchinicio]' SIZE=12 VALUE='".$ini_mem."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[318]		            echo "  <TD Class=invertir>Vencimiento<BR><INPUT ID=fchvencimiento_$j TYPE='TEXT' ".($rs->Value('ca_aplicacion')!='Temporal'?'DISABLED':'')." NAME='reg_".$rs->Value('ca_oid_r')."[fchvencimiento]' SIZE=12 VALUE='".$ven_mem."' ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[385]		            echo "  <TD Class=imprimir>Inicio<BR><INPUT ID=fchinicio_$z TYPE='TEXT' DISABLED NAME='reg_nuevo_".$z."[fchinicio]' VALUE='".date(date("Y")."-".date("m")."-"."01")."' SIZE=12 ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+[386]		            echo "  <TD Class=imprimir>Vencimiento<BR><INPUT ID=fchvencimiento_$z TYPE='TEXT' DISABLED NAME='reg_nuevo_".$z."[fchvencimiento]' VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' SIZE=12 ONKEYPRESS='chkDate(this)' ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+
+---------- VARIABLES.PHP
