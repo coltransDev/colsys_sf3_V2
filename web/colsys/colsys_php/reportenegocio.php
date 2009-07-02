@@ -2643,7 +2643,9 @@ elseif (isset($accion)) {                                                       
 				 // VARIABLES
 				 $file = str_replace('%20', ' ', $attachment);
 				 // $file_real = $hiddenPath . $category . $file;
-				 $file_real = $attachment;
+				 $file_real = $_FILES['attachment']['tmp_name'];
+							
+				
 				 // echo $_FILES['attachment']['name'];
 			
 				 // HACK ATTEMPT CHECK
@@ -2858,6 +2860,9 @@ elseif (isset($accion)) {                                                       
 			}
 		$consecutivo = $rs->Value('ca_consecutivo');
         echo "<script>document.location.href = '../colsys_sf/index.php/traficos/verEstatusCarga/modo/impo/ver/reporte/numreporte/$consecutivo';</script>";  // Retorna a la pantalla principal de la opción
+		/*
+		 echo "<script>document.location.href = '/traficos/listaStatus/modo/maritimo?reporte=$consecutivo';</script>";  // Retorna a la pantalla principal de la opción
+		*/
      }else if (isset($id)) {
 		echo "<script>document.location.href = 'reportenegocio.php?boton=Consultar\&id=$id';</script>";  // Retorna a la pantalla principal de la opción
 	 }else {
