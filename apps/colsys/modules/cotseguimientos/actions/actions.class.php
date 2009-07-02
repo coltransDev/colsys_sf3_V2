@@ -11,7 +11,7 @@
 class cotseguimientosActions extends sfActions
 {
 
-	const RUTINA = 12;
+	const RUTINA = 19;
 	
 	
 	/**
@@ -320,6 +320,9 @@ class cotseguimientosActions extends sfActions
 		$seguimiento->setCaSeguimiento( $request->getParameter("seguimiento") );
 		$seguimiento->setCaEtapa( $request->getParameter("etapa") );
 		$seguimiento->save();
+		
+		$producto->setCaEtapa( $request->getParameter("etapa") );
+		$producto->save();
 		
 		if( $request->getParameter("prog_seguimiento") ){
 			

@@ -18,6 +18,16 @@ var seleccionarContacto = function(){
 	 
 }
 </script> 
+<?
+if( !sfConfig::get("app_smtp_user") ){
+?>
+<?=image_tag("22x22/alert.gif")?>La autenticación SMTP se encuentra desactivada, es posible que sus mensajes no lleguen al destinatario.
+<br />
+<br />
+<?
+}
+?>
+
 <table width="700px" border="0" cellspacing="0" cellpadding="0" class="tableList">	
 	<tr>
 		<th colspan="2">Nuevo correo Electronico</th>

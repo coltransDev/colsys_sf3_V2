@@ -22,7 +22,7 @@ var crearSeguimiento=function(){
 	?>
 	<tr>
 		<td >				
-		 <div align="left"><?php echo $form->renderGlobalErrors()?></div></td>	
+		 	<div align="left"><?php echo $form->renderGlobalErrors()?></div></td>	
 	</tr>
 	<?
 	}
@@ -30,46 +30,44 @@ var crearSeguimiento=function(){
 	
 	<tr>
 		<td>
-		<b>Etapa</b><br>
-
-		<?		
+			<div align="left"><b>Etapa</b><br>
+				
+						<?		
 		echo $form['etapa']->renderError(); 
 		if( $ultSeguimiento ){
 			 $form->setDefault('etapa', $ultSeguimiento->getCaEtapa() ); 	
 		}
 		echo $form['etapa']->render();
 		?>		
-		</td>
+				</div></td>
 	</tr>
 	<tr>
 		<td>
-		<b>Seguimiento</b><br>
-
-		<?		
+			<div align="left"><b>Seguimiento</b><br>
+				
+						<?		
 		echo $form['seguimiento']->renderError(); 
 		echo $form['seguimiento']->render();
 		?>		
-		</td>
+				</div></td>
 	</tr>
 	
 	<tr>
 		<td ><div align="left"><b>recordar seguimiento:</b>
-			<?
+				<?
 			 echo $form['prog_seguimiento']->renderError(); 
 			 echo $form['prog_seguimiento']->render();
 			 ?>
-			 
-			 </div></td>
+			
+		</div></td>
 	</tr>
 	<tr>
 		<td  id="row_seguimiento"><div align="left"><b>Fecha seguimiento:</b>
-			<?
+				<?
 			echo $form['fchseguimiento']->renderError(); 
 			echo $form['fchseguimiento']->render();
 			?>
-			</div>			
-		
-			</td>
+		</div></td>
 		</tr>
 	<tr>
 		<td>		
@@ -77,8 +75,7 @@ var crearSeguimiento=function(){
 				<input type="submit" value="Guardar" class="button" >	
 				
 				<input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for("cotseguimientos/verSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion())?>'" >				
-			</div>
-		</td>
+			</div>		</td>
 	</tr>
 </table>
 </form>

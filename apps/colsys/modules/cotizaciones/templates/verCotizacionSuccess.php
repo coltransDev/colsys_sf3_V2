@@ -5,8 +5,8 @@ $enBlanco = $cotizacion->enBlanco();
 
 ?>
 
-<div align="center"> 
-<script language="javascript">
+<div align="center">  
+<script language="javascript" type="text/javascript">
 	function showEmailForm(){
 		if( document.getElementById('emailForm').style.display=="none"){ 
 			document.getElementById('emailForm').style.display="inline"
@@ -14,18 +14,23 @@ $enBlanco = $cotizacion->enBlanco();
 			document.getElementById('emailForm').style.display="none"
 		}
 	}
+	
+	function verificarInfo(){
+		if( document.getElementById("checkObservaciones").value == "1" ){
+			if( document.getElementById("observaciones_idg").value =="" ){
+				alert( "Por favor indique el motivo por el cual sobrepaso el limite de tiempo establecido" );
+				return false;
+			}
+		}
+		return  true;
+	}
+	
 </script>
 <div id="emailForm"  style="display:<?=$enBlanco?"inline":"none"?>;">
-	<form name="form1" id="form1" method="post" action="<?=url_for("cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion())?>">
-	<?
-	//echo form_tag( "cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion() ); 
-	/*echo form_remote_tag(array("url"=>"cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion(), 
-								"update"=>"emailForm",
-								 'loading'  => visual_effect('appear', 'indicator'),
-							    'complete' => visual_effect('fade', 'indicator')							
-							
-						 ));*/
-						 
+	<form name="form1" id="form1" method="post" action="<?=url_for("cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion())?>" onsubmit="return verificarInfo()">
+		<input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
+	
+	<?					 
 	$contactos = $cotizacion->getContacto()->getCaEmail();					 
 		
 	if( $contactos &&  $cotizacion->getCliente()->getCaConfirmar() ){
@@ -91,6 +96,11 @@ $enBlanco = $cotizacion->enBlanco();
 					$diff = $tarea->getTiempoRestante( $festivos );					
 					if( substr($diff, 0,1)=="-" ){
 						echo "<span class='rojo'>".$diff."</span>";
+						?>
+						<script language="javascript" type="text/javascript">
+							document.getElementById("checkObservaciones").value = "1";
+						</script>
+						<?
 					}else{
 						echo $diff;			
 					}
@@ -100,7 +110,7 @@ $enBlanco = $cotizacion->enBlanco();
 			<tr>
 				<td>
 					Observaciones
-					<input type="text" value="<?=$tarea->getCaObservaciones()?>" name="observaciones_idg" size="100" />
+					<input type="text" value="<?=$tarea->getCaObservaciones()?>" name="observaciones_idg" id="observaciones_idg" size="100" />
 				</td>
 			</tr>		
 		</table>	

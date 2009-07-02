@@ -13,14 +13,14 @@ if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
 	$saludoAviso = $saludo.'\n\nPor medio de la presente estamos confirmando la salida  de la carga de los señores  '.$reporte->getConsignatario().' como  sigue:';
 }
 
-$saludo = "Respetado cliente ";	
+/*$saludo = $textos['saludo'];	
 if( date("G")<12 ){
 	$saludo .= "buenos días:"; 
 }elseif( date("G")<18 ){
 	$saludo .= "buenas tardes:"; 
 }else{
 	$saludo .= "buenas noches:"; 
-}
+}*/
 
 
 
@@ -111,7 +111,7 @@ var mostrar=function( oid ){
 		}
 		?>
 		default:
-			var val = '<?=str_replace("\n", "<br />", $saludo)?>';
+			var val = '<?=str_replace("\n", "<br />", $textos['saludo']	)?>';
 			document.form1.introduccion.value = val.split("<br />").join("\n");				
 			break;
 	}
@@ -565,7 +565,7 @@ if( !sfConfig::get("app_smtp_user") ){
 		<td colspan="2"><div align="left"><b>Introducci&oacute;n al mensaje:</b><br />
 			<?
 			echo $form['introduccion']->renderError(); 
-			$form->setDefault('introduccion', $saludo ); 
+			$form->setDefault('introduccion', $textos['saludo'] ); 
 			echo $form['introduccion']->render();
 			
 			?>		
@@ -609,7 +609,7 @@ if( !sfConfig::get("app_smtp_user") ){
 				?>
 				<input type="checkbox" name="attachments[]" value="<?=base64_encode($file)?>"  <?=$option?> />  
 				<?
-				echo mime_type_icon( basename($file) )." ".link_to(basename( $file ), url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) ) )."</br>";				
+				echo mime_type_icon( basename($file) )." ".link_to(basename( $file ), url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) ) )."<br />";				
 			}
 			?>
 				</div></td>

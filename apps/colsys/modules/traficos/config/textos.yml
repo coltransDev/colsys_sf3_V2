@@ -1,5 +1,7 @@
 #Recuerde identar correctamente las notas y los correspondientes espacios entre renglones 
 #RECOMENDACION USE NOTEPAD++ PARA EDITAR ESTE ARCHIVO 
+saludo: |
+  Estimado cliente, reciba un cordial saludo
 
 mensajeEmbarqueMaritimo: |
   - FAVOR TENER EN CUENTA QUE LA FECHA DE ARRIBO ES UN ESTIMADO. TAN PRONTO EL BUQUE LLEGUE A PUERTO, NUESTRO DEPARTAMENTO OPERATIVO MARITIMO LES NOTIFICARÁ.

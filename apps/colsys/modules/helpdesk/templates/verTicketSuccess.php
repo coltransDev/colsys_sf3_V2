@@ -181,16 +181,21 @@ $proyecto = $ticket->getHdeskProject();
 			include_component("helpdesk", "listaRespuestasTicket", array("idticket"=>$ticket->getCaIdticket()) );
 			?>			  
 			</div>
+			<?
+			if( $ticket->getCaAction()=="Abierto" ){
+			?>
 			 <div class="story_coment" id="coment_status_txt" style="display:none" >
 				<textarea rows="1" cols="180" id="coment_status_field" onkeyup="autoGrow(this)" onfocus="autoGrow(this)"></textarea>
 				<br />
 				
 				<b><a onclick="guardar_comentario( <?=$ticket->getCaIdticket()?> )"><?=image_tag("16x16/button_ok.gif")?> Guardar</b></a> <b><a onclick="cancelar_comentar()"> <?=image_tag("16x16/button_cancel.gif")?> Cancelar</a></b>
-			</div>	
+			</div>				
 			<div class="story_coment" id="coment_status" onclick="comentar()">
 				<b> <?=image_tag("16x16/edit_add.gif")?> Respuesta</b>
 			</div>	
-			  
+			 <?
+			 }
+			 ?> 
 		</div>	  </td>
   </tr> 
 </table>

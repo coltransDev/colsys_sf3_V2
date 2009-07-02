@@ -2676,8 +2676,31 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 	}
 	
 	
-	
-	
+	public function executeFixFchconfirmacion(){
+		$sql = "select * from tb_repstatus inner join tb_inoavisos_sea on tb_repstatus.ca_idemail = tb_inoavisos_sea.ca_idemail
+	inner join tb_inomaestra_sea on tb_inoavisos_sea.ca_referencia = tb_inomaestra_sea.ca_referencia
+
+where tb_repstatus.ca_fchllegada is null and ca_idetapa='IMCPD' 
+ORDER BY ca_fchstatus ";
+
+		
+		$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
+		
+		$stmt = $con->prepare($sql);
+		$stmt->execute();	 
+		
+		while($row= $stmt->fetch() ){
+			
+			$status = RepStatusPeer::retrieveByPk( $row['ca_idstatus'] );			
+			$status->setCaFchllegada($row['ca_fchconfirmacion']); 
+			$status->save(); 
+			
+			
+			echo "OK ".$row['ca_idstatus']." fchllegada ".$row['ca_fchllegada']." "." fchconfirmacion ".$row['ca_fchconfirmacion']."<br />";
+		}
+		
+		$this->setTemplate("blank");
+	}
 		
 		
 }

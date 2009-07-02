@@ -67,8 +67,8 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 		$lastProject = $project;
   ?>   
   <tr class="row0">
-  	<td colspan="10"><b>
-	<?
+  	<td colspan="10"><div align="left"><b>
+  		<?
 		if( $ticket->getHdeskProject() ){			
 			
 			if( $nivel>0 ){
@@ -79,8 +79,9 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 		}else{			
 			echo "Sin proyecto asignado";
 		}
-		?></b>
-	</td>
+		?>
+  		</b>
+  		</div></td>
   </tr>
   <?
   }

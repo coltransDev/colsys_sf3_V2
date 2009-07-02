@@ -88,6 +88,10 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 	</tr>
+	<tr>
+		<td><b>Mercanc&iacute;a</b></td>
+		<td colspan="5"><?=$reporte->getCaMercanciaDesc()?></td>
+	</tr>
 	<?
 	if ($status->getCaStatus() ){
 	?>

@@ -1,6 +1,6 @@
 <?
 foreach( $statusList as $status ){
-	$txt = "<b>".Utils::fechaMes( $status->getCaFchstatus("Y-m-d") )." ".$status->getCaFchstatus("h:i A" )."&gt;&gt;". $status->getTrackingEtapa()->getCaEtapa()."</b>
+	$txt = "<b>".Utils::fechaMes( $status->getCaFchenvio("Y-m-d") )." ".$status->getCaFchenvio("h:i A" )."&gt;&gt;". $status->getTrackingEtapa()->getCaEtapa()."</b>
 	";
 	if( $status->getCaIdemail() ){
 		?>

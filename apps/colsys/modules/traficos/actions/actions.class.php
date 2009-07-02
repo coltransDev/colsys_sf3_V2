@@ -381,6 +381,9 @@ class traficosActions extends sfActions
 				
 		
 		$this->usuario = UsuarioPeer::retrieveByPk( $this->getuser()->getUserId() );
+		
+		$config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."traficos".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
+		$this->textos = sfYaml::load($config);	
 			
 	}
 	

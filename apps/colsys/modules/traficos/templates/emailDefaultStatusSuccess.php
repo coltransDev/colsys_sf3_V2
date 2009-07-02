@@ -22,20 +22,20 @@ $cliente = $reporte->getCliente();
 	<br />
 	<table width="100%" cellspacing="0" border="1" class="tableList">
 	<tr>
-		<td width="21%"><b>Orden:</b></td>
+		<td width="13%"><b>Orden:</b></td>
 		<td colspan="5"><?=$reporte->getCaOrdenClie()?></td>
 	</tr>
 	<tr>
 		<td><b>Proveedor:</b></td>
 		<td colspan="3"><?=$reporte->getProveedoresStr()?></td>
-		<td width="36%"><b><?=$reporte->getCaOrdenProv()?"Orden Proveedor":"&nbsp;"?></b></td>
-		<td width="6%"><?=$reporte->getCaOrdenProv()?$reporte->getCaOrdenProv():"&nbsp;"?></td>
+		<td width="20%"><b><?=$reporte->getCaOrdenProv()?"Orden Proveedor":"&nbsp;"?></b></td>
+		<td width="22%"><?=$reporte->getCaOrdenProv()?$reporte->getCaOrdenProv():"&nbsp;"?></td>
 	</tr>
 	<tr>
 		<td><b>Origen:</b></td>
-		<td width="5%"><?=$reporte->getOrigen()->getCaCiudad()?></td>
-		<td width="25%"><b>Fch.Salida:</b></td>
-		<td width="7%"><?=$status->getCaFchsalida()?$status->getCaFchsalida()." ".$status->getCaHorasalida():"&nbsp;"?></td>
+		<td width="13%"><?=$reporte->getOrigen()->getCaCiudad()?></td>
+		<td width="15%"><b>Fch.Salida:</b></td>
+		<td width="17%"><?=$status->getCaFchsalida()?$status->getCaFchsalida()." ".$status->getCaHorasalida():"&nbsp;"?></td>
 		<td><b>Nombre del Buque:</b></td>
 		<td><?=$status->getCaIdnave()?></td>
 	</tr>
