@@ -205,25 +205,25 @@ class RepStatus extends BaseRepStatus
 		
 		switch( $this->getCaIdetapa() ){
 			case "IMCPD":
-				$asunto = "Confirmación de Llegada ";
+				$asunto = "Confirmación de Llegada";
 				break;				
 			case "IMCOL":
-				$asunto = "Confirmación de Llegada OTM ";
+				$asunto = "Confirmación de Llegada OTM";
 				break;	
 			case "IACAD":
-				$asunto = "Confirmación de Llegada ";
+				$asunto = "Confirmación de Llegada";
 				break;		
 			case "IMETA":
-				$asunto = "Aviso ";
+				$asunto = "Aviso";
 				break;		
 			case "99999":
 				$asunto = "Cierre";
 				break;	
 			default: 
 				if( $etapa && $etapa->getCaDepartamento()=="OTM/DTA" ){
-					$asunto = "Status OTM ";
+					$asunto = "Status OTM";
 				}else{
-					$asunto = "Status ";
+					$asunto = "Status";
 				}
 				break;
 		} 
@@ -237,12 +237,15 @@ class RepStatus extends BaseRepStatus
 		$origen = $reporte->getOrigen()->getCaCiudad();
 		$destino = $reporte->getDestino()->getCaCiudad();
 		$cliente = $reporte->getCliente();	
+		
+		$asunto .= " Id.: ".$reporte->getCaConsecutivo()." ";
+		
 		if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
 			$proveedor = substr($reporte->getProveedoresStr(),0,130);					
-			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie()." Id.: ".$reporte->getCaConsecutivo();					
+			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();					
 		}else{
 			$consignatario = $reporte->getConsignatario();
-			$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] Id.: ".$reporte->getCaConsecutivo();	
+			$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";	
 		}
 				
 		$email->setCaSubject( $asunto );
