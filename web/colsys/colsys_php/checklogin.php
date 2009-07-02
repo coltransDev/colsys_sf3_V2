@@ -55,6 +55,7 @@ while(list($key,$value)=each($_REQUEST)) {
 }
 
 
+
 //session_register("usuario", "password", "nivel", "database", "principal", "servidor", "hora"); 
 $conn =& DlDatabase::NewConnection("PGSQL", $usuarioDb, $password, $database, $servidor);
 
