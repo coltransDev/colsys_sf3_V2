@@ -106,7 +106,7 @@ elseif (!isset($boton) and !isset($accion) and $reporte == 'Facturacion'){
 	set_time_limit(360);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
-    if (!$rs->Open("select ca_fchfestivo from tb_festivos where date_part('year',ca_fchfestivo) = ".(2000+substr($ano, -1))." and date_part('month',ca_fchfestivo) like '".intval($mes)."'")) {        // Selecciona todos lo registros de la tabla Ino-Marítimo
+    if (!$rs->Open("select ca_fchfestivo from tb_festivos where date_part('year',ca_fchfestivo)::text = '".(2000+substr($ano, -1))."' and date_part('month',ca_fchfestivo)::text like '".intval($mes)."'")) {        // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -122,13 +122,10 @@ elseif (!isset($boton) and !isset($accion) and $reporte == 'Facturacion'){
 	$queries.= "else (case when nullvalue(m.ca_fchconfirmacion) then m.ca_fcharribo else m.ca_fchconfirmacion end) end as ca_fchllegada, min(g.ca_factura) as ca_factura, min(g.ca_fchfactura) as ca_fchfactura, g.ca_observaciones ";
 	$queries.= "from vi_inoclientes_sea i LEFT OUTER JOIN (select g.ca_referencia, g.ca_idcliente, g.ca_hbls, g.ca_factura, g.ca_fchfactura, g.ca_observaciones from tb_inoingresos_sea g LEFT OUTER JOIN (select ca_referencia, ca_idcliente, ca_hbls, min(ca_fchfactura) as ca_fchfactura ";
 	$queries.= "from tb_inoingresos_sea group by ca_referencia, ca_idcliente, ca_hbls) ii ON (ii.ca_referencia = g.ca_referencia and ii.ca_idcliente = g.ca_idcliente and ii.ca_hbls = g.ca_hbls and ii.ca_fchfactura = g.ca_fchfactura)) g ON (g.ca_referencia = i.ca_referencia and g.ca_idcliente = i.ca_idcliente and g.ca_hbls = i.ca_hbls), vi_inomaestra_sea m ";
-	$queries.= "where i.ca_referencia = m.ca_referencia and substr(ca_mes,1,2) like '$mes' and substr(ca_mes,4) = ".substr($ano, -1)." and ca_trafico like '$trafico' and ca_sucursal like '".$sucursal."' ";
-    $queries.= "and substr(ca_mes,1,2) like '$mes' and substr(ca_mes,4) = ".substr($ano, -1)." and ca_trafico like '$trafico'"."  and ca_sucursal like '".$sucursal."'
-	group by m.ca_ano, m.ca_mes, m.ca_trafico, i.ca_referencia, i.ca_idcliente, i.ca_compania, i.ca_hbls, i.ca_continuacion, m.ca_fchconfirmacion, m.ca_fcharribo,  g.ca_observaciones 
-	";
-	
-	
-    if (!$rs->Open("$queries")) {        // Selecciona todos lo registros de la tabla Ino-Marítimo
+	$queries.= "where i.ca_referencia = m.ca_referencia and substr(ca_mes,1,2) like '$mes' and substr(ca_mes,4)::text = '".substr($ano, -1)."' and ca_trafico like '$trafico' and ca_sucursal like '".$sucursal."' ";
+    $queries.= "and substr(ca_mes,1,2) like '$mes' and substr(ca_mes,4)::text = '".substr($ano, -1)."' and ca_trafico like '$trafico'"."  and ca_sucursal like '".$sucursal."'
+	group by m.ca_ano, m.ca_mes, m.ca_trafico, i.ca_referencia, i.ca_idcliente, i.ca_compania, i.ca_hbls, i.ca_continuacion, m.ca_fchconfirmacion, m.ca_fcharribo,  g.ca_observaciones";
+	if (!$rs->Open("$queries")) {        // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -248,7 +245,7 @@ elseif (!isset($boton) and !isset($accion) and $reporte == 'Confirmacion'){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    if (!$rs->Open("select ca_fchfestivo from tb_festivos where date_part('year',ca_fchfestivo) = ".(2000+substr($ano, -1))." and date_part('month',ca_fchfestivo) like '".intval($mes)."'")) {        // Selecciona todos lo registros de la tabla Ino-Marítimo
+    if (!$rs->Open("select ca_fchfestivo from tb_festivos where date_part('year',ca_fchfestivo)::text = '".(2000+substr($ano, -1))."' and date_part('month',ca_fchfestivo)::text like '".intval($mes)."'")) {        // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -260,8 +257,10 @@ elseif (!isset($boton) and !isset($accion) and $reporte == 'Confirmacion'){
 
 	$trafico = ($trafico == '%')?'%':substr($trafico+100,1,2);
 	$queries = "select 	DISTINCT m.ca_ano, m.ca_mes, m.ca_trafico, i.ca_referencia, i.ca_idcliente, i.ca_compania, i.ca_hbls, i.ca_continuacion, m.ca_fchconfirmacion, m.ca_horaconfirmacion, e.ca_fchenvio	from vi_inoclientes_sea i ";
-	$queries.= "LEFT OUTER JOIN (select ia.ca_referencia, ia.ca_idcliente, ia.ca_hbls, min(ia.ca_fchenvio) as ca_fchenvio from tb_inoavisos_sea ia, tb_emails em where ia.ca_idemail = em.ca_idemail and em.ca_subject like 'Confirmación de Llegada%' group by ia.ca_referencia, ia.ca_idcliente, ia.ca_hbls) e ON (i.ca_referencia = e.ca_referencia and i.ca_idcliente = e.ca_idcliente and i.ca_hbls = e.ca_hbls), ";
-	$queries.= "vi_inomaestra_sea m where i.ca_referencia = m.ca_referencia and substr(ca_mes,1,2) like '$mes' and substr(ca_mes,4) = ".substr($ano, -1)." and ca_trafico like '$trafico' and ca_sucursal like '".$sucursal."'";
+	// $queries.= "LEFT OUTER JOIN (select ia.ca_referencia, ia.ca_idcliente, ia.ca_hbls, min(ia.ca_fchenvio) as ca_fchenvio from tb_inoavisos_sea ia, tb_emails em where ia.ca_idemail = em.ca_idemail and em.ca_subject like 'Confirmación de Llegada%' group by ia.ca_referencia, ia.ca_idcliente, ia.ca_hbls) e ON (i.ca_referencia = e.ca_referencia and i.ca_idcliente = e.ca_idcliente and i.ca_hbls = e.ca_hbls), ";
+	$queries.= "LEFT OUTER JOIN ( select rp.ca_consecutivo, min(ca_fchenvio) as ca_fchenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo ) e ON (i.ca_consecutivo = e.ca_consecutivo), ";
+	$queries.= "vi_inomaestra_sea m where i.ca_referencia = m.ca_referencia and substr(ca_mes,1,2) like '$mes' and substr(ca_mes,4)::text = '".substr($ano, -1)."' and ca_trafico like '$trafico' and ca_sucursal like '".$sucursal."'";
+//    die("$queries");
     if (!$rs->Open("$queries")) {        // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -369,6 +368,7 @@ echo "</BODY>";
     echo "</HTML>";
     }
 
+/*
 function calc_dif(&$festiv, $inicio, $final){
     $difer = 0;
     $start = $inicio;
@@ -396,6 +396,7 @@ function calc_dif(&$festiv, $inicio, $final){
     }
     return($difer);
 }
+*/
 
 function secs_to_string ($secs)
 {
