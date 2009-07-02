@@ -195,14 +195,26 @@ require_once("menu.php");
        if ($rs->Value('ca_idcontacto') != '') {
 	       if ($rs->Value('ca_nomtrafico_co') != $tra_con or $rs->Value('ca_ciudad_co') != $ciu_con) {
 		       echo "<TR>";
-		       echo "  <TD Class=imprimir style='text-align:center; font-weight:bold; font-size: 11px;' COLSPAN=6>".strtoupper($rs->Value('ca_ciudad_co'))."</TD>";
+		       echo "  <TD Class=invertir style='text-align:center; font-weight:bold; font-size: 11px;' COLSPAN=6>".strtoupper($rs->Value('ca_ciudad_co'))."</TD>";
 		       echo "</TR>";
 			   $tra_con = $rs->Value('ca_nomtrafico_co');
 			   $ciu_con = $rs->Value('ca_ciudad_co');
 	       }
 	       echo "<TR>";
-	       echo "<TD Class=invertir style='font-weight:bold; vertical-align:top; font-size: 11px;' COLSPAN=4>".$rs->Value('ca_nombre_co')." ".($rs->Value('ca_activo_con')!="t"?"(INACTIVO)":"")."</TD>";
-	       echo "<TD Class=invertir>".$rs->Value('ca_idcontacto')."</TD>";
+	       echo "<TD ";
+		   if( $rs->Value('ca_sugerido')=="t" ){
+		   	  echo "bgcolor='#FFFFCC'";
+		   }else{
+		   	  echo "Class=invertir";
+		   }
+		   echo " style='font-weight:bold; vertical-align:top; font-size: 11px;' COLSPAN=4>".$rs->Value('ca_nombre_co')." ".($rs->Value('ca_activo_con')!="t"?"(INACTIVO)":"")."</TD>";
+	       echo "<TD ";
+		   if( $rs->Value('ca_sugerido')=="t" ){
+		   	  echo "bgcolor='#FFFFCC'";
+		   }else{
+		   	  echo "Class=invertir";
+		   }
+		   echo ">".$rs->Value('ca_idcontacto')."</TD>";
 	       echo "<TD WIDTH=44 Class=invertir style='text-align:center;'>";											   // Botones para hacer Mantenimiento a la Tabla
 	 	   echo "  <IMG src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"contactos\", \"Modificar\", ".$rs->Value('ca_idagente').", \"".$rs->Value('ca_idcontacto')."\");'>";
 		   echo "  <IMG src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"contactos\", \"Eliminar\", ".$rs->Value('ca_idagente').", \"".$rs->Value('ca_idcontacto')."\");'>";
