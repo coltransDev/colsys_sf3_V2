@@ -1758,9 +1758,10 @@ echo "</BODY>";
              echo "</TABLE><BR>";
              echo "<TABLE CELLSPACING=10>";
 			 
-			 if(  !($rs->Value('ca_idetapa')=='99999' && $rs->Value('ca_transporte')=="Aéreo" ) ){			 		
-				 if ( strlen($rs->Value('ca_usucerrado')) == 0  ){			 
-					 echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Guardar Modificación' ONCLICK='validar(this);'></TH>";    // Ordena almacenar los datos ingresados
+			 	
+			 if ( strlen($rs->Value('ca_usucerrado')) == 0  ){			 
+				 echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Guardar Modificación' ONCLICK='validar(this);'></TH>";    // Ordena almacenar los datos ingresados
+				 if(  !($rs->Value('ca_idetapa')=='99999' && $rs->Value('ca_transporte')=="Aéreo" ) ){			 	
 					 echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Nueva Versión' ONCLICK='validar(this);'></TH>";         // Ordena almacenar los datos ingresados
 				 }
 			 }
