@@ -91,12 +91,9 @@ if($conn->Open()){
 						if ($rs->mRowCount == 0) {
 							
 							$rs->Open("SELECT * FROM control.tb_usuarios WHERE ca_login='".$usuario."'" );							
-							if( $rs->Value('ca_authmethod')=='ldapP' ){
-								$sql = "SELECT DISTINCT control.tb_accesos_perfiles.CA_ACCESO FROM control.tb_accesos_perfiles LEFT JOIN control.tb_usuarios_perfil ON (control.tb_accesos_perfiles.CA_PERFIL=control.tb_usuarios_perfil.CA_PERFIL) WHERE control.tb_accesos_perfiles.CA_RUTINA='$programa' AND control.tb_usuarios_perfil.CA_LOGIN = '$usuario' ORDER BY control.tb_accesos_perfiles.ca_acceso DESC LIMIT 1";		
-																	
-							}else{													
-								$sql = "SELECT control.tb_accesos_grp.CA_ACCESO FROM control.tb_accesos_grp LEFT JOIN control.tb_usuarios_grupo ON (control.tb_accesos_grp.CA_GRUPO=control.tb_usuarios_grupo.CA_GRUPO) WHERE control.tb_accesos_grp.CA_RUTINA='$programa' AND control.tb_usuarios_grupo.CA_LOGIN = '$usuario' ORDER BY control.tb_accesos_grp.ca_acceso DESC LIMIT 1";				
-							}
+							
+							$sql = "SELECT DISTINCT control.tb_accesos_perfiles.CA_ACCESO FROM control.tb_accesos_perfiles LEFT JOIN control.tb_usuarios_perfil ON (control.tb_accesos_perfiles.CA_PERFIL=control.tb_usuarios_perfil.CA_PERFIL) WHERE control.tb_accesos_perfiles.CA_RUTINA='$programa' AND control.tb_usuarios_perfil.CA_LOGIN = '$usuario' ORDER BY control.tb_accesos_perfiles.ca_acceso DESC LIMIT 1";																			
+							
 							// echo $sql;			
 							$rs->Open( $sql );	
 							while (!$rs->Eof()) {
