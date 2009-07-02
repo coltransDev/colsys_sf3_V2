@@ -286,6 +286,7 @@ require_once("menu.php");
 			break;
 		case "Información Oportuna":
 			$source   = "vi_repindicadores";
+			$subque   = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
 			if (!$tm->Open("select ca_fchfestivo from tb_festivos where $ano_fes and $mes_fes")) {        // Selecciona todos lo registros de la tabla Festivos
 				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 				echo "<script>document.location.href = 'entrada.php';</script>";
@@ -313,7 +314,7 @@ require_once("menu.php");
 			$tm->MoveFirst();
 			$ind_mem  = 5;
 			$add_cols = 3;
-			break;
+			break;	
 		case "Cumplimiento de Proveedores":
 			$source   = "vi_repindicadores";
 			$ind_mem  = 6;
@@ -329,11 +330,36 @@ require_once("menu.php");
 			$ind_mem  = 8;
 			$add_cols = 3;
 			break;
+		case "Confirmación de llegada":
+			$source   = "vi_repindicadores";
+			if ($transporte == "ca_transporte like 'Aéreo'"){
+				$subque = "LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, min(ca_fchllegada) as ca_fchconfirmado, to_char(ca_fchenvio,'YYYY-MM-DD')::date as ca_fchenvio from tb_repstatus rs, tb_reportes rp where rp.ca_idreporte = rs.ca_idreporte and rs.ca_idetapa = 'IACAD' group by ca_consecutivo, ca_fchenvio) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+			} else if ($transporte == "ca_transporte like 'Marítimo'"){
+				$subque = "LEFT OUTER JOIN (select rs.ca_consecutivo as ca_consecutivo_sub, min(to_timestamp(im.ca_fchconfirmacion||' '||im.ca_horaconfirmacion, 'YYYY-mm-dd hh-mi-ss')::timestamp) as ca_fchconfirmado, rs.ca_fchenvio from tb_inoclientes_sea ic";
+				$subque.= "	LEFT OUTER JOIN tb_inomaestra_sea im ON (ic.ca_referencia = im.ca_referencia)";
+				$subque.= "	LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte)";
+				$subque.= "	LEFT OUTER JOIN (select srp.ca_consecutivo, min(srs.ca_fchenvio) as ca_fchenvio from tb_repstatus srs LEFT OUTER JOIN tb_reportes srp ON (srs.ca_idreporte = srp.ca_idreporte and srs.ca_idetapa = 'IMCPD') group by srp.ca_consecutivo) rs ON (rp.ca_consecutivo = rs.ca_consecutivo)";
+				$subque.= "	group by rs.ca_consecutivo, rs.ca_fchenvio) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+			}
+			if (!$tm->Open("select ca_fchfestivo from tb_festivos where $ano_fes and $mes_fes")) {        // Selecciona todos lo registros de la tabla Festivos
+				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+				echo "<script>document.location.href = 'entrada.php';</script>";
+				exit; }
+			$festi = array();
+			while (!$tm->Eof() and !$tm->IsEmpty()) {
+				$festi[] = $tm->Value('ca_fchfestivo');
+				$tm->MoveNext();
+			}
+			$tm->MoveFirst();
+			$ind_mem  = 9;
+			$add_cols = 3;
+			break;
 	}
 
-	$queries = "select * from $source where $sucursal $cliente and $transporte and $ano and $mes";
+	$queries = "select * from $source $subque where ca_impoexpo = 'Importación' and $sucursal $cliente and $transporte and $ano and $mes";
 	$queries.= " order by $campos";
-	// echo $queries."<br />";
+	// die ($queries."<br />");
+
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea 
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -341,7 +367,7 @@ require_once("menu.php");
 
 
 	echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=".(10+$add_cols).">COLTRANS S.A.<BR>$titulo<BR>$mes_mem / $ano_mem</TH>";
+    echo "  <TH Class=titulo COLSPAN=".(10+$add_cols).">COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_mem / $ano_mem</TH>";
     echo "</TR>";
 	echo "<TR>";
 	$saltos = array();
@@ -398,6 +424,11 @@ require_once("menu.php");
 			echo "	<TH>Fch.Factura</TH>";
 			echo "	<TH>Dif.</TH>";
 			break;
+		case 9:
+			echo "	<TH>Fch.Llegada</TH>";
+			echo "	<TH>Fch.Confirmación</TH>";
+			echo "	<TH>Dif.</TH>";
+			break;
 	}
 	echo "</TR>";
 	$rs->MoveFirst();
@@ -447,22 +478,18 @@ require_once("menu.php");
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$tm->Value('ca_diferencia')."</TD>";
 				break;
 			case 4:
-				if (!$tm->Open("select ca_fchrecibo, ca_fchenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ca_fchrecibo")) {       // Selecciona todos lo registros de la tabla Status
-					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-					echo "<script>document.location.href = 'repindicadores.php';</script>";
-					exit; }
 				$adicionales = false;
-				while (!$tm->Eof() and !$tm->IsEmpty()) {
+				$idreporte = $rs->Value('ca_idreporte');
+				while ($idreporte == $rs->Value('ca_idreporte') and !$rs->Eof() and !$rs->IsEmpty()) {
 					if ($adicionales){
 						echo "<TR>";
 						echo "  <TD Class=mostrar COLSPAN=10></TD>";
 					}
-					echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchrecibo')."</TD>";
-					echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchenvio')."</TD>";
-
-					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($tm->Value('ca_fchrecibo'), "%d-%d-%d %d:%d:%d");
+					echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchrecibo')."</TD>";
+					echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchenvio')."</TD>";
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchrecibo'), "%d-%d-%d %d:%d:%d");
 					$tstamp_recibido = mktime($hor, $min, $seg, $mes, $dia, $ano);
-					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($tm->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
 					$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
 					$dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado);
 					echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
@@ -470,12 +497,15 @@ require_once("menu.php");
 						echo "</TR>";
 					}
 					$adicionales = true;
-					$tm->MoveNext();
+					$rs->MoveNext();
 				}
 				if (!$adicionales){
 					echo "  <TD Class=mostrar></TD>";
 					echo "  <TD Class=mostrar></TD>";
 					echo "  <TD Class=invertir></TD>";
+				}
+				if (!$rs->Eof()){
+					$rs->MovePrevious();
 				}
 				break;
 			case 5:
@@ -521,7 +551,7 @@ require_once("menu.php");
 			case 8:
 				if ($rs->Value('ca_transporte') == 'Aéreo' and $rs->Value('ca_continuacion') == 'N/A'){
 					$script = "select iia.ca_fchfactura, rs.ca_fchllegada from tb_inoingresos_air iia LEFT OUTER JOIN tb_inoclientes_air ica ON (iia.ca_referencia = ica.ca_referencia and iia.ca_idcliente = ica.ca_idcliente and iia.ca_hawb = ica.ca_hawb)";
-					$script.= "	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail::text = '".$rs->Value('ca_idemail')."') where ica.ca_idreporte = '".$rs->Value('ca_consecutivo')."'";
+					$script.= "	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail::text = '".$rs->Value('ca_idemail')."') where ica.ca_consecutivo = '".$rs->Value('ca_consecutivo')."'";
 					$script.= "	order by ca_fchfactura ASC limit 1";
 				} else if ($rs->Value('ca_transporte') == 'Marítimo' and $rs->Value('ca_continuacion') == 'N/A'){
 					$script = "select iis.ca_fchfactura, rs.ca_fchllegada from tb_inoingresos_sea iis";
@@ -534,9 +564,23 @@ require_once("menu.php");
 					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 					echo "<script>document.location.href = 'repindicadores.php';</script>";
 					exit; }
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchfactura')."</TD>";
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchllegada')."</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($tm->Value('ca_fchfactura'),$tm->Value('ca_fchllegada'))."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchfactura')."</TD>";
+				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($tm->Value('ca_fchllegada'),$tm->Value('ca_fchfactura'))."</TD>";
+				break;
+			case 9:
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconfirmado')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchenvio')."</TD>";
+				if ($rs->Value('ca_transporte') == 'Aéreo'){
+					echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchconfirmado'),$rs->Value('ca_fchenvio'))."</TD>";
+				} else if ($rs->Value('ca_transporte') == 'Marítimo'){
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconfirmado'), "%d-%d-%d %d:%d:%d");
+					$tstamp_confirmado = mktime($hor, $min, $seg, $mes, $dia, $ano);
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
+					$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
+					$dif_mem = calc_dif($festi, $tstamp_confirmado, $tstamp_enviado);
+					echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+				}
 				break;
 		}
 		
