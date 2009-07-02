@@ -194,9 +194,27 @@ require_once("menu.php");
 			   $ciu_con = $rs->Value('ca_ciudad_co');
 	       }
 	       echo "<TR>";
-	       echo "<TD Class=invertir style='font-weight:bold; vertical-align:top; font-size: 11px;' COLSPAN=4>".$rs->Value('ca_nombre_co')." ".($rs->Value('ca_activo_con')!="t"?"(INACTIVO)":"")."</TD>";
-	       echo "<TD Class=invertir>".$rs->Value('ca_idcontacto')."</TD>";
-	       echo "<TD WIDTH=44 Class=invertir style='text-align:center;'></TD>";											   // Botones para hacer Mantenimiento a la Tabla
+	       echo "<TD ";
+		   if( $rs->Value('ca_sugerido')=="t" ){
+		   	  echo "bgcolor='#FFFFCC'";
+		   }else{
+		   	  echo "Class=invertir";
+		   }
+		   echo "  style='font-weight:bold; vertical-align:top; font-size: 11px;' COLSPAN=4>".$rs->Value('ca_nombre_co')." ".($rs->Value('ca_activo_con')!="t"?"(INACTIVO)":"")."</TD>";
+	       echo "<TD ";
+		   if( $rs->Value('ca_sugerido')=="t" ){
+		   	  echo "bgcolor='#FFFFCC'";
+		   }else{
+		   	  echo "Class=invertir";
+		   }
+		   echo ">".$rs->Value('ca_idcontacto')."</TD>";
+	       echo "<TD WIDTH=44 ";
+		   if( $rs->Value('ca_sugerido')=="t" ){
+		   	  echo "bgcolor='#FFFFCC'";
+		   }else{
+		   	  echo "Class=invertir";
+		   }
+		   echo " style='text-align:center;'></TD>";											   // Botones para hacer Mantenimiento a la Tabla
 		   echo "</TD>";
 	       echo "</TR>";
 	       echo "<TR>";
@@ -235,7 +253,7 @@ require_once("menu.php");
 	       echo "</TR>";
 		     echo "<TR>";
 	       echo "<TD Class=mostrar colspan='3' >Sugerido en cotizaciones :</TD>";
-	       echo "<TD Class=mostrar>".($rs->Value('ca_sugerido')=="t"?"S&iacute;":"No")."</TD>";
+	       echo "<TD Class=mostrar colspan='3'>".($rs->Value('ca_sugerido')=="t"?"S&iacute;":"No")."</TD>";
 	     
 	       echo "</TR>";
 		   
