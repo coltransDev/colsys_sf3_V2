@@ -699,7 +699,7 @@ elseif (isset($accion)) {                                                       
 				// VARIABLES
 				$file = str_replace('%20', ' ', $attachment);
 				// $file_real = $hiddenPath . $category . $file;
-				$file_real = $attachment;
+				$file_real = $_FILES['attachment']['tmp_name'];
 				// echo $_FILES['attachment']['name'];
 	
 				// HACK ATTEMPT CHECK
