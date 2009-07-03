@@ -4,9 +4,9 @@
 
 $rsMenu =& DlRecordset::NewRecordset($conn);                                    // Selecciona las bases de datos a las que usuario identificado tiene acceso
 
-$sql = "SELECT DISTINCT control.tb_rutinas.CA_RUTINA, control.tb_rutinas.CA_OPCION, control.tb_rutinas.CA_DESCRIPCION, control.tb_rutinas.CA_PROGRAMA, control.tb_rutinas.CA_GRUPO FROM control.tb_rutinas LEFT JOIN control.tb_accesos_grp ON (control.tb_rutinas.CA_RUTINA=control.tb_accesos_grp.CA_RUTINA AND control.tb_accesos_grp.ca_acceso>=0  ) LEFT JOIN control.tb_usuarios_grupo ON (control.tb_accesos_grp.CA_GRUPO=control.tb_usuarios_grupo.CA_GRUPO) LEFT JOIN control.tb_accesos_user ON (control.tb_rutinas.CA_RUTINA=control.tb_accesos_user.CA_RUTINA AND control.tb_accesos_user.ca_acceso>=0 ) WHERE (control.tb_usuarios_grupo.CA_LOGIN='".$usuario."' OR control.tb_accesos_user.CA_LOGIN='".$usuario."') ORDER BY control.tb_rutinas.CA_GRUPO ASC,control.tb_rutinas.CA_OPCION ASC";
 
 
+$sql = "SELECT DISTINCT control.tb_rutinas.ca_rutina, control.tb_rutinas.CA_OPCION, ca_programa, control.tb_rutinas.ca_grupo FROM control.tb_rutinas LEFT JOIN control.tb_accesos_perfiles ON (control.tb_rutinas.CA_RUTINA=control.tb_accesos_perfiles.CA_RUTINA AND control.tb_accesos_perfiles.ca_acceso>=0  ) 	LEFT JOIN control.tb_usuarios_perfil ON (control.tb_accesos_perfiles.CA_PERFIL=control.tb_usuarios_perfil.CA_PERFIL) 	LEFT JOIN control.tb_accesos_user ON (control.tb_rutinas.CA_RUTINA=control.tb_accesos_user.CA_RUTINA AND control.tb_accesos_user.ca_acceso>=0 ) WHERE (control.tb_usuarios_perfil.CA_LOGIN='".$usuario."' OR control.tb_accesos_user.CA_LOGIN='".$usuario."') ORDER BY control.tb_rutinas.CA_GRUPO ASC,control.tb_rutinas.CA_OPCION ASC";
 
 $rsMenu->Open( $sql );  
 
