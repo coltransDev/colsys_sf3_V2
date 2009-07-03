@@ -3766,6 +3766,14 @@ echo "</BODY>";
 			 }
 			 $xml_pal66->setAttribute("ntc", $tm->Value("ca_numcontenedores"));
 			 
+			 // Crea el Recordset con los Contenedores 
+			 $ie =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+             if (!$ie->Open("select * from vi_inoequipos_sea where ca_referencia = '".$id."'")) {    // Selecciona los Registros de la Tabala Equipos
+                 echo "<script>alert(\"".addslashes($ie->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'inosea.php';</script>";
+                 exit;
+                }
+
 			 $ntb = 0;  // Número Total Bultos
 			 $tpb = 0;  // Total Peso Bruto
 			 $unidades_carga = array();
@@ -3857,9 +3865,76 @@ echo "</BODY>";
 				
 				foreach (explode("|",$ic->Value('ca_contenedores')) as $parciales){
 					$parcial = explode(";",$parciales);
-					$unidades_carga[$parcial[0]]['pz']+= $parcial[1];
-					$unidades_carga[$parcial[0]]['ps']+= $parcial[2];
-					$unidades_carga[$parcial[0]]['cn']+= 1;
+					$unidades_carga[$parcial[0]]['pz'] = $parcial[1];
+					$unidades_carga[$parcial[0]]['ps'] = $parcial[2];
+					$unidades_carga[$parcial[0]]['cn'] = 1;
+
+					$grp = 0;
+					// Se Crear los elementos h167
+					$ie->MoveFirst();
+					while (!$ie->Eof() and !$ie->IsEmpty()) {
+						if ($ie->Value("ca_idequipo") != $parcial[0]){;
+							$ie->MoveNext();
+							continue;
+						}
+						
+						// Se Crear el elemento h167
+						$xml_h167 = $xml->createElement( "h167" );
+			
+						if ($dm->Value("ca_iddocanterior") != ""){
+							$xml_h167->setAttribute("fa67", $dm->Value("ca_iddocanterior"));
+						}
+						$xml_h167->setAttribute("cont", $dm->Value("ca_tipocarga"));
+						$xml_h167->setAttribute("tun", 2);
+						$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
+		
+						$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
+						$xml_h167->setAttribute("tam", $tam_equipo);
+						$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
+						$xml_h167->setAttribute("teq", $tip_equipo);
+						$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
+			
+						$xml_h167->setAttribute("vpb", $unidades_carga[$ie->Value("ca_idequipo")]['ps']);
+						$xml_h167->setAttribute("nbul",$unidades_carga[$ie->Value("ca_idequipo")]['pz']);
+						$xml_h167->setAttribute("nreg",$unidades_carga[$ie->Value("ca_idequipo")]['cn']);
+		
+						$grp++;
+						// Se Crear el elemento h267
+						$xml_h267 = $xml->createElement( "h267" );
+						$xml_h267->setAttribute("grp", $grp);
+						$xml_h267->setAttribute("peso",$unidades_carga[$ie->Value("ca_idequipo")]['ps']);
+						$xml_h267->setAttribute("bul", $unidades_carga[$ie->Value("ca_idequipo")]['pz']);
+						// Se Crear el elemento item
+						$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
+						$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
+						$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
+						$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' order by ca_idemail DESC limit 1";
+						if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
+							echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+							echo "<script>document.location.href = 'inosea.php';</script>";
+							exit;
+						}
+						$xml_item = $xml->createElement( "item" );
+						$item = 1;
+						$xml_item->setAttribute("item", $grp);
+						$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
+						$xml_item->setAttribute("idg", htmlentities(substr($rp->Value("ca_mercancia_desc"),0,300)));
+						$xml_item->setAttribute("mpel", "N");
+						$xml_h267->appendChild( $xml_item );
+
+						// Se Crear el elemento contenedor
+						if ($dm->Value("ca_tipodocviaje") == 10){
+							$xml_contenedor = $xml->createElement( "contenedor" );
+							$xml_contenedor->setAttribute("contp", str_replace("-","",$ie->Value("ca_idequipo")));
+							$xml_h167->appendChild( $xml_contenedor );
+						}
+
+						$xml_h167->appendChild( $xml_h267 );
+						$xml_hijo->appendChild( $xml_h167 );
+						$ie->MoveNext();
+
+					}
+
 				}
 
 				$tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
@@ -3870,18 +3945,19 @@ echo "</BODY>";
 				}
 				$xml_hijo->setAttribute("hcpe", substr($tm->Value("ca_idtrafico"),0,2));
 				$xml_hijo->setAttribute("hcle", substr($tm->Value("ca_idciudad"),0,3));
-				
+
 				$xml_pal66->appendChild( $xml_hijo );
 			 	$ic->MoveNext();
 			 }
 
+
 			 // Se Crear los elementos h167
-			 $ie =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
              if (!$ie->Open("select * from vi_inoequipos_sea where ca_referencia = '".$id."'")) {    // Selecciona los Registros de la Tabala Equipos
                  echo "<script>alert(\"".addslashes($ie->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                  echo "<script>document.location.href = 'inosea.php';</script>";
                  exit;
                 }
+			 $ie->MoveFirst();
 			 while (!$ie->Eof() and !$ie->IsEmpty()) {
 				// Se Crear el elemento h167
 				$xml_h167 = $xml->createElement( "h167" );
@@ -3899,10 +3975,6 @@ echo "</BODY>";
 				$xml_h167->setAttribute("teq", $tip_equipo);
 				$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
 	
-				$xml_h167->setAttribute("vpb", $unidades_carga[$ie->Value("ca_idequipo")]['pz']);
-				$xml_h167->setAttribute("nbul", $unidades_carga[$ie->Value("ca_idequipo")]['ps']);
-				$xml_h167->setAttribute("nreg", $unidades_carga[$ie->Value("ca_idequipo")]['cn']);
-
 				// Se Crear el elemento contenedor
 				if ($dm->Value("ca_tipodocviaje") == 10){
 					$xml_contenedor = $xml->createElement( "contenedor" );
@@ -3910,6 +3982,7 @@ echo "</BODY>";
 					$xml_h167->appendChild( $xml_contenedor );
 				}
 
+				$unidades_carga = array();
 				// Se Crear el elemento h267
 				$ic->MoveFirst();
 				while (!$ic->Eof() and !$ic->IsEmpty()) {
@@ -3917,6 +3990,9 @@ echo "</BODY>";
 					$contenedores = explode("|",$ic->Value("ca_contenedores"));
 					foreach($contenedores as $cargas){
 						$carga = explode(";",$cargas);
+						$unidades_carga[$carga[0]]['pz']+= $carga[1];
+						$unidades_carga[$carga[0]]['ps']+= $carga[2];
+						$unidades_carga[$carga[0]]['cn']+= 1;
 						if ($ie->Value("ca_idequipo") == $carga[0]){
 							$grp++;
 							$xml_h267 = $xml->createElement( "h267" );
@@ -3945,6 +4021,10 @@ echo "</BODY>";
 					}
 					$ic->MoveNext();
 			 	}
+
+				$xml_h167->setAttribute("vpb", $unidades_carga[$ie->Value("ca_idequipo")]['ps']);
+				$xml_h167->setAttribute("nbul",$unidades_carga[$ie->Value("ca_idequipo")]['pz']);
+				$xml_h167->setAttribute("nreg",$unidades_carga[$ie->Value("ca_idequipo")]['cn']);
 
 				$xml_pal66->appendChild( $xml_h167 );
 			 	$ie->MoveNext();
@@ -3999,8 +4079,13 @@ echo "</BODY>";
 			
 			 // Valida contra el Esquema
 			 if (!$xml->schemaValidate('./xsd/1166.xsd')) {
-				 print '<b>La Generación del XML no ha pasado la primera prueba. A continuación se listan los errores.</b>';
-				 libxml_display_errors();
+				 $errors = libxml_get_errors();
+				 foreach ($errors as $error) {
+					echo display_xml_error($error, $xml);
+				 }
+			 	 // print $xml->saveXML();
+				 // libxml_display_errors();
+				 // print '<b>La Generación del XML no ha pasado la primera prueba. A continuación se listan los errores.</b>';
 			 }
 
 			 // Parse the XML.
@@ -4008,7 +4093,6 @@ echo "</BODY>";
 			 $filename = "Dmuisca_".substr($xml_CodCpt->nodeValue+100,1,2).substr($xml_Formato->nodeValue+100000,1,5).substr($xml_Version->nodeValue+100,1,2).$xml_Ano->nodeValue.substr($xml_NumEnvio->nodeValue+100000000,1,8).".xml";
 			 header( "content-disposition: attachment; filename=".$filename);
 			 print $xml->saveXML();
-
              break;
              }
 
@@ -4338,12 +4422,6 @@ require_once("menu.php");
 					}
 				 	$ic->MoveNext();
 				}
-
-
-
-
-
-
 			 	$ie->MoveNext();
 			 }
              echo "</TABLE><BR>";
@@ -4846,4 +4924,35 @@ elseif (isset($accion)) {                                                      /
         echo "<script>document.location.href = 'inosea.php';</script>";  // Retorna a la pantalla principal de la opción
      }
    }
+
+
+
+function display_xml_error($error, $xml)
+{
+    $return  = $xml[$error->line - 1] . "\n";
+    $return .= str_repeat('-', $error->column) . "^\n";
+
+    switch ($error->level) {
+        case LIBXML_ERR_WARNING:
+            $return .= "Warning $error->code: ";
+            break;
+         case LIBXML_ERR_ERROR:
+            $return .= "Error $error->code: ";
+            break;
+        case LIBXML_ERR_FATAL:
+            $return .= "Fatal Error $error->code: ";
+            break;
+    }
+
+    $return .= trim($error->message) .
+               "\n  Line: $error->line" .
+               "\n  Column: $error->column";
+
+    if ($error->file) {
+        $return .= "\n  File: $error->file";
+    }
+
+    return "$return\n\n--------------------------------------------\n\n";
+}
+
 ?>
