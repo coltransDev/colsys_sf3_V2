@@ -2860,10 +2860,11 @@ elseif (isset($accion)) {                                                       
 			 exit;
 			}
 		$consecutivo = $rs->Value('ca_consecutivo');
-        echo "<script>document.location.href = '../colsys_sf/index.php/traficos/verEstatusCarga/modo/impo/ver/reporte/numreporte/$consecutivo';</script>";  // Retorna a la pantalla principal de la opción
-		/*
-		 echo "<script>document.location.href = '/traficos/listaStatus/modo/maritimo?reporte=$consecutivo';</script>";  // Retorna a la pantalla principal de la opción
+        /*echo "<script>document.location.href = '../colsys_sf/index.php/traficos/verEstatusCarga/modo/impo/ver/reporte/numreporte/$consecutivo';</script>";  // Retorna a la pantalla principal de la opción
 		*/
+		
+		 echo "<script>document.location.href = '/traficos/listaStatus/modo/maritimo?reporte=$consecutivo';</script>";  // Retorna a la pantalla principal de la opción
+		
      }else if (isset($id)) {
 		echo "<script>document.location.href = 'reportenegocio.php?boton=Consultar\&id=$id';</script>";  // Retorna a la pantalla principal de la opción
 	 }else {
@@ -3266,7 +3267,7 @@ function carga_arreglos(&$tm){
             echo "<INPUT TYPE='HIDDEN' NAME='ciutraficos' VALUE='".$tm->Value('ca_idtrafico')."'>";
             $tm->MoveNext();
            }
-     if (!$tm->Open("select ca_idagente, ca_nombre, ca_idtrafico from vi_agentes order by ca_nombre")) { // Selecciona todos lo registros de la tabla Agentes
+     if (!$tm->Open("select ca_idagente, ca_nombre, ca_idtrafico from vi_agentes where ca_activo=true order by ca_nombre ")) { // Selecciona todos lo registros de la tabla Agentes
          echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
          echo "<script>document.location.href = 'reportenegocio.php';</script>";
          exit; }
