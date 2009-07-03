@@ -3234,7 +3234,7 @@ else if (isset($opcion) and $opcion == 'Recargos_Loc' and isset($i) and isset($i
 else if (isset($opcion) and $opcion == 'Imprimir' and isset($id) and isset($ci)){
     require('include/fpdf.php');                                                   // Incorpora la librería de funciones, para generara Archivos en formato PDF
     require('include/cpdf.php');                                                   // Incorpora la plantilla con formato de Coltrans
-    if (!$rs->Open("select * from vi_agentesxcont where ca_idtrafico_ag like '".$id."' and ca_idciudad_ag like '".$ci."'")) {    // Mueve el apuntador al registro que se desea eliminar
+    if (!$rs->Open("select * from vi_agentesxcont where ca_activo=true and ca_activo_con=true and ca_idtrafico_ag like '".$id."' and ca_idciudad_ag like '".$ci."'")) {    // Mueve el apuntador al registro que se desea eliminar
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'agentes.php';</script>";
         exit; }

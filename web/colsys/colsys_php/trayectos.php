@@ -287,7 +287,7 @@ elseif (isset($boton)) {                                                       /
                      echo "<INPUT TYPE='HIDDEN' NAME='atransporte' VALUE='".$tm->Value('ca_transporte')."'>";
                      $tm->MoveNext();
                    }
-             if (!$tm->Open("select ca_idagente, ca_nombre, ca_idtrafico from vi_agentes order by ca_nombre")) { // Selecciona todos lo registros de la tabla Agentes
+             if (!$tm->Open("select ca_idagente, ca_nombre, ca_idtrafico from vi_agentes where ca_activo=true order by ca_nombre")) { // Selecciona todos lo registros de la tabla Agentes
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'reportenegocio.php';</script>";
                  exit; }
@@ -607,7 +607,7 @@ require_once("menu.php");
                    }
              echo "  </SELECT></TD>";
              echo "</TR>";
-             if (!$tm->Open("select ca_idagente, ca_nombre, ca_idtrafico from vi_agentes where ca_idtrafico = '".$rs->Value('ca_idtraorigen')."' order by ca_nombre")) { // Selecciona todos lo registros de la tabla Agentes
+             if (!$tm->Open("select ca_idagente, ca_nombre, ca_idtrafico from vi_agentes where ca_activo=true and ca_idtrafico = '".$rs->Value('ca_idtraorigen')."' order by ca_nombre")) { // Selecciona todos lo registros de la tabla Agentes
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'trayectos.php';</script>";
                  exit; }
