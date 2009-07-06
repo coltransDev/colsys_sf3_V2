@@ -47,13 +47,7 @@
 		<column name="ca_action" type="VARCHAR" size="100"/>
 	</table>
 	
-	<table name="control.tb_accesos_grp" phpName="AccesoGrupo">
-		
-		<column name="ca_rutina" type="VARCHAR"  primaryKey="true"/>
-		<column name="ca_grupo" type="VARCHAR"  primaryKey="true"/>
-		<column name="ca_acceso" type="integer" />
-		
-	</table>
+	
 	
 	<table name="control.tb_accesos_user" phpName="AccesoUsuario">		
 		<column name="ca_rutina" type="VARCHAR"  primaryKey="true" />
@@ -73,13 +67,7 @@
 	</table>
 	
 	
-	<table name="control.tb_rutinas_old" phpName="RutinaOld">
-		<column name="ca_rutina" type="VARCHAR" required="VARCHAR" primaryKey="true"/>
-		<column name="ca_opcion" type="VARCHAR" />
-		<column name="ca_descripcion" type="VARCHAR" />
-		<column name="ca_programa" type="VARCHAR" />
-		<column name="ca_grupo" type="VARCHAR" />		
-	</table>
+	
 	
 	<table name="control.tb_departamentos" phpName="Departamento">
 		<column name="ca_iddepartamento" type="integer" required="true" primaryKey="true" autoIncrement="true" />
@@ -88,16 +76,6 @@
 		<column name="ca_inhelpdesk" type="boolean" />	
 	</table>
 		
-	<table name="control.tb_grupos" phpName="Grupo">				
-		<column name="ca_nombre" type="varchar" primaryKey="true"/>					
-	</table>
-	
-	<table name="control.tb_usuarios_grupo" phpName="UsuarioGrupo">				
-		<column name="ca_login" type="varchar" primaryKey="true"/>	
-		<column name="ca_grupo" type="varchar" primaryKey="true"/>				
-	</table>
-	
-	
 	<table name="control.tb_perfiles" phpName="Perfil">				
 		<column name="ca_perfil" type="varchar" primaryKey="true"/>	
 		<column name="ca_nombre" type="varchar" />	
@@ -155,6 +133,29 @@
 			<reference local="ca_login" foreign="ca_login"/>
 		</foreign-key>	
 	</table>
-		
-		
+	
+	<!-- Para eliminar 
+	<table name="control.tb_rutinas_old" phpName="RutinaOld">
+		<column name="ca_rutina" type="VARCHAR" required="VARCHAR" primaryKey="true"/>
+		<column name="ca_opcion" type="VARCHAR" />
+		<column name="ca_descripcion" type="VARCHAR" />
+		<column name="ca_programa" type="VARCHAR" />
+		<column name="ca_grupo" type="VARCHAR" />		
+	</table>
+	
+	<table name="control.tb_grupos" phpName="Grupo">				
+		<column name="ca_nombre" type="varchar" primaryKey="true"/>					
+	</table>
+	
+	<table name="control.tb_usuarios_grupo" phpName="UsuarioGrupo">				
+		<column name="ca_login" type="varchar" primaryKey="true"/>	
+		<column name="ca_grupo" type="varchar" primaryKey="true"/>				
+	</table>	
+	
+	<table name="control.tb_accesos_grp" phpName="AccesoGrupo">		
+		<column name="ca_rutina" type="VARCHAR"  primaryKey="true"/>
+		<column name="ca_grupo" type="VARCHAR"  primaryKey="true"/>
+		<column name="ca_acceso" type="integer" />		
+	</table>	
+	-->	
 </database>

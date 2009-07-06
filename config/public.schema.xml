@@ -82,7 +82,8 @@
 	</table>	
 	
 	<table name="tb_agentes" phpName="Agente">
-		<column name="ca_idagente" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_idagente" type="integer" required="true" primaryKey="true" autoIncrement="true" />	
+		<id-method-parameter value="tb_agentes_id"/>		
 		<column name="ca_nombre" type="varchar" />		
 		<column name="ca_direccion" type="varchar" />
 		<column name="ca_telefonos" type="varchar" />
@@ -93,6 +94,12 @@
 		<column name="ca_email" type="varchar" />
 		<column name="ca_tipo" type="varchar" />	
 		<column name="ca_activo" type="boolean" />	
+		<column name="ca_fchcreado" type="timestamp"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />	
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_usuactualizado" type="varchar"   />	
+		
+		
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>
 		</foreign-key>	
@@ -102,6 +109,7 @@
 		<column name="ca_idcontacto" type="varchar" required="true" primaryKey="true" />			
 		<column name="ca_idagente" type="integer" />		
 		<column name="ca_nombre" type="varchar" />
+		<column name="ca_apellido" type="varchar" />
 		<column name="ca_direccion" type="varchar" />
 		<column name="ca_telefonos" type="varchar" />
 		<column name="ca_fax" type="varchar" />
@@ -113,6 +121,10 @@
 		<column name="ca_detalle" type="varchar" />	
 		<column name="ca_sugerido" type="boolean" />
 		<column name="ca_activo" type="boolean" />	
+		<column name="ca_fchcreado" type="timestamp"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />	
+		<column name="ca_usucreado" type="varchar"   />	
+		<column name="ca_usuactualizado" type="varchar"   />
 		<foreign-key foreignTable="tb_agentes">
 			<reference local="ca_idagente" foreign="ca_idagente"/>
 		</foreign-key>	

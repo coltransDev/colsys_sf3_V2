@@ -55,29 +55,31 @@
 		<column name="ca_idetapa" type="varchar" />
 		<column name="ca_fchultstatus" type="timestamp" />
 		<column name="ca_idtarea_rext" type="integer" />
+		<column name="ca_idseguimiento" type="integer"  />
+		
 		
 		<foreign-key foreignTable="control.tb_usuarios">
 			<reference local="ca_login" foreign="ca_login"/>
-		</foreign-key>	
-				
+		</foreign-key>
 		<foreign-key foreignTable="tb_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
-		</foreign-key>	
-			
+		</foreign-key>
 		<foreign-key foreignTable="tb_terceros">
 			<reference local="ca_idproveedor" foreign="ca_idtercero"/>
-		</foreign-key>
-		
+		</foreign-key>		
 		<foreign-key foreignTable="tb_agentes">
 			<reference local="ca_idagente" foreign="ca_idagente"/>
-		</foreign-key>
-		
+		</foreign-key>		
 		<foreign-key foreignTable="tb_bodegas">
 			<reference local="ca_idbodega" foreign="ca_idbodega"/>
 		</foreign-key>
 		<foreign-key foreignTable="tb_tracking_etapas">		
-			<reference local="ca_idetapa" foreign="ca_idetapa"/>
+			<reference local="ca_idetapa" foreign="ca_idetapa"/>			
 		</foreign-key>
+		<foreign-key foreignTable="notificaciones.tb_tareas">		
+			<reference local="ca_idseguimiento" foreign="ca_idtarea"/>
+		</foreign-key>		
+		
 	</table>
 	
 	<table name="tb_repstatus" phpName="RepStatus">
@@ -107,7 +109,7 @@
 		<column name="ca_horallegada" type="time" />	
 		<column name="ca_idetapa" type="varchar" />
 		<column name="ca_propiedades" type="varchar" />
-		<column name="ca_idseguimiento" type="integer"  />
+		
 		
 		 
 		<foreign-key foreignTable="tb_reportes">		
@@ -120,9 +122,7 @@
 			<reference local="ca_idetapa" foreign="ca_idetapa"/>
 		</foreign-key>
 		
-		<foreign-key foreignTable="notificaciones.tb_tareas">		
-			<reference local="ca_idseguimiento" foreign="ca_idtarea"/>
-		</foreign-key>
+		
 	</table>
 	
 	
