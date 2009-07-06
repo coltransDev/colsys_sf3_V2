@@ -24,6 +24,9 @@ if( $nivel>0 ){
 	exit();
 }
 
+header("Location: /agentes/index");
+exit();
+
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 if (!isset($buscar) and !isset($boton) and !isset($accion)) {

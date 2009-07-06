@@ -758,7 +758,7 @@ elseif (isset($accion)) {                                                      /
     switch(trim($accion)) {                                                    // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar': {                                                      // El Botón Guardar fue pulsado
              $idtarifas = ($idtarifas==0)?"currval('tb_trayectos_id')":$idtarifas;
-             if (!$rs->Open("insert into tb_trayectos (ca_origen, ca_destino, ca_idlinea, ca_transporte, ca_impoexpo, ca_frecuencia, ca_tiempotransito, ca_modalidad, ca_fchcreado, ca_idtarifas, ca_observaciones, ca_idagente) values('$idciuorigen', '$idciudestino', $idlinea, '$transporte', '$impoexpo', '$frecuencia', '$tiempotransito', '$modalidad', '$fchcreado', $idtarifas, '$observaciones', $idagente)")) {
+             if (!$rs->Open("insert into tb_trayectos (ca_origen, ca_destino, ca_idlinea, ca_transporte, ca_impoexpo, ca_frecuencia, ca_tiempotransito, ca_modalidad, ca_fchcreado, ca_idtarifas, ca_observaciones, ca_idagente) values('$idciuorigen', '$idciudestino', $idlinea, '$transporte', '$impoexpo', '$frecuencia', '$tiempotransito', '$modalidad', '$fchcreado', $idtarifas, '$observaciones', ".($idagente?$idagente:"null").")")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'trayectos.php';</script>";
                  exit;
@@ -767,7 +767,7 @@ elseif (isset($accion)) {                                                      /
              }
         case 'Actualizar': {                                                   // El Botón Actualizar fue pulsado
              $terminales = isset($terminales)?implode("|",$terminales):"";
-             if (!$rs->Open("update tb_trayectos set ca_idlinea = $idlinea, ca_transporte = '$transporte', ca_frecuencia = '$frecuencia', ca_tiempotransito = '$tiempotransito', ca_modalidad = '$modalidad', ca_idtarifas = $idtarifas, ca_observaciones = '$observaciones', ca_idagente = $idagente where ca_idtrayecto = $id")) {
+             if (!$rs->Open("update tb_trayectos set ca_idlinea = $idlinea, ca_transporte = '$transporte', ca_frecuencia = '$frecuencia', ca_tiempotransito = '$tiempotransito', ca_modalidad = '$modalidad', ca_idtarifas = $idtarifas, ca_observaciones = '$observaciones', ca_idagente = ".($idagente?$idagente:"null")." where ca_idtrayecto = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'trayectos.php';</script>";
                  exit;

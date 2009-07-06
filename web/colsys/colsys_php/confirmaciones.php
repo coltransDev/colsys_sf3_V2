@@ -12,8 +12,8 @@
 // Copyright:     Coltrans S.A. - 2004                                        \\
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
-header("Location: /confirmaciones/index");
-$programa = 26;
+//header("Location: /confirmaciones/index");
+//$programa = 26;
 $titulo = 'Módulo de Confirmaciones de Llegada';
 $columnas = array("Número de Referencia"=>"ca_referencia", "BL Master"=>"ca_mbls", "Motonave"=>"ca_motonave", "No. Contenedor"=>"ca_idequipo", "BL Hijo"=>"ca_hbls", "Nombre del Cliente"=>"ca_compania", "Reporte de Negocio"=>"ca_consecutivo", "Factura Cliente"=>"ca_factura", "N.i.t."=>"ca_idcliente", "Factura Proveedor"=>"ca_factura_prov", "Observaciones"=>"ca_observaciones");  // Arreglo con las opciones de busqueda
 $imporexpor = array("Importación","Exportación");                              // Arreglo con los tipos de Trayecto
