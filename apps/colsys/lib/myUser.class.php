@@ -61,36 +61,9 @@ class myUser extends sfBasicSecurityUser
 	}
 	
 	
-	public function getNivelAcceso( $rutina ){		
-		$acceso = AccesoUsuarioPeer::retrieveByPk( $rutina, $this->getUserId() );
-		
-		if( $acceso ){					
-			return $acceso->getCaAcceso();
-		}else{
-			if( $this->getAttribute('authmethod')=="ldapP" ){						
-				$c = new Criteria();									
-				$c->addJoin( AccesoPerfilPeer::CA_PERFIL, UsuarioPerfilPeer::CA_PERFIL );				
-				$c->add( UsuarioPerfilPeer::CA_LOGIN , $this->getUserId() );
-				$c->add( AccesoPerfilPeer::CA_RUTINA , $rutina );
-				
-				$acceso = AccesoPerfilPeer::doSelectOne( $c );
-				if( $acceso ){				
-					return $acceso->getCaAcceso();
-				}
-			}else{
-				$c = new Criteria();									
-				$c->addJoin( AccesoGrupoPeer::CA_GRUPO, UsuarioGrupoPeer::CA_GRUPO );				
-				$c->add( UsuarioGrupoPeer::CA_LOGIN , $this->getUserId() );
-				$c->add( AccesoGrupoPeer::CA_RUTINA , $rutina );
-				
-				$acceso = AccesoGrupoPeer::doSelectOne( $c );
-				if( $acceso ){				
-					return $acceso->getCaAcceso();
-				}
-			}		
-		}
-		
-		return -1;
+	public function getNivelAcceso( $rutina ){	
+		$usuario = UsuarioPeer::retrieveByPk( $this->getUserId() ); 	
+		return $usuario->getNivelAcceso( $rutina );
 	}
 	
 	public function getGrupos( ){		
@@ -175,7 +148,7 @@ class myUser extends sfBasicSecurityUser
 	* Inicia la sesion y verifica a los grupos a los que pertenece
 	*  el usuario el el directorio LDAP
 	*/
-	public function signInLDAP( $username )
+	/*public function signInLDAP( $username )
 	{ 		
 		$user = UsuarioPeer::retrieveByPk( $username );
 		
@@ -259,14 +232,14 @@ class myUser extends sfBasicSecurityUser
 			}
 		}
 	}
-	
+	*/
 	
 	
 	/*
 	* Inicia la sesion y verifica a los grupos a los que pertenece
 	*  el usuario el el directorio LDAP
 	*/
-	public function signInLDAPPerfiles( $username )
+	public function signInLDAP( $username )
 	{ 		
 		$user = UsuarioPeer::retrieveByPk( $username );
 		
@@ -328,20 +301,7 @@ class myUser extends sfBasicSecurityUser
 			$departamento = DepartamentoPeer::doSelectOne( $c );
 			if( $departamento ){
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
-			}
-						
-			/*
-			* En este caso los grupos no cambian dinamicamente como en el LDAP y semantienen en la BD
-			* en caso que el usuario inicie sesion con LDAP estos se borraran. 
-			*/
-			$grupos = array();
-			$c = new Criteria();
-			$c->add( UsuarioGrupoPeer::CA_LOGIN, $username );
-			$accesos = UsuarioGrupoPeer::doSelect( $c );
-			foreach( $accesos as $acceso ){
-				$grupos[] = $acceso->getCaGrupo();	
-			}
-											
+			}									
 		}		
 	}
 	
@@ -368,16 +328,6 @@ class myUser extends sfBasicSecurityUser
 		$this->clearCredentials();
 		//session_destroy();
 	}
-	
-	/*
-	* Sobrecarga la function isAuthenticated de la clase sfBasicSecurityUser para determinar si cumplio el maximo tiempo de sesion
-	*/
-	/*public function isAuthenticated(){
-		return parent::isAuthenticated();
-	}*/
-	
-	
-	
 	
 }
 

@@ -56,6 +56,7 @@ class helpdeskActions extends sfActions
 		$nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );		
 		$opcion = $request->getParameter("opcion");
 		$criterio = $request->getParameter("criterio");
+		$groupby = $request->getParameter("groupby");
 		
 		$c = new Criteria();
 				
@@ -117,7 +118,9 @@ class helpdeskActions extends sfActions
 				}
 				
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );
-				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_IDPROJECT );
+				if( $groupby=="project" ){
+					$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_IDPROJECT );
+				}
 				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_ACTION );
 				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );							
 					
@@ -137,8 +140,10 @@ class helpdeskActions extends sfActions
 				
 				$c->add( HdeskTicketPeer::CA_ACTION, "Abierto" );
 				
-				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );	
-				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_IDPROJECT );			
+				$c->addAscendingOrderByColumn( HdeskTicketPeer::CA_IDGROUP );
+				if( $groupby=="project" ){	
+					$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_IDPROJECT );			
+				}
 				$c->addDescendingOrderByColumn( HdeskTicketPeer::CA_OPENED );					
 				break;
 		}
@@ -171,7 +176,7 @@ class helpdeskActions extends sfActions
 		$c->setDistinct();	
 		$this->tickets = HdeskTicketPeer::doSelect( $c );
 		
-		
+		$this->groupby = $groupby;
 		
 		$this->nivel = $this->getUser()->getNivelAcceso( helpdeskActions::RUTINA );
 	}

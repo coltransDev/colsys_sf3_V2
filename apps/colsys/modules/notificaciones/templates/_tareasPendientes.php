@@ -19,7 +19,7 @@ if( count($listaTareas)>0 ){
 		<tr>
 			<th width="42%" >Tarea</th>
 			<th width="9%" >Enlace</th>
-			<th width="23%" >Vencimiento</th>
+			<th width="23%" >Creada</th>
 			<th width="18%" >Tiempo restante *</th>
 			<th width="8%" >Prioridad</th>
 		</tr>
@@ -30,7 +30,7 @@ if( count($listaTareas)>0 ){
 		<tr>
 			<td><?=$tarea->getCaTitulo()?></td>
 			<td><a href="<?=url_for("notificaciones/realizarTarea?id=".$tarea->getCaIdtarea())?>">Click aca</a></td>
-			<td><?=Utils::fechaMes($tarea->getCaFchvencimiento("Y-m-d"))." ".$tarea->getCaFchvencimiento("H:i:s")?></td>
+			<td><?=Utils::fechaMes($tarea->getCaFchcreado("Y-m-d"))." ".$tarea->getCaFchcreado("H:i:s")?></td>
 			<td>
 				<?			
 				$diff = $tarea->getTiempoRestante( $festivos  );					

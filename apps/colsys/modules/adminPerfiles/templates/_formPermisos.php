@@ -11,11 +11,11 @@
 		<?
 		if( $accesosPerfil ){
 		?>
-		<th width="19%" scope="col">Accesos Heredados</th>	
+		<th width="19%" scope="col">Accesos Heredados</th>			
 		<?
 		}
 		?>
-		
+		<th width="19%" scope="col">Opciones</th>
 	</tr>
 	<?
 	$lastGrp = null; 
@@ -24,7 +24,7 @@
 		$lastGrp=$opcion->getCaGrupo();
 	?>
 	<tr class="row0">
-		<td colspan="<?=$accesosPerfil?5:4?>"> <?=$opcion->getCaGrupo()?></td>					
+		<td colspan="<?=$accesosPerfil?6:5?>"> <?=$opcion->getCaGrupo()?></td>					
 	</tr>
 	<?
 	
@@ -55,10 +55,7 @@
 			<?
 			}
 			?>
-			
-										
-			</select>
-		</td>
+			</select>		</td>
 		<?
 		if( $accesosPerfil ){
 		?>
@@ -88,12 +85,11 @@
 			?>
 			
 		</div></td>	
+		
 		<?
 		}
 		?>
-		
-		
-		
+		<td width="9%" scope="col"><?=link_to("Usuarios con acceso", "adminPerfiles/listaAccesoUsuarios?rutina=".$opcion->getCaRutina())?></td>
 	</tr>
 	<?
 	}

@@ -152,7 +152,7 @@ if( !sfConfig::get("app_smtp_user") ){
 
 <table width="60%" border="0" class="tableList">
 	<tr>
-		<th colspan="2"><div align="center"><b>Nuevo Status </b></div></th>
+		<th colspan="2"><div align="center"><b>Nuevo <?=$tipo=="aviso"?"Aviso":"Status"?> </b></div></th>
 	</tr>
 	<?
 	if( $form->renderGlobalErrors() ){
@@ -327,7 +327,9 @@ if( !sfConfig::get("app_smtp_user") ){
 					<b>Hora de salida:</b><br />
 					<?
 						echo $form['horasalida']->renderError(); 
-						$form->setDefault('horasalida', $ultStatus->getCaHorasalida() ); 
+						if( $ultStatus ){
+							$form->setDefault('horasalida', $ultStatus->getCaHorasalida() ); 
+						}
 						echo $form['horasalida']->render();					
 					}else{
 						echo "&nbsp;";
@@ -550,7 +552,8 @@ if( !sfConfig::get("app_smtp_user") ){
 					<td colspan="2"><div align="left"><b>Datos en destino para reclamar el BL:</b><br />
 							<?
 							echo $form['datosbl']->renderError(); 
-							$form->setDefault('datosbl',$repexpo->getCaDatosbl()?$repexpo->getCaDatosbl():"Empresa:\nTel:\nContacto:" ); 
+							$datosbl = str_replace("<br />", "\n" , $repexpo->getCaDatosbl());	
+							$form->setDefault('datosbl',$repexpo->getCaDatosbl()?$datosbl:"Empresa:\nTel:\nContacto:" ); 
 							echo $form['datosbl']->render();
 							
 							?>								
@@ -630,11 +633,17 @@ if( !sfConfig::get("app_smtp_user") ){
 			 echo $form['horarecibo']->render();
 			 ?>		
 		</div></td>
-		</tr>
+	</tr>
+	<?
+	$tarea = $reporte->getNotTarea();
+	?>
 	<tr>
 		<td colspan="2"><div align="left"><b>Programar seguimiento:</b>
 			<?
 			 echo $form['prog_seguimiento']->renderError(); 
+			 if( $tarea ){
+			 	$form->setDefault('prog_seguimiento', true ); 
+			 }	
 			 echo $form['prog_seguimiento']->render();
 			 ?>
 			 
@@ -643,7 +652,10 @@ if( !sfConfig::get("app_smtp_user") ){
 	<tr>
 		<td colspan="2" id="row_seguimiento"><div align="left"><b>Fecha seguimiento:</b>
 				<?
-			 echo $form['fchseguimiento']->renderError(); 
+			 echo $form['fchseguimiento']->renderError();
+			 if( $tarea ){
+			 	$form->setDefault('fchseguimiento', $tarea->getCaFchvencimiento("Y-m-d") ); 
+			 }			   
 			 echo $form['fchseguimiento']->render();
 			 ?>
 		</div>			
@@ -651,6 +663,9 @@ if( !sfConfig::get("app_smtp_user") ){
 		<div align="left"><b>Recordar sobre:</b>
 				<?
 			 echo $form['txtseguimiento']->renderError(); 
+			 if( $tarea ){
+			 	$form->setDefault('txtseguimiento', $tarea->getCaTexto() ); 
+			 }	
 			 echo $form['txtseguimiento']->render();
 			 ?>
 			</div></td>

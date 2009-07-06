@@ -18,7 +18,7 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 		
 		<table width="95%" border="1" class="tableList">
 		  <tr>
-			<th colspan="10"><?=$ticket->getHdeskGroup()->getCaName()?></th>
+			<th colspan="<?=$groupby=="project"?"10":"11"?>"><?=$ticket->getHdeskGroup()->getCaName()?></th>
 			</tr>    
 		  <tr>
 			<th width="76">Ticket # </th>
@@ -26,7 +26,13 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 			<th width="69">Usuario</th>
 			<th width="72">Fecha</th>
 			<th width="58">Tipo</th>
-			
+			<?
+			if( $groupby!="project" ){
+			?>
+			<th width="110">Proyecto</th>
+			<?
+			}
+			?>
 			<th width="110">Prioridad</th>
 			<th width="110">Asignado a</th>
 			<th width="95">Fecha Respuesta </th>
@@ -63,13 +69,13 @@ for( $i =0 ; $i<$numtickets; $i++ ){
 		$project = "";
 	}
 		
-	if(  $lastProject!=$project || $lastProject===null ){
+	if( $groupby=="project" && ($lastProject!=$project || $lastProject===null) ){
 		$lastProject = $project;
   ?>   
   <tr class="row0">
   	<td colspan="10"><div align="left"><b>
   		<?
-		if( $ticket->getHdeskProject() ){			
+		if(  $ticket->getHdeskProject() ){			
 			
 			if( $nivel>0 ){
 				echo link_to($project ,"helpdesk/listaTickets?opcion=personalizada&project=".$ticket->getHdeskProject()->getCaIdproject());
@@ -93,6 +99,27 @@ for( $i =0 ; $i<$numtickets; $i++ ){
     <td><?=$ticket->getCaLogin()?></td>
     <td><?=Utils::fechaMes($ticket->getCaOpened("Y-m-d"))?></td>
     <td><?=$ticket->getCaType()?></td>
+	
+	<?
+	if( $groupby!="project" ){
+	?>
+	<td>
+	<?
+	if(  $ticket->getHdeskProject() ){			
+			
+		if( $nivel>0 ){
+			echo link_to($project ,"helpdesk/listaTickets?opcion=personalizada&project=".$ticket->getHdeskProject()->getCaIdproject());
+		}else{
+			echo $project;
+		}
+	}else{			
+		echo "&nbsp;";
+	}
+	?>
+	</td>
+	<?
+	}
+	?>
 	
 	<td><?=$ticket->getCaPriority()?></td>
 	<td>

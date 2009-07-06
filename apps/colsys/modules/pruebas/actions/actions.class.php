@@ -1816,6 +1816,23 @@ Departamento Comercial
 	}
 	
 	
+	public function executeEliminarUsuarios(){
+		exit("detenido");
+		$sql = "select * from pg_user";
+		$con = Propel::getConnection(UsuarioPeer::DATABASE_NAME);
+		$stmt = $con->prepare($sql);
+		$stmt->execute();
+		while($row = $stmt->fetch() ){
+			if( $row['usename']!="postgres" && $row['usename']!="Administrador" ){
+				$sql = "DROP ROLE \"".$row['usename']."\" ";
+				//echo $row['usename']."<br />";
+				echo $sql.";<br />";
+			}
+		}
+		return sfView::NONE;
+	}
+	
+	
 	public function executeHorasCotizaciones(){
 
 		sfConfig::set('sf_web_debug', false) ;	
@@ -2155,13 +2172,13 @@ Departamento Comercial
 	* se crean todos x CrearStatusMaritimo
 	*/
 	public function executeCrearStatusConfirmaciones(){
-		exit("detenido");
+		exit("detenido no usar");
 		set_time_limit( 0 );
 		$c = new Criteria(); //CaFchconfirmado
 		//$c->addJoin(  InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA );
 		
-		$c->add( InoMaestraSeaPeer::CA_FCHCONFIRMADO, '2009-04-16',  Criteria::GREATER_EQUAL);	
-		//$c->addAnd( InoMaestraSeaPeer::CA_FCHCONFIRMADO, '2009-04-15', Criteria::LESS_EQUAL );
+		$c->add( InoMaestraSeaPeer::CA_FCHCONFIRMADO, '2008-12-01',  Criteria::GREATER_EQUAL);	
+		$c->addAnd( InoMaestraSeaPeer::CA_FCHCONFIRMADO, '2008-12-31', Criteria::LESS_EQUAL );
 		$c->add( InoMaestraSeaPeer::CA_REFERENCIA, '4%', Criteria::LIKE);
 		$c->addOr( InoMaestraSeaPeer::CA_REFERENCIA, '5%', Criteria::LIKE);
 		//$c->setLimit( 100 );
@@ -2204,6 +2221,7 @@ Departamento Comercial
 						$status->setCaFchenvio( $referencia->getCaFchconfirmado() );
 						$status->setCausuenvio( $referencia->getCaUsuconfirmado() );
 						$status->setCaFchStatus( $referencia->getCaFchconfirmado() );
+						// No ejecutar
 						//$status->save();
 						fwrite($fp, $referencia->getCaReferencia()."\r\n");
 					}
@@ -2219,9 +2237,10 @@ Departamento Comercial
 	* se borraron 129549 - 133400 12 mayo 11:13
 	* Ejecutado 12 May a las 11:15AM   ( CA_FCHENVIO, '2009-01-01' - 2009-01-31) se crearon los status    133740 - 135577 -   excepto {134440, 133880}
 	
-	* Ejecutado 12 May a las 11:38AM   ( CA_FCHENVIO, '2009-02-01' - 2009-03-31) se crearon los status    135581 - 138741  excepto {138459, 136664, 136131 }   total 3154
-	* Ejecutado 12 May a las 11:57AM   ( CA_FCHENVIO, '2009-04-01' - 2009-04-30) se crearon los status   138747  - 140472  excepto {140240, 139951, 138990, 138928 }   
-	* Ejecutado 12 May a las 12:01PM   ( CA_FCHENVIO, '2009-05-01' - ...) se crearon los status   140479  - 141011  excepto { }   
+	* Ejecutado 12 May 09 a las 11:38AM   ( CA_FCHENVIO, '2009-02-01' - 2009-03-31) se crearon los status    135581 - 138741  excepto {138459, 136664, 136131 }   total 3154
+	* Ejecutado 12 May  09 a las 11:57AM   ( CA_FCHENVIO, '2009-04-01' - 2009-04-30) se crearon los status   138747  - 140472  excepto {140240, 139951, 138990, 138928 }   
+	* Ejecutado 12 May  09 a las 12:01PM   ( CA_FCHENVIO, '2009-05-01' - ...) se crearon los status   140479  - 141011  excepto { }  
+	* Ejecutado 3 jul 09  a las 15:21PM   ( CA_FCHENVIO, ..., '2008-12-31 ) ( CA_REFERENCIA, '%9', Criteria::LIKE ) se crearon los status   156250  - 156282  excepto { }   
 	*/
 	public function executeCrearStatusMaritimo(){
 		exit("detenido");
@@ -2229,8 +2248,9 @@ Departamento Comercial
 		$c = new Criteria(); //CaFchconfirmado
 		//$c->addJoin(  InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA );
 		
-		$c->add( InoAvisosSeaPeer::CA_FCHENVIO, '2009-05-01',  Criteria::GREATER_EQUAL);	
-		//$c->addAnd( InoAvisosSeaPeer::CA_FCHENVIO, '2009-04-30', Criteria::LESS_EQUAL );
+		//$c->add( InoAvisosSeaPeer::CA_FCHENVIO, '2009-05-01',  Criteria::GREATER_EQUAL);	
+		$c->addAnd( InoAvisosSeaPeer::CA_FCHENVIO, '2008-12-31', Criteria::LESS_EQUAL );
+		$c->addAnd( InoAvisosSeaPeer::CA_REFERENCIA, '%9', Criteria::LIKE );
 		
 		//$c->add( InoAvisosSeaPeer::CA_FCHENVIO, '2009-01-01',  Criteria::GREATER_EQUAL);	;
 		
@@ -2259,7 +2279,8 @@ Departamento Comercial
 						$texto = "La MN ".($referencia->getCaMnLlegada(  ) ?$referencia->getCaMnLlegada(  ):$referencia->getCaMotonave())." arribó a ".$referencia->getDestino()->getCaCiudad().", el dia ".Utils::fechaMes( $referencia->getCaFchconfirmacion() )." con la orden en referencia a bordo.\n". ucfirst($inoCliente->getCamensaje());
 												
 						$idetapa = "IMCOL";
-					}else{						
+					}else{
+						break;						
 						if( strpos($texto, "Confirmamos cierre y finalización de los documentos del proceso de OTM")!==false ){
 							$idetapa = "99999";
 						}elseif( strpos($texto, "Confirmamos el cargue y despacho de la")!==false){
@@ -2587,39 +2608,7 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 	
 	}
 	
-	/*
-	Lista de los permisos de los usuarios 
-	*/
-	public function executeListaAccesoUsuarios(){
-		
-		$rutina = $this->getRequestParameter("rutina");
-		$this->rutina = RutinaPeer::retrieveByPk( $rutina );
-		$c = new Criteria();					
-		
-		//$c->addJoin( RutinaPeer::CA_RUTINA, AccesoGrupoPeer::CA_RUTINA , Criteria::LEFT_JOIN );		
-					
-		$c->addJoin( UsuarioPeer::CA_LOGIN, UsuarioGrupoPeer::CA_LOGIN,  Criteria::LEFT_JOIN );		
-		$c->addJoin( UsuarioGrupoPeer::CA_GRUPO, AccesoGrupoPeer::CA_GRUPO, Criteria::LEFT_JOIN );		
-				
-		$c->addJoin( UsuarioPeer::CA_LOGIN, AccesoUsuarioPeer::CA_LOGIN,  Criteria::LEFT_JOIN );		
-					
-		$criterion = $c->getNewCriterion( AccesoGrupoPeer::CA_RUTINA, $rutina );								
-		$criterion->addOr($c->getNewCriterion( AccesoUsuarioPeer::CA_RUTINA, $rutina ));	
-		$c->add($criterion);			
-		
-		$c->add(  AccesoUsuarioPeer::CA_ACCESO, 0 , Criteria::GREATER_EQUAL );
-		$c->addOr(  AccesoUsuarioPeer::CA_ACCESO, null , Criteria::ISNULL );
-		
-		$c->add(  AccesoGrupoPeer::CA_ACCESO, 0 , Criteria::GREATER_EQUAL );
-		$c->addOr(  AccesoGrupoPeer::CA_ACCESO, null , Criteria::ISNULL );
-		
-		$c->setDistinct();	
-		$c->addAscendingOrderByColumn( UsuarioPeer::CA_IDSUCURSAL );	
-		$c->addAscendingOrderByColumn( UsuarioPeer::CA_DEPARTAMENTO );
-		$c->addAscendingOrderByColumn( UsuarioPeer::CA_CARGO );
-		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );	
-		$this->usuarios = UsuarioPeer::doSelect( $c );	
-	}
+	
 	
 	
 	
@@ -2700,6 +2689,39 @@ ORDER BY ca_fchstatus ";
 		}
 		
 		$this->setTemplate("blank");
+	}
+	
+	
+	public function executeCopiarPermisosGrupo(){
+		
+		$c = new Criteria();
+		$c->addDescendingOrderByColumn( AccesoGrupoPeer::CA_ACCESO );
+		$accesosGrupo = AccesoGrupoPeer::doSelect( $c );		
+		
+		foreach( $accesosGrupo as $accesoGrupo ){
+			
+			$c = new Criteria();
+			$c->add(  UsuarioGrupoPeer::CA_GRUPO, $accesoGrupo->getCaGrupo() );
+			$usuarios = UsuarioGrupoPeer::doSelect( $c );
+			
+			foreach( $usuarios as $usuario ){
+				$accesoUsuario = AccesoUsuarioPeer::retrieveByPk( $accesoGrupo->getCaRutina()  , $usuario->getcaLogin() );
+				if( !$accesoUsuario ){
+					$accesoUsuario = new AccesoUsuario();
+					$accesoUsuario->setCaLogin( $usuario->getcaLogin() );
+					$accesoUsuario->setCaRutina( $accesoGrupo->getCaRutina() );
+					$accesoUsuario->setCaAcceso( $accesoGrupo->getCaAcceso() );
+					$accesoUsuario->save();
+					
+					echo "Grupo:  ".$accesoGrupo->getCaGrupo()." Rutina ".$accesoGrupo->getCaRutina()." ".$accesoGrupo->getCaAcceso()." ".$usuario->getcaLogin()."<br />";
+				}
+			
+			}
+			//$accesoGrupo->delete();
+			
+			
+		}
+				
 	}
 		
 		

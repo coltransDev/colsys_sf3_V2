@@ -158,16 +158,16 @@ for( $k=0; $k<count($transportes); $k++ ):
 			$pdf->Row(array('Producto : '.$producto->getCaProducto()));
 			
 			$pdf->SetFont($font,'B',8);
-			$pdf->SetWidths(array(40, 40, 45, 45));
+			$pdf->SetWidths(array( 50, 60, 60));
 			$pdf->SetAligns(array_fill(0, 5, "C"));
 			$pdf->SetStyles(array_fill(0, 5, "B"));
 			$pdf->SetFills(array_fill(0, 5, 1));
-			$pdf->Row(array('Impo/Expo', 'Términos' ,'Origen', 'Destino'));
+			$pdf->Row(array( 'Términos' ,'Origen', 'Destino'));
 					
 			$pdf->SetStyles(array_fill(0, 5, ""));
 			$pdf->SetFills(array_fill(0, 5, 0));
 			$pdf->SetFont($font,'',8);
-			$pdf->Row(array($producto->getCaImpoExpo(), $producto->getCaIncoterms(), $producto->getOrigen()->getCaCiudad()." - ".$producto->getOrigen()->getCaTrafico(),  $producto->getDestino()->getCaCiudad()." - ".$producto->getDestino()->getCaTrafico() ));		
+			$pdf->Row(array( $producto->getCaIncoterms(), $producto->getOrigen()->getCaCiudad()." - ".$producto->getOrigen()->getCaTrafico(),  $producto->getDestino()->getCaCiudad()." - ".$producto->getDestino()->getCaTrafico() ));		
 			
 			if( $linea && $producto->getCaPostularLinea()){
 				$pdf->SetFont($font,'',8);
@@ -230,7 +230,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 				$pdf->SetAligns(array_fill(0, 4, "C"));
 				$pdf->SetStyles(array_fill(0, 4, "B"));
 				$pdf->SetFills(array_fill(0, 4, 1));
-				$pdf->Row($titulos);
+				//$pdf->Row($titulos);
 				
 				foreach( $tabla as $item ){
 					if( $imprimirRecargos && !isset($item["recargos"]) ){ //Evita que queden huecos en la impresion
@@ -285,7 +285,7 @@ for( $k=0; $k<count($transportes); $k++ ):
 				$pdf->SetAligns(array_fill(0, count($width_mem), "C"));
 				$pdf->SetStyles(array_fill(0, count($width_mem), "B"));
 				$pdf->SetFills(array_fill(0, count($width_mem), 1));
-				$pdf->Row($titu_mem);
+				//$pdf->Row($titu_mem);
 				
 				$pdf->SetAligns(array_fill(0, count($width_mem), "L"));
 				$pdf->SetStyles(array_fill(0, count($width_mem), ""));
@@ -1122,7 +1122,7 @@ if( $cotizacion->getCaDatosag() ){
 			}
 					
 			$pdf->SetFont($font,'B',8);
-			$pdf->MultiCell(0, 3,$contacto->getCaNombre(),0,1);
+			$pdf->MultiCell(0, 3,$contacto->getCaNombre()." ".$contacto->getCaApellido(),0,1);
 			$pdf->SetFont($font,'',8);
 			$pdf->MultiCell(0, 3,$contacto->getCaDireccion()." - ".$ciudad->getCaCiudad(),0,1);
 			$pdf->MultiCell(0, 3,"Teléfonos (".substr(strtoupper($ciudad->getCaIdtrafico()),3,3)." - ".substr(strtoupper($contacto->getCaIdciudad() ),4,4).") : ".$contacto->getCaTelefonos()." - Fax : ".$contacto->getCaFax(),0,1);

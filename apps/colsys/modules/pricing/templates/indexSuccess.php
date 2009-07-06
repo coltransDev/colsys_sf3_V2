@@ -192,7 +192,7 @@ Ext.onReady(function(){
 					?>								
 					,
 					<?						
-					include_component("pricing","panelCargasNacionales", array( "impoexpo"=>Constantes::IMPO, "transporte"=>"", "titulo"=>"Cargas Nacionales"));						
+					include_component("pricing","panelCargasNacionales", array( "impoexpo"=>Constantes::IMPO, "transporte"=>"", "titulo"=>"Archivos"));						
 					?>
 					
 					<?	

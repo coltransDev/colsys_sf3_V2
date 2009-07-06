@@ -170,6 +170,52 @@ class adminPerfilesActions extends sfActions
 	}
 	
 	
+	/*
+	Lista de los permisos de los usuarios 
+	*/
+	public function executeListaAccesoUsuarios( $request ){
+		
+		$rutina = $request->getParameter("rutina");
+		$this->rutina = RutinaPeer::retrieveByPk( $rutina );
+		$this->forward404Unless( $this->rutina );
+		$c = new Criteria();					
+		
+		//$c->addJoin( RutinaPeer::CA_RUTINA, AccesoGrupoPeer::CA_RUTINA , Criteria::LEFT_JOIN );		
+					
+		$c->addJoin( UsuarioPeer::CA_LOGIN, UsuarioPerfilPeer::CA_LOGIN,  Criteria::LEFT_JOIN );		
+		$c->addJoin( UsuarioPerfilPeer::CA_PERFIL, AccesoPerfilPeer::CA_PERFIL, Criteria::LEFT_JOIN );		
+				
+		$c->addJoin( UsuarioPeer::CA_LOGIN, AccesoUsuarioPeer::CA_LOGIN,  Criteria::LEFT_JOIN );		
+					
+		$criterion = $c->getNewCriterion( AccesoPerfilPeer::CA_RUTINA, $rutina );								
+		$criterion->addOr($c->getNewCriterion( AccesoUsuarioPeer::CA_RUTINA, $rutina ));	
+		$c->add($criterion);			
+		
+		$c->add(  AccesoUsuarioPeer::CA_ACCESO, 0 , Criteria::GREATER_EQUAL );
+		$c->addOr(  AccesoUsuarioPeer::CA_ACCESO, null , Criteria::ISNULL );
+		
+		$c->add(  AccesoPerfilPeer::CA_ACCESO, 0 , Criteria::GREATER_EQUAL );
+		$c->addOr(  AccesoPerfilPeer::CA_ACCESO, null , Criteria::ISNULL );
+		
+		$c->setDistinct();	
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_IDSUCURSAL );	
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_DEPARTAMENTO );
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_CARGO );
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );	
+		$this->usuarios = UsuarioPeer::doSelect( $c );	
+		
+		
+		$c = new Criteria();
+		$c->add( RutinaNivelPeer::CA_RUTINA, $rutina );
+		$c->addAscendingOrderByColumn( RutinaNivelPeer::CA_NIVEL );
+		$rutinasNivel = RutinaNivelPeer::doSelect( $c );
+		$this->rutinasNivel = array();
+		foreach( $rutinasNivel as $rutinaNivel ){
+			$this->rutinasNivel[ $rutinaNivel->getCaNivel() ] = $rutinaNivel->getCaValor();
+		}
+	}
+	
+	
 	
 	
 	

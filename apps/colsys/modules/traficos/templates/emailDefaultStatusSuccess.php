@@ -58,8 +58,8 @@ $cliente = $reporte->getCliente();
 	<tr>
 		<td><b>No. HBL:</b></td>
 		<td><?=$status->getCaDoctransporte()?$status->getCaDoctransporte():"&nbsp;"?></td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
+		<td><?=$reporte->getCaModalidad()=="FCL"&&$status->getCaDocmaster()?"<b>Master:</b>":"&nbsp;"?></td>
+		<td><?=$reporte->getCaModalidad()=="FCL"&&$status->getCaDocmaster()?$status->getCaDocmaster():"&nbsp;"?></td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 	</tr>		
@@ -134,7 +134,13 @@ $cliente = $reporte->getCliente();
 						<tr>
 							<th>Concepto</th>
 							<th>Cantidad</th>
-							<th>ID Equipo</th>
+							<?
+							if( $reporte->getCaImpoExpo()==Constantes::EXPO ){
+							?>
+							<th>Serial</th>
+							<?
+							}
+							?>
 							<th>Observaciones</th>
 						</tr>
 						<?				
@@ -143,7 +149,13 @@ $cliente = $reporte->getCliente();
 						<tr>
 							<td><?=$equipo->getConcepto()->getCaConcepto()?></td>
 							<td><?=$equipo->getCaCantidad()?></td>
+							<?
+							if( $reporte->getCaImpoExpo()==Constantes::EXPO ){
+							?>
 							<td><?=$equipo->getCaIdequipo()?></td>
+							<?
+							}
+							?>
 							<td><?=$equipo->getCaObservaciones()?$equipo->getCaObservaciones():"&nbsp;"?></td>
 						</tr>
 						<?

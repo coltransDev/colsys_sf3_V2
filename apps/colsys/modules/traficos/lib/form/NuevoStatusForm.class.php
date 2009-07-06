@@ -243,6 +243,7 @@ class NuevoStatusForm extends sfForm{
 			 $this->validatorSchema['peso']->setOption('required', true);
 			 $this->validatorSchema['volumen']->setOption('required', true);
 			 $this->validatorSchema['fchsalida']->setOption('required', true);
+			 $this->validatorSchema['fchllegada']->setOption('required', true);	 			 			 			 
 			 $this->validatorSchema['fchllegada']->setOption('required', true);
 			 $this->validatorSchema['doctransporte']->setOption('required', true);
 			 $this->validatorSchema['idnave']->setOption('required', true);

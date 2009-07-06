@@ -98,7 +98,13 @@ var cambiarCriterios = function( element ){
 		<td><?=link_to("Tickets <b>activos asignados a mi</b>","helpdesk/listaTickets?opcion=personalizada&assignedto=".$user->getUserId()."&actionTicket=Abierto")?></td>
 	</tr>
 	<tr class="row0">
+		<td><?=link_to("Tickets <b>activos asignados a mi agrupados por proyecto</b>","helpdesk/listaTickets?opcion=personalizada&assignedto=".$user->getUserId()."&actionTicket=Abierto&groupby=project")?></td>
+	</tr>
+	<tr class="row1">
 		<td><?=link_to("<b>Todos los tickets </b> de mis areas","helpdesk/listaTickets?opcion=group")?></td>
+	</tr>
+	<tr class="row0">
+		<td><?=link_to("<b>Todos los tickets </b> de mis areas agrupados por proyecto","helpdesk/listaTickets?opcion=group&groupby=project")?></td>
 	</tr>	
 	<tr class="row1">
 		<td><?=link_to("<b>Tickets asignados</b> de mis areas","helpdesk/listaTickets?opcion=group&assigned=true")?></td>

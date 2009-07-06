@@ -4,7 +4,7 @@ use_helper("MimeType");
 ?>
 <script language="javascript">
 	
-	function actualizar( id ){
+	function ocultarMostrarReporte( id ){
 		var tabla = document.getElementById( 'lista' );
 		var trs = tabla.getElementsByTagName( 'tr' );
 			
@@ -25,25 +25,32 @@ use_helper("MimeType");
 			histContent = document.getElementById('info_'+id);
 			
 			if( histContent.innerHTML=="" ){	
-				histContent.innerHTML = "<div id='indicator'></div>";			
-				Ext.Ajax.request({
-					url: '<?=url_for("traficos/infoReporte");?>',
-					params: {							
-						idreporte: id,
-						modo: '<?=$modo?>'
-					},
-					success: function(xhr) {			
-						histContent.innerHTML = xhr.responseText;
-						
-					},
-					failure: function() {
-						Ext.Msg.alert("Error", "Server communication failure");
-					}
-				});	
+				actualizar( id );
 			}
 		}else{
 			document.getElementById('infotr_'+id).style.display = 'none';
 		}						
+	}
+	
+	function actualizar( id ){
+		histContent = document.getElementById('info_'+id);
+		
+		histContent.innerHTML = "<div id='indicator'></div>";			
+		Ext.Ajax.request({
+			url: '<?=url_for("traficos/infoReporte");?>',
+			params: {							
+				idreporte: id,
+				modo: '<?=$modo?>'
+			},
+			success: function(xhr) {			
+				histContent.innerHTML = xhr.responseText;
+				
+			},
+			failure: function() {
+				Ext.Msg.alert("Error", "Server communication failure");
+			}
+		});	
+		
 	}
 	
 	
@@ -127,7 +134,7 @@ use_helper("MimeType");
 		$ultReporte=  $reporte->getCaIdreporte();	
 		$class= $reporte->getColorStatus();		
 	?>
-	<tr class="<?=$class?>" id="tr_<?=$reporte->getCaIdreporte()?>" onclick="actualizar('<?=$reporte->getCaIdreporte()?>')" style="cursor:pointer">
+	<tr class="<?=$class?>" id="tr_<?=$reporte->getCaIdreporte()?>" onclick="ocultarMostrarReporte('<?=$reporte->getCaIdreporte()?>')" style="cursor:pointer">
 		<td>
 		<div align="left">
 			<?=$reporte->getCaFchReporte()?>
@@ -218,7 +225,7 @@ if( $numReportes==1 ){
 if( $idreporte ){
 ?>
 <script language="javascript" type="text/javascript" >
-	actualizar( <?=$idreporte?> );
+	ocultarMostrarReporte( <?=$idreporte?> );
 
 </script>
 <?

@@ -18,7 +18,8 @@ class adminUsersActions extends sfActions
 	public function executeIndex(sfWebRequest $request)
 	{
 		$c = new Criteria();
-		$c->addAscendingOrderByColumn( UsuarioPeer::CA_NOMBRE );
+		$c->addDescendingOrderByColumn( UsuarioPeer::CA_ACTIVO );
+		$c->addAscendingOrderByColumn( UsuarioPeer::CA_LOGIN );
 		$this->usuarios = UsuarioPeer::doSelect( $c );
 	}
 	
@@ -96,6 +97,13 @@ class adminUsersActions extends sfActions
 			$usuario->setCaForcechange( true );
 		}else{
 			$usuario->setCaForcechange( false );
+		}
+		
+		
+		if( $request->getParameter("activo") ){
+			$usuario->setCaActivo( true );
+		}else{
+			$usuario->setCaActivo( false );
 		}
 		
 		$usuario->save();		

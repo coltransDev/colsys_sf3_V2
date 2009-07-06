@@ -219,6 +219,9 @@ class pricingActions extends sfActions
 		$c->add( TrayectoPeer::CA_TRANSPORTE, $transporte );
 		$c->add( TrayectoPeer::CA_MODALIDAD, $modalidad );
 		$c->add( TrayectoPeer::CA_ACTIVO, true );
+		$c->addJoin( TrayectoPeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE, Criteria::LEFT_JOIN );
+		$c->add(  AgentePeer::CA_ACTIVO, true );
+		$c->addOr(  AgentePeer::CA_ACTIVO, null, Criteria::ISNULL );
 		
 		if( $this->trafico ){
 			if( $impoexpo==Constantes::IMPO ){

@@ -38,6 +38,28 @@
 					?><br />
 			
 		</div>
+		<br />
+		<div class="post-info" align="left">
+		<b>Seguimientos</b><br />	
+		<?
+		$tarea = $reporte->getNotTarea();
+		
+		$url = "/traficos/formSeguimiento?modo=".$modo."&reporte=".$reporte->getCaConsecutivo();
+		
+		if( $tarea ){
+			echo Utils::fechaMes($tarea->getCaFchvencimiento("Y-m-d"))."<br />";
+			echo $tarea->getCaTexto()."<br />";
+			echo link_to(image_tag("22x22/todo.gif")." Editar", $url);		
+		}else{
+			echo "No se ha creado ning&uacute;n seguimiento.<br />";
+			echo link_to(image_tag("22x22/todo.gif")." Nuevo", $url);
+		}
+			
+		?>	
+		</div>
+		<br />
+		<a href="#" onClick="actualizar(<?=$reporte->getCaIdreporte()?>)">Actualizar</a>
+		
 		</td>
 		<td width="46%" valign="top">
 			<div class="post-info" align="left">
@@ -85,6 +107,9 @@
 				
 			
 		</div>
+		<br />
+		
+		
 		</td>
 	</tr>
 </table>

@@ -279,7 +279,7 @@ class traficosActions extends sfActions
 		//Campos personalizados por cliente	
 		$c = new Criteria();
 		$c->addJoin( ParametroPeer::CA_IDENTIFICACION, ClientePeer::CA_IDGRUPO );
-		$c->add( ClientePeer::CA_IDGRUPO, $reporte->getCliente()->getCaIdCliente() );
+		$c->add( ClientePeer::CA_IDGRUPO, $reporte->getCliente()->getCaIdGrupo() );
 		$c->add( ParametroPeer::CA_CASOUSO, "CU059" );		
 		$c->setDistinct();
 		$parametros = ParametroPeer::doSelect( $c );			
@@ -458,8 +458,10 @@ class traficosActions extends sfActions
 		if( $request->getParameter("fchllegada") ){
 			$status->setCaFchllegada( Utils::parseDate($request->getParameter("fchllegada")) );
 		}
+			
 		
-		if( $request->getParameter("horasalida") ){	
+		$horaRecibo = $request->getParameter("horasalida");		
+		if( $horaRecibo['hour'] ){	
 			$horasalida =  $request->getParameter("horasalida");		
 			if( !$horasalida['minute'] ){
 				$horasalida['minute']='00';
@@ -560,30 +562,38 @@ class traficosActions extends sfActions
 		$options["from"] =  $request->getParameter("remitente");
 			
 		//$address = array();
-		$status->send($address, $cc,  $att, $options);
+		$status->send($address, $cc,  $att, $options);	
 		
-		
-		
+		$tarea = $reporte->getNotTarea();					
 		if( $request->getParameter("prog_seguimiento") ){
 			
 			$titulo = "Seguimiento RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
 			$texto = "";			
-			$tarea = new NotTarea(); 
+			
+			
+			if( !$tarea ){			
+				$tarea = new NotTarea(); 
+				$tarea->setCaFchcreado( time() );								
+				$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+			}	
 			$tarea->setCaUrl( "/traficos/listaStatus/modo/maritimo/reporte/".$reporte->getCaConsecutivo() );
-			$tarea->setCaIdlistatarea( 3 );
-			$tarea->setCaFchcreado( time() );								
+			$tarea->setCaIdlistatarea( 3 );			
 			$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
-			$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );
-			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+			$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );			
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $request->getParameter("txtseguimiento") );
 			$tarea->save();
 			$loginsAsignaciones = array( $this->getUser()->getUserId() );
 			$tarea->setAsignaciones( $loginsAsignaciones );	
 			
-			$status->setCaIdseguimiento( $tarea->getCaIdtarea() );
-			$status->save();
-				
+			$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
+			$reporte->save();				
+		}else{
+			if( $tarea ){
+				$tarea->setCaFchterminada( time() );
+				$tarea->setCaUsuterminada( $this->getUser()->getUserId()  );									
+				$tarea->save();
+			}	
 		}				
 		$this->redirect("traficos/listaStatus?modo=".$this->modo."&reporte=".$reporte->getCaConsecutivo());
 	}
@@ -654,7 +664,7 @@ class traficosActions extends sfActions
 		
 		$c = new Criteria();
 		$c->addJoin( ParametroPeer::CA_IDENTIFICACION, ClientePeer::CA_IDGRUPO );
-		$c->add( ClientePeer::CA_IDGRUPO, $this->cliente->getCaIdCliente() );
+		$c->add( ClientePeer::CA_IDGRUPO, $this->cliente->getCaIdGrupo() );
 		$c->add( ParametroPeer::CA_CASOUSO, "CU059" );		
 		$c->setDistinct();
 		$this->parametros = ParametroPeer::doSelect( $c );
@@ -934,9 +944,67 @@ class traficosActions extends sfActions
 	}
 	
 	/***********************************************************************************
-	* 
+	* Formulariode seguimientos
 	************************************************************************************/
 	
+	/*
+	* Permite modificar un seguimiento
+	* author: Andres Botero
+	*/	
+	public function executeFormSeguimiento( $request ){
+		$this->form = new SeguimientoForm();
+		$reporte = $this->getRequestParameter( "reporte" );
+		$this->forward404Unless( $reporte );
+		$reporte = ReportePeer::retrieveByConsecutivo( $reporte );
+		
+		$this->modo = $this->getRequestParameter("modo");		
+		if( !$this->modo ){
+			$this->forward( "traficos", "seleccionModo" );	
+		}
+		
+		$this->forward404Unless( $reporte );
+		
+		
+		if ($request->isMethod('post')){		
+		
+			$bindValues = array();			
+			$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
+			$bindValues["txtseguimiento"] = $request->getParameter("txtseguimiento");
+			
+			$this->form->bind( $bindValues ); 
+			if( $this->form->isValid() ){					
+				$titulo = "Seguimiento RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
+				$texto = "";			
+				
+				$tarea = $reporte->getNotTarea();	
+				if( !$tarea ){			
+					$tarea = new NotTarea(); 
+					$tarea->setCaFchcreado( time() );								
+					$tarea->setCaUsucreado( $this->getUser()->getUserId() );
+				}	
+				$tarea->setCaUrl( "/traficos/listaStatus/modo/maritimo/reporte/".$reporte->getCaConsecutivo() );
+				$tarea->setCaIdlistatarea( 3 );			
+				$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
+				$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );			
+				$tarea->setCaTitulo( $titulo );		
+				$tarea->setCaTexto( $request->getParameter("txtseguimiento") );
+				$tarea->save();
+				$loginsAsignaciones = array( $this->getUser()->getUserId() );
+				$tarea->setAsignaciones( $loginsAsignaciones );	
+				
+				$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
+				$reporte->save();	
+				
+				$this->redirect( "/traficos/listaStatus/modo/maritimo/reporte/".$reporte->getCaConsecutivo() );
+			}				
+		}
+		
+		$this->reporte = $reporte;
+		
+		
+		
+	
+	}
 	
 }
 ?>

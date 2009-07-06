@@ -414,7 +414,7 @@ class cotizacionesActions extends sfActions
 			
       		$agentes[] = array( 'sel'=>$sel,
 									'idcontacto'=>$contacto->getCaIdContacto(),
-      								 'contacto'=>utf8_encode($contacto->getCaNombre()),
+      								 'contacto'=>utf8_encode($contacto->getCaNombre()." ".$contacto->getCaApellido()),
 									 'agente'=>utf8_encode($agente->getCaNombre()." » ".$ciudad->getTrafico()->getCaNombre()),
 									 'cargo'=>utf8_encode($contacto->getCaCargo()),
 									 'telefonos'=>$contacto->getCaTelefonos(),
