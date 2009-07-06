@@ -18,15 +18,25 @@
 		<th>Cargo</th>
 		<th>Departamento</th>
 		<th>Sucursal</th>
+		<th>Nivel</th>
 	</tr>
 	<?
 	foreach( $usuarios as $usuario ){
+	$nivel = $usuario->getNivelAcceso( $rutina->getCaRutina() );
+		
+	if( isset( $rutinasNivel[ $nivel ] )){
+		$acceso = $rutinasNivel[ $nivel ];
+	}else{
+		$acceso = $nivel;
+	}
+	
 	?>
 	<tr>
 		<td><?=$usuario->getCaNombre()?></td>
 		<td><?=$usuario->getCaCargo()?></td>
 		<td><?=$usuario->getCaDepartamento()?></td>
 		<td><?=$usuario->getSucursal()->getCaNombre()?></td>
+		<td><?=$acceso?></td>
 	</tr>
 	<?
 	}
