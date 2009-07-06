@@ -144,14 +144,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	private $lastNotTareaAsignacionCriteria = null;
 
 	/**
-	 * @var        array RepStatus[] Collection to store aggregation of RepStatus objects.
+	 * @var        array Reporte[] Collection to store aggregation of Reporte objects.
 	 */
-	protected $collRepStatuss;
+	protected $collReportes;
 
 	/**
-	 * @var        Criteria The criteria used to select the current contents of collRepStatuss.
+	 * @var        Criteria The criteria used to select the current contents of collReportes.
 	 */
-	private $lastRepStatusCriteria = null;
+	private $lastReporteCriteria = null;
 
 	/**
 	 * @var        array RepAsignacion[] Collection to store aggregation of RepAsignacion objects.
@@ -936,8 +936,8 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$this->collNotTareaAsignacions = null;
 			$this->lastNotTareaAsignacionCriteria = null;
 
-			$this->collRepStatuss = null;
-			$this->lastRepStatusCriteria = null;
+			$this->collReportes = null;
+			$this->lastReporteCriteria = null;
 
 			$this->collRepAsignacions = null;
 			$this->lastRepAsignacionCriteria = null;
@@ -1093,8 +1093,8 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				}
 			}
 
-			if ($this->collRepStatuss !== null) {
-				foreach ($this->collRepStatuss as $referrerFK) {
+			if ($this->collReportes !== null) {
+				foreach ($this->collReportes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1224,8 +1224,8 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 					}
 				}
 
-				if ($this->collRepStatuss !== null) {
-					foreach ($this->collRepStatuss as $referrerFK) {
+				if ($this->collReportes !== null) {
+					foreach ($this->collReportes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1585,9 +1585,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				}
 			}
 
-			foreach ($this->getRepStatuss() as $relObj) {
+			foreach ($this->getReportes() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addRepStatus($relObj->copy($deepCopy));
+					$copyObj->addReporte($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2688,47 +2688,47 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Clears out the collRepStatuss collection (array).
+	 * Clears out the collReportes collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
 	 *
 	 * @return     void
-	 * @see        addRepStatuss()
+	 * @see        addReportes()
 	 */
-	public function clearRepStatuss()
+	public function clearReportes()
 	{
-		$this->collRepStatuss = null; // important to set this to NULL since that means it is uninitialized
+		$this->collReportes = null; // important to set this to NULL since that means it is uninitialized
 	}
 
 	/**
-	 * Initializes the collRepStatuss collection (array).
+	 * Initializes the collReportes collection (array).
 	 *
-	 * By default this just sets the collRepStatuss collection to an empty array (like clearcollRepStatuss());
+	 * By default this just sets the collReportes collection to an empty array (like clearcollReportes());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
 	 * @return     void
 	 */
-	public function initRepStatuss()
+	public function initReportes()
 	{
-		$this->collRepStatuss = array();
+		$this->collReportes = array();
 	}
 
 	/**
-	 * Gets an array of RepStatus objects which contain a foreign key that references this object.
+	 * Gets an array of Reporte objects which contain a foreign key that references this object.
 	 *
 	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
 	 * Otherwise if this NotTarea has previously been saved, it will retrieve
-	 * related RepStatuss from storage. If this NotTarea is new, it will return
+	 * related Reportes from storage. If this NotTarea is new, it will return
 	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
 	 * @param      PropelPDO $con
 	 * @param      Criteria $criteria
-	 * @return     array RepStatus[]
+	 * @return     array Reporte[]
 	 * @throws     PropelException
 	 */
-	public function getRepStatuss($criteria = null, PropelPDO $con = null)
+	public function getReportes($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
 			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
@@ -2738,15 +2738,15 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$criteria = clone $criteria;
 		}
 
-		if ($this->collRepStatuss === null) {
+		if ($this->collReportes === null) {
 			if ($this->isNew()) {
-			   $this->collRepStatuss = array();
+			   $this->collReportes = array();
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-				RepStatusPeer::addSelectColumns($criteria);
-				$this->collRepStatuss = RepStatusPeer::doSelect($criteria, $con);
+				ReportePeer::addSelectColumns($criteria);
+				$this->collReportes = ReportePeer::doSelect($criteria, $con);
 			}
 		} else {
 			// criteria has no effect for a new object
@@ -2756,28 +2756,28 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				// one, just return the collection.
 
 
-				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-				RepStatusPeer::addSelectColumns($criteria);
-				if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-					$this->collRepStatuss = RepStatusPeer::doSelect($criteria, $con);
+				ReportePeer::addSelectColumns($criteria);
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$this->collReportes = ReportePeer::doSelect($criteria, $con);
 				}
 			}
 		}
-		$this->lastRepStatusCriteria = $criteria;
-		return $this->collRepStatuss;
+		$this->lastReporteCriteria = $criteria;
+		return $this->collReportes;
 	}
 
 	/**
-	 * Returns the number of related RepStatus objects.
+	 * Returns the number of related Reporte objects.
 	 *
 	 * @param      Criteria $criteria
 	 * @param      boolean $distinct
 	 * @param      PropelPDO $con
-	 * @return     int Count of related RepStatus objects.
+	 * @return     int Count of related Reporte objects.
 	 * @throws     PropelException
 	 */
-	public function countRepStatuss(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	public function countReportes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
 			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
@@ -2791,14 +2791,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 
 		$count = null;
 
-		if ($this->collRepStatuss === null) {
+		if ($this->collReportes === null) {
 			if ($this->isNew()) {
 				$count = 0;
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-				$count = RepStatusPeer::doCount($criteria, $con);
+				$count = ReportePeer::doCount($criteria, $con);
 			}
 		} else {
 			// criteria has no effect for a new object
@@ -2808,35 +2808,35 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				// one, just return count of the collection.
 
 
-				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-				if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-					$count = RepStatusPeer::doCount($criteria, $con);
+				if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+					$count = ReportePeer::doCount($criteria, $con);
 				} else {
-					$count = count($this->collRepStatuss);
+					$count = count($this->collReportes);
 				}
 			} else {
-				$count = count($this->collRepStatuss);
+				$count = count($this->collReportes);
 			}
 		}
 		return $count;
 	}
 
 	/**
-	 * Method called to associate a RepStatus object to this object
-	 * through the RepStatus foreign key attribute.
+	 * Method called to associate a Reporte object to this object
+	 * through the Reporte foreign key attribute.
 	 *
-	 * @param      RepStatus $l RepStatus
+	 * @param      Reporte $l Reporte
 	 * @return     void
 	 * @throws     PropelException
 	 */
-	public function addRepStatus(RepStatus $l)
+	public function addReporte(Reporte $l)
 	{
-		if ($this->collRepStatuss === null) {
-			$this->initRepStatuss();
+		if ($this->collReportes === null) {
+			$this->initReportes();
 		}
-		if (!in_array($l, $this->collRepStatuss, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collRepStatuss, $l);
+		if (!in_array($l, $this->collReportes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collReportes, $l);
 			$l->setNotTarea($this);
 		}
 	}
@@ -2847,13 +2847,13 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	 * an identical criteria, it returns the collection.
 	 * Otherwise if this NotTarea is new, it will return
 	 * an empty collection; or if this NotTarea has previously
-	 * been saved, it will retrieve related RepStatuss from storage.
+	 * been saved, it will retrieve related Reportes from storage.
 	 *
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NotTarea.
 	 */
-	public function getRepStatussJoinReporte($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public function getReportesJoinUsuario($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
 			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
@@ -2863,29 +2863,29 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$criteria = clone $criteria;
 		}
 
-		if ($this->collRepStatuss === null) {
+		if ($this->collReportes === null) {
 			if ($this->isNew()) {
-				$this->collRepStatuss = array();
+				$this->collReportes = array();
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+			$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinReporte($criteria, $con, $join_behavior);
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinUsuario($criteria, $con, $join_behavior);
 			}
 		}
-		$this->lastRepStatusCriteria = $criteria;
+		$this->lastReporteCriteria = $criteria;
 
-		return $this->collRepStatuss;
+		return $this->collReportes;
 	}
 
 
@@ -2894,13 +2894,13 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	 * an identical criteria, it returns the collection.
 	 * Otherwise if this NotTarea is new, it will return
 	 * an empty collection; or if this NotTarea has previously
-	 * been saved, it will retrieve related RepStatuss from storage.
+	 * been saved, it will retrieve related Reportes from storage.
 	 *
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NotTarea.
 	 */
-	public function getRepStatussJoinEmail($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public function getReportesJoinTransportador($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
 			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
@@ -2910,29 +2910,29 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$criteria = clone $criteria;
 		}
 
-		if ($this->collRepStatuss === null) {
+		if ($this->collReportes === null) {
 			if ($this->isNew()) {
-				$this->collRepStatuss = array();
+				$this->collReportes = array();
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+			$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinTransportador($criteria, $con, $join_behavior);
 			}
 		}
-		$this->lastRepStatusCriteria = $criteria;
+		$this->lastReporteCriteria = $criteria;
 
-		return $this->collRepStatuss;
+		return $this->collReportes;
 	}
 
 
@@ -2941,13 +2941,13 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	 * an identical criteria, it returns the collection.
 	 * Otherwise if this NotTarea is new, it will return
 	 * an empty collection; or if this NotTarea has previously
-	 * been saved, it will retrieve related RepStatuss from storage.
+	 * been saved, it will retrieve related Reportes from storage.
 	 *
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NotTarea.
 	 */
-	public function getRepStatussJoinTrackingEtapa($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public function getReportesJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
 			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
@@ -2957,29 +2957,170 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$criteria = clone $criteria;
 		}
 
-		if ($this->collRepStatuss === null) {
+		if ($this->collReportes === null) {
 			if ($this->isNew()) {
-				$this->collRepStatuss = array();
+				$this->collReportes = array();
 			} else {
 
-				$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		} else {
 			// the following code is to determine if a new query is
 			// called for.  If the criteria is the same as the last
 			// one, just return the collection.
 
-			$criteria->add(RepStatusPeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+			$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
 
-			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinTercero($criteria, $con, $join_behavior);
 			}
 		}
-		$this->lastRepStatusCriteria = $criteria;
+		$this->lastReporteCriteria = $criteria;
 
-		return $this->collRepStatuss;
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getReportesJoinAgente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getReportesJoinBodega($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinBodega($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getReportesJoinTrackingEtapa($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+				$this->collReportes = ReportePeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idtarea);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
 	}
 
 	/**
@@ -3215,8 +3356,8 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
-			if ($this->collRepStatuss) {
-				foreach ((array) $this->collRepStatuss as $o) {
+			if ($this->collReportes) {
+				foreach ((array) $this->collReportes as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
@@ -3231,7 +3372,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		$this->collCotProductos = null;
 		$this->collHdeskTickets = null;
 		$this->collNotTareaAsignacions = null;
-		$this->collRepStatuss = null;
+		$this->collReportes = null;
 		$this->collRepAsignacions = null;
 			$this->aNotListaTareas = null;
 	}

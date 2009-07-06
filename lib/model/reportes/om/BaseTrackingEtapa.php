@@ -1643,6 +1643,53 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 		return $this->collReportes;
 	}
 
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this TrackingEtapa is new, it will return
+	 * an empty collection; or if this TrackingEtapa has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in TrackingEtapa.
+	 */
+	public function getReportesJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+				$this->collReportes = ReportePeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
 	/**
 	 * Clears out the collRepStatuss collection (array).
 	 *
@@ -1884,53 +1931,6 @@ abstract class BaseTrackingEtapa extends BaseObject  implements Persistent {
 
 			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
 				$this->collRepStatuss = RepStatusPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastRepStatusCriteria = $criteria;
-
-		return $this->collRepStatuss;
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this TrackingEtapa is new, it will return
-	 * an empty collection; or if this TrackingEtapa has previously
-	 * been saved, it will retrieve related RepStatuss from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in TrackingEtapa.
-	 */
-	public function getRepStatussJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(TrackingEtapaPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collRepStatuss === null) {
-			if ($this->isNew()) {
-				$this->collRepStatuss = array();
-			} else {
-
-				$criteria->add(RepStatusPeer::CA_IDETAPA, $this->ca_idetapa);
-
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(RepStatusPeer::CA_IDETAPA, $this->ca_idetapa);
-
-			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepStatusCriteria = $criteria;

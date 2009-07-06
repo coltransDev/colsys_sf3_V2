@@ -87,6 +87,30 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	protected $ca_activo;
 
 	/**
+	 * The value for the ca_fchcreado field.
+	 * @var        string
+	 */
+	protected $ca_fchcreado;
+
+	/**
+	 * The value for the ca_fchactualizado field.
+	 * @var        string
+	 */
+	protected $ca_fchactualizado;
+
+	/**
+	 * The value for the ca_usucreado field.
+	 * @var        string
+	 */
+	protected $ca_usucreado;
+
+	/**
+	 * The value for the ca_usuactualizado field.
+	 * @var        string
+	 */
+	protected $ca_usuactualizado;
+
+	/**
 	 * @var        Ciudad
 	 */
 	protected $aCiudad;
@@ -263,6 +287,92 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	public function getCaActivo()
 	{
 		return $this->ca_activo;
+	}
+
+	/**
+	 * Get the [optionally formatted] temporal [ca_fchcreado] column value.
+	 * 
+	 *
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
+	 */
+	public function getCaFchcreado($format = 'Y-m-d H:i:s')
+	{
+		if ($this->ca_fchcreado === null) {
+			return null;
+		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchcreado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcreado, true), $x);
+		}
+
+		if ($format === null) {
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $dt->format('U'));
+		} else {
+			return $dt->format($format);
+		}
+	}
+
+	/**
+	 * Get the [optionally formatted] temporal [ca_fchactualizado] column value.
+	 * 
+	 *
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
+	 */
+	public function getCaFchactualizado($format = 'Y-m-d H:i:s')
+	{
+		if ($this->ca_fchactualizado === null) {
+			return null;
+		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchactualizado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchactualizado, true), $x);
+		}
+
+		if ($format === null) {
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $dt->format('U'));
+		} else {
+			return $dt->format($format);
+		}
+	}
+
+	/**
+	 * Get the [ca_usucreado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsucreado()
+	{
+		return $this->ca_usucreado;
+	}
+
+	/**
+	 * Get the [ca_usuactualizado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsuactualizado()
+	{
+		return $this->ca_usuactualizado;
 	}
 
 	/**
@@ -490,6 +600,144 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 	} // setCaActivo()
 
 	/**
+	 * Sets the value of [ca_fchcreado] column to a normalized version of the date/time value specified.
+	 * 
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Agente The current object (for fluent API support)
+	 */
+	public function setCaFchcreado($v)
+	{
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->ca_fchcreado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchcreado !== null && $tmpDt = new DateTime($this->ca_fchcreado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchcreado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = AgentePeer::CA_FCHCREADO;
+			}
+		} // if either are not null
+
+		return $this;
+	} // setCaFchcreado()
+
+	/**
+	 * Sets the value of [ca_fchactualizado] column to a normalized version of the date/time value specified.
+	 * 
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     Agente The current object (for fluent API support)
+	 */
+	public function setCaFchactualizado($v)
+	{
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->ca_fchactualizado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchactualizado !== null && $tmpDt = new DateTime($this->ca_fchactualizado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchactualizado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = AgentePeer::CA_FCHACTUALIZADO;
+			}
+		} // if either are not null
+
+		return $this;
+	} // setCaFchactualizado()
+
+	/**
+	 * Set the value of [ca_usucreado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Agente The current object (for fluent API support)
+	 */
+	public function setCaUsucreado($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_usucreado !== $v) {
+			$this->ca_usucreado = $v;
+			$this->modifiedColumns[] = AgentePeer::CA_USUCREADO;
+		}
+
+		return $this;
+	} // setCaUsucreado()
+
+	/**
+	 * Set the value of [ca_usuactualizado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Agente The current object (for fluent API support)
+	 */
+	public function setCaUsuactualizado($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_usuactualizado !== $v) {
+			$this->ca_usuactualizado = $v;
+			$this->modifiedColumns[] = AgentePeer::CA_USUACTUALIZADO;
+		}
+
+		return $this;
+	} // setCaUsuactualizado()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -537,6 +785,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$this->ca_email = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
 			$this->ca_tipo = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->ca_activo = ($row[$startcol + 10] !== null) ? (boolean) $row[$startcol + 10] : null;
+			$this->ca_fchcreado = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_usucreado = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -546,7 +798,7 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 11; // 11 = AgentePeer::NUM_COLUMNS - AgentePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 15; // 15 = AgentePeer::NUM_COLUMNS - AgentePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Agente object", $e);
@@ -937,6 +1189,18 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			case 10:
 				return $this->getCaActivo();
 				break;
+			case 11:
+				return $this->getCaFchcreado();
+				break;
+			case 12:
+				return $this->getCaFchactualizado();
+				break;
+			case 13:
+				return $this->getCaUsucreado();
+				break;
+			case 14:
+				return $this->getCaUsuactualizado();
+				break;
 			default:
 				return null;
 				break;
@@ -969,6 +1233,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			$keys[8] => $this->getCaEmail(),
 			$keys[9] => $this->getCaTipo(),
 			$keys[10] => $this->getCaActivo(),
+			$keys[11] => $this->getCaFchcreado(),
+			$keys[12] => $this->getCaFchactualizado(),
+			$keys[13] => $this->getCaUsucreado(),
+			$keys[14] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1033,6 +1301,18 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 			case 10:
 				$this->setCaActivo($value);
 				break;
+			case 11:
+				$this->setCaFchcreado($value);
+				break;
+			case 12:
+				$this->setCaFchactualizado($value);
+				break;
+			case 13:
+				$this->setCaUsucreado($value);
+				break;
+			case 14:
+				$this->setCaUsuactualizado($value);
+				break;
 		} // switch()
 	}
 
@@ -1068,6 +1348,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[8], $arr)) $this->setCaEmail($arr[$keys[8]]);
 		if (array_key_exists($keys[9], $arr)) $this->setCaTipo($arr[$keys[9]]);
 		if (array_key_exists($keys[10], $arr)) $this->setCaActivo($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFchcreado($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaFchactualizado($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaUsucreado($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaUsuactualizado($arr[$keys[14]]);
 	}
 
 	/**
@@ -1090,6 +1374,10 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(AgentePeer::CA_EMAIL)) $criteria->add(AgentePeer::CA_EMAIL, $this->ca_email);
 		if ($this->isColumnModified(AgentePeer::CA_TIPO)) $criteria->add(AgentePeer::CA_TIPO, $this->ca_tipo);
 		if ($this->isColumnModified(AgentePeer::CA_ACTIVO)) $criteria->add(AgentePeer::CA_ACTIVO, $this->ca_activo);
+		if ($this->isColumnModified(AgentePeer::CA_FCHCREADO)) $criteria->add(AgentePeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(AgentePeer::CA_FCHACTUALIZADO)) $criteria->add(AgentePeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
+		if ($this->isColumnModified(AgentePeer::CA_USUCREADO)) $criteria->add(AgentePeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(AgentePeer::CA_USUACTUALIZADO)) $criteria->add(AgentePeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
 
 		return $criteria;
 	}
@@ -1163,6 +1451,14 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 		$copyObj->setCaTipo($this->ca_tipo);
 
 		$copyObj->setCaActivo($this->ca_activo);
+
+		$copyObj->setCaFchcreado($this->ca_fchcreado);
+
+		$copyObj->setCaFchactualizado($this->ca_fchactualizado);
+
+		$copyObj->setCaUsucreado($this->ca_usucreado);
+
+		$copyObj->setCaUsuactualizado($this->ca_usuactualizado);
 
 
 		if ($deepCopy) {
@@ -2070,6 +2366,53 @@ abstract class BaseAgente extends BaseObject  implements Persistent {
 
 			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
 				$this->collReportes = ReportePeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastReporteCriteria = $criteria;
+
+		return $this->collReportes;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Agente is new, it will return
+	 * an empty collection; or if this Agente has previously
+	 * been saved, it will retrieve related Reportes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Agente.
+	 */
+	public function getReportesJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(AgentePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collReportes === null) {
+			if ($this->isNew()) {
+				$this->collReportes = array();
+			} else {
+
+				$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
+
+				$this->collReportes = ReportePeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(ReportePeer::CA_IDAGENTE, $this->ca_idagente);
+
+			if (!isset($this->lastReporteCriteria) || !$this->lastReporteCriteria->equals($criteria)) {
+				$this->collReportes = ReportePeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastReporteCriteria = $criteria;

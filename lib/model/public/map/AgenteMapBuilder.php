@@ -62,7 +62,7 @@ class AgenteMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_agentes_ca_idagente_seq');
+		$tMap->setPrimaryKeyMethodInfo('tb_agentes_id');
 
 		$tMap->addPrimaryKey('CA_IDAGENTE', 'CaIdagente', 'INTEGER', true, null);
 
@@ -85,6 +85,14 @@ class AgenteMapBuilder implements MapBuilder {
 		$tMap->addColumn('CA_TIPO', 'CaTipo', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
+
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
+
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', false, null);
+
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
 	} // doBuild()
 

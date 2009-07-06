@@ -172,6 +172,8 @@ class ReporteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_IDTAREA_REXT', 'CaIdtareaRext', 'INTEGER', false, null);
 
+		$tMap->addForeignKey('CA_IDSEGUIMIENTO', 'CaIdseguimiento', 'INTEGER', 'notificaciones.tb_tareas', 'CA_IDTAREA', false, null);
+
 	} // doBuild()
 
 } // ReporteMapBuilder

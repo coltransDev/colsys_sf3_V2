@@ -276,8 +276,8 @@ class RepStatus extends BaseRepStatus
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );				
 		$email->save(); 					
-		/*$email->setCaAddress("abotero@coltrans.com.co");
-		$email->setCaCc("");*/
+		$email->setCaAddress("abotero@coltrans.com.co");
+		$email->setCaCc("");
 		$email->send(); 	
 		$this->setCaIdemail( $email->getCaIdemail() );
 		$this->save();

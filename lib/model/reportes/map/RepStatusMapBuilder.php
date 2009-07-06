@@ -114,8 +114,6 @@ class RepStatusMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_PROPIEDADES', 'CaPropiedades', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_IDSEGUIMIENTO', 'CaIdseguimiento', 'INTEGER', 'notificaciones.tb_tareas', 'CA_IDTAREA', false, null);
-
 	} // doBuild()
 
 } // RepStatusMapBuilder

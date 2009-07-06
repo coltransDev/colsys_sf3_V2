@@ -345,6 +345,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	protected $ca_idtarea_rext;
 
 	/**
+	 * The value for the ca_idseguimiento field.
+	 * @var        int
+	 */
+	protected $ca_idseguimiento;
+
+	/**
 	 * @var        Usuario
 	 */
 	protected $aUsuario;
@@ -373,6 +379,11 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * @var        TrackingEtapa
 	 */
 	protected $aTrackingEtapa;
+
+	/**
+	 * @var        NotTarea
+	 */
+	protected $aNotTarea;
 
 	/**
 	 * @var        array InoClientesAir[] Collection to store aggregation of InoClientesAir objects.
@@ -1202,6 +1213,16 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	public function getCaIdtareaRext()
 	{
 		return $this->ca_idtarea_rext;
+	}
+
+	/**
+	 * Get the [ca_idseguimiento] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdseguimiento()
+	{
+		return $this->ca_idseguimiento;
 	}
 
 	/**
@@ -2512,6 +2533,30 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	} // setCaIdtareaRext()
 
 	/**
+	 * Set the value of [ca_idseguimiento] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     Reporte The current object (for fluent API support)
+	 */
+	public function setCaIdseguimiento($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idseguimiento !== $v) {
+			$this->ca_idseguimiento = $v;
+			$this->modifiedColumns[] = ReportePeer::CA_IDSEGUIMIENTO;
+		}
+
+		if ($this->aNotTarea !== null && $this->aNotTarea->getCaIdtarea() !== $v) {
+			$this->aNotTarea = null;
+		}
+
+		return $this;
+	} // setCaIdseguimiento()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -2602,6 +2647,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->ca_idetapa = ($row[$startcol + 51] !== null) ? (string) $row[$startcol + 51] : null;
 			$this->ca_fchultstatus = ($row[$startcol + 52] !== null) ? (string) $row[$startcol + 52] : null;
 			$this->ca_idtarea_rext = ($row[$startcol + 53] !== null) ? (int) $row[$startcol + 53] : null;
+			$this->ca_idseguimiento = ($row[$startcol + 54] !== null) ? (int) $row[$startcol + 54] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -2611,7 +2657,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 54; // 54 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 55; // 55 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Reporte object", $e);
@@ -2651,6 +2697,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		}
 		if ($this->aTrackingEtapa !== null && $this->ca_idetapa !== $this->aTrackingEtapa->getCaIdetapa()) {
 			$this->aTrackingEtapa = null;
+		}
+		if ($this->aNotTarea !== null && $this->ca_idseguimiento !== $this->aNotTarea->getCaIdtarea()) {
+			$this->aNotTarea = null;
 		}
 	} // ensureConsistency
 
@@ -2697,6 +2746,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aAgente = null;
 			$this->aBodega = null;
 			$this->aTrackingEtapa = null;
+			$this->aNotTarea = null;
 			$this->collInoClientesAirs = null;
 			$this->lastInoClientesAirCriteria = null;
 
@@ -2857,6 +2907,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 					$affectedRows += $this->aTrackingEtapa->save($con);
 				}
 				$this->setTrackingEtapa($this->aTrackingEtapa);
+			}
+
+			if ($this->aNotTarea !== null) {
+				if ($this->aNotTarea->isModified() || $this->aNotTarea->isNew()) {
+					$affectedRows += $this->aNotTarea->save($con);
+				}
+				$this->setNotTarea($this->aNotTarea);
 			}
 
 			if ($this->isNew() ) {
@@ -3067,6 +3124,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			if ($this->aTrackingEtapa !== null) {
 				if (!$this->aTrackingEtapa->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aTrackingEtapa->getValidationFailures());
+				}
+			}
+
+			if ($this->aNotTarea !== null) {
+				if (!$this->aNotTarea->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aNotTarea->getValidationFailures());
 				}
 			}
 
@@ -3353,6 +3416,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			case 53:
 				return $this->getCaIdtareaRext();
 				break;
+			case 54:
+				return $this->getCaIdseguimiento();
+				break;
 			default:
 				return null;
 				break;
@@ -3428,6 +3494,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$keys[51] => $this->getCaIdetapa(),
 			$keys[52] => $this->getCaFchultstatus(),
 			$keys[53] => $this->getCaIdtareaRext(),
+			$keys[54] => $this->getCaIdseguimiento(),
 		);
 		return $result;
 	}
@@ -3621,6 +3688,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			case 53:
 				$this->setCaIdtareaRext($value);
 				break;
+			case 54:
+				$this->setCaIdseguimiento($value);
+				break;
 		} // switch()
 	}
 
@@ -3699,6 +3769,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[51], $arr)) $this->setCaIdetapa($arr[$keys[51]]);
 		if (array_key_exists($keys[52], $arr)) $this->setCaFchultstatus($arr[$keys[52]]);
 		if (array_key_exists($keys[53], $arr)) $this->setCaIdtareaRext($arr[$keys[53]]);
+		if (array_key_exists($keys[54], $arr)) $this->setCaIdseguimiento($arr[$keys[54]]);
 	}
 
 	/**
@@ -3764,6 +3835,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ReportePeer::CA_IDETAPA)) $criteria->add(ReportePeer::CA_IDETAPA, $this->ca_idetapa);
 		if ($this->isColumnModified(ReportePeer::CA_FCHULTSTATUS)) $criteria->add(ReportePeer::CA_FCHULTSTATUS, $this->ca_fchultstatus);
 		if ($this->isColumnModified(ReportePeer::CA_IDTAREA_REXT)) $criteria->add(ReportePeer::CA_IDTAREA_REXT, $this->ca_idtarea_rext);
+		if ($this->isColumnModified(ReportePeer::CA_IDSEGUIMIENTO)) $criteria->add(ReportePeer::CA_IDSEGUIMIENTO, $this->ca_idseguimiento);
 
 		return $criteria;
 	}
@@ -3923,6 +3995,8 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		$copyObj->setCaFchultstatus($this->ca_fchultstatus);
 
 		$copyObj->setCaIdtareaRext($this->ca_idtarea_rext);
+
+		$copyObj->setCaIdseguimiento($this->ca_idseguimiento);
 
 
 		if ($deepCopy) {
@@ -4344,6 +4418,57 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aTrackingEtapa;
+	}
+
+	/**
+	 * Declares an association between this object and a NotTarea object.
+	 *
+	 * @param      NotTarea $v
+	 * @return     Reporte The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setNotTarea(NotTarea $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdseguimiento(NULL);
+		} else {
+			$this->setCaIdseguimiento($v->getCaIdtarea());
+		}
+
+		$this->aNotTarea = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the NotTarea object, it will not be re-added.
+		if ($v !== null) {
+			$v->addReporte($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated NotTarea object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     NotTarea The associated NotTarea object.
+	 * @throws     PropelException
+	 */
+	public function getNotTarea(PropelPDO $con = null)
+	{
+		if ($this->aNotTarea === null && ($this->ca_idseguimiento !== null)) {
+			$c = new Criteria(NotTareaPeer::DATABASE_NAME);
+			$c->add(NotTareaPeer::CA_IDTAREA, $this->ca_idseguimiento);
+			$this->aNotTarea = NotTareaPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNotTarea->addReportes($this);
+			 */
+		}
+		return $this->aNotTarea;
 	}
 
 	/**
@@ -4835,53 +4960,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
 				$this->collRepStatuss = RepStatusPeer::doSelectJoinTrackingEtapa($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastRepStatusCriteria = $criteria;
-
-		return $this->collRepStatuss;
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte is new, it will return
-	 * an empty collection; or if this Reporte has previously
-	 * been saved, it will retrieve related RepStatuss from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Reporte.
-	 */
-	public function getRepStatussJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collRepStatuss === null) {
-			if ($this->isNew()) {
-				$this->collRepStatuss = array();
-			} else {
-
-				$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(RepStatusPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
 			}
 		}
 		$this->lastRepStatusCriteria = $criteria;
@@ -6424,6 +6502,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aAgente = null;
 			$this->aBodega = null;
 			$this->aTrackingEtapa = null;
+			$this->aNotTarea = null;
 	}
 
 } // BaseReporte

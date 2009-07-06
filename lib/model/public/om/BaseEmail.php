@@ -1844,53 +1844,6 @@ abstract class BaseEmail extends BaseObject  implements Persistent {
 		return $this->collRepStatuss;
 	}
 
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Email is new, it will return
-	 * an empty collection; or if this Email has previously
-	 * been saved, it will retrieve related RepStatuss from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Email.
-	 */
-	public function getRepStatussJoinNotTarea($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(EmailPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collRepStatuss === null) {
-			if ($this->isNew()) {
-				$this->collRepStatuss = array();
-			} else {
-
-				$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
-
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(RepStatusPeer::CA_IDEMAIL, $this->ca_idemail);
-
-			if (!isset($this->lastRepStatusCriteria) || !$this->lastRepStatusCriteria->equals($criteria)) {
-				$this->collRepStatuss = RepStatusPeer::doSelectJoinNotTarea($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastRepStatusCriteria = $criteria;
-
-		return $this->collRepStatuss;
-	}
-
 	/**
 	 * Clears out the collInoAvisosSeas collection (array).
 	 *

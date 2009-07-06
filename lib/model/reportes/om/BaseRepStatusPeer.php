@@ -19,7 +19,7 @@ abstract class BaseRepStatusPeer {
 	const CLASS_DEFAULT = 'lib.model.reportes.RepStatus';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 26;
+	const NUM_COLUMNS = 25;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -99,9 +99,6 @@ abstract class BaseRepStatusPeer {
 	/** the column name for the CA_PROPIEDADES field */
 	const CA_PROPIEDADES = 'tb_repstatus.CA_PROPIEDADES';
 
-	/** the column name for the CA_IDSEGUIMIENTO field */
-	const CA_IDSEGUIMIENTO = 'tb_repstatus.CA_IDSEGUIMIENTO';
-
 	/**
 	 * An identiy map to hold any loaded instances of RepStatus objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -123,11 +120,11 @@ abstract class BaseRepStatusPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdstatus', 'CaIdreporte', 'CaIdemail', 'CaFchstatus', 'CaStatus', 'CaComentarios', 'CaFchrecibo', 'CaFchenvio', 'CaUsuenvio', 'CaEtapa', 'CaIntroduccion', 'CaFchsalida', 'CaFchllegada', 'CaFchcontinuacion', 'CaPiezas', 'CaPeso', 'CaVolumen', 'CaDoctransporte', 'CaIdnave', 'CaDocmaster', 'CaEquipos', 'CaHorasalida', 'CaHorallegada', 'CaIdetapa', 'CaPropiedades', 'CaIdseguimiento', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus', 'caIdreporte', 'caIdemail', 'caFchstatus', 'caStatus', 'caComentarios', 'caFchrecibo', 'caFchenvio', 'caUsuenvio', 'caEtapa', 'caIntroduccion', 'caFchsalida', 'caFchllegada', 'caFchcontinuacion', 'caPiezas', 'caPeso', 'caVolumen', 'caDoctransporte', 'caIdnave', 'caDocmaster', 'caEquipos', 'caHorasalida', 'caHorallegada', 'caIdetapa', 'caPropiedades', 'caIdseguimiento', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS, self::CA_IDREPORTE, self::CA_IDEMAIL, self::CA_FCHSTATUS, self::CA_STATUS, self::CA_COMENTARIOS, self::CA_FCHRECIBO, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_ETAPA, self::CA_INTRODUCCION, self::CA_FCHSALIDA, self::CA_FCHLLEGADA, self::CA_FCHCONTINUACION, self::CA_PIEZAS, self::CA_PESO, self::CA_VOLUMEN, self::CA_DOCTRANSPORTE, self::CA_IDNAVE, self::CA_DOCMASTER, self::CA_EQUIPOS, self::CA_HORASALIDA, self::CA_HORALLEGADA, self::CA_IDETAPA, self::CA_PROPIEDADES, self::CA_IDSEGUIMIENTO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus', 'ca_idreporte', 'ca_idemail', 'ca_fchstatus', 'ca_status', 'ca_comentarios', 'ca_fchrecibo', 'ca_fchenvio', 'ca_usuenvio', 'ca_etapa', 'ca_introduccion', 'ca_fchsalida', 'ca_fchllegada', 'ca_fchcontinuacion', 'ca_piezas', 'ca_peso', 'ca_volumen', 'ca_doctransporte', 'ca_idnave', 'ca_docmaster', 'ca_equipos', 'ca_horasalida', 'ca_horallegada', 'ca_idetapa', 'ca_propiedades', 'ca_idseguimiento', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdstatus', 'CaIdreporte', 'CaIdemail', 'CaFchstatus', 'CaStatus', 'CaComentarios', 'CaFchrecibo', 'CaFchenvio', 'CaUsuenvio', 'CaEtapa', 'CaIntroduccion', 'CaFchsalida', 'CaFchllegada', 'CaFchcontinuacion', 'CaPiezas', 'CaPeso', 'CaVolumen', 'CaDoctransporte', 'CaIdnave', 'CaDocmaster', 'CaEquipos', 'CaHorasalida', 'CaHorallegada', 'CaIdetapa', 'CaPropiedades', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus', 'caIdreporte', 'caIdemail', 'caFchstatus', 'caStatus', 'caComentarios', 'caFchrecibo', 'caFchenvio', 'caUsuenvio', 'caEtapa', 'caIntroduccion', 'caFchsalida', 'caFchllegada', 'caFchcontinuacion', 'caPiezas', 'caPeso', 'caVolumen', 'caDoctransporte', 'caIdnave', 'caDocmaster', 'caEquipos', 'caHorasalida', 'caHorallegada', 'caIdetapa', 'caPropiedades', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS, self::CA_IDREPORTE, self::CA_IDEMAIL, self::CA_FCHSTATUS, self::CA_STATUS, self::CA_COMENTARIOS, self::CA_FCHRECIBO, self::CA_FCHENVIO, self::CA_USUENVIO, self::CA_ETAPA, self::CA_INTRODUCCION, self::CA_FCHSALIDA, self::CA_FCHLLEGADA, self::CA_FCHCONTINUACION, self::CA_PIEZAS, self::CA_PESO, self::CA_VOLUMEN, self::CA_DOCTRANSPORTE, self::CA_IDNAVE, self::CA_DOCMASTER, self::CA_EQUIPOS, self::CA_HORASALIDA, self::CA_HORALLEGADA, self::CA_IDETAPA, self::CA_PROPIEDADES, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus', 'ca_idreporte', 'ca_idemail', 'ca_fchstatus', 'ca_status', 'ca_comentarios', 'ca_fchrecibo', 'ca_fchenvio', 'ca_usuenvio', 'ca_etapa', 'ca_introduccion', 'ca_fchsalida', 'ca_fchllegada', 'ca_fchcontinuacion', 'ca_piezas', 'ca_peso', 'ca_volumen', 'ca_doctransporte', 'ca_idnave', 'ca_docmaster', 'ca_equipos', 'ca_horasalida', 'ca_horallegada', 'ca_idetapa', 'ca_propiedades', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, )
 	);
 
 	/**
@@ -137,11 +134,11 @@ abstract class BaseRepStatusPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdstatus' => 0, 'CaIdreporte' => 1, 'CaIdemail' => 2, 'CaFchstatus' => 3, 'CaStatus' => 4, 'CaComentarios' => 5, 'CaFchrecibo' => 6, 'CaFchenvio' => 7, 'CaUsuenvio' => 8, 'CaEtapa' => 9, 'CaIntroduccion' => 10, 'CaFchsalida' => 11, 'CaFchllegada' => 12, 'CaFchcontinuacion' => 13, 'CaPiezas' => 14, 'CaPeso' => 15, 'CaVolumen' => 16, 'CaDoctransporte' => 17, 'CaIdnave' => 18, 'CaDocmaster' => 19, 'CaEquipos' => 20, 'CaHorasalida' => 21, 'CaHorallegada' => 22, 'CaIdetapa' => 23, 'CaPropiedades' => 24, 'CaIdseguimiento' => 25, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus' => 0, 'caIdreporte' => 1, 'caIdemail' => 2, 'caFchstatus' => 3, 'caStatus' => 4, 'caComentarios' => 5, 'caFchrecibo' => 6, 'caFchenvio' => 7, 'caUsuenvio' => 8, 'caEtapa' => 9, 'caIntroduccion' => 10, 'caFchsalida' => 11, 'caFchllegada' => 12, 'caFchcontinuacion' => 13, 'caPiezas' => 14, 'caPeso' => 15, 'caVolumen' => 16, 'caDoctransporte' => 17, 'caIdnave' => 18, 'caDocmaster' => 19, 'caEquipos' => 20, 'caHorasalida' => 21, 'caHorallegada' => 22, 'caIdetapa' => 23, 'caPropiedades' => 24, 'caIdseguimiento' => 25, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS => 0, self::CA_IDREPORTE => 1, self::CA_IDEMAIL => 2, self::CA_FCHSTATUS => 3, self::CA_STATUS => 4, self::CA_COMENTARIOS => 5, self::CA_FCHRECIBO => 6, self::CA_FCHENVIO => 7, self::CA_USUENVIO => 8, self::CA_ETAPA => 9, self::CA_INTRODUCCION => 10, self::CA_FCHSALIDA => 11, self::CA_FCHLLEGADA => 12, self::CA_FCHCONTINUACION => 13, self::CA_PIEZAS => 14, self::CA_PESO => 15, self::CA_VOLUMEN => 16, self::CA_DOCTRANSPORTE => 17, self::CA_IDNAVE => 18, self::CA_DOCMASTER => 19, self::CA_EQUIPOS => 20, self::CA_HORASALIDA => 21, self::CA_HORALLEGADA => 22, self::CA_IDETAPA => 23, self::CA_PROPIEDADES => 24, self::CA_IDSEGUIMIENTO => 25, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus' => 0, 'ca_idreporte' => 1, 'ca_idemail' => 2, 'ca_fchstatus' => 3, 'ca_status' => 4, 'ca_comentarios' => 5, 'ca_fchrecibo' => 6, 'ca_fchenvio' => 7, 'ca_usuenvio' => 8, 'ca_etapa' => 9, 'ca_introduccion' => 10, 'ca_fchsalida' => 11, 'ca_fchllegada' => 12, 'ca_fchcontinuacion' => 13, 'ca_piezas' => 14, 'ca_peso' => 15, 'ca_volumen' => 16, 'ca_doctransporte' => 17, 'ca_idnave' => 18, 'ca_docmaster' => 19, 'ca_equipos' => 20, 'ca_horasalida' => 21, 'ca_horallegada' => 22, 'ca_idetapa' => 23, 'ca_propiedades' => 24, 'ca_idseguimiento' => 25, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdstatus' => 0, 'CaIdreporte' => 1, 'CaIdemail' => 2, 'CaFchstatus' => 3, 'CaStatus' => 4, 'CaComentarios' => 5, 'CaFchrecibo' => 6, 'CaFchenvio' => 7, 'CaUsuenvio' => 8, 'CaEtapa' => 9, 'CaIntroduccion' => 10, 'CaFchsalida' => 11, 'CaFchllegada' => 12, 'CaFchcontinuacion' => 13, 'CaPiezas' => 14, 'CaPeso' => 15, 'CaVolumen' => 16, 'CaDoctransporte' => 17, 'CaIdnave' => 18, 'CaDocmaster' => 19, 'CaEquipos' => 20, 'CaHorasalida' => 21, 'CaHorallegada' => 22, 'CaIdetapa' => 23, 'CaPropiedades' => 24, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdstatus' => 0, 'caIdreporte' => 1, 'caIdemail' => 2, 'caFchstatus' => 3, 'caStatus' => 4, 'caComentarios' => 5, 'caFchrecibo' => 6, 'caFchenvio' => 7, 'caUsuenvio' => 8, 'caEtapa' => 9, 'caIntroduccion' => 10, 'caFchsalida' => 11, 'caFchllegada' => 12, 'caFchcontinuacion' => 13, 'caPiezas' => 14, 'caPeso' => 15, 'caVolumen' => 16, 'caDoctransporte' => 17, 'caIdnave' => 18, 'caDocmaster' => 19, 'caEquipos' => 20, 'caHorasalida' => 21, 'caHorallegada' => 22, 'caIdetapa' => 23, 'caPropiedades' => 24, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSTATUS => 0, self::CA_IDREPORTE => 1, self::CA_IDEMAIL => 2, self::CA_FCHSTATUS => 3, self::CA_STATUS => 4, self::CA_COMENTARIOS => 5, self::CA_FCHRECIBO => 6, self::CA_FCHENVIO => 7, self::CA_USUENVIO => 8, self::CA_ETAPA => 9, self::CA_INTRODUCCION => 10, self::CA_FCHSALIDA => 11, self::CA_FCHLLEGADA => 12, self::CA_FCHCONTINUACION => 13, self::CA_PIEZAS => 14, self::CA_PESO => 15, self::CA_VOLUMEN => 16, self::CA_DOCTRANSPORTE => 17, self::CA_IDNAVE => 18, self::CA_DOCMASTER => 19, self::CA_EQUIPOS => 20, self::CA_HORASALIDA => 21, self::CA_HORALLEGADA => 22, self::CA_IDETAPA => 23, self::CA_PROPIEDADES => 24, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idstatus' => 0, 'ca_idreporte' => 1, 'ca_idemail' => 2, 'ca_fchstatus' => 3, 'ca_status' => 4, 'ca_comentarios' => 5, 'ca_fchrecibo' => 6, 'ca_fchenvio' => 7, 'ca_usuenvio' => 8, 'ca_etapa' => 9, 'ca_introduccion' => 10, 'ca_fchsalida' => 11, 'ca_fchllegada' => 12, 'ca_fchcontinuacion' => 13, 'ca_piezas' => 14, 'ca_peso' => 15, 'ca_volumen' => 16, 'ca_doctransporte' => 17, 'ca_idnave' => 18, 'ca_docmaster' => 19, 'ca_equipos' => 20, 'ca_horasalida' => 21, 'ca_horallegada' => 22, 'ca_idetapa' => 23, 'ca_propiedades' => 24, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, )
 	);
 
 	/**
@@ -272,8 +269,6 @@ abstract class BaseRepStatusPeer {
 		$criteria->addSelectColumn(RepStatusPeer::CA_IDETAPA);
 
 		$criteria->addSelectColumn(RepStatusPeer::CA_PROPIEDADES);
-
-		$criteria->addSelectColumn(RepStatusPeer::CA_IDSEGUIMIENTO);
 
 	}
 
@@ -666,56 +661,6 @@ abstract class BaseRepStatusPeer {
 
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related NotTarea table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(RepStatusPeer::TABLE_NAME);
-
-		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->setDistinct();
-		}
-
-		if (!$criteria->hasSelectClause()) {
-			RepStatusPeer::addSelectColumns($criteria);
-		}
-
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
-
-		if ($con === null) {
-			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-		}
-
-		$criteria->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
-
-		$stmt = BasePeer::doCount($criteria, $con);
-
-		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$count = (int) $row[0];
-		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
-		$stmt->closeCursor();
-		return $count;
-	}
-
-
-	/**
 	 * Selects a collection of RepStatus objects pre-filled with their Reporte objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
@@ -917,73 +862,6 @@ abstract class BaseRepStatusPeer {
 
 
 	/**
-	 * Selects a collection of RepStatus objects pre-filled with their NotTarea objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of RepStatus objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function doSelectJoinNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		$c = clone $c;
-
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
-			$c->setDbName(self::DATABASE_NAME);
-		}
-
-		RepStatusPeer::addSelectColumns($c);
-		$startcol = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
-		NotTareaPeer::addSelectColumns($c);
-
-		$c->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
-		$stmt = BasePeer::doSelect($c, $con);
-		$results = array();
-
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
-
-				$omClass = RepStatusPeer::getOMClass();
-
-				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-				$obj1 = new $cls();
-				$obj1->hydrate($row);
-				RepStatusPeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
-			$key2 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol);
-			if ($key2 !== null) {
-				$obj2 = NotTareaPeer::getInstanceFromPool($key2);
-				if (!$obj2) {
-
-					$omClass = NotTareaPeer::getOMClass();
-
-					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-					$obj2 = new $cls();
-					$obj2->hydrate($row, $startcol);
-					NotTareaPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
-
-				// Add the $obj1 (RepStatus) to $obj2 (NotTarea)
-				$obj2->addRepStatus($obj1);
-
-			} // if joined row was not null
-
-			$results[] = $obj1;
-		}
-		$stmt->closeCursor();
-		return $results;
-	}
-
-
-	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
 	 * @param      Criteria $c
@@ -1022,7 +900,6 @@ abstract class BaseRepStatusPeer {
 		$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
 		$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
-		$criteria->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1065,13 +942,9 @@ abstract class BaseRepStatusPeer {
 		TrackingEtapaPeer::addSelectColumns($c);
 		$startcol5 = $startcol4 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NotTareaPeer::addSelectColumns($c);
-		$startcol6 = $startcol5 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
-
 		$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
 		$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
-		$c->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -1150,26 +1023,6 @@ abstract class BaseRepStatusPeer {
 				$obj4->addRepStatus($obj1);
 			} // if joined row not null
 
-			// Add objects for joined NotTarea rows
-
-			$key5 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol5);
-			if ($key5 !== null) {
-				$obj5 = NotTareaPeer::getInstanceFromPool($key5);
-				if (!$obj5) {
-
-					$omClass = NotTareaPeer::getOMClass();
-
-
-					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-					$obj5 = new $cls();
-					$obj5->hydrate($row, $startcol5);
-					NotTareaPeer::addInstanceToPool($obj5, $key5);
-				} // if obj5 loaded
-
-				// Add the $obj1 (RepStatus) to the collection in $obj5 (NotTarea)
-				$obj5->addRepStatus($obj1);
-			} // if joined row not null
-
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1210,7 +1063,6 @@ abstract class BaseRepStatusPeer {
 	
 				$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
 				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
-				$criteria->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1256,7 +1108,6 @@ abstract class BaseRepStatusPeer {
 	
 				$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
-				$criteria->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1302,53 +1153,6 @@ abstract class BaseRepStatusPeer {
 	
 				$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 				$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
-				$criteria->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
-		$stmt = BasePeer::doCount($criteria, $con);
-
-		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$count = (int) $row[0];
-		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
-		$stmt->closeCursor();
-		return $count;
-	}
-
-
-	/**
-	 * Returns the number of rows matching criteria, joining the related NotTarea table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
-	public static function doCountJoinAllExceptNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
-
-		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-			$criteria->setDistinct();
-		}
-
-		if (!$criteria->hasSelectClause()) {
-			RepStatusPeer::addSelectColumns($criteria);
-		}
-
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
-
-		if ($con === null) {
-			$con = Propel::getConnection(RepStatusPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-		}
-	
-				$criteria->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
-				$criteria->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
-				$criteria->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1391,12 +1195,8 @@ abstract class BaseRepStatusPeer {
 		TrackingEtapaPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NotTareaPeer::addSelectColumns($c);
-		$startcol5 = $startcol4 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
-
 				$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
 				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
-				$c->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1458,27 +1258,6 @@ abstract class BaseRepStatusPeer {
 
 			} // if joined row is not null
 
-				// Add objects for joined NotTarea rows
-
-				$key4 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-				if ($key4 !== null) {
-					$obj4 = NotTareaPeer::getInstanceFromPool($key4);
-					if (!$obj4) {
-	
-						$omClass = NotTareaPeer::getOMClass();
-
-
-					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-					$obj4 = new $cls();
-					$obj4->hydrate($row, $startcol4);
-					NotTareaPeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
-
-				// Add the $obj1 (RepStatus) to the collection in $obj4 (NotTarea)
-				$obj4->addRepStatus($obj1);
-
-			} // if joined row is not null
-
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1516,12 +1295,8 @@ abstract class BaseRepStatusPeer {
 		TrackingEtapaPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NotTareaPeer::addSelectColumns($c);
-		$startcol5 = $startcol4 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
-
 				$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
-				$c->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1583,27 +1358,6 @@ abstract class BaseRepStatusPeer {
 
 			} // if joined row is not null
 
-				// Add objects for joined NotTarea rows
-
-				$key4 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-				if ($key4 !== null) {
-					$obj4 = NotTareaPeer::getInstanceFromPool($key4);
-					if (!$obj4) {
-	
-						$omClass = NotTareaPeer::getOMClass();
-
-
-					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-					$obj4 = new $cls();
-					$obj4->hydrate($row, $startcol4);
-					NotTareaPeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
-
-				// Add the $obj1 (RepStatus) to the collection in $obj4 (NotTarea)
-				$obj4->addRepStatus($obj1);
-
-			} // if joined row is not null
-
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1641,12 +1395,8 @@ abstract class BaseRepStatusPeer {
 		EmailPeer::addSelectColumns($c);
 		$startcol4 = $startcol3 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NotTareaPeer::addSelectColumns($c);
-		$startcol5 = $startcol4 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
-
 				$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 				$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
-				$c->addJoin(array(RepStatusPeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
@@ -1705,152 +1455,6 @@ abstract class BaseRepStatusPeer {
 
 				// Add the $obj1 (RepStatus) to the collection in $obj3 (Email)
 				$obj3->addRepStatus($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined NotTarea rows
-
-				$key4 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-				if ($key4 !== null) {
-					$obj4 = NotTareaPeer::getInstanceFromPool($key4);
-					if (!$obj4) {
-	
-						$omClass = NotTareaPeer::getOMClass();
-
-
-					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-					$obj4 = new $cls();
-					$obj4->hydrate($row, $startcol4);
-					NotTareaPeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
-
-				// Add the $obj1 (RepStatus) to the collection in $obj4 (NotTarea)
-				$obj4->addRepStatus($obj1);
-
-			} // if joined row is not null
-
-			$results[] = $obj1;
-		}
-		$stmt->closeCursor();
-		return $results;
-	}
-
-
-	/**
-	 * Selects a collection of RepStatus objects pre-filled with all related objects except NotTarea.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of RepStatus objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function doSelectJoinAllExceptNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		$c = clone $c;
-
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
-			$c->setDbName(self::DATABASE_NAME);
-		}
-
-		RepStatusPeer::addSelectColumns($c);
-		$startcol2 = (RepStatusPeer::NUM_COLUMNS - RepStatusPeer::NUM_LAZY_LOAD_COLUMNS);
-
-		ReportePeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + (ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS);
-
-		EmailPeer::addSelectColumns($c);
-		$startcol4 = $startcol3 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
-
-		TrackingEtapaPeer::addSelectColumns($c);
-		$startcol5 = $startcol4 + (TrackingEtapaPeer::NUM_COLUMNS - TrackingEtapaPeer::NUM_LAZY_LOAD_COLUMNS);
-
-				$c->addJoin(array(RepStatusPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
-				$c->addJoin(array(RepStatusPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
-				$c->addJoin(array(RepStatusPeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
-
-		$stmt = BasePeer::doSelect($c, $con);
-		$results = array();
-
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$key1 = RepStatusPeer::getPrimaryKeyHashFromRow($row, 0);
-			if (null !== ($obj1 = RepStatusPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
-				$omClass = RepStatusPeer::getOMClass();
-
-				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-				$obj1 = new $cls();
-				$obj1->hydrate($row);
-				RepStatusPeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Reporte rows
-
-				$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-				if ($key2 !== null) {
-					$obj2 = ReportePeer::getInstanceFromPool($key2);
-					if (!$obj2) {
-	
-						$omClass = ReportePeer::getOMClass();
-
-
-					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-					$obj2 = new $cls();
-					$obj2->hydrate($row, $startcol2);
-					ReportePeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
-
-				// Add the $obj1 (RepStatus) to the collection in $obj2 (Reporte)
-				$obj2->addRepStatus($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Email rows
-
-				$key3 = EmailPeer::getPrimaryKeyHashFromRow($row, $startcol3);
-				if ($key3 !== null) {
-					$obj3 = EmailPeer::getInstanceFromPool($key3);
-					if (!$obj3) {
-	
-						$omClass = EmailPeer::getOMClass();
-
-
-					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-					$obj3 = new $cls();
-					$obj3->hydrate($row, $startcol3);
-					EmailPeer::addInstanceToPool($obj3, $key3);
-				} // if $obj3 already loaded
-
-				// Add the $obj1 (RepStatus) to the collection in $obj3 (Email)
-				$obj3->addRepStatus($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined TrackingEtapa rows
-
-				$key4 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol4);
-				if ($key4 !== null) {
-					$obj4 = TrackingEtapaPeer::getInstanceFromPool($key4);
-					if (!$obj4) {
-	
-						$omClass = TrackingEtapaPeer::getOMClass();
-
-
-					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
-					$obj4 = new $cls();
-					$obj4->hydrate($row, $startcol4);
-					TrackingEtapaPeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
-
-				// Add the $obj1 (RepStatus) to the collection in $obj4 (TrackingEtapa)
-				$obj4->addRepStatus($obj1);
 
 			} // if joined row is not null
 

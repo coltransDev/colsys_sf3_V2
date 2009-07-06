@@ -39,6 +39,12 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	protected $ca_nombre;
 
 	/**
+	 * The value for the ca_apellido field.
+	 * @var        string
+	 */
+	protected $ca_apellido;
+
+	/**
 	 * The value for the ca_direccion field.
 	 * @var        string
 	 */
@@ -103,6 +109,30 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	 * @var        boolean
 	 */
 	protected $ca_activo;
+
+	/**
+	 * The value for the ca_fchcreado field.
+	 * @var        string
+	 */
+	protected $ca_fchcreado;
+
+	/**
+	 * The value for the ca_fchactualizado field.
+	 * @var        string
+	 */
+	protected $ca_fchactualizado;
+
+	/**
+	 * The value for the ca_usucreado field.
+	 * @var        string
+	 */
+	protected $ca_usucreado;
+
+	/**
+	 * The value for the ca_usuactualizado field.
+	 * @var        string
+	 */
+	protected $ca_usuactualizado;
 
 	/**
 	 * @var        Agente
@@ -176,6 +206,16 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	public function getCaNombre()
 	{
 		return $this->ca_nombre;
+	}
+
+	/**
+	 * Get the [ca_apellido] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaApellido()
+	{
+		return $this->ca_apellido;
 	}
 
 	/**
@@ -289,6 +329,92 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Get the [optionally formatted] temporal [ca_fchcreado] column value.
+	 * 
+	 *
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
+	 */
+	public function getCaFchcreado($format = 'Y-m-d H:i:s')
+	{
+		if ($this->ca_fchcreado === null) {
+			return null;
+		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchcreado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcreado, true), $x);
+		}
+
+		if ($format === null) {
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $dt->format('U'));
+		} else {
+			return $dt->format($format);
+		}
+	}
+
+	/**
+	 * Get the [optionally formatted] temporal [ca_fchactualizado] column value.
+	 * 
+	 *
+	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
+	 *							If format is NULL, then the raw DateTime object will be returned.
+	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+	 * @throws     PropelException - if unable to parse/validate the date/time value.
+	 */
+	public function getCaFchactualizado($format = 'Y-m-d H:i:s')
+	{
+		if ($this->ca_fchactualizado === null) {
+			return null;
+		}
+
+
+
+		try {
+			$dt = new DateTime($this->ca_fchactualizado);
+		} catch (Exception $x) {
+			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchactualizado, true), $x);
+		}
+
+		if ($format === null) {
+			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+			return $dt;
+		} elseif (strpos($format, '%') !== false) {
+			return strftime($format, $dt->format('U'));
+		} else {
+			return $dt->format($format);
+		}
+	}
+
+	/**
+	 * Get the [ca_usucreado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsucreado()
+	{
+		return $this->ca_usucreado;
+	}
+
+	/**
+	 * Get the [ca_usuactualizado] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaUsuactualizado()
+	{
+		return $this->ca_usuactualizado;
+	}
+
+	/**
 	 * Set the value of [ca_idcontacto] column.
 	 * 
 	 * @param      string $v new value
@@ -351,6 +477,26 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 
 		return $this;
 	} // setCaNombre()
+
+	/**
+	 * Set the value of [ca_apellido] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     ContactoAgente The current object (for fluent API support)
+	 */
+	public function setCaApellido($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_apellido !== $v) {
+			$this->ca_apellido = $v;
+			$this->modifiedColumns[] = ContactoAgentePeer::CA_APELLIDO;
+		}
+
+		return $this;
+	} // setCaApellido()
 
 	/**
 	 * Set the value of [ca_direccion] column.
@@ -577,6 +723,144 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	} // setCaActivo()
 
 	/**
+	 * Sets the value of [ca_fchcreado] column to a normalized version of the date/time value specified.
+	 * 
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     ContactoAgente The current object (for fluent API support)
+	 */
+	public function setCaFchcreado($v)
+	{
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->ca_fchcreado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchcreado !== null && $tmpDt = new DateTime($this->ca_fchcreado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchcreado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = ContactoAgentePeer::CA_FCHCREADO;
+			}
+		} // if either are not null
+
+		return $this;
+	} // setCaFchcreado()
+
+	/**
+	 * Sets the value of [ca_fchactualizado] column to a normalized version of the date/time value specified.
+	 * 
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
+	 * @return     ContactoAgente The current object (for fluent API support)
+	 */
+	public function setCaFchactualizado($v)
+	{
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->ca_fchactualizado !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->ca_fchactualizado !== null && $tmpDt = new DateTime($this->ca_fchactualizado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->ca_fchactualizado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
+				$this->modifiedColumns[] = ContactoAgentePeer::CA_FCHACTUALIZADO;
+			}
+		} // if either are not null
+
+		return $this;
+	} // setCaFchactualizado()
+
+	/**
+	 * Set the value of [ca_usucreado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     ContactoAgente The current object (for fluent API support)
+	 */
+	public function setCaUsucreado($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_usucreado !== $v) {
+			$this->ca_usucreado = $v;
+			$this->modifiedColumns[] = ContactoAgentePeer::CA_USUCREADO;
+		}
+
+		return $this;
+	} // setCaUsucreado()
+
+	/**
+	 * Set the value of [ca_usuactualizado] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     ContactoAgente The current object (for fluent API support)
+	 */
+	public function setCaUsuactualizado($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_usuactualizado !== $v) {
+			$this->ca_usuactualizado = $v;
+			$this->modifiedColumns[] = ContactoAgentePeer::CA_USUACTUALIZADO;
+		}
+
+		return $this;
+	} // setCaUsuactualizado()
+
+	/**
 	 * Indicates whether the columns in this object are only set to default values.
 	 *
 	 * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -616,17 +900,22 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$this->ca_idcontacto = ($row[$startcol + 0] !== null) ? (string) $row[$startcol + 0] : null;
 			$this->ca_idagente = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
 			$this->ca_nombre = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->ca_direccion = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_telefonos = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_fax = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_idciudad = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_email = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-			$this->ca_impoexpo = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-			$this->ca_transporte = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-			$this->ca_cargo = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-			$this->ca_detalle = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-			$this->ca_sugerido = ($row[$startcol + 12] !== null) ? (boolean) $row[$startcol + 12] : null;
-			$this->ca_activo = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
+			$this->ca_apellido = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_direccion = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_telefonos = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_fax = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_idciudad = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_email = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_impoexpo = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_transporte = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_cargo = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_detalle = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_sugerido = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
+			$this->ca_activo = ($row[$startcol + 14] !== null) ? (boolean) $row[$startcol + 14] : null;
+			$this->ca_fchcreado = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_usucreado = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -636,7 +925,7 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 14; // 14 = ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 19; // 19 = ContactoAgentePeer::NUM_COLUMNS - ContactoAgentePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating ContactoAgente object", $e);
@@ -959,37 +1248,52 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 				return $this->getCaNombre();
 				break;
 			case 3:
-				return $this->getCaDireccion();
+				return $this->getCaApellido();
 				break;
 			case 4:
-				return $this->getCaTelefonos();
+				return $this->getCaDireccion();
 				break;
 			case 5:
-				return $this->getCaFax();
+				return $this->getCaTelefonos();
 				break;
 			case 6:
-				return $this->getCaIdciudad();
+				return $this->getCaFax();
 				break;
 			case 7:
-				return $this->getCaEmail();
+				return $this->getCaIdciudad();
 				break;
 			case 8:
-				return $this->getCaImpoexpo();
+				return $this->getCaEmail();
 				break;
 			case 9:
-				return $this->getCaTransporte();
+				return $this->getCaImpoexpo();
 				break;
 			case 10:
-				return $this->getCaCargo();
+				return $this->getCaTransporte();
 				break;
 			case 11:
-				return $this->getCaDetalle();
+				return $this->getCaCargo();
 				break;
 			case 12:
-				return $this->getCaSugerido();
+				return $this->getCaDetalle();
 				break;
 			case 13:
+				return $this->getCaSugerido();
+				break;
+			case 14:
 				return $this->getCaActivo();
+				break;
+			case 15:
+				return $this->getCaFchcreado();
+				break;
+			case 16:
+				return $this->getCaFchactualizado();
+				break;
+			case 17:
+				return $this->getCaUsucreado();
+				break;
+			case 18:
+				return $this->getCaUsuactualizado();
 				break;
 			default:
 				return null;
@@ -1015,17 +1319,22 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 			$keys[0] => $this->getCaIdcontacto(),
 			$keys[1] => $this->getCaIdagente(),
 			$keys[2] => $this->getCaNombre(),
-			$keys[3] => $this->getCaDireccion(),
-			$keys[4] => $this->getCaTelefonos(),
-			$keys[5] => $this->getCaFax(),
-			$keys[6] => $this->getCaIdciudad(),
-			$keys[7] => $this->getCaEmail(),
-			$keys[8] => $this->getCaImpoexpo(),
-			$keys[9] => $this->getCaTransporte(),
-			$keys[10] => $this->getCaCargo(),
-			$keys[11] => $this->getCaDetalle(),
-			$keys[12] => $this->getCaSugerido(),
-			$keys[13] => $this->getCaActivo(),
+			$keys[3] => $this->getCaApellido(),
+			$keys[4] => $this->getCaDireccion(),
+			$keys[5] => $this->getCaTelefonos(),
+			$keys[6] => $this->getCaFax(),
+			$keys[7] => $this->getCaIdciudad(),
+			$keys[8] => $this->getCaEmail(),
+			$keys[9] => $this->getCaImpoexpo(),
+			$keys[10] => $this->getCaTransporte(),
+			$keys[11] => $this->getCaCargo(),
+			$keys[12] => $this->getCaDetalle(),
+			$keys[13] => $this->getCaSugerido(),
+			$keys[14] => $this->getCaActivo(),
+			$keys[15] => $this->getCaFchcreado(),
+			$keys[16] => $this->getCaFchactualizado(),
+			$keys[17] => $this->getCaUsucreado(),
+			$keys[18] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1067,37 +1376,52 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 				$this->setCaNombre($value);
 				break;
 			case 3:
-				$this->setCaDireccion($value);
+				$this->setCaApellido($value);
 				break;
 			case 4:
-				$this->setCaTelefonos($value);
+				$this->setCaDireccion($value);
 				break;
 			case 5:
-				$this->setCaFax($value);
+				$this->setCaTelefonos($value);
 				break;
 			case 6:
-				$this->setCaIdciudad($value);
+				$this->setCaFax($value);
 				break;
 			case 7:
-				$this->setCaEmail($value);
+				$this->setCaIdciudad($value);
 				break;
 			case 8:
-				$this->setCaImpoexpo($value);
+				$this->setCaEmail($value);
 				break;
 			case 9:
-				$this->setCaTransporte($value);
+				$this->setCaImpoexpo($value);
 				break;
 			case 10:
-				$this->setCaCargo($value);
+				$this->setCaTransporte($value);
 				break;
 			case 11:
-				$this->setCaDetalle($value);
+				$this->setCaCargo($value);
 				break;
 			case 12:
-				$this->setCaSugerido($value);
+				$this->setCaDetalle($value);
 				break;
 			case 13:
+				$this->setCaSugerido($value);
+				break;
+			case 14:
 				$this->setCaActivo($value);
+				break;
+			case 15:
+				$this->setCaFchcreado($value);
+				break;
+			case 16:
+				$this->setCaFchactualizado($value);
+				break;
+			case 17:
+				$this->setCaUsucreado($value);
+				break;
+			case 18:
+				$this->setCaUsuactualizado($value);
 				break;
 		} // switch()
 	}
@@ -1126,17 +1450,22 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdcontacto($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaIdagente($arr[$keys[1]]);
 		if (array_key_exists($keys[2], $arr)) $this->setCaNombre($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaDireccion($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaTelefonos($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaFax($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaIdciudad($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaEmail($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaImpoexpo($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaTransporte($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaCargo($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaDetalle($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaSugerido($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaActivo($arr[$keys[13]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaApellido($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaDireccion($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaTelefonos($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaFax($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaIdciudad($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaEmail($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaImpoexpo($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaTransporte($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaCargo($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaDetalle($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaSugerido($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaActivo($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaFchcreado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaFchactualizado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaUsucreado($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaUsuactualizado($arr[$keys[18]]);
 	}
 
 	/**
@@ -1151,6 +1480,7 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ContactoAgentePeer::CA_IDCONTACTO)) $criteria->add(ContactoAgentePeer::CA_IDCONTACTO, $this->ca_idcontacto);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_IDAGENTE)) $criteria->add(ContactoAgentePeer::CA_IDAGENTE, $this->ca_idagente);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_NOMBRE)) $criteria->add(ContactoAgentePeer::CA_NOMBRE, $this->ca_nombre);
+		if ($this->isColumnModified(ContactoAgentePeer::CA_APELLIDO)) $criteria->add(ContactoAgentePeer::CA_APELLIDO, $this->ca_apellido);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_DIRECCION)) $criteria->add(ContactoAgentePeer::CA_DIRECCION, $this->ca_direccion);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_TELEFONOS)) $criteria->add(ContactoAgentePeer::CA_TELEFONOS, $this->ca_telefonos);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_FAX)) $criteria->add(ContactoAgentePeer::CA_FAX, $this->ca_fax);
@@ -1162,6 +1492,10 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ContactoAgentePeer::CA_DETALLE)) $criteria->add(ContactoAgentePeer::CA_DETALLE, $this->ca_detalle);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_SUGERIDO)) $criteria->add(ContactoAgentePeer::CA_SUGERIDO, $this->ca_sugerido);
 		if ($this->isColumnModified(ContactoAgentePeer::CA_ACTIVO)) $criteria->add(ContactoAgentePeer::CA_ACTIVO, $this->ca_activo);
+		if ($this->isColumnModified(ContactoAgentePeer::CA_FCHCREADO)) $criteria->add(ContactoAgentePeer::CA_FCHCREADO, $this->ca_fchcreado);
+		if ($this->isColumnModified(ContactoAgentePeer::CA_FCHACTUALIZADO)) $criteria->add(ContactoAgentePeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
+		if ($this->isColumnModified(ContactoAgentePeer::CA_USUCREADO)) $criteria->add(ContactoAgentePeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(ContactoAgentePeer::CA_USUACTUALIZADO)) $criteria->add(ContactoAgentePeer::CA_USUACTUALIZADO, $this->ca_usuactualizado);
 
 		return $criteria;
 	}
@@ -1222,6 +1556,8 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 
 		$copyObj->setCaNombre($this->ca_nombre);
 
+		$copyObj->setCaApellido($this->ca_apellido);
+
 		$copyObj->setCaDireccion($this->ca_direccion);
 
 		$copyObj->setCaTelefonos($this->ca_telefonos);
@@ -1243,6 +1579,14 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 		$copyObj->setCaSugerido($this->ca_sugerido);
 
 		$copyObj->setCaActivo($this->ca_activo);
+
+		$copyObj->setCaFchcreado($this->ca_fchcreado);
+
+		$copyObj->setCaFchactualizado($this->ca_fchactualizado);
+
+		$copyObj->setCaUsucreado($this->ca_usucreado);
+
+		$copyObj->setCaUsuactualizado($this->ca_usuactualizado);
 
 
 		$copyObj->setNew(true);

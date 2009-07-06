@@ -54,4 +54,26 @@ class Usuario extends BaseUsuario
 		return $this->getCapasswd()==sha1($passwd.$this->getCaSalt() );	
 				
 	}
+	
+	public function getNivelAcceso( $rutina ){
+		
+		$acceso = AccesoUsuarioPeer::retrieveByPk( $rutina, $this->getCaLogin() );
+		
+		if( $acceso ){						
+			return $acceso->getCaAcceso();
+		}else{			
+			$c = new Criteria();									
+			$c->addJoin( AccesoPerfilPeer::CA_PERFIL, UsuarioPerfilPeer::CA_PERFIL );				
+			$c->add( UsuarioPerfilPeer::CA_LOGIN , $this->getCaLogin() );
+			$c->add( AccesoPerfilPeer::CA_RUTINA , $rutina );
+			
+			$acceso = AccesoPerfilPeer::doSelectOne( $c );
+			if( $acceso ){				
+				return $acceso->getCaAcceso();
+			}				
+		}
+		
+		return -1;
+	}
 }
+?>

@@ -68,6 +68,8 @@ class ContactoAgenteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_APELLIDO', 'CaApellido', 'VARCHAR', false, null);
+
 		$tMap->addColumn('CA_DIRECCION', 'CaDireccion', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_TELEFONOS', 'CaTelefonos', 'VARCHAR', false, null);
@@ -89,6 +91,14 @@ class ContactoAgenteMapBuilder implements MapBuilder {
 		$tMap->addColumn('CA_SUGERIDO', 'CaSugerido', 'BOOLEAN', false, null);
 
 		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
+
+		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
+
+		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', false, null);
+
+		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
 
 	} // doBuild()
 
