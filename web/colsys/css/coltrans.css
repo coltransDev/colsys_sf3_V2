@@ -185,6 +185,10 @@ table.tableList tr.row1 {
 	background-color: #FFF;
 }
 
+table.tableList tr.row2 {
+	background-color: #D2D2D2;
+}
+
 table.tableList tr.row0:hover {
 	background-color: #f1f1f1;
 }
