@@ -11,5 +11,6 @@ class AgenteForm extends BaseAgenteForm
 {
   public function configure()
   {
+  	
   }
 }
