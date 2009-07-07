@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.notificaciones">
 	<table name="notificaciones.tb_notificaciones" phpName="Notificacion">
-		<column name="ca_idnotificacion" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-		<id-method-parameter value="notificaciones.tb_notificaciones_id"/>			
-		<column name="ca_url" type="varchar" />			
-		<column name="ca_titulo" type="varchar" />
-		<column name="ca_texto" type="varchar" />
-		<column name="ca_login" type="varchar" />		
-		<column name="ca_leido" type="boolean" />	
-		<column name="ca_fchcreado" type="timestamp" />	
-		<column name="ca_usucreado" type="varchar" />
-		<column name="ca_idemail" type="integer" />
-		<foreign-key foreignTable="control.tb_usuarios">
-			<reference local="ca_login" foreign="ca_login"/>
+		<column name="ca_idtarea" type="integer" required="true" primaryKey="true"  />
+		<column name="ca_idemail" type="integer" required="true" primaryKey="true"/>
+		
+		<foreign-key foreignTable="notificaciones.tb_tareas">
+			<reference local="ca_idtarea" foreign="ca_idtarea"/>
+		</foreign-key>		
+		<foreign-key foreignTable="tb_emails">
+			<reference local="ca_idemail" foreign="ca_idemail"/>
 		</foreign-key>						
 	</table>	
 	
