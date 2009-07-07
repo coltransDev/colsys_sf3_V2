@@ -582,6 +582,7 @@ require_once("menu.php");
              echo "</script>";
              echo "</HEAD>";
              echo "<BODY ID=Cuerpo onscroll='dalt=document.body.scrollTop+3; find_texts.style.top=dalt'>";
+			 require("menu.php");
              echo "<DIV ID='find_texts' STYLE='visibility:hidden; position:absolute; border-width:3; border-color:#666666; border-style:solid;'>";
              echo "<IFRAME ID='find_texts_frame' SRC='blanco.html' MARGINWIDTH=0 MARGINHEIGHT=0 FRAMEBORDER='NO' SCROLLING='YES' STYLE='width:645; height:200'>";
              echo "</IFRAME>";
