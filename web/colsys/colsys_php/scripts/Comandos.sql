@@ -1395,3 +1395,46 @@ insert into tb_festivos values ('2009-12-08');
 insert into tb_festivos values ('2009-12-25');
 
 
+select ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, rs.ca_fchllegada, max(ca_fchenvio) as ca_fchenvio from tb_repstatus rs
+	LEFT OUTER JOIN (select ca_idreporte, ca_consecutivo from tb_reportes order by ca_idreporte) rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCOL','IMCPD'))
+	RIGHT OUTER JOIN (select DISTINCT ca_referencia, ca_idcliente, ca_hbls, ca_continuacion, ca_consecutivo from vi_inoclientes_sea where substr(ca_referencia,15,1)::text = '9' and substr(ca_referencia,8,2)::text = '06' order by ca_consecutivo) ic on (rp.ca_consecutivo = ic.ca_consecutivo)
+group by ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, rs.ca_fchllegada
+
+select * from tb_repstatus rs
+	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)
+	RIGHT OUTER JOIN (select DISTINCT ca_consecutivo from vi_inoclientes_sea where ca_referencia = '400.05.01.003.9') ic on (rp.ca_consecutivo = ic.ca_consecutivo)
+
+
+Create view vi_repultimo as
+select rpt.ca_consecutivo, rpt.ca_fchreporte, ruv.ca_version from tb_reportes rpt, 
+	(select ca_consecutivo, min(ca_idreporte) as ca_idreporte from tb_reportes group by ca_consecutivo order by ca_idreporte) rpv,
+	(select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_usuanulado is null group by ca_consecutivo) ruv
+	where rpt.ca_idreporte = rpv.ca_idreporte and rpt.ca_consecutivo = ruv.ca_consecutivo
+	order by rpt.ca_consecutivo;
+REVOKE ALL ON vi_repultimo FROM PUBLIC;
+GRANT ALL ON vi_repultimo TO "Administrador";
+GRANT ALL ON vi_repultimo TO GROUP "Usuarios";
+
+
+select DISTINCT m.ca_ano, m.ca_mes, m.ca_trafico, i.ca_referencia, i.ca_idcliente, i.ca_compania, i.ca_hbls, i.ca_continuacion, f.ca_fchllegada, f.ca_fchenvio, g.ca_fchfactura, g.ca_observaciones from vi_inoclientes_sea i 
+LEFT OUTER JOIN (
+	select g.ca_referencia, g.ca_idcliente, g.ca_hbls, g.ca_factura, g.ca_fchfactura, g.ca_observaciones from tb_inoingresos_sea g 
+		RIGHT OUTER JOIN (
+			select ca_referencia, ca_idcliente, ca_hbls, min(ca_fchfactura) as ca_fchfactura from tb_inoingresos_sea group by ca_referencia, ca_idcliente, ca_hbls order by ca_referencia, ca_idcliente, ca_hbls
+		) ii ON (ii.ca_referencia = g.ca_referencia and ii.ca_idcliente = g.ca_idcliente and ii.ca_hbls = g.ca_hbls and ii.ca_fchfactura = g.ca_fchfactura)
+		
+) g ON (g.ca_referencia = i.ca_referencia and g.ca_idcliente = i.ca_idcliente and g.ca_hbls = i.ca_hbls)
+
+LEFT OUTER JOIN (
+	select ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, rs.ca_fchllegada, max(ca_fchenvio) as ca_fchenvio from tb_repstatus rs
+		LEFT OUTER JOIN (select ca_idreporte, ca_consecutivo from tb_reportes order by ca_idreporte) rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCOL','IMCPD'))
+		RIGHT OUTER JOIN (select DISTINCT ca_referencia, ca_idcliente, ca_hbls, ca_continuacion, ca_consecutivo from vi_inoclientes_sea order by ca_consecutivo) ic on (rp.ca_consecutivo = ic.ca_consecutivo)
+	group by ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, rs.ca_fchllegada order by ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls
+
+) f ON (f.ca_referencia = i.ca_referencia and f.ca_idcliente = i.ca_idcliente and f.ca_hbls = i.ca_hbls)
+
+, vi_inomaestra_sea m 
+where i.ca_referencia = m.ca_referencia and substr(ca_mes,1,2) like '06' and substr(ca_mes,4)::text = '9' and ca_trafico like '%' and ca_sucursal like 'Medellín' and substr(ca_mes,1,2) like '06' and substr(ca_mes,4)::text = '9' and ca_trafico like '%'
+
+
+

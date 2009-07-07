@@ -23,7 +23,99 @@ session_cache_limiter('private_expire');
 require_once("checklogin.php");                                                       
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-if (isset($suf) and $suf == 'Instructions_sea'){
+if (isset($suf) and $suf == 'findDianDeposito'){
+    $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
+    echo "<HTML>";
+    echo "<HEAD>";
+    echo "<TITLE>$titulo</TITLE>";
+    echo "</HEAD>";
+    echo "<BODY style='margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; text-align: right; font-size: 11px; font-weight:bold;'>";
+    echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
+    echo "<CENTER>";
+    echo "<H3>$titulo</H3>";
+    echo "<FORM METHOD=post NAME='ventanas' ACTION='ventanas.php'>";
+    echo "<INPUT TYPE='HIDDEN' NAME='suf' VALUE='listDianDeposito'>";
+    echo "<TABLE WIDTH=450 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
+    echo "<TH COLSPAN=3 style='font-size: 12px; font-weight:bold;'><B>Base de Datos de Depósitos de la Dian</TH>";
+    echo "<TR>";
+    echo "  <TH ROWSPAN=2>&nbsp</TH>";
+    echo "  <TD Class=listar><B>Que contenga la cadena:</B><BR><INPUT TYPE='text' NAME='contents' size='60'></TD>";
+    echo "  <TH ROWSPAN=2><INPUT Class=submit TYPE='SUBMIT' NAME='boton' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
+    echo "</TR>";
+    echo "<TR HEIGHT=5>";
+    echo "  <TD Class=captura COLSPAN=4></TD>";
+    echo "</TR>";
+    echo "</TABLE>";
+    echo "<TABLE CELLSPACING=10>";
+    echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='accion' VALUE='Cancelar' ONCLICK='javascript:window.parent.frames.window_div.style.visibility = \"hidden\"; window.parent.document.body.scroll=\"yes\";'></TH>";  // Cancela la operación
+    echo "</TABLE>";
+    echo "</FORM>";
+    echo "</CENTER>";
+    //   echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
+    require_once("footer.php");
+    echo "</BODY>";
+    echo "</HTML>";
+    }
+else if (isset($suf) and $suf == 'listDianDeposito'){
+	$condicion = "where lower(ca_nombre) like lower('%".$contents."%')";
+	if (!$rs->Open("select * from tb_diandepositos $condicion order by ca_nombre")) {  // Selecciona todos lo registros de la tabla DianDepositos
+	   echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+	   echo "<script>document.location.href = 'entrada.php';</script>";
+	   exit; }
+
+	echo "<HTML>";
+	echo "<HEAD>";
+	echo "<TITLE>$titulo</TITLE>";
+	echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
+	echo "function elegir(nw){";
+	echo "    window.parent.document.getElementById('coddeposito').value = nw;";
+	echo "    window.parent.frames.window_div.style.visibility = \"hidden\";";
+	echo "    window.parent.document.body.scroll=\"yes\";";
+	echo "}";
+	echo "function uno(src,color_entrada) {";
+	echo "    src.style.background=color_entrada;src.style.cursor='hand'";
+	echo "}";
+	echo "function dos(src,color_default) {";
+	echo "    src.style.background=color_default;src.style.cursor='default';";
+	echo "}";
+	echo "</script>";
+	echo "</HEAD>";
+	echo "<BODY>";
+	echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
+	echo "<CENTER>";
+	echo "<TABLE WIDTH=600 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
+	echo "<TR>";
+	echo "  <TH Class=titulo COLSPAN=4>COLTRANS S.A.<BR>$titulo</TH>";
+	echo "</TR>";
+	echo "<TH>Cod.Depósito</TH>";
+	echo "<TH>Nombre</TH>";
+	echo "<TH>Fch.Desde</TH>";
+	echo "<TH>Fch.Hasta</TH>";
+	$consecutivo = '';
+	while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
+		echo "<TR>";
+		echo "  <TD Class=listar onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:elegir('".$rs->Value('ca_codigo')."')\">".$rs->Value('ca_codigo')."</TD>";
+		echo "  <TD Class=listar>".$rs->Value('ca_nombre')."</TD>";
+		echo "  <TD Class=listar>".$rs->Value('ca_fchdesde')."</TD>";
+		echo "  <TD Class=listar>".$rs->Value('ca_fchhasta')."</TD>";
+		echo "</TR>";
+		echo "<TR HEIGHT=5>";
+		echo "  <TD Class=invertir COLSPAN=4></TD>";
+		echo "</TR>";
+		$rs->MoveNext();
+		}
+	echo "</TABLE><BR>";
+	echo "<TABLE CELLSPACING=10>";
+	echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:location.href = \"ventanas.php?suf=findDianDeposito\"'></TH>";  // Cancela la operación
+	echo "</TABLE>";
+	echo "</FORM>";
+	echo "</CENTER>";
+//			echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
+	require_once("footer.php");
+	echo "</BODY>";
+	echo "</HTML>";
+    }
+else if (isset($suf) and $suf == 'Instructions_sea'){
     echo "<HTML>";
     echo "<HEAD>";
     echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
