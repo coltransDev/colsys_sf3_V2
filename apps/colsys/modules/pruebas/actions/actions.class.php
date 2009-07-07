@@ -2240,7 +2240,8 @@ Departamento Comercial
 	* Ejecutado 12 May 09 a las 11:38AM   ( CA_FCHENVIO, '2009-02-01' - 2009-03-31) se crearon los status    135581 - 138741  excepto {138459, 136664, 136131 }   total 3154
 	* Ejecutado 12 May  09 a las 11:57AM   ( CA_FCHENVIO, '2009-04-01' - 2009-04-30) se crearon los status   138747  - 140472  excepto {140240, 139951, 138990, 138928 }   
 	* Ejecutado 12 May  09 a las 12:01PM   ( CA_FCHENVIO, '2009-05-01' - ...) se crearon los status   140479  - 141011  excepto { }  
-	* Ejecutado 3 jul 09  a las 15:21PM   ( CA_FCHENVIO, ..., '2008-12-31 ) ( CA_REFERENCIA, '%9', Criteria::LIKE ) se crearon los status   156250  - 156282  excepto { }   
+	* Ejecutado 3 jul 09  a las 15:21PM   ( CA_FCHENVIO, ..., '2008-12-31 ) ( CA_REFERENCIA, '%9', Criteria::LIKE ) se crearon los status   156250  - 156282  excepto { }   	
+	* Ejecutado 7 jul 09  a las 12:14PM   ( CA_FCHENVIO, 2009-07-01, .. ) ( CA_REFERENCIA, '%9', Criteria::LIKE ) se crearon los status   157128- 157131  excepto { }   Enviados por jjleon por el modulo viejo
 	*/
 	public function executeCrearStatusMaritimo(){
 		exit("detenido");
@@ -2248,8 +2249,8 @@ Departamento Comercial
 		$c = new Criteria(); //CaFchconfirmado
 		//$c->addJoin(  InoClientesSeaPeer::CA_REFERENCIA, InoMaestraSeaPeer::CA_REFERENCIA );
 		
-		//$c->add( InoAvisosSeaPeer::CA_FCHENVIO, '2009-05-01',  Criteria::GREATER_EQUAL);	
-		$c->addAnd( InoAvisosSeaPeer::CA_FCHENVIO, '2008-12-31', Criteria::LESS_EQUAL );
+		$c->add( InoAvisosSeaPeer::CA_FCHENVIO, '2009-07-01',  Criteria::GREATER_EQUAL);	
+		//$c->addAnd( InoAvisosSeaPeer::CA_FCHENVIO, '2009-07-01', Criteria::LESS_EQUAL );
 		$c->addAnd( InoAvisosSeaPeer::CA_REFERENCIA, '%9', Criteria::LIKE );
 		
 		//$c->add( InoAvisosSeaPeer::CA_FCHENVIO, '2009-01-01',  Criteria::GREATER_EQUAL);	;
