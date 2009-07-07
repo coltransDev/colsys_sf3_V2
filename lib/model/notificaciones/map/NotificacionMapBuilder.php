@@ -60,27 +60,11 @@ class NotificacionMapBuilder implements MapBuilder {
 		$tMap->setPhpName('Notificacion');
 		$tMap->setClassname('Notificacion');
 
-		$tMap->setUseIdGenerator(true);
+		$tMap->setUseIdGenerator(false);
 
-		$tMap->setPrimaryKeyMethodInfo('notificaciones.tb_notificaciones_id');
+		$tMap->addForeignPrimaryKey('CA_IDTAREA', 'CaIdtarea', 'INTEGER' , 'notificaciones.tb_tareas', 'CA_IDTAREA', true, null);
 
-		$tMap->addPrimaryKey('CA_IDNOTIFICACION', 'CaIdnotificacion', 'INTEGER', true, null);
-
-		$tMap->addColumn('CA_URL', 'CaUrl', 'VARCHAR', false, null);
-
-		$tMap->addColumn('CA_TITULO', 'CaTitulo', 'VARCHAR', false, null);
-
-		$tMap->addColumn('CA_TEXTO', 'CaTexto', 'VARCHAR', false, null);
-
-		$tMap->addForeignKey('CA_LOGIN', 'CaLogin', 'VARCHAR', 'control.tb_usuarios', 'CA_LOGIN', false, null);
-
-		$tMap->addColumn('CA_LEIDO', 'CaLeido', 'BOOLEAN', false, null);
-
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
-
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
-
-		$tMap->addColumn('CA_IDEMAIL', 'CaIdemail', 'INTEGER', false, null);
+		$tMap->addForeignPrimaryKey('CA_IDEMAIL', 'CaIdemail', 'INTEGER' , 'tb_emails', 'CA_IDEMAIL', true, null);
 
 	} // doBuild()
 

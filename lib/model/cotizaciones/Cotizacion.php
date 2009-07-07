@@ -120,7 +120,8 @@ class Cotizacion extends BaseCotizacion
 			$tarea->setCaUsucreado( $this->getCaUsucreado() );
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $texto );
-			$tarea->setCaFchcreado(  $fchCreado );			
+			$tarea->setCaFchcreado(  $fchCreado );	
+			$tarea->setCaFchvisible( time()+3600 );		
 			$tarea->setCaFchvencimiento( strtotime( $fchCreado )+Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
 			$tarea->save();
 				

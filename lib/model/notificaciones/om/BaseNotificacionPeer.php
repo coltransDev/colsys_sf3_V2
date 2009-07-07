@@ -19,34 +19,13 @@ abstract class BaseNotificacionPeer {
 	const CLASS_DEFAULT = 'lib.model.notificaciones.Notificacion';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 9;
+	const NUM_COLUMNS = 2;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_IDNOTIFICACION field */
-	const CA_IDNOTIFICACION = 'notificaciones.tb_notificaciones.CA_IDNOTIFICACION';
-
-	/** the column name for the CA_URL field */
-	const CA_URL = 'notificaciones.tb_notificaciones.CA_URL';
-
-	/** the column name for the CA_TITULO field */
-	const CA_TITULO = 'notificaciones.tb_notificaciones.CA_TITULO';
-
-	/** the column name for the CA_TEXTO field */
-	const CA_TEXTO = 'notificaciones.tb_notificaciones.CA_TEXTO';
-
-	/** the column name for the CA_LOGIN field */
-	const CA_LOGIN = 'notificaciones.tb_notificaciones.CA_LOGIN';
-
-	/** the column name for the CA_LEIDO field */
-	const CA_LEIDO = 'notificaciones.tb_notificaciones.CA_LEIDO';
-
-	/** the column name for the CA_FCHCREADO field */
-	const CA_FCHCREADO = 'notificaciones.tb_notificaciones.CA_FCHCREADO';
-
-	/** the column name for the CA_USUCREADO field */
-	const CA_USUCREADO = 'notificaciones.tb_notificaciones.CA_USUCREADO';
+	/** the column name for the CA_IDTAREA field */
+	const CA_IDTAREA = 'notificaciones.tb_notificaciones.CA_IDTAREA';
 
 	/** the column name for the CA_IDEMAIL field */
 	const CA_IDEMAIL = 'notificaciones.tb_notificaciones.CA_IDEMAIL';
@@ -72,11 +51,11 @@ abstract class BaseNotificacionPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdnotificacion', 'CaUrl', 'CaTitulo', 'CaTexto', 'CaLogin', 'CaLeido', 'CaFchcreado', 'CaUsucreado', 'CaIdemail', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdnotificacion', 'caUrl', 'caTitulo', 'caTexto', 'caLogin', 'caLeido', 'caFchcreado', 'caUsucreado', 'caIdemail', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDNOTIFICACION, self::CA_URL, self::CA_TITULO, self::CA_TEXTO, self::CA_LOGIN, self::CA_LEIDO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_IDEMAIL, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idnotificacion', 'ca_url', 'ca_titulo', 'ca_texto', 'ca_login', 'ca_leido', 'ca_fchcreado', 'ca_usucreado', 'ca_idemail', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtarea', 'CaIdemail', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtarea', 'caIdemail', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTAREA, self::CA_IDEMAIL, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtarea', 'ca_idemail', ),
+		BasePeer::TYPE_NUM => array (0, 1, )
 	);
 
 	/**
@@ -86,11 +65,11 @@ abstract class BaseNotificacionPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdnotificacion' => 0, 'CaUrl' => 1, 'CaTitulo' => 2, 'CaTexto' => 3, 'CaLogin' => 4, 'CaLeido' => 5, 'CaFchcreado' => 6, 'CaUsucreado' => 7, 'CaIdemail' => 8, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdnotificacion' => 0, 'caUrl' => 1, 'caTitulo' => 2, 'caTexto' => 3, 'caLogin' => 4, 'caLeido' => 5, 'caFchcreado' => 6, 'caUsucreado' => 7, 'caIdemail' => 8, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDNOTIFICACION => 0, self::CA_URL => 1, self::CA_TITULO => 2, self::CA_TEXTO => 3, self::CA_LOGIN => 4, self::CA_LEIDO => 5, self::CA_FCHCREADO => 6, self::CA_USUCREADO => 7, self::CA_IDEMAIL => 8, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idnotificacion' => 0, 'ca_url' => 1, 'ca_titulo' => 2, 'ca_texto' => 3, 'ca_login' => 4, 'ca_leido' => 5, 'ca_fchcreado' => 6, 'ca_usucreado' => 7, 'ca_idemail' => 8, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtarea' => 0, 'CaIdemail' => 1, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtarea' => 0, 'caIdemail' => 1, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTAREA => 0, self::CA_IDEMAIL => 1, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtarea' => 0, 'ca_idemail' => 1, ),
+		BasePeer::TYPE_NUM => array (0, 1, )
 	);
 
 	/**
@@ -172,21 +151,7 @@ abstract class BaseNotificacionPeer {
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
-		$criteria->addSelectColumn(NotificacionPeer::CA_IDNOTIFICACION);
-
-		$criteria->addSelectColumn(NotificacionPeer::CA_URL);
-
-		$criteria->addSelectColumn(NotificacionPeer::CA_TITULO);
-
-		$criteria->addSelectColumn(NotificacionPeer::CA_TEXTO);
-
-		$criteria->addSelectColumn(NotificacionPeer::CA_LOGIN);
-
-		$criteria->addSelectColumn(NotificacionPeer::CA_LEIDO);
-
-		$criteria->addSelectColumn(NotificacionPeer::CA_FCHCREADO);
-
-		$criteria->addSelectColumn(NotificacionPeer::CA_USUCREADO);
+		$criteria->addSelectColumn(NotificacionPeer::CA_IDTAREA);
 
 		$criteria->addSelectColumn(NotificacionPeer::CA_IDEMAIL);
 
@@ -314,7 +279,7 @@ abstract class BaseNotificacionPeer {
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = (string) $obj->getCaIdnotificacion();
+				$key = serialize(array((string) $obj->getCaIdtarea(), (string) $obj->getCaIdemail()));
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -334,10 +299,10 @@ abstract class BaseNotificacionPeer {
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof Notificacion) {
-				$key = (string) $value->getCaIdnotificacion();
-			} elseif (is_scalar($value)) {
+				$key = serialize(array((string) $value->getCaIdtarea(), (string) $value->getCaIdemail()));
+			} elseif (is_array($value) && count($value) === 2) {
 				// assume we've been passed a primary key
-				$key = (string) $value;
+				$key = serialize(array((string) $value[0], (string) $value[1]));
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Notificacion object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -390,10 +355,10 @@ abstract class BaseNotificacionPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null) {
+		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null) {
 			return null;
 		}
-		return (string) $row[$startcol + 0];
+		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1]));
 	}
 
 	/**
@@ -431,7 +396,7 @@ abstract class BaseNotificacionPeer {
 	}
 
 	/**
-	 * Returns the number of rows matching criteria, joining the related Usuario table
+	 * Returns the number of rows matching criteria, joining the related NotTarea table
 	 *
 	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
@@ -439,7 +404,7 @@ abstract class BaseNotificacionPeer {
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     int Number of matching rows.
 	 */
-	public static function doCountJoinUsuario(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doCountJoinNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		// we're going to modify criteria, so copy it first
 		$criteria = clone $criteria;
@@ -466,7 +431,7 @@ abstract class BaseNotificacionPeer {
 			$con = Propel::getConnection(NotificacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(NotificacionPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+		$criteria->addJoin(array(NotificacionPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 
 		$stmt = BasePeer::doCount($criteria, $con);
 
@@ -481,7 +446,57 @@ abstract class BaseNotificacionPeer {
 
 
 	/**
-	 * Selects a collection of Notificacion objects pre-filled with their Usuario objects.
+	 * Returns the number of rows matching criteria, joining the related Email table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinEmail(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		// We need to set the primary table name, since in the case that there are no WHERE columns
+		// it will be impossible for the BasePeer::createSelectSql() method to determine which
+		// tables go into the FROM clause.
+		$criteria->setPrimaryTableName(NotificacionPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			NotificacionPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(NotificacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(NotificacionPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Selects a collection of Notificacion objects pre-filled with their NotTarea objects.
 	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -489,7 +504,7 @@ abstract class BaseNotificacionPeer {
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinUsuario(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
@@ -500,9 +515,9 @@ abstract class BaseNotificacionPeer {
 
 		NotificacionPeer::addSelectColumns($c);
 		$startcol = (NotificacionPeer::NUM_COLUMNS - NotificacionPeer::NUM_LAZY_LOAD_COLUMNS);
-		UsuarioPeer::addSelectColumns($c);
+		NotTareaPeer::addSelectColumns($c);
 
-		$c->addJoin(array(NotificacionPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+		$c->addJoin(array(NotificacionPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -522,20 +537,87 @@ abstract class BaseNotificacionPeer {
 				NotificacionPeer::addInstanceToPool($obj1, $key1);
 			} // if $obj1 already loaded
 
-			$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			$key2 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
-				$obj2 = UsuarioPeer::getInstanceFromPool($key2);
+				$obj2 = NotTareaPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$omClass = UsuarioPeer::getOMClass();
+					$omClass = NotTareaPeer::getOMClass();
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
-					UsuarioPeer::addInstanceToPool($obj2, $key2);
+					NotTareaPeer::addInstanceToPool($obj2, $key2);
 				} // if obj2 already loaded
 
-				// Add the $obj1 (Notificacion) to $obj2 (Usuario)
+				// Add the $obj1 (Notificacion) to $obj2 (NotTarea)
+				$obj2->addNotificacion($obj1);
+
+			} // if joined row was not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of Notificacion objects pre-filled with their Email objects.
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of Notificacion objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinEmail(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		NotificacionPeer::addSelectColumns($c);
+		$startcol = (NotificacionPeer::NUM_COLUMNS - NotificacionPeer::NUM_LAZY_LOAD_COLUMNS);
+		EmailPeer::addSelectColumns($c);
+
+		$c->addJoin(array(NotificacionPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = NotificacionPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = NotificacionPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+
+				$omClass = NotificacionPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				NotificacionPeer::addInstanceToPool($obj1, $key1);
+			} // if $obj1 already loaded
+
+			$key2 = EmailPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = EmailPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = EmailPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					EmailPeer::addInstanceToPool($obj2, $key2);
+				} // if obj2 already loaded
+
+				// Add the $obj1 (Notificacion) to $obj2 (Email)
 				$obj2->addNotificacion($obj1);
 
 			} // if joined row was not null
@@ -583,7 +665,8 @@ abstract class BaseNotificacionPeer {
 			$con = Propel::getConnection(NotificacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(NotificacionPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+		$criteria->addJoin(array(NotificacionPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+		$criteria->addJoin(array(NotificacionPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -617,10 +700,14 @@ abstract class BaseNotificacionPeer {
 		NotificacionPeer::addSelectColumns($c);
 		$startcol2 = (NotificacionPeer::NUM_COLUMNS - NotificacionPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		UsuarioPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + (UsuarioPeer::NUM_COLUMNS - UsuarioPeer::NUM_LAZY_LOAD_COLUMNS);
+		NotTareaPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(array(NotificacionPeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
+		EmailPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		$c->addJoin(array(NotificacionPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+		$c->addJoin(array(NotificacionPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -639,25 +726,283 @@ abstract class BaseNotificacionPeer {
 				NotificacionPeer::addInstanceToPool($obj1, $key1);
 			} // if obj1 already loaded
 
-			// Add objects for joined Usuario rows
+			// Add objects for joined NotTarea rows
 
-			$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+			$key2 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 			if ($key2 !== null) {
-				$obj2 = UsuarioPeer::getInstanceFromPool($key2);
+				$obj2 = NotTareaPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$omClass = UsuarioPeer::getOMClass();
+					$omClass = NotTareaPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
-					UsuarioPeer::addInstanceToPool($obj2, $key2);
+					NotTareaPeer::addInstanceToPool($obj2, $key2);
 				} // if obj2 loaded
 
-				// Add the $obj1 (Notificacion) to the collection in $obj2 (Usuario)
+				// Add the $obj1 (Notificacion) to the collection in $obj2 (NotTarea)
 				$obj2->addNotificacion($obj1);
 			} // if joined row not null
+
+			// Add objects for joined Email rows
+
+			$key3 = EmailPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = EmailPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = EmailPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					EmailPeer::addInstanceToPool($obj3, $key3);
+				} // if obj3 loaded
+
+				// Add the $obj1 (Notificacion) to the collection in $obj3 (Email)
+				$obj3->addNotificacion($obj1);
+			} // if joined row not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related NotTarea table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			NotificacionPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(NotificacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(NotificacionPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Returns the number of rows matching criteria, joining the related Email table
+	 *
+	 * @param      Criteria $c
+	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     int Number of matching rows.
+	 */
+	public static function doCountJoinAllExceptEmail(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		// we're going to modify criteria, so copy it first
+		$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			NotificacionPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+		// Set the correct dbName
+		$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(NotificacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(NotificacionPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; // no rows returned; we infer that means 0 matches.
+		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	/**
+	 * Selects a collection of Notificacion objects pre-filled with all related objects except NotTarea.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of Notificacion objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		NotificacionPeer::addSelectColumns($c);
+		$startcol2 = (NotificacionPeer::NUM_COLUMNS - NotificacionPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		EmailPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (EmailPeer::NUM_COLUMNS - EmailPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(NotificacionPeer::CA_IDEMAIL,), array(EmailPeer::CA_IDEMAIL,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = NotificacionPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = NotificacionPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = NotificacionPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				NotificacionPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined Email rows
+
+				$key2 = EmailPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = EmailPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = EmailPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					EmailPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (Notificacion) to the collection in $obj2 (Email)
+				$obj2->addNotificacion($obj1);
+
+			} // if joined row is not null
+
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	/**
+	 * Selects a collection of Notificacion objects pre-filled with all related objects except Email.
+	 *
+	 * @param      Criteria  $c
+	 * @param      PropelPDO $con
+	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+	 * @return     array Array of Notificacion objects.
+	 * @throws     PropelException Any exceptions caught during processing will be
+	 *		 rethrown wrapped into a PropelException.
+	 */
+	public static function doSelectJoinAllExceptEmail(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+		// Set the correct dbName if it has not been overridden
+		// $c->getDbName() will return the same object if not set to another value
+		// so == check is okay and faster
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		NotificacionPeer::addSelectColumns($c);
+		$startcol2 = (NotificacionPeer::NUM_COLUMNS - NotificacionPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		NotTareaPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NotTareaPeer::NUM_COLUMNS - NotTareaPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(NotificacionPeer::CA_IDTAREA,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = NotificacionPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = NotificacionPeer::getInstanceFromPool($key1))) {
+				// We no longer rehydrate the object, since this can cause data loss.
+				// See http://propel.phpdb.org/trac/ticket/509
+				// $obj1->hydrate($row, 0, true); // rehydrate
+			} else {
+				$omClass = NotificacionPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				NotificacionPeer::addInstanceToPool($obj1, $key1);
+			} // if obj1 already loaded
+
+				// Add objects for joined NotTarea rows
+
+				$key2 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = NotTareaPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = NotTareaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					NotTareaPeer::addInstanceToPool($obj2, $key2);
+				} // if $obj2 already loaded
+
+				// Add the $obj1 (Notificacion) to the collection in $obj2 (NotTarea)
+				$obj2->addNotificacion($obj1);
+
+			} // if joined row is not null
 
 			$results[] = $obj1;
 		}
@@ -717,10 +1062,6 @@ abstract class BaseNotificacionPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from Notificacion object
 		}
 
-		if ($criteria->containsKey(NotificacionPeer::CA_IDNOTIFICACION) && $criteria->keyContainsValue(NotificacionPeer::CA_IDNOTIFICACION) ) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ('.NotificacionPeer::CA_IDNOTIFICACION.')');
-		}
-
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);
@@ -759,8 +1100,11 @@ abstract class BaseNotificacionPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; // rename for clarity
 
-			$comparison = $criteria->getComparison(NotificacionPeer::CA_IDNOTIFICACION);
-			$selectCriteria->add(NotificacionPeer::CA_IDNOTIFICACION, $criteria->remove(NotificacionPeer::CA_IDNOTIFICACION), $comparison);
+			$comparison = $criteria->getComparison(NotificacionPeer::CA_IDTAREA);
+			$selectCriteria->add(NotificacionPeer::CA_IDTAREA, $criteria->remove(NotificacionPeer::CA_IDTAREA), $comparison);
+
+			$comparison = $criteria->getComparison(NotificacionPeer::CA_IDEMAIL);
+			$selectCriteria->add(NotificacionPeer::CA_IDEMAIL, $criteria->remove(NotificacionPeer::CA_IDEMAIL), $comparison);
 
 		} else { // $values is Notificacion object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -833,11 +1177,22 @@ abstract class BaseNotificacionPeer {
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			$criteria->add(NotificacionPeer::CA_IDNOTIFICACION, (array) $values, Criteria::IN);
+			// primary key is composite; we therefore, expect
+			// the primary key passed to be an array of pkey
+			// values
+			if (count($values) == count($values, COUNT_RECURSIVE)) {
+				// array is not multi-dimensional
+				$values = array($values);
+			}
 
-			foreach ((array) $values as $singleval) {
-				// we can invalidate the cache for this single object
-				NotificacionPeer::removeInstanceFromPool($singleval);
+			foreach ($values as $value) {
+
+				$criterion = $criteria->getNewCriterion(NotificacionPeer::CA_IDTAREA, $value[0]);
+				$criterion->addAnd($criteria->getNewCriterion(NotificacionPeer::CA_IDEMAIL, $value[1]));
+				$criteria->addOr($criterion);
+
+				// we can invalidate the cache for this single PK
+				NotificacionPeer::removeInstanceFromPool($value);
 			}
 		}
 
@@ -907,56 +1262,29 @@ abstract class BaseNotificacionPeer {
 	}
 
 	/**
-	 * Retrieve a single object by pkey.
-	 *
-	 * @param      int $pk the primary key.
-	 * @param      PropelPDO $con the connection to use
+	 * Retrieve object using using composite pkey values.
+	 * @param      int $ca_idtarea
+	   @param      int $ca_idemail
+	   
+	 * @param      PropelPDO $con
 	 * @return     Notificacion
 	 */
-	public static function retrieveByPK($pk, PropelPDO $con = null)
-	{
-
-		if (null !== ($obj = NotificacionPeer::getInstanceFromPool((string) $pk))) {
-			return $obj;
+	public static function retrieveByPK($ca_idtarea, $ca_idemail, PropelPDO $con = null) {
+		$key = serialize(array((string) $ca_idtarea, (string) $ca_idemail));
+ 		if (null !== ($obj = NotificacionPeer::getInstanceFromPool($key))) {
+ 			return $obj;
 		}
 
 		if ($con === null) {
 			$con = Propel::getConnection(NotificacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
-
 		$criteria = new Criteria(NotificacionPeer::DATABASE_NAME);
-		$criteria->add(NotificacionPeer::CA_IDNOTIFICACION, $pk);
-
+		$criteria->add(NotificacionPeer::CA_IDTAREA, $ca_idtarea);
+		$criteria->add(NotificacionPeer::CA_IDEMAIL, $ca_idemail);
 		$v = NotificacionPeer::doSelect($criteria, $con);
 
-		return !empty($v) > 0 ? $v[0] : null;
+		return !empty($v) ? $v[0] : null;
 	}
-
-	/**
-	 * Retrieve multiple objects by pkey.
-	 *
-	 * @param      array $pks List of primary keys
-	 * @param      PropelPDO $con the connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
-	public static function retrieveByPKs($pks, PropelPDO $con = null)
-	{
-		if ($con === null) {
-			$con = Propel::getConnection(NotificacionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-		}
-
-		$objs = null;
-		if (empty($pks)) {
-			$objs = array();
-		} else {
-			$criteria = new Criteria(NotificacionPeer::DATABASE_NAME);
-			$criteria->add(NotificacionPeer::CA_IDNOTIFICACION, $pks, Criteria::IN);
-			$objs = NotificacionPeer::doSelect($criteria, $con);
-		}
-		return $objs;
-	}
-
 } // BaseNotificacionPeer
 
 // This is the static code needed to register the MapBuilder for this table with the main Propel class.

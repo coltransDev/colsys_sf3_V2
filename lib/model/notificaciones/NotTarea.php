@@ -71,7 +71,12 @@ class NotTarea extends BaseNotTarea
 				
 		$email->setCaBodyhtml( $texto );		
 		$email->save();
-		$email->send();		
+		$email->send();	
+		
+		$notificacion = new Notificacion();
+		$notificacion->setCaIdtarea( $this->getCaIdtarea() );
+		$notificacion->setCaIdemail( $email->getCaIdemail() );
+		$notificacion->save();	
 	}
 	
 	/*

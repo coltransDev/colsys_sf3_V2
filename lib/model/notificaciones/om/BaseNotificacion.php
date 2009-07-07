@@ -21,52 +21,10 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	protected static $peer;
 
 	/**
-	 * The value for the ca_idnotificacion field.
+	 * The value for the ca_idtarea field.
 	 * @var        int
 	 */
-	protected $ca_idnotificacion;
-
-	/**
-	 * The value for the ca_url field.
-	 * @var        string
-	 */
-	protected $ca_url;
-
-	/**
-	 * The value for the ca_titulo field.
-	 * @var        string
-	 */
-	protected $ca_titulo;
-
-	/**
-	 * The value for the ca_texto field.
-	 * @var        string
-	 */
-	protected $ca_texto;
-
-	/**
-	 * The value for the ca_login field.
-	 * @var        string
-	 */
-	protected $ca_login;
-
-	/**
-	 * The value for the ca_leido field.
-	 * @var        boolean
-	 */
-	protected $ca_leido;
-
-	/**
-	 * The value for the ca_fchcreado field.
-	 * @var        string
-	 */
-	protected $ca_fchcreado;
-
-	/**
-	 * The value for the ca_usucreado field.
-	 * @var        string
-	 */
-	protected $ca_usucreado;
+	protected $ca_idtarea;
 
 	/**
 	 * The value for the ca_idemail field.
@@ -75,9 +33,14 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	protected $ca_idemail;
 
 	/**
-	 * @var        Usuario
+	 * @var        NotTarea
 	 */
-	protected $aUsuario;
+	protected $aNotTarea;
+
+	/**
+	 * @var        Email
+	 */
+	protected $aEmail;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -114,106 +77,13 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Get the [ca_idnotificacion] column value.
+	 * Get the [ca_idtarea] column value.
 	 * 
 	 * @return     int
 	 */
-	public function getCaIdnotificacion()
+	public function getCaIdtarea()
 	{
-		return $this->ca_idnotificacion;
-	}
-
-	/**
-	 * Get the [ca_url] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaUrl()
-	{
-		return $this->ca_url;
-	}
-
-	/**
-	 * Get the [ca_titulo] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaTitulo()
-	{
-		return $this->ca_titulo;
-	}
-
-	/**
-	 * Get the [ca_texto] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaTexto()
-	{
-		return $this->ca_texto;
-	}
-
-	/**
-	 * Get the [ca_login] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaLogin()
-	{
-		return $this->ca_login;
-	}
-
-	/**
-	 * Get the [ca_leido] column value.
-	 * 
-	 * @return     boolean
-	 */
-	public function getCaLeido()
-	{
-		return $this->ca_leido;
-	}
-
-	/**
-	 * Get the [optionally formatted] temporal [ca_fchcreado] column value.
-	 * 
-	 *
-	 * @param      string $format The date/time format string (either date()-style or strftime()-style).
-	 *							If format is NULL, then the raw DateTime object will be returned.
-	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-	 * @throws     PropelException - if unable to parse/validate the date/time value.
-	 */
-	public function getCaFchcreado($format = 'Y-m-d H:i:s')
-	{
-		if ($this->ca_fchcreado === null) {
-			return null;
-		}
-
-
-
-		try {
-			$dt = new DateTime($this->ca_fchcreado);
-		} catch (Exception $x) {
-			throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->ca_fchcreado, true), $x);
-		}
-
-		if ($format === null) {
-			// Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-			return $dt;
-		} elseif (strpos($format, '%') !== false) {
-			return strftime($format, $dt->format('U'));
-		} else {
-			return $dt->format($format);
-		}
-	}
-
-	/**
-	 * Get the [ca_usucreado] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaUsucreado()
-	{
-		return $this->ca_usucreado;
+		return $this->ca_idtarea;
 	}
 
 	/**
@@ -227,197 +97,28 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Set the value of [ca_idnotificacion] column.
+	 * Set the value of [ca_idtarea] column.
 	 * 
 	 * @param      int $v new value
 	 * @return     Notificacion The current object (for fluent API support)
 	 */
-	public function setCaIdnotificacion($v)
+	public function setCaIdtarea($v)
 	{
 		if ($v !== null) {
 			$v = (int) $v;
 		}
 
-		if ($this->ca_idnotificacion !== $v) {
-			$this->ca_idnotificacion = $v;
-			$this->modifiedColumns[] = NotificacionPeer::CA_IDNOTIFICACION;
+		if ($this->ca_idtarea !== $v) {
+			$this->ca_idtarea = $v;
+			$this->modifiedColumns[] = NotificacionPeer::CA_IDTAREA;
+		}
+
+		if ($this->aNotTarea !== null && $this->aNotTarea->getCaIdtarea() !== $v) {
+			$this->aNotTarea = null;
 		}
 
 		return $this;
-	} // setCaIdnotificacion()
-
-	/**
-	 * Set the value of [ca_url] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Notificacion The current object (for fluent API support)
-	 */
-	public function setCaUrl($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_url !== $v) {
-			$this->ca_url = $v;
-			$this->modifiedColumns[] = NotificacionPeer::CA_URL;
-		}
-
-		return $this;
-	} // setCaUrl()
-
-	/**
-	 * Set the value of [ca_titulo] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Notificacion The current object (for fluent API support)
-	 */
-	public function setCaTitulo($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_titulo !== $v) {
-			$this->ca_titulo = $v;
-			$this->modifiedColumns[] = NotificacionPeer::CA_TITULO;
-		}
-
-		return $this;
-	} // setCaTitulo()
-
-	/**
-	 * Set the value of [ca_texto] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Notificacion The current object (for fluent API support)
-	 */
-	public function setCaTexto($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_texto !== $v) {
-			$this->ca_texto = $v;
-			$this->modifiedColumns[] = NotificacionPeer::CA_TEXTO;
-		}
-
-		return $this;
-	} // setCaTexto()
-
-	/**
-	 * Set the value of [ca_login] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Notificacion The current object (for fluent API support)
-	 */
-	public function setCaLogin($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_login !== $v) {
-			$this->ca_login = $v;
-			$this->modifiedColumns[] = NotificacionPeer::CA_LOGIN;
-		}
-
-		if ($this->aUsuario !== null && $this->aUsuario->getCaLogin() !== $v) {
-			$this->aUsuario = null;
-		}
-
-		return $this;
-	} // setCaLogin()
-
-	/**
-	 * Set the value of [ca_leido] column.
-	 * 
-	 * @param      boolean $v new value
-	 * @return     Notificacion The current object (for fluent API support)
-	 */
-	public function setCaLeido($v)
-	{
-		if ($v !== null) {
-			$v = (boolean) $v;
-		}
-
-		if ($this->ca_leido !== $v) {
-			$this->ca_leido = $v;
-			$this->modifiedColumns[] = NotificacionPeer::CA_LEIDO;
-		}
-
-		return $this;
-	} // setCaLeido()
-
-	/**
-	 * Sets the value of [ca_fchcreado] column to a normalized version of the date/time value specified.
-	 * 
-	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-	 *						be treated as NULL for temporal objects.
-	 * @return     Notificacion The current object (for fluent API support)
-	 */
-	public function setCaFchcreado($v)
-	{
-		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-		// -- which is unexpected, to say the least.
-		if ($v === null || $v === '') {
-			$dt = null;
-		} elseif ($v instanceof DateTime) {
-			$dt = $v;
-		} else {
-			// some string/numeric value passed; we normalize that so that we can
-			// validate it.
-			try {
-				if (is_numeric($v)) { // if it's a unix timestamp
-					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-					// We have to explicitly specify and then change the time zone because of a
-					// DateTime bug: http://bugs.php.net/bug.php?id=43003
-					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-				} else {
-					$dt = new DateTime($v);
-				}
-			} catch (Exception $x) {
-				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-			}
-		}
-
-		if ( $this->ca_fchcreado !== null || $dt !== null ) {
-			// (nested ifs are a little easier to read in this case)
-
-			$currNorm = ($this->ca_fchcreado !== null && $tmpDt = new DateTime($this->ca_fchcreado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
-			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
-
-			if ( ($currNorm !== $newNorm) // normalized values don't match 
-					)
-			{
-				$this->ca_fchcreado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
-				$this->modifiedColumns[] = NotificacionPeer::CA_FCHCREADO;
-			}
-		} // if either are not null
-
-		return $this;
-	} // setCaFchcreado()
-
-	/**
-	 * Set the value of [ca_usucreado] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Notificacion The current object (for fluent API support)
-	 */
-	public function setCaUsucreado($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_usucreado !== $v) {
-			$this->ca_usucreado = $v;
-			$this->modifiedColumns[] = NotificacionPeer::CA_USUCREADO;
-		}
-
-		return $this;
-	} // setCaUsucreado()
+	} // setCaIdtarea()
 
 	/**
 	 * Set the value of [ca_idemail] column.
@@ -434,6 +135,10 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 		if ($this->ca_idemail !== $v) {
 			$this->ca_idemail = $v;
 			$this->modifiedColumns[] = NotificacionPeer::CA_IDEMAIL;
+		}
+
+		if ($this->aEmail !== null && $this->aEmail->getCaIdemail() !== $v) {
+			$this->aEmail = null;
 		}
 
 		return $this;
@@ -476,15 +181,8 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	{
 		try {
 
-			$this->ca_idnotificacion = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->ca_url = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-			$this->ca_titulo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->ca_texto = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_login = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_leido = ($row[$startcol + 5] !== null) ? (boolean) $row[$startcol + 5] : null;
-			$this->ca_fchcreado = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_usucreado = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-			$this->ca_idemail = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
+			$this->ca_idtarea = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
+			$this->ca_idemail = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -494,7 +192,7 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 9; // 9 = NotificacionPeer::NUM_COLUMNS - NotificacionPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 2; // 2 = NotificacionPeer::NUM_COLUMNS - NotificacionPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Notificacion object", $e);
@@ -517,8 +215,11 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	public function ensureConsistency()
 	{
 
-		if ($this->aUsuario !== null && $this->ca_login !== $this->aUsuario->getCaLogin()) {
-			$this->aUsuario = null;
+		if ($this->aNotTarea !== null && $this->ca_idtarea !== $this->aNotTarea->getCaIdtarea()) {
+			$this->aNotTarea = null;
+		}
+		if ($this->aEmail !== null && $this->ca_idemail !== $this->aEmail->getCaIdemail()) {
+			$this->aEmail = null;
 		}
 	} // ensureConsistency
 
@@ -559,7 +260,8 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 
 		if ($deep) {  // also de-associate any related objects?
 
-			$this->aUsuario = null;
+			$this->aNotTarea = null;
+			$this->aEmail = null;
 		} // if (deep)
 	}
 
@@ -650,16 +352,20 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 			// method.  This object relates to these object(s) by a
 			// foreign key reference.
 
-			if ($this->aUsuario !== null) {
-				if ($this->aUsuario->isModified() || $this->aUsuario->isNew()) {
-					$affectedRows += $this->aUsuario->save($con);
+			if ($this->aNotTarea !== null) {
+				if ($this->aNotTarea->isModified() || $this->aNotTarea->isNew()) {
+					$affectedRows += $this->aNotTarea->save($con);
 				}
-				$this->setUsuario($this->aUsuario);
+				$this->setNotTarea($this->aNotTarea);
 			}
 
-			if ($this->isNew() ) {
-				$this->modifiedColumns[] = NotificacionPeer::CA_IDNOTIFICACION;
+			if ($this->aEmail !== null) {
+				if ($this->aEmail->isModified() || $this->aEmail->isNew()) {
+					$affectedRows += $this->aEmail->save($con);
+				}
+				$this->setEmail($this->aEmail);
 			}
+
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -668,8 +374,6 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
-
-					$this->setCaIdnotificacion($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -750,9 +454,15 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 			// method.  This object relates to these object(s) by a
 			// foreign key reference.
 
-			if ($this->aUsuario !== null) {
-				if (!$this->aUsuario->validate($columns)) {
-					$failureMap = array_merge($failureMap, $this->aUsuario->getValidationFailures());
+			if ($this->aNotTarea !== null) {
+				if (!$this->aNotTarea->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aNotTarea->getValidationFailures());
+				}
+			}
+
+			if ($this->aEmail !== null) {
+				if (!$this->aEmail->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aEmail->getValidationFailures());
 				}
 			}
 
@@ -796,30 +506,9 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				return $this->getCaIdnotificacion();
+				return $this->getCaIdtarea();
 				break;
 			case 1:
-				return $this->getCaUrl();
-				break;
-			case 2:
-				return $this->getCaTitulo();
-				break;
-			case 3:
-				return $this->getCaTexto();
-				break;
-			case 4:
-				return $this->getCaLogin();
-				break;
-			case 5:
-				return $this->getCaLeido();
-				break;
-			case 6:
-				return $this->getCaFchcreado();
-				break;
-			case 7:
-				return $this->getCaUsucreado();
-				break;
-			case 8:
 				return $this->getCaIdemail();
 				break;
 			default:
@@ -843,15 +532,8 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	{
 		$keys = NotificacionPeer::getFieldNames($keyType);
 		$result = array(
-			$keys[0] => $this->getCaIdnotificacion(),
-			$keys[1] => $this->getCaUrl(),
-			$keys[2] => $this->getCaTitulo(),
-			$keys[3] => $this->getCaTexto(),
-			$keys[4] => $this->getCaLogin(),
-			$keys[5] => $this->getCaLeido(),
-			$keys[6] => $this->getCaFchcreado(),
-			$keys[7] => $this->getCaUsucreado(),
-			$keys[8] => $this->getCaIdemail(),
+			$keys[0] => $this->getCaIdtarea(),
+			$keys[1] => $this->getCaIdemail(),
 		);
 		return $result;
 	}
@@ -884,30 +566,9 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	{
 		switch($pos) {
 			case 0:
-				$this->setCaIdnotificacion($value);
+				$this->setCaIdtarea($value);
 				break;
 			case 1:
-				$this->setCaUrl($value);
-				break;
-			case 2:
-				$this->setCaTitulo($value);
-				break;
-			case 3:
-				$this->setCaTexto($value);
-				break;
-			case 4:
-				$this->setCaLogin($value);
-				break;
-			case 5:
-				$this->setCaLeido($value);
-				break;
-			case 6:
-				$this->setCaFchcreado($value);
-				break;
-			case 7:
-				$this->setCaUsucreado($value);
-				break;
-			case 8:
 				$this->setCaIdemail($value);
 				break;
 		} // switch()
@@ -934,15 +595,8 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	{
 		$keys = NotificacionPeer::getFieldNames($keyType);
 
-		if (array_key_exists($keys[0], $arr)) $this->setCaIdnotificacion($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setCaUrl($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaTitulo($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaTexto($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaLogin($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaLeido($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaFchcreado($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaUsucreado($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaIdemail($arr[$keys[8]]);
+		if (array_key_exists($keys[0], $arr)) $this->setCaIdtarea($arr[$keys[0]]);
+		if (array_key_exists($keys[1], $arr)) $this->setCaIdemail($arr[$keys[1]]);
 	}
 
 	/**
@@ -954,14 +608,7 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(NotificacionPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(NotificacionPeer::CA_IDNOTIFICACION)) $criteria->add(NotificacionPeer::CA_IDNOTIFICACION, $this->ca_idnotificacion);
-		if ($this->isColumnModified(NotificacionPeer::CA_URL)) $criteria->add(NotificacionPeer::CA_URL, $this->ca_url);
-		if ($this->isColumnModified(NotificacionPeer::CA_TITULO)) $criteria->add(NotificacionPeer::CA_TITULO, $this->ca_titulo);
-		if ($this->isColumnModified(NotificacionPeer::CA_TEXTO)) $criteria->add(NotificacionPeer::CA_TEXTO, $this->ca_texto);
-		if ($this->isColumnModified(NotificacionPeer::CA_LOGIN)) $criteria->add(NotificacionPeer::CA_LOGIN, $this->ca_login);
-		if ($this->isColumnModified(NotificacionPeer::CA_LEIDO)) $criteria->add(NotificacionPeer::CA_LEIDO, $this->ca_leido);
-		if ($this->isColumnModified(NotificacionPeer::CA_FCHCREADO)) $criteria->add(NotificacionPeer::CA_FCHCREADO, $this->ca_fchcreado);
-		if ($this->isColumnModified(NotificacionPeer::CA_USUCREADO)) $criteria->add(NotificacionPeer::CA_USUCREADO, $this->ca_usucreado);
+		if ($this->isColumnModified(NotificacionPeer::CA_IDTAREA)) $criteria->add(NotificacionPeer::CA_IDTAREA, $this->ca_idtarea);
 		if ($this->isColumnModified(NotificacionPeer::CA_IDEMAIL)) $criteria->add(NotificacionPeer::CA_IDEMAIL, $this->ca_idemail);
 
 		return $criteria;
@@ -979,29 +626,41 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	{
 		$criteria = new Criteria(NotificacionPeer::DATABASE_NAME);
 
-		$criteria->add(NotificacionPeer::CA_IDNOTIFICACION, $this->ca_idnotificacion);
+		$criteria->add(NotificacionPeer::CA_IDTAREA, $this->ca_idtarea);
+		$criteria->add(NotificacionPeer::CA_IDEMAIL, $this->ca_idemail);
 
 		return $criteria;
 	}
 
 	/**
-	 * Returns the primary key for this object (row).
-	 * @return     int
+	 * Returns the composite primary key for this object.
+	 * The array elements will be in same order as specified in XML.
+	 * @return     array
 	 */
 	public function getPrimaryKey()
 	{
-		return $this->getCaIdnotificacion();
+		$pks = array();
+
+		$pks[0] = $this->getCaIdtarea();
+
+		$pks[1] = $this->getCaIdemail();
+
+		return $pks;
 	}
 
 	/**
-	 * Generic method to set the primary key (ca_idnotificacion column).
+	 * Set the [composite] primary key.
 	 *
-	 * @param      int $key Primary key.
+	 * @param      array $keys The elements of the composite key (order must match the order in XML file).
 	 * @return     void
 	 */
-	public function setPrimaryKey($key)
+	public function setPrimaryKey($keys)
 	{
-		$this->setCaIdnotificacion($key);
+
+		$this->setCaIdtarea($keys[0]);
+
+		$this->setCaIdemail($keys[1]);
+
 	}
 
 	/**
@@ -1017,26 +676,12 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
-		$copyObj->setCaUrl($this->ca_url);
-
-		$copyObj->setCaTitulo($this->ca_titulo);
-
-		$copyObj->setCaTexto($this->ca_texto);
-
-		$copyObj->setCaLogin($this->ca_login);
-
-		$copyObj->setCaLeido($this->ca_leido);
-
-		$copyObj->setCaFchcreado($this->ca_fchcreado);
-
-		$copyObj->setCaUsucreado($this->ca_usucreado);
+		$copyObj->setCaIdtarea($this->ca_idtarea);
 
 		$copyObj->setCaIdemail($this->ca_idemail);
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaIdnotificacion(NULL); // this is a auto-increment column, so set to default value
 
 	}
 
@@ -1079,24 +724,24 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Declares an association between this object and a Usuario object.
+	 * Declares an association between this object and a NotTarea object.
 	 *
-	 * @param      Usuario $v
+	 * @param      NotTarea $v
 	 * @return     Notificacion The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function setUsuario(Usuario $v = null)
+	public function setNotTarea(NotTarea $v = null)
 	{
 		if ($v === null) {
-			$this->setCaLogin(NULL);
+			$this->setCaIdtarea(NULL);
 		} else {
-			$this->setCaLogin($v->getCaLogin());
+			$this->setCaIdtarea($v->getCaIdtarea());
 		}
 
-		$this->aUsuario = $v;
+		$this->aNotTarea = $v;
 
 		// Add binding for other direction of this n:n relationship.
-		// If this object has already been added to the Usuario object, it will not be re-added.
+		// If this object has already been added to the NotTarea object, it will not be re-added.
 		if ($v !== null) {
 			$v->addNotificacion($this);
 		}
@@ -1106,27 +751,78 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 
 
 	/**
-	 * Get the associated Usuario object
+	 * Get the associated NotTarea object
 	 *
 	 * @param      PropelPDO Optional Connection object.
-	 * @return     Usuario The associated Usuario object.
+	 * @return     NotTarea The associated NotTarea object.
 	 * @throws     PropelException
 	 */
-	public function getUsuario(PropelPDO $con = null)
+	public function getNotTarea(PropelPDO $con = null)
 	{
-		if ($this->aUsuario === null && (($this->ca_login !== "" && $this->ca_login !== null))) {
-			$c = new Criteria(UsuarioPeer::DATABASE_NAME);
-			$c->add(UsuarioPeer::CA_LOGIN, $this->ca_login);
-			$this->aUsuario = UsuarioPeer::doSelectOne($c, $con);
+		if ($this->aNotTarea === null && ($this->ca_idtarea !== null)) {
+			$c = new Criteria(NotTareaPeer::DATABASE_NAME);
+			$c->add(NotTareaPeer::CA_IDTAREA, $this->ca_idtarea);
+			$this->aNotTarea = NotTareaPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
 			   guarantee the related object contains a reference
 			   to this object.  This level of coupling may, however, be
 			   undesirable since it could result in an only partially populated collection
 			   in the referenced object.
-			   $this->aUsuario->addNotificacions($this);
+			   $this->aNotTarea->addNotificacions($this);
 			 */
 		}
-		return $this->aUsuario;
+		return $this->aNotTarea;
+	}
+
+	/**
+	 * Declares an association between this object and a Email object.
+	 *
+	 * @param      Email $v
+	 * @return     Notificacion The current object (for fluent API support)
+	 * @throws     PropelException
+	 */
+	public function setEmail(Email $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdemail(NULL);
+		} else {
+			$this->setCaIdemail($v->getCaIdemail());
+		}
+
+		$this->aEmail = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Email object, it will not be re-added.
+		if ($v !== null) {
+			$v->addNotificacion($this);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Get the associated Email object
+	 *
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Email The associated Email object.
+	 * @throws     PropelException
+	 */
+	public function getEmail(PropelPDO $con = null)
+	{
+		if ($this->aEmail === null && ($this->ca_idemail !== null)) {
+			$c = new Criteria(EmailPeer::DATABASE_NAME);
+			$c->add(EmailPeer::CA_IDEMAIL, $this->ca_idemail);
+			$this->aEmail = EmailPeer::doSelectOne($c, $con);
+			/* The following can be used additionally to
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aEmail->addNotificacions($this);
+			 */
+		}
+		return $this->aEmail;
 	}
 
 	/**
@@ -1143,7 +839,8 @@ abstract class BaseNotificacion extends BaseObject  implements Persistent {
 		if ($deep) {
 		} // if ($deep)
 
-			$this->aUsuario = null;
+			$this->aNotTarea = null;
+			$this->aEmail = null;
 	}
 
 } // BaseNotificacion

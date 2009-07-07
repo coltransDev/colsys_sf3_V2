@@ -27,33 +27,19 @@ EOF;
 	$databaseManager = new sfDatabaseManager($this->configuration);
 	$databaseManager->loadConfiguration();
 	
-	
-	$c = new Criteria();
-	$c->add( NotificacionPeer::CA_IDEMAIL, null, Criteria::ISNULL);		
-	$notificaciones = NotificacionPeer::doSelect( $c );
-	
-	foreach( $notificaciones as $notificacion ){
+	$c = new Criteria();	
+	$c->addJoin( NotTareaPeer::CA_IDTAREA, NotificacionPeer::CA_IDTAREA, Criteria::LEFT_JOIN );	
+	$c->add( NotTareaPeer::CA_FCHCREADO, '2009-07-07 00:00:00', Criteria::GREATER_EQUAL );	
+	$c->add( NotTareaPeer::CA_FCHVISIBLE, date("Y-m-d H:i:s"), Criteria::LESS_EQUAL );	
+	$c->add( NotTareaPeer::CA_FCHTERMINADA, null, Criteria::ISNULL );
+	$c->add( NotificacionPeer::CA_IDEMAIL, null, Criteria::ISNULL );	
+	$c->setDistinct();					
+	$tareas = NotTareaPeer::doSelect( $c );
 		
-		$usuario = UsuarioPeer::retrieveByPk( $notificacion->getCaLogin() );
+	foreach( $tareas as $tarea ){
+		$tarea->notificar();
+	}
 	
-		$email = new Email();		
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
-		$email->setCaUsuenvio( $usuario->getCalogin() );
-		$email->setCaTipo( "Notificación" ); 		
-		$email->setCaIdcaso( $notificacion->getcaIdnotificacion() );
-		$email->setCaFrom( "no-reply@coltrans.com.co" );
-		$email->setCaFromname( "Colsys Notificaciones" );
-		$email->addTo( $usuario->getCaEmail() ); 
-						
-		$mensaje = $notificacion->getCaTexto();
-						
-		$email->setCaSubject( $notificacion->getCaTitulo() );				
-		$email->setCaBodyhtml( $mensaje );		
-		$email->save();
-		$email->send();
-		$notificacion->setCaIdemail( $email->getCaidemail() );
-		$notificacion->save();
-	}	
 	
 	
 		

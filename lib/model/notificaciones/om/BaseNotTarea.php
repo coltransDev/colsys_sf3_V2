@@ -134,6 +134,16 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	private $lastHdeskTicketCriteria = null;
 
 	/**
+	 * @var        array Notificacion[] Collection to store aggregation of Notificacion objects.
+	 */
+	protected $collNotificacions;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collNotificacions.
+	 */
+	private $lastNotificacionCriteria = null;
+
+	/**
 	 * @var        array NotTareaAsignacion[] Collection to store aggregation of NotTareaAsignacion objects.
 	 */
 	protected $collNotTareaAsignacions;
@@ -933,6 +943,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$this->collHdeskTickets = null;
 			$this->lastHdeskTicketCriteria = null;
 
+			$this->collNotificacions = null;
+			$this->lastNotificacionCriteria = null;
+
 			$this->collNotTareaAsignacions = null;
 			$this->lastNotTareaAsignacionCriteria = null;
 
@@ -1085,6 +1098,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collNotificacions !== null) {
+				foreach ($this->collNotificacions as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collNotTareaAsignacions !== null) {
 				foreach ($this->collNotTareaAsignacions as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -1210,6 +1231,14 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 
 				if ($this->collHdeskTickets !== null) {
 					foreach ($this->collHdeskTickets as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collNotificacions !== null) {
+					foreach ($this->collNotificacions as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1576,6 +1605,12 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			foreach ($this->getHdeskTickets() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addHdeskTicket($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getNotificacions() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addNotificacion($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2487,6 +2522,207 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collNotificacions collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addNotificacions()
+	 */
+	public function clearNotificacions()
+	{
+		$this->collNotificacions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collNotificacions collection (array).
+	 *
+	 * By default this just sets the collNotificacions collection to an empty array (like clearcollNotificacions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initNotificacions()
+	{
+		$this->collNotificacions = array();
+	}
+
+	/**
+	 * Gets an array of Notificacion objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NotTarea has previously been saved, it will retrieve
+	 * related Notificacions from storage. If this NotTarea is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array Notificacion[]
+	 * @throws     PropelException
+	 */
+	public function getNotificacions($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNotificacions === null) {
+			if ($this->isNew()) {
+			   $this->collNotificacions = array();
+			} else {
+
+				$criteria->add(NotificacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				NotificacionPeer::addSelectColumns($criteria);
+				$this->collNotificacions = NotificacionPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NotificacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				NotificacionPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNotificacionCriteria) || !$this->lastNotificacionCriteria->equals($criteria)) {
+					$this->collNotificacions = NotificacionPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastNotificacionCriteria = $criteria;
+		return $this->collNotificacions;
+	}
+
+	/**
+	 * Returns the number of related Notificacion objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Notificacion objects.
+	 * @throws     PropelException
+	 */
+	public function countNotificacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNotificacions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(NotificacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				$count = NotificacionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NotificacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				if (!isset($this->lastNotificacionCriteria) || !$this->lastNotificacionCriteria->equals($criteria)) {
+					$count = NotificacionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNotificacions);
+				}
+			} else {
+				$count = count($this->collNotificacions);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a Notificacion object to this object
+	 * through the Notificacion foreign key attribute.
+	 *
+	 * @param      Notificacion $l Notificacion
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addNotificacion(Notificacion $l)
+	{
+		if ($this->collNotificacions === null) {
+			$this->initNotificacions();
+		}
+		if (!in_array($l, $this->collNotificacions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNotificacions, $l);
+			$l->setNotTarea($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this NotTarea is new, it will return
+	 * an empty collection; or if this NotTarea has previously
+	 * been saved, it will retrieve related Notificacions from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in NotTarea.
+	 */
+	public function getNotificacionsJoinEmail($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(NotTareaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNotificacions === null) {
+			if ($this->isNew()) {
+				$this->collNotificacions = array();
+			} else {
+
+				$criteria->add(NotificacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+				$this->collNotificacions = NotificacionPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NotificacionPeer::CA_IDTAREA, $this->ca_idtarea);
+
+			if (!isset($this->lastNotificacionCriteria) || !$this->lastNotificacionCriteria->equals($criteria)) {
+				$this->collNotificacions = NotificacionPeer::doSelectJoinEmail($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNotificacionCriteria = $criteria;
+
+		return $this->collNotificacions;
+	}
+
+	/**
 	 * Clears out the collNotTareaAsignacions collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -3351,6 +3587,11 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collNotificacions) {
+				foreach ((array) $this->collNotificacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collNotTareaAsignacions) {
 				foreach ((array) $this->collNotTareaAsignacions as $o) {
 					$o->clearAllReferences($deep);
@@ -3371,6 +3612,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		$this->collCotizacions = null;
 		$this->collCotProductos = null;
 		$this->collHdeskTickets = null;
+		$this->collNotificacions = null;
 		$this->collNotTareaAsignacions = null;
 		$this->collReportes = null;
 		$this->collRepAsignacions = null;
