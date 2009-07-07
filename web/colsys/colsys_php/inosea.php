@@ -3863,6 +3863,15 @@ echo "</BODY>";
 				$ntb+= $ic->Value("ca_numpiezas");  // Número Total Bultos
 				$tpb+= $ic->Value("ca_peso");  // Total Peso Bruto
 				
+				$tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+				if (!$tm->Open("select ca_idtrafico, ca_idciudad from vi_ciudades where ca_idciudad = '".$rp->Value("ca_origen")."'")) {    // Trae información de la Ciudad y Tráfico de Origen
+					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+					echo "<script>document.location.href = 'inosea.php';</script>";
+					exit;
+				}
+				$xml_hijo->setAttribute("hcpe", substr($tm->Value("ca_idtrafico"),0,2));
+				$xml_hijo->setAttribute("hcle", substr($tm->Value("ca_idtrafico"),0,2).substr($tm->Value("ca_idciudad"),0,3));
+
 				foreach (explode("|",$ic->Value('ca_contenedores')) as $parciales){
 					$parcial = explode(";",$parciales);
 					$unidades_carga[$parcial[0]]['pz'] = $parcial[1];
@@ -3936,15 +3945,6 @@ echo "</BODY>";
 					}
 
 				}
-
-				$tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-				if (!$tm->Open("select ca_idtrafico, ca_idciudad from vi_ciudades where ca_idciudad = '".$rp->Value("ca_origen")."'")) {    // Trae información de la Ciudad y Tráfico de Origen
-					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
-					echo "<script>document.location.href = 'inosea.php';</script>";
-					exit;
-				}
-				$xml_hijo->setAttribute("hcpe", substr($tm->Value("ca_idtrafico"),0,2));
-				$xml_hijo->setAttribute("hcle", substr($tm->Value("ca_idciudad"),0,3));
 
 				$xml_pal66->appendChild( $xml_hijo );
 			 	$ic->MoveNext();
@@ -4041,7 +4041,7 @@ echo "</BODY>";
 			 	exit;
 			 }
 			 $xml_pal66->setAttribute("pemb", substr($tm->Value("ca_idtrafico"),0,2));
-			 $xml_pal66->setAttribute("lemb", substr($tm->Value("ca_idciudad"),0,3));
+			 $xml_pal66->setAttribute("lemb", substr($tm->Value("ca_idtrafico"),0,2).substr($tm->Value("ca_idciudad"),0,3));
 
 			 if (!$tm->Open("update tb_dianmaestra set ca_iddocactual = '$iddocactual', ca_vlrtotal = $ValorTotal, ca_cantreg = $CantReg where ca_idinfodian = ".$dm->Value("ca_idinfodian"))) {    // Actualizar la Fecha y Hora de Envio 
 			 	echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
