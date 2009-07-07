@@ -327,6 +327,31 @@ require_once("menu.php");
 			break;
 		case "Emisión de Factura":
 			$source   = "vi_repindicadores";
+
+			if ($rs->Value('ca_transporte') == 'Aéreo'){
+
+				$script = "LEFT OUTER JOIN (";
+				$script.= "	";
+				$script.= ")	 sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+
+			} else if ($rs->Value('ca_transporte') == 'Marítimo' and $rs->Value('ca_continuacion') == 'N/A'){
+
+				$subque = "LEFT OUTER JOIN (select rs.ca_consecutivo as ca_consecutivo_sub, min(to_timestamp(im.ca_fchconfirmacion||' '||im.ca_horaconfirmacion, 'YYYY-mm-dd hh-mi-ss')::timestamp) as ca_fchconfirmado, rs.ca_fchenvio from tb_inoclientes_sea ic";
+				$subque.= "	LEFT OUTER JOIN tb_inomaestra_sea im ON (ic.ca_referencia = im.ca_referencia)";
+				$subque.= "	LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte)";
+				$subque.= "	LEFT OUTER JOIN (select srp.ca_consecutivo, min(srs.ca_fchenvio) as ca_fchenvio from tb_repstatus srs LEFT OUTER JOIN tb_reportes srp ON (srs.ca_idreporte = srp.ca_idreporte and srs.ca_idetapa = 'IMCPD') group by srp.ca_consecutivo) rs ON (rp.ca_consecutivo = rs.ca_consecutivo)";
+				$subque.= "	group by rs.ca_consecutivo, rs.ca_fchenvio) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+
+
+
+				$script = "select iis.ca_fchfactura, rs.ca_fchllegada from tb_inoingresos_sea iis";
+				$script.= "	LEFT OUTER JOIN tb_inoclientes_sea ics ON (iis.ca_referencia = ics.ca_referencia and iis.ca_idcliente = ics.ca_idcliente and iis.ca_hbls = ics.ca_hbls)";
+				$script.= "	LEFT OUTER JOIN tb_reportes rp ON (ics.ca_idreporte = rp.ca_idreporte)";
+				$script.= "	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail::text = '".$rs->Value('ca_idemail')."') where rp.ca_consecutivo = '".$rs->Value('ca_consecutivo')."'";
+				$script.= "	order by ca_fchfactura ASC limit 1";
+			}
+
+
 			$ind_mem  = 8;
 			$add_cols = 3;
 			break;
@@ -335,11 +360,11 @@ require_once("menu.php");
 			if ($transporte == "ca_transporte like 'Aéreo'"){
 				$subque = "LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, min(ca_fchllegada) as ca_fchconfirmado, to_char(ca_fchenvio,'YYYY-MM-DD')::date as ca_fchenvio from tb_repstatus rs, tb_reportes rp where rp.ca_idreporte = rs.ca_idreporte and rs.ca_idetapa = 'IACAD' group by ca_consecutivo, ca_fchenvio) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
 			} else if ($transporte == "ca_transporte like 'Marítimo'"){
-				$subque = "LEFT OUTER JOIN (select rs.ca_consecutivo as ca_consecutivo_sub, min(to_timestamp(im.ca_fchconfirmacion||' '||im.ca_horaconfirmacion, 'YYYY-mm-dd hh-mi-ss')::timestamp) as ca_fchconfirmado, rs.ca_fchenvio from tb_inoclientes_sea ic";
+				$subque = "LEFT OUTER JOIN (select rs.ca_consecutivo as ca_consecutivo_sub, to_timestamp(im.ca_fchconfirmacion||' '||im.ca_horaconfirmacion, 'YYYY-mm-dd hh-mi-ss')::timestamp as ca_fchconfirmado, rs.ca_fchenvio from tb_inoclientes_sea ic";
 				$subque.= "	LEFT OUTER JOIN tb_inomaestra_sea im ON (ic.ca_referencia = im.ca_referencia)";
 				$subque.= "	LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte)";
-				$subque.= "	LEFT OUTER JOIN (select srp.ca_consecutivo, min(srs.ca_fchenvio) as ca_fchenvio from tb_repstatus srs LEFT OUTER JOIN tb_reportes srp ON (srs.ca_idreporte = srp.ca_idreporte and srs.ca_idetapa = 'IMCPD') group by srp.ca_consecutivo) rs ON (rp.ca_consecutivo = rs.ca_consecutivo)";
-				$subque.= "	group by rs.ca_consecutivo, rs.ca_fchenvio) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+				$subque.= "	RIGHT OUTER JOIN (select srp.ca_consecutivo, min(srs.ca_fchenvio) as ca_fchenvio from tb_repstatus srs LEFT OUTER JOIN tb_reportes srp ON (srs.ca_idreporte = srp.ca_idreporte and srs.ca_idetapa = 'IMCPD') group by srp.ca_consecutivo) rs ON (rp.ca_consecutivo = rs.ca_consecutivo)";
+				$subque.= "order by rp.ca_consecutivo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
 			}
 			if (!$tm->Open("select ca_fchfestivo from tb_festivos where $ano_fes and $mes_fes")) {        // Selecciona todos lo registros de la tabla Festivos
 				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -358,7 +383,7 @@ require_once("menu.php");
 
 	$queries = "select * from $source $subque where ca_impoexpo = 'Importación' and $sucursal $cliente and $transporte and $ano and $mes";
 	$queries.= " order by $campos";
-	// die ($queries."<br />");
+	die ($queries."<br />");
 
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea 
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
@@ -549,21 +574,12 @@ require_once("menu.php");
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchsolicitud'),$fch_presenta)."</TD>";
 				break;
 			case 8:
-				if ($rs->Value('ca_transporte') == 'Aéreo' and $rs->Value('ca_continuacion') == 'N/A'){
-					$script = "select iia.ca_fchfactura, rs.ca_fchllegada from tb_inoingresos_air iia LEFT OUTER JOIN tb_inoclientes_air ica ON (iia.ca_referencia = ica.ca_referencia and iia.ca_idcliente = ica.ca_idcliente and iia.ca_hawb = ica.ca_hawb)";
-					$script.= "	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail::text = '".$rs->Value('ca_idemail')."') where ica.ca_consecutivo = '".$rs->Value('ca_consecutivo')."'";
-					$script.= "	order by ca_fchfactura ASC limit 1";
-				} else if ($rs->Value('ca_transporte') == 'Marítimo' and $rs->Value('ca_continuacion') == 'N/A'){
-					$script = "select iis.ca_fchfactura, rs.ca_fchllegada from tb_inoingresos_sea iis";
-					$script.= "	LEFT OUTER JOIN tb_inoclientes_sea ics ON (iis.ca_referencia = ics.ca_referencia and iis.ca_idcliente = ics.ca_idcliente and iis.ca_hbls = ics.ca_hbls)";
-					$script.= "	LEFT OUTER JOIN tb_reportes rp ON (ics.ca_idreporte = rp.ca_idreporte)";
-					$script.= "	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail::text = '".$rs->Value('ca_idemail')."') where rp.ca_consecutivo = '".$rs->Value('ca_consecutivo')."'";
-					$script.= "	order by ca_fchfactura ASC limit 1";
-				}
+/*
 				if (!$tm->Open("$script")) {       // Selecciona todos lo registros de la tabla InoIngresos
 					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 					echo "<script>document.location.href = 'repindicadores.php';</script>";
 					exit; }
+*/
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchllegada')."</TD>";
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchfactura')."</TD>";
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($tm->Value('ca_fchllegada'),$tm->Value('ca_fchfactura'))."</TD>";
