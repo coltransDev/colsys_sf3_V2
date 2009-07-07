@@ -193,7 +193,7 @@ class reportesActions extends sfActions
 			$newTarea->setAsignaciones( $logins );		
 					
 			$this->asignaciones[] = $logins;
-			$newTarea->notificar();				
+				
 						
 		}
 		

@@ -26,24 +26,42 @@ class notificacionesActions extends sfActions
 	*
 	* @param sfRequest $request A request object
 	*/
-	public function executeRealizarTarea(sfWebRequest $request)
-	{
+	public function executeRealizarTarea(sfWebRequest $request){
 		$id = $request->getParameter("id");
 		$this->forward404Unless( $id );
 		
 		$tarea = NotTareaPeer::retrieveByPk( $id );
 		$this->forward404Unless( $tarea );
-		
-		
+				
 		if( !$tarea->getCaFchterminada() ){
 			$this->redirect( $tarea->getCaUrl() );
-		}
-						
-		$this->tarea = $tarea;		
-		
-		
-		
+		}						
+		$this->tarea = $tarea;			
 	}
+	
+	/*
+	* Muestra las tareas pendientes de un usuario 
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeResumenTareasPendientes(sfWebRequest $request){
+		$login = $request->getParameter("login");
+		$this->forward404Unless( $login );
+		$usuario = UsuarioPeer::retrieveByPk( $login ); 
+		$this->forward404Unless( $usuario );
+		
+		$c = new Criteria();
+		$c->addJoin( NotTareaPeer::CA_IDLISTATAREA, NotListaTareasPeer::CA_IDLISTATAREA );
+		$c->addJoin( NotTareaPeer::CA_IDTAREA, NotTareaAsignacionPeer::CA_IDTAREA );	
+		$c->add( NotTareaPeer::CA_FCHVISIBLE, date("Y-m-d H:i:s"), Criteria::LESS_EQUAL );	
+		$c->add( NotTareaPeer::CA_FCHTERMINADA, null, Criteria::ISNULL );
+		$c->add( NotTareaAsignacionPeer::CA_LOGIN, $usuario->getCaLogin() );	
+		$c->setDistinct();					
+		$this->listaTareas = NotListaTareasPeer::doSelect( $c );	
+		
+		$this->usuario = $usuario;						
+	}
+	
 	
 }
 ?>

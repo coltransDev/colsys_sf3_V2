@@ -334,43 +334,45 @@ class helpdeskActions extends sfActions
 			}
 		}
 			
-		
-		
-		if( $ticket->getCaAssignedto()==$this->getUser()->getUserId() || in_array($this->getUser()->getUserId(),$logins ) ){
-			
-				$tarea = $ticket->getTareaIdg(); 
-				
-				if( $tarea ){
-					if( !$tarea->getCaFchterminada() ){
-						$tarea->setCaFchterminada( time() );
-						$tarea->setCaUsuterminada( $this->getUser()->getUserId() );	
-						$tarea->save();
-					}
-				}				
+		if( $ticket->getCaAssignedto()==$this->getUser()->getUserId() || in_array($this->getUser()->getUserId(),$logins ) ){			
+			$tarea = $ticket->getTareaIdg(); 				
+			if( $tarea ){
+				if( !$tarea->getCaFchterminada() ){
+					$tarea->setCaFchterminada( time() );
+					$tarea->setCaUsuterminada( $this->getUser()->getUserId() );	
+					$tarea->save();
+				}
+			}				
 		}
 		
+		$email = new Email();		
+		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email->setCaUsuenvio( $this->getUser()->getUserId() );
+		$email->setCaTipo( "Notificación" ); 		
+		$email->setCaIdcaso( $ticket->getCaIdticket() );
+		$email->setCaFrom( "no-reply@coltrans.com.co" );
+		$email->setCaFromname( "Colsys Notificaciones" );
 		
+		
+		$email->setCaSubject( "Nueva respuesta Ticket #".$ticket->getCaIdticket()." [".$ticket->getCaTitle()."]" );		
+		
+		$texto = "Se ha creado una respuesta \n\n<br /><br />" ;					
+		$request->setParameter("id", $ticket->getCaIdticket() );
+		$request->setParameter("format", "email" );			
+		$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
+		
+		$email->setCaBodyhtml( $texto );
+			
 		foreach( $logins as $login ){
 		
 			if( $this->getUser()->getUserId()!=$login ){
-				$notificacion = new Notificacion();
-				$notificacion->setCaLogin( $login );
-				$notificacion->setCaUrl( "helpdesk/verTicket?id=".$ticket->getCaIdticket() );
-				$notificacion->setCaFchcreado( time() );
-				$notificacion->setCaUsucreado( $this->getUser()->getUserId() );
-				
-				$request->setParameter("id", $ticket->getCaIdticket() );
-				$request->setParameter("format", "email" );
-				
-				$notificacion->setCaTitulo( "Nueva respuesta Ticket #".$ticket->getCaIdticket()." [".$ticket->getCaTitle()."]" );
-				$texto = "Se ha creado una respuesta \n\n<br /><br />" ;
-				
-				$texto.= sfContext::getInstance()->getController()->getPresentationFor( 'helpdesk', 'verTicket');
-				
-				$notificacion->setCaTexto( $texto );
-				$notificacion->save();	
+				$usuario = UsuarioPeer::retrieveByPk( $login );
+				$email->addTo( $usuario->getCaEmail() ); 				
 			}
 		}
+		
+		$email->save();
+		$email->send();
 		
 		$this->ticket = $ticket;
 		$this->setLayout("ajax");		
@@ -387,9 +389,9 @@ class helpdeskActions extends sfActions
 		$gruposArray = array();
 			
 		if( $departamento ){
-			$c = new Criteria();		
+			$c = new Criteria();					
 			$c->add( HdeskGroupPeer::CA_IDDEPARTAMENT, $departamento );
-					
+			$c->addAscendingOrderByColumn( HdeskGroupPeer::CA_NAME );		
 			$grupos = HdeskGroupPeer::doSelect( $c );			
 			foreach( $grupos as $grupo ){
 				$gruposArray[] = array("idgrupo"=>$grupo->getCaIdgroup(), "nombre"=>utf8_encode($grupo->getCaname()));
