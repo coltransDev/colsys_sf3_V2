@@ -2876,6 +2876,7 @@ elseif (isset($accion)) {                                                       
 
 
 function enviar_email(&$rs, $id, &$attachment){
+	global $smtpHost, $smtpUser, $smtpPasswd;
     if (!$rs->Open("select * from vi_emails where ca_idemail = $id")) {
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
         echo "<script>document.location.href = reportenegocio.php';</script>";
@@ -2884,12 +2885,14 @@ function enviar_email(&$rs, $id, &$attachment){
     require("include/class.phpmailer.php");
     $fchregistroadu = (!isset($fchregistroadu))?null:$fchregistroadu;
 	$domin = chr(100-36)."coltrans.com.co";
-	$name  = "tasas_cambios".$domin;
-	$pass  = "tasas_cambios";
+	$name  = $smtpUser.$domin;		
+	$pass  = $smtpPasswd;
     $mail = new PHPMailer();
     $mail->IsSMTP();              // set mailer to use SMTP
-	$mail->Host = "10.192.1.30";   // specify main and backup server
-    $mail->SMTPAuth = true;       // turn on SMTP authentication
+	$mail->Host = $smtpHost;   // specify main and backup server
+	if( $smtpUser ){
+    	$mail->SMTPAuth = true;       // turn on SMTP authentication
+	}
 
     $mail->From = $rs->Value('ca_from');
     $mail->FromName = $rs->Value('ca_fromname');

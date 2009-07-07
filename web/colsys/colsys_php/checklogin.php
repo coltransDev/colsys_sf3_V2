@@ -29,7 +29,6 @@ $servidor = substr( $dsn,  strlen( $principal )+6 );
 $usuarioDb = $databaseConfig['all']['propel']['param']['username'];
 $password = $databaseConfig['all']['propel']['param']['password'];
 
-
 /*
 $usuarioDb = "Administrador";
 $password = "cglti\$col91";
@@ -37,6 +36,13 @@ $servidor = "10.192.1.127";
 */
 
 
+$config = '../../../apps/colsys/config/app.yml';
+$appConfig = sfYaml::load($config);	
+
+
+$smtpHost = $appConfig["all"]["smtp"]["host"];
+$smtpUser = $appConfig["all"]["smtp"]["user"];
+$smtpPasswd = $appConfig["all"]["smtp"]["passwd"];
 
 if( isset($programa) ){ //Si esta definido quiere decir que esta en una opcion del menu
 	$nivel = -1;

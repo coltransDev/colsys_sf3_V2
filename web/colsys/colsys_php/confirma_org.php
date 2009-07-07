@@ -393,12 +393,14 @@ elseif (isset($accion)) {                                                      /
              
              // Telecom //
              $domin = chr(100-36)."coltrans.com.co";
-             $name  = "tasas_cambios".$domin;
-             $pass  = "tasas_cambios";
+             $name  = $smtpUser.$domin;		
+			 $pass  = $smtpPasswd;
              $mail = new PHPMailer();
              $mail->IsSMTP();              // set mailer to use SMTP
-             $mail->Host = "10.192.1.3";   // specify main and backup server
-             $mail->SMTPAuth = true;       // turn on SMTP authentication
+             $mail->Host = $smtpHost;   // specify main and backup server
+			if( $smtpUser ){
+				$mail->SMTPAuth = true;       // turn on SMTP authentication
+			}
 
              $fchregistroadu = (!isset($fchregistroadu))?null:$fchregistroadu;
              $us =& DlRecordset::NewRecordset($conn);
