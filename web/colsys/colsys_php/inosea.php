@@ -214,9 +214,6 @@ elseif (isset($boton)) {                                                       /
              echo "<TITLE>$titulo</TITLE>";
              echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
              echo "function elegir(opcion, id, cl, hb){";
-			 echo "    if (opcion == 'Prevalidador' && !confirm(\"¿Esta seguro que desea generar el XML?\")) {";
-			 echo "        return;";
-             echo "    }";
              echo "    document.location.href = 'inosea.php?boton='+opcion+'\&id='+id+'\&cl='+cl+'\&hb='+hb;";
              echo "}";
              echo "function apertura(opcion, id){";
@@ -3166,7 +3163,7 @@ echo "</BODY>";
                  echo "<script>document.location.href = 'inosea.php';</script>";
                  exit; }
 
-             $siono = array("No","Sí");
+             $siono = array("Sí","No");
              echo "<HEAD>";
              echo "<TITLE>$titulo</TITLE>";
              echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
@@ -3182,9 +3179,7 @@ echo "</BODY>";
              echo "  frame.src='ventanas.php?suf=findDianDeposito';";
              echo "}";
              echo "function validar(){";
-             echo "  if (document.getElementById('coddeposito').value == '')";
-             echo "      alert('Debe Ingresar el Código del Depósito');";
-             echo "  else if (document.getElementById('vlrfob').value == '')";
+             echo "  if (document.getElementById('vlrfob').value == '')";
              echo "      alert('Ingrese el Valor FOB en USD de la mercancia');";
              echo "  else if (document.getElementById('vlrflete').value == '')";
              echo "      alert('Ingrese el Valor del Flete en USD');";
@@ -3207,7 +3202,7 @@ require_once("menu.php");
              echo "<FORM METHOD=post NAME='muisca' ACTION='inosea.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
              echo "<TABLE WIDTH=600 CELLSPACING=1>";
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta actualizando
-             echo "<TH Class=titulo COLSPAN=5>Datos del Tipo de Recargo a Eliminar</TH>";
+             echo "<TH Class=titulo COLSPAN=5>Datos del Master para Muisca</TH>";
              echo "<TR>";
              echo "  <TD Class=partir>Referencia:</TD>";
              echo "  <TD Class=listar style='font-size: 11px; font-weight:bold;' COLSPAN=2>".$rs->Value('ca_referencia')."</TD>";
@@ -3392,7 +3387,10 @@ echo "</BODY>";
                  exit;
                 }
              $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-             if (!$tm->Open("select DISTINCT dc.* from tb_inoclientes_sea ic LEFT OUTER JOIN (select * from tb_dianclientes where ca_referencia = '".$id."' and ca_idcliente = '".$cl."' and ca_house = '".$hb."') dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house AND true) order by ca_idinfodian DESC")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
+			 $query = "select DISTINCT rp.ca_consecutivo, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre, dc.*  from tb_inoclientes_sea ic";
+			 $query.= " LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte) LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
+			 $query.= " RIGHT OUTER JOIN (select * from tb_dianclientes where ca_referencia = '$id' and ca_idcliente = '$cl' and ca_house = '$hb') dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house) order by ca_idinfodian DESC";
+             if (!$tm->Open("$query")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                  echo "<script>document.location.href = 'inosea.php';</script>";
                  exit;
@@ -3403,7 +3401,7 @@ echo "</BODY>";
                  echo "<script>document.location.href = 'inosea.php';</script>";
                  exit; }
 
-             $siono = array("No","Sí");
+             $siono = array("Sí","No");
              echo "<HEAD>";
              echo "<TITLE>$titulo</TITLE>";
              echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
@@ -3419,11 +3417,7 @@ echo "</BODY>";
              echo "  frame.src='ventanas.php?suf=findDianDeposito';";
              echo "}";
              echo "function validar(){";
-             echo "  if (document.getElementById('coddeposito').value == '')";
-             echo "      alert('Debe Ingresar el Código del Depósito');";
-             echo "  else";
-             echo "      return (true);";
-             echo "  return (false);";
+             echo "  return (true);";
              echo "}";
              echo "</script>";
              echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
@@ -3444,35 +3438,35 @@ require_once("menu.php");
              echo "<INPUT TYPE='HIDDEN' NAME='house' VALUE=\"".$hb."\">";                    // Hereda el Id del Cliente que se esta modificando
              echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
              echo "<TR>";
-             echo "  <TD Class=listar style='font-size: 11px;'><B>ID Reporte:</B><BR>".$rs->Value('ca_consecutivo')."</TD>";
-             echo "  <TD Class=listar style='font-size: 11px;'><B>Vendedor:</B><BR>".$rs->Value('ca_login')."</TD>";
-             echo "  <TD Class=listar style='font-size: 11px;'><B>ID Proveedor:</B><BR>".$rs->Value('ca_idproveedor')."</TD>";
-             echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>".$rs->Value('ca_proveedor')."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px;'><B>ID Reporte:</B><BR>".$tm->Value('ca_consecutivo')."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px;'><B>Vendedor:</B><BR>".$tm->Value('ca_login')."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px;'><B>ID Proveedor:</B><BR>".$tm->Value('ca_idproveedor')."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>".$tm->Value('ca_proveedor')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($rs->Value('ca_idcliente'))."</TD>";
-             echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$rs->Value('ca_compania')."</TD>";
-             echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$rs->Value('ca_numorden')."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px;'><B>Id Cliente:</B><BR>".number_format($tm->Value('ca_idcliente'))."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$tm->Value('ca_compania')."</TD>";
+             echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$tm->Value('ca_numorden')."</TD>";
              echo "</TR>";
 
              echo "<TR>";
              echo " <TD Class=invertir COLSPAN=2>";
              echo "  <TABLE WIDTH=100% CELLSPACING=1>";
              echo "  <TR>";
-             echo "    <TD Class=mostrar COLSPAN=2>HBL:<BR>".$rs->Value('ca_hbls')."</TD>";
-             echo "    <TD Class=mostrar>Fch.HBL<BR>".$rs->Value('ca_fchhbls')."</TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>HBL:<BR>".$tm->Value('ca_hbls')."</TD>";
+             echo "    <TD Class=mostrar>Fch.HBL<BR>".$tm->Value('ca_fchhbls')."</TD>";
              echo "  </TR>";
              echo "  <TR>";
-             echo "    <TD Class=mostrar>No.Piezas:<BR>".$rs->Value('ca_numpiezas')."</TD>";
-             echo "    <TD Class=mostrar>No.Kilos:<BR>".$rs->Value('ca_peso')."</TD>";
-             echo "    <TD Class=mostrar>No.CMB:<BR>".$rs->Value('ca_volumen')."</TD>";
+             echo "    <TD Class=mostrar>No.Piezas:<BR>".$tm->Value('ca_numpiezas')."</TD>";
+             echo "    <TD Class=mostrar>No.Kilos:<BR>".$tm->Value('ca_peso')."</TD>";
+             echo "    <TD Class=mostrar>No.CMB:<BR>".$tm->Value('ca_volumen')."</TD>";
              echo "  </TR>";
              echo "  <TR>";
-             echo "  <TD Class=mostrar>Continua/Viaje:<BR>".$rs->Value('ca_continuacion')."</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2>Destino Final:<BR>".$rs->Value('ca_continuacion_dest')."</TD>";
+             echo "  <TD Class=mostrar>Continua/Viaje:<BR>".$tm->Value('ca_continuacion')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=2>Destino Final:<BR>".$tm->Value('ca_continuacion_dest')."</TD>";
              echo "  </TR>";
              echo "  <TR>";
-             echo "  <TD Class=mostrar COLSPAN=5>Operador:<BR>".$rs->Value('ca_bodega')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=5>Operador:<BR>".$tm->Value('ca_bodega')."</TD>";
 
              echo "  </TR>";
              echo "  </TABLE>";
@@ -3505,9 +3499,6 @@ require_once("menu.php");
              echo "  <TD Class=captura COLSPAN=5></TD>";
              echo "</TR>";
 
-             if ($tm->GetRowCount() > 1){
-                 $tm->MoveNext();
-             }
              echo "<TR>";
              echo "  <TD Class=invertir style='font-size: 11px; text-align: center; font-weight:bold;' COLSPAN=5>INFORMACIÓN PARA MUISCA</TD>";
              echo "</TR>";
@@ -3595,7 +3586,7 @@ require_once("menu.php");
              echo "</TR>";
              echo "</TABLE><BR>";
              echo "<TABLE CELLSPACING=10>";
-             echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena eliminar el registro de forma permanente
+             echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Grabar Cliente'></TH>";     // Ordena Grabar el Registro del Cliente
              echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
              echo "</TABLE>";
              echo "</FORM>";
@@ -3606,6 +3597,112 @@ echo "</BODY>";
              break;
              }
         case 'Prevalidador': {
+             $modulo = "00100300";                                             // Identificación del módulo para la ayuda en línea
+//           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
+             if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '".$id."'")) {    // Mueve el apuntador al registro que se desea eliminar
+                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'inosea.php';</script>";
+                 exit;
+                }
+             echo "<HEAD>";
+             echo "<TITLE>$titulo</TITLE>";
+             echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
+             echo "function validar(){";
+             echo "  if (document.getElementById('NumEnvio').value == '')";
+             echo "      alert('Ingrese el Número Consecutivo correspondiente, según lo informa la página de la Dian - Módulo Muisca!');";
+			 echo "  else if (!confirm(\"¿Esta seguro que desea generar el XML?\"))";
+             echo "      alert('Ha decido cancelar la generación del Archivo XML');";
+             echo "  else";
+             echo "      return (true);";
+             echo "  return (false);";
+             echo "}";
+             echo "</script>";
+             echo "</HEAD>";
+             echo "<BODY>";
+require_once("menu.php");
+             echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
+             echo "<CENTER>";
+             echo "<H3>$titulo</H3>";
+             echo "<FORM METHOD=post NAME='muisca' ACTION='inosea.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
+             echo "<TABLE WIDTH=600 CELLSPACING=1>";
+             echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta actualizando
+             echo "<TH Class=titulo COLSPAN=5>Generar el Archivo XML para sistema Muisca</TH>";
+             echo "<TR>";
+             echo "  <TD Class=partir>Referencia:</TD>";
+             echo "  <TD Class=listar style='font-size: 11px; font-weight:bold;' COLSPAN=2>".$rs->Value('ca_referencia')."</TD>";
+             echo "  <TD Class=partir>Fecha de Registro :</TD>";
+             echo "  <TD Class=listar style='font-size: 11px; text-align: center;'>".$rs->Value('ca_fchreferencia')."</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=partir>Clase</TD>";
+             echo "  <TD Class=partir style='font-size: 11px; text-align: center;' COLSPAN=2>Ciudad de Origen</TD>";
+             echo "  <TD Class=partir style='font-size: 11px; text-align: center;' COLSPAN=2>Ciudad de Destino</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=partir style='text-align: center; vertical-align:top;'>".$rs->Value('ca_impoexpo')."<BR>&nbsp<BR>&nbsp</TD>";
+             echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_ciuorigen')."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_traorigen')."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_ciudestino')."</TD>";
+             echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_tradestino')."</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=partir>Transportista:</TD>";
+             echo "  <TD Class=listar COLSPAN=2>".$rs->Value('ca_nombre')."<BR>".$rs->Value('ca_sigla')."</TD>";
+             echo "  <TD Class=listar COLSPAN=2>".$rs->Value('ca_nomtransportista')."</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD Class=partir ROWSPAN=2>Modalidad:<BR><CENTER>".$rs->Value('ca_modalidad')."</CENTER></TD>";
+             echo "  <TD Class=listar><B>Motonave:</B><BR>".$rs->Value('ca_motonave')."</TD>";
+             echo "  <TD Class=listar><B>MBL's:</B><BR>".str_replace("|","<br />",$rs->Value('ca_mbls'))."</TD>";
+             echo "  <TD Class=listar COLSPAN=2><B>Observaciones:</B><BR>".nl2br($rs->Value('ca_observaciones'))."</TD>";
+             echo "</TR>";
+             echo "<TR>";
+             echo "  <TD COLSPAN=4 Class=invertir>";
+             $co =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
+             if (!$co->Open("select * from vi_inoequipos_sea where ca_referencia = '".$rs->Value('ca_referencia')."'")) {       // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
+                 echo "<script>alert(\"".addslashes($co->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'entrada.php';</script>";
+                 exit; }
+             echo "  <TABLE WIDTH=100% CELLSPACING=1 style='letter-spacing:-1px;'>";
+             echo "  <TH>Concepto</TH>";
+             echo "  <TH>Cantidad</TH>";
+             echo "  <TH>Id Equipo</TH>";
+             echo "  <TH>No.Precinto</TH>";
+             echo "  <TH>Observaciones</TH>";
+             while (!$co->Eof() and !$co->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
+                 echo "<TR>";
+                 echo "  <TD WIDTH=85 Class=listar>".$co->Value('ca_concepto')."</TD>";
+                 echo "  <TD WIDTH=80 Class=listar>".formatNumber($co->Value('ca_cantidad'),3)."</TD>";
+                 echo "  <TD WIDTH=100 Class=listar>".$co->Value('ca_idequipo')."</TD>";
+                 echo "  <TD WIDTH=100 Class=listar>".$co->Value('ca_numprecinto')."</TD>";
+                 echo "  <TD WIDTH=100 Class=listar>".$co->Value('ca_observaciones')."</TD>";
+                 echo "</TR>";
+                $co->MoveNext();
+                }
+             echo "  </TABLE>";
+             echo "  </TD>";
+             echo "</TR>";
+
+             echo "<TR>";
+             echo "  <TD Class=partir>Nro.Envio:</TD>";
+             echo "  <TD Class=listar><INPUT TYPE='TEXT' NAME='NumEnvio' SIZE=15 MAXLENGTH=15></TD>";
+             echo "  <TD Class=listar COLSPAN=3><- Ingrese el Número de Envío según lo indique la Página de la Dian - Módulo Muisca</TD>";
+             echo "</TR>";
+
+             echo "<TR HEIGHT=5>";
+             echo "  <TD Class=invertir COLSPAN=5></TD>";
+             echo "</TR>";
+             echo "</TABLE><BR>";
+             echo "<TABLE CELLSPACING=10>";
+             echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='boton' VALUE='Generar XML'></TH>";     // Ordena la Generación del XML
+             echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"inosea.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
+             echo "</TABLE>";
+             echo "</FORM>";
+             echo "</CENTER>";
+
+             break;
+             }
+        case 'Generar XML': {
              $modulo = "00100300";                                             // Identificación del módulo para la ayuda en línea
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              if (!$rs->Open("select * from vi_inomaestra_sea where ca_referencia = '".$id."'")) {    // Mueve el apuntador al registro que se desea eliminar
@@ -3653,14 +3750,7 @@ echo "</BODY>";
 			 $ValorTotal = 0;
 			 $CantReg = 0;
 
-			 if (!$tm->Open("select max(ca_numenvio) as ca_numenvio from tb_dianmaestra where TO_CHAR(TO_DATE(date_part('year',ca_fchtrans),'YYYY'),'Year') = '".$rs->Value("ca_fchtrans")."'")) {    // Toma el último consecutivo en Número de transacción del año.
-			 	echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
-			 	echo "<script>document.location.href = 'inosea.php';</script>";
-			 	exit;
-			 }
-			 $NumEnvio = $tm->Value("ca_numenvio") + 1;
 			 $xml_NumEnvio = $xml->createElement( "NumEnvio", $NumEnvio );
-			 
 			 if (!$tm->Open("update tb_dianmaestra set ca_numenvio = $NumEnvio, ca_fchenvio = '".date("d M Y H:i:s", $FecEnvio)."', ca_usuenvio = '$usuario' where ca_idinfodian = ".$dm->Value("ca_idinfodian"))) {    // Actualizar la Fecha y Hora de Envio 
 			 	echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 			 	echo "<script>document.location.href = 'inosea.php';</script>";
@@ -3911,18 +4001,17 @@ echo "</BODY>";
 						if ($dm->Value("ca_iddocanterior") != ""){
 							$xml_h167->setAttribute("fa67", $dm->Value("ca_iddocanterior"));
 						}
-						$xml_h167->setAttribute("cont", $dm->Value("ca_tipocarga"));
-						if ( $dm->Value("ca_tipocarga") == 1 ){
+						$xml_h167->setAttribute("cont", $dc->Value("ca_tipocarga"));
+						if ( $dc->Value("ca_tipocarga") == 2 ){
 							$xml_h167->setAttribute("tun", 2);
+							$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
+			
+							$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
+							$xml_h167->setAttribute("tam", $tam_equipo);
+							$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
+							$xml_h167->setAttribute("teq", $tip_equipo);
+							$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
 						}
-						
-						$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
-		
-						$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
-						$xml_h167->setAttribute("tam", $tam_equipo);
-						$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
-						$xml_h167->setAttribute("teq", $tip_equipo);
-						$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
 			
 						$xml_h167->setAttribute("vpb", $unidades_carga[$ie->Value("ca_idequipo")]['ps']);
 						$xml_h167->setAttribute("nbul",$unidades_carga[$ie->Value("ca_idequipo")]['pz']);
@@ -3962,7 +4051,6 @@ echo "</BODY>";
 						$xml_h167->appendChild( $xml_h267 );
 						$xml_hijo->appendChild( $xml_h167 );
 						$ie->MoveNext();
-
 					}
 
 				}
@@ -3987,14 +4075,16 @@ echo "</BODY>";
 					$xml_h167->setAttribute("fa67", $dm->Value("ca_iddocanterior"));
 				}
 				$xml_h167->setAttribute("cont", $dm->Value("ca_tipocarga"));
-				$xml_h167->setAttribute("tun", 2);
-				$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
-
-				$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
-				$xml_h167->setAttribute("tam", $tam_equipo);
-				$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
-				$xml_h167->setAttribute("teq", $tip_equipo);
-				$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
+				if ( $dm->Value("ca_tipocarga") == 2 ){
+					$xml_h167->setAttribute("tun", 2);
+					$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
+	
+					$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
+					$xml_h167->setAttribute("tam", $tam_equipo);
+					$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
+					$xml_h167->setAttribute("teq", $tip_equipo);
+					$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
+				}
 	
 				// Se Crear el elemento contenedor
 				if ($dm->Value("ca_tipodocviaje") == 10){
