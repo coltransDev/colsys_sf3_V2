@@ -225,7 +225,7 @@ require_once("menu.php");
     echo "  <TD Class=invertir COLSPAN=6></TD>";
     echo "</TR>";
     echo "<TR>";
-    echo "  <TD Class=listar ROWSPAN=4><B>Otras Tablas :</B></TD>";
+    echo "  <TD Class=listar ROWSPAN=3><B>Otras Tablas :</B></TD>";
     echo "  <TD Class=listar COLSPAN=5><A HREF=\"#\" ONCLICK='javascript:window.open(\"./links/CONDICIONES LOCALES NAVIERAS.xls\")'><B>Cuadro Condiciones Locales de Navieras &nbsp «Haga Click aquí para consultar».</A></B></TD>";
     echo "</TR>";
    /* echo "<TR>";
@@ -237,9 +237,9 @@ require_once("menu.php");
     /*echo "<TR>";
     echo "  <TD Class=listar COLSPAN=5><A HREF=\"#\" ONCLICK='javascript:window.open(\"./links/Tarifario ASW.xls\")'><B>Tarifario ASW &nbsp «Haga Click aquí para consultar». <IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Item'></A></B></TD>";
     echo "</TR>";*/
-    echo "<TR>";
+    /*echo "<TR>";
     echo "  <TD Class=listar COLSPAN=5><A HREF=\"#\" ONCLICK='javascript:window.open(\"./links/TARIFAS EXPORTACION.xls\")'><B>Tarifario de Exportación &nbsp «Haga Click aquí para consultar».</A></B></TD>";
-    echo "</TR>";
+    echo "</TR>";*/
 	echo "<TR>";
     echo "  <TD Class=listar COLSPAN=5><A HREF=\"#\" ONCLICK='javascript:window.open(\"./links/TARIFARIO DE IMPORTACION PRINCIPALES TRÁFICOS FCL-LCL.xls\")'><B>TARIFARIO DE IMPORTACION PRINCIPALES TRÁFICOS FCL/LCL &nbsp; «Haga Click aquí para consultar».</A></B></TD>";
     echo "</TR>";

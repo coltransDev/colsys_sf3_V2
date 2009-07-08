@@ -2464,7 +2464,7 @@ elseif (isset($accion)) {                                                       
                  exit;
                 }
              if (isset($obtencionpoliza) and $obtencionpoliza != 0) {
-		         $seguro_conf = (isset($esegu))?implode(",",array_filter($esegu, "vacios")):"";           // Retira las posiciones en blanco del arreglo
+		         $seguro_conf = (isset($esegu))?implode(",",array_filter($esegu, "vacios")):"";           // Retira las posiciones en blanco del arreglo				 	
                  if (!$rs->Open("insert into tb_repseguro (ca_idreporte, ca_vlrasegurado, ca_idmoneda_vlr, ca_primaventa, ca_minimaventa, ca_idmoneda_vta, ca_obtencionpoliza, ca_idmoneda_pol, ca_seguro_conf) values($idreporte, $vlrasegurado, '$idmoneda_vlr', '$primaventa', '$minimaventa', '$idmoneda_vta', '$obtencionpoliza', '$idmoneda_pol', '$seguro_conf')")) {
                      echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                      echo "<script>document.location.href = 'reportenegocio.php';</script>";
