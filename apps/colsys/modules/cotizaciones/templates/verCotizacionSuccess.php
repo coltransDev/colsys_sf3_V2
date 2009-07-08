@@ -5,7 +5,10 @@ $enBlanco = $cotizacion->enBlanco();
 
 ?>
 
-<div align="center">  
+<div align="center" class="content">  
+<?
+
+?>
 <script language="javascript" type="text/javascript">
 	function showEmailForm(){
 		if( document.getElementById('emailForm').style.display=="none"){ 
@@ -26,6 +29,9 @@ $enBlanco = $cotizacion->enBlanco();
 	}
 	
 </script>
+<?
+if( !$cotizacion->getCaUsuanulado() ){
+?>
 <div id="emailForm"  style="display:<?=$enBlanco?"inline":"none"?>;">
 	<form name="form1" id="form1" method="post" action="<?=url_for("cotizaciones/enviarCotizacionEmail?id=".$cotizacion->getCaIdcotizacion())?>" onsubmit="return verificarInfo()">
 		<input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
@@ -40,7 +46,9 @@ $enBlanco = $cotizacion->enBlanco();
 		$contactos .=  $cotizacion->getCliente()->getCaConfirmar();
 	}
 	
+	
 	include_component("general", "formEmail", array("subject"=>$asunto,"message"=>$mensaje,"contacts"=>$contactos));
+	
 	?>
 	<br />
 	
@@ -162,11 +170,18 @@ $enBlanco = $cotizacion->enBlanco();
 
 
 <? 
+}
 if( !$enBlanco ){
 ?>	
 <iframe src="<?=url_for("cotizaciones/generarPDF?id=".$cotizacion->getCaIdcotizacion()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
 
 <?
+}else{
+	if( $cotizacion->getCaUsuanulado() ){
+	?>
+		<h3>ANULADO</h3>
+	<?
+	}
 }
 if( count($emails)>0 ){
 ?>

@@ -24,9 +24,7 @@
 				<li class="group" id="li_directorio"> 
 					<a class="group-title" onclick="mostrarGrupo('directorio')">Directorio</a>				
 				</li>
-				<li class="group" id="li_novedades"> 
-					<a class="group-title" onclick="mostrarGrupo('novedades')">Novedades</a>				
-				</li>
+			
 			</ul>
 			<div id="content-homepage-top">
 				<?=image_tag("layout/homepage/corner-content-topright.jpg", "id=corner-content-topright")?>
@@ -67,6 +65,11 @@
 		
 	}
 	?>
+	
+	<div id="novedades" >
+		<?=include_component("homepage","novedades")?>
+	</div>
+	
 </div>
 
 <div id="aplicaciones" style="display:none">
@@ -83,9 +86,7 @@
 	<?=include_partial("homepage/directorio")?>
 </div>
 
-<div id="novedades" style="display:none">
-	<?=include_component("homepage","novedades")?>
-</div>
+
 
 
 <script language="javascript" type="text/javascript">

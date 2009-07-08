@@ -3,6 +3,7 @@
 <br />
 
 <h3><?=link_to( "<h3>haga click aca para volver</h3>","/reportes/verReporte?id=".$reporte->getCaIdreporte() );?></h3>
+<br />
 
 <table width="50%" border="0" class="tableList">
 

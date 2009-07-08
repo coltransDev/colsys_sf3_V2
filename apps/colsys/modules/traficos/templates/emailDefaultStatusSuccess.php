@@ -85,7 +85,26 @@ $cliente = $reporte->getCliente();
 		<td colspan="5"><?=$bodega->getCaNombre()?></td>
 	</tr>
 	<?	
-	}		
+	}
+	
+	if( $reporte->getCaSeguro()== "Sí"){
+	?>
+		<tr>
+			<td><strong>Carga Asegurada:</strong></td>
+			<td colspan="5"><?=Utils::replace($reporte->getCaSeguro())?></td>	
+		</tr>
+	<?	
+	}
+	
+	if ( $reporte->getCaColmas()== "Sí") {
+	?>
+		<tr>
+			<td><strong>Nacionalización Colmas SIA Ltda:</strong></td>
+			<td colspan="5"><?=Utils::replace($reporte->getCaColmas())?></td>
+		</tr> 
+	<?	
+	}
+		
 	
 	if( $reporte->getCaModalidad()=="FCL" ){
 		if( $inoCliente ){		

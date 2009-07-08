@@ -5,6 +5,8 @@
 $ultTrafico = null;
 foreach( $agentes as $agente ){
 	
+	$indicativo = "(".substr($agente->getCiudad()->getCaIdtrafico(), strpos($agente->getCiudad()->getCaIdtrafico(),"-")+1, 5 ).") (".substr($agente->getCaIdCiudad(), strpos($agente->getCaIdCiudad(),"-")+1, 5 ).")";
+	
 	if( $agente->getCiudad()->getCaIdtrafico()!=$ultTrafico ){	
 		$ultTrafico=$agente->getCiudad()->getCaIdtrafico();
 	?>
@@ -54,11 +56,11 @@ foreach( $agentes as $agente ){
 	</tr>
 	<tr class="row0">
 		<td><div align="left"><b>Tel&eacute;fonos:</b></div></td>
-		<td colspan="2"><div align="left"><?=$agente->getCaTelefonos()?>
+		<td colspan="2"><div align="left">  <?=$indicativo." ".$agente->getCaTelefonos()?>
 		</div></td>
 		<td><div align="left"><b>Fax:</b></div></td>
 		<td><div align="left">
-			<?=$agente->getCaFax()?>
+			<?=$indicativo." ".$agente->getCaFax()?>
 		</div></td>
 	</tr>
 	<tr class="row0">
@@ -112,7 +114,8 @@ foreach( $agentes as $agente ){
 		foreach( $contactos as $contacto ){
 			if( $ultCiudad!=$contacto->getCaIdciudad() ){
 				$ultCiudad=$contacto->getCaIdciudad();
-	
+				$idtrafico=$contacto->getCiudad()->getCaidtrafico();
+				$indicativo = "(".substr($idtrafico, strpos($idtrafico,"-")+1, 5 ).") (".substr($ultCiudad, strpos($ultCiudad,"-")+1, 5 ).")";
 		?>
 		
 	<tr class="row2">
@@ -145,10 +148,10 @@ foreach( $agentes as $agente ){
 	
 	<tr >
 		<td><div align="left"><b>Tel&eacute;fonos:</b></div></td>
-		<td><div align="left"><?=$contacto->getCaTelefonos()?></div></td>
+		<td><div align="left"><?=$indicativo." ".$contacto->getCaTelefonos()?></div></td>
 		<td><div align="left"><b>Fax:</b></div></td>
 		<td><div align="left">
-			<?=$contacto->getCaFax()?>
+			<?=$indicativo." ".$contacto->getCaFax()?>
 		</div></td>
 	</tr>
 	<tr >

@@ -195,46 +195,27 @@ if( !sfConfig::get("app_smtp_user") ){
 				 $form->setDefault('destinatarios_'.$i, 1 ); 	
 				 echo $form['destinatarios_'.$i]->render().$form['destinatarios_'.$i]->renderLabel()."<br />";
 			}
-			/*
-			$contacto = $reporte->getContacto();	
-			//echo checkbox_tag("destinatarios[]", $contacto->getCaEmail() , 1)." &nbsp;".$contacto->getCaNombres()." ".$contacto->getCaPApellido()."<br />";	
-			if( $reporte->getCaConfirmarclie() ){
-				$contactosClie = explode(",",$reporte->getCaConfirmarclie());
-				
-				foreach( $contactosClie as $contacto ){
-					if( isset($destinatarios) ){
-						if( array_search($contacto, $destinatarios )){
-							$option = 'checked="checked"';
-						}else{
-							$option = '';
-						}
-					}else{
-						$option = 'checked="checked"';
-					}
-					?>
-				<input type="checkbox" name="destinatarios[]" value="<?=$contacto?>" <?=$option?> />
-				<?=$contacto?>
-				<br />
-				<?
-					
-				}
-			}*/
 						
-			/*
-			if ( $reporte->getCaContinuacion()!="N/A" ) {
-				echo checkbox_tag("copiar_cont", 1, 1  )." &nbsp;Coordinador OTM/DTA<br />";		
+			if ( $reporte->getCaContinuacion()!="N/A" && $reporte->getCaTransporte()==Constantes::MARITIMO ) {
+				echo " &nbsp;&nbsp;&nbsp;Coordinador OTM/DTA<br />";		
 			}
+			
 			if ( $reporte->getCaSeguro()=="Sí" ) {
 				$repseguro = $reporte->getRepSeguro();
 				if( $repseguro ){
 					$segConf = explode(",", $repseguro->getCaSeguroConf() );
 					$usuario = UsuarioPeer::retrieveByPk( $repseguro->getCaSeguroConf() );	
 					if( $usuario ){
-						echo checkbox_tag("destinatarios[]", $usuario->getCaEmail(), 1 )." &nbsp;Analista de Seguros<br />";								
+						echo " &nbsp;&nbsp;&nbsp;Seguros: ".$usuario->getCaEmail()."<br />";
+						if( $usuario->getCaEmail()!="seguros@coltrans.com.co" ){
+							echo " &nbsp;&nbsp;&nbsp;Seguros: seguros@coltrans.com.co<br />";	
+						}		
+					}else{
+						echo " &nbsp;&nbsp;&nbsp;Seguros: seguros@coltrans.com.co<br />";								
 					}						
-				}
-				
+				}				
 			}
+			
 			if ( $reporte->getCaColmas()=="Sí" ) {
 				$repaduana = $reporte->getRepAduana();				
 				$coordinador = null;
@@ -243,11 +224,11 @@ if( !sfConfig::get("app_smtp_user") ){
 				}
 				
 				if( $coordinador ){				
-					echo checkbox_tag("copiar_adua", 1, 1  )." &nbsp;".$coordinador->getCaNombre()."<br />";		
+					echo " &nbsp;&nbsp;&nbsp;".$coordinador->getCaNombre()."<br />";		
 				}else{
 					echo "- No se ha definido coordinador de aduana en Maestra de Clientes<br />";
 				}
-			}	*/		
+			}			
 			?>		
 			</div></td>
 		<td valign="top">

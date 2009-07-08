@@ -151,6 +151,9 @@ class widgetsActions extends sfActions
 		
 		if( $impoexpo ){
 			$c->add( ReportePeer::CA_IMPOEXPO, $impoexpo );
+			if( $impoexpo==Constantes::IMPO ){
+				$c->addOr( ReportePeer::CA_IMPOEXPO, Constantes::TRIANGULACION );
+			}
 		}
 		
 		$c->add( ReportePeer::CA_CONSECUTIVO, $criterio."%", Criteria::LIKE );

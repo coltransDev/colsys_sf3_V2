@@ -1,4 +1,4 @@
-<h1>Novedades del sistema Colsys</h1>
+
 <?
 foreach( $novedades as $novedad ){
 ?>			

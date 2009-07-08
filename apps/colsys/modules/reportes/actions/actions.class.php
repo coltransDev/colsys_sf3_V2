@@ -59,7 +59,17 @@ class reportesActions extends sfActions
 			}
 		}
 			
-		$this->reporte = $reporte;						
+		
+		
+		if( $reporte->getCaIdTareaRext() ){
+			$this->tarea = NotTareaPeer::retrieveByPk( $reporte->getCaIdTareaRext() );
+		}else{
+			$this->tarea = null;
+		}
+		
+		$this->asignaciones = $reporte->getRepasignacions();			
+		$this->reporte = $reporte;		
+						
 	}	
 	
 	/**
@@ -69,20 +79,14 @@ class reportesActions extends sfActions
 	public function executeEnviarNotificacion( $request ){
 		
 		if( $request->getParameter( "idreporte" ) ){
-			$reporte = ReportePeer::retrieveByPk($request->getParameter( "idreporte" ));
-			
+			$reporte = ReportePeer::retrieveByPk($request->getParameter( "idreporte" ));			
 		}		
-		$this->forward404Unless( $reporte );		
 		
-		
-		
-		$usuarios  = $reporte->getUsuariosOperativos();
-		
+		$this->forward404Unless( $reporte );				
+		$usuarios  = $reporte->getUsuariosOperativos();		
 		$this->gruposCrearReporte = array();
-		if( $reporte->getCaImpoExpo()==Constantes::IMPO ){		
-			
-			
-			
+		
+		if( $reporte->getCaImpoExpo()==Constantes::IMPO ){
 			if( !$reporte->getReporteExterior()  ){
 				if( $reporte->getCaIdTareaRext() ){
 					$tarea = NotTareaPeer::retrieveByPk( $reporte->getCaIdTareaRext() );
@@ -120,8 +124,7 @@ class reportesActions extends sfActions
 					$logins[] = $usuario->getCaLogin();
 				}
 				//$logins = array("abotero");
-				$tarea->setAsignaciones( $logins );	
-				$tarea->notificar();			
+				$tarea->setAsignaciones( $logins );					
 				
 				$reporte->setCaIdtareaRext( $tarea->getCaIdtarea() );
 				$reporte->save();
@@ -178,7 +181,6 @@ class reportesActions extends sfActions
 			}
 		}
 			
-		
 		if( $reporte->getCaContinuacion()!="N/A" ){
 			
 			if( $reporte->getCaContinuacionConf() ){
@@ -187,14 +189,16 @@ class reportesActions extends sfActions
 		}	
 		
 		$this->asignaciones = array(); 
-		foreach( $grupos as $logins ){ 			
+		foreach( $grupos as $logins ){ 				
 			$newTarea = $tarea->copy();
 			$newTarea->save();
-			$newTarea->setAsignaciones( $logins );		
-					
+			$newTarea->setAsignaciones( $logins );							
 			$this->asignaciones[] = $logins;
-				
-						
+			
+			$asignacion = new RepAsignacion();
+			$asignacion->setCaIdreporte( $reporte->getcaIdreporte() );
+			$asignacion->setCaIdtarea( $newTarea->getCaIdtarea() );
+			$asignacion->save();
 		}
 		
 		$this->gruposVerReporte = $grupos;		
