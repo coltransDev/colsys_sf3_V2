@@ -217,6 +217,12 @@ class Utils{
 		
 		$start = strtotime($inicio);
 		$final = strtotime($final);
+		
+		$difer = 0;
+		$start = $inicio;
+		
+		
+		
 		while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)){
 			
 		   //echo "<br />".date("Y-m-d H:i", $start)." ".$difer;			
@@ -250,6 +256,7 @@ class Utils{
 	* teniendo en cuenta las horas habiles( 8a5 sin festivos).
 	* @author: Andres Botero
 	*/	
+	
 	static function addTimeWorkingHours($festiv, $inicio, $segundos ){		
 		
 		$result = 0;			

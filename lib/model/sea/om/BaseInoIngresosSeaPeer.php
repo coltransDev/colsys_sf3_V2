@@ -19,7 +19,7 @@ abstract class BaseInoIngresosSeaPeer {
 	const CLASS_DEFAULT = 'lib.model.sea.InoIngresosSea';
 
 	/** The total number of columns. */
-	const NUM_COLUMNS = 16;
+	const NUM_COLUMNS = 14;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -38,12 +38,6 @@ abstract class BaseInoIngresosSeaPeer {
 
 	/** the column name for the CA_FCHFACTURA field */
 	const CA_FCHFACTURA = 'tb_inoingresos_sea.CA_FCHFACTURA';
-
-	/** the column name for the CA_IDMONEDA field */
-	const CA_IDMONEDA = 'tb_inoingresos_sea.CA_IDMONEDA';
-
-	/** the column name for the CA_NETO field */
-	const CA_NETO = 'tb_inoingresos_sea.CA_NETO';
 
 	/** the column name for the CA_VALOR field */
 	const CA_VALOR = 'tb_inoingresos_sea.CA_VALOR';
@@ -93,11 +87,11 @@ abstract class BaseInoIngresosSeaPeer {
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaReferencia', 'CaIdcliente', 'CaHbls', 'CaFactura', 'CaFchfactura', 'CaIdmoneda', 'CaNeto', 'CaValor', 'CaReccaja', 'CaFchpago', 'CaTcambio', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaObservaciones', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caReferencia', 'caIdcliente', 'caHbls', 'caFactura', 'caFchfactura', 'caIdmoneda', 'caNeto', 'caValor', 'caReccaja', 'caFchpago', 'caTcambio', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caObservaciones', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_REFERENCIA, self::CA_IDCLIENTE, self::CA_HBLS, self::CA_FACTURA, self::CA_FCHFACTURA, self::CA_IDMONEDA, self::CA_NETO, self::CA_VALOR, self::CA_RECCAJA, self::CA_FCHPAGO, self::CA_TCAMBIO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_OBSERVACIONES, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_referencia', 'ca_idcliente', 'ca_hbls', 'ca_factura', 'ca_fchfactura', 'ca_idmoneda', 'ca_neto', 'ca_valor', 'ca_reccaja', 'ca_fchpago', 'ca_tcambio', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_observaciones', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
+		BasePeer::TYPE_PHPNAME => array ('CaReferencia', 'CaIdcliente', 'CaHbls', 'CaFactura', 'CaFchfactura', 'CaValor', 'CaReccaja', 'CaFchpago', 'CaTcambio', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaObservaciones', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caReferencia', 'caIdcliente', 'caHbls', 'caFactura', 'caFchfactura', 'caValor', 'caReccaja', 'caFchpago', 'caTcambio', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caObservaciones', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_REFERENCIA, self::CA_IDCLIENTE, self::CA_HBLS, self::CA_FACTURA, self::CA_FCHFACTURA, self::CA_VALOR, self::CA_RECCAJA, self::CA_FCHPAGO, self::CA_TCAMBIO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_OBSERVACIONES, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_referencia', 'ca_idcliente', 'ca_hbls', 'ca_factura', 'ca_fchfactura', 'ca_valor', 'ca_reccaja', 'ca_fchpago', 'ca_tcambio', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_observaciones', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
 	);
 
 	/**
@@ -107,11 +101,11 @@ abstract class BaseInoIngresosSeaPeer {
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaReferencia' => 0, 'CaIdcliente' => 1, 'CaHbls' => 2, 'CaFactura' => 3, 'CaFchfactura' => 4, 'CaIdmoneda' => 5, 'CaNeto' => 6, 'CaValor' => 7, 'CaReccaja' => 8, 'CaFchpago' => 9, 'CaTcambio' => 10, 'CaFchcreado' => 11, 'CaUsucreado' => 12, 'CaFchactualizado' => 13, 'CaUsuactualizado' => 14, 'CaObservaciones' => 15, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caReferencia' => 0, 'caIdcliente' => 1, 'caHbls' => 2, 'caFactura' => 3, 'caFchfactura' => 4, 'caIdmoneda' => 5, 'caNeto' => 6, 'caValor' => 7, 'caReccaja' => 8, 'caFchpago' => 9, 'caTcambio' => 10, 'caFchcreado' => 11, 'caUsucreado' => 12, 'caFchactualizado' => 13, 'caUsuactualizado' => 14, 'caObservaciones' => 15, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_REFERENCIA => 0, self::CA_IDCLIENTE => 1, self::CA_HBLS => 2, self::CA_FACTURA => 3, self::CA_FCHFACTURA => 4, self::CA_IDMONEDA => 5, self::CA_NETO => 6, self::CA_VALOR => 7, self::CA_RECCAJA => 8, self::CA_FCHPAGO => 9, self::CA_TCAMBIO => 10, self::CA_FCHCREADO => 11, self::CA_USUCREADO => 12, self::CA_FCHACTUALIZADO => 13, self::CA_USUACTUALIZADO => 14, self::CA_OBSERVACIONES => 15, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_referencia' => 0, 'ca_idcliente' => 1, 'ca_hbls' => 2, 'ca_factura' => 3, 'ca_fchfactura' => 4, 'ca_idmoneda' => 5, 'ca_neto' => 6, 'ca_valor' => 7, 'ca_reccaja' => 8, 'ca_fchpago' => 9, 'ca_tcambio' => 10, 'ca_fchcreado' => 11, 'ca_usucreado' => 12, 'ca_fchactualizado' => 13, 'ca_usuactualizado' => 14, 'ca_observaciones' => 15, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
+		BasePeer::TYPE_PHPNAME => array ('CaReferencia' => 0, 'CaIdcliente' => 1, 'CaHbls' => 2, 'CaFactura' => 3, 'CaFchfactura' => 4, 'CaValor' => 5, 'CaReccaja' => 6, 'CaFchpago' => 7, 'CaTcambio' => 8, 'CaFchcreado' => 9, 'CaUsucreado' => 10, 'CaFchactualizado' => 11, 'CaUsuactualizado' => 12, 'CaObservaciones' => 13, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caReferencia' => 0, 'caIdcliente' => 1, 'caHbls' => 2, 'caFactura' => 3, 'caFchfactura' => 4, 'caValor' => 5, 'caReccaja' => 6, 'caFchpago' => 7, 'caTcambio' => 8, 'caFchcreado' => 9, 'caUsucreado' => 10, 'caFchactualizado' => 11, 'caUsuactualizado' => 12, 'caObservaciones' => 13, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_REFERENCIA => 0, self::CA_IDCLIENTE => 1, self::CA_HBLS => 2, self::CA_FACTURA => 3, self::CA_FCHFACTURA => 4, self::CA_VALOR => 5, self::CA_RECCAJA => 6, self::CA_FCHPAGO => 7, self::CA_TCAMBIO => 8, self::CA_FCHCREADO => 9, self::CA_USUCREADO => 10, self::CA_FCHACTUALIZADO => 11, self::CA_USUACTUALIZADO => 12, self::CA_OBSERVACIONES => 13, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_referencia' => 0, 'ca_idcliente' => 1, 'ca_hbls' => 2, 'ca_factura' => 3, 'ca_fchfactura' => 4, 'ca_valor' => 5, 'ca_reccaja' => 6, 'ca_fchpago' => 7, 'ca_tcambio' => 8, 'ca_fchcreado' => 9, 'ca_usucreado' => 10, 'ca_fchactualizado' => 11, 'ca_usuactualizado' => 12, 'ca_observaciones' => 13, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
 	);
 
 	/**
@@ -202,10 +196,6 @@ abstract class BaseInoIngresosSeaPeer {
 		$criteria->addSelectColumn(InoIngresosSeaPeer::CA_FACTURA);
 
 		$criteria->addSelectColumn(InoIngresosSeaPeer::CA_FCHFACTURA);
-
-		$criteria->addSelectColumn(InoIngresosSeaPeer::CA_IDMONEDA);
-
-		$criteria->addSelectColumn(InoIngresosSeaPeer::CA_NETO);
 
 		$criteria->addSelectColumn(InoIngresosSeaPeer::CA_VALOR);
 

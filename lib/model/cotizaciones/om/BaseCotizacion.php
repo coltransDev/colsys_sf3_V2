@@ -535,7 +535,7 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	 * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
 	 * @throws     PropelException - if unable to parse/validate the date/time value.
 	 */
-	public function getCaFchanulado($format = 'Y-m-d')
+	public function getCaFchanulado($format = 'Y-m-d H:i:s')
 	{
 		if ($this->ca_fchanulado === null) {
 			return null;
@@ -1117,13 +1117,13 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 		if ( $this->ca_fchanulado !== null || $dt !== null ) {
 			// (nested ifs are a little easier to read in this case)
 
-			$currNorm = ($this->ca_fchanulado !== null && $tmpDt = new DateTime($this->ca_fchanulado)) ? $tmpDt->format('Y-m-d') : null;
-			$newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
+			$currNorm = ($this->ca_fchanulado !== null && $tmpDt = new DateTime($this->ca_fchanulado)) ? $tmpDt->format('Y-m-d\\TH:i:sO') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d\\TH:i:sO') : null;
 
 			if ( ($currNorm !== $newNorm) // normalized values don't match 
 					)
 			{
-				$this->ca_fchanulado = ($dt ? $dt->format('Y-m-d') : null);
+				$this->ca_fchanulado = ($dt ? $dt->format('Y-m-d\\TH:i:sO') : null);
 				$this->modifiedColumns[] = CotizacionPeer::CA_FCHANULADO;
 			}
 		} // if either are not null
