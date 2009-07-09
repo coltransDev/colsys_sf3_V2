@@ -38,61 +38,64 @@ foreach( $agentes as $agente ){
 	<tr class="row0">
 		<td width="25%"><div align="left"><b>Direcci&oacute;n:</b></div></td>
 		<td colspan="4">
-			<div align="left">
-				<?=$agente->getCaDireccion()?>
-				</div></td>
+			
+				<div align="left">
+					<?=$agente->getCaDireccion()?>
+			</div></td>
 		</tr>
 	<tr class="row0">
 		<td><div align="left"><b>Ciudad:</b></div></td>
-		<td colspan="2"><div align="left">
+		<td colspan="2">
+			
 			<div align="left">
-					<?=$agente->getCiudad()->getCaCiudad()." - ".$agente->getCiudad()->getTrafico()->getCaNombre()?>
-				</div>
-		</div></td>
-		<td width="25%"><div align="left"><b>Zip Code: </b></div></td>
-		<td width="25%"><div align="left">
-			<?=$agente->getCaZipcode()?>
-		</div></td>
-	</tr>
+				<?=$agente->getCiudad()->getCaCiudad()." - ".$agente->getCiudad()->getTrafico()->getCaNombre()?>
+				</div></td><td width="25%"><div align="left"><b>Zip Code: </b></div></td>
+				<td width="25%">
+						<div align="left">
+							<?=$agente->getCaZipcode()?>
+								</div></td></tr>
 	<tr class="row0">
 		<td><div align="left"><b>Tel&eacute;fonos:</b></div></td>
-		<td colspan="2"><div align="left">  <?=$indicativo." ".$agente->getCaTelefonos()?>
-		</div></td>
-		<td><div align="left"><b>Fax:</b></div></td>
-		<td><div align="left">
-			<?=$indicativo." ".$agente->getCaFax()?>
-		</div></td>
-	</tr>
+		<td colspan="2">  <div align="left">
+			<?=$indicativo." ".$agente->getCaTelefonos()?>
+		</div></td><td><div align="left"><b>Fax:</b></div></td>
+		<td>
+			<div align="left">
+				<?=$indicativo." ".$agente->getCaFax()?>
+				</div></td></tr>
 	<tr class="row0">
 		<td><div align="left"><b>e-mail:</b></div></td>
-		<td colspan="2"><div align="left">
-			<?=$agente->getCaEmail()?>
-		</div></td>
-		<td><div align="left"><b>Website:</b></div></td>
-		<td><div align="left">
-			<?=$agente->getCaWebsite()?>
-		</div></td>
-	</tr>
+		<td colspan="2">
+			<div align="left">
+				<?=$agente->getCaEmail()?>
+				</div></td><td><div align="left"><b>Website:</b></div></td>
+				<td>
+						<div align="left">
+							<?=$agente->getCaWebsite()?>
+								</div></td></tr>
 	<tr class="row0">
 		<td><div align="left"><b>Tipo:</b></div></td>
-		<td colspan="2"><div align="left">
-			<?=$agente->getCaTipo()?>
-		</div></td>
-		<td><div align="left"></div></td>
+		<td colspan="2">
+			<div align="left">
+				<?=$agente->getCaTipo()?>
+				</div></td><td><div align="left"></div></td>
 		<td><div align="left"></div></td>
 	</tr>
 	<tr class="row2">
 		<td colspan="4" ><div align="left"><b>Contactos</b></div></td>
 		<td >
-		<?
+			
+				<div align="right">
+					<?
 		if( $nivel>0 ){
 		?>
-		<div align="right"><?=link_to(image_tag("16x16/new.gif"), "agentes/formContactos?idagente=".$agente->getcaIdagente())?></div>
-		<?
+					<?=link_to(image_tag("16x16/new.gif"), "agentes/formContactos?idagente=".$agente->getcaIdagente())?>
+					<?
 		}else{
 			echo "&nbsp;";
 		}
-		?>		</td>
+		?>		
+			</div></td>
 	</tr>
 		<?
 		$c = new Criteria();
@@ -119,75 +122,85 @@ foreach( $agentes as $agente ){
 		?>
 		
 	<tr class="row2">
-		<td colspan="5"><div align="left"><?=$contacto->getCiudad()->getCaCiudad()?></div></td>		
+		<td colspan="5"><div align="left">
+			<div style="font-size:16px"><b><?=$contacto->getCiudad()->getCaCiudad()?></b></div>
+		</div></td>		
 	</tr>
 		<?
 			}
 		?>
 	<tr class="<?=$contacto->getCaSugerido()?"yellow":"row0"?>">
-		<td colspan="4" ><div align="left"><b><?=$contacto->getCaNombre()." ".$contacto->getCaApellido()?></b></div></td>
+		<td colspan="4" ><div align="left"><b>
+			<?=$contacto->getCaNombre()." ".$contacto->getCaApellido()?>
+		</b></div></td>
 		<td >
-		<?
+			
+				<div align="right">
+					<?
 		if( $nivel>0 ){
 		?>
-		<div align="right"><?=link_to(image_tag("16x16/edit.gif"), "agentes/formContactos?idagente=".$agente->getcaIdagente()."&idcontacto=".$contacto->getCaIdcontacto())?></div>
-		<?
+					<?=link_to(image_tag("16x16/edit.gif"), "agentes/formContactos?idagente=".$agente->getcaIdagente()."&idcontacto=".$contacto->getCaIdcontacto())?>
+					<?
 		}else{
 			echo "&nbsp;";
 		}
 		?>
-		</td>
+			</div></td>
 	</tr>	
 	
 	<tr >
-		<td width="25%" rowspan="6">&nbsp;</td>
+		<td width="25%" rowspan="6"><div align="left"></div></td>
 		<td >
 			<div align="left"><b>Direcci&oacute;n:</b></div></td>
-		<td colspan="3" ><?=$contacto->getCaDireccion()?></td>
+		<td colspan="3" ><div align="left">
+			<?=$contacto->getCaDireccion()?>
+		</div></td>
 	</tr>
 	
 	<tr >
 		<td><div align="left"><b>Tel&eacute;fonos:</b></div></td>
-		<td><div align="left"><?=$indicativo." ".$contacto->getCaTelefonos()?></div></td>
-		<td><div align="left"><b>Fax:</b></div></td>
 		<td><div align="left">
-			<?=$indicativo." ".$contacto->getCaFax()?>
+			<?=$indicativo." ".$contacto->getCaTelefonos()?>
 		</div></td>
-	</tr>
+		<td><div align="left"><b>Fax:</b></div></td>
+		<td>
+			<div align="left">
+				<?=$indicativo." ".$contacto->getCaFax()?>
+				</div></td></tr>
 	<tr >
 		<td><div align="left"><b>e-mail:</b></div></td>
-		<td><div align="left">
-			<?=$contacto->getCaEmail()?>
-		</div></td>
-		<td><div align="left"></div></td>
+		<td>
+			<div align="left">
+				<?=$contacto->getCaEmail()?>
+				</div></td><td><div align="left"></div></td>
 		<td><div align="left"></div></td>
 	</tr>
 	<tr >
 		<td><div align="left"><b>Atiende:</b></div></td>
-		<td><div align="left">
-			<?=str_replace("|", " ",$contacto->getCaImpoexpo())?>
-		</div></td>
-		<td><div align="left"><b>Transporte:</b></div></td>
-		<td><div align="left">
-			<?=str_replace("|", " ",$contacto->getCaTransporte() )?>
-		</div></td>
-	</tr>
+		<td>
+			<div align="left">
+				<?=str_replace("|", " ",$contacto->getCaImpoexpo())?>
+				</div></td><td><div align="left"><b>Transporte:</b></div></td>
+				<td>
+						<div align="left">
+							<?=str_replace("|", " ",$contacto->getCaTransporte() )?>
+								</div></td></tr>
 	<tr >
 		<td><div align="left"><b>Cargo:</b></div></td>
-		<td><div align="left">
-			<?=$contacto->getCaCargo()?>
-		</div></td>
-		<td><div align="left"><b>Detalles:</b></div></td>
-		<td><div align="left">
-			<?=$contacto->getCaDetalle()?>
-		</div></td>
-	</tr>
+		<td>
+			<div align="left">
+				<?=$contacto->getCaCargo()?>
+				</div></td><td><div align="left"><b>Detalles:</b></div></td>
+				<td>
+						<div align="left">
+							<?=$contacto->getCaDetalle()?>
+								</div></td></tr>
 	<tr >
 		<td><div align="left"><b>Sugerido en cotizaciones:</b></div></td>
-		<td><div align="left">
-			<?=$contacto->getCaSugerido()?"S&iacute;":"No"?>
-		</div></td>
-		<td><div align="left"></div></td>
+		<td>
+			<div align="left">
+				<?=$contacto->getCaSugerido()?"S&iacute;":"No"?>
+				</div></td><td><div align="left"></div></td>
 		<td><div align="left"></div></td>
 	</tr>
 	
