@@ -39,7 +39,13 @@
 		<td ><div align="left"><strong>Mensaje:</strong><br />
 		</div>
 			
-			<?=$email->getCaBody()?>
+			<?
+			if($email->getCaBodyHtml()){
+				echo $email->getCaBodyHtml();
+			}else{
+				echo $email->getCaBody();
+			}
+			?>
 			
 		</td>
 	</tr>
