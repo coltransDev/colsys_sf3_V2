@@ -97,6 +97,11 @@ if( !$cotizacion->getCaUsuanulado() ){
 				</div></th>
 			</tr>		
 			<tr>
+				<td><b>Fecha de solicitud:</b>
+					<?=Utils::fechaMes( $tarea->getCafchcreado("Y-m-d") ) ?>
+					<?=$tarea->getCafchcreado("H:i:s")?></td>
+			</tr>
+			<tr>
 				<td>
 					Tiempo restante
 					<?			
@@ -112,14 +117,12 @@ if( !$cotizacion->getCaUsuanulado() ){
 					}else{
 						echo $diff;			
 					}
-					?>
-				</td>
+					?>				</td>
 			</tr>
 			<tr>
 				<td>
 					Observaciones
-					<input type="text" value="<?=$tarea->getCaObservaciones()?>" name="observaciones_idg" id="observaciones_idg" size="100" />
-				</td>
+					<input type="text" value="<?=$tarea->getCaObservaciones()?>" name="observaciones_idg" id="observaciones_idg" size="100" />				</td>
 			</tr>		
 		</table>	
 		<br />

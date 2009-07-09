@@ -187,7 +187,7 @@ Ext.onReady(function(){
 				        tpl: resultTpl,
 				        itemSelector: 'div.search-item',		
 					    emptyText:'Escriba el nombre del cliente...',
-					    value: '<?=$cliente->getCaCompania()?>',		
+					    value: '<?=str_replace("'", "\\'", $cliente->getCaCompania())?>',		
 					    forceSelection:true,		
 						selectOnFocus:true,
 						allowBlank:false,
