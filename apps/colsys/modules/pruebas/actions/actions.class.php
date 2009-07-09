@@ -2506,15 +2506,13 @@ where (column_name like 'ca_login%' ) and table_name like 'tb_%' and table_schem
 			$tarea = new NotTarea(); 
 			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$ticket->getCaIdticket() );
 			$tarea->setCaIdlistatarea( 1 );
-			$tarea->setCaFchcreado( $ticket->getCaOpened() );						
-			$tarea->setCaFchvencimiento( strtotime( $ticket->getCaOpened() )+$grupo->getCaMaxresponsetime() );
-			
-			
+			$tarea->setCaFchcreado( $ticket->getCaOpened() );									
+			$tarea->setTiempo( Utils::getFestivos(), $grupo->getCaMaxresponsetime() );	
+						
 			if( $ticket->getCaResponsetime() ){
 				$tarea->setCaFchterminada( $ticket->getCaResponsetime() );
 			}
-			
-			
+					
 			$tarea->setCaUsucreado( $ticket->getCaLogin() );
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $texto );
@@ -2725,6 +2723,41 @@ ORDER BY ca_fchstatus ";
 				
 	}
 		
+		
+	public function executeFixTareasReportes(){
+		exit("OK");
+		
+		$sql = "select * from notificaciones.tb_tareas left join  tb_reportes on ca_idtarea = ca_idseguimiento where ca_idlistatarea = 3 and ca_idreporte is null";
+
+		
+		$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
+		
+		$stmt = $con->prepare($sql);
+		$stmt->execute();	 
+		
+		while($row= $stmt->fetch() ){
+			
+			/*$status = RepStatusPeer::retrieveByPk( $row['ca_idtarea'] );			
+			$status->setCaFchllegada($row['ca_fchconfirmacion']); 
+			$status->save(); 
+			*/
+			
+			$consreporte = substr( $row['ca_titulo'], strpos($row['ca_titulo'], "RN")+2, 9 );
+			$reporte = ReportePeer::retrieveByConsecutivo( $consreporte ); 
+			if( !$reporte->getCaidseguimiento() ){
+				echo "OK ".$row['ca_idtarea']." ".$consreporte." ".$row['ca_titulo']."<br />";
+				$reporte->setCaIdseguimiento( $row['ca_idtarea'] );
+				$reporte->save();
+			}else{
+				echo "NO ".$row['ca_idtarea']." ".$consreporte." ".$row['ca_titulo']."<br />";
+				$tarea = NotTareaPeer::retrieveByPk( $row['ca_idtarea'] );
+				//$tarea->delete();
+			}
+		}
+		
+		$this->setTemplate("blank");
+		
+	}	
 		
 }
 

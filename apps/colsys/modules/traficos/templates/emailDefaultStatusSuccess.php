@@ -36,7 +36,7 @@ $cliente = $reporte->getCliente();
 		<td width="13%"><?=$reporte->getOrigen()->getCaCiudad()?></td>
 		<td width="15%"><b>Fch.Salida:</b></td>
 		<td width="17%"><?=$status->getCaFchsalida()?$status->getCaFchsalida()." ".$status->getCaHorasalida():"&nbsp;"?></td>
-		<td><b>Nombre del Buque:</b></td>
+		<td><b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"Motonave:":"Vuelo:"?></b></td>
 		<td><?=$status->getCaIdnave()?></td>
 	</tr>
 	<tr>
@@ -50,13 +50,13 @@ $cliente = $reporte->getCliente();
 	<tr>
 		<td><b>No.Piezas:</b></td>
 		<td><?=$status->getCaPiezas()?str_replace("|", " ", $status->getCaPiezas()):"&nbsp;"?></td>
-		<td><b>Volumen:</b></td>
-		<td><?=$status->getCaVolumen()?str_replace("|", " ",$status->getCaVolumen()):"&nbsp;"?></td>
 		<td><b>Peso:</b></td>
 		<td><?=$status->getCaPeso()?str_replace("|", " ",$status->getCaPeso()):"&nbsp;"?></td>
+		<td><b>Volumen:</b></td>
+		<td><?=$status->getCaVolumen()?str_replace("|", " ",$status->getCaVolumen()):"&nbsp;"?></td>
 	</tr>
 	<tr>
-		<td><b>No. HBL:</b></td>
+		<td><b><?=$reporte->getCaTransporte()==Constantes::MARITIMO?"HBL:":"HAWB:"?></b></td>
 		<td><?=$status->getCaDoctransporte()?$status->getCaDoctransporte():"&nbsp;"?></td>
 		<td><?=$reporte->getCaModalidad()=="FCL"&&$status->getCaDocmaster()?"<b>Master:</b>":"&nbsp;"?></td>
 		<td><?=$reporte->getCaModalidad()=="FCL"&&$status->getCaDocmaster()?$status->getCaDocmaster():"&nbsp;"?></td>
@@ -237,7 +237,7 @@ if( $status->getCaIdetapa()=="IMETA" ){
 ?>
 
 <br />
-Gracias por contar con nuestro servicio.<br />
+Cualquier información adicional que ustedes requieran, con gusto le será suministrada.<br />
 <br />
 Cordial Saludo.<br />
 <br />

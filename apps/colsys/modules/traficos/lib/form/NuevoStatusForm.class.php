@@ -43,7 +43,7 @@ class NuevoStatusForm extends sfForm{
 															  'choices' => array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co'),
 															));
 										
-		//$widgets['asunto'] = new sfWidgetFormInput(array(), array("size"=>145 ));
+		$widgets['asunto'] = new sfWidgetFormInput(array(), array("size"=>120 ));
 		$widgets['introduccion'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
 		$widgets['mensaje'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140, "onChange=validarMensaje" ));
 		$widgets['notas'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
@@ -149,8 +149,8 @@ class NuevoStatusForm extends sfForm{
 		
 		$validator['idetapa'] = new sfValidatorString(array('required' => true ), 
 														array('required' => 'La etapa es obligatoria'));
-		/*$validator['asunto'] = new sfValidatorString(array('required' => true ), 
-														array('required' => 'Por favor coloque el asunto'));	*/
+		$validator['asunto'] = new sfValidatorString(array('required' => true ), 
+														array('required' => 'Por favor coloque el asunto'));	
 		
 		$validator['introduccion'] = new sfValidatorString(array('required' => true ), 
 														array('required' => 'Por favor coloque la introducción o el saludo del mensaje'));	

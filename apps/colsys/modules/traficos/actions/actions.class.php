@@ -162,9 +162,6 @@ class traficosActions extends sfActions
 	* Muestra la información de los reporte
 	*/
 	public function executeInfoReporte( $request ){
-		$this->forward404Unless( $this->getRequestParameter("idreporte") );
-		$this->reporte = ReportePeer::retrieveByPk( $this->getRequestParameter("idreporte") );		
-		$this->forward404Unless( $this->reporte );
 		
 		$this->modo = $this->getRequestParameter("modo");
 		if( $this->modo=="maritimo" ){
@@ -179,6 +176,10 @@ class traficosActions extends sfActions
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
+		
+		$this->forward404Unless( $this->getRequestParameter("idreporte") );
+		$this->reporte = ReportePeer::retrieveByPk( $this->getRequestParameter("idreporte") );		
+		$this->forward404Unless( $this->reporte );
 	}
 	
 	
@@ -236,17 +237,20 @@ class traficosActions extends sfActions
 		
 		/*
 		* Configuracion de la forma
-		*/
-		
+		*/		
 		$this->form = new NuevoStatusForm();
 		if( $reporte->getCaConfirmarclie() ){
 				$this->form->setDestinatarios( explode(",",$reporte->getCaConfirmarclie()) );
 		}
 		//Etapas			
-		$c = new Criteria();
-		$c->add( TrackingEtapaPeer::CA_IMPOEXPO, $reporte->getCaImpoexpo() );		
+		$c = new Criteria();		
+		if(  $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
+			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, Constantes::IMPO );	
+		}else{
+			$c->add( TrackingEtapaPeer::CA_IMPOEXPO, $reporte->getCaImpoexpo() );	
+		}	
 		$c->addOr( TrackingEtapaPeer::CA_IMPOEXPO, null, Criteria::ISNULL );			
-		if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
+		if( $reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION  ){
 			$c->add( TrackingEtapaPeer::CA_TRANSPORTE, $reporte->getCaTransporte() );	
 			$c->addOr( TrackingEtapaPeer::CA_TRANSPORTE, null, Criteria::ISNULL );		
 		}
@@ -306,7 +310,7 @@ class traficosActions extends sfActions
 						
 			$bindValues["remitente"] = $request->getParameter("remitente");
 			$bindValues["idetapa"] = $request->getParameter("idetapa");
-			
+			$bindValues["asunto"] = $request->getParameter("asunto");
 			$bindValues["fchsalida"] = $request->getParameter("fchsalida");
 			$bindValues["horasalida"] = $request->getParameter("horasalida");
 			$bindValues["fchllegada"] = $request->getParameter("fchllegada");
@@ -560,6 +564,9 @@ class traficosActions extends sfActions
 		}
 		
 		$options["from"] =  $request->getParameter("remitente");
+		
+		$options["subject"] =  $request->getParameter("asunto");
+		
 			
 		//$address = array();
 		$status->send($address, $cc,  $att, $options);	
@@ -754,7 +761,13 @@ class traficosActions extends sfActions
 		$email->setCaUsuenvio( $user->getUserId() );
 		$email->setCaTipo( "Envío de cuadro" ); //Envío de Avisos
 		$email->setCaIdcaso( null );
-		$email->setCaFrom( $user->getEmail() );
+		
+		$from = $this->getRequestParameter("from");
+		if( $from ){
+			$email->setCaFrom( $from );
+		}else{
+			$email->setCaFrom( $user->getEmail() );
+		}
 		$email->setCaFromname( $user->getNombre() );
 		if( $adjuntar_excel ){		
 			$email->AddAttachment( $fileName );
@@ -783,7 +796,11 @@ class traficosActions extends sfActions
 			}
 		}
 		
-		$email->addCc( $this->getUser()->getEmail() );
+		if( $from ){
+			$email->addCc( $from );
+		}else{
+			$email->addCc( $this->getUser()->getEmail() );
+		}
 			
 		$email->setCaSubject( $this->getRequestParameter("asunto") );
 		$attachments = $this->getRequestParameter( "attachments" );

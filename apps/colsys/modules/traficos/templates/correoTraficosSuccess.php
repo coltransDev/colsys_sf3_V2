@@ -30,8 +30,13 @@ $message.=$usuario->getFirma();
 $contactos =  $cliente->getCaConfirmar();
 
 
+if($user->getIdSucursal()=="BOG" && $modo=="maritimo" ){	
+	$from = array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co');
+}else{
+	$from=array();
+}
 
-include_component("general", "formEmail", array("subject"=>$subject, "message"=>$message, "contacts"=>$contactos));
+include_component("general", "formEmail", array("subject"=>$subject, "message"=>$message, "contacts"=>$contactos, "from"=> $from ));
 
 
 

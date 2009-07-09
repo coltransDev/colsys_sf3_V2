@@ -200,7 +200,7 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 <br />
 Nota: Estimado Cliente, le recordamos que el tiempo de permanencia de mercancìa en los depositos es de un (1) mes, contados desde la fecha de llegada de la mercancìa, y pueden solicitar una posible prorroga por un (1) mes adicional acorde al Decreto 2557 del 06 de Julio 2007 art. 10<br />
 <br />
-Gracias por contar con nuestro servicio.<br />
+Cualquier informaci&oacute;n adicional que ustedes requieran, con gusto le ser&aacute;   suministrada..<br />
 <br />
 Cordial Saludo.<br />
 <br />

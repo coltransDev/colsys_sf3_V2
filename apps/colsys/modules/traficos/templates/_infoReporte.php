@@ -79,6 +79,12 @@
 						
 					}
 					echo link_to(image_tag("22x22/edit_add.gif")." Status","traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=status&token=".md5(time()));
+					
+					/*
+					if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
+						echo link_to(image_tag("22x22/edit_add.gif")." Rep. Exterior","reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte() );
+					}*/
+					
 				}	
 				?>
 			</div>

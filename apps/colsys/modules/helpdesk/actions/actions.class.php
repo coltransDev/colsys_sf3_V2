@@ -508,13 +508,9 @@ class helpdeskActions extends sfActions
 			$tarea->setCaUrl( "/helpdesk/verTicket?id=".$ticket->getCaIdticket() );
 			$tarea->setCaIdlistatarea( 1 );
 			$tarea->setCaFchcreado( time() );	
+									
+			$tarea->setTiempo( Utils::getFestivos(), $grupo->getCaMaxresponsetime() );				
 			
-			$festivos = Utils::getFestivos();
-			
-			
-			
-			$fchVencimiento = Utils::addTimeWorkingHours( $festivos , date("Y-m-d H:i:s"), $grupo->getCaMaxresponsetime());										
-			$tarea->setCaFchvencimiento( $fchVencimiento );
 			$tarea->setCaUsucreado( $this->getUser()->getUserId() );
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $texto );

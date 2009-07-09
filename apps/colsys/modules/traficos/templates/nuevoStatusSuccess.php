@@ -64,6 +64,24 @@ var mostrar=function( oid ){
 			break;
 	}
 	
+	switch( value ){
+		<?
+		foreach( $etapas as $etapa ){
+			if( $etapa->getIntroAsunto() ){
+			?>
+			case '<?=$etapa->getCaIdetapa()?>':						
+				document.getElementById("asuntoIntro").innerHTML = "<?=$etapa->getIntroAsunto()?>";								
+				break;
+			<?
+			}
+		}
+		?>
+		default:			
+			document.getElementById("asuntoIntro").innerHTML = "";				
+			break;
+	}
+	
+	
 	if( !document.form1.mensaje_dirty.value ){
 		switch( value ){
 			<?
@@ -115,6 +133,9 @@ var mostrar=function( oid ){
 			document.form1.introduccion.value = val.split("<br />").join("\n");				
 			break;
 	}
+	
+	
+	
 	
 }
 
@@ -203,7 +224,7 @@ if( !sfConfig::get("app_smtp_user") ){
 			if ( $reporte->getCaSeguro()=="Sí" ) {
 				$repseguro = $reporte->getRepSeguro();
 				if( $repseguro ){
-					$segConf = explode(",", $repseguro->getCaSeguroConf() );
+					
 					$usuario = UsuarioPeer::retrieveByPk( $repseguro->getCaSeguroConf() );	
 					if( $usuario ){
 						echo " &nbsp;&nbsp;&nbsp;Seguros: ".$usuario->getCaEmail()."<br />";
@@ -263,13 +284,30 @@ if( !sfConfig::get("app_smtp_user") ){
 			 ?>		
 			</div></td>
 		<td><div align="left"></div></td>
-		</tr>
-	<?
-	/*
+	</tr>
+	<?	
+	$asunto = "";
+				
+	$origen = $reporte->getOrigen()->getCaCiudad();
+	$destino = $reporte->getDestino()->getCaCiudad();
+	$cliente = $reporte->getCliente();			
+	
+	if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
+		$proveedor = substr($reporte->getProveedoresStr(),0,130);					
+		$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();					
+	}else{
+		$consignatario = $reporte->getConsignatario();
+		$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";	
+	}
+	
+	
+	
 	?>
 	<tr>
 		<td colspan="2"><div align="left"><b>Asunto:</b><br />
-				<?
+			<div id="asuntoIntro"></div> 
+			<?
+			 echo " Id.: ".$reporte->getCaConsecutivo()." ";
 			 echo $form['asunto']->renderError(); 			 
 			 echo $form->setDefault('asunto', $asunto); 
 			 echo $form['asunto']->render();
@@ -277,7 +315,7 @@ if( !sfConfig::get("app_smtp_user") ){
 		</div></td>
 	</tr>
 	<?
-	*/
+	
 	?>
 	<tr>
 		<td><div align="left"><b>Informaci&oacute;n de la carga</b></div></td>

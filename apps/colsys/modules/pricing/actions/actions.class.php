@@ -1116,7 +1116,7 @@ class pricingActions extends sfActions
 				'idrecargo'=>$recargo->getCaIdrecargo(),
 				'recargo'=>utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
 				'idconcepto'=>$recargo->getCaIdconcepto(),
-				'concepto'=>$recargo->getCaIdconcepto()==9999?"Recargo General":utf8_encode($recargo->getConcepto()->getCaConcepto()),
+				'concepto'=>$recargo->getCaIdconcepto()==9999?"Aplica para todos":utf8_encode($recargo->getConcepto()->getCaConcepto()),
 				'vlrrecargo'=>$recargo->getCaVlrrecargo(),
 				'vlrminimo'=>$recargo->getCaVlrminimo(),
 				'aplicacion'=>utf8_encode($recargo->getCaAplicacion()),

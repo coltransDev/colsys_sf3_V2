@@ -108,7 +108,7 @@ if( $nivel>0 ){
 						<?
 						}
 						?>
-						,['9999','Recargo General']
+						,['9999','Aplica para todos']
 					]
 				})
 	
@@ -313,7 +313,11 @@ var colModel = new Ext.grid.ColumnModel({
 			<?
 			}
 			?>
-		},
+		}
+		<?
+		}
+		?>
+		,
 		{
 			id: 'idmoneda',
 			header: "Moneda",
@@ -330,9 +334,7 @@ var colModel = new Ext.grid.ColumnModel({
 			}
 			?>
 		}
-		<?
-		}
-		?>
+		
 		,
 		{
 			id: 'observaciones',
@@ -482,7 +484,7 @@ var gridOnValidateEdit = function(e){
 					}
 					?>	
 					rec.set("idconcepto", '9999');
-					rec.set("concepto", 'Recargo General');	   				
+					rec.set("concepto", 'Aplica para todos');	   				
 					rec.set("idrecargo", r.data.idrecargo);
 					rec.set("idmoneda", "USD");
 					e.value = r.data.recargo;				
@@ -546,7 +548,7 @@ var gridOnValidateEdit = function(e){
 					}
 					?>						
 					rec.set("idconcepto", '9999');
-					rec.set("concepto", 'Recargo General');	   
+					rec.set("concepto", 'Aplica para todos');	   
 					rec.set("idlinea", r.data.idlinea);
 					rec.set("idmoneda", "USD");
 					e.value = r.data.linea;				

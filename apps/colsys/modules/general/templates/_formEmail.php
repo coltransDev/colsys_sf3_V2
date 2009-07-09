@@ -33,12 +33,27 @@ if( !sfConfig::get("app_smtp_user") ){
 		<th colspan="2">Nuevo correo Electronico</th>
 
 	</tr>
-	<tr>
+	<tr>		
 		<td width="454"><div align="left"><b>Remitente:</b> <br />
 			<?
-				echo "".$user->getNombre()." &lt;".$user->getEmail()."&gt;";
+			if( isset( $from ) && count($from)>0 ){
 				?>
+				<select name="from" id="from">
+					<?
+					foreach( $from as $email ){
+					?>
+					<option value="<?=$email?>" <?=$user->getEmail()==$email?'selected="selected"':''?>><?=$email?></option>
+					<?
+					}
+					?>
+				</select>
+				<?
+			}else{	
+				echo "".$user->getNombre()." &lt;".$user->getEmail()."&gt;";
+			}
+			?>
 		</div></td>
+		
 	    <td width="246">Contactos</td>
 	</tr>
 	<tr>

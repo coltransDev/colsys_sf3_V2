@@ -125,7 +125,7 @@ foreach( $agentes as $agente ){
 			}
 		?>
 	<tr class="<?=$contacto->getCaSugerido()?"yellow":"row0"?>">
-		<td colspan="4" ><div align="left"><b><?=$contacto->getCaNombre()?></b></div></td>
+		<td colspan="4" ><div align="left"><b><?=$contacto->getCaNombre()." ".$contacto->getCaApellido()?></b></div></td>
 		<td >
 		<?
 		if( $nivel>0 ){
