@@ -70,7 +70,7 @@ require_once("menu.php");
         }
     echo "  </SELECT></TD>";
     echo "  <TD Class=listar COLSPAN=2><B>Que contenga la cadena:</B><BR><INPUT TYPE='text' NAME='criterio' size='60'></TD>";
-    echo "  <TH ROWSPAN=4><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
+    echo "  <TH ROWSPAN=3><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
     echo "</TR>";
 
     echo "<TR>";
@@ -110,7 +110,7 @@ require_once("menu.php");
     echo "</TR>";
 
     echo "<TR>";
-    echo "  <TD Class=listar COLSPAN=3><TABLE WIDTH=100% BORDER=0 CELLSPACING=0>";
+    echo "  <TD Class=listar COLSPAN=4><TABLE WIDTH=100% BORDER=0 CELLSPACING=0>";
     echo "	<TR>";
 	echo "  	<TD Class=listar><B>Empresa:</B>";
 	$che_mem = "CHECKED";
@@ -129,14 +129,18 @@ require_once("menu.php");
 	echo "  	<TD Class=listar><B>Nivel de Riesgo:</B>";
     for ($i=1; $i < count($riesgos); $i++) {
          echo "<BR /><INPUT TYPE='CHECKBOX' NAME='riesgo[]' VALUE='".$riesgos[$i]."' $che_mem>".$riesgos[$i];
-		 $che_mem = "";
         }
 	echo "		</TD>";
 
 	echo "  	<TD Class=listar><B>Circular 170:</B>";
     for ($i=0; $i < count($circular); $i++) {
          echo "<BR /><INPUT TYPE='CHECKBOX' NAME='circular_std[]' VALUE='".$circular[$i]."' $che_mem>".$circular[$i];
-		 $che_mem = "";
+        }
+	echo "		</TD>";
+
+	echo "  	<TD Class=listar><B>Carta Garantia:</B>";
+    for ($i=0; $i < count($circular); $i++) {
+         echo "<BR /><INPUT TYPE='CHECKBOX' NAME='cartagtia_std[]' VALUE='".$circular[$i]."' $che_mem>".$circular[$i];
         }
 	echo "		</TD>";
 
@@ -254,16 +258,24 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
 		$sub_cad = substr($sub_cad,0,strlen($sub_cad)-1).")";
 		$condicion.= $sub_cad;
 	}
+	if (isset($cartagtia_std)){
+		$sub_cad = " and ca_stdcarta_gtia in (";
+		foreach($cartagtia_std as $estado){
+			$sub_cad.= "'".$estado."',";
+		}
+		$sub_cad = substr($sub_cad,0,strlen($sub_cad)-1).")";
+		$condicion.= $sub_cad;
+	}
 		
 	if (isset($listaclinton)){
 		$condicion.= " and ca_listaclinton = '$listaclinton'";
 	}
 	if (isset($leyinsolvencia)){
 		$condicion.= " and ca_leyinsolvencia = '$leyinsolvencia'";
-	}	
+	}
 	if (!$rs->Open("select * from vi_clientes $condicion")) {                  // Selecciona todos lo registros de la tabla Trasportistas
 		echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-		echo "<script>document.location.href = 'entrada.php';</script>";
+		echo "<script>document.location.href = 'clientes.php';</script>";
 		exit; }
 	$registros = (!$rs->IsEmpty())?"ca_idcliente = ".$rs->Value('ca_idcliente'):"false";
 	$cn =& DlRecordset::NewRecordset($conn);
@@ -420,7 +432,7 @@ require_once("menu.php");
 		   echo "  <TD Class=listar style='$vetado' ROWSPAN=8 style='text-align: center;'>";
 		   echo "    <TABLE>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"concliente.php?id=".$rs->Value('ca_idcliente')."\"' style='color=blue;'><BR><IMG src='graficos/contacto.gif'><BR>Contactos</TD></TR>";
-		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"' style='color=blue;'><BR><IMG src='graficos/encuesta.gif'><BR>Encuestas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
+		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"enccliente.php?id=".$rs->Value('ca_idcliente')."\"' style='color=blue;'><BR><IMG src='graficos/encuesta.gif'><BR>Visitas<BR>".$rs->Value('ca_fchvisita')."</TD></TR>";
 		   echo "      <TR><TD style='visibility: $visible;' Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:liberar(".$rs->Value('ca_idcliente').");' style='color=blue;'><BR><IMG src='graficos/no.gif'><BR>Liberar Cliente</TD></TR>";
 		   echo "      <TR><TD Class=mostrar style='text-align: center;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href = \"/clientes/clavesTracking?id=".$rs->Value('ca_idcliente')."\"' style='color=blue;'><BR><IMG src='graficos/tracking.gif'><BR>Tracking</TD></TR>";
 		   echo "    </TABLE>";
@@ -1629,7 +1641,7 @@ require_once("menu.php");
                  exit;
                 }
              $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-             if (!$tm->Open("select * from tb_comcliente where ca_idcliente = ".$id." order by ca_fchfirmado DESC")) {    // Mueve el apuntador al registro que se desea eliminar
+             if (!$tm->Open("select oid as ca_oid, * from tb_comcliente where ca_idcliente = ".$id." and ca_usuanulado is null order by ca_fchfirmado DESC")) {    // Mueve el apuntador al registro que se desea eliminar
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -1644,6 +1656,11 @@ require_once("menu.php");
              echo "      return (true);";
              echo "  return (false);";
              echo "}";
+             echo "function anular_vigencia(element){";
+			 echo "  if (confirm(\"¿Esta seguro que desea Anular la Vigencia?\")) {";
+             echo "  	document.location.href = 'clientes.php?accion=anular_vig\&id=$id\&oid='+element.name;";
+             echo "  }";
+             echo "}";
              echo "</script>";
              echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
              echo "</HEAD>";
@@ -1655,40 +1672,41 @@ require_once("menu.php");
              echo "<FORM METHOD=post NAME='contrato' ACTION='clientes.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
              echo "<TABLE CELLSPACING=1 WIDTH=400>";
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta eliminando
-             echo "<TH Class=titulo COLSPAN=3>Información del Cliente</TH>";
+             echo "<TH Class=titulo COLSPAN=4>Información del Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
-             echo "  <TD Class=mostrar COLSPAN=2 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=2>&nbsp&nbsp<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
              echo "</TR>";
-             echo "<TH Class=titulo COLSPAN=3>Histórico de Vigencias Firmadas</TH>";
+             echo "<TH Class=titulo COLSPAN=4>Histórico de Vigencias Firmadas</TH>";
              echo "<TR>";
              echo "  <TD Class=invertir>Fecha Firma</TD>";
              echo "  <TD Class=invertir>Fecha Vencimiento</TD>";
-             echo "  <TD Class=invertir>Registro</TD>";
+             echo "  <TD Class=invertir COLSPAN=2>Registro</TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fchfirmado' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fchvencimiento' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-             echo "  <TD Class=mostrar></TD>";
+             echo "  <TD Class=mostrar COLSPAN=2></TD>";
              echo "</TR>";
              while (!$tm->Eof() and !$tm->IsEmpty()) {
                  echo "<TR>";
                  echo "  <TD Class=mostrar>".$tm->Value('ca_fchfirmado')."</TD>";
                  echo "  <TD Class=mostrar>".$tm->Value('ca_fchvencimiento')."</TD>";
                  echo "  <TD Class=mostrar>".$tm->Value('ca_fchcreado')."<BR>".$tm->Value('ca_usucreado')."</TD>";
+                 echo "  <TD Class=mostrar><IMG NAME='".$tm->Value('ca_oid')."' src='graficos/no.gif' alt='Anular la Vigencia de la Carta' ONCLICK='anular_vigencia(this);'></TD>";
                  echo "</TR>";
                  $tm->MoveNext();
              }
@@ -2018,7 +2036,7 @@ elseif (isset($accion)) {                                                      /
              break;
              }
         case 'Liberar': {                                                   // El Botón Actualizar fue pulsado
-             if (!$rs->Open("update tb_clientes set ca_vendedor = '', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
+             if (!$rs->Open("update tb_clientes set ca_vendedor = null, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idcliente = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;
@@ -2033,9 +2051,19 @@ elseif (isset($accion)) {                                                      /
                 }
              break;
              }
+        case 'anular_vig': {                                                     // Anula una Vigencia de Carta de Garantía de un Cliente
+             if (!$rs->Open("update tb_comcliente set ca_usuanulado = '$usuario', ca_fchanulado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') where oid = $oid")) {
+                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'clientes.php';</script>";
+                 exit;
+                }
+             break;
+             }
         }
    $cadena = "";
-   if(isset($id) and $accion != 'Eliminar'){
+   if(isset($id) and $accion == 'anular_vig') {
+      $cadena = "?boton=Contrato\&id=$id";
+   } else if(isset($id) and $accion != 'Eliminar'){
       $cadena = "?modalidad=N.i.t.\&criterio=$id";
    }
    echo "<script>document.location.href = 'clientes.php$cadena';</script>";  // Retorna a la pantalla principal de la opción

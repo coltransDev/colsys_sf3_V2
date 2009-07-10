@@ -3311,10 +3311,12 @@ require_once("menu.php");
                     }
                     $cu->MoveNext();
                    }
+			 $fchinicial = (strlen($tm->Value('ca_fchinicial'))==0)?date(date("Y")."-"."01"."-"."01"):$tm->Value('ca_fchinicial');
+			 $fchfinal = (strlen($tm->Value('ca_fchfinal'))==0)?date(date("Y")."-"."12"."-"."31"):$tm->Value('ca_fchfinal');
              echo "  </TD>";
              echo "  <TD Class=mostrar>Depósito:<BR><INPUT TYPE='TEXT' NAME='coddeposito' VALUE='".$tm->Value('ca_coddeposito')."' SIZE=4 MAXLENGTH=4>&nbsp;<IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0' onclick='window_find();'></TD>";
-             echo "  <TD Class=mostrar>Fch.Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' VALUE='".$tm->Value('ca_fchinicial')."' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
-             echo "  <TD Class=mostrar>Fch.Final:<BR><INPUT TYPE='TEXT' NAME='fchfinal' VALUE='".$tm->Value('ca_fchfinal')."' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+             echo "  <TD Class=mostrar>Fch.Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' VALUE='$fchinicial' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
+             echo "  <TD Class=mostrar>Fch.Final:<BR><INPUT TYPE='TEXT' NAME='fchfinal' VALUE='$fchfinal' SIZE=12 ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
              echo "  <TD Class=mostrar>Condiciones:<BR><SELECT NAME='idcondiciones'>";  // Llena el cuadro de lista con los valores de la tabla Parametros
              $cu->MoveFirst();
              while (!$cu->Eof()) {
@@ -3808,7 +3810,9 @@ require_once("menu.php");
 			 $xml_pal66->setAttribute("cdde", $arribo_array[0]);
 			 $xml_pal66->setAttribute("ccd", $arribo_array[1]);
 			 $xml_pal66->setAttribute("cpa", $arribo_array[2]);
-			 $xml_pal66->setAttribute("cdep", $dm->Value("ca_coddeposito"));
+			 if ($dm->Value("ca_coddeposito") != ""){
+				 $xml_pal66->setAttribute("cdep", $dm->Value("ca_coddeposito"));
+			 }
 
 			 $mbls = explode("|",$rs->Value('ca_mbls'));
 			 $xml_pal66->setAttribute("ndv", $mbls[0]);
@@ -3906,16 +3910,35 @@ require_once("menu.php");
 					exit;
 				}
 				
+				if (!$tm->Open("select min(ca_numero_resv) as ca_numero_resv from tb_dianreservados where ca_anno is null")) {    // Toma el siguiente número disponible de la tabla de Reservados.
+					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+					echo "<script>document.location.href = 'inosea.php';</script>";
+					exit;
+				}
+				if ($tm->Value("ca_numero_resv") == "") {    // Verifica las Disponibilidad de Números de Documentos
+					echo "<script>alert(\"No hay Números de Documento Disponibles para este Envío. Solicite un nuevo grupo en la Página de la Dian\");</script>";     // Muestra el mensaje de error
+					echo "<script>document.location.href = 'inosea.php';</script>";
+					exit;
+				} else {
+					$iddocactual = $tm->Value("ca_numero_resv");
+					if (!$tm->Open("update tb_dianreservados set ca_anno = '".substr($dm->Value("ca_fchtrans"),0,4)."', ca_numenvio = '$NumEnvio', ca_fchreservado = '".date("d M Y H:i:s", $FecEnvio)."', ca_usureservado = '$usuario' where ca_numero_resv = '$iddocactual'")) {    // Actualiza la tabla de Reservados.
+						echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+						echo "<script>document.location.href = 'inosea.php';</script>";
+						exit;
+					}
+				}
+
 				$xml_hijo->setAttribute("ideDoc", $iddocactual);
 				if ($dm->Value("ca_iddocanterior") != ""){
 					$xml_hijo->setAttribute("hnfa", $dm->Value("ca_iddocanterior"));
 				}
 				$xml_hijo->setAttribute("hdca", $dc->Value("ca_dispocarga"));
 
+				$destino = ($ic->Value("ca_continuacion")!="N/A")?$rs->Value("ca_destino"):$ic->Value("ca_continuacion_dest");
 				$arribo_array = "";
 				$cu->MoveFirst();
 				while (!$cu->Eof()) {
-					if ($cu->Value('ca_identificacion')==9 and $cu->Value('ca_valor')==$rs->Value("ca_destino")) {
+					if ($cu->Value('ca_identificacion')==9 and $cu->Value('ca_valor')==$destino) {
 						$arribo_array = explode("|",$cu->Value('ca_valor2'));
 						break;
 					}
@@ -3924,14 +3947,22 @@ require_once("menu.php");
 				$xml_hijo->setAttribute("hdpt", $arribo_array[0]);
 				$xml_hijo->setAttribute("hciu", $arribo_array[1]);
 				$xml_hijo->setAttribute("hpa", $arribo_array[2]);
-				$xml_hijo->setAttribute("hdep", $dc->Value("ca_coddeposito"));
+
+				if ($dc->Value("ca_coddeposito") != ""){
+					$xml_hijo->setAttribute("hdep", $dc->Value("ca_coddeposito"));
+				}
+
 				$xml_hijo->setAttribute("tdv2", $dc->Value("ca_tipodocviaje"));
 				$xml_hijo->setAttribute("hijo", $ic->Value("ca_hbls"));
 				$xml_hijo->setAttribute("hfe", $ic->Value("ca_fchhbls"));
 
 				// =========================== Remitente ===========================
 				$xml_hijo->setAttribute("hdo2", 43);
-				$xml_hijo->setAttribute("hrs2", htmlentities($rp->Value("ca_nombre_pro")));
+				if (strlen($rp->Value("ca_nombre_pro")) != 0) {
+					$xml_hijo->setAttribute("hrs2", htmlentities($rp->Value("ca_nombre_pro")));
+				} else {
+					$xml_hijo->setAttribute("hrs2", htmlentities($rp->Value("ca_agente")));
+				}
 
 				// =========================== Destinatario ===========================
 				$xml_hijo->setAttribute("hdo3", 31);
@@ -3964,12 +3995,18 @@ require_once("menu.php");
 				$xml_hijo->setAttribute("hvf", $dc->Value("ca_vlrflete"));
 
 				$contenedores = explode("|", $ic->Value("ca_contenedores"));
-				$num_cont = count($contenedores);
-				$xml_hijo->setAttribute("htco", $num_cont);
+
+				if ( $dc->Value("ca_tipocarga") == 2 ){
+					$num_cont = count($contenedores);
+					$xml_hijo->setAttribute("htco", $num_cont);
+				}else{
+					$xml_hijo->setAttribute("htco", 0);
+				}
+
 				$xml_hijo->setAttribute("htb", $ic->Value("ca_numpiezas"));
-				$xml_hijo->setAttribute("htpb", $ic->Value("ca_peso"));
+				$xml_hijo->setAttribute("htpb", round($ic->Value("ca_peso"),2));
 				$ntb+= $ic->Value("ca_numpiezas");  // Número Total Bultos
-				$tpb+= $ic->Value("ca_peso");  // Total Peso Bruto
+				$tpb+= round($ic->Value("ca_peso"),2);  // Total Peso Bruto
 				
 				$tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 				if (!$tm->Open("select ca_idtrafico, ca_idciudad from vi_ciudades where ca_idciudad = '".$rp->Value("ca_origen")."'")) {    // Trae información de la Ciudad y Tráfico de Origen
@@ -3983,7 +4020,7 @@ require_once("menu.php");
 				foreach (explode("|",$ic->Value('ca_contenedores')) as $parciales){
 					$parcial = explode(";",$parciales);
 					$unidades_carga[$parcial[0]]['pz'] = $parcial[1];
-					$unidades_carga[$parcial[0]]['ps'] = $parcial[2];
+					$unidades_carga[$parcial[0]]['ps'] = round($parcial[2],2);
 					$unidades_carga[$parcial[0]]['cn'] = 1;
 
 					$grp = 0;
@@ -4086,13 +4123,6 @@ require_once("menu.php");
 					$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
 				}
 	
-				// Se Crear el elemento contenedor
-				if ($dm->Value("ca_tipodocviaje") == 10){
-					$xml_contenedor = $xml->createElement( "contenedor" );
-					$xml_contenedor->setAttribute("contp", str_replace("-","",$ie->Value("ca_idequipo")));
-					$xml_h167->appendChild( $xml_contenedor );
-				}
-
 				$grp = 0;
 				$unidades_carga = array();
 				// Se Crear el elemento h267
@@ -4102,14 +4132,14 @@ require_once("menu.php");
 					foreach($contenedores as $cargas){
 						$carga = explode(";",$cargas);
 						$unidades_carga[$carga[0]]['pz']+= $carga[1];
-						$unidades_carga[$carga[0]]['ps']+= $carga[2];
+						$unidades_carga[$carga[0]]['ps']+= round($carga[2],2);
 						$unidades_carga[$carga[0]]['cn']+= 1;
 						if ($ie->Value("ca_idequipo") == $carga[0]){
 							$grp++;
 							$xml_h267 = $xml->createElement( "h267" );
 							$xml_h267->setAttribute("grp", $grp);
 							$xml_h267->setAttribute("bul", $carga[1]);
-							$xml_h267->setAttribute("peso", $carga[2]);
+							$xml_h267->setAttribute("peso", round($carga[2],2));
 							$xml_h167->appendChild( $xml_h267 );
 							// Se Crear el elemento item
 							$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";

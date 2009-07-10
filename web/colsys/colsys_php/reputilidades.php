@@ -17,6 +17,7 @@ $titulo = 'Reporte de Análisis de Utilidades';
 $meses  = array( "%" => "Todos los Meses", "01" => "Enero", "02" => "Febrero", "03" => "Marzo", "04" => "Abril", "05" => "Mayo", "06" => "Junio", "07" => "Julio", "08" => "Agosto", "09" => "Septiembre", "10" => "Octubre", "11" => "Noviembre", "12" => "Diciembre" );
 $estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisional" => "ca_estado = \"Provisional\"","Casos Abiertos" => "ca_estado = \"Abierto\"","Todos los Casos" => "true");
 $modalidades = array( "%" => "Listar Todas", "FCL" => "FCL", "LCL" => "LCL", "COLOADING" => "COLOADING", "PROYECTOS" => "PROYECTOS");
+$reportes = array( "utilidad" => "Utilidad de la Referencia", "xsobreventa" => "Utilidad en Sobreventa", "xdeducciones" => "Recaudo en Deducciones");
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
@@ -27,6 +28,20 @@ if (!isset($traorigen) and !isset($boton) and !isset($accion)){
     echo "<HTML>";
     echo "<HEAD>";
     echo "<TITLE>$titulo</TITLE>";
+    echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
+    echo "function mostrar_lista(element){";
+    echo "    if (element.value == 'utilidad'){";
+	echo "       document.getElementById('con_costo').style.display = 'none';";
+	echo "       document.getElementById('con_deduccion').style.display = 'none';";
+    echo "    }else if (element.value == 'xsobreventa') {";
+	echo "       document.getElementById('con_costo').style.display = 'block';";
+	echo "       document.getElementById('con_deduccion').style.display = 'none';";
+    echo "    }else if (element.value == 'xdeducciones') {";
+	echo "       document.getElementById('con_costo').style.display = 'none';";
+	echo "       document.getElementById('con_deduccion').style.display = 'block';";
+    echo "    }";
+    echo "}";
+    echo "</script>";
     echo "</HEAD>";
     echo "<BODY>";
 require_once("menu.php");
@@ -78,7 +93,7 @@ require_once("menu.php");
         echo " <OPTION VALUE='".$val."'>".$clave;
         }
     echo "  </SELECT></TD>";
-    echo "  <TH style='vertical-align:center;' ROWSPAN=2><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
+    echo "  <TH style='vertical-align:center;' ROWSPAN=3><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
     echo "</TR>";
 
     echo "<TR>";
@@ -86,8 +101,39 @@ require_once("menu.php");
     echo "  <TD Class=listar COLSPAN=3>Nombre del Cliente:<BR><INPUT TYPE='text' NAME='compania' size='60'></TD>";
     echo "</TR>";
 
+    echo "<TR>";
+    echo "  <TD Class=listar COLSPAN=2>Reportar: <IMG SRC='./graficos/nuevo.gif' border=0 ALT='Utilidad Desglozada por Concepto'><BR><SELECT NAME='reportar' ONCHANGE='mostrar_lista(this);'>";
+    while (list ($clave, $val) = each ($reportes)) {
+        echo " <OPTION VALUE='".$clave."'>".$val;
+        }
+    echo "  </SELECT></TD>";
+
+    if (!$tm->Open("select DISTINCT ca_costo from tb_costos order by ca_costo")) {       // Selecciona todos lo registros de la tabla Costos
+        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'reputilidades.php';</script>";
+        exit; }
+    $tm->MoveFirst();
+    echo "  <TD Class=listar COLSPAN=3>Seleccione el Concepto:<BR><SELECT ID=con_costo NAME='concepto[xsobreventa]' style='display:none'>";
+    while ( !$tm->Eof()) {
+            echo " <OPTION VALUE='".$tm->Value('ca_costo')."'>".$tm->Value('ca_costo')."</OPTION>";
+            $tm->MoveNext();
+          }
+    if (!$tm->Open("select DISTINCT ca_deduccion from tb_deducciones where ca_transporte = 'Marítimo' and ca_impoexpo = 'Importación' order by ca_deduccion")) {       // Selecciona todos lo registros de la tabla Deducciones
+        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'reputilidades.php';</script>";
+        exit; }
+    $tm->MoveFirst();
+    echo "  </SELECT><SELECT ID=con_deduccion NAME='concepto[xdeducciones]' style='display:none'>";
+    while ( !$tm->Eof()) {
+            echo " <OPTION VALUE='".$tm->Value('ca_deduccion')."'>".$tm->Value('ca_deduccion')."</OPTION>";
+            $tm->MoveNext();
+          }
+
+    echo "  </SELECT></TD>";
+    echo "</TR>";
+
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=captura COLSPAN=7></TD>";
+    echo "  <TD Class=captura COLSPAN=8></TD>";
     echo "</TR>";
 
     echo "</TABLE><BR>";
@@ -103,20 +149,37 @@ echo "</BODY>";
     echo "</HTML>";
     }
 elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
-    set_time_limit(360);
+	set_time_limit(360);
     SetCookie ("cadena", $criterio);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    if (isset($compania) and $compania != '') {
-        $condicion= "* from vi_inocomisiones_sea where upper(ca_compania) like upper('%".strtolower($compania)."%') and ";
-    }else{
-        $condicion= "* from vi_inoutilidades_sea where";
-        if (isset($comparable) and $comparable != 0) {
-            $condicion.= " ca_utilxcbm ".$signo." ".$comparable. " and";
-        }
-    }
-    $condicion.= " substr(ca_referencia,8,2) like '$mes' and substr(ca_referencia,15) = ".substr($ano, -1)." and ca_traorigen like '%$traorigen%' and ca_modalidad like '%$modalidad%' and ". str_replace("\"","'",$casos);
+    if ($reportar == 'utilidad') {
+		$col_one = "Util.x CBM";
+		$col_two = "Utilidad";
+		if (isset($compania) and $compania != '') {
+			$condicion= "* from vi_inocomisiones_sea iu where upper(ca_compania) like upper('%".strtolower($compania)."%') and ";
+		}else{
+			$condicion= "* from vi_inoutilidades_sea iu where";
+			if (isset($comparable) and $comparable != 0) {
+				$condicion.= " ca_utilxcbm ".$signo." ".$comparable. " and";
+			}
+		}
+	}elseif ($reportar == 'xsobreventa') {
+		$col_one = "Concepto";
+		$col_two = "Util.x Sobreventa";
+		$condicion = "iu.*, isv.ca_util_costo from vi_inoutilidades_sea iu ";
+		$condicion.= "LEFT OUTER JOIN (select ca_referencia, ca_costo, sum(round(ca_venta::numeric-(ca_tcambio::numeric*ca_neto::numeric),2)) as ca_util_costo from tb_inocostos_sea ic RIGHT OUTER JOIN tb_costos ct ON (ic.ca_idcosto = ct.ca_idcosto and ct.ca_costo = '$concepto[$reportar]') ";
+		$condicion.= "group by ca_referencia, ca_costo) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
+	}elseif ($reportar == 'xdeducciones') {
+		$col_one = "Deducible";
+		$col_two = "Vlr.Recaudo";
+		$condicion = "iu.*, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu ";
+		$condicion.= "LEFT OUTER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id LEFT OUTER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
+		$condicion.= "group by ca_referencia, ca_deduccion) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
+	}
+    $condicion.= " substr(iu.ca_referencia,8,2) like '$mes' and substr(iu.ca_referencia,15) = ".substr($ano, -1)." and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and ". str_replace("\"","'",$casos);
+
     $co =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$rs->Open("select $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -153,11 +216,12 @@ require_once("menu.php");
         echo "<TH>Puerto</TH>";
         echo "<TH>Destino</TH>";
         echo "<TH>Modalidad</TH>";
-        echo "<TH>Utilidad</TH>";
-        echo "<TH>Util.x CBM</TH>";
+        echo "<TH>$col_one</TH>";
+        echo "<TH>$col_two</TH>";
         echo "<TH>Equipos</TH>";
         echo "<TH>Clientes</TH>";
         echo "<TH>Referencia</TH>";
+		$gra_tot = 0;
         $mes_mem = '';
         $nom_tra = '';
         $mod_mem = $rs->Value('ca_modalidad');
@@ -176,6 +240,15 @@ require_once("menu.php");
                $sub_fac = 0;
               }
            if ($nom_tra != $rs->Value('ca_traorigen')) {
+               if (strlen($nom_tra) != 0){
+				   echo "<TR>";
+				   echo "  <TD Class=resaltar style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=4>SubTotal $nom_tra:</TD>";
+				   echo "  <TD Class=resaltar style='font-size: 10px;font-weight:bold;text-align:right'>".number_format($sub_tot)."</TD>";
+				   echo "  <TD Class=resaltar COLSPAN=3></TD>";
+				   echo "</TR>";
+			   }
+               $gra_tot+= $sub_tot;
+               $sub_tot = 0;
                echo "<TR>";
                echo "  <TD Class=invertir style='font-size: 10px;font-weight:bold;' COLSPAN=5>".strtoupper($rs->Value('ca_traorigen'))."</TD>";
                echo "  <TD Class=invertir style='font-size: 9px;'>";
@@ -192,9 +265,20 @@ require_once("menu.php");
            echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_ciuorigen')."</TD>";
            echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_ciudestino')."</TD>";
            echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_modalidad')."</TD>";
-           echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_cbm)."</TD>";
-           echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_utilxcbm'))."</TD>";
-    
+           if ($reportar == 'utilidad') {
+			   echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_utilxcbm'))."</TD>";
+			   echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($utl_cbm)."</TD>";
+               $sub_tot+= $utl_cbm;
+           }elseif ($reportar == 'xsobreventa') {
+			   echo "  <TD Class=valores style='font-size: 9px;$back_col'>$concepto[$reportar]</TD>";
+			   echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_util_costo'))."</TD>";
+               $sub_tot+= $rs->Value('ca_util_costo');
+           }elseif ($reportar == 'xdeducciones') {
+			   echo "  <TD Class=valores style='font-size: 9px;$back_col'>$concepto[$reportar]</TD>";
+			   echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_recaudo_deduccion'))."</TD>";
+               $sub_tot+= $rs->Value('ca_recaudo_deduccion');
+           }
+   
            if (!$eq->Open("select ca_referencia, ca_concepto, sum(ca_cantidad) as ca_cantidad from vi_inoequipos_sea where ca_referencia = '".$rs->Value('ca_referencia')."' group by ca_referencia, ca_concepto")) {       // Selecciona todos lo registros de la tabla Clientes de una referencia Ino-Marítimo
                echo "<script>alert(\"".addslashes($eq->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                echo "<script>document.location.href = 'entrada.php';</script>";
@@ -238,6 +322,16 @@ require_once("menu.php");
                $mod_mem = $rs->Value('ca_modalidad');
            }
         }
+		echo "<TR>";
+		echo "  <TD Class=resaltar style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=4>SubTotal $nom_tra:</TD>";
+		echo "  <TD Class=resaltar style='font-size: 10px;font-weight:bold;text-align:right'>".number_format($sub_tot)."</TD>";
+		echo "  <TD Class=resaltar COLSPAN=3></TD>";
+		echo "</TR>";
+		echo "<TR>";
+		echo "  <TD Class=titulo style='font-size: 9px; font-weight:bold;text-align:right' COLSPAN=4>GRAN TOTAL:</TD>";
+		echo "  <TD Class=titulo style='font-size: 10px;font-weight:bold;text-align:right'>".number_format($gra_tot)."</TD>";
+		echo "  <TD Class=titulo COLSPAN=3></TD>";
+		echo "</TR>";
     }else {
 		echo "<TR>";
 		echo "  <TH Class=titulo COLSPAN=9>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
