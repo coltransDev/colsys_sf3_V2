@@ -19,9 +19,6 @@ $estados = array("Casos Cerrados" => "ca_estado <> \"Abierto\"","Cierre Provisio
 
 include_once 'include/datalib.php';                                            // Incorpora la libreria de funciones, para accesar leer bases de datos
 require_once("checklogin.php");                                                                 // Captura las variables de la sessión abierta
- 
- 
-
 
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 if (!isset($traorigen) and !isset($boton) and !isset($accion)){
@@ -118,6 +115,7 @@ echo "</BODY>";
     echo "</HTML>";
     }
 elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
+    set_time_limit(0);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 /*	
@@ -135,12 +133,22 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
         exit; }
 */
     $condicion = "where substr(ca_referencia,8,2)::text = '$mes' and substr(ca_referencia,15)::text = '".($ano-2000)."' and ca_trafico like '%$trafico%'"." and ca_traorigen like '%$traorigen%' and ".str_replace("\\","", str_replace("\"","'",$casos))." and ca_sucursal like '%$sucursal%'";
-    if (!$rs->Open("select DISTINCT ca_referencia, ca_trafico, ca_traorigen, ca_modal, ca_observaciones from vi_inoconsulta_sea $condicion order by ca_trafico, ca_modal, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
+    if (!$rs->Open("select DISTINCT ca_referencia, ca_trafico, ca_traorigen, ca_modal, ca_observaciones, ca_fcharribo, ca_iddocactual, ca_fchenvio, ca_usuenvio from vi_inoconsulta_sea $condicion order by ca_trafico, ca_modal, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 		exit( "select * from vi_inomaestra_sea $condicion order by ca_trafico, ca_modal, ca_referencia" );	
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 
+	$tm =& DlRecordset::NewRecordset($conn);
+	if (!$tm->Open("select ca_fchfestivo from tb_festivos where to_char(ca_fchfestivo,'YYYY')::int = $ano and to_char(ca_fchfestivo,'mm')::int = $mes")) {        // Selecciona todos lo registros de la tabla Festivos
+		echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+		echo "<script>document.location.href = 'entrada.php';</script>";
+		exit; }
+	$festi = array();
+	while (!$tm->Eof() and !$tm->IsEmpty()) {
+		$festi[] = $tm->Value('ca_fchfestivo');
+		$tm->MoveNext();
+	}
 
     $cl =& DlRecordset::NewRecordset($conn);
     $eq =& DlRecordset::NewRecordset($conn);
@@ -153,14 +161,17 @@ require_once("menu.php");
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
     echo "<CENTER>";
     echo "<FORM METHOD=post NAME='informe' ACTION='repreferencia.php'>";       // Hace una llamado nuevamente a este script pero con
-    echo "<TABLE WIDTH=650 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
+    echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
     echo "  <TH Class=titulo COLSPAN=7>COLTRANS S.A.<BR>$titulo<BR>$meses[$mes]/$ano</TH>";
     echo "</TR>";
     echo "<TH WIDTH=50>Item</TH>";
     echo "<TH WIDTH=100>Referencia</TH>";
-    echo "<TH WIDTH=20>Estado</TH>";
-    echo "<TH WIDTH=500>Observaciones</TH>";
+    echo "<TH WIDTH=80>Estado</TH>";
+    echo "<TH WIDTH=70>E.T.A.</TH>";
+    echo "<TH WIDTH=150>Id.Doc</TH>";
+    echo "<TH WIDTH=70>Pres.Muisca</TH>";
+    echo "<TH WIDTH=70>Usu.Envío</TH>";
     $nom_tra = '';
     $sub_ref = '';
     $num_ref = 0;
@@ -169,30 +180,71 @@ require_once("menu.php");
 
        if ($nom_tra != $rs->Value('ca_trafico')) {
            echo "<TR>";
-           echo "  <TD Class=invertir style='font-weight:bold;' COLSPAN=4>TRAFICOS DEL CODIGO: ".$rs->Value('ca_trafico')."</TD>";
+           echo "  <TD Class=invertir style='font-weight:bold;' COLSPAN=7>TRAFICOS DEL CODIGO: ".$rs->Value('ca_trafico')."</TD>";
            echo "</TR>";
            $nom_tra = $rs->Value('ca_trafico');
            $num_ref = 0;
           }
        if ($sub_ref != substr($rs->Value('ca_referencia'),0,3)) {
            echo "<TR HEIGHT=5>";
-           echo "  <TD Class=titulo COLSPAN=4></TD>";
+           echo "  <TD Class=titulo COLSPAN=7></TD>";
            echo "</TR>";
            $sub_ref = substr($rs->Value('ca_referencia'),0,3);
            $num_ref = 0;
           }
        $num_ref++;
+
+       list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date('Y-m-d H:i:s'), "%d-%d-%d %d:%d:%d");
+       $tstamp_actual = mktime($hor, $min, $seg, $mes, $dia, $ano);
+       list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fcharribo'), "%d-%d-%d %d:%d:%d");
+       $tstamp_fcharribo = mktime($hor, $min, $seg, $mes, $dia, $ano);
+	   if ($tstamp_actual > $tstamp_fcharribo and $rs->Value('ca_iddocactual')==""){
+	       $class = "resaltar";
+	   }else{
+	       $dif_mem = calc_dif($festi, $tstamp_actual, $tstamp_fcharribo);
+		   if ($dif_mem > 24){
+		       $class = "normal";
+		   }else if ($dif_mem > 9 and $rs->Value('ca_iddocactual')==""){
+		       $class = "destacar";
+		   }else if ($dif_mem <= 9 and $rs->Value('ca_iddocactual')==""){
+		       $class = "negativo";
+		   }else{
+		       $class = "listar";
+		   }
+	   }
+
        echo "<TR>";
        echo "  <TD Class=listar style='font-size: 9px;$back_col'>$num_ref</TD>";
        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_referencia')."</TD>";
        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_estado')."</TD>";
-       echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_observaciones')."</TD>";
+       echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_fcharribo')."</TD>";
+       echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_iddocactual')."</TD>";
+       echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_fchenvio')."</TD>";
+       echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_usuenvio')."</TD>";
        echo "</TR>";
+	   if ($rs->Value('ca_observaciones') != ''){
+		   echo "<TR>";
+		   echo "  <TD Class=listar></TD>";
+		   echo "  <TD Class=listar COLSPAN=6 style='font-size: 9px;$back_col'><b>Observaciones: </b>".nl2br($rs->Value('ca_observaciones'))."</TD>";
+		   echo "</TR>";
+	   }
        $rs->MoveNext();
       }
     echo "</TABLE><BR>";
 
-    
+    echo "<TABLE WIDTH=600 CELLSPACING=1>";
+	echo "<TR>";
+    echo "  <TD Class=titulo COLSPAN=5 style='font-size: 9px;$back_col font-weight:bold;'>Convenciones</TD>";
+	echo "</TR>";
+	echo "<TR>";
+    echo "  <TD WIDTH='20%' Class=resaltar style='text-align: center; font-size: 9px;$back_col'>No se Reportó</TD>";
+    echo "  <TD WIDTH='20%' Class=destacar style='text-align: center; font-size: 9px;$back_col'>Próximo a vencer</TD>";
+    echo "  <TD WIDTH='20%' Class=negativo style='text-align: center; font-size: 9px;$back_col'>Menos de 24 Horas</TD>";
+    echo "  <TD WIDTH='20%' Class=normal style='text-align: center; font-size: 9px;$back_col'>Normal</TD>";
+    echo "  <TD WIDTH='20%' Class=listar style='text-align: center; font-size: 9px;$back_col'>Reportado</TD>";
+	echo "</TR>";
+    echo "</TABLE><BR>";
+
     echo "<TABLE CELLSPACING=10>";
     echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Regresar' ONCLICK='javascript:document.location.href = \"repreferencia.php\"'></TH>";  // Cancela la operación
     echo "</TABLE>";

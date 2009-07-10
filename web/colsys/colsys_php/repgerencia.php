@@ -109,7 +109,7 @@ echo "</BODY>";
     echo "</HTML>";
     }
 elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
-    set_time_limit(600);
+    set_time_limit(0);
     SetCookie ("cadena", $criterio);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
