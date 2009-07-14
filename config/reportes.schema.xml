@@ -24,6 +24,8 @@
 		<column name="ca_informar_cons" type="varchar" />
 		<column name="ca_idnotify" type="integer" />
 		<column name="ca_informar_noti" type="varchar" />
+		<column name="ca_idmaster" type="integer" />
+		<column name="ca_informar_mast" type="varchar" />
 		<column name="ca_notify" type="integer" />
 		<column name="ca_transporte" type="varchar" />
 		<column name="ca_modalidad" type="varchar" />
@@ -56,7 +58,6 @@
 		<column name="ca_fchultstatus" type="timestamp" />
 		<column name="ca_idtarea_rext" type="integer" />
 		<column name="ca_idseguimiento" type="integer"  />
-		
 		
 		<foreign-key foreignTable="control.tb_usuarios">
 			<reference local="ca_login" foreign="ca_login"/>

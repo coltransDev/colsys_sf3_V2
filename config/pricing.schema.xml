@@ -264,7 +264,7 @@
 		<column name="ca_transporte" type="varchar" required="true" primaryKey="true" />		
 		<column name="ca_modalidad" type="varchar" required="true" primaryKey="true" />
 		<column name="ca_impoexpo" type="varchar" required="true" primaryKey="true" />				
-		<column name="ca_concepto" type="varchar" />
+		<column name="ca_concepto" type="varchar" required="true" primaryKey="true"/>
 		<column name="ca_valor" type="varchar" />	
 		<column name="ca_observaciones" type="varchar" />		
 		<column name="ca_fchcreado" type="timestamp" />	
