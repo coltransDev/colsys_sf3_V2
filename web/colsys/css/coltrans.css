@@ -149,6 +149,8 @@ table.tableList th {
 * Colores que puede tomar una fila de acuerdo al status en que se encuentre
 */
 
+
+
 table.tableList tr.yellow{
 	background-color:#FFFFCC;	
 }
