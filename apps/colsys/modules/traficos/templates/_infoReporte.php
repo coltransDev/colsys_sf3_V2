@@ -46,7 +46,7 @@
 		
 		$url = "/traficos/formSeguimiento?modo=".$modo."&reporte=".$reporte->getCaConsecutivo();
 		
-		if( $tarea ){
+		if( $tarea && !$tarea->getCaFchterminada() ){
 			echo Utils::fechaMes($tarea->getCaFchvencimiento("Y-m-d"))."<br />";
 			echo $tarea->getCaTexto()."<br />";
 			echo link_to(image_tag("22x22/todo.gif")." Editar", $url);		
@@ -58,6 +58,37 @@
 		?>	
 		</div>
 		<br />
+		
+		<?
+		if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
+		?>
+		<div class="post-info" align="left">
+		<b>Reportes al exterior</b><br />	
+		<?
+			if( $reportesExt ){
+				foreach( $reportesExt as $reporteExt ){
+					$txt = 	$reporteExt->getCausuenvio()." ".$reporteExt->getCaFchenvio();
+				?>
+				<a href='#' onClick='window.open("<?=url_for("general/verEmail?id=".$reporteExt->getCaIdemail())?>")' ><b><?=$txt?></b></a>
+				<br />
+				<?=$reporteExt->getCaSubject()?>
+				<br /><br />
+				<?	
+				}
+			}else{
+				echo "No se han creado reportes al exterior";
+			}
+			
+			
+			echo link_to(image_tag("22x22/edit_add.gif")." Rep. Exterior","reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte() );
+				
+				
+		?>
+		</div>
+		<?
+		}
+		?>
+		
 		<a href="#" onClick="actualizar(<?=$reporte->getCaIdreporte()?>)">Actualizar</a>
 		
 		</td>
@@ -80,11 +111,8 @@
 					}
 					echo link_to(image_tag("22x22/edit_add.gif")." Status","traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=status&token=".md5(time()));
 					
-					/*
-					if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
-						echo link_to(image_tag("22x22/edit_add.gif")." Rep. Exterior","reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte() );
-					}*/
 					
+									
 				}	
 				?>
 			</div>

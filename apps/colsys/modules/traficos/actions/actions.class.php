@@ -264,14 +264,14 @@ class traficosActions extends sfActions
 		// Tipos de piezas			
 		$this->form->setCriteriaPiezas( ParametroPeer::getCriteriaByCu( "CU047" ) );	
 		$this->form->setCriteriaPeso( ParametroPeer::getCriteriaByCu( "CU049" ) );	
-		
-		if( $reporte->getCaTransporte()==Constantes::MARITIMO){
-			$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU050" ) );				
-		}
+	
 		
 		if( $reporte->getCaTransporte()==Constantes::AEREO ){
 			$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU058" ) );		
-		}	
+		}else{
+			$this->form->setCriteriaVolumen( ParametroPeer::getCriteriaByCu( "CU050" ) );	
+		}
+			
 		
 		$c = new Criteria();
 		$c->add(ConceptoPeer::CA_MODALIDAD, "FCL" );
@@ -310,7 +310,7 @@ class traficosActions extends sfActions
 						
 			$bindValues["remitente"] = $request->getParameter("remitente");
 			$bindValues["idetapa"] = $request->getParameter("idetapa");
-			$bindValues["asunto"] = $request->getParameter("asunto");
+			
 			$bindValues["fchsalida"] = $request->getParameter("fchsalida");
 			$bindValues["horasalida"] = $request->getParameter("horasalida");
 			$bindValues["fchllegada"] = $request->getParameter("fchllegada");
@@ -324,7 +324,7 @@ class traficosActions extends sfActions
 			$bindValues["doctransporte"] = $request->getParameter("doctransporte");
 			$bindValues["idnave"] = $request->getParameter("idnave");
 			
-			//$bindValues["asunto"] = $request->getParameter("asunto");
+			$bindValues["asunto"] = $request->getParameter("asunto");
 			$bindValues["introduccion"] = $request->getParameter("introduccion");
 			$bindValues["mensaje"] = $request->getParameter("mensaje");
 			$bindValues["notas"] = $request->getParameter("notas");
@@ -411,12 +411,16 @@ class traficosActions extends sfActions
 		$status->setCaIdReporte( $reporte->getCaIdreporte() );
 		$status->setCaFchStatus( date("Y-m-d H:i:s") );
 		$status->setCaIntroduccion( Utils::replace( $request->getParameter("introduccion") ) );	
-		$status->setCaStatus( $request->getParameter("mensaje") );
+		
+		
 		if( $request->getParameter("notas") ){ 
 			$status->setCaComentarios( $request->getParameter("notas") );
 		}
 		$status->setCaIdEtapa( $request->getParameter("idetapa") );
 		
+		
+		
+	
 		if( $request->getParameter("fchrecibo") ){			
 			$horaRecibo =  $request->getParameter("horarecibo");		
 			if( !$horaRecibo['minute'] ){
@@ -530,6 +534,8 @@ class traficosActions extends sfActions
 			}	
 			$repExpo->save();	
 		}			
+		
+		$status->setStatus( $request->getParameter("mensaje") );		
 						
 		$status->save();
 		
@@ -578,12 +584,12 @@ class traficosActions extends sfActions
 			$texto = "";			
 			
 			
-			if( !$tarea ){			
+			if( !$tarea || ($tarea && $tarea->getCaFchterminada()) ){			
 				$tarea = new NotTarea(); 
 				$tarea->setCaFchcreado( time() );								
 				$tarea->setCaUsucreado( $this->getUser()->getUserId() );
 			}	
-			$tarea->setCaUrl( "/traficos/listaStatus/modo/maritimo/reporte/".$reporte->getCaConsecutivo() );
+			$tarea->setCaUrl( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
 			$tarea->setCaIdlistatarea( 3 );			
 			$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
 			$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );			
@@ -1012,7 +1018,7 @@ class traficosActions extends sfActions
 				$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
 				$reporte->save();	
 				
-				$this->redirect( "/traficos/listaStatus/modo/maritimo/reporte/".$reporte->getCaConsecutivo() );
+				$this->redirect( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
 			}				
 		}
 		

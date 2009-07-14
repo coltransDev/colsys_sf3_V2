@@ -16,6 +16,21 @@ class traficosComponents extends sfComponents
 	*/		
 	public function executeInfoReporte(){		
 		$this->modo = $this->getRequestParameter("modo");
+		
+		
+		if( $this->reporte->getCaImpoexpo()==Constantes::IMPO ){
+			//Reportes al exterior
+			$c = new Criteria();
+			$c->add( EmailPeer::CA_IDCASO, $this->reporte->getCaIdreporte() );
+			if( $this->reporte->getCaTransporte()==Constantes::MARITIMO ){
+				$c->add( EmailPeer::CA_TIPO, 'Rep.MarítimoExterior' );
+			}else{
+				$c->add( EmailPeer::CA_TIPO, 'Rep.AéreoExterior' );
+			}
+			$c->addDescendingOrderByColumn( EmailPeer::CA_FCHENVIO );
+			$this->reportesExt = EmailPeer::doSelect( $c );
+		}		
+		
 	} 
 	
 	

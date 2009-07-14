@@ -660,7 +660,7 @@ if( !sfConfig::get("app_smtp_user") ){
 		<td colspan="2"><div align="left"><b>Programar seguimiento:</b>
 			<?
 			 echo $form['prog_seguimiento']->renderError(); 
-			 if( $tarea ){
+			 if( $tarea && !$tarea->getCaFchterminada() ){
 			 	$form->setDefault('prog_seguimiento', true ); 
 			 }	
 			 echo $form['prog_seguimiento']->render();
@@ -672,7 +672,7 @@ if( !sfConfig::get("app_smtp_user") ){
 		<td colspan="2" id="row_seguimiento"><div align="left"><b>Fecha seguimiento:</b>
 				<?
 			 echo $form['fchseguimiento']->renderError();
-			 if( $tarea ){
+			 if( $tarea && !$tarea->getCaFchterminada() ){
 			 	$form->setDefault('fchseguimiento', $tarea->getCaFchvencimiento("Y-m-d") ); 
 			 }			   
 			 echo $form['fchseguimiento']->render();
@@ -682,7 +682,7 @@ if( !sfConfig::get("app_smtp_user") ){
 		<div align="left"><b>Recordar sobre:</b>
 				<?
 			 echo $form['txtseguimiento']->renderError(); 
-			 if( $tarea ){
+			 if( $tarea && !$tarea->getCaFchterminada() ){
 			 	$form->setDefault('txtseguimiento', $tarea->getCaTexto() ); 
 			 }	
 			 echo $form['txtseguimiento']->render();
