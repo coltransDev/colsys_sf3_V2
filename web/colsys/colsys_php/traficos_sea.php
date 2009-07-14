@@ -609,7 +609,7 @@ require_once("menu.php");
              echo "  <TD Class=captura>Correo Remitente :</TD>";
              echo "  <TD Class=listar><INPUT TYPE='TEXT' NAME='recorreo' READONLY SIZE=40 VALUE='".$tm->Value('ca_email')."' MAXLENGTH=90></TD>";
              echo "</TR>";
-             if (!$tm->Open("select ca_nombre, ca_apellido ca_email from vi_contactos where ca_idagente = '".$rs->Value('ca_idagente')."' and ca_impoexpo like '%".(($rs->Value('ca_impoexpo')=='Triangulación')?'Importación':$rs->Value('ca_impoexpo'))."%' and ca_transporte like '%".$rs->Value('ca_transporte')."%'")) { // Selecciona todos lo registros de la tabla Agentes
+             if (!$tm->Open("select ca_nombre, ca_apellido, ca_email from vi_contactos where ca_idagente = '".$rs->Value('ca_idagente')."' and ca_impoexpo like '%".(($rs->Value('ca_impoexpo')=='Triangulación')?'Importación':$rs->Value('ca_impoexpo'))."%' and ca_transporte like '%".$rs->Value('ca_transporte')."%'")) { // Selecciona todos lo registros de la tabla Agentes
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";                   // Muestra el mensaje de error
                  echo "<script>document.location.href = 'entrada.php';</script>";
                  exit; }
