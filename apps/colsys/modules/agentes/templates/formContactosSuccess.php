@@ -161,6 +161,18 @@
 				 ?>				</td>
 			</tr>
 			<tr>
+				<td><b>Detalles:</b></td>
+				<td colspan="3">
+				<?
+				 echo $form['detalles']->renderError();
+				 if( $contacto ){
+					$form->setDefault('detalles', $contacto->getCaDetalle() ); 
+				 }			   
+				 echo $form['detalles']->render();
+				 ?>				</td>
+			</tr>
+			
+			<tr>
 				<td><b>Cotizaciones :</b></td>
 				<td colspan="3"><?
 					 echo $form['sugerido']->renderError();

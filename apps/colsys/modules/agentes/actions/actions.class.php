@@ -28,6 +28,20 @@ class agentesActions extends sfActions
 		$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
 		$this->traficos = TraficoPeer::doSelect( $c );
 		
+		$c = new Criteria();		
+		$c->add( CiudadPeer::CA_IDCIUDAD, '999-9999', Criteria::NOT_EQUAL );		
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_IDTRAFICO );
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
+		$ciudades = CiudadPeer::doSelect( $c );
+		
+		$result = array();
+		foreach( $ciudades as $ciudad ){
+			$result[ $ciudad->getCaidtrafico() ][] = array("idciudad"=>$ciudad->getCaIdciudad(),
+															"ciudad"=>utf8_encode($ciudad->getCaCiudad())		
+													 ); 
+		}
+		
+		$this->ciudades = json_encode($result);
 		
 	}
 	
@@ -52,6 +66,8 @@ class agentesActions extends sfActions
 			$c->add( TraficoPeer::CA_IDTRAFICO, $request->getParameter("idtrafico") );
 		}
 		
+		$this->idciudad = $request->getParameter("idciudad");
+				
 		if( $request->getParameter("buscar") ){
 			$c->add( AgentePeer::CA_NOMBRE, "%".trim(strtoupper($request->getParameter("buscar")))."%", Criteria::LIKE );
 		}
@@ -155,6 +171,7 @@ class agentesActions extends sfActions
 			$bindValues["cargo"] = $request->getParameter("cargo");
 			$bindValues["sugerido"] = $request->getParameter("sugerido");
 			$bindValues["activo"] = $request->getParameter("activo");
+			$bindValues["detalles"] = $request->getParameter("detalles");
 			
 			$bindValues["impoexpo"] =  $request->getParameter("impoexpo");
 			$bindValues["transporte"] = $request->getParameter("transporte");
@@ -183,6 +200,7 @@ class agentesActions extends sfActions
 				$contacto->setCaImpoexpo( implode("|",$bindValues["impoexpo"]) );
 				$contacto->setCaTransporte( implode("|",$bindValues["transporte"]) );
 				$contacto->setCaCargo( $bindValues["cargo"] );
+				$contacto->setCaDetalle( $bindValues["detalles"] );
 				if( $bindValues["sugerido"] ){
 					$contacto->setCaSugerido( true );
 				}else{

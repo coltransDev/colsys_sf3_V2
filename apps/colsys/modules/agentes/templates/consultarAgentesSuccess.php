@@ -100,6 +100,11 @@ foreach( $agentes as $agente ){
 		<?
 		$c = new Criteria();
 		$c->addJoin( ContactoAgentePeer::CA_IDCIUDAD,  CiudadPeer::CA_IDCIUDAD );
+		
+		if( $idciudad ){
+			$c->add( ContactoAgentePeer::CA_IDCIUDAD, $idciudad );
+		}
+		
 		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
 		$c->addDescendingOrderByColumn( ContactoAgentePeer::CA_SUGERIDO ); 
 		$c->addAscendingOrderByColumn( ContactoAgentePeer::CA_NOMBRE ); 
@@ -109,7 +114,13 @@ foreach( $agentes as $agente ){
 		if( count($contactos)==0 ){
 			?>		
 	<tr >
-		<td colspan="5"><div align="left">No hay contactos registrados</div></td>		
+		<td colspan="5"><div align="left">No hay contactos registrados 
+		<?
+		if( $idciudad ){
+			echo "en esta ciudad";
+		}
+		?>
+		</div></td>		
 	</tr>
 		<?
 		}

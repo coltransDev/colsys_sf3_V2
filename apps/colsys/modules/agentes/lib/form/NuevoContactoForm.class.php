@@ -32,8 +32,8 @@ class NuevoContactoForm extends sfForm{
   								'choices' => array('Jefe de Oficina'=>'Jefe de Oficina', 
 													'Jefe Importación'=>'Jefe Importación', 
 													'Jefe Exportación'=>'Jefe Exportación', 
-													'Contacto Operativo'=>'Contacto Operativo'
-												
+													'Contacto Operativo'=>'Contacto Operativo',
+													''=>'Otro ver detalles'												
 												), 'expanded'=>true)),
 		  						
 		 
@@ -41,6 +41,7 @@ class NuevoContactoForm extends sfForm{
   								'choices' => array('Oficial'=>'Oficial', 'No Oficial'=>'No Oficial'), 'expanded'=>true)),
   		  'sugerido'      => new sfWidgetFormInputCheckbox(),
 		  'activo'      => new sfWidgetFormInputCheckbox(),
+		  'detalles' => new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>80 ) )
 		));
 	
 		$this->setValidators(array(
@@ -57,9 +58,10 @@ class NuevoContactoForm extends sfForm{
 		  'impoexpo'     => new sfValidatorString(array('required' => true)),
 		  'transporte'     => new sfValidatorString(array('required' => true)),
 		  
-		  'cargo' => new sfValidatorString(array('required' => true)),
+		  'cargo' => new sfValidatorString(array('required' => false)),
 		  'sugerido'      => new sfValidatorBoolean(array('required' => false)),
 		  'activo'      => new sfValidatorBoolean(array('required' => false)),
+		   'detalles'      => new sfValidatorString(array('required' => false)),
 		));												
 																												
 		
