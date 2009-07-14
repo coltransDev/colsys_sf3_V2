@@ -2013,7 +2013,7 @@ elseif (isset($accion)) {                                                      /
              $sapellido = addslashes($sapellido);
              $nombres = addslashes($nombres);
              $direccion = isset($direccion)?implode("|",$direccion):"";
-             $vendedor = ($nivel > 2)?"":$usuario;
+             $vendedor = ($nivel >= 2)?"":$usuario;
 			 $fchcircular = (strlen($fchcircular)!=0)?"'".$fchcircular."'":'date(null)';
 			 $fchcotratoag = (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
 			 $status = ($listaclinton=='Sí')?"Vetado":$status;
@@ -2030,7 +2030,7 @@ elseif (isset($accion)) {                                                      /
              $sapellido = addslashes($sapellido);
              $nombres = addslashes($nombres);
              $direccion = isset($direccion)?implode("|",$direccion):"";
-             $vendedor = ($nivel > 2)?$vendedor:$usuario;
+             $vendedor = ($nivel >= 2)?$vendedor:$usuario;
 			 $fchcircular = (strlen($fchcircular)!=0)?"'".$fchcircular."'":'date(null)';
 			 $fchcotratoag= (strlen($fchcotratoag)!=0)?"'".$fchcotratoag."'":'date(null)';
 			 $status = ($listaclinton=='Sí')?"Vetado":$status;

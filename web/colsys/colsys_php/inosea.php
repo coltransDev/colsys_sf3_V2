@@ -3798,7 +3798,7 @@ require_once("menu.php");
 			 $xml_pal66->setAttribute("cadm", $dm->Value("ca_codadministracion"));
 			 $xml_pal66->setAttribute("dica", $dm->Value("ca_dispocarga"));
 
-			 $arribo_array = "";
+			 $arribo_array = array();
 			 $cu->MoveFirst();
 			 while (!$cu->Eof()) {
 			 	if ($cu->Value('ca_identificacion')==9 and $cu->Value('ca_valor')==$rs->Value("ca_destino")) {
@@ -3926,6 +3926,11 @@ require_once("menu.php");
 						echo "<script>document.location.href = 'inosea.php';</script>";
 						exit;
 					}
+					if (!$dc->Open("update tb_dianclientes set ca_iddocactual = '$iddocactual' where ca_idinfodian = ".$dm->Value("ca_idinfodian")." and ca_referencia = '".$ic->Value("ca_referencia")."' and ca_idcliente = '".$ic->Value("ca_idcliente")."' and ca_house = '".$ic->Value("ca_hbls")."'")) {    // Actualiza el Número de Reserva en DianClientes
+						echo "<script>alert(\"".addslashes($dm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+						echo "<script>document.location.href = 'inosea.php';</script>";
+						exit;
+					}
 				}
 
 				$xml_hijo->setAttribute("ideDoc", $iddocactual);
@@ -3934,8 +3939,8 @@ require_once("menu.php");
 				}
 				$xml_hijo->setAttribute("hdca", $dc->Value("ca_dispocarga"));
 
-				$destino = ($ic->Value("ca_continuacion")!="N/A")?$rs->Value("ca_destino"):$ic->Value("ca_continuacion_dest");
-				$arribo_array = "";
+				$destino = ($ic->Value("ca_continuacion")=="N/A")?$rs->Value("ca_destino"):$ic->Value("ca_continuacion_dest");
+				$arribo_array = array();
 				$cu->MoveFirst();
 				while (!$cu->Eof()) {
 					if ($cu->Value('ca_identificacion')==9 and $cu->Value('ca_valor')==$destino) {
@@ -3970,7 +3975,7 @@ require_once("menu.php");
 				$xml_hijo->setAttribute("hdv3", $rp->Value("ca_digito"));
 				$xml_hijo->setAttribute("hdir", htmlentities($rp->Value("ca_direccion_cli")));
 
-				$arribo_array = "";
+				$arribo_array = array();
 				$cu->MoveFirst();
 				while (!$cu->Eof()) {
 					if ($cu->Value('ca_identificacion')==9 and $cu->Value('ca_valor')==$rp->Value("ca_idciudad_cli")) {
@@ -4017,14 +4022,35 @@ require_once("menu.php");
 				$xml_hijo->setAttribute("hcpe", substr($tm->Value("ca_idtrafico"),0,2));
 				$xml_hijo->setAttribute("hcle", substr($tm->Value("ca_idtrafico"),0,2).substr($tm->Value("ca_idciudad"),0,3));
 
+
+				$grp = 0;
+				// Se Crear el elemento h167
+				$xml_h167 = $xml->createElement( "h167" );
+	
+				if ($dm->Value("ca_iddocanterior") != ""){
+					$xml_h167->setAttribute("fa67", $dm->Value("ca_iddocanterior"));
+				}
+				$xml_h167->setAttribute("cont", $dc->Value("ca_tipocarga"));
+				if ( $dc->Value("ca_tipocarga") == 2 ){
+					$xml_h167->setAttribute("tun", 2);
+					$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
+	
+					$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
+					$xml_h167->setAttribute("tam", $tam_equipo);
+					$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
+					$xml_h167->setAttribute("teq", $tip_equipo);
+					$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
+				}
+				$sub_ps = 0;
+				$sub_pz = 0;
+				$sub_cn = 0;
+
 				foreach (explode("|",$ic->Value('ca_contenedores')) as $parciales){
 					$parcial = explode(";",$parciales);
 					$unidades_carga[$parcial[0]]['pz'] = $parcial[1];
 					$unidades_carga[$parcial[0]]['ps'] = round($parcial[2],2);
 					$unidades_carga[$parcial[0]]['cn'] = 1;
 
-					$grp = 0;
-					// Se Crear los elementos h167
 					$ie->MoveFirst();
 					while (!$ie->Eof() and !$ie->IsEmpty()) {
 						if ($ie->Value("ca_idequipo") != $parcial[0]){;
@@ -4032,34 +4058,16 @@ require_once("menu.php");
 							continue;
 						}
 						
-						// Se Crear el elemento h167
-						$xml_h167 = $xml->createElement( "h167" );
-			
-						if ($dm->Value("ca_iddocanterior") != ""){
-							$xml_h167->setAttribute("fa67", $dm->Value("ca_iddocanterior"));
-						}
-						$xml_h167->setAttribute("cont", $dc->Value("ca_tipocarga"));
-						if ( $dc->Value("ca_tipocarga") == 2 ){
-							$xml_h167->setAttribute("tun", 2);
-							$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
-			
-							$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
-							$xml_h167->setAttribute("tam", $tam_equipo);
-							$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
-							$xml_h167->setAttribute("teq", $tip_equipo);
-							$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
-						}
-			
-						$xml_h167->setAttribute("vpb", $unidades_carga[$ie->Value("ca_idequipo")]['ps']);
-						$xml_h167->setAttribute("nbul",$unidades_carga[$ie->Value("ca_idequipo")]['pz']);
-						$xml_h167->setAttribute("nreg",$unidades_carga[$ie->Value("ca_idequipo")]['cn']);
-		
 						$grp++;
+						$sub_ps+= $unidades_carga[$ie->Value("ca_idequipo")]['ps'];
+						$sub_pz+= $unidades_carga[$ie->Value("ca_idequipo")]['pz'];
+						$sub_cn+= 1;
 						// Se Crear el elemento h267
 						$xml_h267 = $xml->createElement( "h267" );
 						$xml_h267->setAttribute("grp", $grp);
 						$xml_h267->setAttribute("peso",$unidades_carga[$ie->Value("ca_idequipo")]['ps']);
 						$xml_h267->setAttribute("bul", $unidades_carga[$ie->Value("ca_idequipo")]['pz']);
+						
 						// Se Crear el elemento item
 						$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
 						$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
@@ -4086,11 +4094,13 @@ require_once("menu.php");
 						}
 
 						$xml_h167->appendChild( $xml_h267 );
-						$xml_hijo->appendChild( $xml_h167 );
 						$ie->MoveNext();
 					}
-
 				}
+				$xml_h167->setAttribute("vpb", $sub_ps);
+				$xml_h167->setAttribute("nbul",$sub_pz);
+				$xml_h167->setAttribute("nreg",$sub_cn);
+				$xml_hijo->appendChild( $xml_h167 );
 
 				$xml_pal66->appendChild( $xml_hijo );
 			 	$ic->MoveNext();
