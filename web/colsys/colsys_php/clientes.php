@@ -15,7 +15,6 @@
 
 $programa = 10;
 
-
 $titulo = 'Maestra de Clientes Colsys';
 $saludos= array( "Señor" => "Señor", "Señora" => "Señora", "Doctor" => "Doctor", "Doctora" => "Doctora", "Ingeniero" => "Ingeniero", "Ingeniera" => "Ingeniera", "Arquitecto" => "Arquitecto", "Arquitecta" => "Arquitecta" );
 $letras  = array(" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N");
@@ -1759,45 +1758,52 @@ require_once("menu.php");
              echo "<CENTER>";
              echo "<H3>$titulo</H3>";
              echo "<FORM METHOD=post NAME='comision' ACTION='clientes.php' ONSUBMIT='return validar();'>";  // Llena la forma con los datos actuales del registro
-             echo "<TABLE CELLSPACING=1 WIDTH=400>";
+             echo "<TABLE CELLSPACING=1 WIDTH=500>";
              echo "<INPUT TYPE='HIDDEN' NAME='id' VALUE=".$id.">";              // Hereda el Id del registro que se esta eliminando
-             echo "<TH Class=titulo COLSPAN=4>Información del Cliente</TH>";
+             echo "<TH Class=titulo COLSPAN=5>Información del Cliente</TH>";
              echo "<TR>";
              echo "  <TD Class=mostrar style='vertical-align: top;' ROWSPAN=5>".number_format($rs->Value('ca_idcliente'))."-".$rs->Value('ca_digito')."</TD>";
-             echo "  <TD Class=mostrar COLSPAN=3 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4 style='font-size: 12px; font-weight:bold; text-align:left;'>".$rs->Value('ca_compania')."</TD>";
              echo "</TR>";
              echo "<TR>";
              $complemento = (($rs->Value('ca_oficina')!='')?" Oficina : ".$rs->Value('ca_oficina'):"").(($rs->Value('ca_torre')!='')?" Torre : ".$rs->Value('ca_torre'):"").(($rs->Value('ca_interior')!='')?" Interior : ".$rs->Value('ca_interior'):"").(($rs->Value('ca_complemento')!='')?" - ".$rs->Value('ca_complemento'):"");
-             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp&nbsp<B>Dirección : </B>".str_replace ("|"," ",$rs->Value('ca_direccion')).$complemento."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp&nbsp<B>Teléfonos : </B>".$rs->Value('ca_telefonos')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp&nbsp<B>Fax : </B>".$rs->Value('ca_fax')."</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=3>&nbsp&nbsp<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>&nbsp&nbsp<B>Ciudad : </B>".$rs->Value('ca_ciudad')."</TD>";
              echo "</TR>";
-             echo "<TH Class=titulo COLSPAN=4>Histórico de Porcentajes de Comisión</TH>";
+             echo "<TH Class=titulo COLSPAN=5>Histórico de Porcentajes de Comisión</TH>";
              echo "<TR>";
              echo "  <TD Class=invertir>Inicio</TD>";
              echo "  <TD Class=invertir>Fin</TD>";
 			 echo "  <TD Class=invertir>Porcentaje</TD>";
+             echo "  <TD Class=invertir>Empresa</TD>";
              echo "  <TD Class=invertir>Registro</TD>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='inicio' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='fin' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
              echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='porcentaje' SIZE=3 MAXLENGTH=2>%</TD>";
+             echo "  <TD Class=mostrar><SELECT NAME='empresa'>";
+             while (list ($clave, $val) = each ($empresas)) {
+             	echo " <OPTION VALUE='".$val."'>".$val;
+             }
+             echo "  </SELECT></TD>";
              echo "  <TD Class=mostrar></TD>";
              echo "</TR>";
              while (!$tm->Eof() and !$tm->IsEmpty()) {
                  echo "<TR>";
-                 echo "  <TD Class=mostrar>".$tm->Value('ca_inicio')."</TD>";
-                 echo "  <TD Class=mostrar>".$tm->Value('ca_fin')."</TD>";
-				 echo "  <TD Class=mostrar>".$tm->Value('ca_porcentaje')."</TD>";
-                 echo "  <TD Class=mostrar>".$tm->Value('ca_fchcreado')."<BR>".$tm->Value('ca_usucreado')."</TD>";
+                 echo "  <TD Class=listar>".$tm->Value('ca_inicio')."</TD>";
+                 echo "  <TD Class=listar>".$tm->Value('ca_fin')."</TD>";
+				 echo "  <TD Class=listar>".$tm->Value('ca_porcentaje')."</TD>";
+				 echo "  <TD Class=listar>".$tm->Value('ca_empresa')."</TD>";
+                 echo "  <TD Class=listar>".$tm->Value('ca_fchcreado')."<BR>".$tm->Value('ca_usucreado')."</TD>";
                  echo "</TR>";
                  $tm->MoveNext();
              }
@@ -1947,7 +1953,7 @@ elseif (isset($accion)) {                                                      /
 			 $inicio = date("Y-m-d", mktime(0, 0, 0, $mes, 1, $ano));
 			 list($ano, $mes, $dia) = sscanf($fin, "%d-%d-%d");
 			 $fin = date("Y-m-d", mktime(0, 0, 0, $mes+1, 0, $ano));
-             if (!$rs->Open("insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+             if (!$rs->Open("insert into tb_porcentajescomisiones (ca_idcliente, ca_inicio, ca_fin, ca_porcentaje, ca_empresa, ca_fchcreado, ca_usucreado) values($id, '$inicio', '$fin', $porcentaje, '$empresa', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'clientes.php';</script>";
                  exit;

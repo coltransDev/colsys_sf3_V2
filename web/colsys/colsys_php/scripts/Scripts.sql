@@ -2396,7 +2396,7 @@ Drop view vi_inoingresos_sea cascade;
 Create view vi_inoingresos_sea as
 Select DISTINCT i.oid as ca_oid, substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'||substr(i.ca_referencia,15,1) as ca_mes, i.ca_referencia, i.ca_idcliente, c.ca_compania, l.ca_hbls, l.ca_login, l.ca_volumen,
        i.ca_factura, i.ca_fchfactura, i.ca_reccaja, i.ca_fchpago, i.ca_idmoneda, i.ca_neto, i.ca_valor, i.ca_observaciones, i.ca_fchcreado, i.ca_usucreado, i.ca_fchactualizado, i.ca_usuactualizado,
-       (select fun_getcomision(c.ca_idcliente, i.ca_referencia)) as ca_porcentaje,
+       (select fun_getcomision(c.ca_idcliente, i.ca_referencia, 'Coltrans')) as ca_porcentaje,
        (select sum(cm.ca_vlrcomision) from tb_inocomisiones_sea cm where l.ca_referencia = cm.ca_referencia and l.ca_hbls = cm.ca_hbls) as ca_vlrcomisiones,
        (select sum(cm.ca_sbrcomision) from tb_inocomisiones_sea cm where l.ca_referencia = cm.ca_referencia and l.ca_hbls = cm.ca_hbls) as ca_sbrcomisiones,
        (select sum(ic.ca_volumen) from tb_inoclientes_sea ic where i.ca_referencia = ic.ca_referencia) as ca_volumen_r,
