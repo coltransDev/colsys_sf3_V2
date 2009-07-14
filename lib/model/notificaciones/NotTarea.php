@@ -61,12 +61,7 @@ class NotTarea extends BaseNotTarea
 			$texto .= "<tr><td>".$usuario->getCaNombre()."</td> <td>".$usuario->getCaEmail()."</td></tr>";	
 		}
 		$texto .= "</table>";	
-		
-			
-		
-		
-		
-		
+				
 		$texto .= $this->getCaTexto();
 				
 		$email->setCaBodyhtml( $texto );		
@@ -83,7 +78,7 @@ class NotTarea extends BaseNotTarea
 	* Tiempo restante para terminar la tarea
 	*/
 	public function getTiempoRestante( $festivos  ){
-		//echo "<br /> <b>Ini. ".date("Y-m-d H:i:s")." <br />Ven. ".$this->getCaFchvencimiento()."</b><br />";
+		//echo "<br /> <b>Ini. ".date("Y-m-d H:i:s")." <br />Ven. ".$this->getCaFchvencimiento()."</b><br />";		
 		return Utils::getHumanTime(Utils::diffTimeWorkingHours( $festivos, date("Y-m-d H:i:s"), $this->getCaFchvencimiento() ));
 	}
 	
@@ -94,6 +89,19 @@ class NotTarea extends BaseNotTarea
 		return Utils::getHumanTime(Utils::diffTimeWorkingHours( $festivos, $this->getCaFchcreado(), $this->getCaFchvencimiento() ));
 	}
 	
+	
+	
+	/*
+	* Tiempo restante para terminar la tarea
+	*/
+	public function setTiempo( $festivos, $seconds  ){						
+		$fecha = Utils::addTimeWorkingHours( $festivos, $this->getCaFchcreado( ) , $seconds );	
+		
+		//echo " Creado ".$this->getCaFchcreado( )." vencimiento ".date("Y-m-d H:i:s", $fecha);
+			
+		$this->setCaFchvencimiento( $fecha );
+		//exit();
+	}
 	
 	/*
 	* Retorna la prioridad de acuerdo al numero

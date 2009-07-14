@@ -70,7 +70,7 @@ class PricRecargoParametroMapBuilder implements MapBuilder {
 
 		$tMap->addPrimaryKey('CA_IMPOEXPO', 'CaImpoexpo', 'VARCHAR', true, null);
 
-		$tMap->addColumn('CA_CONCEPTO', 'CaConcepto', 'VARCHAR', false, null);
+		$tMap->addPrimaryKey('CA_CONCEPTO', 'CaConcepto', 'VARCHAR', true, null);
 
 		$tMap->addColumn('CA_VALOR', 'CaValor', 'VARCHAR', false, null);
 

@@ -159,6 +159,18 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	protected $ca_informar_noti;
 
 	/**
+	 * The value for the ca_idmaster field.
+	 * @var        int
+	 */
+	protected $ca_idmaster;
+
+	/**
+	 * The value for the ca_informar_mast field.
+	 * @var        string
+	 */
+	protected $ca_informar_mast;
+
+	/**
 	 * The value for the ca_notify field.
 	 * @var        int
 	 */
@@ -788,6 +800,26 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	public function getCaInformarNoti()
 	{
 		return $this->ca_informar_noti;
+	}
+
+	/**
+	 * Get the [ca_idmaster] column value.
+	 * 
+	 * @return     int
+	 */
+	public function getCaIdmaster()
+	{
+		return $this->ca_idmaster;
+	}
+
+	/**
+	 * Get the [ca_informar_mast] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaInformarMast()
+	{
+		return $this->ca_informar_mast;
 	}
 
 	/**
@@ -1752,6 +1784,46 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	} // setCaInformarNoti()
 
 	/**
+	 * Set the value of [ca_idmaster] column.
+	 * 
+	 * @param      int $v new value
+	 * @return     Reporte The current object (for fluent API support)
+	 */
+	public function setCaIdmaster($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_idmaster !== $v) {
+			$this->ca_idmaster = $v;
+			$this->modifiedColumns[] = ReportePeer::CA_IDMASTER;
+		}
+
+		return $this;
+	} // setCaIdmaster()
+
+	/**
+	 * Set the value of [ca_informar_mast] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     Reporte The current object (for fluent API support)
+	 */
+	public function setCaInformarMast($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_informar_mast !== $v) {
+			$this->ca_informar_mast = $v;
+			$this->modifiedColumns[] = ReportePeer::CA_INFORMAR_MAST;
+		}
+
+		return $this;
+	} // setCaInformarMast()
+
+	/**
 	 * Set the value of [ca_notify] column.
 	 * 
 	 * @param      int $v new value
@@ -2616,38 +2688,40 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->ca_informar_cons = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
 			$this->ca_idnotify = ($row[$startcol + 21] !== null) ? (int) $row[$startcol + 21] : null;
 			$this->ca_informar_noti = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
-			$this->ca_notify = ($row[$startcol + 23] !== null) ? (int) $row[$startcol + 23] : null;
-			$this->ca_transporte = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
-			$this->ca_modalidad = ($row[$startcol + 25] !== null) ? (string) $row[$startcol + 25] : null;
-			$this->ca_seguro = ($row[$startcol + 26] !== null) ? (string) $row[$startcol + 26] : null;
-			$this->ca_liberacion = ($row[$startcol + 27] !== null) ? (string) $row[$startcol + 27] : null;
-			$this->ca_tiempocredito = ($row[$startcol + 28] !== null) ? (string) $row[$startcol + 28] : null;
-			$this->ca_preferencias_clie = ($row[$startcol + 29] !== null) ? (string) $row[$startcol + 29] : null;
-			$this->ca_instrucciones = ($row[$startcol + 30] !== null) ? (string) $row[$startcol + 30] : null;
-			$this->ca_idlinea = ($row[$startcol + 31] !== null) ? (int) $row[$startcol + 31] : null;
-			$this->ca_idconsignar = ($row[$startcol + 32] !== null) ? (int) $row[$startcol + 32] : null;
-			$this->ca_idconsignarmaster = ($row[$startcol + 33] !== null) ? (int) $row[$startcol + 33] : null;
-			$this->ca_idbodega = ($row[$startcol + 34] !== null) ? (int) $row[$startcol + 34] : null;
-			$this->ca_mastersame = ($row[$startcol + 35] !== null) ? (string) $row[$startcol + 35] : null;
-			$this->ca_continuacion = ($row[$startcol + 36] !== null) ? (string) $row[$startcol + 36] : null;
-			$this->ca_continuacion_dest = ($row[$startcol + 37] !== null) ? (string) $row[$startcol + 37] : null;
-			$this->ca_continuacion_conf = ($row[$startcol + 38] !== null) ? (string) $row[$startcol + 38] : null;
-			$this->ca_etapa_actual = ($row[$startcol + 39] !== null) ? (string) $row[$startcol + 39] : null;
-			$this->ca_login = ($row[$startcol + 40] !== null) ? (string) $row[$startcol + 40] : null;
-			$this->ca_fchcreado = ($row[$startcol + 41] !== null) ? (string) $row[$startcol + 41] : null;
-			$this->ca_usucreado = ($row[$startcol + 42] !== null) ? (string) $row[$startcol + 42] : null;
-			$this->ca_fchactualizado = ($row[$startcol + 43] !== null) ? (string) $row[$startcol + 43] : null;
-			$this->ca_usuactualizado = ($row[$startcol + 44] !== null) ? (string) $row[$startcol + 44] : null;
-			$this->ca_fchanulado = ($row[$startcol + 45] !== null) ? (string) $row[$startcol + 45] : null;
-			$this->ca_usuanulado = ($row[$startcol + 46] !== null) ? (string) $row[$startcol + 46] : null;
-			$this->ca_fchcerrado = ($row[$startcol + 47] !== null) ? (string) $row[$startcol + 47] : null;
-			$this->ca_usucerrado = ($row[$startcol + 48] !== null) ? (string) $row[$startcol + 48] : null;
-			$this->ca_colmas = ($row[$startcol + 49] !== null) ? (string) $row[$startcol + 49] : null;
-			$this->ca_propiedades = ($row[$startcol + 50] !== null) ? (string) $row[$startcol + 50] : null;
-			$this->ca_idetapa = ($row[$startcol + 51] !== null) ? (string) $row[$startcol + 51] : null;
-			$this->ca_fchultstatus = ($row[$startcol + 52] !== null) ? (string) $row[$startcol + 52] : null;
-			$this->ca_idtarea_rext = ($row[$startcol + 53] !== null) ? (int) $row[$startcol + 53] : null;
-			$this->ca_idseguimiento = ($row[$startcol + 54] !== null) ? (int) $row[$startcol + 54] : null;
+			$this->ca_idmaster = ($row[$startcol + 23] !== null) ? (int) $row[$startcol + 23] : null;
+			$this->ca_informar_mast = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+			$this->ca_notify = ($row[$startcol + 25] !== null) ? (int) $row[$startcol + 25] : null;
+			$this->ca_transporte = ($row[$startcol + 26] !== null) ? (string) $row[$startcol + 26] : null;
+			$this->ca_modalidad = ($row[$startcol + 27] !== null) ? (string) $row[$startcol + 27] : null;
+			$this->ca_seguro = ($row[$startcol + 28] !== null) ? (string) $row[$startcol + 28] : null;
+			$this->ca_liberacion = ($row[$startcol + 29] !== null) ? (string) $row[$startcol + 29] : null;
+			$this->ca_tiempocredito = ($row[$startcol + 30] !== null) ? (string) $row[$startcol + 30] : null;
+			$this->ca_preferencias_clie = ($row[$startcol + 31] !== null) ? (string) $row[$startcol + 31] : null;
+			$this->ca_instrucciones = ($row[$startcol + 32] !== null) ? (string) $row[$startcol + 32] : null;
+			$this->ca_idlinea = ($row[$startcol + 33] !== null) ? (int) $row[$startcol + 33] : null;
+			$this->ca_idconsignar = ($row[$startcol + 34] !== null) ? (int) $row[$startcol + 34] : null;
+			$this->ca_idconsignarmaster = ($row[$startcol + 35] !== null) ? (int) $row[$startcol + 35] : null;
+			$this->ca_idbodega = ($row[$startcol + 36] !== null) ? (int) $row[$startcol + 36] : null;
+			$this->ca_mastersame = ($row[$startcol + 37] !== null) ? (string) $row[$startcol + 37] : null;
+			$this->ca_continuacion = ($row[$startcol + 38] !== null) ? (string) $row[$startcol + 38] : null;
+			$this->ca_continuacion_dest = ($row[$startcol + 39] !== null) ? (string) $row[$startcol + 39] : null;
+			$this->ca_continuacion_conf = ($row[$startcol + 40] !== null) ? (string) $row[$startcol + 40] : null;
+			$this->ca_etapa_actual = ($row[$startcol + 41] !== null) ? (string) $row[$startcol + 41] : null;
+			$this->ca_login = ($row[$startcol + 42] !== null) ? (string) $row[$startcol + 42] : null;
+			$this->ca_fchcreado = ($row[$startcol + 43] !== null) ? (string) $row[$startcol + 43] : null;
+			$this->ca_usucreado = ($row[$startcol + 44] !== null) ? (string) $row[$startcol + 44] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 45] !== null) ? (string) $row[$startcol + 45] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 46] !== null) ? (string) $row[$startcol + 46] : null;
+			$this->ca_fchanulado = ($row[$startcol + 47] !== null) ? (string) $row[$startcol + 47] : null;
+			$this->ca_usuanulado = ($row[$startcol + 48] !== null) ? (string) $row[$startcol + 48] : null;
+			$this->ca_fchcerrado = ($row[$startcol + 49] !== null) ? (string) $row[$startcol + 49] : null;
+			$this->ca_usucerrado = ($row[$startcol + 50] !== null) ? (string) $row[$startcol + 50] : null;
+			$this->ca_colmas = ($row[$startcol + 51] !== null) ? (string) $row[$startcol + 51] : null;
+			$this->ca_propiedades = ($row[$startcol + 52] !== null) ? (string) $row[$startcol + 52] : null;
+			$this->ca_idetapa = ($row[$startcol + 53] !== null) ? (string) $row[$startcol + 53] : null;
+			$this->ca_fchultstatus = ($row[$startcol + 54] !== null) ? (string) $row[$startcol + 54] : null;
+			$this->ca_idtarea_rext = ($row[$startcol + 55] !== null) ? (int) $row[$startcol + 55] : null;
+			$this->ca_idseguimiento = ($row[$startcol + 56] !== null) ? (int) $row[$startcol + 56] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -2657,7 +2731,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 55; // 55 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 57; // 57 = ReportePeer::NUM_COLUMNS - ReportePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Reporte object", $e);
@@ -3324,99 +3398,105 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				return $this->getCaInformarNoti();
 				break;
 			case 23:
-				return $this->getCaNotify();
+				return $this->getCaIdmaster();
 				break;
 			case 24:
-				return $this->getCaTransporte();
+				return $this->getCaInformarMast();
 				break;
 			case 25:
-				return $this->getCaModalidad();
+				return $this->getCaNotify();
 				break;
 			case 26:
-				return $this->getCaSeguro();
+				return $this->getCaTransporte();
 				break;
 			case 27:
-				return $this->getCaLiberacion();
+				return $this->getCaModalidad();
 				break;
 			case 28:
-				return $this->getCaTiempocredito();
+				return $this->getCaSeguro();
 				break;
 			case 29:
-				return $this->getCaPreferenciasClie();
+				return $this->getCaLiberacion();
 				break;
 			case 30:
-				return $this->getCaInstrucciones();
+				return $this->getCaTiempocredito();
 				break;
 			case 31:
-				return $this->getCaIdlinea();
+				return $this->getCaPreferenciasClie();
 				break;
 			case 32:
-				return $this->getCaIdconsignar();
+				return $this->getCaInstrucciones();
 				break;
 			case 33:
-				return $this->getCaIdconsignarmaster();
+				return $this->getCaIdlinea();
 				break;
 			case 34:
-				return $this->getCaIdbodega();
+				return $this->getCaIdconsignar();
 				break;
 			case 35:
-				return $this->getCaMastersame();
+				return $this->getCaIdconsignarmaster();
 				break;
 			case 36:
-				return $this->getCaContinuacion();
+				return $this->getCaIdbodega();
 				break;
 			case 37:
-				return $this->getCaContinuacionDest();
+				return $this->getCaMastersame();
 				break;
 			case 38:
-				return $this->getCaContinuacionConf();
+				return $this->getCaContinuacion();
 				break;
 			case 39:
-				return $this->getCaEtapaActual();
+				return $this->getCaContinuacionDest();
 				break;
 			case 40:
-				return $this->getCaLogin();
+				return $this->getCaContinuacionConf();
 				break;
 			case 41:
-				return $this->getCaFchcreado();
+				return $this->getCaEtapaActual();
 				break;
 			case 42:
-				return $this->getCaUsucreado();
+				return $this->getCaLogin();
 				break;
 			case 43:
-				return $this->getCaFchactualizado();
+				return $this->getCaFchcreado();
 				break;
 			case 44:
-				return $this->getCaUsuactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 45:
-				return $this->getCaFchanulado();
+				return $this->getCaFchactualizado();
 				break;
 			case 46:
-				return $this->getCaUsuanulado();
+				return $this->getCaUsuactualizado();
 				break;
 			case 47:
-				return $this->getCaFchcerrado();
+				return $this->getCaFchanulado();
 				break;
 			case 48:
-				return $this->getCaUsucerrado();
+				return $this->getCaUsuanulado();
 				break;
 			case 49:
-				return $this->getCaColmas();
+				return $this->getCaFchcerrado();
 				break;
 			case 50:
-				return $this->getCaPropiedades();
+				return $this->getCaUsucerrado();
 				break;
 			case 51:
-				return $this->getCaIdetapa();
+				return $this->getCaColmas();
 				break;
 			case 52:
-				return $this->getCaFchultstatus();
+				return $this->getCaPropiedades();
 				break;
 			case 53:
-				return $this->getCaIdtareaRext();
+				return $this->getCaIdetapa();
 				break;
 			case 54:
+				return $this->getCaFchultstatus();
+				break;
+			case 55:
+				return $this->getCaIdtareaRext();
+				break;
+			case 56:
 				return $this->getCaIdseguimiento();
 				break;
 			default:
@@ -3463,38 +3543,40 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$keys[20] => $this->getCaInformarCons(),
 			$keys[21] => $this->getCaIdnotify(),
 			$keys[22] => $this->getCaInformarNoti(),
-			$keys[23] => $this->getCaNotify(),
-			$keys[24] => $this->getCaTransporte(),
-			$keys[25] => $this->getCaModalidad(),
-			$keys[26] => $this->getCaSeguro(),
-			$keys[27] => $this->getCaLiberacion(),
-			$keys[28] => $this->getCaTiempocredito(),
-			$keys[29] => $this->getCaPreferenciasClie(),
-			$keys[30] => $this->getCaInstrucciones(),
-			$keys[31] => $this->getCaIdlinea(),
-			$keys[32] => $this->getCaIdconsignar(),
-			$keys[33] => $this->getCaIdconsignarmaster(),
-			$keys[34] => $this->getCaIdbodega(),
-			$keys[35] => $this->getCaMastersame(),
-			$keys[36] => $this->getCaContinuacion(),
-			$keys[37] => $this->getCaContinuacionDest(),
-			$keys[38] => $this->getCaContinuacionConf(),
-			$keys[39] => $this->getCaEtapaActual(),
-			$keys[40] => $this->getCaLogin(),
-			$keys[41] => $this->getCaFchcreado(),
-			$keys[42] => $this->getCaUsucreado(),
-			$keys[43] => $this->getCaFchactualizado(),
-			$keys[44] => $this->getCaUsuactualizado(),
-			$keys[45] => $this->getCaFchanulado(),
-			$keys[46] => $this->getCaUsuanulado(),
-			$keys[47] => $this->getCaFchcerrado(),
-			$keys[48] => $this->getCaUsucerrado(),
-			$keys[49] => $this->getCaColmas(),
-			$keys[50] => $this->getCaPropiedades(),
-			$keys[51] => $this->getCaIdetapa(),
-			$keys[52] => $this->getCaFchultstatus(),
-			$keys[53] => $this->getCaIdtareaRext(),
-			$keys[54] => $this->getCaIdseguimiento(),
+			$keys[23] => $this->getCaIdmaster(),
+			$keys[24] => $this->getCaInformarMast(),
+			$keys[25] => $this->getCaNotify(),
+			$keys[26] => $this->getCaTransporte(),
+			$keys[27] => $this->getCaModalidad(),
+			$keys[28] => $this->getCaSeguro(),
+			$keys[29] => $this->getCaLiberacion(),
+			$keys[30] => $this->getCaTiempocredito(),
+			$keys[31] => $this->getCaPreferenciasClie(),
+			$keys[32] => $this->getCaInstrucciones(),
+			$keys[33] => $this->getCaIdlinea(),
+			$keys[34] => $this->getCaIdconsignar(),
+			$keys[35] => $this->getCaIdconsignarmaster(),
+			$keys[36] => $this->getCaIdbodega(),
+			$keys[37] => $this->getCaMastersame(),
+			$keys[38] => $this->getCaContinuacion(),
+			$keys[39] => $this->getCaContinuacionDest(),
+			$keys[40] => $this->getCaContinuacionConf(),
+			$keys[41] => $this->getCaEtapaActual(),
+			$keys[42] => $this->getCaLogin(),
+			$keys[43] => $this->getCaFchcreado(),
+			$keys[44] => $this->getCaUsucreado(),
+			$keys[45] => $this->getCaFchactualizado(),
+			$keys[46] => $this->getCaUsuactualizado(),
+			$keys[47] => $this->getCaFchanulado(),
+			$keys[48] => $this->getCaUsuanulado(),
+			$keys[49] => $this->getCaFchcerrado(),
+			$keys[50] => $this->getCaUsucerrado(),
+			$keys[51] => $this->getCaColmas(),
+			$keys[52] => $this->getCaPropiedades(),
+			$keys[53] => $this->getCaIdetapa(),
+			$keys[54] => $this->getCaFchultstatus(),
+			$keys[55] => $this->getCaIdtareaRext(),
+			$keys[56] => $this->getCaIdseguimiento(),
 		);
 		return $result;
 	}
@@ -3596,99 +3678,105 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->setCaInformarNoti($value);
 				break;
 			case 23:
-				$this->setCaNotify($value);
+				$this->setCaIdmaster($value);
 				break;
 			case 24:
-				$this->setCaTransporte($value);
+				$this->setCaInformarMast($value);
 				break;
 			case 25:
-				$this->setCaModalidad($value);
+				$this->setCaNotify($value);
 				break;
 			case 26:
-				$this->setCaSeguro($value);
+				$this->setCaTransporte($value);
 				break;
 			case 27:
-				$this->setCaLiberacion($value);
+				$this->setCaModalidad($value);
 				break;
 			case 28:
-				$this->setCaTiempocredito($value);
+				$this->setCaSeguro($value);
 				break;
 			case 29:
-				$this->setCaPreferenciasClie($value);
+				$this->setCaLiberacion($value);
 				break;
 			case 30:
-				$this->setCaInstrucciones($value);
+				$this->setCaTiempocredito($value);
 				break;
 			case 31:
-				$this->setCaIdlinea($value);
+				$this->setCaPreferenciasClie($value);
 				break;
 			case 32:
-				$this->setCaIdconsignar($value);
+				$this->setCaInstrucciones($value);
 				break;
 			case 33:
-				$this->setCaIdconsignarmaster($value);
+				$this->setCaIdlinea($value);
 				break;
 			case 34:
-				$this->setCaIdbodega($value);
+				$this->setCaIdconsignar($value);
 				break;
 			case 35:
-				$this->setCaMastersame($value);
+				$this->setCaIdconsignarmaster($value);
 				break;
 			case 36:
-				$this->setCaContinuacion($value);
+				$this->setCaIdbodega($value);
 				break;
 			case 37:
-				$this->setCaContinuacionDest($value);
+				$this->setCaMastersame($value);
 				break;
 			case 38:
-				$this->setCaContinuacionConf($value);
+				$this->setCaContinuacion($value);
 				break;
 			case 39:
-				$this->setCaEtapaActual($value);
+				$this->setCaContinuacionDest($value);
 				break;
 			case 40:
-				$this->setCaLogin($value);
+				$this->setCaContinuacionConf($value);
 				break;
 			case 41:
-				$this->setCaFchcreado($value);
+				$this->setCaEtapaActual($value);
 				break;
 			case 42:
-				$this->setCaUsucreado($value);
+				$this->setCaLogin($value);
 				break;
 			case 43:
-				$this->setCaFchactualizado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 44:
-				$this->setCaUsuactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 45:
-				$this->setCaFchanulado($value);
+				$this->setCaFchactualizado($value);
 				break;
 			case 46:
-				$this->setCaUsuanulado($value);
+				$this->setCaUsuactualizado($value);
 				break;
 			case 47:
-				$this->setCaFchcerrado($value);
+				$this->setCaFchanulado($value);
 				break;
 			case 48:
-				$this->setCaUsucerrado($value);
+				$this->setCaUsuanulado($value);
 				break;
 			case 49:
-				$this->setCaColmas($value);
+				$this->setCaFchcerrado($value);
 				break;
 			case 50:
-				$this->setCaPropiedades($value);
+				$this->setCaUsucerrado($value);
 				break;
 			case 51:
-				$this->setCaIdetapa($value);
+				$this->setCaColmas($value);
 				break;
 			case 52:
-				$this->setCaFchultstatus($value);
+				$this->setCaPropiedades($value);
 				break;
 			case 53:
-				$this->setCaIdtareaRext($value);
+				$this->setCaIdetapa($value);
 				break;
 			case 54:
+				$this->setCaFchultstatus($value);
+				break;
+			case 55:
+				$this->setCaIdtareaRext($value);
+				break;
+			case 56:
 				$this->setCaIdseguimiento($value);
 				break;
 		} // switch()
@@ -3738,38 +3826,40 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[20], $arr)) $this->setCaInformarCons($arr[$keys[20]]);
 		if (array_key_exists($keys[21], $arr)) $this->setCaIdnotify($arr[$keys[21]]);
 		if (array_key_exists($keys[22], $arr)) $this->setCaInformarNoti($arr[$keys[22]]);
-		if (array_key_exists($keys[23], $arr)) $this->setCaNotify($arr[$keys[23]]);
-		if (array_key_exists($keys[24], $arr)) $this->setCaTransporte($arr[$keys[24]]);
-		if (array_key_exists($keys[25], $arr)) $this->setCaModalidad($arr[$keys[25]]);
-		if (array_key_exists($keys[26], $arr)) $this->setCaSeguro($arr[$keys[26]]);
-		if (array_key_exists($keys[27], $arr)) $this->setCaLiberacion($arr[$keys[27]]);
-		if (array_key_exists($keys[28], $arr)) $this->setCaTiempocredito($arr[$keys[28]]);
-		if (array_key_exists($keys[29], $arr)) $this->setCaPreferenciasClie($arr[$keys[29]]);
-		if (array_key_exists($keys[30], $arr)) $this->setCaInstrucciones($arr[$keys[30]]);
-		if (array_key_exists($keys[31], $arr)) $this->setCaIdlinea($arr[$keys[31]]);
-		if (array_key_exists($keys[32], $arr)) $this->setCaIdconsignar($arr[$keys[32]]);
-		if (array_key_exists($keys[33], $arr)) $this->setCaIdconsignarmaster($arr[$keys[33]]);
-		if (array_key_exists($keys[34], $arr)) $this->setCaIdbodega($arr[$keys[34]]);
-		if (array_key_exists($keys[35], $arr)) $this->setCaMastersame($arr[$keys[35]]);
-		if (array_key_exists($keys[36], $arr)) $this->setCaContinuacion($arr[$keys[36]]);
-		if (array_key_exists($keys[37], $arr)) $this->setCaContinuacionDest($arr[$keys[37]]);
-		if (array_key_exists($keys[38], $arr)) $this->setCaContinuacionConf($arr[$keys[38]]);
-		if (array_key_exists($keys[39], $arr)) $this->setCaEtapaActual($arr[$keys[39]]);
-		if (array_key_exists($keys[40], $arr)) $this->setCaLogin($arr[$keys[40]]);
-		if (array_key_exists($keys[41], $arr)) $this->setCaFchcreado($arr[$keys[41]]);
-		if (array_key_exists($keys[42], $arr)) $this->setCaUsucreado($arr[$keys[42]]);
-		if (array_key_exists($keys[43], $arr)) $this->setCaFchactualizado($arr[$keys[43]]);
-		if (array_key_exists($keys[44], $arr)) $this->setCaUsuactualizado($arr[$keys[44]]);
-		if (array_key_exists($keys[45], $arr)) $this->setCaFchanulado($arr[$keys[45]]);
-		if (array_key_exists($keys[46], $arr)) $this->setCaUsuanulado($arr[$keys[46]]);
-		if (array_key_exists($keys[47], $arr)) $this->setCaFchcerrado($arr[$keys[47]]);
-		if (array_key_exists($keys[48], $arr)) $this->setCaUsucerrado($arr[$keys[48]]);
-		if (array_key_exists($keys[49], $arr)) $this->setCaColmas($arr[$keys[49]]);
-		if (array_key_exists($keys[50], $arr)) $this->setCaPropiedades($arr[$keys[50]]);
-		if (array_key_exists($keys[51], $arr)) $this->setCaIdetapa($arr[$keys[51]]);
-		if (array_key_exists($keys[52], $arr)) $this->setCaFchultstatus($arr[$keys[52]]);
-		if (array_key_exists($keys[53], $arr)) $this->setCaIdtareaRext($arr[$keys[53]]);
-		if (array_key_exists($keys[54], $arr)) $this->setCaIdseguimiento($arr[$keys[54]]);
+		if (array_key_exists($keys[23], $arr)) $this->setCaIdmaster($arr[$keys[23]]);
+		if (array_key_exists($keys[24], $arr)) $this->setCaInformarMast($arr[$keys[24]]);
+		if (array_key_exists($keys[25], $arr)) $this->setCaNotify($arr[$keys[25]]);
+		if (array_key_exists($keys[26], $arr)) $this->setCaTransporte($arr[$keys[26]]);
+		if (array_key_exists($keys[27], $arr)) $this->setCaModalidad($arr[$keys[27]]);
+		if (array_key_exists($keys[28], $arr)) $this->setCaSeguro($arr[$keys[28]]);
+		if (array_key_exists($keys[29], $arr)) $this->setCaLiberacion($arr[$keys[29]]);
+		if (array_key_exists($keys[30], $arr)) $this->setCaTiempocredito($arr[$keys[30]]);
+		if (array_key_exists($keys[31], $arr)) $this->setCaPreferenciasClie($arr[$keys[31]]);
+		if (array_key_exists($keys[32], $arr)) $this->setCaInstrucciones($arr[$keys[32]]);
+		if (array_key_exists($keys[33], $arr)) $this->setCaIdlinea($arr[$keys[33]]);
+		if (array_key_exists($keys[34], $arr)) $this->setCaIdconsignar($arr[$keys[34]]);
+		if (array_key_exists($keys[35], $arr)) $this->setCaIdconsignarmaster($arr[$keys[35]]);
+		if (array_key_exists($keys[36], $arr)) $this->setCaIdbodega($arr[$keys[36]]);
+		if (array_key_exists($keys[37], $arr)) $this->setCaMastersame($arr[$keys[37]]);
+		if (array_key_exists($keys[38], $arr)) $this->setCaContinuacion($arr[$keys[38]]);
+		if (array_key_exists($keys[39], $arr)) $this->setCaContinuacionDest($arr[$keys[39]]);
+		if (array_key_exists($keys[40], $arr)) $this->setCaContinuacionConf($arr[$keys[40]]);
+		if (array_key_exists($keys[41], $arr)) $this->setCaEtapaActual($arr[$keys[41]]);
+		if (array_key_exists($keys[42], $arr)) $this->setCaLogin($arr[$keys[42]]);
+		if (array_key_exists($keys[43], $arr)) $this->setCaFchcreado($arr[$keys[43]]);
+		if (array_key_exists($keys[44], $arr)) $this->setCaUsucreado($arr[$keys[44]]);
+		if (array_key_exists($keys[45], $arr)) $this->setCaFchactualizado($arr[$keys[45]]);
+		if (array_key_exists($keys[46], $arr)) $this->setCaUsuactualizado($arr[$keys[46]]);
+		if (array_key_exists($keys[47], $arr)) $this->setCaFchanulado($arr[$keys[47]]);
+		if (array_key_exists($keys[48], $arr)) $this->setCaUsuanulado($arr[$keys[48]]);
+		if (array_key_exists($keys[49], $arr)) $this->setCaFchcerrado($arr[$keys[49]]);
+		if (array_key_exists($keys[50], $arr)) $this->setCaUsucerrado($arr[$keys[50]]);
+		if (array_key_exists($keys[51], $arr)) $this->setCaColmas($arr[$keys[51]]);
+		if (array_key_exists($keys[52], $arr)) $this->setCaPropiedades($arr[$keys[52]]);
+		if (array_key_exists($keys[53], $arr)) $this->setCaIdetapa($arr[$keys[53]]);
+		if (array_key_exists($keys[54], $arr)) $this->setCaFchultstatus($arr[$keys[54]]);
+		if (array_key_exists($keys[55], $arr)) $this->setCaIdtareaRext($arr[$keys[55]]);
+		if (array_key_exists($keys[56], $arr)) $this->setCaIdseguimiento($arr[$keys[56]]);
 	}
 
 	/**
@@ -3804,6 +3894,8 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ReportePeer::CA_INFORMAR_CONS)) $criteria->add(ReportePeer::CA_INFORMAR_CONS, $this->ca_informar_cons);
 		if ($this->isColumnModified(ReportePeer::CA_IDNOTIFY)) $criteria->add(ReportePeer::CA_IDNOTIFY, $this->ca_idnotify);
 		if ($this->isColumnModified(ReportePeer::CA_INFORMAR_NOTI)) $criteria->add(ReportePeer::CA_INFORMAR_NOTI, $this->ca_informar_noti);
+		if ($this->isColumnModified(ReportePeer::CA_IDMASTER)) $criteria->add(ReportePeer::CA_IDMASTER, $this->ca_idmaster);
+		if ($this->isColumnModified(ReportePeer::CA_INFORMAR_MAST)) $criteria->add(ReportePeer::CA_INFORMAR_MAST, $this->ca_informar_mast);
 		if ($this->isColumnModified(ReportePeer::CA_NOTIFY)) $criteria->add(ReportePeer::CA_NOTIFY, $this->ca_notify);
 		if ($this->isColumnModified(ReportePeer::CA_TRANSPORTE)) $criteria->add(ReportePeer::CA_TRANSPORTE, $this->ca_transporte);
 		if ($this->isColumnModified(ReportePeer::CA_MODALIDAD)) $criteria->add(ReportePeer::CA_MODALIDAD, $this->ca_modalidad);
@@ -3933,6 +4025,10 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		$copyObj->setCaIdnotify($this->ca_idnotify);
 
 		$copyObj->setCaInformarNoti($this->ca_informar_noti);
+
+		$copyObj->setCaIdmaster($this->ca_idmaster);
+
+		$copyObj->setCaInformarMast($this->ca_informar_mast);
 
 		$copyObj->setCaNotify($this->ca_notify);
 

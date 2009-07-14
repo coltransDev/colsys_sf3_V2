@@ -314,7 +314,7 @@ abstract class BasePricRecargoParametroPeer {
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
-				$key = serialize(array((string) $obj->getCaIdlinea(), (string) $obj->getCaTransporte(), (string) $obj->getCaModalidad(), (string) $obj->getCaImpoexpo()));
+				$key = serialize(array((string) $obj->getCaIdlinea(), (string) $obj->getCaTransporte(), (string) $obj->getCaModalidad(), (string) $obj->getCaImpoexpo(), (string) $obj->getCaConcepto()));
 			} // if key === null
 			self::$instances[$key] = $obj;
 		}
@@ -334,10 +334,10 @@ abstract class BasePricRecargoParametroPeer {
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof PricRecargoParametro) {
-				$key = serialize(array((string) $value->getCaIdlinea(), (string) $value->getCaTransporte(), (string) $value->getCaModalidad(), (string) $value->getCaImpoexpo()));
-			} elseif (is_array($value) && count($value) === 4) {
+				$key = serialize(array((string) $value->getCaIdlinea(), (string) $value->getCaTransporte(), (string) $value->getCaModalidad(), (string) $value->getCaImpoexpo(), (string) $value->getCaConcepto()));
+			} elseif (is_array($value) && count($value) === 5) {
 				// assume we've been passed a primary key
-				$key = serialize(array((string) $value[0], (string) $value[1], (string) $value[2], (string) $value[3]));
+				$key = serialize(array((string) $value[0], (string) $value[1], (string) $value[2], (string) $value[3], (string) $value[4]));
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or PricRecargoParametro object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -390,10 +390,10 @@ abstract class BasePricRecargoParametroPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null && $row[$startcol + 2] === null && $row[$startcol + 3] === null) {
+		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null && $row[$startcol + 2] === null && $row[$startcol + 3] === null && $row[$startcol + 4] === null) {
 			return null;
 		}
-		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1], (string) $row[$startcol + 2], (string) $row[$startcol + 3]));
+		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1], (string) $row[$startcol + 2], (string) $row[$startcol + 3], (string) $row[$startcol + 4]));
 	}
 
 	/**
@@ -767,6 +767,9 @@ abstract class BasePricRecargoParametroPeer {
 			$comparison = $criteria->getComparison(PricRecargoParametroPeer::CA_IMPOEXPO);
 			$selectCriteria->add(PricRecargoParametroPeer::CA_IMPOEXPO, $criteria->remove(PricRecargoParametroPeer::CA_IMPOEXPO), $comparison);
 
+			$comparison = $criteria->getComparison(PricRecargoParametroPeer::CA_CONCEPTO);
+			$selectCriteria->add(PricRecargoParametroPeer::CA_CONCEPTO, $criteria->remove(PricRecargoParametroPeer::CA_CONCEPTO), $comparison);
+
 		} else { // $values is PricRecargoParametro object
 			$criteria = $values->buildCriteria(); // gets full criteria
 			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -852,6 +855,7 @@ abstract class BasePricRecargoParametroPeer {
 				$criterion->addAnd($criteria->getNewCriterion(PricRecargoParametroPeer::CA_TRANSPORTE, $value[1]));
 				$criterion->addAnd($criteria->getNewCriterion(PricRecargoParametroPeer::CA_MODALIDAD, $value[2]));
 				$criterion->addAnd($criteria->getNewCriterion(PricRecargoParametroPeer::CA_IMPOEXPO, $value[3]));
+				$criterion->addAnd($criteria->getNewCriterion(PricRecargoParametroPeer::CA_CONCEPTO, $value[4]));
 				$criteria->addOr($criterion);
 
 				// we can invalidate the cache for this single PK
@@ -930,12 +934,13 @@ abstract class BasePricRecargoParametroPeer {
 	   @param      string $ca_transporte
 	   @param      string $ca_modalidad
 	   @param      string $ca_impoexpo
+	   @param      string $ca_concepto
 	   
 	 * @param      PropelPDO $con
 	 * @return     PricRecargoParametro
 	 */
-	public static function retrieveByPK($ca_idlinea, $ca_transporte, $ca_modalidad, $ca_impoexpo, PropelPDO $con = null) {
-		$key = serialize(array((string) $ca_idlinea, (string) $ca_transporte, (string) $ca_modalidad, (string) $ca_impoexpo));
+	public static function retrieveByPK($ca_idlinea, $ca_transporte, $ca_modalidad, $ca_impoexpo, $ca_concepto, PropelPDO $con = null) {
+		$key = serialize(array((string) $ca_idlinea, (string) $ca_transporte, (string) $ca_modalidad, (string) $ca_impoexpo, (string) $ca_concepto));
  		if (null !== ($obj = PricRecargoParametroPeer::getInstanceFromPool($key))) {
  			return $obj;
 		}
@@ -948,6 +953,7 @@ abstract class BasePricRecargoParametroPeer {
 		$criteria->add(PricRecargoParametroPeer::CA_TRANSPORTE, $ca_transporte);
 		$criteria->add(PricRecargoParametroPeer::CA_MODALIDAD, $ca_modalidad);
 		$criteria->add(PricRecargoParametroPeer::CA_IMPOEXPO, $ca_impoexpo);
+		$criteria->add(PricRecargoParametroPeer::CA_CONCEPTO, $ca_concepto);
 		$v = PricRecargoParametroPeer::doSelect($criteria, $con);
 
 		return !empty($v) ? $v[0] : null;

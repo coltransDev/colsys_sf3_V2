@@ -62,7 +62,7 @@ class RepStatus extends BaseRepStatus
 		$result = "";
 		
 		$tpl = explode(" ", $template );
-			
+				
 		foreach( $tpl as $t ){
 			if( $result ){
 				$result.=" ";
@@ -75,13 +75,16 @@ class RepStatus extends BaseRepStatus
 				foreach( $evalExprArray as $eval ){					
 					$str .= "->get".ucfirst($eval)."()";					
 				}
-				eval("\$result .= \$this".$str.";");				
+				
+				
+				
+				eval("\$result .= \$this".$str.";");
+												
 			}else{				
 				$result.=$t;
 			}
 		}
-		
-		
+			
 		return $result;		
 	}
 	
@@ -97,6 +100,7 @@ class RepStatus extends BaseRepStatus
 				$txt = $this->applyTemplate( $template )."\n\n";
 			}					
 		}
+		
 		return $txt;		
 	}
 	
@@ -140,6 +144,38 @@ class RepStatus extends BaseRepStatus
 		return $this->bodega;
 	}
 	
+	public function getIntroAsunto(){
+		$etapa = $this->getTrackingEtapa();
+		$reporte = $this->getReporte();
+		if( $etapa ){
+			$asunto = $etapa->getIntroAsunto();			
+		}else{
+			$asunto = "";			
+		}
+		
+		$asunto .= " Id.: ".$reporte->getCaConsecutivo()." ";	
+		return $asunto;
+	}
+	
+	public function getAsunto(){
+		
+		$reporte = $this->getReporte();
+		
+		$asunto = "";
+				
+		$origen = $reporte->getOrigen()->getCaCiudad();
+		$destino = $reporte->getDestino()->getCaCiudad();
+		$cliente = $reporte->getCliente();			
+		
+		if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
+			$proveedor = substr($reporte->getProveedoresStr(),0,130);					
+			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();					
+		}else{
+			$consignatario = $reporte->getConsignatario();
+			$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";	
+		}
+		return $asunto;
+	}
 	
 	/*
 	* Envia el status, generalemte se usa despues de guardar
@@ -178,7 +214,6 @@ class RepStatus extends BaseRepStatus
 				$email->addTo( $recip ); 
 			}
 		}			
-								
 		
 		foreach( $cc as $recip ){			
 			$recip = str_replace(" ", "", $recip );			
@@ -191,8 +226,15 @@ class RepStatus extends BaseRepStatus
 					
 		if ( $reporte->getCaSeguro()=="Sí" ) {
 			$email->addCc( "seguros@coltrans.com.co" ); 
+			
+			$repseguro = $reporte->getRepSeguro();
+			if( $repseguro ){				
+				$usuario = UsuarioPeer::retrieveByPk( $repseguro->getCaSeguroConf() );	
+				if( $usuario ){
+					$email->addCc( $usuario->getCaEmail() ); 						
+				}						
+			}			
 		}
-		
 		
 		if(isset($options["from"]) && $options["from"] ){
 			$email->addCc( $options["from"] );
@@ -200,60 +242,19 @@ class RepStatus extends BaseRepStatus
 			$email->addCc( $user->getEmail() );
 		}
 		
-		
-		$etapa = $this->getTrackingEtapa();
-		
-		switch( $this->getCaIdetapa() ){
-			case "IMCPD":
-				$asunto = "Confirmación de Llegada";
-				break;				
-			case "IMCOL":
-				$asunto = "Confirmación de Llegada OTM";
-				break;	
-			case "IACAD":
-				$asunto = "Confirmación de Llegada";
-				break;		
-			case "IMETA":
-				$asunto = "Aviso";
-				break;		
-			case "99999":
-				$asunto = "Cierre";
-				break;	
-			default: 
-				if( $etapa && $etapa->getCaDepartamento()=="OTM/DTA" ){
-					$asunto = "Status OTM";
-				}else{
-					$asunto = "Status";
-				}
-				break;
-		} 
-		
-		if( $this->getCaIdetapa()=="IMCPD" ){		
-			
+		$asunto = $this->getIntroAsunto();
+		if(isset($options["subject"]) && $options["subject"] ){
+			$asunto.=  $options["subject"];
 		}else{
-			
+			$asunto.= $this->getAsunto();
 		}
-		
-		$origen = $reporte->getOrigen()->getCaCiudad();
-		$destino = $reporte->getDestino()->getCaCiudad();
-		$cliente = $reporte->getCliente();	
-		
-		$asunto .= " Id.: ".$reporte->getCaConsecutivo()." ";
-		
-		if( $reporte->getCaImpoExpo()=="Importación" || $reporte->getCaImpoExpo()=="Triangulación" ){
-			$proveedor = substr($reporte->getProveedoresStr(),0,130);					
-			$asunto .= $proveedor." / ".$cliente." [".$origen." -> ".$destino."] ".$reporte->getCaOrdenClie();					
-		}else{
-			$consignatario = $reporte->getConsignatario();
-			$asunto .= $consignatario." / ".$cliente." [".$origen." -> ".$destino."] ";	
-		}
-				
+						
 		$email->setCaSubject( $asunto );
 				
 		if( $attachments ){		
 			$email->setCaAttachment( implode( "|", $attachments ) );
 		}
-				
+		$etapa = $this->getTrackingEtapa();		
 		if ( $reporte->getCaContinuacion() != 'N/A' ){
 			if( ($etapa && $etapa->getCaDepartamento()!="OTM/DTA") || !$etapa ){
 				$recips = explode(",",$reporte->getCaContinuacionConf());			
@@ -267,17 +268,21 @@ class RepStatus extends BaseRepStatus
 		}
 			
 		if ( $reporte->getCaColmas() == 'Sí'  ){
-			$cordinador = $reporte->getCliente()->getCoordinador(); 			 
-			if( $cordinador ){			
-				$email->addCc( $cordinador->getCaEmail() );				
-			}		  		   
+			$repaduana = $reporte->getRepAduana();				
+			$coordinador = null;
+			if( $repaduana ){
+				$coordinador = UsuarioPeer::retrieveByPk($repaduana->getCaCoordinador());
+				if( $coordinador ){		
+					$email->addCc( $coordinador->getCaEmail() );										
+				}	
+			}
+			
+							  		   
 		}
 		
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );				
-		$email->save(); 					
-		/*$email->setCaAddress("abotero@coltrans.com.co");
-		$email->setCaCc("");*/
+		$email->save(); 							
 		$email->send(); 	
 		$this->setCaIdemail( $email->getCaIdemail() );
 		$this->save();

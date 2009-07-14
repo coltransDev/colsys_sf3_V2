@@ -25,7 +25,7 @@ class Usuario extends BaseUsuario
 	
 	public function getFirma(){
 		$resultado = Utils::replace(strtoupper($this->getCaNombre()))."\n";
-		$resultado .= $this->getCaCargo()."- COLTRANS S.A.\n";		
+		$resultado .= $this->getCaCargo()."\nCOLTRANS S.A.\n";		
 		$sucursal = $this->getSucursal();
 		if( $sucursal ){
 			$resultado .= $sucursal->getCaDireccion()."\n";

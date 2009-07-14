@@ -110,6 +110,10 @@ class ReporteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_INFORMAR_NOTI', 'CaInformarNoti', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_IDMASTER', 'CaIdmaster', 'INTEGER', false, null);
+
+		$tMap->addColumn('CA_INFORMAR_MAST', 'CaInformarMast', 'VARCHAR', false, null);
+
 		$tMap->addColumn('CA_NOTIFY', 'CaNotify', 'INTEGER', false, null);
 
 		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', false, null);

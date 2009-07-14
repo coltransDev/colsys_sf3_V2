@@ -122,7 +122,7 @@ class Cotizacion extends BaseCotizacion
 			$tarea->setCaTexto( $texto );
 			$tarea->setCaFchcreado(  $fchCreado );	
 			$tarea->setCaFchvisible( time()+3600 );		
-			$tarea->setCaFchvencimiento( strtotime( $fchCreado )+Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
+			$tarea->setTiempo( Utils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
 			$tarea->save();
 				
 			$this->setCaIdgEnvioOportuno( $tarea->getCaIdtarea() );
@@ -131,7 +131,7 @@ class Cotizacion extends BaseCotizacion
 		
 		
 		$tarea->setCaFchcreado(  $fchCreado );			
-		$tarea->setCaFchvencimiento( strtotime( $fchCreado )+Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
+		$tarea->setTiempo( Utils::getFestivos(), Cotizacion::TIEMPO_IDG_ENTREGA_OPORTUNA );
 		$tarea->save();
 		
 		if( $tarea ){					

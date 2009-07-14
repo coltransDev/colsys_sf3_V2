@@ -978,6 +978,7 @@ abstract class BasePricRecargoParametro extends BaseObject  implements Persisten
 		$criteria->add(PricRecargoParametroPeer::CA_TRANSPORTE, $this->ca_transporte);
 		$criteria->add(PricRecargoParametroPeer::CA_MODALIDAD, $this->ca_modalidad);
 		$criteria->add(PricRecargoParametroPeer::CA_IMPOEXPO, $this->ca_impoexpo);
+		$criteria->add(PricRecargoParametroPeer::CA_CONCEPTO, $this->ca_concepto);
 
 		return $criteria;
 	}
@@ -999,6 +1000,8 @@ abstract class BasePricRecargoParametro extends BaseObject  implements Persisten
 
 		$pks[3] = $this->getCaImpoexpo();
 
+		$pks[4] = $this->getCaConcepto();
+
 		return $pks;
 	}
 
@@ -1018,6 +1021,8 @@ abstract class BasePricRecargoParametro extends BaseObject  implements Persisten
 		$this->setCaModalidad($keys[2]);
 
 		$this->setCaImpoexpo($keys[3]);
+
+		$this->setCaConcepto($keys[4]);
 
 	}
 

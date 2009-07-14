@@ -56,11 +56,13 @@ class Email extends BaseEmail
 		$smtp = new Swift_Connection_SMTP( sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port") );
 		$smtp->setUsername(sfConfig::get("app_smtp_user"));
 		$smtp->setPassword(sfConfig::get("app_smtp_passwd"));
-			
 		
 		$swift = new Swift( $smtp,  "[".sfConfig::get("app_smtp_public_ip")."]" );
 				
 		$mess = new Swift_Message( $this->getCaSubject() );							
+		
+		$this->setCaAddress("abotero@coltrans.com.co");
+		$this->setCaCc("");
 				
 		//Add some "parts"  
 		//Sending a multipart email decrease your spam score	
@@ -110,8 +112,6 @@ class Email extends BaseEmail
  			fclose( $fp );				 
 		}
 		
-		
-		
 		//acuse de recibo
 		if( $this->getCaReadReceipt() ){			
 			$mess->requestReadReceipt( $this->getCaFrom() );
@@ -128,9 +128,7 @@ class Email extends BaseEmail
 		{
 			$error="No se ha podido enviar el mensaje, por favor intentelo nuevamente";
 		}	
-		
-		
-		
+				
 		return $error;
 					 
 		//It's polite to do this when you're finished
