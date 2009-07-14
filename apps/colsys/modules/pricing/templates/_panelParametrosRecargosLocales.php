@@ -251,7 +251,7 @@ var guardarParametrosRecargos = function(){
 				
 		changes['id']=r.id;										
  	    changes['concepto']=r.data.concepto;	
-		
+		changes['valor']=r.data.valor;	
 		//envia los datos al servidor 
 		Ext.Ajax.request( 
 			{   

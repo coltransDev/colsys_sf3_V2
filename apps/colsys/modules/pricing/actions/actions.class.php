@@ -1354,29 +1354,31 @@ class pricingActions extends sfActions
 		$modalidad = $this->getRequestParameter("modalidad");
 		$transporte = $this->getRequestParameter("transporte");
 		$impoexpo = $this->getRequestParameter("impoexpo");
-		//echo $impoexpo;
-		
+		$concepto = utf8_decode($this->getRequestParameter("concepto"));
+								
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $idlinea );
 		$this->forward404Unless( $modalidad );
 		$this->forward404Unless( $impoexpo );
+		$this->forward404Unless( $concepto );
 		
-		$parametro = PricRecargoParametroPeer::retrieveByPk($idlinea, $transporte, $modalidad,utf8_decode($impoexpo));
-		if( !$parametro ){
-			
+		$parametro = PricRecargoParametroPeer::retrieveByPk($idlinea, $transporte, $modalidad,$impoexpo, $concepto);
+		
+	
+				
+		if( !$parametro ){			
 			$parametro = new PricRecargoParametro();	
 			$parametro->setCaIdlinea( $idlinea );
 			$parametro->setCaImpoexpo( $impoexpo );
 			$parametro->setCaTransporte( $transporte );
-			$parametro->setCaModalidad( $modalidad );				
+			$parametro->setCaModalidad( $modalidad );	
+			$parametro->setCaConcepto( $concepto );
+						
 			$parametro->setCaUsucreado( $this->getUser()->getUserId() );
 			$parametro->setCaFchcreado( time() );			
 		}
 		
-		if( $this->getRequestParameter("concepto") ){
-			$parametro->setCaConcepto( utf8_decode($this->getRequestParameter("concepto") ) );
-		}
-					
+							
 		if( $this->getRequestParameter("valor") ){
 			$parametro->setCaValor( utf8_decode($this->getRequestParameter("valor")) );
 		}
@@ -1400,14 +1402,16 @@ class pricingActions extends sfActions
 		$transporte = $this->getRequestParameter( "transporte" );		
 		$modalidad = $this->getRequestParameter( "modalidad" );				
 		$impoexpo = $this->getRequestParameter( "impoexpo" );
-		$idlinea = $this->getRequestParameter( "idlinea" );		
-						
+		$idlinea = $this->getRequestParameter( "idlinea" );	
+		$concepto = utf8_decode($this->getRequestParameter( "concepto" ));
+		
 		$this->forward404Unless( $transporte );
 		$this->forward404Unless( $modalidad );			
 		$this->forward404Unless( $impoexpo );
 		$this->forward404Unless( $idlinea );
+		$this->forward404Unless( $concepto );
 		
-		$parametro = PricRecargoParametroPeer::retrieveByPk($idlinea, $transporte, $modalidad,$impoexpo);
+		$parametro = PricRecargoParametroPeer::retrieveByPk($idlinea, $transporte, $modalidad,$impoexpo, $concepto);
 		$success = false;
 		if( $parametro ){
 			$parametro->delete();
