@@ -76,7 +76,7 @@
 				<?	
 				}
 			}else{
-				echo "No se han creado reportes al exterior";
+				echo "No se han creado reportes al exterior<br />";
 			}
 			
 			
