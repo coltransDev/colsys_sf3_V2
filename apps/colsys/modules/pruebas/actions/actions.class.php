@@ -103,6 +103,14 @@ class pruebasActions extends sfActions {
 	
 	}
 	
+	public function executeSendStatus() {
+		exit("detenido");
+		//esto no sirve
+		$status = RepStatusPeer::retrieveByPk( 158756 );
+		$status->send();
+	}
+	
+	
 	public function executeCambiaTipoStatus() {
 		$c = new Criteria ( );		
 		$avisos = RepAvisoPeer::doSelect ( $c );
