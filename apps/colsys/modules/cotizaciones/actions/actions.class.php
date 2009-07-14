@@ -581,18 +581,19 @@ class cotizacionesActions extends sfActions
 		$this->error = $email->send();	
 		if(!$this->error){
 			$tarea  = $this->cotizacion->getTareaIDGEnvioOportuno();
-					
-			$observaciones_idg = $this->getRequestParameter("observaciones_idg");
 			
-			if( $observaciones_idg!==null ){
-				$tarea->setCaObservaciones( $observaciones_idg );		
-			}
-			if( $tarea ){			
+			if( $tarea ){		
+				$observaciones_idg = $this->getRequestParameter("observaciones_idg");
+			
+				if( $observaciones_idg!==null ){
+					$tarea->setCaObservaciones( $observaciones_idg );		
+				}
+							
 				if( !$tarea->getCaFchterminada() ){
 					$tarea->setCaFchterminada( time() );									
-				}			
+				}							
+				$tarea->save();
 			}
-			$tarea->save();
 		}		
 	}
 	
