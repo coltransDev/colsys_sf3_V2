@@ -1,3 +1,6 @@
+<?
+use_helper("MimeType");
+?>
 <div class="content" align="center">
 <table border="1" cellspacing="1" width="90%" class="tableList">
 	<tbody>
@@ -44,19 +47,32 @@
 					<?=$email->getCaBodyHtml()?$email->getCaBodyHtml():$email->getCaBody()?>
 			</div></td>
 		</tr>
-		<tr height="5">
-			<td colspan="2"></td>
-		</tr>
+		
+		<?
+		
+		$attahcments = $email->getEmailAttachments();
+		if( count($attahcments)>0 || $email->getCaAttachment() ){
+		?>
 		<tr>
-			<td>Ver Adjuntos:
+			<td><b>Adjuntos:</b>
 				<table cellspacing="1" width="95%">
 					<tbody>
 						<tr>
-							<td></td>
+							<td>
+							<?
+							
+							foreach( $attahcments as $attahcment ){
+								echo link_to(mime_type_icon($attahcment->getCaHeaderFile())." ".$attahcment->getCaHeaderFile(), "general/verAttachmentDB?id=".$attahcment->getCaIdattachment())."<br />";
+							}
+							?>
+							</td>
 						</tr>
 					</tbody>
 				</table></td>
 		</tr>
+		<?
+		}
+		?>
 	</tbody>
 </table>
 

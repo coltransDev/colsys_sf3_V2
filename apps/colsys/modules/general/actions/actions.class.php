@@ -156,6 +156,18 @@ class generalActions extends sfActions
 		
 	}
 	
+	/*
+	* Permite ver un email
+	*/
+	public function executeVerAttachmentDB( $request ){
+		$this->archivo = EmailAttachmentPeer::retrieveByPk($request->getParameter("id"));
+		$this->forward404Unless( $this->archivo );		
+			
+		
+		
+	}
+	
+	
 	
 }
 ?>
