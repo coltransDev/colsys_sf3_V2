@@ -162,8 +162,15 @@ class reporteExtActions extends sfActions
 				$email = new Email();	
 				
 				$email->setCaFchenvio( date("Y-m-d H:i:s") );
-				$email->setCaUsuenvio( $user->getUserId() );		
-				$email->setCaTipo( "Rep.MarítimoExterior" );			
+				$email->setCaUsuenvio( $user->getUserId() );	
+				if( $this->reporte->getCaTransporte()==Constantes::MARITIMO ){	
+					$email->setCaTipo( "Rep.MarítimoExterior" );
+				}
+				
+				if( $this->reporte->getCaTransporte()==Constantes::AEREO ){				
+					$email->setCaTipo( "Rep.AéreoExterior" );
+				}
+							
 				$email->setCaIdcaso( $this->reporte->getCaIdreporte() );
 				
 				//print_r( $_POST );

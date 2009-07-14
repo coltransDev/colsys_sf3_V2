@@ -1,7 +1,7 @@
 <?php
 
 /**
- * pricing components.
+ * reporteExt components.
  *
  * @package    colsys
  * @subpackage pricing
@@ -12,7 +12,7 @@ class reporteExtComponents extends sfComponents
 { 
  	
 	/*
-	* Muestra la presentación del reporte maritimo al exterior
+	* Muestra la presentación del reporte marítimo al exterior
 	* @author: Andres Botero 
 	*/
 	public function executeReporteMaritimoExt(){
@@ -25,6 +25,17 @@ class reporteExtComponents extends sfComponents
 		//$c->add( RepGastoPeer::CA_TIPO, Constantes::RECARGO_EN_ORIGEN);	
 		$this->gastos = RepGastoPeer::doSelect( $c );
 		
-	}			
+	}		
+	
+	
+	/*
+	* Muestra la presentación del reporte aéreo al exterior
+	* @author: Andres Botero 
+	*/
+	public function executeReporteAereoExt(){
+		$c = new Criteria();
+		$c->add( RepTarifaPeer::CA_IDREPORTE, $this->reporte->getCaIdreporte() );	
+		$this->tarifas = RepTarifaPeer::doSelect( $c );		
+	}	
 }
 ?>

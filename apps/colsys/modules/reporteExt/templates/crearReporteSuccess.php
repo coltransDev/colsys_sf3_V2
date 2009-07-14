@@ -71,7 +71,7 @@ var crearSeguimiento=function(){
 		</tr>
 	<tr>
 		<td valign="top">
-			<div align="left"><b>Enviar a: </b><br />
+			<div align="left" style="max-height:200px; overflow:auto;"><b>Enviar a: </b><br />
 			<?					
 			$contactos = $form->getContactosAg();
 			$ultCiudad = null;			
@@ -143,7 +143,13 @@ var crearSeguimiento=function(){
 		<td colspan="2" valign="top">
 			<div align="left">
 				<?
-				include_component("reporteExt","reporteMaritimoExt", array("reporte"=>$reporte));
+				if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+					include_component("reporteExt","reporteMaritimoExt", array("reporte"=>$reporte));
+				}
+				
+				if( $reporte->getCaTransporte()==Constantes::AEREO ){
+					include_component("reporteExt","reporteAereoExt", array("reporte"=>$reporte));
+				}
 				?>
 			</div>		</td>
 	</tr>

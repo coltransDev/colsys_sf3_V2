@@ -231,16 +231,10 @@ if ( $reporte->getCaModalidad() != 'LCL'){
 					}
 					if ($tarifa->getCaReportarMin() > 0){
 					?>
-							<td bgcolor="#CCCCCC" width="25%"><b>Selling Rate :</b><br />
-								<?=number_format($tarifa->getCaReportarMin(),2)." ".$tarifa->getCaReportarIdm()?>							</td>
-							<?							
-					}
-					if ( $tarifa->getCaObservaciones() ){
-					?>
-							<td bgcolor="#CCCCCC" width="25%"><b>Details :</b><br />
-								<?=$tarifa->getCaObservaciones()?>							</td>
-							<?							
-					}
+						<td bgcolor="#CCCCCC" width="25%"><b>Minimum :</b><br />
+								<?=number_format($tarifa->getCaReportarMin(),2)." ".$tarifa->getCaReportarIdm()?>					</td>
+					<?							
+					}					
 					?>
 						</tr>
 					</table></td>
