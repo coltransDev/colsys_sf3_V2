@@ -40,7 +40,7 @@ class pruebasActions extends sfActions {
 	}
 	
 	public function executeSendEmail() {
-		exit("detenido");
+		//exit("detenido");
 		$c = new Criteria ( );
 		/*$c->add ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:01", Criteria::GREATER_THAN );
 		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:00", Criteria::LESS_THAN );
@@ -55,7 +55,7 @@ class pruebasActions extends sfActions {
 		//$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
 		//$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
 		
-		$c->add( EmailPeer::CA_IDEMAIL, 256626);
+		$c->add( EmailPeer::CA_IDEMAIL, 265405);
 		/*$c->addOr( EmailPeer::CA_IDEMAIL, 240610);
 		$c->addOr( EmailPeer::CA_IDEMAIL, 240656);*/
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
@@ -96,7 +96,7 @@ class pruebasActions extends sfActions {
 			}
 			
 			
-			echo $email->send()."<br /><br />";
+			echo $email->send()?"OK":"NO"."<br /><br />";
 		}
 		
 		return sfView::NONE;
@@ -2766,6 +2766,36 @@ ORDER BY ca_fchstatus ";
 		$this->setTemplate("blank");
 		
 	}	
+	
+	
+	public function executeFixApellidoContactos(){
+		exit();
+		$c = new Criteria();
+		$c->add( ContactoAgentePeer::CA_APELLIDO, null, Criteria::ISNULL);
+		//$c->add( ContactoAgentePeer::CA_IMPOEXPO, '%Importación%', Criteria::LIKE );
+		$c->addAscendingOrderByColumn( CA_TRANSPORTE ); //ca_impoexpo like '%Importación%' and ca_apellido is null
+		$contactos = ContactoAgentePeer::doSelect( $c );
+		
+		foreach( $contactos as $contacto ){
+			$nombreComp = $contacto->getCaNombre();
+			
+			$array = explode(" ", trim($nombreComp) );
+			if( count( $array) ==2 ){
+				$nombre = ucfirst(trim($array[1]));
+				$apellido = ucfirst(trim($array[0]));
+				
+				$contacto->setCaNombre( $nombre );
+				$contacto->setCaApellido( $apellido );
+				//$contacto->save();
+				echo "<b>OK </b>".$nombreComp." <b>Nombre:</b> $nombre <b>Apellido:</b> $apellido<br />";
+			}else{
+				$agente = $contacto->getAgente();
+				echo str_replace("|"," ", $contacto->getCaTransporte())." ".$agente." ".$nombreComp."<br />";
+			}
+					
+		}
+	
+	}
 		
 }
 

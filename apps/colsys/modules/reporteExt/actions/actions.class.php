@@ -232,6 +232,14 @@ class reporteExtActions extends sfActions
 								
 				$email->send();
 				
+				if( $this->reporte->getCaIdTareaRext() ){
+					$tarea = NotTareaPeer::retrieveByPk( $this->reporte->getCaIdTareaRext() );
+					if( $tarea ){
+						$tarea->setCaFchterminada( time() );
+						$tarea->save();
+					}
+				}
+								
 				$this->redirect( "traficos/listaStatus?modo=".$this->modo."&reporte=".$this->reporte->getCaConsecutivo() );
 					
 			}				

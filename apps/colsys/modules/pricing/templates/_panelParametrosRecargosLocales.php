@@ -101,7 +101,7 @@ var colModelRecargosLocalesParametros = new Ext.grid.ColumnModel({
 		}		
 		,
 		{
-			header: "Valor",
+			header: "Aplicación",
 			width: 100,
 			sortable: false,	
 			hideable: false,		
