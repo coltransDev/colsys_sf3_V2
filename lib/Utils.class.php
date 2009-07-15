@@ -475,9 +475,11 @@ class Utils{
 	
 	
 	public static function writeLog($file, $event){
-			$fp = fopen ($file, 'w+'); 			
-			fwrite($fp, $event );			
-			fclose ($fp); 	
+		
+		$event.="\r\n-------------------------------------------------\r\n\r\n";			
+		$fp = fopen ($file, 'a'); 			
+		fwrite($fp, $event );			
+		fclose ($fp); 	
 	}
 }
 ?>

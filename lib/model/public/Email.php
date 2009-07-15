@@ -60,6 +60,7 @@ class Email extends BaseEmail
 		
 		$logFile = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."mail_error.log";
 		$logHeader= date("Y-m-d H:i:s")." email_id: ".$this->getCaIdemail()."\r\n";
+		$logHeader.= "Subject: ".$this->getCaSubject()."\r\n";
 		$logHeader.= "To: ".$this->getCaAddress()."\r\n";
 		$logHeader.= "CC: ".$this->getCacc()."\r\n";
 		
@@ -93,7 +94,7 @@ class Email extends BaseEmail
 					//echo 'Caught exception: ',  $e->getMessage(), "\n";						
 					$event= $logHeader;						
 					$event.= $e->getMessage();
-					$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+										
 					Utils::writeLog($logFile , $event );					
 				}
 			}
@@ -109,7 +110,7 @@ class Email extends BaseEmail
 						//echo 'Caught exception: ',  $e->getMessage(), "\n";						
 						$event= $logHeader;						
 						$event.= $e->getMessage();
-						$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";
+						
 						
 						Utils::writeLog( $logFile , $event );					
 					}
@@ -137,7 +138,7 @@ class Email extends BaseEmail
 				//echo 'Caught exception: ',  $e->getMessage(), "\n";						
 				$event= $logHeader;						
 				$event.= $e->getMessage();
-				$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+									
 				Utils::writeLog($logFile , $event );					
 			}
 					
@@ -156,7 +157,7 @@ class Email extends BaseEmail
 						//echo 'Caught exception: ',  $e->getMessage(), "\n";				
 						$event= $logHeader;						
 						$event.= $logger->dump();
-						$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+											
 						Utils::writeLog($logFile , $event );					
 					}
 											
@@ -180,21 +181,30 @@ class Email extends BaseEmail
 				//echo 'Caught exception: ',  $e->getMessage(), "\n";				
 				$event= $logHeader;						
 				$event.= $logger->dump();
-				$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+									
 				Utils::writeLog($logFile , $event );					
 			}			 
 		}
 		
+		$failures = null;
 		try{
-			$mailer->send($message);
+			$mailer->send($message, $failures);
+			
+			if( $failures ){
+				$event= $logHeader;	
+				$event.="Failures:\r\n";						
+				$event.= var_export( $failures, true ) ;
+									
+				Utils::writeLog($logFile , $event );
+			}
 			$this->setCaFchenvio( time() );
 			$this->save();
 			return true;
 		}catch (Exception $e) {
-			//echo 'Caught exception: ',  $e->getMessage(), "\n";				
+			//echo 'Caught exception: ',  $e->getMessage(), "\n";						
 			$event= $logHeader;						
 			$event.= $logger->dump();
-			$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+								
 			Utils::writeLog($logFile , $event );					
 		}					
 		return false;
