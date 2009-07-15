@@ -58,6 +58,11 @@ class Email extends BaseEmail
 		require_once('lib/vendor/swift/swift_init.php'); # needed due to symfony autoloader
 		
 		
+		$logFile = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."mail_error.log";
+		$logHeader= date("Y-m-d H:i:s")." email_id: ".$this->getCaIdemail()."\r\n";
+		$logHeader.= "To: ".$this->getCaAddress()."\r\n";
+		$logHeader.= "CC: ".$this->getCacc()."\r\n";
+		
 		$transport = Swift_SmtpTransport::newInstance(sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port"))
 	  ->setUsername(sfConfig::get("app_smtp_user"))
 	  ->setPassword(sfConfig::get("app_smtp_passwd"));
@@ -73,21 +78,42 @@ class Email extends BaseEmail
         $message->setFrom(array( $this->getCaFrom() => $this->getCaFromname() ));
 		
 		if( sfConfig::get("app_smtp_debugAddress") ){
-			$message->setTo(array( sfConfig::get("app_smtp_debugAddress")));
-		}else{		
-			if( $this->getCaAddress() ){				
-				$recips = explode( ",", $this->getCaAddress() ); 		
-				foreach( $recips as $key=>$recip ){		
-					$recip = str_replace(" ", "", $recip );																
+			$this->setCaAddress( sfConfig::get("app_smtp_debugAddress")) ;
+			$this->setCaCc( "" ) ;
+		}
+		
+		if( $this->getCaAddress() ){				
+			$recips = explode( ",", $this->getCaAddress() ); 		
+			foreach( $recips as $key=>$recip ){		
+				$recip = str_replace(" ", "", $recip );		
+				
+				try{
 					$message->addTo( $recip  ); 
+				}catch (Exception $e) {
+					//echo 'Caught exception: ',  $e->getMessage(), "\n";						
+					$event= $logHeader;						
+					$event.= $e->getMessage();
+					$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+					Utils::writeLog($logFile , $event );					
 				}
-			}	
-			
+			}
+				
 			if( $this->getCaCc() ){		
 				$recips = explode( ",", $this->getCaCc() ); 		
 				foreach( $recips as $key=>$recip ){		
 					$recip = str_replace(" ", "", $recip );																
-					$message->addCc( $recip  ); 
+								
+					try{
+						$message->addCc( $recip  ); 
+					}catch (Exception $e) {
+						//echo 'Caught exception: ',  $e->getMessage(), "\n";						
+						$event= $logHeader;						
+						$event.= $e->getMessage();
+						$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";
+						
+						Utils::writeLog( $logFile , $event );					
+					}
+					 
 				}		
 			}
 		}
@@ -103,31 +129,60 @@ class Email extends BaseEmail
 		}*/
 		
 		//acuse de recibo
-		if( $this->getCaReadReceipt() ){			
-			$message->setReadReceiptTo($this->getCaFrom());			
+		if( $this->getCaReadReceipt() ){	
+			
+			try{
+				$message->setReadReceiptTo($this->getCaFrom());	
+			}catch (Exception $e) {
+				//echo 'Caught exception: ',  $e->getMessage(), "\n";						
+				$event= $logHeader;						
+				$event.= $e->getMessage();
+				$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+				Utils::writeLog($logFile , $event );					
+			}
+					
+					
 		}
 				
 		if( $this->getCaAttachment() ){
 			$atchFiles = explode( "|",  $this->getCaAttachment() );
 			//Attachments	
 			foreach( $atchFiles as $file ){	
-				if( file_exists($file) ){								
-					$message->attach(Swift_Attachment::fromPath($file));							
+				if( file_exists($file) ){		
+					
+					try{
+						$message->attach(Swift_Attachment::fromPath($file));							
+					}catch (Exception $e) {
+						//echo 'Caught exception: ',  $e->getMessage(), "\n";				
+						$event= $logHeader;						
+						$event.= $logger->dump();
+						$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+						Utils::writeLog($logFile , $event );					
+					}
+											
+											
 				}
 			}
 		}
 				
 		$attachments = $this->getEmailAttachments();
 		foreach( $attachments as $attachment ){	
-			$fp =  $attachment->getCaContent();			
-			
-			$attachment = Swift_Attachment::newInstance()
-				  ->setFilename(Utils::replace($attachment->getCaHeaderFile()))
-				  ->setContentType( Utils::mimetype($attachment->getCaHeaderFile()) )
-				  ->setBody( stream_get_contents($fp) )
-				  ;				 
-			$message->attach($attachment);							 
- 			fclose( $fp );				 
+			try{
+				$fp =  $attachment->getCaContent();
+				$attachment = Swift_Attachment::newInstance()
+					  ->setFilename(Utils::replace($attachment->getCaHeaderFile()))
+					  ->setContentType( Utils::mimetype($attachment->getCaHeaderFile()) )
+					  ->setBody( stream_get_contents($fp) )
+					  ;				 
+				$message->attach($attachment);							 
+				fclose( $fp );	
+			}catch (Exception $e) {
+				//echo 'Caught exception: ',  $e->getMessage(), "\n";				
+				$event= $logHeader;						
+				$event.= $logger->dump();
+				$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+				Utils::writeLog($logFile , $event );					
+			}			 
 		}
 		
 		try{
@@ -136,14 +191,11 @@ class Email extends BaseEmail
 			$this->save();
 			return true;
 		}catch (Exception $e) {
-			//echo 'Caught exception: ',  $e->getMessage(), "\n";			
-			$file= sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."mail_error.log";
-			$fp = fopen ($file, 'w+'); 			
-			fwrite($fp, date("Y-m-d H:i:s")." email_id: ".$this->getCaIdemail()."\r\n");
-			fwrite($fp, $logger->dump()."\r\n-------------------------------------------------\r\n\r\n\r\n");
-			fclose ($fp); 
-			
-			
+			//echo 'Caught exception: ',  $e->getMessage(), "\n";				
+			$event= $logHeader;						
+			$event.= $logger->dump();
+			$event.="\r\n-------------------------------------------------\r\n\r\n\r\n";					
+			Utils::writeLog($logFile , $event );					
 		}					
 		return false;
 		

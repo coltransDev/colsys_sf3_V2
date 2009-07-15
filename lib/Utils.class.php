@@ -472,5 +472,12 @@ class Utils{
 		
 		return date( $format ,  mktime(0, 0, 0, $mm   , $dd + $days, $yy) );		
 	} 
+	
+	
+	public static function writeLog($file, $event){
+			$fp = fopen ($file, 'w+'); 			
+			fwrite($fp, $event );			
+			fclose ($fp); 	
+	}
 }
 ?>

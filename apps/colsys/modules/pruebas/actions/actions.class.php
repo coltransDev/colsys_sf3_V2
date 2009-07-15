@@ -55,7 +55,7 @@ class pruebasActions extends sfActions {
 		//$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
 		//$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
 		
-		$c->add( EmailPeer::CA_IDEMAIL, 265405);
+		$c->add( EmailPeer::CA_IDEMAIL, 265460);
 		/*$c->addOr( EmailPeer::CA_IDEMAIL, 240610);
 		$c->addOr( EmailPeer::CA_IDEMAIL, 240656);*/
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
