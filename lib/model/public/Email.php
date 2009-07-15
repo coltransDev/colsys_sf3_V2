@@ -78,44 +78,49 @@ class Email extends BaseEmail
 				
         $message->setFrom(array( $this->getCaFrom() => $this->getCaFromname() ));
 		
-		if( sfConfig::get("app_smtp_debugAddress") ){
-			$this->setCaAddress( sfConfig::get("app_smtp_debugAddress")) ;
-			$this->setCaCc( "" ) ;
-		}
+		if( sfConfig::get("app_smtp_debugAddress") ){			
+			try{
+				$message->addTo( sfConfig::get("app_smtp_debugAddress") ); 
+			}catch (Exception $e) {					
+				$event= $logHeader;						
+				$event.= $e->getMessage();
+									
+				Utils::writeLog($logFile , $event );					
+			}			
+		}else{
 		
-		if( $this->getCaAddress() ){				
-			$recips = explode( ",", $this->getCaAddress() ); 		
-			foreach( $recips as $key=>$recip ){		
-				$recip = str_replace(" ", "", $recip );		
-				
-				try{
-					$message->addTo( $recip  ); 
-				}catch (Exception $e) {
-					//echo 'Caught exception: ',  $e->getMessage(), "\n";						
-					$event= $logHeader;						
-					$event.= $e->getMessage();
-										
-					Utils::writeLog($logFile , $event );					
-				}
-			}
-				
-			if( $this->getCaCc() ){		
-				$recips = explode( ",", $this->getCaCc() ); 		
+			if( $this->getCaAddress() ){				
+				$recips = explode( ",", $this->getCaAddress() ); 		
 				foreach( $recips as $key=>$recip ){		
-					$recip = str_replace(" ", "", $recip );																
-								
+					$recip = str_replace(" ", "", $recip );		
+					
 					try{
-						$message->addCc( $recip  ); 
-					}catch (Exception $e) {
-						//echo 'Caught exception: ',  $e->getMessage(), "\n";						
+						$message->addTo( $recip  ); 
+					}catch (Exception $e) {										
 						$event= $logHeader;						
 						$event.= $e->getMessage();
-						
-						
-						Utils::writeLog( $logFile , $event );					
+											
+						Utils::writeLog($logFile , $event );					
 					}
-					 
-				}		
+				}
+					
+				if( $this->getCaCc() ){		
+					$recips = explode( ",", $this->getCaCc() ); 		
+					foreach( $recips as $key=>$recip ){		
+						$recip = str_replace(" ", "", $recip );																
+									
+						try{
+							$message->addCc( $recip  ); 
+						}catch (Exception $e) {												
+							$event= $logHeader;						
+							$event.= $e->getMessage();
+							
+							
+							Utils::writeLog( $logFile , $event );					
+						}
+						 
+					}		
+				}
 			}
 		}
 		
@@ -125,43 +130,35 @@ class Email extends BaseEmail
 		
 		if( $this->getCaBody() ){		
 			$message->addPart( $this->getCaBody() , 'text/plain');			
-		}/*else{
-			$mess->attach( new Swift_Message_Part(  "«« Este mensaje está en formato HTML pero su equipo no está configurado para mostrarlo automáticamente. Active la opción HTML del menú Ver en su cliente de correo electrónico para una correcta visualización>>" , "text/plain") );
-		}*/
+		}else{
+			$message->addPart( "«« Este mensaje está en formato HTML pero su equipo no está configurado para mostrarlo automáticamente. Active la opción HTML del menú Ver en su cliente de correo electrónico para una correcta visualización>>" , 'text/plain');				
+		}
 		
 		//acuse de recibo
-		if( $this->getCaReadReceipt() ){	
-			
+		if( $this->getCaReadReceipt() ){				
 			try{
 				$message->setReadReceiptTo($this->getCaFrom());	
 			}catch (Exception $e) {
 				//echo 'Caught exception: ',  $e->getMessage(), "\n";						
 				$event= $logHeader;						
-				$event.= $e->getMessage();
-									
+				$event.= $e->getMessage();									
 				Utils::writeLog($logFile , $event );					
-			}
-					
-					
+			}						
 		}
 				
 		if( $this->getCaAttachment() ){
 			$atchFiles = explode( "|",  $this->getCaAttachment() );
 			//Attachments	
 			foreach( $atchFiles as $file ){	
-				if( file_exists($file) ){		
-					
+				if( file_exists($file) ){						
 					try{
 						$message->attach(Swift_Attachment::fromPath($file));							
-					}catch (Exception $e) {
-						//echo 'Caught exception: ',  $e->getMessage(), "\n";				
+					}catch (Exception $e) {						
 						$event= $logHeader;						
 						$event.= $logger->dump();
 											
 						Utils::writeLog($logFile , $event );					
 					}
-											
-											
 				}
 			}
 		}
@@ -177,8 +174,7 @@ class Email extends BaseEmail
 					  ;				 
 				$message->attach($attachment);							 
 				fclose( $fp );	
-			}catch (Exception $e) {
-				//echo 'Caught exception: ',  $e->getMessage(), "\n";				
+			}catch (Exception $e) {				
 				$event= $logHeader;						
 				$event.= $logger->dump();
 									
