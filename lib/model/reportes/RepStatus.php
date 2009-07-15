@@ -185,8 +185,7 @@ class RepStatus extends BaseRepStatus
 		$user = sfContext::getInstance()->getUser();
 		
 		$email = new Email();	
-		
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+				
 		$email->setCaUsuenvio( $user->getUserId() );
 		
 		$email->setCaTipo( "Envío de Status" ); 	
@@ -282,10 +281,12 @@ class RepStatus extends BaseRepStatus
 		
 		sfContext::getInstance()->getRequest()->setParameter("idstatus", $this->getCaIdstatus());
 		$email->setCaBodyHtml(  sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'verStatus') );				
-		$email->save(); 							
-		$email->send(); 	
+		$email->save(); 									
 		$this->setCaIdemail( $email->getCaIdemail() );
 		$this->save();
+		
+		$email->send(); 	
+		
 	}
 }
 

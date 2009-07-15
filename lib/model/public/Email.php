@@ -53,86 +53,101 @@ class Email extends BaseEmail
 	* author: Andres Botero
 	*/	
 	public function send( ){
-		$smtp = new Swift_Connection_SMTP( sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port") );
-		$smtp->setUsername(sfConfig::get("app_smtp_user"));
-		$smtp->setPassword(sfConfig::get("app_smtp_passwd"));
 		
-		$swift = new Swift( $smtp,  "[".sfConfig::get("app_smtp_public_ip")."]" );
-				
-		$mess = new Swift_Message( $this->getCaSubject() );							
 		
-		$this->setCaAddress("abotero@coltrans.com.co");
-		$this->setCaCc("");
+		require_once('lib/vendor/swift/swift_init.php'); # needed due to symfony autoloader
+		
+		
+		$transport = Swift_SmtpTransport::newInstance(sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port"))
+	  ->setUsername(sfConfig::get("app_smtp_user"))
+	  ->setPassword(sfConfig::get("app_smtp_passwd"));
+		
+		
+		$mailer = Swift_Mailer::newInstance( $transport );
+		
+		$logger = new Swift_Plugins_Loggers_ArrayLogger();
+		$mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($logger));
+		
+		$message = Swift_Message::newInstance( $this->getCaSubject() );
 				
-		//Add some "parts"  
-		//Sending a multipart email decrease your spam score	
-
-		if( $this->getCaBody() ){		
-			$mess->attach( new Swift_Message_Part(  $this->getCaBody() , "text/plain") );
+        $message->setFrom(array( $this->getCaFrom() => $this->getCaFromname() ));
+		
+		if( sfConfig::get("app_smtp_debugAddress") ){
+			$message->setTo(array( sfConfig::get("app_smtp_debugAddress")));
+		}else{		
+			if( $this->getCaAddress() ){				
+				$recips = explode( ",", $this->getCaAddress() ); 		
+				foreach( $recips as $key=>$recip ){		
+					$recip = str_replace(" ", "", $recip );																
+					$message->addTo( $recip  ); 
+				}
+			}	
+			
+			if( $this->getCaCc() ){		
+				$recips = explode( ",", $this->getCaCc() ); 		
+				foreach( $recips as $key=>$recip ){		
+					$recip = str_replace(" ", "", $recip );																
+					$message->addCc( $recip  ); 
+				}		
+			}
 		}
 		
 		if( $this->getCaBodyhtml() ){
-			$mess->attach( new Swift_Message_Part(  $this->getCaBodyhtml() , "text/html") );			
-		}
-								
-		//Recipients 
-		$recipients = new Swift_RecipientList();	
-		
-		$recips = explode( ",", $this->getCaAddress() ); 		
-		foreach( $recips as $key=>$recip ){		
-			$recip = str_replace(" ", "", $recip );																
-			$recipients->addTo( $recip  ); 
+			$message->setBody($this->getCaBodyhtml(), 'text/html'); 		
 		}
 		
-		$recips = explode( ",", $this->getCaCc() ); 		
-		foreach( $recips as $key=>$recip ){		
-			$recip = str_replace(" ", "", $recip );																
-			$recipients->addCc( $recip  ); 
-		}
+		if( $this->getCaBody() ){		
+			$message->addPart( $this->getCaBody() , 'text/plain');			
+		}/*else{
+			$mess->attach( new Swift_Message_Part(  "«« Este mensaje está en formato HTML pero su equipo no está configurado para mostrarlo automáticamente. Active la opción HTML del menú Ver en su cliente de correo electrónico para una correcta visualización>>" , "text/plain") );
+		}*/
 		
-			
+		//acuse de recibo
+		if( $this->getCaReadReceipt() ){			
+			$message->setReadReceiptTo($this->getCaFrom());			
+		}
+				
 		if( $this->getCaAttachment() ){
 			$atchFiles = explode( "|",  $this->getCaAttachment() );
 			//Attachments	
 			foreach( $atchFiles as $file ){	
 				if( file_exists($file) ){								
-					$sfFile = new Swift_File($file);
-					$attachment = new Swift_Message_Attachment($sfFile);		 
-					$mess->attach($attachment);				
+					$message->attach(Swift_Attachment::fromPath($file));							
 				}
 			}
 		}
-		
-		//Busca los attachments en la tabla de attachments 
+				
 		$attachments = $this->getEmailAttachments();
 		foreach( $attachments as $attachment ){	
-			$fp =  $attachment->getCaContent();		
-			$mess->attach(new Swift_Message_Attachment( 
- 							 stream_get_contents($fp), Utils::replace($attachment->getCaHeaderFile()), Utils::mimetype($attachment->getCaHeaderFile())));
+			$fp =  $attachment->getCaContent();			
+			
+			$attachment = Swift_Attachment::newInstance()
+				  ->setFilename(Utils::replace($attachment->getCaHeaderFile()))
+				  ->setContentType( Utils::mimetype($attachment->getCaHeaderFile()) )
+				  ->setBody( stream_get_contents($fp) )
+				  ;				 
+			$message->attach($attachment);							 
  			fclose( $fp );				 
 		}
 		
-		//acuse de recibo
-		if( $this->getCaReadReceipt() ){			
-			$mess->requestReadReceipt( $this->getCaFrom() );
-		}
-				
-		// Todo log the message id and find in the SMTP log  
-		$id = $mess->generateId();					
-		$sender = new Swift_Address( $this->getCaFrom() , $this->getCaFromname() );					 
-		if ($swift->send($mess,  $recipients , $sender ))
-		{
-			$error="";
-		}
-		else
-		{
-			$error="No se ha podido enviar el mensaje, por favor intentelo nuevamente";
-		}	
-				
-		return $error;
-					 
-		//It's polite to do this when you're finished
-		$swift->disconnect();
+		try{
+			$mailer->send($message);
+			$this->setCaFchenvio( time() );
+			$this->save();
+			return true;
+		}catch (Exception $e) {
+			//echo 'Caught exception: ',  $e->getMessage(), "\n";			
+			$file= sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."mail_error.log";
+			$fp = fopen ($file, 'w+'); 			
+			fwrite($fp, date("Y-m-d H:i:s")." email_id: ".$this->getCaIdemail()."\r\n");
+			fwrite($fp, $logger->dump()."\r\n-------------------------------------------------\r\n\r\n\r\n");
+			fclose ($fp); 
+			
+			
+		}					
+		return false;
+		
+		
 	}
 }
 ?>
