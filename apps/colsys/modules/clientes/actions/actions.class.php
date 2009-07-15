@@ -227,13 +227,21 @@ class clientesActions extends sfActions
 		
 		//$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
 		$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail(), $this->getUser()->getNombre()=>$this->getUser()->getEmail());																					
-		StaticEmail::sendEmail( "Activación Clave Coltrans.com.co", array("plain"=>$contentPlain,"html"=>$contentHTML), $from, $fromName, $to );								
+		//StaticEmail::sendEmail( "Activación Clave Coltrans.com.co", array("plain"=>$contentPlain,"html"=>$contentHTML), $from, $fromName, $to );	
 		
-		
-		
-			
-		
-		
+		$email = new Email();									
+		$email->setCaUsuenvio( "Administrador" );	
+		$email->setCaTipo( "Activación Tracking" );
+		$email->setCaFrom( $from );
+		$email->setCaReplyto( $from );	
+		$email->setCaFromname( $fromName );
+		$email->addTo( $contacto->getCaEmail() );
+		$email->addCc( $this->getUser()->getEmail() );										
+		$email->setCaSubject( "Activación Clave Coltrans.com.co" );
+		$email->setCaBodyHtml( $contentHTML );		
+		$email->setCaBody( $contentPlain );			
+		$email->save();
+		$email->send();		
 	}
 	
 	

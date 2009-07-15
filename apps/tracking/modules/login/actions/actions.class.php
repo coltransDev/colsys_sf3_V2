@@ -91,7 +91,23 @@ class loginActions extends sfActions
 						$fromName = "Coltrans S.A. - Servicio al cliente";
 						$to = array($contacto->getCaNombres()." ".$contacto->getCaPapellido()=>$contacto->getCaEmail() );
 																												
-						StaticEmail::sendEmail( "Activación Clave Coltrans.com.co", array("plain"=>$contentPlain,"html"=>$contentHTML), $from, $fromName, $to );													
+						//StaticEmail::sendEmail( "Activación Clave Coltrans.com.co", array("plain"=>$contentPlain,"html"=>$contentHTML), $from, $fromName, $to );
+						
+						
+						$email = new Email();									
+						$email->setCaUsuenvio( "Administrador" );	
+						$email->setCaTipo( "Activación Tracking" );
+						$email->setCaFrom( $from );
+						$email->setCaReplyto( $from );	
+						$email->setCaFromname( $fromName );
+						$email->addTo( $contacto->getCaEmail() );																
+						$email->setCaSubject( "Activación Clave Coltrans.com.co" );
+						$email->setCaBodyHtml( $contentHTML );		
+						$email->setCaBody( $contentPlain );			
+						$email->save();
+						$email->send();		
+						
+																			
 						$this->setTemplate("register");
 					}											
 				}else{	

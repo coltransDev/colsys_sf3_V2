@@ -8,5 +8,5 @@ all:
 #    user:  tasas_cambios
 #    passwd:  tasas_cambios
     port: 25
-    public_ip: 200.14.235.62
+    debugAddress: abotero@coltrans.com.co
 

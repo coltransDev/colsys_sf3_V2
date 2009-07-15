@@ -1,14 +1,14 @@
 # default values
 all:
   digitalFile:
-    root:  /srv/www/digitalFile/
+#    root:  /srv/www/digitalFile/
     pricing:  /srv/www/colsys_sf12/web/colsys/uploads
-#    root:  C:\Desarrollo\digitalFile\
+    root:  C:\Desarrollo\digitalFile\
 
   smtp:
     host: 10.192.1.30
-    user:  tasas_cambios
-    passwd:  tasas_cambios
+#    user:  tasas_cambios
+#    passwd:  tasas_cambios
 #    host: smtp.colmas.com.co
 #    user: bogota-aduana@colmas.com.co
 #    passwd:  gbvFR5
