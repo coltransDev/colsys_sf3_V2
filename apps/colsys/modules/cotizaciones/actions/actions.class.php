@@ -493,7 +493,6 @@ class cotizacionesActions extends sfActions
 					
 		//Crea el correo electronico
 		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( $user->getUserId() );
 		$email->setCaTipo( "Envío de cotización" ); 		
 		$email->setCaIdcaso( $this->getRequestParameter("id") );

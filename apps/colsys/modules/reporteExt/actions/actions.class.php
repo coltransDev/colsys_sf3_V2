@@ -160,8 +160,7 @@ class reporteExtActions extends sfActions
 				$user = $this->getUser();
 				
 				$email = new Email();	
-				
-				$email->setCaFchenvio( date("Y-m-d H:i:s") );
+								
 				$email->setCaUsuenvio( $user->getUserId() );	
 				if( $this->reporte->getCaTransporte()==Constantes::MARITIMO ){	
 					$email->setCaTipo( "Rep.MarítimoExterior" );

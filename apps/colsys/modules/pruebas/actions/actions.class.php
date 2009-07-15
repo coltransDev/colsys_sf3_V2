@@ -40,7 +40,7 @@ class pruebasActions extends sfActions {
 	}
 	
 	public function executeSendEmail() {
-		//exit("detenido");
+		exit("detenido");
 		$c = new Criteria ( );
 		/*$c->add ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:01", Criteria::GREATER_THAN );
 		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:00", Criteria::LESS_THAN );
@@ -1797,7 +1797,6 @@ Departamento Comercial
 				$email->setCaAttachment( $file );
 				$email->setCaTipo( "Circular combustible" );
 				$email->setCaIdcaso( 0 );
-				$email->setCaFchenvio( time() );
 				$email->setCaUsuenvio( "Administrador" );
 				//$email->save();
 				//$email->send();

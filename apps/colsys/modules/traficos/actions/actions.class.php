@@ -763,7 +763,7 @@ class traficosActions extends sfActions
 		$user = $this->getUser();		
 		//Guarda el correo y lo envia
 		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		
 		$email->setCaUsuenvio( $user->getUserId() );
 		$email->setCaTipo( "Envío de cuadro" ); //Envío de Avisos
 		$email->setCaIdcaso( null );

@@ -346,7 +346,6 @@ class helpdeskActions extends sfActions
 		}
 		
 		$email = new Email();		
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( $this->getUser()->getUserId() );
 		$email->setCaTipo( "Notificación" ); 		
 		$email->setCaIdcaso( $ticket->getCaIdticket() );

@@ -466,7 +466,6 @@ class clientesActions extends sfActions
 			}
 		}
 		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( "Administrador" );
 		$email->setCaTipo( "EstadosClientes" ); 		
 		$email->setCaIdcaso( "1" );
@@ -515,7 +514,6 @@ class clientesActions extends sfActions
 			}
 		}
 		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( "Administrador" );
 		$email->setCaTipo( "CircularClientes" ); 		
 		$email->setCaIdcaso( "1" );
@@ -817,7 +815,6 @@ class clientesActions extends sfActions
 		
 				//Crea el correo electronico
 				$email = new Email();
-				$email->setCaFchenvio( date("Y-m-d H:i:s") );
 				$email->setCaUsuenvio( "Administrador" );
 				$email->setCaTipo( "SDNList Compair" ); 		
 				$email->setCaIdcaso( "1" );

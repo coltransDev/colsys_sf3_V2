@@ -445,7 +445,6 @@ class falabellaActions extends sfActions {
 					
 		//Crea el correo electronico
 		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( $user->getUserId() );
 		$email->setCaTipo( "Fal Shipping Inst." ); 		
 		$email->setCaIdcaso( substr(-20,20,base64_decode($this->getRequestParameter('iddoc'))) );

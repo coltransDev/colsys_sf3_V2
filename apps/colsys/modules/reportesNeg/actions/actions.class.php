@@ -1134,8 +1134,7 @@ class reportesNegActions extends sfActions
 		$user = $this->getUser();
 					
 		//Crea el correo electronico
-		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email = new Email();		
 		$email->setCaUsuenvio( $user->getUserId() );
 		$email->setCaTipo( "Envío de reportes" ); 		
 		$email->setCaIdcaso( $this->getRequestParameter("reporteId") );
