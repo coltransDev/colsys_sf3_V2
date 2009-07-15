@@ -129,8 +129,7 @@ class reportesActions extends sfActions
 		/*
 		Notifica a todas las personas de Coltrans  y Colmas
 		*/			
-		$email = new Email();
-		$email->setCaFchenvio( date("Y-m-d H:i:s") );
+		$email = new Email();		
 		$email->setCaUsuenvio( "Administrador" );
 		
 		$email->setCaTipo( "Respuesta a Status" ); 	
@@ -203,8 +202,7 @@ class reportesActions extends sfActions
 		Notifica al cliente
 		*/	
 		if( count( $correosCliente )>0 ){
-			$email = new Email();
-			$email->setCaFchenvio( date("Y-m-d H:i:s") );
+			$email = new Email();			
 			$email->setCaUsuenvio( "Administrador" );
 			
 			$email->setCaTipo( "Respuesta a Status" ); 	
