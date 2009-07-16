@@ -1370,7 +1370,7 @@ echo "</BODY>";
              echo "          }";
 			 echo "          i++;";
              echo "      }";
-			 echo "      if ((document.getElementById('numpiezas').value != pz || document.getElementById('peso').value != ps) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS'){";
+			 echo "      if ((document.getElementById('numpiezas').value != pz || document.getElementById('peso').value != ps) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS' && '$modalidad' != 'OTM/DTA'){";
              echo "               alert('Hay inconsistencia entre el Piezas/Peso y el desgloce en Contenedores');";
              echo "               respuesta = false;";
              echo "          }";
@@ -3363,8 +3363,28 @@ require_once("menu.php");
                   }
              echo "  </SELECT></TD>";
              echo "</TR>";
+
+             echo "<TR>";
+             if (!$cu->Open("select ca_idtransportista, ca_nombre from tb_transportistas order by ca_nombre")) {
+                 echo "<script>alert(\"".addslashes($cu->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'inosea.php';</script>";
+                 exit; }
+             $cu->MoveFirst();
+             echo "  <TD Class=mostrar COLSPAN=3>Transportista:<BR><SELECT NAME='idtransportista'>";  // Llena el cuadro de lista transportistas
+			 echo "    <OPTION VALUE=''></OPTION>";
+             while (!$cu->Eof()) {
+					$sel = ($tm->Value('ca_idtransportista')==$cu->Value('ca_idtransportista'))?'SELECTED':'';
+					echo "<OPTION VALUE=".$cu->Value('ca_idtransportista')." $sel>".$cu->Value('ca_nombre')."</OPTION>";
+                    $cu->MoveNext();
+                   }
+             echo "  </SELECT></TD>";
+             echo "  <TD Class=mostrar></TD>";  // Llena el cuadro de lista con los valores de la tabla Parametros
+             echo "</TR>";
+
              echo "  </TABLE></TD>";
              echo "</TR>";
+
+
              echo "<TR HEIGHT=5>";
              echo "  <TD Class=invertir COLSPAN=5></TD>";
              echo "</TR>";
@@ -3836,12 +3856,17 @@ require_once("menu.php");
 			 }
 
 			 // =========================== Agente de Carga ===========================
+			 $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+			 if (!$tm->Open("select ca_idtransportista, ca_digito from tb_transportistas where ca_idtransportista = '".$dm->Value("ca_idtransportista")."'")) {    // Trae la Información del Agente Genera de Carga / Transportista
+				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+				echo "<script>document.location.href = 'inosea.php';</script>";
+				exit;
+			 }
 			 $xml_pal66->setAttribute("doc1", 31 );
-			 $xml_pal66->setAttribute("nid1", 800024075);
-			 $xml_pal66->setAttribute("dv1", 8);
+			 $xml_pal66->setAttribute("nid1", $tm->Value("ca_idtransportista"));
+			 $xml_pal66->setAttribute("dv1", $tm->Value("ca_digito"));
 
 			 // =========================== Remitente = Agente en el Exterior ===========================
-			 $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 			 if (!$tm->Open("select ca_idagente, count(ca_idagente) from tb_reportes where ca_idreporte in (select ca_idreporte from tb_inoclientes_sea where ca_referencia = '".$rs->Value("ca_referencia")."') group by ca_idagente")) {    // Calcula a partir de los reportes de Negocio quien es el Agente
 				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 				echo "<script>document.location.href = 'inosea.php';</script>";
@@ -4400,13 +4425,13 @@ elseif (isset($accion)) {                                                      /
         case 'Grabar Encabezado': {                                                      // El Botón Grabar Encabezado fue pulsado
             if ($idinfodian == ''){
 				$iddocactual = '';
-				if (!$rs->Open("insert into tb_dianmaestra (ca_referencia, ca_codconcepto, ca_fchtrans, ca_iddocactual, ca_iddocanterior, ca_tipodocviaje, ca_codadministracion, ca_dispocarga, ca_coddeposito, ca_fchinicial, ca_fchfinal, ca_iddoctrasbordo, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_fchcreado, ca_usucreado) values ('$id', '$codconcepto', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$iddocactual', '$iddocanterior', '$tipodocviaje', '$codadministracion', '$dispocarga', '$coddeposito', '$fchinicial', '$fchfinal', '$iddoctrasbordo', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+				if (!$rs->Open("insert into tb_dianmaestra (ca_referencia, ca_codconcepto, ca_fchtrans, ca_iddocactual, ca_iddocanterior, ca_tipodocviaje, ca_codadministracion, ca_dispocarga, ca_coddeposito, ca_idtransportista, ca_fchinicial, ca_fchfinal, ca_iddoctrasbordo, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_fchcreado, ca_usucreado) values ('$id', '$codconcepto', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$iddocactual', '$iddocanterior', '$tipodocviaje', '$codadministracion', '$dispocarga', '$coddeposito', '$idtransportista', '$fchinicial', '$fchfinal', '$iddoctrasbordo', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
 					exit;
 				}
             } else {
-                if (!$rs->Open("update tb_dianmaestra set ca_codconcepto = '$codconcepto', ca_fchtrans = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_iddocanterior = '$iddocanterior', ca_tipodocviaje = '$tipodocviaje', ca_codadministracion = '$codadministracion', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_fchinicial = '$fchinicial', ca_fchfinal = '$fchfinal', ca_iddoctrasbordo = '$iddoctrasbordo', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian'")) {
+                if (!$rs->Open("update tb_dianmaestra set ca_codconcepto = '$codconcepto', ca_fchtrans = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_iddocanterior = '$iddocanterior', ca_tipodocviaje = '$tipodocviaje', ca_codadministracion = '$codadministracion', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_idtransportista = '$idtransportista', ca_fchinicial = '$fchinicial', ca_fchfinal = '$fchfinal', ca_iddoctrasbordo = '$iddoctrasbordo', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php?id=$id';</script>";
                     exit;
