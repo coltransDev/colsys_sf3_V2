@@ -3926,8 +3926,8 @@ require_once("menu.php");
 						echo "<script>document.location.href = 'inosea.php';</script>";
 						exit;
 					}
-					if (!$dc->Open("update tb_dianclientes set ca_iddocactual = '$iddocactual' where ca_idinfodian = ".$dm->Value("ca_idinfodian")." and ca_referencia = '".$ic->Value("ca_referencia")."' and ca_idcliente = '".$ic->Value("ca_idcliente")."' and ca_house = '".$ic->Value("ca_hbls")."'")) {    // Actualiza el Número de Reserva en DianClientes
-						echo "<script>alert(\"".addslashes($dm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+					if (!$tm->Open("update tb_dianclientes set ca_iddocactual = '$iddocactual' where ca_idinfodian = ".$dm->Value("ca_idinfodian")." and ca_referencia = '".$ic->Value("ca_referencia")."' and ca_idcliente = '".$ic->Value("ca_idcliente")."' and ca_house = '".$ic->Value("ca_hbls")."'")) {    // Actualiza el Número de Reserva en DianClientes
+						echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 						echo "<script>document.location.href = 'inosea.php';</script>";
 						exit;
 					}
