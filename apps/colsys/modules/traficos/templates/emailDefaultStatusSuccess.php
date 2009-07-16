@@ -47,6 +47,20 @@ $cliente = $reporte->getCliente();
 		<td>&nbsp;</td>		
 		<td>&nbsp;</td>
 	</tr>
+	<?				
+	if( $reporte->getCaContinuacion()!="N/A" ){
+	?>
+	<tr>
+		<td><b>Destino:</b></td>
+		<td><?=$reporte->getCaContinuacion()." -> ".$reporte->getDestinoCont()?>	</td>
+		<td><b>Fch.Llegada:</b></td>
+		<td><?=$status->getCaFchcontinuacion()?$status->getCaFchcontinuacion():"&nbsp;"?></td>		
+		<td>&nbsp;</td>		
+		<td>&nbsp;</td>
+	</tr>
+	<?
+	}
+	?>	
 	<tr>
 		<td><b>No.Piezas:</b></td>
 		<td><?=$status->getCaPiezas()?str_replace("|", " ", $status->getCaPiezas()):"&nbsp;"?></td>

@@ -578,7 +578,7 @@ class cotizacionesActions extends sfActions
   
 		$email->save(); //guarda el cuerpo del mensaje
 		$this->error = $email->send();	
-		if(!$this->error){
+		//if(!$this->error){
 			$tarea  = $this->cotizacion->getTareaIDGEnvioOportuno();
 			
 			if( $tarea ){		
@@ -593,7 +593,7 @@ class cotizacionesActions extends sfActions
 				}							
 				$tarea->save();
 			}
-		}		
+		//}		
 	}
 	
 	

@@ -380,8 +380,7 @@ if( !sfConfig::get("app_smtp_user") ){
 				<td><div align="left"><b>Continuación:</b><br />
 						<?=$reporte->getCaContinuacion()." -> ".$reporte->getDestinoCont()?>				
 				</div></td>
-				<td><div align="left"><b><b>Fecha de llegada:</b></b></div></td>
-				<td><div align="left">
+				<td><div align="left"><b><b>Fecha de llegada:</b></b><br />
 					<?			
 					echo $form['fchcontinuacion']->renderError(); 
 					if( $ultStatus ){	
@@ -390,6 +389,7 @@ if( !sfConfig::get("app_smtp_user") ){
 					echo $form['fchcontinuacion']->render();
 					?>
 				</div></td>
+				<td>&nbsp;</td>
 			</tr>
 			<?
 			}

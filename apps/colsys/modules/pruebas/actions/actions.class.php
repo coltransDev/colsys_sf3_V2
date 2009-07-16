@@ -41,27 +41,33 @@ class pruebasActions extends sfActions {
 	
 	public function executeSendEmail() {
 		exit("detenido");
+		set_time_limit(0 );
 		$c = new Criteria ( );
-		/*$c->add ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:01", Criteria::GREATER_THAN );
-		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:58:00", Criteria::LESS_THAN );
+		/*$c->add ( EmailPeer::CA_FCHENVIO, "2009-07-15 13:10:01", Criteria::GREATER_THAN );
+		$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-07-15 17:50:01", Criteria::LESS_THAN );
+		$c->add( EmailPeer::CA_TIPO,  'Envío de Status');*/
 		
-		$c->add(  EmailPeer::CA_ADDRESS, "%bsnmedical%", Criteria::NOT_LIKE  );
-		$c->addAnd(  EmailPeer::CA_ADDRESS, "%willard%", Criteria::NOT_LIKE  );
-		*/
+		//$c->add(  EmailPeer::CA_ADDRESS, "%bsnmedical%", Criteria::NOT_LIKE  );
+		//$c->addAnd(  EmailPeer::CA_ADDRESS, "%willard%", Criteria::NOT_LIKE  );
+		
 		//$c->addAnd ( EmailPeer::CA_FCHENVIO, "2009-03-26 14:50:00", Criteria::LESS_THAN );		
-		
-		 
-		
+			
 		//$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
 		//$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
 		
-		$c->add( EmailPeer::CA_IDEMAIL, 265460);
+		//$c->add( EmailPeer::CA_IDEMAIL, 265437);
 		/*$c->addOr( EmailPeer::CA_IDEMAIL, 240610);
 		$c->addOr( EmailPeer::CA_IDEMAIL, 240656);*/
+		//$c->add(  EmailPeer::CA_FCHENVIO , null, Criteria::ISNULL );
 		$c->addAscendingOrderByColumn ( EmailPeer::CA_FCHENVIO );
+		$c->setLimit(5);
 			
 		$i = 0;
 		$emails = EmailPeer::doSelect ( $c );
+				
+		
+		
+		
 		foreach ( $emails as $email ) {
 			//print_r( $email);
 			echo "<b>Enviando " . $i ++ . "</b>	emailid: " . $email->getCaIdEmail () . " Fch: " . $email->getCaFchEnvio () . " <br />From: " . $email->getCaFrom () . "<br />";
@@ -1382,25 +1388,27 @@ class pruebasActions extends sfActions {
 	* Coloca la fecha de presentacion de acuerdo a los envios por email
 	*/
 	public function executeFixCotFchpresentacion(){
-		
+		exit();
 		set_time_limit(0);
 		
-		$sql = "SELECT distinct ca_idcotizacion,  MIN(ca_fchenvio) as ca_fchenvio
-from tb_cotizaciones INNER JOIN  tb_emails ON tb_cotizaciones.ca_idcotizacion = tb_emails.ca_idcaso 
-WHERE tb_emails.ca_tipo = 'Envío de cotización' AND ca_consecutivo IS NOT  NULL 
-group by ca_idcotizacion";
-		$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
+		$sql = "select ca_consecutivo, notificaciones.tb_tareas.ca_idtarea, min(ca_fchenvio) as ca_fchenvio from tb_cotizaciones inner join notificaciones.tb_tareas on ca_idg_envio_oportuno = ca_idtarea 
+	inner join notificaciones.tb_notificaciones on 	notificaciones.tb_tareas.ca_idtarea = notificaciones.tb_notificaciones.ca_idtarea
+	inner join tb_emails on	tb_emails.ca_idemail = tb_notificaciones.ca_idemail 
+where ca_consecutivo like '%2009'  and ca_fchterminada is null and tb_emails.ca_fchenvio is not null 
+
+group by ca_consecutivo,  notificaciones.tb_tareas.ca_idtarea";
+		$con = Propel::getConnection(NotTareaPeer::DATABASE_NAME);
 		
 		$stmt = $con->prepare($sql);
 		$stmt->execute();	 
 		
 		while($row= $stmt->fetch() ){
 			//print_r( $row );
-			$cotizacion = CotizacionPeer::retrieveByPk( $row['ca_idcotizacion']);
-			$cotizacion->setCaFchpresentacion(  $row['ca_fchenvio']);
-			//$cotizacion->save();
+			$tarea = NotTareaPeer::retrieveByPk( $row['ca_idtarea']);
+			$tarea->setCaFchterminada(  $row['ca_fchenvio']);
+			//$tarea->save();
 			
-			echo "OK ".$cotizacion->getCaConsecutivo()."<br />";
+			echo "OK ".$row['ca_consecutivo']."<br />";
 		}
 		return sfView::NONE;
 	} 
