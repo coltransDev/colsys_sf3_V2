@@ -1370,7 +1370,7 @@ echo "</BODY>";
              echo "          }";
 			 echo "          i++;";
              echo "      }";
-			 echo "      if ((document.getElementById('numpiezas').value != pz || document.getElementById('peso').value != ps) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS' && '$modalidad' != 'OTM/DTA'){";
+			 echo "      if ((document.getElementById('numpiezas').value != pz || document.getElementById('peso').value != ps) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS' && '$impoexpo' != 'OTM/DTA'){";
              echo "               alert('Hay inconsistencia entre el Piezas/Peso y el desgloce en Contenedores');";
              echo "               respuesta = false;";
              echo "          }";
