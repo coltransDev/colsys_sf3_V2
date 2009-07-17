@@ -371,7 +371,7 @@ class helpdeskActions extends sfActions
 		}
 		
 		$email->save();
-		$email->send();
+		//$email->send();
 		
 		$this->ticket = $ticket;
 		$this->setLayout("ajax");		

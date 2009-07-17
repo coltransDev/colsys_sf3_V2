@@ -7,7 +7,11 @@ class NuevoContactoForm extends sfForm{
 	public function configure(){
 		
 		sfValidatorBase::setCharset('ISO-8859-1');
-				
+		
+		$criteriaCiudades = new Criteria();
+		$criteriaCiudades->addJoin( TraficoPeer::CA_IDTRAFICO, CiudadPeer::CA_IDTRAFICO );		
+		$criteriaCiudades->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
+		
 				
 		$this->setWidgets(array(
 		  'idagente'    => new sfWidgetFormInputHidden(),
@@ -17,7 +21,7 @@ class NuevoContactoForm extends sfForm{
 		  'direccion'   => new sfWidgetFormInput(array(), array("maxlength"=>"100" ,"size"=>"60")),
 		  'telefonos'   => new sfWidgetFormInput(array(), array("maxlength"=>"30" ,"size"=>"60") ),
 		  'fax'         => new sfWidgetFormInput(array(), array("maxlength"=>"30" ,"size"=>"60")),
-		  'idciudad'    => new sfWidgetFormPropelChoice(array('model' => 'Ciudad', 'add_empty' => false, 'order_by'=>array('CaCiudad', 'ASC'))),
+		  'idciudad'    => new sfWidgetFormPropelChoice(array('model' => 'Ciudad', 'add_empty' => false, 'criteria' => $criteriaCiudades)),
 		  'email'       => new sfWidgetFormInput( array(), array("maxlength"=>"40" ,"size"=>"60")),
 		  'impoexpo'     => new sfWidgetFormChoice(array(
   								'choices' => array( Constantes::IMPO=>Constantes::IMPO,

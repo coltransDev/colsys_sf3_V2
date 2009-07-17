@@ -23,7 +23,16 @@ $cliente = $reporte->getCliente();
 	<table width="100%" cellspacing="0" border="1" class="tableList">
 	<tr>
 		<td width="13%"><b>Orden:</b></td>
-		<td colspan="5"><?=$reporte->getCaOrdenClie()?></td>
+		<td colspan="3"><?=$reporte->getCaOrdenClie()?></td>
+		<td><b>T&eacute;rmino de Negociaci&oacute;n:</b></td>
+		<td>
+		<?
+		$array = explode("|",$reporte->getCaIncoterms());
+		$array = array_unique( $array );
+		$incoterms = implode(" ", $array );
+		echo $incoterms;
+		?>
+		</td>
 	</tr>
 	<tr>
 		<td><b>Proveedor:</b></td>
@@ -31,6 +40,7 @@ $cliente = $reporte->getCliente();
 		<td width="20%"><b><?=$reporte->getCaOrdenProv()?"Orden Proveedor":"&nbsp;"?></b></td>
 		<td width="22%"><?=$reporte->getCaOrdenProv()?$reporte->getCaOrdenProv():"&nbsp;"?></td>
 	</tr>
+	
 	<tr>
 		<td><b>Origen:</b></td>
 		<td width="13%"><?=$reporte->getOrigen()->getCaCiudad()?></td>

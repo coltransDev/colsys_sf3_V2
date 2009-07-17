@@ -66,8 +66,10 @@ class reporteExtActions extends sfActions
 			$bindValues = array();
 						
 			$contactos = $this->form->getContactosAg();
-			foreach( $contactos as $contacto ){		
-				$bindValues["destinatarios_".$contacto->getCaIdcontacto()] = trim($request->getParameter("destinatarios_".$contacto->getCaIdcontacto() ));					 
+			foreach( $contactos as $contacto ){	
+				if( $request->getParameter("destinatarios_".$contacto->getCaIdcontacto() ) ){	
+					$bindValues["destinatarios_".$contacto->getCaIdcontacto()] = trim($request->getParameter("destinatarios_".$contacto->getCaIdcontacto() ));					 
+				}
 			}
 			
 			for( $i=0; $i<NuevoReporteForm::NUM_CC ; $i++ ){

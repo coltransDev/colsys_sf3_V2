@@ -300,10 +300,11 @@ class traficosActions extends sfActions
 			$bindValues = array();
 						
 			$destinatarios = $this->form->getDestinatarios();
-			for( $i=0; $i< count($destinatarios) ; $i++ ){		
-				$bindValues["destinatarios_".$i] = trim($request->getParameter("destinatarios_".$i));					 
+			for( $i=0; $i< count($destinatarios) ; $i++ ){	
+				if( $request->getParameter("destinatarios_".$i) ){	
+					$bindValues["destinatarios_".$i] = trim($request->getParameter("destinatarios_".$i));					 				}
 			}
-			
+
 			for( $i=0; $i<NuevoStatusForm::NUM_CC ; $i++ ){
 				$bindValues["cc_".$i] = trim($request->getParameter("cc_".$i));
 			}

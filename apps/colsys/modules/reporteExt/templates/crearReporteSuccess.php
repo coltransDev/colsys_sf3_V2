@@ -1,7 +1,7 @@
 
 <script language="javascript" type="text/javascript">
 var verInstruccionesAgente=function(){	
-	document.body.scroll='no';  
+	//document.body.scroll='no';  
 	frame = document.getElementById( 'find_texts_frame' );  
 	//frame.style.height = document.body.clientHeight-16;  
 	ventana = document.getElementById('find_texts');  
@@ -51,13 +51,15 @@ var crearSeguimiento=function(){
 	
 	<tr>
 		<td valign="top"><div align="left"><b>Remitente:</b>
-			<?
-			if($user->getIdSucursal()=="BOG" && $reporte->getCaTransporte()==Constantes::MARITIMO && $reporte->getCaImpoexpo()==Constantes::IMPO ){			
-				echo $form['remitente']->renderError(); 			
+			<?		
+			if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){			
+				echo $form['remitente']->renderError(); 	
+				$form->setDefault('remitente', $user->getEmail() ); 			
 				echo $form['remitente']->render();					
 			}else{
 				echo $usuario->getCaNombre()." &lt;".$usuario->getCaEmail()."&gt;";
 			}
+			
 			?>	
 		</div></td>
 		<td valign="top"><div align="left">&nbsp;</div></td>

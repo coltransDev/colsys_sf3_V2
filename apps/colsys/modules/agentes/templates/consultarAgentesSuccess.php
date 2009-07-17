@@ -5,6 +5,11 @@
 $ultTrafico = null;
 foreach( $agentes as $agente ){
 	
+	
+	if( !$agente->getCaActivo() && $nivel<1){
+		continue;
+	}
+	
 	$indicativo = "(".substr($agente->getCiudad()->getCaIdtrafico(), strpos($agente->getCiudad()->getCaIdtrafico(),"-")+1, 5 ).") (".substr($agente->getCaIdCiudad(), strpos($agente->getCaIdCiudad(),"-")+1, 5 ).")";
 	
 	if( $agente->getCiudad()->getCaIdtrafico()!=$ultTrafico ){	
@@ -126,6 +131,11 @@ foreach( $agentes as $agente ){
 		}
 		
 		foreach( $contactos as $contacto ){
+			
+			if( !$contacto->getCaActivo() && $nivel<1){
+				continue;
+			}
+			
 			if( $ultCiudad!=$contacto->getCaIdciudad() ){
 				$ultCiudad=$contacto->getCaIdciudad();
 				$idtrafico=$contacto->getCiudad()->getCaidtrafico();
@@ -142,7 +152,7 @@ foreach( $agentes as $agente ){
 		?>
 	<tr class="<?=$contacto->getCaSugerido()?"yellow":"row0"?>">
 		<td colspan="4" ><div align="left"><b>
-			<?=$contacto->getCaNombre()." ".$contacto->getCaApellido()?>
+			<?=$contacto->getCaNombre()." ".$contacto->getCaApellido()?> <?=(!$contacto->getCaActivo()?"(INACTIVO)":"")?>
 		</b></div></td>
 		<td >
 			

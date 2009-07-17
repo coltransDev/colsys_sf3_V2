@@ -283,6 +283,16 @@ class cotizacionesActions extends sfActions
 			$tarea->delete();
 		}
 		
+		
+		$productos = $cotizacion->getCotProductos();
+		
+		foreach( $productos as $producto ){
+			if( $producto->getCaIdtarea() ){
+				$tarea  = NotTareaPeer::retrieveByPk( $producto->getCaIdtarea() );
+				$tarea->setCaFchterminada( time() );
+				$tarea->save();
+			}
+		}		
 		$this->redirect("cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdCotizacion());	
 	}
 	
