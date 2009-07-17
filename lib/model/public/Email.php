@@ -129,13 +129,11 @@ class Email extends BaseEmail
 			
 		}
 		
-		if( $this->getCaBodyhtml() ){
-			//$message->setBody($this->getCaBodyhtml(), 'text/html', 'iso-8859-1'); 
+		if( $this->getCaBodyhtml() ){			
 			$message->setBody($this->getCaBodyhtml(), 'text/html', 'iso-8859-1' );		
 		}
 		
-		if( $this->getCaBody() ){		
-			//$message->addPart( $this->getCaBody() , 'text/plain', 'iso-8859-1');	
+		if( $this->getCaBody() ){	
 			$message->addPart( $this->getCaBody() , 'text/plain', 'iso-8859-1');			
 		}else{
 			$message->addPart( "<< Este mensaje está en formato HTML pero su equipo no está configurado para mostrarlo automáticamente. Active la opción HTML del menú Ver en su cliente de correo electrónico para una correcta visualización>>" , 'text/plain', 'iso-8859-1');				
@@ -159,7 +157,7 @@ class Email extends BaseEmail
 			foreach( $atchFiles as $file ){	
 				if( file_exists($file) ){						
 					try{
-						$message->attach(Swift_Attachment::fromPath($file));							
+						$message->attach(Swift_Attachment::fromPath($file)->setFilename(Utils::replace(basename($file))));							
 					}catch (Exception $e) {						
 						$event= $logHeader;						
 						$event.= $logger->dump();
