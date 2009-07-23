@@ -1840,6 +1840,126 @@ GRANT ALL ON tb_colnovedades TO GROUP "Usuarios";
 
 
 
+-- Table: tb_dianmaestra
+-- DROP TABLE tb_dianmaestra;
+CREATE TABLE tb_dianmaestra
+(
+  ca_idinfodian integer NOT NULL DEFAULT nextval('tb_dianmaestra_id'::regclass),
+  ca_referencia character varying(16) NOT NULL,
+  ca_codconcepto character varying(1) NOT NULL,
+  ca_fchtrans timestamp without time zone NOT NULL,
+  ca_iddocactual character varying(20) NOT NULL,
+  ca_iddocanterior character varying(20),
+  ca_tipodocviaje character varying(2),
+  ca_codadministracion character varying(2),
+  ca_dispocarga character varying(2),
+  ca_coddeposito character varying(4),
+  ca_idtransportista numeric(9),
+  ca_numenvio smallint,
+  ca_fchenvio timestamp without time zone,
+  ca_usuenvio character varying(20),
+  ca_fchinicial date,
+  ca_fchfinal date,
+  ca_vlrtotal integer,
+  ca_cantreg smallint,
+  ca_iddoctrasbordo character varying(20),
+  ca_idcondiciones smallint,
+  ca_responsabilidad character varying(1),
+  ca_tiponegociacion character varying(1),
+  ca_tipocarga character varying(1),
+  ca_precursores character varying(1),
+  ca_fchcreado timestamp without time zone,
+  ca_usucreado character varying(20),
+  ca_fchactualizado timestamp without time zone,
+  ca_usuactualizado character varying(20),
+  CONSTRAINT pk_dianmaestra PRIMARY KEY (ca_idinfodian, ca_referencia),
+  CONSTRAINT tb_dianmaestra_ca_idinfodian_key UNIQUE (ca_idinfodian)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_dianmaestra OWNER TO postgres;
+GRANT ALL ON TABLE tb_dianmaestra TO postgres;
+GRANT ALL ON TABLE tb_dianmaestra TO "Administrador";
+GRANT ALL ON TABLE tb_dianmaestra TO "Usuarios";
+
+
+-- Table: tb_dianclientes
+-- DROP TABLE tb_dianclientes;
+CREATE TABLE tb_dianclientes
+(
+  ca_idinfodian integer NOT NULL,
+  ca_referencia character varying(16) NOT NULL,
+  ca_idcliente numeric(11) NOT NULL,
+  ca_house character varying(25) NOT NULL,
+  ca_dispocarga character varying(2),
+  ca_coddeposito character varying(4),
+  ca_tipodocviaje character varying(2),
+  ca_idcondiciones smallint,
+  ca_responsabilidad character varying(1),
+  ca_tiponegociacion character varying(1),
+  ca_tipocarga character varying(1),
+  ca_precursores character varying(1),
+  ca_vlrfob integer,
+  ca_vlrflete integer,
+  ca_fchcreado timestamp without time zone,
+  ca_usucreado character varying(20),
+  ca_fchactualizado timestamp without time zone,
+  ca_usuactualizado character varying(20),
+  ca_iddocactual character varying(20),
+  ca_iddocanterior character varying(20),
+  CONSTRAINT pk_dianclientes PRIMARY KEY (ca_idinfodian, ca_referencia, ca_idcliente, ca_house)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_dianclientes OWNER TO postgres;
+GRANT ALL ON TABLE tb_dianclientes TO postgres;
+GRANT ALL ON TABLE tb_dianclientes TO "Administrador";
+GRANT ALL ON TABLE tb_dianclientes TO "Usuarios";
+
+
+-- Table: tb_diandepositos
+-- DROP TABLE tb_diandepositos;
+CREATE TABLE tb_diandepositos
+(
+  ca_codigo integer NOT NULL,
+  ca_nombre character varying(250),
+  ca_fchdesde date NOT NULL,
+  ca_fchhasta date,
+  ca_codadmin integer,
+  ca_codtipo integer,
+  CONSTRAINT pk_diandepositos PRIMARY KEY (ca_codigo, ca_fchdesde)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_diandepositos OWNER TO postgres;
+GRANT ALL ON TABLE tb_diandepositos TO postgres;
+GRANT ALL ON TABLE tb_diandepositos TO "Administrador";
+GRANT ALL ON TABLE tb_diandepositos TO "Usuarios";
+
+
+-- Table: tb_dianreservados
+-- DROP TABLE tb_dianreservados;
+CREATE TABLE tb_dianreservados
+(
+  ca_numero_resv character varying(20) NOT NULL,
+  ca_anno smallint,
+  ca_numenvio smallint,
+  ca_fchreservado timestamp without time zone,
+  ca_usureservado character varying(20),
+  CONSTRAINT pk_dianreservados PRIMARY KEY (ca_numero_resv)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_dianreservados OWNER TO postgres;
+GRANT ALL ON TABLE tb_dianreservados TO postgres;
+GRANT ALL ON TABLE tb_dianreservados TO "Administrador";
+GRANT ALL ON TABLE tb_dianreservados TO "Usuarios";
+
+
 
 /* Vistas de la Base de Datos */
 
