@@ -198,7 +198,21 @@ if ( $status->getCaIdEtapa() == "IMCPD" ) { //confirmación de llegada
 <?=$inoMaestra->getCaMensaje()?>
 <br />
 <br />
-Nota: Estimado Cliente, le recordamos que el tiempo de permanencia de mercancìa en los depositos es de un (1) mes, contados desde la fecha de llegada de la mercancìa, y pueden solicitar una posible prorroga por un (1) mes adicional acorde al Decreto 2557 del 06 de Julio 2007 art. 10<br />
+Nota: Estimado Cliente, 
+- le recordamos que el tiempo de permanencia de mercancìa en los depositos es de un (1) mes, contados desde la fecha de llegada de la mercancìa, y pueden solicitar una posible prorroga por un (1) mes adicional acorde al Decreto 2557 del 06 de Julio 2007 art. 10<br />
+<?
+if( substr($inoMaestra->getcaReferencia(),0,1)=="4" ){
+?>
+- El recibo de los contenedores en el interior del País esta sujeto a la disponibilidad de espacio en el respectivo patio de las Navieras.<br />
+- En caso de aceptación se debe cancelar un Drop Off , el cual fue previamente cotizado a Ustedes.
+- Solicitamos a ustedes devolver los contenedores a la mayor brevedad posible, para evitar costos  adicionales por concepto de demoras en la devolución de las unidades.<br />
+- El tiempo libre para la devolución de los contenedores vacíos es estimado en 9 días calendario a partir de la fecha de arribo del buque para las unidades estándar. Y  los contenedores  especiales como refrigeradas tienen  3 días  siguientes a la llegada del buque, y sin excepcion la devolucion es en el  Puerto  ( este tiempo  esta sujeto a cambios o variaciones del mercado)<br />
+<?
+}
+?>
+
+
+
 <br />
 Cualquier informaci&oacute;n adicional que ustedes requieran, con gusto le ser&aacute;   suministrada..<br />
 <br />
