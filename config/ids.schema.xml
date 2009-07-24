@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.ids">
+	<table name="ids.tb_ids" phpName="Ids" >
+		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="ids.tb_ids_id"/>
+        <column name="ca_dv" type="integer" />
+		<column name="ca_idalterno" type="varchar" />
+		<column name="ca_tipoidentificacion" type="" />
+		<column name="ca_idgrupo" type="integer" />
+		<column name="ca_nombre" type="varchar" />
+		<column name="ca_website" type="varchar" />
+		<column name="ca_actividad" type="varchar" />
+		<column name="ca_sectoreco" type="varchar" />
+		<column name="ca_fchcreado" type="timestamp"   />
+		<column name="ca_usucreado" type="varchar"   />
+        <column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />
+		
+	</table>
+
+    <table name="ids.tb_sucursales" phpName="IdsSucursal" >
+		<column name="ca_idsucursal" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="ca_id" type="integer" />
+		<column name="ca_direccion" type="varchar" />
+		<column name="ca_oficina" type="varchar" />
+		<column name="ca_torre" type="integer" />
+		<column name="ca_bloque" type="varchar" />
+		<column name="ca_interior" type="varchar" />
+		<column name="ca_localidad" type="varchar" />
+		<column name="ca_complemento" type="varchar" />
+        <column name="ca_telefonos" type="varchar" />
+        <column name="ca_fax" type="varchar" />
+        <column name="ca_idciudad" type="varchar" />
+		<column name="ca_fchcreado" type="timestamp"   />
+		<column name="ca_usucreado" type="varchar"   />
+        <column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />
+        
+		<foreign-key foreignTable="tb_ciudades">
+			<reference local="ca_idciudad" foreign="ca_idciudad"/>
+		</foreign-key>
+
+        <foreign-key foreignTable="ids.tb_ids">
+			<reference local="ca_id" foreign="ca_id"/>
+		</foreign-key>
+	</table>
+
+	<table name="ids.tb_contactos" phpName="IdsContacto">
+		<column name="ca_idcontacto" type="integer" required="true" primaryKey="true"  />
+		<column name="ca_idsucursal" type="integer" required="true"  />
+        <column name="ca_nombres" type="varchar" required="true"  />
+		<column name="ca_papellido" type="varchar" required="true"  />
+		<column name="ca_sapellido" type="varchar" />
+		<column name="ca_nombres" type="varchar"    />
+		<column name="ca_saludo" type="varchar"   />
+        <column name="ca_direccion" type="varchar"   />
+        <column name="ca_telefonos" type="varchar"   />
+        <column name="ca_fax" type="varchar"   />
+        <column name="ca_idciudad" type="varchar"   />
+        <column name="ca_email" type="varchar"   />
+        <column name="ca_impoexpo" type="varchar"   />
+        <column name="ca_transporte" type="varchar"   />
+		<column name="ca_cargo" type="varchar"   />
+		<column name="ca_departamento" type="varchar"   />	
+		<column name="ca_observaciones" type="varchar"   />		
+		<column name="ca_sugerido" type="boolean"   />
+        <column name="ca_activo" type="boolean"   />
+        <column name="ca_fchcreado" type="timestamp"   />
+		<column name="ca_usucreado" type="varchar"   />
+        <column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />
+        <column name="ca_fcheliminado" type="timestamp"   />
+		<column name="ca_usueliminado" type="varchar"   />
+
+        <foreign-key foreignTable="tb_ciudades">
+			<reference local="ca_idciudad" foreign="ca_idciudad"/>
+		</foreign-key>
+		<foreign-key foreignTable="ids.tb_sucursales">
+			<reference local="ca_idsucursal" foreign="ca_idsucursal"/>
+		</foreign-key>
+	</table>
+
+    <table name="ids.ca_idproveedor" phpName="IdsProveedor">
+		<column name="ca_idproveedor" type="integer" required="true" primaryKey="true"  />
+		<column name="ca_tipo" type="integer" required="true"  />
+        <column name="ca_critico" type="boolean" required="true"  />
+		<column name="ca_controladoporsig" type="boolean" required="true"  />
+		<column name="ca_fchaprobado" type="timestamp" />
+		<column name="ca_usuaprobado" type="varchar"    />
+        
+        <foreign-key foreignTable="ids.tb_ids">
+			<reference local="ca_idproveedor" foreign="ca_id"/>
+		</foreign-key>
+		
+	</table>
+
+	
+
+</database>
