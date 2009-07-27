@@ -169,7 +169,7 @@ class FileImported extends BaseFileImported
 				$falaDetail->setCaCantidadPaquetesMiles( $this->row['ctns'] );
 				$falaDetail->setCaUnidadMedidaPaquetes( "CT" );
 				$falaDetail->setCaCantidadVolumenMiles( ($this->row['ctn_hgt'] * $this->row['ctn_wid'] * $this->row['ctn_lgt']) );
-				//$falaDetail->setCaUnidadMedidaVolumen( $this->row['long'] );
+				$falaDetail->setCaUnidadMedidaVolumen( $this->row['long'] );
 				$falaDetail->setCaCantidadPesoMiles( $this->row['kgs_net'] );
 				$falaDetail->setCaUnidadMedidaPeso( $this->row['unit_measure'] );
 				$falaDetail->save();
