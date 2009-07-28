@@ -110,6 +110,26 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 	private $lastContactoAgenteCriteria = null;
 
 	/**
+	 * @var        array IdsSucursal[] Collection to store aggregation of IdsSucursal objects.
+	 */
+	protected $collIdsSucursals;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collIdsSucursals.
+	 */
+	private $lastIdsSucursalCriteria = null;
+
+	/**
+	 * @var        array IdsContacto[] Collection to store aggregation of IdsContacto objects.
+	 */
+	protected $collIdsContactos;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collIdsContactos.
+	 */
+	private $lastIdsContactoCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -401,6 +421,12 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			$this->collContactoAgentes = null;
 			$this->lastContactoAgenteCriteria = null;
 
+			$this->collIdsSucursals = null;
+			$this->lastIdsSucursalCriteria = null;
+
+			$this->collIdsContactos = null;
+			$this->lastIdsContactoCriteria = null;
+
 		} // if (deep)
 	}
 
@@ -563,6 +589,22 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collIdsSucursals !== null) {
+				foreach ($this->collIdsSucursals as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collIdsContactos !== null) {
+				foreach ($this->collIdsContactos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -688,6 +730,22 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 
 				if ($this->collContactoAgentes !== null) {
 					foreach ($this->collContactoAgentes as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collIdsSucursals !== null) {
+					foreach ($this->collIdsSucursals as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collIdsContactos !== null) {
+					foreach ($this->collIdsContactos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -951,6 +1009,18 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			foreach ($this->getContactoAgentes() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addContactoAgente($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getIdsSucursals() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addIdsSucursal($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getIdsContactos() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addIdsContacto($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2116,6 +2186,408 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collIdsSucursals collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addIdsSucursals()
+	 */
+	public function clearIdsSucursals()
+	{
+		$this->collIdsSucursals = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collIdsSucursals collection (array).
+	 *
+	 * By default this just sets the collIdsSucursals collection to an empty array (like clearcollIdsSucursals());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initIdsSucursals()
+	{
+		$this->collIdsSucursals = array();
+	}
+
+	/**
+	 * Gets an array of IdsSucursal objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Ciudad has previously been saved, it will retrieve
+	 * related IdsSucursals from storage. If this Ciudad is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array IdsSucursal[]
+	 * @throws     PropelException
+	 */
+	public function getIdsSucursals($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsSucursals === null) {
+			if ($this->isNew()) {
+			   $this->collIdsSucursals = array();
+			} else {
+
+				$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				IdsSucursalPeer::addSelectColumns($criteria);
+				$this->collIdsSucursals = IdsSucursalPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				IdsSucursalPeer::addSelectColumns($criteria);
+				if (!isset($this->lastIdsSucursalCriteria) || !$this->lastIdsSucursalCriteria->equals($criteria)) {
+					$this->collIdsSucursals = IdsSucursalPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastIdsSucursalCriteria = $criteria;
+		return $this->collIdsSucursals;
+	}
+
+	/**
+	 * Returns the number of related IdsSucursal objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related IdsSucursal objects.
+	 * @throws     PropelException
+	 */
+	public function countIdsSucursals(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collIdsSucursals === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				$count = IdsSucursalPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				if (!isset($this->lastIdsSucursalCriteria) || !$this->lastIdsSucursalCriteria->equals($criteria)) {
+					$count = IdsSucursalPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collIdsSucursals);
+				}
+			} else {
+				$count = count($this->collIdsSucursals);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a IdsSucursal object to this object
+	 * through the IdsSucursal foreign key attribute.
+	 *
+	 * @param      IdsSucursal $l IdsSucursal
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addIdsSucursal(IdsSucursal $l)
+	{
+		if ($this->collIdsSucursals === null) {
+			$this->initIdsSucursals();
+		}
+		if (!in_array($l, $this->collIdsSucursals, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collIdsSucursals, $l);
+			$l->setCiudad($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Ciudad is new, it will return
+	 * an empty collection; or if this Ciudad has previously
+	 * been saved, it will retrieve related IdsSucursals from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Ciudad.
+	 */
+	public function getIdsSucursalsJoinIds($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsSucursals === null) {
+			if ($this->isNew()) {
+				$this->collIdsSucursals = array();
+			} else {
+
+				$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				$this->collIdsSucursals = IdsSucursalPeer::doSelectJoinIds($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+			if (!isset($this->lastIdsSucursalCriteria) || !$this->lastIdsSucursalCriteria->equals($criteria)) {
+				$this->collIdsSucursals = IdsSucursalPeer::doSelectJoinIds($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastIdsSucursalCriteria = $criteria;
+
+		return $this->collIdsSucursals;
+	}
+
+	/**
+	 * Clears out the collIdsContactos collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addIdsContactos()
+	 */
+	public function clearIdsContactos()
+	{
+		$this->collIdsContactos = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collIdsContactos collection (array).
+	 *
+	 * By default this just sets the collIdsContactos collection to an empty array (like clearcollIdsContactos());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initIdsContactos()
+	{
+		$this->collIdsContactos = array();
+	}
+
+	/**
+	 * Gets an array of IdsContacto objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Ciudad has previously been saved, it will retrieve
+	 * related IdsContactos from storage. If this Ciudad is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array IdsContacto[]
+	 * @throws     PropelException
+	 */
+	public function getIdsContactos($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsContactos === null) {
+			if ($this->isNew()) {
+			   $this->collIdsContactos = array();
+			} else {
+
+				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				IdsContactoPeer::addSelectColumns($criteria);
+				$this->collIdsContactos = IdsContactoPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				IdsContactoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastIdsContactoCriteria) || !$this->lastIdsContactoCriteria->equals($criteria)) {
+					$this->collIdsContactos = IdsContactoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastIdsContactoCriteria = $criteria;
+		return $this->collIdsContactos;
+	}
+
+	/**
+	 * Returns the number of related IdsContacto objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related IdsContacto objects.
+	 * @throws     PropelException
+	 */
+	public function countIdsContactos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collIdsContactos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				$count = IdsContactoPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				if (!isset($this->lastIdsContactoCriteria) || !$this->lastIdsContactoCriteria->equals($criteria)) {
+					$count = IdsContactoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collIdsContactos);
+				}
+			} else {
+				$count = count($this->collIdsContactos);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a IdsContacto object to this object
+	 * through the IdsContacto foreign key attribute.
+	 *
+	 * @param      IdsContacto $l IdsContacto
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addIdsContacto(IdsContacto $l)
+	{
+		if ($this->collIdsContactos === null) {
+			$this->initIdsContactos();
+		}
+		if (!in_array($l, $this->collIdsContactos, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collIdsContactos, $l);
+			$l->setCiudad($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Ciudad is new, it will return
+	 * an empty collection; or if this Ciudad has previously
+	 * been saved, it will retrieve related IdsContactos from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Ciudad.
+	 */
+	public function getIdsContactosJoinIdsSucursal($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsContactos === null) {
+			if ($this->isNew()) {
+				$this->collIdsContactos = array();
+			} else {
+
+				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+				$this->collIdsContactos = IdsContactoPeer::doSelectJoinIdsSucursal($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
+
+			if (!isset($this->lastIdsContactoCriteria) || !$this->lastIdsContactoCriteria->equals($criteria)) {
+				$this->collIdsContactos = IdsContactoPeer::doSelectJoinIdsSucursal($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastIdsContactoCriteria = $criteria;
+
+		return $this->collIdsContactos;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -2157,6 +2629,16 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collIdsSucursals) {
+				foreach ((array) $this->collIdsSucursals as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collIdsContactos) {
+				foreach ((array) $this->collIdsContactos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
 		$this->collPricRecargosxCiudads = null;
@@ -2165,6 +2647,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		$this->collClientes = null;
 		$this->collAgentes = null;
 		$this->collContactoAgentes = null;
+		$this->collIdsSucursals = null;
+		$this->collIdsContactos = null;
 			$this->aTrafico = null;
 	}
 

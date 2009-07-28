@@ -398,16 +398,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	protected $aNotTarea;
 
 	/**
-	 * @var        array InoClientesAir[] Collection to store aggregation of InoClientesAir objects.
-	 */
-	protected $collInoClientesAirs;
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collInoClientesAirs.
-	 */
-	private $lastInoClientesAirCriteria = null;
-
-	/**
 	 * @var        array RepStatus[] Collection to store aggregation of RepStatus objects.
 	 */
 	protected $collRepStatuss;
@@ -491,6 +481,16 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	 * @var        Criteria The criteria used to select the current contents of collInoClientesSeas.
 	 */
 	private $lastInoClientesSeaCriteria = null;
+
+	/**
+	 * @var        array InoClientesAir[] Collection to store aggregation of InoClientesAir objects.
+	 */
+	protected $collInoClientesAirs;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collInoClientesAirs.
+	 */
+	private $lastInoClientesAirCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -2821,9 +2821,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			$this->aBodega = null;
 			$this->aTrackingEtapa = null;
 			$this->aNotTarea = null;
-			$this->collInoClientesAirs = null;
-			$this->lastInoClientesAirCriteria = null;
-
 			$this->collRepStatuss = null;
 			$this->lastRepStatusCriteria = null;
 
@@ -2850,6 +2847,9 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 			$this->collInoClientesSeas = null;
 			$this->lastInoClientesSeaCriteria = null;
+
+			$this->collInoClientesAirs = null;
+			$this->lastInoClientesAirCriteria = null;
 
 		} // if (deep)
 	}
@@ -3012,14 +3012,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
-			if ($this->collInoClientesAirs !== null) {
-				foreach ($this->collInoClientesAirs as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
-			}
-
 			if ($this->collRepStatuss !== null) {
 				foreach ($this->collRepStatuss as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -3088,6 +3080,14 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 			if ($this->collInoClientesSeas !== null) {
 				foreach ($this->collInoClientesSeas as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collInoClientesAirs !== null) {
+				foreach ($this->collInoClientesAirs as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -3213,14 +3213,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			}
 
 
-				if ($this->collInoClientesAirs !== null) {
-					foreach ($this->collInoClientesAirs as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
-
 				if ($this->collRepStatuss !== null) {
 					foreach ($this->collRepStatuss as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
@@ -3289,6 +3281,14 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 
 				if ($this->collInoClientesSeas !== null) {
 					foreach ($this->collInoClientesSeas as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collInoClientesAirs !== null) {
+					foreach ($this->collInoClientesAirs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -4100,12 +4100,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach ($this->getInoClientesAirs() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addInoClientesAir($relObj->copy($deepCopy));
-				}
-			}
-
 			foreach ($this->getRepStatuss() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addRepStatus($relObj->copy($deepCopy));
@@ -4160,6 +4154,12 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			foreach ($this->getInoClientesSeas() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addInoClientesSea($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getInoClientesAirs() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoClientesAir($relObj->copy($deepCopy));
 				}
 			}
 
@@ -4565,254 +4565,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aNotTarea;
-	}
-
-	/**
-	 * Clears out the collInoClientesAirs collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addInoClientesAirs()
-	 */
-	public function clearInoClientesAirs()
-	{
-		$this->collInoClientesAirs = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collInoClientesAirs collection (array).
-	 *
-	 * By default this just sets the collInoClientesAirs collection to an empty array (like clearcollInoClientesAirs());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initInoClientesAirs()
-	{
-		$this->collInoClientesAirs = array();
-	}
-
-	/**
-	 * Gets an array of InoClientesAir objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Reporte has previously been saved, it will retrieve
-	 * related InoClientesAirs from storage. If this Reporte is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array InoClientesAir[]
-	 * @throws     PropelException
-	 */
-	public function getInoClientesAirs($criteria = null, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collInoClientesAirs === null) {
-			if ($this->isNew()) {
-			   $this->collInoClientesAirs = array();
-			} else {
-
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				InoClientesAirPeer::addSelectColumns($criteria);
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				InoClientesAirPeer::addSelectColumns($criteria);
-				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-					$this->collInoClientesAirs = InoClientesAirPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastInoClientesAirCriteria = $criteria;
-		return $this->collInoClientesAirs;
-	}
-
-	/**
-	 * Returns the number of related InoClientesAir objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related InoClientesAir objects.
-	 * @throws     PropelException
-	 */
-	public function countInoClientesAirs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
-		} else {
-			$criteria = clone $criteria;
-		}
-
-		if ($distinct) {
-			$criteria->setDistinct();
-		}
-
-		$count = null;
-
-		if ($this->collInoClientesAirs === null) {
-			if ($this->isNew()) {
-				$count = 0;
-			} else {
-
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				$count = InoClientesAirPeer::doCount($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
-
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-					$count = InoClientesAirPeer::doCount($criteria, $con);
-				} else {
-					$count = count($this->collInoClientesAirs);
-				}
-			} else {
-				$count = count($this->collInoClientesAirs);
-			}
-		}
-		return $count;
-	}
-
-	/**
-	 * Method called to associate a InoClientesAir object to this object
-	 * through the InoClientesAir foreign key attribute.
-	 *
-	 * @param      InoClientesAir $l InoClientesAir
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addInoClientesAir(InoClientesAir $l)
-	{
-		if ($this->collInoClientesAirs === null) {
-			$this->initInoClientesAirs();
-		}
-		if (!in_array($l, $this->collInoClientesAirs, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collInoClientesAirs, $l);
-			$l->setReporte($this);
-		}
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte is new, it will return
-	 * an empty collection; or if this Reporte has previously
-	 * been saved, it will retrieve related InoClientesAirs from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Reporte.
-	 */
-	public function getInoClientesAirsJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collInoClientesAirs === null) {
-			if ($this->isNew()) {
-				$this->collInoClientesAirs = array();
-			} else {
-
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastInoClientesAirCriteria = $criteria;
-
-		return $this->collInoClientesAirs;
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Reporte is new, it will return
-	 * an empty collection; or if this Reporte has previously
-	 * been saved, it will retrieve related InoClientesAirs from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Reporte.
-	 */
-	public function getInoClientesAirsJoinInoMaestraAir($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collInoClientesAirs === null) {
-			if ($this->isNew()) {
-				$this->collInoClientesAirs = array();
-			} else {
-
-				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
-
-			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
-				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastInoClientesAirCriteria = $criteria;
-
-		return $this->collInoClientesAirs;
 	}
 
 	/**
@@ -6519,6 +6271,254 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collInoClientesAirs collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addInoClientesAirs()
+	 */
+	public function clearInoClientesAirs()
+	{
+		$this->collInoClientesAirs = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collInoClientesAirs collection (array).
+	 *
+	 * By default this just sets the collInoClientesAirs collection to an empty array (like clearcollInoClientesAirs());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initInoClientesAirs()
+	{
+		$this->collInoClientesAirs = array();
+	}
+
+	/**
+	 * Gets an array of InoClientesAir objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Reporte has previously been saved, it will retrieve
+	 * related InoClientesAirs from storage. If this Reporte is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array InoClientesAir[]
+	 * @throws     PropelException
+	 */
+	public function getInoClientesAirs($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesAirs === null) {
+			if ($this->isNew()) {
+			   $this->collInoClientesAirs = array();
+			} else {
+
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				InoClientesAirPeer::addSelectColumns($criteria);
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				InoClientesAirPeer::addSelectColumns($criteria);
+				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
+					$this->collInoClientesAirs = InoClientesAirPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastInoClientesAirCriteria = $criteria;
+		return $this->collInoClientesAirs;
+	}
+
+	/**
+	 * Returns the number of related InoClientesAir objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related InoClientesAir objects.
+	 * @throws     PropelException
+	 */
+	public function countInoClientesAirs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collInoClientesAirs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$count = InoClientesAirPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
+					$count = InoClientesAirPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collInoClientesAirs);
+				}
+			} else {
+				$count = count($this->collInoClientesAirs);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a InoClientesAir object to this object
+	 * through the InoClientesAir foreign key attribute.
+	 *
+	 * @param      InoClientesAir $l InoClientesAir
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addInoClientesAir(InoClientesAir $l)
+	{
+		if ($this->collInoClientesAirs === null) {
+			$this->initInoClientesAirs();
+		}
+		if (!in_array($l, $this->collInoClientesAirs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collInoClientesAirs, $l);
+			$l->setReporte($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Reporte is new, it will return
+	 * an empty collection; or if this Reporte has previously
+	 * been saved, it will retrieve related InoClientesAirs from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Reporte.
+	 */
+	public function getInoClientesAirsJoinTercero($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesAirs === null) {
+			if ($this->isNew()) {
+				$this->collInoClientesAirs = array();
+			} else {
+
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinTercero($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoClientesAirCriteria = $criteria;
+
+		return $this->collInoClientesAirs;
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Reporte is new, it will return
+	 * an empty collection; or if this Reporte has previously
+	 * been saved, it will retrieve related InoClientesAirs from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Reporte.
+	 */
+	public function getInoClientesAirsJoinInoMaestraAir($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ReportePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collInoClientesAirs === null) {
+			if ($this->isNew()) {
+				$this->collInoClientesAirs = array();
+			} else {
+
+				$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(InoClientesAirPeer::CA_IDREPORTE, $this->ca_idreporte);
+
+			if (!isset($this->lastInoClientesAirCriteria) || !$this->lastInoClientesAirCriteria->equals($criteria)) {
+				$this->collInoClientesAirs = InoClientesAirPeer::doSelectJoinInoMaestraAir($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastInoClientesAirCriteria = $criteria;
+
+		return $this->collInoClientesAirs;
+	}
+
+	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -6530,11 +6530,6 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
-			if ($this->collInoClientesAirs) {
-				foreach ((array) $this->collInoClientesAirs as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
 			if ($this->collRepStatuss) {
 				foreach ((array) $this->collRepStatuss as $o) {
 					$o->clearAllReferences($deep);
@@ -6579,9 +6574,13 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collInoClientesAirs) {
+				foreach ((array) $this->collInoClientesAirs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
-		$this->collInoClientesAirs = null;
 		$this->collRepStatuss = null;
 		$this->collRepEquipos = null;
 		$this->collRepGastos = null;
@@ -6592,6 +6591,7 @@ abstract class BaseReporte extends BaseObject  implements Persistent {
 		$this->singleRepExpo = null;
 		$this->collRepAsignacions = null;
 		$this->collInoClientesSeas = null;
+		$this->collInoClientesAirs = null;
 			$this->aUsuario = null;
 			$this->aTransportador = null;
 			$this->aTercero = null;

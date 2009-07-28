@@ -11,7 +11,7 @@ class NuevoContactoForm extends sfForm{
 		$criteriaCiudades = new Criteria();
 		$criteriaCiudades->addJoin( TraficoPeer::CA_IDTRAFICO, CiudadPeer::CA_IDTRAFICO );		
 		$criteriaCiudades->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
-		
+		$criteriaCiudades->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
 				
 		$this->setWidgets(array(
 		  'idagente'    => new sfWidgetFormInputHidden(),

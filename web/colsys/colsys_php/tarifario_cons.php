@@ -240,9 +240,9 @@ require_once("menu.php");
     /*echo "<TR>";
     echo "  <TD Class=listar COLSPAN=5><A HREF=\"#\" ONCLICK='javascript:window.open(\"./links/TARIFAS EXPORTACION.xls\")'><B>Tarifario de Exportación &nbsp «Haga Click aquí para consultar».</A></B></TD>";
     echo "</TR>";*/
-	echo "<TR>";
-    echo "  <TD Class=listar COLSPAN=5><A HREF=\"#\" ONCLICK='javascript:window.open(\"./links/TARIFARIO DE IMPORTACION PRINCIPALES TRÁFICOS FCL-LCL.xls\")'><B>TARIFARIO DE IMPORTACION PRINCIPALES TRÁFICOS FCL/LCL &nbsp; «Haga Click aquí para consultar».</A></B></TD>";
-    echo "</TR>";
+	//echo "<TR>";
+  //  echo "  <TD Class=listar COLSPAN=5><A HREF=\"#\" ONCLICK='javascript:window.open(\"./links/TARIFARIO DE IMPORTACION PRINCIPALES TRÁFICOS FCL-LCL.xls\")'><B>TARIFARIO DE IMPORTACION PRINCIPALES TRÁFICOS FCL/LCL &nbsp; «Haga Click aquí para consultar».</A></B></TD>";
+    //echo "</TR>";
 //    echo "<TR>";
 //    echo "  <TD Class=listar COLSPAN=5><A HREF=\"#\" ONCLICK='javascript:window.open(\"./links/Cuadro condiciones Deposito-Dropoff.pdf\")'><B>Cuadro de Condiciones Depósito - Dropoff &nbsp «Haga Click aquí para consultar». <IMG SRC='./graficos/nuevo.gif' border=0 ALT='Nuevo Item'></A></TD>";
 //    echo "</TR>";

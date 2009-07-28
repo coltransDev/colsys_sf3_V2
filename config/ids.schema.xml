@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.ids">
 	<table name="ids.tb_ids" phpName="Ids" >
-		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<column name="ca_id" type="integer" required="true" primaryKey="true"  />
 		<id-method-parameter value="ids.tb_ids_id"/>
         <column name="ca_dv" type="integer" />
 		<column name="ca_idalterno" type="varchar" />
@@ -20,7 +20,9 @@
 
     <table name="ids.tb_sucursales" phpName="IdsSucursal" >
 		<column name="ca_idsucursal" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-		<column name="ca_id" type="integer" />
+		<id-method-parameter value="ids.tb_sucursales_id"/>
+        <column name="ca_id" type="integer" />
+        <column name="ca_principal" type="boolean" />
 		<column name="ca_direccion" type="varchar" />
 		<column name="ca_oficina" type="varchar" />
 		<column name="ca_torre" type="integer" />

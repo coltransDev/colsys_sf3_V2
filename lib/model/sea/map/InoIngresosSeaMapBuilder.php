@@ -72,6 +72,10 @@ class InoIngresosSeaMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_FCHFACTURA', 'CaFchfactura', 'DATE', false, null);
 
+		$tMap->addColumn('CA_IDMONEDA', 'CaIdmoneda', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_NETO', 'CaNeto', 'NUMERIC', false, null);
+
 		$tMap->addColumn('CA_VALOR', 'CaValor', 'NUMERIC', false, null);
 
 		$tMap->addColumn('CA_RECCAJA', 'CaReccaja', 'VARCHAR', false, null);

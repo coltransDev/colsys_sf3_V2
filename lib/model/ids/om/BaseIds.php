@@ -852,9 +852,6 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
-			if ($this->isNew() ) {
-				$this->modifiedColumns[] = IdsPeer::CA_ID;
-			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
@@ -863,8 +860,6 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
 										 // should always be true here (even though technically
 										 // BasePeer::doInsert() can insert multiple rows).
-
-					$this->setCaId($pk);  //[IMV] update autoincrement primary key
 
 					$this->setNew(false);
 				} else {
@@ -1264,6 +1259,8 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaId($this->ca_id);
+
 		$copyObj->setCaDv($this->ca_dv);
 
 		$copyObj->setCaIdalterno($this->ca_idalterno);
@@ -1309,8 +1306,6 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 
 
 		$copyObj->setNew(true);
-
-		$copyObj->setCaId(NULL); // this is a auto-increment column, so set to default value
 
 	}
 

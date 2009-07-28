@@ -51,6 +51,18 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 	protected $ca_fchfactura;
 
 	/**
+	 * The value for the ca_idmoneda field.
+	 * @var        string
+	 */
+	protected $ca_idmoneda;
+
+	/**
+	 * The value for the ca_neto field.
+	 * @var        string
+	 */
+	protected $ca_neto;
+
+	/**
 	 * The value for the ca_valor field.
 	 * @var        string
 	 */
@@ -219,6 +231,26 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 		} else {
 			return $dt->format($format);
 		}
+	}
+
+	/**
+	 * Get the [ca_idmoneda] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaIdmoneda()
+	{
+		return $this->ca_idmoneda;
+	}
+
+	/**
+	 * Get the [ca_neto] column value.
+	 * 
+	 * @return     string
+	 */
+	public function getCaNeto()
+	{
+		return $this->ca_neto;
 	}
 
 	/**
@@ -516,6 +548,46 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 
 		return $this;
 	} // setCaFchfactura()
+
+	/**
+	 * Set the value of [ca_idmoneda] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     InoIngresosSea The current object (for fluent API support)
+	 */
+	public function setCaIdmoneda($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_idmoneda !== $v) {
+			$this->ca_idmoneda = $v;
+			$this->modifiedColumns[] = InoIngresosSeaPeer::CA_IDMONEDA;
+		}
+
+		return $this;
+	} // setCaIdmoneda()
+
+	/**
+	 * Set the value of [ca_neto] column.
+	 * 
+	 * @param      string $v new value
+	 * @return     InoIngresosSea The current object (for fluent API support)
+	 */
+	public function setCaNeto($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_neto !== $v) {
+			$this->ca_neto = $v;
+			$this->modifiedColumns[] = InoIngresosSeaPeer::CA_NETO;
+		}
+
+		return $this;
+	} // setCaNeto()
 
 	/**
 	 * Set the value of [ca_valor] column.
@@ -826,15 +898,17 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 			$this->ca_hbls = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->ca_factura = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->ca_fchfactura = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_valor = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_reccaja = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_fchpago = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-			$this->ca_tcambio = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-			$this->ca_fchcreado = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-			$this->ca_usucreado = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-			$this->ca_fchactualizado = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-			$this->ca_usuactualizado = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-			$this->ca_observaciones = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_idmoneda = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_neto = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_valor = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_reccaja = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_fchpago = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_tcambio = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_fchcreado = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_usucreado = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_observaciones = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -844,7 +918,7 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 14; // 14 = InoIngresosSeaPeer::NUM_COLUMNS - InoIngresosSeaPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 16; // 16 = InoIngresosSeaPeer::NUM_COLUMNS - InoIngresosSeaPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating InoIngresosSea object", $e);
@@ -1173,30 +1247,36 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 				return $this->getCaFchfactura();
 				break;
 			case 5:
-				return $this->getCaValor();
+				return $this->getCaIdmoneda();
 				break;
 			case 6:
-				return $this->getCaReccaja();
+				return $this->getCaNeto();
 				break;
 			case 7:
-				return $this->getCaFchpago();
+				return $this->getCaValor();
 				break;
 			case 8:
-				return $this->getCaTcambio();
+				return $this->getCaReccaja();
 				break;
 			case 9:
-				return $this->getCaFchcreado();
+				return $this->getCaFchpago();
 				break;
 			case 10:
-				return $this->getCaUsucreado();
+				return $this->getCaTcambio();
 				break;
 			case 11:
-				return $this->getCaFchactualizado();
+				return $this->getCaFchcreado();
 				break;
 			case 12:
-				return $this->getCaUsuactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 13:
+				return $this->getCaFchactualizado();
+				break;
+			case 14:
+				return $this->getCaUsuactualizado();
+				break;
+			case 15:
 				return $this->getCaObservaciones();
 				break;
 			default:
@@ -1225,15 +1305,17 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 			$keys[2] => $this->getCaHbls(),
 			$keys[3] => $this->getCaFactura(),
 			$keys[4] => $this->getCaFchfactura(),
-			$keys[5] => $this->getCaValor(),
-			$keys[6] => $this->getCaReccaja(),
-			$keys[7] => $this->getCaFchpago(),
-			$keys[8] => $this->getCaTcambio(),
-			$keys[9] => $this->getCaFchcreado(),
-			$keys[10] => $this->getCaUsucreado(),
-			$keys[11] => $this->getCaFchactualizado(),
-			$keys[12] => $this->getCaUsuactualizado(),
-			$keys[13] => $this->getCaObservaciones(),
+			$keys[5] => $this->getCaIdmoneda(),
+			$keys[6] => $this->getCaNeto(),
+			$keys[7] => $this->getCaValor(),
+			$keys[8] => $this->getCaReccaja(),
+			$keys[9] => $this->getCaFchpago(),
+			$keys[10] => $this->getCaTcambio(),
+			$keys[11] => $this->getCaFchcreado(),
+			$keys[12] => $this->getCaUsucreado(),
+			$keys[13] => $this->getCaFchactualizado(),
+			$keys[14] => $this->getCaUsuactualizado(),
+			$keys[15] => $this->getCaObservaciones(),
 		);
 		return $result;
 	}
@@ -1281,30 +1363,36 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 				$this->setCaFchfactura($value);
 				break;
 			case 5:
-				$this->setCaValor($value);
+				$this->setCaIdmoneda($value);
 				break;
 			case 6:
-				$this->setCaReccaja($value);
+				$this->setCaNeto($value);
 				break;
 			case 7:
-				$this->setCaFchpago($value);
+				$this->setCaValor($value);
 				break;
 			case 8:
-				$this->setCaTcambio($value);
+				$this->setCaReccaja($value);
 				break;
 			case 9:
-				$this->setCaFchcreado($value);
+				$this->setCaFchpago($value);
 				break;
 			case 10:
-				$this->setCaUsucreado($value);
+				$this->setCaTcambio($value);
 				break;
 			case 11:
-				$this->setCaFchactualizado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 12:
-				$this->setCaUsuactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 13:
+				$this->setCaFchactualizado($value);
+				break;
+			case 14:
+				$this->setCaUsuactualizado($value);
+				break;
+			case 15:
 				$this->setCaObservaciones($value);
 				break;
 		} // switch()
@@ -1336,15 +1424,17 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[2], $arr)) $this->setCaHbls($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaFactura($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaFchfactura($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaValor($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaReccaja($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaFchpago($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaTcambio($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaFchcreado($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaUsucreado($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaFchactualizado($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaUsuactualizado($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaObservaciones($arr[$keys[13]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaIdmoneda($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaNeto($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaValor($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaReccaja($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaFchpago($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaTcambio($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFchcreado($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaUsucreado($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaFchactualizado($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaUsuactualizado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaObservaciones($arr[$keys[15]]);
 	}
 
 	/**
@@ -1361,6 +1451,8 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(InoIngresosSeaPeer::CA_HBLS)) $criteria->add(InoIngresosSeaPeer::CA_HBLS, $this->ca_hbls);
 		if ($this->isColumnModified(InoIngresosSeaPeer::CA_FACTURA)) $criteria->add(InoIngresosSeaPeer::CA_FACTURA, $this->ca_factura);
 		if ($this->isColumnModified(InoIngresosSeaPeer::CA_FCHFACTURA)) $criteria->add(InoIngresosSeaPeer::CA_FCHFACTURA, $this->ca_fchfactura);
+		if ($this->isColumnModified(InoIngresosSeaPeer::CA_IDMONEDA)) $criteria->add(InoIngresosSeaPeer::CA_IDMONEDA, $this->ca_idmoneda);
+		if ($this->isColumnModified(InoIngresosSeaPeer::CA_NETO)) $criteria->add(InoIngresosSeaPeer::CA_NETO, $this->ca_neto);
 		if ($this->isColumnModified(InoIngresosSeaPeer::CA_VALOR)) $criteria->add(InoIngresosSeaPeer::CA_VALOR, $this->ca_valor);
 		if ($this->isColumnModified(InoIngresosSeaPeer::CA_RECCAJA)) $criteria->add(InoIngresosSeaPeer::CA_RECCAJA, $this->ca_reccaja);
 		if ($this->isColumnModified(InoIngresosSeaPeer::CA_FCHPAGO)) $criteria->add(InoIngresosSeaPeer::CA_FCHPAGO, $this->ca_fchpago);
@@ -1455,6 +1547,10 @@ abstract class BaseInoIngresosSea extends BaseObject  implements Persistent {
 		$copyObj->setCaFactura($this->ca_factura);
 
 		$copyObj->setCaFchfactura($this->ca_fchfactura);
+
+		$copyObj->setCaIdmoneda($this->ca_idmoneda);
+
+		$copyObj->setCaNeto($this->ca_neto);
 
 		$copyObj->setCaValor($this->ca_valor);
 

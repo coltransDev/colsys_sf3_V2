@@ -57,26 +57,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	protected $ca_liminferior;
 
 	/**
-	 * @var        array CotOpcion[] Collection to store aggregation of CotOpcion objects.
-	 */
-	protected $collCotOpcions;
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collCotOpcions.
-	 */
-	private $lastCotOpcionCriteria = null;
-
-	/**
-	 * @var        array CotContinuacion[] Collection to store aggregation of CotContinuacion objects.
-	 */
-	protected $collCotContinuacions;
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collCotContinuacions.
-	 */
-	private $lastCotContinuacionCriteria = null;
-
-	/**
 	 * @var        array PricFlete[] Collection to store aggregation of PricFlete objects.
 	 */
 	protected $collPricFletes;
@@ -117,6 +97,16 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	private $lastPricRecargosxLineaLogCriteria = null;
 
 	/**
+	 * @var        array Flete[] Collection to store aggregation of Flete objects.
+	 */
+	protected $collFletes;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collFletes.
+	 */
+	private $lastFleteCriteria = null;
+
+	/**
 	 * @var        array RepEquipo[] Collection to store aggregation of RepEquipo objects.
 	 */
 	protected $collRepEquipos;
@@ -147,6 +137,26 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	private $lastRepTarifaCriteria = null;
 
 	/**
+	 * @var        array CotOpcion[] Collection to store aggregation of CotOpcion objects.
+	 */
+	protected $collCotOpcions;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collCotOpcions.
+	 */
+	private $lastCotOpcionCriteria = null;
+
+	/**
+	 * @var        array CotContinuacion[] Collection to store aggregation of CotContinuacion objects.
+	 */
+	protected $collCotContinuacions;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collCotContinuacions.
+	 */
+	private $lastCotContinuacionCriteria = null;
+
+	/**
 	 * @var        array InoEquiposSea[] Collection to store aggregation of InoEquiposSea objects.
 	 */
 	protected $collInoEquiposSeas;
@@ -155,16 +165,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	 * @var        Criteria The criteria used to select the current contents of collInoEquiposSeas.
 	 */
 	private $lastInoEquiposSeaCriteria = null;
-
-	/**
-	 * @var        array Flete[] Collection to store aggregation of Flete objects.
-	 */
-	protected $collFletes;
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collFletes.
-	 */
-	private $lastFleteCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -494,12 +494,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 
 		if ($deep) {  // also de-associate any related objects?
 
-			$this->collCotOpcions = null;
-			$this->lastCotOpcionCriteria = null;
-
-			$this->collCotContinuacions = null;
-			$this->lastCotContinuacionCriteria = null;
-
 			$this->collPricFletes = null;
 			$this->lastPricFleteCriteria = null;
 
@@ -512,6 +506,9 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 			$this->collPricRecargosxLineaLogs = null;
 			$this->lastPricRecargosxLineaLogCriteria = null;
 
+			$this->collFletes = null;
+			$this->lastFleteCriteria = null;
+
 			$this->collRepEquipos = null;
 			$this->lastRepEquipoCriteria = null;
 
@@ -521,11 +518,14 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 			$this->collRepTarifas = null;
 			$this->lastRepTarifaCriteria = null;
 
+			$this->collCotOpcions = null;
+			$this->lastCotOpcionCriteria = null;
+
+			$this->collCotContinuacions = null;
+			$this->lastCotContinuacionCriteria = null;
+
 			$this->collInoEquiposSeas = null;
 			$this->lastInoEquiposSeaCriteria = null;
-
-			$this->collFletes = null;
-			$this->lastFleteCriteria = null;
 
 		} // if (deep)
 	}
@@ -634,22 +634,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
-			if ($this->collCotOpcions !== null) {
-				foreach ($this->collCotOpcions as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
-			}
-
-			if ($this->collCotContinuacions !== null) {
-				foreach ($this->collCotContinuacions as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
-			}
-
 			if ($this->collPricFletes !== null) {
 				foreach ($this->collPricFletes as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -682,6 +666,14 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collFletes !== null) {
+				foreach ($this->collFletes as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collRepEquipos !== null) {
 				foreach ($this->collRepEquipos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -706,16 +698,24 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				}
 			}
 
-			if ($this->collInoEquiposSeas !== null) {
-				foreach ($this->collInoEquiposSeas as $referrerFK) {
+			if ($this->collCotOpcions !== null) {
+				foreach ($this->collCotOpcions as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
 				}
 			}
 
-			if ($this->collFletes !== null) {
-				foreach ($this->collFletes as $referrerFK) {
+			if ($this->collCotContinuacions !== null) {
+				foreach ($this->collCotContinuacions as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collInoEquiposSeas !== null) {
+				foreach ($this->collInoEquiposSeas as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -793,22 +793,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 			}
 
 
-				if ($this->collCotOpcions !== null) {
-					foreach ($this->collCotOpcions as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
-
-				if ($this->collCotContinuacions !== null) {
-					foreach ($this->collCotContinuacions as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
-
 				if ($this->collPricFletes !== null) {
 					foreach ($this->collPricFletes as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
@@ -841,6 +825,14 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 					}
 				}
 
+				if ($this->collFletes !== null) {
+					foreach ($this->collFletes as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
 				if ($this->collRepEquipos !== null) {
 					foreach ($this->collRepEquipos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
@@ -865,16 +857,24 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 					}
 				}
 
-				if ($this->collInoEquiposSeas !== null) {
-					foreach ($this->collInoEquiposSeas as $referrerFK) {
+				if ($this->collCotOpcions !== null) {
+					foreach ($this->collCotOpcions as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
 					}
 				}
 
-				if ($this->collFletes !== null) {
-					foreach ($this->collFletes as $referrerFK) {
+				if ($this->collCotContinuacions !== null) {
+					foreach ($this->collCotContinuacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collInoEquiposSeas !== null) {
+					foreach ($this->collInoEquiposSeas as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1125,18 +1125,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach ($this->getCotOpcions() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addCotOpcion($relObj->copy($deepCopy));
-				}
-			}
-
-			foreach ($this->getCotContinuacions() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addCotContinuacion($relObj->copy($deepCopy));
-				}
-			}
-
 			foreach ($this->getPricFletes() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addPricFlete($relObj->copy($deepCopy));
@@ -1161,6 +1149,12 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				}
 			}
 
+			foreach ($this->getFletes() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addFlete($relObj->copy($deepCopy));
+				}
+			}
+
 			foreach ($this->getRepEquipos() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addRepEquipo($relObj->copy($deepCopy));
@@ -1179,15 +1173,21 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 				}
 			}
 
-			foreach ($this->getInoEquiposSeas() as $relObj) {
+			foreach ($this->getCotOpcions() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addInoEquiposSea($relObj->copy($deepCopy));
+					$copyObj->addCotOpcion($relObj->copy($deepCopy));
 				}
 			}
 
-			foreach ($this->getFletes() as $relObj) {
+			foreach ($this->getCotContinuacions() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addFlete($relObj->copy($deepCopy));
+					$copyObj->addCotContinuacion($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getInoEquiposSeas() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addInoEquiposSea($relObj->copy($deepCopy));
 				}
 			}
 
@@ -1236,408 +1236,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 			self::$peer = new ConceptoPeer();
 		}
 		return self::$peer;
-	}
-
-	/**
-	 * Clears out the collCotOpcions collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addCotOpcions()
-	 */
-	public function clearCotOpcions()
-	{
-		$this->collCotOpcions = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collCotOpcions collection (array).
-	 *
-	 * By default this just sets the collCotOpcions collection to an empty array (like clearcollCotOpcions());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initCotOpcions()
-	{
-		$this->collCotOpcions = array();
-	}
-
-	/**
-	 * Gets an array of CotOpcion objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Concepto has previously been saved, it will retrieve
-	 * related CotOpcions from storage. If this Concepto is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array CotOpcion[]
-	 * @throws     PropelException
-	 */
-	public function getCotOpcions($criteria = null, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collCotOpcions === null) {
-			if ($this->isNew()) {
-			   $this->collCotOpcions = array();
-			} else {
-
-				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				CotOpcionPeer::addSelectColumns($criteria);
-				$this->collCotOpcions = CotOpcionPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				CotOpcionPeer::addSelectColumns($criteria);
-				if (!isset($this->lastCotOpcionCriteria) || !$this->lastCotOpcionCriteria->equals($criteria)) {
-					$this->collCotOpcions = CotOpcionPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastCotOpcionCriteria = $criteria;
-		return $this->collCotOpcions;
-	}
-
-	/**
-	 * Returns the number of related CotOpcion objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related CotOpcion objects.
-	 * @throws     PropelException
-	 */
-	public function countCotOpcions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		} else {
-			$criteria = clone $criteria;
-		}
-
-		if ($distinct) {
-			$criteria->setDistinct();
-		}
-
-		$count = null;
-
-		if ($this->collCotOpcions === null) {
-			if ($this->isNew()) {
-				$count = 0;
-			} else {
-
-				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				$count = CotOpcionPeer::doCount($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
-
-				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				if (!isset($this->lastCotOpcionCriteria) || !$this->lastCotOpcionCriteria->equals($criteria)) {
-					$count = CotOpcionPeer::doCount($criteria, $con);
-				} else {
-					$count = count($this->collCotOpcions);
-				}
-			} else {
-				$count = count($this->collCotOpcions);
-			}
-		}
-		return $count;
-	}
-
-	/**
-	 * Method called to associate a CotOpcion object to this object
-	 * through the CotOpcion foreign key attribute.
-	 *
-	 * @param      CotOpcion $l CotOpcion
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addCotOpcion(CotOpcion $l)
-	{
-		if ($this->collCotOpcions === null) {
-			$this->initCotOpcions();
-		}
-		if (!in_array($l, $this->collCotOpcions, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collCotOpcions, $l);
-			$l->setConcepto($this);
-		}
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Concepto is new, it will return
-	 * an empty collection; or if this Concepto has previously
-	 * been saved, it will retrieve related CotOpcions from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Concepto.
-	 */
-	public function getCotOpcionsJoinCotProducto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collCotOpcions === null) {
-			if ($this->isNew()) {
-				$this->collCotOpcions = array();
-			} else {
-
-				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				$this->collCotOpcions = CotOpcionPeer::doSelectJoinCotProducto($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-			if (!isset($this->lastCotOpcionCriteria) || !$this->lastCotOpcionCriteria->equals($criteria)) {
-				$this->collCotOpcions = CotOpcionPeer::doSelectJoinCotProducto($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastCotOpcionCriteria = $criteria;
-
-		return $this->collCotOpcions;
-	}
-
-	/**
-	 * Clears out the collCotContinuacions collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addCotContinuacions()
-	 */
-	public function clearCotContinuacions()
-	{
-		$this->collCotContinuacions = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collCotContinuacions collection (array).
-	 *
-	 * By default this just sets the collCotContinuacions collection to an empty array (like clearcollCotContinuacions());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initCotContinuacions()
-	{
-		$this->collCotContinuacions = array();
-	}
-
-	/**
-	 * Gets an array of CotContinuacion objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Concepto has previously been saved, it will retrieve
-	 * related CotContinuacions from storage. If this Concepto is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array CotContinuacion[]
-	 * @throws     PropelException
-	 */
-	public function getCotContinuacions($criteria = null, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collCotContinuacions === null) {
-			if ($this->isNew()) {
-			   $this->collCotContinuacions = array();
-			} else {
-
-				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				CotContinuacionPeer::addSelectColumns($criteria);
-				$this->collCotContinuacions = CotContinuacionPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				CotContinuacionPeer::addSelectColumns($criteria);
-				if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
-					$this->collCotContinuacions = CotContinuacionPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastCotContinuacionCriteria = $criteria;
-		return $this->collCotContinuacions;
-	}
-
-	/**
-	 * Returns the number of related CotContinuacion objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related CotContinuacion objects.
-	 * @throws     PropelException
-	 */
-	public function countCotContinuacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		} else {
-			$criteria = clone $criteria;
-		}
-
-		if ($distinct) {
-			$criteria->setDistinct();
-		}
-
-		$count = null;
-
-		if ($this->collCotContinuacions === null) {
-			if ($this->isNew()) {
-				$count = 0;
-			} else {
-
-				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				$count = CotContinuacionPeer::doCount($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
-
-				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
-					$count = CotContinuacionPeer::doCount($criteria, $con);
-				} else {
-					$count = count($this->collCotContinuacions);
-				}
-			} else {
-				$count = count($this->collCotContinuacions);
-			}
-		}
-		return $count;
-	}
-
-	/**
-	 * Method called to associate a CotContinuacion object to this object
-	 * through the CotContinuacion foreign key attribute.
-	 *
-	 * @param      CotContinuacion $l CotContinuacion
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addCotContinuacion(CotContinuacion $l)
-	{
-		if ($this->collCotContinuacions === null) {
-			$this->initCotContinuacions();
-		}
-		if (!in_array($l, $this->collCotContinuacions, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collCotContinuacions, $l);
-			$l->setConcepto($this);
-		}
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Concepto is new, it will return
-	 * an empty collection; or if this Concepto has previously
-	 * been saved, it will retrieve related CotContinuacions from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Concepto.
-	 */
-	public function getCotContinuacionsJoinCotizacion($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collCotContinuacions === null) {
-			if ($this->isNew()) {
-				$this->collCotContinuacions = array();
-			} else {
-
-				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				$this->collCotContinuacions = CotContinuacionPeer::doSelectJoinCotizacion($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-			if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
-				$this->collCotContinuacions = CotContinuacionPeer::doSelectJoinCotizacion($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastCotContinuacionCriteria = $criteria;
-
-		return $this->collCotContinuacions;
 	}
 
 	/**
@@ -2539,6 +2137,207 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collFletes collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addFletes()
+	 */
+	public function clearFletes()
+	{
+		$this->collFletes = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collFletes collection (array).
+	 *
+	 * By default this just sets the collFletes collection to an empty array (like clearcollFletes());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initFletes()
+	{
+		$this->collFletes = array();
+	}
+
+	/**
+	 * Gets an array of Flete objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Concepto has previously been saved, it will retrieve
+	 * related Fletes from storage. If this Concepto is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array Flete[]
+	 * @throws     PropelException
+	 */
+	public function getFletes($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collFletes === null) {
+			if ($this->isNew()) {
+			   $this->collFletes = array();
+			} else {
+
+				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				FletePeer::addSelectColumns($criteria);
+				$this->collFletes = FletePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				FletePeer::addSelectColumns($criteria);
+				if (!isset($this->lastFleteCriteria) || !$this->lastFleteCriteria->equals($criteria)) {
+					$this->collFletes = FletePeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastFleteCriteria = $criteria;
+		return $this->collFletes;
+	}
+
+	/**
+	 * Returns the number of related Flete objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related Flete objects.
+	 * @throws     PropelException
+	 */
+	public function countFletes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collFletes === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				$count = FletePeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				if (!isset($this->lastFleteCriteria) || !$this->lastFleteCriteria->equals($criteria)) {
+					$count = FletePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collFletes);
+				}
+			} else {
+				$count = count($this->collFletes);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a Flete object to this object
+	 * through the Flete foreign key attribute.
+	 *
+	 * @param      Flete $l Flete
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addFlete(Flete $l)
+	{
+		if ($this->collFletes === null) {
+			$this->initFletes();
+		}
+		if (!in_array($l, $this->collFletes, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collFletes, $l);
+			$l->setConcepto($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Concepto is new, it will return
+	 * an empty collection; or if this Concepto has previously
+	 * been saved, it will retrieve related Fletes from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Concepto.
+	 */
+	public function getFletesJoinTrayecto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collFletes === null) {
+			if ($this->isNew()) {
+				$this->collFletes = array();
+			} else {
+
+				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				$this->collFletes = FletePeer::doSelectJoinTrayecto($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+			if (!isset($this->lastFleteCriteria) || !$this->lastFleteCriteria->equals($criteria)) {
+				$this->collFletes = FletePeer::doSelectJoinTrayecto($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastFleteCriteria = $criteria;
+
+		return $this->collFletes;
+	}
+
+	/**
 	 * Clears out the collRepEquipos collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -3189,6 +2988,408 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	}
 
 	/**
+	 * Clears out the collCotOpcions collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotOpcions()
+	 */
+	public function clearCotOpcions()
+	{
+		$this->collCotOpcions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotOpcions collection (array).
+	 *
+	 * By default this just sets the collCotOpcions collection to an empty array (like clearcollCotOpcions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initCotOpcions()
+	{
+		$this->collCotOpcions = array();
+	}
+
+	/**
+	 * Gets an array of CotOpcion objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Concepto has previously been saved, it will retrieve
+	 * related CotOpcions from storage. If this Concepto is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array CotOpcion[]
+	 * @throws     PropelException
+	 */
+	public function getCotOpcions($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotOpcions === null) {
+			if ($this->isNew()) {
+			   $this->collCotOpcions = array();
+			} else {
+
+				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				CotOpcionPeer::addSelectColumns($criteria);
+				$this->collCotOpcions = CotOpcionPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				CotOpcionPeer::addSelectColumns($criteria);
+				if (!isset($this->lastCotOpcionCriteria) || !$this->lastCotOpcionCriteria->equals($criteria)) {
+					$this->collCotOpcions = CotOpcionPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastCotOpcionCriteria = $criteria;
+		return $this->collCotOpcions;
+	}
+
+	/**
+	 * Returns the number of related CotOpcion objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotOpcion objects.
+	 * @throws     PropelException
+	 */
+	public function countCotOpcions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collCotOpcions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				$count = CotOpcionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				if (!isset($this->lastCotOpcionCriteria) || !$this->lastCotOpcionCriteria->equals($criteria)) {
+					$count = CotOpcionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotOpcions);
+				}
+			} else {
+				$count = count($this->collCotOpcions);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a CotOpcion object to this object
+	 * through the CotOpcion foreign key attribute.
+	 *
+	 * @param      CotOpcion $l CotOpcion
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addCotOpcion(CotOpcion $l)
+	{
+		if ($this->collCotOpcions === null) {
+			$this->initCotOpcions();
+		}
+		if (!in_array($l, $this->collCotOpcions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotOpcions, $l);
+			$l->setConcepto($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Concepto is new, it will return
+	 * an empty collection; or if this Concepto has previously
+	 * been saved, it will retrieve related CotOpcions from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Concepto.
+	 */
+	public function getCotOpcionsJoinCotProducto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotOpcions === null) {
+			if ($this->isNew()) {
+				$this->collCotOpcions = array();
+			} else {
+
+				$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				$this->collCotOpcions = CotOpcionPeer::doSelectJoinCotProducto($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotOpcionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+			if (!isset($this->lastCotOpcionCriteria) || !$this->lastCotOpcionCriteria->equals($criteria)) {
+				$this->collCotOpcions = CotOpcionPeer::doSelectJoinCotProducto($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotOpcionCriteria = $criteria;
+
+		return $this->collCotOpcions;
+	}
+
+	/**
+	 * Clears out the collCotContinuacions collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addCotContinuacions()
+	 */
+	public function clearCotContinuacions()
+	{
+		$this->collCotContinuacions = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collCotContinuacions collection (array).
+	 *
+	 * By default this just sets the collCotContinuacions collection to an empty array (like clearcollCotContinuacions());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initCotContinuacions()
+	{
+		$this->collCotContinuacions = array();
+	}
+
+	/**
+	 * Gets an array of CotContinuacion objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Concepto has previously been saved, it will retrieve
+	 * related CotContinuacions from storage. If this Concepto is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array CotContinuacion[]
+	 * @throws     PropelException
+	 */
+	public function getCotContinuacions($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotContinuacions === null) {
+			if ($this->isNew()) {
+			   $this->collCotContinuacions = array();
+			} else {
+
+				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				CotContinuacionPeer::addSelectColumns($criteria);
+				$this->collCotContinuacions = CotContinuacionPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				CotContinuacionPeer::addSelectColumns($criteria);
+				if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
+					$this->collCotContinuacions = CotContinuacionPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastCotContinuacionCriteria = $criteria;
+		return $this->collCotContinuacions;
+	}
+
+	/**
+	 * Returns the number of related CotContinuacion objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related CotContinuacion objects.
+	 * @throws     PropelException
+	 */
+	public function countCotContinuacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collCotContinuacions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				$count = CotContinuacionPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
+					$count = CotContinuacionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotContinuacions);
+				}
+			} else {
+				$count = count($this->collCotContinuacions);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a CotContinuacion object to this object
+	 * through the CotContinuacion foreign key attribute.
+	 *
+	 * @param      CotContinuacion $l CotContinuacion
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addCotContinuacion(CotContinuacion $l)
+	{
+		if ($this->collCotContinuacions === null) {
+			$this->initCotContinuacions();
+		}
+		if (!in_array($l, $this->collCotContinuacions, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collCotContinuacions, $l);
+			$l->setConcepto($this);
+		}
+	}
+
+
+	/**
+	 * If this collection has already been initialized with
+	 * an identical criteria, it returns the collection.
+	 * Otherwise if this Concepto is new, it will return
+	 * an empty collection; or if this Concepto has previously
+	 * been saved, it will retrieve related CotContinuacions from storage.
+	 *
+	 * This method is protected by default in order to keep the public
+	 * api reasonable.  You can provide public methods for those you
+	 * actually need in Concepto.
+	 */
+	public function getCotContinuacionsJoinCotizacion($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotContinuacions === null) {
+			if ($this->isNew()) {
+				$this->collCotContinuacions = array();
+			} else {
+
+				$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+				$this->collCotContinuacions = CotContinuacionPeer::doSelectJoinCotizacion($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(CotContinuacionPeer::CA_IDCONCEPTO, $this->ca_idconcepto);
+
+			if (!isset($this->lastCotContinuacionCriteria) || !$this->lastCotContinuacionCriteria->equals($criteria)) {
+				$this->collCotContinuacions = CotContinuacionPeer::doSelectJoinCotizacion($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastCotContinuacionCriteria = $criteria;
+
+		return $this->collCotContinuacions;
+	}
+
+	/**
 	 * Clears out the collInoEquiposSeas collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
@@ -3390,207 +3591,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Clears out the collFletes collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addFletes()
-	 */
-	public function clearFletes()
-	{
-		$this->collFletes = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collFletes collection (array).
-	 *
-	 * By default this just sets the collFletes collection to an empty array (like clearcollFletes());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initFletes()
-	{
-		$this->collFletes = array();
-	}
-
-	/**
-	 * Gets an array of Flete objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Concepto has previously been saved, it will retrieve
-	 * related Fletes from storage. If this Concepto is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array Flete[]
-	 * @throws     PropelException
-	 */
-	public function getFletes($criteria = null, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collFletes === null) {
-			if ($this->isNew()) {
-			   $this->collFletes = array();
-			} else {
-
-				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				FletePeer::addSelectColumns($criteria);
-				$this->collFletes = FletePeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				FletePeer::addSelectColumns($criteria);
-				if (!isset($this->lastFleteCriteria) || !$this->lastFleteCriteria->equals($criteria)) {
-					$this->collFletes = FletePeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastFleteCriteria = $criteria;
-		return $this->collFletes;
-	}
-
-	/**
-	 * Returns the number of related Flete objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related Flete objects.
-	 * @throws     PropelException
-	 */
-	public function countFletes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		} else {
-			$criteria = clone $criteria;
-		}
-
-		if ($distinct) {
-			$criteria->setDistinct();
-		}
-
-		$count = null;
-
-		if ($this->collFletes === null) {
-			if ($this->isNew()) {
-				$count = 0;
-			} else {
-
-				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				$count = FletePeer::doCount($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
-
-				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				if (!isset($this->lastFleteCriteria) || !$this->lastFleteCriteria->equals($criteria)) {
-					$count = FletePeer::doCount($criteria, $con);
-				} else {
-					$count = count($this->collFletes);
-				}
-			} else {
-				$count = count($this->collFletes);
-			}
-		}
-		return $count;
-	}
-
-	/**
-	 * Method called to associate a Flete object to this object
-	 * through the Flete foreign key attribute.
-	 *
-	 * @param      Flete $l Flete
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addFlete(Flete $l)
-	{
-		if ($this->collFletes === null) {
-			$this->initFletes();
-		}
-		if (!in_array($l, $this->collFletes, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collFletes, $l);
-			$l->setConcepto($this);
-		}
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Concepto is new, it will return
-	 * an empty collection; or if this Concepto has previously
-	 * been saved, it will retrieve related Fletes from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Concepto.
-	 */
-	public function getFletesJoinTrayecto($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ConceptoPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collFletes === null) {
-			if ($this->isNew()) {
-				$this->collFletes = array();
-			} else {
-
-				$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-				$this->collFletes = FletePeer::doSelectJoinTrayecto($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(FletePeer::CA_IDCONCEPTO, $this->ca_idconcepto);
-
-			if (!isset($this->lastFleteCriteria) || !$this->lastFleteCriteria->equals($criteria)) {
-				$this->collFletes = FletePeer::doSelectJoinTrayecto($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastFleteCriteria = $criteria;
-
-		return $this->collFletes;
-	}
-
-	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -3602,16 +3602,6 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
-			if ($this->collCotOpcions) {
-				foreach ((array) $this->collCotOpcions as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
-			if ($this->collCotContinuacions) {
-				foreach ((array) $this->collCotContinuacions as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
 			if ($this->collPricFletes) {
 				foreach ((array) $this->collPricFletes as $o) {
 					$o->clearAllReferences($deep);
@@ -3632,6 +3622,11 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collFletes) {
+				foreach ((array) $this->collFletes as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collRepEquipos) {
 				foreach ((array) $this->collRepEquipos as $o) {
 					$o->clearAllReferences($deep);
@@ -3647,29 +3642,34 @@ abstract class BaseConcepto extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collCotOpcions) {
+				foreach ((array) $this->collCotOpcions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collCotContinuacions) {
+				foreach ((array) $this->collCotContinuacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collInoEquiposSeas) {
 				foreach ((array) $this->collInoEquiposSeas as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
-			if ($this->collFletes) {
-				foreach ((array) $this->collFletes as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
 		} // if ($deep)
 
-		$this->collCotOpcions = null;
-		$this->collCotContinuacions = null;
 		$this->collPricFletes = null;
 		$this->collPricFleteLogs = null;
 		$this->collPricRecargosxLineas = null;
 		$this->collPricRecargosxLineaLogs = null;
+		$this->collFletes = null;
 		$this->collRepEquipos = null;
 		$this->collRepGastos = null;
 		$this->collRepTarifas = null;
+		$this->collCotOpcions = null;
+		$this->collCotContinuacions = null;
 		$this->collInoEquiposSeas = null;
-		$this->collFletes = null;
 	}
 
 } // BaseConcepto

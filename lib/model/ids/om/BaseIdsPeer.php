@@ -501,10 +501,6 @@ abstract class BaseIdsPeer {
 			$criteria = $values->buildCriteria(); // build Criteria from Ids object
 		}
 
-		if ($criteria->containsKey(IdsPeer::CA_ID) && $criteria->keyContainsValue(IdsPeer::CA_ID) ) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ('.IdsPeer::CA_ID.')');
-		}
-
 
 		// Set the correct dbName
 		$criteria->setDbName(self::DATABASE_NAME);

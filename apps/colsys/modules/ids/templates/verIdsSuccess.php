@@ -44,6 +44,10 @@
             <tr>
                 <th colspan="4"><div align="left">Oficina Principal</div></th>
             </tr>
+            <?
+            $sucursal = $ids->getSucursalPrincipal();
+            include_partial("ids/verSucursal", array("sucursal"=>$sucursal ));
+            ?>
              
             
         </tbody>

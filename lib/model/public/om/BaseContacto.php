@@ -128,16 +128,6 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 	protected $aCliente;
 
 	/**
-	 * @var        array Cotizacion[] Collection to store aggregation of Cotizacion objects.
-	 */
-	protected $collCotizacions;
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collCotizacions.
-	 */
-	private $lastCotizacionCriteria = null;
-
-	/**
 	 * @var        array TrackingUser[] Collection to store aggregation of TrackingUser objects.
 	 */
 	protected $collTrackingUsers;
@@ -146,6 +136,16 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 	 * @var        Criteria The criteria used to select the current contents of collTrackingUsers.
 	 */
 	private $lastTrackingUserCriteria = null;
+
+	/**
+	 * @var        array Cotizacion[] Collection to store aggregation of Cotizacion objects.
+	 */
+	protected $collCotizacions;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collCotizacions.
+	 */
+	private $lastCotizacionCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -928,11 +928,11 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 		if ($deep) {  // also de-associate any related objects?
 
 			$this->aCliente = null;
-			$this->collCotizacions = null;
-			$this->lastCotizacionCriteria = null;
-
 			$this->collTrackingUsers = null;
 			$this->lastTrackingUserCriteria = null;
+
+			$this->collCotizacions = null;
+			$this->lastCotizacionCriteria = null;
 
 		} // if (deep)
 	}
@@ -1048,16 +1048,16 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
 			}
 
-			if ($this->collCotizacions !== null) {
-				foreach ($this->collCotizacions as $referrerFK) {
+			if ($this->collTrackingUsers !== null) {
+				foreach ($this->collTrackingUsers as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
 				}
 			}
 
-			if ($this->collTrackingUsers !== null) {
-				foreach ($this->collTrackingUsers as $referrerFK) {
+			if ($this->collCotizacions !== null) {
+				foreach ($this->collCotizacions as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -1147,16 +1147,16 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 			}
 
 
-				if ($this->collCotizacions !== null) {
-					foreach ($this->collCotizacions as $referrerFK) {
+				if ($this->collTrackingUsers !== null) {
+					foreach ($this->collTrackingUsers as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
 					}
 				}
 
-				if ($this->collTrackingUsers !== null) {
-					foreach ($this->collTrackingUsers as $referrerFK) {
+				if ($this->collCotizacions !== null) {
+					foreach ($this->collCotizacions as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1530,15 +1530,15 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 			// the getter/setter methods for fkey referrer objects.
 			$copyObj->setNew(false);
 
-			foreach ($this->getCotizacions() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addCotizacion($relObj->copy($deepCopy));
-				}
-			}
-
 			foreach ($this->getTrackingUsers() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
 					$copyObj->addTrackingUser($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getCotizacions() as $relObj) {
+				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+					$copyObj->addCotizacion($relObj->copy($deepCopy));
 				}
 			}
 
@@ -1636,6 +1636,160 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 			 */
 		}
 		return $this->aCliente;
+	}
+
+	/**
+	 * Clears out the collTrackingUsers collection (array).
+	 *
+	 * This does not modify the database; however, it will remove any associated objects, causing
+	 * them to be refetched by subsequent calls to accessor method.
+	 *
+	 * @return     void
+	 * @see        addTrackingUsers()
+	 */
+	public function clearTrackingUsers()
+	{
+		$this->collTrackingUsers = null; // important to set this to NULL since that means it is uninitialized
+	}
+
+	/**
+	 * Initializes the collTrackingUsers collection (array).
+	 *
+	 * By default this just sets the collTrackingUsers collection to an empty array (like clearcollTrackingUsers());
+	 * however, you may wish to override this method in your stub class to provide setting appropriate
+	 * to your application -- for example, setting the initial array to the values stored in database.
+	 *
+	 * @return     void
+	 */
+	public function initTrackingUsers()
+	{
+		$this->collTrackingUsers = array();
+	}
+
+	/**
+	 * Gets an array of TrackingUser objects which contain a foreign key that references this object.
+	 *
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this Contacto has previously been saved, it will retrieve
+	 * related TrackingUsers from storage. If this Contacto is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
+	 *
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array TrackingUser[]
+	 * @throws     PropelException
+	 */
+	public function getTrackingUsers($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ContactoPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collTrackingUsers === null) {
+			if ($this->isNew()) {
+			   $this->collTrackingUsers = array();
+			} else {
+
+				$criteria->add(TrackingUserPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+
+				TrackingUserPeer::addSelectColumns($criteria);
+				$this->collTrackingUsers = TrackingUserPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(TrackingUserPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+
+				TrackingUserPeer::addSelectColumns($criteria);
+				if (!isset($this->lastTrackingUserCriteria) || !$this->lastTrackingUserCriteria->equals($criteria)) {
+					$this->collTrackingUsers = TrackingUserPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastTrackingUserCriteria = $criteria;
+		return $this->collTrackingUsers;
+	}
+
+	/**
+	 * Returns the number of related TrackingUser objects.
+	 *
+	 * @param      Criteria $criteria
+	 * @param      boolean $distinct
+	 * @param      PropelPDO $con
+	 * @return     int Count of related TrackingUser objects.
+	 * @throws     PropelException
+	 */
+	public function countTrackingUsers(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(ContactoPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collTrackingUsers === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(TrackingUserPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+
+				$count = TrackingUserPeer::doCount($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(TrackingUserPeer::CA_IDCONTACTO, $this->ca_idcontacto);
+
+				if (!isset($this->lastTrackingUserCriteria) || !$this->lastTrackingUserCriteria->equals($criteria)) {
+					$count = TrackingUserPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collTrackingUsers);
+				}
+			} else {
+				$count = count($this->collTrackingUsers);
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * Method called to associate a TrackingUser object to this object
+	 * through the TrackingUser foreign key attribute.
+	 *
+	 * @param      TrackingUser $l TrackingUser
+	 * @return     void
+	 * @throws     PropelException
+	 */
+	public function addTrackingUser(TrackingUser $l)
+	{
+		if ($this->collTrackingUsers === null) {
+			$this->initTrackingUsers();
+		}
+		if (!in_array($l, $this->collTrackingUsers, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collTrackingUsers, $l);
+			$l->setContacto($this);
+		}
 	}
 
 	/**
@@ -1887,160 +2041,6 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 	}
 
 	/**
-	 * Clears out the collTrackingUsers collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addTrackingUsers()
-	 */
-	public function clearTrackingUsers()
-	{
-		$this->collTrackingUsers = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collTrackingUsers collection (array).
-	 *
-	 * By default this just sets the collTrackingUsers collection to an empty array (like clearcollTrackingUsers());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initTrackingUsers()
-	{
-		$this->collTrackingUsers = array();
-	}
-
-	/**
-	 * Gets an array of TrackingUser objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Contacto has previously been saved, it will retrieve
-	 * related TrackingUsers from storage. If this Contacto is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array TrackingUser[]
-	 * @throws     PropelException
-	 */
-	public function getTrackingUsers($criteria = null, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ContactoPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collTrackingUsers === null) {
-			if ($this->isNew()) {
-			   $this->collTrackingUsers = array();
-			} else {
-
-				$criteria->add(TrackingUserPeer::CA_IDCONTACTO, $this->ca_idcontacto);
-
-				TrackingUserPeer::addSelectColumns($criteria);
-				$this->collTrackingUsers = TrackingUserPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(TrackingUserPeer::CA_IDCONTACTO, $this->ca_idcontacto);
-
-				TrackingUserPeer::addSelectColumns($criteria);
-				if (!isset($this->lastTrackingUserCriteria) || !$this->lastTrackingUserCriteria->equals($criteria)) {
-					$this->collTrackingUsers = TrackingUserPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastTrackingUserCriteria = $criteria;
-		return $this->collTrackingUsers;
-	}
-
-	/**
-	 * Returns the number of related TrackingUser objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related TrackingUser objects.
-	 * @throws     PropelException
-	 */
-	public function countTrackingUsers(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(ContactoPeer::DATABASE_NAME);
-		} else {
-			$criteria = clone $criteria;
-		}
-
-		if ($distinct) {
-			$criteria->setDistinct();
-		}
-
-		$count = null;
-
-		if ($this->collTrackingUsers === null) {
-			if ($this->isNew()) {
-				$count = 0;
-			} else {
-
-				$criteria->add(TrackingUserPeer::CA_IDCONTACTO, $this->ca_idcontacto);
-
-				$count = TrackingUserPeer::doCount($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
-
-				$criteria->add(TrackingUserPeer::CA_IDCONTACTO, $this->ca_idcontacto);
-
-				if (!isset($this->lastTrackingUserCriteria) || !$this->lastTrackingUserCriteria->equals($criteria)) {
-					$count = TrackingUserPeer::doCount($criteria, $con);
-				} else {
-					$count = count($this->collTrackingUsers);
-				}
-			} else {
-				$count = count($this->collTrackingUsers);
-			}
-		}
-		return $count;
-	}
-
-	/**
-	 * Method called to associate a TrackingUser object to this object
-	 * through the TrackingUser foreign key attribute.
-	 *
-	 * @param      TrackingUser $l TrackingUser
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addTrackingUser(TrackingUser $l)
-	{
-		if ($this->collTrackingUsers === null) {
-			$this->initTrackingUsers();
-		}
-		if (!in_array($l, $this->collTrackingUsers, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collTrackingUsers, $l);
-			$l->setContacto($this);
-		}
-	}
-
-	/**
 	 * Resets all collections of referencing foreign keys.
 	 *
 	 * This method is a user-space workaround for PHP's inability to garbage collect objects
@@ -2052,20 +2052,20 @@ abstract class BaseContacto extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
-			if ($this->collCotizacions) {
-				foreach ((array) $this->collCotizacions as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
 			if ($this->collTrackingUsers) {
 				foreach ((array) $this->collTrackingUsers as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collCotizacions) {
+				foreach ((array) $this->collCotizacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} // if ($deep)
 
-		$this->collCotizacions = null;
 		$this->collTrackingUsers = null;
+		$this->collCotizacions = null;
 			$this->aCliente = null;
 	}
 

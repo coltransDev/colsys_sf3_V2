@@ -33,6 +33,12 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 	protected $ca_id;
 
 	/**
+	 * The value for the ca_principal field.
+	 * @var        boolean
+	 */
+	protected $ca_principal;
+
+	/**
 	 * The value for the ca_direccion field.
 	 * @var        string
 	 */
@@ -188,6 +194,16 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 	public function getCaId()
 	{
 		return $this->ca_id;
+	}
+
+	/**
+	 * Get the [ca_principal] column value.
+	 * 
+	 * @return     boolean
+	 */
+	public function getCaPrincipal()
+	{
+		return $this->ca_principal;
 	}
 
 	/**
@@ -419,6 +435,26 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 
 		return $this;
 	} // setCaId()
+
+	/**
+	 * Set the value of [ca_principal] column.
+	 * 
+	 * @param      boolean $v new value
+	 * @return     IdsSucursal The current object (for fluent API support)
+	 */
+	public function setCaPrincipal($v)
+	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
+
+		if ($this->ca_principal !== $v) {
+			$this->ca_principal = $v;
+			$this->modifiedColumns[] = IdsSucursalPeer::CA_PRINCIPAL;
+		}
+
+		return $this;
+	} // setCaPrincipal()
 
 	/**
 	 * Set the value of [ca_direccion] column.
@@ -801,20 +837,21 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 
 			$this->ca_idsucursal = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
 			$this->ca_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-			$this->ca_direccion = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->ca_oficina = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-			$this->ca_torre = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
-			$this->ca_bloque = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_interior = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_localidad = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-			$this->ca_complemento = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-			$this->ca_telefonos = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-			$this->ca_fax = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-			$this->ca_idciudad = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-			$this->ca_fchcreado = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-			$this->ca_usucreado = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-			$this->ca_fchactualizado = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-			$this->ca_usuactualizado = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_principal = ($row[$startcol + 2] !== null) ? (boolean) $row[$startcol + 2] : null;
+			$this->ca_direccion = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->ca_oficina = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+			$this->ca_torre = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
+			$this->ca_bloque = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_interior = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_localidad = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_complemento = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_telefonos = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_fax = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_idciudad = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_fchcreado = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_usucreado = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -824,7 +861,7 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 16; // 16 = IdsSucursalPeer::NUM_COLUMNS - IdsSucursalPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 17; // 17 = IdsSucursalPeer::NUM_COLUMNS - IdsSucursalPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating IdsSucursal object", $e);
@@ -1168,45 +1205,48 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 				return $this->getCaId();
 				break;
 			case 2:
-				return $this->getCaDireccion();
+				return $this->getCaPrincipal();
 				break;
 			case 3:
-				return $this->getCaOficina();
+				return $this->getCaDireccion();
 				break;
 			case 4:
-				return $this->getCaTorre();
+				return $this->getCaOficina();
 				break;
 			case 5:
-				return $this->getCaBloque();
+				return $this->getCaTorre();
 				break;
 			case 6:
-				return $this->getCaInterior();
+				return $this->getCaBloque();
 				break;
 			case 7:
-				return $this->getCaLocalidad();
+				return $this->getCaInterior();
 				break;
 			case 8:
-				return $this->getCaComplemento();
+				return $this->getCaLocalidad();
 				break;
 			case 9:
-				return $this->getCaTelefonos();
+				return $this->getCaComplemento();
 				break;
 			case 10:
-				return $this->getCaFax();
+				return $this->getCaTelefonos();
 				break;
 			case 11:
-				return $this->getCaIdciudad();
+				return $this->getCaFax();
 				break;
 			case 12:
-				return $this->getCaFchcreado();
+				return $this->getCaIdciudad();
 				break;
 			case 13:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 14:
-				return $this->getCaFchactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 15:
+				return $this->getCaFchactualizado();
+				break;
+			case 16:
 				return $this->getCaUsuactualizado();
 				break;
 			default:
@@ -1232,20 +1272,21 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 		$result = array(
 			$keys[0] => $this->getCaIdsucursal(),
 			$keys[1] => $this->getCaId(),
-			$keys[2] => $this->getCaDireccion(),
-			$keys[3] => $this->getCaOficina(),
-			$keys[4] => $this->getCaTorre(),
-			$keys[5] => $this->getCaBloque(),
-			$keys[6] => $this->getCaInterior(),
-			$keys[7] => $this->getCaLocalidad(),
-			$keys[8] => $this->getCaComplemento(),
-			$keys[9] => $this->getCaTelefonos(),
-			$keys[10] => $this->getCaFax(),
-			$keys[11] => $this->getCaIdciudad(),
-			$keys[12] => $this->getCaFchcreado(),
-			$keys[13] => $this->getCaUsucreado(),
-			$keys[14] => $this->getCaFchactualizado(),
-			$keys[15] => $this->getCaUsuactualizado(),
+			$keys[2] => $this->getCaPrincipal(),
+			$keys[3] => $this->getCaDireccion(),
+			$keys[4] => $this->getCaOficina(),
+			$keys[5] => $this->getCaTorre(),
+			$keys[6] => $this->getCaBloque(),
+			$keys[7] => $this->getCaInterior(),
+			$keys[8] => $this->getCaLocalidad(),
+			$keys[9] => $this->getCaComplemento(),
+			$keys[10] => $this->getCaTelefonos(),
+			$keys[11] => $this->getCaFax(),
+			$keys[12] => $this->getCaIdciudad(),
+			$keys[13] => $this->getCaFchcreado(),
+			$keys[14] => $this->getCaUsucreado(),
+			$keys[15] => $this->getCaFchactualizado(),
+			$keys[16] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -1284,45 +1325,48 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 				$this->setCaId($value);
 				break;
 			case 2:
-				$this->setCaDireccion($value);
+				$this->setCaPrincipal($value);
 				break;
 			case 3:
-				$this->setCaOficina($value);
+				$this->setCaDireccion($value);
 				break;
 			case 4:
-				$this->setCaTorre($value);
+				$this->setCaOficina($value);
 				break;
 			case 5:
-				$this->setCaBloque($value);
+				$this->setCaTorre($value);
 				break;
 			case 6:
-				$this->setCaInterior($value);
+				$this->setCaBloque($value);
 				break;
 			case 7:
-				$this->setCaLocalidad($value);
+				$this->setCaInterior($value);
 				break;
 			case 8:
-				$this->setCaComplemento($value);
+				$this->setCaLocalidad($value);
 				break;
 			case 9:
-				$this->setCaTelefonos($value);
+				$this->setCaComplemento($value);
 				break;
 			case 10:
-				$this->setCaFax($value);
+				$this->setCaTelefonos($value);
 				break;
 			case 11:
-				$this->setCaIdciudad($value);
+				$this->setCaFax($value);
 				break;
 			case 12:
-				$this->setCaFchcreado($value);
+				$this->setCaIdciudad($value);
 				break;
 			case 13:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 14:
-				$this->setCaFchactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 15:
+				$this->setCaFchactualizado($value);
+				break;
+			case 16:
 				$this->setCaUsuactualizado($value);
 				break;
 		} // switch()
@@ -1351,20 +1395,21 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 
 		if (array_key_exists($keys[0], $arr)) $this->setCaIdsucursal($arr[$keys[0]]);
 		if (array_key_exists($keys[1], $arr)) $this->setCaId($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setCaDireccion($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setCaOficina($arr[$keys[3]]);
-		if (array_key_exists($keys[4], $arr)) $this->setCaTorre($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaBloque($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaInterior($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaLocalidad($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaComplemento($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaTelefonos($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaFax($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaIdciudad($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaFchcreado($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaUsucreado($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaFchactualizado($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaUsuactualizado($arr[$keys[15]]);
+		if (array_key_exists($keys[2], $arr)) $this->setCaPrincipal($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setCaDireccion($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setCaOficina($arr[$keys[4]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaTorre($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaBloque($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaInterior($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaLocalidad($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaComplemento($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaTelefonos($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaFax($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaIdciudad($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaFchcreado($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaUsucreado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaFchactualizado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaUsuactualizado($arr[$keys[16]]);
 	}
 
 	/**
@@ -1378,6 +1423,7 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 
 		if ($this->isColumnModified(IdsSucursalPeer::CA_IDSUCURSAL)) $criteria->add(IdsSucursalPeer::CA_IDSUCURSAL, $this->ca_idsucursal);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_ID)) $criteria->add(IdsSucursalPeer::CA_ID, $this->ca_id);
+		if ($this->isColumnModified(IdsSucursalPeer::CA_PRINCIPAL)) $criteria->add(IdsSucursalPeer::CA_PRINCIPAL, $this->ca_principal);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_DIRECCION)) $criteria->add(IdsSucursalPeer::CA_DIRECCION, $this->ca_direccion);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_OFICINA)) $criteria->add(IdsSucursalPeer::CA_OFICINA, $this->ca_oficina);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_TORRE)) $criteria->add(IdsSucursalPeer::CA_TORRE, $this->ca_torre);
@@ -1447,6 +1493,8 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 	{
 
 		$copyObj->setCaId($this->ca_id);
+
+		$copyObj->setCaPrincipal($this->ca_principal);
 
 		$copyObj->setCaDireccion($this->ca_direccion);
 

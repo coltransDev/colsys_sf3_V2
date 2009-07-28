@@ -2,14 +2,14 @@
     var getDV = function(){
 
         if( document.getElementById("tipo_identificacion").value=="3" ){
-            document.getElementById("identificacion").value="";
-            document.getElementById("identificacion").disabled=true;
+            document.getElementById("id").value="";
+            document.getElementById("id").disabled=true;
         }else{
-            document.getElementById("identificacion").disabled=false;
+            document.getElementById("id").disabled=false;
         }
 
         if( document.getElementById("tipo_identificacion").value=="1" ){
-            var dv = d_verificacion(document.getElementById("identificacion").value);
+            var dv = d_verificacion(document.getElementById("id").value);
             document.getElementById("dv").value = dv;
         }else{
             document.getElementById("dv").value = "";
@@ -38,12 +38,15 @@
 		<td width="22%"> <div align="left"><b>Tipo de identificaci&oacute;n </b></div></td>
 		<td width="25%">
              <div align="left">
-            <?
-            if( !$ids->getCaId() ){
+            <?            
+            if( $ids->isNew() ){
                 echo $form['tipo_identificacion']->renderError();
                 echo $form['tipo_identificacion']->render();
             }else{
                 echo $ids->getCaTipoidentificacion();
+                ?>
+                <input type="hidden" name="tipo_identificacion" value="<?=$ids->getCaTipoidentificacion()?>" />
+                <?
             }
             ?>
              </div>
@@ -58,10 +61,13 @@
             <div align="left">
             <?
             if( !$ids->getCaId() ){
-                echo $form['identificacion']->renderError();
-                echo $form['identificacion']->render();
+                echo $form['id']->renderError();
+                echo $form['id']->render();
             }else{
                 echo $ids->getCaId();
+                ?>
+                <input type="hidden" name="id" value="<?=$ids->getCaId()?>" />
+                <?
             }
             ?>
             </div>
@@ -78,6 +84,9 @@
                 echo $form['dv']->render();
             }else{
                 echo $ids->getCaDv();
+                ?>
+                <input type="hidden" name="dv" value="<?=$ids->getCaDv()?>" />
+                <?
             }
             ?>
             </div>
@@ -90,7 +99,7 @@
              <div align="left">
             <?
             echo $form['nombre']->renderError();
-            //$form->setDefault('identificacion', $user->getEmail() );
+            $form->setDefault('nombre', $ids->getCaNombre() );
             echo $form['nombre']->render();
             ?>
              </div>
@@ -102,7 +111,7 @@
              <div align="left">
             <?
             echo $form['website']->renderError();
-            //$form->setDefault('identificacion', $user->getEmail() );
+            $form->setDefault('website', $ids->getCaWebsite() );
             echo $form['website']->render();
             ?>
              </div>
@@ -112,29 +121,52 @@
 		<th colspan="6"><div align="left"><b>Oficina Principal:</b></div></th>
 		</tr>
 	<tr>
-		<td> <div align="left">Direcci&oacute;n</div></td>
-		<td><div align="left">&nbsp;</div></td>
-		<td><div align="left">Ciudad</div></td>
-		<td><div align="left">&nbsp;</div></td>
+		<td> <div align="left"><b>Direcci&oacute;n</b></div></td>
+		<td><div align="left">
+            <?
+
+            $sucursal = $ids->getSucursalPrincipal();
+
+            echo $form['direccion']->renderError();
+            $form->setDefault('direccion', $sucursal->getCaDireccion() );
+            echo $form['direccion']->render();
+            ?>
+
+            </div></td>
+            <td><div align="left"><b>Ciudad</b></div></td>
+		<td><div align="left">
+            <?
+            echo $form['idciudad']->renderError();
+            $form->setDefault('idciudad', $sucursal->getCaIdciudad() );
+            echo $form['idciudad']->render();
+            ?>
+
+            </div></td>
 		<td><div align="left">&nbsp;</div></td>
 		<td><div align="left">&nbsp;</div></td>
 	</tr>
 	<tr>
-		<td>Telefonos</td>
+        <td><b>Tel&eacute;fonos</b></td>
+		<td><div align="left">
+            <?
+            echo $form['telefonos']->renderError();
+            $form->setDefault('telefonos', $sucursal->getCaTelefonos() );
+            echo $form['telefonos']->render();
+            ?>
+            </div>
+        </td>
+        <td><b>Fax</b></td>
+		<td><div align="left">
+            <?
+            echo $form['fax']->renderError();
+            $form->setDefault('fax', $sucursal->getCaFax() );
+            echo $form['fax']->render();
+            ?>
+            </div>
+        </td>
 		<td>&nbsp;</td>
-		<td>Fax</td>
 		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-	</tr>
-    <tr>
-        <td> <div align="left">Tel&eacute;fonos</div></td>
-		<td><div align="left">&nbsp;</div></td>
-		<td><div align="left">Fax</div></td>
-		<td><div align="left">&nbsp;</div></td>
-		<td><div align="left">&nbsp;</div></td>
-		<td><div align="left">&nbsp;</div></td>
-	</tr>		
+	</tr>    		
     <tr>
 		<td colspan="6">
             <div align="center">

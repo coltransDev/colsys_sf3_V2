@@ -62,11 +62,13 @@ class IdsSucursalMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('ids.tb_sucursales_ca_idsucursal_seq');
+		$tMap->setPrimaryKeyMethodInfo('ids.tb_sucursales_id');
 
 		$tMap->addPrimaryKey('CA_IDSUCURSAL', 'CaIdsucursal', 'INTEGER', true, null);
 
 		$tMap->addForeignKey('CA_ID', 'CaId', 'INTEGER', 'ids.tb_ids', 'CA_ID', false, null);
+
+		$tMap->addColumn('CA_PRINCIPAL', 'CaPrincipal', 'BOOLEAN', false, null);
 
 		$tMap->addColumn('CA_DIRECCION', 'CaDireccion', 'VARCHAR', false, null);
 

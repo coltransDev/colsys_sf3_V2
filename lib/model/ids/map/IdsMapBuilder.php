@@ -60,7 +60,7 @@ class IdsMapBuilder implements MapBuilder {
 		$tMap->setPhpName('Ids');
 		$tMap->setClassname('Ids');
 
-		$tMap->setUseIdGenerator(true);
+		$tMap->setUseIdGenerator(false);
 
 		$tMap->setPrimaryKeyMethodInfo('ids.tb_ids_id');
 
