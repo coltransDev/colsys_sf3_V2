@@ -115,19 +115,24 @@ if( $reporte->getCaIdConsignatario() ){
 }
 
 
+$bodega1 = $reporte->getBodegaConsignar();
+$bodega2 = BodegaPeer::retrieveByPk( $reporte->getCaIdBodega() );
+
 if( $reporte->getCaIdconsignar()==1 ){
 	$hijo = $consignatario_final;
-}else{
-	$bodegaConsignar = $reporte->getBodegaConsignar();
-	$hijo = $bodegaConsignar->getCaNombre();
+}else{	
+	$hijo = $bodega1->getCaNombre();
 }
 
-$bodega = $reporte->getBodega();
 
-if( $bodega && $bodega->getCaTipo()!= "Coordinador Logistico" ){
-	$hijo .=" / ".$bodega->getCaTipo()." ".(($bodega->getCaNombre()!='N/A')?$bodega->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
+
+if( $bodega2 && $bodega2->getCaTipo()!= "Coordinador Logistico" ){
+	$hijo .=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"")." ".$reporte->getDestinoCont()->getCaCiudad()." - ".$reporte->getDestinoCont()->getTrafico()->getCaNombre();
 
 }
+
+// $hijo = (
+//              ($rs->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rs->Value('ca_tipobodega')." ".(($rs->Value('ca_bodega')!='N/A')?$rs->Value('ca_bodega'):"")." ".$rs->Value('ca_final_dest')." - ".$tm->Value('ca_pais'):"");
 
 if( !$reporte->getCaNotify() ){	
 	$contacto = $reporte->getContacto();
@@ -139,7 +144,7 @@ if( !$reporte->getCaNotify() ){
 	if( $reporte->getCaNotify()==1 ) {	
 		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );
 	}elseif(  $reporte->getCaNotify()==2 ){
-		$notify = TerceroPeer::retrieveByPk( $reporte->getCaNotify() );
+		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdNotify() );
 	}elseif(  $reporte->getCaNotify()==3 ){
 		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdmaster() );
 	}

@@ -77,38 +77,48 @@ if ( $reporte->getCaIdlinea() ){
 <?	
 }
 
- 
- 
-
-	 
-
 if( $reporte->getCaIdmaster()){
 	$consignatario = TerceroPeer::retrieveByPk( $reporte->getCaIdmaster() );
-	 $master = $consignatario->getCaNombre()."<BR>".$consignatario->getCaContacto()."<BR>Dirección: ".$consignatario->getCaDireccion()."<BR>Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<BR>Email: ".$consignatario->getCaEmail();
+	 $master = $consignatario->getCaNombre()."<BR>".$consignatario->getCaContacto()."<BR>".$consignatario->getCaDireccion()."<BR>Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<BR>Email: ".$consignatario->getCaEmail();
 }else {
-	$consignatario = ClientePeer::retrieveByPk( 800024075 );	
-	$master = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<BR>Dirección: ".str_replace ("|"," ",$consignatario->getCaDireccion())."<BR>Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<BR>".$consignatario->getCiudad()->__toString();
+	$consignatario = ClientePeer::retrieveByPk( 800024075 );
+
+    $c = new Criteria();
+    $c->add( SucursalPeer::CA_NOMBRE, $reporte->getDestino()->getCaCiudad() );
+    $sucursal = SucursalPeer::doSelectOne( $c );
+
+	$master = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<BR>".$sucursal->getCaDireccion()."<BR>Teléfonos:".$sucursal->getCaTelefono()." Fax:".$sucursal->getCaFax()."<BR>".$reporte->getDestino()->getCaCiudad()." - ".$reporte->getDestino()->getTrafico()->getCaNombre();
 }
+
 
 if( $reporte->getCaIdConsignatario() ){
 
 	$consignatario = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );
-	$consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<BR>Contacto: ".$consignatario->getCaContacto()."<BR>Dirección: ".$consignatario->getCaDireccion()."<BR>Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<BR>Email: ".$consignatario->getCaEmail();
+	$consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<BR>".$consignatario->getCaContacto()."<BR>".$consignatario->getCaDireccion();
 		
 }else{
 	$contacto = $reporte->getContacto();
 	$cliente = $reporte->getContacto()->getCliente();
 	
-	$consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>Dirección: ".str_replace ("|"," ",$cliente->getCaDireccion())."<BR>Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<BR> Email:".$contacto->getCaEmail();		
+	$consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".str_replace ("|"," ",$cliente->getCaDireccion());
 }
 
+$bodega1 = $reporte->getBodegaConsignar();
+$bodega2 = BodegaPeer::retrieveByPk( $reporte->getCaIdBodega() );
 
 if( $reporte->getCaIdconsignar()==1 ){
 	$hijo = $consignatario_final;
-}else{
-	$bodegaConsignar = $reporte->getBodegaConsignar();
+}else{	
 	$hijo = $bodegaConsignar->getCaNombre();
 }
+
+$hijo.=" / ".$bodega2->getCaTipo()." ".(($bodega2->getCaNombre()!='N/A')?$bodega2->getCaNombre():"");
+
+if( $reporte->getCaContinuacion()== 'N/A' ){
+    $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
+}
+$hijo.="<br />".$reporte->getDestino()->getTrafico()->getCaNombre();
+//.(($rs->Value('ca_continuacion') == 'N/A')?"<BR>".$rs->Value('ca_ciudestino'):"")."<BR>".$tm->Value('ca_pais');
 
 
 if( !$reporte->getCaNotify() ){	
@@ -117,14 +127,14 @@ if( !$reporte->getCaNotify() ){
 	
 	$consignatario_h = $cliente->getCaCompania()."<BR>: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".str_replace ("|"," ",$cliente->getCaDireccion())."<BR>".$cliente->getCiudad()->getTrafico()->getcaNombre();		
 }else{
-
+    echo $reporte->getCaNotify();
 	if( $reporte->getCaNotify()==1 ) {	
 		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );
 	}elseif(  $reporte->getCaNotify()==2 ){
-		$notify = TerceroPeer::retrieveByPk( $reporte->getCaNotify() );
+		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdNotify() );
 	}
 	
-	$consignatario_h = $notify->getCaNombre()." Nit. ".$notify->getCaIdentificacion()."<BR>Contacto: ".$notify->getCaContacto()."<BR>Dirección: ".$notify->getCaDireccion()."<BR>Teléfonos:".$notify->getCaTelefonos()." Fax:".$notify->getCaFax()."<BR>Email: ".$notify->getCaEmail();	
+	$consignatario_h = $notify->getCaNombre()."<br />".$notify->getCaContacto()."<br />".$notify->getCaDireccion();
 }
 
 if ( $reporte->getCaMastersame() == 'Sí' ){
