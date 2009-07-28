@@ -52,8 +52,7 @@
 		<column name="ca_idsucursal" type="integer" required="true"  />
         <column name="ca_nombres" type="varchar" required="true"  />
 		<column name="ca_papellido" type="varchar" required="true"  />
-		<column name="ca_sapellido" type="varchar" />
-		<column name="ca_nombres" type="varchar"    />
+		<column name="ca_sapellido" type="varchar" />		
 		<column name="ca_saludo" type="varchar"   />
         <column name="ca_direccion" type="varchar"   />
         <column name="ca_telefonos" type="varchar"   />
