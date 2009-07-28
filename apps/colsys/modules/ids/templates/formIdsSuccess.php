@@ -128,7 +128,9 @@
             $sucursal = $ids->getSucursalPrincipal();
 
             echo $form['direccion']->renderError();
-            $form->setDefault('direccion', $sucursal->getCaDireccion() );
+            if( $sucursal ){
+                $form->setDefault('direccion', $sucursal->getCaDireccion() );
+            }
             echo $form['direccion']->render();
             ?>
 
@@ -137,7 +139,9 @@
 		<td><div align="left">
             <?
             echo $form['idciudad']->renderError();
-            $form->setDefault('idciudad', $sucursal->getCaIdciudad() );
+            if( $sucursal ){
+                $form->setDefault('idciudad', $sucursal->getCaIdciudad() );
+            }
             echo $form['idciudad']->render();
             ?>
 
@@ -150,7 +154,9 @@
 		<td><div align="left">
             <?
             echo $form['telefonos']->renderError();
-            $form->setDefault('telefonos', $sucursal->getCaTelefonos() );
+            if( $sucursal ){
+                $form->setDefault('telefonos', $sucursal->getCaTelefonos() );
+            }
             echo $form['telefonos']->render();
             ?>
             </div>
@@ -159,7 +165,9 @@
 		<td><div align="left">
             <?
             echo $form['fax']->renderError();
-            $form->setDefault('fax', $sucursal->getCaFax() );
+            if( $sucursal ){
+                $form->setDefault('fax', $sucursal->getCaFax() );
+            }
             echo $form['fax']->render();
             ?>
             </div>
@@ -171,7 +179,15 @@
 		<td colspan="6">
             <div align="center">
                 <input type="submit" value="Guardar" class="button" />&nbsp;
-                <input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for("ids/index?modo=".$modo)?>'" />
+
+                 <?
+                if( $ids->isNew() ){
+                    $url = "ids/index?modo=".$modo;
+                }else{
+                    $url = "ids/verIds?id=".$ids->getCaId()."&modo=".$modo;
+                }
+                ?>
+                <input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for($url)?>'" />
             </div>
        </td>
 	</tr>
@@ -180,5 +196,12 @@
 </div>
 
 <script language="javascript" type="text/javascript">
+
+    <?
+    if( $ids->isNew() ){
+    ?>
     getDV();
+    <?
+    }
+    ?>
 </script>

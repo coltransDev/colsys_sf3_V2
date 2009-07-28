@@ -22,6 +22,44 @@ class idsActions extends sfActions
 
 
     /**
+	* Permite realizar busquedas en la tabla de proveedores
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeBusqueda(sfWebRequest $request)
+	{
+        $this->modo = $request->getParameter("modo");
+
+        $criterio = $request->getParameter("criterio");
+        $cadena = $request->getParameter("cadena");
+
+        $c = new Criteria();
+
+		switch( $criterio ){
+			case "nombre":
+				$c->add( IdsPeer::CA_NOMBRE, "%". strtoupper($cadena)."%", Criteria::LIKE );
+				break;
+		}
+		//$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL );
+		$c->addAscendingOrderByColumn( IdsPeer::CA_NOMBRE );
+		$c->setLimit( 200 );
+
+		$this->pager = new sfPropelPager('Ids', 30);
+		$this->pager->setCriteria($c);
+		$this->pager->setPage($this->getRequestParameter('page', 1));
+		$this->pager->init();
+
+
+		if( count($this->pager->getResults())==1 && count($this->pager->getLinks())==1  ){
+			$ids = $this->pager->getResults();
+			$this->redirect("ids/verIds?id=".$ids[0]->getCaId());
+		}
+		$this->criterio = $criterio;
+		$this->cadena = $cadena;
+	}
+
+
+    /**
 	* Muestra el formulario de creación y edicion de proveedores
 	*
 	* @param sfRequest $request A request object
@@ -65,7 +103,7 @@ class idsActions extends sfActions
             $bindValues["tipo_identificacion"] = $request->getParameter("tipo_identificacion");
             $bindValues["id"] = $request->getParameter("id");
             $bindValues["dv"] = $request->getParameter("dv");
-            $bindValues["nombre"] = $request->getParameter("nombre");
+            $bindValues["nombre"] = strtoupper($request->getParameter("nombre"));
             $bindValues["website"] = $request->getParameter("website");
             $bindValues["idgrupo"] = $request->getParameter("idgrupo");
             
@@ -79,8 +117,8 @@ class idsActions extends sfActions
                 
                 $ids->setCaTipoidentificacion( $bindValues["tipo_identificacion"]);
 
-                if( $bindValues["identificacion"] ){
-                    $ids->setCaId( $bindValues["identificacion"]);
+                if( $bindValues["id"] ){
+                    $ids->setCaId( $bindValues["id"]);
                 }
 
                 if( $bindValues["dv"] ){
@@ -135,5 +173,15 @@ class idsActions extends sfActions
 
         $this->ids = $ids;
 	}
+
+    /**
+	* Muestra el formulario de creación y edicion de proveedores
+	*
+	* @param sfRequest $request A request object
+	*/
+
+    public function executeFormContactosIds(sfWebRequest $request){
+        
+    }
 }
 ?>
