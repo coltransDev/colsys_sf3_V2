@@ -126,8 +126,7 @@ if( !$reporte->getCaNotify() ){
 	$cliente = $reporte->getContacto()->getCliente();
 	
 	$consignatario_h = $cliente->getCaCompania()."<BR>: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".str_replace ("|"," ",$cliente->getCaDireccion())."<BR>".$cliente->getCiudad()->getTrafico()->getcaNombre();		
-}else{
-    echo $reporte->getCaNotify();
+}else{    
 	if( $reporte->getCaNotify()==1 ) {	
 		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );
 	}elseif(  $reporte->getCaNotify()==2 ){

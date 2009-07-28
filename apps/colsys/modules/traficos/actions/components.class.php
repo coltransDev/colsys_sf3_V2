@@ -21,7 +21,8 @@ class traficosComponents extends sfComponents
 		if( $this->reporte->getCaImpoexpo()==Constantes::IMPO ){
 			//Reportes al exterior
 			$c = new Criteria();
-			$c->add( EmailPeer::CA_IDCASO, $this->reporte->getCaIdreporte() );
+            $c->addJoin( EmailPeer::CA_IDCASO, ReportePeer::CA_IDREPORTE );
+			$c->add( ReportePeer::CA_CONSECUTIVO, $this->reporte->getCaConsecutivo() );
 			if( $this->reporte->getCaTransporte()==Constantes::MARITIMO ){
 				$c->add( EmailPeer::CA_TIPO, 'Rep.MarítimoExterior' );
 			}else{

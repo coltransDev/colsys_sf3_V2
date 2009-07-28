@@ -79,7 +79,7 @@
 				echo "No se han creado reportes al exterior<br />";
 			}
 			if( $nivel>0 ){
-				echo link_to(image_tag("22x22/edit_add.gif")." Rep. Exterior","reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte() );				
+				echo link_to(image_tag("22x22/edit_add.gif")." Rep. Exterior","reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte() );
 			}
 		?>
 		</div>
