@@ -51,12 +51,6 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 	protected $ca_sapellido;
 
 	/**
-	 * The value for the ca_nombres field.
-	 * @var        string
-	 */
-	protected $ca_nombres;
-
-	/**
 	 * The value for the ca_saludo field.
 	 * @var        string
 	 */
@@ -262,16 +256,6 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 	public function getCaSapellido()
 	{
 		return $this->ca_sapellido;
-	}
-
-	/**
-	 * Get the [ca_nombres] column value.
-	 * 
-	 * @return     string
-	 */
-	public function getCaNombres()
-	{
-		return $this->ca_nombres;
 	}
 
 	/**
@@ -636,26 +620,6 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 
 		return $this;
 	} // setCaSapellido()
-
-	/**
-	 * Set the value of [ca_nombres] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     IdsContacto The current object (for fluent API support)
-	 */
-	public function setCaNombres($v)
-	{
-		if ($v !== null) {
-			$v = (string) $v;
-		}
-
-		if ($this->ca_nombres !== $v) {
-			$this->ca_nombres = $v;
-			$this->modifiedColumns[] = IdsContactoPeer::CA_NOMBRES;
-		}
-
-		return $this;
-	} // setCaNombres()
 
 	/**
 	 * Set the value of [ca_saludo] column.
@@ -1170,26 +1134,25 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 			$this->ca_nombres = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->ca_papellido = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->ca_sapellido = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-			$this->ca_nombres = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_saludo = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_direccion = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-			$this->ca_telefonos = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-			$this->ca_fax = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-			$this->ca_idciudad = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-			$this->ca_email = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-			$this->ca_impoexpo = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-			$this->ca_transporte = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-			$this->ca_cargo = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-			$this->ca_departamento = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
-			$this->ca_observaciones = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-			$this->ca_sugerido = ($row[$startcol + 17] !== null) ? (boolean) $row[$startcol + 17] : null;
-			$this->ca_activo = ($row[$startcol + 18] !== null) ? (boolean) $row[$startcol + 18] : null;
-			$this->ca_fchcreado = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
-			$this->ca_usucreado = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
-			$this->ca_fchactualizado = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
-			$this->ca_usuactualizado = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
-			$this->ca_fcheliminado = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
-			$this->ca_usueliminado = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+			$this->ca_saludo = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_direccion = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_telefonos = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_fax = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_idciudad = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+			$this->ca_email = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+			$this->ca_impoexpo = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+			$this->ca_transporte = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_cargo = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_departamento = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_observaciones = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_sugerido = ($row[$startcol + 16] !== null) ? (boolean) $row[$startcol + 16] : null;
+			$this->ca_activo = ($row[$startcol + 17] !== null) ? (boolean) $row[$startcol + 17] : null;
+			$this->ca_fchcreado = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_usucreado = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+			$this->ca_fcheliminado = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_usueliminado = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -1199,7 +1162,7 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 			}
 
 			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 25; // 25 = IdsContactoPeer::NUM_COLUMNS - IdsContactoPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 24; // 24 = IdsContactoPeer::NUM_COLUMNS - IdsContactoPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating IdsContacto object", $e);
@@ -1528,63 +1491,60 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 				return $this->getCaSapellido();
 				break;
 			case 5:
-				return $this->getCaNombres();
-				break;
-			case 6:
 				return $this->getCaSaludo();
 				break;
-			case 7:
+			case 6:
 				return $this->getCaDireccion();
 				break;
-			case 8:
+			case 7:
 				return $this->getCaTelefonos();
 				break;
-			case 9:
+			case 8:
 				return $this->getCaFax();
 				break;
-			case 10:
+			case 9:
 				return $this->getCaIdciudad();
 				break;
-			case 11:
+			case 10:
 				return $this->getCaEmail();
 				break;
-			case 12:
+			case 11:
 				return $this->getCaImpoexpo();
 				break;
-			case 13:
+			case 12:
 				return $this->getCaTransporte();
 				break;
-			case 14:
+			case 13:
 				return $this->getCaCargo();
 				break;
-			case 15:
+			case 14:
 				return $this->getCaDepartamento();
 				break;
-			case 16:
+			case 15:
 				return $this->getCaObservaciones();
 				break;
-			case 17:
+			case 16:
 				return $this->getCaSugerido();
 				break;
-			case 18:
+			case 17:
 				return $this->getCaActivo();
 				break;
-			case 19:
+			case 18:
 				return $this->getCaFchcreado();
 				break;
-			case 20:
+			case 19:
 				return $this->getCaUsucreado();
 				break;
-			case 21:
+			case 20:
 				return $this->getCaFchactualizado();
 				break;
-			case 22:
+			case 21:
 				return $this->getCaUsuactualizado();
 				break;
-			case 23:
+			case 22:
 				return $this->getCaFcheliminado();
 				break;
-			case 24:
+			case 23:
 				return $this->getCaUsueliminado();
 				break;
 			default:
@@ -1613,26 +1573,25 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 			$keys[2] => $this->getCaNombres(),
 			$keys[3] => $this->getCaPapellido(),
 			$keys[4] => $this->getCaSapellido(),
-			$keys[5] => $this->getCaNombres(),
-			$keys[6] => $this->getCaSaludo(),
-			$keys[7] => $this->getCaDireccion(),
-			$keys[8] => $this->getCaTelefonos(),
-			$keys[9] => $this->getCaFax(),
-			$keys[10] => $this->getCaIdciudad(),
-			$keys[11] => $this->getCaEmail(),
-			$keys[12] => $this->getCaImpoexpo(),
-			$keys[13] => $this->getCaTransporte(),
-			$keys[14] => $this->getCaCargo(),
-			$keys[15] => $this->getCaDepartamento(),
-			$keys[16] => $this->getCaObservaciones(),
-			$keys[17] => $this->getCaSugerido(),
-			$keys[18] => $this->getCaActivo(),
-			$keys[19] => $this->getCaFchcreado(),
-			$keys[20] => $this->getCaUsucreado(),
-			$keys[21] => $this->getCaFchactualizado(),
-			$keys[22] => $this->getCaUsuactualizado(),
-			$keys[23] => $this->getCaFcheliminado(),
-			$keys[24] => $this->getCaUsueliminado(),
+			$keys[5] => $this->getCaSaludo(),
+			$keys[6] => $this->getCaDireccion(),
+			$keys[7] => $this->getCaTelefonos(),
+			$keys[8] => $this->getCaFax(),
+			$keys[9] => $this->getCaIdciudad(),
+			$keys[10] => $this->getCaEmail(),
+			$keys[11] => $this->getCaImpoexpo(),
+			$keys[12] => $this->getCaTransporte(),
+			$keys[13] => $this->getCaCargo(),
+			$keys[14] => $this->getCaDepartamento(),
+			$keys[15] => $this->getCaObservaciones(),
+			$keys[16] => $this->getCaSugerido(),
+			$keys[17] => $this->getCaActivo(),
+			$keys[18] => $this->getCaFchcreado(),
+			$keys[19] => $this->getCaUsucreado(),
+			$keys[20] => $this->getCaFchactualizado(),
+			$keys[21] => $this->getCaUsuactualizado(),
+			$keys[22] => $this->getCaFcheliminado(),
+			$keys[23] => $this->getCaUsueliminado(),
 		);
 		return $result;
 	}
@@ -1680,63 +1639,60 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 				$this->setCaSapellido($value);
 				break;
 			case 5:
-				$this->setCaNombres($value);
-				break;
-			case 6:
 				$this->setCaSaludo($value);
 				break;
-			case 7:
+			case 6:
 				$this->setCaDireccion($value);
 				break;
-			case 8:
+			case 7:
 				$this->setCaTelefonos($value);
 				break;
-			case 9:
+			case 8:
 				$this->setCaFax($value);
 				break;
-			case 10:
+			case 9:
 				$this->setCaIdciudad($value);
 				break;
-			case 11:
+			case 10:
 				$this->setCaEmail($value);
 				break;
-			case 12:
+			case 11:
 				$this->setCaImpoexpo($value);
 				break;
-			case 13:
+			case 12:
 				$this->setCaTransporte($value);
 				break;
-			case 14:
+			case 13:
 				$this->setCaCargo($value);
 				break;
-			case 15:
+			case 14:
 				$this->setCaDepartamento($value);
 				break;
-			case 16:
+			case 15:
 				$this->setCaObservaciones($value);
 				break;
-			case 17:
+			case 16:
 				$this->setCaSugerido($value);
 				break;
-			case 18:
+			case 17:
 				$this->setCaActivo($value);
 				break;
-			case 19:
+			case 18:
 				$this->setCaFchcreado($value);
 				break;
-			case 20:
+			case 19:
 				$this->setCaUsucreado($value);
 				break;
-			case 21:
+			case 20:
 				$this->setCaFchactualizado($value);
 				break;
-			case 22:
+			case 21:
 				$this->setCaUsuactualizado($value);
 				break;
-			case 23:
+			case 22:
 				$this->setCaFcheliminado($value);
 				break;
-			case 24:
+			case 23:
 				$this->setCaUsueliminado($value);
 				break;
 		} // switch()
@@ -1768,26 +1724,25 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[2], $arr)) $this->setCaNombres($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaPapellido($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaSapellido($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaNombres($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaSaludo($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaDireccion($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaTelefonos($arr[$keys[8]]);
-		if (array_key_exists($keys[9], $arr)) $this->setCaFax($arr[$keys[9]]);
-		if (array_key_exists($keys[10], $arr)) $this->setCaIdciudad($arr[$keys[10]]);
-		if (array_key_exists($keys[11], $arr)) $this->setCaEmail($arr[$keys[11]]);
-		if (array_key_exists($keys[12], $arr)) $this->setCaImpoexpo($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaTransporte($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaCargo($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaDepartamento($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaObservaciones($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaSugerido($arr[$keys[17]]);
-		if (array_key_exists($keys[18], $arr)) $this->setCaActivo($arr[$keys[18]]);
-		if (array_key_exists($keys[19], $arr)) $this->setCaFchcreado($arr[$keys[19]]);
-		if (array_key_exists($keys[20], $arr)) $this->setCaUsucreado($arr[$keys[20]]);
-		if (array_key_exists($keys[21], $arr)) $this->setCaFchactualizado($arr[$keys[21]]);
-		if (array_key_exists($keys[22], $arr)) $this->setCaUsuactualizado($arr[$keys[22]]);
-		if (array_key_exists($keys[23], $arr)) $this->setCaFcheliminado($arr[$keys[23]]);
-		if (array_key_exists($keys[24], $arr)) $this->setCaUsueliminado($arr[$keys[24]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaSaludo($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaDireccion($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaTelefonos($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaFax($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaIdciudad($arr[$keys[9]]);
+		if (array_key_exists($keys[10], $arr)) $this->setCaEmail($arr[$keys[10]]);
+		if (array_key_exists($keys[11], $arr)) $this->setCaImpoexpo($arr[$keys[11]]);
+		if (array_key_exists($keys[12], $arr)) $this->setCaTransporte($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaCargo($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaDepartamento($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaObservaciones($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaSugerido($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaActivo($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaFchcreado($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaUsucreado($arr[$keys[19]]);
+		if (array_key_exists($keys[20], $arr)) $this->setCaFchactualizado($arr[$keys[20]]);
+		if (array_key_exists($keys[21], $arr)) $this->setCaUsuactualizado($arr[$keys[21]]);
+		if (array_key_exists($keys[22], $arr)) $this->setCaFcheliminado($arr[$keys[22]]);
+		if (array_key_exists($keys[23], $arr)) $this->setCaUsueliminado($arr[$keys[23]]);
 	}
 
 	/**
@@ -1804,7 +1759,6 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(IdsContactoPeer::CA_NOMBRES)) $criteria->add(IdsContactoPeer::CA_NOMBRES, $this->ca_nombres);
 		if ($this->isColumnModified(IdsContactoPeer::CA_PAPELLIDO)) $criteria->add(IdsContactoPeer::CA_PAPELLIDO, $this->ca_papellido);
 		if ($this->isColumnModified(IdsContactoPeer::CA_SAPELLIDO)) $criteria->add(IdsContactoPeer::CA_SAPELLIDO, $this->ca_sapellido);
-		if ($this->isColumnModified(IdsContactoPeer::CA_NOMBRES)) $criteria->add(IdsContactoPeer::CA_NOMBRES, $this->ca_nombres);
 		if ($this->isColumnModified(IdsContactoPeer::CA_SALUDO)) $criteria->add(IdsContactoPeer::CA_SALUDO, $this->ca_saludo);
 		if ($this->isColumnModified(IdsContactoPeer::CA_DIRECCION)) $criteria->add(IdsContactoPeer::CA_DIRECCION, $this->ca_direccion);
 		if ($this->isColumnModified(IdsContactoPeer::CA_TELEFONOS)) $criteria->add(IdsContactoPeer::CA_TELEFONOS, $this->ca_telefonos);
@@ -1887,8 +1841,6 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 		$copyObj->setCaPapellido($this->ca_papellido);
 
 		$copyObj->setCaSapellido($this->ca_sapellido);
-
-		$copyObj->setCaNombres($this->ca_nombres);
 
 		$copyObj->setCaSaludo($this->ca_saludo);
 
