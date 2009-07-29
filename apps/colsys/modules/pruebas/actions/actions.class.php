@@ -40,7 +40,7 @@ class pruebasActions extends sfActions {
 	}
 	
 	public function executeSendEmail() {
-		exit("detenido");
+		//exit("detenido");
 		set_time_limit(0 );
 		$c = new Criteria ( );
 		/*$c->add ( EmailPeer::CA_FCHENVIO, "2009-07-15 13:10:01", Criteria::GREATER_THAN );
@@ -55,7 +55,7 @@ class pruebasActions extends sfActions {
 		//$c->add(EmailPeer::CA_TIPO, "Envío de Avisos" );
 		//$c->addOr(EmailPeer::CA_TIPO, "Envío de Status" );
 		
-		//$c->add( EmailPeer::CA_IDEMAIL, 265437);
+		$c->add( EmailPeer::CA_IDEMAIL, 265437);
 		/*$c->addOr( EmailPeer::CA_IDEMAIL, 240610);
 		$c->addOr( EmailPeer::CA_IDEMAIL, 240656);*/
 		//$c->add(  EmailPeer::CA_FCHENVIO , null, Criteria::ISNULL );
@@ -72,26 +72,28 @@ class pruebasActions extends sfActions {
 			//print_r( $email);
 			echo "<b>Enviando " . $i ++ . "</b>	emailid: " . $email->getCaIdEmail () . " Fch: " . $email->getCaFchEnvio () . " <br />From: " . $email->getCaFrom () . "<br />";
 				
-			$addresses = explode(",",$email->getCaAddress());			
-			/*foreach( $addresses as $key=>$address ){
+			/*$addresses = explode(",",$email->getCaAddress());
+			foreach( $addresses as $key=>$address ){
 				if( strpos( $address, "coltrans.com.co" )!=false ){
 					unset( $addresses[$key] );
 				}
-			}*/
+			}
 			$email->setCaAddress( implode(",", $addresses) );
-						
-			$ccs = explode(",",$email->getCaCC());
+			*/
+
+            /*$ccs = explode(",",$email->getCaCC());
 			
-			/*
 			foreach( $ccs as $key=>$address ){
 				if( strpos( $address, "coltrans.com.co" )!=false ){
 					unset( $addresses[$key] );
 				}
-			}*/
+			}
 			$email->setCaCc( implode(",", $ccs) );
+
+             */
 			
 			
-			echo "to: " . $email->getCaAddress () . "<br />";
+			echo "To: " . $email->getCaAddress () . "<br />";
 			echo "CC: " . $email->getCaCC () . "<br />";
 			echo "Subject" . $email->getCaSubject () . "<br />";
 			
