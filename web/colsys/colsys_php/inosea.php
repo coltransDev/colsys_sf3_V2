@@ -1312,7 +1312,7 @@ echo "</BODY>";
              echo "      alert('Debe seleccionar un cliente');";
              echo "  else if (document.adicionar.hbls.value == '')";
              echo "      alert('El Número de HBL no es válido');";
-             echo "  else if (document.adicionar.fchhbls.value == '')";
+             echo "  else if (document.adicionar.fchhbls.value == '' || document.adicionar.fchhbls.value.length < 10)";
              echo "      alert('Ingrese la Fecha del Hbl, tenga en cuenta que debería ser la misma Fecha del Master.');";
              echo "  else if (document.adicionar.consecutivo.value == '' && document.adicionar.vigencia.value == 'true' && document.adicionar.impoexpo.value != 'OTM/DTA')";
              echo "      alert('El Número de Reporte de Negocio no es válido');";
@@ -1734,7 +1734,7 @@ echo "</BODY>";
              echo "      alert('El Número de Reporte de Negocio no es válido');";
              echo "  else if (document.modificar.hbls.value == '')";
              echo "      alert('El Número de HBL no es válido');";
-             echo "  else if (document.modificar.fchhbls.value == '')";
+             echo "  else if (document.modificar.fchhbls.value == '' || document.modificar.fchhbls.value.length < 10)";
              echo "      alert('Ingrese la Fecha del Hbl, tenga en cuenta que debería ser la misma Fecha del Master.');";
              echo "  else if (document.modificar.numpiezas.value == '' || document.modificar.numpiezas.value < 0)";
              echo "      alert('El número de piezas no es válido');";
@@ -4003,6 +4003,28 @@ require_once("menu.php");
 						exit;
 					}
 					$xml_hijo->setAttribute("hdv3", $tm->Value("ca_digito"));
+					$arribo_array = array();
+					$cu->MoveFirst();
+					while (!$cu->Eof()) {
+						if ($cu->Value('ca_identificacion')==9 and $cu->Value('ca_valor')==$tm->Value("ca_idciudad")) {
+							$arribo_array = explode("|",$cu->Value('ca_valor2'));
+							break;
+						}
+						$cu->MoveNext();
+					}
+					$xml_hijo->setAttribute("hde3", $arribo_array[0]);
+					$xml_hijo->setAttribute("hci3", $arribo_array[1]);
+				} else if (strlen($rp->Value("ca_idconsignatario")) != 0) {
+					if (!$tm->Open("select * from tb_terceros where ca_idtercero = ".$rp->Value("ca_idconsignatario"))) {    // 
+						echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+						echo "<script>document.location.href = 'inosea.php';</script>";
+						exit;
+					}
+					$xml_hijo->setAttribute("hdo3", 31);
+					$idconsignatario = explode("-", strtr($tm->Value("ca_identificacion"), ",.", ""));
+					$xml_hijo->setAttribute("hni3", $idconsignatario[0]);
+					$xml_hijo->setAttribute("hdv3", $idconsignatario[1]);
+
 					$arribo_array = array();
 					$cu->MoveFirst();
 					while (!$cu->Eof()) {
