@@ -59,10 +59,10 @@ class Email extends BaseEmail
 		
 		
 		$logFile = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."mail_error.log";
-		$logHeader= date("Y-m-d H:i:s")." email_id: ".$this->getCaIdemail()."\r\n";
-		$logHeader.= "Subject: ".$this->getCaSubject()."\r\n";
-		$logHeader.= "To: ".$this->getCaAddress()."\r\n";
-		$logHeader.= "CC: ".$this->getCacc()."\r\n";
+		$logHeader= date("Y-m-d H:i:s")." email_id: ".$this->getCaIdemail()." >> ";
+		$logHeader.= "Subject: ".$this->getCaSubject()." >> ";
+		$logHeader.= "To: ".$this->getCaAddress()." >> ";
+		$logHeader.= "CC: ".$this->getCacc()." >> ";
 		
 		$transport = Swift_SmtpTransport::newInstance(sfConfig::get("app_smtp_host"), sfConfig::get("app_smtp_port"))
 	  ->setUsername(sfConfig::get("app_smtp_user"))
@@ -198,9 +198,11 @@ class Email extends BaseEmail
 			
 			if( $failures ){
 				$event= $logHeader;	
-				$event.="Failures:\r\n";						
-				$event.= var_export( $failures, true ) ;
-									
+				$event.="Failures: >> [";
+                foreach( $failures as $failure ){
+                    $event.= $failure."," ;
+                }
+				$event.="]";
 				Utils::writeLog($logFile , $event );			
 			}
 			
