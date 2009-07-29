@@ -13,7 +13,7 @@ all:
 #    user: bogota-aduana@colmas.com.co
 #    passwd:  gbvFR5
     port: 25
-    debugAddress: abotero@coltrans.com.co
+#    debugAddress: abotero@coltrans.com.co
 #    debugAddress: botero82@gmail.com
 #    public_ip: 200.14.235.62
 
