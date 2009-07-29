@@ -3,7 +3,16 @@
  * Muestra os datos de una sucursal
  */
 ?>
-
+<tr>
+    <th colspan="4">
+        <div align="left">
+            <div style="font-size:16px">
+                <b><?=$sucursal->getCiudad()->getCaCiudad() ?></b>
+            </div>
+            <?=$sucursal->getCaPrincipal()?"Oficina Principal":""?>
+        </div>
+    </th>
+</tr>
 <tr>
     <td>
         <div align="left">
@@ -17,12 +26,12 @@
     </td>
     <td>
         <div align="left">
-            <b>Ciudad:</b>
+            &nbsp;
         </div>
     </td>
     <td>
         <div align="left">
-              <?=$sucursal->getCiudad()->getCaCiudad() ?>
+             &nbsp;
         </div>
     </td>
 </tr>

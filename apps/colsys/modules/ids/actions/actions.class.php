@@ -181,7 +181,75 @@ class idsActions extends sfActions
 	*/
 
     public function executeFormContactosIds(sfWebRequest $request){
-        
+        /*$this->nivel = $this->getUser()->getNivelAcceso( agentesActions::RUTINA );
+
+		if( $this->nivel<=0 ){
+			$this->forward404();
+		}	*/
+
+		$this->sucursal = IdsSucursalPeer::retrieveByPk( $request->getParameter("idsucursal") );
+		$this->forward404Unless( $this->sucursal );
+		$this->contacto = IdsContactoPeer::retrieveByPk( $request->getParameter("idcontacto") );
+
+		$this->form = new NuevoContactoForm();
+
+		if ($request->isMethod('post')){
+			$bindValues = array();
+
+			$bindValues["idcontacto"] = $request->getParameter("idcontacto");
+			$bindValues["idsucursal"] = $request->getParameter("idsucursal");
+			$bindValues["nombre"] = trim($request->getParameter("nombre"));
+			$bindValues["apellido"] = trim($request->getParameter("apellido"));
+			//$bindValues["direccion"] = $request->getParameter("direccion");
+			//$bindValues["idciudad"] = $request->getParameter("idciudad");
+			$bindValues["telefonos"] = $request->getParameter("telefonos");
+			$bindValues["fax"] = $request->getParameter("fax");
+			$bindValues["email"] = trim($request->getParameter("email"));
+			$bindValues["cargo"] = $request->getParameter("cargo");
+			$bindValues["sugerido"] = $request->getParameter("sugerido");
+			$bindValues["activo"] = $request->getParameter("activo");
+			$bindValues["detalles"] = $request->getParameter("detalles");
+
+			$bindValues["impoexpo"] =  $request->getParameter("impoexpo");
+			$bindValues["transporte"] = $request->getParameter("transporte");
+			$this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+				if( $bindValues["idcontacto"] ){
+					$contacto = IdsContactoPeer::retrieveByPk( $bindValues["idcontacto"] );					
+				}else{					
+					$contacto = new IdsContacto();
+					$contacto->setCaIdsucursal( $this->sucursal->getCaIdsucursal() );					
+				}
+
+				$contacto->setCaNombres( ucfirst( trim($bindValues["nombre"]) ));
+				$contacto->setCaPapellido( ucfirst( trim($bindValues["apellido"]) ));
+				//$contacto->setCaDireccion( trim($bindValues["direccion"]) );
+				//$contacto->setCaIdciudad( $bindValues["idciudad"] );
+				$contacto->setCaTelefonos( $bindValues["telefonos"] );
+				$contacto->setCaFax( $bindValues["fax"] );
+				$contacto->setCaEmail( $bindValues["email"] );
+				$contacto->setCaImpoexpo( implode("|",$bindValues["impoexpo"]) );
+				$contacto->setCaTransporte( implode("|",$bindValues["transporte"]) );
+				$contacto->setCaCargo( $bindValues["cargo"] );
+				$contacto->setCaObservaciones( $bindValues["detalles"] );
+				if( $bindValues["sugerido"] ){
+					$contacto->setCaSugerido( true );
+				}else{
+					$contacto->setCaSugerido( false );
+				}
+
+				if( $bindValues["activo"] ){
+					$contacto->setCaActivo( true );
+				}else{
+					$contacto->setCaActivo( false );
+				}
+				$contacto->save();
+
+				$this->redirect("ids/verIds?id=".$this->sucursal->getCaId() );
+
+
+			}
+		}
     }
 }
 ?>

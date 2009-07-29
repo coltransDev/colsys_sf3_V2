@@ -30,13 +30,8 @@ switch($action){
 		$button[$i]["tooltip"]="Edita este registro";
 		$button[$i]["image"]="22x22/edit.gif";
 		$button[$i]["link"]= "ids/formIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
-		$i++;
-
-        $button[$i]["name"]="Contactos";
-		$button[$i]["tooltip"]="Modifica los contactos";
-		$button[$i]["image"]="22x22/add_user.gif";
-		$button[$i]["link"]= "ids/formContactosIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
-		$i++;
+		$i++;        
+		
 		break;
 		
 	

@@ -41,15 +41,23 @@
                    <div align="left"><?=$ids->getCaWebsite()?></div>
                </td>
             </tr>
-            <tr>
-                <th colspan="4"><div align="left">Oficina Principal</div></th>
-            </tr>
+            
+            
             <?
             $sucursal = $ids->getSucursalPrincipal();
             include_partial("ids/verSucursal", array("sucursal"=>$sucursal ));
             ?>
-             
+            <tr class="row0">
+                 <td colspan="3" ><div align="left"><b>Contactos</b></div></td>
+                 <td ><div align="left"><?=link_to(image_tag("16x16/add_user.gif")." Nuevo contacto", "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo)?></div></td>
+            </tr>
+            <?
+            $contactos = $sucursal->getIdsContactos();
+            include_partial("ids/verContactos", array("contactos"=>$contactos ));
+            ?>
             
         </tbody>
     </table>
 </div>
+
+
