@@ -10,4 +10,5 @@ class Ids extends BaseIds
     }
 }
 
-?>
+sfPropelBehavior::add('IdsContacto', array( 'traceable' ));
+
