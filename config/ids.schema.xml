@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.ids">
+<database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.ids" >
 	<table name="ids.tb_ids" phpName="Ids" >
 		<column name="ca_id" type="integer" required="true" primaryKey="true"  />
 		<id-method-parameter value="ids.tb_ids_id"/>
@@ -57,7 +57,7 @@
         <column name="ca_direccion" type="varchar"   />
         <column name="ca_telefonos" type="varchar"   />
         <column name="ca_fax" type="varchar"   />
-        <column name="ca_idciudad" type="varchar"   />
+        
         <column name="ca_email" type="varchar"   />
         <column name="ca_impoexpo" type="varchar"   />
         <column name="ca_transporte" type="varchar"   />
@@ -73,9 +73,7 @@
         <column name="ca_fcheliminado" type="timestamp"   />
 		<column name="ca_usueliminado" type="varchar"   />
 
-        <foreign-key foreignTable="tb_ciudades">
-			<reference local="ca_idciudad" foreign="ca_idciudad"/>
-		</foreign-key>
+        
 		<foreign-key foreignTable="ids.tb_sucursales">
 			<reference local="ca_idsucursal" foreign="ca_idsucursal"/>
 		</foreign-key>
