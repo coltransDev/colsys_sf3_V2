@@ -136,12 +136,14 @@ class sfPropelActAsTraceableBehaviorPlugin
 
     public function doSelectStmt($class, $criteria, $con = null)
     {
-        $columnName = 'ca_fcheliminado';        
-        if (self::enabled()){
-            $criteria->add(call_user_func(array($class, 'translateFieldName'), $columnName, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_COLNAME), null, Criteria::ISNULL);
-        }
-        else{
-            self::enable();
+        if( method_exists($class, 'setCaFcheliminado') ){
+            $columnName = 'ca_fcheliminado';
+            if (self::enabled()){
+                $criteria->add(call_user_func(array($class, 'translateFieldName'), $columnName, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_COLNAME), null, Criteria::ISNULL);
+            }
+            else{
+                self::enable();
+            }
         }
 
 
