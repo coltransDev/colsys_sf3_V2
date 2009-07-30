@@ -3,4 +3,4 @@
 class IdsPeer extends BaseIdsPeer
 {
 }
-sfPropelBehavior::add('IdsContacto', array( 'traceable' ));
+sfPropelBehavior::add('IdsPeer', array( 'traceable' ));

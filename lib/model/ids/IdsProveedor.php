@@ -3,4 +3,4 @@
 class IdsProveedor extends BaseIdsProveedor
 {
 }
-sfPropelBehavior::add('IdsContacto', array( 'traceable' ));
+sfPropelBehavior::add('IdsProveedor', array( 'traceable' ));

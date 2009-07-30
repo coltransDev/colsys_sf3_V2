@@ -3,4 +3,4 @@
 class IdsSucursalPeer extends BaseIdsSucursalPeer
 {
 }
-sfPropelBehavior::add('IdsContacto', array( 'traceable' ));
+sfPropelBehavior::add('IdsSucursal', array( 'traceable' ));
