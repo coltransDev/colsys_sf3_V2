@@ -3,20 +3,20 @@
  * Muestra os datos de una sucursal
  */
 ?>
-<tr>
-    <th colspan="3">
+<tr class="row0">
+    <td colspan="3">
         <div align="left">
             <div style="font-size:16px">
                 <b><?=$sucursal->getCiudad()->getCaCiudad() ?></b>
             </div>
             <?=$sucursal->getCaPrincipal()?"Oficina Principal":""?>
         </div>
-    </th>
-    <th valign="top">
+    </td>
+    <td valign="top">
         <div align="right">
-            <?=$sucursal->getCaPrincipal()?link_to(image_tag("16x16/add_group.gif")." Nueva sucursal", "ids/formSucursalIds?id=".$sucursal->getCaid()."&modo=".$modo):"&nbsp;"?>
+            <?=$sucursal->getCaPrincipal()?link_to(image_tag("16x16/add_group.gif")." Nueva sucursal", "ids/formSucursalIds?id=".$sucursal->getCaid()."&modo=".$modo):link_to(image_tag("16x16/edit.gif"), "ids/formSucursalIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo)?>
         </div>
-    </th>
+    </td>
 </tr>
 <tr>
     <td>

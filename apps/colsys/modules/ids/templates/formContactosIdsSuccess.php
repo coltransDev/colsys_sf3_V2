@@ -209,7 +209,8 @@
 				<td colspan="4" ><div align="center">
 			<input type="submit" value="Guardar" class="button" />&nbsp;
 
-			<input type="button" value="Cancelar" class="button" onClick="document.location='<? //url_for("agentes/consultarAgentes?buscar=".$agente->getCaNombre())?>'" />
+			<input type="button" value="Cancelar" class="button"
+                   onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$sucursal->getCaId())?>'" />
 		</div></td>
 		</tr>
 		</tbody>

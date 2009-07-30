@@ -20,6 +20,7 @@ class NuevaSucursalForm extends sfForm {
         $criteriaCiudades->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
 
 		$widgets = array();
+        $widgets['idsucursal'] = new sfWidgetFormInputHidden(array(), array("size"=>80 ));
         $widgets['direccion'] = new sfWidgetFormInput(array(), array("size"=>80 ));
         $widgets['telefonos'] = new sfWidgetFormInput(array(), array("size"=>40 ));
         $widgets['fax'] = new sfWidgetFormInput(array(), array("size"=>40 ));
@@ -27,6 +28,7 @@ class NuevaSucursalForm extends sfForm {
         $this->setWidgets( $widgets );
 
 		$validator = array();
+        $validator["idciudad"] = new sfValidatorPropelChoice(array('model' => 'IdsSucursal', 'column' => 'ca_idsucursal', 'required' => false));
         $validator["direccion"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'La dirección es requerida'));
         $validator["telefonos"] =new sfValidatorString( array('required' => true ),

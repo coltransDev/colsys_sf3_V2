@@ -52,10 +52,35 @@
                  <td ><div align="right"><?=link_to(image_tag("16x16/add_user.gif")." Nuevo contacto", "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo)?></div></td>
             </tr>
             <?
-            $contactos = $sucursal->getIdsContactos();
+            $c = new Criteria();
+            $c->addDescendingOrderByColumn( IdsContactoPeer::CA_SUGERIDO );
+            $c->addAscendingOrderByColumn( IdsContactoPeer::CA_NOMBRES );
+            $contactos = $sucursal->getIdsContactos( $c);
             include_partial("ids/verContactos", array("contactos"=>$contactos, "modo"=>$modo, "nivel"=>$nivel ));
             ?>
+            <?
+            foreach( $sucursales as $sucursal){
+                ?>
+
+                <tr>
+                    <td colspan="4">
+                        &nbsp;
+                   </td>
+                </tr>
+                <?
+                
+                include_partial("ids/verSucursal", array("sucursal"=>$sucursal, "modo"=>$modo, "nivel"=>$nivel ));
+                ?>
+                <tr class="row0">
+                     <td colspan="3" ><div align="left"><b>Contactos</b></div></td>
+                     <td ><div align="right"><?=link_to(image_tag("16x16/add_user.gif")." Nuevo contacto", "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo)?></div></td>
+                </tr>
+                <?
+                $contactos = $sucursal->getIdsContactos( $c );
+                include_partial("ids/verContactos", array("contactos"=>$contactos, "modo"=>$modo, "nivel"=>$nivel ));
             
+            }
+            ?>
         </tbody>
     </table>
 </div>

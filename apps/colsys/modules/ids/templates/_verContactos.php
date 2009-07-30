@@ -24,7 +24,7 @@ if( count( $contactos )==0){
                   <?
                   foreach( $contactos as $contacto ){
                   ?>
-                   <tr>
+                  <tr class="<?=$contacto->getCaSugerido()?"yellow":""?>">
                        <td><div align="left"><?=$contacto->getNombre()?></div></td>
                        <td><div align="left"><?=$contacto->getCaTelefonos()?></div></td>
                        <td><div align="left"><?=$contacto->getCaFax()?></div></td>
@@ -32,7 +32,12 @@ if( count( $contactos )==0){
                        <td><div align="left"><?=$contacto->getCaCargo()?></div></td>
                        <td><div align="left"><?=$contacto->getCaImpoexpo()?></div></td>
                        <td><div align="left"><?=$contacto->getCaTransporte()?></div></td>
-                       <td><div align="center"><?=link_to(image_tag("16x16/edit.gif"), "ids/formContactosIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."" )?></div></td>
+                       <td><div align="center">
+                        <?
+                        echo link_to(image_tag("16x16/edit.gif"), "ids/formContactosIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."" );
+                        echo link_to(image_tag("16x16/delete.gif"), "ids/eliminarContactoIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."", array("confirm"=>"Esta seguro?") );
+                        ?>
+                       </div></td>
                    </tr>
                    <?
                   }

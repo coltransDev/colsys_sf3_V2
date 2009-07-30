@@ -110,6 +110,13 @@ class idsActions extends sfActions
         $this->forward404Unless($request->getParameter("id"));
         $this->ids = IdsPeer::retrieveByPK($request->getParameter("id"));
         $this->forward404Unless($this->ids);
+
+        $c = new Criteria();
+        $c->addJoin(IdsSucursalPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
+        $c->add(IdsSucursalPeer::CA_ID, $this->ids->getCaId() );
+        $c->add(IdsSucursalPeer::CA_PRINCIPAL, false );
+        $c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
+        $this->sucursales = IdsSucursalPeer::doSelect( $c );
     }
 
     /**
@@ -168,14 +175,7 @@ class idsActions extends sfActions
                 
                 $ids->setCaNombre($bindValues["nombre"]);
                 $ids->setCaWebsite($bindValues["website"]);
-                
-                if( $ids->isNew() ){
-                    $ids->setCaUsucreado( $this->getUser()->getUserId() );
-                    $ids->setCaFchcreado( time() );
-                }else{
-                    $ids->setCaUsuactualizado( $this->getUser()->getUserId() );
-                    $ids->setCaFchactualizado( time() );
-                }                
+                                              
                 $ids->save();
 
                 if( $bindValues["idgrupo"] ){
@@ -192,13 +192,8 @@ class idsActions extends sfActions
                 if( !$sucursal ){
                     $sucursal = new IdsSucursal();
                     $sucursal->setCaPrincipal( true );
-
-                    $sucursal->setCaUsucreado( $this->getUser()->getUserId() );
-                    $sucursal->setCaFchcreado( time() );
-                }else{
-                    $sucursal->setCaUsuactualizado( $this->getUser()->getUserId() );
-                    $sucursal->setCaFchactualizado( time() );
                 }
+                
                 $sucursal->setCaId( $ids->getCaId());
                 $sucursal->setCaDireccion( $request->getParameter("direccion"));
                 $sucursal->setCaTelefonos( $request->getParameter("telefonos"));
@@ -216,17 +211,17 @@ class idsActions extends sfActions
 	}
 
     /**
-	* Muestra el formulario de creación y edicion de proveedores
+	* Muestra el formulario de creación y edicion de contactos
 	*
 	* @param sfRequest $request A request object
 	*/
 
     public function executeFormContactosIds(sfWebRequest $request){
         $this->nivel = $this->getNivel();
-/*
+        /*
 		if( $this->nivel<=0 ){
 			$this->forward404();
-		}	*/
+		}*/
         $this->modo = $request->getParameter("modo");
 		
 		$this->contacto = IdsContactoPeer::retrieveByPk( $request->getParameter("idcontacto") );
@@ -297,6 +292,86 @@ class idsActions extends sfActions
 
 			}
 		}
+    }
+
+    /**
+	* Elimina un contacto de una sucursal
+	*
+	* @param sfRequest $request A request object
+	*/
+    public function executeEliminarContactoIds(sfWebRequest $request){
+        $this->nivel = $this->getNivel();
+
+		/*if( $this->nivel<=0 ){
+			$this->forward404();
+		}*/
+
+        $this->modo = $request->getParameter("modo");
+
+        $contacto = IdsContactoPeer::retrieveByPk( $request->getParameter("idcontacto") );
+        $this->forward404Unless( $contacto );
+        $this->sucursal = $contacto->getIdsSucursal();
+        $contacto->delete();
+        $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->sucursal->getCaId() );
+
+    }
+
+    /**
+	* Muestra el formulario de creación y edicion de sucursales
+	*
+	* @param sfRequest $request A request object
+	*/
+    public function executeFormSucursalIds(sfWebRequest $request){
+        $this->nivel = $this->getNivel();
+        /*
+		if( $this->nivel<=0 ){
+			$this->forward404();
+		}*/
+        $this->modo = $request->getParameter("modo");
+
+		$sucursal = IdsSucursalPeer::retrieveByPk( $request->getParameter("idsucursal") );
+
+        if( $sucursal ){
+            $ids = $sucursal->getIds();
+        }else{
+            $ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+        }
+		$this->forward404Unless( $ids );
+
+		$this->form = new NuevaSucursalForm();
+
+		if ($request->isMethod('post')){
+			$bindValues = array();
+            
+			$bindValues["direccion"] = $request->getParameter("direccion");
+			$bindValues["idciudad"] = $request->getParameter("idciudad");
+			$bindValues["telefonos"] = $request->getParameter("telefonos");
+			$bindValues["fax"] = $request->getParameter("fax");
+			
+           			
+			$this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+
+
+                if( !$sucursal ){
+                    $sucursal = new IdsSucursal();
+                    $sucursal->setCaPrincipal( false );
+                }
+
+                $sucursal->setCaId( $ids->getCaId());
+                $sucursal->setCaDireccion( $request->getParameter("direccion"));
+                $sucursal->setCaTelefonos( $request->getParameter("telefonos"));
+                $sucursal->setCaIdciudad( $request->getParameter("idciudad"));
+                $sucursal->setCaFax( $request->getParameter("fax"));
+
+                $sucursal->save();
+
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
+			}
+		}
+        $this->sucursal = $sucursal;
+        $this->ids = $ids;
+
     }
 }
 ?>
