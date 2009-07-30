@@ -2,7 +2,7 @@
 <h3>Maestra de proveedores</h3>
 <br />
 
-<form action="<?=url_for( "ids/busqueda" )?>" method="post" >
+<form action="<?=url_for( "ids/busqueda?modo=".$modo )?>" method="post" >
 <script language="javascript">
 	
 </script>

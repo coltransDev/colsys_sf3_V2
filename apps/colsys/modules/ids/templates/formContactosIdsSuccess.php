@@ -1,7 +1,7 @@
 <div class="content" align="center">
 	<h3>Maestra de Proveedores - Contactos</h3>
 	<br />
-	<form action="<?=url_for("ids/formContactosIds?idsucursal=".$sucursal->getCaIdsucursal())?>" method="post">
+	<form action="<?=url_for("ids/formContactosIds?modo=".$modo."&idsucursal=".$sucursal->getCaIdsucursal())?>" method="post">
 	<?
 	echo $form['idsucursal']->renderError();
 	$form->setDefault('idsucursal', $sucursal->getCaIdsucursal() );
@@ -58,7 +58,7 @@
 				<?
 				 echo $form['nombre']->renderError();
 				 if( $contacto ){
-					$form->setDefault('nombre', $contacto->getCaNombre() );
+					$form->setDefault('nombre', $contacto->getCaNombres() );
 				 }
 				 echo $form['nombre']->render();
 				 ?>				</td>
@@ -69,7 +69,7 @@
 				<?
 				 echo $form['apellido']->renderError();
 				 if( $contacto ){
-					$form->setDefault('apellido', $contacto->getCaApellido() );
+					$form->setDefault('apellido', $contacto->getCaPApellido() );
 				 }
 				 echo $form['apellido']->render();
 				 ?>				</td>
@@ -173,7 +173,7 @@
 				<?
 				 echo $form['detalles']->renderError();
 				 if( $contacto ){
-					$form->setDefault('detalles', $contacto->getCaDetalle() );
+					$form->setDefault('detalles', $contacto->getCaObservaciones() );
 				 }
 				 echo $form['detalles']->render();
 				 ?>				</td>

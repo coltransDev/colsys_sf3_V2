@@ -9,7 +9,7 @@
     <table  class="tableList" width="80%">
         <thead>
             <tr>
-                <th colspan="4"><div align="left">Datos Basicos</div></th>
+                <th colspan="4"><div align="left"><b>Datos Basicos</b></div></th>
             </tr>
         </thead>
         <tbody>
@@ -45,15 +45,15 @@
             
             <?
             $sucursal = $ids->getSucursalPrincipal();
-            include_partial("ids/verSucursal", array("sucursal"=>$sucursal ));
+            include_partial("ids/verSucursal", array("sucursal"=>$sucursal, "modo"=>$modo, "nivel"=>$nivel ));
             ?>
             <tr class="row0">
                  <td colspan="3" ><div align="left"><b>Contactos</b></div></td>
-                 <td ><div align="left"><?=link_to(image_tag("16x16/add_user.gif")." Nuevo contacto", "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo)?></div></td>
+                 <td ><div align="right"><?=link_to(image_tag("16x16/add_user.gif")." Nuevo contacto", "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo)?></div></td>
             </tr>
             <?
             $contactos = $sucursal->getIdsContactos();
-            include_partial("ids/verContactos", array("contactos"=>$contactos ));
+            include_partial("ids/verContactos", array("contactos"=>$contactos, "modo"=>$modo, "nivel"=>$nivel ));
             ?>
             
         </tbody>

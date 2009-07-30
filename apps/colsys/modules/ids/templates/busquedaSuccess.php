@@ -6,7 +6,7 @@
 ?>
 <div align="center">
 <?
-$url = "ids/busqueda?criterio=".$criterio;
+$url = "ids/busqueda?modo=".$modo."&criterio=".$criterio;
 if( $cadena ){
 	$url.="&cadena=".$cadena;
 }
@@ -50,7 +50,7 @@ endif;
 		
 	?>
 	<tr>
-	  <td  ><?=link_to( $ids->getCaId(), "ids/verIds?id=".$ids->getCaId())?></td>
+	  <td  ><?=link_to( $ids->getCaId(), "ids/verIds?modo=".$modo."&id=".$ids->getCaId())?></td>
 	  <td ><b><?=$ids->getCaNombre()?></b>
       
       </td>

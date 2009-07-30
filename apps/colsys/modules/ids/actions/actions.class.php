@@ -10,6 +10,34 @@
  */
 class idsActions extends sfActions
 {
+
+    const RUTINA_AGENTES = "78";
+	const RUTINA_TRANPORTADORES = "79";
+	const RUTINA_OTROSPROV = "80";
+    /*
+     * Retorna el nivel de acceso de acuerdo al modo
+     */
+    private function getNivel( ){
+        $this->modo = $this->getRequestParameter("modo");
+		if( !$this->modo ){
+			$this->forward( "ids", "seleccionModo" );
+		}
+
+		if( $this->modo=="agentes" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );
+			
+		}
+		if( $this->modo=="transp" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_TRANPORTADORES );
+		}
+		if( $this->modo=="prov" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_OTROSPROV );
+		}
+        
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+    }
 	/**
 	* Muestra la pagina inicial del modulo, le permite al usuario hacer busquedas.
 	*
@@ -18,8 +46,19 @@ class idsActions extends sfActions
 	public function executeIndex(sfWebRequest $request)
 	{
         $this->modo = $request->getParameter("modo");
+        $this->nivel = $this->getNivel();
 	}
 
+    /**
+	 * Permite seleccionar el modo de operacion del programa
+	 * @author: Andres Botero
+	 */
+	public function executeSeleccionModo()
+	{
+		$this->nivelAgentes = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );
+		$this->nivelTransportadores = $this->getUser()->getNivelAcceso( idsActions::RUTINA_TRANPORTADORES );
+		$this->nivelOtrosproveedores = $this->getUser()->getNivelAcceso( idsActions::RUTINA_OTROSPROV );
+	}
 
     /**
 	* Permite realizar busquedas en la tabla de proveedores
@@ -29,7 +68,7 @@ class idsActions extends sfActions
 	public function executeBusqueda(sfWebRequest $request)
 	{
         $this->modo = $request->getParameter("modo");
-
+        $this->nivel = $this->getNivel();
         $criterio = $request->getParameter("criterio");
         $cadena = $request->getParameter("cadena");
 
@@ -52,7 +91,7 @@ class idsActions extends sfActions
 
 		if( count($this->pager->getResults())==1 && count($this->pager->getLinks())==1  ){
 			$ids = $this->pager->getResults();
-			$this->redirect("ids/verIds?id=".$ids[0]->getCaId());
+			$this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids[0]->getCaId());
 		}
 		$this->criterio = $criterio;
 		$this->cadena = $cadena;
@@ -66,6 +105,7 @@ class idsActions extends sfActions
 	*/
 	public function executeVerIds(sfWebRequest $request)
 	{
+        $this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
         $this->forward404Unless($request->getParameter("id"));
         $this->ids = IdsPeer::retrieveByPK($request->getParameter("id"));
@@ -79,6 +119,7 @@ class idsActions extends sfActions
 	*/
 	public function executeFormIds(sfWebRequest $request)
 	{
+        $this->nivel = $this->getNivel();
         $this->modo = $request->getParameter("modo");
         $this->form = new NuevoIdsForm();
 
@@ -181,15 +222,21 @@ class idsActions extends sfActions
 	*/
 
     public function executeFormContactosIds(sfWebRequest $request){
-        /*$this->nivel = $this->getUser()->getNivelAcceso( agentesActions::RUTINA );
-
+        $this->nivel = $this->getNivel();
+/*
 		if( $this->nivel<=0 ){
 			$this->forward404();
 		}	*/
-
-		$this->sucursal = IdsSucursalPeer::retrieveByPk( $request->getParameter("idsucursal") );
-		$this->forward404Unless( $this->sucursal );
+        $this->modo = $request->getParameter("modo");
+		
 		$this->contacto = IdsContactoPeer::retrieveByPk( $request->getParameter("idcontacto") );
+
+        if( $this->contacto ){
+            $this->sucursal = $this->contacto->getIdsSucursal();
+        }else{
+            $this->sucursal = IdsSucursalPeer::retrieveByPk( $request->getParameter("idsucursal") );
+        }
+		$this->forward404Unless( $this->sucursal );
 
 		$this->form = new NuevoContactoForm();
 
@@ -245,7 +292,7 @@ class idsActions extends sfActions
 				}
 				$contacto->save();
 
-				$this->redirect("ids/verIds?id=".$this->sucursal->getCaId() );
+				$this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->sucursal->getCaId() );
 
 
 			}

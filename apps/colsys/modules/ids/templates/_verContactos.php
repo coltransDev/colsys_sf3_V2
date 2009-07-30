@@ -17,8 +17,9 @@ if( count( $contactos )==0){
                       <th>Fax</th>
                       <th>e-mail</th>
                       <th>Cargo</th>
-                      <th>Atiende</th>
+                      <th>Impo/Expo</th>
                       <th>Transporte</th>
+                      <th>Opciones</th>
                   </tr>
                   <?
                   foreach( $contactos as $contacto ){
@@ -31,6 +32,7 @@ if( count( $contactos )==0){
                        <td><div align="left"><?=$contacto->getCaCargo()?></div></td>
                        <td><div align="left"><?=$contacto->getCaImpoexpo()?></div></td>
                        <td><div align="left"><?=$contacto->getCaTransporte()?></div></td>
+                       <td><div align="center"><?=link_to(image_tag("16x16/edit.gif"), "ids/formContactosIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."" )?></div></td>
                    </tr>
                    <?
                   }
