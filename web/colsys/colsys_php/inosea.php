@@ -3994,14 +3994,18 @@ require_once("menu.php");
 				// =========================== Destinatario ===========================
 				if ($ic->Value("ca_continuacion")=="OTM"){
 					$xml_hijo->setAttribute("hdo3", 31);
-					list($nombre, $nit, $dv) = sscanf($rp->Value("ca_consignar"), "%s Nit.%s-%d");
-					$xml_hijo->setAttribute("hni3", str_replace(".","",$nit));
-					$nit = (strlen($nit)==0)?NULL:$nit;
+
+					$cadena = str_replace(array(",","."), "", $rp->Value("ca_consignar"));
+					$nit = substr($cadena, strpos($cadena, "Nit")+3);
+					$nit = explode("-",$nit);
+					$nit = $nit[0];
+
 					if (!$tm->Open("select * from tb_transportistas where ca_idtransportista = $nit")) {    // Trae la información del Operador Multimodal de la Tabla Transportistas.
 						echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 						echo "<script>document.location.href = 'inosea.php';</script>";
 						exit;
 					}
+					$xml_hijo->setAttribute("hni3", $tm->Value("ca_idtransportista"));
 					$xml_hijo->setAttribute("hdv3", $tm->Value("ca_digito"));
 					$arribo_array = array();
 					$cu->MoveFirst();
@@ -4014,14 +4018,14 @@ require_once("menu.php");
 					}
 					$xml_hijo->setAttribute("hde3", $arribo_array[0]);
 					$xml_hijo->setAttribute("hci3", $arribo_array[1]);
-				} else if (strlen($rp->Value("ca_idconsignatario")) != 0) {
+				} else if ($rp->Value("ca_idconsignatario")!=0) {
 					if (!$tm->Open("select * from tb_terceros where ca_idtercero = ".$rp->Value("ca_idconsignatario"))) {    // 
 						echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 						echo "<script>document.location.href = 'inosea.php';</script>";
 						exit;
 					}
 					$xml_hijo->setAttribute("hdo3", 31);
-					$idconsignatario = explode("-", strtr($tm->Value("ca_identificacion"), ",.", ""));
+					$idconsignatario = explode("-", str_replace(array(",","."), "", $tm->Value("ca_identificacion")));
 					$xml_hijo->setAttribute("hni3", $idconsignatario[0]);
 					$xml_hijo->setAttribute("hdv3", $idconsignatario[1]);
 
@@ -4157,18 +4161,19 @@ require_once("menu.php");
 							$xml_item->setAttribute("mpel", "N");
 							$xml_h267->appendChild( $xml_item );
 	
+							$xml_h167->appendChild( $xml_h267 );
+
 							// Se Crear el elemento contenedor
 							if ($dm->Value("ca_tipodocviaje") == 10){
 								$xml_contenedor = $xml->createElement( "contenedor" );
 								$xml_contenedor->setAttribute("contp", str_replace("-","",$ie->Value("ca_idequipo")));
 								$xml_h167->appendChild( $xml_contenedor );
 							}
-	
-							$xml_h167->appendChild( $xml_h267 );
 							$ie->MoveNext();
 						}
 					}
 				} else {
+					$grp++;
 					// Se Crear el elemento h267
 					$xml_h267 = $xml->createElement( "h267" );
 					$xml_h267->setAttribute("grp", $grp);
@@ -4259,7 +4264,7 @@ require_once("menu.php");
 								$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
 								$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' order by ca_idemail DESC limit 1";
 								if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
-									echo "<script>alert(\"".addslashes($dm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+									echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 									echo "<script>document.location.href = 'inosea.php';</script>";
 									exit;
 								}
@@ -4292,8 +4297,8 @@ require_once("menu.php");
 					$sub_pz = 0;
 					$sub_cn = 0;
 					while (!$ic->Eof() and !$ic->IsEmpty()) {
-						// Se Crear el elemento h267
 						$grp++;
+						// Se Crear el elemento h267
 						$xml_h267 = $xml->createElement( "h267" );
 						$xml_h267->setAttribute("grp", $grp);
 						$xml_h267->setAttribute("peso",$ic->Value("ca_peso"));
