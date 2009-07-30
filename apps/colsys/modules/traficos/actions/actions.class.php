@@ -54,7 +54,7 @@ class traficosActions extends sfActions
 	}
 	
 	/**
-	 * Muestra un formulario para seleccionar un rango de fechas y el cliente
+	 * Permite seleccionar el modo de operacion del programa
 	 * @author: Andres Botero
 	 */
 	public function executeSeleccionModo()
