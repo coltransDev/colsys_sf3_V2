@@ -7,7 +7,11 @@ class myUser extends sfBasicSecurityUser
 		$this->setAttribute('user_id', $login );
 	}
 		
-	
+	public function __toString() {
+        return $this->getUserId();
+    }
+
+
 	public function setUserId( $userId  ){
 		$this->setAttribute('user_id', $userId );
 		$user = UsuarioPeer::retrieveByPk( $userId );
