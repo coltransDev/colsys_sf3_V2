@@ -160,7 +160,8 @@ var crearSeguimiento=function(){
 			
 			<div align="left" id="inst_agente"><b>Instrucciones Especiales para el Agente: <a href="#inst_agente" onclick="verInstruccionesAgente()"><?=image_tag("cerrado.gif")?></a></b>
 			<?		
-			 echo $form['instrucciones']->renderError(); 			 
+			 echo $form['instrucciones']->renderError();
+             echo $form->setDefault('instrucciones', $reporte->getCaInstrucciones());
 			 echo $form['instrucciones']->render();
 			 ?>
 			 </div>		</td>
