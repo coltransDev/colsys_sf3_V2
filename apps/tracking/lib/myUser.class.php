@@ -2,6 +2,7 @@
 
 class myUser extends sfBasicSecurityUser
 {
+  
 	public function signIn( $trackingUser )
 	{ 		
 		$this->setAttribute('email', $trackingUser->getCaEmail());
