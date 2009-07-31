@@ -475,7 +475,7 @@ require_once("menu.php");
 		echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_compania')."</TD>";
 		switch ($ind_mem) {
 			case 1:
-				if (!$tm->Open("select ca_fchsalida, to_date((ca_fchenvio::timestamp)::text,'yyyy-mm-dd') as ca_fchenvio, to_date((ca_fchenvio::timestamp)::text,'yyyy-mm-dd')-ca_fchsalida as ca_diferencia from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte)	where not nullvalue(ca_fchsalida) and ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ca_consecutivo ASC limit 1")) {       // Selecciona todos lo registros de la tabla Status
+				if (!$tm->Open("select ca_fchsalida, to_date((ca_fchenvio::timestamp)::text,'yyyy-mm-dd') as ca_fchenvio, to_date((ca_fchenvio::timestamp)::text,'yyyy-mm-dd')-ca_fchsalida as ca_diferencia from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte)	where rs.ca_idetapa in ('IAETA','IMETA') and ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ca_consecutivo ASC limit 1")) {       // Selecciona todos lo registros Confirmación de Zarpe de la tabla Status
 					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 					echo "<script>document.location.href = 'repindicadores.php';</script>";
 					exit; }
