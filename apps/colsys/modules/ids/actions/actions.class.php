@@ -111,12 +111,11 @@ class idsActions extends sfActions
         $this->ids = IdsPeer::retrieveByPK($request->getParameter("id"));
         $this->forward404Unless($this->ids);
 
-        $c = new Criteria();
-        $c->addJoin(IdsSucursalPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
-        $c->add(IdsSucursalPeer::CA_ID, $this->ids->getCaId() );
-        $c->add(IdsSucursalPeer::CA_PRINCIPAL, false );
-        $c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
-        $this->sucursales = IdsSucursalPeer::doSelect( $c );
+       
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("tabpane/tabpane",'last');
+        $response->addStylesheet("tabpane/luna/tab",'last');
     }
 
     /**
@@ -372,6 +371,64 @@ class idsActions extends sfActions
         $this->sucursal = $sucursal;
         $this->ids = $ids;
 
+    }
+
+
+    /*
+     * Manejo de documentos
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormDocumentos(sfWebRequest $request){
+         $this->nivel = $this->getNivel();
+        /*
+		if( $this->nivel<=0 ){
+			$this->forward404();
+		}*/
+        $this->modo = $request->getParameter("modo");
+
+        $documento = IdsDocumentoPeer::retrieveByPk( $request->getParameter("iddocumento") );
+
+        if( $documento ){
+            $ids = $documento->getIds();
+        }else{
+            $ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+        }              
+		$this->forward404Unless( $ids );
+
+		$this->form = new NuevoDocumentoForm();
+        
+		if ($request->isMethod('post')){
+			$bindValues = array();
+
+			$bindValues["id"] = $request->getParameter("id");
+			$bindValues["idtipo"] = $request->getParameter("idtipo");
+			$bindValues["inicio"] = $request->getParameter("inicio");
+			$bindValues["vencimiento"] = $request->getParameter("vencimiento");
+
+            $bindFiles["archivo"] = $_FILES["archivo"];
+
+			$this->form->bind( $bindValues, $bindFiles );
+			if( $this->form->isValid() ){
+
+
+                if( !$documento ){
+                    $documento = new IdsDocumento();
+                    $documento->setCaId( $ids->getCaId() );
+                }
+
+                $documento->setCaIdtipo( $request->getParameter("idtipo"));
+                $documento->setCaFchinicio( $request->getParameter("inicio"));
+                $documento->setCaFchvencimiento( $request->getParameter("vencimiento"));
+                //$documento->setCaFax( $request->getParameter("fax"));
+
+                $documento->save();
+
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
+			}
+		}
+        $this->documento = $documento;
+        $this->ids = $ids;
     }
 }
 ?>

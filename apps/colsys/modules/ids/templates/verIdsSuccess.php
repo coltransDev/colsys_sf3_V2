@@ -42,45 +42,44 @@
                </td>
             </tr>
             
-            
-            <?
-            $sucursal = $ids->getSucursalPrincipal();
-            include_partial("ids/verSucursal", array("sucursal"=>$sucursal, "modo"=>$modo, "nivel"=>$nivel ));
-            ?>
-            <tr class="row0">
-                 <td colspan="3" ><div align="left"><b>Contactos</b></div></td>
-                 <td ><div align="right"><?=link_to(image_tag("16x16/add_user.gif")." Nuevo contacto", "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo)?></div></td>
-            </tr>
-            <?
-            $c = new Criteria();
-            $c->addDescendingOrderByColumn( IdsContactoPeer::CA_SUGERIDO );
-            $c->addAscendingOrderByColumn( IdsContactoPeer::CA_NOMBRES );
-            $contactos = $sucursal->getIdsContactos( $c);
-            include_partial("ids/verContactos", array("contactos"=>$contactos, "modo"=>$modo, "nivel"=>$nivel ));
-            ?>
-            <?
-            foreach( $sucursales as $sucursal){
-                ?>
+            <tr>
+                <td colspan="4">
+                    <div class="tab-pane" id="tab-pane-1">
 
-                <tr>
-                    <td colspan="4">
-                        &nbsp;
-                   </td>
-                </tr>
-                <?
-                
-                include_partial("ids/verSucursal", array("sucursal"=>$sucursal, "modo"=>$modo, "nivel"=>$nivel ));
-                ?>
-                <tr class="row0">
-                     <td colspan="3" ><div align="left"><b>Contactos</b></div></td>
-                     <td ><div align="right"><?=link_to(image_tag("16x16/add_user.gif")." Nuevo contacto", "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo)?></div></td>
-                </tr>
-                <?
-                $contactos = $sucursal->getIdsContactos( $c );
-                include_partial("ids/verContactos", array("contactos"=>$contactos, "modo"=>$modo, "nivel"=>$nivel ));
-            
-            }
-            ?>
+                   <div class="tab-page">
+                      <h2 class="tab">Contactos</h2>
+                        <?
+                        include_component("ids", "contactos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                        ?>
+                       </div>
+                       <div class="tab-page">
+                          <h2 class="tab">Documentos</h2>
+
+                         <?
+                        include_component("ids", "documentos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                        ?>
+
+                       </div>
+
+                        <div class="tab-page">
+                          <h2 class="tab">Evaluacion</h2>
+
+                          This is text of tab 2. This is text of tab 2.
+                          This is text of tab 2. This is text of tab 2.
+
+                       </div>
+
+                         <div class="tab-page">
+                          <h2 class="tab">Eventos</h2>
+
+                          This is text of tab 2. This is text of tab 2.
+                          This is text of tab 2. This is text of tab 2.
+
+                       </div>
+                    </div>
+
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

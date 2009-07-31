@@ -32,6 +32,13 @@ switch($action){
 		$button[$i]["link"]= "ids/formIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
 		$i++;        
 		
+        $button[$i]["name"]="Nueva sucursal";
+		$button[$i]["tooltip"]="";
+		$button[$i]["image"]="22x22/add_group.gif";
+		$button[$i]["link"]= "ids/formSucursalIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
+		$i++;
+
+       
 		break;
 		
 	
