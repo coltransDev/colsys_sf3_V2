@@ -11,8 +11,8 @@
 		<column name="ca_website" type="varchar" />
 		<column name="ca_actividad" type="varchar" />
 		<column name="ca_sectoreco" type="varchar" />
-		<column name="ca_fchcreado" type="timestamp"   />
-		<column name="ca_usucreado" type="varchar"   />
+		<column name="ca_fchcreado" type="timestamp" required="true"  />
+		<column name="ca_usucreado" type="varchar" required="true"  />
         <column name="ca_fchactualizado" type="timestamp"   />
 		<column name="ca_usuactualizado" type="varchar"   />
 		
@@ -33,8 +33,8 @@
         <column name="ca_telefonos" type="varchar" />
         <column name="ca_fax" type="varchar" />
         <column name="ca_idciudad" type="varchar" />
-		<column name="ca_fchcreado" type="timestamp"   />
-		<column name="ca_usucreado" type="varchar"   />
+		<column name="ca_fchcreado" type="timestamp" required="true"  />
+		<column name="ca_usucreado" type="varchar" required="true"  />
         <column name="ca_fchactualizado" type="timestamp"   />
 		<column name="ca_usuactualizado" type="varchar"   />
         
@@ -66,8 +66,8 @@
 		<column name="ca_observaciones" type="varchar"   />		
 		<column name="ca_sugerido" type="boolean"   />
         <column name="ca_activo" type="boolean"   />
-        <column name="ca_fchcreado" type="timestamp"   />
-		<column name="ca_usucreado" type="varchar"   />
+        <column name="ca_fchcreado" type="timestamp" required="true"  />
+		<column name="ca_usucreado" type="varchar" required="true"  />
         <column name="ca_fchactualizado" type="timestamp"   />
 		<column name="ca_usuactualizado" type="varchar"   />
         <column name="ca_fcheliminado" type="timestamp"   />
@@ -79,7 +79,7 @@
 		</foreign-key>
 	</table>
 
-    <table name="ids.ca_idproveedor" phpName="IdsProveedor">
+    <table name="ids.tb_proveedor" phpName="IdsProveedor">
 		<column name="ca_idproveedor" type="integer" required="true" primaryKey="true"  />
 		<column name="ca_tipo" type="integer" required="true"  />
         <column name="ca_critico" type="boolean" required="true"  />
@@ -89,10 +89,44 @@
         
         <foreign-key foreignTable="ids.tb_ids">
 			<reference local="ca_idproveedor" foreign="ca_id"/>
-		</foreign-key>
-		
+		</foreign-key>		
 	</table>
 
-	
+
+    <table name="ids.tb_tipodocumentos" phpName="IdsTipoDocumento">
+		<column name="ca_idtipo" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="ids.tb_tipodocumentos_id"/>
+        <column name="ca_tipo" type="varchar" required="true"  />
+		<column name="ca_equivalentea" type="integer" />
+        <column name="ca_vigencia" type="varchar" required="true"  />
+		<column name="ca_observaciones" type="varchar" required="true"  />
+
+		<column name="ca_fchcreado" type="timestamp" required="true" />
+		<column name="ca_usucreado" type="varchar" required="true"   />
+        <column name="ca_fchactualizado" type="timestamp"   />
+		<column name="ca_usuactualizado" type="varchar"   />
+       
+	</table>
+
+	<table name="ids.tb_documentos" phpName="IdsDocumento">
+		<column name="ca_iddocumento" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="ids.tb_documentos_id"/>
+        <column name="ca_id" type="integer" required="true"  />
+		<column name="ca_idtipo" type="integer" required="true"  />
+        <column name="ca_ubicacion" type="varchar" />
+		<column name="ca_fchinicio" type="date" required="true"  />
+        <column name="ca_fchvencimiento" type="date" />
+        <column name="ca_observaciones" type="varchar"   />
+		<column name="ca_fchcreado" type="timestamp" required="true"/>
+		<column name="ca_usucreado" type="varchar" required="true"   />
+
+        <foreign-key foreignTable="ids.tb_ids">
+			<reference local="ca_id" foreign="ca_id"/>
+		</foreign-key>
+
+        <foreign-key foreignTable="ids.tb_tipodocumentos">
+			<reference local="ca_idtipo" foreign="ca_idtipo"/>
+		</foreign-key>
+	</table>
 
 </database>
