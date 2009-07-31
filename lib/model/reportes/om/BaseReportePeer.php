@@ -1,220 +1,201 @@
 <?php
 
-/**
- * Base static class for performing query and update operations on the 'tb_reportes' table.
- *
- * 
- *
- * @package    lib.model.reportes.om
- */
+
 abstract class BaseReportePeer {
 
-	/** the default database name for this class */
+	
 	const DATABASE_NAME = 'propel';
 
-	/** the table name for this class */
+	
 	const TABLE_NAME = 'tb_reportes';
 
-	/** A class that can be returned by this peer. */
+	
 	const CLASS_DEFAULT = 'lib.model.reportes.Reporte';
 
-	/** The total number of columns. */
+	
 	const NUM_COLUMNS = 57;
 
-	/** The number of lazy-loaded columns. */
+	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_IDREPORTE field */
+	
 	const CA_IDREPORTE = 'tb_reportes.CA_IDREPORTE';
 
-	/** the column name for the CA_FCHREPORTE field */
+	
 	const CA_FCHREPORTE = 'tb_reportes.CA_FCHREPORTE';
 
-	/** the column name for the CA_CONSECUTIVO field */
+	
 	const CA_CONSECUTIVO = 'tb_reportes.CA_CONSECUTIVO';
 
-	/** the column name for the CA_VERSION field */
+	
 	const CA_VERSION = 'tb_reportes.CA_VERSION';
 
-	/** the column name for the CA_IDCOTIZACION field */
+	
 	const CA_IDCOTIZACION = 'tb_reportes.CA_IDCOTIZACION';
 
-	/** the column name for the CA_ORIGEN field */
+	
 	const CA_ORIGEN = 'tb_reportes.CA_ORIGEN';
 
-	/** the column name for the CA_DESTINO field */
+	
 	const CA_DESTINO = 'tb_reportes.CA_DESTINO';
 
-	/** the column name for the CA_IMPOEXPO field */
+	
 	const CA_IMPOEXPO = 'tb_reportes.CA_IMPOEXPO';
 
-	/** the column name for the CA_FCHDESPACHO field */
+	
 	const CA_FCHDESPACHO = 'tb_reportes.CA_FCHDESPACHO';
 
-	/** the column name for the CA_IDAGENTE field */
+	
 	const CA_IDAGENTE = 'tb_reportes.CA_IDAGENTE';
 
-	/** the column name for the CA_INCOTERMS field */
+	
 	const CA_INCOTERMS = 'tb_reportes.CA_INCOTERMS';
 
-	/** the column name for the CA_MERCANCIA_DESC field */
+	
 	const CA_MERCANCIA_DESC = 'tb_reportes.CA_MERCANCIA_DESC';
 
-	/** the column name for the CA_IDPROVEEDOR field */
+	
 	const CA_IDPROVEEDOR = 'tb_reportes.CA_IDPROVEEDOR';
 
-	/** the column name for the CA_ORDEN_PROV field */
+	
 	const CA_ORDEN_PROV = 'tb_reportes.CA_ORDEN_PROV';
 
-	/** the column name for the CA_IDCONCLIENTE field */
+	
 	const CA_IDCONCLIENTE = 'tb_reportes.CA_IDCONCLIENTE';
 
-	/** the column name for the CA_ORDEN_CLIE field */
+	
 	const CA_ORDEN_CLIE = 'tb_reportes.CA_ORDEN_CLIE';
 
-	/** the column name for the CA_CONFIRMAR_CLIE field */
+	
 	const CA_CONFIRMAR_CLIE = 'tb_reportes.CA_CONFIRMAR_CLIE';
 
-	/** the column name for the CA_IDREPRESENTANTE field */
+	
 	const CA_IDREPRESENTANTE = 'tb_reportes.CA_IDREPRESENTANTE';
 
-	/** the column name for the CA_INFORMAR_REPR field */
+	
 	const CA_INFORMAR_REPR = 'tb_reportes.CA_INFORMAR_REPR';
 
-	/** the column name for the CA_IDCONSIGNATARIO field */
+	
 	const CA_IDCONSIGNATARIO = 'tb_reportes.CA_IDCONSIGNATARIO';
 
-	/** the column name for the CA_INFORMAR_CONS field */
+	
 	const CA_INFORMAR_CONS = 'tb_reportes.CA_INFORMAR_CONS';
 
-	/** the column name for the CA_IDNOTIFY field */
+	
 	const CA_IDNOTIFY = 'tb_reportes.CA_IDNOTIFY';
 
-	/** the column name for the CA_INFORMAR_NOTI field */
+	
 	const CA_INFORMAR_NOTI = 'tb_reportes.CA_INFORMAR_NOTI';
 
-	/** the column name for the CA_IDMASTER field */
+	
 	const CA_IDMASTER = 'tb_reportes.CA_IDMASTER';
 
-	/** the column name for the CA_INFORMAR_MAST field */
+	
 	const CA_INFORMAR_MAST = 'tb_reportes.CA_INFORMAR_MAST';
 
-	/** the column name for the CA_NOTIFY field */
+	
 	const CA_NOTIFY = 'tb_reportes.CA_NOTIFY';
 
-	/** the column name for the CA_TRANSPORTE field */
+	
 	const CA_TRANSPORTE = 'tb_reportes.CA_TRANSPORTE';
 
-	/** the column name for the CA_MODALIDAD field */
+	
 	const CA_MODALIDAD = 'tb_reportes.CA_MODALIDAD';
 
-	/** the column name for the CA_SEGURO field */
+	
 	const CA_SEGURO = 'tb_reportes.CA_SEGURO';
 
-	/** the column name for the CA_LIBERACION field */
+	
 	const CA_LIBERACION = 'tb_reportes.CA_LIBERACION';
 
-	/** the column name for the CA_TIEMPOCREDITO field */
+	
 	const CA_TIEMPOCREDITO = 'tb_reportes.CA_TIEMPOCREDITO';
 
-	/** the column name for the CA_PREFERENCIAS_CLIE field */
+	
 	const CA_PREFERENCIAS_CLIE = 'tb_reportes.CA_PREFERENCIAS_CLIE';
 
-	/** the column name for the CA_INSTRUCCIONES field */
+	
 	const CA_INSTRUCCIONES = 'tb_reportes.CA_INSTRUCCIONES';
 
-	/** the column name for the CA_IDLINEA field */
+	
 	const CA_IDLINEA = 'tb_reportes.CA_IDLINEA';
 
-	/** the column name for the CA_IDCONSIGNAR field */
+	
 	const CA_IDCONSIGNAR = 'tb_reportes.CA_IDCONSIGNAR';
 
-	/** the column name for the CA_IDCONSIGNARMASTER field */
+	
 	const CA_IDCONSIGNARMASTER = 'tb_reportes.CA_IDCONSIGNARMASTER';
 
-	/** the column name for the CA_IDBODEGA field */
+	
 	const CA_IDBODEGA = 'tb_reportes.CA_IDBODEGA';
 
-	/** the column name for the CA_MASTERSAME field */
+	
 	const CA_MASTERSAME = 'tb_reportes.CA_MASTERSAME';
 
-	/** the column name for the CA_CONTINUACION field */
+	
 	const CA_CONTINUACION = 'tb_reportes.CA_CONTINUACION';
 
-	/** the column name for the CA_CONTINUACION_DEST field */
+	
 	const CA_CONTINUACION_DEST = 'tb_reportes.CA_CONTINUACION_DEST';
 
-	/** the column name for the CA_CONTINUACION_CONF field */
+	
 	const CA_CONTINUACION_CONF = 'tb_reportes.CA_CONTINUACION_CONF';
 
-	/** the column name for the CA_ETAPA_ACTUAL field */
+	
 	const CA_ETAPA_ACTUAL = 'tb_reportes.CA_ETAPA_ACTUAL';
 
-	/** the column name for the CA_LOGIN field */
+	
 	const CA_LOGIN = 'tb_reportes.CA_LOGIN';
 
-	/** the column name for the CA_FCHCREADO field */
+	
 	const CA_FCHCREADO = 'tb_reportes.CA_FCHCREADO';
 
-	/** the column name for the CA_USUCREADO field */
+	
 	const CA_USUCREADO = 'tb_reportes.CA_USUCREADO';
 
-	/** the column name for the CA_FCHACTUALIZADO field */
+	
 	const CA_FCHACTUALIZADO = 'tb_reportes.CA_FCHACTUALIZADO';
 
-	/** the column name for the CA_USUACTUALIZADO field */
+	
 	const CA_USUACTUALIZADO = 'tb_reportes.CA_USUACTUALIZADO';
 
-	/** the column name for the CA_FCHANULADO field */
+	
 	const CA_FCHANULADO = 'tb_reportes.CA_FCHANULADO';
 
-	/** the column name for the CA_USUANULADO field */
+	
 	const CA_USUANULADO = 'tb_reportes.CA_USUANULADO';
 
-	/** the column name for the CA_FCHCERRADO field */
+	
 	const CA_FCHCERRADO = 'tb_reportes.CA_FCHCERRADO';
 
-	/** the column name for the CA_USUCERRADO field */
+	
 	const CA_USUCERRADO = 'tb_reportes.CA_USUCERRADO';
 
-	/** the column name for the CA_COLMAS field */
+	
 	const CA_COLMAS = 'tb_reportes.CA_COLMAS';
 
-	/** the column name for the CA_PROPIEDADES field */
+	
 	const CA_PROPIEDADES = 'tb_reportes.CA_PROPIEDADES';
 
-	/** the column name for the CA_IDETAPA field */
+	
 	const CA_IDETAPA = 'tb_reportes.CA_IDETAPA';
 
-	/** the column name for the CA_FCHULTSTATUS field */
+	
 	const CA_FCHULTSTATUS = 'tb_reportes.CA_FCHULTSTATUS';
 
-	/** the column name for the CA_IDTAREA_REXT field */
+	
 	const CA_IDTAREA_REXT = 'tb_reportes.CA_IDTAREA_REXT';
 
-	/** the column name for the CA_IDSEGUIMIENTO field */
+	
 	const CA_IDSEGUIMIENTO = 'tb_reportes.CA_IDSEGUIMIENTO';
 
-	/**
-	 * An identiy map to hold any loaded instances of Reporte objects.
-	 * This must be public so that other peer classes can access this when hydrating from JOIN
-	 * queries.
-	 * @var        array Reporte[]
-	 */
+	
 	public static $instances = array();
 
-	/**
-	 * The MapBuilder instance for this peer.
-	 * @var        MapBuilder
-	 */
+	
 	private static $mapBuilder = null;
 
-	/**
-	 * holds an array of fieldnames
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
-	 */
+	
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdreporte', 'CaFchreporte', 'CaConsecutivo', 'CaVersion', 'CaIdcotizacion', 'CaOrigen', 'CaDestino', 'CaImpoexpo', 'CaFchdespacho', 'CaIdagente', 'CaIncoterms', 'CaMercanciaDesc', 'CaIdproveedor', 'CaOrdenProv', 'CaIdconcliente', 'CaOrdenClie', 'CaConfirmarClie', 'CaIdrepresentante', 'CaInformarRepr', 'CaIdconsignatario', 'CaInformarCons', 'CaIdnotify', 'CaInformarNoti', 'CaIdmaster', 'CaInformarMast', 'CaNotify', 'CaTransporte', 'CaModalidad', 'CaSeguro', 'CaLiberacion', 'CaTiempocredito', 'CaPreferenciasClie', 'CaInstrucciones', 'CaIdlinea', 'CaIdconsignar', 'CaIdconsignarmaster', 'CaIdbodega', 'CaMastersame', 'CaContinuacion', 'CaContinuacionDest', 'CaContinuacionConf', 'CaEtapaActual', 'CaLogin', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFchanulado', 'CaUsuanulado', 'CaFchcerrado', 'CaUsucerrado', 'CaColmas', 'CaPropiedades', 'CaIdetapa', 'CaFchultstatus', 'CaIdtareaRext', 'CaIdseguimiento', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte', 'caFchreporte', 'caConsecutivo', 'caVersion', 'caIdcotizacion', 'caOrigen', 'caDestino', 'caImpoexpo', 'caFchdespacho', 'caIdagente', 'caIncoterms', 'caMercanciaDesc', 'caIdproveedor', 'caOrdenProv', 'caIdconcliente', 'caOrdenClie', 'caConfirmarClie', 'caIdrepresentante', 'caInformarRepr', 'caIdconsignatario', 'caInformarCons', 'caIdnotify', 'caInformarNoti', 'caIdmaster', 'caInformarMast', 'caNotify', 'caTransporte', 'caModalidad', 'caSeguro', 'caLiberacion', 'caTiempocredito', 'caPreferenciasClie', 'caInstrucciones', 'caIdlinea', 'caIdconsignar', 'caIdconsignarmaster', 'caIdbodega', 'caMastersame', 'caContinuacion', 'caContinuacionDest', 'caContinuacionConf', 'caEtapaActual', 'caLogin', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caFchanulado', 'caUsuanulado', 'caFchcerrado', 'caUsucerrado', 'caColmas', 'caPropiedades', 'caIdetapa', 'caFchultstatus', 'caIdtareaRext', 'caIdseguimiento', ),
@@ -223,12 +204,7 @@ abstract class BaseReportePeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, )
 	);
 
-	/**
-	 * holds an array of keys for quick access to the fieldnames array
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
-	 */
+	
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdreporte' => 0, 'CaFchreporte' => 1, 'CaConsecutivo' => 2, 'CaVersion' => 3, 'CaIdcotizacion' => 4, 'CaOrigen' => 5, 'CaDestino' => 6, 'CaImpoexpo' => 7, 'CaFchdespacho' => 8, 'CaIdagente' => 9, 'CaIncoterms' => 10, 'CaMercanciaDesc' => 11, 'CaIdproveedor' => 12, 'CaOrdenProv' => 13, 'CaIdconcliente' => 14, 'CaOrdenClie' => 15, 'CaConfirmarClie' => 16, 'CaIdrepresentante' => 17, 'CaInformarRepr' => 18, 'CaIdconsignatario' => 19, 'CaInformarCons' => 20, 'CaIdnotify' => 21, 'CaInformarNoti' => 22, 'CaIdmaster' => 23, 'CaInformarMast' => 24, 'CaNotify' => 25, 'CaTransporte' => 26, 'CaModalidad' => 27, 'CaSeguro' => 28, 'CaLiberacion' => 29, 'CaTiempocredito' => 30, 'CaPreferenciasClie' => 31, 'CaInstrucciones' => 32, 'CaIdlinea' => 33, 'CaIdconsignar' => 34, 'CaIdconsignarmaster' => 35, 'CaIdbodega' => 36, 'CaMastersame' => 37, 'CaContinuacion' => 38, 'CaContinuacionDest' => 39, 'CaContinuacionConf' => 40, 'CaEtapaActual' => 41, 'CaLogin' => 42, 'CaFchcreado' => 43, 'CaUsucreado' => 44, 'CaFchactualizado' => 45, 'CaUsuactualizado' => 46, 'CaFchanulado' => 47, 'CaUsuanulado' => 48, 'CaFchcerrado' => 49, 'CaUsucerrado' => 50, 'CaColmas' => 51, 'CaPropiedades' => 52, 'CaIdetapa' => 53, 'CaFchultstatus' => 54, 'CaIdtareaRext' => 55, 'CaIdseguimiento' => 56, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte' => 0, 'caFchreporte' => 1, 'caConsecutivo' => 2, 'caVersion' => 3, 'caIdcotizacion' => 4, 'caOrigen' => 5, 'caDestino' => 6, 'caImpoexpo' => 7, 'caFchdespacho' => 8, 'caIdagente' => 9, 'caIncoterms' => 10, 'caMercanciaDesc' => 11, 'caIdproveedor' => 12, 'caOrdenProv' => 13, 'caIdconcliente' => 14, 'caOrdenClie' => 15, 'caConfirmarClie' => 16, 'caIdrepresentante' => 17, 'caInformarRepr' => 18, 'caIdconsignatario' => 19, 'caInformarCons' => 20, 'caIdnotify' => 21, 'caInformarNoti' => 22, 'caIdmaster' => 23, 'caInformarMast' => 24, 'caNotify' => 25, 'caTransporte' => 26, 'caModalidad' => 27, 'caSeguro' => 28, 'caLiberacion' => 29, 'caTiempocredito' => 30, 'caPreferenciasClie' => 31, 'caInstrucciones' => 32, 'caIdlinea' => 33, 'caIdconsignar' => 34, 'caIdconsignarmaster' => 35, 'caIdbodega' => 36, 'caMastersame' => 37, 'caContinuacion' => 38, 'caContinuacionDest' => 39, 'caContinuacionConf' => 40, 'caEtapaActual' => 41, 'caLogin' => 42, 'caFchcreado' => 43, 'caUsucreado' => 44, 'caFchactualizado' => 45, 'caUsuactualizado' => 46, 'caFchanulado' => 47, 'caUsuanulado' => 48, 'caFchcerrado' => 49, 'caUsucerrado' => 50, 'caColmas' => 51, 'caPropiedades' => 52, 'caIdetapa' => 53, 'caFchultstatus' => 54, 'caIdtareaRext' => 55, 'caIdseguimiento' => 56, ),
@@ -237,10 +213,7 @@ abstract class BaseReportePeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, )
 	);
 
-	/**
-	 * Get a (singleton) instance of the MapBuilder for this peer class.
-	 * @return     MapBuilder The map builder for this peer
-	 */
+	
 	public static function getMapBuilder()
 	{
 		if (self::$mapBuilder === null) {
@@ -248,16 +221,7 @@ abstract class BaseReportePeer {
 		}
 		return self::$mapBuilder;
 	}
-	/**
-	 * Translates a fieldname to another type
-	 *
-	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @param      string $toType   One of the class type constants
-	 * @return     string translated name of the field.
-	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
-	 */
+	
 	static public function translateFieldName($name, $fromType, $toType)
 	{
 		$toNames = self::getFieldNames($toType);
@@ -268,14 +232,7 @@ abstract class BaseReportePeer {
 		return $toNames[$key];
 	}
 
-	/**
-	 * Returns an array of field names.
-	 *
-	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @return     array A list of field names
-	 */
+	
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
@@ -285,34 +242,13 @@ abstract class BaseReportePeer {
 		return self::$fieldNames[$type];
 	}
 
-	/**
-	 * Convenience method which changes table.column to alias.column.
-	 *
-	 * Using this method you can maintain SQL abstraction while using column aliases.
-	 * <code>
-	 *		$c->addAlias("alias1", TablePeer::TABLE_NAME);
-	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
-	 * </code>
-	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. ReportePeer::COLUMN_NAME).
-	 * @return     string
-	 */
+	
 	public static function alias($alias, $column)
 	{
 		return str_replace(ReportePeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
-	/**
-	 * Add all the columns needed to create a new object.
-	 *
-	 * Note: any columns that were marked with lazyLoad="true" in the
-	 * XML schema will not be added to the select list and only loaded
-	 * on demand.
-	 *
-	 * @param      criteria object containing the columns to add.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
@@ -432,23 +368,12 @@ abstract class BaseReportePeer {
 
 	}
 
-	/**
-	 * Returns the number of rows matching criteria.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we may modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -458,33 +383,28 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
-
+		$criteria->clearOrderByColumns(); 		$criteria->setDbName(self::DATABASE_NAME); 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		// BasePeer returns a PDOStatement
-		$stmt = BasePeer::doCount($criteria, $con);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
+				$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
-	/**
-	 * Method to select one object from the DB.
-	 *
-	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     Reporte
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
@@ -495,34 +415,21 @@ abstract class BaseReportePeer {
 		}
 		return null;
 	}
-	/**
-	 * Method to do selects.
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     array Array of selected Objects
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
 		return ReportePeer::populateObjects(ReportePeer::doSelectStmt($criteria, $con));
 	}
-	/**
-	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
-	 *
-	 * Use this method directly if you want to work with an executed statement durirectly (for example
-	 * to perform your own object hydration).
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con The connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @return     PDOStatement The executed PDOStatement object.
-	 * @see        BasePeer::doSelect()
-	 */
+	
 	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doSelectStmt:doSelectStmt') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -532,52 +439,28 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a PDOStatement
-		return BasePeer::doSelect($criteria, $con);
+				return BasePeer::doSelect($criteria, $con);
 	}
-	/**
-	 * Adds an object to the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doSelect*()
-	 * methods in your stub classes -- you may need to explicitly add objects
-	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
-	 * and retrieveByPK*() calls.
-	 *
-	 * @param      Reporte $value A Reporte object.
-	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
-	 */
+	
 	public static function addInstanceToPool(Reporte $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
 				$key = (string) $obj->getCaIdreporte();
-			} // if key === null
-			self::$instances[$key] = $obj;
+			} 			self::$instances[$key] = $obj;
 		}
 	}
 
-	/**
-	 * Removes an object from the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doDelete
-	 * methods in your stub classes -- you may need to explicitly remove objects
-	 * from the cache in order to prevent returning objects that no longer exist.
-	 *
-	 * @param      mixed $value A Reporte object or a primary key value.
-	 */
+	
 	public static function removeInstanceFromPool($value)
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof Reporte) {
 				$key = (string) $value->getCaIdreporte();
 			} elseif (is_scalar($value)) {
-				// assume we've been passed a primary key
-				$key = (string) $value;
+								$key = (string) $value;
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or Reporte object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -585,18 +468,8 @@ abstract class BaseReportePeer {
 
 			unset(self::$instances[$key]);
 		}
-	} // removeInstanceFromPool()
-
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     Reporte Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
-	 * @see        getPrimaryKeyHash()
-	 */
+	} 
+	
 	public static function getInstanceFromPool($key)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
@@ -604,90 +477,51 @@ abstract class BaseReportePeer {
 				return self::$instances[$key];
 			}
 		}
-		return null; // just to be explicit
-	}
+		return null; 	}
 	
-	/**
-	 * Clear the instance pool.
-	 *
-	 * @return     void
-	 */
+	
 	public static function clearInstancePool()
 	{
 		self::$instances = array();
 	}
 	
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
-	 */
+	
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
-		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null) {
+				if ($row[$startcol + 0] === null) {
 			return null;
 		}
 		return (string) $row[$startcol + 0];
 	}
 
-	/**
-	 * The returned array will contain objects of the default type or
-	 * objects that inherit from the default.
-	 *
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
-		// set the class once to avoid overhead in the loop
-		$cls = ReportePeer::getOMClass();
+				$cls = ReportePeer::getOMClass();
 		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
-		// populate the object(s)
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj = ReportePeer::getInstanceFromPool($key))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj->hydrate($row, 0, true); // rehydrate
-				$results[] = $obj;
+																$results[] = $obj;
 			} else {
 		
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
 				ReportePeer::addInstanceToPool($obj, $key);
-			} // if key exists
-		}
+			} 		}
 		$stmt->closeCursor();
 		return $results;
 	}
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Usuario table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinUsuario(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -697,10 +531,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -708,36 +540,30 @@ abstract class BaseReportePeer {
 
 		$criteria->addJoin(array(ReportePeer::CA_LOGIN,), array(UsuarioPeer::CA_LOGIN,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Transportador table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinTransportador(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -747,10 +573,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -758,36 +582,30 @@ abstract class BaseReportePeer {
 
 		$criteria->addJoin(array(ReportePeer::CA_IDLINEA,), array(TransportadorPeer::CA_IDLINEA,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Tercero table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinTercero(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -797,10 +615,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -808,36 +624,30 @@ abstract class BaseReportePeer {
 
 		$criteria->addJoin(array(ReportePeer::CA_IDPROVEEDOR,), array(TerceroPeer::CA_IDTERCERO,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Agente table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAgente(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -847,10 +657,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -858,36 +666,30 @@ abstract class BaseReportePeer {
 
 		$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Bodega table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinBodega(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -897,10 +699,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -908,36 +708,30 @@ abstract class BaseReportePeer {
 
 		$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related TrackingEtapa table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinTrackingEtapa(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -947,10 +741,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -958,36 +750,30 @@ abstract class BaseReportePeer {
 
 		$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related NotTarea table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -997,10 +783,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -1008,33 +792,37 @@ abstract class BaseReportePeer {
 
 		$criteria->addJoin(array(ReportePeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with their Usuario objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinUsuario(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doSelectJoin:doSelectJoin') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1049,10 +837,7 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ReportePeer::getOMClass();
 
@@ -1060,8 +845,7 @@ abstract class BaseReportePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = UsuarioPeer::getInstanceFromPool($key2);
@@ -1073,13 +857,10 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					UsuarioPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to $obj2 (Usuario)
-				$obj2->addReporte($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1087,21 +868,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with their Transportador objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinTransportador(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1116,10 +888,7 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ReportePeer::getOMClass();
 
@@ -1127,8 +896,7 @@ abstract class BaseReportePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = TransportadorPeer::getInstanceFromPool($key2);
@@ -1140,13 +908,10 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					TransportadorPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to $obj2 (Transportador)
-				$obj2->addReporte($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1154,21 +919,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with their Tercero objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinTercero(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1183,10 +939,7 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ReportePeer::getOMClass();
 
@@ -1194,8 +947,7 @@ abstract class BaseReportePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = TerceroPeer::getInstanceFromPool($key2);
@@ -1207,13 +959,10 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					TerceroPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to $obj2 (Tercero)
-				$obj2->addReporte($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1221,21 +970,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with their Agente objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAgente(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1250,10 +990,7 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ReportePeer::getOMClass();
 
@@ -1261,8 +998,7 @@ abstract class BaseReportePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = AgentePeer::getInstanceFromPool($key2);
@@ -1274,13 +1010,10 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					AgentePeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to $obj2 (Agente)
-				$obj2->addReporte($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1288,21 +1021,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with their Bodega objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinBodega(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1317,10 +1041,7 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ReportePeer::getOMClass();
 
@@ -1328,8 +1049,7 @@ abstract class BaseReportePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = BodegaPeer::getInstanceFromPool($key2);
@@ -1341,13 +1061,10 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					BodegaPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to $obj2 (Bodega)
-				$obj2->addReporte($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1355,21 +1072,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with their TrackingEtapa objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinTrackingEtapa(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1384,10 +1092,7 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ReportePeer::getOMClass();
 
@@ -1395,8 +1100,7 @@ abstract class BaseReportePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = TrackingEtapaPeer::getInstanceFromPool($key2);
@@ -1408,13 +1112,10 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					TrackingEtapaPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to $obj2 (TrackingEtapa)
-				$obj2->addReporte($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1422,21 +1123,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with their NotTarea objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1451,10 +1143,7 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ReportePeer::getOMClass();
 
@@ -1462,8 +1151,7 @@ abstract class BaseReportePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = NotTareaPeer::getInstanceFromPool($key2);
@@ -1475,13 +1163,10 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					NotTareaPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to $obj2 (NotTarea)
-				$obj2->addReporte($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1489,24 +1174,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining all related tables
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ReportePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -1516,10 +1189,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -1532,33 +1203,36 @@ abstract class BaseReportePeer {
 		$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 		$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 		$criteria->addJoin(array(ReportePeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with all related objects.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doSelectJoinAll:doSelectJoinAll') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1599,20 +1273,15 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ReportePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-			// Add objects for joined Usuario rows
-
+			} 
+			
 			$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 			if ($key2 !== null) {
 				$obj2 = UsuarioPeer::getInstanceFromPool($key2);
@@ -1625,14 +1294,10 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					UsuarioPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 loaded
-
-				// Add the $obj1 (Reporte) to the collection in $obj2 (Usuario)
-				$obj2->addReporte($obj1);
-			} // if joined row not null
-
-			// Add objects for joined Transportador rows
-
+				} 
+								$obj2->addReporte($obj1);
+			} 
+			
 			$key3 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 			if ($key3 !== null) {
 				$obj3 = TransportadorPeer::getInstanceFromPool($key3);
@@ -1645,14 +1310,10 @@ abstract class BaseReportePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					TransportadorPeer::addInstanceToPool($obj3, $key3);
-				} // if obj3 loaded
-
-				// Add the $obj1 (Reporte) to the collection in $obj3 (Transportador)
-				$obj3->addReporte($obj1);
-			} // if joined row not null
-
-			// Add objects for joined Tercero rows
-
+				} 
+								$obj3->addReporte($obj1);
+			} 
+			
 			$key4 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol4);
 			if ($key4 !== null) {
 				$obj4 = TerceroPeer::getInstanceFromPool($key4);
@@ -1665,14 +1326,10 @@ abstract class BaseReportePeer {
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					TerceroPeer::addInstanceToPool($obj4, $key4);
-				} // if obj4 loaded
-
-				// Add the $obj1 (Reporte) to the collection in $obj4 (Tercero)
-				$obj4->addReporte($obj1);
-			} // if joined row not null
-
-			// Add objects for joined Agente rows
-
+				} 
+								$obj4->addReporte($obj1);
+			} 
+			
 			$key5 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol5);
 			if ($key5 !== null) {
 				$obj5 = AgentePeer::getInstanceFromPool($key5);
@@ -1685,14 +1342,10 @@ abstract class BaseReportePeer {
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					AgentePeer::addInstanceToPool($obj5, $key5);
-				} // if obj5 loaded
-
-				// Add the $obj1 (Reporte) to the collection in $obj5 (Agente)
-				$obj5->addReporte($obj1);
-			} // if joined row not null
-
-			// Add objects for joined Bodega rows
-
+				} 
+								$obj5->addReporte($obj1);
+			} 
+			
 			$key6 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
 			if ($key6 !== null) {
 				$obj6 = BodegaPeer::getInstanceFromPool($key6);
@@ -1705,14 +1358,10 @@ abstract class BaseReportePeer {
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					BodegaPeer::addInstanceToPool($obj6, $key6);
-				} // if obj6 loaded
-
-				// Add the $obj1 (Reporte) to the collection in $obj6 (Bodega)
-				$obj6->addReporte($obj1);
-			} // if joined row not null
-
-			// Add objects for joined TrackingEtapa rows
-
+				} 
+								$obj6->addReporte($obj1);
+			} 
+			
 			$key7 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
 			if ($key7 !== null) {
 				$obj7 = TrackingEtapaPeer::getInstanceFromPool($key7);
@@ -1725,14 +1374,10 @@ abstract class BaseReportePeer {
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					TrackingEtapaPeer::addInstanceToPool($obj7, $key7);
-				} // if obj7 loaded
-
-				// Add the $obj1 (Reporte) to the collection in $obj7 (TrackingEtapa)
-				$obj7->addReporte($obj1);
-			} // if joined row not null
-
-			// Add objects for joined NotTarea rows
-
+				} 
+								$obj7->addReporte($obj1);
+			} 
+			
 			$key8 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol8);
 			if ($key8 !== null) {
 				$obj8 = NotTareaPeer::getInstanceFromPool($key8);
@@ -1745,12 +1390,9 @@ abstract class BaseReportePeer {
 					$obj8 = new $cls();
 					$obj8->hydrate($row, $startcol8);
 					NotTareaPeer::addInstanceToPool($obj8, $key8);
-				} // if obj8 loaded
-
-				// Add the $obj1 (Reporte) to the collection in $obj8 (NotTarea)
-				$obj8->addReporte($obj1);
-			} // if joined row not null
-
+				} 
+								$obj8->addReporte($obj1);
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1758,19 +1400,10 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Usuario table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptUsuario(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -1780,10 +1413,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -1795,31 +1426,28 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Transportador table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptTransportador(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -1829,10 +1457,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -1844,31 +1470,28 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Tercero table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptTercero(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -1878,10 +1501,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -1893,31 +1514,28 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Agente table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptAgente(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -1927,10 +1545,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -1942,31 +1558,28 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Bodega table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptBodega(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -1976,10 +1589,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -1991,31 +1602,28 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related TrackingEtapa table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptTrackingEtapa(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -2025,10 +1633,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -2040,31 +1646,28 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDSEGUIMIENTO,), array(NotTareaPeer::CA_IDTAREA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related NotTarea table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptNotTarea(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -2074,10 +1677,8 @@ abstract class BaseReportePeer {
 			ReportePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -2089,36 +1690,37 @@ abstract class BaseReportePeer {
 				$criteria->addJoin(array(ReportePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDBODEGA,), array(BodegaPeer::CA_IDBODEGA,), $join_behavior);
 				$criteria->addJoin(array(ReportePeer::CA_IDETAPA,), array(TrackingEtapaPeer::CA_IDETAPA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with all related objects except Usuario.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptUsuario(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doSelectJoinAllExcept:doSelectJoinAllExcept') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -2156,20 +1758,15 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ReportePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Transportador rows
-
+			} 
+				
 				$key2 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = TransportadorPeer::getInstanceFromPool($key2);
@@ -2182,15 +1779,11 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					TransportadorPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj2 (Transportador)
-				$obj2->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Tercero rows
-
+			} 
+				
 				$key3 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
 					$obj3 = TerceroPeer::getInstanceFromPool($key3);
@@ -2203,15 +1796,11 @@ abstract class BaseReportePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					TerceroPeer::addInstanceToPool($obj3, $key3);
-				} // if $obj3 already loaded
+				} 
+								$obj3->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj3 (Tercero)
-				$obj3->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Agente rows
-
+			} 
+				
 				$key4 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol4);
 				if ($key4 !== null) {
 					$obj4 = AgentePeer::getInstanceFromPool($key4);
@@ -2224,15 +1813,11 @@ abstract class BaseReportePeer {
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					AgentePeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
+				} 
+								$obj4->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj4 (Agente)
-				$obj4->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Bodega rows
-
+			} 
+				
 				$key5 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol5);
 				if ($key5 !== null) {
 					$obj5 = BodegaPeer::getInstanceFromPool($key5);
@@ -2245,15 +1830,11 @@ abstract class BaseReportePeer {
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					BodegaPeer::addInstanceToPool($obj5, $key5);
-				} // if $obj5 already loaded
+				} 
+								$obj5->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj5 (Bodega)
-				$obj5->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined TrackingEtapa rows
-
+			} 
+				
 				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
 				if ($key6 !== null) {
 					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
@@ -2266,15 +1847,11 @@ abstract class BaseReportePeer {
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
-				} // if $obj6 already loaded
+				} 
+								$obj6->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
-				$obj6->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined NotTarea rows
-
+			} 
+				
 				$key7 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
 				if ($key7 !== null) {
 					$obj7 = NotTareaPeer::getInstanceFromPool($key7);
@@ -2287,13 +1864,10 @@ abstract class BaseReportePeer {
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					NotTareaPeer::addInstanceToPool($obj7, $key7);
-				} // if $obj7 already loaded
+				} 
+								$obj7->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj7 (NotTarea)
-				$obj7->addReporte($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -2301,24 +1875,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with all related objects except Transportador.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptTransportador(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -2356,20 +1918,15 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ReportePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Usuario rows
-
+			} 
+				
 				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
@@ -2382,15 +1939,11 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					UsuarioPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj2 (Usuario)
-				$obj2->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Tercero rows
-
+			} 
+				
 				$key3 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
 					$obj3 = TerceroPeer::getInstanceFromPool($key3);
@@ -2403,15 +1956,11 @@ abstract class BaseReportePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					TerceroPeer::addInstanceToPool($obj3, $key3);
-				} // if $obj3 already loaded
+				} 
+								$obj3->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj3 (Tercero)
-				$obj3->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Agente rows
-
+			} 
+				
 				$key4 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol4);
 				if ($key4 !== null) {
 					$obj4 = AgentePeer::getInstanceFromPool($key4);
@@ -2424,15 +1973,11 @@ abstract class BaseReportePeer {
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					AgentePeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
+				} 
+								$obj4->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj4 (Agente)
-				$obj4->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Bodega rows
-
+			} 
+				
 				$key5 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol5);
 				if ($key5 !== null) {
 					$obj5 = BodegaPeer::getInstanceFromPool($key5);
@@ -2445,15 +1990,11 @@ abstract class BaseReportePeer {
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					BodegaPeer::addInstanceToPool($obj5, $key5);
-				} // if $obj5 already loaded
+				} 
+								$obj5->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj5 (Bodega)
-				$obj5->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined TrackingEtapa rows
-
+			} 
+				
 				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
 				if ($key6 !== null) {
 					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
@@ -2466,15 +2007,11 @@ abstract class BaseReportePeer {
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
-				} // if $obj6 already loaded
+				} 
+								$obj6->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
-				$obj6->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined NotTarea rows
-
+			} 
+				
 				$key7 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
 				if ($key7 !== null) {
 					$obj7 = NotTareaPeer::getInstanceFromPool($key7);
@@ -2487,13 +2024,10 @@ abstract class BaseReportePeer {
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					NotTareaPeer::addInstanceToPool($obj7, $key7);
-				} // if $obj7 already loaded
+				} 
+								$obj7->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj7 (NotTarea)
-				$obj7->addReporte($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -2501,24 +2035,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with all related objects except Tercero.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptTercero(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -2556,20 +2078,15 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ReportePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Usuario rows
-
+			} 
+				
 				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
@@ -2582,15 +2099,11 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					UsuarioPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj2 (Usuario)
-				$obj2->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Transportador rows
-
+			} 
+				
 				$key3 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
 					$obj3 = TransportadorPeer::getInstanceFromPool($key3);
@@ -2603,15 +2116,11 @@ abstract class BaseReportePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					TransportadorPeer::addInstanceToPool($obj3, $key3);
-				} // if $obj3 already loaded
+				} 
+								$obj3->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj3 (Transportador)
-				$obj3->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Agente rows
-
+			} 
+				
 				$key4 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol4);
 				if ($key4 !== null) {
 					$obj4 = AgentePeer::getInstanceFromPool($key4);
@@ -2624,15 +2133,11 @@ abstract class BaseReportePeer {
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					AgentePeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
+				} 
+								$obj4->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj4 (Agente)
-				$obj4->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Bodega rows
-
+			} 
+				
 				$key5 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol5);
 				if ($key5 !== null) {
 					$obj5 = BodegaPeer::getInstanceFromPool($key5);
@@ -2645,15 +2150,11 @@ abstract class BaseReportePeer {
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					BodegaPeer::addInstanceToPool($obj5, $key5);
-				} // if $obj5 already loaded
+				} 
+								$obj5->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj5 (Bodega)
-				$obj5->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined TrackingEtapa rows
-
+			} 
+				
 				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
 				if ($key6 !== null) {
 					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
@@ -2666,15 +2167,11 @@ abstract class BaseReportePeer {
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
-				} // if $obj6 already loaded
+				} 
+								$obj6->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
-				$obj6->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined NotTarea rows
-
+			} 
+				
 				$key7 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
 				if ($key7 !== null) {
 					$obj7 = NotTareaPeer::getInstanceFromPool($key7);
@@ -2687,13 +2184,10 @@ abstract class BaseReportePeer {
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					NotTareaPeer::addInstanceToPool($obj7, $key7);
-				} // if $obj7 already loaded
+				} 
+								$obj7->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj7 (NotTarea)
-				$obj7->addReporte($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -2701,24 +2195,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with all related objects except Agente.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptAgente(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -2756,20 +2238,15 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ReportePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Usuario rows
-
+			} 
+				
 				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
@@ -2782,15 +2259,11 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					UsuarioPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj2 (Usuario)
-				$obj2->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Transportador rows
-
+			} 
+				
 				$key3 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
 					$obj3 = TransportadorPeer::getInstanceFromPool($key3);
@@ -2803,15 +2276,11 @@ abstract class BaseReportePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					TransportadorPeer::addInstanceToPool($obj3, $key3);
-				} // if $obj3 already loaded
+				} 
+								$obj3->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj3 (Transportador)
-				$obj3->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Tercero rows
-
+			} 
+				
 				$key4 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol4);
 				if ($key4 !== null) {
 					$obj4 = TerceroPeer::getInstanceFromPool($key4);
@@ -2824,15 +2293,11 @@ abstract class BaseReportePeer {
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					TerceroPeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
+				} 
+								$obj4->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj4 (Tercero)
-				$obj4->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Bodega rows
-
+			} 
+				
 				$key5 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol5);
 				if ($key5 !== null) {
 					$obj5 = BodegaPeer::getInstanceFromPool($key5);
@@ -2845,15 +2310,11 @@ abstract class BaseReportePeer {
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					BodegaPeer::addInstanceToPool($obj5, $key5);
-				} // if $obj5 already loaded
+				} 
+								$obj5->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj5 (Bodega)
-				$obj5->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined TrackingEtapa rows
-
+			} 
+				
 				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
 				if ($key6 !== null) {
 					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
@@ -2866,15 +2327,11 @@ abstract class BaseReportePeer {
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
-				} // if $obj6 already loaded
+				} 
+								$obj6->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
-				$obj6->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined NotTarea rows
-
+			} 
+				
 				$key7 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
 				if ($key7 !== null) {
 					$obj7 = NotTareaPeer::getInstanceFromPool($key7);
@@ -2887,13 +2344,10 @@ abstract class BaseReportePeer {
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					NotTareaPeer::addInstanceToPool($obj7, $key7);
-				} // if $obj7 already loaded
+				} 
+								$obj7->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj7 (NotTarea)
-				$obj7->addReporte($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -2901,24 +2355,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with all related objects except Bodega.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptBodega(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -2956,20 +2398,15 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ReportePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Usuario rows
-
+			} 
+				
 				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
@@ -2982,15 +2419,11 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					UsuarioPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj2 (Usuario)
-				$obj2->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Transportador rows
-
+			} 
+				
 				$key3 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
 					$obj3 = TransportadorPeer::getInstanceFromPool($key3);
@@ -3003,15 +2436,11 @@ abstract class BaseReportePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					TransportadorPeer::addInstanceToPool($obj3, $key3);
-				} // if $obj3 already loaded
+				} 
+								$obj3->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj3 (Transportador)
-				$obj3->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Tercero rows
-
+			} 
+				
 				$key4 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol4);
 				if ($key4 !== null) {
 					$obj4 = TerceroPeer::getInstanceFromPool($key4);
@@ -3024,15 +2453,11 @@ abstract class BaseReportePeer {
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					TerceroPeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
+				} 
+								$obj4->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj4 (Tercero)
-				$obj4->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Agente rows
-
+			} 
+				
 				$key5 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol5);
 				if ($key5 !== null) {
 					$obj5 = AgentePeer::getInstanceFromPool($key5);
@@ -3045,15 +2470,11 @@ abstract class BaseReportePeer {
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					AgentePeer::addInstanceToPool($obj5, $key5);
-				} // if $obj5 already loaded
+				} 
+								$obj5->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj5 (Agente)
-				$obj5->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined TrackingEtapa rows
-
+			} 
+				
 				$key6 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
 				if ($key6 !== null) {
 					$obj6 = TrackingEtapaPeer::getInstanceFromPool($key6);
@@ -3066,15 +2487,11 @@ abstract class BaseReportePeer {
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					TrackingEtapaPeer::addInstanceToPool($obj6, $key6);
-				} // if $obj6 already loaded
+				} 
+								$obj6->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj6 (TrackingEtapa)
-				$obj6->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined NotTarea rows
-
+			} 
+				
 				$key7 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
 				if ($key7 !== null) {
 					$obj7 = NotTareaPeer::getInstanceFromPool($key7);
@@ -3087,13 +2504,10 @@ abstract class BaseReportePeer {
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					NotTareaPeer::addInstanceToPool($obj7, $key7);
-				} // if $obj7 already loaded
+				} 
+								$obj7->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj7 (NotTarea)
-				$obj7->addReporte($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -3101,24 +2515,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with all related objects except TrackingEtapa.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptTrackingEtapa(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -3156,20 +2558,15 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ReportePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Usuario rows
-
+			} 
+				
 				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
@@ -3182,15 +2579,11 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					UsuarioPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj2 (Usuario)
-				$obj2->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Transportador rows
-
+			} 
+				
 				$key3 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
 					$obj3 = TransportadorPeer::getInstanceFromPool($key3);
@@ -3203,15 +2596,11 @@ abstract class BaseReportePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					TransportadorPeer::addInstanceToPool($obj3, $key3);
-				} // if $obj3 already loaded
+				} 
+								$obj3->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj3 (Transportador)
-				$obj3->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Tercero rows
-
+			} 
+				
 				$key4 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol4);
 				if ($key4 !== null) {
 					$obj4 = TerceroPeer::getInstanceFromPool($key4);
@@ -3224,15 +2613,11 @@ abstract class BaseReportePeer {
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					TerceroPeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
+				} 
+								$obj4->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj4 (Tercero)
-				$obj4->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Agente rows
-
+			} 
+				
 				$key5 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol5);
 				if ($key5 !== null) {
 					$obj5 = AgentePeer::getInstanceFromPool($key5);
@@ -3245,15 +2630,11 @@ abstract class BaseReportePeer {
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					AgentePeer::addInstanceToPool($obj5, $key5);
-				} // if $obj5 already loaded
+				} 
+								$obj5->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj5 (Agente)
-				$obj5->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Bodega rows
-
+			} 
+				
 				$key6 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
 				if ($key6 !== null) {
 					$obj6 = BodegaPeer::getInstanceFromPool($key6);
@@ -3266,15 +2647,11 @@ abstract class BaseReportePeer {
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					BodegaPeer::addInstanceToPool($obj6, $key6);
-				} // if $obj6 already loaded
+				} 
+								$obj6->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj6 (Bodega)
-				$obj6->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined NotTarea rows
-
+			} 
+				
 				$key7 = NotTareaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
 				if ($key7 !== null) {
 					$obj7 = NotTareaPeer::getInstanceFromPool($key7);
@@ -3287,13 +2664,10 @@ abstract class BaseReportePeer {
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					NotTareaPeer::addInstanceToPool($obj7, $key7);
-				} // if $obj7 already loaded
+				} 
+								$obj7->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj7 (NotTarea)
-				$obj7->addReporte($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -3301,24 +2675,12 @@ abstract class BaseReportePeer {
 	}
 
 
-	/**
-	 * Selects a collection of Reporte objects pre-filled with all related objects except NotTarea.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of Reporte objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptNotTarea(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -3356,20 +2718,15 @@ abstract class BaseReportePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ReportePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ReportePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ReportePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ReportePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Usuario rows
-
+			} 
+				
 				$key2 = UsuarioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = UsuarioPeer::getInstanceFromPool($key2);
@@ -3382,15 +2739,11 @@ abstract class BaseReportePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					UsuarioPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj2 (Usuario)
-				$obj2->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Transportador rows
-
+			} 
+				
 				$key3 = TransportadorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 				if ($key3 !== null) {
 					$obj3 = TransportadorPeer::getInstanceFromPool($key3);
@@ -3403,15 +2756,11 @@ abstract class BaseReportePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					TransportadorPeer::addInstanceToPool($obj3, $key3);
-				} // if $obj3 already loaded
+				} 
+								$obj3->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj3 (Transportador)
-				$obj3->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Tercero rows
-
+			} 
+				
 				$key4 = TerceroPeer::getPrimaryKeyHashFromRow($row, $startcol4);
 				if ($key4 !== null) {
 					$obj4 = TerceroPeer::getInstanceFromPool($key4);
@@ -3424,15 +2773,11 @@ abstract class BaseReportePeer {
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					TerceroPeer::addInstanceToPool($obj4, $key4);
-				} // if $obj4 already loaded
+				} 
+								$obj4->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj4 (Tercero)
-				$obj4->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Agente rows
-
+			} 
+				
 				$key5 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol5);
 				if ($key5 !== null) {
 					$obj5 = AgentePeer::getInstanceFromPool($key5);
@@ -3445,15 +2790,11 @@ abstract class BaseReportePeer {
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					AgentePeer::addInstanceToPool($obj5, $key5);
-				} // if $obj5 already loaded
+				} 
+								$obj5->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj5 (Agente)
-				$obj5->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined Bodega rows
-
+			} 
+				
 				$key6 = BodegaPeer::getPrimaryKeyHashFromRow($row, $startcol6);
 				if ($key6 !== null) {
 					$obj6 = BodegaPeer::getInstanceFromPool($key6);
@@ -3466,15 +2807,11 @@ abstract class BaseReportePeer {
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					BodegaPeer::addInstanceToPool($obj6, $key6);
-				} // if $obj6 already loaded
+				} 
+								$obj6->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj6 (Bodega)
-				$obj6->addReporte($obj1);
-
-			} // if joined row is not null
-
-				// Add objects for joined TrackingEtapa rows
-
+			} 
+				
 				$key7 = TrackingEtapaPeer::getPrimaryKeyHashFromRow($row, $startcol7);
 				if ($key7 !== null) {
 					$obj7 = TrackingEtapaPeer::getInstanceFromPool($key7);
@@ -3487,13 +2824,10 @@ abstract class BaseReportePeer {
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					TrackingEtapaPeer::addInstanceToPool($obj7, $key7);
-				} // if $obj7 already loaded
+				} 
+								$obj7->addReporte($obj1);
 
-				// Add the $obj1 (Reporte) to the collection in $obj7 (TrackingEtapa)
-				$obj7->addReporte($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -3505,65 +2839,49 @@ abstract class BaseReportePeer {
   {
     return array();
   }
-	/**
-	 * Returns the TableMap related to this peer.
-	 * This method is not needed for general use but a specific application could have a need.
-	 * @return     TableMap
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function getTableMap()
 	{
 		return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
 	}
 
-	/**
-	 * The class that the Peer will make instances of.
-	 *
-	 * This uses a dot-path notation which is tranalted into a path
-	 * relative to a location on the PHP include_path.
-	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
-	 *
-	 * @return     string path.to.ClassName
-	 */
+	
 	public static function getOMClass()
 	{
 		return ReportePeer::CLASS_DEFAULT;
 	}
 
-	/**
-	 * Method perform an INSERT on the database, given a Reporte or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or Reporte object containing data that is used to create the INSERT statement.
-	 * @param      PropelPDO $con the PropelPDO connection to use
-	 * @return     mixed The new primary key.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doInsert($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doInsert:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseReportePeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from Reporte object
-		}
+			$criteria = clone $values; 		} else {
+			$criteria = $values->buildCriteria(); 		}
 
 		if ($criteria->containsKey(ReportePeer::CA_IDREPORTE) && $criteria->keyContainsValue(ReportePeer::CA_IDREPORTE) ) {
 			throw new PropelException('Cannot insert a value for auto-increment primary key ('.ReportePeer::CA_IDREPORTE.')');
 		}
 
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table (I guess, conceivably)
-			$con->beginTransaction();
+									$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
@@ -3571,20 +2889,29 @@ abstract class BaseReportePeer {
 			throw $e;
 		}
 
-		return $pk;
+		
+    foreach (sfMixer::getCallables('BaseReportePeer:doInsert:post') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $values, $con, $pk);
+    }
+
+    return $pk;
 	}
 
-	/**
-	 * Method perform an UPDATE on the database, given a Reporte or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or Reporte object containing data that is used to create the UPDATE statement.
-	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doUpdate($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseReportePeer:doUpdate:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseReportePeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
@@ -3592,37 +2919,33 @@ abstract class BaseReportePeer {
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-
+			$criteria = clone $values; 
 			$comparison = $criteria->getComparison(ReportePeer::CA_IDREPORTE);
 			$selectCriteria->add(ReportePeer::CA_IDREPORTE, $criteria->remove(ReportePeer::CA_IDREPORTE), $comparison);
 
-		} else { // $values is Reporte object
-			$criteria = $values->buildCriteria(); // gets full criteria
-			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
-		}
+		} else { 			$criteria = $values->buildCriteria(); 			$selectCriteria = $values->buildPkeyCriteria(); 		}
 
-		// set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	}
+		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	
 
-	/**
-	 * Method to DELETE all rows from the tb_reportes table.
-	 *
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 */
+    foreach (sfMixer::getCallables('BaseReportePeer:doUpdate:post') as $callable)
+    {
+      call_user_func($callable, 'BaseReportePeer', $values, $con, $ret);
+    }
+
+    return $ret;
+  }
+
+	
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(ReportePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-		$affectedRows = 0; // initialize var to track total num of affected rows
-		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+		$affectedRows = 0; 		try {
+									$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(ReportePeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
@@ -3632,17 +2955,7 @@ abstract class BaseReportePeer {
 		}
 	}
 
-	/**
-	 * Method perform a DELETE on the database, given a Reporte or Criteria object OR a primary key value.
-	 *
-	 * @param      mixed $values Criteria or Reporte object or primary key or array of primary keys
-	 *              which is used to create the DELETE statement
-	 * @param      PropelPDO $con the connection to use
-	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-	 *				if supported by native driver or if emulated using Propel.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
@@ -3650,41 +2963,29 @@ abstract class BaseReportePeer {
 		}
 
 		if ($values instanceof Criteria) {
-			// invalidate the cache for all objects of this type, since we have no
-			// way of knowing (without running a query) what objects should be invalidated
-			// from the cache based on this Criteria.
-			ReportePeer::clearInstancePool();
+												ReportePeer::clearInstancePool();
 
-			// rename for clarity
-			$criteria = clone $values;
+						$criteria = clone $values;
 		} elseif ($values instanceof Reporte) {
-			// invalidate the cache for this single object
-			ReportePeer::removeInstanceFromPool($values);
-			// create criteria based on pk values
-			$criteria = $values->buildPkeyCriteria();
+						ReportePeer::removeInstanceFromPool($values);
+						$criteria = $values->buildPkeyCriteria();
 		} else {
-			// it must be the primary key
-
+			
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(ReportePeer::CA_IDREPORTE, (array) $values, Criteria::IN);
 
 			foreach ((array) $values as $singleval) {
-				// we can invalidate the cache for this single object
-				ReportePeer::removeInstanceFromPool($singleval);
+								ReportePeer::removeInstanceFromPool($singleval);
 			}
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		$affectedRows = 0; // initialize var to track total num of affected rows
-
+		$affectedRows = 0; 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+									$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
 
@@ -3696,18 +2997,7 @@ abstract class BaseReportePeer {
 		}
 	}
 
-	/**
-	 * Validates all modified columns of given Reporte object.
-	 * If parameter $columns is either a single column name or an array of column names
-	 * than only those columns are validated.
-	 *
-	 * NOTICE: This does not apply to primary or foreign keys for now.
-	 *
-	 * @param      Reporte $obj The object to validate.
-	 * @param      mixed $cols Column name or array of column names.
-	 *
-	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
-	 */
+	
 	public static function doValidate(Reporte $obj, $cols = null)
 	{
 		$columns = array();
@@ -3741,13 +3031,7 @@ abstract class BaseReportePeer {
     return $res;
 	}
 
-	/**
-	 * Retrieve a single object by pkey.
-	 *
-	 * @param      int $pk the primary key.
-	 * @param      PropelPDO $con the connection to use
-	 * @return     Reporte
-	 */
+	
 	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
 
@@ -3767,14 +3051,7 @@ abstract class BaseReportePeer {
 		return !empty($v) > 0 ? $v[0] : null;
 	}
 
-	/**
-	 * Retrieve multiple objects by pkey.
-	 *
-	 * @param      array $pks List of primary keys
-	 * @param      PropelPDO $con the connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
@@ -3792,16 +3069,7 @@ abstract class BaseReportePeer {
 		return $objs;
 	}
 
-} // BaseReportePeer
-
-// This is the static code needed to register the MapBuilder for this table with the main Propel class.
-//
-// NOTE: This static code cannot call methods on the ReportePeer class, because it is not defined yet.
-// If you need to use overridden methods, you can add this code to the bottom of the ReportePeer class:
-//
-// Propel::getDatabaseMap(ReportePeer::DATABASE_NAME)->addTableBuilder(ReportePeer::TABLE_NAME, ReportePeer::getMapBuilder());
-//
-// Doing so will effectively overwrite the registration below.
+} 
 
 Propel::getDatabaseMap(BaseReportePeer::DATABASE_NAME)->addTableBuilder(BaseReportePeer::TABLE_NAME, BaseReportePeer::getMapBuilder());
 

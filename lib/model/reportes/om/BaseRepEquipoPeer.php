@@ -1,64 +1,45 @@
 <?php
 
-/**
- * Base static class for performing query and update operations on the 'tb_repequipos' table.
- *
- * 
- *
- * @package    lib.model.reportes.om
- */
+
 abstract class BaseRepEquipoPeer {
 
-	/** the default database name for this class */
+	
 	const DATABASE_NAME = 'propel';
 
-	/** the table name for this class */
+	
 	const TABLE_NAME = 'tb_repequipos';
 
-	/** A class that can be returned by this peer. */
+	
 	const CLASS_DEFAULT = 'lib.model.reportes.RepEquipo';
 
-	/** The total number of columns. */
+	
 	const NUM_COLUMNS = 5;
 
-	/** The number of lazy-loaded columns. */
+	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_IDREPORTE field */
+	
 	const CA_IDREPORTE = 'tb_repequipos.CA_IDREPORTE';
 
-	/** the column name for the CA_IDCONCEPTO field */
+	
 	const CA_IDCONCEPTO = 'tb_repequipos.CA_IDCONCEPTO';
 
-	/** the column name for the CA_CANTIDAD field */
+	
 	const CA_CANTIDAD = 'tb_repequipos.CA_CANTIDAD';
 
-	/** the column name for the CA_IDEQUIPO field */
+	
 	const CA_IDEQUIPO = 'tb_repequipos.CA_IDEQUIPO';
 
-	/** the column name for the CA_OBSERVACIONES field */
+	
 	const CA_OBSERVACIONES = 'tb_repequipos.CA_OBSERVACIONES';
 
-	/**
-	 * An identiy map to hold any loaded instances of RepEquipo objects.
-	 * This must be public so that other peer classes can access this when hydrating from JOIN
-	 * queries.
-	 * @var        array RepEquipo[]
-	 */
+	
 	public static $instances = array();
 
-	/**
-	 * The MapBuilder instance for this peer.
-	 * @var        MapBuilder
-	 */
+	
 	private static $mapBuilder = null;
 
-	/**
-	 * holds an array of fieldnames
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
-	 */
+	
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdreporte', 'CaIdconcepto', 'CaCantidad', 'CaIdequipo', 'CaObservaciones', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte', 'caIdconcepto', 'caCantidad', 'caIdequipo', 'caObservaciones', ),
@@ -67,12 +48,7 @@ abstract class BaseRepEquipoPeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
-	/**
-	 * holds an array of keys for quick access to the fieldnames array
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
-	 */
+	
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdreporte' => 0, 'CaIdconcepto' => 1, 'CaCantidad' => 2, 'CaIdequipo' => 3, 'CaObservaciones' => 4, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdreporte' => 0, 'caIdconcepto' => 1, 'caCantidad' => 2, 'caIdequipo' => 3, 'caObservaciones' => 4, ),
@@ -81,10 +57,7 @@ abstract class BaseRepEquipoPeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
-	/**
-	 * Get a (singleton) instance of the MapBuilder for this peer class.
-	 * @return     MapBuilder The map builder for this peer
-	 */
+	
 	public static function getMapBuilder()
 	{
 		if (self::$mapBuilder === null) {
@@ -92,16 +65,7 @@ abstract class BaseRepEquipoPeer {
 		}
 		return self::$mapBuilder;
 	}
-	/**
-	 * Translates a fieldname to another type
-	 *
-	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @param      string $toType   One of the class type constants
-	 * @return     string translated name of the field.
-	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
-	 */
+	
 	static public function translateFieldName($name, $fromType, $toType)
 	{
 		$toNames = self::getFieldNames($toType);
@@ -112,14 +76,7 @@ abstract class BaseRepEquipoPeer {
 		return $toNames[$key];
 	}
 
-	/**
-	 * Returns an array of field names.
-	 *
-	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @return     array A list of field names
-	 */
+	
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
@@ -129,34 +86,13 @@ abstract class BaseRepEquipoPeer {
 		return self::$fieldNames[$type];
 	}
 
-	/**
-	 * Convenience method which changes table.column to alias.column.
-	 *
-	 * Using this method you can maintain SQL abstraction while using column aliases.
-	 * <code>
-	 *		$c->addAlias("alias1", TablePeer::TABLE_NAME);
-	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
-	 * </code>
-	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. RepEquipoPeer::COLUMN_NAME).
-	 * @return     string
-	 */
+	
 	public static function alias($alias, $column)
 	{
 		return str_replace(RepEquipoPeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
-	/**
-	 * Add all the columns needed to create a new object.
-	 *
-	 * Note: any columns that were marked with lazyLoad="true" in the
-	 * XML schema will not be added to the select list and only loaded
-	 * on demand.
-	 *
-	 * @param      criteria object containing the columns to add.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
@@ -172,23 +108,12 @@ abstract class BaseRepEquipoPeer {
 
 	}
 
-	/**
-	 * Returns the number of rows matching criteria.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we may modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(RepEquipoPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(RepEquipoPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -198,33 +123,28 @@ abstract class BaseRepEquipoPeer {
 			RepEquipoPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
-
+		$criteria->clearOrderByColumns(); 		$criteria->setDbName(self::DATABASE_NAME); 
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		// BasePeer returns a PDOStatement
-		$stmt = BasePeer::doCount($criteria, $con);
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $criteria, $con);
+    }
+
+
+				$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
-	/**
-	 * Method to select one object from the DB.
-	 *
-	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     RepEquipo
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
@@ -235,34 +155,21 @@ abstract class BaseRepEquipoPeer {
 		}
 		return null;
 	}
-	/**
-	 * Method to do selects.
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     array Array of selected Objects
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
 		return RepEquipoPeer::populateObjects(RepEquipoPeer::doSelectStmt($criteria, $con));
 	}
-	/**
-	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
-	 *
-	 * Use this method directly if you want to work with an executed statement durirectly (for example
-	 * to perform your own object hydration).
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con The connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @return     PDOStatement The executed PDOStatement object.
-	 * @see        BasePeer::doSelect()
-	 */
+	
 	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doSelectStmt:doSelectStmt') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $criteria, $con);
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -272,52 +179,28 @@ abstract class BaseRepEquipoPeer {
 			RepEquipoPeer::addSelectColumns($criteria);
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a PDOStatement
-		return BasePeer::doSelect($criteria, $con);
+				return BasePeer::doSelect($criteria, $con);
 	}
-	/**
-	 * Adds an object to the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doSelect*()
-	 * methods in your stub classes -- you may need to explicitly add objects
-	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
-	 * and retrieveByPK*() calls.
-	 *
-	 * @param      RepEquipo $value A RepEquipo object.
-	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
-	 */
+	
 	public static function addInstanceToPool(RepEquipo $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
 				$key = serialize(array((string) $obj->getCaIdreporte(), (string) $obj->getCaIdconcepto()));
-			} // if key === null
-			self::$instances[$key] = $obj;
+			} 			self::$instances[$key] = $obj;
 		}
 	}
 
-	/**
-	 * Removes an object from the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doDelete
-	 * methods in your stub classes -- you may need to explicitly remove objects
-	 * from the cache in order to prevent returning objects that no longer exist.
-	 *
-	 * @param      mixed $value A RepEquipo object or a primary key value.
-	 */
+	
 	public static function removeInstanceFromPool($value)
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof RepEquipo) {
 				$key = serialize(array((string) $value->getCaIdreporte(), (string) $value->getCaIdconcepto()));
 			} elseif (is_array($value) && count($value) === 2) {
-				// assume we've been passed a primary key
-				$key = serialize(array((string) $value[0], (string) $value[1]));
+								$key = serialize(array((string) $value[0], (string) $value[1]));
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or RepEquipo object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -325,18 +208,8 @@ abstract class BaseRepEquipoPeer {
 
 			unset(self::$instances[$key]);
 		}
-	} // removeInstanceFromPool()
-
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     RepEquipo Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
-	 * @see        getPrimaryKeyHash()
-	 */
+	} 
+	
 	public static function getInstanceFromPool($key)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
@@ -344,90 +217,51 @@ abstract class BaseRepEquipoPeer {
 				return self::$instances[$key];
 			}
 		}
-		return null; // just to be explicit
-	}
+		return null; 	}
 	
-	/**
-	 * Clear the instance pool.
-	 *
-	 * @return     void
-	 */
+	
 	public static function clearInstancePool()
 	{
 		self::$instances = array();
 	}
 	
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
-	 */
+	
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
-		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null) {
+				if ($row[$startcol + 0] === null && $row[$startcol + 1] === null) {
 			return null;
 		}
 		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1]));
 	}
 
-	/**
-	 * The returned array will contain objects of the default type or
-	 * objects that inherit from the default.
-	 *
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
-		// set the class once to avoid overhead in the loop
-		$cls = RepEquipoPeer::getOMClass();
+				$cls = RepEquipoPeer::getOMClass();
 		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
-		// populate the object(s)
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key = RepEquipoPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj = RepEquipoPeer::getInstanceFromPool($key))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj->hydrate($row, 0, true); // rehydrate
-				$results[] = $obj;
+																$results[] = $obj;
 			} else {
 		
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
 				RepEquipoPeer::addInstanceToPool($obj, $key);
-			} // if key exists
-		}
+			} 		}
 		$stmt->closeCursor();
 		return $results;
 	}
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Reporte table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinReporte(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(RepEquipoPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(RepEquipoPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -437,10 +271,8 @@ abstract class BaseRepEquipoPeer {
 			RepEquipoPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -448,36 +280,30 @@ abstract class BaseRepEquipoPeer {
 
 		$criteria->addJoin(array(RepEquipoPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Concepto table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinConcepto(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(RepEquipoPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(RepEquipoPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -487,10 +313,8 @@ abstract class BaseRepEquipoPeer {
 			RepEquipoPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -498,33 +322,37 @@ abstract class BaseRepEquipoPeer {
 
 		$criteria->addJoin(array(RepEquipoPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Selects a collection of RepEquipo objects pre-filled with their Reporte objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of RepEquipo objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinReporte(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doSelectJoin:doSelectJoin') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -539,10 +367,7 @@ abstract class BaseRepEquipoPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = RepEquipoPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = RepEquipoPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = RepEquipoPeer::getOMClass();
 
@@ -550,8 +375,7 @@ abstract class BaseRepEquipoPeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				RepEquipoPeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = ReportePeer::getInstanceFromPool($key2);
@@ -563,13 +387,10 @@ abstract class BaseRepEquipoPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					ReportePeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addRepEquipo($obj1);
 
-				// Add the $obj1 (RepEquipo) to $obj2 (Reporte)
-				$obj2->addRepEquipo($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -577,21 +398,12 @@ abstract class BaseRepEquipoPeer {
 	}
 
 
-	/**
-	 * Selects a collection of RepEquipo objects pre-filled with their Concepto objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of RepEquipo objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinConcepto(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -606,10 +418,7 @@ abstract class BaseRepEquipoPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = RepEquipoPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = RepEquipoPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = RepEquipoPeer::getOMClass();
 
@@ -617,8 +426,7 @@ abstract class BaseRepEquipoPeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				RepEquipoPeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = ConceptoPeer::getInstanceFromPool($key2);
@@ -630,13 +438,10 @@ abstract class BaseRepEquipoPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					ConceptoPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addRepEquipo($obj1);
 
-				// Add the $obj1 (RepEquipo) to $obj2 (Concepto)
-				$obj2->addRepEquipo($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -644,24 +449,12 @@ abstract class BaseRepEquipoPeer {
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining all related tables
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(RepEquipoPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(RepEquipoPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -671,10 +464,8 @@ abstract class BaseRepEquipoPeer {
 			RepEquipoPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -682,33 +473,36 @@ abstract class BaseRepEquipoPeer {
 
 		$criteria->addJoin(array(RepEquipoPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
 		$criteria->addJoin(array(RepEquipoPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
-	/**
-	 * Selects a collection of RepEquipo objects pre-filled with all related objects.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of RepEquipo objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doSelectJoinAll:doSelectJoinAll') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -729,20 +523,15 @@ abstract class BaseRepEquipoPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = RepEquipoPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = RepEquipoPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = RepEquipoPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				RepEquipoPeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-			// Add objects for joined Reporte rows
-
+			} 
+			
 			$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
 			if ($key2 !== null) {
 				$obj2 = ReportePeer::getInstanceFromPool($key2);
@@ -755,14 +544,10 @@ abstract class BaseRepEquipoPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					ReportePeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 loaded
-
-				// Add the $obj1 (RepEquipo) to the collection in $obj2 (Reporte)
-				$obj2->addRepEquipo($obj1);
-			} // if joined row not null
-
-			// Add objects for joined Concepto rows
-
+				} 
+								$obj2->addRepEquipo($obj1);
+			} 
+			
 			$key3 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 			if ($key3 !== null) {
 				$obj3 = ConceptoPeer::getInstanceFromPool($key3);
@@ -775,12 +560,9 @@ abstract class BaseRepEquipoPeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					ConceptoPeer::addInstanceToPool($obj3, $key3);
-				} // if obj3 loaded
-
-				// Add the $obj1 (RepEquipo) to the collection in $obj3 (Concepto)
-				$obj3->addRepEquipo($obj1);
-			} // if joined row not null
-
+				} 
+								$obj3->addRepEquipo($obj1);
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -788,19 +570,10 @@ abstract class BaseRepEquipoPeer {
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Reporte table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptReporte(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -810,41 +583,36 @@ abstract class BaseRepEquipoPeer {
 			RepEquipoPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
 				$criteria->addJoin(array(RepEquipoPeer::CA_IDCONCEPTO,), array(ConceptoPeer::CA_IDCONCEPTO,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Concepto table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptConcepto(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -854,46 +622,45 @@ abstract class BaseRepEquipoPeer {
 			RepEquipoPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
 				$criteria->addJoin(array(RepEquipoPeer::CA_IDREPORTE,), array(ReportePeer::CA_IDREPORTE,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Selects a collection of RepEquipo objects pre-filled with all related objects except Reporte.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of RepEquipo objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptReporte(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doSelectJoinAllExcept:doSelectJoinAllExcept') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -911,20 +678,15 @@ abstract class BaseRepEquipoPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = RepEquipoPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = RepEquipoPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = RepEquipoPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				RepEquipoPeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Concepto rows
-
+			} 
+				
 				$key2 = ConceptoPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = ConceptoPeer::getInstanceFromPool($key2);
@@ -937,13 +699,10 @@ abstract class BaseRepEquipoPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					ConceptoPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addRepEquipo($obj1);
 
-				// Add the $obj1 (RepEquipo) to the collection in $obj2 (Concepto)
-				$obj2->addRepEquipo($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -951,24 +710,12 @@ abstract class BaseRepEquipoPeer {
 	}
 
 
-	/**
-	 * Selects a collection of RepEquipo objects pre-filled with all related objects except Concepto.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of RepEquipo objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptConcepto(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -986,20 +733,15 @@ abstract class BaseRepEquipoPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = RepEquipoPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = RepEquipoPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = RepEquipoPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				RepEquipoPeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Reporte rows
-
+			} 
+				
 				$key2 = ReportePeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = ReportePeer::getInstanceFromPool($key2);
@@ -1012,13 +754,10 @@ abstract class BaseRepEquipoPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					ReportePeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addRepEquipo($obj1);
 
-				// Add the $obj1 (RepEquipo) to the collection in $obj2 (Reporte)
-				$obj2->addRepEquipo($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1030,61 +769,45 @@ abstract class BaseRepEquipoPeer {
   {
     return array();
   }
-	/**
-	 * Returns the TableMap related to this peer.
-	 * This method is not needed for general use but a specific application could have a need.
-	 * @return     TableMap
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function getTableMap()
 	{
 		return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
 	}
 
-	/**
-	 * The class that the Peer will make instances of.
-	 *
-	 * This uses a dot-path notation which is tranalted into a path
-	 * relative to a location on the PHP include_path.
-	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
-	 *
-	 * @return     string path.to.ClassName
-	 */
+	
 	public static function getOMClass()
 	{
 		return RepEquipoPeer::CLASS_DEFAULT;
 	}
 
-	/**
-	 * Method perform an INSERT on the database, given a RepEquipo or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or RepEquipo object containing data that is used to create the INSERT statement.
-	 * @param      PropelPDO $con the PropelPDO connection to use
-	 * @return     mixed The new primary key.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doInsert($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doInsert:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseRepEquipoPeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from RepEquipo object
-		}
+			$criteria = clone $values; 		} else {
+			$criteria = $values->buildCriteria(); 		}
 
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table (I guess, conceivably)
-			$con->beginTransaction();
+									$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
@@ -1092,20 +815,29 @@ abstract class BaseRepEquipoPeer {
 			throw $e;
 		}
 
-		return $pk;
+		
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doInsert:post') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $values, $con, $pk);
+    }
+
+    return $pk;
 	}
 
-	/**
-	 * Method perform an UPDATE on the database, given a RepEquipo or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or RepEquipo object containing data that is used to create the UPDATE statement.
-	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doUpdate($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doUpdate:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseRepEquipoPeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
@@ -1113,40 +845,36 @@ abstract class BaseRepEquipoPeer {
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-
+			$criteria = clone $values; 
 			$comparison = $criteria->getComparison(RepEquipoPeer::CA_IDREPORTE);
 			$selectCriteria->add(RepEquipoPeer::CA_IDREPORTE, $criteria->remove(RepEquipoPeer::CA_IDREPORTE), $comparison);
 
 			$comparison = $criteria->getComparison(RepEquipoPeer::CA_IDCONCEPTO);
 			$selectCriteria->add(RepEquipoPeer::CA_IDCONCEPTO, $criteria->remove(RepEquipoPeer::CA_IDCONCEPTO), $comparison);
 
-		} else { // $values is RepEquipo object
-			$criteria = $values->buildCriteria(); // gets full criteria
-			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
-		}
+		} else { 			$criteria = $values->buildCriteria(); 			$selectCriteria = $values->buildPkeyCriteria(); 		}
 
-		// set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	}
+		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	
 
-	/**
-	 * Method to DELETE all rows from the tb_repequipos table.
-	 *
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 */
+    foreach (sfMixer::getCallables('BaseRepEquipoPeer:doUpdate:post') as $callable)
+    {
+      call_user_func($callable, 'BaseRepEquipoPeer', $values, $con, $ret);
+    }
+
+    return $ret;
+  }
+
+	
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(RepEquipoPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-		$affectedRows = 0; // initialize var to track total num of affected rows
-		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+		$affectedRows = 0; 		try {
+									$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(RepEquipoPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
@@ -1156,17 +884,7 @@ abstract class BaseRepEquipoPeer {
 		}
 	}
 
-	/**
-	 * Method perform a DELETE on the database, given a RepEquipo or Criteria object OR a primary key value.
-	 *
-	 * @param      mixed $values Criteria or RepEquipo object or primary key or array of primary keys
-	 *              which is used to create the DELETE statement
-	 * @param      PropelPDO $con the connection to use
-	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-	 *				if supported by native driver or if emulated using Propel.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
@@ -1174,30 +892,19 @@ abstract class BaseRepEquipoPeer {
 		}
 
 		if ($values instanceof Criteria) {
-			// invalidate the cache for all objects of this type, since we have no
-			// way of knowing (without running a query) what objects should be invalidated
-			// from the cache based on this Criteria.
-			RepEquipoPeer::clearInstancePool();
+												RepEquipoPeer::clearInstancePool();
 
-			// rename for clarity
-			$criteria = clone $values;
+						$criteria = clone $values;
 		} elseif ($values instanceof RepEquipo) {
-			// invalidate the cache for this single object
-			RepEquipoPeer::removeInstanceFromPool($values);
-			// create criteria based on pk values
-			$criteria = $values->buildPkeyCriteria();
+						RepEquipoPeer::removeInstanceFromPool($values);
+						$criteria = $values->buildPkeyCriteria();
 		} else {
-			// it must be the primary key
-
+			
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			// primary key is composite; we therefore, expect
-			// the primary key passed to be an array of pkey
-			// values
-			if (count($values) == count($values, COUNT_RECURSIVE)) {
-				// array is not multi-dimensional
-				$values = array($values);
+												if (count($values) == count($values, COUNT_RECURSIVE)) {
+								$values = array($values);
 			}
 
 			foreach ($values as $value) {
@@ -1206,20 +913,15 @@ abstract class BaseRepEquipoPeer {
 				$criterion->addAnd($criteria->getNewCriterion(RepEquipoPeer::CA_IDCONCEPTO, $value[1]));
 				$criteria->addOr($criterion);
 
-				// we can invalidate the cache for this single PK
-				RepEquipoPeer::removeInstanceFromPool($value);
+								RepEquipoPeer::removeInstanceFromPool($value);
 			}
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		$affectedRows = 0; // initialize var to track total num of affected rows
-
+		$affectedRows = 0; 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+									$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
 
@@ -1231,18 +933,7 @@ abstract class BaseRepEquipoPeer {
 		}
 	}
 
-	/**
-	 * Validates all modified columns of given RepEquipo object.
-	 * If parameter $columns is either a single column name or an array of column names
-	 * than only those columns are validated.
-	 *
-	 * NOTICE: This does not apply to primary or foreign keys for now.
-	 *
-	 * @param      RepEquipo $obj The object to validate.
-	 * @param      mixed $cols Column name or array of column names.
-	 *
-	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
-	 */
+	
 	public static function doValidate(RepEquipo $obj, $cols = null)
 	{
 		$columns = array();
@@ -1276,14 +967,7 @@ abstract class BaseRepEquipoPeer {
     return $res;
 	}
 
-	/**
-	 * Retrieve object using using composite pkey values.
-	 * @param      int $ca_idreporte
-	   @param      int $ca_idconcepto
-	   
-	 * @param      PropelPDO $con
-	 * @return     RepEquipo
-	 */
+	
 	public static function retrieveByPK($ca_idreporte, $ca_idconcepto, PropelPDO $con = null) {
 		$key = serialize(array((string) $ca_idreporte, (string) $ca_idconcepto));
  		if (null !== ($obj = RepEquipoPeer::getInstanceFromPool($key))) {
@@ -1300,16 +984,7 @@ abstract class BaseRepEquipoPeer {
 
 		return !empty($v) ? $v[0] : null;
 	}
-} // BaseRepEquipoPeer
-
-// This is the static code needed to register the MapBuilder for this table with the main Propel class.
-//
-// NOTE: This static code cannot call methods on the RepEquipoPeer class, because it is not defined yet.
-// If you need to use overridden methods, you can add this code to the bottom of the RepEquipoPeer class:
-//
-// Propel::getDatabaseMap(RepEquipoPeer::DATABASE_NAME)->addTableBuilder(RepEquipoPeer::TABLE_NAME, RepEquipoPeer::getMapBuilder());
-//
-// Doing so will effectively overwrite the registration below.
+} 
 
 Propel::getDatabaseMap(BaseRepEquipoPeer::DATABASE_NAME)->addTableBuilder(BaseRepEquipoPeer::TABLE_NAME, BaseRepEquipoPeer::getMapBuilder());
 

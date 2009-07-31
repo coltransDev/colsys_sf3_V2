@@ -1,214 +1,114 @@
 <?php
 
-/**
- * Base class that represents a row from the 'tb_ciudades' table.
- *
- * 
- *
- * @package    lib.model.public.om
- */
+
 abstract class BaseCiudad extends BaseObject  implements Persistent {
 
 
   const PEER = 'CiudadPeer';
 
-	/**
-	 * The Peer class.
-	 * Instance provides a convenient way of calling static methods on a class
-	 * that calling code may not be able to identify.
-	 * @var        CiudadPeer
-	 */
+	
 	protected static $peer;
 
-	/**
-	 * The value for the ca_idciudad field.
-	 * @var        string
-	 */
+	
 	protected $ca_idciudad;
 
-	/**
-	 * The value for the ca_ciudad field.
-	 * @var        string
-	 */
+	
 	protected $ca_ciudad;
 
-	/**
-	 * The value for the ca_idtrafico field.
-	 * @var        string
-	 */
+	
 	protected $ca_idtrafico;
 
-	/**
-	 * The value for the ca_puerto field.
-	 * @var        string
-	 */
+	
 	protected $ca_puerto;
 
-	/**
-	 * @var        Trafico
-	 */
+	
 	protected $aTrafico;
 
-	/**
-	 * @var        array PricRecargosxCiudad[] Collection to store aggregation of PricRecargosxCiudad objects.
-	 */
+	
 	protected $collPricRecargosxCiudads;
 
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collPricRecargosxCiudads.
-	 */
+	
 	private $lastPricRecargosxCiudadCriteria = null;
 
-	/**
-	 * @var        array PricRecargosxCiudadLog[] Collection to store aggregation of PricRecargosxCiudadLog objects.
-	 */
+	
 	protected $collPricRecargosxCiudadLogs;
 
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collPricRecargosxCiudadLogs.
-	 */
+	
 	private $lastPricRecargosxCiudadLogCriteria = null;
 
-	/**
-	 * @var        array PricPatio[] Collection to store aggregation of PricPatio objects.
-	 */
+	
 	protected $collPricPatios;
 
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collPricPatios.
-	 */
+	
 	private $lastPricPatioCriteria = null;
 
-	/**
-	 * @var        array Cliente[] Collection to store aggregation of Cliente objects.
-	 */
+	
 	protected $collClientes;
 
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collClientes.
-	 */
+	
 	private $lastClienteCriteria = null;
 
-	/**
-	 * @var        array Agente[] Collection to store aggregation of Agente objects.
-	 */
+	
 	protected $collAgentes;
 
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collAgentes.
-	 */
+	
 	private $lastAgenteCriteria = null;
 
-	/**
-	 * @var        array ContactoAgente[] Collection to store aggregation of ContactoAgente objects.
-	 */
+	
 	protected $collContactoAgentes;
 
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collContactoAgentes.
-	 */
+	
 	private $lastContactoAgenteCriteria = null;
 
-	/**
-	 * @var        array IdsSucursal[] Collection to store aggregation of IdsSucursal objects.
-	 */
+	
 	protected $collIdsSucursals;
 
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collIdsSucursals.
-	 */
+	
 	private $lastIdsSucursalCriteria = null;
 
-	/**
-	 * @var        array IdsContacto[] Collection to store aggregation of IdsContacto objects.
-	 */
-	protected $collIdsContactos;
-
-	/**
-	 * @var        Criteria The criteria used to select the current contents of collIdsContactos.
-	 */
-	private $lastIdsContactoCriteria = null;
-
-	/**
-	 * Flag to prevent endless save loop, if this object is referenced
-	 * by another object which falls in this transaction.
-	 * @var        boolean
-	 */
+	
 	protected $alreadyInSave = false;
 
-	/**
-	 * Flag to prevent endless validation loop, if this object is referenced
-	 * by another object which falls in this transaction.
-	 * @var        boolean
-	 */
+	
 	protected $alreadyInValidation = false;
 
-	/**
-	 * Initializes internal state of BaseCiudad object.
-	 * @see        applyDefaults()
-	 */
+	
 	public function __construct()
 	{
 		parent::__construct();
 		$this->applyDefaultValues();
 	}
 
-	/**
-	 * Applies default values to this object.
-	 * This method should be called from the object's constructor (or
-	 * equivalent initialization method).
-	 * @see        __construct()
-	 */
+	
 	public function applyDefaultValues()
 	{
 	}
 
-	/**
-	 * Get the [ca_idciudad] column value.
-	 * 
-	 * @return     string
-	 */
+	
 	public function getCaIdciudad()
 	{
 		return $this->ca_idciudad;
 	}
 
-	/**
-	 * Get the [ca_ciudad] column value.
-	 * 
-	 * @return     string
-	 */
+	
 	public function getCaCiudad()
 	{
 		return $this->ca_ciudad;
 	}
 
-	/**
-	 * Get the [ca_idtrafico] column value.
-	 * 
-	 * @return     string
-	 */
+	
 	public function getCaIdtrafico()
 	{
 		return $this->ca_idtrafico;
 	}
 
-	/**
-	 * Get the [ca_puerto] column value.
-	 * 
-	 * @return     string
-	 */
+	
 	public function getCaPuerto()
 	{
 		return $this->ca_puerto;
 	}
 
-	/**
-	 * Set the value of [ca_idciudad] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Ciudad The current object (for fluent API support)
-	 */
+	
 	public function setCaIdciudad($v)
 	{
 		if ($v !== null) {
@@ -221,14 +121,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		}
 
 		return $this;
-	} // setCaIdciudad()
-
-	/**
-	 * Set the value of [ca_ciudad] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Ciudad The current object (for fluent API support)
-	 */
+	} 
+	
 	public function setCaCiudad($v)
 	{
 		if ($v !== null) {
@@ -241,14 +135,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		}
 
 		return $this;
-	} // setCaCiudad()
-
-	/**
-	 * Set the value of [ca_idtrafico] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Ciudad The current object (for fluent API support)
-	 */
+	} 
+	
 	public function setCaIdtrafico($v)
 	{
 		if ($v !== null) {
@@ -265,14 +153,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		}
 
 		return $this;
-	} // setCaIdtrafico()
-
-	/**
-	 * Set the value of [ca_puerto] column.
-	 * 
-	 * @param      string $v new value
-	 * @return     Ciudad The current object (for fluent API support)
-	 */
+	} 
+	
 	public function setCaPuerto($v)
 	{
 		if ($v !== null) {
@@ -285,41 +167,17 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		}
 
 		return $this;
-	} // setCaPuerto()
-
-	/**
-	 * Indicates whether the columns in this object are only set to default values.
-	 *
-	 * This method can be used in conjunction with isModified() to indicate whether an object is both
-	 * modified _and_ has some values set which are non-default.
-	 *
-	 * @return     boolean Whether the columns in this object are only been set with default values.
-	 */
+	} 
+	
 	public function hasOnlyDefaultValues()
 	{
-			// First, ensure that we don't have any columns that have been modified which aren't default columns.
-			if (array_diff($this->modifiedColumns, array())) {
+						if (array_diff($this->modifiedColumns, array())) {
 				return false;
 			}
 
-		// otherwise, everything was equal, so return TRUE
-		return true;
-	} // hasOnlyDefaultValues()
-
-	/**
-	 * Hydrates (populates) the object variables with values from the database resultset.
-	 *
-	 * An offset (0-based "start column") is specified so that objects can be hydrated
-	 * with a subset of the columns in the resultset rows.  This is needed, for example,
-	 * for results of JOIN queries where the resultset row includes columns from two or
-	 * more tables.
-	 *
-	 * @param      array $row The row returned by PDOStatement->fetch(PDO::FETCH_NUM)
-	 * @param      int $startcol 0-based offset column which indicates which restultset column to start with.
-	 * @param      boolean $rehydrate Whether this object is being re-hydrated from the database.
-	 * @return     int next starting column
-	 * @throws     PropelException  - Any caught Exception will be rewrapped as a PropelException.
-	 */
+				return true;
+	} 
+	
 	public function hydrate($row, $startcol = 0, $rehydrate = false)
 	{
 		try {
@@ -336,45 +194,21 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->ensureConsistency();
 			}
 
-			// FIXME - using NUM_COLUMNS may be clearer.
-			return $startcol + 4; // 4 = CiudadPeer::NUM_COLUMNS - CiudadPeer::NUM_LAZY_LOAD_COLUMNS).
-
+						return $startcol + 4; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Ciudad object", $e);
 		}
 	}
 
-	/**
-	 * Checks and repairs the internal consistency of the object.
-	 *
-	 * This method is executed after an already-instantiated object is re-hydrated
-	 * from the database.  It exists to check any foreign keys to make sure that
-	 * the objects related to the current object are correct based on foreign key.
-	 *
-	 * You can override this method in the stub class, but you should always invoke
-	 * the base method from the overridden method (i.e. parent::ensureConsistency()),
-	 * in case your model changes.
-	 *
-	 * @throws     PropelException
-	 */
+	
 	public function ensureConsistency()
 	{
 
 		if ($this->aTrafico !== null && $this->ca_idtrafico !== $this->aTrafico->getCaIdtrafico()) {
 			$this->aTrafico = null;
 		}
-	} // ensureConsistency
-
-	/**
-	 * Reloads this object from datastore based on primary key and (optionally) resets all associated objects.
-	 *
-	 * This will only work if the object has been saved and has a valid primary key set.
-	 *
-	 * @param      boolean $deep (optional) Whether to also de-associated any related objects.
-	 * @param      PropelPDO $con (optional) The PropelPDO connection to use.
-	 * @return     void
-	 * @throws     PropelException - if this object is deleted, unsaved or doesn't have pk match in db
-	 */
+	} 
+	
 	public function reload($deep = false, PropelPDO $con = null)
 	{
 		if ($this->isDeleted()) {
@@ -389,19 +223,15 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			$con = Propel::getConnection(CiudadPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		// We don't need to alter the object instance pool; we're just modifying this instance
-		// already in the pool.
-
+				
 		$stmt = CiudadPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 		$stmt->closeCursor();
 		if (!$row) {
 			throw new PropelException('Cannot find matching row in the database to reload object values.');
 		}
-		$this->hydrate($row, 0, true); // rehydrate
-
-		if ($deep) {  // also de-associate any related objects?
-
+		$this->hydrate($row, 0, true); 
+		if ($deep) {  
 			$this->aTrafico = null;
 			$this->collPricRecargosxCiudads = null;
 			$this->lastPricRecargosxCiudadCriteria = null;
@@ -424,23 +254,22 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			$this->collIdsSucursals = null;
 			$this->lastIdsSucursalCriteria = null;
 
-			$this->collIdsContactos = null;
-			$this->lastIdsContactoCriteria = null;
+		} 	}
 
-		} // if (deep)
-	}
-
-	/**
-	 * Removes this object from datastore and sets delete attribute.
-	 *
-	 * @param      PropelPDO $con
-	 * @return     void
-	 * @throws     PropelException
-	 * @see        BaseObject::setDeleted()
-	 * @see        BaseObject::isDeleted()
-	 */
+	
 	public function delete(PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseCiudad:delete:pre') as $callable)
+    {
+      $ret = call_user_func($callable, $this, $con);
+      if ($ret)
+      {
+        return;
+      }
+    }
+
+
 		if ($this->isDeleted()) {
 			throw new PropelException("This object has already been deleted.");
 		}
@@ -458,23 +287,28 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			$con->rollBack();
 			throw $e;
 		}
-	}
+	
 
-	/**
-	 * Persists this object to the database.
-	 *
-	 * If the object is new, it inserts it; otherwise an update is performed.
-	 * All modified related objects will also be persisted in the doSave()
-	 * method.  This method wraps all precipitate database operations in a
-	 * single transaction.
-	 *
-	 * @param      PropelPDO $con
-	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
-	 * @throws     PropelException
-	 * @see        doSave()
-	 */
+    foreach (sfMixer::getCallables('BaseCiudad:delete:post') as $callable)
+    {
+      call_user_func($callable, $this, $con);
+    }
+
+  }
+	
 	public function save(PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseCiudad:save:pre') as $callable)
+    {
+      $affectedRows = call_user_func($callable, $this, $con);
+      if (is_int($affectedRows))
+      {
+        return $affectedRows;
+      }
+    }
+
+
 		if ($this->isDeleted()) {
 			throw new PropelException("You cannot save an object that has been deleted.");
 		}
@@ -487,6 +321,11 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		try {
 			$affectedRows = $this->doSave($con);
 			$con->commit();
+    foreach (sfMixer::getCallables('BaseCiudad:save:post') as $callable)
+    {
+      call_user_func($callable, $this, $con, $affectedRows);
+    }
+
 			CiudadPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -495,28 +334,13 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		}
 	}
 
-	/**
-	 * Performs the work of inserting or updating the row in the database.
-	 *
-	 * If the object is new, it inserts it; otherwise an update is performed.
-	 * All related objects are also updated in this method.
-	 *
-	 * @param      PropelPDO $con
-	 * @return     int The number of rows affected by this insert/update and any referring fk objects' save() operations.
-	 * @throws     PropelException
-	 * @see        save()
-	 */
+	
 	protected function doSave(PropelPDO $con)
 	{
-		$affectedRows = 0; // initialize var to track total num of affected rows
-		if (!$this->alreadyInSave) {
+		$affectedRows = 0; 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
-			// We call the save method on the following object(s) if they
-			// were passed to this object by their coresponding set
-			// method.  This object relates to these object(s) by a
-			// foreign key reference.
-
+												
 			if ($this->aTrafico !== null) {
 				if ($this->aTrafico->isModified() || $this->aTrafico->isNew()) {
 					$affectedRows += $this->aTrafico->save($con);
@@ -525,21 +349,16 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			}
 
 
-			// If this object has been modified, then save it to the database.
-			if ($this->isModified()) {
+						if ($this->isModified()) {
 				if ($this->isNew()) {
 					$pk = CiudadPeer::doInsert($this, $con);
-					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
-										 // should always be true here (even though technically
-										 // BasePeer::doInsert() can insert multiple rows).
-
+					$affectedRows += 1; 										 										 
 					$this->setNew(false);
 				} else {
 					$affectedRows += CiudadPeer::doUpdate($this, $con);
 				}
 
-				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
-			}
+				$this->resetModified(); 			}
 
 			if ($this->collPricRecargosxCiudads !== null) {
 				foreach ($this->collPricRecargosxCiudads as $referrerFK) {
@@ -597,49 +416,21 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				}
 			}
 
-			if ($this->collIdsContactos !== null) {
-				foreach ($this->collIdsContactos as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
-			}
-
 			$this->alreadyInSave = false;
 
 		}
 		return $affectedRows;
-	} // doSave()
-
-	/**
-	 * Array of ValidationFailed objects.
-	 * @var        array ValidationFailed[]
-	 */
+	} 
+	
 	protected $validationFailures = array();
 
-	/**
-	 * Gets any ValidationFailed objects that resulted from last call to validate().
-	 *
-	 *
-	 * @return     array ValidationFailed[]
-	 * @see        validate()
-	 */
+	
 	public function getValidationFailures()
 	{
 		return $this->validationFailures;
 	}
 
-	/**
-	 * Validates the objects modified field values and all objects related to this table.
-	 *
-	 * If $columns is either a column name or an array of column names
-	 * only those columns are validated.
-	 *
-	 * @param      mixed $columns Column name or an array of column names.
-	 * @return     boolean Whether all columns pass validation.
-	 * @see        doValidate()
-	 * @see        getValidationFailures()
-	 */
+	
 	public function validate($columns = null)
 	{
 		$res = $this->doValidate($columns);
@@ -652,16 +443,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		}
 	}
 
-	/**
-	 * This function performs the validation work for complex object models.
-	 *
-	 * In addition to checking the current object, all related objects will
-	 * also be validated.  If all pass then <code>true</code> is returned; otherwise
-	 * an aggreagated array of ValidationFailed objects will be returned.
-	 *
-	 * @param      array $columns Array of column names to validate.
-	 * @return     mixed <code>true</code> if all validations pass; array of <code>ValidationFailed</code> objets otherwise.
-	 */
+	
 	protected function doValidate($columns = null)
 	{
 		if (!$this->alreadyInValidation) {
@@ -671,11 +453,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			$failureMap = array();
 
 
-			// We call the validate method on the following object(s) if they
-			// were passed to this object by their coresponding set
-			// method.  This object relates to these object(s) by a
-			// foreign key reference.
-
+												
 			if ($this->aTrafico !== null) {
 				if (!$this->aTrafico->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aTrafico->getValidationFailures());
@@ -744,14 +522,6 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 					}
 				}
 
-				if ($this->collIdsContactos !== null) {
-					foreach ($this->collIdsContactos as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
-
 
 			$this->alreadyInValidation = false;
 		}
@@ -759,15 +529,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return (!empty($failureMap) ? $failureMap : true);
 	}
 
-	/**
-	 * Retrieves a field from the object by name passed in as a string.
-	 *
-	 * @param      string $name name
-	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @return     mixed Value of field.
-	 */
+	
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = CiudadPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
@@ -775,13 +537,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $field;
 	}
 
-	/**
-	 * Retrieves a field from the object by Position as specified in the xml schema.
-	 * Zero-based.
-	 *
-	 * @param      int $pos position in xml schema
-	 * @return     mixed Value of field at $pos
-	 */
+	
 	public function getByPosition($pos)
 	{
 		switch($pos) {
@@ -800,20 +556,9 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			default:
 				return null;
 				break;
-		} // switch()
-	}
+		} 	}
 
-	/**
-	 * Exports the object as an array.
-	 *
-	 * You can specify the key type of the array by passing one of the class
-	 * type constants.
-	 *
-	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
-	 * @return     an associative array containing the field names (as keys) and field values
-	 */
+	
 	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
 		$keys = CiudadPeer::getFieldNames($keyType);
@@ -826,30 +571,14 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $result;
 	}
 
-	/**
-	 * Sets a field from the object by name passed in as a string.
-	 *
-	 * @param      string $name peer name
-	 * @param      mixed $value field value
-	 * @param      string $type The type of fieldname the $name is of:
-	 *                     one of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                     BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @return     void
-	 */
+	
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
 		$pos = CiudadPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		return $this->setByPosition($pos, $value);
 	}
 
-	/**
-	 * Sets a field from the object by Position as specified in the xml schema.
-	 * Zero-based.
-	 *
-	 * @param      int $pos position in xml schema
-	 * @param      mixed $value field value
-	 * @return     void
-	 */
+	
 	public function setByPosition($pos, $value)
 	{
 		switch($pos) {
@@ -865,26 +594,9 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 			case 3:
 				$this->setCaPuerto($value);
 				break;
-		} // switch()
-	}
+		} 	}
 
-	/**
-	 * Populates the object using an array.
-	 *
-	 * This is particularly useful when populating an object from one of the
-	 * request arrays (e.g. $_POST).  This method goes through the column
-	 * names, checking to see whether a matching key exists in populated
-	 * array. If so the setByName() method is called for that column.
-	 *
-	 * You can specify the key type of the array by additionally passing one
-	 * of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-	 * BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-	 * The default key type is the column's phpname (e.g. 'AuthorId')
-	 *
-	 * @param      array  $arr     An array to populate the object from.
-	 * @param      string $keyType The type of keys the array uses.
-	 * @return     void
-	 */
+	
 	public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
 	{
 		$keys = CiudadPeer::getFieldNames($keyType);
@@ -895,11 +607,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[3], $arr)) $this->setCaPuerto($arr[$keys[3]]);
 	}
 
-	/**
-	 * Build a Criteria object containing the values of all modified columns in this object.
-	 *
-	 * @return     Criteria The Criteria object containing all modified values.
-	 */
+	
 	public function buildCriteria()
 	{
 		$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
@@ -912,14 +620,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $criteria;
 	}
 
-	/**
-	 * Builds a Criteria object containing the primary key for this object.
-	 *
-	 * Unlike buildCriteria() this method includes the primary key values regardless
-	 * of whether or not they have been modified.
-	 *
-	 * @return     Criteria The Criteria object containing value(s) for primary key(s).
-	 */
+	
 	public function buildPkeyCriteria()
 	{
 		$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
@@ -929,36 +630,19 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $criteria;
 	}
 
-	/**
-	 * Returns the primary key for this object (row).
-	 * @return     string
-	 */
+	
 	public function getPrimaryKey()
 	{
 		return $this->getCaIdciudad();
 	}
 
-	/**
-	 * Generic method to set the primary key (ca_idciudad column).
-	 *
-	 * @param      string $key Primary key.
-	 * @return     void
-	 */
+	
 	public function setPrimaryKey($key)
 	{
 		$this->setCaIdciudad($key);
 	}
 
-	/**
-	 * Sets contents of passed object to values from current object.
-	 *
-	 * If desired, this method can also make copies of all associated (fkey referrers)
-	 * objects.
-	 *
-	 * @param      object $copyObj An object of Ciudad (or compatible) type.
-	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @throws     PropelException
-	 */
+	
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
@@ -972,95 +656,59 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 
 
 		if ($deepCopy) {
-			// important: temporarily setNew(false) because this affects the behavior of
-			// the getter/setter methods for fkey referrer objects.
-			$copyObj->setNew(false);
+									$copyObj->setNew(false);
 
 			foreach ($this->getPricRecargosxCiudads() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addPricRecargosxCiudad($relObj->copy($deepCopy));
+				if ($relObj !== $this) {  					$copyObj->addPricRecargosxCiudad($relObj->copy($deepCopy));
 				}
 			}
 
 			foreach ($this->getPricRecargosxCiudadLogs() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addPricRecargosxCiudadLog($relObj->copy($deepCopy));
+				if ($relObj !== $this) {  					$copyObj->addPricRecargosxCiudadLog($relObj->copy($deepCopy));
 				}
 			}
 
 			foreach ($this->getPricPatios() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addPricPatio($relObj->copy($deepCopy));
+				if ($relObj !== $this) {  					$copyObj->addPricPatio($relObj->copy($deepCopy));
 				}
 			}
 
 			foreach ($this->getClientes() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addCliente($relObj->copy($deepCopy));
+				if ($relObj !== $this) {  					$copyObj->addCliente($relObj->copy($deepCopy));
 				}
 			}
 
 			foreach ($this->getAgentes() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addAgente($relObj->copy($deepCopy));
+				if ($relObj !== $this) {  					$copyObj->addAgente($relObj->copy($deepCopy));
 				}
 			}
 
 			foreach ($this->getContactoAgentes() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addContactoAgente($relObj->copy($deepCopy));
+				if ($relObj !== $this) {  					$copyObj->addContactoAgente($relObj->copy($deepCopy));
 				}
 			}
 
 			foreach ($this->getIdsSucursals() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addIdsSucursal($relObj->copy($deepCopy));
+				if ($relObj !== $this) {  					$copyObj->addIdsSucursal($relObj->copy($deepCopy));
 				}
 			}
 
-			foreach ($this->getIdsContactos() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addIdsContacto($relObj->copy($deepCopy));
-				}
-			}
-
-		} // if ($deepCopy)
-
+		} 
 
 		$copyObj->setNew(true);
 
 	}
 
-	/**
-	 * Makes a copy of this object that will be inserted as a new row in table when saved.
-	 * It creates a new object filling in the simple attributes, but skipping any primary
-	 * keys that are defined for the table.
-	 *
-	 * If desired, this method can also make copies of all associated (fkey referrers)
-	 * objects.
-	 *
-	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @return     Ciudad Clone of current object.
-	 * @throws     PropelException
-	 */
+	
 	public function copy($deepCopy = false)
 	{
-		// we use get_class(), because this might be a subclass
-		$clazz = get_class($this);
+				$clazz = get_class($this);
 		$copyObj = new $clazz();
 		$this->copyInto($copyObj, $deepCopy);
 		return $copyObj;
 	}
 
-	/**
-	 * Returns a peer instance associated with this om.
-	 *
-	 * Since Peer classes are not to have any instance attributes, this method returns the
-	 * same instance for all member of this class. The method could therefore
-	 * be static, but this would prevent one from overriding the behavior.
-	 *
-	 * @return     CiudadPeer
-	 */
+	
 	public function getPeer()
 	{
 		if (self::$peer === null) {
@@ -1069,13 +717,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return self::$peer;
 	}
 
-	/**
-	 * Declares an association between this object and a Trafico object.
-	 *
-	 * @param      Trafico $v
-	 * @return     Ciudad The current object (for fluent API support)
-	 * @throws     PropelException
-	 */
+	
 	public function setTrafico(Trafico $v = null)
 	{
 		if ($v === null) {
@@ -1086,9 +728,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 
 		$this->aTrafico = $v;
 
-		// Add binding for other direction of this n:n relationship.
-		// If this object has already been added to the Trafico object, it will not be re-added.
-		if ($v !== null) {
+						if ($v !== null) {
 			$v->addCiudad($this);
 		}
 
@@ -1096,71 +736,30 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 	}
 
 
-	/**
-	 * Get the associated Trafico object
-	 *
-	 * @param      PropelPDO Optional Connection object.
-	 * @return     Trafico The associated Trafico object.
-	 * @throws     PropelException
-	 */
+	
 	public function getTrafico(PropelPDO $con = null)
 	{
 		if ($this->aTrafico === null && (($this->ca_idtrafico !== "" && $this->ca_idtrafico !== null))) {
 			$c = new Criteria(TraficoPeer::DATABASE_NAME);
 			$c->add(TraficoPeer::CA_IDTRAFICO, $this->ca_idtrafico);
 			$this->aTrafico = TraficoPeer::doSelectOne($c, $con);
-			/* The following can be used additionally to
-			   guarantee the related object contains a reference
-			   to this object.  This level of coupling may, however, be
-			   undesirable since it could result in an only partially populated collection
-			   in the referenced object.
-			   $this->aTrafico->addCiudads($this);
-			 */
+			
 		}
 		return $this->aTrafico;
 	}
 
-	/**
-	 * Clears out the collPricRecargosxCiudads collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addPricRecargosxCiudads()
-	 */
+	
 	public function clearPricRecargosxCiudads()
 	{
-		$this->collPricRecargosxCiudads = null; // important to set this to NULL since that means it is uninitialized
-	}
+		$this->collPricRecargosxCiudads = null; 	}
 
-	/**
-	 * Initializes the collPricRecargosxCiudads collection (array).
-	 *
-	 * By default this just sets the collPricRecargosxCiudads collection to an empty array (like clearcollPricRecargosxCiudads());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
+	
 	public function initPricRecargosxCiudads()
 	{
 		$this->collPricRecargosxCiudads = array();
 	}
 
-	/**
-	 * Gets an array of PricRecargosxCiudad objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Ciudad has previously been saved, it will retrieve
-	 * related PricRecargosxCiudads from storage. If this Ciudad is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array PricRecargosxCiudad[]
-	 * @throws     PropelException
-	 */
+	
 	public function getPricRecargosxCiudads($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1182,12 +781,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelect($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(PricRecargosxCiudadPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1201,15 +796,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collPricRecargosxCiudads;
 	}
 
-	/**
-	 * Returns the number of related PricRecargosxCiudad objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related PricRecargosxCiudad objects.
-	 * @throws     PropelException
-	 */
+	
 	public function countPricRecargosxCiudads(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1234,12 +821,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = PricRecargosxCiudadPeer::doCount($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(PricRecargosxCiudadPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1255,37 +838,19 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $count;
 	}
 
-	/**
-	 * Method called to associate a PricRecargosxCiudad object to this object
-	 * through the PricRecargosxCiudad foreign key attribute.
-	 *
-	 * @param      PricRecargosxCiudad $l PricRecargosxCiudad
-	 * @return     void
-	 * @throws     PropelException
-	 */
+	
 	public function addPricRecargosxCiudad(PricRecargosxCiudad $l)
 	{
 		if ($this->collPricRecargosxCiudads === null) {
 			$this->initPricRecargosxCiudads();
 		}
-		if (!in_array($l, $this->collPricRecargosxCiudads, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collPricRecargosxCiudads, $l);
+		if (!in_array($l, $this->collPricRecargosxCiudads, true)) { 			array_push($this->collPricRecargosxCiudads, $l);
 			$l->setCiudad($this);
 		}
 	}
 
 
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Ciudad is new, it will return
-	 * an empty collection; or if this Ciudad has previously
-	 * been saved, it will retrieve related PricRecargosxCiudads from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Ciudad.
-	 */
+	
 	public function getPricRecargosxCiudadsJoinTipoRecargo($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
@@ -1306,10 +871,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collPricRecargosxCiudads = PricRecargosxCiudadPeer::doSelectJoinTipoRecargo($criteria, $con, $join_behavior);
 			}
 		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
+									
 			$criteria->add(PricRecargosxCiudadPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
 			if (!isset($this->lastPricRecargosxCiudadCriteria) || !$this->lastPricRecargosxCiudadCriteria->equals($criteria)) {
@@ -1321,47 +883,18 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collPricRecargosxCiudads;
 	}
 
-	/**
-	 * Clears out the collPricRecargosxCiudadLogs collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addPricRecargosxCiudadLogs()
-	 */
+	
 	public function clearPricRecargosxCiudadLogs()
 	{
-		$this->collPricRecargosxCiudadLogs = null; // important to set this to NULL since that means it is uninitialized
-	}
+		$this->collPricRecargosxCiudadLogs = null; 	}
 
-	/**
-	 * Initializes the collPricRecargosxCiudadLogs collection (array).
-	 *
-	 * By default this just sets the collPricRecargosxCiudadLogs collection to an empty array (like clearcollPricRecargosxCiudadLogs());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
+	
 	public function initPricRecargosxCiudadLogs()
 	{
 		$this->collPricRecargosxCiudadLogs = array();
 	}
 
-	/**
-	 * Gets an array of PricRecargosxCiudadLog objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Ciudad has previously been saved, it will retrieve
-	 * related PricRecargosxCiudadLogs from storage. If this Ciudad is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array PricRecargosxCiudadLog[]
-	 * @throws     PropelException
-	 */
+	
 	public function getPricRecargosxCiudadLogs($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1383,12 +916,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collPricRecargosxCiudadLogs = PricRecargosxCiudadLogPeer::doSelect($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1402,15 +931,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collPricRecargosxCiudadLogs;
 	}
 
-	/**
-	 * Returns the number of related PricRecargosxCiudadLog objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related PricRecargosxCiudadLog objects.
-	 * @throws     PropelException
-	 */
+	
 	public function countPricRecargosxCiudadLogs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1435,12 +956,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = PricRecargosxCiudadLogPeer::doCount($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1456,37 +973,19 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $count;
 	}
 
-	/**
-	 * Method called to associate a PricRecargosxCiudadLog object to this object
-	 * through the PricRecargosxCiudadLog foreign key attribute.
-	 *
-	 * @param      PricRecargosxCiudadLog $l PricRecargosxCiudadLog
-	 * @return     void
-	 * @throws     PropelException
-	 */
+	
 	public function addPricRecargosxCiudadLog(PricRecargosxCiudadLog $l)
 	{
 		if ($this->collPricRecargosxCiudadLogs === null) {
 			$this->initPricRecargosxCiudadLogs();
 		}
-		if (!in_array($l, $this->collPricRecargosxCiudadLogs, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collPricRecargosxCiudadLogs, $l);
+		if (!in_array($l, $this->collPricRecargosxCiudadLogs, true)) { 			array_push($this->collPricRecargosxCiudadLogs, $l);
 			$l->setCiudad($this);
 		}
 	}
 
 
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Ciudad is new, it will return
-	 * an empty collection; or if this Ciudad has previously
-	 * been saved, it will retrieve related PricRecargosxCiudadLogs from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Ciudad.
-	 */
+	
 	public function getPricRecargosxCiudadLogsJoinTipoRecargo($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
@@ -1507,10 +1006,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collPricRecargosxCiudadLogs = PricRecargosxCiudadLogPeer::doSelectJoinTipoRecargo($criteria, $con, $join_behavior);
 			}
 		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
+									
 			$criteria->add(PricRecargosxCiudadLogPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
 			if (!isset($this->lastPricRecargosxCiudadLogCriteria) || !$this->lastPricRecargosxCiudadLogCriteria->equals($criteria)) {
@@ -1522,47 +1018,18 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collPricRecargosxCiudadLogs;
 	}
 
-	/**
-	 * Clears out the collPricPatios collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addPricPatios()
-	 */
+	
 	public function clearPricPatios()
 	{
-		$this->collPricPatios = null; // important to set this to NULL since that means it is uninitialized
-	}
+		$this->collPricPatios = null; 	}
 
-	/**
-	 * Initializes the collPricPatios collection (array).
-	 *
-	 * By default this just sets the collPricPatios collection to an empty array (like clearcollPricPatios());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
+	
 	public function initPricPatios()
 	{
 		$this->collPricPatios = array();
 	}
 
-	/**
-	 * Gets an array of PricPatio objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Ciudad has previously been saved, it will retrieve
-	 * related PricPatios from storage. If this Ciudad is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array PricPatio[]
-	 * @throws     PropelException
-	 */
+	
 	public function getPricPatios($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1584,12 +1051,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collPricPatios = PricPatioPeer::doSelect($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(PricPatioPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1603,15 +1066,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collPricPatios;
 	}
 
-	/**
-	 * Returns the number of related PricPatio objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related PricPatio objects.
-	 * @throws     PropelException
-	 */
+	
 	public function countPricPatios(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1636,12 +1091,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = PricPatioPeer::doCount($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(PricPatioPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1657,66 +1108,29 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $count;
 	}
 
-	/**
-	 * Method called to associate a PricPatio object to this object
-	 * through the PricPatio foreign key attribute.
-	 *
-	 * @param      PricPatio $l PricPatio
-	 * @return     void
-	 * @throws     PropelException
-	 */
+	
 	public function addPricPatio(PricPatio $l)
 	{
 		if ($this->collPricPatios === null) {
 			$this->initPricPatios();
 		}
-		if (!in_array($l, $this->collPricPatios, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collPricPatios, $l);
+		if (!in_array($l, $this->collPricPatios, true)) { 			array_push($this->collPricPatios, $l);
 			$l->setCiudad($this);
 		}
 	}
 
-	/**
-	 * Clears out the collClientes collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addClientes()
-	 */
+	
 	public function clearClientes()
 	{
-		$this->collClientes = null; // important to set this to NULL since that means it is uninitialized
-	}
+		$this->collClientes = null; 	}
 
-	/**
-	 * Initializes the collClientes collection (array).
-	 *
-	 * By default this just sets the collClientes collection to an empty array (like clearcollClientes());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
+	
 	public function initClientes()
 	{
 		$this->collClientes = array();
 	}
 
-	/**
-	 * Gets an array of Cliente objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Ciudad has previously been saved, it will retrieve
-	 * related Clientes from storage. If this Ciudad is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array Cliente[]
-	 * @throws     PropelException
-	 */
+	
 	public function getClientes($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1738,12 +1152,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collClientes = ClientePeer::doSelect($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(ClientePeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1757,15 +1167,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collClientes;
 	}
 
-	/**
-	 * Returns the number of related Cliente objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related Cliente objects.
-	 * @throws     PropelException
-	 */
+	
 	public function countClientes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1790,12 +1192,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = ClientePeer::doCount($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(ClientePeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1811,66 +1209,29 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $count;
 	}
 
-	/**
-	 * Method called to associate a Cliente object to this object
-	 * through the Cliente foreign key attribute.
-	 *
-	 * @param      Cliente $l Cliente
-	 * @return     void
-	 * @throws     PropelException
-	 */
+	
 	public function addCliente(Cliente $l)
 	{
 		if ($this->collClientes === null) {
 			$this->initClientes();
 		}
-		if (!in_array($l, $this->collClientes, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collClientes, $l);
+		if (!in_array($l, $this->collClientes, true)) { 			array_push($this->collClientes, $l);
 			$l->setCiudad($this);
 		}
 	}
 
-	/**
-	 * Clears out the collAgentes collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addAgentes()
-	 */
+	
 	public function clearAgentes()
 	{
-		$this->collAgentes = null; // important to set this to NULL since that means it is uninitialized
-	}
+		$this->collAgentes = null; 	}
 
-	/**
-	 * Initializes the collAgentes collection (array).
-	 *
-	 * By default this just sets the collAgentes collection to an empty array (like clearcollAgentes());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
+	
 	public function initAgentes()
 	{
 		$this->collAgentes = array();
 	}
 
-	/**
-	 * Gets an array of Agente objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Ciudad has previously been saved, it will retrieve
-	 * related Agentes from storage. If this Ciudad is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array Agente[]
-	 * @throws     PropelException
-	 */
+	
 	public function getAgentes($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1892,12 +1253,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collAgentes = AgentePeer::doSelect($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(AgentePeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1911,15 +1268,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collAgentes;
 	}
 
-	/**
-	 * Returns the number of related Agente objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related Agente objects.
-	 * @throws     PropelException
-	 */
+	
 	public function countAgentes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -1944,12 +1293,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = AgentePeer::doCount($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(AgentePeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -1965,66 +1310,29 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $count;
 	}
 
-	/**
-	 * Method called to associate a Agente object to this object
-	 * through the Agente foreign key attribute.
-	 *
-	 * @param      Agente $l Agente
-	 * @return     void
-	 * @throws     PropelException
-	 */
+	
 	public function addAgente(Agente $l)
 	{
 		if ($this->collAgentes === null) {
 			$this->initAgentes();
 		}
-		if (!in_array($l, $this->collAgentes, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collAgentes, $l);
+		if (!in_array($l, $this->collAgentes, true)) { 			array_push($this->collAgentes, $l);
 			$l->setCiudad($this);
 		}
 	}
 
-	/**
-	 * Clears out the collContactoAgentes collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addContactoAgentes()
-	 */
+	
 	public function clearContactoAgentes()
 	{
-		$this->collContactoAgentes = null; // important to set this to NULL since that means it is uninitialized
-	}
+		$this->collContactoAgentes = null; 	}
 
-	/**
-	 * Initializes the collContactoAgentes collection (array).
-	 *
-	 * By default this just sets the collContactoAgentes collection to an empty array (like clearcollContactoAgentes());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
+	
 	public function initContactoAgentes()
 	{
 		$this->collContactoAgentes = array();
 	}
 
-	/**
-	 * Gets an array of ContactoAgente objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Ciudad has previously been saved, it will retrieve
-	 * related ContactoAgentes from storage. If this Ciudad is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array ContactoAgente[]
-	 * @throws     PropelException
-	 */
+	
 	public function getContactoAgentes($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -2046,12 +1354,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collContactoAgentes = ContactoAgentePeer::doSelect($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(ContactoAgentePeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -2065,15 +1369,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collContactoAgentes;
 	}
 
-	/**
-	 * Returns the number of related ContactoAgente objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related ContactoAgente objects.
-	 * @throws     PropelException
-	 */
+	
 	public function countContactoAgentes(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -2098,12 +1394,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = ContactoAgentePeer::doCount($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(ContactoAgentePeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -2119,37 +1411,19 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $count;
 	}
 
-	/**
-	 * Method called to associate a ContactoAgente object to this object
-	 * through the ContactoAgente foreign key attribute.
-	 *
-	 * @param      ContactoAgente $l ContactoAgente
-	 * @return     void
-	 * @throws     PropelException
-	 */
+	
 	public function addContactoAgente(ContactoAgente $l)
 	{
 		if ($this->collContactoAgentes === null) {
 			$this->initContactoAgentes();
 		}
-		if (!in_array($l, $this->collContactoAgentes, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collContactoAgentes, $l);
+		if (!in_array($l, $this->collContactoAgentes, true)) { 			array_push($this->collContactoAgentes, $l);
 			$l->setCiudad($this);
 		}
 	}
 
 
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Ciudad is new, it will return
-	 * an empty collection; or if this Ciudad has previously
-	 * been saved, it will retrieve related ContactoAgentes from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Ciudad.
-	 */
+	
 	public function getContactoAgentesJoinAgente($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
@@ -2170,10 +1444,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collContactoAgentes = ContactoAgentePeer::doSelectJoinAgente($criteria, $con, $join_behavior);
 			}
 		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
+									
 			$criteria->add(ContactoAgentePeer::CA_IDCIUDAD, $this->ca_idciudad);
 
 			if (!isset($this->lastContactoAgenteCriteria) || !$this->lastContactoAgenteCriteria->equals($criteria)) {
@@ -2185,47 +1456,18 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collContactoAgentes;
 	}
 
-	/**
-	 * Clears out the collIdsSucursals collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addIdsSucursals()
-	 */
+	
 	public function clearIdsSucursals()
 	{
-		$this->collIdsSucursals = null; // important to set this to NULL since that means it is uninitialized
-	}
+		$this->collIdsSucursals = null; 	}
 
-	/**
-	 * Initializes the collIdsSucursals collection (array).
-	 *
-	 * By default this just sets the collIdsSucursals collection to an empty array (like clearcollIdsSucursals());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
+	
 	public function initIdsSucursals()
 	{
 		$this->collIdsSucursals = array();
 	}
 
-	/**
-	 * Gets an array of IdsSucursal objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Ciudad has previously been saved, it will retrieve
-	 * related IdsSucursals from storage. If this Ciudad is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array IdsSucursal[]
-	 * @throws     PropelException
-	 */
+	
 	public function getIdsSucursals($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -2247,12 +1489,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collIdsSucursals = IdsSucursalPeer::doSelect($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -2266,15 +1504,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collIdsSucursals;
 	}
 
-	/**
-	 * Returns the number of related IdsSucursal objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related IdsSucursal objects.
-	 * @throws     PropelException
-	 */
+	
 	public function countIdsSucursals(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
@@ -2299,12 +1529,8 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$count = IdsSucursalPeer::doCount($criteria, $con);
 			}
 		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
+						if (!$this->isNew()) {
+												
 
 				$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
@@ -2320,37 +1546,19 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $count;
 	}
 
-	/**
-	 * Method called to associate a IdsSucursal object to this object
-	 * through the IdsSucursal foreign key attribute.
-	 *
-	 * @param      IdsSucursal $l IdsSucursal
-	 * @return     void
-	 * @throws     PropelException
-	 */
+	
 	public function addIdsSucursal(IdsSucursal $l)
 	{
 		if ($this->collIdsSucursals === null) {
 			$this->initIdsSucursals();
 		}
-		if (!in_array($l, $this->collIdsSucursals, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collIdsSucursals, $l);
+		if (!in_array($l, $this->collIdsSucursals, true)) { 			array_push($this->collIdsSucursals, $l);
 			$l->setCiudad($this);
 		}
 	}
 
 
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Ciudad is new, it will return
-	 * an empty collection; or if this Ciudad has previously
-	 * been saved, it will retrieve related IdsSucursals from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Ciudad.
-	 */
+	
 	public function getIdsSucursalsJoinIds($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		if ($criteria === null) {
@@ -2371,10 +1579,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 				$this->collIdsSucursals = IdsSucursalPeer::doSelectJoinIds($criteria, $con, $join_behavior);
 			}
 		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
+									
 			$criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
 
 			if (!isset($this->lastIdsSucursalCriteria) || !$this->lastIdsSucursalCriteria->equals($criteria)) {
@@ -2386,216 +1591,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		return $this->collIdsSucursals;
 	}
 
-	/**
-	 * Clears out the collIdsContactos collection (array).
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addIdsContactos()
-	 */
-	public function clearIdsContactos()
-	{
-		$this->collIdsContactos = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collIdsContactos collection (array).
-	 *
-	 * By default this just sets the collIdsContactos collection to an empty array (like clearcollIdsContactos());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initIdsContactos()
-	{
-		$this->collIdsContactos = array();
-	}
-
-	/**
-	 * Gets an array of IdsContacto objects which contain a foreign key that references this object.
-	 *
-	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
-	 * Otherwise if this Ciudad has previously been saved, it will retrieve
-	 * related IdsContactos from storage. If this Ciudad is new, it will return
-	 * an empty collection or the current collection, the criteria is ignored on a new object.
-	 *
-	 * @param      PropelPDO $con
-	 * @param      Criteria $criteria
-	 * @return     array IdsContacto[]
-	 * @throws     PropelException
-	 */
-	public function getIdsContactos($criteria = null, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collIdsContactos === null) {
-			if ($this->isNew()) {
-			   $this->collIdsContactos = array();
-			} else {
-
-				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
-
-				IdsContactoPeer::addSelectColumns($criteria);
-				$this->collIdsContactos = IdsContactoPeer::doSelect($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return the collection.
-
-
-				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
-
-				IdsContactoPeer::addSelectColumns($criteria);
-				if (!isset($this->lastIdsContactoCriteria) || !$this->lastIdsContactoCriteria->equals($criteria)) {
-					$this->collIdsContactos = IdsContactoPeer::doSelect($criteria, $con);
-				}
-			}
-		}
-		$this->lastIdsContactoCriteria = $criteria;
-		return $this->collIdsContactos;
-	}
-
-	/**
-	 * Returns the number of related IdsContacto objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related IdsContacto objects.
-	 * @throws     PropelException
-	 */
-	public function countIdsContactos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
-		} else {
-			$criteria = clone $criteria;
-		}
-
-		if ($distinct) {
-			$criteria->setDistinct();
-		}
-
-		$count = null;
-
-		if ($this->collIdsContactos === null) {
-			if ($this->isNew()) {
-				$count = 0;
-			} else {
-
-				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
-
-				$count = IdsContactoPeer::doCount($criteria, $con);
-			}
-		} else {
-			// criteria has no effect for a new object
-			if (!$this->isNew()) {
-				// the following code is to determine if a new query is
-				// called for.  If the criteria is the same as the last
-				// one, just return count of the collection.
-
-
-				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
-
-				if (!isset($this->lastIdsContactoCriteria) || !$this->lastIdsContactoCriteria->equals($criteria)) {
-					$count = IdsContactoPeer::doCount($criteria, $con);
-				} else {
-					$count = count($this->collIdsContactos);
-				}
-			} else {
-				$count = count($this->collIdsContactos);
-			}
-		}
-		return $count;
-	}
-
-	/**
-	 * Method called to associate a IdsContacto object to this object
-	 * through the IdsContacto foreign key attribute.
-	 *
-	 * @param      IdsContacto $l IdsContacto
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addIdsContacto(IdsContacto $l)
-	{
-		if ($this->collIdsContactos === null) {
-			$this->initIdsContactos();
-		}
-		if (!in_array($l, $this->collIdsContactos, true)) { // only add it if the **same** object is not already associated
-			array_push($this->collIdsContactos, $l);
-			$l->setCiudad($this);
-		}
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this Ciudad is new, it will return
-	 * an empty collection; or if this Ciudad has previously
-	 * been saved, it will retrieve related IdsContactos from storage.
-	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in Ciudad.
-	 */
-	public function getIdsContactosJoinIdsSucursal($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		if ($criteria === null) {
-			$criteria = new Criteria(CiudadPeer::DATABASE_NAME);
-		}
-		elseif ($criteria instanceof Criteria)
-		{
-			$criteria = clone $criteria;
-		}
-
-		if ($this->collIdsContactos === null) {
-			if ($this->isNew()) {
-				$this->collIdsContactos = array();
-			} else {
-
-				$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
-
-				$this->collIdsContactos = IdsContactoPeer::doSelectJoinIdsSucursal($criteria, $con, $join_behavior);
-			}
-		} else {
-			// the following code is to determine if a new query is
-			// called for.  If the criteria is the same as the last
-			// one, just return the collection.
-
-			$criteria->add(IdsContactoPeer::CA_IDCIUDAD, $this->ca_idciudad);
-
-			if (!isset($this->lastIdsContactoCriteria) || !$this->lastIdsContactoCriteria->equals($criteria)) {
-				$this->collIdsContactos = IdsContactoPeer::doSelectJoinIdsSucursal($criteria, $con, $join_behavior);
-			}
-		}
-		$this->lastIdsContactoCriteria = $criteria;
-
-		return $this->collIdsContactos;
-	}
-
-	/**
-	 * Resets all collections of referencing foreign keys.
-	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect objects
-	 * with circular references.  This is currently necessary when using Propel in certain
-	 * daemon or large-volumne/high-memory operations.
-	 *
-	 * @param      boolean $deep Whether to also clear the references on all associated objects.
-	 */
+	
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
@@ -2634,13 +1630,7 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
-			if ($this->collIdsContactos) {
-				foreach ((array) $this->collIdsContactos as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
-		} // if ($deep)
-
+		} 
 		$this->collPricRecargosxCiudads = null;
 		$this->collPricRecargosxCiudadLogs = null;
 		$this->collPricPatios = null;
@@ -2648,8 +1638,21 @@ abstract class BaseCiudad extends BaseObject  implements Persistent {
 		$this->collAgentes = null;
 		$this->collContactoAgentes = null;
 		$this->collIdsSucursals = null;
-		$this->collIdsContactos = null;
 			$this->aTrafico = null;
 	}
 
-} // BaseCiudad
+
+  public function __call($method, $arguments)
+  {
+    if (!$callable = sfMixer::getCallable('BaseCiudad:'.$method))
+    {
+      throw new sfException(sprintf('Call to undefined method BaseCiudad::%s', $method));
+    }
+
+    array_unshift($arguments, $this);
+
+    return call_user_func_array($callable, $arguments);
+  }
+
+
+} 

@@ -1,106 +1,87 @@
 <?php
 
-/**
- * Base static class for performing query and update operations on the 'tb_contactos' table.
- *
- * 
- *
- * @package    lib.model.public.om
- */
+
 abstract class BaseContactoAgentePeer {
 
-	/** the default database name for this class */
+	
 	const DATABASE_NAME = 'propel';
 
-	/** the table name for this class */
+	
 	const TABLE_NAME = 'tb_contactos';
 
-	/** A class that can be returned by this peer. */
+	
 	const CLASS_DEFAULT = 'lib.model.public.ContactoAgente';
 
-	/** The total number of columns. */
+	
 	const NUM_COLUMNS = 19;
 
-	/** The number of lazy-loaded columns. */
+	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_IDCONTACTO field */
+	
 	const CA_IDCONTACTO = 'tb_contactos.CA_IDCONTACTO';
 
-	/** the column name for the CA_IDAGENTE field */
+	
 	const CA_IDAGENTE = 'tb_contactos.CA_IDAGENTE';
 
-	/** the column name for the CA_NOMBRE field */
+	
 	const CA_NOMBRE = 'tb_contactos.CA_NOMBRE';
 
-	/** the column name for the CA_APELLIDO field */
+	
 	const CA_APELLIDO = 'tb_contactos.CA_APELLIDO';
 
-	/** the column name for the CA_DIRECCION field */
+	
 	const CA_DIRECCION = 'tb_contactos.CA_DIRECCION';
 
-	/** the column name for the CA_TELEFONOS field */
+	
 	const CA_TELEFONOS = 'tb_contactos.CA_TELEFONOS';
 
-	/** the column name for the CA_FAX field */
+	
 	const CA_FAX = 'tb_contactos.CA_FAX';
 
-	/** the column name for the CA_IDCIUDAD field */
+	
 	const CA_IDCIUDAD = 'tb_contactos.CA_IDCIUDAD';
 
-	/** the column name for the CA_EMAIL field */
+	
 	const CA_EMAIL = 'tb_contactos.CA_EMAIL';
 
-	/** the column name for the CA_IMPOEXPO field */
+	
 	const CA_IMPOEXPO = 'tb_contactos.CA_IMPOEXPO';
 
-	/** the column name for the CA_TRANSPORTE field */
+	
 	const CA_TRANSPORTE = 'tb_contactos.CA_TRANSPORTE';
 
-	/** the column name for the CA_CARGO field */
+	
 	const CA_CARGO = 'tb_contactos.CA_CARGO';
 
-	/** the column name for the CA_DETALLE field */
+	
 	const CA_DETALLE = 'tb_contactos.CA_DETALLE';
 
-	/** the column name for the CA_SUGERIDO field */
+	
 	const CA_SUGERIDO = 'tb_contactos.CA_SUGERIDO';
 
-	/** the column name for the CA_ACTIVO field */
+	
 	const CA_ACTIVO = 'tb_contactos.CA_ACTIVO';
 
-	/** the column name for the CA_FCHCREADO field */
+	
 	const CA_FCHCREADO = 'tb_contactos.CA_FCHCREADO';
 
-	/** the column name for the CA_FCHACTUALIZADO field */
+	
 	const CA_FCHACTUALIZADO = 'tb_contactos.CA_FCHACTUALIZADO';
 
-	/** the column name for the CA_USUCREADO field */
+	
 	const CA_USUCREADO = 'tb_contactos.CA_USUCREADO';
 
-	/** the column name for the CA_USUACTUALIZADO field */
+	
 	const CA_USUACTUALIZADO = 'tb_contactos.CA_USUACTUALIZADO';
 
-	/**
-	 * An identiy map to hold any loaded instances of ContactoAgente objects.
-	 * This must be public so that other peer classes can access this when hydrating from JOIN
-	 * queries.
-	 * @var        array ContactoAgente[]
-	 */
+	
 	public static $instances = array();
 
-	/**
-	 * The MapBuilder instance for this peer.
-	 * @var        MapBuilder
-	 */
+	
 	private static $mapBuilder = null;
 
-	/**
-	 * holds an array of fieldnames
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
-	 */
+	
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdcontacto', 'CaIdagente', 'CaNombre', 'CaApellido', 'CaDireccion', 'CaTelefonos', 'CaFax', 'CaIdciudad', 'CaEmail', 'CaImpoexpo', 'CaTransporte', 'CaCargo', 'CaDetalle', 'CaSugerido', 'CaActivo', 'CaFchcreado', 'CaFchactualizado', 'CaUsucreado', 'CaUsuactualizado', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcontacto', 'caIdagente', 'caNombre', 'caApellido', 'caDireccion', 'caTelefonos', 'caFax', 'caIdciudad', 'caEmail', 'caImpoexpo', 'caTransporte', 'caCargo', 'caDetalle', 'caSugerido', 'caActivo', 'caFchcreado', 'caFchactualizado', 'caUsucreado', 'caUsuactualizado', ),
@@ -109,12 +90,7 @@ abstract class BaseContactoAgentePeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
-	/**
-	 * holds an array of keys for quick access to the fieldnames array
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
-	 */
+	
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaIdcontacto' => 0, 'CaIdagente' => 1, 'CaNombre' => 2, 'CaApellido' => 3, 'CaDireccion' => 4, 'CaTelefonos' => 5, 'CaFax' => 6, 'CaIdciudad' => 7, 'CaEmail' => 8, 'CaImpoexpo' => 9, 'CaTransporte' => 10, 'CaCargo' => 11, 'CaDetalle' => 12, 'CaSugerido' => 13, 'CaActivo' => 14, 'CaFchcreado' => 15, 'CaFchactualizado' => 16, 'CaUsucreado' => 17, 'CaUsuactualizado' => 18, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcontacto' => 0, 'caIdagente' => 1, 'caNombre' => 2, 'caApellido' => 3, 'caDireccion' => 4, 'caTelefonos' => 5, 'caFax' => 6, 'caIdciudad' => 7, 'caEmail' => 8, 'caImpoexpo' => 9, 'caTransporte' => 10, 'caCargo' => 11, 'caDetalle' => 12, 'caSugerido' => 13, 'caActivo' => 14, 'caFchcreado' => 15, 'caFchactualizado' => 16, 'caUsucreado' => 17, 'caUsuactualizado' => 18, ),
@@ -123,10 +99,7 @@ abstract class BaseContactoAgentePeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, )
 	);
 
-	/**
-	 * Get a (singleton) instance of the MapBuilder for this peer class.
-	 * @return     MapBuilder The map builder for this peer
-	 */
+	
 	public static function getMapBuilder()
 	{
 		if (self::$mapBuilder === null) {
@@ -134,16 +107,7 @@ abstract class BaseContactoAgentePeer {
 		}
 		return self::$mapBuilder;
 	}
-	/**
-	 * Translates a fieldname to another type
-	 *
-	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @param      string $toType   One of the class type constants
-	 * @return     string translated name of the field.
-	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
-	 */
+	
 	static public function translateFieldName($name, $fromType, $toType)
 	{
 		$toNames = self::getFieldNames($toType);
@@ -154,14 +118,7 @@ abstract class BaseContactoAgentePeer {
 		return $toNames[$key];
 	}
 
-	/**
-	 * Returns an array of field names.
-	 *
-	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @return     array A list of field names
-	 */
+	
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
@@ -171,34 +128,13 @@ abstract class BaseContactoAgentePeer {
 		return self::$fieldNames[$type];
 	}
 
-	/**
-	 * Convenience method which changes table.column to alias.column.
-	 *
-	 * Using this method you can maintain SQL abstraction while using column aliases.
-	 * <code>
-	 *		$c->addAlias("alias1", TablePeer::TABLE_NAME);
-	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
-	 * </code>
-	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. ContactoAgentePeer::COLUMN_NAME).
-	 * @return     string
-	 */
+	
 	public static function alias($alias, $column)
 	{
 		return str_replace(ContactoAgentePeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
-	/**
-	 * Add all the columns needed to create a new object.
-	 *
-	 * Note: any columns that were marked with lazyLoad="true" in the
-	 * XML schema will not be added to the select list and only loaded
-	 * on demand.
-	 *
-	 * @param      criteria object containing the columns to add.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
@@ -242,23 +178,12 @@ abstract class BaseContactoAgentePeer {
 
 	}
 
-	/**
-	 * Returns the number of rows matching criteria.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we may modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ContactoAgentePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ContactoAgentePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -268,33 +193,28 @@ abstract class BaseContactoAgentePeer {
 			ContactoAgentePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
-
+		$criteria->clearOrderByColumns(); 		$criteria->setDbName(self::DATABASE_NAME); 
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		// BasePeer returns a PDOStatement
-		$stmt = BasePeer::doCount($criteria, $con);
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $criteria, $con);
+    }
+
+
+				$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
-	/**
-	 * Method to select one object from the DB.
-	 *
-	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     ContactoAgente
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
@@ -305,34 +225,21 @@ abstract class BaseContactoAgentePeer {
 		}
 		return null;
 	}
-	/**
-	 * Method to do selects.
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     array Array of selected Objects
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
 		return ContactoAgentePeer::populateObjects(ContactoAgentePeer::doSelectStmt($criteria, $con));
 	}
-	/**
-	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
-	 *
-	 * Use this method directly if you want to work with an executed statement durirectly (for example
-	 * to perform your own object hydration).
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con The connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @return     PDOStatement The executed PDOStatement object.
-	 * @see        BasePeer::doSelect()
-	 */
+	
 	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doSelectStmt:doSelectStmt') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $criteria, $con);
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -342,52 +249,28 @@ abstract class BaseContactoAgentePeer {
 			ContactoAgentePeer::addSelectColumns($criteria);
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a PDOStatement
-		return BasePeer::doSelect($criteria, $con);
+				return BasePeer::doSelect($criteria, $con);
 	}
-	/**
-	 * Adds an object to the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doSelect*()
-	 * methods in your stub classes -- you may need to explicitly add objects
-	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
-	 * and retrieveByPK*() calls.
-	 *
-	 * @param      ContactoAgente $value A ContactoAgente object.
-	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
-	 */
+	
 	public static function addInstanceToPool(ContactoAgente $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
 				$key = (string) $obj->getCaIdcontacto();
-			} // if key === null
-			self::$instances[$key] = $obj;
+			} 			self::$instances[$key] = $obj;
 		}
 	}
 
-	/**
-	 * Removes an object from the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doDelete
-	 * methods in your stub classes -- you may need to explicitly remove objects
-	 * from the cache in order to prevent returning objects that no longer exist.
-	 *
-	 * @param      mixed $value A ContactoAgente object or a primary key value.
-	 */
+	
 	public static function removeInstanceFromPool($value)
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof ContactoAgente) {
 				$key = (string) $value->getCaIdcontacto();
 			} elseif (is_scalar($value)) {
-				// assume we've been passed a primary key
-				$key = (string) $value;
+								$key = (string) $value;
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or ContactoAgente object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -395,18 +278,8 @@ abstract class BaseContactoAgentePeer {
 
 			unset(self::$instances[$key]);
 		}
-	} // removeInstanceFromPool()
-
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     ContactoAgente Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
-	 * @see        getPrimaryKeyHash()
-	 */
+	} 
+	
 	public static function getInstanceFromPool($key)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
@@ -414,90 +287,51 @@ abstract class BaseContactoAgentePeer {
 				return self::$instances[$key];
 			}
 		}
-		return null; // just to be explicit
-	}
+		return null; 	}
 	
-	/**
-	 * Clear the instance pool.
-	 *
-	 * @return     void
-	 */
+	
 	public static function clearInstancePool()
 	{
 		self::$instances = array();
 	}
 	
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
-	 */
+	
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
-		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null) {
+				if ($row[$startcol + 0] === null) {
 			return null;
 		}
 		return (string) $row[$startcol + 0];
 	}
 
-	/**
-	 * The returned array will contain objects of the default type or
-	 * objects that inherit from the default.
-	 *
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
-		// set the class once to avoid overhead in the loop
-		$cls = ContactoAgentePeer::getOMClass();
+				$cls = ContactoAgentePeer::getOMClass();
 		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
-		// populate the object(s)
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key = ContactoAgentePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj = ContactoAgentePeer::getInstanceFromPool($key))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj->hydrate($row, 0, true); // rehydrate
-				$results[] = $obj;
+																$results[] = $obj;
 			} else {
 		
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
 				ContactoAgentePeer::addInstanceToPool($obj, $key);
-			} // if key exists
-		}
+			} 		}
 		$stmt->closeCursor();
 		return $results;
 	}
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Agente table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAgente(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ContactoAgentePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ContactoAgentePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -507,10 +341,8 @@ abstract class BaseContactoAgentePeer {
 			ContactoAgentePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -518,36 +350,30 @@ abstract class BaseContactoAgentePeer {
 
 		$criteria->addJoin(array(ContactoAgentePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Ciudad table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinCiudad(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ContactoAgentePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ContactoAgentePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -557,10 +383,8 @@ abstract class BaseContactoAgentePeer {
 			ContactoAgentePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -568,33 +392,37 @@ abstract class BaseContactoAgentePeer {
 
 		$criteria->addJoin(array(ContactoAgentePeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with their Agente objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of ContactoAgente objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAgente(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doSelectJoin:doSelectJoin') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -609,10 +437,7 @@ abstract class BaseContactoAgentePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ContactoAgentePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ContactoAgentePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ContactoAgentePeer::getOMClass();
 
@@ -620,8 +445,7 @@ abstract class BaseContactoAgentePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ContactoAgentePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = AgentePeer::getInstanceFromPool($key2);
@@ -633,13 +457,10 @@ abstract class BaseContactoAgentePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					AgentePeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addContactoAgente($obj1);
 
-				// Add the $obj1 (ContactoAgente) to $obj2 (Agente)
-				$obj2->addContactoAgente($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -647,21 +468,12 @@ abstract class BaseContactoAgentePeer {
 	}
 
 
-	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with their Ciudad objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of ContactoAgente objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinCiudad(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -676,10 +488,7 @@ abstract class BaseContactoAgentePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ContactoAgentePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ContactoAgentePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = ContactoAgentePeer::getOMClass();
 
@@ -687,8 +496,7 @@ abstract class BaseContactoAgentePeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ContactoAgentePeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = CiudadPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = CiudadPeer::getInstanceFromPool($key2);
@@ -700,13 +508,10 @@ abstract class BaseContactoAgentePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					CiudadPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addContactoAgente($obj1);
 
-				// Add the $obj1 (ContactoAgente) to $obj2 (Ciudad)
-				$obj2->addContactoAgente($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -714,24 +519,12 @@ abstract class BaseContactoAgentePeer {
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining all related tables
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(ContactoAgentePeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(ContactoAgentePeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -741,10 +534,8 @@ abstract class BaseContactoAgentePeer {
 			ContactoAgentePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -752,33 +543,36 @@ abstract class BaseContactoAgentePeer {
 
 		$criteria->addJoin(array(ContactoAgentePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
 		$criteria->addJoin(array(ContactoAgentePeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
-	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with all related objects.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of ContactoAgente objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doSelectJoinAll:doSelectJoinAll') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -799,20 +593,15 @@ abstract class BaseContactoAgentePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ContactoAgentePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ContactoAgentePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ContactoAgentePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ContactoAgentePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-			// Add objects for joined Agente rows
-
+			} 
+			
 			$key2 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol2);
 			if ($key2 !== null) {
 				$obj2 = AgentePeer::getInstanceFromPool($key2);
@@ -825,14 +614,10 @@ abstract class BaseContactoAgentePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					AgentePeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 loaded
-
-				// Add the $obj1 (ContactoAgente) to the collection in $obj2 (Agente)
-				$obj2->addContactoAgente($obj1);
-			} // if joined row not null
-
-			// Add objects for joined Ciudad rows
-
+				} 
+								$obj2->addContactoAgente($obj1);
+			} 
+			
 			$key3 = CiudadPeer::getPrimaryKeyHashFromRow($row, $startcol3);
 			if ($key3 !== null) {
 				$obj3 = CiudadPeer::getInstanceFromPool($key3);
@@ -845,12 +630,9 @@ abstract class BaseContactoAgentePeer {
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					CiudadPeer::addInstanceToPool($obj3, $key3);
-				} // if obj3 loaded
-
-				// Add the $obj1 (ContactoAgente) to the collection in $obj3 (Ciudad)
-				$obj3->addContactoAgente($obj1);
-			} // if joined row not null
-
+				} 
+								$obj3->addContactoAgente($obj1);
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -858,19 +640,10 @@ abstract class BaseContactoAgentePeer {
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Agente table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptAgente(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -880,41 +653,36 @@ abstract class BaseContactoAgentePeer {
 			ContactoAgentePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
 				$criteria->addJoin(array(ContactoAgentePeer::CA_IDCIUDAD,), array(CiudadPeer::CA_IDCIUDAD,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Ciudad table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAllExceptCiudad(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -924,46 +692,45 @@ abstract class BaseContactoAgentePeer {
 			ContactoAgentePeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
 				$criteria->addJoin(array(ContactoAgentePeer::CA_IDAGENTE,), array(AgentePeer::CA_IDAGENTE,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with all related objects except Agente.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of ContactoAgente objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptAgente(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doSelectJoinAllExcept:doSelectJoinAllExcept') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -981,20 +748,15 @@ abstract class BaseContactoAgentePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ContactoAgentePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ContactoAgentePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ContactoAgentePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ContactoAgentePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Ciudad rows
-
+			} 
+				
 				$key2 = CiudadPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = CiudadPeer::getInstanceFromPool($key2);
@@ -1007,13 +769,10 @@ abstract class BaseContactoAgentePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					CiudadPeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addContactoAgente($obj1);
 
-				// Add the $obj1 (ContactoAgente) to the collection in $obj2 (Ciudad)
-				$obj2->addContactoAgente($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1021,24 +780,12 @@ abstract class BaseContactoAgentePeer {
 	}
 
 
-	/**
-	 * Selects a collection of ContactoAgente objects pre-filled with all related objects except Ciudad.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of ContactoAgente objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAllExceptCiudad(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		// $c->getDbName() will return the same object if not set to another value
-		// so == check is okay and faster
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+								if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -1056,20 +803,15 @@ abstract class BaseContactoAgentePeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = ContactoAgentePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = ContactoAgentePeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = ContactoAgentePeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				ContactoAgentePeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-				// Add objects for joined Agente rows
-
+			} 
+				
 				$key2 = AgentePeer::getPrimaryKeyHashFromRow($row, $startcol2);
 				if ($key2 !== null) {
 					$obj2 = AgentePeer::getInstanceFromPool($key2);
@@ -1082,13 +824,10 @@ abstract class BaseContactoAgentePeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					AgentePeer::addInstanceToPool($obj2, $key2);
-				} // if $obj2 already loaded
+				} 
+								$obj2->addContactoAgente($obj1);
 
-				// Add the $obj1 (ContactoAgente) to the collection in $obj2 (Agente)
-				$obj2->addContactoAgente($obj1);
-
-			} // if joined row is not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -1100,61 +839,45 @@ abstract class BaseContactoAgentePeer {
   {
     return array();
   }
-	/**
-	 * Returns the TableMap related to this peer.
-	 * This method is not needed for general use but a specific application could have a need.
-	 * @return     TableMap
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function getTableMap()
 	{
 		return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
 	}
 
-	/**
-	 * The class that the Peer will make instances of.
-	 *
-	 * This uses a dot-path notation which is tranalted into a path
-	 * relative to a location on the PHP include_path.
-	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
-	 *
-	 * @return     string path.to.ClassName
-	 */
+	
 	public static function getOMClass()
 	{
 		return ContactoAgentePeer::CLASS_DEFAULT;
 	}
 
-	/**
-	 * Method perform an INSERT on the database, given a ContactoAgente or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or ContactoAgente object containing data that is used to create the INSERT statement.
-	 * @param      PropelPDO $con the PropelPDO connection to use
-	 * @return     mixed The new primary key.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doInsert($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doInsert:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseContactoAgentePeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from ContactoAgente object
-		}
+			$criteria = clone $values; 		} else {
+			$criteria = $values->buildCriteria(); 		}
 
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table (I guess, conceivably)
-			$con->beginTransaction();
+									$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
@@ -1162,20 +885,29 @@ abstract class BaseContactoAgentePeer {
 			throw $e;
 		}
 
-		return $pk;
+		
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doInsert:post') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $values, $con, $pk);
+    }
+
+    return $pk;
 	}
 
-	/**
-	 * Method perform an UPDATE on the database, given a ContactoAgente or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or ContactoAgente object containing data that is used to create the UPDATE statement.
-	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doUpdate($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doUpdate:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseContactoAgentePeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
@@ -1183,37 +915,33 @@ abstract class BaseContactoAgentePeer {
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-
+			$criteria = clone $values; 
 			$comparison = $criteria->getComparison(ContactoAgentePeer::CA_IDCONTACTO);
 			$selectCriteria->add(ContactoAgentePeer::CA_IDCONTACTO, $criteria->remove(ContactoAgentePeer::CA_IDCONTACTO), $comparison);
 
-		} else { // $values is ContactoAgente object
-			$criteria = $values->buildCriteria(); // gets full criteria
-			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
-		}
+		} else { 			$criteria = $values->buildCriteria(); 			$selectCriteria = $values->buildPkeyCriteria(); 		}
 
-		// set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	}
+		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	
 
-	/**
-	 * Method to DELETE all rows from the tb_contactos table.
-	 *
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 */
+    foreach (sfMixer::getCallables('BaseContactoAgentePeer:doUpdate:post') as $callable)
+    {
+      call_user_func($callable, 'BaseContactoAgentePeer', $values, $con, $ret);
+    }
+
+    return $ret;
+  }
+
+	
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(ContactoAgentePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-		$affectedRows = 0; // initialize var to track total num of affected rows
-		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+		$affectedRows = 0; 		try {
+									$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(ContactoAgentePeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
@@ -1223,17 +951,7 @@ abstract class BaseContactoAgentePeer {
 		}
 	}
 
-	/**
-	 * Method perform a DELETE on the database, given a ContactoAgente or Criteria object OR a primary key value.
-	 *
-	 * @param      mixed $values Criteria or ContactoAgente object or primary key or array of primary keys
-	 *              which is used to create the DELETE statement
-	 * @param      PropelPDO $con the connection to use
-	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-	 *				if supported by native driver or if emulated using Propel.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
@@ -1241,41 +959,29 @@ abstract class BaseContactoAgentePeer {
 		}
 
 		if ($values instanceof Criteria) {
-			// invalidate the cache for all objects of this type, since we have no
-			// way of knowing (without running a query) what objects should be invalidated
-			// from the cache based on this Criteria.
-			ContactoAgentePeer::clearInstancePool();
+												ContactoAgentePeer::clearInstancePool();
 
-			// rename for clarity
-			$criteria = clone $values;
+						$criteria = clone $values;
 		} elseif ($values instanceof ContactoAgente) {
-			// invalidate the cache for this single object
-			ContactoAgentePeer::removeInstanceFromPool($values);
-			// create criteria based on pk values
-			$criteria = $values->buildPkeyCriteria();
+						ContactoAgentePeer::removeInstanceFromPool($values);
+						$criteria = $values->buildPkeyCriteria();
 		} else {
-			// it must be the primary key
-
+			
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(ContactoAgentePeer::CA_IDCONTACTO, (array) $values, Criteria::IN);
 
 			foreach ((array) $values as $singleval) {
-				// we can invalidate the cache for this single object
-				ContactoAgentePeer::removeInstanceFromPool($singleval);
+								ContactoAgentePeer::removeInstanceFromPool($singleval);
 			}
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		$affectedRows = 0; // initialize var to track total num of affected rows
-
+		$affectedRows = 0; 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+									$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
 
@@ -1287,18 +993,7 @@ abstract class BaseContactoAgentePeer {
 		}
 	}
 
-	/**
-	 * Validates all modified columns of given ContactoAgente object.
-	 * If parameter $columns is either a single column name or an array of column names
-	 * than only those columns are validated.
-	 *
-	 * NOTICE: This does not apply to primary or foreign keys for now.
-	 *
-	 * @param      ContactoAgente $obj The object to validate.
-	 * @param      mixed $cols Column name or array of column names.
-	 *
-	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
-	 */
+	
 	public static function doValidate(ContactoAgente $obj, $cols = null)
 	{
 		$columns = array();
@@ -1332,13 +1027,7 @@ abstract class BaseContactoAgentePeer {
     return $res;
 	}
 
-	/**
-	 * Retrieve a single object by pkey.
-	 *
-	 * @param      string $pk the primary key.
-	 * @param      PropelPDO $con the connection to use
-	 * @return     ContactoAgente
-	 */
+	
 	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
 
@@ -1358,14 +1047,7 @@ abstract class BaseContactoAgentePeer {
 		return !empty($v) > 0 ? $v[0] : null;
 	}
 
-	/**
-	 * Retrieve multiple objects by pkey.
-	 *
-	 * @param      array $pks List of primary keys
-	 * @param      PropelPDO $con the connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
@@ -1383,16 +1065,7 @@ abstract class BaseContactoAgentePeer {
 		return $objs;
 	}
 
-} // BaseContactoAgentePeer
-
-// This is the static code needed to register the MapBuilder for this table with the main Propel class.
-//
-// NOTE: This static code cannot call methods on the ContactoAgentePeer class, because it is not defined yet.
-// If you need to use overridden methods, you can add this code to the bottom of the ContactoAgentePeer class:
-//
-// Propel::getDatabaseMap(ContactoAgentePeer::DATABASE_NAME)->addTableBuilder(ContactoAgentePeer::TABLE_NAME, ContactoAgentePeer::getMapBuilder());
-//
-// Doing so will effectively overwrite the registration below.
+} 
 
 Propel::getDatabaseMap(BaseContactoAgentePeer::DATABASE_NAME)->addTableBuilder(BaseContactoAgentePeer::TABLE_NAME, BaseContactoAgentePeer::getMapBuilder());
 

@@ -1,70 +1,51 @@
 <?php
 
-/**
- * Base static class for performing query and update operations on the 'tb_tracking_users' table.
- *
- * 
- *
- * @package    lib.model.public.om
- */
+
 abstract class BaseTrackingUserPeer {
 
-	/** the default database name for this class */
+	
 	const DATABASE_NAME = 'propel';
 
-	/** the table name for this class */
+	
 	const TABLE_NAME = 'tb_tracking_users';
 
-	/** A class that can be returned by this peer. */
+	
 	const CLASS_DEFAULT = 'lib.model.public.TrackingUser';
 
-	/** The total number of columns. */
+	
 	const NUM_COLUMNS = 7;
 
-	/** The number of lazy-loaded columns. */
+	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_EMAIL field */
+	
 	const CA_EMAIL = 'tb_tracking_users.CA_EMAIL';
 
-	/** the column name for the CA_BLOCKED field */
+	
 	const CA_BLOCKED = 'tb_tracking_users.CA_BLOCKED';
 
-	/** the column name for the CA_ACTIVATION_CODE field */
+	
 	const CA_ACTIVATION_CODE = 'tb_tracking_users.CA_ACTIVATION_CODE';
 
-	/** the column name for the CA_PASSWD field */
+	
 	const CA_PASSWD = 'tb_tracking_users.CA_PASSWD';
 
-	/** the column name for the CA_PASSWORD_EXPIRY field */
+	
 	const CA_PASSWORD_EXPIRY = 'tb_tracking_users.CA_PASSWORD_EXPIRY';
 
-	/** the column name for the CA_ACTIVATED field */
+	
 	const CA_ACTIVATED = 'tb_tracking_users.CA_ACTIVATED';
 
-	/** the column name for the CA_IDCONTACTO field */
+	
 	const CA_IDCONTACTO = 'tb_tracking_users.CA_IDCONTACTO';
 
-	/**
-	 * An identiy map to hold any loaded instances of TrackingUser objects.
-	 * This must be public so that other peer classes can access this when hydrating from JOIN
-	 * queries.
-	 * @var        array TrackingUser[]
-	 */
+	
 	public static $instances = array();
 
-	/**
-	 * The MapBuilder instance for this peer.
-	 * @var        MapBuilder
-	 */
+	
 	private static $mapBuilder = null;
 
-	/**
-	 * holds an array of fieldnames
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
-	 */
+	
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaEmail', 'CaBlocked', 'CaActivationCode', 'CaPasswd', 'CaPasswordExpiry', 'CaActivated', 'CaIdcontacto', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caEmail', 'caBlocked', 'caActivationCode', 'caPasswd', 'caPasswordExpiry', 'caActivated', 'caIdcontacto', ),
@@ -73,12 +54,7 @@ abstract class BaseTrackingUserPeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
-	/**
-	 * holds an array of keys for quick access to the fieldnames array
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
-	 */
+	
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaEmail' => 0, 'CaBlocked' => 1, 'CaActivationCode' => 2, 'CaPasswd' => 3, 'CaPasswordExpiry' => 4, 'CaActivated' => 5, 'CaIdcontacto' => 6, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caEmail' => 0, 'caBlocked' => 1, 'caActivationCode' => 2, 'caPasswd' => 3, 'caPasswordExpiry' => 4, 'caActivated' => 5, 'caIdcontacto' => 6, ),
@@ -87,10 +63,7 @@ abstract class BaseTrackingUserPeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
-	/**
-	 * Get a (singleton) instance of the MapBuilder for this peer class.
-	 * @return     MapBuilder The map builder for this peer
-	 */
+	
 	public static function getMapBuilder()
 	{
 		if (self::$mapBuilder === null) {
@@ -98,16 +71,7 @@ abstract class BaseTrackingUserPeer {
 		}
 		return self::$mapBuilder;
 	}
-	/**
-	 * Translates a fieldname to another type
-	 *
-	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @param      string $toType   One of the class type constants
-	 * @return     string translated name of the field.
-	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
-	 */
+	
 	static public function translateFieldName($name, $fromType, $toType)
 	{
 		$toNames = self::getFieldNames($toType);
@@ -118,14 +82,7 @@ abstract class BaseTrackingUserPeer {
 		return $toNames[$key];
 	}
 
-	/**
-	 * Returns an array of field names.
-	 *
-	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @return     array A list of field names
-	 */
+	
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
@@ -135,34 +92,13 @@ abstract class BaseTrackingUserPeer {
 		return self::$fieldNames[$type];
 	}
 
-	/**
-	 * Convenience method which changes table.column to alias.column.
-	 *
-	 * Using this method you can maintain SQL abstraction while using column aliases.
-	 * <code>
-	 *		$c->addAlias("alias1", TablePeer::TABLE_NAME);
-	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
-	 * </code>
-	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. TrackingUserPeer::COLUMN_NAME).
-	 * @return     string
-	 */
+	
 	public static function alias($alias, $column)
 	{
 		return str_replace(TrackingUserPeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
-	/**
-	 * Add all the columns needed to create a new object.
-	 *
-	 * Note: any columns that were marked with lazyLoad="true" in the
-	 * XML schema will not be added to the select list and only loaded
-	 * on demand.
-	 *
-	 * @param      criteria object containing the columns to add.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
@@ -182,23 +118,12 @@ abstract class BaseTrackingUserPeer {
 
 	}
 
-	/**
-	 * Returns the number of rows matching criteria.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we may modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(TrackingUserPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(TrackingUserPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -208,33 +133,28 @@ abstract class BaseTrackingUserPeer {
 			TrackingUserPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
-
+		$criteria->clearOrderByColumns(); 		$criteria->setDbName(self::DATABASE_NAME); 
 		if ($con === null) {
 			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		// BasePeer returns a PDOStatement
-		$stmt = BasePeer::doCount($criteria, $con);
+
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseTrackingUserPeer', $criteria, $con);
+    }
+
+
+				$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
-	/**
-	 * Method to select one object from the DB.
-	 *
-	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     TrackingUser
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
@@ -245,34 +165,21 @@ abstract class BaseTrackingUserPeer {
 		}
 		return null;
 	}
-	/**
-	 * Method to do selects.
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     array Array of selected Objects
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
 		return TrackingUserPeer::populateObjects(TrackingUserPeer::doSelectStmt($criteria, $con));
 	}
-	/**
-	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
-	 *
-	 * Use this method directly if you want to work with an executed statement durirectly (for example
-	 * to perform your own object hydration).
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con The connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @return     PDOStatement The executed PDOStatement object.
-	 * @see        BasePeer::doSelect()
-	 */
+	
 	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doSelectStmt:doSelectStmt') as $callable)
+    {
+      call_user_func($callable, 'BaseTrackingUserPeer', $criteria, $con);
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -282,52 +189,28 @@ abstract class BaseTrackingUserPeer {
 			TrackingUserPeer::addSelectColumns($criteria);
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a PDOStatement
-		return BasePeer::doSelect($criteria, $con);
+				return BasePeer::doSelect($criteria, $con);
 	}
-	/**
-	 * Adds an object to the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doSelect*()
-	 * methods in your stub classes -- you may need to explicitly add objects
-	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
-	 * and retrieveByPK*() calls.
-	 *
-	 * @param      TrackingUser $value A TrackingUser object.
-	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
-	 */
+	
 	public static function addInstanceToPool(TrackingUser $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
 				$key = (string) $obj->getCaEmail();
-			} // if key === null
-			self::$instances[$key] = $obj;
+			} 			self::$instances[$key] = $obj;
 		}
 	}
 
-	/**
-	 * Removes an object from the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doDelete
-	 * methods in your stub classes -- you may need to explicitly remove objects
-	 * from the cache in order to prevent returning objects that no longer exist.
-	 *
-	 * @param      mixed $value A TrackingUser object or a primary key value.
-	 */
+	
 	public static function removeInstanceFromPool($value)
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof TrackingUser) {
 				$key = (string) $value->getCaEmail();
 			} elseif (is_scalar($value)) {
-				// assume we've been passed a primary key
-				$key = (string) $value;
+								$key = (string) $value;
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or TrackingUser object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -335,18 +218,8 @@ abstract class BaseTrackingUserPeer {
 
 			unset(self::$instances[$key]);
 		}
-	} // removeInstanceFromPool()
-
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     TrackingUser Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
-	 * @see        getPrimaryKeyHash()
-	 */
+	} 
+	
 	public static function getInstanceFromPool($key)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
@@ -354,90 +227,51 @@ abstract class BaseTrackingUserPeer {
 				return self::$instances[$key];
 			}
 		}
-		return null; // just to be explicit
-	}
+		return null; 	}
 	
-	/**
-	 * Clear the instance pool.
-	 *
-	 * @return     void
-	 */
+	
 	public static function clearInstancePool()
 	{
 		self::$instances = array();
 	}
 	
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
-	 */
+	
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
-		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null) {
+				if ($row[$startcol + 0] === null) {
 			return null;
 		}
 		return (string) $row[$startcol + 0];
 	}
 
-	/**
-	 * The returned array will contain objects of the default type or
-	 * objects that inherit from the default.
-	 *
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
-		// set the class once to avoid overhead in the loop
-		$cls = TrackingUserPeer::getOMClass();
+				$cls = TrackingUserPeer::getOMClass();
 		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
-		// populate the object(s)
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key = TrackingUserPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj = TrackingUserPeer::getInstanceFromPool($key))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj->hydrate($row, 0, true); // rehydrate
-				$results[] = $obj;
+																$results[] = $obj;
 			} else {
 		
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
 				TrackingUserPeer::addInstanceToPool($obj, $key);
-			} // if key exists
-		}
+			} 		}
 		$stmt->closeCursor();
 		return $results;
 	}
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Contacto table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinContacto(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(TrackingUserPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(TrackingUserPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -447,10 +281,8 @@ abstract class BaseTrackingUserPeer {
 			TrackingUserPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -458,33 +290,37 @@ abstract class BaseTrackingUserPeer {
 
 		$criteria->addJoin(array(TrackingUserPeer::CA_IDCONTACTO,), array(ContactoPeer::CA_IDCONTACTO,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseTrackingUserPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Selects a collection of TrackingUser objects pre-filled with their Contacto objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of TrackingUser objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinContacto(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doSelectJoin:doSelectJoin') as $callable)
+    {
+      call_user_func($callable, 'BaseTrackingUserPeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -499,10 +335,7 @@ abstract class BaseTrackingUserPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = TrackingUserPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = TrackingUserPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = TrackingUserPeer::getOMClass();
 
@@ -510,8 +343,7 @@ abstract class BaseTrackingUserPeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				TrackingUserPeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = ContactoPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = ContactoPeer::getInstanceFromPool($key2);
@@ -523,13 +355,10 @@ abstract class BaseTrackingUserPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					ContactoPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addTrackingUser($obj1);
 
-				// Add the $obj1 (TrackingUser) to $obj2 (Contacto)
-				$obj2->addTrackingUser($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -537,24 +366,12 @@ abstract class BaseTrackingUserPeer {
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining all related tables
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(TrackingUserPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(TrackingUserPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -564,43 +381,44 @@ abstract class BaseTrackingUserPeer {
 			TrackingUserPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$criteria->addJoin(array(TrackingUserPeer::CA_IDCONTACTO,), array(ContactoPeer::CA_IDCONTACTO,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseTrackingUserPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
-	/**
-	 * Selects a collection of TrackingUser objects pre-filled with all related objects.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of TrackingUser objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doSelectJoinAll:doSelectJoinAll') as $callable)
+    {
+      call_user_func($callable, 'BaseTrackingUserPeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -617,20 +435,15 @@ abstract class BaseTrackingUserPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = TrackingUserPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = TrackingUserPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = TrackingUserPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				TrackingUserPeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-			// Add objects for joined Contacto rows
-
+			} 
+			
 			$key2 = ContactoPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 			if ($key2 !== null) {
 				$obj2 = ContactoPeer::getInstanceFromPool($key2);
@@ -643,12 +456,9 @@ abstract class BaseTrackingUserPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					ContactoPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 loaded
-
-				// Add the $obj1 (TrackingUser) to the collection in $obj2 (Contacto)
-				$obj2->addTrackingUser($obj1);
-			} // if joined row not null
-
+				} 
+								$obj2->addTrackingUser($obj1);
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -660,61 +470,45 @@ abstract class BaseTrackingUserPeer {
   {
     return array();
   }
-	/**
-	 * Returns the TableMap related to this peer.
-	 * This method is not needed for general use but a specific application could have a need.
-	 * @return     TableMap
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function getTableMap()
 	{
 		return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
 	}
 
-	/**
-	 * The class that the Peer will make instances of.
-	 *
-	 * This uses a dot-path notation which is tranalted into a path
-	 * relative to a location on the PHP include_path.
-	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
-	 *
-	 * @return     string path.to.ClassName
-	 */
+	
 	public static function getOMClass()
 	{
 		return TrackingUserPeer::CLASS_DEFAULT;
 	}
 
-	/**
-	 * Method perform an INSERT on the database, given a TrackingUser or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or TrackingUser object containing data that is used to create the INSERT statement.
-	 * @param      PropelPDO $con the PropelPDO connection to use
-	 * @return     mixed The new primary key.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doInsert($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doInsert:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseTrackingUserPeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from TrackingUser object
-		}
+			$criteria = clone $values; 		} else {
+			$criteria = $values->buildCriteria(); 		}
 
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table (I guess, conceivably)
-			$con->beginTransaction();
+									$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
@@ -722,20 +516,29 @@ abstract class BaseTrackingUserPeer {
 			throw $e;
 		}
 
-		return $pk;
+		
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doInsert:post') as $callable)
+    {
+      call_user_func($callable, 'BaseTrackingUserPeer', $values, $con, $pk);
+    }
+
+    return $pk;
 	}
 
-	/**
-	 * Method perform an UPDATE on the database, given a TrackingUser or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or TrackingUser object containing data that is used to create the UPDATE statement.
-	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doUpdate($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doUpdate:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseTrackingUserPeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
@@ -743,37 +546,33 @@ abstract class BaseTrackingUserPeer {
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-
+			$criteria = clone $values; 
 			$comparison = $criteria->getComparison(TrackingUserPeer::CA_EMAIL);
 			$selectCriteria->add(TrackingUserPeer::CA_EMAIL, $criteria->remove(TrackingUserPeer::CA_EMAIL), $comparison);
 
-		} else { // $values is TrackingUser object
-			$criteria = $values->buildCriteria(); // gets full criteria
-			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
-		}
+		} else { 			$criteria = $values->buildCriteria(); 			$selectCriteria = $values->buildPkeyCriteria(); 		}
 
-		// set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	}
+		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	
 
-	/**
-	 * Method to DELETE all rows from the tb_tracking_users table.
-	 *
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 */
+    foreach (sfMixer::getCallables('BaseTrackingUserPeer:doUpdate:post') as $callable)
+    {
+      call_user_func($callable, 'BaseTrackingUserPeer', $values, $con, $ret);
+    }
+
+    return $ret;
+  }
+
+	
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(TrackingUserPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-		$affectedRows = 0; // initialize var to track total num of affected rows
-		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+		$affectedRows = 0; 		try {
+									$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(TrackingUserPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
@@ -783,17 +582,7 @@ abstract class BaseTrackingUserPeer {
 		}
 	}
 
-	/**
-	 * Method perform a DELETE on the database, given a TrackingUser or Criteria object OR a primary key value.
-	 *
-	 * @param      mixed $values Criteria or TrackingUser object or primary key or array of primary keys
-	 *              which is used to create the DELETE statement
-	 * @param      PropelPDO $con the connection to use
-	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-	 *				if supported by native driver or if emulated using Propel.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
@@ -801,41 +590,29 @@ abstract class BaseTrackingUserPeer {
 		}
 
 		if ($values instanceof Criteria) {
-			// invalidate the cache for all objects of this type, since we have no
-			// way of knowing (without running a query) what objects should be invalidated
-			// from the cache based on this Criteria.
-			TrackingUserPeer::clearInstancePool();
+												TrackingUserPeer::clearInstancePool();
 
-			// rename for clarity
-			$criteria = clone $values;
+						$criteria = clone $values;
 		} elseif ($values instanceof TrackingUser) {
-			// invalidate the cache for this single object
-			TrackingUserPeer::removeInstanceFromPool($values);
-			// create criteria based on pk values
-			$criteria = $values->buildPkeyCriteria();
+						TrackingUserPeer::removeInstanceFromPool($values);
+						$criteria = $values->buildPkeyCriteria();
 		} else {
-			// it must be the primary key
-
+			
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(TrackingUserPeer::CA_EMAIL, (array) $values, Criteria::IN);
 
 			foreach ((array) $values as $singleval) {
-				// we can invalidate the cache for this single object
-				TrackingUserPeer::removeInstanceFromPool($singleval);
+								TrackingUserPeer::removeInstanceFromPool($singleval);
 			}
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		$affectedRows = 0; // initialize var to track total num of affected rows
-
+		$affectedRows = 0; 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+									$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
 
@@ -847,18 +624,7 @@ abstract class BaseTrackingUserPeer {
 		}
 	}
 
-	/**
-	 * Validates all modified columns of given TrackingUser object.
-	 * If parameter $columns is either a single column name or an array of column names
-	 * than only those columns are validated.
-	 *
-	 * NOTICE: This does not apply to primary or foreign keys for now.
-	 *
-	 * @param      TrackingUser $obj The object to validate.
-	 * @param      mixed $cols Column name or array of column names.
-	 *
-	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
-	 */
+	
 	public static function doValidate(TrackingUser $obj, $cols = null)
 	{
 		$columns = array();
@@ -892,13 +658,7 @@ abstract class BaseTrackingUserPeer {
     return $res;
 	}
 
-	/**
-	 * Retrieve a single object by pkey.
-	 *
-	 * @param      string $pk the primary key.
-	 * @param      PropelPDO $con the connection to use
-	 * @return     TrackingUser
-	 */
+	
 	public static function retrieveByPK($pk, PropelPDO $con = null)
 	{
 
@@ -918,14 +678,7 @@ abstract class BaseTrackingUserPeer {
 		return !empty($v) > 0 ? $v[0] : null;
 	}
 
-	/**
-	 * Retrieve multiple objects by pkey.
-	 *
-	 * @param      array $pks List of primary keys
-	 * @param      PropelPDO $con the connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function retrieveByPKs($pks, PropelPDO $con = null)
 	{
 		if ($con === null) {
@@ -943,16 +696,7 @@ abstract class BaseTrackingUserPeer {
 		return $objs;
 	}
 
-} // BaseTrackingUserPeer
-
-// This is the static code needed to register the MapBuilder for this table with the main Propel class.
-//
-// NOTE: This static code cannot call methods on the TrackingUserPeer class, because it is not defined yet.
-// If you need to use overridden methods, you can add this code to the bottom of the TrackingUserPeer class:
-//
-// Propel::getDatabaseMap(TrackingUserPeer::DATABASE_NAME)->addTableBuilder(TrackingUserPeer::TABLE_NAME, TrackingUserPeer::getMapBuilder());
-//
-// Doing so will effectively overwrite the registration below.
+} 
 
 Propel::getDatabaseMap(BaseTrackingUserPeer::DATABASE_NAME)->addTableBuilder(BaseTrackingUserPeer::TABLE_NAME, BaseTrackingUserPeer::getMapBuilder());
 
