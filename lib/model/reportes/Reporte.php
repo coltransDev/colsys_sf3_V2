@@ -9,9 +9,8 @@
  */ 
 class Reporte extends BaseReporte
 {
-	private $ultimoAviso=null; 	
-	private $ultimoStatus=null;
-	private $historialStatus=null;
+	
+	private $ultimoStatus=null;	
 	private $inoClientesSea=null;
 	
 	/*

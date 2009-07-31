@@ -9,7 +9,13 @@
 
 <div class="content" align="center">
     <form action="<?=url_for("ids/formDocumentos?modo=".$modo."&id=".$ids->getCaId() )?>" method="post" name="form1" enctype="multipart/form-data" >
-
+    <?
+     echo $form['iddocumento']->renderError();
+    if( $documento ){
+        $form->setDefault('iddocumento', $documento->getCaIddocumento() );
+    }
+    echo $form['iddocumento']->render();
+    ?>
 <table class="tableList">
     <tr>
 		<th colspan="6"><div align="left"><b>Nuevo Documento</b></div></th>
@@ -29,12 +35,16 @@
 		<td><div align="left">
             <?
 
-
-            echo $form['idtipo']->renderError();
             if( $documento ){
-                $form->setDefault('idtipo', $documento->getCaIdtipo() );
+                echo $documento->getIdsTipoDocumento() ;
+                ?>
+                <input type="hidden" name="idtipo" value="<?=$documento->getCaIdtipo()?>" />
+                <?
+            }else{
+                echo $form['idtipo']->renderError();
+                echo $form['idtipo']->render();
             }
-            echo $form['idtipo']->render();
+            
             ?>
 
             </div></td>
@@ -54,26 +64,28 @@
 		<td> <div align="left"><b>Inicio:</b></div></td>
 		<td><div align="left">
             <?
-
-
-            echo $form['inicio']->renderError();
             if( $documento ){
-                $form->setDefault('inicio', $documento->getCaInicio() );
-            }
-            echo $form['inicio']->render();
+                echo Utils::fechaMes($documento->getCaFchinicio()) ;
+                 ?>
+                <input type="hidden" name="inicio" value="<?=$documento->getCaFchinicio()?>" />
+                <?
+            }else{
+                echo $form['inicio']->renderError();
+                echo $form['inicio']->render();
+            }            
             ?>
-
             </div></td>
         <td><div align="left"><b> Vencimiento: </b></div></td>
 		<td><div align="left">
             <?
-            echo $form['vencimiento']->renderError();
             if( $documento ){
-                $form->setDefault('inicio', $documento->getCaVencimiento() );
-            }
-            echo $form['vencimiento']->render();
-            ?>
+                echo Utils::fechaMes($documento->getCaFchvencimiento()) ;
 
+            }else{
+                echo $form['vencimiento']->renderError();
+                echo $form['vencimiento']->render();
+            }            
+            ?>
             </div></td>
 		<td><div align="left">&nbsp;</div></td>
 		<td><div align="left">&nbsp;</div></td>

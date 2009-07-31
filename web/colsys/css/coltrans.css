@@ -714,3 +714,20 @@ ul.error_list{
 	background-color:#FF0000;
 	color:#FFFFFF;	
 }
+
+
+.group_expanded{
+	padding: 2px 2px 2px 15px;
+	
+	cursor:pointer;
+	background: transparent url(../images/group-expand-sprite.gif) no-repeat scroll 3px -49px;
+}
+
+.group_collapsed{
+	padding: 2px 2px 2px 15px;
+	
+	cursor:pointer;
+	background: transparent url(../images/group-expand-sprite.gif) no-repeat scroll 3px 0px;
+
+
+}

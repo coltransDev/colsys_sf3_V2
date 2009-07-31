@@ -40,7 +40,7 @@ function mime_type_icon( $name , $size = "22"){
 		case "html":
 			return image_tag($folder."/mimetypes/html.gif");
 			break;
-		case "pdf":
+		case "pdf":            
 			return image_tag($folder."/mimetypes/pdf_document.gif");
 			break;
 		case "zip":

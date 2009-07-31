@@ -2,6 +2,7 @@
 
 class Ids extends BaseIds
 {
+    const FOLDER = "ids";
     public function getSucursalPrincipal( $con=null ){
         $c = new Criteria();
         $c->add( IdsSucursalPeer::CA_PRINCIPAL, true );

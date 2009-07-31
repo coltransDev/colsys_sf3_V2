@@ -5,7 +5,24 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 ?>
+<?
+use_helper("MimeType");
+?>
+<script type="text/javascript">
+    var expandCollapseGroup = function( obj , id ){
+        target = document.getElementById(id);
 
+        //alert( target.style.display );
+        if( target.style.display=="none" ){
+            target.style.display="inline";
+            //obj.className="group_expanded";
+        }else{
+            target.style.display="none";
+            //obj.className="group_collapsed";
+        }
+    }
+
+</script>
 <table class="tableList" width="100%">
     <tr class="row0">
         <td>
@@ -25,27 +42,57 @@
         </td>
     </tr>
     <?
+    $tipo = null;
     foreach( $documentos as $documento ){
+        if( $tipo!=$documento->getCaIdTipo() ){
+            $tipo = $documento->getCaIdTipo();
+            $class="";
+        }else{
+            $class="doc_".$documento->getCaIdtipo();
+
+        }
+    
     ?>
-    <tr>
+    <tr class="<?=$class?$class:""?>">
         <td>
+           <?
+           if( !$class ){
+           ?>
+           <div class="group_collapsed" id='group_<?=$documento->getCaIdtipo()?>' onclick="expandCollapseGroup( this, 'doc_<?=$documento->getCaIdtipo()?>')">
            <?=$documento->getIdsTipodocumento()?>
+           <?
+           }else{
+               ?>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?=$documento->getIdsTipodocumento()?>
+               <?
+           }
+           ?>
+           </div>
         </td>
         <td>
            <?=Utils::fechaMes($documento->getCaFchinicio() )?>
         </td>
         <td>
-           <?=Utils::fechaMes($documento->getCaFchvencimiento() )?>
-        <td>
-        <td>
-           Imagen
-        </td>
-        <td>
-           <?
+            <?
+            if($documento->getCaFchvencimiento()<date("Y-m-d")){
+                ?>
+            <span class="rojo">
+                 <?=Utils::fechaMes($documento->getCaFchvencimiento() )?>
+            </span>
+            <?
+            }else{
+                echo Utils::fechaMes($documento->getCaFchvencimiento() );
+            }
 
-           //link_to(image_tag("16x16/edit_add.gif"), "ids/formDocumentos?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Nuevo documento"))?>
+            ?>
+        <td>
+        <td>
+           <?=($documento->getCaUbicacion()&&file_exists($documento->getArchivo())?mime_type_icon($documento->getCaUbicacion())." ".link_to($documento->getCaUbicacion(),"ids/verDocumento?iddocumento=".$documento->getCaIddocumento()):"&nbsp;")?>
         </td>
-    </tr>
+        <td>
+           <?=link_to(image_tag("16x16/edit.gif"), "ids/formDocumentos?modo=".$modo."&iddocumento=".$documento->getCaIddocumento(),array("title"=>"Editar documento")); ?>
+        </td>
+    </tr> 
     <?
     }
     ?>

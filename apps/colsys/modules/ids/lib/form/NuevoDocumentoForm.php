@@ -23,7 +23,7 @@ class NuevoDocumentoForm extends sfForm {
         $criteriaCiudades->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
 
 		$widgets = array();
-        $widgets['id'] = new sfWidgetFormInputHidden(array(), array("size"=>80 ));
+        $widgets['iddocumento'] = new sfWidgetFormInputHidden(array(), array("size"=>80 ));
         $widgets['inicio'] = new sfWidgetFormExtDate(array());
         $widgets['vencimiento'] = new sfWidgetFormExtDate(array());
         $widgets['archivo'] = new sfWidgetFormInputFile(array(), array("size"=>40 ));
@@ -35,6 +35,7 @@ class NuevoDocumentoForm extends sfForm {
 
 		$validator = array();
         $validator["id"] = new sfValidatorPropelChoice(array('model' => 'Ids', 'column' => 'ca_id', 'required' => true));
+        $validator["iddocumento"] = new sfValidatorPropelChoice(array('model' => 'IdsDocumento', 'column' => 'ca_iddocumento', 'required' => false));
         $validator["idtipo"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'El tipo'));
         $validator["inicio"] =new sfValidatorDate( array('required' => true ),

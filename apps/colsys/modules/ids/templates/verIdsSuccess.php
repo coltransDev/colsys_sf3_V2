@@ -5,7 +5,12 @@
 
 ?>
 
+
 <div align="center" class="content">
+    <h3>Maestra de Proveedores</h3>
+    <br />
+    <br />
+
     <table  class="tableList" width="80%">
         <thead>
             <tr>

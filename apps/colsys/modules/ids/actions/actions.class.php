@@ -409,8 +409,9 @@ class idsActions extends sfActions
             $bindFiles["archivo"] = $_FILES["archivo"];
 
 			$this->form->bind( $bindValues, $bindFiles );
+            
 			if( $this->form->isValid() ){
-
+                
 
                 if( !$documento ){
                     $documento = new IdsDocumento();
@@ -418,17 +419,45 @@ class idsActions extends sfActions
                 }
 
                 $documento->setCaIdtipo( $request->getParameter("idtipo"));
-                $documento->setCaFchinicio( $request->getParameter("inicio"));
-                $documento->setCaFchvencimiento( $request->getParameter("vencimiento"));
-                //$documento->setCaFax( $request->getParameter("fax"));
 
+                if( $request->getParameter("inicio") ){
+                    $documento->setCaFchinicio( $request->getParameter("inicio"));
+                }
+
+                if( $request->getParameter("vencimiento") ){
+                    $documento->setCaFchvencimiento( $request->getParameter("vencimiento"));
+                }
                 $documento->save();
+
+                if( $bindFiles["archivo"] ){
+                    $directorio = $documento->getDirectorio();
+                    
+                    if( !is_dir($directorio) ){
+                        mkdir($directorio, 0777, true);
+                    }
+                    print_r( $bindFiles["archivo"] );
+                    move_uploaded_file( $bindFiles["archivo"]["tmp_name"], $directorio.DIRECTORY_SEPARATOR. $bindFiles["archivo"]["name"]);
+                    $documento->setCaUbicacion( $bindFiles["archivo"]["name"] );
+                    $documento->save();                   
+                }                
+                
 
                 $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
 			}
 		}
         $this->documento = $documento;
         $this->ids = $ids;
+    }
+
+    /*
+    * Visualiza documentos
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeVerDocumento(sfWebRequest $request){
+        $documento = IdsDocumentoPeer::retrieveByPk( $request->getParameter("iddocumento") );
+		$this->forward404Unless( $documento);
+        $this->file = $documento->getArchivo();
     }
 }
 ?>
