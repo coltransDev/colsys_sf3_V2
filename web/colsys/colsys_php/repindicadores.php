@@ -228,6 +228,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 
 	$ano_mem = implode(',',$ano);
 	$mes_mem = implode(',',$mes);
+	$tra_mem = $transporte[0];
 	
 	$ano_fes = "to_char(ca_fchfestivo,'YYYY') ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
 	$ano = "ca_ano ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
@@ -271,11 +272,13 @@ require_once("menu.php");
 	switch ($indicador) {
 		case "Confirmación Salida de la Carga":
 			$source   = "vi_repindicadores";
+			$subque   = "LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, min(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')-rs.ca_fchsalida as ca_diferencia from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where rs.ca_idetapa in ('IAETA','IMETA') group by ca_consecutivo, ca_fchsalida, ca_diferencia ) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
 			$ind_mem  = 1;
 			$add_cols = 3;
 			break;
 		case "Tiempo de Tránsito":
 			$source   = "vi_repindicadores";
+			$subque   = "LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, rs.ca_fchsalida, rs.ca_fchllegada, max(to_date((rs.ca_fchenvio::timestamp)::text,'yyyy-mm-dd')) as ca_fchenvio, rs.ca_fchllegada-rs.ca_fchsalida as ca_diferencia from tb_repstatus rs INNER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where rs.ca_idetapa in ('IACAD','IMCPD') group by ca_consecutivo, ca_fchsalida, ca_fchllegada, ca_diferencia) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
 			$ind_mem  = 2;
 			$add_cols = 3;
 			break;
@@ -283,6 +286,24 @@ require_once("menu.php");
 			$source   = "vi_repindicadores";
 			$ind_mem  = 3;
 			$add_cols = 4;
+			break;
+		case "Emisión de Factura":
+			if ($tra_mem == 'Aéreo'){
+				$source   = "vi_repindicador_air";
+
+				$script = "LEFT OUTER JOIN (";
+				$script.= "	";
+				$script.= ")	 sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+
+			} else if ($tra_mem == 'Marítimo'){
+				$source = "vi_repindicador_sea";
+				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo) ";
+				$subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo, rs.ca_fchllegada as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCRR') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo) ";
+				$subque.= " LEFT OUTER JOIN (select ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where ((string_to_array(ca_referencia,'.'))[5]::int)+2000 in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ('$mes_mem') order by ca_referencia, ca_idcliente, ca_hbls) ii ON ($source.ca_referencia = ii.ca_referencia and $source.ca_idcliente = ii.ca_idcliente and $source.ca_hbls = ii.ca_hbls) ";
+			}
+
+			$ind_mem  = 4;
+			$add_cols = 5;
 			break;
 		case "Información Oportuna":
 			$source   = "vi_repindicadores";
@@ -297,7 +318,7 @@ require_once("menu.php");
 				$tm->MoveNext();
 			}
 			$tm->MoveFirst();
-			$ind_mem  = 4;
+			$ind_mem  = 5;
 			$add_cols = 3;
 			break;
 		case "Oportunidada de Primer Status":
@@ -312,46 +333,16 @@ require_once("menu.php");
 				$tm->MoveNext();
 			}
 			$tm->MoveFirst();
-			$ind_mem  = 5;
+			$ind_mem  = 6;
 			$add_cols = 3;
 			break;	
 		case "Cumplimiento de Proveedores":
 			$source   = "vi_repindicadores";
-			$ind_mem  = 6;
+			$ind_mem  = 7;
 			$add_cols = 3;
 			break;
 		case "Oportunidad en Entrega de Cotizaciones":
 			$source   = "vi_cotindicadores";
-			$ind_mem  = 7;
-			$add_cols = 3;
-			break;
-		case "Emisión de Factura":
-			$source   = "vi_repindicadores";
-
-			if ($rs->Value('ca_transporte') == 'Aéreo'){
-
-				$script = "LEFT OUTER JOIN (";
-				$script.= "	";
-				$script.= ")	 sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
-
-			} else if ($rs->Value('ca_transporte') == 'Marítimo' and $rs->Value('ca_continuacion') == 'N/A'){
-
-				$subque = "LEFT OUTER JOIN (select rs.ca_consecutivo as ca_consecutivo_sub, min(to_timestamp(im.ca_fchconfirmacion||' '||im.ca_horaconfirmacion, 'YYYY-mm-dd hh-mi-ss')::timestamp) as ca_fchconfirmado, rs.ca_fchenvio from tb_inoclientes_sea ic";
-				$subque.= "	LEFT OUTER JOIN tb_inomaestra_sea im ON (ic.ca_referencia = im.ca_referencia)";
-				$subque.= "	LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte)";
-				$subque.= "	LEFT OUTER JOIN (select srp.ca_consecutivo, min(srs.ca_fchenvio) as ca_fchenvio from tb_repstatus srs LEFT OUTER JOIN tb_reportes srp ON (srs.ca_idreporte = srp.ca_idreporte and srs.ca_idetapa = 'IMCPD') group by srp.ca_consecutivo) rs ON (rp.ca_consecutivo = rs.ca_consecutivo)";
-				$subque.= "	group by rs.ca_consecutivo, rs.ca_fchenvio) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
-
-
-
-				$script = "select iis.ca_fchfactura, rs.ca_fchllegada from tb_inoingresos_sea iis";
-				$script.= "	LEFT OUTER JOIN tb_inoclientes_sea ics ON (iis.ca_referencia = ics.ca_referencia and iis.ca_idcliente = ics.ca_idcliente and iis.ca_hbls = ics.ca_hbls)";
-				$script.= "	LEFT OUTER JOIN tb_reportes rp ON (ics.ca_idreporte = rp.ca_idreporte)";
-				$script.= "	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail::text = '".$rs->Value('ca_idemail')."') where rp.ca_consecutivo = '".$rs->Value('ca_consecutivo')."'";
-				$script.= "	order by ca_fchfactura ASC limit 1";
-			}
-
-
 			$ind_mem  = 8;
 			$add_cols = 3;
 			break;
@@ -383,7 +374,7 @@ require_once("menu.php");
 
 	$queries = "select * from $source $subque where ca_impoexpo = 'Importación' and $sucursal $cliente and $transporte and $ano and $mes";
 	$queries.= " order by $campos";
-	die ($queries."<br />");
+	// die($queries);
 
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea 
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
@@ -425,28 +416,30 @@ require_once("menu.php");
 			echo "	<TH>Dif.</TH>";
 			break;
 		case 4:
+			echo "	<TH>Referencia</TH>";
+			echo "	<TH>Continuación</TH>";
+			echo "	<TH>Fch.Llegada/Planilla</TH>";
+			echo "	<TH>Fch.Factura</TH>";
+			echo "	<TH>Dif.</TH>";
+			break;
+		case 5:
 			echo "	<TH>Fch.Status</TH>";
 			echo "	<TH>Envío Msg</TH>";
 			echo "	<TH>Dif.</TH>";
 			break;
-		case 5:
+		case 6:
 			echo "	<TH>Fch.Reporte</TH>";
 			echo "	<TH>Primer Status</TH>";
 			echo "	<TH>Dif.</TH>";
 			break;
-		case 6:
+		case 7:
 			echo "	<TH>E.T.A.</TH>";
 			echo "	<TH>Fch.Llegada</TH>";
 			echo "	<TH>Dif.</TH>";
 			break;
-		case 7:
+		case 8:
 			echo "	<TH>Fch.Solicitud</TH>";
 			echo "	<TH>Fch.Envio</TH>";
-			echo "	<TH>Dif.</TH>";
-			break;
-		case 8:
-			echo "	<TH>Fch.Llegada</TH>";
-			echo "	<TH>Fch.Factura</TH>";
 			echo "	<TH>Dif.</TH>";
 			break;
 		case 9:
@@ -475,22 +468,14 @@ require_once("menu.php");
 		echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_compania')."</TD>";
 		switch ($ind_mem) {
 			case 1:
-				if (!$tm->Open("select ca_fchsalida, to_date((ca_fchenvio::timestamp)::text,'yyyy-mm-dd') as ca_fchenvio, to_date((ca_fchenvio::timestamp)::text,'yyyy-mm-dd')-ca_fchsalida as ca_diferencia from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte)	where rs.ca_idetapa in ('IAETA','IMETA') and ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ca_consecutivo ASC limit 1")) {       // Selecciona todos lo registros Confirmación de Zarpe de la tabla Status
-					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-					echo "<script>document.location.href = 'repindicadores.php';</script>";
-					exit; }
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchsalida')."</TD>";
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchenvio')."</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$tm->Value('ca_diferencia')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchsalida')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchenvio')."</TD>";
+				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$rs->Value('ca_diferencia')."</TD>";
 				break;
 			case 2:
-				if (!$tm->Open("select ca_fchsalida, ca_fchllegada, ca_fchllegada-ca_fchsalida as ca_diferencia from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where not nullvalue(ca_fchllegada) and ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ca_fchenvio DESC limit 1")) {       // Selecciona todos lo registros de la tabla Status
-					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-					echo "<script>document.location.href = 'repindicadores.php';</script>";
-					exit; }
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchsalida')."</TD>";
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchllegada')."</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$tm->Value('ca_diferencia')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchsalida')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchllegada')."</TD>";
+				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$rs->Value('ca_diferencia')."</TD>";
 				break;
 			case 3:
 				if (!$tm->Open("select ic.ca_referencia, rp.ca_consecutivo, im.ca_fchconfirmacion, (CASE WHEN to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') < im.ca_fchconfirmacion THEN NULL ELSE to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') END) as ca_fchdesconsolidacion, (CASE WHEN to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') < im.ca_fchconfirmacion THEN NULL ELSE to_date(im.ca_fchdesconsolidacion,'YYYY-MM-DD') END)-im.ca_fchconfirmacion as ca_diferencia from tb_inoclientes_sea ic LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte::text = rp.ca_idreporte::text) LEFT OUTER JOIN tb_inomaestra_sea im ON (ic.ca_referencia = im.ca_referencia) where ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ic.ca_referencia, im.ca_fchconfirmacion")) {       // Selecciona todos lo registros de la tabla InoClientes / InoMaestra
@@ -503,6 +488,36 @@ require_once("menu.php");
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$tm->Value('ca_diferencia')."</TD>";
 				break;
 			case 4:
+				$adicionales = false;
+				$ref_tmp = $rs->Value('ca_referencia');
+				$idc_tmp = $rs->Value('ca_idcliente');					
+				$hbl_tmp = $rs->Value('ca_hbls');
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_continuacion')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchllegada')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchfactura')."</TD>";
+				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchllegada'),$rs->Value('ca_fchfactura'))."</TD>";
+				if ($rs->Value('ca_continuacion') == "N/A"){
+					while ($rs->Value('ca_referencia') = $ref_tmp and $rs->Value('ca_idcliente') = $idc_tmp and $rs->Value('ca_hbls') = $hbl_tmp and $rs->Eof()){
+						$rs->MoveNext();	// Omite las facturas adicionales sobre una misma carga.
+					}
+					continue;
+				}else if ($rs->Value('ca_continuacion') == "OTM" or $rs->Value('ca_continuacion') == "DTA"){
+					while ($rs->Value('ca_referencia') = $ref_tmp and $rs->Value('ca_idcliente') = $idc_tmp and $rs->Value('ca_hbls') = $hbl_tmp and $rs->Eof()){
+						if ($rs->Value('ca_observaciones') == "OTM/DTA"){ // Busca la Factura por el OTM o el DTA
+							echo "<TR>";
+							echo "  <TD Class=mostrar COLSPAN=12></TD>";
+							echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchplanilla')."</TD>";
+							echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchfactura')."</TD>";
+							echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchplanilla'),$rs->Value('ca_fchfactura'))."</TD>";
+							echo "</TR>";
+						}
+						$rs->MoveNext();
+					}
+					continue;
+				}
+				break;
+			case 5:
 				$adicionales = false;
 				$idreporte = $rs->Value('ca_idreporte');
 				while ($idreporte == $rs->Value('ca_idreporte') and !$rs->Eof() and !$rs->IsEmpty()) {
@@ -522,18 +537,17 @@ require_once("menu.php");
 						echo "</TR>";
 					}
 					$adicionales = true;
-					$rs->MoveNext();
+					$rs->MoveNext();	// Buscar Todos los Status de un Embarque
 				}
 				if (!$adicionales){
 					echo "  <TD Class=mostrar></TD>";
 					echo "  <TD Class=mostrar></TD>";
 					echo "  <TD Class=invertir></TD>";
-				}
-				if (!$rs->Eof()){
-					$rs->MovePrevious();
+				} else {
+					continue;
 				}
 				break;
-			case 5:
+			case 6:
 				if (!$tm->Open("select ca_fchcreado as ca_fchreporte, ca_fchenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ca_fchenvio ASC limit 1 order by ca_fchcreado")) {       // Selecciona todos lo registros de la tabla Status
 					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 					echo "<script>document.location.href = 'repindicadores.php';</script>";
@@ -547,7 +561,7 @@ require_once("menu.php");
 				$dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado);
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				break;
-			case 6:
+			case 7:
 				if (!$tm->Open("select ca_fchllegada from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ca_fchllegada")) {       // Selecciona todos lo registros de la tabla Status
 					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 					echo "<script>document.location.href = 'repindicadores.php';</script>";
@@ -566,23 +580,12 @@ require_once("menu.php");
 				echo "  <TD Class=mostrar style='font-size: 9px;'>$fch_llegada</TD>";
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($fch_eta,$fch_llegada)."</TD>";
 				break;
-			case 7:
+			case 8:
 				list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchpresentacion'), "%d-%d-%d %d:%d:%d");
 				$fch_presenta = (strlen($ano)!=0)?date("Y-m-d", mktime(0, 0, 0, $mes, $dia, $ano)):null;
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchsolicitud')."</TD>";
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$fch_presenta."</TD>";
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchsolicitud'),$fch_presenta)."</TD>";
-				break;
-			case 8:
-/*
-				if (!$tm->Open("$script")) {       // Selecciona todos lo registros de la tabla InoIngresos
-					echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-					echo "<script>document.location.href = 'repindicadores.php';</script>";
-					exit; }
-*/
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchllegada')."</TD>";
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$tm->Value('ca_fchfactura')."</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($tm->Value('ca_fchllegada'),$tm->Value('ca_fchfactura'))."</TD>";
 				break;
 			case 9:
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconfirmado')."</TD>";
