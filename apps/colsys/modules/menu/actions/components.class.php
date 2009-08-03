@@ -12,11 +12,23 @@ class menuComponents extends sfComponents
 		$action = $this->getContext()->getActionName ();
 				
 		$button=array();			
+        //echo sfConfig::get("sf_plugins_dir");
 
+        
 		$filename=sfConfig::get("sf_app_module_dir").DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR."templates".DIRECTORY_SEPARATOR."_submenuBar.php";
 		if( file_exists($filename) ){
 			include($filename);
-		}			
+		}elseif ($pluginDirs = glob(sfConfig::get('sf_plugins_dir').DIRECTORY_SEPARATOR."*".DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR."templates".DIRECTORY_SEPARATOR))
+        {
+          foreach ($pluginDirs as $dir)
+          {
+             $filename = $dir."_submenuBar.php";        
+             if( file_exists($filename) ){
+                include($filename);
+            }
+          }
+        }
+
 		$this->buttons = $button;		   
 					
 		
