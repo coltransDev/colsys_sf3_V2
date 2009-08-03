@@ -60,7 +60,7 @@
 		<br />
 		
 		<?
-		if( $reporte->getCaImpoexpo()==Constantes::IMPO ){
+		if( $reporte->getCaImpoexpo()==Constantes::IMPO || $reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
 		?>
 		<div class="post-info" align="left">
 		<b>Reportes al exterior</b><br />	

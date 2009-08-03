@@ -18,7 +18,7 @@ class traficosComponents extends sfComponents
 		$this->modo = $this->getRequestParameter("modo");
 		
 		
-		if( $this->reporte->getCaImpoexpo()==Constantes::IMPO ){
+		if( $this->reporte->getCaImpoexpo()==Constantes::IMPO || $this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION  ){
 			//Reportes al exterior
 			$c = new Criteria();
             $c->addJoin( EmailPeer::CA_IDCASO, ReportePeer::CA_IDREPORTE );

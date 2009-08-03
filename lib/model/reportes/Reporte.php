@@ -46,7 +46,7 @@ class Reporte extends BaseReporte
 	*/
 	public function getProveedores(){
 		
-		if( $this->getcaImpoexpo()=="Importación"){
+		if( $this->getcaImpoexpo()==Constantes::IMPO || $this->getcaImpoexpo()==Constantes::TRIANGULACION ){
 			$provId = $this->getCaIdproveedor();	
 			if($provId){		
 				$provId = explode("|", $provId);
