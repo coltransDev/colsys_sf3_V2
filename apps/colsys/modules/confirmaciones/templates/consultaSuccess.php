@@ -115,11 +115,11 @@ function mostrar(oid){
 		  }
 	} 
 	
-	objeto_1 = document.getElementById('divfchllegada_' + oid);
-	objeto_2 = document.getElementById('divbodega_' + oid);
-	objeto_3 = document.getElementById('divmessage_' + oid);
-	objeto_4 = document.getElementById('mensaje_' + oid);
-		
+	var objeto_1 = document.getElementById('divfchllegada_' + oid);
+	var objeto_2 = document.getElementById('divbodega_' + oid);
+	var objeto_3 = document.getElementById('divmessage_' + oid);
+	var objeto_4 = document.getElementById('mensaje_' + oid);
+	var objeto_5 = document.getElementById('divfchplanilla_' + oid);
 	switch( value ){
 		<?
 		foreach( $etapas as $etapa ){
@@ -168,6 +168,18 @@ function mostrar(oid){
 		objeto_1.style.display = 'none';
 		objeto_2.style.display = 'none';
 	}
+    <?
+    if($modo=="otm"){
+        ?>
+        if(value == "99999") {
+            objeto_5.style.display = 'inline';
+        }
+        else {
+            objeto_5.style.display = 'none';
+        }
+    <?
+    }
+    ?>
 }
 
 </script>
@@ -523,16 +535,21 @@ function mostrar(oid){
 						Status						 </td>
 					<td class="listar" style='vertical-align:bottom;'><b>Destino OTM:</b><br />
 							<?=$inoCliente->getContinuacion()?$inoCliente->getContinuacion()->getcaCiudad():""?></td>
-					<td class="listar" style='vertical-align:bottom;'><div id="divfchllegada_<?=$inoCliente->getOid()?>"> <b>Fecha llegada:</b><br />
+					<td class="listar" style='vertical-align:bottom;'>
+                        <div id="divfchllegada_<?=$inoCliente->getOid()?>"> <b>Fecha llegada:</b><br />
 									
 									<?
-									extDatePicker('fchllegada_'.$inoCliente->getOid(), date("Y-m-d"));
+									echo extDatePicker('fchllegada_'.$inoCliente->getOid(), date("Y-m-d"));
 									?>
 						</div>
 						
-						<?
-						echo extDatePicker('fchllegada_'.$inoCliente->getOid(), date("Y-m-d"));
-						?>
+                        <div id="divfchplanilla_<?=$inoCliente->getOid()?>" style="display:none;"> <b>Fecha Planilla:</b><br />
+
+									<?
+									echo extDatePicker('fchplanilla_'.$inoCliente->getOid(), date("Y-m-d"));
+									?>
+						</div>
+
 						  </td>
 				</tr>
 				<tr>

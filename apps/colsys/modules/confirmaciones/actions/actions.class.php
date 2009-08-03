@@ -296,7 +296,12 @@ class confirmacionesActions extends sfActions
 						$status->setCaFchcontinuacion( Utils::parseDate($this->getRequestParameter("fchllegada_".$oid)));	
 						$status->setProperty("idbodega", $idbodega);				
 					}
-										
+
+                    if( $etapa=="99999" ){
+						$fchplanilla = $this->getRequestParameter("fchplanilla_".$oid);						
+						$status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));
+					}
+
 					$status->setCaIdEtapa($etapa);
 					break;				
 				default:	
@@ -319,9 +324,11 @@ class confirmacionesActions extends sfActions
 			$destinatarios = array();
 			
 			$checkbox = $request->getParameter("em_".$oid);
-			foreach($checkbox as $check ){				
-				$destinatarios[]=$request->getParameter("ar_".$oid."_".$check);
-			}
+            if( $checkbox ){
+                foreach($checkbox as $check ){
+                    $destinatarios[]=$request->getParameter("ar_".$oid."_".$check);
+                }
+            }
 							
 			$status->save();			
 			$status->send($destinatarios, array(), $attachments );		
