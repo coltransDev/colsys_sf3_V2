@@ -8,21 +8,7 @@
 <?
 use_helper("MimeType");
 ?>
-<script type="text/javascript">
-    var expandCollapseGroup = function( obj , id ){
-        target = document.getElementById(id);
 
-        //alert( target.style.display );
-        if( target.style.display=="none" ){
-            target.style.display="inline";
-            //obj.className="group_expanded";
-        }else{
-            target.style.display="none";
-            //obj.className="group_collapsed";
-        }
-    }
-
-</script>
 <table class="tableList" width="100%">
     <tr class="row0">
         <td>
@@ -53,7 +39,7 @@ use_helper("MimeType");
         }
     
     ?>
-    <tr class="<?=$class?$class:""?>">
+    <tr class="<?=$class?$class:""?>" <?=$class?'style="display:none;"':""?>  >
         <td>
            <?
            if( !$class ){
@@ -90,7 +76,11 @@ use_helper("MimeType");
            <?=($documento->getCaUbicacion()&&file_exists($documento->getArchivo())?mime_type_icon($documento->getCaUbicacion())." ".link_to($documento->getCaUbicacion(),"ids/verDocumento?iddocumento=".$documento->getCaIddocumento()):"&nbsp;")?>
         </td>
         <td>
-           <?=link_to(image_tag("16x16/edit.gif"), "ids/formDocumentos?modo=".$modo."&iddocumento=".$documento->getCaIddocumento(),array("title"=>"Editar documento")); ?>
+            <?
+            if( !$class ){
+                echo link_to(image_tag("16x16/edit.gif"), "ids/formDocumentos?modo=".$modo."&iddocumento=".$documento->getCaIddocumento(),array("title"=>"Editar documento"));
+            }
+            ?>
         </td>
     </tr> 
     <?
