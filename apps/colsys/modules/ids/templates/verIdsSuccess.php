@@ -53,25 +53,21 @@
 
                    <div class="tab-page">
                       <h2 class="tab">Contactos</h2>
-                        <?
-                        include_component("ids", "contactos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
-                        ?>
+                          <?
+                          include_component("ids", "contactos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                          ?>
                        </div>
                        <div class="tab-page">
                           <h2 class="tab">Documentos</h2>
-
-                         <?
-                        include_component("ids", "documentos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
-                        ?>
-
+                          <?
+                          include_component("ids", "documentos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                          ?>
                        </div>
-
                         <div class="tab-page">
                           <h2 class="tab">Evaluacion</h2>
-
-                          This is text of tab 2. This is text of tab 2.
-                          This is text of tab 2. This is text of tab 2.
-
+                          <?
+                          include_component("ids", "evaluaciones", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                          ?>
                        </div>
 
                          <div class="tab-page">

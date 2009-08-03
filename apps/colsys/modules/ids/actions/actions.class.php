@@ -459,5 +459,26 @@ class idsActions extends sfActions
 		$this->forward404Unless( $documento);
         $this->file = $documento->getArchivo();
     }
+
+
+    /*
+    * Visualiza documentos
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormEvaluacion(sfWebRequest $request){
+        
+
+    }
+
+
+    public function executeGetConceptosEvaluacion(sfWebRequest $request){
+        $tipocriterio = $request->getParameter("tipocriterio");
+        
+        $c = new Criteria();
+        $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, $tipocriterio );
+        $this->criterios = IdsCriterioPeer::doSelect( $c );
+    }
+
 }
 ?>
