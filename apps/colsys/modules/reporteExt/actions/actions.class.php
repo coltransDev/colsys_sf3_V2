@@ -252,7 +252,7 @@ class reporteExtActions extends sfActions
 		$this->reporte = ReportePeer::retrieveByPk( $this->getRequestParameter("idreporte") );		
 		$this->forward404Unless( $this->reporte );
 		
-		$this->forward404Unless( $this->reporte->getCaImpoExpo()==Constantes::IMPO );
+		$this->forward404Unless( $this->reporte->getCaImpoExpo()==Constantes::IMPO||$this->reporte->getCaImpoExpo()==Constantes::TRIANGULACION );
 		
 		if( $this->getRequestParameter("layout") ){
 			$this->setLayout( $this->getRequestParameter("layout") );
