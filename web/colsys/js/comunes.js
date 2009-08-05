@@ -208,3 +208,64 @@ var expandCollapse = function( obj , id, classname ){
 }
 
 
+document.getElementsByClass = function(needle) {
+ function acceptNode(node) {
+   if (node.hasAttribute("class")) {
+     var c = " " + node.className + " ";
+      if (c.indexOf(" " + needle + " ") != -1)
+        return NodeFilter.FILTER_ACCEPT;
+   }
+   return NodeFilter.FILTER_SKIP;
+ }
+ var treeWalker = document.createTreeWalker(document.documentElement,
+     NodeFilter.SHOW_ELEMENT, acceptNode, true);
+ var outArray = new Array();
+ if (treeWalker) {
+   var node = treeWalker.nextNode();
+   while (node) {
+     outArray.push(node);
+     node = treeWalker.nextNode();
+   }
+ }
+ return outArray;
+}
+
+
+/*
+* Expande y colapsa un elemento de acuerdo a la clase que tenga
+*/
+var expandCollapseGroup = function( obj , id ){
+
+    var elements = document.getElementsByClass(id);
+
+    for(var i=0; i<elements.length; i++ ){
+        target = elements[i];
+        if( target.style.display=="none" ){
+            target.style.display="";
+            obj.className="group_expanded";
+        }else{
+            target.style.display="none";
+            obj.className="group_collapsed";
+        }
+    }
+}
+
+
+
+function actualizarContenido( id , url, params ){
+		var content = document.getElementById( id );
+
+		content.innerHTML = "<div id='indicator'></div>";
+		Ext.Ajax.request({
+			url: url,
+			params: params,
+			success: function(xhr) {
+				content.innerHTML = xhr.responseText;
+
+			},
+			failure: function() {
+				Ext.Msg.alert("Error", "Server communication failure");
+			}
+		});
+
+	}
