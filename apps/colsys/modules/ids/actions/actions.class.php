@@ -130,8 +130,14 @@ class idsActions extends sfActions
         $this->form = new NuevoIdsForm();
 
         $formSucursal = new NuevaSucursalForm();
-
         $this->form->mergeForm($formSucursal);
+
+        if( $this->modo=="agentes" || $this->modo=="transp" ){
+            $this->formProveedor = new NuevoProveedorForm();
+            $this->form->mergeForm($this->formProveedor);
+
+
+        }
 
         $ids = null;
 
@@ -467,18 +473,96 @@ class idsActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeFormEvaluacion(sfWebRequest $request){
-        
+        $this->nivel = $this->getNivel();
+
+        $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+        $this->modo = $request->getParameter("modo");
+		$this->forward404Unless( $this->ids );
+        if ($request->isMethod('post')){
+            
+            $evaluacion = new IdsEvaluacion();
+            $evaluacion->setCaId( $this->ids->getCaId() );
+            $evaluacion->setCaFchevaluacion( Utils::parseDate( $request->getParameter('fchevaluacion' )) );
+            $evaluacion->setCaConcepto( $request->getParameter('concepto') );
+            $evaluacion->setCaTipo( $request->getParameter('tipo') );
+            $evaluacion->save();
+
+            $criterios = $request->getParameter("idcriterio");
+
+            foreach( $criterios as $idcriterio ){
+                $evaluacionxcriterio = new IdsEvaluacionxCriterio();
+                $evaluacionxcriterio->setCaIdCriterio( $idcriterio );
+                $evaluacionxcriterio->setCaValor( $request->getParameter("calificacion_".$idcriterio) );
+                $evaluacionxcriterio->setCaIdEvaluacion(  $evaluacion->getCaIdevaluacion() );
+                if( $request->getParameter("observaciones_".$idcriterio) ){
+                    $evaluacionxcriterio->setCaObservaciones( $request->getParameter("observaciones_".$idcriterio) );
+                }
+                $evaluacionxcriterio->save();
+
+            }
+
+            $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+        }
 
     }
 
-
+    /*
+     *  Devuelve los campos del formulario para realizar la evaluación de acuerdo al
+     *  tipo de evaluación que se desee aplicar.
+     *
+     * @param sfRequest $request A request object
+     */
     public function executeGetConceptosEvaluacion(sfWebRequest $request){
         $tipocriterio = $request->getParameter("tipocriterio");
         
         $c = new Criteria();
         $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, $tipocriterio );
         $this->criterios = IdsCriterioPeer::doSelect( $c );
+
+        $this->tipocriterio = $tipocriterio;
+        
+
     }
 
+    /*
+    * Permite registrar eventos por referencia
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormEventos(sfWebRequest $request){
+        //Se debe verificar que la referencia exista y determinar el proveedor.
+
+        $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
+        $this->forward404Unless(  $numreferencia );
+
+        if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
+            $referencia = InoMaestraSea::retrieveByPk( $numreferencia );
+            $linea = $referencia->getCaidlinea();
+
+            
+
+
+        }
+
+
+        //Se muestra el formulario y se guarda el evento
+        $this->form = new NuevoEventoForm();
+
+        if ($request->isMethod('post')){
+
+			$bindValues = array();
+
+            $bindValues["tipo_evento"] = $request->getParameter("tipo_evento");
+            $bindValues["evento"] = $request->getParameter("evento");
+            $bindValues["id_proveedor"] = $request->getParameter("id_proveedor");
+            
+            $this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+                
+            }
+
+        }
+
+    }
 }
 ?>

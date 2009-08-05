@@ -9,13 +9,13 @@
 <table class="tableList" width="100%">
     <tr class="row0">
         <td>
-            <b>Evaluación </b>
+            <b>Fecha </b>
         </td>
         <td>
            <b>Tipo</b>
         </td>
         <td>
-           <b>Fecha</b>
+            <b>Calificaci&oacute;n</b>
         <td>
         
         <td>
@@ -29,36 +29,19 @@
     ?>
     <tr   >
         <td>
+            <?=Utils::fechaMes($evaluacion->getCaFchcreado() )?>
 
-
         </td>
         <td>
-           <?=Utils::fechaMes($documento->getCaFchinicio() )?>
+           <?=ucfirst($evaluacion->getCaTipo())?>
         </td>
         <td>
-            <?
-            if($documento->getCaFchvencimiento()<date("Y-m-d")){
-                ?>
-            <span class="rojo">
-                 <?=Utils::fechaMes($documento->getCaFchvencimiento() )?>
-            </span>
-            <?
-            }else{
-                echo Utils::fechaMes($documento->getCaFchvencimiento() );
-            }
-
-            ?>
+           <?=$evaluacion->getCalificacion()?>
         <td>
         <td>
-           <?=($documento->getCaUbicacion()&&file_exists($documento->getArchivo())?mime_type_icon($documento->getCaUbicacion())." ".link_to($documento->getCaUbicacion(),"ids/verDocumento?iddocumento=".$documento->getCaIddocumento()):"&nbsp;")?>
+            &nbsp;
         </td>
-        <td>
-            <?
-            if( !$class ){
-                echo link_to(image_tag("16x16/edit.gif"), "ids/formDocumentos?modo=".$modo."&iddocumento=".$documento->getCaIddocumento(),array("title"=>"Editar documento"));
-            }
-            ?>
-        </td>
+        
     </tr>
     <?
     }

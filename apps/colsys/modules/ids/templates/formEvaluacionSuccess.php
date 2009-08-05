@@ -12,6 +12,7 @@ use_helper("ExtCalendar");
 
 
 <div class="content" align="center">
+    <form action="<?=url_for("ids/formEvaluacion?modo=".$modo."&id=".$ids->getCaId())?>" method="post">
     <table class="tableList" width="50%">
         <tr>
             <th colspan="2">&nbsp;</th>
@@ -51,25 +52,11 @@ use_helper("ExtCalendar");
         </tr>
         </tr>
     </table>
+    </form>
+
 </div>
 <script type="text/javascript">
-   function actualizarContenido( id , url, params ){
-		var content = document.getElementById( id );
-
-		content.innerHTML = "<div id='indicator'></div>";
-		Ext.Ajax.request({
-			url: url,
-			params: params,
-			success: function(xhr) {
-				content.innerHTML = xhr.responseText;
-
-			},
-			failure: function() {
-				Ext.Msg.alert("Error", "Server communication failure");
-			}
-		});
-
-	}
+   
 
     actualizarContenido( 'evaluacion', '<?=url_for("ids/getConceptosEvaluacion");?>', {tipocriterio:document.getElementById("tipo").value} );
 

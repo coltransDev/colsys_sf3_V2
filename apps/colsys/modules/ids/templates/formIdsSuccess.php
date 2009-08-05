@@ -117,6 +117,26 @@
              </div>
         </td>
 	</tr>
+
+    <?
+    if( isset($formProveedor) ){
+    ?>
+    <tr>
+        <td> <div align="left"><b>Tipo de Proveedor:</b></div></td>
+		<td colspan="5">
+             <div align="left">
+            <?
+            echo $form['tipo_proveedor']->renderError();
+            //$form->setDefault('website', $ids->getCaWebsite() );
+            echo $form['tipo_proveedor']->render();
+            ?>
+             </div>
+        </td>
+	</tr>
+    <?
+    }
+    ?>
+
 	<tr>
 		<th colspan="6"><div align="left"><b>Oficina Principal:</b></div></th>
 		</tr>
@@ -205,3 +225,6 @@
     }
     ?>
 </script>
+
+
+

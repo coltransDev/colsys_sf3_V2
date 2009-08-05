@@ -11,9 +11,15 @@
         <th>
             Criterio
         </th>
+        <?
+        if( $tipocriterio!="seleccion" ){
+        ?>
         <th>
             Ponderaci&oacute;n
         </th>
+        <?
+        }
+        ?>
         <th>
             Calificaci&oacute;n
         </th>
@@ -29,9 +35,15 @@
             <?=$criterio->getCaCriterio()?>
             <input type="hidden" name="idcriterio[]" size="5" value="<?=$criterio->getCaIdCriterio()?>" />
         </td>
+        <?
+        if( $tipocriterio!="seleccion" ){
+        ?>
         <td>
             <input type="text" name="ponderacion_<?=$criterio->getCaIdCriterio()?>" size="5" />
         </td>
+        <?
+        }
+        ?>
         <td>
             <input type="text" name="calificacion_<?=$criterio->getCaIdCriterio()?>" size="5" />
         </td>

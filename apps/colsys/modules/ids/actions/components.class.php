@@ -50,12 +50,10 @@ class idsComponents  extends sfComponents
     public function executeEvaluaciones()
 	{
 		$c = new Criteria();
-        $c->addJoin(IdsDocumentoPeer::CA_IDTIPO, IdsTipoDocumentoPeer::CA_IDTIPO );
-        $c->add(IdsDocumentoPeer::CA_ID, $this->ids->getCaId() );
-
-        $c->addAscendingOrderByColumn( IdsTipoDocumentoPeer::CA_TIPO );
-        $c->addDescendingOrderByColumn( IdsDocumentoPeer::CA_FCHCREADO );
-        $this->documentos = IdsDocumentoPeer::doSelect( $c );
+       
+        $c->add(IdsEvaluacionPeer::CA_ID, $this->ids->getCaId() );        
+        $c->addDescendingOrderByColumn( IdsEvaluacionPeer::CA_FCHEVALUACION );
+        $this->evaluaciones = IdsEvaluacionPeer::doSelect( $c );
 
 
 	}
