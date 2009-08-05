@@ -511,52 +511,87 @@ class idsActions extends sfActions
 
         $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
         $this->modo = $request->getParameter("modo");
+
+        $this->tipo = $request->getParameter("tipo");
+
 		$this->forward404Unless( $this->ids );
+        
+
+
+        $c = new Criteria();
+        $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, $this->tipo );
+        $this->criterios = IdsCriterioPeer::doSelect( $c );
+
+        $this->form = new NuevaEvaluacionForm();
+        $this->form->setCriterios( $this->criterios );
+        $this->form->configure();
+        
         if ($request->isMethod('post')){
-            
-            $evaluacion = new IdsEvaluacion();
-            $evaluacion->setCaId( $this->ids->getCaId() );
-            $evaluacion->setCaFchevaluacion( Utils::parseDate( $request->getParameter('fchevaluacion' )) );
-            $evaluacion->setCaConcepto( $request->getParameter('concepto') );
-            $evaluacion->setCaTipo( $request->getParameter('tipo') );
-            $evaluacion->save();
 
-            $criterios = $request->getParameter("idcriterio");
 
-            foreach( $criterios as $idcriterio ){
-                $evaluacionxcriterio = new IdsEvaluacionxCriterio();
-                $evaluacionxcriterio->setCaIdCriterio( $idcriterio );
-                $evaluacionxcriterio->setCaValor( $request->getParameter("calificacion_".$idcriterio) );
-                $evaluacionxcriterio->setCaIdEvaluacion(  $evaluacion->getCaIdevaluacion() );
-                if( $request->getParameter("observaciones_".$idcriterio) ){
-                    $evaluacionxcriterio->setCaObservaciones( $request->getParameter("observaciones_".$idcriterio) );
-                }
-                $evaluacionxcriterio->save();
+            $bindValues = array();
 
+			$bindValues["fchevaluacion"] = $request->getParameter("fchevaluacion");
+			$bindValues["concepto"] = $request->getParameter("concepto");
+			$bindValues["tipo"] = $request->getParameter("tipo");
+            foreach( $this->criterios as $criterio ){
+                $bindValues["ponderacion_".$criterio->getCaidcriterio() ] = $request->getParameter("ponderacion_".$criterio->getCaidcriterio());
+                $bindValues["calificacion_".$criterio->getCaidcriterio() ] = $request->getParameter("calificacion_".$criterio->getCaidcriterio());
+                $bindValues["observaciones_".$criterio->getCaidcriterio() ] = $request->getParameter("observaciones_".$criterio->getCaidcriterio());
             }
 
-            $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+
+
+			$this->form->bind( $bindValues);
+
+			if( $this->form->isValid() ){
+              
+
+
+                $evaluacion = new IdsEvaluacion();
+                $evaluacion->setCaId( $this->ids->getCaId() );
+                $evaluacion->setCaFchevaluacion( Utils::parseDate( $request->getParameter('fchevaluacion' )) );
+                $evaluacion->setCaConcepto( $request->getParameter('concepto') );
+                $evaluacion->setCaTipo( $request->getParameter('tipo') );
+                $evaluacion->save();
+
+                $criterios = $request->getParameter("idcriterio");
+
+                foreach( $criterios as $idcriterio ){
+                    $evaluacionxcriterio = new IdsEvaluacionxCriterio();
+                    $evaluacionxcriterio->setCaIdCriterio( $idcriterio );                    
+                    $evaluacionxcriterio->setCaPonderacion( trim($request->getParameter("ponderacion_".$idcriterio)) );                    
+                    $evaluacionxcriterio->setCaValor( trim($request->getParameter("calificacion_".$idcriterio)) );
+                    $evaluacionxcriterio->setCaIdEvaluacion(  $evaluacion->getCaIdevaluacion() );
+                    if( $request->getParameter("observaciones_".$idcriterio) ){
+                        $evaluacionxcriterio->setCaObservaciones( $request->getParameter("observaciones_".$idcriterio) );
+                    }
+                    $evaluacionxcriterio->save();
+                }
+
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+                
+            }
         }
 
     }
 
-    /*
-     *  Devuelve los campos del formulario para realizar la evaluación de acuerdo al
-     *  tipo de evaluación que se desee aplicar.
-     *
-     * @param sfRequest $request A request object
-     */
-    public function executeGetConceptosEvaluacion(sfWebRequest $request){
-        $tipocriterio = $request->getParameter("tipocriterio");
-        
-        $c = new Criteria();
-        $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, $tipocriterio );
-        $this->criterios = IdsCriterioPeer::doSelect( $c );
 
-        $this->tipocriterio = $tipocriterio;
-        
+    /*
+    * Muestra una evaluacion
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeVerEvaluacion(sfWebRequest $request){
+        $this->evaluacion = IdsEvaluacionPeer::retrieveByPK( $request->getParameter("idevaluacion"));
+        $this->forward404Unless( $this->evaluacion );
+
+        $this->ids = $this->evaluacion->getIds();
+        $this->modo=$request->getParameter("modo");
 
     }
+
+    
 
     /*
     * Permite registrar eventos por referencia
@@ -572,12 +607,7 @@ class idsActions extends sfActions
         if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
             $referencia = InoMaestraSea::retrieveByPk( $numreferencia );
             $linea = $referencia->getCaidlinea();
-
-            
-
-
         }
-
 
         //Se muestra el formulario y se guarda el evento
         $this->form = new NuevoEventoForm();
@@ -598,5 +628,8 @@ class idsActions extends sfActions
         }
 
     }
+
+
+
 }
 ?>
