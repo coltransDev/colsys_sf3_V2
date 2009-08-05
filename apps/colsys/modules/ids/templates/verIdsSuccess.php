@@ -46,7 +46,43 @@
                    <div align="left"><?=$ids->getCaWebsite()?></div>
                </td>
             </tr>
+            <?
+            $proveedor = $ids->getIdsProveedor();
             
+            if( $proveedor ){
+            ?>
+            <tr>
+                <td>
+                    <div align="left"><b>Tipo</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$proveedor->getIdsTipo()?></div>
+               </td>
+               <td>
+                   <div align="left"><b>Fecha de aprobaci&oacute;n</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado())." por ".$proveedor->getCaUsuaprobado():"No Aprobado"?></div>
+               </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <div align="left"><b>Controlado por SIG</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$proveedor->getCaControladoporsig()?"S&iacute;":"No"?></div>
+               </td>
+               <td>
+                   <div align="left"><b>Critico</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$proveedor->getCaCritico()?"S&iacute;":"No"?></div>
+               </td>
+            </tr>
+            <?
+            }
+            ?>
             <tr>
                 <td colspan="4">
                     <div class="tab-pane" id="tab-pane-1">

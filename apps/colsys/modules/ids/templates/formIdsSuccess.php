@@ -120,17 +120,60 @@
 
     <?
     if( isset($formProveedor) ){
+        $proveedor = $ids->getIdsProveedor();
+    
     ?>
     <tr>
         <td> <div align="left"><b>Tipo de Proveedor:</b></div></td>
-		<td colspan="5">
-             <div align="left">
+		<td >
+            <div align="left">
             <?
             echo $form['tipo_proveedor']->renderError();
-            //$form->setDefault('website', $ids->getCaWebsite() );
+            if( $proveedor ){
+                $form->setDefault('tipo_proveedor', $proveedor->getCaTipo() );
+            }
             echo $form['tipo_proveedor']->render();
             ?>
-             </div>
+            </div>
+        </td>
+        <td> <div align="left"><b>Aprobado:</b></div></td>
+		<td colspan="3">
+            <div align="left">
+            <?
+            echo $form['aprobado']->renderError();
+            if( $proveedor ){
+                $form->setDefault('aprobado', $proveedor->getCaFchaprobado()?true:false );
+            }
+            echo $form['aprobado']->render();
+            ?>
+            </div>
+        </td>
+	</tr>
+
+    <tr>
+        <td> <div align="left"><b>Controlado por SIG:</b></div></td>
+		<td >
+            <div align="left">
+            <?
+            echo $form['controladoporsig']->renderError();
+            if( $proveedor ){
+                $form->setDefault('controladoporsig', $proveedor->getCaControladoporsig() );
+            }
+            echo $form['controladoporsig']->render();
+            ?>
+            </div>
+        </td>
+        <td> <div align="left"><b>Critico:</b></div></td>
+		<td colspan="3">
+            <div align="left">
+            <?
+            echo $form['critico']->renderError();
+            if( $proveedor ){
+                $form->setDefault('critico', $proveedor->getCaCritico() );
+            }
+            echo $form['critico']->render();
+            ?>
+            </div>
         </td>
 	</tr>
     <?

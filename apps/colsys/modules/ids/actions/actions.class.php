@@ -164,7 +164,13 @@ class idsActions extends sfActions
             $bindValues["telefonos"] = $request->getParameter("telefonos");
             $bindValues["fax"] = $request->getParameter("fax");
             $bindValues["idciudad"] = $request->getParameter("idciudad");
-            
+
+
+            $bindValues["tipo_proveedor"] = $request->getParameter("tipo_proveedor");
+            $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
+            $bindValues["critico"] = $request->getParameter("critico");
+            $bindValues["aprobado"] = $request->getParameter("aprobado");
+
             $this->form->bind( $bindValues );
 			if( $this->form->isValid() ){
                 
@@ -190,9 +196,37 @@ class idsActions extends sfActions
                 }
                 $ids->save();
 
-                /*
-                * Guardar Sucursal
-                */
+
+                // Guarda el proveedor
+                if( isset($this->formProveedor) ){
+                    $proveedor = $ids->getIdsProveedor();
+                    if( !$proveedor ){
+                        $proveedor = new IdsProveedor();
+                        $proveedor->setCaIdproveedor($ids->getCaId());
+                    }
+
+                    $proveedor->setCaTipo( $bindValues["tipo_proveedor"] );
+                    if( $bindValues["controladoporsig"]!==null ){
+                        $proveedor->setCaControladoporsig( $bindValues["controladoporsig"] );
+                    }
+                    if( $bindValues["critico"]!==null ){
+                        $proveedor->setCaCritico( $bindValues["critico"] );
+                    }
+
+                    if( $bindValues["aprobado"]!==null ){
+                        $proveedor->setCaFchaprobado( time() );
+                        $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+                    }else{
+                        $proveedor->setCaFchaprobado( null );
+                        $proveedor->setCaUsuaprobado( null );
+
+                    }
+
+                    $proveedor->save();
+                }
+
+                
+                // Guardar Sucursal
                 $sucursal = $ids->getSucursalPrincipal();
                 if( !$sucursal ){
                     $sucursal = new IdsSucursal();
@@ -207,7 +241,7 @@ class idsActions extends sfActions
                 
                 $sucursal->save();
                 
-                $this->redirect("ids/verIds?id=".$ids->getCaId() );
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
 
             }
         }

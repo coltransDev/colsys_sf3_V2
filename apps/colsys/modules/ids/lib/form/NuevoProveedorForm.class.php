@@ -21,19 +21,9 @@ class NuevoProveedorForm extends sfForm{
 
 
         $c = new Criteria();
-		$c->addJoin( TraficoPeer::CA_IDTRAFICO, CiudadPeer::CA_IDTRAFICO );
-		$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
-        $c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
-
-        $widgets['tipo_proveedor'] = new sfWidgetFormChoice(array(
-															  'choices' => array('1'=>'R.U.T',
-                                                                                 '2'=>'C.C.',
-                                                                                 '3'=>'Consecutivo Interno Colsys',
-                                                                                 '4'=>'Otro'
-                                                                                ),
-															),
-                                                            array("onChange"=>"getDV()")
-                                                    );
+        $c->add(IdsTipoPeer::CA_APLICACION, 'Proveedores');
+		$c->addAscendingOrderByColumn( IdsTipoPeer::CA_NOMBRE );
+        $widgets['tipo_proveedor'] = new sfWidgetFormPropelChoice(array('model' => 'IdsTipo', 'add_empty' => false, 'criteria' => $c));
 
         $widgets['critico'] = new sfWidgetFormChoice(array(
 															  'choices' => array('0'=>'No',
@@ -41,14 +31,14 @@ class NuevoProveedorForm extends sfForm{
                                                                                 ),
 															)
                                                     );
-        $widgets['ca_controladoporsig'] = new sfWidgetFormChoice(array(
+        $widgets['controladoporsig'] = new sfWidgetFormChoice(array(
 															  'choices' => array('0'=>'No',
                                                                                  '1'=>'Sí'
                                                                                 ),
 															)
                                                     );
 
-        $widgets['ca_aprobado'] = new sfWidgetFormChoice(array(
+        $widgets['aprobado'] = new sfWidgetFormChoice(array(
 															  'choices' => array('0'=>'No',
                                                                                  '1'=>'Sí'
                                                                                 ),
@@ -66,10 +56,10 @@ class NuevoProveedorForm extends sfForm{
 														array('required' => 'Este campo es requerido'));
 
 
-        $validator["ca_controladoporsig"] =new sfValidatorString( array('required' => true ),
+        $validator["controladoporsig"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'Este campo es requerido'));
 
-        $validator["ca_aprobado"] =new sfValidatorString( array('required' => true ),
+        $validator["aprobado"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'Este campo es requerido'));
 
        
