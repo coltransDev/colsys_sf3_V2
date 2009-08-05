@@ -58,6 +58,18 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 	protected $singleIdsProveedor;
 
 	
+	protected $collIdsDocumentos;
+
+	
+	private $lastIdsDocumentoCriteria = null;
+
+	
+	protected $collIdsEvaluacions;
+
+	
+	private $lastIdsEvaluacionCriteria = null;
+
+	
 	protected $alreadyInSave = false;
 
 	
@@ -482,6 +494,12 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 
 			$this->singleIdsProveedor = null;
 
+			$this->collIdsDocumentos = null;
+			$this->lastIdsDocumentoCriteria = null;
+
+			$this->collIdsEvaluacions = null;
+			$this->lastIdsEvaluacionCriteria = null;
+
 		} 	}
 
 	
@@ -594,6 +612,22 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collIdsDocumentos !== null) {
+				foreach ($this->collIdsDocumentos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collIdsEvaluacions !== null) {
+				foreach ($this->collIdsEvaluacions as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -647,6 +681,22 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 				if ($this->singleIdsProveedor !== null) {
 					if (!$this->singleIdsProveedor->validate($columns)) {
 						$failureMap = array_merge($failureMap, $this->singleIdsProveedor->getValidationFailures());
+					}
+				}
+
+				if ($this->collIdsDocumentos !== null) {
+					foreach ($this->collIdsDocumentos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collIdsEvaluacions !== null) {
+					foreach ($this->collIdsEvaluacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
 					}
 				}
 
@@ -895,6 +945,16 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 				$copyObj->setIdsProveedor($relObj->copy($deepCopy));
 			}
 
+			foreach ($this->getIdsDocumentos() as $relObj) {
+				if ($relObj !== $this) {  					$copyObj->addIdsDocumento($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getIdsEvaluacions() as $relObj) {
+				if ($relObj !== $this) {  					$copyObj->addIdsEvaluacion($relObj->copy($deepCopy));
+				}
+			}
+
 		} 
 
 		$copyObj->setNew(true);
@@ -1078,6 +1138,242 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 	}
 
 	
+	public function clearIdsDocumentos()
+	{
+		$this->collIdsDocumentos = null; 	}
+
+	
+	public function initIdsDocumentos()
+	{
+		$this->collIdsDocumentos = array();
+	}
+
+	
+	public function getIdsDocumentos($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsDocumentos === null) {
+			if ($this->isNew()) {
+			   $this->collIdsDocumentos = array();
+			} else {
+
+				$criteria->add(IdsDocumentoPeer::CA_ID, $this->ca_id);
+
+				IdsDocumentoPeer::addSelectColumns($criteria);
+				$this->collIdsDocumentos = IdsDocumentoPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(IdsDocumentoPeer::CA_ID, $this->ca_id);
+
+				IdsDocumentoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastIdsDocumentoCriteria) || !$this->lastIdsDocumentoCriteria->equals($criteria)) {
+					$this->collIdsDocumentos = IdsDocumentoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastIdsDocumentoCriteria = $criteria;
+		return $this->collIdsDocumentos;
+	}
+
+	
+	public function countIdsDocumentos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collIdsDocumentos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(IdsDocumentoPeer::CA_ID, $this->ca_id);
+
+				$count = IdsDocumentoPeer::doCount($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(IdsDocumentoPeer::CA_ID, $this->ca_id);
+
+				if (!isset($this->lastIdsDocumentoCriteria) || !$this->lastIdsDocumentoCriteria->equals($criteria)) {
+					$count = IdsDocumentoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collIdsDocumentos);
+				}
+			} else {
+				$count = count($this->collIdsDocumentos);
+			}
+		}
+		return $count;
+	}
+
+	
+	public function addIdsDocumento(IdsDocumento $l)
+	{
+		if ($this->collIdsDocumentos === null) {
+			$this->initIdsDocumentos();
+		}
+		if (!in_array($l, $this->collIdsDocumentos, true)) { 			array_push($this->collIdsDocumentos, $l);
+			$l->setIds($this);
+		}
+	}
+
+
+	
+	public function getIdsDocumentosJoinIdsTipoDocumento($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsDocumentos === null) {
+			if ($this->isNew()) {
+				$this->collIdsDocumentos = array();
+			} else {
+
+				$criteria->add(IdsDocumentoPeer::CA_ID, $this->ca_id);
+
+				$this->collIdsDocumentos = IdsDocumentoPeer::doSelectJoinIdsTipoDocumento($criteria, $con, $join_behavior);
+			}
+		} else {
+									
+			$criteria->add(IdsDocumentoPeer::CA_ID, $this->ca_id);
+
+			if (!isset($this->lastIdsDocumentoCriteria) || !$this->lastIdsDocumentoCriteria->equals($criteria)) {
+				$this->collIdsDocumentos = IdsDocumentoPeer::doSelectJoinIdsTipoDocumento($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastIdsDocumentoCriteria = $criteria;
+
+		return $this->collIdsDocumentos;
+	}
+
+	
+	public function clearIdsEvaluacions()
+	{
+		$this->collIdsEvaluacions = null; 	}
+
+	
+	public function initIdsEvaluacions()
+	{
+		$this->collIdsEvaluacions = array();
+	}
+
+	
+	public function getIdsEvaluacions($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsEvaluacions === null) {
+			if ($this->isNew()) {
+			   $this->collIdsEvaluacions = array();
+			} else {
+
+				$criteria->add(IdsEvaluacionPeer::CA_ID, $this->ca_id);
+
+				IdsEvaluacionPeer::addSelectColumns($criteria);
+				$this->collIdsEvaluacions = IdsEvaluacionPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(IdsEvaluacionPeer::CA_ID, $this->ca_id);
+
+				IdsEvaluacionPeer::addSelectColumns($criteria);
+				if (!isset($this->lastIdsEvaluacionCriteria) || !$this->lastIdsEvaluacionCriteria->equals($criteria)) {
+					$this->collIdsEvaluacions = IdsEvaluacionPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastIdsEvaluacionCriteria = $criteria;
+		return $this->collIdsEvaluacions;
+	}
+
+	
+	public function countIdsEvaluacions(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collIdsEvaluacions === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(IdsEvaluacionPeer::CA_ID, $this->ca_id);
+
+				$count = IdsEvaluacionPeer::doCount($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(IdsEvaluacionPeer::CA_ID, $this->ca_id);
+
+				if (!isset($this->lastIdsEvaluacionCriteria) || !$this->lastIdsEvaluacionCriteria->equals($criteria)) {
+					$count = IdsEvaluacionPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collIdsEvaluacions);
+				}
+			} else {
+				$count = count($this->collIdsEvaluacions);
+			}
+		}
+		return $count;
+	}
+
+	
+	public function addIdsEvaluacion(IdsEvaluacion $l)
+	{
+		if ($this->collIdsEvaluacions === null) {
+			$this->initIdsEvaluacions();
+		}
+		if (!in_array($l, $this->collIdsEvaluacions, true)) { 			array_push($this->collIdsEvaluacions, $l);
+			$l->setIds($this);
+		}
+	}
+
+	
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
@@ -1089,9 +1385,21 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 			if ($this->singleIdsProveedor) {
 				$this->singleIdsProveedor->clearAllReferences($deep);
 			}
+			if ($this->collIdsDocumentos) {
+				foreach ((array) $this->collIdsDocumentos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
+			if ($this->collIdsEvaluacions) {
+				foreach ((array) $this->collIdsEvaluacions as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} 
 		$this->collIdsSucursals = null;
 		$this->singleIdsProveedor = null;
+		$this->collIdsDocumentos = null;
+		$this->collIdsEvaluacions = null;
 	}
 
 

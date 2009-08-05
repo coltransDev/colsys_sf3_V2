@@ -7,7 +7,7 @@ abstract class BaseIdsProveedorPeer {
 	const DATABASE_NAME = 'propel';
 
 	
-	const TABLE_NAME = 'ids.ca_idproveedor';
+	const TABLE_NAME = 'ids.tb_proveedor';
 
 	
 	const CLASS_DEFAULT = 'lib.model.ids.IdsProveedor';
@@ -19,22 +19,22 @@ abstract class BaseIdsProveedorPeer {
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 	
-	const CA_IDPROVEEDOR = 'ids.ca_idproveedor.CA_IDPROVEEDOR';
+	const CA_IDPROVEEDOR = 'ids.tb_proveedor.CA_IDPROVEEDOR';
 
 	
-	const CA_TIPO = 'ids.ca_idproveedor.CA_TIPO';
+	const CA_TIPO = 'ids.tb_proveedor.CA_TIPO';
 
 	
-	const CA_CRITICO = 'ids.ca_idproveedor.CA_CRITICO';
+	const CA_CRITICO = 'ids.tb_proveedor.CA_CRITICO';
 
 	
-	const CA_CONTROLADOPORSIG = 'ids.ca_idproveedor.CA_CONTROLADOPORSIG';
+	const CA_CONTROLADOPORSIG = 'ids.tb_proveedor.CA_CONTROLADOPORSIG';
 
 	
-	const CA_FCHAPROBADO = 'ids.ca_idproveedor.CA_FCHAPROBADO';
+	const CA_FCHAPROBADO = 'ids.tb_proveedor.CA_FCHAPROBADO';
 
 	
-	const CA_USUAPROBADO = 'ids.ca_idproveedor.CA_USUAPROBADO';
+	const CA_USUAPROBADO = 'ids.tb_proveedor.CA_USUAPROBADO';
 
 	
 	public static $instances = array();
