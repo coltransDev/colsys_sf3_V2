@@ -3,9 +3,10 @@
 /**
  * Flete form base class.
  *
- * @package    form
- * @subpackage flete
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 8807 2008-05-06 14:12:28Z fabien $
+ * @package    colsys
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 16976 2009-04-04 12:47:44Z fabien $
  */
 class BaseFleteForm extends BaseFormPropel
 {
@@ -16,12 +17,15 @@ class BaseFleteForm extends BaseFormPropel
       'ca_idconcepto'      => new sfWidgetFormInputHidden(),
       'ca_vlrneto'         => new sfWidgetFormInput(),
       'ca_vlrminimo'       => new sfWidgetFormInput(),
+      'ca_fleteminimo'     => new sfWidgetFormInput(),
       'ca_fchinicio'       => new sfWidgetFormDate(),
       'ca_fchvencimiento'  => new sfWidgetFormDate(),
       'ca_idmoneda'        => new sfWidgetFormInput(),
       'ca_observaciones'   => new sfWidgetFormInput(),
       'ca_fchcreado'       => new sfWidgetFormDateTime(),
-      'recargo_flete_list' => new sfWidgetFormPropelSelectMany(array('model' => 'TipoRecargo')),
+      'ca_sugerida'        => new sfWidgetFormInput(),
+      'ca_mantenimiento'   => new sfWidgetFormInput(),
+      'recargo_flete_list' => new sfWidgetFormPropelChoiceMany(array('model' => 'TipoRecargo')),
     ));
 
     $this->setValidators(array(
@@ -29,11 +33,14 @@ class BaseFleteForm extends BaseFormPropel
       'ca_idconcepto'      => new sfValidatorPropelChoice(array('model' => 'Concepto', 'column' => 'ca_idconcepto', 'required' => false)),
       'ca_vlrneto'         => new sfValidatorNumber(),
       'ca_vlrminimo'       => new sfValidatorNumber(array('required' => false)),
+      'ca_fleteminimo'     => new sfValidatorNumber(array('required' => false)),
       'ca_fchinicio'       => new sfValidatorDate(array('required' => false)),
       'ca_fchvencimiento'  => new sfValidatorDate(array('required' => false)),
       'ca_idmoneda'        => new sfValidatorString(array('max_length' => 3, 'required' => false)),
       'ca_observaciones'   => new sfValidatorString(array('required' => false)),
       'ca_fchcreado'       => new sfValidatorDateTime(array('required' => false)),
+      'ca_sugerida'        => new sfValidatorString(array('required' => false)),
+      'ca_mantenimiento'   => new sfValidatorString(array('required' => false)),
       'recargo_flete_list' => new sfValidatorPropelChoiceMany(array('model' => 'TipoRecargo', 'required' => false)),
     ));
 

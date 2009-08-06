@@ -6,7 +6,7 @@
  * @package    colsys
  * @subpackage form
  * @author     Your name here
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 16976 2009-04-04 12:47:44Z fabien $
  */
 class BaseClienteForm extends BaseFormPropel
 {
@@ -37,7 +37,9 @@ class BaseClienteForm extends BaseFormPropel
       'ca_idgrupo'            => new sfWidgetFormInput(),
       'ca_listaclinton'       => new sfWidgetFormInput(),
       'ca_fchcircular'        => new sfWidgetFormDate(),
+      'ca_status'             => new sfWidgetFormInput(),
       'ino_ingresos_air_list' => new sfWidgetFormPropelChoiceMany(array('model' => 'InoMaestraAir')),
+      'ino_clientes_sea_list' => new sfWidgetFormPropelChoiceMany(array('model' => 'InoMaestraSea')),
       'ino_avisos_sea_list'   => new sfWidgetFormPropelChoiceMany(array('model' => 'InoMaestraSea')),
       'ino_ingresos_sea_list' => new sfWidgetFormPropelChoiceMany(array('model' => 'InoMaestraSea')),
     ));
@@ -67,7 +69,9 @@ class BaseClienteForm extends BaseFormPropel
       'ca_idgrupo'            => new sfValidatorInteger(array('required' => false)),
       'ca_listaclinton'       => new sfValidatorString(array('required' => false)),
       'ca_fchcircular'        => new sfValidatorDate(array('required' => false)),
+      'ca_status'             => new sfValidatorString(array('required' => false)),
       'ino_ingresos_air_list' => new sfValidatorPropelChoiceMany(array('model' => 'InoMaestraAir', 'required' => false)),
+      'ino_clientes_sea_list' => new sfValidatorPropelChoiceMany(array('model' => 'InoMaestraSea', 'required' => false)),
       'ino_avisos_sea_list'   => new sfValidatorPropelChoiceMany(array('model' => 'InoMaestraSea', 'required' => false)),
       'ino_ingresos_sea_list' => new sfValidatorPropelChoiceMany(array('model' => 'InoMaestraSea', 'required' => false)),
     ));
@@ -100,6 +104,17 @@ class BaseClienteForm extends BaseFormPropel
       $this->setDefault('ino_ingresos_air_list', $values);
     }
 
+    if (isset($this->widgetSchema['ino_clientes_sea_list']))
+    {
+      $values = array();
+      foreach ($this->object->getInoClientesSeas() as $obj)
+      {
+        $values[] = $obj->getCaReferencia();
+      }
+
+      $this->setDefault('ino_clientes_sea_list', $values);
+    }
+
     if (isset($this->widgetSchema['ino_avisos_sea_list']))
     {
       $values = array();
@@ -129,6 +144,7 @@ class BaseClienteForm extends BaseFormPropel
     parent::doSave($con);
 
     $this->saveInoIngresosAirList($con);
+    $this->saveInoClientesSeaList($con);
     $this->saveInoAvisosSeaList($con);
     $this->saveInoIngresosSeaList($con);
   }
@@ -161,6 +177,41 @@ class BaseClienteForm extends BaseFormPropel
       foreach ($values as $value)
       {
         $obj = new InoIngresosAir();
+        $obj->setCaIdcliente($this->object->getPrimaryKey());
+        $obj->setCaReferencia($value);
+        $obj->save();
+      }
+    }
+  }
+
+  public function saveInoClientesSeaList($con = null)
+  {
+    if (!$this->isValid())
+    {
+      throw $this->getErrorSchema();
+    }
+
+    if (!isset($this->widgetSchema['ino_clientes_sea_list']))
+    {
+      // somebody has unset this widget
+      return;
+    }
+
+    if (is_null($con))
+    {
+      $con = $this->getConnection();
+    }
+
+    $c = new Criteria();
+    $c->add(InoClientesSeaPeer::CA_IDCLIENTE, $this->object->getPrimaryKey());
+    InoClientesSeaPeer::doDelete($c, $con);
+
+    $values = $this->getValue('ino_clientes_sea_list');
+    if (is_array($values))
+    {
+      foreach ($values as $value)
+      {
+        $obj = new InoClientesSea();
         $obj->setCaIdcliente($this->object->getPrimaryKey());
         $obj->setCaReferencia($value);
         $obj->save();

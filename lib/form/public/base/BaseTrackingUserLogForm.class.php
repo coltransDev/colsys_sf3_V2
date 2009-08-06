@@ -6,7 +6,7 @@
  * @package    colsys
  * @subpackage form
  * @author     Your name here
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 16976 2009-04-04 12:47:44Z fabien $
  */
 class BaseTrackingUserLogForm extends BaseFormPropel
 {
@@ -19,6 +19,7 @@ class BaseTrackingUserLogForm extends BaseFormPropel
       'ca_url'       => new sfWidgetFormInput(),
       'ca_evento'    => new sfWidgetFormInput(),
       'ca_ipaddress' => new sfWidgetFormInput(),
+      'ca_useragent' => new sfWidgetFormInput(),
     ));
 
     $this->setValidators(array(
@@ -28,6 +29,7 @@ class BaseTrackingUserLogForm extends BaseFormPropel
       'ca_url'       => new sfValidatorString(array('required' => false)),
       'ca_evento'    => new sfValidatorString(array('required' => false)),
       'ca_ipaddress' => new sfValidatorString(array('required' => false)),
+      'ca_useragent' => new sfValidatorString(array('required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('tracking_user_log[%s]');

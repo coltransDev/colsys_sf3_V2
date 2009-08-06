@@ -6,7 +6,7 @@
  * @package    colsys
  * @subpackage form
  * @author     Your name here
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 16976 2009-04-04 12:47:44Z fabien $
  */
 class BaseInoIngresosSeaForm extends BaseFormPropel
 {
@@ -18,6 +18,8 @@ class BaseInoIngresosSeaForm extends BaseFormPropel
       'ca_hbls'           => new sfWidgetFormInputHidden(),
       'ca_factura'        => new sfWidgetFormInputHidden(),
       'ca_fchfactura'     => new sfWidgetFormDate(),
+      'ca_idmoneda'       => new sfWidgetFormInput(),
+      'ca_neto'           => new sfWidgetFormInput(),
       'ca_valor'          => new sfWidgetFormInput(),
       'ca_reccaja'        => new sfWidgetFormInput(),
       'ca_fchpago'        => new sfWidgetFormDate(),
@@ -35,6 +37,8 @@ class BaseInoIngresosSeaForm extends BaseFormPropel
       'ca_hbls'           => new sfValidatorPropelChoice(array('model' => 'InoIngresosSea', 'column' => 'ca_hbls', 'required' => false)),
       'ca_factura'        => new sfValidatorPropelChoice(array('model' => 'InoIngresosSea', 'column' => 'ca_factura', 'required' => false)),
       'ca_fchfactura'     => new sfValidatorDate(array('required' => false)),
+      'ca_idmoneda'       => new sfValidatorString(array('required' => false)),
+      'ca_neto'           => new sfValidatorNumber(array('required' => false)),
       'ca_valor'          => new sfValidatorNumber(array('required' => false)),
       'ca_reccaja'        => new sfValidatorString(array('required' => false)),
       'ca_fchpago'        => new sfValidatorDate(array('required' => false)),

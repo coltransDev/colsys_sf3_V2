@@ -6,7 +6,7 @@
  * @package    colsys
  * @subpackage form
  * @author     Your name here
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 16976 2009-04-04 12:47:44Z fabien $
  */
 class BaseInoMaestraSeaForm extends BaseFormPropel
 {
@@ -56,6 +56,7 @@ class BaseInoMaestraSeaForm extends BaseFormPropel
       'ca_usuconfirma_otm'     => new sfWidgetFormInput(),
       'ca_provisional'         => new sfWidgetFormInputCheckbox(),
       'ca_sitiodevolucion'     => new sfWidgetFormInput(),
+      'ino_clientes_sea_list'  => new sfWidgetFormPropelChoiceMany(array('model' => 'Cliente')),
       'ino_avisos_sea_list'    => new sfWidgetFormPropelChoiceMany(array('model' => 'Cliente')),
       'ino_ingresos_sea_list'  => new sfWidgetFormPropelChoiceMany(array('model' => 'Cliente')),
     ));
@@ -104,6 +105,7 @@ class BaseInoMaestraSeaForm extends BaseFormPropel
       'ca_usuconfirma_otm'     => new sfValidatorString(array('required' => false)),
       'ca_provisional'         => new sfValidatorBoolean(array('required' => false)),
       'ca_sitiodevolucion'     => new sfValidatorString(array('required' => false)),
+      'ino_clientes_sea_list'  => new sfValidatorPropelChoiceMany(array('model' => 'Cliente', 'required' => false)),
       'ino_avisos_sea_list'    => new sfValidatorPropelChoiceMany(array('model' => 'Cliente', 'required' => false)),
       'ino_ingresos_sea_list'  => new sfValidatorPropelChoiceMany(array('model' => 'Cliente', 'required' => false)),
     ));
@@ -124,6 +126,17 @@ class BaseInoMaestraSeaForm extends BaseFormPropel
   public function updateDefaultsFromObject()
   {
     parent::updateDefaultsFromObject();
+
+    if (isset($this->widgetSchema['ino_clientes_sea_list']))
+    {
+      $values = array();
+      foreach ($this->object->getInoClientesSeas() as $obj)
+      {
+        $values[] = $obj->getCaIdcliente();
+      }
+
+      $this->setDefault('ino_clientes_sea_list', $values);
+    }
 
     if (isset($this->widgetSchema['ino_avisos_sea_list']))
     {
@@ -153,8 +166,44 @@ class BaseInoMaestraSeaForm extends BaseFormPropel
   {
     parent::doSave($con);
 
+    $this->saveInoClientesSeaList($con);
     $this->saveInoAvisosSeaList($con);
     $this->saveInoIngresosSeaList($con);
+  }
+
+  public function saveInoClientesSeaList($con = null)
+  {
+    if (!$this->isValid())
+    {
+      throw $this->getErrorSchema();
+    }
+
+    if (!isset($this->widgetSchema['ino_clientes_sea_list']))
+    {
+      // somebody has unset this widget
+      return;
+    }
+
+    if (is_null($con))
+    {
+      $con = $this->getConnection();
+    }
+
+    $c = new Criteria();
+    $c->add(InoClientesSeaPeer::CA_REFERENCIA, $this->object->getPrimaryKey());
+    InoClientesSeaPeer::doDelete($c, $con);
+
+    $values = $this->getValue('ino_clientes_sea_list');
+    if (is_array($values))
+    {
+      foreach ($values as $value)
+      {
+        $obj = new InoClientesSea();
+        $obj->setCaReferencia($this->object->getPrimaryKey());
+        $obj->setCaIdcliente($value);
+        $obj->save();
+      }
+    }
   }
 
   public function saveInoAvisosSeaList($con = null)

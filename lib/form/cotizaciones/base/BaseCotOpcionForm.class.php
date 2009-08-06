@@ -6,7 +6,7 @@
  * @package    colsys
  * @subpackage form
  * @author     Your name here
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 16976 2009-04-04 12:47:44Z fabien $
  */
 class BaseCotOpcionForm extends BaseFormPropel
 {
@@ -34,7 +34,7 @@ class BaseCotOpcionForm extends BaseFormPropel
 
     $this->setValidators(array(
       'ca_idopcion'       => new sfValidatorPropelChoice(array('model' => 'CotOpcion', 'column' => 'ca_idopcion', 'required' => false)),
-      'ca_idcotizacion'   => new sfValidatorPropelChoice(array('model' => 'CotProducto', 'column' => 'ca_idproducto', 'required' => false)),
+      'ca_idcotizacion'   => new sfValidatorPropelChoice(array('model' => 'CotProducto', 'column' => 'ca_idcotizacion', 'required' => false)),
       'ca_idproducto'     => new sfValidatorPropelChoice(array('model' => 'CotProducto', 'column' => 'ca_idproducto', 'required' => false)),
       'ca_idconcepto'     => new sfValidatorPropelChoice(array('model' => 'Concepto', 'column' => 'ca_idconcepto', 'required' => false)),
       'ca_valor_tar'      => new sfValidatorNumber(array('required' => false)),

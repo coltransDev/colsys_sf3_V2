@@ -6,7 +6,7 @@
  * @package    colsys
  * @subpackage form
  * @author     Your name here
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 16976 2009-04-04 12:47:44Z fabien $
  */
 class BaseReporteForm extends BaseFormPropel
 {
@@ -36,6 +36,8 @@ class BaseReporteForm extends BaseFormPropel
       'ca_informar_cons'     => new sfWidgetFormInput(),
       'ca_idnotify'          => new sfWidgetFormInput(),
       'ca_informar_noti'     => new sfWidgetFormInput(),
+      'ca_idmaster'          => new sfWidgetFormInput(),
+      'ca_informar_mast'     => new sfWidgetFormInput(),
       'ca_notify'            => new sfWidgetFormInput(),
       'ca_transporte'        => new sfWidgetFormInput(),
       'ca_modalidad'         => new sfWidgetFormInput(),
@@ -64,9 +66,13 @@ class BaseReporteForm extends BaseFormPropel
       'ca_usucerrado'        => new sfWidgetFormInput(),
       'ca_colmas'            => new sfWidgetFormInput(),
       'ca_propiedades'       => new sfWidgetFormInput(),
-      'rep_aviso_list'       => new sfWidgetFormPropelChoiceMany(array('model' => 'Email')),
+      'ca_idetapa'           => new sfWidgetFormPropelChoice(array('model' => 'TrackingEtapa', 'add_empty' => true)),
+      'ca_fchultstatus'      => new sfWidgetFormDateTime(),
+      'ca_idtarea_rext'      => new sfWidgetFormInput(),
+      'ca_idseguimiento'     => new sfWidgetFormPropelChoice(array('model' => 'NotTarea', 'add_empty' => true)),
       'rep_equipo_list'      => new sfWidgetFormPropelChoiceMany(array('model' => 'Concepto')),
-      'rep_status_list'      => new sfWidgetFormPropelChoiceMany(array('model' => 'Email')),
+      'rep_aviso_list'       => new sfWidgetFormPropelChoiceMany(array('model' => 'Email')),
+      'rep_asignacion_list'  => new sfWidgetFormPropelChoiceMany(array('model' => 'NotTarea')),
     ));
 
     $this->setValidators(array(
@@ -93,6 +99,8 @@ class BaseReporteForm extends BaseFormPropel
       'ca_informar_cons'     => new sfValidatorString(array('required' => false)),
       'ca_idnotify'          => new sfValidatorInteger(array('required' => false)),
       'ca_informar_noti'     => new sfValidatorString(array('required' => false)),
+      'ca_idmaster'          => new sfValidatorInteger(array('required' => false)),
+      'ca_informar_mast'     => new sfValidatorString(array('required' => false)),
       'ca_notify'            => new sfValidatorInteger(array('required' => false)),
       'ca_transporte'        => new sfValidatorString(array('required' => false)),
       'ca_modalidad'         => new sfValidatorString(array('required' => false)),
@@ -121,9 +129,13 @@ class BaseReporteForm extends BaseFormPropel
       'ca_usucerrado'        => new sfValidatorString(array('required' => false)),
       'ca_colmas'            => new sfValidatorString(array('required' => false)),
       'ca_propiedades'       => new sfValidatorString(array('required' => false)),
-      'rep_aviso_list'       => new sfValidatorPropelChoiceMany(array('model' => 'Email', 'required' => false)),
+      'ca_idetapa'           => new sfValidatorPropelChoice(array('model' => 'TrackingEtapa', 'column' => 'ca_idetapa', 'required' => false)),
+      'ca_fchultstatus'      => new sfValidatorDateTime(array('required' => false)),
+      'ca_idtarea_rext'      => new sfValidatorInteger(array('required' => false)),
+      'ca_idseguimiento'     => new sfValidatorPropelChoice(array('model' => 'NotTarea', 'column' => 'ca_idtarea', 'required' => false)),
       'rep_equipo_list'      => new sfValidatorPropelChoiceMany(array('model' => 'Concepto', 'required' => false)),
-      'rep_status_list'      => new sfValidatorPropelChoiceMany(array('model' => 'Email', 'required' => false)),
+      'rep_aviso_list'       => new sfValidatorPropelChoiceMany(array('model' => 'Email', 'required' => false)),
+      'rep_asignacion_list'  => new sfValidatorPropelChoiceMany(array('model' => 'NotTarea', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('reporte[%s]');
@@ -143,17 +155,6 @@ class BaseReporteForm extends BaseFormPropel
   {
     parent::updateDefaultsFromObject();
 
-    if (isset($this->widgetSchema['rep_aviso_list']))
-    {
-      $values = array();
-      foreach ($this->object->getRepAvisos() as $obj)
-      {
-        $values[] = $obj->getCaIdemail();
-      }
-
-      $this->setDefault('rep_aviso_list', $values);
-    }
-
     if (isset($this->widgetSchema['rep_equipo_list']))
     {
       $values = array();
@@ -165,15 +166,26 @@ class BaseReporteForm extends BaseFormPropel
       $this->setDefault('rep_equipo_list', $values);
     }
 
-    if (isset($this->widgetSchema['rep_status_list']))
+    if (isset($this->widgetSchema['rep_aviso_list']))
     {
       $values = array();
-      foreach ($this->object->getRepStatuss() as $obj)
+      foreach ($this->object->getRepAvisos() as $obj)
       {
         $values[] = $obj->getCaIdemail();
       }
 
-      $this->setDefault('rep_status_list', $values);
+      $this->setDefault('rep_aviso_list', $values);
+    }
+
+    if (isset($this->widgetSchema['rep_asignacion_list']))
+    {
+      $values = array();
+      foreach ($this->object->getRepAsignacions() as $obj)
+      {
+        $values[] = $obj->getCaIdtarea();
+      }
+
+      $this->setDefault('rep_asignacion_list', $values);
     }
 
   }
@@ -182,44 +194,9 @@ class BaseReporteForm extends BaseFormPropel
   {
     parent::doSave($con);
 
-    $this->saveRepAvisoList($con);
     $this->saveRepEquipoList($con);
-    $this->saveRepStatusList($con);
-  }
-
-  public function saveRepAvisoList($con = null)
-  {
-    if (!$this->isValid())
-    {
-      throw $this->getErrorSchema();
-    }
-
-    if (!isset($this->widgetSchema['rep_aviso_list']))
-    {
-      // somebody has unset this widget
-      return;
-    }
-
-    if (is_null($con))
-    {
-      $con = $this->getConnection();
-    }
-
-    $c = new Criteria();
-    $c->add(RepAvisoPeer::CA_IDREPORTE, $this->object->getPrimaryKey());
-    RepAvisoPeer::doDelete($c, $con);
-
-    $values = $this->getValue('rep_aviso_list');
-    if (is_array($values))
-    {
-      foreach ($values as $value)
-      {
-        $obj = new RepAviso();
-        $obj->setCaIdreporte($this->object->getPrimaryKey());
-        $obj->setCaIdemail($value);
-        $obj->save();
-      }
-    }
+    $this->saveRepAvisoList($con);
+    $this->saveRepAsignacionList($con);
   }
 
   public function saveRepEquipoList($con = null)
@@ -257,14 +234,14 @@ class BaseReporteForm extends BaseFormPropel
     }
   }
 
-  public function saveRepStatusList($con = null)
+  public function saveRepAvisoList($con = null)
   {
     if (!$this->isValid())
     {
       throw $this->getErrorSchema();
     }
 
-    if (!isset($this->widgetSchema['rep_status_list']))
+    if (!isset($this->widgetSchema['rep_aviso_list']))
     {
       // somebody has unset this widget
       return;
@@ -276,17 +253,52 @@ class BaseReporteForm extends BaseFormPropel
     }
 
     $c = new Criteria();
-    $c->add(RepStatusPeer::CA_IDREPORTE, $this->object->getPrimaryKey());
-    RepStatusPeer::doDelete($c, $con);
+    $c->add(RepAvisoPeer::CA_IDREPORTE, $this->object->getPrimaryKey());
+    RepAvisoPeer::doDelete($c, $con);
 
-    $values = $this->getValue('rep_status_list');
+    $values = $this->getValue('rep_aviso_list');
     if (is_array($values))
     {
       foreach ($values as $value)
       {
-        $obj = new RepStatus();
+        $obj = new RepAviso();
         $obj->setCaIdreporte($this->object->getPrimaryKey());
         $obj->setCaIdemail($value);
+        $obj->save();
+      }
+    }
+  }
+
+  public function saveRepAsignacionList($con = null)
+  {
+    if (!$this->isValid())
+    {
+      throw $this->getErrorSchema();
+    }
+
+    if (!isset($this->widgetSchema['rep_asignacion_list']))
+    {
+      // somebody has unset this widget
+      return;
+    }
+
+    if (is_null($con))
+    {
+      $con = $this->getConnection();
+    }
+
+    $c = new Criteria();
+    $c->add(RepAsignacionPeer::CA_IDREPORTE, $this->object->getPrimaryKey());
+    RepAsignacionPeer::doDelete($c, $con);
+
+    $values = $this->getValue('rep_asignacion_list');
+    if (is_array($values))
+    {
+      foreach ($values as $value)
+      {
+        $obj = new RepAsignacion();
+        $obj->setCaIdreporte($this->object->getPrimaryKey());
+        $obj->setCaIdtarea($value);
         $obj->save();
       }
     }

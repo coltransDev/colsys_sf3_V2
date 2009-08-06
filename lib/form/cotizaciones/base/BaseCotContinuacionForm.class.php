@@ -6,14 +6,14 @@
  * @package    colsys
  * @subpackage form
  * @author     Your name here
- * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 12815 2008-11-09 10:43:58Z fabien $
+ * @version    SVN: $Id: sfPropelFormGeneratedTemplate.php 16976 2009-04-04 12:47:44Z fabien $
  */
 class BaseCotContinuacionForm extends BaseFormPropel
 {
   public function setup()
   {
     $this->setWidgets(array(
-      'oid'               => new sfWidgetFormInputHidden(),
+      'ca_idcontinuacion' => new sfWidgetFormInputHidden(),
       'ca_idcotizacion'   => new sfWidgetFormPropelChoice(array('model' => 'Cotizacion', 'add_empty' => true)),
       'ca_tipo'           => new sfWidgetFormInput(),
       'ca_modalidad'      => new sfWidgetFormInput(),
@@ -35,7 +35,7 @@ class BaseCotContinuacionForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'oid'               => new sfValidatorPropelChoice(array('model' => 'CotContinuacion', 'column' => 'oid', 'required' => false)),
+      'ca_idcontinuacion' => new sfValidatorPropelChoice(array('model' => 'CotContinuacion', 'column' => 'ca_idcontinuacion', 'required' => false)),
       'ca_idcotizacion'   => new sfValidatorPropelChoice(array('model' => 'Cotizacion', 'column' => 'ca_idcotizacion', 'required' => false)),
       'ca_tipo'           => new sfValidatorString(),
       'ca_modalidad'      => new sfValidatorString(array('required' => false)),
