@@ -663,6 +663,56 @@ class idsActions extends sfActions
     }
 
 
+     /*
+    * Permite agregar lineas de transporte
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormTransportista(sfWebRequest $request){
+        $this->nivel = $this->getNivel();
+
+        $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+       
+        $transportista = TransportadorPeer::retrieveByPk( $request->getParameter("idlinea") );
+        
+        if( $transportista ){
+            $proveedor = $transportista->getIdsProveedor();
+            $this->forward404Unless($proveedor->getCaTipo()=="TRI");
+            $this->ids = $proveedor->getIds();
+        }else{
+            $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+
+            $transportista = new Transportador();
+            $transportista->setCaIdtransportista( $this->ids->getCaId() );
+        }
+        $this->forward404Unless( $this->ids );
+
+        $this->modo = $request->getParameter("modo");
+
+		
+
+        $this->form = new NuevoTransportistaForm();
+
+        if ($request->isMethod('post')){
+            $bindValues = array();
+            $bindValues["nombre"] = $request->getParameter("nombre");
+            $bindValues["sigla"] = $request->getParameter("sigla");
+            $bindValues["transporte"] = $request->getParameter("transporte");
+
+            $this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+                $transportista->setCaNombre( $bindValues["nombre"] );
+                $transportista->setCaSigla( $bindValues["sigla"] );
+                $transportista->setCaTransporte( $bindValues["transporte"] );
+                $transportista->save();
+
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+            }
+        }
+
+        $this->transportista  = $transportista;
+    }
+
 
 }
 ?>

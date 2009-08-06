@@ -49,7 +49,9 @@
             <?
             $proveedor = $ids->getIdsProveedor();
             
-            if( $proveedor ){
+            if( $proveedor  ){
+               
+
             ?>
             <tr>
                 <td>
@@ -106,12 +108,26 @@
                           ?>
                        </div>
 
-                         <div class="tab-page">
+                       <div class="tab-page">
                           <h2 class="tab">Eventos</h2>
                           <?
                           include_component("ids", "eventos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
                           ?>
                        </div>
+                       <?
+                       if( $proveedor && $proveedor->getCaTipo()=="TRI" ){
+                       ?>
+                       <div class="tab-page">
+                          <h2 class="tab">Transportistas</h2>
+                          <?
+                          include_component("ids", "transportistas", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                          ?>
+                       </div>
+                       <?
+                       }
+                       ?>
+
+
                     </div>
 
                 </td>

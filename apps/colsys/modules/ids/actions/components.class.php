@@ -72,4 +72,19 @@ class idsComponents  extends sfComponents
 
 
 	}
+
+    /**
+	* Muestra los transportistas
+	*
+	*/
+    public function executeTransportistas()
+	{
+		$c = new Criteria();
+
+        $c->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ids->getCaId() );
+        $c->addDescendingOrderByColumn( TransportadorPeer::CA_NOMBRE );
+        $this->transportistas = TransportadorPeer::doSelect( $c );
+
+
+	}
 }
