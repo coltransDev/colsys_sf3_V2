@@ -295,10 +295,9 @@ require_once("menu.php");
 			} else if ($tra_mem == 'Marítimo'){
 				$source = "vi_repindicador_sea";
 				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
-				$subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_cont, rs.ca_fchllegada as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCRR') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_cont) ";
+				$subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_cont, rs.ca_fchllegada as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '99999') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_cont) ";
 				$subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where ((string_to_array(ca_referencia,'.'))[5]::int)+2000 in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ('$mes_mem') order by ca_referencia, ca_idcliente, ca_hbls) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) ";
 			}
-
 			$ind_mem  = 4;
 			$add_cols = 5;
 			break;
@@ -345,15 +344,12 @@ require_once("menu.php");
 			$add_cols = 3;
 			break;
 		case "Confirmación de llegada":
-			$source   = "vi_repindicadores";
-			if ($transporte == "ca_transporte like 'Aéreo'"){
-				$subque = "LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_sub, min(ca_fchllegada) as ca_fchconfirmado, to_char(ca_fchenvio,'YYYY-MM-DD')::date as ca_fchenvio from tb_repstatus rs, tb_reportes rp where rp.ca_idreporte = rs.ca_idreporte and rs.ca_idetapa = 'IACAD' group by ca_consecutivo, ca_fchenvio) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
-			} else if ($transporte == "ca_transporte like 'Marítimo'"){
-				$subque = "LEFT OUTER JOIN (select rs.ca_consecutivo as ca_consecutivo_sub, to_timestamp(im.ca_fchconfirmacion||' '||im.ca_horaconfirmacion, 'YYYY-mm-dd hh-mi-ss')::timestamp as ca_fchconfirmado, rs.ca_fchenvio from tb_inoclientes_sea ic";
-				$subque.= "	LEFT OUTER JOIN tb_inomaestra_sea im ON (ic.ca_referencia = im.ca_referencia)";
-				$subque.= "	LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte)";
-				$subque.= "	RIGHT OUTER JOIN (select srp.ca_consecutivo, min(srs.ca_fchenvio) as ca_fchenvio from tb_repstatus srs LEFT OUTER JOIN tb_reportes srp ON (srs.ca_idreporte = srp.ca_idreporte and srs.ca_idetapa = 'IMCPD') group by srp.ca_consecutivo) rs ON (rp.ca_consecutivo = rs.ca_consecutivo)";
-				$subque.= "order by rp.ca_consecutivo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+			if ($tra_mem == 'Aéreo'){
+				$source   = "vi_repindicador_air";
+				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+			} else if ($tra_mem == 'Marítimo'){
+				$source = "vi_repindicador_sea";
+				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
 			}
 			if (!$tm->Open("select ca_fchfestivo from tb_festivos where $ano_fes and $mes_fes")) {        // Selecciona todos lo registros de la tabla Festivos
 				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -366,7 +362,7 @@ require_once("menu.php");
 			}
 			$tm->MoveFirst();
 			$ind_mem  = 9;
-			$add_cols = 3;
+			$add_cols = 4;
 			break;
 	}
 
@@ -445,6 +441,7 @@ require_once("menu.php");
 			echo "	<TH>Dif.</TH>";
 			break;
 		case 9:
+			echo "	<TH>Referencia</TH>";
 			echo "	<TH>Fch.Llegada</TH>";
 			echo "	<TH>Fch.Confirmación</TH>";
 			echo "	<TH>Dif.</TH>";
@@ -490,7 +487,6 @@ require_once("menu.php");
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$tm->Value('ca_diferencia')."</TD>";
 				break;
 			case 4:
-				$adicionales = false;
 				$ref_tmp = $rs->Value('ca_referencia');
 				$idc_tmp = $rs->Value('ca_idcliente');					
 				$hbl_tmp = $rs->Value('ca_hbls');
@@ -520,7 +516,6 @@ require_once("menu.php");
 				}
 				break;
 			case 5:
-				$adicionales = false;
 				$idreporte = $rs->Value('ca_idreporte');
 				while ($idreporte == $rs->Value('ca_idreporte') and !$rs->Eof() and !$rs->IsEmpty()) {
 					if ($adicionales){
@@ -586,18 +581,22 @@ require_once("menu.php");
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchsolicitud'),$fch_presenta)."</TD>";
 				break;
 			case 9:
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconfirmado')."</TD>";
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchenvio')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
 				if ($rs->Value('ca_transporte') == 'Aéreo'){
-					echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchconfirmado'),$rs->Value('ca_fchenvio'))."</TD>";
+					echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchllegada')."</TD>";
+					$dif_mem = dateDiff($rs->Value('ca_fchllegada'),$rs->Value('ca_fchconf_lleg'));
 				} else if ($rs->Value('ca_transporte') == 'Marítimo'){
-					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconfirmado'), "%d-%d-%d %d:%d:%d");
+					echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconfirmacion')."</TD>";
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconfirmacion'), "%d-%d-%d %d:%d:%d");
 					$tstamp_confirmado = mktime($hor, $min, $seg, $mes, $dia, $ano);
-					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconf_lleg'), "%d-%d-%d %d:%d:%d");
 					$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
 					$dif_mem = calc_dif($festi, $tstamp_confirmado, $tstamp_enviado);
-					echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				}
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconf_lleg')."</TD>";
+				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+
+				continue;
 				break;
 		}
 		

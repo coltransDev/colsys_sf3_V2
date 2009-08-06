@@ -1370,7 +1370,7 @@ echo "</BODY>";
              echo "          }";
 			 echo "          i++;";
              echo "      }";
-			 echo "      if ((document.getElementById('numpiezas').value != pz || document.getElementById('peso').value != ps) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS' && '$impoexpo' != 'OTM/DTA'){";
+			 echo "      if ((document.getElementById('numpiezas').value != roundNumber(pz,2) || document.getElementById('peso').value != roundNumber(ps,2)) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS' && '$modalidad' != 'PARTICULARES' && '$impoexpo' != 'OTM/DTA'){";
              echo "               alert('Hay inconsistencia entre el Piezas/Peso y el desgloce en Contenedores');";
              echo "               respuesta = false;";
              echo "          }";
@@ -1382,6 +1382,10 @@ echo "</BODY>";
              echo "      return (respuesta);";
              echo "      }";
              echo "  return (false);";
+             echo "}";
+             echo "function roundNumber(rnum, rlength) {"; // Arguments: number to round, number of decimal places
+             echo "  var newnumber = Math.round(rnum*Math.pow(10,rlength))/Math.pow(10,rlength);";
+             echo "  return newnumber;"; // Output the result to the form field (change for your purposes)
              echo "}";
              echo "function llenar_select(){";
              echo "  for (cont=0; cont<5; cont++) {";
@@ -1787,7 +1791,7 @@ echo "</BODY>";
              echo "          }";
 			 echo "          i++;";
              echo "      }";
-			 echo "      if ((document.getElementById('numpiezas').value != pz || document.getElementById('peso').value != ps) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS'){";
+			 echo "      if ((document.getElementById('numpiezas').value != roundNumber(pz,2) || document.getElementById('peso').value != roundNumber(ps,2)) && '$modalidad' != 'COLOADING' && '$modalidad' != 'PROYECTOS' && '$modalidad' != 'PARTICULARES' && '$impoexpo' != 'OTM/DTA'){";
              echo "               alert('Hay inconsistencia entre el Piezas/Peso y el desgloce en Contenedores');";
              echo "               respuesta = false;";
              echo "          }";
@@ -1799,6 +1803,10 @@ echo "</BODY>";
              echo "      return (respuesta);";
              echo "      }";
              echo "  return (false);";
+             echo "}";
+             echo "function roundNumber(rnum, rlength) {"; // Arguments: number to round, number of decimal places
+             echo "  var newnumber = Math.round(rnum*Math.pow(10,rlength))/Math.pow(10,rlength);";
+             echo "  return newnumber;"; // Output the result to the form field (change for your purposes)
              echo "}";
              echo "function llenar_select(){";
              echo "  facturas  = document.getElementById('num_reg');";
@@ -3727,6 +3735,11 @@ require_once("menu.php");
                  echo "<script>document.location.href = 'inosea.php';</script>";
                  exit;
                 }
+			 if ($rs->GetRowCount()==0){
+                 echo "<script>alert(\"No ha sido creada la información del Documento Consolidador para Muisca\");</script>";     // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'inosea.php';</script>";
+                 exit;
+			 }
              $ic =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
              if (!$ic->Open("select * from vi_inoclientes_sea where ca_referencia = '".$id."' order by ca_idcliente")) {    // Trae de la Tabla de la Dian el último registro.
                  echo "<script>alert(\"".addslashes($dc->mErrMsg)."\");</script>";     // Muestra el mensaje de error
@@ -3827,7 +3840,7 @@ require_once("menu.php");
 			 $xml_pal66->setAttribute("cdde", $arribo_array[0]);
 			 $xml_pal66->setAttribute("ccd", $arribo_array[1]);
 			 $xml_pal66->setAttribute("cpa", $arribo_array[2]);
-			 if ($dm->Value("ca_coddeposito") != ""){
+			 if ($dm->Value("ca_dispocarga") != "21"){
 				 $xml_pal66->setAttribute("cdep", $dm->Value("ca_coddeposito"));
 			 }
 
@@ -3975,7 +3988,7 @@ require_once("menu.php");
 				$xml_hijo->setAttribute("hciu", $arribo_array[1]);
 				$xml_hijo->setAttribute("hpa", $arribo_array[2]);
 
-				if ($dc->Value("ca_coddeposito") != ""){
+				if ($dc->Value("ca_dispocarga") != "21"){
 					$xml_hijo->setAttribute("hdep", $dc->Value("ca_coddeposito"));
 				}
 
@@ -4085,6 +4098,7 @@ require_once("menu.php");
 
 				$xml_hijo->setAttribute("htb", $ic->Value("ca_numpiezas"));
 				$xml_hijo->setAttribute("htpb", round($ic->Value("ca_peso"),2));
+				$xml_hijo->setAttribute("htvo", 0);
 				$ntb+= $ic->Value("ca_numpiezas");  // Número Total Bultos
 				$tpb+= round($ic->Value("ca_peso"),2);  // Total Peso Bruto
 				
@@ -4108,10 +4122,10 @@ require_once("menu.php");
 				if ( $dc->Value("ca_tipocarga") == 2 ){
 					$xml_h167->setAttribute("tun", 2);
 					$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
-	
-					$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
+
+					$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:(($ie->Value("ca_liminferior")==20)?1:(($ie->Value("ca_liminferior")==40)?3:4));
 					$xml_h167->setAttribute("tam", $tam_equipo);
-					$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
+					$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:((strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:((strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:((strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:((strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:((strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1)))));
 					$xml_h167->setAttribute("teq", $tip_equipo);
 					$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
 				}
@@ -4119,7 +4133,7 @@ require_once("menu.php");
 				$sub_pz = 0;
 				$sub_cn = 0;
 
-				if ( $dc->Value("ca_tipocarga") == 2 ){
+				if ( $dm->Value("ca_tipocarga") == 2 ){
 					foreach (explode("|",$ic->Value('ca_contenedores')) as $parciales){
 						$parcial = explode(";",$parciales);
 						$unidades_carga[$parcial[0]]['pz'] = $parcial[1];
@@ -4147,7 +4161,7 @@ require_once("menu.php");
 							$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
 							$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
 							$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
-							$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' order by ca_idemail DESC limit 1";
+							$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
 							if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
 								echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 								echo "<script>document.location.href = 'inosea.php';</script>";
@@ -4205,6 +4219,7 @@ require_once("menu.php");
 				}
 				$xml_h167->setAttribute("vpb", $sub_ps);
 				$xml_h167->setAttribute("nbul",$sub_pz);
+				$xml_h167->setAttribute("vol1",0);
 				$xml_h167->setAttribute("nreg",$sub_cn);
 				$xml_hijo->appendChild( $xml_h167 );
 
@@ -4233,9 +4248,9 @@ require_once("menu.php");
 						$xml_h167->setAttribute("tun", 2);
 						$xml_h167->setAttribute("idu", str_replace("-","",$ie->Value("ca_idequipo")));
 		
-						$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:($ie->Value("ca_liminferior")==20)?1:($ie->Value("ca_liminferior")==40)?3:4;
+						$tam_equipo = (strpos($ie->Value("ca_concepto"),'High Cube') !== false)?2:(($ie->Value("ca_liminferior")==20)?1:(($ie->Value("ca_liminferior")==40)?3:4));
 						$xml_h167->setAttribute("tam", $tam_equipo);
-						$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:(strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:(strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:(strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:(strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:(strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1;
+						$tip_equipo = (strpos($ie->Value("ca_concepto"),'Flat Rack') !== false)?2:((strpos($ie->Value("ca_concepto"),'Open Top') !== false)?3:((strpos($ie->Value("ca_concepto"),'Collapsible') !== false)?4:((strpos($ie->Value("ca_concepto"),'Platform') !== false)?5:((strpos($ie->Value("ca_concepto"),'Tank') !== false)?6:((strpos($ie->Value("ca_concepto"),'Reefer') !== false)?8:1)))));
 						$xml_h167->setAttribute("teq", $tip_equipo);
 						$xml_h167->setAttribute("npr", $ie->Value("ca_numprecinto"));
 					}
