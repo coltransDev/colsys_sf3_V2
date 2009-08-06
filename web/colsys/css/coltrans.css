@@ -715,7 +715,14 @@ ul.error_list{
 	color:#FFFFFF;	
 }
 
+.error{
+	background-color:#FF0000;
+	color:#FFFFFF;
+}
 
+/*
+
+*/
 .group_expanded{
 	padding: 2px 2px 2px 15px;
 	
