@@ -94,8 +94,6 @@
         <foreign-key foreignTable="ids.tb_tipos">
 			<reference local="ca_tipo" foreign="ca_tipo"/>
 		</foreign-key>
-
-
 	</table>
 
 

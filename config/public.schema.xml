@@ -215,13 +215,15 @@
 	</table>
 	
 	<table name="tb_transporlineas" phpName="Transportador">
-		<column name="ca_idlinea" type="integer" required="true" primaryKey="true" autoIncrement="true" />			
+		<column name="ca_idlinea" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <id-method-parameter value="tb_transporlineas_id"/>
 		<column name="ca_idtransportista" type="numeric" />		
 		<column name="ca_nombre" type="varchar" />
 		<column name="ca_sigla" type="varchar" />
 		<column name="ca_transporte" type="varchar" />
-		<foreign-key foreignTable="tb_transportistas">
-			<reference local="ca_idtransportista" foreign="ca_idtransportista"/>
+        <column name="ca_activo" type="boolean" />
+		<foreign-key foreignTable="ids.tb_proveedores">
+			<reference local="ca_idtransportista" foreign="ca_idproveedor"/>
 		</foreign-key>		
 	</table>
 	
@@ -235,6 +237,21 @@
 		<column name="ca_idciudad" type="varchar" />
 		<column name="ca_website" type="varchar" />
 		<column name="ca_email" type="varchar" />
+	</table>
+
+    <table name="tb_transporcontac" phpName="TransContacto">
+		<column name="ca_idtransportista" type="integer" required="true"  />
+		<column name="ca_idcontacto" type="numeric" primaryKey="true" />
+		<column name="ca_nombre" type="varchar" />		
+		<column name="ca_telefonos" type="varchar" />
+		<column name="ca_fax" type="varchar" />
+		<column name="ca_email" type="varchar" />
+		<column name="ca_observaciones" type="varchar" />
+
+        <foreign-key foreignTable="tb_transportistas">
+			<reference local="ca_idtransportista" foreign="ca_idtransportista"/>
+		</foreign-key>
+
 	</table>
 
 	<table name="tb_monedas" phpName="Moneda">
