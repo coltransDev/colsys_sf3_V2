@@ -2774,7 +2774,7 @@ Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'|
 
 // Drop view vi_repindicadores cascade;
 Create view vi_repindicadores as
-select rp.ca_idreporte, rp.ca_consecutivo, rp.ca_version, TO_CHAR(TO_DATE(date_part('year',rpi.ca_fchreporte)::text,'yyyy'),'yyyy') as ca_ano, TO_CHAR(TO_DATE(date_part('month',rpi.ca_fchreporte)::text,'mm'),'mm') as ca_mes,
+select rp.ca_idreporte, rp.ca_consecutivo, rx.ca_version, TO_CHAR(TO_DATE(date_part('year',rx.ca_fchreporte)::text,'yyyy'),'yyyy') as ca_ano, TO_CHAR(TO_DATE(date_part('month',rx.ca_fchreporte)::text,'mm'),'mm') as ca_mes,
        sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte, rp.ca_modalidad, rp.ca_impoexpo, rp.ca_continuacion, ccl.ca_compania
 --      , rs.ca_idemail, rs.ca_piezas, rs.ca_peso, rs.ca_volumen, rs.ca_doctransporte
 from tb_reportes rp
@@ -2792,20 +2792,62 @@ from tb_reportes rp
 --	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail = rf.ca_idemail)
 
 -- La última versión del reporte
---	RIGHT OUTER JOIN (select ca_consecutivo as ca_consecutivo_f, max(ca_idreporte) as ca_idreporte from tb_reportes where nullvalue(ca_usuanulado) group by ca_consecutivo_f order by ca_consecutivo_f) rx ON (rp.ca_idreporte = rx.ca_idreporte)
-
--- Determina cuando se empezó a manejar el caso
---	LEFT OUTER JOIN (select rpt.ca_consecutivo, rpt.ca_fchreporte from tb_reportes rpt, (select ca_consecutivo, min(ca_idreporte) as ca_idreporte from tb_reportes group by ca_consecutivo order by ca_idreporte) rpv where rpt.ca_idreporte = rpv.ca_idreporte) rpi ON (rp.ca_consecutivo = rpi.ca_consecutivo)
-
-	RIGHT OUTER JOIN ( select rpt.ca_consecutivo, rpt.ca_fchreporte, ruv.ca_version from tb_reportes rpt, 
-	(select ca_consecutivo, min(ca_idreporte) as ca_idreporte from tb_reportes group by ca_consecutivo order by ca_idreporte) rpv,
-	(select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_usuanulado is null group by ca_consecutivo) ruv
-	where rpt.ca_idreporte = rpv.ca_idreporte and rpt.ca_consecutivo = ruv.ca_consecutivo order by rpt.ca_consecutivo ) rpi ON (rp.ca_consecutivo = rpi.ca_consecutivo and rp.ca_version = rpi.ca_version)
+	INNER JOIN (select ca_consecutivo as ca_consecutivo_f, ca_fchreporte, max(ca_version) as ca_version from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo_f) rx ON (rp.ca_consecutivo = rx.ca_consecutivo_f and rp.ca_version = rx.ca_version)
 
 order by ca_ano, ca_mes, ca_sucursal, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999');
 REVOKE ALL ON vi_repindicadores FROM PUBLIC;
 GRANT ALL ON vi_repindicadores TO "Administrador";
 GRANT ALL ON vi_repindicadores TO GROUP "Usuarios";
+
+
+// Drop view vi_repindicador_sea cascade;
+Create view vi_repindicador_sea as
+select im.ca_referencia, ic.ca_idcliente, ic.ca_hbls, rp.ca_idreporte, rp.ca_consecutivo, rp.ca_version, ((string_to_array(im.ca_referencia,'.'))[5]::int)+2000 as ca_ano, ((string_to_array(im.ca_referencia,'.'))[3])::text as ca_mes,
+    sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte, im.ca_modalidad, im.ca_impoexpo, ic.ca_continuacion, ccl.ca_compania, to_timestamp(im.ca_fchconfirmacion||' '||im.ca_horaconfirmacion, 'yyyy-mm-dd hh24:mi:ss')::timestamp as ca_fchconfirmacion
+
+from tb_inomaestra_sea im
+	LEFT OUTER JOIN tb_inoclientes_sea ic ON (ic.ca_referencia = im.ca_referencia)
+	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = ic.ca_idreporte)
+	LEFT OUTER JOIN control.tb_usuarios us ON (ic.ca_login = us.ca_login)
+	LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
+	LEFT OUTER JOIN tb_ciudades cio ON (im.ca_origen = cio.ca_idciudad)
+	LEFT OUTER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
+	LEFT OUTER JOIN tb_ciudades cid ON (im.ca_destino = cid.ca_idciudad)
+	LEFT OUTER JOIN tb_concliente ccn ON (rp.ca_idconcliente = ccn.ca_idcontacto)
+	LEFT OUTER JOIN tb_clientes ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
+
+-- La última versión del reporte
+	INNER JOIN (select ca_consecutivo as ca_consecutivo_f, ca_fchreporte, max(ca_version) as ca_version from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo_f) rx ON (rp.ca_consecutivo = rx.ca_consecutivo_f)
+
+order by ca_ano, ca_mes, ca_sucursal, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999');
+REVOKE ALL ON vi_repindicador_sea FROM PUBLIC;
+GRANT ALL ON vi_repindicador_sea TO "Administrador";
+GRANT ALL ON vi_repindicador_sea TO GROUP "Usuarios";
+
+
+// Drop view vi_repindicador_air cascade;
+Create view vi_repindicador_air as
+select im.ca_referencia, ic.ca_idcliente, ic.ca_hawb, rx.ca_idreporte, ic.ca_idreporte as ca_consecutivo, rx.ca_version, ((string_to_array(im.ca_referencia,'.'))[5]::int)+2000 as ca_ano, ((string_to_array(im.ca_referencia,'.'))[3])::text as ca_mes,
+    sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, rx.ca_transporte, im.ca_modalidad, rx.ca_impoexpo, rx.ca_continuacion, ccl.ca_compania
+
+from tb_inomaestra_air im
+	LEFT OUTER JOIN tb_inoclientes_air ic ON (ic.ca_referencia = im.ca_referencia)
+	LEFT OUTER JOIN control.tb_usuarios us ON (ic.ca_loginvendedor = us.ca_login)
+	LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
+	LEFT OUTER JOIN tb_ciudades cio ON (im.ca_origen = cio.ca_idciudad)
+	LEFT OUTER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
+	LEFT OUTER JOIN tb_ciudades cid ON (im.ca_destino = cid.ca_idciudad)
+
+-- La última versión del reporte
+	INNER JOIN (select rp.ca_idreporte, rp.ca_transporte, rp.ca_impoexpo, rp.ca_idconcliente, rp.ca_consecutivo, rp.ca_fchreporte, rp.ca_version, rp.ca_continuacion from tb_reportes rp INNER JOIN (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_transporte = 'Aéreo' and ca_usuanulado IS NULL group by ca_consecutivo) rv ON (rp.ca_consecutivo = rv.ca_consecutivo and rp.ca_version = rv.ca_version) order by ca_consecutivo) rx ON (ic.ca_idreporte = rx.ca_consecutivo)
+
+	LEFT OUTER JOIN tb_concliente ccn ON (rx.ca_idconcliente = ccn.ca_idcontacto)
+	LEFT OUTER JOIN tb_clientes ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
+
+order by ca_ano, ca_mes, ca_sucursal, to_number(substr(rx.ca_consecutivo,0,position('-' in rx.ca_consecutivo)),'99999999');
+REVOKE ALL ON vi_repindicador_air FROM PUBLIC;
+GRANT ALL ON vi_repindicador_air TO "Administrador";
+GRANT ALL ON vi_repindicador_air TO GROUP "Usuarios";
 
 
 // Drop view vi_cotindicadores cascade;
