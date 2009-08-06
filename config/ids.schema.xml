@@ -79,9 +79,9 @@
 		</foreign-key>
 	</table>
 
-    <table name="ids.tb_proveedor" phpName="IdsProveedor">
+    <table name="ids.tb_proveedores" phpName="IdsProveedor">
 		<column name="ca_idproveedor" type="integer" required="true" primaryKey="true"  />
-		<column name="ca_tipo" type="integer" required="true"  />
+		<column name="ca_tipo" type="varchar" required="true"  />
         <column name="ca_critico" type="boolean" required="true"  />
 		<column name="ca_controladoporsig" type="boolean" required="true"  />
 		<column name="ca_fchaprobado" type="timestamp" />
@@ -89,9 +89,21 @@
         
         <foreign-key foreignTable="ids.tb_ids">
 			<reference local="ca_idproveedor" foreign="ca_id"/>
-		</foreign-key>		
+		</foreign-key>
+
+        <foreign-key foreignTable="ids.tb_tipos">
+			<reference local="ca_tipo" foreign="ca_tipo"/>
+		</foreign-key>
+
+
 	</table>
 
+
+    <table name="ids.tb_tipos" phpName="IdsTipo">
+		<column name="ca_tipo" type="varchar" required="true" primaryKey="true"   />
+        <column name="ca_nombre" type="varchar" required="true"  />
+        <column name="ca_aplicacion" type="varchar" required="true"  />
+	</table>
 
     <table name="ids.tb_tipodocumentos" phpName="IdsTipoDocumento">
 		<column name="ca_idtipo" type="integer" required="true" primaryKey="true" autoIncrement="true" />
@@ -175,4 +187,20 @@
 		</foreign-key>
 
 	</table>
+
+    <table name="ids.tb_eventos" phpName="IdsEvento">
+		<column name="ca_idevento" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="ids.tb_eventos_id"/>
+        <column name="ca_id" type="integer" required="true" />
+        <column name="ca_evento" type="varchar" />
+        <column name="ca_referencia" type="varchar"   />
+        <column name="ca_tipo" type="varchar"   />
+        <column name="ca_fchcreado" type="timestamp" required="true"/>
+		<column name="ca_usucreado" type="varchar" required="true"   />
+        <foreign-key foreignTable="ids.tb_ids">
+			<reference local="ca_id" foreign="ca_id"/>
+		</foreign-key>
+	</table>
+
+
 </database>
