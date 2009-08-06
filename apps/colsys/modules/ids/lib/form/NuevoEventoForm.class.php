@@ -27,17 +27,31 @@ class NuevoEventoForm extends sfForm{
 															  'choices' => array('Buen servicio'=>'Buen servicio',
                                                                                  'Mal servicio'=>'Mal servicio'
                                                                                 ),
-															)
-                                                            
+															)                                                            
                                                     );
 
         $widgets['evento'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>80 ) );
-		$this->setWidgets( $widgets );
+		
+        $idproveedores = $this->getIdproveedores();
+        if( $idproveedores ){
+            $choices = array();
+            foreach( $idproveedores as $idproveedor ){
+                $proveedor = TransportadorPeer::retrieveByPK( $idproveedor );
+                $choices[ $proveedor->getCaIdtransportista() ]=$proveedor->getCaNombre();
+            }
 
+            $widgets['id'] = new sfWidgetFormChoice(array(
+															  'choices' => $choices,
+															)
+                                                    );
 
+        }
+        $this->setWidgets( $widgets );
+
+        $validator["id"] =new sfValidatorString( array('required' => true ),
+														array('required' => 'El proveedor es requerido'));
         $validator["tipo_evento"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'El tipo de evento es requerido'));
-
         $validator["evento"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'El evento es requerido'));
 

@@ -108,10 +108,9 @@
 
                          <div class="tab-page">
                           <h2 class="tab">Eventos</h2>
-
-                          This is text of tab 2. This is text of tab 2.
-                          This is text of tab 2. This is text of tab 2.
-
+                          <?
+                          include_component("ids", "eventos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
+                          ?>
                        </div>
                     </div>
 

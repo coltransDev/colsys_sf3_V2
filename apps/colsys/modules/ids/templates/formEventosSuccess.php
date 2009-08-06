@@ -10,7 +10,14 @@
 
 
 <div class="content" align="center">
-    <form action="<?=url_for("ids/formEventos")?>" method="post">
+    <form action="<?=url_for("ids/formEventos?modo=".$modo)?>" method="post">
+    <?
+    if( !$modo ){
+        ?>
+        <input type="hidden" name="referencia" value="<?=$numreferencia?>" />
+        <?
+    }
+    ?>
     <table class="tableList" width="50%">
         <tr>
             <th colspan="2">&nbsp;</th>
@@ -26,8 +33,8 @@
         }
         ?>
         <tr>
-            <td>
-                Tipo de evento:<br />
+            <td width="25%">
+                <b>Tipo de evento:</b><br />
                 <?
                 echo $form['tipo_evento']->renderError();
 				echo $form['tipo_evento']->render();
@@ -35,18 +42,25 @@
 
             </td>
 
-            <td>
-                Proveedor:<br />
+            <td width="25%">
+                <b>Proveedor:</b><br />
                 <?
-                //echo $form['id_proveedor']->renderError();
-				//echo $form['id_proveedor']->render();
+                if( $modo ){
+                    echo $ids->getCaNombre();
+                ?>
+                <input type="hidden" name="id" value="<?=$ids->getCaId()?>">
+                <?
+                }else{
+                    echo $form['id']->renderError();
+                    echo $form['id']->render();
+                }
                 ?>
 
             </td>
         </tr>
         <tr>
             <td colspan="2">
-                Evento:<br />
+                <b>Evento:</b><br />
                 <?
                 echo $form['evento']->renderError();
 				echo $form['evento']->render();
@@ -55,7 +69,11 @@
         </tr>
         <tr>
             <td colspan="2">
-                <div align="center"><input type="submit" value="Guardar" class="button" /></div>
+                <div align="center">
+                    <input type="submit" value="Guardar" class="button" />
+                    
+                    <input type="button" value="Cancelar" class="button" onClick="document.location='<?=$url?>'" />
+                </div>
             </td>
         </tr>
         

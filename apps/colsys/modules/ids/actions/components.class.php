@@ -44,7 +44,7 @@ class idsComponents  extends sfComponents
 	}
 
     /**
-	* Muestra los documentos
+	* Muestra las evaluaciones
 	*
 	*/
     public function executeEvaluaciones()
@@ -54,6 +54,21 @@ class idsComponents  extends sfComponents
         $c->add(IdsEvaluacionPeer::CA_ID, $this->ids->getCaId() );        
         $c->addDescendingOrderByColumn( IdsEvaluacionPeer::CA_FCHEVALUACION );
         $this->evaluaciones = IdsEvaluacionPeer::doSelect( $c );
+
+
+	}
+
+    /**
+	* Muestra los eventos
+	*
+	*/
+    public function executeEventos()
+	{
+		$c = new Criteria();
+
+        $c->add(IdsEventoPeer::CA_ID, $this->ids->getCaId() );
+        $c->addDescendingOrderByColumn( IdsEventoPeer::CA_FCHCREADO );
+        $this->eventos = IdsEventoPeer::doSelect( $c );
 
 
 	}

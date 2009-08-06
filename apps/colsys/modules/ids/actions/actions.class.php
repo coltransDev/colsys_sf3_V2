@@ -601,27 +601,60 @@ class idsActions extends sfActions
     public function executeFormEventos(sfWebRequest $request){
         //Se debe verificar que la referencia exista y determinar el proveedor.
 
-        $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
-        $this->forward404Unless(  $numreferencia );
+        $this->modo=$request->getParameter("modo");
+        $this->form = new NuevoEventoForm();
 
-        if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
-            $referencia = InoMaestraSea::retrieveByPk( $numreferencia );
-            $linea = $referencia->getCaidlinea();
+        if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
+            $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+            $this->url = "/ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
+        }else{ // Esta ingresando desde la referencia
+            $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
+            $this->forward404Unless(  $numreferencia );
+
+            $idproveedores = array();
+
+            if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){
+                $referencia = InoMaestraSeaPeer::retrieveByPk( $numreferencia );
+                $linea = $referencia->getCaidlinea();
+
+                $idproveedores[] = $linea;
+
+                $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
+            }
+
+            if( substr($numreferencia,0,1)=="1"  ){
+                $referencia = InoMaestraAirPeer::retrieveByPk( $numreferencia );
+                $linea = $referencia->getCaidlinea();
+
+                $idproveedores[] = $linea;
+
+                $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
+            }
+            $this->form->setIdproveedores($idproveedores);
+
+            $this->numreferencia = $numreferencia;
         }
 
-        //Se muestra el formulario y se guarda el evento
-        $this->form = new NuevoEventoForm();
+        $this->form->configure();
+        
 
         if ($request->isMethod('post')){
 
 			$bindValues = array();
-
+            $bindValues["id"] = $request->getParameter("id");
             $bindValues["tipo_evento"] = $request->getParameter("tipo_evento");
-            $bindValues["evento"] = $request->getParameter("evento");
-            $bindValues["id_proveedor"] = $request->getParameter("id_proveedor");
+            $bindValues["evento"] = $request->getParameter("evento");           
             
             $this->form->bind( $bindValues );
 			if( $this->form->isValid() ){
+                $evento = new IdsEvento();
+                $evento->setCaId( $bindValues["id"] );
+                $evento->setCaEvento( $bindValues["evento"] );
+                $evento->setCaTipo( $bindValues["tipo_evento"] );
+                $evento->save();
+                
+                $this->redirect($this->url);
+
                 
             }
 
