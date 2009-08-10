@@ -59,7 +59,7 @@ class NuevoIdsForm extends sfForm{
         }
 
 		if( $taintedValues["tipo_identificacion"]==3 ){
-			$this->validatorSchema['identificacion']->setOption('required', false);
+			$this->validatorSchema['id']->setOption('required', false);
 		}
 		
 		parent::bind($taintedValues,  $taintedFiles);

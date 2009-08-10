@@ -13,7 +13,7 @@ class idsActions extends sfActions
 
     const RUTINA_AGENTES = "78";
 	const RUTINA_TRANPORTADORES = "79";
-	const RUTINA_OTROSPROV = "80";
+	const RUTINA_PROV = "80";
     /*
      * Retorna el nivel de acceso de acuerdo al modo
      */
@@ -24,16 +24,13 @@ class idsActions extends sfActions
 		}
 
 		if( $this->modo=="agentes" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );
-			
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );			
 		}
-		if( $this->modo=="transp" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_TRANPORTADORES );
-		}
+		
 		if( $this->modo=="prov" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_OTROSPROV );
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );
 		}
-        
+
 		if( $this->nivel==-1 ){
 			$this->forward404();
 		}
@@ -55,9 +52,8 @@ class idsActions extends sfActions
 	 */
 	public function executeSeleccionModo()
 	{
-		$this->nivelAgentes = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );
-		$this->nivelTransportadores = $this->getUser()->getNivelAcceso( idsActions::RUTINA_TRANPORTADORES );
-		$this->nivelOtrosproveedores = $this->getUser()->getNivelAcceso( idsActions::RUTINA_OTROSPROV );
+		$this->nivelAgentes = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );		
+		$this->nivelProveedores = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );
 	}
 
     /**
@@ -132,11 +128,14 @@ class idsActions extends sfActions
         $formSucursal = new NuevaSucursalForm();
         $this->form->mergeForm($formSucursal);
 
-        if( $this->modo=="agentes" || $this->modo=="transp" ){
+        if( $this->modo=="prov" ){
             $this->formProveedor = new NuevoProveedorForm();
             $this->form->mergeForm($this->formProveedor);
+        }
 
-
+        if( $this->modo=="agentes" ){
+            $this->formAgente = new NuevoAgenteForm();
+            $this->form->mergeForm($this->formAgente);
         }
 
         $ids = null;
@@ -165,11 +164,17 @@ class idsActions extends sfActions
             $bindValues["fax"] = $request->getParameter("fax");
             $bindValues["idciudad"] = $request->getParameter("idciudad");
 
-
-            $bindValues["tipo_proveedor"] = $request->getParameter("tipo_proveedor");
-            $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
-            $bindValues["critico"] = $request->getParameter("critico");
-            $bindValues["aprobado"] = $request->getParameter("aprobado");
+            if( $this->modo=="prov" ){
+                $bindValues["tipo_proveedor"] = $request->getParameter("tipo_proveedor");
+                $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
+                $bindValues["critico"] = $request->getParameter("critico");
+                $bindValues["aprobado"] = $request->getParameter("aprobado");
+            }
+            
+            if( $this->modo=="agentes" ){
+                $bindValues["tipo"] = $request->getParameter("tipo");
+                $bindValues["activo"] = $request->getParameter("activo");
+            }
 
             $this->form->bind( $bindValues );
 			if( $this->form->isValid() ){
@@ -178,6 +183,8 @@ class idsActions extends sfActions
 
                 if( $bindValues["id"] ){
                     $ids->setCaId( $bindValues["id"]);
+                }else{
+                    $ids->setId();
                 }
 
                 if( $bindValues["dv"] ){
@@ -225,6 +232,21 @@ class idsActions extends sfActions
                     $proveedor->save();
                 }
 
+
+                if( isset($this->formAgente) ){
+                    $agente = $ids->getIdsAgente();
+                    if( !$agente ){
+                        $agente = new IdsAgente();
+                        $agente->setCaIdagente($ids->getCaId());
+                    }
+
+                    $agente->setCaTipo( $bindValues["tipo"] );
+                    if( $bindValues["activo"]!==null ){
+                        $agente->setCaActivo();
+                    }
+                    
+                    $agente->save();
+                }
                 
                 // Guardar Sucursal
                 $sucursal = $ids->getSucursalPrincipal();

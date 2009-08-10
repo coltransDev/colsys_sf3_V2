@@ -22,8 +22,8 @@
            <td><div align="left"><?=$contacto->getCaFax()?></div></td>
            <td><div align="left"><?=$contacto->getCaEmail()?></div></td>
            <td><div align="left"><?=$contacto->getCaCargo()?></div></td>
-           <td><div align="left"><?=$contacto->getCaImpoexpo()?></div></td>
-           <td><div align="left"><?=$contacto->getCaTransporte()?></div></td>
+           <td><div align="left"><?=str_replace( "|", ",",$contacto->getCaImpoexpo())?></div></td>
+           <td><div align="left"><?=str_replace( "|", ",", $contacto->getCaTransporte())?></div></td>
            <td><div align="center">
             <?
             echo link_to(image_tag("16x16/edit.gif"), "ids/formContactosIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."" );

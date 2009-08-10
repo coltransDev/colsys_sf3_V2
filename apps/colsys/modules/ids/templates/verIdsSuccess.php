@@ -47,11 +47,27 @@
                </td>
             </tr>
             <?
-            $proveedor = $ids->getIdsProveedor();
-            
+            $agente = $ids->getIdsAgente();
+            if( $agente  ){
+            ?>
+            <tr>
+                <td>
+                    <div align="left"><b>Tipo</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$agente->getCaTipo()?></div>
+               </td>
+               <td>
+                   <div align="left"><b>Activo</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$agente->getCaActivo()?"S&iacute;":"No"?></div>
+               </td>
+            </tr>
+            <?
+            }
+            $proveedor = $ids->getIdsProveedor();            
             if( $proveedor  ){
-               
-
             ?>
             <tr>
                 <td>

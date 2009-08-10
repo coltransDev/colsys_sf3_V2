@@ -13,24 +13,12 @@
 	</tr>
 	<?
 	}
-	?>
-	<?
-	if( $nivelTransportadores>=0 ){
-	?>
-	<tr>
-		<td><div align="left">
-			<?=link_to("Transportadores", "ids/index?modo=transp")?>
-		</div></td>
-	</tr>
-	<?
-	}
-	?>
-	<?
-	if( $nivelOtrosproveedores>=0 ){
+	
+	if( $nivelProveedores>=0 ){
 	?>
 	<tr>
 		<td><div align="left">
-			<?=link_to("Otros Proveedores", "ids/index?modo=otrosp")?>
+			<?=link_to("Proveedores", "ids/index?modo=prov")?>
 		</div></td>
 	</tr>
 	<?

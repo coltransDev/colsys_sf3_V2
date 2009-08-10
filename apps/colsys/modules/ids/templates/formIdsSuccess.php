@@ -117,8 +117,42 @@
              </div>
         </td>
 	</tr>
-
     <?
+    if( isset($formAgente) ){
+        $agente = $ids->getIdsAgente();
+    
+    ?>
+    <tr>
+		<td> <div align="left"><b>Tipo</b></div></td>
+        <td>
+            <div align="left">
+            <?
+            echo $form['tipo']->renderError();
+            if( $agente ){
+                $form->setDefault('tipo', $agente->getCaTipo() );
+            }else{
+                $form->setDefault('tipo', 'Oficial' );
+
+            }
+            echo $form['tipo']->render();
+            ?>
+             </div></td>
+        <td> <div align="left"><b>Activo</b></div></td>
+        <td colspan="3">
+            <?
+            echo $form['activo']->renderError();
+            if( $agente ){
+                $form->setDefault('activo', $agente->getCaActivo() );
+            }else{
+                $form->setDefault('activo', true );
+            }
+            echo $form['activo']->render();
+            ?>
+        </td>
+	</tr>
+    <?
+
+    }    
     if( isset($formProveedor) ){
         $proveedor = $ids->getIdsProveedor();
     

@@ -42,7 +42,7 @@ endif;
 <table class="tableList" width="800px" border="1" id="mainTable">
 	<tr>
 		<th width="57" scope="col">Identificacion</th>
-		<th width="668" colspan="4" scope="col">Nombre</th>
+		<th width="668" scope="col">Nombre</th>
 	</tr>
 	<?
 
@@ -64,7 +64,7 @@ endif;
 	?>
 	<tr>
 
-		<td  colspan="2" scope="col"><div align="center">No hay resultados</div></td>
+		<td  colspan="2" ><div align="center"><b>No hay resultados</b>></div></td>
 	</tr>
 	<?
 	}
