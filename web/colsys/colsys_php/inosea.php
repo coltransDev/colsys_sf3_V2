@@ -951,7 +951,7 @@ require_once("menu.php");
              echo "  <TABLE CELLSPACING=1>";
              while (!$in->Eof()) {
                     echo "<TR>";
-                    echo "  <TD Class=mostrar><INPUT TYPE='TEXT' READONLY NAME='hbls[]' VALUE=".$in->Value('ca_hbls')." SIZE=23></TD>";
+                    echo "  <TD Class=mostrar><INPUT TYPE='TEXT' READONLY NAME='hbls[]' VALUE='".$in->Value('ca_hbls')."' SIZE=23></TD>";
                     echo "  <TD Class=mostrar><INPUT TYPE='TEXT' NAME='utilidades[]' VALUE=0 ONCHANGE='calcular();' SIZE=13 MAXLENGTH=15></TD>";
                     echo "</TR>";
                     echo "<INPUT TYPE='HIDDEN' NAME='clientes[]' VALUE=".$in->Value('ca_idcliente').">";              // Hereda el Id del Cliente que se esta modificando
@@ -4201,7 +4201,7 @@ require_once("menu.php");
 					$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
 					$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
 					$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
-					$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' order by ca_idemail DESC limit 1";
+					$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
 					if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
 						echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 						echo "<script>document.location.href = 'inosea.php';</script>";
@@ -4277,7 +4277,7 @@ require_once("menu.php");
 								$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
 								$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
 								$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
-								$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' order by ca_idemail DESC limit 1";
+								$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
 								if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
 									echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 									echo "<script>document.location.href = 'inosea.php';</script>";
@@ -4326,7 +4326,7 @@ require_once("menu.php");
 						$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
 						$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
 						$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
-						$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' order by ca_idemail DESC limit 1";
+						$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
 						if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
 							echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 							echo "<script>document.location.href = 'inosea.php';</script>";
