@@ -3578,7 +3578,7 @@ BEGIN
 						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Coltrans');
 					END IF;
 				END IF;
-			ELSIF (TG_RELNAME = 'tb_expo_maestra' OR TG_RELNAME = 'adicion_inomaestra_brk') THEN
+			ELSIF (TG_RELNAME = 'tb_expo_maestra' OR TG_RELNAME = 'tb_inomaestra_brk') THEN
 				IF (referrer_keys.ca_cantidad_exp + referrer_keys.ca_cantidad_brk) = 0 THEN
 					IF v_estado2 != 'Potencial' THEN
 						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
