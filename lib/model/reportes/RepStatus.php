@@ -248,7 +248,7 @@ class RepStatus extends BaseRepStatus
 			$asunto.= $this->getAsunto();
 		}
 						
-		$email->setCaSubject( $asunto );
+		$email->setCaSubject( substr($asunto, 0, 250) );
 				
 		if( $attachments ){		
 			$email->setCaAttachment( implode( "|", $attachments ) );
