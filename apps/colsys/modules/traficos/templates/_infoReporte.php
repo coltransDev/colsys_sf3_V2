@@ -1,3 +1,8 @@
+<?
+if( $reporte->getCausuanulado() ){
+    $nivel = 0;
+}
+?>
 <table width="100%" border="0">
 	<tr>
 		<td width="26%" valign="top">
@@ -5,7 +10,7 @@
 		 	<b>Informaci&oacute;n general</b><br />				
 			<?					
 					if( $reporte->getCaUsuAnulado() ){
-						echo "<b>Anulado por:</b> ".$reporte->getCaUsuAnulado()." ".$reporte->getCaFchAnulado();
+						echo "<b>Anulado por:</b> ".$reporte->getCaUsuAnulado()." ".$reporte->getCaFchAnulado()."<br />";
 					}
 					?>					
 					<b>Transporte:</b> <?=$reporte->getCaTransporte()?><br />
@@ -78,7 +83,7 @@
 			}else{
 				echo "No se han creado reportes al exterior<br />";
 			}
-			if( $nivel>0 ){
+			if( $nivel>0 && !$reporte->getCausuanulado() ){
 				echo link_to(image_tag("22x22/edit_add.gif")." Rep. Exterior","reporteExt/crearReporte?idreporte=".$reporte->getCaIdreporte() );
 			}
 		?>
@@ -102,7 +107,7 @@
 				<br />
 				<?
 				
-				if( $nivel>0 ){
+				if( $nivel>0 && !$reporte->getCausuanulado() ){
 					if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
 						echo link_to(image_tag("22x22/edit_add.gif")." Aviso" ,"traficos/nuevoStatus?idreporte=".$reporte->getCaIdreporte()."&modo=".$modo."&tipo=aviso&token=".md5(time()));
 						

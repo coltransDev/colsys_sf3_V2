@@ -87,7 +87,7 @@ class traficosActions extends sfActions
 		}
 		
 		
-		$this->forward404unless( $this->modo );
+		
 					
 		if( $this->getRequestParameter("reporte") ){
 			$consecutivo = $this->getRequestParameter("reporte");
@@ -99,16 +99,16 @@ class traficosActions extends sfActions
 			$reporte = ReportePeer::retrieveByConsecutivo( $consecutivo );	
 			$this->forward404Unless( $reporte ); 		
 			
-			if( $this->modo=="maritimo" && $reporte->getCaTransporte()!=Constantes::MARITIMO ){
-				$this->forward404();
+			if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+				$this->modo="maritimo";
 			}
 			
-			if( $this->modo=="aereo" && $reporte->getCaTransporte()!=Constantes::AEREO ){
-				$this->forward404();
+			if( $reporte->getCaTransporte()==Constantes::AEREO ){
+				$this->modo="aereo";
 			}
 			
-			if( $this->modo=="expo" && $reporte->getCaImpoexpo()!=Constantes::EXPO ){
-				$this->forward404();
+			if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
+				$this->modo="expo";
 			}
 			
 			$this->cliente = $reporte->getCliente(); 			
@@ -125,7 +125,8 @@ class traficosActions extends sfActions
 			$reporte = null;
 		}
 			
-				
+		$this->forward404unless( $this->modo );
+		
 		switch( $this->modo ){
 			case "aereo":
 				$this->reportes = ReportePeer::getReportesActivosImpoAereo( $this->cliente->getCaIdcliente() );
