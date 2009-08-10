@@ -44,6 +44,27 @@ class idsActions extends sfActions
 	{
         $this->modo = $request->getParameter("modo");
         $this->nivel = $this->getNivel();
+
+
+        $c = new Criteria();
+		$c->add( TraficoPeer::CA_IDTRAFICO, '99-999', Criteria::NOT_EQUAL );
+		$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
+		$this->traficos = TraficoPeer::doSelect( $c );
+
+		$c = new Criteria();
+		$c->add( CiudadPeer::CA_IDCIUDAD, '999-9999', Criteria::NOT_EQUAL );
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_IDTRAFICO );
+		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
+		$ciudades = CiudadPeer::doSelect( $c );
+
+		$result = array();
+		foreach( $ciudades as $ciudad ){
+			$result[ $ciudad->getCaidtrafico() ][] = array("idciudad"=>$ciudad->getCaIdciudad(),
+															"ciudad"=>utf8_encode($ciudad->getCaCiudad())
+													 );
+		}
+
+		$this->ciudades = json_encode($result);
 	}
 
     /**
@@ -74,8 +95,33 @@ class idsActions extends sfActions
 			case "nombre":
 				$c->add( IdsPeer::CA_NOMBRE, "%". strtoupper($cadena)."%", Criteria::LIKE );
 				break;
+            case "id":
+				$c->add( IdsPeer::CA_ID, $cadena );
+				break;
+            case "ciudad":
+                $idtrafico = $request->getParameter("idtrafico");
+                $idciudad = $request->getParameter("idciudad");
+                
+				$c->addJoin( IdsPeer::CA_ID, IdsSucursalPeer::CA_ID );
+                $c->addJoin( IdsSucursalPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
+                if( $idtrafico ){
+                    $c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
+                }
+                if( $idciudad ){
+                    $c->add( CiudadPeer::CA_ICIUDAD, $idciudad );
+                }
+				break;
 		}
-		//$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL );
+
+
+		switch( $this->modo ){
+            case "agentes":
+                $c->addJoin( IdsPeer::CA_ID, IdsAgentePeer::CA_IDAGENTE );
+                break;
+            case "prov":
+                $c->addJoin( IdsPeer::CA_ID, IdsProveedorPeer::CA_IDPROVEEDOR );
+                break;
+        }
 		$c->addAscendingOrderByColumn( IdsPeer::CA_NOMBRE );
 		$c->setLimit( 200 );
 

@@ -64,7 +64,7 @@ endif;
 	?>
 	<tr>
 
-		<td  colspan="2" ><div align="center"><b>No hay resultados</b>></div></td>
+		<td  colspan="2" ><div align="center"><b>No hay resultados</b></div></td>
 	</tr>
 	<?
 	}

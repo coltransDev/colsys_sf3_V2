@@ -118,7 +118,7 @@
                           ?>
                        </div>
                         <div class="tab-page">
-                          <h2 class="tab">Evaluacion</h2>
+                          <h2 class="tab">Evaluaci&oacute;n</h2>
                           <?
                           include_component("ids", "evaluaciones", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
                           ?>
