@@ -1098,8 +1098,8 @@ class pricingActions extends sfActions
 		if( $idtrafico=="99-999" ){
 			$c->add( PricRecargosxLineaPeer::CA_IDLINEA, $idlinea  );
 		}
-		
-			
+
+        			
 		$recargos = PricRecargosxLineaPeer::doSelect( $c );
 				
 		
@@ -1453,6 +1453,7 @@ class pricingActions extends sfActions
 		$c->add( PricPatioLineaPeer::CA_IMPOEXPO, $impoexpo  );
 		$c->add( PricPatioLineaPeer::CA_TRANSPORTE, $transporte  );
 		$c->add( PricPatioLineaPeer::CA_MODALIDAD, $modalidad  );
+        $c->setDistinct();
 		$patiosLineas = PricPatioLineaPeer::doSelect( $c );
 		
 		$patiosLineaArray = array(); 
@@ -1464,12 +1465,11 @@ class pricingActions extends sfActions
 		
 				
 		$c = new Criteria();			
-		if( $this->nivel==0 ){
-			$c->addJoin( PricPatioPeer::CA_IDPATIO, PricPatioLineaPeer::CA_IDPATIO );			
-		}	
+		
 		$c->addJoin( PricPatioPeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );
 		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );		
-		$c->addAscendingOrderByColumn( PricPatioPeer::CA_NOMBRE );		
+		$c->addAscendingOrderByColumn( PricPatioPeer::CA_NOMBRE );
+       
 		$patios = PricPatioPeer::doSelect( $c );
 					
 		$data = array();
@@ -1484,6 +1484,9 @@ class pricingActions extends sfActions
 			}else{
 				$sel = false;
 				$observaciones = "";
+                if( $this->nivel==0 ){
+                    continue;
+                }
 			}
 		
 			$row = array(
