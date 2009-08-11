@@ -1058,8 +1058,16 @@ if ( count($seguros)>0 ) {
 
 
 // ======================== Directorio de agentes ======================== //
-if( $cotizacion->getCaDatosag() ){
-	$datosAg = explode("|", $cotizacion->getCaDatosag() );
+$datosAg = array();
+$c = new Criteria();
+$c->add(CotContactoAgPeer::CA_IDCOTIZACION, $cotizacion->getCaIdcotizacion() );
+$contactosAg = CotContactoAgPeer::doSelect( $c );
+foreach( $contactosAg as $contactoAg ){
+    $datosAg[]=$contactoAg->getCaIdcontacto();
+}
+if( count( $datosAg )>0 ){
+	
+    
 	$c = new Criteria();
 	$c->addJoin( ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE );
 	$c->addJoin( AgentePeer::CA_IDCIUDAD, CiudadPeer::CA_IDCIUDAD );

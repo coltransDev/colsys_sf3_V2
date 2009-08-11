@@ -305,12 +305,28 @@ class cotizacionesActions extends sfActions
 		$this->forward404Unless($cotizacion);
 		$datosag = $this->getRequestParameter( "datosag" );
 		$this->forward404Unless($datosag!==null);
+
+        $c = new Criteria();
+        $c->add(CotContactoAgPeer::CA_IDCOTIZACION, $cotizacion->getCaIdcotizacion() );
+        $contactosAg = CotContactoAgPeer::doSelect( $c );
+        foreach( $contactosAg as $contactoAg ){
+            $contactoAg->delete();
+        }
+
+        $idcontactos = explode("|", $datosag );
+        foreach($idcontactos as $idcontacto ){
+            $contactoAg = new CotContactoAg();
+            $contactoAg->setCaIdcotizacion($cotizacion->getCaIdcotizacion());
+            $contactoAg->setCaIdcontacto( $idcontacto );
+            $contactoAg->save();
+        }
+        /*
 		if( $datosag ){
 			$cotizacion->setCaDatosAg( $datosag );
 		}else{			
 			$cotizacion->setCaDatosAg( null );	
-		}
-		$cotizacion->save();
+		}*/
+		//$cotizacion->save();
 		$this->responseArray = array("success"=>true);	
 		$this->setTemplate("responseTemplate");		
 		$this->setLayout("ajax");
@@ -370,8 +386,14 @@ class cotizacionesActions extends sfActions
 			}
 			$ciudades=array_unique($ciudades);
 		}
-				
-		$datosag  = explode("|",$cotizacion->getCaDatosag());
+		$datosag = array();
+        $c = new Criteria();
+        $c->add(CotContactoAgPeer::CA_IDCOTIZACION, $cotizacion->getCaIdcotizacion() );
+        $contactosAg = CotContactoAgPeer::doSelect( $c );
+        foreach( $contactosAg as $contactoAg ){
+            $datosag[]=$contactoAg->getCaIdcontacto();
+        }
+		//$datosag  = explode("|",$cotizacion->getCaDatosag());
 		
 		$c = new Criteria();	
 		$c->addJoin( ContactoAgentePeer::CA_IDAGENTE, AgentePeer::CA_IDAGENTE );
