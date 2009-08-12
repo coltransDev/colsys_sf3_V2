@@ -1,6 +1,6 @@
 <?
-	$tarea = $reporte->getNotTarea();
-	?>
+
+?>
 <div class="content" align="center">
 
 <form action="<?=url_for("traficos/formSeguimiento?modo=".$modo."&reporte=".$reporte->getCaConsecutivo() )?>" method="post" name="form1" >

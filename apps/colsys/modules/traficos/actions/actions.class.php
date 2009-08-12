@@ -988,7 +988,13 @@ class traficosActions extends sfActions
 		}
 		
 		$this->forward404Unless( $reporte );
-		
+
+        $tarea = $reporte->getNotTarea();
+        if( !$tarea || $tarea->getCaFchterminada() ){
+            $tarea = new NotTarea();
+            $tarea->setCaFchcreado( time() );
+            $tarea->setCaUsucreado( $this->getUser()->getUserId() );
+        }
 		
 		if ($request->isMethod('post')){		
 		
@@ -1001,12 +1007,7 @@ class traficosActions extends sfActions
 				$titulo = "Seguimiento RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
 				$texto = "";			
 				
-				$tarea = $reporte->getNotTarea();	
-				if( !$tarea ){			
-					$tarea = new NotTarea(); 
-					$tarea->setCaFchcreado( time() );								
-					$tarea->setCaUsucreado( $this->getUser()->getUserId() );
-				}	
+				
 				$tarea->setCaUrl( "/traficos/listaStatus/modo/maritimo/reporte/".$reporte->getCaConsecutivo() );
 				$tarea->setCaIdlistatarea( 3 );			
 				$tarea->setCaFchvencimiento( $request->getParameter("fchseguimiento")." 23:59:59" );
@@ -1024,7 +1025,8 @@ class traficosActions extends sfActions
 			}				
 		}
 		
-		$this->reporte = $reporte;		
+		$this->reporte = $reporte;
+        $this->tarea = $tarea;
 	}
 
     /*
