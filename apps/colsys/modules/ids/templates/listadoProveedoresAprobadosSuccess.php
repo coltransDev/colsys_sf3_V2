@@ -11,7 +11,7 @@ $numYears = $actualYear-$initialYear+1;
 
 ?>
 <div class="content" align="center">
-    <table border="1" class="tableList">
+    <table border="1" class="tableList" width="90%">
     <thead>
         <tr>
             <th rowspan="2">Nombre</th>
@@ -39,16 +39,46 @@ $numYears = $actualYear-$initialYear+1;
     </thead>
     <tbody>
         <?
+        $ultTipo=null;
         foreach($proveedores as $proovedor ){
             $ids = $proovedor->getIds();
             $sucursales = $ids->getIdsSucursals();
+            if( $ultTipo!=$proovedor->getCaTipo() ){
+                $ultTipo=$proovedor->getCaTipo();
+                $tipo = $proovedor->getIdsTipo();
+            ?>
+            <tr class="row0">
+                <td  colspan="<?=10+$numYears?>"><div align="left"><?=$tipo->getcaNombre()?></div></td>
+            </tr>
+            <?
+            }
         ?>
         <tr>
             <td><div align="left"><?=$ids->getcaNombre()?></div></td>
-            <td><div align="left"><?=$proovedor->getCaFchaprobado()?></div></td>
+            <td><div align="left"><?=Utils::fechaMes($proovedor->getCaFchaprobado())?></div></td>
             <td><div align="left"><?=$proovedor->getCaActivo()?"Activo":"Inactivo"?></div></td>
-            <td><div align="left"></div></td>
-            <td><div align="left"></div></td>
+            <td>
+                <div align="left">
+                    <?
+                    $doc = $ids->getDocumento( 4 );                    
+                    if( $doc ){
+                        echo Utils::fechaMes($doc->getCaFchvencimiento());
+                    }else{
+                        echo "No";
+                    }
+                    ?>
+                </div></td>
+            <td><div align="left">
+                    <?
+                    $doc = $ids->getDocumento( 7 );
+                    if( $doc ){
+                        echo Utils::fechaMes($doc->getCaFchvencimiento());
+                    }else{
+                        echo "No";
+                    }
+                    ?>
+
+                </div></td>
             <td>
                 <div align="left">
                 <?

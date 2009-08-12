@@ -798,6 +798,8 @@ class idsActions extends sfActions
     public function executeListadoProveedoresAprobados(sfWebRequest $request){
         $c = new Criteria();
         $c->addJoin( IdsProveedorPeer::CA_IDPROVEEDOR, IdsPeer::CA_ID );
+        $c->addJoin( IdsProveedorPeer::CA_TIPO, IdsTipoPeer::CA_TIPO );
+        $c->addAscendingOrderByColumn(IdsTipoPeer::CA_NOMBRE );
         $c->addAscendingOrderByColumn(IdsPeer::CA_NOMBRE );
         $c->add( IdsProveedorPeer::CA_FCHAPROBADO, null, Criteria::ISNOTNULL );
         $c->add( IdsProveedorPeer::CA_CONTROLADOPORSIG, true );
