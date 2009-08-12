@@ -7,22 +7,22 @@ use_helper("MimeType");
 <br />
 <table width="90%" border="0" cellspacing="0" cellpadding="0" class="tableList">
 	<tr>
-		<td><b>Enviado: </b><br> <?=$user->getCaNombre()?> el <?=Utils::fechaMes( $email->getCaFchenvio() )." ".$email->getCaFchenvio("h:i A")?> </td>
+		<td><div align="left"><b>Enviado: </b><br> <?=$user->getCaNombre()?> el <?=Utils::fechaMes( $email->getCaFchenvio() )." ".$email->getCaFchenvio("h:i A")?></div> </td>
 	</tr>
     <?
 	if($email->getCaAddress()){
 	?>
 	<tr>
-		<td><b>Para</b><br><?=$email->getCaAddress()?></td>
+		<td><div align="left"><b>Para</b><br><?=$email->getCaAddress()?></div></td>
 	</tr>
 	<?
 	}
 	if( $email->getCaCc() ){
 	?>
 	<tr>
-		<td><b>CC</b>
+		<td><div align="left"><b>CC</b>
 			<br>
-		<?=$email->getCaCc()?></td>
+		<?=$email->getCaCc()?></div></td>
 	</tr>
 	<?
 	}

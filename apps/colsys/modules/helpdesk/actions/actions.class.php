@@ -364,10 +364,10 @@ class helpdeskActions extends sfActions
 			
 		foreach( $logins as $login ){
 		
-			if( $this->getUser()->getUserId()!=$login ){
+			//if( $this->getUser()->getUserId()!=$login ){
 				$usuario = UsuarioPeer::retrieveByPk( $login );
 				$email->addTo( $usuario->getCaEmail() ); 				
-			}
+			//}
 		}
 		
 		$email->save();

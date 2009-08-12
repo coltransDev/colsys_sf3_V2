@@ -147,7 +147,7 @@ class reporteExtActions extends sfActions
 				$contenido.="</style>";
 		
 				$contenido.= nl2br($request->getParameter("introduccion"));
-				$contenido.= '<br /><TABLE BORDER="0" WIDTH="500" CELLSPACING="0" CELLPADDING="0">';
+				$contenido.= '<br /><TABLE BORDER="0" WIDTH="600" CELLSPACING="0" CELLPADDING="0">';
 				$contenido.= "<TR><TD>";
 				
 				$request->setParameter('idreporte',$this->reporte->getCaIdreporte());

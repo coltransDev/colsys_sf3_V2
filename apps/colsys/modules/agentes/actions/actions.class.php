@@ -184,7 +184,7 @@ class agentesActions extends sfActions
 				}else{
 					$idcontacto = substr(strtoupper( trim($bindValues["nombre"])),0,3).substr(strtoupper( trim($bindValues["apellido"])),0,3).substr( $this->agente->getCaIdAgente(), -3, 3 ) ;					
 					$contacto = new ContactoAgente();
-					$contacto->setCaIdcontacto( $idcontacto );
+					//$contacto->setCaIdcontacto( $idcontacto );
 					$contacto->setCaIdagente( $this->agente->getCaIdAgente() );
 					$contacto->setCaFchcreado(time());
 					$contacto->setCaUsucreado($this->getUser()->getUserId());
