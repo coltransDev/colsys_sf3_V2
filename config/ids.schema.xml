@@ -33,6 +33,7 @@
         <column name="ca_telefonos" type="varchar" />
         <column name="ca_fax" type="varchar" />
         <column name="ca_idciudad" type="varchar" />
+        <column name="ca_zipcode" type="varchar" />
 		<column name="ca_fchcreado" type="timestamp" required="true"  />
 		<column name="ca_usucreado" type="varchar" required="true"  />
         <column name="ca_fchactualizado" type="timestamp"   />
@@ -56,8 +57,7 @@
 		<column name="ca_saludo" type="varchar"   />
         <column name="ca_direccion" type="varchar"   />
         <column name="ca_telefonos" type="varchar"   />
-        <column name="ca_fax" type="varchar"   />
-        
+        <column name="ca_fax" type="varchar"   />        
         <column name="ca_email" type="varchar"   />
         <column name="ca_impoexpo" type="varchar"   />
         <column name="ca_transporte" type="varchar"   />
@@ -72,7 +72,6 @@
 		<column name="ca_usuactualizado" type="varchar"   />
         <column name="ca_fcheliminado" type="timestamp"   />
 		<column name="ca_usueliminado" type="varchar"   />
-
         
 		<foreign-key foreignTable="ids.tb_sucursales">
 			<reference local="ca_idsucursal" foreign="ca_idsucursal"/>
@@ -86,7 +85,7 @@
 		<column name="ca_controladoporsig" type="boolean" required="true"  />
 		<column name="ca_fchaprobado" type="timestamp" />
 		<column name="ca_usuaprobado" type="varchar"    />
-        
+        <column name="ca_activo" type="varchar" required="true"  />
         <foreign-key foreignTable="ids.tb_ids">
 			<reference local="ca_idproveedor" foreign="ca_id"/>
 		</foreign-key>
@@ -96,6 +95,14 @@
 		</foreign-key>
 	</table>
 
+    <table name="ids.tb_agentes" phpName="IdsAgente">
+		<column name="ca_idagente" type="integer" required="true" primaryKey="true"  />
+		<column name="ca_tipo" type="varchar" required="true"  />
+        <column name="ca_activo" type="varchar" required="true"  />
+        <foreign-key foreignTable="ids.tb_ids">
+			<reference local="ca_idagente" foreign="ca_id"/>
+		</foreign-key>       
+	</table>
 
     <table name="ids.tb_tipos" phpName="IdsTipo">
 		<column name="ca_tipo" type="varchar" required="true" primaryKey="true"   />
@@ -161,6 +168,7 @@
         <column name="ca_tipocriterio" type="varchar" required="true"  />
         <column name="ca_criterio" type="varchar"   />
         <column name="ca_activo" type="boolean"   />
+        <column name="ca_ponderacion" type="integer"   />
 		<column name="ca_fchcreado" type="timestamp" required="true"/>
 		<column name="ca_usucreado" type="varchar" required="true"   />
         <column name="ca_fchactualizado" type="timestamp" required="true"/>
@@ -199,6 +207,7 @@
 			<reference local="ca_id" foreign="ca_id"/>
 		</foreign-key>
 	</table>
+
 
 
 </database>

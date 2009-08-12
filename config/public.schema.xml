@@ -93,7 +93,7 @@
 		<column name="ca_website" type="varchar" />
 		<column name="ca_email" type="varchar" />
 		<column name="ca_tipo" type="varchar" />	
-		<column name="ca_activo" type="boolean" />	
+		<column name="ca_activo" type="boolean" />        
 		<column name="ca_fchcreado" type="timestamp"   />	
 		<column name="ca_fchactualizado" type="timestamp"   />	
 		<column name="ca_usucreado" type="varchar"   />	
@@ -106,7 +106,8 @@
 	</table>
 	
 	<table name="tb_contactos" phpName="ContactoAgente">
-		<column name="ca_idcontacto" type="varchar" required="true" primaryKey="true" />			
+		<column name="ca_idcontacto" type="varchar" required="true" primaryKey="true" autoIncrement="true" />
+		<id-method-parameter value="tb_contactos_id"/>
 		<column name="ca_idagente" type="integer" />		
 		<column name="ca_nombre" type="varchar" />
 		<column name="ca_apellido" type="varchar" />

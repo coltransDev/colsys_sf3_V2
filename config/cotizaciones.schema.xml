@@ -239,6 +239,14 @@
 		</foreign-key>										
 	</table>
 
-	
+	<table name="tb_cotcontactosag" phpName="CotContactoAg">
+		<column name="ca_idcotizacion" type="integer" required="true"  primaryKey="true" />
+		<column name="ca_idcontacto" type="varchar" required="true"  primaryKey="true" />
+		<foreign-key foreignTable="tb_cotizaciones">
+			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
+		</foreign-key>			
+										
+	</table>
+    
 	
 </database>

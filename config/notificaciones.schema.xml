@@ -34,7 +34,8 @@
 		<column name="ca_prioridad" type="integer" />
 		<column name="ca_fchcreado" type="timestamp" />	
 		<column name="ca_usucreado" type="varchar" />
-		<column name="ca_observaciones" type="varchar" />		
+		<column name="ca_observaciones" type="varchar" />
+        <column name="ca_notificar" type="varchar" />
 		<foreign-key foreignTable="notificaciones.tb_listatareas">
 			<reference local="ca_idlistatarea" foreign="ca_idlistatarea"/>
 		</foreign-key>								
