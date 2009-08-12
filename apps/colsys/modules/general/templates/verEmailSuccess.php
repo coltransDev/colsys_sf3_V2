@@ -7,7 +7,7 @@ use_helper("MimeType");
 <br />
 <table width="90%" border="0" cellspacing="0" cellpadding="0" class="tableList">
 	<tr>
-		<td><b>Enviado: </b><br> <?=$user->getCaNombre()?> el <?=$email->getCaFchenvio()?> </td>
+		<td><b>Enviado: </b><br> <?=$user->getCaNombre()?> el <?=Utils::fechaMes( $email->getCaFchenvio() )." ".$email->getCaFchenvio("h:i A")?> </td>
 	</tr>
     <?
 	if($email->getCaAddress()){
