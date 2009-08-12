@@ -30,7 +30,7 @@ $message.=$usuario->getFirma();
 $contactos =  $cliente->getCaConfirmar();
 
 
-if($user->getIdSucursal()=="BOG" && $modo=="maritimo" ){	
+if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){			
 	$from = array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co');
 }else{
 	$from=array();
