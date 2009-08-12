@@ -3888,7 +3888,7 @@ require_once("menu.php");
 				exit;
 			 }
 			 $xml_pal66->setAttribute("doc2", 43);
-			 $xml_pal66->setAttribute("raz2", htmlentities($tm->Value("ca_nombre")));
+			 $xml_pal66->setAttribute("raz2", addslashes($tm->Value("ca_nombre")));
 
 			 // =========================== Consignatario ===========================
 			 $xml_pal66->setAttribute("doc3", 31);
@@ -3999,9 +3999,9 @@ require_once("menu.php");
 				// =========================== Remitente ===========================
 				$xml_hijo->setAttribute("hdo2", 43);
 				if (strlen($rp->Value("ca_nombre_pro")) != 0) {
-					$xml_hijo->setAttribute("hrs2", htmlentities($rp->Value("ca_nombre_pro")));
+					$xml_hijo->setAttribute("hrs2", addslashes($rp->Value("ca_nombre_pro")));
 				} else {
-					$xml_hijo->setAttribute("hrs2", htmlentities($rp->Value("ca_agente")));
+					$xml_hijo->setAttribute("hrs2", addslashes($rp->Value("ca_agente")));
 				}
 
 				// =========================== Destinatario ===========================
@@ -4171,7 +4171,7 @@ require_once("menu.php");
 							$item = 1;
 							$xml_item->setAttribute("item", $item);
 							$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-							$xml_item->setAttribute("idg", htmlentities(substr($rp->Value("ca_mercancia_desc"),0,200)));
+							$xml_item->setAttribute("idg", addslashes(substr($rp->Value("ca_mercancia_desc"),0,200)));
 							$xml_item->setAttribute("mpel", "N");
 							$xml_h267->appendChild( $xml_item );
 	
@@ -4211,7 +4211,7 @@ require_once("menu.php");
 					$item = 1;
 					$xml_item->setAttribute("item", $item);
 					$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-					$xml_item->setAttribute("idg", htmlentities(substr($rp->Value("ca_mercancia_desc"),0,200)));
+					$xml_item->setAttribute("idg", addslashes(substr($rp->Value("ca_mercancia_desc"),0,200)));
 					$xml_item->setAttribute("mpel", "N");
 					$xml_h267->appendChild( $xml_item );
 					
@@ -4287,7 +4287,7 @@ require_once("menu.php");
 								$item = 1;
 								$xml_item->setAttribute("item", $item);
 								$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-								$xml_item->setAttribute("idg", htmlentities(substr($rp->Value("ca_mercancia_desc"),0,200)));
+								$xml_item->setAttribute("idg", addslashes(substr($rp->Value("ca_mercancia_desc"),0,200)));
 								$xml_item->setAttribute("mpel", "N");
 								$xml_h267->appendChild( $xml_item );
 							}
@@ -4336,7 +4336,7 @@ require_once("menu.php");
 						$item = 1;
 						$xml_item->setAttribute("item", $item);
 						$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-						$xml_item->setAttribute("idg", htmlentities(substr($rp->Value("ca_mercancia_desc"),0,200)));
+						$xml_item->setAttribute("idg", addslashes(substr($rp->Value("ca_mercancia_desc"),0,200)));
 						$xml_item->setAttribute("mpel", "N");
 						$xml_h267->appendChild( $xml_item );
 
