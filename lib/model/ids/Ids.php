@@ -25,6 +25,16 @@ class Ids extends BaseIds
         $c->add( IdsSucursalPeer::CA_ID, $this->getCaId() );
         return IdsSucursalPeer::doSelectOne( $c, $con);
     }
+
+    /*
+     *
+     */
+    public function getDocumento( $idtipo ){
+        $c = new Criteria();
+        $c->add( IdsDocumentoPeer::CA_IDTIPO, $idtipo );
+        $c->add( IdsDocumentoPeer::CA_ID, $this->getCaId() );
+        return IdsDocumentoPeer::doSelectOne( $c);
+    }
 }
 
 sfPropelBehavior::add('Ids', array( 'traceable' ));
