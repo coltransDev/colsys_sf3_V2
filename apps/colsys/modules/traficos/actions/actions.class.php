@@ -1024,12 +1024,31 @@ class traficosActions extends sfActions
 			}				
 		}
 		
-		$this->reporte = $reporte;
-		
-		
-		
-	
+		$this->reporte = $reporte;		
 	}
+
+    /*
+	* Permite modificar un seguimiento
+	* author: Andres Botero
+	*/
+	public function executeTerminarSeguimiento( $request ){
+        $this->form = new SeguimientoForm();
+		$reporte = $this->getRequestParameter( "reporte" );
+		$this->forward404Unless( $reporte );
+		$reporte = ReportePeer::retrieveByConsecutivo( $reporte );
+
+		$this->modo = $this->getRequestParameter("modo");
+		if( !$this->modo ){
+			$this->forward( "traficos", "seleccionModo" );
+		}
+
+		$this->forward404Unless( $reporte );
+        $tarea = $reporte->getNotTarea();
+        $tarea->setCaFchterminada(time());
+        $tarea->save();
+
+        $this->redirect( "/traficos/listaStatus/modo/".$this->modo."/reporte/".$reporte->getCaConsecutivo() );
+    }
 	
 }
 ?>

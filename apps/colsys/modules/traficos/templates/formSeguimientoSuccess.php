@@ -42,9 +42,15 @@
 		</tr>
 	<tr>
 		<td ><div align="center">
-			<input type="submit" value="Enviar" class="button" />&nbsp;
-			
-			<input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for("traficos/listaStatus?modo=".$modo."&reporte=".$reporte->getCaConsecutivo())?>'" />
+			<input type="submit" value="Enviar" class="button" />&nbsp;			
+			<input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for("traficos/listaStatus?modo=".$modo."&reporte=".$reporte->getCaConsecutivo())?>'" />&nbsp;
+			<?
+            if( $tarea ){
+            ?>
+            <input type="button" value="Terminar" class="button" onClick="document.location='<?=url_for("traficos/terminarSeguimiento?modo=".$modo."&reporte=".$reporte->getCaConsecutivo())?>'" />
+            <?
+            }
+            ?>
 		</div></td>
 		</tr>
 </table>
