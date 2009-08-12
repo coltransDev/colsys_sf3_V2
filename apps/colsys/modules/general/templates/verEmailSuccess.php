@@ -1,53 +1,39 @@
 <?
 use_helper("MimeType");
 ?>
+
 <div class="content" align="center">
-<table border="1" cellspacing="1" width="90%" class="tableList">
-	<tbody>
+<h3><?=$email->getCaSubject()?></h3>
+<br />
+<table width="90%" border="0" cellspacing="0" cellpadding="0" class="tableList">
+	<tr>
+		<td><b>Enviado: </b><br> <?=$user->getCaNombre()?> el <?=$email->getCaFchenvio()?> </td>
+	</tr>
+    <?
+	if($email->getCaAddress()){
+	?>
+	<tr>
+		<td><b>Para</b><br><?=$email->getCaAddress()?></td>
+	</tr>
+	<?
+	}
+	if( $email->getCaCc() ){
+	?>
+	<tr>
+		<td><b>CC</b>
+			<br>
+		<?=$email->getCaCc()?></td>
+	</tr>
+	<?
+	}
+	?>
+
+
 		<tr>
-			<th colspan="2">CORREO ELECTR&Oacute;NICO ENVIADO</th>
-		</tr>
-		<tr>
-			<td><div align="left"><b>Fecha de Enviado:</b><br>
-					<?=$email->getCaFchenvio()?>
-			</div></td>
-		</tr>
-		<tr>
-			<td><div align="left"><b>Usuario que Envi&oacute;:</b><br>
-					<?=$email->getCaUsuenvio()?>
-			</div></td>
-		</tr>
-		<tr>
-			<td><div align="left"><b>Nombre del Usuario:</b><br>
-					<?=$user->getCaNombre()?>
-			</div></td>
-		</tr>
-		<tr>
-			<td><div align="left"><b>Email del Usuario:</b><br>
-					<?=$user->getCaEmail()?>
-			</div></td>
-		</tr>
-		<tr>
-			<td><div align="left"><b>Destinatarios:</b><br>
-					<?=$email->getCaAddress()?>
-			</div></td>
-		</tr>
-		<tr>
-			<td><div align="left"><b>CC.:</b><br>
-						<?=$email->getCaCc()?>
-			</div></td>
-		</tr>
-		<tr>
-			<td><div align="left"><b>Asunto:</b><br>
-					<?=$email->getCaSubject()?>
-			</div></td>
-		</tr>
-		<tr>
-			<td><div align="left"><b>Mensaje:</b><br>
+			<td><div align="left">
 					<?=$email->getCaBodyHtml()?$email->getCaBodyHtml():$email->getCaBody()?>
 			</div></td>
-		</tr>
-		
+		</tr>		
 		<?
 		
 		$attahcments = $email->getEmailAttachments();
@@ -73,7 +59,7 @@ use_helper("MimeType");
 		<?
 		}
 		?>
-	</tbody>
+	
 </table>
 
 
