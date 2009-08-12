@@ -12,13 +12,11 @@ class IdsEvaluacion extends BaseIdsEvaluacion
 
         $conceptos = $this->getIdsEvaluacionxCriterios();
         foreach( $conceptos as $concepto ){
-            if( $this->getCaTipo() == "seleccion" ){
-                $resultado+=$concepto->getCaValor();
-            }else{
+            
                 $resultado+=$concepto->getCaValor()*$concepto->getCaPonderacion();
 
-            }
-            $i++;
+            
+            $i+=$concepto->getCaPonderacion();
         }
         if( $i==0 ){
             return 0;
