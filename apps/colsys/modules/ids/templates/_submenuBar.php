@@ -8,7 +8,7 @@ $button[0]["link"]= "/index.html";
 
 $i=0;
 
-if( $action!="index" ){
+if( $action!="index" && $action!="listadoProveedoresAprobados" ){
 	$button[$i]["name"]="Inicio ";
 	$button[$i]["tooltip"]="Pagina inicial del módulo";
 	$button[$i]["image"]="22x22/gohome.gif"; 			
@@ -37,12 +37,19 @@ switch($action){
 		$button[$i]["image"]="22x22/add_group.gif";
 		$button[$i]["link"]= "ids/formSucursalIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
 		$i++;
-
        
 		break;
-		
-	
 }
+
+if( $this->getRequestParameter("modo")=="prov" && $action!="listadoProveedoresAprobados" ){
+    $button[$i]["name"]="Prov. aprobados ";
+    $button[$i]["tooltip"]="Listado de proveedores aprobados";
+    $button[$i]["image"]="22x22/gohome.gif";
+    $button[$i]["link"]= "ids/listadoProveedoresAprobados?modo=".$this->getRequestParameter("modo");
+    $i++;
+}
+
+
 
 
 ?>

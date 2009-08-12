@@ -80,6 +80,8 @@ use_helper("ExtCalendar");
                         <?
                         if( $tipo=="seleccion" ){
                             $ponderacion = 100/count( $criterios );
+                        }else{
+                            $ponderacion = $criterio->getCaPonderacion();
                         }
                         ?>
                         <td>

@@ -25,25 +25,9 @@ class NuevoProveedorForm extends sfForm{
 		$c->addAscendingOrderByColumn( IdsTipoPeer::CA_NOMBRE );
         $widgets['tipo_proveedor'] = new sfWidgetFormPropelChoice(array('model' => 'IdsTipo', 'add_empty' => false, 'criteria' => $c));
 
-        $widgets['critico'] = new sfWidgetFormChoice(array(
-															  'choices' => array('0'=>'No',
-                                                                                 '1'=>'Sí'
-                                                                                ),
-															)
-                                                    );
-        $widgets['controladoporsig'] = new sfWidgetFormChoice(array(
-															  'choices' => array('0'=>'No',
-                                                                                 '1'=>'Sí'
-                                                                                ),
-															)
-                                                    );
-
-        $widgets['aprobado'] = new sfWidgetFormChoice(array(
-															  'choices' => array('0'=>'No',
-                                                                                 '1'=>'Sí'
-                                                                                ),
-															)
-                                                    );
+        $widgets['critico'] = new sfWidgetFormInputCheckbox();
+        $widgets['controladoporsig'] = new sfWidgetFormInputCheckbox();
+        $widgets['aprobado'] = new sfWidgetFormInputCheckbox();
 
 
 		$this->setWidgets( $widgets );
@@ -52,14 +36,14 @@ class NuevoProveedorForm extends sfForm{
         $validator["tipo_proveedor"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'El tipo de proveedor es requerido'));
 
-        $validator["critico"] =new sfValidatorString( array('required' => true ),
+        $validator["critico"] =new sfValidatorBoolean( array('required' => false ),
 														array('required' => 'Este campo es requerido'));
 
 
-        $validator["controladoporsig"] =new sfValidatorString( array('required' => true ),
+        $validator["controladoporsig"] =new sfValidatorBoolean( array('required' => false ),
 														array('required' => 'Este campo es requerido'));
 
-        $validator["aprobado"] =new sfValidatorString( array('required' => true ),
+        $validator["aprobado"] =new sfValidatorBoolean( array('required' => false ),
 														array('required' => 'Este campo es requerido'));
 
        

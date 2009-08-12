@@ -47,9 +47,7 @@ if( $nivel>0 ){
 				})
 	
 	});
-	
-	
-	
+		
 	var comboRecargos = new Ext.form.ComboBox({			
 		typeAhead: true,
 		forceSelection: true,
@@ -138,6 +136,16 @@ if( $nivel>0 ){
 <?
 }
 ?>
+
+var expander = new Ext.grid.myRowExpander({
+lazyRender : false,
+width: 15,
+tpl : new Ext.Template(
+  '<p><div >&nbsp;&nbsp; {observaciones}</div></p>'
+
+)
+});
+
 /*
 * Crea el Record 
 */
@@ -191,9 +199,16 @@ var checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:3
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
 var colModel = new Ext.grid.ColumnModel({		
-	columns: [		
-		checkColumn			
-		, 	
+	columns: [
+        <?
+        if( $nivel==0 ){
+        ?>
+        expander,
+        <?
+        }
+        ?>
+		checkColumn
+		,
 		<?		
 		if( !$idlinea ){
 		?>		
@@ -334,7 +349,9 @@ var colModel = new Ext.grid.ColumnModel({
 			}
 			?>
 		}
-		
+		<?
+        if( $nivel!=0 ){
+        ?>
 		,
 		{
 			id: 'observaciones',
@@ -358,6 +375,9 @@ var colModel = new Ext.grid.ColumnModel({
 	                    allowBlank:true
 			})
 		}
+        <?
+        }
+        ?>
 				
 	],
 	isCellEditable: function(colIndex, rowIndex) {	
@@ -742,7 +762,15 @@ var seleccionarTodo = function(){
 	title: '<?=$titulo?>',
 	height: 500,
 	
-	plugins: [checkColumn], //expander,	
+	plugins: [checkColumn
+    <?
+    if( $nivel==0 ){
+    ?>
+    , expander
+    <?
+    }
+    ?>
+    ],
 	closable: <?=$idtrafico=="99-999"?"false":"true"?>,	
 	<?
 	if( $nivel>0 ){

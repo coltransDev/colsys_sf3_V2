@@ -41,6 +41,9 @@
             <?            
             if( $ids->isNew() ){
                 echo $form['tipo_identificacion']->renderError();
+                if( $modo=="agentes" ){
+                    $form->setDefault('tipo_identificacion', 3 );
+                }
                 echo $form['tipo_identificacion']->render();
             }else{
                 echo $ids->getCaTipoidentificacion();

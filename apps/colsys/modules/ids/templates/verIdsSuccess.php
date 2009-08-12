@@ -7,7 +7,18 @@
 
 
 <div align="center" class="content">
-    <h3>Maestra de Proveedores</h3>
+    <h3>Maestra de
+
+    <?
+    if( $modo=="prov" ){
+        echo "Proveedores";
+    }
+
+    if(  $modo=="agentes" ){
+        echo "Agentes";
+    }
+    ?>
+    </h3>
     <br />
     <br />
 
@@ -111,6 +122,9 @@
                           include_component("ids", "contactos", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
                           ?>
                        </div>
+                        <?
+                        if( $modo=="prov" ){
+                        ?>
                        <div class="tab-page">
                           <h2 class="tab">Documentos</h2>
                           <?
@@ -123,7 +137,9 @@
                           include_component("ids", "evaluaciones", array("ids"=>$ids, "modo"=>$modo, "nivel"=>$nivel ));
                           ?>
                        </div>
-
+                       <?
+                        }
+                       ?>
                        <div class="tab-page">
                           <h2 class="tab">Eventos</h2>
                           <?

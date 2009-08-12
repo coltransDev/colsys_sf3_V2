@@ -63,7 +63,7 @@
         <?
         if( count( $contactos )==0){
         ?>
-            <div align="center">No hay contactos </div>
+            <div align="center">No hay contactos <?=link_to(image_tag("16x16/add_user.gif"), "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo, array("title"=>"Nuevo contacto"))?></div>
         <?
         }else{
             include_partial("ids/verContactos", array("sucursal"=>$sucursal

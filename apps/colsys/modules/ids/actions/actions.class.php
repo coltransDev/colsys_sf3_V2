@@ -108,7 +108,7 @@ class idsActions extends sfActions
                     $c->add( CiudadPeer::CA_IDTRAFICO, $idtrafico );
                 }
                 if( $idciudad ){
-                    $c->add( CiudadPeer::CA_ICIUDAD, $idciudad );
+                    $c->add( CiudadPeer::CA_IDCIUDAD, $idciudad );
                 }
 				break;
 		}
@@ -259,16 +259,23 @@ class idsActions extends sfActions
                     }
 
                     $proveedor->setCaTipo( $bindValues["tipo_proveedor"] );
-                    if( $bindValues["controladoporsig"]!==null ){
-                        $proveedor->setCaControladoporsig( $bindValues["controladoporsig"] );
-                    }
-                    if( $bindValues["critico"]!==null ){
-                        $proveedor->setCaCritico( $bindValues["critico"] );
+                    if( $bindValues["controladoporsig"] ){
+                        $proveedor->setCaControladoporsig( true );
+                    }else{
+                        $proveedor->setCaControladoporsig( false );                        
                     }
 
-                    if( $bindValues["aprobado"]!==null ){
-                        $proveedor->setCaFchaprobado( time() );
-                        $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+                    if( $bindValues["critico"] ){
+                        $proveedor->setCaCritico( true );
+                    }else{
+                        $proveedor->setCaCritico( false );
+                    }
+
+                    if( $bindValues["aprobado"] ){
+                        if( !$proveedor->getCaFchaprobado() ){
+                            $proveedor->setCaFchaprobado( time() );
+                            $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+                        }
                     }else{
                         $proveedor->setCaFchaprobado( null );
                         $proveedor->setCaUsuaprobado( null );
@@ -435,14 +442,15 @@ class idsActions extends sfActions
 			$this->forward404();
 		}*/
         $this->modo = $request->getParameter("modo");
-
-		$sucursal = IdsSucursalPeer::retrieveByPk( $request->getParameter("idsucursal") );
-
-        if( $sucursal ){
+        if( $request->getParameter("idsucursal") ){
+            $sucursal = IdsSucursalPeer::retrieveByPk( $request->getParameter("idsucursal") );
             $ids = $sucursal->getIds();
         }else{
             $ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+            $sucursal=null;
         }
+
+        
 		$this->forward404Unless( $ids );
 
 		$this->form = new NuevaSucursalForm();
@@ -584,10 +592,13 @@ class idsActions extends sfActions
 
 		$this->forward404Unless( $this->ids );
         
-
+        $this->proveedor = IdsProveedorPeer::retrieveByPk( $request->getParameter("id") );
 
         $c = new Criteria();
         $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, $this->tipo );
+        if( $this->proveedor ){
+            $c->add(IdsCriterioPeer::CA_TIPO, $this->proveedor->getCaTipo() );
+        }
         $this->criterios = IdsCriterioPeer::doSelect( $c );
 
         $this->form = new NuevaEvaluacionForm();
@@ -607,15 +618,9 @@ class idsActions extends sfActions
                 $bindValues["calificacion_".$criterio->getCaidcriterio() ] = $request->getParameter("calificacion_".$criterio->getCaidcriterio());
                 $bindValues["observaciones_".$criterio->getCaidcriterio() ] = $request->getParameter("observaciones_".$criterio->getCaidcriterio());
             }
-
-
-
+            
 			$this->form->bind( $bindValues);
-
-			if( $this->form->isValid() ){
-              
-
-
+			if( $this->form->isValid() ){              
                 $evaluacion = new IdsEvaluacion();
                 $evaluacion->setCaId( $this->ids->getCaId() );
                 $evaluacion->setCaFchevaluacion( Utils::parseDate( $request->getParameter('fchevaluacion' )) );
@@ -675,6 +680,7 @@ class idsActions extends sfActions
         if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
             $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
             $this->url = "/ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
+            $numreferencia = "";
         }else{ // Esta ingresando desde la referencia
             $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
             $this->forward404Unless(  $numreferencia );
@@ -718,6 +724,9 @@ class idsActions extends sfActions
                 $evento = new IdsEvento();
                 $evento->setCaId( $bindValues["id"] );
                 $evento->setCaEvento( $bindValues["evento"] );
+                if( $numreferencia ){
+                    $evento->setCaReferencia( $numreferencia );
+                }
                 $evento->setCaTipo( $bindValues["tipo_evento"] );
                 $evento->save();
                 
@@ -781,6 +790,19 @@ class idsActions extends sfActions
         $this->transportista  = $transportista;
     }
 
+     /*
+    * Permite agregar lineas de transporte
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeListadoProveedoresAprobados(sfWebRequest $request){
+        $c = new Criteria();
+        $c->addJoin( IdsProveedorPeer::CA_IDPROVEEDOR, IdsPeer::CA_ID );
+        $c->addAscendingOrderByColumn(IdsPeer::CA_NOMBRE );
+        $c->add( IdsProveedorPeer::CA_FCHAPROBADO, null, Criteria::ISNOTNULL );
+        $c->add( IdsProveedorPeer::CA_CONTROLADOPORSIG, true );
+        $this->proveedores = IdsProveedorPeer::doSelect( $c );
+    }
 
 }
 ?>

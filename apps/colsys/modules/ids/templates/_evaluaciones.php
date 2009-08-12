@@ -32,7 +32,7 @@
     ?>
     <tr   >
         <td>
-            <?=Utils::fechaMes($evaluacion->getCaFchcreado() )?>
+            <?=Utils::fechaMes($evaluacion->getCaFchevaluacion() )?>
 
         </td>
         <td>

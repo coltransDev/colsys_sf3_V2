@@ -17,7 +17,7 @@
         </td>
         <td width="20%">
             <b>Transporte</b>
-        </td>  .
+        </td>  
         <td width="20%">
             <b>Estado</b>
         </td>

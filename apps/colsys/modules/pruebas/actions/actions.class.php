@@ -2800,11 +2800,254 @@ ORDER BY ca_fchstatus ";
 			}else{
 				$agente = $contacto->getAgente();
 				echo str_replace("|"," ", $contacto->getCaTransporte())." ".$agente." ".$nombreComp."<br />";
-			}
-					
-		}
-	
+			}					
+		}	
 	}
+
+    public function executeImportarTransportistas( $request ){
+
+
+        $c = new Criteria();
+        $c->addAscendingOrderByColumn( TransportistaPeer::CA_NOMBRE );
+        $transportistas = TransportistaPeer::doSelect($c);
+
+        foreach( $transportistas as $transportista ){
+            $ids = new Ids();
+            $ids->setCaId( $transportista->getCaIdTransportista() );
+            $ids->setCaIdgrupo( $transportista->getCaIdTransportista() );
+            $ids->setCaTipoidentificacion( 1 );
+            $ids->setCaDv( $transportista->getCaDigito() );
+            $ids->setCaNombre( $transportista->getCaNombre() );
+
+            if( $transportista->getCaWebsite() ){
+                $ids->setCaWebsite( $transportista->getCaWebsite() );
+            }
+            $ids->save();
+
+            $proveedor = new IdsProveedor();
+            $proveedor->setCaTipo("TRI");
+            $proveedor->setCaIdproveedor($transportista->getCaIdTransportista());
+            $proveedor->setCaCritico(false);
+            $proveedor->setCaControladoporsig(false);
+            $proveedor->save();
+
+            $sucursal = new IdsSucursal();
+            $sucursal->setCaId( $ids->getcaId() );
+            $sucursal->setCaIdciudad( $transportista->getcaIdciudad() );
+            $sucursal->setCaDireccion( $transportista->getCaDireccion() );
+            $sucursal->setCaTelefonos( $transportista->getCaTelefonos() );
+            $sucursal->setCaFax( $transportista->getCaFax() );
+            $sucursal->setCaPrincipal( true );
+            $sucursal->save();
+
+            $transContactos = $transportista->getTransContactos();
+            foreach( $transContactos as $transContacto ){
+                $contacto = new IdsContacto();
+                $nombres = explode(" ",$transContacto->getCaNombre());
+
+                if(count($nombres)==2){
+                    $nombre = $nombres[0];
+                    $apellido = $nombres[1];
+                }elseif(count($nombres)==3){
+                    $nombre = $nombres[0]." ".$nombres[1];
+                    $apellido = $nombres[2];
+
+                }else{
+                    $nombre = $transContacto->getCaNombre();
+                    $apellido = "";
+                }
+
+                $contacto->setCaNombres(ucwords($nombre));
+                $contacto->setCaPapellido(ucwords($apellido));
+                $contacto->setCaIdsucursal( $sucursal->getcaIdsucursal() );
+                $contacto->setCaActivo( true );
+                $contacto->setCaEmail( $transContacto->getCaEmail() );
+                $contacto->setCaTelefonos( $transContacto->getCaTelefonos() );
+                $contacto->setCaFax( $transContacto->getCaFax() );
+                $contacto->setCaObservaciones( $transContacto->getCaObservaciones() );
+                $contacto->save();
+            }
+
+        }
+        $this->setTemplate("blank");
+    }
+
+
+    public function executeImportarAgentes(){
+        $c = new Criteria();
+        $c->addAscendingOrderByColumn( AgentePeer::CA_NOMBRE );
+        $agentes = AgentePeer::doSelect($c);
+
+        foreach( $agentes as $agente ){
+            $ids = new Ids();
+            $ids->setCaId( $agente->getCaIdagente() );
+            $ids->setCaIdgrupo( $agente->getCaIdagente() );
+            $ids->setCaTipoidentificacion( 3 );
+            $ids->setCaDv( null );
+            $ids->setCaNombre( $agente->getCaNombre() );
+
+            if( $agente->getCaWebsite() ){
+                $ids->setCaWebsite( $agente->getCaWebsite() );
+            }
+            $ids->save();
+
+            $idsAgente = new IdsAgente();
+            $idsAgente->setCaTipo( $agente->getCaTipo() );
+            $idsAgente->setCaIdagente($agente->getCaIdagente() );
+            if( $agente->getCaActivo() ){
+                $idsAgente->setCaActivo(true);
+            }else{
+                //$idsAgente->setCaActivo(false);
+            }
+            $idsAgente->save();
+            
+            $sucursal = new IdsSucursal();
+            $sucursal->setCaId( $ids->getcaId() );
+            $sucursal->setCaIdciudad( $agente->getcaIdciudad() );
+            $sucursal->setCaDireccion( $agente->getCaDireccion() );
+            $sucursal->setCaTelefonos( $agente->getCaTelefonos() );
+            $sucursal->setCaFax( $agente->getCaFax() );
+            $sucursal->setCaZipcode( $agente->getCaZipcode() );
+            $sucursal->setCaPrincipal( true );
+            $sucursal->save();
+            
+            $transContactos = $agente->getContactoAgentes();
+            foreach( $transContactos as $transContacto ){
+                $contacto = new IdsContacto();
+                $nombres = explode(" ",$transContacto->getCaNombre());
+
+                if(count($nombres)==2){
+                    $nombre = $nombres[0];
+                    $apellido = $nombres[1];
+                }elseif(count($nombres)==3){
+                    $nombre = $nombres[0]." ".$nombres[1];
+                    $apellido = $nombres[2];
+
+                }else{
+                    $nombre = $transContacto->getCaNombre();
+                    $apellido = "";
+                }
+
+                $contacto->setCaNombres(ucwords($transContacto->getCaNombre()));
+                $contacto->setCaPapellido(ucwords($transContacto->getCaApellido()));
+                $contacto->setCaIdsucursal( $sucursal->getcaIdsucursal() );
+                if( $transContacto->getCaActivo() ){
+                    $contacto->setCaActivo( true );
+                }else{
+                    $contacto->setCaActivo( false );
+                }
+
+                 if( $transContacto->getCaSugerido() ){
+                    $contacto->setCaSugerido( true );
+                }else{
+                    $contacto->setCaSugerido( false );
+                }
+                $contacto->setCaEmail( $transContacto->getCaEmail() );
+                $contacto->setCaTelefonos( $transContacto->getCaTelefonos() );
+                $contacto->setCaFax( $transContacto->getCaFax() );
+                $contacto->setCaDireccion( $transContacto->getCaDireccion() );
+                $contacto->setCaObservaciones( $transContacto->getCaDetalle() );
+                $contacto->setCaCargo( $transContacto->getCaCargo() );
+                $contacto->setCaImpoexpo( $transContacto->getCaImpoexpo() );
+                $contacto->setCaTransporte( $transContacto->getCaTransporte() );
+                $contacto->save();
+            }
+
+        }
+        $this->setTemplate("blank");
+    }
+
+    public function executeFixContactoCotizaciones(){
+        set_time_limit(0);
+        /*$idContactos = array();
+
+        $c = new Criteria();
+        $contactosAg = ContactoAgentePeer::doSelect($c);
+        foreach( $contactosAg as $contacto ){
+            $idContactos[$contacto->getCaIdcontacto()] = $contacto->getCaId
+        }*/
+        $c = new Criteria();
+        $c->addDescendingOrderByColumn(CotizacionPeer::CA_IDCOTIZACION );
+        $c->add(CotizacionPeer::CA_DATOSAG, null , Criteria::ISNOTNULL);
+        $c->addJoin(CotizacionPeer::CA_IDCOTIZACION, CotContactoAgPeer::CA_IDCOTIZACION, Criteria::LEFT_JOIN );
+        $c->add(CotContactoAgPeer::CA_IDCOTIZACION, null , Criteria::ISNULL);
+        //32307
+
+        $cotizaciones = CotizacionPeer::doSelect($c);
+
+        foreach( $cotizaciones as $cotizacion){
+            $datosAg = array_unique(explode("|",$cotizacion->getCaDatosag() ));
+            //print_r( $datosAg );
+            foreach( $datosAg as $ag ){
+                echo $cotizacion->getCaIdcotizacion()." ".$ag."<br />";
+                $cont = CotContactoAgPeer::retrieveByPk($cotizacion->getCaIdcontacto(), $ag);
+                if(!$cont){
+                        $cont = new CotContactoAg();
+                }
+                $cont->setCaIdCotizacion($cotizacion->getCaIdcotizacion());
+                $cont->setCaIdContacto($ag);
+                try{
+                    $cont->save();
+                }catch( Exception $e ){
+                    echo "-->".$e."<br />";
+                }
+
+            }
+        }
+        $this->setTemplate("blank");
+    }
+
+
+    public function executeFixIdcontactoAgentes(){
+        $c = new Criteria();
+        $c->addAscendingOrderByColumn( ContactoAgentePeer::CA_IDAGENTE );
+        $c->addAscendingOrderByColumn( ContactoAgentePeer::CA_NOMBRE );
+        $contactos = ContactoAgentePeer::doSelect( $c );
+        $i=1;
+        foreach( $contactos as  $contacto ){
+            $sql = "UPDATE tb_contactos SET ca_idcontacto='".$i."' WHERE ca_idcontacto='".$contacto->getCaIdcontacto()."'";
+            echo $sql.";<br />";
+            $i++;
+
+        }
+        $this->setTemplate("blank");
+    }
+
+    /*
+     * Borra tareas pendientes de reportes anulados o cerrados
+     */
+    public function executeFixTareasPendientes(){
+        $this->setTemplate("blank");
+        /*
+        $c = new Criteria();
+        $c->addJoin(  ReportePeer::CA_IDSEGUIMIENTO, NotTareaPeer::CA_IDTAREA );
+        $c->add( ReportePeer::CA_FCHANULADO, null , Criteria::ISNOTNULL );
+        $c->add( NotTareaPeer::CA_FCHVENCIMIENTO, null , Criteria::ISNOTNULL );
+
+        $tareas = NotTareaPeer::doSelect( $c );
+
+        foreach( $tareas as  $tarea ){
+            echo $tarea->getCaTitulo()."<br />";
+            $tarea->setCaFchterminada(time());
+            $tarea->save();
+        }*/
+
+        $c = new Criteria();
+        $c->addJoin(  ReportePeer::CA_IDSEGUIMIENTO, NotTareaPeer::CA_IDTAREA );
+        $c->add( ReportePeer::CA_IDETAPA, "99999" );
+        $c->add( NotTareaPeer::CA_FCHVENCIMIENTO, null , Criteria::ISNOTNULL );
+
+        $tareas = NotTareaPeer::doSelect( $c );
+
+        foreach( $tareas as  $tarea ){
+            echo $tarea->getCaTitulo()."<br />";
+            $tarea->setCaFchterminada(time());
+            $tarea->save();
+        }
+
+
+
+    }
 		
 }
 

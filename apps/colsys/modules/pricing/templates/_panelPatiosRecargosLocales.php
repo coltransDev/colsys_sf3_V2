@@ -1,6 +1,16 @@
 <?
 
 ?>
+
+var expander = new Ext.grid.myRowExpander({
+    lazyRender : false,
+    width: 15,
+    tpl : new Ext.Template(
+      '<p><div >&nbsp;&nbsp; {observaciones}</div></p>'
+
+    )
+});
+
 /*
 * Crea el Record 
 */
@@ -53,7 +63,13 @@ var colModelRecargosPatios = new Ext.grid.ColumnModel({
 		, 	
 		<?
 		}
-		?>
+        if( $nivel==0 ){
+        ?>
+        expander,
+        <?
+        }
+        ?>
+
 		{
 			header: "Patio",
 			width: 80,
@@ -78,8 +94,10 @@ var colModelRecargosPatios = new Ext.grid.ColumnModel({
 			hideable: false,		
 			dataIndex: 'ciudad' 			
 		}
-		,
-		
+        <?
+        if( $nivel>0 ){
+        ?>
+		,		
 		{
 			header: "Observaciones",
 			width: 200,
@@ -90,6 +108,9 @@ var colModelRecargosPatios = new Ext.grid.ColumnModel({
 	                    allowBlank:true
 			})
 		}
+        <?
+        }
+        ?>
 				
 	]
 });
@@ -178,7 +199,16 @@ var seleccionarTodoRecargosPatios = function(){
 	title: 'Patios',
 	height: 500,
 	
-	plugins: [checkColumn], //expander,	
+	plugins: [checkColumn
+    <?
+    if( $nivel==0 ){
+    ?>
+    , expander
+    <?
+    }
+    ?>
+
+    ], 
 	closable: false,	
 	<?
 	if( $nivel>0 ){

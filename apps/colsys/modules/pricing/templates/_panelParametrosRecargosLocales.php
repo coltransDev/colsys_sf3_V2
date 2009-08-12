@@ -40,6 +40,14 @@ if( $nivel>0 ){
 }
 ?>
 
+var expander = new Ext.grid.myRowExpander({
+    lazyRender : false,
+    width: 15,
+    tpl : new Ext.Template(
+      '<p><div >&nbsp;&nbsp; {observaciones}</div></p>'
+
+)
+});
 	
 /*
 * Crea el Record 
@@ -84,7 +92,14 @@ var storeRecargosLocalesParametros = new Ext.data.GroupingStore({
 * Crea las columnas que van en la grilla, nuevas columnas se añaden dinamicamente
 */
 var colModelRecargosLocalesParametros = new Ext.grid.ColumnModel({		
-	columns: [	
+	columns: [
+        <?		
+        if( $nivel==0 ){
+        ?>
+        expander,
+        <?
+        }
+        ?>
 		{
 			header: "Concepto",
 			width: 100,
@@ -115,7 +130,10 @@ var colModelRecargosLocalesParametros = new Ext.grid.ColumnModel({
 			?>
 			
 			
-		}	
+		}
+        <?
+        if( $nivel>0 ){
+        ?>
 		,
 		{
 			header: "Observaciones",
@@ -127,7 +145,10 @@ var colModelRecargosLocalesParametros = new Ext.grid.ColumnModel({
 						
 			})   
 			
-		}	
+		}
+        <?
+        }
+        ?>
 				
 	],
 	isCellEditable: function(colIndex, rowIndex) {	
@@ -353,7 +374,14 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 	title: 'Parametros',
 	height: 500,
 	width: '100',
-	
+
+    <?
+    if( $nivel==0 ){
+    ?>
+        plugins: [expander],    
+    <?
+    }
+    ?>
 	closable: false,	
 	region: 'west',
 	<?
