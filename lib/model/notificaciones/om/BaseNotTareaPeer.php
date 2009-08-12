@@ -13,7 +13,7 @@ abstract class BaseNotTareaPeer {
 	const CLASS_DEFAULT = 'lib.model.notificaciones.NotTarea';
 
 	
-	const NUM_COLUMNS = 13;
+	const NUM_COLUMNS = 14;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -58,6 +58,9 @@ abstract class BaseNotTareaPeer {
 	const CA_OBSERVACIONES = 'notificaciones.tb_tareas.CA_OBSERVACIONES';
 
 	
+	const CA_NOTIFICAR = 'notificaciones.tb_tareas.CA_NOTIFICAR';
+
+	
 	public static $instances = array();
 
 	
@@ -65,20 +68,20 @@ abstract class BaseNotTareaPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtarea', 'CaIdlistatarea', 'CaUrl', 'CaTitulo', 'CaTexto', 'CaFchvisible', 'CaFchvencimiento', 'CaFchterminada', 'CaUsuterminada', 'CaPrioridad', 'CaFchcreado', 'CaUsucreado', 'CaObservaciones', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtarea', 'caIdlistatarea', 'caUrl', 'caTitulo', 'caTexto', 'caFchvisible', 'caFchvencimiento', 'caFchterminada', 'caUsuterminada', 'caPrioridad', 'caFchcreado', 'caUsucreado', 'caObservaciones', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDTAREA, self::CA_IDLISTATAREA, self::CA_URL, self::CA_TITULO, self::CA_TEXTO, self::CA_FCHVISIBLE, self::CA_FCHVENCIMIENTO, self::CA_FCHTERMINADA, self::CA_USUTERMINADA, self::CA_PRIORIDAD, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_OBSERVACIONES, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtarea', 'ca_idlistatarea', 'ca_url', 'ca_titulo', 'ca_texto', 'ca_fchvisible', 'ca_fchvencimiento', 'ca_fchterminada', 'ca_usuterminada', 'ca_prioridad', 'ca_fchcreado', 'ca_usucreado', 'ca_observaciones', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtarea', 'CaIdlistatarea', 'CaUrl', 'CaTitulo', 'CaTexto', 'CaFchvisible', 'CaFchvencimiento', 'CaFchterminada', 'CaUsuterminada', 'CaPrioridad', 'CaFchcreado', 'CaUsucreado', 'CaObservaciones', 'CaNotificar', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtarea', 'caIdlistatarea', 'caUrl', 'caTitulo', 'caTexto', 'caFchvisible', 'caFchvencimiento', 'caFchterminada', 'caUsuterminada', 'caPrioridad', 'caFchcreado', 'caUsucreado', 'caObservaciones', 'caNotificar', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTAREA, self::CA_IDLISTATAREA, self::CA_URL, self::CA_TITULO, self::CA_TEXTO, self::CA_FCHVISIBLE, self::CA_FCHVENCIMIENTO, self::CA_FCHTERMINADA, self::CA_USUTERMINADA, self::CA_PRIORIDAD, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_OBSERVACIONES, self::CA_NOTIFICAR, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtarea', 'ca_idlistatarea', 'ca_url', 'ca_titulo', 'ca_texto', 'ca_fchvisible', 'ca_fchvencimiento', 'ca_fchterminada', 'ca_usuterminada', 'ca_prioridad', 'ca_fchcreado', 'ca_usucreado', 'ca_observaciones', 'ca_notificar', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdtarea' => 0, 'CaIdlistatarea' => 1, 'CaUrl' => 2, 'CaTitulo' => 3, 'CaTexto' => 4, 'CaFchvisible' => 5, 'CaFchvencimiento' => 6, 'CaFchterminada' => 7, 'CaUsuterminada' => 8, 'CaPrioridad' => 9, 'CaFchcreado' => 10, 'CaUsucreado' => 11, 'CaObservaciones' => 12, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtarea' => 0, 'caIdlistatarea' => 1, 'caUrl' => 2, 'caTitulo' => 3, 'caTexto' => 4, 'caFchvisible' => 5, 'caFchvencimiento' => 6, 'caFchterminada' => 7, 'caUsuterminada' => 8, 'caPrioridad' => 9, 'caFchcreado' => 10, 'caUsucreado' => 11, 'caObservaciones' => 12, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDTAREA => 0, self::CA_IDLISTATAREA => 1, self::CA_URL => 2, self::CA_TITULO => 3, self::CA_TEXTO => 4, self::CA_FCHVISIBLE => 5, self::CA_FCHVENCIMIENTO => 6, self::CA_FCHTERMINADA => 7, self::CA_USUTERMINADA => 8, self::CA_PRIORIDAD => 9, self::CA_FCHCREADO => 10, self::CA_USUCREADO => 11, self::CA_OBSERVACIONES => 12, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idtarea' => 0, 'ca_idlistatarea' => 1, 'ca_url' => 2, 'ca_titulo' => 3, 'ca_texto' => 4, 'ca_fchvisible' => 5, 'ca_fchvencimiento' => 6, 'ca_fchterminada' => 7, 'ca_usuterminada' => 8, 'ca_prioridad' => 9, 'ca_fchcreado' => 10, 'ca_usucreado' => 11, 'ca_observaciones' => 12, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdtarea' => 0, 'CaIdlistatarea' => 1, 'CaUrl' => 2, 'CaTitulo' => 3, 'CaTexto' => 4, 'CaFchvisible' => 5, 'CaFchvencimiento' => 6, 'CaFchterminada' => 7, 'CaUsuterminada' => 8, 'CaPrioridad' => 9, 'CaFchcreado' => 10, 'CaUsucreado' => 11, 'CaObservaciones' => 12, 'CaNotificar' => 13, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdtarea' => 0, 'caIdlistatarea' => 1, 'caUrl' => 2, 'caTitulo' => 3, 'caTexto' => 4, 'caFchvisible' => 5, 'caFchvencimiento' => 6, 'caFchterminada' => 7, 'caUsuterminada' => 8, 'caPrioridad' => 9, 'caFchcreado' => 10, 'caUsucreado' => 11, 'caObservaciones' => 12, 'caNotificar' => 13, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDTAREA => 0, self::CA_IDLISTATAREA => 1, self::CA_URL => 2, self::CA_TITULO => 3, self::CA_TEXTO => 4, self::CA_FCHVISIBLE => 5, self::CA_FCHVENCIMIENTO => 6, self::CA_FCHTERMINADA => 7, self::CA_USUTERMINADA => 8, self::CA_PRIORIDAD => 9, self::CA_FCHCREADO => 10, self::CA_USUCREADO => 11, self::CA_OBSERVACIONES => 12, self::CA_NOTIFICAR => 13, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idtarea' => 0, 'ca_idlistatarea' => 1, 'ca_url' => 2, 'ca_titulo' => 3, 'ca_texto' => 4, 'ca_fchvisible' => 5, 'ca_fchvencimiento' => 6, 'ca_fchterminada' => 7, 'ca_usuterminada' => 8, 'ca_prioridad' => 9, 'ca_fchcreado' => 10, 'ca_usucreado' => 11, 'ca_observaciones' => 12, 'ca_notificar' => 13, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
 	);
 
 	
@@ -145,6 +148,8 @@ abstract class BaseNotTareaPeer {
 		$criteria->addSelectColumn(NotTareaPeer::CA_USUCREADO);
 
 		$criteria->addSelectColumn(NotTareaPeer::CA_OBSERVACIONES);
+
+		$criteria->addSelectColumn(NotTareaPeer::CA_NOTIFICAR);
 
 	}
 

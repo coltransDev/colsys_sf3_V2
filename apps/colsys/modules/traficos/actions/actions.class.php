@@ -597,6 +597,9 @@ class traficosActions extends sfActions
 			$tarea->setCaFchvisible( $request->getParameter("fchseguimiento")." 00:00:00" );			
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $request->getParameter("txtseguimiento") );
+            if( $request->getParameter("remitente") ){
+                $tarea->setCaNotificar( $request->getParameter("remitente") );
+            }
 			$tarea->save();
 			$loginsAsignaciones = array( $this->getUser()->getUserId() );
 			$tarea->setAsignaciones( $loginsAsignaciones );	

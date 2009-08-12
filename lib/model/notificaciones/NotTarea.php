@@ -41,15 +41,21 @@ class NotTarea extends BaseNotTarea
 		$email->setCaIdcaso( $this->getCaIdtarea() );
 		$email->setCaFrom( "no-reply@coltrans.com.co" );
 		$email->setCaFromname( "Colsys Notificaciones" );
-		
-		$usuariosAsignacion = array();
-		foreach( $asignaciones as $asignacion ){
-			$usuario = UsuarioPeer::retrieveByPk( $asignacion->getCaLogin() );					
-			$email->addTo( $usuario->getCaEmail() ); 
-			
-			$usuariosAsignacion[] = $usuario;
-		}
-								
+
+        if( $this->getCaNotificar() ){
+            $email->addTo( $usuario->getCaEmail() );
+        }
+
+        $usuariosAsignacion = array();
+        foreach( $asignaciones as $asignacion ){
+            $usuario = UsuarioPeer::retrieveByPk( $asignacion->getCaLogin() );
+            if( !$this->getCaNotificar() ){
+                $email->addTo( $usuario->getCaEmail() );
+            }
+
+            $usuariosAsignacion[] = $usuario;
+        }
+
 		$email->setCaSubject( $this->getCaTitulo() );				
 				
 		$texto = "Tiene una tarea pendiente con vencimiento en ".Utils::fechaMes($this->getCaFchvencimiento("Y-m-d"))." ".$this->getCaFchvencimiento("H:i:s")." \n\n<br /><br />" ;			

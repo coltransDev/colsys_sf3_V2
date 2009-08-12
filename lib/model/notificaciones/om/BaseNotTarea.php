@@ -49,6 +49,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	protected $ca_observaciones;
 
 	
+	protected $ca_notificar;
+
+	
 	protected $aNotListaTareas;
 
 	
@@ -259,6 +262,12 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 	public function getCaObservaciones()
 	{
 		return $this->ca_observaciones;
+	}
+
+	
+	public function getCaNotificar()
+	{
+		return $this->ca_notificar;
 	}
 
 	
@@ -520,6 +529,20 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		return $this;
 	} 
 	
+	public function setCaNotificar($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_notificar !== $v) {
+			$this->ca_notificar = $v;
+			$this->modifiedColumns[] = NotTareaPeer::CA_NOTIFICAR;
+		}
+
+		return $this;
+	} 
+	
 	public function hasOnlyDefaultValues()
 	{
 						if (array_diff($this->modifiedColumns, array())) {
@@ -546,6 +569,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$this->ca_fchcreado = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->ca_usucreado = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
 			$this->ca_observaciones = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+			$this->ca_notificar = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -554,7 +578,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 				$this->ensureConsistency();
 			}
 
-						return $startcol + 13; 
+						return $startcol + 14; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating NotTarea object", $e);
 		}
@@ -944,6 +968,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			case 12:
 				return $this->getCaObservaciones();
 				break;
+			case 13:
+				return $this->getCaNotificar();
+				break;
 			default:
 				return null;
 				break;
@@ -967,6 +994,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			$keys[10] => $this->getCaFchcreado(),
 			$keys[11] => $this->getCaUsucreado(),
 			$keys[12] => $this->getCaObservaciones(),
+			$keys[13] => $this->getCaNotificar(),
 		);
 		return $result;
 	}
@@ -1021,6 +1049,9 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 			case 12:
 				$this->setCaObservaciones($value);
 				break;
+			case 13:
+				$this->setCaNotificar($value);
+				break;
 		} 	}
 
 	
@@ -1041,6 +1072,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[10], $arr)) $this->setCaFchcreado($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setCaUsucreado($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setCaObservaciones($arr[$keys[12]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaNotificar($arr[$keys[13]]);
 	}
 
 	
@@ -1061,6 +1093,7 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(NotTareaPeer::CA_FCHCREADO)) $criteria->add(NotTareaPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(NotTareaPeer::CA_USUCREADO)) $criteria->add(NotTareaPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(NotTareaPeer::CA_OBSERVACIONES)) $criteria->add(NotTareaPeer::CA_OBSERVACIONES, $this->ca_observaciones);
+		if ($this->isColumnModified(NotTareaPeer::CA_NOTIFICAR)) $criteria->add(NotTareaPeer::CA_NOTIFICAR, $this->ca_notificar);
 
 		return $criteria;
 	}
@@ -1114,6 +1147,8 @@ abstract class BaseNotTarea extends BaseObject  implements Persistent {
 		$copyObj->setCaUsucreado($this->ca_usucreado);
 
 		$copyObj->setCaObservaciones($this->ca_observaciones);
+
+		$copyObj->setCaNotificar($this->ca_notificar);
 
 
 		if ($deepCopy) {
