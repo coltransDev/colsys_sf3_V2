@@ -9,7 +9,7 @@ default:
     keywords:     symfony, project
     language:     en	
 
-  stylesheets:    [coltrans,   yui/calendar/calendar, tooltips/tooltips, ext/css/ext-all, ext/css/xtheme-gray.css, menu/menu]
+  stylesheets:    [coltrans, print: { media: print }, yui/calendar/calendar, tooltips/tooltips, ext/css/ext-all, ext/css/xtheme-gray.css, menu/menu]
 
   javascripts:    [comunes, yui/yahoo/yahoo, yui/event/event, yui/dom/dom, yui/calendar/calendar, ext/adapter/ext/ext-base, ext/ext-all-debug, menu/menu]
 
