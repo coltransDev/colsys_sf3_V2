@@ -58,6 +58,9 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 	protected $singleIdsProveedor;
 
 	
+	protected $singleIdsAgente;
+
+	
 	protected $collIdsDocumentos;
 
 	
@@ -68,6 +71,12 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 
 	
 	private $lastIdsEvaluacionCriteria = null;
+
+	
+	protected $collIdsEventos;
+
+	
+	private $lastIdsEventoCriteria = null;
 
 	
 	protected $alreadyInSave = false;
@@ -494,11 +503,16 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 
 			$this->singleIdsProveedor = null;
 
+			$this->singleIdsAgente = null;
+
 			$this->collIdsDocumentos = null;
 			$this->lastIdsDocumentoCriteria = null;
 
 			$this->collIdsEvaluacions = null;
 			$this->lastIdsEvaluacionCriteria = null;
+
+			$this->collIdsEventos = null;
+			$this->lastIdsEventoCriteria = null;
 
 		} 	}
 
@@ -612,6 +626,12 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->singleIdsAgente !== null) {
+				if (!$this->singleIdsAgente->isDeleted()) {
+						$affectedRows += $this->singleIdsAgente->save($con);
+				}
+			}
+
 			if ($this->collIdsDocumentos !== null) {
 				foreach ($this->collIdsDocumentos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -622,6 +642,14 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 
 			if ($this->collIdsEvaluacions !== null) {
 				foreach ($this->collIdsEvaluacions as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
+			if ($this->collIdsEventos !== null) {
+				foreach ($this->collIdsEventos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -684,6 +712,12 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 					}
 				}
 
+				if ($this->singleIdsAgente !== null) {
+					if (!$this->singleIdsAgente->validate($columns)) {
+						$failureMap = array_merge($failureMap, $this->singleIdsAgente->getValidationFailures());
+					}
+				}
+
 				if ($this->collIdsDocumentos !== null) {
 					foreach ($this->collIdsDocumentos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
@@ -694,6 +728,14 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 
 				if ($this->collIdsEvaluacions !== null) {
 					foreach ($this->collIdsEvaluacions as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collIdsEventos !== null) {
+					foreach ($this->collIdsEventos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -945,6 +987,11 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 				$copyObj->setIdsProveedor($relObj->copy($deepCopy));
 			}
 
+			$relObj = $this->getIdsAgente();
+			if ($relObj) {
+				$copyObj->setIdsAgente($relObj->copy($deepCopy));
+			}
+
 			foreach ($this->getIdsDocumentos() as $relObj) {
 				if ($relObj !== $this) {  					$copyObj->addIdsDocumento($relObj->copy($deepCopy));
 				}
@@ -952,6 +999,11 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 
 			foreach ($this->getIdsEvaluacions() as $relObj) {
 				if ($relObj !== $this) {  					$copyObj->addIdsEvaluacion($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getIdsEventos() as $relObj) {
+				if ($relObj !== $this) {  					$copyObj->addIdsEvento($relObj->copy($deepCopy));
 				}
 			}
 
@@ -1129,6 +1181,29 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 	public function setIdsProveedor(IdsProveedor $v)
 	{
 		$this->singleIdsProveedor = $v;
+
+				if ($v->getIds() === null) {
+			$v->setIds($this);
+		}
+
+		return $this;
+	}
+
+	
+	public function getIdsAgente(PropelPDO $con = null)
+	{
+
+		if ($this->singleIdsAgente === null && !$this->isNew()) {
+			$this->singleIdsAgente = IdsAgentePeer::retrieveByPK($this->ca_id, $con);
+		}
+
+		return $this->singleIdsAgente;
+	}
+
+	
+	public function setIdsAgente(IdsAgente $v)
+	{
+		$this->singleIdsAgente = $v;
 
 				if ($v->getIds() === null) {
 			$v->setIds($this);
@@ -1374,6 +1449,107 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 	}
 
 	
+	public function clearIdsEventos()
+	{
+		$this->collIdsEventos = null; 	}
+
+	
+	public function initIdsEventos()
+	{
+		$this->collIdsEventos = array();
+	}
+
+	
+	public function getIdsEventos($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsEventos === null) {
+			if ($this->isNew()) {
+			   $this->collIdsEventos = array();
+			} else {
+
+				$criteria->add(IdsEventoPeer::CA_ID, $this->ca_id);
+
+				IdsEventoPeer::addSelectColumns($criteria);
+				$this->collIdsEventos = IdsEventoPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(IdsEventoPeer::CA_ID, $this->ca_id);
+
+				IdsEventoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastIdsEventoCriteria) || !$this->lastIdsEventoCriteria->equals($criteria)) {
+					$this->collIdsEventos = IdsEventoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastIdsEventoCriteria = $criteria;
+		return $this->collIdsEventos;
+	}
+
+	
+	public function countIdsEventos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collIdsEventos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(IdsEventoPeer::CA_ID, $this->ca_id);
+
+				$count = IdsEventoPeer::doCount($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(IdsEventoPeer::CA_ID, $this->ca_id);
+
+				if (!isset($this->lastIdsEventoCriteria) || !$this->lastIdsEventoCriteria->equals($criteria)) {
+					$count = IdsEventoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collIdsEventos);
+				}
+			} else {
+				$count = count($this->collIdsEventos);
+			}
+		}
+		return $count;
+	}
+
+	
+	public function addIdsEvento(IdsEvento $l)
+	{
+		if ($this->collIdsEventos === null) {
+			$this->initIdsEventos();
+		}
+		if (!in_array($l, $this->collIdsEventos, true)) { 			array_push($this->collIdsEventos, $l);
+			$l->setIds($this);
+		}
+	}
+
+	
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
@@ -1385,6 +1561,9 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 			if ($this->singleIdsProveedor) {
 				$this->singleIdsProveedor->clearAllReferences($deep);
 			}
+			if ($this->singleIdsAgente) {
+				$this->singleIdsAgente->clearAllReferences($deep);
+			}
 			if ($this->collIdsDocumentos) {
 				foreach ((array) $this->collIdsDocumentos as $o) {
 					$o->clearAllReferences($deep);
@@ -1395,11 +1574,18 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collIdsEventos) {
+				foreach ((array) $this->collIdsEventos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} 
 		$this->collIdsSucursals = null;
 		$this->singleIdsProveedor = null;
+		$this->singleIdsAgente = null;
 		$this->collIdsDocumentos = null;
 		$this->collIdsEvaluacions = null;
+		$this->collIdsEventos = null;
 	}
 
 

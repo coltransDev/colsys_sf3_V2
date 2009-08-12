@@ -31,6 +31,15 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 	protected $aIds;
 
 	
+	protected $aIdsTipo;
+
+	
+	protected $collTransportadors;
+
+	
+	private $lastTransportadorCriteria = null;
+
+	
 	protected $alreadyInSave = false;
 
 	
@@ -124,12 +133,16 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 	public function setCaTipo($v)
 	{
 		if ($v !== null) {
-			$v = (int) $v;
+			$v = (string) $v;
 		}
 
 		if ($this->ca_tipo !== $v) {
 			$this->ca_tipo = $v;
 			$this->modifiedColumns[] = IdsProveedorPeer::CA_TIPO;
+		}
+
+		if ($this->aIdsTipo !== null && $this->aIdsTipo->getCaTipo() !== $v) {
+			$this->aIdsTipo = null;
 		}
 
 		return $this;
@@ -223,7 +236,7 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		try {
 
 			$this->ca_idproveedor = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->ca_tipo = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+			$this->ca_tipo = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
 			$this->ca_critico = ($row[$startcol + 2] !== null) ? (boolean) $row[$startcol + 2] : null;
 			$this->ca_controladoporsig = ($row[$startcol + 3] !== null) ? (boolean) $row[$startcol + 3] : null;
 			$this->ca_fchaprobado = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
@@ -248,6 +261,9 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 
 		if ($this->aIds !== null && $this->ca_idproveedor !== $this->aIds->getCaId()) {
 			$this->aIds = null;
+		}
+		if ($this->aIdsTipo !== null && $this->ca_tipo !== $this->aIdsTipo->getCaTipo()) {
+			$this->aIdsTipo = null;
 		}
 	} 
 	
@@ -275,6 +291,10 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		$this->hydrate($row, 0, true); 
 		if ($deep) {  
 			$this->aIds = null;
+			$this->aIdsTipo = null;
+			$this->collTransportadors = null;
+			$this->lastTransportadorCriteria = null;
+
 		} 	}
 
 	
@@ -369,6 +389,13 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 				$this->setIds($this->aIds);
 			}
 
+			if ($this->aIdsTipo !== null) {
+				if ($this->aIdsTipo->isModified() || $this->aIdsTipo->isNew()) {
+					$affectedRows += $this->aIdsTipo->save($con);
+				}
+				$this->setIdsTipo($this->aIdsTipo);
+			}
+
 
 						if ($this->isModified()) {
 				if ($this->isNew()) {
@@ -380,6 +407,14 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 				}
 
 				$this->resetModified(); 			}
+
+			if ($this->collTransportadors !== null) {
+				foreach ($this->collTransportadors as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
 
 			$this->alreadyInSave = false;
 
@@ -425,11 +460,25 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->aIdsTipo !== null) {
+				if (!$this->aIdsTipo->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aIdsTipo->getValidationFailures());
+				}
+			}
+
 
 			if (($retval = IdsProveedorPeer::doValidate($this, $columns)) !== true) {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collTransportadors !== null) {
+					foreach ($this->collTransportadors as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 
 			$this->alreadyInValidation = false;
@@ -586,6 +635,16 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		$copyObj->setCaUsuaprobado($this->ca_usuaprobado);
 
 
+		if ($deepCopy) {
+									$copyObj->setNew(false);
+
+			foreach ($this->getTransportadors() as $relObj) {
+				if ($relObj !== $this) {  					$copyObj->addTransportador($relObj->copy($deepCopy));
+				}
+			}
+
+		} 
+
 		$copyObj->setNew(true);
 
 	}
@@ -640,11 +699,150 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 	}
 
 	
+	public function setIdsTipo(IdsTipo $v = null)
+	{
+		if ($v === null) {
+			$this->setCaTipo(NULL);
+		} else {
+			$this->setCaTipo($v->getCaTipo());
+		}
+
+		$this->aIdsTipo = $v;
+
+						if ($v !== null) {
+			$v->addIdsProveedor($this);
+		}
+
+		return $this;
+	}
+
+
+	
+	public function getIdsTipo(PropelPDO $con = null)
+	{
+		if ($this->aIdsTipo === null && (($this->ca_tipo !== "" && $this->ca_tipo !== null))) {
+			$c = new Criteria(IdsTipoPeer::DATABASE_NAME);
+			$c->add(IdsTipoPeer::CA_TIPO, $this->ca_tipo);
+			$this->aIdsTipo = IdsTipoPeer::doSelectOne($c, $con);
+			
+		}
+		return $this->aIdsTipo;
+	}
+
+	
+	public function clearTransportadors()
+	{
+		$this->collTransportadors = null; 	}
+
+	
+	public function initTransportadors()
+	{
+		$this->collTransportadors = array();
+	}
+
+	
+	public function getTransportadors($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsProveedorPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collTransportadors === null) {
+			if ($this->isNew()) {
+			   $this->collTransportadors = array();
+			} else {
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idproveedor);
+
+				TransportadorPeer::addSelectColumns($criteria);
+				$this->collTransportadors = TransportadorPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idproveedor);
+
+				TransportadorPeer::addSelectColumns($criteria);
+				if (!isset($this->lastTransportadorCriteria) || !$this->lastTransportadorCriteria->equals($criteria)) {
+					$this->collTransportadors = TransportadorPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastTransportadorCriteria = $criteria;
+		return $this->collTransportadors;
+	}
+
+	
+	public function countTransportadors(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsProveedorPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collTransportadors === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idproveedor);
+
+				$count = TransportadorPeer::doCount($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idproveedor);
+
+				if (!isset($this->lastTransportadorCriteria) || !$this->lastTransportadorCriteria->equals($criteria)) {
+					$count = TransportadorPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collTransportadors);
+				}
+			} else {
+				$count = count($this->collTransportadors);
+			}
+		}
+		return $count;
+	}
+
+	
+	public function addTransportador(Transportador $l)
+	{
+		if ($this->collTransportadors === null) {
+			$this->initTransportadors();
+		}
+		if (!in_array($l, $this->collTransportadors, true)) { 			array_push($this->collTransportadors, $l);
+			$l->setIdsProveedor($this);
+		}
+	}
+
+	
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collTransportadors) {
+				foreach ((array) $this->collTransportadors as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} 
+		$this->collTransportadors = null;
 			$this->aIds = null;
+			$this->aIdsTipo = null;
 	}
 
 

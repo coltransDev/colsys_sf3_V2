@@ -625,7 +625,7 @@ class Reporte extends BaseReporte
 	public function getFiles(){
 		$directory = $this->getDirectorio();							
 		if( !is_dir($directory) ){			
-			mkdir($directory, 0777);			
+			mkdir($directory, 0777, true );
 		}		
 		return sfFinder::type('file')->maxDepth(0)->in($directory);
 	}

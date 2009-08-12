@@ -7,7 +7,7 @@ abstract class BaseIdsProveedorPeer {
 	const DATABASE_NAME = 'propel';
 
 	
-	const TABLE_NAME = 'ids.tb_proveedor';
+	const TABLE_NAME = 'ids.tb_proveedores';
 
 	
 	const CLASS_DEFAULT = 'lib.model.ids.IdsProveedor';
@@ -19,22 +19,22 @@ abstract class BaseIdsProveedorPeer {
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 	
-	const CA_IDPROVEEDOR = 'ids.tb_proveedor.CA_IDPROVEEDOR';
+	const CA_IDPROVEEDOR = 'ids.tb_proveedores.CA_IDPROVEEDOR';
 
 	
-	const CA_TIPO = 'ids.tb_proveedor.CA_TIPO';
+	const CA_TIPO = 'ids.tb_proveedores.CA_TIPO';
 
 	
-	const CA_CRITICO = 'ids.tb_proveedor.CA_CRITICO';
+	const CA_CRITICO = 'ids.tb_proveedores.CA_CRITICO';
 
 	
-	const CA_CONTROLADOPORSIG = 'ids.tb_proveedor.CA_CONTROLADOPORSIG';
+	const CA_CONTROLADOPORSIG = 'ids.tb_proveedores.CA_CONTROLADOPORSIG';
 
 	
-	const CA_FCHAPROBADO = 'ids.tb_proveedor.CA_FCHAPROBADO';
+	const CA_FCHAPROBADO = 'ids.tb_proveedores.CA_FCHAPROBADO';
 
 	
-	const CA_USUAPROBADO = 'ids.tb_proveedor.CA_USUAPROBADO';
+	const CA_USUAPROBADO = 'ids.tb_proveedores.CA_USUAPROBADO';
 
 	
 	public static $instances = array();
@@ -304,6 +304,48 @@ abstract class BaseIdsProveedorPeer {
 
 
 	
+	public static function doCountJoinIdsTipo(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+								$criteria->setPrimaryTableName(IdsProveedorPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			IdsProveedorPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(IdsProveedorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(IdsProveedorPeer::CA_TIPO,), array(IdsTipoPeer::CA_TIPO,), $join_behavior);
+
+
+    foreach (sfMixer::getCallables('BaseIdsProveedorPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseIdsProveedorPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
 	public static function doSelectJoinIds(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 
@@ -362,6 +404,57 @@ abstract class BaseIdsProveedorPeer {
 
 
 	
+	public static function doSelectJoinIdsTipo(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+				if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		IdsProveedorPeer::addSelectColumns($c);
+		$startcol = (IdsProveedorPeer::NUM_COLUMNS - IdsProveedorPeer::NUM_LAZY_LOAD_COLUMNS);
+		IdsTipoPeer::addSelectColumns($c);
+
+		$c->addJoin(array(IdsProveedorPeer::CA_TIPO,), array(IdsTipoPeer::CA_TIPO,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = IdsProveedorPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = IdsProveedorPeer::getInstanceFromPool($key1))) {
+															} else {
+
+				$omClass = IdsProveedorPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				IdsProveedorPeer::addInstanceToPool($obj1, $key1);
+			} 
+			$key2 = IdsTipoPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = IdsTipoPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = IdsTipoPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					IdsTipoPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->addIdsProveedor($obj1);
+
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
 	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 				$criteria = clone $criteria;
@@ -384,6 +477,7 @@ abstract class BaseIdsProveedorPeer {
 		}
 
 		$criteria->addJoin(array(IdsProveedorPeer::CA_IDPROVEEDOR,), array(IdsPeer::CA_ID,), $join_behavior);
+		$criteria->addJoin(array(IdsProveedorPeer::CA_TIPO,), array(IdsTipoPeer::CA_TIPO,), $join_behavior);
 
     foreach (sfMixer::getCallables('BaseIdsProveedorPeer:doCount:doCount') as $callable)
     {
@@ -423,7 +517,11 @@ abstract class BaseIdsProveedorPeer {
 		IdsPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (IdsPeer::NUM_COLUMNS - IdsPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		IdsTipoPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (IdsTipoPeer::NUM_COLUMNS - IdsTipoPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		$c->addJoin(array(IdsProveedorPeer::CA_IDPROVEEDOR,), array(IdsPeer::CA_ID,), $join_behavior);
+		$c->addJoin(array(IdsProveedorPeer::CA_TIPO,), array(IdsTipoPeer::CA_TIPO,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -453,6 +551,217 @@ abstract class BaseIdsProveedorPeer {
 					IdsPeer::addInstanceToPool($obj2, $key2);
 				} 
 								$obj1->setIds($obj2);
+			} 
+			
+			$key3 = IdsTipoPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = IdsTipoPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = IdsTipoPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					IdsTipoPeer::addInstanceToPool($obj3, $key3);
+				} 
+								$obj3->addIdsProveedor($obj1);
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
+	public static function doCountJoinAllExceptIds(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			IdsProveedorPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(IdsProveedorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(IdsProveedorPeer::CA_TIPO,), array(IdsTipoPeer::CA_TIPO,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseIdsProveedorPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseIdsProveedorPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
+	public static function doCountJoinAllExceptIdsTipo(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			IdsProveedorPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(IdsProveedorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(IdsProveedorPeer::CA_IDPROVEEDOR,), array(IdsPeer::CA_ID,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseIdsProveedorPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseIdsProveedorPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
+	public static function doSelectJoinAllExceptIds(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+
+    foreach (sfMixer::getCallables('BaseIdsProveedorPeer:doSelectJoinAllExcept:doSelectJoinAllExcept') as $callable)
+    {
+      call_user_func($callable, 'BaseIdsProveedorPeer', $c, $con);
+    }
+
+
+		$c = clone $c;
+
+								if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		IdsProveedorPeer::addSelectColumns($c);
+		$startcol2 = (IdsProveedorPeer::NUM_COLUMNS - IdsProveedorPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		IdsTipoPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (IdsTipoPeer::NUM_COLUMNS - IdsTipoPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(IdsProveedorPeer::CA_TIPO,), array(IdsTipoPeer::CA_TIPO,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = IdsProveedorPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = IdsProveedorPeer::getInstanceFromPool($key1))) {
+															} else {
+				$omClass = IdsProveedorPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				IdsProveedorPeer::addInstanceToPool($obj1, $key1);
+			} 
+				
+				$key2 = IdsTipoPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = IdsTipoPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = IdsTipoPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					IdsTipoPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->addIdsProveedor($obj1);
+
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
+	public static function doSelectJoinAllExceptIdsTipo(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+								if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		IdsProveedorPeer::addSelectColumns($c);
+		$startcol2 = (IdsProveedorPeer::NUM_COLUMNS - IdsProveedorPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		IdsPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (IdsPeer::NUM_COLUMNS - IdsPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(IdsProveedorPeer::CA_IDPROVEEDOR,), array(IdsPeer::CA_ID,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = IdsProveedorPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = IdsProveedorPeer::getInstanceFromPool($key1))) {
+															} else {
+				$omClass = IdsProveedorPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				IdsProveedorPeer::addInstanceToPool($obj1, $key1);
+			} 
+				
+				$key2 = IdsPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = IdsPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = IdsPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					IdsPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->setIdsProveedor($obj1);
+
 			} 
 			$results[] = $obj1;
 		}

@@ -135,7 +135,13 @@ var mostrar=function( oid ){
 	}
 	
 	
-	
+	if(value=="IMETA"){
+        document.getElementById("prog_seguimiento").checked = false;
+        crearSeguimiento();
+        document.getElementById("prog_seguimiento").disabled=true;
+    }else{
+        document.getElementById("prog_seguimiento").disabled=false;
+    }
 	
 }
 

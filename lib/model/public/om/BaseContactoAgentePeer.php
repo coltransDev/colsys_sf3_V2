@@ -873,6 +873,10 @@ abstract class BaseContactoAgentePeer {
 			$criteria = clone $values; 		} else {
 			$criteria = $values->buildCriteria(); 		}
 
+		if ($criteria->containsKey(ContactoAgentePeer::CA_IDCONTACTO) && $criteria->keyContainsValue(ContactoAgentePeer::CA_IDCONTACTO) ) {
+			throw new PropelException('Cannot insert a value for auto-increment primary key ('.ContactoAgentePeer::CA_IDCONTACTO.')');
+		}
+
 
 				$criteria->setDbName(self::DATABASE_NAME);
 

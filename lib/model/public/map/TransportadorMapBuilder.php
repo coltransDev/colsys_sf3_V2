@@ -33,17 +33,19 @@ class TransportadorMapBuilder implements MapBuilder {
 
 		$tMap->setUseIdGenerator(true);
 
-		$tMap->setPrimaryKeyMethodInfo('tb_transporlineas_ca_idlinea_seq');
+		$tMap->setPrimaryKeyMethodInfo('tb_transporlineas_id');
 
 		$tMap->addPrimaryKey('CA_IDLINEA', 'CaIdlinea', 'INTEGER', true, null);
 
-		$tMap->addForeignKey('CA_IDTRANSPORTISTA', 'CaIdtransportista', 'NUMERIC', 'tb_transportistas', 'CA_IDTRANSPORTISTA', false, null);
+		$tMap->addForeignKey('CA_IDTRANSPORTISTA', 'CaIdtransportista', 'NUMERIC', 'ids.tb_proveedores', 'CA_IDPROVEEDOR', false, null);
 
 		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_SIGLA', 'CaSigla', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
 
 	} 
 } 

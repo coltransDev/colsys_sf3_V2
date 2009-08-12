@@ -115,6 +115,12 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	private $lastCotSeguimientoCriteria = null;
 
 	
+	protected $collCotContactoAgs;
+
+	
+	private $lastCotContactoAgCriteria = null;
+
+	
 	protected $alreadyInSave = false;
 
 	
@@ -906,6 +912,9 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 			$this->collCotSeguimientos = null;
 			$this->lastCotSeguimientoCriteria = null;
 
+			$this->collCotContactoAgs = null;
+			$this->lastCotContactoAgCriteria = null;
+
 		} 	}
 
 	
@@ -1070,6 +1079,14 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collCotContactoAgs !== null) {
+				foreach ($this->collCotContactoAgs as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -1166,6 +1183,14 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 				if ($this->collCotSeguimientos !== null) {
 					foreach ($this->collCotSeguimientos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
+				if ($this->collCotContactoAgs !== null) {
+					foreach ($this->collCotContactoAgs as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -1526,6 +1551,11 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 
 			foreach ($this->getCotSeguimientos() as $relObj) {
 				if ($relObj !== $this) {  					$copyObj->addCotSeguimiento($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getCotContactoAgs() as $relObj) {
+				if ($relObj !== $this) {  					$copyObj->addCotContactoAg($relObj->copy($deepCopy));
 				}
 			}
 
@@ -2357,6 +2387,107 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 	}
 
 	
+	public function clearCotContactoAgs()
+	{
+		$this->collCotContactoAgs = null; 	}
+
+	
+	public function initCotContactoAgs()
+	{
+		$this->collCotContactoAgs = array();
+	}
+
+	
+	public function getCotContactoAgs($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collCotContactoAgs === null) {
+			if ($this->isNew()) {
+			   $this->collCotContactoAgs = array();
+			} else {
+
+				$criteria->add(CotContactoAgPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				CotContactoAgPeer::addSelectColumns($criteria);
+				$this->collCotContactoAgs = CotContactoAgPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(CotContactoAgPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				CotContactoAgPeer::addSelectColumns($criteria);
+				if (!isset($this->lastCotContactoAgCriteria) || !$this->lastCotContactoAgCriteria->equals($criteria)) {
+					$this->collCotContactoAgs = CotContactoAgPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastCotContactoAgCriteria = $criteria;
+		return $this->collCotContactoAgs;
+	}
+
+	
+	public function countCotContactoAgs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(CotizacionPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collCotContactoAgs === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(CotContactoAgPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				$count = CotContactoAgPeer::doCount($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(CotContactoAgPeer::CA_IDCOTIZACION, $this->ca_idcotizacion);
+
+				if (!isset($this->lastCotContactoAgCriteria) || !$this->lastCotContactoAgCriteria->equals($criteria)) {
+					$count = CotContactoAgPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collCotContactoAgs);
+				}
+			} else {
+				$count = count($this->collCotContactoAgs);
+			}
+		}
+		return $count;
+	}
+
+	
+	public function addCotContactoAg(CotContactoAg $l)
+	{
+		if ($this->collCotContactoAgs === null) {
+			$this->initCotContactoAgs();
+		}
+		if (!in_array($l, $this->collCotContactoAgs, true)) { 			array_push($this->collCotContactoAgs, $l);
+			$l->setCotizacion($this);
+		}
+	}
+
+	
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
@@ -2385,12 +2516,18 @@ abstract class BaseCotizacion extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collCotContactoAgs) {
+				foreach ((array) $this->collCotContactoAgs as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} 
 		$this->collCotProductos = null;
 		$this->collCotContinuacions = null;
 		$this->collCotSeguros = null;
 		$this->collCotArchivos = null;
 		$this->collCotSeguimientos = null;
+		$this->collCotContactoAgs = null;
 			$this->aContacto = null;
 			$this->aNotTarea = null;
 			$this->aUsuario = null;

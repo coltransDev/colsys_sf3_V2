@@ -13,7 +13,7 @@ abstract class BaseTransportadorPeer {
 	const CLASS_DEFAULT = 'lib.model.public.Transportador';
 
 	
-	const NUM_COLUMNS = 5;
+	const NUM_COLUMNS = 6;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -34,6 +34,9 @@ abstract class BaseTransportadorPeer {
 	const CA_TRANSPORTE = 'tb_transporlineas.CA_TRANSPORTE';
 
 	
+	const CA_ACTIVO = 'tb_transporlineas.CA_ACTIVO';
+
+	
 	public static $instances = array();
 
 	
@@ -41,20 +44,20 @@ abstract class BaseTransportadorPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdlinea', 'CaIdtransportista', 'CaNombre', 'CaSigla', 'CaTransporte', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdlinea', 'caIdtransportista', 'caNombre', 'caSigla', 'caTransporte', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDLINEA, self::CA_IDTRANSPORTISTA, self::CA_NOMBRE, self::CA_SIGLA, self::CA_TRANSPORTE, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idlinea', 'ca_idtransportista', 'ca_nombre', 'ca_sigla', 'ca_transporte', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdlinea', 'CaIdtransportista', 'CaNombre', 'CaSigla', 'CaTransporte', 'CaActivo', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdlinea', 'caIdtransportista', 'caNombre', 'caSigla', 'caTransporte', 'caActivo', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDLINEA, self::CA_IDTRANSPORTISTA, self::CA_NOMBRE, self::CA_SIGLA, self::CA_TRANSPORTE, self::CA_ACTIVO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idlinea', 'ca_idtransportista', 'ca_nombre', 'ca_sigla', 'ca_transporte', 'ca_activo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdlinea' => 0, 'CaIdtransportista' => 1, 'CaNombre' => 2, 'CaSigla' => 3, 'CaTransporte' => 4, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdlinea' => 0, 'caIdtransportista' => 1, 'caNombre' => 2, 'caSigla' => 3, 'caTransporte' => 4, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDLINEA => 0, self::CA_IDTRANSPORTISTA => 1, self::CA_NOMBRE => 2, self::CA_SIGLA => 3, self::CA_TRANSPORTE => 4, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idlinea' => 0, 'ca_idtransportista' => 1, 'ca_nombre' => 2, 'ca_sigla' => 3, 'ca_transporte' => 4, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdlinea' => 0, 'CaIdtransportista' => 1, 'CaNombre' => 2, 'CaSigla' => 3, 'CaTransporte' => 4, 'CaActivo' => 5, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdlinea' => 0, 'caIdtransportista' => 1, 'caNombre' => 2, 'caSigla' => 3, 'caTransporte' => 4, 'caActivo' => 5, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDLINEA => 0, self::CA_IDTRANSPORTISTA => 1, self::CA_NOMBRE => 2, self::CA_SIGLA => 3, self::CA_TRANSPORTE => 4, self::CA_ACTIVO => 5, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idlinea' => 0, 'ca_idtransportista' => 1, 'ca_nombre' => 2, 'ca_sigla' => 3, 'ca_transporte' => 4, 'ca_activo' => 5, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
 	);
 
 	
@@ -105,6 +108,8 @@ abstract class BaseTransportadorPeer {
 		$criteria->addSelectColumn(TransportadorPeer::CA_SIGLA);
 
 		$criteria->addSelectColumn(TransportadorPeer::CA_TRANSPORTE);
+
+		$criteria->addSelectColumn(TransportadorPeer::CA_ACTIVO);
 
 	}
 
@@ -257,7 +262,7 @@ abstract class BaseTransportadorPeer {
 	}
 
 	
-	public static function doCountJoinTransportista(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doCountJoinIdsProveedor(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 				$criteria = clone $criteria;
 
@@ -278,7 +283,7 @@ abstract class BaseTransportadorPeer {
 			$con = Propel::getConnection(TransportadorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
+		$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(IdsProveedorPeer::CA_IDPROVEEDOR,), $join_behavior);
 
 
     foreach (sfMixer::getCallables('BaseTransportadorPeer:doCount:doCount') as $callable)
@@ -299,7 +304,7 @@ abstract class BaseTransportadorPeer {
 
 
 	
-	public static function doSelectJoinTransportista(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinIdsProveedor(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 
     foreach (sfMixer::getCallables('BaseTransportadorPeer:doSelectJoin:doSelectJoin') as $callable)
@@ -316,9 +321,9 @@ abstract class BaseTransportadorPeer {
 
 		TransportadorPeer::addSelectColumns($c);
 		$startcol = (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
-		TransportistaPeer::addSelectColumns($c);
+		IdsProveedorPeer::addSelectColumns($c);
 
-		$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
+		$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(IdsProveedorPeer::CA_IDPROVEEDOR,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -334,17 +339,17 @@ abstract class BaseTransportadorPeer {
 				$obj1->hydrate($row);
 				TransportadorPeer::addInstanceToPool($obj1, $key1);
 			} 
-			$key2 = TransportistaPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			$key2 = IdsProveedorPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
-				$obj2 = TransportistaPeer::getInstanceFromPool($key2);
+				$obj2 = IdsProveedorPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$omClass = TransportistaPeer::getOMClass();
+					$omClass = IdsProveedorPeer::getOMClass();
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
-					TransportistaPeer::addInstanceToPool($obj2, $key2);
+					IdsProveedorPeer::addInstanceToPool($obj2, $key2);
 				} 
 								$obj2->addTransportador($obj1);
 
@@ -378,7 +383,7 @@ abstract class BaseTransportadorPeer {
 			$con = Propel::getConnection(TransportadorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
+		$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(IdsProveedorPeer::CA_IDPROVEEDOR,), $join_behavior);
 
     foreach (sfMixer::getCallables('BaseTransportadorPeer:doCount:doCount') as $callable)
     {
@@ -415,10 +420,10 @@ abstract class BaseTransportadorPeer {
 		TransportadorPeer::addSelectColumns($c);
 		$startcol2 = (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		TransportistaPeer::addSelectColumns($c);
-		$startcol3 = $startcol2 + (TransportistaPeer::NUM_COLUMNS - TransportistaPeer::NUM_LAZY_LOAD_COLUMNS);
+		IdsProveedorPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (IdsProveedorPeer::NUM_COLUMNS - IdsProveedorPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
+		$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(IdsProveedorPeer::CA_IDPROVEEDOR,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -434,18 +439,18 @@ abstract class BaseTransportadorPeer {
 				TransportadorPeer::addInstanceToPool($obj1, $key1);
 			} 
 			
-			$key2 = TransportistaPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+			$key2 = IdsProveedorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 			if ($key2 !== null) {
-				$obj2 = TransportistaPeer::getInstanceFromPool($key2);
+				$obj2 = IdsProveedorPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$omClass = TransportistaPeer::getOMClass();
+					$omClass = IdsProveedorPeer::getOMClass();
 
 
 					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
-					TransportistaPeer::addInstanceToPool($obj2, $key2);
+					IdsProveedorPeer::addInstanceToPool($obj2, $key2);
 				} 
 								$obj2->addTransportador($obj1);
 			} 

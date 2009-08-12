@@ -37,10 +37,10 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 	protected $ca_email;
 
 	
-	protected $collTransportadors;
+	protected $collTransContactos;
 
 	
-	private $lastTransportadorCriteria = null;
+	private $lastTransContactoCriteria = null;
 
 	
 	protected $alreadyInSave = false;
@@ -306,8 +306,8 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 		}
 		$this->hydrate($row, 0, true); 
 		if ($deep) {  
-			$this->collTransportadors = null;
-			$this->lastTransportadorCriteria = null;
+			$this->collTransContactos = null;
+			$this->lastTransContactoCriteria = null;
 
 		} 	}
 
@@ -411,8 +411,8 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 
 				$this->resetModified(); 			}
 
-			if ($this->collTransportadors !== null) {
-				foreach ($this->collTransportadors as $referrerFK) {
+			if ($this->collTransContactos !== null) {
+				foreach ($this->collTransContactos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -461,8 +461,8 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 			}
 
 
-				if ($this->collTransportadors !== null) {
-					foreach ($this->collTransportadors as $referrerFK) {
+				if ($this->collTransContactos !== null) {
+					foreach ($this->collTransContactos as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -658,8 +658,8 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 		if ($deepCopy) {
 									$copyObj->setNew(false);
 
-			foreach ($this->getTransportadors() as $relObj) {
-				if ($relObj !== $this) {  					$copyObj->addTransportador($relObj->copy($deepCopy));
+			foreach ($this->getTransContactos() as $relObj) {
+				if ($relObj !== $this) {  					$copyObj->addTransContacto($relObj->copy($deepCopy));
 				}
 			}
 
@@ -689,18 +689,18 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 	}
 
 	
-	public function clearTransportadors()
+	public function clearTransContactos()
 	{
-		$this->collTransportadors = null; 	}
+		$this->collTransContactos = null; 	}
 
 	
-	public function initTransportadors()
+	public function initTransContactos()
 	{
-		$this->collTransportadors = array();
+		$this->collTransContactos = array();
 	}
 
 	
-	public function getTransportadors($criteria = null, PropelPDO $con = null)
+	public function getTransContactos($criteria = null, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
 			$criteria = new Criteria(TransportistaPeer::DATABASE_NAME);
@@ -710,34 +710,34 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 			$criteria = clone $criteria;
 		}
 
-		if ($this->collTransportadors === null) {
+		if ($this->collTransContactos === null) {
 			if ($this->isNew()) {
-			   $this->collTransportadors = array();
+			   $this->collTransContactos = array();
 			} else {
 
-				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+				$criteria->add(TransContactoPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
 
-				TransportadorPeer::addSelectColumns($criteria);
-				$this->collTransportadors = TransportadorPeer::doSelect($criteria, $con);
+				TransContactoPeer::addSelectColumns($criteria);
+				$this->collTransContactos = TransContactoPeer::doSelect($criteria, $con);
 			}
 		} else {
 						if (!$this->isNew()) {
 												
 
-				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+				$criteria->add(TransContactoPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
 
-				TransportadorPeer::addSelectColumns($criteria);
-				if (!isset($this->lastTransportadorCriteria) || !$this->lastTransportadorCriteria->equals($criteria)) {
-					$this->collTransportadors = TransportadorPeer::doSelect($criteria, $con);
+				TransContactoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastTransContactoCriteria) || !$this->lastTransContactoCriteria->equals($criteria)) {
+					$this->collTransContactos = TransContactoPeer::doSelect($criteria, $con);
 				}
 			}
 		}
-		$this->lastTransportadorCriteria = $criteria;
-		return $this->collTransportadors;
+		$this->lastTransContactoCriteria = $criteria;
+		return $this->collTransContactos;
 	}
 
 	
-	public function countTransportadors(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	public function countTransContactos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
 		if ($criteria === null) {
 			$criteria = new Criteria(TransportistaPeer::DATABASE_NAME);
@@ -751,40 +751,40 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 
 		$count = null;
 
-		if ($this->collTransportadors === null) {
+		if ($this->collTransContactos === null) {
 			if ($this->isNew()) {
 				$count = 0;
 			} else {
 
-				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+				$criteria->add(TransContactoPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
 
-				$count = TransportadorPeer::doCount($criteria, $con);
+				$count = TransContactoPeer::doCount($criteria, $con);
 			}
 		} else {
 						if (!$this->isNew()) {
 												
 
-				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+				$criteria->add(TransContactoPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
 
-				if (!isset($this->lastTransportadorCriteria) || !$this->lastTransportadorCriteria->equals($criteria)) {
-					$count = TransportadorPeer::doCount($criteria, $con);
+				if (!isset($this->lastTransContactoCriteria) || !$this->lastTransContactoCriteria->equals($criteria)) {
+					$count = TransContactoPeer::doCount($criteria, $con);
 				} else {
-					$count = count($this->collTransportadors);
+					$count = count($this->collTransContactos);
 				}
 			} else {
-				$count = count($this->collTransportadors);
+				$count = count($this->collTransContactos);
 			}
 		}
 		return $count;
 	}
 
 	
-	public function addTransportador(Transportador $l)
+	public function addTransContacto(TransContacto $l)
 	{
-		if ($this->collTransportadors === null) {
-			$this->initTransportadors();
+		if ($this->collTransContactos === null) {
+			$this->initTransContactos();
 		}
-		if (!in_array($l, $this->collTransportadors, true)) { 			array_push($this->collTransportadors, $l);
+		if (!in_array($l, $this->collTransContactos, true)) { 			array_push($this->collTransContactos, $l);
 			$l->setTransportista($this);
 		}
 	}
@@ -793,13 +793,13 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
-			if ($this->collTransportadors) {
-				foreach ((array) $this->collTransportadors as $o) {
+			if ($this->collTransContactos) {
+				foreach ((array) $this->collTransContactos as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 		} 
-		$this->collTransportadors = null;
+		$this->collTransContactos = null;
 	}
 
 

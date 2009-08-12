@@ -31,7 +31,9 @@ class ContactoAgenteMapBuilder implements MapBuilder {
 		$tMap->setPhpName('ContactoAgente');
 		$tMap->setClassname('ContactoAgente');
 
-		$tMap->setUseIdGenerator(false);
+		$tMap->setUseIdGenerator(true);
+
+		$tMap->setPrimaryKeyMethodInfo('tb_contactos_id');
 
 		$tMap->addPrimaryKey('CA_IDCONTACTO', 'CaIdcontacto', 'VARCHAR', true, null);
 

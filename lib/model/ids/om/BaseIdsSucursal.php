@@ -49,6 +49,9 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 	protected $ca_idciudad;
 
 	
+	protected $ca_zipcode;
+
+	
 	protected $ca_fchcreado;
 
 	
@@ -166,6 +169,12 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 	public function getCaIdciudad()
 	{
 		return $this->ca_idciudad;
+	}
+
+	
+	public function getCaZipcode()
+	{
+		return $this->ca_zipcode;
 	}
 
 	
@@ -419,6 +428,20 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 		return $this;
 	} 
 	
+	public function setCaZipcode($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_zipcode !== $v) {
+			$this->ca_zipcode = $v;
+			$this->modifiedColumns[] = IdsSucursalPeer::CA_ZIPCODE;
+		}
+
+		return $this;
+	} 
+	
 	public function setCaFchcreado($v)
 	{
 						if ($v === null || $v === '') {
@@ -537,10 +560,11 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 			$this->ca_telefonos = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
 			$this->ca_fax = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
 			$this->ca_idciudad = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-			$this->ca_fchcreado = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-			$this->ca_usucreado = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-			$this->ca_fchactualizado = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
-			$this->ca_usuactualizado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_zipcode = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+			$this->ca_fchcreado = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_usucreado = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -549,7 +573,7 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 				$this->ensureConsistency();
 			}
 
-						return $startcol + 17; 
+						return $startcol + 18; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating IdsSucursal object", $e);
 		}
@@ -843,15 +867,18 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 				return $this->getCaIdciudad();
 				break;
 			case 13:
-				return $this->getCaFchcreado();
+				return $this->getCaZipcode();
 				break;
 			case 14:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 15:
-				return $this->getCaFchactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 16:
+				return $this->getCaFchactualizado();
+				break;
+			case 17:
 				return $this->getCaUsuactualizado();
 				break;
 			default:
@@ -877,10 +904,11 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 			$keys[10] => $this->getCaTelefonos(),
 			$keys[11] => $this->getCaFax(),
 			$keys[12] => $this->getCaIdciudad(),
-			$keys[13] => $this->getCaFchcreado(),
-			$keys[14] => $this->getCaUsucreado(),
-			$keys[15] => $this->getCaFchactualizado(),
-			$keys[16] => $this->getCaUsuactualizado(),
+			$keys[13] => $this->getCaZipcode(),
+			$keys[14] => $this->getCaFchcreado(),
+			$keys[15] => $this->getCaUsucreado(),
+			$keys[16] => $this->getCaFchactualizado(),
+			$keys[17] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -936,15 +964,18 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 				$this->setCaIdciudad($value);
 				break;
 			case 13:
-				$this->setCaFchcreado($value);
+				$this->setCaZipcode($value);
 				break;
 			case 14:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 15:
-				$this->setCaFchactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 16:
+				$this->setCaFchactualizado($value);
+				break;
+			case 17:
 				$this->setCaUsuactualizado($value);
 				break;
 		} 	}
@@ -967,10 +998,11 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[10], $arr)) $this->setCaTelefonos($arr[$keys[10]]);
 		if (array_key_exists($keys[11], $arr)) $this->setCaFax($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setCaIdciudad($arr[$keys[12]]);
-		if (array_key_exists($keys[13], $arr)) $this->setCaFchcreado($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaUsucreado($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaFchactualizado($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaUsuactualizado($arr[$keys[16]]);
+		if (array_key_exists($keys[13], $arr)) $this->setCaZipcode($arr[$keys[13]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaFchcreado($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaUsucreado($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaFchactualizado($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaUsuactualizado($arr[$keys[17]]);
 	}
 
 	
@@ -991,6 +1023,7 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(IdsSucursalPeer::CA_TELEFONOS)) $criteria->add(IdsSucursalPeer::CA_TELEFONOS, $this->ca_telefonos);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_FAX)) $criteria->add(IdsSucursalPeer::CA_FAX, $this->ca_fax);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_IDCIUDAD)) $criteria->add(IdsSucursalPeer::CA_IDCIUDAD, $this->ca_idciudad);
+		if ($this->isColumnModified(IdsSucursalPeer::CA_ZIPCODE)) $criteria->add(IdsSucursalPeer::CA_ZIPCODE, $this->ca_zipcode);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_FCHCREADO)) $criteria->add(IdsSucursalPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_USUCREADO)) $criteria->add(IdsSucursalPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(IdsSucursalPeer::CA_FCHACTUALIZADO)) $criteria->add(IdsSucursalPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
@@ -1048,6 +1081,8 @@ abstract class BaseIdsSucursal extends BaseObject  implements Persistent {
 		$copyObj->setCaFax($this->ca_fax);
 
 		$copyObj->setCaIdciudad($this->ca_idciudad);
+
+		$copyObj->setCaZipcode($this->ca_zipcode);
 
 		$copyObj->setCaFchcreado($this->ca_fchcreado);
 

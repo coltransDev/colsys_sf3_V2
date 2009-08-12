@@ -13,7 +13,7 @@ abstract class BaseIdsSucursalPeer {
 	const CLASS_DEFAULT = 'lib.model.ids.IdsSucursal';
 
 	
-	const NUM_COLUMNS = 17;
+	const NUM_COLUMNS = 18;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -58,6 +58,9 @@ abstract class BaseIdsSucursalPeer {
 	const CA_IDCIUDAD = 'ids.tb_sucursales.CA_IDCIUDAD';
 
 	
+	const CA_ZIPCODE = 'ids.tb_sucursales.CA_ZIPCODE';
+
+	
 	const CA_FCHCREADO = 'ids.tb_sucursales.CA_FCHCREADO';
 
 	
@@ -77,20 +80,20 @@ abstract class BaseIdsSucursalPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdsucursal', 'CaId', 'CaPrincipal', 'CaDireccion', 'CaOficina', 'CaTorre', 'CaBloque', 'CaInterior', 'CaLocalidad', 'CaComplemento', 'CaTelefonos', 'CaFax', 'CaIdciudad', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdsucursal', 'caId', 'caPrincipal', 'caDireccion', 'caOficina', 'caTorre', 'caBloque', 'caInterior', 'caLocalidad', 'caComplemento', 'caTelefonos', 'caFax', 'caIdciudad', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDSUCURSAL, self::CA_ID, self::CA_PRINCIPAL, self::CA_DIRECCION, self::CA_OFICINA, self::CA_TORRE, self::CA_BLOQUE, self::CA_INTERIOR, self::CA_LOCALIDAD, self::CA_COMPLEMENTO, self::CA_TELEFONOS, self::CA_FAX, self::CA_IDCIUDAD, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idsucursal', 'ca_id', 'ca_principal', 'ca_direccion', 'ca_oficina', 'ca_torre', 'ca_bloque', 'ca_interior', 'ca_localidad', 'ca_complemento', 'ca_telefonos', 'ca_fax', 'ca_idciudad', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdsucursal', 'CaId', 'CaPrincipal', 'CaDireccion', 'CaOficina', 'CaTorre', 'CaBloque', 'CaInterior', 'CaLocalidad', 'CaComplemento', 'CaTelefonos', 'CaFax', 'CaIdciudad', 'CaZipcode', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdsucursal', 'caId', 'caPrincipal', 'caDireccion', 'caOficina', 'caTorre', 'caBloque', 'caInterior', 'caLocalidad', 'caComplemento', 'caTelefonos', 'caFax', 'caIdciudad', 'caZipcode', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSUCURSAL, self::CA_ID, self::CA_PRINCIPAL, self::CA_DIRECCION, self::CA_OFICINA, self::CA_TORRE, self::CA_BLOQUE, self::CA_INTERIOR, self::CA_LOCALIDAD, self::CA_COMPLEMENTO, self::CA_TELEFONOS, self::CA_FAX, self::CA_IDCIUDAD, self::CA_ZIPCODE, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idsucursal', 'ca_id', 'ca_principal', 'ca_direccion', 'ca_oficina', 'ca_torre', 'ca_bloque', 'ca_interior', 'ca_localidad', 'ca_complemento', 'ca_telefonos', 'ca_fax', 'ca_idciudad', 'ca_zipcode', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdsucursal' => 0, 'CaId' => 1, 'CaPrincipal' => 2, 'CaDireccion' => 3, 'CaOficina' => 4, 'CaTorre' => 5, 'CaBloque' => 6, 'CaInterior' => 7, 'CaLocalidad' => 8, 'CaComplemento' => 9, 'CaTelefonos' => 10, 'CaFax' => 11, 'CaIdciudad' => 12, 'CaFchcreado' => 13, 'CaUsucreado' => 14, 'CaFchactualizado' => 15, 'CaUsuactualizado' => 16, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdsucursal' => 0, 'caId' => 1, 'caPrincipal' => 2, 'caDireccion' => 3, 'caOficina' => 4, 'caTorre' => 5, 'caBloque' => 6, 'caInterior' => 7, 'caLocalidad' => 8, 'caComplemento' => 9, 'caTelefonos' => 10, 'caFax' => 11, 'caIdciudad' => 12, 'caFchcreado' => 13, 'caUsucreado' => 14, 'caFchactualizado' => 15, 'caUsuactualizado' => 16, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDSUCURSAL => 0, self::CA_ID => 1, self::CA_PRINCIPAL => 2, self::CA_DIRECCION => 3, self::CA_OFICINA => 4, self::CA_TORRE => 5, self::CA_BLOQUE => 6, self::CA_INTERIOR => 7, self::CA_LOCALIDAD => 8, self::CA_COMPLEMENTO => 9, self::CA_TELEFONOS => 10, self::CA_FAX => 11, self::CA_IDCIUDAD => 12, self::CA_FCHCREADO => 13, self::CA_USUCREADO => 14, self::CA_FCHACTUALIZADO => 15, self::CA_USUACTUALIZADO => 16, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idsucursal' => 0, 'ca_id' => 1, 'ca_principal' => 2, 'ca_direccion' => 3, 'ca_oficina' => 4, 'ca_torre' => 5, 'ca_bloque' => 6, 'ca_interior' => 7, 'ca_localidad' => 8, 'ca_complemento' => 9, 'ca_telefonos' => 10, 'ca_fax' => 11, 'ca_idciudad' => 12, 'ca_fchcreado' => 13, 'ca_usucreado' => 14, 'ca_fchactualizado' => 15, 'ca_usuactualizado' => 16, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdsucursal' => 0, 'CaId' => 1, 'CaPrincipal' => 2, 'CaDireccion' => 3, 'CaOficina' => 4, 'CaTorre' => 5, 'CaBloque' => 6, 'CaInterior' => 7, 'CaLocalidad' => 8, 'CaComplemento' => 9, 'CaTelefonos' => 10, 'CaFax' => 11, 'CaIdciudad' => 12, 'CaZipcode' => 13, 'CaFchcreado' => 14, 'CaUsucreado' => 15, 'CaFchactualizado' => 16, 'CaUsuactualizado' => 17, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdsucursal' => 0, 'caId' => 1, 'caPrincipal' => 2, 'caDireccion' => 3, 'caOficina' => 4, 'caTorre' => 5, 'caBloque' => 6, 'caInterior' => 7, 'caLocalidad' => 8, 'caComplemento' => 9, 'caTelefonos' => 10, 'caFax' => 11, 'caIdciudad' => 12, 'caZipcode' => 13, 'caFchcreado' => 14, 'caUsucreado' => 15, 'caFchactualizado' => 16, 'caUsuactualizado' => 17, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDSUCURSAL => 0, self::CA_ID => 1, self::CA_PRINCIPAL => 2, self::CA_DIRECCION => 3, self::CA_OFICINA => 4, self::CA_TORRE => 5, self::CA_BLOQUE => 6, self::CA_INTERIOR => 7, self::CA_LOCALIDAD => 8, self::CA_COMPLEMENTO => 9, self::CA_TELEFONOS => 10, self::CA_FAX => 11, self::CA_IDCIUDAD => 12, self::CA_ZIPCODE => 13, self::CA_FCHCREADO => 14, self::CA_USUCREADO => 15, self::CA_FCHACTUALIZADO => 16, self::CA_USUACTUALIZADO => 17, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idsucursal' => 0, 'ca_id' => 1, 'ca_principal' => 2, 'ca_direccion' => 3, 'ca_oficina' => 4, 'ca_torre' => 5, 'ca_bloque' => 6, 'ca_interior' => 7, 'ca_localidad' => 8, 'ca_complemento' => 9, 'ca_telefonos' => 10, 'ca_fax' => 11, 'ca_idciudad' => 12, 'ca_zipcode' => 13, 'ca_fchcreado' => 14, 'ca_usucreado' => 15, 'ca_fchactualizado' => 16, 'ca_usuactualizado' => 17, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
 	
@@ -157,6 +160,8 @@ abstract class BaseIdsSucursalPeer {
 		$criteria->addSelectColumn(IdsSucursalPeer::CA_FAX);
 
 		$criteria->addSelectColumn(IdsSucursalPeer::CA_IDCIUDAD);
+
+		$criteria->addSelectColumn(IdsSucursalPeer::CA_ZIPCODE);
 
 		$criteria->addSelectColumn(IdsSucursalPeer::CA_FCHCREADO);
 

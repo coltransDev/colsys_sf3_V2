@@ -80,7 +80,7 @@ class ReportePeer extends BaseReportePeer
 				$c->addAscendingOrderByColumn(ReportePeer::CA_ORDEN_CLIE);	
 				break;
 			default:
-				$c->addJoin( ReportePeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO, Criteria::LEFT_JOIN );
+				$c->addJoin( ReportePeer::CA_IDPROVEEDOR, TerceroPeer::CA_IDTERCERO."::text", Criteria::LEFT_JOIN );
 				$c->addAscendingOrderByColumn(TerceroPeer::CA_NOMBRE);	
 				$c->addAscendingOrderByColumn(ReportePeer::CA_ORDEN_CLIE);	
 				break;

@@ -735,11 +735,15 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 				$this->setCiudad($this->aCiudad);
 			}
 
+			if ($this->isNew() ) {
+				$this->modifiedColumns[] = ContactoAgentePeer::CA_IDCONTACTO;
+			}
 
 						if ($this->isModified()) {
 				if ($this->isNew()) {
 					$pk = ContactoAgentePeer::doInsert($this, $con);
 					$affectedRows += 1; 										 										 
+					$this->setCaIdcontacto($pk);  
 					$this->setNew(false);
 				} else {
 					$affectedRows += ContactoAgentePeer::doUpdate($this, $con);
@@ -1062,8 +1066,6 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
-		$copyObj->setCaIdcontacto($this->ca_idcontacto);
-
 		$copyObj->setCaIdagente($this->ca_idagente);
 
 		$copyObj->setCaNombre($this->ca_nombre);
@@ -1103,6 +1105,7 @@ abstract class BaseContactoAgente extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
+		$copyObj->setCaIdcontacto(NULL); 
 	}
 
 	
