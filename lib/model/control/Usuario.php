@@ -9,6 +9,14 @@
  */ 
 class Usuario extends BaseUsuario
 {
+    public function __toString(){
+        $result = $this->getCaNombre();
+        if( !$this->getCaActivo() ){
+            $result .=" (Inactivo)";
+        }
+        return $result;
+    }
+
 	public function getFirmaHTML(){
 		$resultado = "<strong>".Utils::replace(strtoupper($this->getCaNombre()))."</strong><br />";
 		$resultado .= $this->getCaCargo()."- COLTRANS S.A.<br />";		

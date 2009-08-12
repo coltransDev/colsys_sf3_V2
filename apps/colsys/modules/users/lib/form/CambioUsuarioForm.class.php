@@ -8,8 +8,7 @@ class CambioUsuarioForm extends sfForm{
 		  'username' => new sfWidgetFormPropelChoice(
 		  					array(
 								'model'     => 'Usuario',
-								'add_empty' => false,
-								'method'=>'getCaNombre',
+								'add_empty' => false,								
 								'key_method'=>'getCaLogin',
 								'order_by'=>array('CaNombre', 'ASC')
   						    ) )
