@@ -993,14 +993,13 @@ class traficosActions extends sfActions
 		$this->forward404Unless( $reporte );
 
         $tarea = $reporte->getNotTarea();
-        if( !$tarea || $tarea->getCaFchterminada() ){
+        if( !$tarea || ($tarea && $tarea->getCaFchterminada()) ){
             $tarea = new NotTarea();
             $tarea->setCaFchcreado( time() );
             $tarea->setCaUsucreado( $this->getUser()->getUserId() );
         }
 		
-		if ($request->isMethod('post')){		
-		
+		if ($request->isMethod('post')){           
 			$bindValues = array();			
 			$bindValues["fchseguimiento"] = $request->getParameter("fchseguimiento");
 			$bindValues["txtseguimiento"] = $request->getParameter("txtseguimiento");
