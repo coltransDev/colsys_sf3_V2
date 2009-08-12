@@ -86,7 +86,17 @@ $cliente = $reporte->getCliente();
 		<td><?=$reporte->getCaModalidad()=="FCL"&&$status->getCaDocmaster()?$status->getCaDocmaster():"&nbsp;"?></td>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
-	</tr>		
+	</tr>
+    <?
+    if($reporte->getCaTransporte()==Constantes::AEREO){
+    ?>
+    <tr>
+		<td><b>Transladar a:</b></td>
+		<td colspan="5"><?=$reporte->getNombreBodega()?></td>
+	</tr>
+    <?
+    }
+    ?>
 	<tr>
 		<td><b>Mercanc&iacute;a</b></td>
 		<td colspan="5"><?=$reporte->getCaMercanciaDesc()?></td>
@@ -257,6 +267,16 @@ if( $status->getCaIdetapa()=="IMETA" ){
 	if( $reporte->getCaContinuacion()=="OTM"  ){	
 		echo $textos['mensajeEmbarqueOTM']."<br />";
 	}
+}
+?>
+
+
+<?
+if($reporte->getCaTransporte()==Constantes::AEREO && $status->getCaIdetapa()!="IMETA" ){
+?>
+<br />
+La fecha de llegada de la mercancía es un estimado ya que puede variar por decisión de la aerolínea. 
+<?
 }
 ?>
 
