@@ -251,6 +251,7 @@ require_once("menu.php");
                 echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
                 echo "    <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                 echo "    <IMG style='visibility: $visible;' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
+                echo "    <a href='/ids/formEventos?referencia=".$rs->Value('ca_referencia')."' title='Eventos proveedores'>Eventos proveedores</a><BR>";
                 echo "  </TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -3888,7 +3889,7 @@ require_once("menu.php");
 				exit;
 			 }
 			 $xml_pal66->setAttribute("doc2", 43);
-			 $xml_pal66->setAttribute("raz2", addslashes($tm->Value("ca_nombre")));
+			 $xml_pal66->setAttribute("raz2", utf8_encode($tm->Value("ca_nombre")));
 
 			 // =========================== Consignatario ===========================
 			 $xml_pal66->setAttribute("doc3", 31);
@@ -4171,7 +4172,7 @@ require_once("menu.php");
 							$item = 1;
 							$xml_item->setAttribute("item", $item);
 							$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-							$xml_item->setAttribute("idg", addslashes(substr($rp->Value("ca_mercancia_desc"),0,200)));
+							$xml_item->setAttribute("idg", utf8_encode(substr($rp->Value("ca_mercancia_desc"),0,200)));
 							$xml_item->setAttribute("mpel", "N");
 							$xml_h267->appendChild( $xml_item );
 	
@@ -4211,7 +4212,7 @@ require_once("menu.php");
 					$item = 1;
 					$xml_item->setAttribute("item", $item);
 					$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-					$xml_item->setAttribute("idg", addslashes(substr($rp->Value("ca_mercancia_desc"),0,200)));
+					$xml_item->setAttribute("idg", utf8_encode(substr($rp->Value("ca_mercancia_desc"),0,200)));
 					$xml_item->setAttribute("mpel", "N");
 					$xml_h267->appendChild( $xml_item );
 					
@@ -4287,7 +4288,7 @@ require_once("menu.php");
 								$item = 1;
 								$xml_item->setAttribute("item", $item);
 								$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-								$xml_item->setAttribute("idg", addslashes(substr($rp->Value("ca_mercancia_desc"),0,200)));
+								$xml_item->setAttribute("idg", utf8_encode(substr($rp->Value("ca_mercancia_desc"),0,200)));
 								$xml_item->setAttribute("mpel", "N");
 								$xml_h267->appendChild( $xml_item );
 							}
@@ -4336,7 +4337,7 @@ require_once("menu.php");
 						$item = 1;
 						$xml_item->setAttribute("item", $item);
 						$xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-						$xml_item->setAttribute("idg", addslashes(substr($rp->Value("ca_mercancia_desc"),0,200)));
+						$xml_item->setAttribute("idg", utf8_encode(substr($rp->Value("ca_mercancia_desc"),0,200)));
 						$xml_item->setAttribute("mpel", "N");
 						$xml_h267->appendChild( $xml_item );
 
