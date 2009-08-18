@@ -158,6 +158,18 @@ td.valores {
    background: #F0F0F0;
    color: #000000;
 }
+td.negativo {
+   text-align: right;
+   vertical-align: top;
+   background: #FF0000;
+   color: #000000;
+}
+td.normal {
+   text-align: right;
+   vertical-align: top;
+   background: #04B404;
+   color: #000000;
+}
 th.imprimir {
    text-align:center;
    background:#FFFFFF;
