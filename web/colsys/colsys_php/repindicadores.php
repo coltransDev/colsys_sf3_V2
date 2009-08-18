@@ -269,6 +269,8 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='informe' ACTION='repindicadores.php'>";        // Hace una llamado nuevamente a este script pero con
     echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
 
+	$array_avg = array();
+	$format_avg = "H:i:s";
 	switch ($indicador) {
 		case "Confirmación Salida de la Carga":
 			$source   = "vi_repindicadores";
@@ -288,6 +290,7 @@ require_once("menu.php");
 			$add_cols = 4;
 			break;
 		case "Emisión de Factura":
+			$format_avg = "d";
 			if ($tra_mem == 'Aéreo'){
 				$source   = "vi_repindicador_air";
 				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
@@ -334,12 +337,22 @@ require_once("menu.php");
 			$add_cols = 3;
 			break;	
 		case "Cumplimiento de Proveedores":
+			$format_avg = "d";
 			$source   = "vi_repindicadores";
 			$ind_mem  = 7;
 			$add_cols = 3;
 			break;
 		case "Oportunidad en Entrega de Cotizaciones":
 			$source   = "vi_cotindicadores";
+			if (!$tm->Open("select ca_fchfestivo from tb_festivos where $ano_fes and $mes_fes")) {        // Selecciona todos lo registros de la tabla Festivos
+				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+				echo "<script>document.location.href = 'entrada.php';</script>";
+				exit; }
+			$festi = array();
+			while (!$tm->Eof() and !$tm->IsEmpty()) {
+				$festi[] = $tm->Value('ca_fchfestivo');
+				$tm->MoveNext();
+			}
 			$ind_mem  = 8;
 			$add_cols = 3;
 			$cot_ant  = null;
@@ -362,7 +375,6 @@ require_once("menu.php");
 				$festi[] = $tm->Value('ca_fchfestivo');
 				$tm->MoveNext();
 			}
-			$tm->MoveFirst();
 			$ind_mem  = 9;
 			$add_cols = 4;
 			$ini_ant  = null;
@@ -454,6 +466,7 @@ require_once("menu.php");
 	echo "</TR>";
 	$rs->MoveFirst();
     while (!$rs->Eof() and !$rs->IsEmpty()){                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
+		$adicionales = false;
 		if ($ind_mem == 3 and ($rs->Value('ca_transporte') != 'Marítimo' or $rs->Value('ca_modalidad') != 'LCL')){
 			$rs->MoveNext();
 			continue;
@@ -502,7 +515,15 @@ require_once("menu.php");
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_continuacion')."</TD>";
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchllegada')."</TD>";
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchfactura')."</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchllegada'),$rs->Value('ca_fchfactura'))."</TD>";
+				$dif_mem = dateDiff($rs->Value('ca_fchllegada'),$rs->Value('ca_fchfactura'));
+				if ($dif_mem == null) {
+					$color = "negativo";
+					$dif_mem = 2; // Retorna un valor por defecto de 48 horas = 2 días
+				}else {
+					$color = "invertir";
+				}
+				$array_avg[] = $dif_mem;
+				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				if ($rs->Value('ca_continuacion') == "N/A"){
 					while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()){
 						$rs->MoveNext();	// Omite las facturas adicionales sobre una misma carga.
@@ -515,7 +536,15 @@ require_once("menu.php");
 							echo "  <TD Class=mostrar COLSPAN=12></TD>";
 							echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchplanilla')."</TD>";
 							echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchfactura')."</TD>";
-							echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchplanilla'),$rs->Value('ca_fchfactura'))."</TD>";
+							$dif_mem = dateDiff($rs->Value('ca_fchplanilla'),$rs->Value('ca_fchfactura'));
+							if ($dif_mem == null) {
+								$color = "negativo";
+								$dif_mem = 2; // Retorna un valor por defecto de 48 horas = 2 días
+							}else {
+								$color = "invertir";
+							}
+							$array_avg[] = $dif_mem;
+							echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 							echo "</TR>";
 						}
 						$rs->MoveNext();
@@ -537,7 +566,16 @@ require_once("menu.php");
 					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
 					$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
 					$dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado);
-					echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+
+					if ($dif_mem == null) {
+						$color = "negativo";
+						$dif_mem = tiempo_segundos( 48 * 60 * 60 ); // Retorna un valor por defecto de 48 horas
+					}else {
+						$color = "invertir";
+					}
+					list($hor, $min, $seg) = sscanf($dif_mem, "%d:%d:%d");
+					$array_avg[] = mktime($hor, $min, $sec, 0, 0, 0);
+					echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 					if ($adicionales){
 						echo "</TR>";
 					}
@@ -553,14 +591,22 @@ require_once("menu.php");
 				}
 				break;
 			case 6:
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchreporte')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchrecibo')."</TD>";
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchenvio')."</TD>";
-				list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchreporte'), "%d-%d-%d %d:%d:%d");
+				list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchrecibo'), "%d-%d-%d %d:%d:%d");
 				$tstamp_recibido = mktime($hor, $min, $seg, $mes, $dia, $ano);
 				list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
 				$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
 				$dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado);
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+				if ($dif_mem == null) {
+					$color = "negativo";
+					$dif_mem = tiempo_segundos( 48 * 60 * 60 ); // Retorna un valor por defecto de 48 horas
+				}else {
+					$color = "invertir";
+				}
+				list($hor, $min, $seg) = sscanf($dif_mem, "%d:%d:%d");
+				$array_avg[] = mktime($hor, $min, $sec, 0, 0, 0);
+				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				break;
 			case 7:
 				if (!$tm->Open("select ca_fchllegada from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ca_consecutivo = '".$rs->Value('ca_consecutivo')."' order by ca_fchllegada")) {       // Selecciona todos lo registros de la tabla Status
@@ -577,9 +623,17 @@ require_once("menu.php");
 					$fch_llegada = $tm->Value('ca_fchllegada');
 					$tm->MoveNext();
 				}
+				$dif_mem = dateDiff($fch_eta,$fch_llegada);
+				if ($dif_mem == null) {
+					$color = "negativo";
+					$dif_mem = 2; // Retorna un valor por defecto de 48 horas = 2 días
+				}else {
+					$color = "invertir";
+				}
+				$array_avg[] = $dif_mem;
 				echo "  <TD Class=mostrar style='font-size: 9px;'>$fch_eta</TD>";
 				echo "  <TD Class=mostrar style='font-size: 9px;'>$fch_llegada</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($fch_eta,$fch_llegada)."</TD>";
+				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				break;
 			case 8:
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchcreado')."</TD>";
@@ -593,7 +647,15 @@ require_once("menu.php");
 					$fin_ant = $rs->Value('ca_fchterminada');
 				}
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchterminada')."</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+				if ($dif_mem == null) {
+					$color = "negativo";
+					$dif_mem = tiempo_segundos( 48 * 60 * 60 ); // Retorna un valor por defecto de 48 horas
+				}else {
+					$color = "invertir";
+				}
+				list($hor, $min, $seg) = sscanf($dif_mem, "%d:%d:%d");
+				$array_avg[] = mktime($hor, $min, $sec, 0, 0, 0);
+				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				$cot_ant = $rs->Value('ca_consecutivo');
 				break;
 			case 9:
@@ -618,15 +680,25 @@ require_once("menu.php");
 					}
 				}
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconf_lleg')."</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+				if ($dif_mem == null) {
+					$color = "negativo";
+					$dif_mem = tiempo_segundos( 48 * 60 * 60 ); // Retorna un valor por defecto de 48 horas
+				}else {
+					$color = "invertir";
+				}
+				list($hor, $min, $seg) = sscanf($dif_mem, "%d:%d:%d");
+				$array_avg[] = mktime($hor, $min, $sec, 0, 0, 0);
+				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				continue;
 				break;
 		}
 		
     	$rs->MoveNext();
     }
+
 	echo "<TR HEIGHT=5>";
-    echo "  <TH Class=titulo COLSPAN=".(10+$add_cols)."></TH>";
+    echo "  <TH Class=titulo COLSPAN=".(9+$add_cols)." style='font-size: 9px; text-align:right;'>Promedio Ponderado :</TH>";
+	echo "  <TH Class=titulo>".date($format_avg,array_avg($array_avg))."</TH>";
     echo "</TR>";
 
     echo "<TABLE CELLSPACING=10>";
