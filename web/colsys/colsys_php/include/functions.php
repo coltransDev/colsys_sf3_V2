@@ -21,8 +21,8 @@ function formatNumber($number, $decimals=2, $dec_point=".", $thousands_sep=",") 
 
 function dateDiff($startDate, $endDate)
 {
-	if (strlen($startDate) == 0 or strlen($endDate) == 0){
-		return null;
+	if (strlen($startDate) == 0 or strlen($endDate) == 0){ // Valida si Inicio o Final viene en Blanco
+		return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
 	}
     // Parse dates for conversion
     $startArry = date_parse($startDate);
@@ -41,8 +41,8 @@ function dateDiff($startDate, $endDate)
 function calc_dif(&$festiv, $inicio, $final){
 	$difer = 0;
     $start = $inicio;
-	if (strlen($inicio) == 0 or strlen($final) == 0){
-		return null;
+	if ($inicio == mktime(0,0,0,11,30,1999) or $final == mktime(0,0,0,11,30,1999)){ // Valida si Inicio o Final viene en Blanco
+		return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
 	}
     while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)){
        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");
@@ -81,4 +81,24 @@ function tiempo_segundos($segundos){
 	$segundos2=$segundos%60%60%60;
 	return substr(100+$horas,1,2).":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
 }
+
+
+function array_avg($array,$precision="2"){
+    $a=0;
+    if(is_array($array)){
+        foreach($array as $value):
+            if(!is_numeric($value)){
+                $a++;
+            }
+        endforeach;
+        if($a==0){
+            $cuantos=count($array);
+            return round(array_sum($array)/$cuantos,$precision);
+        }else{
+            return "ERROR in function array_avg(): the array contains one or more non-numeric values";
+        }       
+    }else{
+        return "ERROR in function array_avg(): this is a not array";
+    }
+} 
 ?>
