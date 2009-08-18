@@ -1935,7 +1935,7 @@ echo "</BODY>";
              datos_basicos($nivel,$rs,$tm);
              if ($rs->Value('ca_seguro')== "Sí") {
                  $mn =& DlRecordset::NewRecordset($conn);
-                 if (!$mn->Open("select ca_idmoneda, ca_nombre from tb_monedas where ca_idmoneda = 'COP' order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Monedas
+                 if (!$mn->Open("select ca_idmoneda, ca_nombre from tb_monedas order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Monedas
                      echo "<script>alert(\"".addslashes($mn->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                      echo "<script>document.location.href = 'reportenegocio.php';</script>";
                      exit; }
@@ -1954,11 +1954,13 @@ echo "</BODY>";
                  echo "    <SELECT NAME='idmoneda_vlr'>";  // Llena el cuadro de lista con los valores de la tabla Monedas
                             $mn->MoveFirst();
                             while (!$mn->Eof()) {
-                                   echo "<OPTION VALUE=".$mn->Value('ca_idmoneda');
-                                   if ($mn->Value('ca_idmoneda')==$rs->Value('ca_idmoneda_vlr') or ($rs->Value('ca_idmoneda_vlr')=='' and $mn->Value('ca_idmoneda')=='USD')) {
-                                       echo" SELECTED"; }
-                                   echo ">".$mn->Value('ca_idmoneda')."</OPTION>";
-                                   $mn->MoveNext();
+							   if ($mn->Value("ca_idmoneda")=='COP'){
+								   echo "<OPTION VALUE=".$mn->Value('ca_idmoneda');
+								   if ($mn->Value('ca_idmoneda')==$rs->Value('ca_idmoneda_vlr') or ($rs->Value('ca_idmoneda_vlr')=='' and $mn->Value('ca_idmoneda')=='USD')) {
+									   echo" SELECTED"; }
+								   echo ">".$mn->Value('ca_idmoneda')."</OPTION>";
+							   }
+							   $mn->MoveNext();
                             }
                  echo "    </SELECT></TD>";
                  echo "    <TD Class=listar style='vertical-align:bottom;'>20.2 Obtención Póliza:<BR><INPUT TYPE='TEXT' NAME='obtencionpoliza' VALUE='".($rs->Value('ca_obtencionpoliza')+0)."' SIZE=15 MAXLENGTH=15>";

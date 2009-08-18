@@ -342,6 +342,8 @@ require_once("menu.php");
 			$source   = "vi_cotindicadores";
 			$ind_mem  = 8;
 			$add_cols = 3;
+			$cot_ant  = null;
+			$campos.= ", to_number(substr(ca_consecutivo,0,position('-' in ca_consecutivo)),'99999999')";
 			break;
 		case "Confirmación de llegada":
 			if ($tra_mem == 'Aéreo'){
@@ -363,6 +365,8 @@ require_once("menu.php");
 			$tm->MoveFirst();
 			$ind_mem  = 9;
 			$add_cols = 4;
+			$ini_ant  = null;
+			$fin_ant  = null;
 			break;
 	}
 
@@ -451,6 +455,10 @@ require_once("menu.php");
 	$rs->MoveFirst();
     while (!$rs->Eof() and !$rs->IsEmpty()){                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
 		if ($ind_mem == 3 and ($rs->Value('ca_transporte') != 'Marítimo' or $rs->Value('ca_modalidad') != 'LCL')){
+			$rs->MoveNext();
+			continue;
+		} else if ($ind_mem == 8 and $rs->Value('ca_consecutivo') == $cot_ant and false){
+			echo "  <TD Class=mostrar COLSPAN='3'></TD>";
 			$rs->MoveNext();
 			continue;
 		}
@@ -574,28 +582,43 @@ require_once("menu.php");
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($fch_eta,$fch_llegada)."</TD>";
 				break;
 			case 8:
-				list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchpresentacion'), "%d-%d-%d %d:%d:%d");
-				$fch_presenta = (strlen($ano)!=0)?date("Y-m-d", mktime(0, 0, 0, $mes, $dia, $ano)):null;
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchsolicitud')."</TD>";
-				echo "  <TD Class=mostrar style='font-size: 9px;'>".$fch_presenta."</TD>";
-				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".dateDiff($rs->Value('ca_fchsolicitud'),$fch_presenta)."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchcreado')."</TD>";
+				if ($rs->Value('ca_fchcreado') != $ini_ant or $rs->Value('ca_fchterminada') != $fin_ant){
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchcreado'), "%d-%d-%d %d:%d:%d");
+					$tstamp_confirmado = mktime($hor, $min, $seg, $mes, $dia, $ano);
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchterminada'), "%d-%d-%d %d:%d:%d");
+					$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
+					$dif_mem = calc_dif($festi, $tstamp_confirmado, $tstamp_enviado);
+					$ini_ant = $rs->Value('ca_fchcreado');
+					$fin_ant = $rs->Value('ca_fchterminada');
+				}
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchterminada')."</TD>";
+				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+				$cot_ant = $rs->Value('ca_consecutivo');
 				break;
 			case 9:
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
 				if ($rs->Value('ca_transporte') == 'Aéreo'){
 					echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchllegada')."</TD>";
-					$dif_mem = dateDiff($rs->Value('ca_fchllegada'),$rs->Value('ca_fchconf_lleg'));
+					if ($rs->Value('ca_fchllegada') != $ini_ant or $rs->Value('ca_fchconf_lleg') != $fin_ant){
+						$dif_mem = dateDiff($rs->Value('ca_fchllegada'),$rs->Value('ca_fchconf_lleg'));
+						$ini_ant = $rs->Value('ca_fchllegada');
+						$fin_ant = $rs->Value('ca_fchconf_lleg');
+					}
 				} else if ($rs->Value('ca_transporte') == 'Marítimo'){
 					echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconfirmacion')."</TD>";
-					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconfirmacion'), "%d-%d-%d %d:%d:%d");
-					$tstamp_confirmado = mktime($hor, $min, $seg, $mes, $dia, $ano);
-					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconf_lleg'), "%d-%d-%d %d:%d:%d");
-					$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
-					$dif_mem = calc_dif($festi, $tstamp_confirmado, $tstamp_enviado);
+					if ($rs->Value('ca_fchconfirmacion') != $ini_ant or $rs->Value('ca_fchconf_lleg') != $fin_ant){
+						list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconfirmacion'), "%d-%d-%d %d:%d:%d");
+						$tstamp_confirmado = mktime($hor, $min, $seg, $mes, $dia, $ano);
+						list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconf_lleg'), "%d-%d-%d %d:%d:%d");
+						$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
+						$dif_mem = calc_dif($festi, $tstamp_confirmado, $tstamp_enviado);
+						$ini_ant = $rs->Value('ca_fchconfirmacion');
+						$fin_ant = $rs->Value('ca_fchconf_lleg');
+					}
 				}
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconf_lleg')."</TD>";
 				echo "  <TD Class=invertir style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
-
 				continue;
 				break;
 		}
