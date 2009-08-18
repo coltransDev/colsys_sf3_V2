@@ -37,6 +37,36 @@ function dateDiff($startDate, $endDate)
     return $difference;
 } 
 
+function dateDiff(&$festiv, $startDate, $endDate)
+{
+	if (strlen($startDate) == 0 or strlen($endDate) == 0){ // Valida si Inicio o Final viene en Blanco
+		return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
+	}
+
+	$difer = 0;
+    $start = $startDate;
+	$final = $endDate;
+
+    while (date("Y-m-d", $start) < date("Y-m-d", $final)){
+       list($ano, $mes, $dia) = sscanf(date("Y-m-d", $start), "%d-%d-%d");
+
+       if (date("N", $start)> 5){                                    // Evalua si es un fin de semana
+           $start = mktime(0,0,0,$mes,$dia+1,$ano);
+           continue;
+       }else if (in_array(date("Y-m-d", $start),$festiv)){           // Evalua si es un día festivo
+           $start = mktime(0,0,0,$mes,$dia+1,$ano);
+           continue;
+       }else{
+		   $difer+=1;
+		   $start+=mktime(0,0,0,$mes,$dia+1,$ano);
+	   }
+       // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
+    }
+	// echo "------------- <br /><br />";
+    return(tiempo_segundos($difer));
+}
+
+
 
 function calc_dif(&$festiv, $inicio, $final){
 	$difer = 0;
