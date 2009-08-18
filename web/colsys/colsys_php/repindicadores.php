@@ -289,7 +289,7 @@ require_once("menu.php");
 			$ind_mem  = 3;
 			$add_cols = 4;
 			break;
-		case "Emisión de Factura":
+		case "Oportunidad en la Facturación":
 			$format_avg = "d";
 			if ($tra_mem == 'Aéreo'){
 				$source   = "vi_repindicador_air";
@@ -304,7 +304,7 @@ require_once("menu.php");
 			$ind_mem  = 4;
 			$add_cols = 5;
 			break;
-		case "Información Oportuna":
+		case "Oportunidad en el Envío de Comunicaciones":
 			$source   = "vi_repindicadores";
 			$subque   = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
 			if (!$tm->Open("select ca_fchfestivo from tb_festivos where $ano_fes and $mes_fes")) {        // Selecciona todos lo registros de la tabla Festivos
@@ -342,7 +342,7 @@ require_once("menu.php");
 			$ind_mem  = 7;
 			$add_cols = 3;
 			break;
-		case "Oportunidad en Entrega de Cotizaciones":
+		case "Oportunidad en la Entrega de Cotizaciones":
 			$source   = "vi_cotindicadores";
 			if (!$tm->Open("select ca_fchfestivo from tb_festivos where $ano_fes and $mes_fes")) {        // Selecciona todos lo registros de la tabla Festivos
 				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -358,7 +358,7 @@ require_once("menu.php");
 			$cot_ant  = null;
 			$campos.= ", to_number(substr(ca_consecutivo,0,position('-' in ca_consecutivo)),'99999999')";
 			break;
-		case "Confirmación de llegada":
+		case "Oportunidad en Confirmación de llegada":
 			if ($tra_mem == 'Aéreo'){
 				$source   = "vi_repindicador_air";
 				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
