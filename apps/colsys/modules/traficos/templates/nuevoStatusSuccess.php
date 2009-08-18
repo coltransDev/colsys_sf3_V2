@@ -45,10 +45,13 @@ var mostrar=function( oid ){
 	var divmensaje = document.getElementById('divmensaje');
 	var mensaje = document.form1.mensaje;
 	var mensaje_mask = document.form1.mensaje_mask;
-		
-	switch( value ){
+	
+	switch( value ){        
 		<?
-		foreach( $etapas as $etapa ){
+		foreach( $etapas as $etapa ){           
+            if( $etapa->getCaIdetapa()=="IMETA" && $count>0 ){
+                continue;
+            }
 		?>
 		case '<?=$etapa->getCaIdetapa()?>':
 			var val = '<?=str_replace("\n", "<br />", $etapa->getCaMessage())?>';			

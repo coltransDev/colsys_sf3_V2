@@ -28,7 +28,7 @@ class NuevoProveedorForm extends sfForm{
         $widgets['critico'] = new sfWidgetFormInputCheckbox();
         $widgets['controladoporsig'] = new sfWidgetFormInputCheckbox();
         $widgets['aprobado'] = new sfWidgetFormInputCheckbox();
-
+        $widgets['activo'] = new sfWidgetFormInputCheckbox();
 
 		$this->setWidgets( $widgets );
 
@@ -47,7 +47,7 @@ class NuevoProveedorForm extends sfForm{
 														array('required' => 'Este campo es requerido'));
 
        
-
+        $validator["activo"] =new sfValidatorBoolean( array('required' => false ) );
         $this->setValidators( $validator );
     }
 }

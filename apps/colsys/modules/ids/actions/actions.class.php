@@ -215,6 +215,7 @@ class idsActions extends sfActions
                 $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
                 $bindValues["critico"] = $request->getParameter("critico");
                 $bindValues["aprobado"] = $request->getParameter("aprobado");
+                $bindValues["activo"] = $request->getParameter("activo");
             }
             
             if( $this->modo=="agentes" ){
@@ -223,6 +224,7 @@ class idsActions extends sfActions
             }
 
             $this->form->bind( $bindValues );
+            
 			if( $this->form->isValid() ){
                 
                 $ids->setCaTipoidentificacion( $bindValues["tipo_identificacion"]);
@@ -271,6 +273,12 @@ class idsActions extends sfActions
                         $proveedor->setCaCritico( false );
                     }
 
+                    if( $bindValues["activo"] ){
+                        $proveedor->setCaActivo( true );
+                    }else{
+                        $proveedor->setCaActivo( false );
+                    }
+
                     if( $bindValues["aprobado"] ){
                         if( !$proveedor->getCaFchaprobado() ){
                             $proveedor->setCaFchaprobado( time() );
@@ -294,10 +302,13 @@ class idsActions extends sfActions
                     }
 
                     $agente->setCaTipo( $bindValues["tipo"] );
-                    if( $bindValues["activo"]!==null ){
-                        $agente->setCaActivo();
+                   
+                    if( $bindValues["activo"] ){
+                        $agente->setCaActivo( true );
+                    }else{
+                        $agente->setCaActivo( false );
                     }
-                    
+
                     $agente->save();
                 }
                 
@@ -585,18 +596,25 @@ class idsActions extends sfActions
     public function executeFormEvaluacion(sfWebRequest $request){
         $this->nivel = $this->getNivel();
 
-        $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+        if( $request->getParameter("idevaluacion") ){
+            $evaluacion = IdsEvaluacionPeer::retrieveByPk( $request->getParameter("idevaluacion") );
+            $this->ids = $evaluacion->getIds();
+            $this->tipo = $evaluacion->getCaTipo();
+            $this->proveedor = IdsProveedorPeer::retrieveByPk( $this->ids->getCaId() );
+        }else{
+            $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
+            $evaluacion = new IdsEvaluacion();
+            $this->tipo = $request->getParameter("tipo");
+            $this->proveedor = IdsProveedorPeer::retrieveByPk( $request->getParameter("id") );
+        }
+
+
         $this->modo = $request->getParameter("modo");
-
-        $this->tipo = $request->getParameter("tipo");
-
 		$this->forward404Unless( $this->ids );
         
-        $this->proveedor = IdsProveedorPeer::retrieveByPk( $request->getParameter("id") );
-
         $c = new Criteria();
         $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, $this->tipo );
-        if( $this->proveedor ){
+        if( $this->proveedor && $this->tipo!="desempeno" ){
             $c->add(IdsCriterioPeer::CA_TIPO, $this->proveedor->getCaTipo() );
         }
         $this->criterios = IdsCriterioPeer::doSelect( $c );
@@ -607,9 +625,8 @@ class idsActions extends sfActions
         
         if ($request->isMethod('post')){
 
-
             $bindValues = array();
-
+            
 			$bindValues["fchevaluacion"] = $request->getParameter("fchevaluacion");
 			$bindValues["concepto"] = $request->getParameter("concepto");
 			$bindValues["tipo"] = $request->getParameter("tipo");
@@ -621,12 +638,17 @@ class idsActions extends sfActions
             
 			$this->form->bind( $bindValues);
 			if( $this->form->isValid() ){              
-                $evaluacion = new IdsEvaluacion();
+                
                 $evaluacion->setCaId( $this->ids->getCaId() );
                 $evaluacion->setCaFchevaluacion( Utils::parseDate( $request->getParameter('fchevaluacion' )) );
                 $evaluacion->setCaConcepto( $request->getParameter('concepto') );
                 $evaluacion->setCaTipo( $request->getParameter('tipo') );
                 $evaluacion->save();
+
+                $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterios();
+                foreach( $evaluacionxCriterios as $evaluacionxCriterio ){
+                    $evaluacionxCriterio->delete();
+                }
 
                 $criterios = $request->getParameter("idcriterio");
 
@@ -638,6 +660,8 @@ class idsActions extends sfActions
                     $evaluacionxcriterio->setCaIdEvaluacion(  $evaluacion->getCaIdevaluacion() );
                     if( $request->getParameter("observaciones_".$idcriterio) ){
                         $evaluacionxcriterio->setCaObservaciones( $request->getParameter("observaciones_".$idcriterio) );
+                    }else{
+                        $evaluacionxcriterio->setCaObservaciones( null );
                     }
                     $evaluacionxcriterio->save();
                 }
@@ -645,6 +669,14 @@ class idsActions extends sfActions
                 $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
                 
             }
+        }
+
+        $this->evaluacion = $evaluacion;
+
+        $this->evaluacionxCriterios = array();
+        $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterios();
+        foreach( $evaluacionxCriterios as $evaluacionxCriterio ){
+            $this->evaluacionxCriterios[$evaluacionxCriterio->getCaIdcriterio()]= $evaluacionxCriterio;
         }
 
     }
@@ -681,6 +713,7 @@ class idsActions extends sfActions
             $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
             $this->url = "/ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
             $numreferencia = "";
+            
         }else{ // Esta ingresando desde la referencia
             $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
             $this->forward404Unless(  $numreferencia );
@@ -727,7 +760,7 @@ class idsActions extends sfActions
                 if( $numreferencia ){
                     $evento->setCaReferencia( $numreferencia );
                 }
-                $evento->setCaTipo( $bindValues["tipo_evento"] );
+                $evento->setCaIdcriterio( $bindValues["tipo_evento"] );
                 $evento->save();
                 
                 $this->redirect($this->url);

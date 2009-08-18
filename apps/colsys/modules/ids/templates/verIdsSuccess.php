@@ -109,6 +109,20 @@
                    <div align="left"><?=$proveedor->getCaCritico()?"S&iacute;":"No"?></div>
                </td>
             </tr>
+             <tr>
+                <td>
+                    <div align="left"><b>Activo</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$proveedor->getCaActivo()?"S&iacute;":"No"?></div>
+               </td>
+               <td>
+                   <div align="left"><b>&nbsp;</b></div>
+               </td>
+               <td>
+                   <div align="left">&nbsp;</div>
+               </td>
+            </tr>
             <?
             }
             ?>

@@ -75,7 +75,7 @@ Ext.onReady(function(){
 									
 					?>
 					var url = '<?=url_for( $url )?>';						
-					break;								
+					break;               
 				default: 
 					/*
 					*  Se muestra una grilla con la información de fletes 

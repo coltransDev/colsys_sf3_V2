@@ -37,7 +37,7 @@ class NuevaEvaluacionForm extends sfForm{
         if( $criterios ){            
             foreach( $criterios as $criterio ){
                
-                $widgets['ponderacion_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInput(array(), array("size"=>5 ));
+                $widgets['ponderacion_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInput(array(), array("size"=>5 , "readOnly"=>"true"));
                 $widgets['calificacion_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInput(array(), array("size"=>5 ));
                 $widgets['observaciones_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInput(array(), array("size"=>50));
             }

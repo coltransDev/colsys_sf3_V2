@@ -3,7 +3,7 @@ use_helper("MimeType");
 ?>
 
 <div class="content" align="center">
-<h3><?=$email->getCaSubject()?></h3>
+<b><?=$email->getCaSubject()?></b>
 <br />
 <table width="90%" border="0" cellspacing="0" cellpadding="0" class="tableList">
 	<tr>

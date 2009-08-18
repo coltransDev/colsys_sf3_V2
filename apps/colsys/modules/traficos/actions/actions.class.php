@@ -235,7 +235,9 @@ class traficosActions extends sfActions
 		if( $this->getRequestParameter("destinatarios") ){
 			$this->destinatarios = $this->getRequestParameter("destinatarios");
 		}
-		
+
+
+
 		/*
 		* Configuracion de la forma
 		*/		
@@ -295,6 +297,12 @@ class traficosActions extends sfActions
 		/*
 		* Fin de la configuración
 		*/
+
+
+        $c = new Criteria();
+        $c->add( RepStatusPeer::CA_IDREPORTE, $reporte->getCaIdreporte());
+        $c->add( RepStatusPeer::CA_IDETAPA, "IMCEM" );
+        $this->count = RepStatusPeer::doCount($c);        
 		
 		if ($request->isMethod('post')){		
 		

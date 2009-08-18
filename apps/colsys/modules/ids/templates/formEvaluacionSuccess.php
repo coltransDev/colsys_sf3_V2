@@ -13,6 +13,7 @@ use_helper("ExtCalendar");
 
 <div class="content" align="center">
     <form action="<?=url_for("ids/formEvaluacion?modo=".$modo."&tipo=".$tipo."&id=".$ids->getCaId())?>" method="post">
+        <input type="hidden" name="idevaluacion" value="<?=$evaluacion->getCaIdevaluacion()?>">
     <table class="tableList" width="50%">
         <tr>
             <th colspan="2">&nbsp;</th>
@@ -37,7 +38,11 @@ use_helper("ExtCalendar");
                 <b>Fecha:</b><br />
                 <?
                 echo $form["fchevaluacion"]->renderError();
-                $form->setDefault('fchevaluacion', date("Y-m-d") );
+                if( $evaluacion->getCafchevaluacion() ){
+                    $form->setDefault('fchevaluacion', $evaluacion->getCafchevaluacion() );
+                }else{
+                    $form->setDefault('fchevaluacion', date("Y-m-d") );
+                }
                 echo $form["fchevaluacion"]->render();
                 ?>
 
@@ -47,6 +52,9 @@ use_helper("ExtCalendar");
                 <b>Concepto:</b><br />
                 <?
                 echo $form["concepto"]->renderError();
+                if( $evaluacion->getCaConcepto() ){
+                    $form->setDefault('concepto', $evaluacion->getCaConcepto() );
+                }
                 echo $form["concepto"]->render();
                 ?>
 
@@ -71,6 +79,11 @@ use_helper("ExtCalendar");
                     </tr>
                     <?
                     foreach( $criterios as $criterio ){
+                        if( isset($evaluacionxCriterios[$criterio->getCaIdCriterio()] )){
+                            $evaluacionXCriterio = $evaluacionxCriterios[$criterio->getCaIdCriterio()];
+                        }else{
+                            $evaluacionXCriterio = null;
+                        }
                     ?>
                     <tr>
                         <td>
@@ -96,13 +109,19 @@ use_helper("ExtCalendar");
                         
                         <td>
                             <?
-                            echo $form["calificacion_".$criterio->getCaIdCriterio()]->renderError();                            
+                            echo $form["calificacion_".$criterio->getCaIdCriterio()]->renderError();
+                            if( $evaluacionXCriterio ){
+                                $form->setDefault("calificacion_".$criterio->getCaIdCriterio(),$evaluacionXCriterio->getCaValor() );
+                            }
                             echo $form["calificacion_".$criterio->getCaIdCriterio()]->render();
                             ?>
                         </td>
                         <td>
                            <?
                             echo $form["observaciones_".$criterio->getCaIdCriterio()]->renderError();
+                            if( $evaluacionXCriterio ){
+                                $form->setDefault("observaciones_".$criterio->getCaIdCriterio(),$evaluacionXCriterio->getCaObservaciones() );
+                            }
                             echo $form["observaciones_".$criterio->getCaIdCriterio()]->render();
                             ?>
                         </td>
@@ -111,7 +130,11 @@ use_helper("ExtCalendar");
                     }
                     ?>
                     <tr>
-                        <td colspan="4"><div align="center"><input type="Submit" value="Guardar" class="button"></div>
+                        <td colspan="4">
+                            <div align="center">
+                                <input type="Submit" value="Guardar" class="button">&nbsp;
+                                <input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$ids->getCaId())?>'">
+                            </div>
                         </td>
                     </tr>
                 </table>

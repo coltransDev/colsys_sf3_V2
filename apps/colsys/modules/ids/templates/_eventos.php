@@ -36,7 +36,7 @@
     ?>
     <tr   >
         <td width="20%">
-           <?=$evento->getCaTipo()?>
+           <?=$evento->getIdsCriterio()?>
         </td>
         <td width="20%">
             <?=$evento->getCaEvento()?>

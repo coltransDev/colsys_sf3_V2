@@ -72,7 +72,7 @@ class widgetsActions extends sfActions
 		$this->lineas = array();	
 		foreach( $lineas as $linea ){
 			$this->lineas[] = array(  "idlinea"=>$linea->getCaIdLinea(),
-									"linea"=>$linea->getCaNombre()
+									"linea"=>utf8_encode($linea->getCaNombre())
 								);	
 		}						
 		

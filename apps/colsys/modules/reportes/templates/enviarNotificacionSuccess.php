@@ -1,26 +1,36 @@
 <div align="center" class="content">
-<h1>Se ha enviado una notificación a los siguientes destinatarios:</h1>
+<br />
+    <h1>Se enviar&aacute; una notificaci&oacute;n a los siguientes destinatarios:</h1>
+
 <br />
 
-<h3><?=link_to( "<h3>haga click aca para volver</h3>","/reportes/verReporte?id=".$reporte->getCaIdreporte() );?></h3>
-<br />
+<form action="<?=url_for("/reportes/enviarNotificacion?idreporte=".$reporte->getCaIdreporte())?>" method="post">
 
 <table width="50%" border="0" class="tableList">
-
 <tr>
+    <th width="3%" scope="col">&nbsp;</th>
 	<th width="11%" scope="col"><b>Grupo</b></th>
-	<th width="28%" scope="col">Acci&oacute;n</th>
+	<th width="25%" scope="col"><b>Acci&oacute;n</b></th>
 	<th width="31%" scope="col"><b>Usuario</b></th>
 	<th width="30%" scope="col"><b>e-mail</b></th>
 </tr>
 <?
-foreach( $gruposVerReporte as $grupo=>$logins ){		
+foreach( $grupos as $grupo=>$logins ){		
 	foreach( $logins as $login ){
 		$usuario = UsuarioPeer::retrieveByPk( $login );
 	?>		
 	<tr>
+        <td><input type="checkbox" name="notificar[]" value="<?=$login?>" ></td>
 		<td><?=ucfirst($grupo)?></td>
-		<td>Ver reporte</td>
+		<td>
+            <?
+            if( $grupo=="operativo" ){
+                echo " Crear reporte al exterior";
+            }else{
+                echo "Ver reporte";
+            }
+            ?>
+        </td>
 		<td><?
 				echo $usuario->getCaNombre();				
 			?></td>
@@ -31,27 +41,16 @@ foreach( $gruposVerReporte as $grupo=>$logins ){
 	<?
 	}	
 }
-
-foreach( $gruposCrearReporte as $login ){		
-	$usuario = UsuarioPeer::retrieveByPk( $login );
-	?>		
-	<tr>
-		<td>Operativo</td>
-		<td>Crear reporte al exterior</td>
-		<td><?
-				echo $usuario->getCaNombre();				
-			?></td>
-		<td><?
-				echo $usuario->getCaEmail();				
-			?></td>
-	</tr>
-	<?
-		
-}
 ?>
+    <tr>
+        <td colspan="5">
+            <div align="center">
+                 <input type="submit" value="Enviar" class="button"> &nbsp;
+                 <input type="button" value="Cancelar" class="button" onclick="document.location='<?=url_for("/reportes/verReporte?id=".$reporte->getCaIdreporte())?>'">
+
+            </div>
+        </td>
+    </tr>
 </table>
-
-
-
-
+</form>
 </div>

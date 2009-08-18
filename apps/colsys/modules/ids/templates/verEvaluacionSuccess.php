@@ -20,8 +20,12 @@
                 <td width="50%"><b>Proveedor:</b><br /><?=$ids->getCaNombre()?></td>
             </tr>
             <tr>
-                <td> <b>Fecha:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchevaluacion())?></td>
+                <td> <b>Fecha Evaluaci&acute;n:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchevaluacion())?></td>
                 <td> <b>Concepto:</b><br /><?=$evaluacion->getCaConcepto()?></td>
+            </tr>
+             <tr>
+                <td> <b>Fecha Creaci&oacute;n:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchcreado())?></td>
+                <td> <b>Usuario Creador:</b><br /><?=$evaluacion->getCaUsucreado()?></td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -49,11 +53,9 @@
                     foreach( $criterios as $criterio ){
                         $i++;
                         $ponderacion+=$criterio->getCaPonderacion();
-                        if( $evaluacion->getCaTipo()!="seleccion" ){
-                            $valor+=$criterio->getCaValor()*$criterio->getCaPonderacion();
-                        }else{
-                            $valor+=$criterio->getCaValor();
-                        }
+                        
+                        $valor+=$criterio->getCaValor()*$criterio->getCaPonderacion();
+                        
                     
                     ?>
                     <tr>
@@ -95,7 +97,11 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4"><div align="center"><input type="button" value="Volver" class="button" onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$ids->getCaId())?>'"></div>
+                        <td colspan="4">
+                            <div align="center">
+                                <input type="button" value="Volver" class="button" onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$ids->getCaId())?>'">
+                                <input type="button" value="Editar" class="button" onClick="document.location='<?=url_for("ids/formEvaluacion?modo=".$modo."&idevaluacion=".$evaluacion->getCaIdevaluacion())?>'">
+                            </div>
                         </td>
                     </tr>
                 </table>

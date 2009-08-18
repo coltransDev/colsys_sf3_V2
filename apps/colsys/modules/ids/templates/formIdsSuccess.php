@@ -213,6 +213,29 @@
             </div>
         </td>
 	</tr>
+
+     <tr>
+        <td> <div align="left"><b>Activo:</b></div></td>
+		<td >
+            <div align="left">
+           <?
+            echo $form['activo']->renderError();
+            if( $proveedor ){
+                $form->setDefault('activo', $proveedor->getCaActivo() );
+            }else{
+                $form->setDefault('activo', true );
+            }
+            echo $form['activo']->render();
+            ?>
+            </div>
+        </td>
+        <td> &nbsp;</td>
+		<td colspan="3">
+           &nbsp;
+        </td>
+	</tr>
+
+
     <?
     }
     ?>

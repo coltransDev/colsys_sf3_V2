@@ -85,7 +85,7 @@
 		<column name="ca_controladoporsig" type="boolean" required="true"  />
 		<column name="ca_fchaprobado" type="timestamp" />
 		<column name="ca_usuaprobado" type="varchar"    />
-        <column name="ca_activo" type="varchar" required="true"  />
+        <column name="ca_activo" type="boolean" required="true"  />
         <foreign-key foreignTable="ids.tb_ids">
 			<reference local="ca_idproveedor" foreign="ca_id"/>
 		</foreign-key>
@@ -98,7 +98,7 @@
     <table name="ids.tb_agentes" phpName="IdsAgente">
 		<column name="ca_idagente" type="integer" required="true" primaryKey="true"  />
 		<column name="ca_tipo" type="varchar" required="true"  />
-        <column name="ca_activo" type="varchar" required="true"  />
+        <column name="ca_activo" type="boolean" required="true"  />
         <foreign-key foreignTable="ids.tb_ids">
 			<reference local="ca_idagente" foreign="ca_id"/>
 		</foreign-key>       
@@ -199,12 +199,15 @@
 		<id-method-parameter value="ids.tb_eventos_id"/>
         <column name="ca_id" type="integer" required="true" />
         <column name="ca_evento" type="varchar" />
-        <column name="ca_referencia" type="varchar"   />
-        <column name="ca_tipo" type="varchar"   />
-        <column name="ca_fchcreado" type="timestamp" required="true"/>
-		<column name="ca_usucreado" type="varchar" required="true"   />
+        <column name="ca_referencia" type="varchar" />
+        <column name="ca_idcriterio" type="integer" />
+        <column name="ca_fchcreado" type="timestamp" required="true" />
+		<column name="ca_usucreado" type="varchar" required="true" />
         <foreign-key foreignTable="ids.tb_ids">
 			<reference local="ca_id" foreign="ca_id"/>
+		</foreign-key>
+        <foreign-key foreignTable="ids.tb_criterios">
+			<reference local="ca_idcriterio" foreign="ca_idcriterio"/>
 		</foreign-key>
 	</table>
 

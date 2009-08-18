@@ -22,13 +22,10 @@ class NuevoEventoForm extends sfForm{
 		$widgets = array();
 		$validator = array();
 
-
-        $widgets['tipo_evento'] = new sfWidgetFormChoice(array(
-															  'choices' => array('Buen servicio'=>'Buen servicio',
-                                                                                 'Mal servicio'=>'Mal servicio'
-                                                                                ),
-															)                                                            
-                                                    );
+        
+        $c = new Criteria();                
+        $c->add( IdsCriterioPeer::CA_TIPOCRITERIO, "desempeno" );        
+        $widgets['tipo_evento'] = new sfWidgetFormPropelChoice(array('model' => 'IdsCriterio', 'add_empty' => false, 'criteria' => $c));
 
         $widgets['evento'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>80 ) );
 		
@@ -72,6 +69,7 @@ class NuevoEventoForm extends sfForm{
     public function setIdproveedores( array $v ){
         $this->idproveedores = $v;
     }
+
 
     public function getIdproveedores( ){
         return $this->idproveedores;

@@ -1985,6 +1985,10 @@ class pricingActions extends sfActions
 		$this->responseArray = array("id"=>$id, "success"=>true);	
 		$this->setTemplate("responseTemplate");		
 	}
+
+    
+
+	
 	
 	/*
 	* Muestra las ciudades y las devuelve en forma de arbol, el cliente 

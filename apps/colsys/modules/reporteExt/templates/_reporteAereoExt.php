@@ -87,7 +87,11 @@ if( $reporte->getCaIdmaster()){
     $c->add( SucursalPeer::CA_NOMBRE, $reporte->getDestino()->getCaCiudad() );
     $sucursal = SucursalPeer::doSelectOne( $c );
 
-	$master = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<BR>".$sucursal->getCaDireccion()."<BR>Teléfonos:".$sucursal->getCaTelefono()." Fax:".$sucursal->getCaFax()."<BR>".$reporte->getDestino()->getCaCiudad()." - ".$reporte->getDestino()->getTrafico()->getCaNombre();
+	$master = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<BR>";
+    if( $sucursal ){    
+        $master.=$sucursal->getCaDireccion()."<BR>Teléfonos:".$sucursal->getCaTelefono()." Fax:".$sucursal->getCaFax()."<BR>";
+    }
+    $master.=$reporte->getDestino()->getCaCiudad()." - ".$reporte->getDestino()->getTrafico()->getCaNombre();
 }
 
 
