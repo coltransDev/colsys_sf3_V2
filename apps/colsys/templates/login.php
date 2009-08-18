@@ -16,9 +16,7 @@
 				<?=image_tag("coltrans_logo.jpg")?>
 		</div>
 		<div class="logo2"> 			          					
-				<?
-				//image_tag("colmas_logo.jpg")
-				?>
+				<?=image_tag("colmas_logo.jpg")	?>
 		</div>			
 		<!--	
 		<div class="search">
