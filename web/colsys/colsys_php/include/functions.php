@@ -33,15 +33,20 @@ function dateDiff($startDate, $endDate)
     $end_date = gregoriantojd($endArry["month"], $endArry["day"], $endArry["year"]);
 
     // Return difference
-    return round(($end_date - $start_date), 0);
+	$difference = (round(($end_date-$start_date),0)==0)?1:round(($end_date-$start_date),0);
+    return $difference;
 } 
 
 
 function calc_dif(&$festiv, $inicio, $final){
 	$difer = 0;
     $start = $inicio;
+	if (strlen($inicio) == 0 or strlen($final) == 0){
+		return null;
+	}
     while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)){
        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");
+
        if (date("N", $start)> 5){                                    // Evalua si es un fin de semana
            $start = mktime(8,0,0,$mes,$dia+1,$ano);
            continue;
@@ -54,12 +59,17 @@ function calc_dif(&$festiv, $inicio, $final){
        }else if ($start > mktime(16,59,0,$mes,$dia,$ano)){            // Evalua si es después de las 5:00 pm
            $start = mktime(8,0,0,$mes,$dia+1,$ano);
            continue;
+       }else if (date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final) and date("Y-m-d H:i:s", $start+3600) <= date("Y-m-d H:i:s", mktime(17,0,0,$mes,$dia,$ano))){ // Evalua la posibilidad de incrementos de una hora sin sobrepasar las 5:00pm
+		   $difer+=3600;
+           $start+=3600;
+           continue;
        }else{
 		   $difer+=60;
 		   $start+=60;
 	   }
-    // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
+       // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
     }
+	// echo "------------- <br /><br />";
     return(tiempo_segundos($difer));
 }
 
