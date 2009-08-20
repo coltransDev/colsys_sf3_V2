@@ -66,6 +66,7 @@
 		<column name="ca_observaciones" type="varchar"   />		
 		<column name="ca_sugerido" type="boolean"   />
         <column name="ca_activo" type="boolean"   />
+        <column name="ca_visibilidad" type="integer"   />
         <column name="ca_fchcreado" type="timestamp" required="true"  />
 		<column name="ca_usucreado" type="varchar" required="true"  />
         <column name="ca_fchactualizado" type="timestamp"   />
