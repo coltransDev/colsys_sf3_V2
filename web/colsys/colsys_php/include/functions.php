@@ -90,6 +90,7 @@ function calc_dif(&$festiv, $inicio, $final){
 	if ($inicio == mktime(0,0,0,11,30,1999) or $final == mktime(0,0,0,11,30,1999)){ // Valida si Inicio o Final viene en Blanco
 		return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
 	}
+
     while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)){
        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");
 
