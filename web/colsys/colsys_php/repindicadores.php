@@ -715,15 +715,17 @@ require_once("menu.php");
 
 function analizar_dif($tipo, $lci_var, $lcs_var, &$dif_mem, &$array_avg, &$array_pnc, &$array_pmc){
 	if ($dif_mem == null) {
-		$color = "negativo";
-		$dif_mem = ($tipo == "D")?(2):(48*60*60); // Retorna un valor por defecto de 48 horas = 2 días
+		$color = "resaltar";
+		$dif_mem = ($tipo == "D")?(2):"48:00:00"; // Retorna un valor por defecto de 48 horas = 2 días
 		$array_pnc[] = $dif_mem;
 	}else if ($dif_mem >= $lcs_var) {
 		$color = "negativo";
 		$array_pnc[] = $dif_mem;
-	}else if ($dif_mem < $lcs_var){
+	}else if ($dif_mem < $lci_var){
 		$color = "destacar";
 		$array_pmc[] = $dif_mem;
+	}else{
+		$color = "invertir";
 	}
 	if ($tipo == "D"){
 		$array_avg[] = $dif_mem;
