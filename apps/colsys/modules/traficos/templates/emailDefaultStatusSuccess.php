@@ -89,10 +89,11 @@ $cliente = $reporte->getCliente();
 	</tr>
     <?
     if($reporte->getCaTransporte()==Constantes::AEREO){
+        $bodega2 = BodegaPeer::retrieveByPk( $reporte->getCaIdBodega() );
     ?>
     <tr>
 		<td><b>Transladar a:</b></td>
-		<td colspan="5"><?=$reporte->getNombreBodega()?></td>
+		<td colspan="5"><?=$bodega2->getCaTipo()?></td>
 	</tr>
     <?
     }
