@@ -194,28 +194,35 @@ require_once("menu.php");
           }
        $num_ref++;
 
-       list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date('Y-m-d H:i:s'), "%d-%d-%d %d:%d:%d");
-       $tstamp_actual = mktime($hor, $min, $seg, $mes, $dia, $ano);
-       list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fcharribo'), "%d-%d-%d %d:%d:%d");
-       $tstamp_fcharribo = mktime($hor, $min, $seg, $mes, $dia, $ano);
+       $startArry = date_parse(date('Y-m-d H:i:s'));
+	   $endArry = date_parse($rs->Value('ca_fcharribo')." 00:00:00");
+	   
+       $tstamp_actual = mktime($startArry[hour], $startArry[minute], $startArry[second], $startArry[month], $startArry[day], $startArry[year]);
+       $tstamp_fcharribo = mktime($endArry[hour], $endArry[minute], $endArry[second], $endArry[month], $endArry[day], $endArry[year]);
+
 	   if ($tstamp_actual > $tstamp_fcharribo and $rs->Value('ca_iddocactual')==""){
 	       $class = "resaltar";
 	   }else{
-	       $dif_mem = calc_dif($festi, $tstamp_actual, $tstamp_fcharribo);
-		   if ($dif_mem > 24){
+	       $dif_mem = workDiff($festi, date('Y-m-d'), $rs->Value('ca_fcharribo'));
+		   if ($dif_mem > 2){
 		       $class = "normal";
-		   }else if ($dif_mem > 9 and $rs->Value('ca_iddocactual')==""){
-		       $class = "destacar";
-		   }else if ($dif_mem <= 9 and $rs->Value('ca_iddocactual')==""){
-		       $class = "negativo";
-		   }else{
-		       $class = "listar";
+		   }else {
+		       $dif_mem = calc_dif($festi, $tstamp_actual, $tstamp_fcharribo);
+			   $dif_hou = date_parse($dif_mem);
+		   
+			   if ($dif_hou[hour] > 8 and $rs->Value('ca_iddocactual')==""){
+				   $class = "destacar";
+			   }else if ($dif_hou[hour] <= 8 and $rs->Value('ca_iddocactual')==""){
+				   $class = "negativo";
+			   }else{
+				   $class = "listar";
+			   }
 		   }
 	   }
 
        echo "<TR>";
        echo "  <TD Class=listar style='font-size: 9px;$back_col'>$num_ref</TD>";
-       echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_referencia')."</TD>";
+       echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_referencia')." </TD>";
        echo "  <TD Class=listar style='font-size: 9px;$back_col'>".$rs->Value('ca_estado')."</TD>";
        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_fcharribo')."</TD>";
        echo "  <TD Class=$class style='font-size: 9px;$back_col'>".$rs->Value('ca_iddocactual')."</TD>";
