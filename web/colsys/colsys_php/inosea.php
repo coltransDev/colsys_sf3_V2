@@ -251,7 +251,7 @@ require_once("menu.php");
                 echo "    <IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Modificar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'>";
                 echo "    <IMG style='visibility: $visible;' src='./graficos/del.gif'  alt='Eliminar el Registro' border=0 onclick='elegir(\"Eliminar\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR><BR>";
                 echo "    <IMG style='visibility: $visible;' src='./graficos/muisca.gif'  alt='Informacion Muisca' border=0 onclick='elegir(\"Muisca\", \"".$rs->Value('ca_referencia')."\", 0, 0);'><BR>";
-                echo "    <a href='/ids/formEventos?referencia=".$rs->Value('ca_referencia')."' title='Eventos proveedores'>Eventos proveedores</a><BR>";
+                
                 echo "  </TD>";
                 echo "</TR>";
                 echo "<TR>";
@@ -527,7 +527,8 @@ require_once("menu.php");
                 echo "  <TD Class=imprimir COLSPAN=6>&nbsp</TD>";
                 echo "</TR>";
                 echo "<TH Class=titulo COLSPAN=5>Cuadro de Costos de la Referencia</TH>";
-                echo "<TH><IMG style='visibility: $visible;' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"".$rs->Value('ca_referencia')."\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
+                echo "<TH><IMG style='visibility: $visible;' src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"AdicionarCs\",  \"".$rs->Value('ca_referencia')."\", 0);'>";  // Botón para la creación de un Registro Nuevo
+                echo "<IMG src='./graficos/post.gif' onClick=\"document.location='/ids/formEventos?referencia=".$rs->Value('ca_referencia')."'\" title='Eventos Proveedores' ></TH>";
                 while (!$cs->Eof() and !$cs->IsEmpty()) {                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
                    echo "<TR>";
                    echo "<TR HEIGHT=5>";
