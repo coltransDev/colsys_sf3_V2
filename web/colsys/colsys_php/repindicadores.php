@@ -643,14 +643,14 @@ require_once("menu.php");
 			case 9:
 				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
 				if ($rs->Value('ca_transporte') == 'Aéreo'){
-					echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchllegada')."</TD>";
+					$fch_mem = $rs->Value('ca_fchllegada');
 					if ($rs->Value('ca_fchllegada') != $ini_ant or $rs->Value('ca_fchconf_lleg') != $fin_ant){
 						$dif_mem = dateDiff($rs->Value('ca_fchllegada'),$rs->Value('ca_fchconf_lleg'));
 						$ini_ant = $rs->Value('ca_fchllegada');
 						$fin_ant = $rs->Value('ca_fchconf_lleg');
 					}
 				} else if ($rs->Value('ca_transporte') == 'Marítimo'){
-					echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchconfirmacion')."</TD>";
+					$fch_mem = $rs->Value('ca_fchconfirmacion');
 					if ($rs->Value('ca_fchconfirmacion') != $ini_ant or $rs->Value('ca_fchconf_lleg') != $fin_ant){
 						list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchconfirmacion'), "%d-%d-%d %d:%d:%d");
 						$tstamp_confirmado = mktime($hor, $min, $seg, $mes, $dia, $ano);
@@ -662,6 +662,7 @@ require_once("menu.php");
 					}
 				}
 				$color = analizar_dif("T", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc); // Función que retorna un Arreglo con el resultado de Dif
+				echo "  <TD Class=$color style='font-size: 9px;'>".$fch_mem."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchconf_lleg')."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				continue;
