@@ -2876,6 +2876,7 @@ ORDER BY ca_fchstatus ";
     public function executeImportarAgentes(){
         $c = new Criteria();
         $c->addAscendingOrderByColumn( AgentePeer::CA_NOMBRE );
+        //$c->add( AgentePeer::CA_IDAGENTE, 400056103 );
         $agentes = AgentePeer::doSelect($c);
 
         foreach( $agentes as $agente ){
@@ -2897,36 +2898,58 @@ ORDER BY ca_fchstatus ";
             if( $agente->getCaActivo() ){
                 $idsAgente->setCaActivo(true);
             }else{
-                //$idsAgente->setCaActivo(false);
+                $idsAgente->setCaActivo(false);
             }
             $idsAgente->save();
             
-            $sucursal = new IdsSucursal();
-            $sucursal->setCaId( $ids->getcaId() );
-            $sucursal->setCaIdciudad( $agente->getcaIdciudad() );
-            $sucursal->setCaDireccion( $agente->getCaDireccion() );
-            $sucursal->setCaTelefonos( $agente->getCaTelefonos() );
-            $sucursal->setCaFax( $agente->getCaFax() );
-            $sucursal->setCaZipcode( $agente->getCaZipcode() );
-            $sucursal->setCaPrincipal( true );
-            $sucursal->save();
-            
-            $transContactos = $agente->getContactoAgentes();
+
+            $ult = null;
+
+            $c = new Criteria();
+            $c->addAscendingOrderByColumn( ContactoAgentePeer::CA_IDCIUDAD );
+            $transContactos = $agente->getContactoAgentes( $c );
+
+          
+            if( count($transContactos)==0 ){
+                $sucursal = new IdsSucursal();
+                $sucursal->setCaId( $ids->getcaId() );
+                $sucursal->setCaIdciudad( $agente->getCaIdciudad() );
+                $sucursal->setCaPrincipal( true );
+                $sucursal->setCaDireccion( $agente->getCaDireccion() );
+                $sucursal->setCaTelefonos( $agente->getCaTelefonos() );
+                $sucursal->setCaFax( $agente->getCaFax() );
+                $sucursal->setCaZipcode( $agente->getCaZipcode() );
+                $sucursal->save();
+            }
+
             foreach( $transContactos as $transContacto ){
-                $contacto = new IdsContacto();
-                $nombres = explode(" ",$transContacto->getCaNombre());
 
-                if(count($nombres)==2){
-                    $nombre = $nombres[0];
-                    $apellido = $nombres[1];
-                }elseif(count($nombres)==3){
-                    $nombre = $nombres[0]." ".$nombres[1];
-                    $apellido = $nombres[2];
+                if( $ult!=$transContacto->getCaIdciudad() ){
+                    $ult=$transContacto->getCaIdciudad();
+                    $sucursal = new IdsSucursal();
+                    $sucursal->setCaId( $ids->getcaId() );
+                    $sucursal->setCaIdciudad( $transContacto->getCaIdciudad() );
+                    
+                    if( $transContacto->getCaIdciudad()==$agente->getCaIdciudad() ){
+                        $sucursal->setCaPrincipal( true );
 
-                }else{
-                    $nombre = $transContacto->getCaNombre();
-                    $apellido = "";
+                        $sucursal->setCaDireccion( $agente->getCaDireccion() );
+                        $sucursal->setCaTelefonos( $agente->getCaTelefonos() );
+                        $sucursal->setCaFax( $agente->getCaFax() );
+                        $sucursal->setCaZipcode( $agente->getCaZipcode() );
+
+                    }else{
+                        $sucursal->setCaPrincipal( false );
+                        $sucursal->setCaDireccion( $transContacto->getCaDireccion() );
+                        $sucursal->setCaTelefonos( $transContacto->getCaTelefonos() );
+                        $sucursal->setCaFax( $transContacto->getCaFax() );
+                        
+                    }
+                    $sucursal->save();
                 }
+
+                $contacto = new IdsContacto();
+                
 
                 $contacto->setCaNombres(ucwords($transContacto->getCaNombre()));
                 $contacto->setCaPapellido(ucwords($transContacto->getCaApellido()));
