@@ -1,13 +1,13 @@
  <table class="tableList" width="100%">
      <tr class="row0">
-          <td><b>Nombre</b></td>
-          <td><b>Extensión</b></td>
-          <td><b>Fax</b></td>
-          <td><b>e-mail</b></td>
-          <td><b>Cargo</b></td>
-          <td><b>Impo/Expo</b></td>
-          <td><b>Transporte</b></td>
-          <td> 
+         <td width="15%"><b>Nombre</b></td>
+         <td width="10%"><b>Tel&eacute;fono</b></td>
+          <td width="10%"><b>Fax</b></td>
+          <td width="20%"><b>e-mail</b></td>
+          <td width="15%"><b>Cargo</b></td>
+          <td width="15%"><b>Impo/Expo</b></td>
+          <td width="10%"><b>Transporte</b></td>
+          <td width="5%">
               <div align="center">
                 <?
                 if( $nivel>=3 ){

@@ -87,7 +87,7 @@
 				 ?>				 </td>
 			</tr>-->
 			<tr>
-                <td><b>Extensi&oacute;n:</b></td>
+                <td><b>Tel&eacute;fono:</b></td>
 				<td colspan="3">
 				<?
 				 echo $form['telefonos']->renderError();
