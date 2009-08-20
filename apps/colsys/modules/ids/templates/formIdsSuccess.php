@@ -173,19 +173,25 @@
             ?>
             </div>
         </td>
-        <td> <div align="left"><b>Aprobado:</b></div></td>
+        <td> <div align="left"><b>Activo:</b></div></td>
 		<td colspan="3">
-            <div align="left">
-            <?
-            echo $form['aprobado']->renderError();
+                <div align="left">
+           <?
+            echo $form['activo']->renderError();
             if( $proveedor ){
-                $form->setDefault('aprobado', $proveedor->getCaFchaprobado()?true:false );
+                $form->setDefault('activo', $proveedor->getCaActivo() );
+            }else{
+                $form->setDefault('activo', true );
             }
-            echo $form['aprobado']->render();
+            echo $form['activo']->render();
             ?>
             </div>
+           
         </td>
 	</tr>
+        <?
+        if( $nivel>=5 ){
+        ?>
 
     <tr>
         <td> <div align="left"><b>Controlado por SIG:</b></div></td>
@@ -215,17 +221,17 @@
 	</tr>
 
      <tr>
-        <td> <div align="left"><b>Activo:</b></div></td>
+        <td> <div align="left"><b>Aprobado:</b></div></td>
 		<td >
-            <div align="left">
-           <?
-            echo $form['activo']->renderError();
+
+
+             <div align="left">
+            <?
+            echo $form['aprobado']->renderError();
             if( $proveedor ){
-                $form->setDefault('activo', $proveedor->getCaActivo() );
-            }else{
-                $form->setDefault('activo', true );
+                $form->setDefault('aprobado', $proveedor->getCaFchaprobado()?true:false );
             }
-            echo $form['activo']->render();
+            echo $form['aprobado']->render();
             ?>
             </div>
         </td>
@@ -237,6 +243,7 @@
 
 
     <?
+        }
     }
     ?>
 

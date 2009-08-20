@@ -24,7 +24,11 @@ use_helper("MimeType");
            <b>Imagen</b>
         </td>
         <td>
-           <?=link_to(image_tag("16x16/edit_add.gif"), "ids/formDocumentos?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Nuevo documento"))?>
+           <?
+           if( $nivel>=3 ){
+                echo link_to(image_tag("16x16/edit_add.gif"), "ids/formDocumentos?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Nuevo documento"));
+           }
+           ?>
         </td>
     </tr>
     <?
@@ -78,7 +82,9 @@ use_helper("MimeType");
         <td>
             <?
             if( !$class ){
-                echo link_to(image_tag("16x16/edit.gif"), "ids/formDocumentos?modo=".$modo."&iddocumento=".$documento->getCaIddocumento(),array("title"=>"Editar documento"));
+                if( $nivel>=3 ){
+                    echo link_to(image_tag("16x16/edit.gif"), "ids/formDocumentos?modo=".$modo."&iddocumento=".$documento->getCaIddocumento(),array("title"=>"Editar documento"));
+                }
             }
             ?>
         </td>

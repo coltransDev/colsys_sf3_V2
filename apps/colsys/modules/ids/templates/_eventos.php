@@ -25,8 +25,11 @@
             <b>Fecha </b>
         </td>
         <td width="20%" align="center">
-           <?=link_to(image_tag("16x16/edit_add.gif"), "ids/formEventos?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Nuevo evento"))?>
-           
+           <?          
+           if( $nivel>=1 ){
+               echo link_to(image_tag("16x16/edit_add.gif"), "ids/formEventos?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Nuevo evento"));
+           }
+           ?>
         </td>
     </tr>
     <?

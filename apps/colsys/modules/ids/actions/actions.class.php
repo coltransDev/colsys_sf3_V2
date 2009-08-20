@@ -11,14 +11,14 @@
 class idsActions extends sfActions
 {
 
-    const RUTINA_AGENTES = "78";
-	const RUTINA_TRANPORTADORES = "79";
-	const RUTINA_PROV = "80";
+    const RUTINA_AGENTES = "8";	
+	const RUTINA_PROV = "81";
     /*
      * Retorna el nivel de acceso de acuerdo al modo
      */
-    private function getNivel( ){
+    public function getNivel( ){
         $this->modo = $this->getRequestParameter("modo");
+        $this->nivel = -1;
 		if( !$this->modo ){
 			$this->forward( "ids", "seleccionModo" );
 		}
@@ -28,12 +28,13 @@ class idsActions extends sfActions
 		}
 		
 		if( $this->modo=="prov" ){
-			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );            
 		}
 
 		if( $this->nivel==-1 ){
 			$this->forward404();
-		}
+		}        
+        return $this->nivel;
     }
 	/**
 	* Muestra la pagina inicial del modulo, le permite al usuario hacer busquedas.
@@ -152,7 +153,6 @@ class idsActions extends sfActions
         $this->forward404Unless($request->getParameter("id"));
         $this->ids = IdsPeer::retrieveByPK($request->getParameter("id"));
         $this->forward404Unless($this->ids);
-
        
 
         $response = sfContext::getInstance()->getResponse();
@@ -261,17 +261,6 @@ class idsActions extends sfActions
                     }
 
                     $proveedor->setCaTipo( $bindValues["tipo_proveedor"] );
-                    if( $bindValues["controladoporsig"] ){
-                        $proveedor->setCaControladoporsig( true );
-                    }else{
-                        $proveedor->setCaControladoporsig( false );                        
-                    }
-
-                    if( $bindValues["critico"] ){
-                        $proveedor->setCaCritico( true );
-                    }else{
-                        $proveedor->setCaCritico( false );
-                    }
 
                     if( $bindValues["activo"] ){
                         $proveedor->setCaActivo( true );
@@ -279,15 +268,31 @@ class idsActions extends sfActions
                         $proveedor->setCaActivo( false );
                     }
 
-                    if( $bindValues["aprobado"] ){
-                        if( !$proveedor->getCaFchaprobado() ){
-                            $proveedor->setCaFchaprobado( time() );
-                            $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+                   
+                    
+                    if( $this->nivel>=5 ){
+                        if( $bindValues["controladoporsig"] ){
+                            $proveedor->setCaControladoporsig( true );
+                        }else{
+                            $proveedor->setCaControladoporsig( false );
                         }
-                    }else{
-                        $proveedor->setCaFchaprobado( null );
-                        $proveedor->setCaUsuaprobado( null );
 
+                        if( $bindValues["critico"] ){
+                            $proveedor->setCaCritico( true );
+                        }else{
+                            $proveedor->setCaCritico( false );
+                        }
+
+                        if( $bindValues["aprobado"] ){
+                            if( !$proveedor->getCaFchaprobado() ){
+                                $proveedor->setCaFchaprobado( time() );
+                                $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+                            }
+                        }else{
+                            $proveedor->setCaFchaprobado( null );
+                            $proveedor->setCaUsuaprobado( null );
+
+                        }
                     }
 
                     $proveedor->save();
@@ -343,10 +348,10 @@ class idsActions extends sfActions
 
     public function executeFormContactosIds(sfWebRequest $request){
         $this->nivel = $this->getNivel();
-        /*
-		if( $this->nivel<=0 ){
+        
+		if( $this->nivel<3 ){
 			$this->forward404();
-		}*/
+		}
         $this->modo = $request->getParameter("modo");
 		
 		$this->contacto = IdsContactoPeer::retrieveByPk( $request->getParameter("idcontacto") );
@@ -379,6 +384,7 @@ class idsActions extends sfActions
 
 			$bindValues["impoexpo"] =  $request->getParameter("impoexpo");
 			$bindValues["transporte"] = $request->getParameter("transporte");
+            $bindValues["visibilidad"] = $request->getParameter("visibilidad");
 			$this->form->bind( $bindValues );
 			if( $this->form->isValid() ){
 				if( $bindValues["idcontacto"] ){
@@ -399,6 +405,7 @@ class idsActions extends sfActions
 				$contacto->setCaTransporte( implode("|",$bindValues["transporte"]) );
 				$contacto->setCaCargo( $bindValues["cargo"] );
 				$contacto->setCaObservaciones( $bindValues["detalles"] );
+                $contacto->setCaVisibilidad( $bindValues["visibilidad"] );
 				if( $bindValues["sugerido"] ){
 					$contacto->setCaSugerido( true );
 				}else{
@@ -596,6 +603,12 @@ class idsActions extends sfActions
     public function executeFormEvaluacion(sfWebRequest $request){
         $this->nivel = $this->getNivel();
 
+        if( $this->nivel<=2 ){
+            $this->forward404();
+        }
+
+        
+
         if( $request->getParameter("idevaluacion") ){
             $evaluacion = IdsEvaluacionPeer::retrieveByPk( $request->getParameter("idevaluacion") );
             $this->ids = $evaluacion->getIds();
@@ -608,13 +621,20 @@ class idsActions extends sfActions
             $this->proveedor = IdsProveedorPeer::retrieveByPk( $request->getParameter("id") );
         }
 
+        if( $this->nivel<=3 &&  $this->tipo=="seleccion" ){
+            $this->forward404();
+        }
 
         $this->modo = $request->getParameter("modo");
 		$this->forward404Unless( $this->ids );
         
         $c = new Criteria();
-        $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, $this->tipo );
-        if( $this->proveedor && $this->tipo!="desempeno" ){
+        if( $this->tipo=="reevaluacion" ){
+            $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, "desempeno" );
+        }else{
+            $c->add(IdsCriterioPeer::CA_TIPOCRITERIO, $this->tipo );
+        }
+        if( $this->proveedor && $this->tipo!="desempeno" && $this->tipo!="reevaluacion" ){
             $c->add(IdsCriterioPeer::CA_TIPO, $this->proveedor->getCaTipo() );
         }
         $this->criterios = IdsCriterioPeer::doSelect( $c );
@@ -693,6 +713,11 @@ class idsActions extends sfActions
 
         $this->ids = $this->evaluacion->getIds();
         $this->modo=$request->getParameter("modo");
+        
+        $this->nivel = $this->getNivel();
+        $this->user = $this->getUser();
+
+
 
     }
 
@@ -823,7 +848,7 @@ class idsActions extends sfActions
         $this->transportista  = $transportista;
     }
 
-     /*
+    /*
     * Permite agregar lineas de transporte
     *
     * @param sfRequest $request A request object

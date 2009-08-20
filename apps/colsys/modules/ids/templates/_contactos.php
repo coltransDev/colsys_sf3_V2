@@ -43,7 +43,11 @@
             </td>
             <td valign="top">
                 <div align="right">
-                    <?=link_to(image_tag("16x16/edit.gif"), "ids/formSucursalIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo,  array("title"=>"Editar sucursal"))?>
+                    <?
+                    if( $nivel>=3 ){
+                        echo link_to(image_tag("16x16/edit.gif"), "ids/formSucursalIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo,  array("title"=>"Editar sucursal"));
+                    }
+                    ?>
                     
                 </div>
             </td>
@@ -61,16 +65,10 @@
         <td  colspan="5">
         <div align="left">
         <?
-        if( count( $contactos )==0){
-        ?>
-            <div align="center">No hay contactos <?=link_to(image_tag("16x16/add_user.gif"), "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo, array("title"=>"Nuevo contacto"))?></div>
-        <?
-        }else{
-            include_partial("ids/verContactos", array("sucursal"=>$sucursal
+            include_partial("ids/verContactos", array("sucursal"=>$sucursal, "user"=>$user
                     ,"contactos"=>$contactos, "modo"=>$modo, "nivel"=>$nivel ));
-        }
         ?>
-                 </div>
+        </div>
         </td>
         </tr>
     <?

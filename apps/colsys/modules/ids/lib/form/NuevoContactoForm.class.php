@@ -40,7 +40,13 @@ class NuevoContactoForm extends sfForm{
 													''=>'Otro ver detalles'												
 												), 'expanded'=>true)),
 		  						
-		 
+          'visibilidad'     => new sfWidgetFormChoice(array(
+  								'choices' => array('1'=>'Todos',
+													'2'=>'Operativos',
+													'3'=>'Admon. Proveedores',
+                                                    '4'=>'Solo yo',
+													
+												), 'expanded'=>true)),
 		  'tipo' 		=> new sfWidgetFormChoice(array(
   								'choices' => array('Oficial'=>'Oficial', 'No Oficial'=>'No Oficial'), 'expanded'=>true)),
   		  'sugerido'      => new sfWidgetFormInputCheckbox(),
@@ -61,7 +67,7 @@ class NuevoContactoForm extends sfForm{
 														array('invalid' => 'La dirección es invalida')),
 		  'impoexpo'     => new sfValidatorString(array('required' => true)),
 		  'transporte'     => new sfValidatorString(array('required' => true)),
-		  
+		  'visibilidad' => new sfValidatorString(array('required' => true)),
 		  'cargo' => new sfValidatorString(array('required' => false)),
 		  'sugerido'      => new sfValidatorBoolean(array('required' => false)),
 		  'activo'      => new sfValidatorBoolean(array('required' => false)),

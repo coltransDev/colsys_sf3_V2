@@ -22,6 +22,8 @@ class idsComponents  extends sfComponents
         $c->addDescendingOrderByColumn(IdsSucursalPeer::CA_PRINCIPAL);
         $c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );
         $this->sucursales = IdsSucursalPeer::doSelect( $c );
+
+        $this->user = $this->getUser();
 		
 		
 	}

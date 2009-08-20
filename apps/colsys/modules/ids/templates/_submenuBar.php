@@ -16,28 +16,33 @@ if( $action!="index" && $action!="listadoProveedoresAprobados" ){
 	$i++;
 }
 
+@$nivel = idsActions::getNivel();
+
 switch($action){
-	case "index":		
-		$button[$i]["name"]="Nuevo";
-		$button[$i]["tooltip"]="Crear una nuevo registro";
-		$button[$i]["image"]="22x22/new.gif"; 			
-		$button[$i]["link"]= "ids/formIds?modo=".$this->getRequestParameter("modo");
-		$i++;
+	case "index":
+        if( $nivel>=4 ){
+            $button[$i]["name"]="Nuevo";
+            $button[$i]["tooltip"]="Crear una nuevo registro";
+            $button[$i]["image"]="22x22/new.gif";
+            $button[$i]["link"]= "ids/formIds?modo=".$this->getRequestParameter("modo");
+            $i++;
+        }
 		break;	
 
-	case "verIds":
-		$button[$i]["name"]="Editar";
-		$button[$i]["tooltip"]="Edita este registro";
-		$button[$i]["image"]="22x22/edit.gif";
-		$button[$i]["link"]= "ids/formIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
-		$i++;        
-		
-        $button[$i]["name"]="Nueva sucursal";
-		$button[$i]["tooltip"]="";
-		$button[$i]["image"]="22x22/add_group.gif";
-		$button[$i]["link"]= "ids/formSucursalIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
-		$i++;
-       
+	case "verIds":        
+        if( $nivel>=3 ){
+            $button[$i]["name"]="Editar";
+            $button[$i]["tooltip"]="Edita este registro";
+            $button[$i]["image"]="22x22/edit.gif";
+            $button[$i]["link"]= "ids/formIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
+            $i++;
+
+            $button[$i]["name"]="Nueva sucursal";
+            $button[$i]["tooltip"]="";
+            $button[$i]["image"]="22x22/add_group.gif";
+            $button[$i]["link"]= "ids/formSucursalIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
+            $i++;
+        }
 		break;
 }
 

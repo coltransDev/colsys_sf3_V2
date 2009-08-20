@@ -9,12 +9,30 @@
           <td><b>Transporte</b></td>
           <td> 
               <div align="center">
-                <?=link_to(image_tag("16x16/add_user.gif"), "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo, array("title"=>"Nuevo contacto"))?>
+                <?
+                if( $nivel>=3 ){
+                    echo link_to(image_tag("16x16/add_user.gif"), "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo, array("title"=>"Nuevo contacto"));
+                }
+                ?>
               </div>
           </td>
       </tr>
-      <?
-      foreach( $contactos as $contacto ){
+        <?
+        $i=0;
+        foreach( $contactos as $contacto ){
+            if( $contacto->getCavisibilidad()==4 &&
+                ($user->getUserId()!= $contacto->getCaUsucreado() || $user->getUserId()!= $contacto->getCaUsuactualizado()) ){
+                continue;
+            }
+
+            if( $contacto->getCavisibilidad()==3 && $nivel<3 ){
+                continue;
+            }
+
+            //TODO $contacto->getCavisibilidad()==2
+
+            $i++;
+
       ?>
       <tr class="<?=$contacto->getCaSugerido()?"yellow":""?>">
            <td><div align="left"><?=$contacto->getNombre()?></div></td>
@@ -26,12 +44,32 @@
            <td><div align="left"><?=str_replace( "|", ",", $contacto->getCaTransporte())?></div></td>
            <td><div align="center">
             <?
-            echo link_to(image_tag("16x16/edit.gif"), "ids/formContactosIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."" );
-            echo link_to(image_tag("16x16/delete.gif"), "ids/eliminarContactoIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."", array("confirm"=>"Esta seguro?") );
+            if( $nivel>=3 ){
+                echo link_to(image_tag("16x16/edit.gif"), "ids/formContactosIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."" );
+                echo link_to(image_tag("16x16/delete.gif"), "ids/eliminarContactoIds?modo=".$modo."&idcontacto=".$contacto->getCaIdcontacto()."", array("confirm"=>"Esta seguro?") );
+            }
+            
             ?>
            </div></td>
        </tr>
-       <?
+    <?
+    }
+    if( $i==0 ){
+    ?>
+      <tr >
+
+          <td colspan="8">
+           
+            <div align="center">No hay contactos
+            <?
+            if( $nivel>=3 ){
+                echo link_to(image_tag("16x16/add_user.gif"), "ids/formContactosIds?idsucursal=".$sucursal->getCaidsucursal()."&modo=".$modo, array("title"=>"Nuevo contacto"));
+            }
+            ?>
+           
+           </div></td>
+       </tr>
+      <?
       }
-       ?>
+      ?>
   </table>

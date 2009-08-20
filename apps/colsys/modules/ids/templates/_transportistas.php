@@ -22,8 +22,11 @@
             <b>Estado</b>
         </td>
         <td width="20%" align="center">
-           <?=link_to(image_tag("16x16/edit_add.gif"), "ids/formTransportista?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Nuevo transportista"))?>
-
+           <?
+           if( $nivel>=4 ){
+               echo link_to(image_tag("16x16/edit_add.gif"), "ids/formTransportista?modo=".$modo."&id=".$ids->getCaId(),array("title"=>"Nuevo transportista"));
+           }
+           ?>
         </td>
     </tr>
     <?
@@ -45,7 +48,12 @@
             <?=$transportista->getCaActivo()?"Activo":"Inactivo"?>
         </td>
         <td align="center">
-           <?=link_to(image_tag("16x16/edit.gif"),"ids/formTransportista?modo=".$modo."&idlinea=".$transportista->getCaIdLinea())?>
+           <?
+           if( $nivel>=4 ){
+            echo link_to(image_tag("16x16/edit.gif"),"ids/formTransportista?modo=".$modo."&idlinea=".$transportista->getCaIdLinea());
+           }
+
+           ?>
         </td>
     </tr>
     <?

@@ -155,7 +155,7 @@
 
 			<tr>
 				<td><b>Cargo:</b></td>
-				<td colspan="3">
+				<td>
 
 				<?
 				 echo $form['cargo']->renderError();
@@ -165,6 +165,19 @@
 				 	$form->setDefault('cargo', 'Contacto Operativo' );
 				 }
 				 echo $form['cargo']->render();
+				 ?>				</td>
+
+                 <td><b>Visibilidad:</b></td>
+				<td>
+
+				<?
+				 echo $form['visibilidad']->renderError();
+				 if( $contacto ){
+					$form->setDefault('visibilidad', $contacto->getCaVisibilidad() );
+				 }else{
+				 	$form->setDefault('visibilidad', 2 );
+				 }
+				 echo $form['visibilidad']->render();
 				 ?>				</td>
 			</tr>
 			<tr>
