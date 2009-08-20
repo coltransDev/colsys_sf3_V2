@@ -2863,6 +2863,7 @@ from tb_cotproductos cp
 	LEFT OUTER JOIN tb_ciudades cid ON (cp.ca_destino::text = cid.ca_idciudad::text)
 	LEFT OUTER JOIN tb_concliente ccn ON (ct.ca_idcontacto = ccn.ca_idcontacto)
 	LEFT OUTER JOIN tb_clientes ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
+where ct.ca_usuanulado IS NULL
 order by ca_ano, ca_mes, ca_sucursal, to_number(substr(ct.ca_consecutivo,0,position('-' in ct.ca_consecutivo)),'99999999');
 
 REVOKE ALL ON vi_cotindicadores FROM PUBLIC;

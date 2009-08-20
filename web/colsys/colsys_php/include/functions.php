@@ -37,33 +37,49 @@ function dateDiff($startDate, $endDate)
     return $difference;
 } 
 
-function dateDiff(&$festiv, $startDate, $endDate)
+function workDiff(&$festiv, $startDate, $endDate)
 {
 	if (strlen($startDate) == 0 or strlen($endDate) == 0){ // Valida si Inicio o Final viene en Blanco
 		return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
 	}
 
-	$difer = 0;
-    $start = $startDate;
-	$final = $endDate;
+	if ($startDate > $endDate){
+		$fact = -1;
+		$tempDate = $startDate;
+		$startDate= $endDate;
+		$endDate  = $tempDate;
+	}else {
+		$fact = 1;
+	}
 
-    while (date("Y-m-d", $start) < date("Y-m-d", $final)){
-       list($ano, $mes, $dia) = sscanf(date("Y-m-d", $start), "%d-%d-%d");
+	// echo "$startDate -> $endDate <br />";
+    $difference = 0;
+	$start_Date = $startDate;
 
-       if (date("N", $start)> 5){                                    // Evalua si es un fin de semana
-           $start = mktime(0,0,0,$mes,$dia+1,$ano);
-           continue;
-       }else if (in_array(date("Y-m-d", $start),$festiv)){           // Evalua si es un día festivo
-           $start = mktime(0,0,0,$mes,$dia+1,$ano);
-           continue;
-       }else{
-		   $difer+=1;
-		   $start+=mktime(0,0,0,$mes,$dia+1,$ano);
-	   }
-       // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
-    }
-	// echo "------------- <br /><br />";
-    return(tiempo_segundos($difer));
+	// Parse dates for conversion
+	$startArry = date_parse($start_Date);
+	$endArry = date_parse($endDate);
+
+	// Convert dates to TimeStamp
+	$startDate = mktime(0,0,0,$startArry["month"], $startArry["day"], $startArry["year"]);
+	$endDate = mktime(0,0,0,$endArry["month"], $endArry["day"], $endArry["year"]);
+
+    while ($startDate <= $endDate) {
+		// Parse dates for conversion
+		$startArry = date_parse($start_Date);
+		
+		// Convert dates to TimeStamp
+		$startDate = mktime(0,0,0,$startArry["month"], $startArry["day"], $startArry["year"]);
+		if (date("N", $startDate)<= 5 and !in_array(date("Y-m-d", $startDate),$festiv)){		// Evalua si no es fin de semana ni festivo
+		   $difference+=1;
+		}
+		$startDate = mktime(0,0,0,$startArry["month"], $startArry["day"]+1, $startArry["year"]);
+		$start_Date = date("Y-m-d", $startDate);
+	}
+	// echo "Diferencia ".$difference * $fact." <br /><br />";
+
+    // Return difference
+    return $difference * $fact;
 }
 
 
