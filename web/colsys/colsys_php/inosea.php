@@ -3378,7 +3378,7 @@ require_once("menu.php");
 			 echo "    <OPTION VALUE=''></OPTION>";
              while (!$cu->Eof()) {
 					$sel = ($tm->Value('ca_idtransportista')==$cu->Value('ca_idtransportista'))?'SELECTED':'';
-					echo "<OPTION VALUE=".$cu->Value('ca_idtransportista')." $sel>".$cu->Value('ca_nombre')."</OPTION>";
+					echo "<OPTION VALUE=".$cu->Value('ca_idtransportista')." $sel>".$cu->Value('ca_nombre')." Nit. :".formatNumber($cu->Value('ca_idtransportista'),0)."</OPTION>";
                     $cu->MoveNext();
                    }
              echo "  </SELECT></TD>";
@@ -4001,9 +4001,9 @@ require_once("menu.php");
 				// =========================== Remitente ===========================
 				$xml_hijo->setAttribute("hdo2", 43);
 				if (strlen($rp->Value("ca_nombre_pro")) != 0) {
-					$xml_hijo->setAttribute("hrs2", addslashes($rp->Value("ca_nombre_pro")));
+					$xml_hijo->setAttribute("hrs2", utf8_encode($rp->Value("ca_nombre_pro")));
 				} else {
-					$xml_hijo->setAttribute("hrs2", addslashes($rp->Value("ca_agente")));
+					$xml_hijo->setAttribute("hrs2", utf8_encode($rp->Value("ca_agente")));
 				}
 
 				// =========================== Destinatario ===========================
