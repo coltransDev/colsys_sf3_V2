@@ -16,10 +16,11 @@ if( $action!="index" && $action!="listadoProveedoresAprobados" ){
 	$i++;
 }
 
-@$nivel = idsActions::getNivel();
+
 
 switch($action){
 	case "index":
+        @$nivel = idsActions::getNivel();
         if( $nivel>=4 ){
             $button[$i]["name"]="Nuevo";
             $button[$i]["tooltip"]="Crear una nuevo registro";
@@ -29,7 +30,8 @@ switch($action){
         }
 		break;	
 
-	case "verIds":        
+	case "verIds":
+        @$nivel = idsActions::getNivel();
         if( $nivel>=3 ){
             $button[$i]["name"]="Editar";
             $button[$i]["tooltip"]="Edita este registro";

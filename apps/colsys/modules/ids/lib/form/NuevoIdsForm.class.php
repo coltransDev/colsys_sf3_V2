@@ -19,8 +19,8 @@ class NuevoIdsForm extends sfForm{
 															),
                                                             array("onChange"=>"getDV()")
                                                     );
-
-        $widgets['id'] = new sfWidgetFormInput(array(), array("size"=>30, "onChange"=>"getDV()" ));
+        $widgets['id'] = new sfWidgetFormInputHidden();
+        $widgets['idalterno'] = new sfWidgetFormInput(array(), array("size"=>30, "onChange"=>"getDV()" ));
         $widgets['dv'] = new sfWidgetFormInput(array(), array("size"=>3, "readOnly"=>"true" ));
         $widgets['nombre'] = new sfWidgetFormInput(array(), array("size"=>80 ));
         $widgets['website'] = new sfWidgetFormInput(array(), array("size"=>80 ));
@@ -32,7 +32,8 @@ class NuevoIdsForm extends sfForm{
         $validator["tipo_identificacion"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'El tipo de identificación es requerido'));
 
-        $validator["id"] =new sfValidatorString( array('required' => true ),
+        $validator["id"] =new sfValidatorString( array('required' => false ) );
+        $validator["idalterno"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'La identificación es requerida'));
         
 
@@ -58,9 +59,10 @@ class NuevoIdsForm extends sfForm{
             $this->validatorSchema['dv']->setOption('required', true);
         }
 
-		if( $taintedValues["tipo_identificacion"]==3 ){
-			$this->validatorSchema['id']->setOption('required', false);
-		}
+        if( $taintedValues["tipo_identificacion"]==3 ){
+            $this->validatorSchema['idalterno']->setOption('required', false);
+        }
+		
 		
 		parent::bind($taintedValues,  $taintedFiles);
 	}

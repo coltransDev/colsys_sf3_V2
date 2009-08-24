@@ -34,13 +34,13 @@
                     <div align="left"><b>Identificaci&oacute;n</b></div>
                 </td>
                 <td width="25%">
-                    <div align="left"><?=$ids->getCaId()?> <?=$ids->getCaDv()?></div>
+                    <div align="left"><?=$ids->getCaIdalterno()?> <?=$ids->getCaDv()?></div>
                 </td>
                 <td width="25%">
-                    <div align="left"><b><?=$ids->getCaIdalterno()?"Identificaci&oacute;n Alterna":"&nbsp;"?></b></div>
+                    <div align="left"><b><?=$ids->getCaIdalterno()?"Id":"&nbsp;"?></b></div>
                 </td>
                 <td width="25%">
-                    <div align="left"><?=$ids->getCaIdalterno()?$ids->getCaIdalterno():"&nbsp;"?></div>
+                    <div align="left"><?=$ids->getCaId()?$ids->getCaId():"&nbsp;"?></div>
                 </td>
             </tr>
             <tr>

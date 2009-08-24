@@ -200,6 +200,7 @@ class idsActions extends sfActions
 
             $bindValues["tipo_identificacion"] = $request->getParameter("tipo_identificacion");
             $bindValues["id"] = $request->getParameter("id");
+            $bindValues["idalterno"] = $request->getParameter("idalterno");
             $bindValues["dv"] = $request->getParameter("dv");
             $bindValues["nombre"] = strtoupper($request->getParameter("nombre"));
             $bindValues["website"] = $request->getParameter("website");
@@ -229,11 +230,9 @@ class idsActions extends sfActions
                 
                 $ids->setCaTipoidentificacion( $bindValues["tipo_identificacion"]);
 
-                if( $bindValues["id"] ){
-                    $ids->setCaId( $bindValues["id"]);
-                }else{
-                    $ids->setId();
-                }
+                
+                $ids->setCaIdalterno( $bindValues["idalterno"]);
+                
 
                 if( $bindValues["dv"] ){
                     $ids->setCaDv( $bindValues["dv"]);

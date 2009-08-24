@@ -2,14 +2,14 @@
     var getDV = function(){
 
         if( document.getElementById("tipo_identificacion").value=="3" ){
-            document.getElementById("id").value="";
-            document.getElementById("id").disabled=true;
+            document.getElementById("idalterno").value="";
+            document.getElementById("idalterno").disabled=true;
         }else{
-            document.getElementById("id").disabled=false;
+            document.getElementById("idalterno").disabled=false;
         }
 
         if( document.getElementById("tipo_identificacion").value=="1" ){
-            var dv = d_verificacion(document.getElementById("id").value);
+            var dv = d_verificacion(document.getElementById("idalterno").value);
             document.getElementById("dv").value = dv;
         }else{
             document.getElementById("dv").value = "";
@@ -19,7 +19,8 @@
 <div class="content" align="center">
 
     <form action="<?=url_for("ids/formIds?modo=".$modo."" )?>" method="post" name="form1" >
-	<table width="80%" border="0" class="tableList">
+	<input type="hidden" name="id" value="<?=$ids->getCaId()?>" />
+    <table width="80%" border="0" class="tableList">
 	<tr>		
         <th colspan="6"><div align="left"><b>Datos basicos</b></div> </th>
 	</tr>
@@ -64,13 +65,14 @@
             <div align="left">
             <?
             if( !$ids->getCaId() ){
-                echo $form['id']->renderError();
-                echo $form['id']->render();
+                echo $form['idalterno']->renderError();
+                echo $form['idalterno']->render();
             }else{
-                echo $ids->getCaId();
+                echo $ids->getCaIdalterno();
                 ?>
-                <input type="hidden" name="id" value="<?=$ids->getCaId()?>" />
+                <input type="hidden" name="idalterno" value="<?=$ids->getCaIdalterno()?>" />
                 <?
+                
             }
             ?>
             </div>
