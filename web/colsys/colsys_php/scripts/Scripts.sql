@@ -2853,9 +2853,10 @@ GRANT ALL ON vi_repindicador_air TO GROUP "Usuarios";
 // Drop view vi_cotindicadores cascade;
 Create view vi_cotindicadores as
 select ct.ca_idcotizacion, ct.ca_consecutivo, TO_CHAR(TO_DATE(date_part('year',ct.ca_fchcreado)::text,'yyyy'),'yyyy') as ca_ano, TO_CHAR(TO_DATE(date_part('month',ct.ca_fchcreado)::text,'mm'),'mm') as ca_mes,
-	ct.ca_fchsolicitud, ct.ca_horasolicitud, ct.ca_fchpresentacion, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, cp.ca_transporte, cp.ca_modalidad, ccl.ca_compania
+	tr.ca_fchcreado as ca_fchsolicitud, tr.ca_fchterminada as ca_fchpresentacion, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, cp.ca_impoexpo, cp.ca_transporte, cp.ca_modalidad, ccl.ca_compania
 from tb_cotproductos cp
 	LEFT OUTER JOIN tb_cotizaciones ct ON (cp.ca_idcotizacion = ct.ca_idcotizacion)
+	LEFT OUTER JOIN notificaciones.tb_tareas tr ON (ct.ca_idg_envio = tr.ca_idtarea)
 	LEFT OUTER JOIN control.tb_usuarios us ON (ct.ca_usuario = us.ca_login)
 	LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal::text = sc.ca_idsucursal::text)
 	LEFT OUTER JOIN tb_ciudades cio ON (cp.ca_origen::text = cio.ca_idciudad::text)
