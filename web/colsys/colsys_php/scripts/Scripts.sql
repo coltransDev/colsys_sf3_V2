@@ -2774,7 +2774,7 @@ Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'|
 
 // Drop view vi_repindicadores cascade;
 Create view vi_repindicadores as
-select rp.ca_idreporte, rp.ca_consecutivo, rx.ca_version, TO_CHAR(TO_DATE(date_part('year',rx.ca_fchreporte)::text,'yyyy'),'yyyy') as ca_ano, TO_CHAR(TO_DATE(date_part('month',rx.ca_fchreporte)::text,'mm'),'mm') as ca_mes,
+select rp.ca_idreporte, rp.ca_consecutivo, rx.ca_fchcreado, rx.ca_version, TO_CHAR(TO_DATE(date_part('year',rx.ca_fchreporte)::text,'yyyy'),'yyyy') as ca_ano, TO_CHAR(TO_DATE(date_part('month',rx.ca_fchreporte)::text,'mm'),'mm') as ca_mes,
        sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte, rp.ca_modalidad, rp.ca_impoexpo, rp.ca_continuacion, ccl.ca_compania
 --      , rs.ca_idemail, rs.ca_piezas, rs.ca_peso, rs.ca_volumen, rs.ca_doctransporte
 from tb_reportes rp
@@ -2792,7 +2792,7 @@ from tb_reportes rp
 --	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail = rf.ca_idemail)
 
 -- La última versión del reporte
-	INNER JOIN (select ca_consecutivo as ca_consecutivo_f, ca_fchreporte, max(ca_version) as ca_version from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo_f) rx ON (rp.ca_consecutivo = rx.ca_consecutivo_f and rp.ca_version = rx.ca_version)
+	INNER JOIN (select ca_consecutivo as ca_consecutivo_f, ca_fchreporte, max(ca_version) as ca_version, min(ca_fchcreado) as ca_fchcreado from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo_f) rx ON (rp.ca_consecutivo = rx.ca_consecutivo_f and rp.ca_version = rx.ca_version)
 
 order by ca_ano, ca_mes, ca_sucursal, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999');
 REVOKE ALL ON vi_repindicadores FROM PUBLIC;
@@ -2856,7 +2856,7 @@ select ct.ca_idcotizacion, ct.ca_consecutivo, TO_CHAR(TO_DATE(date_part('year',c
 	tr.ca_fchcreado as ca_fchsolicitud, tr.ca_fchterminada as ca_fchpresentacion, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, cp.ca_impoexpo, cp.ca_transporte, cp.ca_modalidad, ccl.ca_compania
 from tb_cotproductos cp
 	LEFT OUTER JOIN tb_cotizaciones ct ON (cp.ca_idcotizacion = ct.ca_idcotizacion)
-	LEFT OUTER JOIN notificaciones.tb_tareas tr ON (ct.ca_idg_envio = tr.ca_idtarea)
+	LEFT OUTER JOIN notificaciones.tb_tareas tr ON (tr.ca_idtarea = ct.ca_idg_envio_oportuno)
 	LEFT OUTER JOIN control.tb_usuarios us ON (ct.ca_usuario = us.ca_login)
 	LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal::text = sc.ca_idsucursal::text)
 	LEFT OUTER JOIN tb_ciudades cio ON (cp.ca_origen::text = cio.ca_idciudad::text)
