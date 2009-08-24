@@ -32,12 +32,19 @@ if (!isset($boton) and !isset($agrupamiento)){
     echo "<TITLE>$titulo</TITLE>";
     echo "<script language='JavaScript' type='text/JavaScript'>";     // Código en JavaScript para validar las opciones de mantenimiento
 	echo "function validar(){";
-	echo "  elemento = document.getElementById('cri_elegido');";
-	echo "  if (elemento.value == '') {";
+	echo "  if (document.getElementById('cri_elegido').value == '') {";
 	echo "      alert('Debe seleccionar por lo menos un criterio de Ordenamiento');";
 	echo "  	elemento = document.getElementById('cri_seleccion');";
-	echo "		elemento.focus(); }";
-	echo "  else";
+	echo "		elemento.focus();";
+	echo "	}else if (document.getElementById('indicador').selectedIndex == 4 && (document.getElementById('lci').value.length<8 || document.getElementById('lc').value.length<8 || document.getElementById('lcs').value.length<8)){";
+	echo "      alert('Para el Indicador '+document.getElementById('indicador').value+ ' los límites deben estar en términos de horas así HH:MM:SS');";
+	echo "	}else if (document.getElementById('indicador').selectedIndex == 5 && (document.getElementById('lci').value.length<8 || document.getElementById('lc').value.length<8 || document.getElementById('lcs').value.length<8)){";
+	echo "      alert('Para el Indicador '+document.getElementById('indicador').value+ ' los límites deben estar en términos de horas así HH:MM:SS');";
+	echo "	}else if (document.getElementById('indicador').selectedIndex == 6 && document.getElementById('indicador').value == 'Marítimo' && (document.getElementById('lci').value.length<8 || document.getElementById('lc').value.length<8 || document.getElementById('lcs').value.length<8)){";
+	echo "      alert('Para el Indicador '+document.getElementById('indicador').value+ ' los límites deben estar en términos de horas así HH:MM:SS');";
+	echo "	}else if (document.getElementById('indicador').selectedIndex == 7 && (document.getElementById('lci').value.length<8 || document.getElementById('lc').value.length<8 || document.getElementById('lcs').value.length<8)){";
+	echo "      alert('Para el Indicador '+document.getElementById('indicador').value+ ' los límites deben estar en términos de horas así HH:MM:SS');";
+	echo "  }else";
 	echo "      return (true);";
 	echo "  return (false);";
 	echo "}";
@@ -64,9 +71,6 @@ if (!isset($boton) and !isset($agrupamiento)){
 	echo "		modal_element[modal_element.length] = new Option('PROYECTOS','PROYECTOS',false,false);";
 	echo "	}";
 	echo "}";
-    echo "</script>";
-
-
     echo "</script>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
     echo "</HEAD>";
@@ -161,13 +165,13 @@ require_once("menu.php");
     echo "  <TD Class=listar COLSPAN=4><INPUT TYPE='text' NAME='cliente' size='100'></TD>";
     echo "</TR>";
 
-    if (!$tm->Open("select ca_valor from tb_parametros where ca_casouso = 'CU072'")) {    // Selecciona los registros de la tabla parámetros
+    if (!$tm->Open("select ca_valor from tb_parametros where ca_casouso = 'CU072' order by ca_identificacion")) {    // Selecciona los registros de la tabla parámetros
         echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
         exit;
         }
     echo "<TR>";
     echo "  <TD Class=listar>Indicador: </TD>";
-    echo "  <TD Class=listar COLSPAN=2><SELECT NAME='indicador'>";
+    echo "  <TD Class=listar COLSPAN=2><SELECT ID='indicador' NAME='indicador'>";
     while ( !$tm->Eof()) {
             echo " <OPTION VALUE='".$tm->Value('ca_valor')."'>".$tm->Value('ca_valor')."</OPTION>";
             $tm->MoveNext();
@@ -176,8 +180,9 @@ require_once("menu.php");
 
     echo "  <TD Class=listar COLSPAN=2><TABLE WIDTH=100%>";
     echo "		<TR>";
-    echo "  		<TD Class=listar>Lím.Cent.Superior</TD><TD Class=listar><INPUT TYPE='text' NAME='lcs_var' size='7'></TD>";
-    echo "  		<TD Class=listar>Lím.Cent.inferior</TD><TD Class=listar><INPUT TYPE='text' NAME='lci_var' size='7'></TD>";
+    echo "  		<TD Class=listar>LCs :</TD><TD Class=listar><INPUT ID='lcs' TYPE='text' NAME='lcs_var' size='7'></TD>";
+    echo "  		<TD Class=listar>LC :</TD><TD Class=listar><INPUT ID='lc' TYPE='text' NAME='lc_var' size='7'></TD>";
+    echo "  		<TD Class=listar>LCi :</TD><TD Class=listar><INPUT ID='lci' TYPE='text' NAME='lci_var' size='7'></TD>";
     echo "		</TR>";
     echo "  </TABLE></TD>";
 	
@@ -238,6 +243,8 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
 
 	$ano_mem = implode(',',$ano);
 	$mes_mem = implode(',',$mes);
+	$suc_mem = implode(',',$sucursal);
+	
 	$tra_mem = $transporte[0];
 	
 	$ano_fes = "to_char(ca_fchfestivo,'YYYY') ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
@@ -283,7 +290,7 @@ require_once("menu.php");
 	$array_pnc = array();  // Para el calculo del Producto no Conforme
 	$array_pmc = array();  // Para el calculo del Producto por debajo del Límite central inferior
 	
-	$format_avg = "H:i:s";
+	$format_avg = "d";
 	switch ($indicador) {
 		case "Confirmación Salida de la Carga":
 			$source   = "vi_repindicadores";
@@ -303,7 +310,6 @@ require_once("menu.php");
 			$add_cols = 4;
 			break;
 		case "Oportunidad en la Facturación":
-			$format_avg = "d";
 			if ($tra_mem == 'Aéreo'){
 				$source   = "vi_repindicador_air";
 				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
@@ -327,6 +333,7 @@ require_once("menu.php");
 			$add_cols = 5;
 			break;
 		case "Oportunidad en el Envío de Comunicaciones":
+			$format_avg = "H:i:s";
 			$source   = "vi_repindicadores";
 			$subque   = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
 			if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
@@ -342,9 +349,10 @@ require_once("menu.php");
 			$ind_mem  = 5;
 			$add_cols = 3;
 			break;
-		case "Oportunidada de Primer Status":
-			$source   = "vi_repindicadores";
-			$subque   = "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchrecibo, ca_fchenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte) group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by rp.ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
+		case "Oportunidad de Primer Status":
+			$format_avg = "H:i:s";
+			$source = "vi_repindicadores";
+			$subque = "LEFT OUTER JOIN (select fs.ca_idstatus, rp.ca_consecutivo as ca_consecutivo_sub, ca_fchenvio from tb_repstatus rs LEFT OUTER JOIN tb_reportes rp ON (rp.ca_idreporte = rs.ca_idreporte) RIGHT OUTER JOIN (select ca_consecutivo, min(ca_idstatus) as ca_idstatus from tb_repstatus rps INNER JOIN tb_reportes rpt ON (rps.ca_idreporte = rpt.ca_idreporte) group by ca_consecutivo) fs ON (fs.ca_idstatus = rs.ca_idstatus) where ".str_replace("ca_ano","to_char(ca_fchrecibo,'YYYY')",$ano)." and ".str_replace("ca_mes","to_char(ca_fchrecibo,'MM')",$mes)." order by rp.ca_consecutivo, ca_fchrecibo) sq ON (vi_repindicadores.ca_consecutivo = sq.ca_consecutivo_sub) ";
 			if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
 				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
 				echo "<script>document.location.href = 'entrada.php';</script>";
@@ -359,12 +367,12 @@ require_once("menu.php");
 			$add_cols = 3;
 			break;	
 		case "Cumplimiento de Proveedores":
-			$format_avg = "d";
 			$source   = "vi_repindicadores";
 			$ind_mem  = 7;
 			$add_cols = 3;
 			break;
 		case "Oportunidad en la Entrega de Cotizaciones":
+			$format_avg = "H:i:s";
 			$source   = "vi_cotindicadores";
 			if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
 				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -382,9 +390,12 @@ require_once("menu.php");
 			break;
 		case "Oportunidad en Confirmación de llegada":
 			if ($tra_mem == 'Aéreo'){
+				$tipo = "D";
 				$source   = "vi_repindicador_air";
 				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
 			} else if ($tra_mem == 'Marítimo'){
+				$tipo = "T";
+				$format_avg = "H:i:s";
 				$source = "vi_repindicador_sea";
 				$subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
 			}
@@ -406,8 +417,8 @@ require_once("menu.php");
 
 	$queries = "select * from $source $subque where ca_impoexpo = 'Importación' and $sucursal $cliente and $transporte and $ano and $mes";
 	$queries.= " order by $campos";
-	// die($queries);
-
+	//  die($queries);
+	
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea 
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
@@ -593,13 +604,13 @@ require_once("menu.php");
 				}
 				break;
 			case 6:
-				list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchrecibo'), "%d-%d-%d %d:%d:%d");
+				list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchcreado'), "%d-%d-%d %d:%d:%d");
 				$tstamp_recibido = mktime($hor, $min, $seg, $mes, $dia, $ano);
 				list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchenvio'), "%d-%d-%d %d:%d:%d");
 				$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
 				$dif_mem = calc_dif($festi, $tstamp_recibido, $tstamp_enviado);
 				$color = analizar_dif("T", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc); // Función que retorna un Arreglo con el resultado de Dif
-				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchrecibo')."</TD>";
+				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchcreado')."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchenvio')."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				break;
@@ -625,18 +636,18 @@ require_once("menu.php");
 				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				break;
 			case 8:
-				if ($rs->Value('ca_fchcreado') != $ini_ant or $rs->Value('ca_fchterminada') != $fin_ant){
-					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchcreado'), "%d-%d-%d %d:%d:%d");
+				if ($rs->Value('ca_fchsolicitud') != $ini_ant or $rs->Value('ca_fchpresentacion') != $fin_ant){
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchsolicitud'), "%d-%d-%d %d:%d:%d");
 					$tstamp_confirmado = mktime($hor, $min, $seg, $mes, $dia, $ano);
-					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchterminada'), "%d-%d-%d %d:%d:%d");
+					list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchpresentacion'), "%d-%d-%d %d:%d:%d");
 					$tstamp_enviado = mktime($hor, $min, $seg, $mes, $dia, $ano);
 					$dif_mem = calc_dif($festi, $tstamp_confirmado, $tstamp_enviado);
-					$ini_ant = $rs->Value('ca_fchcreado');
-					$fin_ant = $rs->Value('ca_fchterminada');
+					$ini_ant = $rs->Value('ca_fchsolicitud');
+					$fin_ant = $rs->Value('ca_fchpresentacion');
 				}
 				$color = analizar_dif("T", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc); // Función que retorna un Arreglo con el resultado de Dif
-				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchcreado')."</TD>";
-				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchterminada')."</TD>";
+				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchsolicitud')."</TD>";
+				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchpresentacion')."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 				$cot_ant = $rs->Value('ca_consecutivo');
 				break;
@@ -661,7 +672,7 @@ require_once("menu.php");
 						$fin_ant = $rs->Value('ca_fchconf_lleg');
 					}
 				}
-				$color = analizar_dif("T", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc); // Función que retorna un Arreglo con el resultado de Dif
+				$color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc); // Función que retorna un Arreglo con el resultado de Dif
 				echo "  <TD Class=$color style='font-size: 9px;'>".$fch_mem."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchconf_lleg')."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
@@ -679,24 +690,31 @@ require_once("menu.php");
     echo "</TABLE>";
 
 	echo "<BR />";
-    echo "<TABLE WIDTH=400 BORDER=0 CELLSPACING=1 CELLPADDING=1>";
-	echo "<TH Class=titulo COLSPAN=4>COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_mem / $ano_mem</TH>";
+    echo "<TABLE WIDTH=500 BORDER=0 CELLSPACING=1 CELLPADDING=1>";
+	echo "<TH Class=titulo COLSPAN=7>COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_mem / $ano_mem</TH>";
 	
     echo "<TR>";
-    echo "  <TD Class=listar ROWSPAN=3>Sucursal</TD>";
+    echo "  <TD Class=listar ROWSPAN=3><b>Sucursal(es):</b><br /> - ".str_replace(",","<br /> - ",str_replace("%","Todas",$suc_mem))."</TD>";
     echo "  <TD Class=listar>Producto NO Conforme (%)</TD>";
     echo "  <TD Class=listar>No. Casos ".count($array_pnc)."</TD>";
     echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".formatNumber(round(count($array_pnc)/count($array_avg)*100,2),2)."%</TD>";
+    echo "  <TD Class=listar ROWSPAN=3>&nbsp;</TD>";
+    echo "  <TD Class=listar>LCs:</TD>";
+    echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".$lcs_var."</TD>";
     echo "</TR>";
     echo "<TR>";
     echo "  <TD Class=listar>Promedio Penderado:</TD>";
     echo "  <TD Class=listar>No. Casos ".count($array_avg)."</TD>";
     echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".(($format_avg=="H:i:s")?date($format_avg,array_avg($array_avg)):array_avg($array_avg))."</TD>";
+    echo "  <TD Class=listar>LC:</TD>";
+    echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".$lc_var."</TD>";
     echo "</TR>";
     echo "<TR>";
     echo "  <TD Class=listar>Registros Inferiores al Lci</TD>";
     echo "  <TD Class=listar>No. Casos ".count($array_pmc)."</TD>";
     echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".formatNumber(round(count($array_pmc)/count($array_avg)*100,2),2)."%</TD>";
+    echo "  <TD Class=listar>LCi:</TD>";
+    echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".$lci_var."</TD>";
     echo "</TR>";
 
     echo "</TABLE>";
@@ -716,9 +734,9 @@ require_once("menu.php");
 function analizar_dif($tipo, $lci_var, $lcs_var, &$dif_mem, &$array_avg, &$array_pnc, &$array_pmc){
 	if ($dif_mem == null) {
 		$color = "resaltar";
-		$dif_mem = ($tipo == "D")?(2):"48:00:00"; // Retorna un valor por defecto de 48 horas = 2 días
+		$dif_mem = ($tipo == "D")?2:"48:00:00"; // Retorna un valor por defecto de 48 horas = 2 días
 		$array_pnc[] = $dif_mem;
-	}else if ($dif_mem >= $lcs_var) {
+	}else if ($dif_mem > $lcs_var) {
 		$color = "negativo";
 		$array_pnc[] = $dif_mem;
 	}else if ($dif_mem < $lci_var){
