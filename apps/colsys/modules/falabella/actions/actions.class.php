@@ -9,25 +9,25 @@
  * @version    SVN: $Id: actions.class.php 3335 2007-01-23 16:19:56Z fabien $
  */
 class falabellaActions extends sfActions {
-	
+
 	/*
 	* Accion por defecto
 	*/
 	public function executeIndex() {
 		return $this->forward ( 'falabella', 'list' );
 	}
-	
+
 	/*
 	* Lista los PO disponibles
-	*/	
+	*/
 	public function executeList() {
 		$c = new Criteria ();
 		$c->addDescendingOrderByColumn( FalaHeaderPeer::CA_FECHA_CARPETA );
 		$this->fala_headers = FalaHeaderPeer::doSelect ( $c );
 	}
-	
+
 	/*
-	* Permite ver las intrucciones de embarque 
+	* Permite ver las intrucciones de embarque
 	*/
 	public function executeShippingInstructions(){
 		$this->header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
@@ -35,13 +35,13 @@ class falabellaActions extends sfActions {
 		$this->instructions = $this->header->getFalaInstructions();
 		$this->info = $this->header->getFalaShipmentInfo();
 	}
-	
-	
+
+
 	/*
 	* Permite ver los detalles del PO y confirmar los datos para generar el archivo de salida
 	*/
 	public function executeDetails(){
-		
+
 		$this->fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($this->fala_header);
 		$c = new Criteria();
@@ -49,14 +49,14 @@ class falabellaActions extends sfActions {
 		$this->details = $this->fala_header->getFalaDetails($c);
 		$this->container = ParametroPeer::retrieveByCaso("CU057");
 	}
-	
+
 	/*
 	* Guarda los cambios en el encabezado del documento
 	*/
 	public function executeObserveHeader(){
 		$fala_header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
 		$this->forward404Unless($fala_header);
-	
+
 		if( $this->getRequestParameter ( 'num_viaje' )!==null ){
 			$fala_header->setCaNumViaje( $this->getRequestParameter ( 'num_viaje' ) );
 		}
@@ -78,41 +78,41 @@ class falabellaActions extends sfActions {
 		}
 
 		$fala_header->save();
-		return sfView::NONE;		
-		
+		return sfView::NONE;
+
 	}
-	
+
 	/*
 	* Guarda los cambios en el detalle del documento
-	*/	
+	*/
 	public function executeObserveDetail(){
-		$faladetail = FalaDetailPeer::retrieveByPk( $this->getRequestParameter ( 'iddoc' ), $this->getRequestParameter ( 'sku' ));		
+		$faladetail = FalaDetailPeer::retrieveByPk( $this->getRequestParameter ( 'iddoc' ), $this->getRequestParameter ( 'sku' ));
 		$this->forward404Unless($faladetail);
-		
+
 		if( $this->getRequestParameter ( 'num_unidades' )!==null ){
 			$faladetail->setCaCantidadMiles( $this->getRequestParameter ( 'num_unidades' ) );
 		}
-		
+
 		if( $this->getRequestParameter ( 'uni_unidades' ) ){
 			$faladetail->setCaUnidadMedidadCantidad( $this->getRequestParameter ( 'uni_unidades' ) );
 		}
-		
+
 		if( $this->getRequestParameter ( 'num_paquetes' ) ){
 			$faladetail->setCaCantidadPaquetesMiles( $this->getRequestParameter ( 'num_paquetes' ) );
 		}
-		
+
 		if( $this->getRequestParameter ( 'paq_unidades' ) ){
 			$faladetail->setCaUnidadMedidaPaquetes( $this->getRequestParameter ( 'paq_unidades' ) );
 		}
-		
+
 		if( $this->getRequestParameter ( 'peso' ) ){
 			$faladetail->setCaCantidadPesoMiles( $this->getRequestParameter ( 'peso' ) );
 		}
-		
+
 		if( $this->getRequestParameter ( 'pes_unidades' ) ){
 			$faladetail->setCaUnidadMedidaPeso( $this->getRequestParameter ( 'pes_unidades' ) );
 		}
-		
+
 		if( $this->getRequestParameter ( 'volumen' ) ){
 			$faladetail->setCaCantidadVolumenMiles( $this->getRequestParameter ( 'volumen' ) );
 		}
@@ -121,10 +121,10 @@ class falabellaActions extends sfActions {
 			$faladetail->setCaUnidadMedidaVolumen( $this->getRequestParameter ( 'vol_unidades' ) );
 		}
 
-		if( $this->getRequestParameter ( 'cont_part1' ) ){			
+		if( $this->getRequestParameter ( 'cont_part1' ) ){
 			$faladetail->setCaNumContPart1( $this->getRequestParameter ( 'cont_part1' ) );
 		}
-		
+
 		if( $this->getRequestParameter ( 'cont_part2' ) ){
 			$faladetail->setCaNumContPart2( $this->getRequestParameter ( 'cont_part2' ) );
 		}
@@ -136,31 +136,31 @@ class falabellaActions extends sfActions {
 		if( $this->getRequestParameter ( 'container_iso' ) ){
 			$faladetail->setCaContainerIso( $this->getRequestParameter ( 'container_iso' ) );
 		}
-	
+
 		$faladetail->save();
-		return sfView::NONE;		
+		return sfView::NONE;
 	}
-	
+
 	/*
 	* Actualiza el reporte en el encabezado del documento
 	*/
 	public function executeBuscarReporte(){
 		$fala_header = FalaHeaderPeer::retrieveByPk ( $this->getRequestParameter ( 'iddoc' ) );
 		$this->forward404Unless($fala_header);
-	
+
 		$consecutivo = $this->getRequestParameter("reporte");
-		
+
 		$reporte = ReportePeer::retrieveByConsecutivo( $consecutivo );
 		if( $reporte ){
 			$fala_header->setCaReporte( $reporte->getCaConsecutivo() );
 			$fala_header->save();
 			return sfView::SUCCESS;
-		}else{				
+		}else{
 			return sfView::ERROR;
 		}
-		
+
 	}
-	
+
 	/*
 	* Permite anular la Orden de Pedido
 	*/
@@ -172,16 +172,16 @@ class falabellaActions extends sfActions {
 		$fala_header->save();
 		$this->redirect("falabella/list");
 	}
-	
+
 	/*
-	* Permite Duplicar un registro de la Orden de Pedido 
+	* Permite Duplicar un registro de la Orden de Pedido
 	*/
 	public function executeDuplicateRecord(){
 		$faladetail = FalaDetailPeer::retrieveByPk( base64_decode($this->getRequestParameter ( 'iddoc' )), $this->getRequestParameter ( 'sku' ));
 		$this->forward404Unless($faladetail);
 		$doc_mem = $this->getRequestParameter ( 'iddoc' );
 		$sku_mem = $faladetail->getSkuNeto();
-		
+
 		$c = new Criteria();
 		$c->add( FalaDetailPeer::CA_IDDOC, FalaDetailPeer::CA_IDDOC." = '$doc_mem'" , Criteria::CUSTOM );
 		$c->addAnd( FalaDetailPeer::CA_SKU, FalaDetailPeer::CA_SKU." LIKE '$sku_mem%'" , Criteria::CUSTOM );
@@ -198,7 +198,7 @@ class falabellaActions extends sfActions {
 		$this->redirect("falabella/details?iddoc=".base64_encode($doc_mem));
 		return sfView::NONE;
 	}
-	
+
 	/*
 	* Generar una Nueva Orden con los productos faltantes
 	*/
@@ -206,20 +206,20 @@ class falabellaActions extends sfActions {
 		$doc_mem = base64_decode($this->getRequestParameter ( 'iddoc' ));
 		$fala_header = FalaHeaderPeer::retrieveByPk ( $doc_mem );
 		$this->forward404Unless($fala_header);
-		
+
 		$c = new Criteria();
 		$c->add( FalaHeaderPeer::CA_IDDOC, FalaHeaderPeer::CA_IDDOC." LIKE '$doc_mem%'" , Criteria::CUSTOM );
 		$doc_mem = $fala_header->getIdDocNeto();
 		$doc_num = FalaHeaderPeer::doCount($c);
-		$doc_mem.= "-".$doc_num; 
-		
+		$doc_mem.= "-".$doc_num;
+
 		$new_falaheader = $fala_header->copy(FALSE);
 		$new_falaheader->setCaIddoc($doc_mem);
 		$new_falaheader->setCaProcesado(FALSE);
 		$new_falaheader->setCaFchanulado(NULL);
 		$new_falaheader->setCaUsuanulado(NULL);
 		$new_falaheader->save();
-		
+
 		$faladetails = $fala_header->getFalaDetails();
 		foreach( $faladetails as $detail ){
 			if ($detail->getCaCantidadMiles() < $detail->getCaCantidadPedido()){
@@ -237,7 +237,7 @@ class falabellaActions extends sfActions {
 			$new_shipping->setCaIddoc($doc_mem);
 			$new_shipping->save();
 		}
-		
+
 		$this->redirect("falabella/generarArchivo?iddoc=".$this->getRequestParameter ( 'iddoc' ));
 		return sfView::NONE;
 	}
@@ -251,7 +251,7 @@ class falabellaActions extends sfActions {
 		$c = new Criteria();
 		$c->addAscendingOrderByColumn( FalaDetailPeer::CA_SKU );
 		$details = $fala_header->getFalaDetails($c);
-		
+
 		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
 		$this->forward404unless( $reporte );
 
@@ -274,7 +274,7 @@ class falabellaActions extends sfActions {
 			$salida.= (($reporte->getcaTransporte() == "Aéreo")?"L":"")."|"; // Vessel 14
 			$salida.= (($reporte->getcaTransporte() == "Aéreo")?"A":"S")."|"; // Vessel 15
 			$salida.= "UN|"; // Vessel 16
-			$salida.= $fala_header->getCaCodigoPuertoPickup()."|"; // 17 
+			$salida.= $fala_header->getCaCodigoPuertoPickup()."|"; // 17
 			$salida.= "UN|"; // Vessel 18
 			$salida.= $fala_header->getCaCodigoPuertoPickup()."|"; // 19
 			$salida.= "UN|"; // Vessel 20
@@ -326,12 +326,12 @@ class falabellaActions extends sfActions {
 			$salida.= $fala_header->getCaCampo61()."|";// 62
 			$salida.= number_format($fala_header->getCaMontoInvoiceMiles()*10000, 0, '', '')."|";// 63
 			$salida.= $fala_header->getCaProformaNumber();// 64
-			$salida.= "\r\n";			
-		}	
+			$salida.= "\r\n";
+		}
 		$directory=sfConfig::get('app_falabella_output');
 		$filename = $directory.DIRECTORY_SEPARATOR.'ASN'.date('ymdHis').'.txt';
-		$handle = fopen($filename , 'w');	
-		
+		$handle = fopen($filename , 'w');
+
 		if (fwrite($handle, $salida) === FALSE) {
 			echo "No se puede escribir al archivo {filename}";
 			exit;
@@ -341,15 +341,15 @@ class falabellaActions extends sfActions {
 		}
     	$this->redirect("falabella/list");
 	}
-	
+
 	/*
 	* Genera el archivo de facturacion
 	*/
 	public function executeGenerarFactura(){
-		
+
 		$fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($fala_header);
-		
+
 		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
 		$this->forward404unless( $reporte );
 
@@ -361,19 +361,19 @@ class falabellaActions extends sfActions {
 			$c->addSelectColumn(InoClientesSeaPeer::CA_HBLS );
 			$c->addSelectColumn(InoClientesSeaPeer::CA_IDREPORTE );
 			$c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
-			
+
 			$c->addSelectColumn(InoIngresosSeaPeer::CA_FACTURA );
 			$c->addSelectColumn(InoIngresosSeaPeer::CA_FCHFACTURA );
 			$c->addSelectColumn(InoIngresosSeaPeer::CA_TCAMBIO );
 			$c->addSelectColumn(InoIngresosSeaPeer::CA_IDMONEDA );
 			$c->addSelectColumn(InoIngresosSeaPeer::CA_VALOR );
 			$c->setDistinct();
-			
+
 			$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE );
 			$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoIngresosSeaPeer::CA_REFERENCIA );
 			$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, InoIngresosSeaPeer::CA_IDCLIENTE );
 			$c->addJoin( InoClientesSeaPeer::CA_HBLS, InoIngresosSeaPeer::CA_HBLS );
-			
+
 			$c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
 			$stmt = InoClientesSeaPeer::doSelectStmt( $c );
 		}else if ($reporte->getcaTransporte() == 'Aéreo'){
@@ -382,23 +382,23 @@ class falabellaActions extends sfActions {
 			$c->addSelectColumn(InoClientesAirPeer::CA_HAWB );
 			$c->addSelectColumn(InoClientesAirPeer::CA_IDREPORTE );
 			$c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
-			
+
 			$c->addSelectColumn(InoIngresosAirPeer::CA_FACTURA );
 			$c->addSelectColumn(InoIngresosAirPeer::CA_FCHFACTURA );
 			$c->addAsColumn("CA_TCAMBIO",InoIngresosAirPeer::CA_TCALAICO);
 			$c->addAsColumn("CA_IDMONEDA", "'USD'::TEXT");
 			$c->addSelectColumn(InoIngresosAirPeer::CA_VALOR );
 			$c->setDistinct();
-			
+
 			$c->addJoin( ReportePeer::CA_CONSECUTIVO, InoClientesAirPeer::CA_IDREPORTE );
 			$c->addJoin( InoClientesAirPeer::CA_REFERENCIA, InoIngresosAirPeer::CA_REFERENCIA );
 			$c->addJoin( InoClientesAirPeer::CA_IDCLIENTE, InoIngresosAirPeer::CA_IDCLIENTE );
 			$c->addJoin( InoClientesAirPeer::CA_HAWB, InoIngresosAirPeer::CA_HAWB );
-			
+
 			$c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
 			$stmt = InoClientesSeaPeer::doSelectStmt( $c );
 		}
-		
+
 		$salida = '';
 		while ( $row = $stmt->fetch() ) {
 			$salida.= "88"; // 1
@@ -416,7 +416,7 @@ class falabellaActions extends sfActions {
 			$salida.= $vencimiento; // 9
 			$salida.= str_pad("COP",3, " "); // 10  Siempre en Pesos Colombianos
 			$salida.= str_pad(1, 10, "0", STR_PAD_LEFT); // 11
-		
+
 			$vlr_afecto = floatval($reporte->getProperty("vlrAfecto"));
                         $vlr_exento = floatval($reporte->getProperty("vlrExento"));
                         $vlr_iva    = floatval($reporte->getProperty("vlrIVA"));
@@ -456,73 +456,73 @@ class falabellaActions extends sfActions {
 			$salida.= str_pad("002",50, " "); // 5 Concepto del IVA
 			$salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 6
 			$salida.= "\r\n";
-			
+
 			$directory=sfConfig::get('app_falabella_output');
 			$filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$row["ca_factura"].'.txt';
-			$handle = fopen($filename , 'w');	
-			
+			$handle = fopen($filename , 'w');
+
 			if (fwrite($handle, $salida) === FALSE) {
 				echo "No se puede escribir al archivo {filename}";
 				exit;
 			}
 		}
-		
+
     	$this->redirect("falabella/list");
 	}
-	
+
 	public function executeEnviarEmail(){
-				
+
 		$this->setLayout("ajax");
 		$content  = sfContext::getInstance()->getController()->getPresentationFor( 'falabella', 'shippingInstructions', 'email') ;
-		
+
 		$user = $this->getUser();
-					
+
 		//Crea el correo electronico
 		$email = new Email();
 		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( $user->getUserId() );
-		$email->setCaTipo( "Fal Shipping Inst." ); 		
+		$email->setCaTipo( "Fal Shipping Inst." );
 		$email->setCaIdcaso( substr(-20,20,base64_decode($this->getRequestParameter('iddoc'))) );
 		$email->setCaFrom( $user->getEmail() );
 		$email->setCaFromname( $user->getNombre() );
-		
+
 		if( $this->getRequestParameter("readreceipt") ){
 			$email->setCaReadReceipt( $this->getRequestParameter("readreceipt") );
 		}
 
 		$email->setCaReplyto( $user->getEmail() );
-				
-		$recips = explode(",",$this->getRequestParameter("destinatario"));									
+
+		$recips = explode(",",$this->getRequestParameter("destinatario"));
 		if( is_array($recips) ){
-			foreach( $recips as $recip ){			
-				$recip = str_replace(" ", "", $recip );			
+			foreach( $recips as $recip ){
+				$recip = str_replace(" ", "", $recip );
 				if( $recip ){
-					$email->addTo( $recip ); 
-				}
-			}	
-		}
-				
-		$recips =  explode(",",$this->getRequestParameter("cc")) ;
-		if( is_array($recips) ){
-			foreach( $recips as $recip ){			
-				$recip = str_replace(" ", "", $recip );			
-				if( $recip ){
-					$email->addCc( $recip ); 
+					$email->addTo( $recip );
 				}
 			}
 		}
-	
-		$email->addCc( $this->getUser()->getEmail() );					
-		$email->setCaSubject( $this->getRequestParameter("asunto") );		
-		$email->setCaBody( $this->getRequestParameter("mensaje")."<br />".$content );	
-		
+
+		$recips =  explode(",",$this->getRequestParameter("cc")) ;
+		if( is_array($recips) ){
+			foreach( $recips as $recip ){
+				$recip = str_replace(" ", "", $recip );
+				if( $recip ){
+					$email->addCc( $recip );
+				}
+			}
+		}
+
+		$email->addCc( $this->getUser()->getEmail() );
+		$email->setCaSubject( $this->getRequestParameter("asunto") );
+		$email->setCaBody( $this->getRequestParameter("mensaje")."<br />".$content );
+
 		$email->save(); //guarda el cuerpo del mensaje
-		$this->error = $email->send();	
+		$this->error = $email->send();
 		if($this->error){
 			$this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
 		}
-		
-	
+
+
 	}
 }
 ?>
