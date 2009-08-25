@@ -89,10 +89,12 @@ class ReportePeer extends BaseReportePeer
 						
 		$c->add( ReportePeer::CA_USUANULADO, null, Criteria::ISNULL );
 			
-				
+		//TODO parametrizar
 		if( $idCliente==860048626 ||$idCliente==830512518 ){ //Este cliente (Minipak) solicita especialmente que siempre la aparezcan todos los reportes del mes
 			$fecha =  date("Y-m-")."01";			
-		}else{	
+		}elseif( $idCliente==860002693 ){
+            $fecha = Utils::addDays( date("Y-m-d"), -60 );
+        }else{
 			//Muetra los reportes con estado carga recogida de los ultimos 3 dias o 6 en caso de que sea lunes y 5 en caso de que sea martes	
 			$today = date( "N" );
 			

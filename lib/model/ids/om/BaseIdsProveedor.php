@@ -28,6 +28,9 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 	protected $ca_usuaprobado;
 
 	
+	protected $ca_activo;
+
+	
 	protected $aIds;
 
 	
@@ -109,6 +112,12 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 	public function getCaUsuaprobado()
 	{
 		return $this->ca_usuaprobado;
+	}
+
+	
+	public function getCaActivo()
+	{
+		return $this->ca_activo;
 	}
 
 	
@@ -222,6 +231,20 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		return $this;
 	} 
 	
+	public function setCaActivo($v)
+	{
+		if ($v !== null) {
+			$v = (boolean) $v;
+		}
+
+		if ($this->ca_activo !== $v) {
+			$this->ca_activo = $v;
+			$this->modifiedColumns[] = IdsProveedorPeer::CA_ACTIVO;
+		}
+
+		return $this;
+	} 
+	
 	public function hasOnlyDefaultValues()
 	{
 						if (array_diff($this->modifiedColumns, array())) {
@@ -241,6 +264,7 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 			$this->ca_controladoporsig = ($row[$startcol + 3] !== null) ? (boolean) $row[$startcol + 3] : null;
 			$this->ca_fchaprobado = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->ca_usuaprobado = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+			$this->ca_activo = ($row[$startcol + 6] !== null) ? (boolean) $row[$startcol + 6] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -249,7 +273,7 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 				$this->ensureConsistency();
 			}
 
-						return $startcol + 6; 
+						return $startcol + 7; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating IdsProveedor object", $e);
 		}
@@ -517,6 +541,9 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 			case 5:
 				return $this->getCaUsuaprobado();
 				break;
+			case 6:
+				return $this->getCaActivo();
+				break;
 			default:
 				return null;
 				break;
@@ -533,6 +560,7 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 			$keys[3] => $this->getCaControladoporsig(),
 			$keys[4] => $this->getCaFchaprobado(),
 			$keys[5] => $this->getCaUsuaprobado(),
+			$keys[6] => $this->getCaActivo(),
 		);
 		return $result;
 	}
@@ -566,6 +594,9 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 			case 5:
 				$this->setCaUsuaprobado($value);
 				break;
+			case 6:
+				$this->setCaActivo($value);
+				break;
 		} 	}
 
 	
@@ -579,6 +610,7 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[3], $arr)) $this->setCaControladoporsig($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaFchaprobado($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaUsuaprobado($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaActivo($arr[$keys[6]]);
 	}
 
 	
@@ -592,6 +624,7 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(IdsProveedorPeer::CA_CONTROLADOPORSIG)) $criteria->add(IdsProveedorPeer::CA_CONTROLADOPORSIG, $this->ca_controladoporsig);
 		if ($this->isColumnModified(IdsProveedorPeer::CA_FCHAPROBADO)) $criteria->add(IdsProveedorPeer::CA_FCHAPROBADO, $this->ca_fchaprobado);
 		if ($this->isColumnModified(IdsProveedorPeer::CA_USUAPROBADO)) $criteria->add(IdsProveedorPeer::CA_USUAPROBADO, $this->ca_usuaprobado);
+		if ($this->isColumnModified(IdsProveedorPeer::CA_ACTIVO)) $criteria->add(IdsProveedorPeer::CA_ACTIVO, $this->ca_activo);
 
 		return $criteria;
 	}
@@ -633,6 +666,8 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		$copyObj->setCaFchaprobado($this->ca_fchaprobado);
 
 		$copyObj->setCaUsuaprobado($this->ca_usuaprobado);
+
+		$copyObj->setCaActivo($this->ca_activo);
 
 
 		if ($deepCopy) {

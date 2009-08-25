@@ -13,7 +13,7 @@ abstract class BaseIdsCriterioPeer {
 	const CLASS_DEFAULT = 'lib.model.ids.IdsCriterio';
 
 	
-	const NUM_COLUMNS = 9;
+	const NUM_COLUMNS = 10;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -32,6 +32,9 @@ abstract class BaseIdsCriterioPeer {
 
 	
 	const CA_ACTIVO = 'ids.tb_criterios.CA_ACTIVO';
+
+	
+	const CA_PONDERACION = 'ids.tb_criterios.CA_PONDERACION';
 
 	
 	const CA_FCHCREADO = 'ids.tb_criterios.CA_FCHCREADO';
@@ -53,20 +56,20 @@ abstract class BaseIdsCriterioPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcriterio', 'CaTipo', 'CaTipocriterio', 'CaCriterio', 'CaActivo', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcriterio', 'caTipo', 'caTipocriterio', 'caCriterio', 'caActivo', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCRITERIO, self::CA_TIPO, self::CA_TIPOCRITERIO, self::CA_CRITERIO, self::CA_ACTIVO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcriterio', 'ca_tipo', 'ca_tipocriterio', 'ca_criterio', 'ca_activo', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcriterio', 'CaTipo', 'CaTipocriterio', 'CaCriterio', 'CaActivo', 'CaPonderacion', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcriterio', 'caTipo', 'caTipocriterio', 'caCriterio', 'caActivo', 'caPonderacion', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCRITERIO, self::CA_TIPO, self::CA_TIPOCRITERIO, self::CA_CRITERIO, self::CA_ACTIVO, self::CA_PONDERACION, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcriterio', 'ca_tipo', 'ca_tipocriterio', 'ca_criterio', 'ca_activo', 'ca_ponderacion', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcriterio' => 0, 'CaTipo' => 1, 'CaTipocriterio' => 2, 'CaCriterio' => 3, 'CaActivo' => 4, 'CaFchcreado' => 5, 'CaUsucreado' => 6, 'CaFchactualizado' => 7, 'CaUsuactualizado' => 8, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcriterio' => 0, 'caTipo' => 1, 'caTipocriterio' => 2, 'caCriterio' => 3, 'caActivo' => 4, 'caFchcreado' => 5, 'caUsucreado' => 6, 'caFchactualizado' => 7, 'caUsuactualizado' => 8, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCRITERIO => 0, self::CA_TIPO => 1, self::CA_TIPOCRITERIO => 2, self::CA_CRITERIO => 3, self::CA_ACTIVO => 4, self::CA_FCHCREADO => 5, self::CA_USUCREADO => 6, self::CA_FCHACTUALIZADO => 7, self::CA_USUACTUALIZADO => 8, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcriterio' => 0, 'ca_tipo' => 1, 'ca_tipocriterio' => 2, 'ca_criterio' => 3, 'ca_activo' => 4, 'ca_fchcreado' => 5, 'ca_usucreado' => 6, 'ca_fchactualizado' => 7, 'ca_usuactualizado' => 8, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcriterio' => 0, 'CaTipo' => 1, 'CaTipocriterio' => 2, 'CaCriterio' => 3, 'CaActivo' => 4, 'CaPonderacion' => 5, 'CaFchcreado' => 6, 'CaUsucreado' => 7, 'CaFchactualizado' => 8, 'CaUsuactualizado' => 9, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcriterio' => 0, 'caTipo' => 1, 'caTipocriterio' => 2, 'caCriterio' => 3, 'caActivo' => 4, 'caPonderacion' => 5, 'caFchcreado' => 6, 'caUsucreado' => 7, 'caFchactualizado' => 8, 'caUsuactualizado' => 9, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCRITERIO => 0, self::CA_TIPO => 1, self::CA_TIPOCRITERIO => 2, self::CA_CRITERIO => 3, self::CA_ACTIVO => 4, self::CA_PONDERACION => 5, self::CA_FCHCREADO => 6, self::CA_USUCREADO => 7, self::CA_FCHACTUALIZADO => 8, self::CA_USUACTUALIZADO => 9, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcriterio' => 0, 'ca_tipo' => 1, 'ca_tipocriterio' => 2, 'ca_criterio' => 3, 'ca_activo' => 4, 'ca_ponderacion' => 5, 'ca_fchcreado' => 6, 'ca_usucreado' => 7, 'ca_fchactualizado' => 8, 'ca_usuactualizado' => 9, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
 	);
 
 	
@@ -117,6 +120,8 @@ abstract class BaseIdsCriterioPeer {
 		$criteria->addSelectColumn(IdsCriterioPeer::CA_CRITERIO);
 
 		$criteria->addSelectColumn(IdsCriterioPeer::CA_ACTIVO);
+
+		$criteria->addSelectColumn(IdsCriterioPeer::CA_PONDERACION);
 
 		$criteria->addSelectColumn(IdsCriterioPeer::CA_FCHCREADO);
 

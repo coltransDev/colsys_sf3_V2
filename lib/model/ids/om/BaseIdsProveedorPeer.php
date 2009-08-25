@@ -13,7 +13,7 @@ abstract class BaseIdsProveedorPeer {
 	const CLASS_DEFAULT = 'lib.model.ids.IdsProveedor';
 
 	
-	const NUM_COLUMNS = 6;
+	const NUM_COLUMNS = 7;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -37,6 +37,9 @@ abstract class BaseIdsProveedorPeer {
 	const CA_USUAPROBADO = 'ids.tb_proveedores.CA_USUAPROBADO';
 
 	
+	const CA_ACTIVO = 'ids.tb_proveedores.CA_ACTIVO';
+
+	
 	public static $instances = array();
 
 	
@@ -44,20 +47,20 @@ abstract class BaseIdsProveedorPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdproveedor', 'CaTipo', 'CaCritico', 'CaControladoporsig', 'CaFchaprobado', 'CaUsuaprobado', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdproveedor', 'caTipo', 'caCritico', 'caControladoporsig', 'caFchaprobado', 'caUsuaprobado', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDPROVEEDOR, self::CA_TIPO, self::CA_CRITICO, self::CA_CONTROLADOPORSIG, self::CA_FCHAPROBADO, self::CA_USUAPROBADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idproveedor', 'ca_tipo', 'ca_critico', 'ca_controladoporsig', 'ca_fchaprobado', 'ca_usuaprobado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdproveedor', 'CaTipo', 'CaCritico', 'CaControladoporsig', 'CaFchaprobado', 'CaUsuaprobado', 'CaActivo', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdproveedor', 'caTipo', 'caCritico', 'caControladoporsig', 'caFchaprobado', 'caUsuaprobado', 'caActivo', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDPROVEEDOR, self::CA_TIPO, self::CA_CRITICO, self::CA_CONTROLADOPORSIG, self::CA_FCHAPROBADO, self::CA_USUAPROBADO, self::CA_ACTIVO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idproveedor', 'ca_tipo', 'ca_critico', 'ca_controladoporsig', 'ca_fchaprobado', 'ca_usuaprobado', 'ca_activo', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdproveedor' => 0, 'CaTipo' => 1, 'CaCritico' => 2, 'CaControladoporsig' => 3, 'CaFchaprobado' => 4, 'CaUsuaprobado' => 5, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdproveedor' => 0, 'caTipo' => 1, 'caCritico' => 2, 'caControladoporsig' => 3, 'caFchaprobado' => 4, 'caUsuaprobado' => 5, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDPROVEEDOR => 0, self::CA_TIPO => 1, self::CA_CRITICO => 2, self::CA_CONTROLADOPORSIG => 3, self::CA_FCHAPROBADO => 4, self::CA_USUAPROBADO => 5, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idproveedor' => 0, 'ca_tipo' => 1, 'ca_critico' => 2, 'ca_controladoporsig' => 3, 'ca_fchaprobado' => 4, 'ca_usuaprobado' => 5, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdproveedor' => 0, 'CaTipo' => 1, 'CaCritico' => 2, 'CaControladoporsig' => 3, 'CaFchaprobado' => 4, 'CaUsuaprobado' => 5, 'CaActivo' => 6, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdproveedor' => 0, 'caTipo' => 1, 'caCritico' => 2, 'caControladoporsig' => 3, 'caFchaprobado' => 4, 'caUsuaprobado' => 5, 'caActivo' => 6, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDPROVEEDOR => 0, self::CA_TIPO => 1, self::CA_CRITICO => 2, self::CA_CONTROLADOPORSIG => 3, self::CA_FCHAPROBADO => 4, self::CA_USUAPROBADO => 5, self::CA_ACTIVO => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idproveedor' => 0, 'ca_tipo' => 1, 'ca_critico' => 2, 'ca_controladoporsig' => 3, 'ca_fchaprobado' => 4, 'ca_usuaprobado' => 5, 'ca_activo' => 6, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	
@@ -110,6 +113,8 @@ abstract class BaseIdsProveedorPeer {
 		$criteria->addSelectColumn(IdsProveedorPeer::CA_FCHAPROBADO);
 
 		$criteria->addSelectColumn(IdsProveedorPeer::CA_USUAPROBADO);
+
+		$criteria->addSelectColumn(IdsProveedorPeer::CA_ACTIVO);
 
 	}
 

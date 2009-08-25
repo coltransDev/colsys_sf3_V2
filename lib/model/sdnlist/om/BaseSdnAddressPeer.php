@@ -1,76 +1,57 @@
 <?php
 
-/**
- * Base static class for performing query and update operations on the 'tb_sdnaddress' table.
- *
- * 
- *
- * @package    lib.model.sdnlist.om
- */
+
 abstract class BaseSdnAddressPeer {
 
-	/** the default database name for this class */
+	
 	const DATABASE_NAME = 'propel';
 
-	/** the table name for this class */
+	
 	const TABLE_NAME = 'tb_sdnaddress';
 
-	/** A class that can be returned by this peer. */
+	
 	const CLASS_DEFAULT = 'lib.model.sdnlist.SdnAddress';
 
-	/** The total number of columns. */
+	
 	const NUM_COLUMNS = 9;
 
-	/** The number of lazy-loaded columns. */
+	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
-	/** the column name for the CA_UID field */
+	
 	const CA_UID = 'tb_sdnaddress.CA_UID';
 
-	/** the column name for the CA_UID_ADDRESS field */
+	
 	const CA_UID_ADDRESS = 'tb_sdnaddress.CA_UID_ADDRESS';
 
-	/** the column name for the CA_ADDRESS1 field */
+	
 	const CA_ADDRESS1 = 'tb_sdnaddress.CA_ADDRESS1';
 
-	/** the column name for the CA_ADDRESS2 field */
+	
 	const CA_ADDRESS2 = 'tb_sdnaddress.CA_ADDRESS2';
 
-	/** the column name for the CA_ADDRESS3 field */
+	
 	const CA_ADDRESS3 = 'tb_sdnaddress.CA_ADDRESS3';
 
-	/** the column name for the CA_CITY field */
+	
 	const CA_CITY = 'tb_sdnaddress.CA_CITY';
 
-	/** the column name for the CA_STATE field */
+	
 	const CA_STATE = 'tb_sdnaddress.CA_STATE';
 
-	/** the column name for the CA_POSTAL field */
+	
 	const CA_POSTAL = 'tb_sdnaddress.CA_POSTAL';
 
-	/** the column name for the CA_COUNTRY field */
+	
 	const CA_COUNTRY = 'tb_sdnaddress.CA_COUNTRY';
 
-	/**
-	 * An identiy map to hold any loaded instances of SdnAddress objects.
-	 * This must be public so that other peer classes can access this when hydrating from JOIN
-	 * queries.
-	 * @var        array SdnAddress[]
-	 */
+	
 	public static $instances = array();
 
-	/**
-	 * The MapBuilder instance for this peer.
-	 * @var        MapBuilder
-	 */
+	
 	private static $mapBuilder = null;
 
-	/**
-	 * holds an array of fieldnames
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
-	 */
+	
 	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('CaUid', 'CaUidAddress', 'CaAddress1', 'CaAddress2', 'CaAddress3', 'CaCity', 'CaState', 'CaPostal', 'CaCountry', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caUid', 'caUidAddress', 'caAddress1', 'caAddress2', 'caAddress3', 'caCity', 'caState', 'caPostal', 'caCountry', ),
@@ -79,12 +60,7 @@ abstract class BaseSdnAddressPeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
 	);
 
-	/**
-	 * holds an array of keys for quick access to the fieldnames array
-	 *
-	 * first dimension keys are the type constants
-	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
-	 */
+	
 	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('CaUid' => 0, 'CaUidAddress' => 1, 'CaAddress1' => 2, 'CaAddress2' => 3, 'CaAddress3' => 4, 'CaCity' => 5, 'CaState' => 6, 'CaPostal' => 7, 'CaCountry' => 8, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('caUid' => 0, 'caUidAddress' => 1, 'caAddress1' => 2, 'caAddress2' => 3, 'caAddress3' => 4, 'caCity' => 5, 'caState' => 6, 'caPostal' => 7, 'caCountry' => 8, ),
@@ -93,10 +69,7 @@ abstract class BaseSdnAddressPeer {
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
 	);
 
-	/**
-	 * Get a (singleton) instance of the MapBuilder for this peer class.
-	 * @return     MapBuilder The map builder for this peer
-	 */
+	
 	public static function getMapBuilder()
 	{
 		if (self::$mapBuilder === null) {
@@ -104,16 +77,7 @@ abstract class BaseSdnAddressPeer {
 		}
 		return self::$mapBuilder;
 	}
-	/**
-	 * Translates a fieldname to another type
-	 *
-	 * @param      string $name field name
-	 * @param      string $fromType One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                         BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @param      string $toType   One of the class type constants
-	 * @return     string translated name of the field.
-	 * @throws     PropelException - if the specified name could not be found in the fieldname mappings.
-	 */
+	
 	static public function translateFieldName($name, $fromType, $toType)
 	{
 		$toNames = self::getFieldNames($toType);
@@ -124,14 +88,7 @@ abstract class BaseSdnAddressPeer {
 		return $toNames[$key];
 	}
 
-	/**
-	 * Returns an array of field names.
-	 *
-	 * @param      string $type The type of fieldnames to return:
-	 *                      One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
-	 *                      BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM
-	 * @return     array A list of field names
-	 */
+	
 
 	static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
 	{
@@ -141,34 +98,13 @@ abstract class BaseSdnAddressPeer {
 		return self::$fieldNames[$type];
 	}
 
-	/**
-	 * Convenience method which changes table.column to alias.column.
-	 *
-	 * Using this method you can maintain SQL abstraction while using column aliases.
-	 * <code>
-	 *		$c->addAlias("alias1", TablePeer::TABLE_NAME);
-	 *		$c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
-	 * </code>
-	 * @param      string $alias The alias for the current table.
-	 * @param      string $column The column name for current table. (i.e. SdnAddressPeer::COLUMN_NAME).
-	 * @return     string
-	 */
+	
 	public static function alias($alias, $column)
 	{
 		return str_replace(SdnAddressPeer::TABLE_NAME.'.', $alias.'.', $column);
 	}
 
-	/**
-	 * Add all the columns needed to create a new object.
-	 *
-	 * Note: any columns that were marked with lazyLoad="true" in the
-	 * XML schema will not be added to the select list and only loaded
-	 * on demand.
-	 *
-	 * @param      criteria object containing the columns to add.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function addSelectColumns(Criteria $criteria)
 	{
 
@@ -192,23 +128,12 @@ abstract class BaseSdnAddressPeer {
 
 	}
 
-	/**
-	 * Returns the number of rows matching criteria.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCount(Criteria $criteria, $distinct = false, PropelPDO $con = null)
 	{
-		// we may modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(SdnAddressPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(SdnAddressPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -218,33 +143,28 @@ abstract class BaseSdnAddressPeer {
 			SdnAddressPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-		$criteria->setDbName(self::DATABASE_NAME); // Set the correct dbName
-
+		$criteria->clearOrderByColumns(); 		$criteria->setDbName(self::DATABASE_NAME); 
 		if ($con === null) {
 			$con = Propel::getConnection(SdnAddressPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		// BasePeer returns a PDOStatement
-		$stmt = BasePeer::doCount($criteria, $con);
+
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseSdnAddressPeer', $criteria, $con);
+    }
+
+
+				$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
-	/**
-	 * Method to select one object from the DB.
-	 *
-	 * @param      Criteria $criteria object used to create the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     SdnAddress
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectOne(Criteria $criteria, PropelPDO $con = null)
 	{
 		$critcopy = clone $criteria;
@@ -255,34 +175,21 @@ abstract class BaseSdnAddressPeer {
 		}
 		return null;
 	}
-	/**
-	 * Method to do selects.
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con
-	 * @return     array Array of selected Objects
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelect(Criteria $criteria, PropelPDO $con = null)
 	{
 		return SdnAddressPeer::populateObjects(SdnAddressPeer::doSelectStmt($criteria, $con));
 	}
-	/**
-	 * Prepares the Criteria object and uses the parent doSelect() method to execute a PDOStatement.
-	 *
-	 * Use this method directly if you want to work with an executed statement durirectly (for example
-	 * to perform your own object hydration).
-	 *
-	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
-	 * @param      PropelPDO $con The connection to use
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @return     PDOStatement The executed PDOStatement object.
-	 * @see        BasePeer::doSelect()
-	 */
+	
 	public static function doSelectStmt(Criteria $criteria, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doSelectStmt:doSelectStmt') as $callable)
+    {
+      call_user_func($callable, 'BaseSdnAddressPeer', $criteria, $con);
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(SdnAddressPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
@@ -292,52 +199,28 @@ abstract class BaseSdnAddressPeer {
 			SdnAddressPeer::addSelectColumns($criteria);
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		// BasePeer returns a PDOStatement
-		return BasePeer::doSelect($criteria, $con);
+				return BasePeer::doSelect($criteria, $con);
 	}
-	/**
-	 * Adds an object to the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doSelect*()
-	 * methods in your stub classes -- you may need to explicitly add objects
-	 * to the cache in order to ensure that the same objects are always returned by doSelect*()
-	 * and retrieveByPK*() calls.
-	 *
-	 * @param      SdnAddress $value A SdnAddress object.
-	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
-	 */
+	
 	public static function addInstanceToPool(SdnAddress $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
 				$key = serialize(array((string) $obj->getCaUid(), (string) $obj->getCaUidAddress()));
-			} // if key === null
-			self::$instances[$key] = $obj;
+			} 			self::$instances[$key] = $obj;
 		}
 	}
 
-	/**
-	 * Removes an object from the instance pool.
-	 *
-	 * Propel keeps cached copies of objects in an instance pool when they are retrieved
-	 * from the database.  In some cases -- especially when you override doDelete
-	 * methods in your stub classes -- you may need to explicitly remove objects
-	 * from the cache in order to prevent returning objects that no longer exist.
-	 *
-	 * @param      mixed $value A SdnAddress object or a primary key value.
-	 */
+	
 	public static function removeInstanceFromPool($value)
 	{
 		if (Propel::isInstancePoolingEnabled() && $value !== null) {
 			if (is_object($value) && $value instanceof SdnAddress) {
 				$key = serialize(array((string) $value->getCaUid(), (string) $value->getCaUidAddress()));
 			} elseif (is_array($value) && count($value) === 2) {
-				// assume we've been passed a primary key
-				$key = serialize(array((string) $value[0], (string) $value[1]));
+								$key = serialize(array((string) $value[0], (string) $value[1]));
 			} else {
 				$e = new PropelException("Invalid value passed to removeInstanceFromPool().  Expected primary key or SdnAddress object; got " . (is_object($value) ? get_class($value) . ' object.' : var_export($value,true)));
 				throw $e;
@@ -345,18 +228,8 @@ abstract class BaseSdnAddressPeer {
 
 			unset(self::$instances[$key]);
 		}
-	} // removeInstanceFromPool()
-
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      string $key The key (@see getPrimaryKeyHash()) for this instance.
-	 * @return     SdnAddress Found object or NULL if 1) no instance exists for specified key or 2) instance pooling has been disabled.
-	 * @see        getPrimaryKeyHash()
-	 */
+	} 
+	
 	public static function getInstanceFromPool($key)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
@@ -364,90 +237,51 @@ abstract class BaseSdnAddressPeer {
 				return self::$instances[$key];
 			}
 		}
-		return null; // just to be explicit
-	}
+		return null; 	}
 	
-	/**
-	 * Clear the instance pool.
-	 *
-	 * @return     void
-	 */
+	
 	public static function clearInstancePool()
 	{
 		self::$instances = array();
 	}
 	
-	/**
-	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
-	 *
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, a serialize()d version of the primary key will be returned.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @return     string A string version of PK or NULL if the components of primary key in result array are all null.
-	 */
+	
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
-		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol + 0] === null && $row[$startcol + 1] === null) {
+				if ($row[$startcol + 0] === null && $row[$startcol + 1] === null) {
 			return null;
 		}
 		return serialize(array((string) $row[$startcol + 0], (string) $row[$startcol + 1]));
 	}
 
-	/**
-	 * The returned array will contain objects of the default type or
-	 * objects that inherit from the default.
-	 *
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function populateObjects(PDOStatement $stmt)
 	{
 		$results = array();
 	
-		// set the class once to avoid overhead in the loop
-		$cls = SdnAddressPeer::getOMClass();
+				$cls = SdnAddressPeer::getOMClass();
 		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
-		// populate the object(s)
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key = SdnAddressPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj = SdnAddressPeer::getInstanceFromPool($key))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj->hydrate($row, 0, true); // rehydrate
-				$results[] = $obj;
+																$results[] = $obj;
 			} else {
 		
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
 				SdnAddressPeer::addInstanceToPool($obj, $key);
-			} // if key exists
-		}
+			} 		}
 		$stmt->closeCursor();
 		return $results;
 	}
 
-	/**
-	 * Returns the number of rows matching criteria, joining the related Sdn table
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinSdn(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(SdnAddressPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(SdnAddressPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -457,10 +291,8 @@ abstract class BaseSdnAddressPeer {
 			SdnAddressPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(SdnAddressPeer::DATABASE_NAME, Propel::CONNECTION_READ);
@@ -468,33 +300,37 @@ abstract class BaseSdnAddressPeer {
 
 		$criteria->addJoin(array(SdnAddressPeer::CA_UID,), array(SdnPeer::CA_UID,), $join_behavior);
 
+
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseSdnAddressPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
 
-	/**
-	 * Selects a collection of SdnAddress objects pre-filled with their Sdn objects.
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of SdnAddress objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinSdn(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doSelectJoin:doSelectJoin') as $callable)
+    {
+      call_user_func($callable, 'BaseSdnAddressPeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -509,10 +345,7 @@ abstract class BaseSdnAddressPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = SdnAddressPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = SdnAddressPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 
 				$omClass = SdnAddressPeer::getOMClass();
 
@@ -520,8 +353,7 @@ abstract class BaseSdnAddressPeer {
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				SdnAddressPeer::addInstanceToPool($obj1, $key1);
-			} // if $obj1 already loaded
-
+			} 
 			$key2 = SdnPeer::getPrimaryKeyHashFromRow($row, $startcol);
 			if ($key2 !== null) {
 				$obj2 = SdnPeer::getInstanceFromPool($key2);
@@ -533,13 +365,10 @@ abstract class BaseSdnAddressPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					SdnPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 already loaded
+				} 
+								$obj2->addSdnAddress($obj1);
 
-				// Add the $obj1 (SdnAddress) to $obj2 (Sdn)
-				$obj2->addSdnAddress($obj1);
-
-			} // if joined row was not null
-
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -547,24 +376,12 @@ abstract class BaseSdnAddressPeer {
 	}
 
 
-	/**
-	 * Returns the number of rows matching criteria, joining all related tables
-	 *
-	 * @param      Criteria $c
-	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     int Number of matching rows.
-	 */
+	
 	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		// we're going to modify criteria, so copy it first
-		$criteria = clone $criteria;
+				$criteria = clone $criteria;
 
-		// We need to set the primary table name, since in the case that there are no WHERE columns
-		// it will be impossible for the BasePeer::createSelectSql() method to determine which
-		// tables go into the FROM clause.
-		$criteria->setPrimaryTableName(SdnAddressPeer::TABLE_NAME);
+								$criteria->setPrimaryTableName(SdnAddressPeer::TABLE_NAME);
 
 		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
 			$criteria->setDistinct();
@@ -574,43 +391,44 @@ abstract class BaseSdnAddressPeer {
 			SdnAddressPeer::addSelectColumns($criteria);
 		}
 
-		$criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		if ($con === null) {
 			$con = Propel::getConnection(SdnAddressPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		$criteria->addJoin(array(SdnAddressPeer::CA_UID,), array(SdnPeer::CA_UID,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseSdnAddressPeer', $criteria, $con);
+    }
+
+
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$count = (int) $row[0];
 		} else {
-			$count = 0; // no rows returned; we infer that means 0 matches.
-		}
+			$count = 0; 		}
 		$stmt->closeCursor();
 		return $count;
 	}
 
-	/**
-	 * Selects a collection of SdnAddress objects pre-filled with all related objects.
-	 *
-	 * @param      Criteria  $c
-	 * @param      PropelPDO $con
-	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-	 * @return     array Array of SdnAddress objects.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
+
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doSelectJoinAll:doSelectJoinAll') as $callable)
+    {
+      call_user_func($callable, 'BaseSdnAddressPeer', $c, $con);
+    }
+
+
 		$c = clone $c;
 
-		// Set the correct dbName if it has not been overridden
-		if ($c->getDbName() == Propel::getDefaultDB()) {
+				if ($c->getDbName() == Propel::getDefaultDB()) {
 			$c->setDbName(self::DATABASE_NAME);
 		}
 
@@ -627,20 +445,15 @@ abstract class BaseSdnAddressPeer {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = SdnAddressPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = SdnAddressPeer::getInstanceFromPool($key1))) {
-				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://propel.phpdb.org/trac/ticket/509
-				// $obj1->hydrate($row, 0, true); // rehydrate
-			} else {
+															} else {
 				$omClass = SdnAddressPeer::getOMClass();
 
 				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				SdnAddressPeer::addInstanceToPool($obj1, $key1);
-			} // if obj1 already loaded
-
-			// Add objects for joined Sdn rows
-
+			} 
+			
 			$key2 = SdnPeer::getPrimaryKeyHashFromRow($row, $startcol2);
 			if ($key2 !== null) {
 				$obj2 = SdnPeer::getInstanceFromPool($key2);
@@ -653,12 +466,9 @@ abstract class BaseSdnAddressPeer {
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					SdnPeer::addInstanceToPool($obj2, $key2);
-				} // if obj2 loaded
-
-				// Add the $obj1 (SdnAddress) to the collection in $obj2 (Sdn)
-				$obj2->addSdnAddress($obj1);
-			} // if joined row not null
-
+				} 
+								$obj2->addSdnAddress($obj1);
+			} 
 			$results[] = $obj1;
 		}
 		$stmt->closeCursor();
@@ -670,61 +480,45 @@ abstract class BaseSdnAddressPeer {
   {
     return array();
   }
-	/**
-	 * Returns the TableMap related to this peer.
-	 * This method is not needed for general use but a specific application could have a need.
-	 * @return     TableMap
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function getTableMap()
 	{
 		return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
 	}
 
-	/**
-	 * The class that the Peer will make instances of.
-	 *
-	 * This uses a dot-path notation which is tranalted into a path
-	 * relative to a location on the PHP include_path.
-	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
-	 *
-	 * @return     string path.to.ClassName
-	 */
+	
 	public static function getOMClass()
 	{
 		return SdnAddressPeer::CLASS_DEFAULT;
 	}
 
-	/**
-	 * Method perform an INSERT on the database, given a SdnAddress or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or SdnAddress object containing data that is used to create the INSERT statement.
-	 * @param      PropelPDO $con the PropelPDO connection to use
-	 * @return     mixed The new primary key.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doInsert($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doInsert:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseSdnAddressPeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(SdnAddressPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-		} else {
-			$criteria = $values->buildCriteria(); // build Criteria from SdnAddress object
-		}
+			$criteria = clone $values; 		} else {
+			$criteria = $values->buildCriteria(); 		}
 
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table (I guess, conceivably)
-			$con->beginTransaction();
+									$con->beginTransaction();
 			$pk = BasePeer::doInsert($criteria, $con);
 			$con->commit();
 		} catch(PropelException $e) {
@@ -732,20 +526,29 @@ abstract class BaseSdnAddressPeer {
 			throw $e;
 		}
 
-		return $pk;
+		
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doInsert:post') as $callable)
+    {
+      call_user_func($callable, 'BaseSdnAddressPeer', $values, $con, $pk);
+    }
+
+    return $pk;
 	}
 
-	/**
-	 * Method perform an UPDATE on the database, given a SdnAddress or Criteria object.
-	 *
-	 * @param      mixed $values Criteria or SdnAddress object containing data that is used to create the UPDATE statement.
-	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	public static function doUpdate($values, PropelPDO $con = null)
 	{
+
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doUpdate:pre') as $callable)
+    {
+      $ret = call_user_func($callable, 'BaseSdnAddressPeer', $values, $con);
+      if (false !== $ret)
+      {
+        return $ret;
+      }
+    }
+
+
 		if ($con === null) {
 			$con = Propel::getConnection(SdnAddressPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
@@ -753,40 +556,36 @@ abstract class BaseSdnAddressPeer {
 		$selectCriteria = new Criteria(self::DATABASE_NAME);
 
 		if ($values instanceof Criteria) {
-			$criteria = clone $values; // rename for clarity
-
+			$criteria = clone $values; 
 			$comparison = $criteria->getComparison(SdnAddressPeer::CA_UID);
 			$selectCriteria->add(SdnAddressPeer::CA_UID, $criteria->remove(SdnAddressPeer::CA_UID), $comparison);
 
 			$comparison = $criteria->getComparison(SdnAddressPeer::CA_UID_ADDRESS);
 			$selectCriteria->add(SdnAddressPeer::CA_UID_ADDRESS, $criteria->remove(SdnAddressPeer::CA_UID_ADDRESS), $comparison);
 
-		} else { // $values is SdnAddress object
-			$criteria = $values->buildCriteria(); // gets full criteria
-			$selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
-		}
+		} else { 			$criteria = $values->buildCriteria(); 			$selectCriteria = $values->buildPkeyCriteria(); 		}
 
-		// set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		return BasePeer::doUpdate($selectCriteria, $criteria, $con);
-	}
+		$ret = BasePeer::doUpdate($selectCriteria, $criteria, $con);
+	
 
-	/**
-	 * Method to DELETE all rows from the tb_sdnaddress table.
-	 *
-	 * @return     int The number of affected rows (if supported by underlying database driver).
-	 */
+    foreach (sfMixer::getCallables('BaseSdnAddressPeer:doUpdate:post') as $callable)
+    {
+      call_user_func($callable, 'BaseSdnAddressPeer', $values, $con, $ret);
+    }
+
+    return $ret;
+  }
+
+	
 	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(SdnAddressPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-		$affectedRows = 0; // initialize var to track total num of affected rows
-		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+		$affectedRows = 0; 		try {
+									$con->beginTransaction();
 			$affectedRows += BasePeer::doDeleteAll(SdnAddressPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
@@ -796,17 +595,7 @@ abstract class BaseSdnAddressPeer {
 		}
 	}
 
-	/**
-	 * Method perform a DELETE on the database, given a SdnAddress or Criteria object OR a primary key value.
-	 *
-	 * @param      mixed $values Criteria or SdnAddress object or primary key or array of primary keys
-	 *              which is used to create the DELETE statement
-	 * @param      PropelPDO $con the connection to use
-	 * @return     int 	The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
-	 *				if supported by native driver or if emulated using Propel.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 */
+	
 	 public static function doDelete($values, PropelPDO $con = null)
 	 {
 		if ($con === null) {
@@ -814,30 +603,19 @@ abstract class BaseSdnAddressPeer {
 		}
 
 		if ($values instanceof Criteria) {
-			// invalidate the cache for all objects of this type, since we have no
-			// way of knowing (without running a query) what objects should be invalidated
-			// from the cache based on this Criteria.
-			SdnAddressPeer::clearInstancePool();
+												SdnAddressPeer::clearInstancePool();
 
-			// rename for clarity
-			$criteria = clone $values;
+						$criteria = clone $values;
 		} elseif ($values instanceof SdnAddress) {
-			// invalidate the cache for this single object
-			SdnAddressPeer::removeInstanceFromPool($values);
-			// create criteria based on pk values
-			$criteria = $values->buildPkeyCriteria();
+						SdnAddressPeer::removeInstanceFromPool($values);
+						$criteria = $values->buildPkeyCriteria();
 		} else {
-			// it must be the primary key
-
+			
 
 
 			$criteria = new Criteria(self::DATABASE_NAME);
-			// primary key is composite; we therefore, expect
-			// the primary key passed to be an array of pkey
-			// values
-			if (count($values) == count($values, COUNT_RECURSIVE)) {
-				// array is not multi-dimensional
-				$values = array($values);
+												if (count($values) == count($values, COUNT_RECURSIVE)) {
+								$values = array($values);
 			}
 
 			foreach ($values as $value) {
@@ -846,20 +624,15 @@ abstract class BaseSdnAddressPeer {
 				$criterion->addAnd($criteria->getNewCriterion(SdnAddressPeer::CA_UID_ADDRESS, $value[1]));
 				$criteria->addOr($criterion);
 
-				// we can invalidate the cache for this single PK
-				SdnAddressPeer::removeInstanceFromPool($value);
+								SdnAddressPeer::removeInstanceFromPool($value);
 			}
 		}
 
-		// Set the correct dbName
-		$criteria->setDbName(self::DATABASE_NAME);
+				$criteria->setDbName(self::DATABASE_NAME);
 
-		$affectedRows = 0; // initialize var to track total num of affected rows
-
+		$affectedRows = 0; 
 		try {
-			// use transaction because $criteria could contain info
-			// for more than one table or we could emulating ON DELETE CASCADE, etc.
-			$con->beginTransaction();
+									$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
 
@@ -871,18 +644,7 @@ abstract class BaseSdnAddressPeer {
 		}
 	}
 
-	/**
-	 * Validates all modified columns of given SdnAddress object.
-	 * If parameter $columns is either a single column name or an array of column names
-	 * than only those columns are validated.
-	 *
-	 * NOTICE: This does not apply to primary or foreign keys for now.
-	 *
-	 * @param      SdnAddress $obj The object to validate.
-	 * @param      mixed $cols Column name or array of column names.
-	 *
-	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
-	 */
+	
 	public static function doValidate(SdnAddress $obj, $cols = null)
 	{
 		$columns = array();
@@ -916,14 +678,7 @@ abstract class BaseSdnAddressPeer {
     return $res;
 	}
 
-	/**
-	 * Retrieve object using using composite pkey values.
-	 * @param      string $ca_uid
-	   @param      string $ca_uid_address
-	   
-	 * @param      PropelPDO $con
-	 * @return     SdnAddress
-	 */
+	
 	public static function retrieveByPK($ca_uid, $ca_uid_address, PropelPDO $con = null) {
 		$key = serialize(array((string) $ca_uid, (string) $ca_uid_address));
  		if (null !== ($obj = SdnAddressPeer::getInstanceFromPool($key))) {
@@ -940,16 +695,7 @@ abstract class BaseSdnAddressPeer {
 
 		return !empty($v) ? $v[0] : null;
 	}
-} // BaseSdnAddressPeer
-
-// This is the static code needed to register the MapBuilder for this table with the main Propel class.
-//
-// NOTE: This static code cannot call methods on the SdnAddressPeer class, because it is not defined yet.
-// If you need to use overridden methods, you can add this code to the bottom of the SdnAddressPeer class:
-//
-// Propel::getDatabaseMap(SdnAddressPeer::DATABASE_NAME)->addTableBuilder(SdnAddressPeer::TABLE_NAME, SdnAddressPeer::getMapBuilder());
-//
-// Doing so will effectively overwrite the registration below.
+} 
 
 Propel::getDatabaseMap(BaseSdnAddressPeer::DATABASE_NAME)->addTableBuilder(BaseSdnAddressPeer::TABLE_NAME, BaseSdnAddressPeer::getMapBuilder());
 

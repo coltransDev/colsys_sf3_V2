@@ -25,6 +25,9 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 	protected $ca_activo;
 
 	
+	protected $ca_ponderacion;
+
+	
 	protected $ca_fchcreado;
 
 	
@@ -41,6 +44,12 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 
 	
 	private $lastIdsEvaluacionxCriterioCriteria = null;
+
+	
+	protected $collIdsEventos;
+
+	
+	private $lastIdsEventoCriteria = null;
 
 	
 	protected $alreadyInSave = false;
@@ -88,6 +97,12 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 	public function getCaActivo()
 	{
 		return $this->ca_activo;
+	}
+
+	
+	public function getCaPonderacion()
+	{
+		return $this->ca_ponderacion;
 	}
 
 	
@@ -221,6 +236,20 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 		return $this;
 	} 
 	
+	public function setCaPonderacion($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_ponderacion !== $v) {
+			$this->ca_ponderacion = $v;
+			$this->modifiedColumns[] = IdsCriterioPeer::CA_PONDERACION;
+		}
+
+		return $this;
+	} 
+	
 	public function setCaFchcreado($v)
 	{
 						if ($v === null || $v === '') {
@@ -331,10 +360,11 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 			$this->ca_tipocriterio = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
 			$this->ca_criterio = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
 			$this->ca_activo = ($row[$startcol + 4] !== null) ? (boolean) $row[$startcol + 4] : null;
-			$this->ca_fchcreado = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_usucreado = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-			$this->ca_fchactualizado = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-			$this->ca_usuactualizado = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_ponderacion = ($row[$startcol + 5] !== null) ? (int) $row[$startcol + 5] : null;
+			$this->ca_fchcreado = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_usucreado = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -343,7 +373,7 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 				$this->ensureConsistency();
 			}
 
-						return $startcol + 9; 
+						return $startcol + 10; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating IdsCriterio object", $e);
 		}
@@ -380,6 +410,9 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 		if ($deep) {  
 			$this->collIdsEvaluacionxCriterios = null;
 			$this->lastIdsEvaluacionxCriterioCriteria = null;
+
+			$this->collIdsEventos = null;
+			$this->lastIdsEventoCriteria = null;
 
 		} 	}
 
@@ -491,6 +524,14 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 				}
 			}
 
+			if ($this->collIdsEventos !== null) {
+				foreach ($this->collIdsEventos as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			$this->alreadyInSave = false;
 
 		}
@@ -541,6 +582,14 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 					}
 				}
 
+				if ($this->collIdsEventos !== null) {
+					foreach ($this->collIdsEventos as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
+
 
 			$this->alreadyInValidation = false;
 		}
@@ -576,15 +625,18 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 				return $this->getCaActivo();
 				break;
 			case 5:
-				return $this->getCaFchcreado();
+				return $this->getCaPonderacion();
 				break;
 			case 6:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 7:
-				return $this->getCaFchactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 8:
+				return $this->getCaFchactualizado();
+				break;
+			case 9:
 				return $this->getCaUsuactualizado();
 				break;
 			default:
@@ -602,10 +654,11 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 			$keys[2] => $this->getCaTipocriterio(),
 			$keys[3] => $this->getCaCriterio(),
 			$keys[4] => $this->getCaActivo(),
-			$keys[5] => $this->getCaFchcreado(),
-			$keys[6] => $this->getCaUsucreado(),
-			$keys[7] => $this->getCaFchactualizado(),
-			$keys[8] => $this->getCaUsuactualizado(),
+			$keys[5] => $this->getCaPonderacion(),
+			$keys[6] => $this->getCaFchcreado(),
+			$keys[7] => $this->getCaUsucreado(),
+			$keys[8] => $this->getCaFchactualizado(),
+			$keys[9] => $this->getCaUsuactualizado(),
 		);
 		return $result;
 	}
@@ -637,15 +690,18 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 				$this->setCaActivo($value);
 				break;
 			case 5:
-				$this->setCaFchcreado($value);
+				$this->setCaPonderacion($value);
 				break;
 			case 6:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 7:
-				$this->setCaFchactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 8:
+				$this->setCaFchactualizado($value);
+				break;
+			case 9:
 				$this->setCaUsuactualizado($value);
 				break;
 		} 	}
@@ -660,10 +716,11 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[2], $arr)) $this->setCaTipocriterio($arr[$keys[2]]);
 		if (array_key_exists($keys[3], $arr)) $this->setCaCriterio($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaActivo($arr[$keys[4]]);
-		if (array_key_exists($keys[5], $arr)) $this->setCaFchcreado($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaUsucreado($arr[$keys[6]]);
-		if (array_key_exists($keys[7], $arr)) $this->setCaFchactualizado($arr[$keys[7]]);
-		if (array_key_exists($keys[8], $arr)) $this->setCaUsuactualizado($arr[$keys[8]]);
+		if (array_key_exists($keys[5], $arr)) $this->setCaPonderacion($arr[$keys[5]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaFchcreado($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaUsucreado($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaFchactualizado($arr[$keys[8]]);
+		if (array_key_exists($keys[9], $arr)) $this->setCaUsuactualizado($arr[$keys[9]]);
 	}
 
 	
@@ -676,6 +733,7 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(IdsCriterioPeer::CA_TIPOCRITERIO)) $criteria->add(IdsCriterioPeer::CA_TIPOCRITERIO, $this->ca_tipocriterio);
 		if ($this->isColumnModified(IdsCriterioPeer::CA_CRITERIO)) $criteria->add(IdsCriterioPeer::CA_CRITERIO, $this->ca_criterio);
 		if ($this->isColumnModified(IdsCriterioPeer::CA_ACTIVO)) $criteria->add(IdsCriterioPeer::CA_ACTIVO, $this->ca_activo);
+		if ($this->isColumnModified(IdsCriterioPeer::CA_PONDERACION)) $criteria->add(IdsCriterioPeer::CA_PONDERACION, $this->ca_ponderacion);
 		if ($this->isColumnModified(IdsCriterioPeer::CA_FCHCREADO)) $criteria->add(IdsCriterioPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(IdsCriterioPeer::CA_USUCREADO)) $criteria->add(IdsCriterioPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(IdsCriterioPeer::CA_FCHACTUALIZADO)) $criteria->add(IdsCriterioPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
@@ -718,6 +776,8 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 
 		$copyObj->setCaActivo($this->ca_activo);
 
+		$copyObj->setCaPonderacion($this->ca_ponderacion);
+
 		$copyObj->setCaFchcreado($this->ca_fchcreado);
 
 		$copyObj->setCaUsucreado($this->ca_usucreado);
@@ -732,6 +792,11 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 
 			foreach ($this->getIdsEvaluacionxCriterios() as $relObj) {
 				if ($relObj !== $this) {  					$copyObj->addIdsEvaluacionxCriterio($relObj->copy($deepCopy));
+				}
+			}
+
+			foreach ($this->getIdsEventos() as $relObj) {
+				if ($relObj !== $this) {  					$copyObj->addIdsEvento($relObj->copy($deepCopy));
 				}
 			}
 
@@ -896,6 +961,141 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 	}
 
 	
+	public function clearIdsEventos()
+	{
+		$this->collIdsEventos = null; 	}
+
+	
+	public function initIdsEventos()
+	{
+		$this->collIdsEventos = array();
+	}
+
+	
+	public function getIdsEventos($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsCriterioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsEventos === null) {
+			if ($this->isNew()) {
+			   $this->collIdsEventos = array();
+			} else {
+
+				$criteria->add(IdsEventoPeer::CA_IDCRITERIO, $this->ca_idcriterio);
+
+				IdsEventoPeer::addSelectColumns($criteria);
+				$this->collIdsEventos = IdsEventoPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(IdsEventoPeer::CA_IDCRITERIO, $this->ca_idcriterio);
+
+				IdsEventoPeer::addSelectColumns($criteria);
+				if (!isset($this->lastIdsEventoCriteria) || !$this->lastIdsEventoCriteria->equals($criteria)) {
+					$this->collIdsEventos = IdsEventoPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastIdsEventoCriteria = $criteria;
+		return $this->collIdsEventos;
+	}
+
+	
+	public function countIdsEventos(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsCriterioPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collIdsEventos === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(IdsEventoPeer::CA_IDCRITERIO, $this->ca_idcriterio);
+
+				$count = IdsEventoPeer::doCount($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(IdsEventoPeer::CA_IDCRITERIO, $this->ca_idcriterio);
+
+				if (!isset($this->lastIdsEventoCriteria) || !$this->lastIdsEventoCriteria->equals($criteria)) {
+					$count = IdsEventoPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collIdsEventos);
+				}
+			} else {
+				$count = count($this->collIdsEventos);
+			}
+		}
+		return $count;
+	}
+
+	
+	public function addIdsEvento(IdsEvento $l)
+	{
+		if ($this->collIdsEventos === null) {
+			$this->initIdsEventos();
+		}
+		if (!in_array($l, $this->collIdsEventos, true)) { 			array_push($this->collIdsEventos, $l);
+			$l->setIdsCriterio($this);
+		}
+	}
+
+
+	
+	public function getIdsEventosJoinIds($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsCriterioPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsEventos === null) {
+			if ($this->isNew()) {
+				$this->collIdsEventos = array();
+			} else {
+
+				$criteria->add(IdsEventoPeer::CA_IDCRITERIO, $this->ca_idcriterio);
+
+				$this->collIdsEventos = IdsEventoPeer::doSelectJoinIds($criteria, $con, $join_behavior);
+			}
+		} else {
+									
+			$criteria->add(IdsEventoPeer::CA_IDCRITERIO, $this->ca_idcriterio);
+
+			if (!isset($this->lastIdsEventoCriteria) || !$this->lastIdsEventoCriteria->equals($criteria)) {
+				$this->collIdsEventos = IdsEventoPeer::doSelectJoinIds($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastIdsEventoCriteria = $criteria;
+
+		return $this->collIdsEventos;
+	}
+
+	
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
@@ -904,8 +1104,14 @@ abstract class BaseIdsCriterio extends BaseObject  implements Persistent {
 					$o->clearAllReferences($deep);
 				}
 			}
+			if ($this->collIdsEventos) {
+				foreach ((array) $this->collIdsEventos as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 		} 
 		$this->collIdsEvaluacionxCriterios = null;
+		$this->collIdsEventos = null;
 	}
 
 

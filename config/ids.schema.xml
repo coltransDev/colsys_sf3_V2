@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.ids" >
 	<table name="ids.tb_ids" phpName="Ids" >
-		<column name="ca_id" type="integer" required="true" primaryKey="true"  />
+		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true"  />
 		<id-method-parameter value="ids.tb_ids_id"/>
         <column name="ca_dv" type="integer" />
 		<column name="ca_idalterno" type="varchar" />

@@ -93,7 +93,7 @@ abstract class BaseIdsAgente extends BaseObject  implements Persistent {
 	public function setCaActivo($v)
 	{
 		if ($v !== null) {
-			$v = (string) $v;
+			$v = (boolean) $v;
 		}
 
 		if ($this->ca_activo !== $v) {
@@ -119,7 +119,7 @@ abstract class BaseIdsAgente extends BaseObject  implements Persistent {
 
 			$this->ca_idagente = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
 			$this->ca_tipo = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-			$this->ca_activo = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->ca_activo = ($row[$startcol + 2] !== null) ? (boolean) $row[$startcol + 2] : null;
 			$this->resetModified();
 
 			$this->setNew(false);

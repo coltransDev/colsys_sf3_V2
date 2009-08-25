@@ -93,8 +93,21 @@ class RepStatus extends BaseRepStatus
 	*/
 	public function getTxtStatus(  ){			
 		$etapa = $this->getTrackingEtapa();			
-		$txt = "";	
-		if( $etapa ){
+		$txt = "";
+
+        /*
+         * Si es un aviso y tiene carga embarcada no se aplica
+         */
+        if( $this->getCaIdetapa()=="IMETA" ){
+            $c = new Criteria();
+            $c->add( RepStatusPeer::CA_IDREPORTE, $this->getCaIdreporte());
+            $c->add( RepStatusPeer::CA_IDETAPA, "IMCEM" );
+            $count = RepStatusPeer::doCount($c);
+        }else{
+            $count=0;
+        }
+
+		if( $etapa && $count==0){
 			$template = $etapa->getCaMessage();
 			if( $template ){
 				$txt = $this->applyTemplate( $template )."\n\n";
@@ -256,13 +269,10 @@ class RepStatus extends BaseRepStatus
 		$etapa = $this->getTrackingEtapa();		
 		if ( $reporte->getCaContinuacion() != 'N/A' ){
 			if( ($etapa && $etapa->getCaDepartamento()!="OTM/DTA") || !$etapa ){
-				$recips = explode(",",$reporte->getCaContinuacionConf());			
-				foreach( $recips as $recip ){			
-					$recip = str_replace(" ", "", $recip );			
-					if( $recip ){					
-						$email->addCc( $recip ); 
-					}
-				}	   
+				$coordinador = UsuarioPeer::retrieveByPk( $reporte->getCaContinuacionConf() );
+				if( $coordinador ){
+					$email->addCc( $coordinador->getCaEmail() );
+				}
 			}
 		}
 			
