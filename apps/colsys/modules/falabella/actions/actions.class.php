@@ -263,16 +263,16 @@ class falabellaActions extends sfActions {
 			$salida.= "ASN|"; // 3
 			$salida.= "COL|"; // 4
 			$salida.= "|"; // Correlativo Coltrans 5
-			$salida.= (($reporte->getCaTransporte() != 'Aéreo')?"MB":"AW")."|"; // 6
+			$salida.= (($reporte->getcaTransporte() != 'Aéreo')?"MB":"AW")."|"; // 6
 			$salida.= $reporte->getDoctransporte()."|"; // 7
 			$salida.= "|"; // Contact 8  /blanco
 			$salida.= "|"; // Contact Number 9
 			$salida.= "|"; // Lloyd  10
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"AIR":$reporte->getIdnave() )."|"; // Vessel 11
-			$salida.= $fala_header->getCaNumViaje()."|"; // Número de Viaje 12
+			$salida.= (($reporte->getcaTransporte() == "Aéreo")?"AIR":$reporte->getIdnave() )."|"; // Vessel 11
+			$salida.= $fala_header->getCaNumViaje()."|"; // NÃºmero de Viaje 12
 			$salida.= "COLT|"; // Carrier 13
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"L":"")."|"; // Vessel 14
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"A":"S")."|"; // Vessel 15
+			$salida.= (($reporte->getcaTransporte() == "Aéreo")?"L":"")."|"; // Vessel 14
+			$salida.= (($reporte->getcaTransporte() == "Aéreo")?"A":"S")."|"; // Vessel 15
 			$salida.= "UN|"; // Vessel 16
 			$salida.= $fala_header->getCaCodigoPuertoPickup()."|"; // 17 
 			$salida.= "UN|"; // Vessel 18
@@ -293,8 +293,8 @@ class falabellaActions extends sfActions {
 			$salida.= str_replace("-","",$detail->getCaNumContPart2())."|"; // Id Cont 10 Car  29
 			$salida.= $detail->getCaNumContSell()."|"; // Sello de Cont Car  30
 			$salida.= $detail->getCaContainerIso()."|"; // Cod ISO 31
-			$salida.= (($reporte->getCaTransporte() != "Aéreo")?$fala_header->getCaContainerMode():"")."|"; // Container Mode 32
-			$salida.= (($reporte->getCaTransporte() == "Aéreo")?"AIR":"")."|"; // Vessel 33
+			$salida.= (($reporte->getcaTransporte() != "Aéreo")?$fala_header->getCaContainerMode():"")."|"; // Container Mode 32
+			$salida.= (($reporte->getcaTransporte() == "Aéreo")?"AIR":"")."|"; // Vessel 33
 			$salida.= "|"; // 34
 			$salida.= "|"; // 35
 			$salida.= "|"; // 36
@@ -354,85 +354,119 @@ class falabellaActions extends sfActions {
 		$this->forward404unless( $reporte );
 
 		$c = new Criteria();
-		$c->addSelectColumn(InoClientesSeaPeer::CA_REFERENCIA );
-		$c->addSelectColumn(InoClientesSeaPeer::CA_IDCLIENTE );
-		$c->addSelectColumn(InoClientesSeaPeer::CA_HBLS );
-		$c->addSelectColumn(InoClientesSeaPeer::CA_IDREPORTE );
-		$c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
-		
-		$c->addSelectColumn(InoIngresosSeaPeer::CA_FACTURA );
-		$c->addSelectColumn(InoIngresosSeaPeer::CA_FCHFACTURA );
-		$c->addSelectColumn(InoIngresosSeaPeer::CA_TCAMBIO );
-		$c->addSelectColumn(InoIngresosSeaPeer::CA_IDMONEDA );
-		$c->addSelectColumn(InoIngresosSeaPeer::CA_VALOR );
-		
-		$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE );
-		$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoIngresosSeaPeer::CA_REFERENCIA );
-		$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, InoIngresosSeaPeer::CA_IDCLIENTE );
-		$c->addJoin( InoClientesSeaPeer::CA_HBLS, InoIngresosSeaPeer::CA_HBLS );
-		
-		$c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
-		$stmt = InoClientesSeaPeer::doSelectStmt( $c );
-		// print_r($stmt);
+
+		if ($reporte->getcaTransporte() == 'Marítimo'){
+			$c->addSelectColumn(InoClientesSeaPeer::CA_REFERENCIA );
+			$c->addSelectColumn(InoClientesSeaPeer::CA_IDCLIENTE );
+			$c->addSelectColumn(InoClientesSeaPeer::CA_HBLS );
+			$c->addSelectColumn(InoClientesSeaPeer::CA_IDREPORTE );
+			$c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
+			
+			$c->addSelectColumn(InoIngresosSeaPeer::CA_FACTURA );
+			$c->addSelectColumn(InoIngresosSeaPeer::CA_FCHFACTURA );
+			$c->addSelectColumn(InoIngresosSeaPeer::CA_TCAMBIO );
+			$c->addSelectColumn(InoIngresosSeaPeer::CA_IDMONEDA );
+			$c->addSelectColumn(InoIngresosSeaPeer::CA_VALOR );
+			$c->setDistinct();
+			
+			$c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE );
+			$c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoIngresosSeaPeer::CA_REFERENCIA );
+			$c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, InoIngresosSeaPeer::CA_IDCLIENTE );
+			$c->addJoin( InoClientesSeaPeer::CA_HBLS, InoIngresosSeaPeer::CA_HBLS );
+			
+			$c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
+			$stmt = InoClientesSeaPeer::doSelectStmt( $c );
+		}else if ($reporte->getcaTransporte() == 'Aéreo'){
+			$c->addSelectColumn(InoClientesAirPeer::CA_REFERENCIA );
+			$c->addSelectColumn(InoClientesAirPeer::CA_IDCLIENTE );
+			$c->addSelectColumn(InoClientesAirPeer::CA_HAWB );
+			$c->addSelectColumn(InoClientesAirPeer::CA_IDREPORTE );
+			$c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
+			
+			$c->addSelectColumn(InoIngresosAirPeer::CA_FACTURA );
+			$c->addSelectColumn(InoIngresosAirPeer::CA_FCHFACTURA );
+			$c->addAsColumn("CA_TCAMBIO",InoIngresosAirPeer::CA_TCALAICO);
+			$c->addAsColumn("CA_IDMONEDA", "'USD'::TEXT");
+			$c->addSelectColumn(InoIngresosAirPeer::CA_VALOR );
+			$c->setDistinct();
+			
+			$c->addJoin( ReportePeer::CA_CONSECUTIVO, InoClientesAirPeer::CA_IDREPORTE );
+			$c->addJoin( InoClientesAirPeer::CA_REFERENCIA, InoIngresosAirPeer::CA_REFERENCIA );
+			$c->addJoin( InoClientesAirPeer::CA_IDCLIENTE, InoIngresosAirPeer::CA_IDCLIENTE );
+			$c->addJoin( InoClientesAirPeer::CA_HAWB, InoIngresosAirPeer::CA_HAWB );
+			
+			$c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
+			$stmt = InoClientesSeaPeer::doSelectStmt( $c );
+		}
 		
 		$salida = '';
 		while ( $row = $stmt->fetch() ) {
-			$salida.= "88|"; // 1
-			$salida.= "800024075|"; // 2
-			$salida.= "8|"; // 3
-			$salida.= "900017447|"; // 4
-			$salida.= "8|"; // 5
-			$salida.= $row["ca_factura"]."|"; // 6
-			$salida.= "|"; // 7
+			$salida.= "88"; // 1
+			$salida.= "800024075 "; // 2
+			$salida.= "8"; // 3
+			$salida.= "900017447 "; // 4
+			$salida.= "8"; // 5
+			$salida.= str_pad($row["ca_factura"],10, " "); // 6
+			$salida.= str_pad(null,10, " "); // 7
 			list($anno,$mes,$dia) = sscanf($row["ca_fchfactura"],"%d-%d-%d");
 			$emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
-			$salida.= $emision."|"; // 8
+			$salida.= $emision; // 8
 			list($anno,$mes,$dia) = sscanf($row["ca_fchfactura"],"%d-%d-%d");
 			$vencimiento = date("Ymd", mktime(0,0,0,$mes+1,$dia,$anno));
-			$salida.= $vencimiento."|"; // 9
-			$salida.= $row["ca_idmoneda"]."|"; // 10
-			$salida.= $row["ca_tcambio"]."|"; // 11
-			$val_iva= round($row["ca_valor"] * 0.16,0);
-			$val_total = round($row["ca_valor"] + $val_iva,0);
-			$salida.= number_format($val_total*10000, 0, '', '')."|"; // 12
-			$salida.= number_format($row["ca_valor"]*10000, 0, '', '')."|"; // 13
-			$salida.= number_format($val_iva*10000, 0, '', '')."|"; // 14
-			$salida.= "|"; // 15 Concepto
-			$salida.= substr($fala_header->getCaIddoc(),0,15)."|"; // 16
-			$salida.= "|"; // 17 Embarque
-			$salida.= "|"; // 18 Valor del Embarque
-			$salida.= "|"; // 19
-			$salida.= "|"; // 20
-			$salida.= "|"; // 21
-			$salida.= "|"; // 22
-			$salida.= "|"; // 23
-			$salida.= "|"; // 24
-			$salida.= "|"; // 25
-			$salida.= "0|"; // 26
-			$salida.= "|"; // 27
+			$salida.= $vencimiento; // 9
+			$salida.= str_pad("COP",3, " "); // 10  Siempre en Pesos Colombianos
+			$salida.= str_pad(1, 10, "0", STR_PAD_LEFT); // 11
+		
+			$vlr_afecto = floatval($reporte->getProperty("vlrAfecto"));
+                        $vlr_exento = floatval($reporte->getProperty("vlrExento"));
+                        $vlr_iva    = floatval($reporte->getProperty("vlrIVA"));
+                        $vlr_total  = $vlr_afecto + $vlr_exento + $vlr_iva;
+
+			$salida.= str_pad($vlr_total, 10, "0", STR_PAD_LEFT); // 12
+			$salida.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 13
+			$salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 14
+
+			$salida.= str_pad("21",5, " "); // 15 Concepto
+			$salida.= str_pad(substr($fala_header->getCaIddoc(),0,15),20, " "); // 16
+
+			$salida.= str_pad(floatval($reporte->getProperty("numEmbarque")), 2, "0", STR_PAD_LEFT); // 17 Embarque
+			$salida.= str_pad(floatval($reporte->getProperty("vlrEmbarque")), 10, "0", STR_PAD_LEFT); // 18 Valor del Embarque
+
+			$spaces = array(8,30,30,4,20,20,10); // Campos del 19 al 27
+			foreach( $spaces as $space ){
+				$salida.= str_pad(null,$space, " ");
+			}
+
+                        $salida.= str_pad($vlr_exento, 10, "0", STR_PAD_LEFT); // 28
+                        $salida.= str_pad("650_BOG_DIRECCION_GENERAL", 30, " "); // 29
 			$salida.= "\r\n";
 
-			$salida.= "13|"; // 1
-			$salida.= "800024075|"; // 2
-			$salida.= "8|"; // 3
-			$salida.= $row["ca_factura"]."|"; // 4
-			$salida.= "|"; // 5 Concepto del IVA
-			$salida.= number_format($val_iva*10000, 0, '', '')."|"; // 6
+			$salida.= "12"; // 1
+			$salida.= "800024075"; // 2
+			$salida.= "900017447 "; // 3
+			$salida.= str_pad($row["ca_factura"],10, " "); // 4
+			$salida.= str_pad("003",50, " "); // 5 Concepto de Retención en la Fuente
+			$salida.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 6
+			$salida.= "\r\n";
+
+			$salida.= "13"; // 1
+			$salida.= "800024075"; // 2
+			$salida.= "900017447 "; // 3
+			$salida.= str_pad($row["ca_factura"],10, " "); // 4
+			$salida.= str_pad("002",50, " "); // 5 Concepto del IVA
+			$salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 6
 			$salida.= "\r\n";
 			
+			$directory=sfConfig::get('app_falabella_output');
+			$filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$row["ca_factura"].'.txt';
+			$handle = fopen($filename , 'w');	
+			
+			if (fwrite($handle, $salida) === FALSE) {
+				echo "No se puede escribir al archivo {filename}";
+				exit;
+			}
 		}
-		die($salida);
-		$directory=sfConfig::get('app_falabella_output');
-		$filename = $directory.DIRECTORY_SEPARATOR.'FAC'.date('ymdHis').'.txt';
-		$handle = fopen($filename , 'w');	
 		
-		if (fwrite($handle, $salida) === FALSE) {
-			echo "No se puede escribir al archivo {filename}";
-			exit;
-		}else{
-			$fala_header->setCaProcesado(true);
-			$fala_header->save();
-		}
     	$this->redirect("falabella/list");
 	}
 	
@@ -445,6 +479,7 @@ class falabellaActions extends sfActions {
 					
 		//Crea el correo electronico
 		$email = new Email();
+		$email->setCaFchenvio( date("Y-m-d H:i:s") );
 		$email->setCaUsuenvio( $user->getUserId() );
 		$email->setCaTipo( "Fal Shipping Inst." ); 		
 		$email->setCaIdcaso( substr(-20,20,base64_decode($this->getRequestParameter('iddoc'))) );
