@@ -2813,8 +2813,8 @@ ORDER BY ca_fchstatus ";
 
         foreach( $transportistas as $transportista ){
             $ids = new Ids();
-            $ids->setCaId( $transportista->getCaIdTransportista() );
-            $ids->setCaIdgrupo( $transportista->getCaIdTransportista() );
+            $ids->setCaIdalterno( $transportista->getCaIdTransportista() );
+            
             $ids->setCaTipoidentificacion( 1 );
             $ids->setCaDv( $transportista->getCaDigito() );
             $ids->setCaNombre( $transportista->getCaNombre() );
@@ -2823,10 +2823,12 @@ ORDER BY ca_fchstatus ";
                 $ids->setCaWebsite( $transportista->getCaWebsite() );
             }
             $ids->save();
+            $ids->setCaIdgrupo( $ids->getCaId() );
+
 
             $proveedor = new IdsProveedor();
             $proveedor->setCaTipo("TRI");
-            $proveedor->setCaIdproveedor($transportista->getCaIdTransportista());
+            $proveedor->setCaIdproveedor($ids->getCaId());
             $proveedor->setCaCritico(false);
             $proveedor->setCaControladoporsig(false);
             $proveedor->save();

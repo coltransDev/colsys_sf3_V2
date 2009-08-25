@@ -42,7 +42,7 @@ class idsActions extends sfActions
 	* @param sfRequest $request A request object
 	*/
 	public function executeIndex(sfWebRequest $request)
-	{
+	{        
         $this->modo = $request->getParameter("modo");
         $this->nivel = $this->getNivel();
 
