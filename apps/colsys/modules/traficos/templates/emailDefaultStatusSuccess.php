@@ -88,11 +88,11 @@ $cliente = $reporte->getCliente();
 		<td>&nbsp;</td>
 	</tr>
     <?
-    if($reporte->getCaTransporte()==Constantes::AEREO){
+    if($reporte->getCaTransporte()==Constantes::AEREO && ($reporte->getCaImpoexpo()==Constantes::IMPO||$reporte->getCaImpoexpo()==Constantes::TRIANGULACION)){
         $bodega2 = BodegaPeer::retrieveByPk( $reporte->getCaIdBodega() );
     ?>
     <tr>
-		<td><b>Transladar a:</b></td>
+		<td><b>Trasladar a:</b></td>
 		<td colspan="5"><?=$bodega2->getCaTipo()?></td>
 	</tr>
     <?
@@ -273,7 +273,8 @@ if( $status->getCaIdetapa()=="IMETA" ){
 
 
 <?
-if($reporte->getCaTransporte()==Constantes::AEREO && $status->getCaIdetapa()!="IMETA" ){
+//Ticket # 1853
+if($reporte->getCaTransporte()==Constantes::AEREO && ($status->getCaIdetapa()=="IACCR" || $status->getCaIdetapa()=="IACAD" || $status->getCaIdetapa()=="IACDE") ){
 ?>
 <br />
 La fecha de llegada de la mercancía es un estimado ya que puede variar por decisión de la aerolínea. 
