@@ -89,11 +89,12 @@ $cliente = $reporte->getCliente();
 	</tr>
     <?
     if($reporte->getCaTransporte()==Constantes::AEREO && ($reporte->getCaImpoexpo()==Constantes::IMPO||$reporte->getCaImpoexpo()==Constantes::TRIANGULACION)){
+        //Ticket # 1921
         $bodega2 = BodegaPeer::retrieveByPk( $reporte->getCaIdBodega() );
     ?>
     <tr>
 		<td><b>Trasladar a:</b></td>
-		<td colspan="5"><?=$bodega2->getCaTipo()?></td>
+		<td colspan="5"><?=$bodega2->getCaTipo()." ".$bodega2->getCaNombre()?></td>
 	</tr>
     <?
     }
