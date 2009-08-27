@@ -8,6 +8,7 @@
  * @author     Your name here
  * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
  */
+//exit("deprecated");
 class idsActions extends sfActions
 {
 
@@ -735,7 +736,7 @@ class idsActions extends sfActions
 
         if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
             $this->ids = IdsPeer::retrieveByPk( $request->getParameter("id") );
-            $this->url = "/ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
+            $this->url = "ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
             $numreferencia = "";
             
         }else{ // Esta ingresando desde la referencia
