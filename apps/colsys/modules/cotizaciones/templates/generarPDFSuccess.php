@@ -1240,16 +1240,16 @@ $pdf->MultiCell(0, 5, "Por lo anterior a partir del 1o. de Mayo 2009 es indispen
 $pdf->Ln(2);
 
 $pdf->MultiCell(0, 5, 
-"• RUT ( Registro Único Tributario)  del Importador 
-• La indicación del Trámite o destino que se le dará a la mercancía una vez descargada en el lugar de llegada, ejemplo: 
+" RUT ( Registro Único Tributario)  del Importador 
+  La indicación del Trámite o destino que se le dará a la mercancía una vez descargada en el lugar de llegada, ejemplo:
      -   Entrega en lugar de arribo
      -   Transito Aduanero
      -   Ingreso a depósito o Zona Franca después del descargue en el lugar de arribo
      -   Descargue de mercancía directamente en el depósito o zona franca
      -   Entrega Urgente
-• Descripción  genérica de la mercancía ;  NO es aceptada como descripción \" mercancías varias, mercancía según factura , misceláneas.. \" 
-• La DIAN tendrá la potestad de establecer en que eventos es necesario las partidas o  sub-partidas arancelarias de la mercancía   por acto oficial, como lo estipula en el Decreto 2101 art. 8 y la Resolución 7941 art 8 , hasta la fecha no se ha pronunciado la Aduana con los productos susceptibles del anterior requerimiento
-• Peso,  unidades de carga.  Cuando se trate de carga contenerizada es necesario el número de seguridad o precinto", 0,'J',0);
+  Descripción  genérica de la mercancía ;  NO es aceptada como descripción \" mercancías varias, mercancía según factura , misceláneas.. \"
+  La DIAN tendrá la potestad de establecer en que eventos es necesario las partidas o  sub-partidas arancelarias de la mercancía   por acto oficial, como lo estipula en el Decreto 2101 art. 8 y la Resolución 7941 art 8 , hasta la fecha no se ha pronunciado la Aduana con los productos susceptibles del anterior requerimiento
+  Peso,  unidades de carga.  Cuando se trate de carga contenerizada es necesario el número de seguridad o precinto", 0,'J',0);
 
 
 $pdf->Ln(2);
@@ -1265,6 +1265,30 @@ $pdf->Cell(0, 4, "COLTRANS S.A.",0,1);
 $pdf->Ln(4);
 $pdf->Cell(0, 4, "DEPARTAMENTO MARITIMO",0,1);
 
+
+$pdf->AddPage();
+
+// Ticket # 1811
+$pdf->Ln(4);
+$pdf->SetFont($font,'B',14);
+$pdf->Cell(0, 4, "DIVULGACIÓN BASC",0,1, "C");
+$pdf->Ln(15);
+$pdf->SetFont($font,'',14);
+$pdf->MultiCell(0, 5,
+"Todos los integrantes de la cadena logística debemos implementar por escrito procedimientos de seguridad que nos permitan estudiar tanto a proveedores como a clientes . Estos procedimientos nos ayudaran a identificar riesgos que puedan  afectar los intereses de nuestras compañías.
+
+ Entre los procedimientos que podemos adoptar encontramos:
+
+  -Verficación lista Clinton
+  -Visitas a instalaciones
+  -Análisis Circular 170 de la DIAN
+
+Una de las organizaciones que tiene como principal objetivo la normalización y estandarización en Control y Seguridad dentro de la cadena logística del Comercio Internacional es BASC (Bussiness Alliance for Secure Commerce); los invitamos a visitar la página http://wbasco.org/ en donde podemos encontrar criterios mínimos de seguridad.
+
+Esperamos que esta información sea util y nos sirva para constituir prácticas seguras y efectivas. ", 0,'J',0);
+
+
+$pdf->Ln(2);
 
 	
 $pdf->Output ( $filename);
