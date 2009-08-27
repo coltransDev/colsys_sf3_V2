@@ -232,7 +232,7 @@ require_once("menu.php");
     echo "</CENTER>";
 //  echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
     require_once("footer.php");
-echo "</BODY>";
+    echo "</BODY>";
     echo "</HTML>";
     }
 elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)){
@@ -413,11 +413,32 @@ require_once("menu.php");
 			$ini_ant  = null;
 			$fin_ant  = null;
 			break;
+		case "Oportunidad en Nacionalización de Mcias":
+                        $tipo = "T";
+			$format_avg = "H:i:s";
+			$source   = "vi_repindicador_brk";
+                        $transporte = "ca_transporte = 'Aduana'";
+                        $subque = " LEFT OUTER JOIN ( select bke.*, prm.ca_valor from tb_brk_evento bke	LEFT OUTER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU037' and prm.ca_identificacion = bke.ca_idevento) order by ca_referencia) bke ON ($source.ca_referencia = bke.ca_referencia) ";
+
+			if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
+				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+				echo "<script>document.location.href = 'entrada.php';</script>";
+				exit; }
+			$festi = array();
+			while (!$tm->Eof() and !$tm->IsEmpty()) {
+				$festi[] = $tm->Value('ca_fchfestivo');
+				$tm->MoveNext();
+			}
+			$ind_mem  = 10;
+			$add_cols = 3;
+			$cot_ant  = null;
+			$campos.= ", vi_repindicador_brk.ca_referencia, bke.ca_fchevento, bke.ca_idevento";
+			break;
 	}
 
 	$queries = "select * from $source $subque where ca_impoexpo = 'Importación' and $sucursal $cliente and $transporte and $ano and $mes";
 	$queries.= " order by $campos";
-	//  die($queries);
+        // die($queries);
 	
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea 
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
@@ -431,8 +452,10 @@ require_once("menu.php");
 	echo "<TR>";
 	$saltos = array();
 	$titems = array();
-	echo "	<TH>Reporte</TH>";
-	echo "	<TH>Ver.</TH>";
+	if (!in_array($ind_mem, array(10,11))){
+            echo "	<TH>Reporte</TH>";
+            echo "	<TH>Ver.</TH>";
+        }
 	echo "	<TH>Año</TH>";
 	echo "	<TH>Mes</TH>";
 	echo "	<TH>Sucursal</TH>";
@@ -495,6 +518,13 @@ require_once("menu.php");
 			echo "	<TH>Fch.Confirmación</TH>";
 			echo "	<TH>Dif.</TH>";
 			break;
+		case 10:
+			echo "	<TH>Referencia</TH>";
+			echo "	<TH>Coordinador</TH>";
+                        echo "	<TH>Eventos</TH>";
+                        echo "	<TH>Calculos</TH>";
+			echo "	<TH>Dif.</TH>";
+			break;
 	}
 	echo "</TR>";
 	$rs->MoveFirst();
@@ -509,8 +539,10 @@ require_once("menu.php");
 			continue;
 		}
 		echo "<TR>";
-		echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_consecutivo')."</TD>";
-		echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_version')."</TD>";
+                if (!in_array($ind_mem, array(10,11))){
+                    echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_consecutivo')."</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_version')."</TD>";
+                }
 		echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_ano')."</TD>";
 		echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_mes')."</TD>";
 		echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_sucursal')."</TD>";
@@ -676,6 +708,144 @@ require_once("menu.php");
 				echo "  <TD Class=$color style='font-size: 9px;'>".$fch_mem."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px;'>".$rs->Value('ca_fchconf_lleg')."</TD>";
 				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+				continue;
+				break;
+			case 10:
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
+				echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_coordinador')."</TD>";
+
+                                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
+                                $matriz_eventos = array();
+				$referencia = $rs->Value('ca_referencia');
+                                if ($rs->Value('ca_fchreferencia') > $rs->Value('ca_fcharribo')){
+                                    $matriz_eventos["intervalo_1"]["Fch. Referencia"] = $rs->Value('ca_fchreferencia');
+                                }else{
+                                    $matriz_eventos["intervalo_1"]["Fch. Arribo"] = $rs->Value('ca_fcharribo');
+                                }
+                                echo "<TR>";
+                                echo "  <TD Class=mostrar style='font-size: 9px;'>Fch. Referencia</TD>";
+                                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchreferencia')."</TD>";
+                                echo "</TR>";
+                                echo "<TR>";
+                                echo "  <TD Class=mostrar style='font-size: 9px;'>Fch. Arribo</TD>";
+                                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fcharribo')."</TD>";
+                                echo "</TR>";
+
+				$int_uno = $int_dos = "";
+                                $dif_ref = null;
+                                while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
+                                    $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
+                                    $fchEvento = date("Y-m-d H:i",mktime($fchEventoArry["hour"],$fchEventoArry["minutes"],$fchEventoArry["secons"],$fchEventoArry["month"],$fchEventoArry["day"],$fchEventoArry["year"]));
+                                    echo "<TR>";
+                                    echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_valor')."</TD>";
+                                    echo "  <TD Class=mostrar style='font-size: 9px;'>".$fchEvento."</TD>";
+                                    echo "</TR>";
+                                    if (in_array($rs->Value('ca_idevento'),array(1,3))){ //Evalua si el evento cierra el primer invervalo
+                                        if ($rs->Value('ca_idevento')==1){
+                                            $int_uno = $rs->Value('ca_valor');
+                                            $matriz_eventos["intervalo_1"][$rs->Value('ca_valor')] = $fchEvento;
+                                        } else if ($rs->Value('ca_idevento')==3){
+                                            if ($matriz_eventos["intervalo_1"][$int_uno] < $fchEvento){
+                                                 array_pop($matriz_eventos["intervalo_1"]);
+                                                 $matriz_eventos["intervalo_1"][$rs->Value('ca_valor')] = $fchEvento;
+                                            }
+                                        }
+                                    }
+
+                                    if (in_array($rs->Value('ca_idevento'),array(1)))  //Evalua si el evento abre el segundo invervalo
+                                        $matriz_eventos["intervalo_2"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(2,3))){  //Evalua si el evento cierra el segundo invervalo
+                                        if ($rs->Value('ca_idevento')==2){
+                                            $int_dos = $rs->Value('ca_valor');
+                                            $matriz_eventos["intervalo_2"][$rs->Value('ca_valor')] = $fchEvento;
+                                        } else if ($rs->Value('ca_idevento')==3){
+                                            if ($matriz_eventos["intervalo_2"][$int_dos] < $fchEvento){
+                                                 array_pop($matriz_eventos["intervalo_2"]);
+                                                 $matriz_eventos["intervalo_2"][$rs->Value('ca_valor')] = $fchEvento;
+                                            }
+                                        }
+                                    }
+
+                                    if (in_array($rs->Value('ca_idevento'),array(7)))  //Evalua si el evento abre el tercer invervalo
+                                        $matriz_eventos["intervalo_3"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(8)))  //Evalua si el evento abre el tercer invervalo
+                                        $matriz_eventos["intervalo_3"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(9)))  //Evalua si el evento abre el cuarto invervalo
+                                        $matriz_eventos["intervalo_4"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(10)))  //Evalua si el evento abre el cuarto invervalo
+                                        $matriz_eventos["intervalo_4"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(19)))  //Evalua si el evento abre el quinto invervalo
+                                        $matriz_eventos["intervalo_5"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(20)))  //Evalua si el evento abre el quinto invervalo
+                                        $matriz_eventos["intervalo_5"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(18)))  //Evalua si el evento abre el sexto invervalo
+                                        $matriz_eventos["intervalo_6"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(12)))  //Evalua si el evento abre el sexto invervalo
+                                        $matriz_eventos["intervalo_6"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(14)))  //Evalua si el evento abre el septimo invervalo
+                                        $matriz_eventos["intervalo_7"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento abre el septimo invervalo
+                                        $matriz_eventos["intervalo_7"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(14)))  //Evalua si el evento abre el octavo invervalo
+                                        $matriz_eventos["intervalo_8"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(21)))  //Evalua si el evento abre el octavo invervalo
+                                        $matriz_eventos["intervalo_8"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(22)))  //Evalua si el evento abre el noveno invervalo
+                                        $matriz_eventos["intervalo_9"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento abre el noveno invervalo
+                                        $matriz_eventos["intervalo_9"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(23)))  //Evalua si el evento abre el decimo invervalo
+                                        $matriz_eventos["intervalo_10"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    if (in_array($rs->Value('ca_idevento'),array(24)))  //Evalua si el evento abre el decimo invervalo
+                                        $matriz_eventos["intervalo_10"][$rs->Value('ca_valor')] = $fchEvento;
+
+                                    $rs->MoveNext();	// Buscar Todos los Registros de la referencia
+                                }
+                                echo "  </TABLE></TD>";
+                                echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
+
+                                foreach($matriz_eventos as $intervalo){
+                                    echo "<TR>";
+                                    $flag = true;
+                                    $ini_event = null;
+                                    $fin_event = null;
+                                    while (list ($clave, $val) = each ($intervalo)) {
+                                        if ($flag){
+                                            $ini_event = $val;
+                                            $flag = false;
+                                        }else{
+                                            $fin_event = $val;
+                                        }
+                                        echo "<TD>$clave <br /> $val</TD>";
+                                    }
+                                    list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($ini_event, "%d-%d-%d %d:%d:%d");
+                                    $tstamp_inicial = mktime($hor, $min, $seg, $mes, $dia, $ano);
+                                    list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($fin_event, "%d-%d-%d %d:%d:%d");
+                                    $tstamp_final   = mktime($hor, $min, $seg, $mes, $dia, $ano);
+                                    $dif_mem = calc_dif($festi, $tstamp_inicial, $tstamp_final);
+                                    $dif_ref+= $dif_mem;
+                                    echo "<TD>Diferencia :<br /> $dif_mem</TD>";
+                                    echo "</TR>";
+                                }
+                                echo "  </TABLE></TD>";
+				$color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc); // Función que retorna un Arreglo con el resultado de Dif
+				echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_ref."</TD>";
 				continue;
 				break;
 		}
