@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="propel" defaultIdMethod="native" noxsd="true" package="lib.model.ids" >
 	<table name="ids.tb_ids" phpName="Ids" >
-		<column name="ca_id" type="integer" required="true" primaryKey="true" autoIncrement="true"  />
+		<column name="ca_id" type="integer" required="true" primaryKey="true" />
 		<id-method-parameter value="ids.tb_ids_id"/>
         <column name="ca_dv" type="integer" />
 		<column name="ca_idalterno" type="varchar" />
@@ -14,8 +14,7 @@
 		<column name="ca_fchcreado" type="timestamp" required="true"  />
 		<column name="ca_usucreado" type="varchar" required="true"  />
         <column name="ca_fchactualizado" type="timestamp"   />
-		<column name="ca_usuactualizado" type="varchar"   />
-		
+		<column name="ca_usuactualizado" type="varchar"   />		
 	</table>
 
     <table name="ids.tb_sucursales" phpName="IdsSucursal" >
@@ -86,6 +85,8 @@
 		<column name="ca_controladoporsig" type="boolean" required="true"  />
 		<column name="ca_fchaprobado" type="timestamp" />
 		<column name="ca_usuaprobado" type="varchar"    />
+        <column name="ca_sigla" type="varchar" />
+		<column name="ca_transporte" type="varchar"    />
         <column name="ca_activo" type="boolean" required="true"  />
         <foreign-key foreignTable="ids.tb_ids">
 			<reference local="ca_idproveedor" foreign="ca_id"/>

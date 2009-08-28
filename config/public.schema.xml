@@ -15,7 +15,11 @@
 		<column name="ca_email" type="varchar" />	
 		<column name="ca_coordinador" type="varchar" />
 		<column name="ca_direccion" type="varchar" />
-		<column name="ca_localidad" type="varchar" />
+      
+        <column name="ca_torre" type="varchar" />
+        <column name="ca_bloque" type="varchar" />
+        <column name="ca_interior" type="varchar" />
+        <column name="ca_localidad" type="varchar" />
 		<column name="ca_complemento" type="varchar" />
 		<column name="ca_telefonos" type="varchar" />
 		<column name="ca_fax" type="varchar" />	
@@ -225,7 +229,11 @@
         <column name="ca_activo" type="boolean" />
 		<foreign-key foreignTable="ids.tb_proveedores">
 			<reference local="ca_idtransportista" foreign="ca_idproveedor"/>
-		</foreign-key>		
+		</foreign-key>
+
+        <foreign-key foreignTable="tb_transportistas">
+			<reference local="ca_idtransportista" foreign="ca_idtransportista"/>
+		</foreign-key>
 	</table>
 	
 	<table name="tb_transportistas" phpName="Transportista">
