@@ -104,7 +104,7 @@ if( $reporte->getCaIdConsignatario() ){
 	$contacto = $reporte->getContacto();
 	$cliente = $reporte->getContacto()->getCliente();
 	
-	$consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".str_replace ("|"," ",$cliente->getCaDireccion());
+	$consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".$cliente->getDireccion();
 }
 
 $bodega1 = $reporte->getBodegaConsignar();
@@ -129,7 +129,7 @@ if( !$reporte->getCaNotify() ){
 	$contacto = $reporte->getContacto();
 	$cliente = $reporte->getContacto()->getCliente();
 	
-	$consignatario_h = $cliente->getCaCompania()."<BR>: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".str_replace ("|"," ",$cliente->getCaDireccion())."<BR>".$cliente->getCiudad()->getTrafico()->getcaNombre();		
+	$consignatario_h = $cliente->getCaCompania()."<BR>: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".$cliente->getDireccion()."<BR>".$cliente->getCiudad()->getTrafico()->getcaNombre();		
 }else{    
 	if( $reporte->getCaNotify()==1 ) {	
 		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );
