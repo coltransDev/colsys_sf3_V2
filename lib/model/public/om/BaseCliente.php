@@ -52,6 +52,15 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	protected $ca_direccion;
 
 	
+	protected $ca_torre;
+
+	
+	protected $ca_bloque;
+
+	
+	protected $ca_interior;
+
+	
 	protected $ca_localidad;
 
 	
@@ -229,6 +238,24 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 	public function getCaDireccion()
 	{
 		return $this->ca_direccion;
+	}
+
+	
+	public function getCaTorre()
+	{
+		return $this->ca_torre;
+	}
+
+	
+	public function getCaBloque()
+	{
+		return $this->ca_bloque;
+	}
+
+	
+	public function getCaInterior()
+	{
+		return $this->ca_interior;
 	}
 
 	
@@ -512,6 +539,48 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		return $this;
 	} 
 	
+	public function setCaTorre($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_torre !== $v) {
+			$this->ca_torre = $v;
+			$this->modifiedColumns[] = ClientePeer::CA_TORRE;
+		}
+
+		return $this;
+	} 
+	
+	public function setCaBloque($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_bloque !== $v) {
+			$this->ca_bloque = $v;
+			$this->modifiedColumns[] = ClientePeer::CA_BLOQUE;
+		}
+
+		return $this;
+	} 
+	
+	public function setCaInterior($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_interior !== $v) {
+			$this->ca_interior = $v;
+			$this->modifiedColumns[] = ClientePeer::CA_INTERIOR;
+		}
+
+		return $this;
+	} 
+	
 	public function setCaLocalidad($v)
 	{
 		if ($v !== null) {
@@ -715,17 +784,20 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			$this->ca_email = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
 			$this->ca_coordinador = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
 			$this->ca_direccion = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-			$this->ca_localidad = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-			$this->ca_complemento = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
-			$this->ca_telefonos = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-			$this->ca_fax = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
-			$this->ca_preferencias = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
-			$this->ca_confirmar = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
-			$this->ca_idciudad = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
-			$this->ca_idgrupo = ($row[$startcol + 21] !== null) ? (int) $row[$startcol + 21] : null;
-			$this->ca_listaclinton = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
-			$this->ca_fchcircular = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
-			$this->ca_status = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+			$this->ca_torre = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+			$this->ca_bloque = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+			$this->ca_interior = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+			$this->ca_localidad = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+			$this->ca_complemento = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_telefonos = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_fax = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_preferencias = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+			$this->ca_confirmar = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_idciudad = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+			$this->ca_idgrupo = ($row[$startcol + 24] !== null) ? (int) $row[$startcol + 24] : null;
+			$this->ca_listaclinton = ($row[$startcol + 25] !== null) ? (string) $row[$startcol + 25] : null;
+			$this->ca_fchcircular = ($row[$startcol + 26] !== null) ? (string) $row[$startcol + 26] : null;
+			$this->ca_status = ($row[$startcol + 27] !== null) ? (string) $row[$startcol + 27] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -734,7 +806,7 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				$this->ensureConsistency();
 			}
 
-						return $startcol + 25; 
+						return $startcol + 28; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating Cliente object", $e);
 		}
@@ -1128,36 +1200,45 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				return $this->getCaDireccion();
 				break;
 			case 14:
-				return $this->getCaLocalidad();
+				return $this->getCaTorre();
 				break;
 			case 15:
-				return $this->getCaComplemento();
+				return $this->getCaBloque();
 				break;
 			case 16:
-				return $this->getCaTelefonos();
+				return $this->getCaInterior();
 				break;
 			case 17:
-				return $this->getCaFax();
+				return $this->getCaLocalidad();
 				break;
 			case 18:
-				return $this->getCaPreferencias();
+				return $this->getCaComplemento();
 				break;
 			case 19:
-				return $this->getCaConfirmar();
+				return $this->getCaTelefonos();
 				break;
 			case 20:
-				return $this->getCaIdciudad();
+				return $this->getCaFax();
 				break;
 			case 21:
-				return $this->getCaIdgrupo();
+				return $this->getCaPreferencias();
 				break;
 			case 22:
-				return $this->getCaListaclinton();
+				return $this->getCaConfirmar();
 				break;
 			case 23:
-				return $this->getCaFchcircular();
+				return $this->getCaIdciudad();
 				break;
 			case 24:
+				return $this->getCaIdgrupo();
+				break;
+			case 25:
+				return $this->getCaListaclinton();
+				break;
+			case 26:
+				return $this->getCaFchcircular();
+				break;
+			case 27:
 				return $this->getCaStatus();
 				break;
 			default:
@@ -1184,17 +1265,20 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 			$keys[11] => $this->getCaEmail(),
 			$keys[12] => $this->getCaCoordinador(),
 			$keys[13] => $this->getCaDireccion(),
-			$keys[14] => $this->getCaLocalidad(),
-			$keys[15] => $this->getCaComplemento(),
-			$keys[16] => $this->getCaTelefonos(),
-			$keys[17] => $this->getCaFax(),
-			$keys[18] => $this->getCaPreferencias(),
-			$keys[19] => $this->getCaConfirmar(),
-			$keys[20] => $this->getCaIdciudad(),
-			$keys[21] => $this->getCaIdgrupo(),
-			$keys[22] => $this->getCaListaclinton(),
-			$keys[23] => $this->getCaFchcircular(),
-			$keys[24] => $this->getCaStatus(),
+			$keys[14] => $this->getCaTorre(),
+			$keys[15] => $this->getCaBloque(),
+			$keys[16] => $this->getCaInterior(),
+			$keys[17] => $this->getCaLocalidad(),
+			$keys[18] => $this->getCaComplemento(),
+			$keys[19] => $this->getCaTelefonos(),
+			$keys[20] => $this->getCaFax(),
+			$keys[21] => $this->getCaPreferencias(),
+			$keys[22] => $this->getCaConfirmar(),
+			$keys[23] => $this->getCaIdciudad(),
+			$keys[24] => $this->getCaIdgrupo(),
+			$keys[25] => $this->getCaListaclinton(),
+			$keys[26] => $this->getCaFchcircular(),
+			$keys[27] => $this->getCaStatus(),
 		);
 		return $result;
 	}
@@ -1253,36 +1337,45 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 				$this->setCaDireccion($value);
 				break;
 			case 14:
-				$this->setCaLocalidad($value);
+				$this->setCaTorre($value);
 				break;
 			case 15:
-				$this->setCaComplemento($value);
+				$this->setCaBloque($value);
 				break;
 			case 16:
-				$this->setCaTelefonos($value);
+				$this->setCaInterior($value);
 				break;
 			case 17:
-				$this->setCaFax($value);
+				$this->setCaLocalidad($value);
 				break;
 			case 18:
-				$this->setCaPreferencias($value);
+				$this->setCaComplemento($value);
 				break;
 			case 19:
-				$this->setCaConfirmar($value);
+				$this->setCaTelefonos($value);
 				break;
 			case 20:
-				$this->setCaIdciudad($value);
+				$this->setCaFax($value);
 				break;
 			case 21:
-				$this->setCaIdgrupo($value);
+				$this->setCaPreferencias($value);
 				break;
 			case 22:
-				$this->setCaListaclinton($value);
+				$this->setCaConfirmar($value);
 				break;
 			case 23:
-				$this->setCaFchcircular($value);
+				$this->setCaIdciudad($value);
 				break;
 			case 24:
+				$this->setCaIdgrupo($value);
+				break;
+			case 25:
+				$this->setCaListaclinton($value);
+				break;
+			case 26:
+				$this->setCaFchcircular($value);
+				break;
+			case 27:
 				$this->setCaStatus($value);
 				break;
 		} 	}
@@ -1306,17 +1399,20 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[11], $arr)) $this->setCaEmail($arr[$keys[11]]);
 		if (array_key_exists($keys[12], $arr)) $this->setCaCoordinador($arr[$keys[12]]);
 		if (array_key_exists($keys[13], $arr)) $this->setCaDireccion($arr[$keys[13]]);
-		if (array_key_exists($keys[14], $arr)) $this->setCaLocalidad($arr[$keys[14]]);
-		if (array_key_exists($keys[15], $arr)) $this->setCaComplemento($arr[$keys[15]]);
-		if (array_key_exists($keys[16], $arr)) $this->setCaTelefonos($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaFax($arr[$keys[17]]);
-		if (array_key_exists($keys[18], $arr)) $this->setCaPreferencias($arr[$keys[18]]);
-		if (array_key_exists($keys[19], $arr)) $this->setCaConfirmar($arr[$keys[19]]);
-		if (array_key_exists($keys[20], $arr)) $this->setCaIdciudad($arr[$keys[20]]);
-		if (array_key_exists($keys[21], $arr)) $this->setCaIdgrupo($arr[$keys[21]]);
-		if (array_key_exists($keys[22], $arr)) $this->setCaListaclinton($arr[$keys[22]]);
-		if (array_key_exists($keys[23], $arr)) $this->setCaFchcircular($arr[$keys[23]]);
-		if (array_key_exists($keys[24], $arr)) $this->setCaStatus($arr[$keys[24]]);
+		if (array_key_exists($keys[14], $arr)) $this->setCaTorre($arr[$keys[14]]);
+		if (array_key_exists($keys[15], $arr)) $this->setCaBloque($arr[$keys[15]]);
+		if (array_key_exists($keys[16], $arr)) $this->setCaInterior($arr[$keys[16]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaLocalidad($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaComplemento($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaTelefonos($arr[$keys[19]]);
+		if (array_key_exists($keys[20], $arr)) $this->setCaFax($arr[$keys[20]]);
+		if (array_key_exists($keys[21], $arr)) $this->setCaPreferencias($arr[$keys[21]]);
+		if (array_key_exists($keys[22], $arr)) $this->setCaConfirmar($arr[$keys[22]]);
+		if (array_key_exists($keys[23], $arr)) $this->setCaIdciudad($arr[$keys[23]]);
+		if (array_key_exists($keys[24], $arr)) $this->setCaIdgrupo($arr[$keys[24]]);
+		if (array_key_exists($keys[25], $arr)) $this->setCaListaclinton($arr[$keys[25]]);
+		if (array_key_exists($keys[26], $arr)) $this->setCaFchcircular($arr[$keys[26]]);
+		if (array_key_exists($keys[27], $arr)) $this->setCaStatus($arr[$keys[27]]);
 	}
 
 	
@@ -1338,6 +1434,9 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(ClientePeer::CA_EMAIL)) $criteria->add(ClientePeer::CA_EMAIL, $this->ca_email);
 		if ($this->isColumnModified(ClientePeer::CA_COORDINADOR)) $criteria->add(ClientePeer::CA_COORDINADOR, $this->ca_coordinador);
 		if ($this->isColumnModified(ClientePeer::CA_DIRECCION)) $criteria->add(ClientePeer::CA_DIRECCION, $this->ca_direccion);
+		if ($this->isColumnModified(ClientePeer::CA_TORRE)) $criteria->add(ClientePeer::CA_TORRE, $this->ca_torre);
+		if ($this->isColumnModified(ClientePeer::CA_BLOQUE)) $criteria->add(ClientePeer::CA_BLOQUE, $this->ca_bloque);
+		if ($this->isColumnModified(ClientePeer::CA_INTERIOR)) $criteria->add(ClientePeer::CA_INTERIOR, $this->ca_interior);
 		if ($this->isColumnModified(ClientePeer::CA_LOCALIDAD)) $criteria->add(ClientePeer::CA_LOCALIDAD, $this->ca_localidad);
 		if ($this->isColumnModified(ClientePeer::CA_COMPLEMENTO)) $criteria->add(ClientePeer::CA_COMPLEMENTO, $this->ca_complemento);
 		if ($this->isColumnModified(ClientePeer::CA_TELEFONOS)) $criteria->add(ClientePeer::CA_TELEFONOS, $this->ca_telefonos);
@@ -1404,6 +1503,12 @@ abstract class BaseCliente extends BaseObject  implements Persistent {
 		$copyObj->setCaCoordinador($this->ca_coordinador);
 
 		$copyObj->setCaDireccion($this->ca_direccion);
+
+		$copyObj->setCaTorre($this->ca_torre);
+
+		$copyObj->setCaBloque($this->ca_bloque);
+
+		$copyObj->setCaInterior($this->ca_interior);
 
 		$copyObj->setCaLocalidad($this->ca_localidad);
 

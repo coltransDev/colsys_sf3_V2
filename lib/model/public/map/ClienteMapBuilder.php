@@ -63,6 +63,12 @@ class ClienteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_DIRECCION', 'CaDireccion', 'VARCHAR', false, null);
 
+		$tMap->addColumn('CA_TORRE', 'CaTorre', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_BLOQUE', 'CaBloque', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_INTERIOR', 'CaInterior', 'VARCHAR', false, null);
+
 		$tMap->addColumn('CA_LOCALIDAD', 'CaLocalidad', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_COMPLEMENTO', 'CaComplemento', 'VARCHAR', false, null);

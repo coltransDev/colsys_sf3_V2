@@ -13,7 +13,7 @@ abstract class BaseClientePeer {
 	const CLASS_DEFAULT = 'lib.model.public.Cliente';
 
 	
-	const NUM_COLUMNS = 25;
+	const NUM_COLUMNS = 28;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -61,6 +61,15 @@ abstract class BaseClientePeer {
 	const CA_DIRECCION = 'tb_clientes.CA_DIRECCION';
 
 	
+	const CA_TORRE = 'tb_clientes.CA_TORRE';
+
+	
+	const CA_BLOQUE = 'tb_clientes.CA_BLOQUE';
+
+	
+	const CA_INTERIOR = 'tb_clientes.CA_INTERIOR';
+
+	
 	const CA_LOCALIDAD = 'tb_clientes.CA_LOCALIDAD';
 
 	
@@ -101,20 +110,20 @@ abstract class BaseClientePeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcliente', 'CaDigito', 'CaCompania', 'CaPapellido', 'CaSapellido', 'CaNombres', 'CaSaludo', 'CaSexo', 'CaCumpleanos', 'CaOficina', 'CaVendedor', 'CaEmail', 'CaCoordinador', 'CaDireccion', 'CaLocalidad', 'CaComplemento', 'CaTelefonos', 'CaFax', 'CaPreferencias', 'CaConfirmar', 'CaIdciudad', 'CaIdgrupo', 'CaListaclinton', 'CaFchcircular', 'CaStatus', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcliente', 'caDigito', 'caCompania', 'caPapellido', 'caSapellido', 'caNombres', 'caSaludo', 'caSexo', 'caCumpleanos', 'caOficina', 'caVendedor', 'caEmail', 'caCoordinador', 'caDireccion', 'caLocalidad', 'caComplemento', 'caTelefonos', 'caFax', 'caPreferencias', 'caConfirmar', 'caIdciudad', 'caIdgrupo', 'caListaclinton', 'caFchcircular', 'caStatus', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCLIENTE, self::CA_DIGITO, self::CA_COMPANIA, self::CA_PAPELLIDO, self::CA_SAPELLIDO, self::CA_NOMBRES, self::CA_SALUDO, self::CA_SEXO, self::CA_CUMPLEANOS, self::CA_OFICINA, self::CA_VENDEDOR, self::CA_EMAIL, self::CA_COORDINADOR, self::CA_DIRECCION, self::CA_LOCALIDAD, self::CA_COMPLEMENTO, self::CA_TELEFONOS, self::CA_FAX, self::CA_PREFERENCIAS, self::CA_CONFIRMAR, self::CA_IDCIUDAD, self::CA_IDGRUPO, self::CA_LISTACLINTON, self::CA_FCHCIRCULAR, self::CA_STATUS, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcliente', 'ca_digito', 'ca_compania', 'ca_papellido', 'ca_sapellido', 'ca_nombres', 'ca_saludo', 'ca_sexo', 'ca_cumpleanos', 'ca_oficina', 'ca_vendedor', 'ca_email', 'ca_coordinador', 'ca_direccion', 'ca_localidad', 'ca_complemento', 'ca_telefonos', 'ca_fax', 'ca_preferencias', 'ca_confirmar', 'ca_idciudad', 'ca_idgrupo', 'ca_listaclinton', 'ca_fchcircular', 'ca_status', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcliente', 'CaDigito', 'CaCompania', 'CaPapellido', 'CaSapellido', 'CaNombres', 'CaSaludo', 'CaSexo', 'CaCumpleanos', 'CaOficina', 'CaVendedor', 'CaEmail', 'CaCoordinador', 'CaDireccion', 'CaTorre', 'CaBloque', 'CaInterior', 'CaLocalidad', 'CaComplemento', 'CaTelefonos', 'CaFax', 'CaPreferencias', 'CaConfirmar', 'CaIdciudad', 'CaIdgrupo', 'CaListaclinton', 'CaFchcircular', 'CaStatus', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcliente', 'caDigito', 'caCompania', 'caPapellido', 'caSapellido', 'caNombres', 'caSaludo', 'caSexo', 'caCumpleanos', 'caOficina', 'caVendedor', 'caEmail', 'caCoordinador', 'caDireccion', 'caTorre', 'caBloque', 'caInterior', 'caLocalidad', 'caComplemento', 'caTelefonos', 'caFax', 'caPreferencias', 'caConfirmar', 'caIdciudad', 'caIdgrupo', 'caListaclinton', 'caFchcircular', 'caStatus', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCLIENTE, self::CA_DIGITO, self::CA_COMPANIA, self::CA_PAPELLIDO, self::CA_SAPELLIDO, self::CA_NOMBRES, self::CA_SALUDO, self::CA_SEXO, self::CA_CUMPLEANOS, self::CA_OFICINA, self::CA_VENDEDOR, self::CA_EMAIL, self::CA_COORDINADOR, self::CA_DIRECCION, self::CA_TORRE, self::CA_BLOQUE, self::CA_INTERIOR, self::CA_LOCALIDAD, self::CA_COMPLEMENTO, self::CA_TELEFONOS, self::CA_FAX, self::CA_PREFERENCIAS, self::CA_CONFIRMAR, self::CA_IDCIUDAD, self::CA_IDGRUPO, self::CA_LISTACLINTON, self::CA_FCHCIRCULAR, self::CA_STATUS, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcliente', 'ca_digito', 'ca_compania', 'ca_papellido', 'ca_sapellido', 'ca_nombres', 'ca_saludo', 'ca_sexo', 'ca_cumpleanos', 'ca_oficina', 'ca_vendedor', 'ca_email', 'ca_coordinador', 'ca_direccion', 'ca_torre', 'ca_bloque', 'ca_interior', 'ca_localidad', 'ca_complemento', 'ca_telefonos', 'ca_fax', 'ca_preferencias', 'ca_confirmar', 'ca_idciudad', 'ca_idgrupo', 'ca_listaclinton', 'ca_fchcircular', 'ca_status', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcliente' => 0, 'CaDigito' => 1, 'CaCompania' => 2, 'CaPapellido' => 3, 'CaSapellido' => 4, 'CaNombres' => 5, 'CaSaludo' => 6, 'CaSexo' => 7, 'CaCumpleanos' => 8, 'CaOficina' => 9, 'CaVendedor' => 10, 'CaEmail' => 11, 'CaCoordinador' => 12, 'CaDireccion' => 13, 'CaLocalidad' => 14, 'CaComplemento' => 15, 'CaTelefonos' => 16, 'CaFax' => 17, 'CaPreferencias' => 18, 'CaConfirmar' => 19, 'CaIdciudad' => 20, 'CaIdgrupo' => 21, 'CaListaclinton' => 22, 'CaFchcircular' => 23, 'CaStatus' => 24, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcliente' => 0, 'caDigito' => 1, 'caCompania' => 2, 'caPapellido' => 3, 'caSapellido' => 4, 'caNombres' => 5, 'caSaludo' => 6, 'caSexo' => 7, 'caCumpleanos' => 8, 'caOficina' => 9, 'caVendedor' => 10, 'caEmail' => 11, 'caCoordinador' => 12, 'caDireccion' => 13, 'caLocalidad' => 14, 'caComplemento' => 15, 'caTelefonos' => 16, 'caFax' => 17, 'caPreferencias' => 18, 'caConfirmar' => 19, 'caIdciudad' => 20, 'caIdgrupo' => 21, 'caListaclinton' => 22, 'caFchcircular' => 23, 'caStatus' => 24, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCLIENTE => 0, self::CA_DIGITO => 1, self::CA_COMPANIA => 2, self::CA_PAPELLIDO => 3, self::CA_SAPELLIDO => 4, self::CA_NOMBRES => 5, self::CA_SALUDO => 6, self::CA_SEXO => 7, self::CA_CUMPLEANOS => 8, self::CA_OFICINA => 9, self::CA_VENDEDOR => 10, self::CA_EMAIL => 11, self::CA_COORDINADOR => 12, self::CA_DIRECCION => 13, self::CA_LOCALIDAD => 14, self::CA_COMPLEMENTO => 15, self::CA_TELEFONOS => 16, self::CA_FAX => 17, self::CA_PREFERENCIAS => 18, self::CA_CONFIRMAR => 19, self::CA_IDCIUDAD => 20, self::CA_IDGRUPO => 21, self::CA_LISTACLINTON => 22, self::CA_FCHCIRCULAR => 23, self::CA_STATUS => 24, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcliente' => 0, 'ca_digito' => 1, 'ca_compania' => 2, 'ca_papellido' => 3, 'ca_sapellido' => 4, 'ca_nombres' => 5, 'ca_saludo' => 6, 'ca_sexo' => 7, 'ca_cumpleanos' => 8, 'ca_oficina' => 9, 'ca_vendedor' => 10, 'ca_email' => 11, 'ca_coordinador' => 12, 'ca_direccion' => 13, 'ca_localidad' => 14, 'ca_complemento' => 15, 'ca_telefonos' => 16, 'ca_fax' => 17, 'ca_preferencias' => 18, 'ca_confirmar' => 19, 'ca_idciudad' => 20, 'ca_idgrupo' => 21, 'ca_listaclinton' => 22, 'ca_fchcircular' => 23, 'ca_status' => 24, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcliente' => 0, 'CaDigito' => 1, 'CaCompania' => 2, 'CaPapellido' => 3, 'CaSapellido' => 4, 'CaNombres' => 5, 'CaSaludo' => 6, 'CaSexo' => 7, 'CaCumpleanos' => 8, 'CaOficina' => 9, 'CaVendedor' => 10, 'CaEmail' => 11, 'CaCoordinador' => 12, 'CaDireccion' => 13, 'CaTorre' => 14, 'CaBloque' => 15, 'CaInterior' => 16, 'CaLocalidad' => 17, 'CaComplemento' => 18, 'CaTelefonos' => 19, 'CaFax' => 20, 'CaPreferencias' => 21, 'CaConfirmar' => 22, 'CaIdciudad' => 23, 'CaIdgrupo' => 24, 'CaListaclinton' => 25, 'CaFchcircular' => 26, 'CaStatus' => 27, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcliente' => 0, 'caDigito' => 1, 'caCompania' => 2, 'caPapellido' => 3, 'caSapellido' => 4, 'caNombres' => 5, 'caSaludo' => 6, 'caSexo' => 7, 'caCumpleanos' => 8, 'caOficina' => 9, 'caVendedor' => 10, 'caEmail' => 11, 'caCoordinador' => 12, 'caDireccion' => 13, 'caTorre' => 14, 'caBloque' => 15, 'caInterior' => 16, 'caLocalidad' => 17, 'caComplemento' => 18, 'caTelefonos' => 19, 'caFax' => 20, 'caPreferencias' => 21, 'caConfirmar' => 22, 'caIdciudad' => 23, 'caIdgrupo' => 24, 'caListaclinton' => 25, 'caFchcircular' => 26, 'caStatus' => 27, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCLIENTE => 0, self::CA_DIGITO => 1, self::CA_COMPANIA => 2, self::CA_PAPELLIDO => 3, self::CA_SAPELLIDO => 4, self::CA_NOMBRES => 5, self::CA_SALUDO => 6, self::CA_SEXO => 7, self::CA_CUMPLEANOS => 8, self::CA_OFICINA => 9, self::CA_VENDEDOR => 10, self::CA_EMAIL => 11, self::CA_COORDINADOR => 12, self::CA_DIRECCION => 13, self::CA_TORRE => 14, self::CA_BLOQUE => 15, self::CA_INTERIOR => 16, self::CA_LOCALIDAD => 17, self::CA_COMPLEMENTO => 18, self::CA_TELEFONOS => 19, self::CA_FAX => 20, self::CA_PREFERENCIAS => 21, self::CA_CONFIRMAR => 22, self::CA_IDCIUDAD => 23, self::CA_IDGRUPO => 24, self::CA_LISTACLINTON => 25, self::CA_FCHCIRCULAR => 26, self::CA_STATUS => 27, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcliente' => 0, 'ca_digito' => 1, 'ca_compania' => 2, 'ca_papellido' => 3, 'ca_sapellido' => 4, 'ca_nombres' => 5, 'ca_saludo' => 6, 'ca_sexo' => 7, 'ca_cumpleanos' => 8, 'ca_oficina' => 9, 'ca_vendedor' => 10, 'ca_email' => 11, 'ca_coordinador' => 12, 'ca_direccion' => 13, 'ca_torre' => 14, 'ca_bloque' => 15, 'ca_interior' => 16, 'ca_localidad' => 17, 'ca_complemento' => 18, 'ca_telefonos' => 19, 'ca_fax' => 20, 'ca_preferencias' => 21, 'ca_confirmar' => 22, 'ca_idciudad' => 23, 'ca_idgrupo' => 24, 'ca_listaclinton' => 25, 'ca_fchcircular' => 26, 'ca_status' => 27, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, )
 	);
 
 	
@@ -183,6 +192,12 @@ abstract class BaseClientePeer {
 		$criteria->addSelectColumn(ClientePeer::CA_COORDINADOR);
 
 		$criteria->addSelectColumn(ClientePeer::CA_DIRECCION);
+
+		$criteria->addSelectColumn(ClientePeer::CA_TORRE);
+
+		$criteria->addSelectColumn(ClientePeer::CA_BLOQUE);
+
+		$criteria->addSelectColumn(ClientePeer::CA_INTERIOR);
 
 		$criteria->addSelectColumn(ClientePeer::CA_LOCALIDAD);
 

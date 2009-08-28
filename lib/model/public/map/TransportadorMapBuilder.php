@@ -39,6 +39,8 @@ class TransportadorMapBuilder implements MapBuilder {
 
 		$tMap->addForeignKey('CA_IDTRANSPORTISTA', 'CaIdtransportista', 'NUMERIC', 'ids.tb_proveedores', 'CA_IDPROVEEDOR', false, null);
 
+		$tMap->addForeignKey('CA_IDTRANSPORTISTA', 'CaIdtransportista', 'NUMERIC', 'tb_transportistas', 'CA_IDTRANSPORTISTA', false, null);
+
 		$tMap->addColumn('CA_NOMBRE', 'CaNombre', 'VARCHAR', false, null);
 
 		$tMap->addColumn('CA_SIGLA', 'CaSigla', 'VARCHAR', false, null);

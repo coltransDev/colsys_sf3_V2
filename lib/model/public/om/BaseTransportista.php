@@ -37,6 +37,12 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 	protected $ca_email;
 
 	
+	protected $collTransportadors;
+
+	
+	private $lastTransportadorCriteria = null;
+
+	
 	protected $collTransContactos;
 
 	
@@ -306,6 +312,9 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 		}
 		$this->hydrate($row, 0, true); 
 		if ($deep) {  
+			$this->collTransportadors = null;
+			$this->lastTransportadorCriteria = null;
+
 			$this->collTransContactos = null;
 			$this->lastTransContactoCriteria = null;
 
@@ -411,6 +420,14 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 
 				$this->resetModified(); 			}
 
+			if ($this->collTransportadors !== null) {
+				foreach ($this->collTransportadors as $referrerFK) {
+					if (!$referrerFK->isDeleted()) {
+						$affectedRows += $referrerFK->save($con);
+					}
+				}
+			}
+
 			if ($this->collTransContactos !== null) {
 				foreach ($this->collTransContactos as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
@@ -460,6 +477,14 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 				$failureMap = array_merge($failureMap, $retval);
 			}
 
+
+				if ($this->collTransportadors !== null) {
+					foreach ($this->collTransportadors as $referrerFK) {
+						if (!$referrerFK->validate($columns)) {
+							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+						}
+					}
+				}
 
 				if ($this->collTransContactos !== null) {
 					foreach ($this->collTransContactos as $referrerFK) {
@@ -658,6 +683,11 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 		if ($deepCopy) {
 									$copyObj->setNew(false);
 
+			foreach ($this->getTransportadors() as $relObj) {
+				if ($relObj !== $this) {  					$copyObj->addTransportador($relObj->copy($deepCopy));
+				}
+			}
+
 			foreach ($this->getTransContactos() as $relObj) {
 				if ($relObj !== $this) {  					$copyObj->addTransContacto($relObj->copy($deepCopy));
 				}
@@ -686,6 +716,141 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 			self::$peer = new TransportistaPeer();
 		}
 		return self::$peer;
+	}
+
+	
+	public function clearTransportadors()
+	{
+		$this->collTransportadors = null; 	}
+
+	
+	public function initTransportadors()
+	{
+		$this->collTransportadors = array();
+	}
+
+	
+	public function getTransportadors($criteria = null, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportistaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collTransportadors === null) {
+			if ($this->isNew()) {
+			   $this->collTransportadors = array();
+			} else {
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+
+				TransportadorPeer::addSelectColumns($criteria);
+				$this->collTransportadors = TransportadorPeer::doSelect($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+
+				TransportadorPeer::addSelectColumns($criteria);
+				if (!isset($this->lastTransportadorCriteria) || !$this->lastTransportadorCriteria->equals($criteria)) {
+					$this->collTransportadors = TransportadorPeer::doSelect($criteria, $con);
+				}
+			}
+		}
+		$this->lastTransportadorCriteria = $criteria;
+		return $this->collTransportadors;
+	}
+
+	
+	public function countTransportadors(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportistaPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collTransportadors === null) {
+			if ($this->isNew()) {
+				$count = 0;
+			} else {
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+
+				$count = TransportadorPeer::doCount($criteria, $con);
+			}
+		} else {
+						if (!$this->isNew()) {
+												
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+
+				if (!isset($this->lastTransportadorCriteria) || !$this->lastTransportadorCriteria->equals($criteria)) {
+					$count = TransportadorPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collTransportadors);
+				}
+			} else {
+				$count = count($this->collTransportadors);
+			}
+		}
+		return $count;
+	}
+
+	
+	public function addTransportador(Transportador $l)
+	{
+		if ($this->collTransportadors === null) {
+			$this->initTransportadors();
+		}
+		if (!in_array($l, $this->collTransportadors, true)) { 			array_push($this->collTransportadors, $l);
+			$l->setTransportista($this);
+		}
+	}
+
+
+	
+	public function getTransportadorsJoinIdsProveedor($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(TransportistaPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collTransportadors === null) {
+			if ($this->isNew()) {
+				$this->collTransportadors = array();
+			} else {
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+
+				$this->collTransportadors = TransportadorPeer::doSelectJoinIdsProveedor($criteria, $con, $join_behavior);
+			}
+		} else {
+									
+			$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+
+			if (!isset($this->lastTransportadorCriteria) || !$this->lastTransportadorCriteria->equals($criteria)) {
+				$this->collTransportadors = TransportadorPeer::doSelectJoinIdsProveedor($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastTransportadorCriteria = $criteria;
+
+		return $this->collTransportadors;
 	}
 
 	
@@ -793,12 +958,18 @@ abstract class BaseTransportista extends BaseObject  implements Persistent {
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
+			if ($this->collTransportadors) {
+				foreach ((array) $this->collTransportadors as $o) {
+					$o->clearAllReferences($deep);
+				}
+			}
 			if ($this->collTransContactos) {
 				foreach ((array) $this->collTransContactos as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 		} 
+		$this->collTransportadors = null;
 		$this->collTransContactos = null;
 	}
 

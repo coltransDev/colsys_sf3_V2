@@ -304,6 +304,48 @@ abstract class BaseTransportadorPeer {
 
 
 	
+	public static function doCountJoinTransportista(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+								$criteria->setPrimaryTableName(TransportadorPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			TransportadorPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(TransportadorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
+
+
+    foreach (sfMixer::getCallables('BaseTransportadorPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseTransportadorPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
 	public static function doSelectJoinIdsProveedor(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 
@@ -362,6 +404,57 @@ abstract class BaseTransportadorPeer {
 
 
 	
+	public static function doSelectJoinTransportista(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+				if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		TransportadorPeer::addSelectColumns($c);
+		$startcol = (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
+		TransportistaPeer::addSelectColumns($c);
+
+		$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = TransportadorPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = TransportadorPeer::getInstanceFromPool($key1))) {
+															} else {
+
+				$omClass = TransportadorPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				TransportadorPeer::addInstanceToPool($obj1, $key1);
+			} 
+			$key2 = TransportistaPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = TransportistaPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = TransportistaPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					TransportistaPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->addTransportador($obj1);
+
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
 	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 				$criteria = clone $criteria;
@@ -384,6 +477,7 @@ abstract class BaseTransportadorPeer {
 		}
 
 		$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(IdsProveedorPeer::CA_IDPROVEEDOR,), $join_behavior);
+		$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
 
     foreach (sfMixer::getCallables('BaseTransportadorPeer:doCount:doCount') as $callable)
     {
@@ -423,7 +517,11 @@ abstract class BaseTransportadorPeer {
 		IdsProveedorPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (IdsProveedorPeer::NUM_COLUMNS - IdsProveedorPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		TransportistaPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (TransportistaPeer::NUM_COLUMNS - TransportistaPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(IdsProveedorPeer::CA_IDPROVEEDOR,), $join_behavior);
+		$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -453,6 +551,217 @@ abstract class BaseTransportadorPeer {
 					IdsProveedorPeer::addInstanceToPool($obj2, $key2);
 				} 
 								$obj2->addTransportador($obj1);
+			} 
+			
+			$key3 = TransportistaPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = TransportistaPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = TransportistaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					TransportistaPeer::addInstanceToPool($obj3, $key3);
+				} 
+								$obj3->addTransportador($obj1);
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
+	public static function doCountJoinAllExceptIdsProveedor(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			TransportadorPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(TransportadorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseTransportadorPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseTransportadorPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
+	public static function doCountJoinAllExceptTransportista(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			TransportadorPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(TransportadorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(IdsProveedorPeer::CA_IDPROVEEDOR,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseTransportadorPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseTransportadorPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
+	public static function doSelectJoinAllExceptIdsProveedor(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+
+    foreach (sfMixer::getCallables('BaseTransportadorPeer:doSelectJoinAllExcept:doSelectJoinAllExcept') as $callable)
+    {
+      call_user_func($callable, 'BaseTransportadorPeer', $c, $con);
+    }
+
+
+		$c = clone $c;
+
+								if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		TransportadorPeer::addSelectColumns($c);
+		$startcol2 = (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		TransportistaPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (TransportistaPeer::NUM_COLUMNS - TransportistaPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(TransportistaPeer::CA_IDTRANSPORTISTA,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = TransportadorPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = TransportadorPeer::getInstanceFromPool($key1))) {
+															} else {
+				$omClass = TransportadorPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				TransportadorPeer::addInstanceToPool($obj1, $key1);
+			} 
+				
+				$key2 = TransportistaPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = TransportistaPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = TransportistaPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					TransportistaPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->addTransportador($obj1);
+
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
+	public static function doSelectJoinAllExceptTransportista(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+								if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		TransportadorPeer::addSelectColumns($c);
+		$startcol2 = (TransportadorPeer::NUM_COLUMNS - TransportadorPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		IdsProveedorPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (IdsProveedorPeer::NUM_COLUMNS - IdsProveedorPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(TransportadorPeer::CA_IDTRANSPORTISTA,), array(IdsProveedorPeer::CA_IDPROVEEDOR,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = TransportadorPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = TransportadorPeer::getInstanceFromPool($key1))) {
+															} else {
+				$omClass = TransportadorPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				TransportadorPeer::addInstanceToPool($obj1, $key1);
+			} 
+				
+				$key2 = IdsProveedorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = IdsProveedorPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = IdsProveedorPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					IdsProveedorPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->addTransportador($obj1);
+
 			} 
 			$results[] = $obj1;
 		}

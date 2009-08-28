@@ -30,5 +30,20 @@ class Cliente extends BaseCliente
 		$coordinador = UsuarioPeer::retrieveByPk( $this->getCaCoordinador() );
 		return $coordinador;
 	}
+
+
+    public function getDireccion(){
+
+        $direccion = str_replace ("|"," ",$this->getCaDireccion());
+
+        $direccion.=$this->getCaOficina()." ";
+        $direccion.=$this->getCaTorre()." ";
+        $direccion.=$this->getCaBloque()." ";
+        $direccion.=$this->getCaInterior()." ";
+        $direccion.=$this->getCaLocalidad()." ";
+        $direccion.=$this->getCaComplemento()." ";
+
+		return $direccion;
+	}
 }
 ?>

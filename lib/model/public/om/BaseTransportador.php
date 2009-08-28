@@ -31,6 +31,9 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 	protected $aIdsProveedor;
 
 	
+	protected $aTransportista;
+
+	
 	protected $collTrayectos;
 
 	
@@ -168,6 +171,10 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 			$this->aIdsProveedor = null;
 		}
 
+		if ($this->aTransportista !== null && $this->aTransportista->getCaIdtransportista() !== $v) {
+			$this->aTransportista = null;
+		}
+
 		return $this;
 	} 
 	
@@ -267,6 +274,9 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 		if ($this->aIdsProveedor !== null && $this->ca_idtransportista !== $this->aIdsProveedor->getCaIdproveedor()) {
 			$this->aIdsProveedor = null;
 		}
+		if ($this->aTransportista !== null && $this->ca_idtransportista !== $this->aTransportista->getCaIdtransportista()) {
+			$this->aTransportista = null;
+		}
 	} 
 	
 	public function reload($deep = false, PropelPDO $con = null)
@@ -293,6 +303,7 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 		$this->hydrate($row, 0, true); 
 		if ($deep) {  
 			$this->aIdsProveedor = null;
+			$this->aTransportista = null;
 			$this->collTrayectos = null;
 			$this->lastTrayectoCriteria = null;
 
@@ -412,6 +423,13 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 					$affectedRows += $this->aIdsProveedor->save($con);
 				}
 				$this->setIdsProveedor($this->aIdsProveedor);
+			}
+
+			if ($this->aTransportista !== null) {
+				if ($this->aTransportista->isModified() || $this->aTransportista->isNew()) {
+					$affectedRows += $this->aTransportista->save($con);
+				}
+				$this->setTransportista($this->aTransportista);
 			}
 
 			if ($this->isNew() ) {
@@ -543,6 +561,12 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 			if ($this->aIdsProveedor !== null) {
 				if (!$this->aIdsProveedor->validate($columns)) {
 					$failureMap = array_merge($failureMap, $this->aIdsProveedor->getValidationFailures());
+				}
+			}
+
+			if ($this->aTransportista !== null) {
+				if (!$this->aTransportista->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aTransportista->getValidationFailures());
 				}
 			}
 
@@ -879,6 +903,37 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 			
 		}
 		return $this->aIdsProveedor;
+	}
+
+	
+	public function setTransportista(Transportista $v = null)
+	{
+		if ($v === null) {
+			$this->setCaIdtransportista(NULL);
+		} else {
+			$this->setCaIdtransportista($v->getCaIdtransportista());
+		}
+
+		$this->aTransportista = $v;
+
+						if ($v !== null) {
+			$v->addTransportador($this);
+		}
+
+		return $this;
+	}
+
+
+	
+	public function getTransportista(PropelPDO $con = null)
+	{
+		if ($this->aTransportista === null && (($this->ca_idtransportista !== "" && $this->ca_idtransportista !== null))) {
+			$c = new Criteria(TransportistaPeer::DATABASE_NAME);
+			$c->add(TransportistaPeer::CA_IDTRANSPORTISTA, $this->ca_idtransportista);
+			$this->aTransportista = TransportistaPeer::doSelectOne($c, $con);
+			
+		}
+		return $this->aTransportista;
 	}
 
 	
@@ -2326,6 +2381,7 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 		$this->collInoMaestraSeas = null;
 		$this->collInoMaestraAirs = null;
 			$this->aIdsProveedor = null;
+			$this->aTransportista = null;
 	}
 
 
