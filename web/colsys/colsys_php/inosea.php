@@ -3941,7 +3941,7 @@ require_once("menu.php");
 					echo "<script>document.location.href = 'inosea.php';</script>";
 					exit;
 				}
-				if (!$rp->Open("select * from vi_reportes where ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_version = (select max(ca_version) as ca_version from tb_reportes where ca_consecutivo = '".$ic->Value("ca_consecutivo")."')")) {    // Trae de la Tabla de la Reportes de Negocio última version.
+				if (!$rp->Open("select * from vi_reportes where ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_version = (select max(ca_version) as ca_version from tb_reportes where ca_fchanulado is null and ca_consecutivo = '".$ic->Value("ca_consecutivo")."')")) {    // Trae de la Tabla de la Reportes de Negocio última version.
 					echo "<script>alert(\"".addslashes($dm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 					echo "<script>document.location.href = 'inosea.php';</script>";
 					exit;
