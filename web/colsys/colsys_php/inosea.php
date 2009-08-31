@@ -3414,7 +3414,7 @@ echo "</BODY>";
                 }
              $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 			 $query = "select DISTINCT rp.ca_consecutivo, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*  from tb_inoclientes_sea ic";
-			 $query.= " LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte) LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
+			 $query.= " LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and ic.ca_idreporte = rp.ca_idreporte) LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
 			 $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house)";
 			 $query.= " where ic.ca_referencia = '$id' and ic.ca_idcliente = '$cl' and ic.ca_hbls = '$hb' order by ca_idinfodian DESC";
              if (!$tm->Open("$query")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
@@ -3879,7 +3879,7 @@ require_once("menu.php");
 			 $xml_pal66->setAttribute("dv1", $tm->Value("ca_digito"));
 
 			 // =========================== Remitente = Agente en el Exterior ===========================
-			 if (!$tm->Open("select ca_idagente, count(ca_idagente) from tb_reportes where ca_idreporte in (select ca_idreporte from tb_inoclientes_sea where ca_referencia = '".$rs->Value("ca_referencia")."') group by ca_idagente")) {    // Calcula a partir de los reportes de Negocio quien es el Agente
+			 if (!$tm->Open("select ca_idagente, count(ca_idagente) from tb_reportes where ca_fchanulado is null and ca_idreporte in (select ca_idreporte from tb_inoclientes_sea where ca_referencia = '".$rs->Value("ca_referencia")."') group by ca_idagente")) {    // Calcula a partir de los reportes de Negocio quien es el Agente
 				echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
 				echo "<script>document.location.href = 'inosea.php';</script>";
 				exit;
@@ -4161,7 +4161,7 @@ require_once("menu.php");
 
 							// Se Crear el elemento item
 							$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
-							$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
+							$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte)";
 							$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
 							$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
 							if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
@@ -4201,7 +4201,7 @@ require_once("menu.php");
 
 					// Se Crear el elemento item
 					$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
-					$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
+					$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte)";
 					$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
 					$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
 					if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
@@ -4277,7 +4277,7 @@ require_once("menu.php");
 								$xml_h167->appendChild( $xml_h267 );
 								// Se Crear el elemento item
 								$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
-								$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
+								$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte)";
 								$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
 								$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
 								if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
@@ -4326,7 +4326,7 @@ require_once("menu.php");
 
 						// Se Crear el elemento item
 						$string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
-						$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte)";
+						$string.= "	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte)";
 						$string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
 						$string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
 						if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
