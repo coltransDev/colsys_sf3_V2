@@ -135,7 +135,6 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
     $condicion = "where substr(ca_referencia,8,2)::text = '$mes' and substr(ca_referencia,15)::text = '".($ano-2000)."' and ca_trafico like '%$trafico%'"." and ca_traorigen like '%$traorigen%' and ".str_replace("\\","", str_replace("\"","'",$casos))." and ca_sucursal like '%$sucursal%'";
     if (!$rs->Open("select DISTINCT ca_referencia, ca_trafico, ca_traorigen, ca_modal, ca_observaciones, ca_fcharribo, ca_iddocactual, ca_fchenvio, ca_usuenvio from vi_inoconsulta_sea $condicion order by ca_trafico, ca_modal, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-		exit( "select * from vi_inomaestra_sea $condicion order by ca_trafico, ca_modal, ca_referencia" );	
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 
