@@ -97,7 +97,7 @@ require_once("menu.php");
           }
 
     $nv =& DlRecordset::NewRecordset($conn);
-    if (!$nv->Open("select distinct ca_idlinea, ca_nombre from tb_transporlineas where ca_transporte = 'Marítimo' order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
+    if (!$nv->Open("select distinct ca_idlinea, ca_nombre from vi_transporlineas where ca_transporte = 'Marítimo' order by ca_nombre")) {       // Selecciona todos lo registros de la tabla Traficos
         echo "<script>alert(\"".addslashes($nv->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repgenerator.php';</script>";
         exit; }
