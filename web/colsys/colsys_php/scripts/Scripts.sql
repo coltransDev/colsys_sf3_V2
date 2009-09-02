@@ -2065,7 +2065,7 @@ GRANT ALL ON vi_transporlineas TO GROUP "Usuarios";
 // Drop view vi_trayectos;
 Create view vi_trayectos as
 Select t.ca_idtrayecto, t.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_idtrafico as ca_idtraorigen, t1.ca_nombre as ca_traorigen, t1.ca_bandera as ca_banorigen, t1.ca_link as ca_linkorigen, t.ca_destino, c2.ca_ciudad as ca_ciudestino, t2.ca_idtrafico as ca_idtradestino, t2.ca_nombre as ca_tradestino, t2.ca_bandera as ca_bandestino, t2.ca_link as ca_linkdestino, t.ca_terminal, t.ca_idlinea, l.ca_nombre, l.ca_sigla, l.ca_idtransportista,
-       r.ca_nombre as ca_nomtransportista, t.ca_transporte, t.ca_impoexpo, t.ca_frecuencia, t.ca_tiempotransito, t.ca_modalidad, t.ca_fchcreado, t.ca_idtarifas, s.ca_tarifas, t.ca_observaciones from tb_trayectos t, tb_ciudades c1, tb_ciudades c2, tb_traficos t1, tb_traficos t2, tb_transporlineas l, tb_transportistas r, vi_subtrayectos s where t.ca_origen = c1.ca_idciudad and t.ca_destino = c2.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and
+       r.ca_nombre as ca_nomtransportista, t.ca_transporte, t.ca_impoexpo, t.ca_frecuencia, t.ca_tiempotransito, t.ca_modalidad, t.ca_fchcreado, t.ca_idtarifas, s.ca_tarifas, t.ca_observaciones from tb_trayectos t, tb_ciudades c1, tb_ciudades c2, tb_traficos t1, tb_traficos t2, vi_transporlineas l, tb_transportistas r, vi_subtrayectos s where t.ca_origen = c1.ca_idciudad and t.ca_destino = c2.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and
        c2.ca_idtrafico = t2.ca_idtrafico and t.ca_idlinea = l.ca_idlinea and l.ca_idtransportista = r.ca_idtransportista and t.ca_idtarifas = s.ca_idtrayecto order by ca_impoexpo, ca_transporte, ca_traorigen, ca_ciuorigen, ca_ciudestino;
 REVOKE ALL ON vi_trayectos FROM PUBLIC;
 GRANT ALL ON vi_trayectos TO "Administrador";
@@ -2074,7 +2074,7 @@ GRANT ALL ON vi_trayectos TO GROUP "Usuarios";
 
 // Drop view vi_subtrayectos cascade;
 Create view vi_subtrayectos as
-Select t.ca_idtrayecto, c1.ca_ciudad||' / '||c2.ca_ciudad||' / '||l.ca_sigla as ca_tarifas from tb_trayectos t, tb_ciudades c1, tb_ciudades c2, tb_traficos t1, tb_traficos t2, tb_transporlineas l where t.ca_origen = c1.ca_idciudad and t.ca_destino = c2.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and c2.ca_idtrafico = t2.ca_idtrafico and
+Select t.ca_idtrayecto, c1.ca_ciudad||' / '||c2.ca_ciudad||' / '||l.ca_sigla as ca_tarifas from tb_trayectos t, tb_ciudades c1, tb_ciudades c2, tb_traficos t1, tb_traficos t2, vi_transporlineas l where t.ca_origen = c1.ca_idciudad and t.ca_destino = c2.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and c2.ca_idtrafico = t2.ca_idtrafico and
        t.ca_idlinea = l.ca_idlinea and t.ca_idtrayecto = t.ca_idtrayecto order by ca_idtrayecto;
 REVOKE ALL ON vi_subtrayectos FROM PUBLIC;
 GRANT ALL ON vi_subtrayectos TO "Administrador";
@@ -2287,7 +2287,7 @@ select r.ca_idreporte, r.ca_version, (select max(rr.ca_version) from tb_reportes
        tr6.ca_nombre as ca_nombre_mas, tr6.ca_contacto as ca_contacto_mas, tr6.ca_direccion||' '|| tr6.ca_ciudad as ca_direccion_mas, tr6.ca_telefonos as ca_telefonos_mas, tr6.ca_fax as ca_fax_mas, tr6.ca_email as ca_email_mas,
        s.ca_vlrasegurado, s.ca_idmoneda_vlr, s.ca_primaventa, s.ca_minimaventa, s.ca_idmoneda_vta, s.ca_obtencionpoliza, s.ca_idmoneda_pol, s.ca_seguro_conf, ra.ca_idrepaduana, ra.ca_coordinador, u2.ca_nombre as ca_namecoordinador, u2.ca_email as ca_aduana_conf, ra.ca_transnacarga, ra.ca_transnatipo, ra.ca_instrucciones as ca_instrucciones_ad, r.ca_login, u.ca_nombre as ca_vendedor, u.ca_sucursal
        from tb_reportes r 
-	   LEFT OUTER JOIN tb_transporlineas l ON (r.ca_idlinea = l.ca_idlinea) 
+	   LEFT OUTER JOIN vi_transporlineas l ON (r.ca_idlinea = l.ca_idlinea)
 	   LEFT OUTER JOIN tb_terceros tr1 ON (tr1.ca_idtercero::text IN (array_to_string(string_to_array(r.ca_idproveedor,'|'),','))) 
 	   LEFT OUTER JOIN (Select cl.ca_compania, cl.ca_idcliente, cl.ca_digito, cn.ca_idcontacto, cn.ca_nombres ||' '|| cn.ca_papellido ||' '|| cn.ca_sapellido as ca_ncompleto_cn, cn.ca_telefonos, cn.ca_fax, cn.ca_email, cl.ca_direccion as ca_direccion_cl, cl.ca_oficina, cl.ca_torre, cl.ca_bloque, cl.ca_interior, cl.ca_complemento, cd.ca_ciudad
        from tb_clientes cl LEFT OUTER JOIN tb_concliente cn ON (cn.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_libcliente ca ON (ca.ca_idcliente = cl.ca_idcliente) JOIN tb_ciudades cd ON (cl.ca_idciudad = cd.ca_idciudad)) tr2 ON (r.ca_idconcliente = tr2.ca_idcontacto)
@@ -2299,7 +2299,7 @@ select r.ca_idreporte, r.ca_version, (select max(rr.ca_version) from tb_reportes
 	   LEFT OUTER JOIN tb_repaduana ra ON (r.ca_idreporte = ra.ca_idreporte)
 	   LEFT OUTER JOIN control.tb_usuarios u2 ON (ra.ca_coordinador = u2.ca_login), 
 	   tb_agentes a, tb_ciudades c1, tb_ciudades c2, tb_ciudades c3, tb_traficos t1, tb_traficos t2, tb_bodegas b1, tb_bodegas b2, control.tb_usuarios u 
-	   where r.ca_idagente = a.ca_idagente and r.ca_origen = c1.ca_idciudad and r.ca_destino = c2.ca_idciudad and r.ca_continuacion_dest = c3.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and c2.ca_idtrafico = t2.ca_idtrafico and r.ca_idconsignar = b1.ca_idbodega and r.ca_idbodega = b2.ca_idbodega and r.ca_login = u.ca_login and nullvalue(r.ca_usuanulado)
+	   where r.ca_idagente = a.ca_idagente and r.ca_origen = c1.ca_idciudad and r.ca_destino = c2.ca_idciudad and r.ca_continuacion_dest = c3.ca_idciudad and c1.ca_idtrafico = t1.ca_idtrafico and c2.ca_idtrafico = t2.ca_idtrafico and r.ca_idconsignar = b1.ca_idbodega and r.ca_idbodega = b2.ca_idbodega and r.ca_login = u.ca_login and r.ca_usuanulado IS NULL
 	   order by EXTRACT ('year' from ca_fchreporte) DESC, to_number(substr(ca_consecutivo,0,position('-' in ca_consecutivo)),'99999999') DESC, ca_version DESC;
 REVOKE ALL ON vi_reportes FROM PUBLIC;
 GRANT ALL ON vi_reportes TO "Administrador";
@@ -2458,24 +2458,25 @@ GRANT ALL ON vi_inoclientes_sea TO "Administrador";
 GRANT ALL ON vi_inoclientes_sea TO GROUP "Usuarios";
 
 
--- Drop view vi_inoconsulta_sea;
+// Drop view vi_inoconsulta_sea;
 Create view vi_inoconsulta_sea as
 Select substr(im.ca_referencia,15,1) as ca_ano, substr(im.ca_referencia,8,2)||'-'||substr(im.ca_referencia,15,1) as ca_mes, substr(im.ca_referencia,5,2) as ca_trafico, substr(im.ca_referencia,1,3) as ca_modal, im.ca_referencia, im.ca_mbls, im.ca_motonave, im.ca_observaciones, t.ca_nombre, t.ca_sigla, ie.ca_idequipo, im.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_nombre as ca_traorigen, im.ca_destino,
-       c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, im.ca_fchembarque, im.ca_fcharribo, ic.ca_hbls, ic.ca_idcliente, c.ca_compania, rp.ca_consecutivo, ii.ca_factura, it.ca_factura as ca_factura_prov, us.ca_sucursal,
+       c2.ca_ciudad as ca_ciudestino, t2.ca_nombre as ca_tradestino, im.ca_fchembarque, im.ca_fcharribo, ic.ca_hbls, ic.ca_idcliente, c.ca_compania, rp.ca_consecutivo, ii.ca_factura, it.ca_factura as ca_factura_prov, us.ca_sucursal, dm.ca_iddocactual, dm.ca_fchenvio, dm.ca_usuenvio,
 	   (case when im.ca_provisional then 'Provisional' else (case when nullvalue(im.ca_usucerrado) = false and length(im.ca_usucerrado) != 0 then 'Cerrado' else 'Abierto' end) end) as ca_estado
        from tb_inomaestra_sea im
-       LEFT OUTER JOIN tb_ciudades c1 ON (im.ca_origen = c1.ca_idciudad)
-       LEFT OUTER JOIN tb_ciudades c2 ON (im.ca_destino = c2.ca_idciudad)
-       LEFT OUTER JOIN tb_traficos t1 ON (c1.ca_idtrafico = t1.ca_idtrafico)
-       LEFT OUTER JOIN tb_traficos t2 ON (c2.ca_idtrafico = t2.ca_idtrafico)
-       LEFT OUTER JOIN tb_transporlineas t ON (im.ca_idlinea = t.ca_idlinea)
-       LEFT OUTER JOIN tb_inoequipos_sea ie ON (im.ca_referencia = ie.ca_referencia)
-       LEFT OUTER JOIN tb_inoclientes_sea ic ON (im.ca_referencia = ic.ca_referencia)
-       LEFT OUTER JOIN tb_clientes c ON (ic.ca_idcliente = c.ca_idcliente)
-	   LEFT OUTER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte)
-       LEFT OUTER JOIN tb_inoingresos_sea ii ON (im.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls)
-       LEFT OUTER JOIN tb_inocostos_sea it ON (im.ca_referencia = it.ca_referencia)
-	   LEFT OUTER JOIN control.tb_usuarios us ON (im.ca_usucreado = us.ca_login);
+       LEFT JOIN tb_ciudades c1 ON (im.ca_origen = c1.ca_idciudad)
+       LEFT JOIN tb_ciudades c2 ON (im.ca_destino = c2.ca_idciudad)
+       LEFT JOIN tb_traficos t1 ON (c1.ca_idtrafico = t1.ca_idtrafico)
+       LEFT JOIN tb_traficos t2 ON (c2.ca_idtrafico = t2.ca_idtrafico)
+       LEFT JOIN vi_transporlineas t ON (im.ca_idlinea = t.ca_idlinea)
+       LEFT JOIN tb_inoequipos_sea ie ON (im.ca_referencia = ie.ca_referencia)
+       LEFT JOIN tb_inoclientes_sea ic ON (im.ca_referencia = ic.ca_referencia)
+       LEFT JOIN tb_clientes c ON (ic.ca_idcliente = c.ca_idcliente)
+       LEFT JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte)
+       LEFT JOIN tb_inoingresos_sea ii ON (im.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls)
+       LEFT JOIN tb_inocostos_sea it ON (im.ca_referencia = it.ca_referencia)
+       LEFT JOIN tb_dianmaestra dm ON im.ca_referencia::text = dm.ca_referencia::text
+       LEFT OUTER JOIN control.tb_usuarios us ON (im.ca_usucreado = us.ca_login);
 REVOKE ALL ON vi_inoconsulta_sea FROM PUBLIC;
 GRANT ALL ON vi_inoconsulta_sea TO "Administrador";
 GRANT ALL ON vi_inoconsulta_sea TO GROUP "Usuarios";
@@ -2537,7 +2538,7 @@ GRANT ALL ON vi_inoingresos_sea TO "Administrador";
 GRANT ALL ON vi_inoingresos_sea TO GROUP "Usuarios";
 
 
--- Drop view vi_inocarga_fcl;
+// Drop view vi_inocarga_fcl;
 Create view vi_inocarga_fcl as
 Select im.ca_mes, im.ca_trafico, im.ca_modalidad, im.ca_traorigen, im.ca_ciudestino, c.ca_liminferior as ca_capacidad, sum(round(c.ca_liminferior/20,0)*ic.ca_factor) as ca_teus, sum(ie.ca_cantidad*ic.ca_factor) as ca_cantidad, ca_sucursal from ( select inoc.ca_referencia, inoc.ca_idcliente, ca_login, sum(inoc.ca_volumen) / (case when max(inov.ca_granvol) <> 0 then max(inov.ca_granvol) else 1 end) as ca_factor from tb_inoclientes_sea inoc, (select ca_referencia, sum(ca_volumen) as ca_granvol from tb_inoclientes_sea group by ca_referencia) inov
        where inoc.ca_referencia = inov.ca_referencia group by inoc.ca_referencia, inoc.ca_idcliente, inoc.ca_login order by inoc.ca_referencia, inoc.ca_idcliente, inoc.ca_login ) ic
@@ -2552,7 +2553,7 @@ GRANT ALL ON vi_inocarga_fcl TO "Administrador";
 GRANT ALL ON vi_inocarga_fcl TO GROUP "Usuarios";
 
 
--- Drop view vi_inocarga_lcl;
+// Drop view vi_inocarga_lcl;
 Create view vi_inocarga_lcl as
 Select i.ca_mes, u.ca_sucursal, i.ca_trafico, i.ca_traorigen, i.ca_ciudestino, sum(c.ca_volumen) as ca_volumen
        from vi_inocontenedores_sea i, tb_inoclientes_sea c, control.tb_usuarios u
@@ -2564,7 +2565,7 @@ GRANT ALL ON vi_inocarga_lcl TO "Administrador";
 GRANT ALL ON vi_inocarga_lcl TO GROUP "Usuarios";
 
 
--- Drop view vi_inonaviera_fcl;
+// Drop view vi_inonaviera_fcl;
 Create view vi_inonaviera_fcl as
 Select i.ca_mes, i.ca_trafico, i.ca_nomtransportista, i.ca_nombre, i.ca_traorigen, i.ca_ciudestino, substr(e.ca_concepto,1,2) as ca_capacidad, sum(e.ca_cantidad) as ca_cantidad
        from vi_inocontenedores_sea i, vi_inoequipos_sea e
@@ -2748,7 +2749,7 @@ select substr(ic.ca_referencia,15) as ca_ano, substr(ic.ca_referencia,8,2) as ca
 		LEFT OUTER JOIN tb_ciudades co ON (im.ca_origen = co.ca_idciudad)
 		LEFT OUTER JOIN tb_ciudades cd ON (im.ca_destino = cd.ca_idciudad)
 		LEFT OUTER JOIN tb_traficos tr ON (co.ca_idtrafico = tr.ca_idtrafico)
-		LEFT OUTER JOIN tb_transporlineas nv ON (im.ca_idlinea = nv.ca_idlinea)
+		LEFT OUTER JOIN vi_transporlineas nv ON (im.ca_idlinea = nv.ca_idlinea)
 		LEFT OUTER JOIN control.tb_usuarios us ON (ic.ca_login = us.ca_login)
 		order by ca_referencia;
 REVOKE ALL ON vi_repgerencia_sea FROM PUBLIC;
