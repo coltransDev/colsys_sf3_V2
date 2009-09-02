@@ -523,7 +523,7 @@ echo "</BODY>";
                  exit;
                 }
              $tm =& DlRecordset::NewRecordset($conn);
-             if (!$tm->Open("select ca_idlinea, ca_nombre, ca_transporte from tb_transporlineas order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
+             if (!$tm->Open("select ca_idlinea, ca_nombre, ca_transporte from vi_transporlineas order by ca_nombre")) { // Selecciona todos lo registros de la tabla Ciudades
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'trayectos.php';</script>";
                  exit; }
@@ -590,7 +590,7 @@ require_once("menu.php");
              echo "  <TD Class=listar WIDTH=160 style='font-size: 11px; font-weight: bold; text-align=center'>".$rs->Value('ca_tradestino')."</TD>";
              echo "  <TD Class=listar WIDTH=160 style='font-size: 11px; font-weight: bold; text-align=center'>".$rs->Value('ca_ciudestino')."</TD>";
              echo "</TR>";
-             if (!$tm->Open("select ca_idlinea, ca_nombre from tb_transporlineas where ca_transporte = '".$rs->Value('ca_transporte')."' order by ca_nombre")) { // Selecciona todos lo registros de la tabla Transportistas
+             if (!$tm->Open("select ca_idlinea, ca_nombre from vi_transporlineas where ca_transporte = '".$rs->Value('ca_transporte')."' order by ca_nombre")) { // Selecciona todos lo registros de la tabla Transportistas
                  echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'trayectos.php';</script>";
                  exit; }
