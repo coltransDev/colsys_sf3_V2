@@ -27,7 +27,7 @@ switch($action){
 		$button[3]["name"]="Volver";
 		$button[3]["tooltip"]="Vuelve a la pagina anterior";
 		$button[3]["image"]="22x22/1leftarrow.gif"; 			
-		$button[3]["link"]= "/colsys_php/reportenegocio.php?boton=Consultar&id=".$this->getRequestParameter("id")."&token=".md5(time());
+		$button[3]["onClick"]= "volver()";
 		break;
 	case "enviarNotificacion":	
 		$button[3]["name"]="Volver";

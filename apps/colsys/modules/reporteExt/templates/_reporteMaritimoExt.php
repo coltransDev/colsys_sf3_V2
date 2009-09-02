@@ -96,7 +96,7 @@ if( $reporte->getCaIdmaster()){
 }else {
 	$consignatario = ClientePeer::retrieveByPk( 800024075 );
 	
-	$consignatario_m = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<BR>Dirección: ".$consignatario->getDireccion()."<BR>Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<BR>".$consignatario->getCiudad()->__toString();
+	$consignatario_m = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<BR>Dirección: ".$consignatario->getDireccion()."<BR>Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<BR>".$consignatario->getCiudad()->getCaCiudad()." ".$consignatario->getCiudad()->getTrafico()->getCaNombre();
 }
 
 if( $reporte->getCaIdConsignatario() ){
@@ -108,7 +108,7 @@ if( $reporte->getCaIdConsignatario() ){
 	$contacto = $reporte->getContacto();
 	$cliente = $reporte->getContacto()->getCliente();
 	
-	$consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>Dirección: ".$cliente->getDireccion()."<BR>Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<BR> Email:".$contacto->getCaEmail();
+	$consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>Dirección: ".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad()."<BR>Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<BR> Email:".$contacto->getCaEmail();
 	
 	
 	
@@ -138,7 +138,7 @@ if( !$reporte->getCaNotify() ){
 	$contacto = $reporte->getContacto();
 	$cliente = $reporte->getContacto()->getCliente();
 	
-	$notify_h = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>Dirección: ".$cliente->getDireccion()."<BR>Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<BR> Email:".$contacto->getCaEmail()."<BR>".$cliente->getCiudad()->getTrafico()->getcaNombre();		
+	$notify_h = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>Contacto: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>Dirección: ".$cliente->getDireccion()." ".$cliente->getCiudad()->getCaCiudad()."<BR>Teléfonos:".$contacto->getCaTelefonos()." Fax:".$contacto->getCaFax()."<BR> Email:".$contacto->getCaEmail()."<BR>".$cliente->getCiudad()->getTrafico()->getcaNombre();
 }else{
 
 	if( $reporte->getCaNotify()==1 ) {	

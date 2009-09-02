@@ -79,7 +79,7 @@ if ( $reporte->getCaIdlinea() ){
 
 if( $reporte->getCaIdmaster()){
 	$consignatario = TerceroPeer::retrieveByPk( $reporte->getCaIdmaster() );
-	 $master = $consignatario->getCaNombre()."<BR>".$consignatario->getCaContacto()."<BR>".$consignatario->getCaDireccion()."<BR>Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<BR>Email: ".$consignatario->getCaEmail();
+	$master = $consignatario->getCaNombre()."<br />".$consignatario->getCaContacto()."<br />".$consignatario->getCaDireccion()."<br />Teléfonos:".$consignatario->getCaTelefonos()." Fax:".$consignatario->getCaFax()."<br />Email: ".$consignatario->getCaEmail();
 }else {
 	$consignatario = ClientePeer::retrieveByPk( 800024075 );
 
@@ -87,9 +87,9 @@ if( $reporte->getCaIdmaster()){
     $c->add( SucursalPeer::CA_NOMBRE, $reporte->getDestino()->getCaCiudad() );
     $sucursal = SucursalPeer::doSelectOne( $c );
 
-	$master = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<BR>";
+	$master = $consignatario->getCaCompania()." Nit. ".number_format($consignatario->getCaIdcliente(),0)."-".$consignatario->getCaDigito()."<br />";
     if( $sucursal ){    
-        $master.=$sucursal->getCaDireccion()."<BR>Teléfonos:".$sucursal->getCaTelefono()." Fax:".$sucursal->getCaFax()."<BR>";
+        $master.=$sucursal->getCaDireccion()."<br />Teléfonos:".$sucursal->getCaTelefono()." Fax:".$sucursal->getCaFax()."<br />";
     }
     $master.=$reporte->getDestino()->getCaCiudad()." - ".$reporte->getDestino()->getTrafico()->getCaNombre();
 }
@@ -98,13 +98,13 @@ if( $reporte->getCaIdmaster()){
 if( $reporte->getCaIdConsignatario() ){
 
 	$consignatario = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );
-	$consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<BR>".$consignatario->getCaContacto()."<BR>".$consignatario->getCaDireccion();
+	$consignatario_final = $consignatario->getCaNombre()." Nit. ".$consignatario->getCaIdentificacion()."<br />".$consignatario->getCaDireccion();
 		
 }else{
 	$contacto = $reporte->getContacto();
 	$cliente = $reporte->getContacto()->getCliente();
 	
-	$consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<BR>".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".$cliente->getDireccion();
+	$consignatario_final = $cliente->getCaCompania()." Nit. ".number_format($cliente->getCaIdcliente(),0)."-".$cliente->getCaDigito()."<br />".$cliente->getDireccion();
 }
 
 $bodega1 = $reporte->getBodegaConsignar();
@@ -122,14 +122,14 @@ if( $reporte->getCaContinuacion()== 'N/A' ){
     $hijo.="<br />".$reporte->getDestino()->getCaCiudad();
 }
 $hijo.="<br />".$reporte->getDestino()->getTrafico()->getCaNombre();
-//.(($rs->Value('ca_continuacion') == 'N/A')?"<BR>".$rs->Value('ca_ciudestino'):"")."<BR>".$tm->Value('ca_pais');
+//.(($rs->Value('ca_continuacion') == 'N/A')?"<br />".$rs->Value('ca_ciudestino'):"")."<br />".$tm->Value('ca_pais');
 
 
 if( !$reporte->getCaNotify() ){	
 	$contacto = $reporte->getContacto();
 	$cliente = $reporte->getContacto()->getCliente();
 	
-	$consignatario_h = $cliente->getCaCompania()."<BR>: ".$contacto->getCaNombres()." ".$contacto->getCaPapellido()." ".$contacto->getCaSapellido()."<BR>".$cliente->getDireccion()."<BR>".$cliente->getCiudad()->getTrafico()->getcaNombre();		
+	$consignatario_h = $cliente->getCaCompania()."<br /><br />".$cliente->getDireccion()."<br />".$cliente->getCiudad()->getTrafico()->getcaNombre();
 }else{    
 	if( $reporte->getCaNotify()==1 ) {	
 		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );
@@ -137,7 +137,7 @@ if( !$reporte->getCaNotify() ){
 		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdNotify() );
 	}
 	
-	$consignatario_h = $notify->getCaNombre()."<br />".$notify->getCaContacto()."<br />".$notify->getCaDireccion();
+	$consignatario_h = $notify->getCaNombre()."<br />".$notify->getCaDireccion();
 }
 
 if ( $reporte->getCaMastersame() == 'Sí' ){
