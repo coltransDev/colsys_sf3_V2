@@ -29,7 +29,7 @@ EOF;
 	
 	$c = new Criteria();	
 	$c->addJoin( NotTareaPeer::CA_IDTAREA, NotificacionPeer::CA_IDTAREA, Criteria::LEFT_JOIN );	
-	$c->add( NotTareaPeer::CA_FCHCREADO, '2009-07-07 00:00:00', Criteria::GREATER_EQUAL );	
+	$c->add( NotTareaPeer::CA_FCHCREADO, '2009-09-02 00:00:00', Criteria::GREATER_EQUAL );
 	$c->add( NotTareaPeer::CA_FCHVISIBLE, date("Y-m-d H:i:s"), Criteria::LESS_EQUAL );	
 	$c->add( NotTareaPeer::CA_FCHTERMINADA, null, Criteria::ISNULL );
 	$c->add( NotificacionPeer::CA_IDEMAIL, null, Criteria::ISNULL );	

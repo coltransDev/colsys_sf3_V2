@@ -77,8 +77,16 @@ class Email extends BaseEmail
 		
 		$message = Swift_Message::newInstance( $this->getCaSubject() );
 				
-        $message->setFrom(array( $this->getCaFrom() => $this->getCaFromname() ));
-		
+        
+
+        try{
+            $message->setFrom(array( $this->getCaFrom() => $this->getCaFromname() ));
+        }catch (Exception $e) {
+            $event= $logHeader;
+            $event.= $e->getMessage();
+
+            Utils::writeLog($logFile , $event );
+        }
 		
 		
 		if( sfConfig::get("app_smtp_debugAddress") ){			

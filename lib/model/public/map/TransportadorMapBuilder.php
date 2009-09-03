@@ -31,9 +31,7 @@ class TransportadorMapBuilder implements MapBuilder {
 		$tMap->setPhpName('Transportador');
 		$tMap->setClassname('Transportador');
 
-		$tMap->setUseIdGenerator(true);
-
-		$tMap->setPrimaryKeyMethodInfo('tb_transporlineas_id');
+		$tMap->setUseIdGenerator(false);
 
 		$tMap->addPrimaryKey('CA_IDLINEA', 'CaIdlinea', 'INTEGER', true, null);
 

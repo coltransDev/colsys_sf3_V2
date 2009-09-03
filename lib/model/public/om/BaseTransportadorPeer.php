@@ -7,7 +7,7 @@ abstract class BaseTransportadorPeer {
 	const DATABASE_NAME = 'propel';
 
 	
-	const TABLE_NAME = 'tb_transporlineas';
+	const TABLE_NAME = 'vi_transporlineas';
 
 	
 	const CLASS_DEFAULT = 'lib.model.public.Transportador';
@@ -19,22 +19,22 @@ abstract class BaseTransportadorPeer {
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
 	
-	const CA_IDLINEA = 'tb_transporlineas.CA_IDLINEA';
+	const CA_IDLINEA = 'vi_transporlineas.CA_IDLINEA';
 
 	
-	const CA_IDTRANSPORTISTA = 'tb_transporlineas.CA_IDTRANSPORTISTA';
+	const CA_IDTRANSPORTISTA = 'vi_transporlineas.CA_IDTRANSPORTISTA';
 
 	
-	const CA_NOMBRE = 'tb_transporlineas.CA_NOMBRE';
+	const CA_NOMBRE = 'vi_transporlineas.CA_NOMBRE';
 
 	
-	const CA_SIGLA = 'tb_transporlineas.CA_SIGLA';
+	const CA_SIGLA = 'vi_transporlineas.CA_SIGLA';
 
 	
-	const CA_TRANSPORTE = 'tb_transporlineas.CA_TRANSPORTE';
+	const CA_TRANSPORTE = 'vi_transporlineas.CA_TRANSPORTE';
 
 	
-	const CA_ACTIVO = 'tb_transporlineas.CA_ACTIVO';
+	const CA_ACTIVO = 'vi_transporlineas.CA_ACTIVO';
 
 	
 	public static $instances = array();
@@ -807,10 +807,6 @@ abstract class BaseTransportadorPeer {
 		if ($values instanceof Criteria) {
 			$criteria = clone $values; 		} else {
 			$criteria = $values->buildCriteria(); 		}
-
-		if ($criteria->containsKey(TransportadorPeer::CA_IDLINEA) && $criteria->keyContainsValue(TransportadorPeer::CA_IDLINEA) ) {
-			throw new PropelException('Cannot insert a value for auto-increment primary key ('.TransportadorPeer::CA_IDLINEA.')');
-		}
 
 
 				$criteria->setDbName(self::DATABASE_NAME);

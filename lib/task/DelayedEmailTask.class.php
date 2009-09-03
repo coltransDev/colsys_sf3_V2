@@ -33,7 +33,12 @@ EOF;
 	$emails = EmailPeer::doSelect( $c );
 		
 	foreach( $emails as $email ){
-		$email->send();
+		try{
+            $email->send();
+        }catch(Exception $e){
+            echo $e."<br />";
+
+        }
 	}		
   }
 }

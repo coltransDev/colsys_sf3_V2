@@ -432,15 +432,11 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 				$this->setTransportista($this->aTransportista);
 			}
 
-			if ($this->isNew() ) {
-				$this->modifiedColumns[] = TransportadorPeer::CA_IDLINEA;
-			}
 
 						if ($this->isModified()) {
 				if ($this->isNew()) {
 					$pk = TransportadorPeer::doInsert($this, $con);
 					$affectedRows += 1; 										 										 
-					$this->setCaIdlinea($pk);  
 					$this->setNew(false);
 				} else {
 					$affectedRows += TransportadorPeer::doUpdate($this, $con);
@@ -790,6 +786,8 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 	public function copyInto($copyObj, $deepCopy = false)
 	{
 
+		$copyObj->setCaIdlinea($this->ca_idlinea);
+
 		$copyObj->setCaIdtransportista($this->ca_idtransportista);
 
 		$copyObj->setCaNombre($this->ca_nombre);
@@ -853,7 +851,6 @@ abstract class BaseTransportador extends BaseObject  implements Persistent {
 
 		$copyObj->setNew(true);
 
-		$copyObj->setCaIdlinea(NULL); 
 	}
 
 	
