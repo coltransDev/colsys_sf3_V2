@@ -135,7 +135,7 @@ class reportesActions extends sfActions
 		$email->setCaTipo( "Respuesta a Status" ); 	
 		
 		$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() ); //
-		$email->setCaFrom( "colsys_notificaciones" );
+		$email->setCaFrom( "no-reply@coltrans.com.co" );
 		$email->setCaFromname( "Respuesta a status desde pagina Web" );
 											
 		if( is_array($logins) ){
@@ -208,7 +208,7 @@ class reportesActions extends sfActions
 			$email->setCaTipo( "Respuesta a Status" ); 	
 			
 			$email->setCaIdcaso( $respuesta->getCaIdrepstatusrespuestas() ); //
-			$email->setCaFrom( "colsys_notificaciones" );
+			$email->setCaFrom( "no-reply@coltrans.com.co" );
 			$email->setCaFromname( "Respuesta a status desde pagina Web" );
 			
 			foreach( $correosCliente as $recip ){			
