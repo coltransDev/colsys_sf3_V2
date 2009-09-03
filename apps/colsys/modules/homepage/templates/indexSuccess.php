@@ -67,7 +67,9 @@
 	?>
 	
 	<div id="novedades" >
-		<?=include_component("homepage","novedades")?>
+		<?
+        include_component("homepage","novedades");
+        ?>
 	</div>
 	
 </div>
@@ -79,7 +81,9 @@
 <div id="tareas" style="display:none">
 	<h1>Tareas</h1>
 	
-	<?=include_component("notificaciones","tareasPendientes")?>
+	<?
+    //include_component("notificaciones","tareasPendientes");
+    ?>
 </div>
 
 <div id="directorio" style="display:none">
@@ -101,7 +105,24 @@
 		
 		
 		document.getElementById("li_"+idgrupo ).className = "group group-active";	
-		document.getElementById("content-homepage" ).innerHTML = document.getElementById( idgrupo ).innerHTML;		
+		document.getElementById("content-homepage" ).innerHTML = document.getElementById( idgrupo ).innerHTML;
+
+        if( idgrupo=="tareas" ){           
+            Ext.Ajax.request(
+			{
+				url: '<?=url_for("homepage/getTareas" )?>',
+
+                success: function(xhr) {                    
+                    document.getElementById("content-homepage" ).innerHTML = xhr.responseText;
+                },
+                failure: function() {
+                    Ext.Msg.alert("Error", "Server communication failure");
+                }
+				
+			 }
+            );
+        }
+
 		
 	}
 	

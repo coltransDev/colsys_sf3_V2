@@ -127,8 +127,7 @@
 			<div align="left">
 				<input type="password" name="passwd2" id="passwd2" Autocomplete="off"  />		
 			</div></td>
-	</tr>
-	
+	</tr>	
 	<tr>
 		<td><div align="left"><b>Forzar cambio en el proximo inicio de sesión</b></div></td>
 		<td>

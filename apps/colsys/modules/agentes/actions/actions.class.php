@@ -67,7 +67,13 @@ class agentesActions extends sfActions
 		}
 		
 		$this->idciudad = $request->getParameter("idciudad");
-				
+
+        if( $request->getParameter("idciudad") ){
+			$c->addJoin( AgentePeer::CA_IDAGENTE, ContactoAgentePeer::CA_IDAGENTE );
+            $c->add( ContactoAgentePeer::CA_IDCIUDAD, $request->getParameter("idciudad") );
+
+		}
+
 		if( $request->getParameter("buscar") ){
 			$c->add( AgentePeer::CA_NOMBRE, "%".trim(strtoupper($request->getParameter("buscar")))."%", Criteria::LIKE );
 		}

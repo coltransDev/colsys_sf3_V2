@@ -33,12 +33,12 @@ if( count($listaTareas)>0 ){
 			<td><?=Utils::fechaMes($tarea->getCaFchcreado("Y-m-d"))." ".$tarea->getCaFchcreado("H:i:s")?></td>
 			<td>
 				<?			
-				$diff = $tarea->getTiempoRestante( $festivos  );					
+				/*$diff = $tarea->getTiempoRestante( $festivos  );
 				if( substr($diff, 0,1)=="-" ){
 					echo "<span class='rojo'>".$diff."</span>";
 				}else{
 					echo $diff;			
-				}
+				}*/
 				?></td>
 			<td><?=$tarea->getPrioridad()?></td>
 		</tr>

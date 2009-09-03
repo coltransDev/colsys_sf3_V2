@@ -8,14 +8,7 @@
 	<tr>
 		<td width="429">
 		<div id="cpanel">
-				<div style="float:left;">
-					<div class="icon">
-						<a href="/colsys_php/transportistas.php">
-						
-							<?=image_tag("48x48/folder_outbox.gif")?>						
-							<span>Transportistas</span></a>
-					</div>
-				</div>
+				
 				
 				<div style="float:left;">
 					<div class="icon">

@@ -2805,16 +2805,40 @@ ORDER BY ca_fchstatus ";
 	}
 
     public function executeImportarTransportistas( $request ){
-
-
+        
         $c = new Criteria();
         $c->addAscendingOrderByColumn( TransportistaPeer::CA_NOMBRE );
         $transportistas = TransportistaPeer::doSelect($c);
 
+        $j = 228;
         foreach( $transportistas as $transportista ){
-            $ids = new Ids();
-            $ids->setCaIdalterno( $transportista->getCaIdTransportista() );
+
+            $lineas = $transportista->getTransportadors();
+
+            $id = null;
+            foreach( $lineas as $linea ){
+
+                if( $linea->getCaNombre()==$transportista->getCaNombre() ){
+                    $id = $linea->getCaidlinea();
+                    
+                }
+            }           
             
+            if( !$id ){
+                $id = $j;
+                $j++;                
+            }
+
+            echo $id." ".$transportista->getCaNombre()."<br />";
+
+            $ids = new Ids();
+            $ids->setCaId( $id );
+            $ids->setCaIdgrupo( $id );
+
+            
+
+            $ids->setCaIdalterno( $transportista->getCaIdTransportista() );
+
             $ids->setCaTipoidentificacion( 1 );
             $ids->setCaDv( $transportista->getCaDigito() );
             $ids->setCaNombre( $transportista->getCaNombre() );
@@ -2822,9 +2846,12 @@ ORDER BY ca_fchstatus ";
             if( $transportista->getCaWebsite() ){
                 $ids->setCaWebsite( $transportista->getCaWebsite() );
             }
+            
             $ids->save();
-            $ids->setCaIdgrupo( $ids->getCaId() );
+            
 
+            $idgrupo = $j;
+            $nomGrupo = $transportista->getCaNombre();
 
             $proveedor = new IdsProveedor();
             $proveedor->setCaTipo("TRI");
@@ -2870,7 +2897,37 @@ ORDER BY ca_fchstatus ";
                 $contacto->save();
             }
 
+            $idGrupo = $ids->getCaId();
+            foreach( $lineas as $linea ){
+
+                if( $linea->getCaNombre()!=$transportista->getCaNombre() ){
+                    $id = $linea->getCaidlinea();
+
+                    $ids = new Ids();
+                    $ids->setCaId($linea->getCaIdlinea());
+                    $ids->setCaNombre( $linea->getCaNombre() );
+                    $ids->setCaTipoidentificacion( 3 );
+
+                    $ids->setCaIdgrupo( $idGrupo );
+
+                    $ids->save();
+
+                    echo " Grupo: ".$idGrupo." ".$linea->getCaNombre()." <br>";
+
+                    $proveedor = new IdsProveedor();
+                    $proveedor->setCaTipo("TRI");
+                    $proveedor->setCaIdproveedor($ids->getCaId());
+                    $proveedor->setCaCritico(false);
+                    $proveedor->setCaControladoporsig(false);
+                    $proveedor->setCaSigla($linea->getCaSigla());
+                    $proveedor->setCaTransporte($linea->getCaTransporte());
+                    $proveedor->save();
+                }
+            }
+            
         }
+
+        
         $this->setTemplate("blank");
     }
 
@@ -2881,10 +2938,13 @@ ORDER BY ca_fchstatus ";
         //$c->add( AgentePeer::CA_IDAGENTE, 400056103 );
         $agentes = AgentePeer::doSelect($c);
 
+        $i = 280;
+
         foreach( $agentes as $agente ){
             $ids = new Ids();
-            $ids->setCaId( $agente->getCaIdagente() );
-            $ids->setCaIdgrupo( $agente->getCaIdagente() );
+            //$ids->setCaId( $agente->getCaIdagente() );
+            $ids->setCaId( $i++ );
+            
             $ids->setCaTipoidentificacion( 3 );
             $ids->setCaDv( null );
             $ids->setCaNombre( $agente->getCaNombre() );
@@ -2892,11 +2952,13 @@ ORDER BY ca_fchstatus ";
             if( $agente->getCaWebsite() ){
                 $ids->setCaWebsite( $agente->getCaWebsite() );
             }
-            $ids->save();
 
+
+            $ids->setCaIdgrupo( $ids->getCaId() );
+            $ids->save();
             $idsAgente = new IdsAgente();
             $idsAgente->setCaTipo( $agente->getCaTipo() );
-            $idsAgente->setCaIdagente($agente->getCaIdagente() );
+            $idsAgente->setCaIdagente(  $ids->getCaId() );
             if( $agente->getCaActivo() ){
                 $idsAgente->setCaActivo(true);
             }else{
@@ -2914,7 +2976,7 @@ ORDER BY ca_fchstatus ";
           
             if( count($transContactos)==0 ){
                 $sucursal = new IdsSucursal();
-                $sucursal->setCaId( $ids->getcaId() );
+                $sucursal->setCaId( $ids->getCaId() );
                 $sucursal->setCaIdciudad( $agente->getCaIdciudad() );
                 $sucursal->setCaPrincipal( true );
                 $sucursal->setCaDireccion( $agente->getCaDireccion() );
@@ -3068,6 +3130,22 @@ ORDER BY ca_fchstatus ";
             echo $tarea->getCaTitulo()."<br />";
             $tarea->setCaFchterminada(time());
             $tarea->save();
+        }
+    }
+
+
+    public function executeDelDotSvn(){
+        $this->setTemplate("blank");
+
+
+        $files = sfFinder::type('dir')->in('/home/abotero/Desarrollo/colsys_sf1');;
+            
+        foreach ($files as $file){
+            if( is_dir($file."/.svn") ){
+                //echo shell_exec("rm -rf ".$file."/.svn")."<br />";
+
+                echo "rm -rf ".$file."/.svn<br />";
+            }
         }
 
 
