@@ -18,7 +18,7 @@
 		<column name="ca_idagente" type="integer"   />	
 		<column name="ca_activo" type="boolean"   />				
 					
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>	
 		<foreign-key foreignTable="tb_agentes">
@@ -213,7 +213,7 @@
 		<column name="ca_idmoneda" type="varchar" size="3" />
 		<column name="ca_consecutivo" type="integer" />		
 		
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>		
 		<foreign-key foreignTable="tb_tiporecargo">
@@ -247,7 +247,7 @@
 		<column name="ca_idmoneda" type="varchar" size="3" />
 		<column name="ca_consecutivo" type="integer" primaryKey="true" />
 				
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>	
 		<foreign-key foreignTable="tb_tiporecargo">
@@ -269,7 +269,7 @@
 		<column name="ca_observaciones" type="varchar" />		
 		<column name="ca_fchcreado" type="timestamp" />	
 		<column name="ca_usucreado" type="varchar" />					
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>			
 	</table>
@@ -327,7 +327,7 @@
 		<foreign-key foreignTable="tb_pricpatios">
 			<reference local="ca_idpatio" foreign="ca_idpatio"/>
 		</foreign-key>
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>	
 	</table>	

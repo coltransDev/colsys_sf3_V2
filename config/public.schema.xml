@@ -219,9 +219,8 @@
 		<column name="ca_valor2" type="varchar"/>		
 	</table>
 	
-	<table name="tb_transporlineas" phpName="Transportador">
-		<column name="ca_idlinea" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-        <id-method-parameter value="tb_transporlineas_id"/>
+	<table name="vi_transporlineas" phpName="Transportador">
+		<column name="ca_idlinea" type="integer" required="true" primaryKey="true"  />        
 		<column name="ca_idtransportista" type="numeric" />		
 		<column name="ca_nombre" type="varchar" />
 		<column name="ca_sigla" type="varchar" />

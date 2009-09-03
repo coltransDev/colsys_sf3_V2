@@ -23,7 +23,7 @@
 		<column name="ca_usuliquidado" type="varchar"  />
 		<column name="ca_fchcerrado" type="date"  />
 		<column name="ca_usucerrado" type="varchar"  />		
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>		
 	</table>

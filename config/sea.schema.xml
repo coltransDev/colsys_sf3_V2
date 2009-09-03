@@ -45,7 +45,7 @@
 		<column name="ca_usuconfirma_otm" type="varchar"  />
 		<column name="ca_provisional" type="boolean"  />
 		<column name="ca_sitiodevolucion" type="varchar"  />
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>		
 	</table>

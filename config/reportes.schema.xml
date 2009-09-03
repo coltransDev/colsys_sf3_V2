@@ -62,7 +62,7 @@
 		<foreign-key foreignTable="control.tb_usuarios">
 			<reference local="ca_login" foreign="ca_login"/>
 		</foreign-key>
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>
 		<foreign-key foreignTable="tb_terceros">

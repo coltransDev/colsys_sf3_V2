@@ -71,7 +71,7 @@
 		<foreign-key foreignTable="tb_cotizaciones">
 			<reference local="ca_idcotizacion" foreign="ca_idcotizacion"/>
 		</foreign-key>		
-		<foreign-key foreignTable="tb_transporlineas">
+		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>
 		
