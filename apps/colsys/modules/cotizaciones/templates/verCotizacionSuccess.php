@@ -121,8 +121,18 @@ if( !$cotizacion->getCaUsuanulado() ){
 			</tr>
 			<tr>
 				<td>
-					Observaciones
-					<input type="text" value="<?=$tarea->getCaObservaciones()?>" name="observaciones_idg" id="observaciones_idg" size="100" />				</td>
+					Observaciones: 
+                    <select name="observaciones_idg" id="observaciones_idg">
+                        <option value=""></option>
+                    <?                    
+                    foreach( $observacionesIdg as $observacion ){
+                        ?>
+                        <option value="<?=$observacion->getCaValor()?>"><?=$observacion->getCaValor()?></option>
+                        <?
+                    }
+                    ?>
+                    </select>
+                </td>
 			</tr>		
 		</table>	
 		<br />
@@ -174,7 +184,7 @@ if( !$cotizacion->getCaUsuanulado() ){
 
 <? 
 }
-if( !$enBlanco ){
+if( !$enBlanco  ){
 ?>	
 <iframe src="<?=url_for("cotizaciones/generarPDF?id=".$cotizacion->getCaIdcotizacion()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
 

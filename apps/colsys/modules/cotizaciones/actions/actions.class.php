@@ -169,7 +169,9 @@ class cotizacionesActions extends sfActions
 		$this->nivel = $this->getUser()->getNivelAcceso( cotizacionesActions::RUTINA );
 		if( $this->nivel==-1 ){
 			$this->forward404();
-		}	
+		}
+        
+
 	}		
 
 	/*
@@ -480,7 +482,9 @@ class cotizacionesActions extends sfActions
 		$this->asunto = sprintf( $textos['asuntoEmail'], $this->cotizacion->getCaConsecutivo() );
 		$this->mensaje = sprintf( $textos['mensajeEmail'], $this->cotizacion->getContacto()->getNombre(), $this->cotizacion->getCaConsecutivo() );
 		
-		$this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno(); 
+		$this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
+        
+        $this->observacionesIdg = ParametroPeer::retrieveByCaso("CU076");
 				
 	}
 	/*
