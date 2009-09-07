@@ -11,6 +11,8 @@
 // Copyright:     Coltrans S.A. - 2004                                        \\
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
+$programa = 18;
+
 $titulo = 'Maestra de Terceros Coltrans S.A.';
 $campos = array("Nombre del Tercero", "Nombre del Contacto");                  // Arreglo con los criterios de busqueda
 $bdatos = array("Maestra de Terceros");
@@ -39,7 +41,7 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)){
     echo "<BODY style='margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; text-align: right; font-size: 11px; font-weight:bold;'>";
     echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";             // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
     echo "<CENTER>";
-	echo "<H3>$titulo</H3>";
+    echo "<H3>$titulo</H3>";
     echo "<FORM METHOD=post NAME='terceros' ACTION='findtercero.php'>";
     echo "<INPUT TYPE='HIDDEN' NAME='suf' VALUE=$suf>";
     echo "<INPUT TYPE='HIDDEN' NAME='boton' VALUE='Buscar'>";
@@ -82,8 +84,8 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)){
     echo "</FORM>";
     echo "</CENTER>";
     //   echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
-   // require_once("footer.php");
-echo "</BODY>";
+    // require_once("footer.php");
+    echo "</BODY>";
     echo "</HTML>";
     }
 elseif (isset($boton)) {                                                       // Switch que evalua cual botòn de comando fue pulsado por el usuario
@@ -124,7 +126,7 @@ elseif (isset($boton)) {                                                       /
              echo "    }";
              echo "    if (('$suf').substr(0,4) == '_not'){";
              echo "        elemento = window.parent.document.getElementById('default_not');";
-			 echo "        elemento.checked = true;";
+             echo "        elemento.checked = true;";
              echo "    }";
              echo "}";
              echo "function uno(src,color_entrada) {";
@@ -139,7 +141,7 @@ elseif (isset($boton)) {                                                       /
 //require_once("menu.php");
              echo "<STYLE>@import URL(\"Coltrans.css\");</STYLE>";                      // Carga una hoja de estilo que estandariza las pantallas den sistema graficador
              echo "<CENTER>";
-			 echo "<H3>$titulo</H3>";
+             echo "<H3>$titulo</H3>";
              echo "<FORM METHOD=post NAME='cabecera' ACTION='findtercero.php'>";       // Hace una llamado nuevamente a este script pero con
              echo "<INPUT TYPE='HIDDEN' NAME='suf' VALUE=$suf>";
              echo "<TABLE CELLSPACING=1 WIDTH=100%>";                                // un boton de comando definido para hacer mantemientos
@@ -154,7 +156,7 @@ elseif (isset($boton)) {                                                       /
              echo "<TH>Ciudad</TH>";
              echo "<TH><IMG src='./graficos/new.gif' alt='Crear un Nuevo Registro' border=0 onclick='elegir(\"Adicionar\", 0);'></TH>";  // Botón para la creación de un Registro Nuevo
              while (!$rs->Eof() and !$rs->IsEmpty()) {                                  // Lee la totalidad de los registros obtenidos en la instrucción Select
-                $visible = ($rs->Value('ca_vendedor')== $usuario or $rs->Value('ca_vendedor')=='' or $nivel >= 2)?'visible':'hidden';
+                $visible = ($rs->Value('ca_vendedor')== $usuario or $rs->Value('ca_vendedor')=='' or $nivel >= 1)?'visible':'hidden';
                 echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\">";
                 echo "  <DIV>";
                 echo "  <TD ONCLICK='javascript:seleccion(".$rs->Value('ca_idtercero').",\"".AddSlashes($rs->Value('ca_nombre'))."\",\"".AddSlashes($rs->Value('ca_contacto'))."\",\"".AddSlashes($rs->Value('ca_direccion'))."\",\"".$rs->Value('ca_telefonos')."\",\"".$rs->Value('ca_fax')."\",\"".$rs->Value('ca_email')."\")'>".$rs->Value('ca_nombre')."</TD>";
