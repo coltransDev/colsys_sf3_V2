@@ -44,20 +44,20 @@ if (!isset($criterio) and !isset($boton) and !isset($accion)){
     echo "    src.style.background=color_default;src.style.cursor='default';";
     echo "}";
     echo "function habilitar(elemento) {";
-	echo "	if (elemento.name == 'rango') {";
-	echo "		if (elemento.checked){";
-	echo "      	document.getElementById('fchinicial').disabled = false;";
-	echo "      	document.getElementById('fchfinal').disabled = false;";
+    echo "	if (elemento.name == 'rango') {";
+    echo "		if (elemento.checked){";
+    echo "      	document.getElementById('fchinicial').disabled = false;";
+    echo "      	document.getElementById('fchfinal').disabled = false;";
     echo "		}else{";
-	echo "      	document.getElementById('fchinicial').disabled = true;";
-	echo "      	document.getElementById('fchfinal').disabled = true;";
+    echo "      	document.getElementById('fchinicial').disabled = true;";
+    echo "      	document.getElementById('fchfinal').disabled = true;";
     echo "		}";
-	echo "   } else {";
-	echo "		if (elemento.checked)";
-	echo "      	document.getElementById('continuacion_dest').disabled = false;";
+    echo "   } else {";
+    echo "		if (elemento.checked)";
+    echo "      	document.getElementById('continuacion_dest').disabled = false;";
     echo "		else";
-	echo "      	document.getElementById('continuacion_dest').disabled = true;";
-	echo "   }";
+    echo "      	document.getElementById('continuacion_dest').disabled = true;";
+    echo "   }";
     echo "}";
     echo "</script>";
     echo "<script language='javascript' src='javascripts/popcalendar.js'></script>";
@@ -70,47 +70,47 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='menuform' ACTION='reportenegocio.php' >";
     echo "<TABLE WIDTH=550 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=5 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
-	$vista_1 = ($nivel >= 0)?'visible':'hidden'; 					// Habilita la opción para creación de reportes AG
-	echo "<TH>";
-	echo "   <TABLE CELLSPACING=1>";
-	echo "   <TR>";
-	echo "		<TD><IMG src='./graficos/new_ag.gif' alt='Crear Reporte AG' border=0 onclick='elegir(\"Reporte_Ag\", 0, 0);' style='visibility: $vista_1;'></TH></TD>";  // Botón para la creación de un Registro Nuevo
-	echo "		<TD><IMG src='./graficos/new.gif' alt='Crear Reporte de Negocio' border=0 onclick='elegir(\"Adicionar\", 0, 0);'></TH></TD>";  // Botón para la creación de un Registro Nuevo
-	echo " 	 </TR>";
-	echo "   </TABLE>";
-	echo "</TH>";
+    $vista_1 = ($nivel >= 0)?'visible':'hidden'; 					// Habilita la opción para creación de reportes AG
+    echo "<TH>";
+    echo "   <TABLE CELLSPACING=1>";
+    echo "      <TR>";
+    echo "          <TD><IMG src='./graficos/new_ag.gif' alt='Crear Reporte AG' border=0 onclick='elegir(\"Reporte_Ag\", 0, 0);' style='visibility: $vista_1;'></TH></TD>";  // Botón para la creación de un Registro Nuevo
+    echo "          <TD><IMG src='./graficos/new.gif' alt='Crear Reporte de Negocio' border=0 onclick='elegir(\"Adicionar\", 0, 0);'></TH></TD>";  // Botón para la creación de un Registro Nuevo
+    echo " 	 </TR>";
+    echo "   </TABLE>";
+    echo "</TH>";
     echo "<TR>";
-    echo "  <TH ROWSPAN=3>&nbsp</TH>";
+    echo "  <TH ROWSPAN=3>&nbsp;</TH>";
     echo "  <TD Class=listar ROWSPAN=3><B>Buscar por:</B><BR><SELECT NAME='opcion' SIZE=7>";
-	$sel_mem = " SELECTED";
+    $sel_mem = " SELECTED";
     while (list ($clave, $val) = each ($columnas)) {
         echo " <OPTION VALUE='".$val."' $sel_mem>".$clave;
-		$sel_mem = "";
-        }
+        $sel_mem = "";
+    }
     echo "  </SELECT></TD>";
     echo "  <TD Class=listar COLSPAN=3><B>Que contenga la cadena:</B><BR><INPUT TYPE='text' NAME='criterio' VALUE='$cadena' size='60'></TD>";
     echo "  <TH ROWSPAN=3><INPUT Class=submit TYPE='SUBMIT' NAME='buscar' VALUE='  Buscar  ' ONCLIK='menuform.submit();'></TH>";
     echo "</TR>";
     echo "<TR>";
-    echo "  <TD Class=listar WIDTH=160>Por Rango de Fechas:&nbsp<INPUT TYPE=CHECKBOX NAME='rango' ONCLICK='habilitar(this);'></TD>";
+    echo "  <TD Class=listar WIDTH=160>Por Rango de Fechas:&nbsp;<INPUT TYPE=CHECKBOX NAME='rango' ONCLICK='habilitar(this);'></TD>";
     echo "  <TD Class=listar>Fecha Inicial:<BR><INPUT TYPE='TEXT' NAME='fchinicial' DISABLED SIZE=12 VALUE='".date(date("Y")."-".date("m")."-"."01")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
     echo "  <TD Class=listar>Fecha Final :<BR><INPUT TYPE='TEXT' NAME='fchfinal' DISABLED SIZE=12 VALUE='".date( "Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y")))."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></TD>";
     echo "</TR>";
 
     echo "<TR>";
-    echo "  <TD Class=listar WIDTH=160>Con Continuación/Viaje:&nbsp<INPUT TYPE=CHECKBOX NAME='continuacion' ONCLICK='habilitar(this);'></TD>";
-	$tm =& DlRecordset::NewRecordset($conn);
+    echo "  <TD Class=listar WIDTH=160>Con Continuación/Viaje:&nbsp;<INPUT TYPE=CHECKBOX NAME='continuacion' ONCLICK='habilitar(this);'></TD>";
+    $tm =& DlRecordset::NewRecordset($conn);
     if (!$tm->Open("select ca_idciudad, ca_ciudad from vi_ciudades where ca_idtrafico = 'CO-057' and ca_puerto not in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repcarga.php';</script>";
         exit; }
     $tm->MoveFirst();
     echo " <TD Class=listar COLSPAN=2>Con Destino :<BR><SELECT NAME='continuacion_dest' DISABLED>";
-	echo " <OPTION VALUE=''></OPTION>";
+    echo " <OPTION VALUE=''></OPTION>";
     while ( !$tm->Eof()) {
-            echo " <OPTION VALUE='".$tm->Value('ca_idciudad')."'>".$tm->Value('ca_ciudad')."</OPTION>";
-            $tm->MoveNext();
-          }
+        echo " <OPTION VALUE='".$tm->Value('ca_idciudad')."'>".$tm->Value('ca_ciudad')."</OPTION>";
+        $tm->MoveNext();
+    }
     echo "  </SELECT></TD>";
     echo "</TR>";
 
@@ -122,48 +122,48 @@ require_once("menu.php");
     echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Terminar' ONCLICK='javascript:document.location.href = \"/\"'></TH>";  // Cancela la operación
     echo "</TABLE><BR>";
 
-	$filtro = (($nivel==0)?" and ca_vendedor = '$usuario'":"");
-	if (!$rs->Open("select * from vi_repconsulta where ca_colmas = '' and ca_idetapa !='99999' and ca_incoterms NOT LIKE 'CIF%' and ca_incoterms NOT LIKE 'CIP%' and ca_incoterms NOT LIKE 'CPT%' and ca_incoterms NOT LIKE 'CFR%' $filtro")) {                       // Selecciona todos lo registros AG de la tabla Reportes
-		echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-		echo "<script>document.location.href = 'entrada.php';</script>";
-		exit; }
+    $filtro = (($nivel==0)?" and ca_vendedor = '$usuario'":"");
+    if (!$rs->Open("select * from vi_repconsulta where ca_colmas = '' and ca_idetapa !='99999' and ca_incoterms NOT LIKE 'CIF%' and ca_incoterms NOT LIKE 'CIP%' and ca_incoterms NOT LIKE 'CPT%' and ca_incoterms NOT LIKE 'CFR%' $filtro")) {                       // Selecciona todos lo registros AG de la tabla Reportes
+        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'entrada.php';</script>";
+        exit; }
     echo "<TABLE WIDTH=550 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
     echo "  <TH Class=titulo COLSPAN=7>Reportes de Negocio AG pendientes por ser trabajados</TH>";
     echo "</TR>";
-	echo "<TR>";
-	echo "<TD Class=titulo WIDTH=70>No.Reporte</TD>";
-	echo "<TD Class=titulo COLSPAN=3>Cliente</TD>";
-	echo "<TD Class=titulo COLSPAN=3>Proveedor</TD>";
-	echo "</TR>";
-	$ano_mem = intval(substr($rs->Value('ca_fchreporte'),0,4));
+    echo "<TR>";
+    echo "<TD Class=titulo WIDTH=70>No.Reporte</TD>";
+    echo "<TD Class=titulo COLSPAN=3>Cliente</TD>";
+    echo "<TD Class=titulo COLSPAN=3>Proveedor</TD>";
+    echo "</TR>";
+    $ano_mem = intval(substr($rs->Value('ca_fchreporte'),0,4));
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-		if ($ano_mem != $rs->Value('ca_fchreporte')){
-			$ano_mem = intval(substr($rs->Value('ca_fchreporte'),0,4));
-			echo "<TR>";
-			echo "  <TH Class=titulo COLSPAN=7>AÑO $ano_mem</TH>";
-			echo "</TR>";
-		}
-		echo "<TR>";
-		echo "  <TD style='font-size: 9px;' Class=listar ROWSPAN=2 onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:location.href = 'reportenegocio.php?boton=Consultar&id=".$rs->Value('ca_idreporte')."'\">".$rs->Value('ca_consecutivo')."</TD>";
-		echo "  <TD style='font-size: 9px;' Class=listar COLSPAN=3>".$rs->Value('ca_nombre_cli')."</TD>";
-		echo "  <TD style='font-size: 9px;' Class=listar COLSPAN=3>".$rs->Value('ca_nombre_pro')."</TD>";
-		echo "</TR>";
-		echo "<TR>";
-		echo "  <TD style='font-size: 9px;' Class=invertir>".$rs->Value('ca_ciuorigen')."</TD>";
-		echo "  <TD style='font-size: 9px;' Class=invertir>".$rs->Value('ca_ciudestino')."</TD>";
-		echo "  <TD style='font-size: 9px;' Class=invertir>".$rs->Value('ca_transporte')."</TD>";
-		echo "  <TD style='font-size: 9px;' Class=invertir>".$rs->Value('ca_fchreporte')."</TD>";
-		echo "  <TD style='font-size: 9px;' Class=invertir COLSPAN=2>".$rs->Value('ca_mercancia_desc')."</TD>";
-		echo "</TR>";
-		echo "<TR HEIGHT=5>";
-		echo "  <TD Class=resaltar COLSPAN=7></TD>";
-		echo "</TR>";
-       $rs->MoveNext();
-       }
-	echo "<TR HEIGHT=5>";
-	echo "  <TD Class=titulo COLSPAN=7></TD>";
-	echo "</TR>";
+        if ($ano_mem != $rs->Value('ca_fchreporte')){
+                $ano_mem = intval(substr($rs->Value('ca_fchreporte'),0,4));
+                echo "<TR>";
+                echo "  <TH Class=titulo COLSPAN=7>AÑO $ano_mem</TH>";
+                echo "</TR>";
+        }
+        echo "<TR>";
+        echo "  <TD style='font-size: 9px;' Class=listar ROWSPAN=2 onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick=\"javascript:location.href = 'reportenegocio.php?boton=Consultar&id=".$rs->Value('ca_idreporte')."'\">".$rs->Value('ca_consecutivo')."</TD>";
+        echo "  <TD style='font-size: 9px;' Class=listar COLSPAN=3>".$rs->Value('ca_nombre_cli')."</TD>";
+        echo "  <TD style='font-size: 9px;' Class=listar COLSPAN=3>".$rs->Value('ca_nombre_pro')."</TD>";
+        echo "</TR>";
+        echo "<TR>";
+        echo "  <TD style='font-size: 9px;' Class=invertir>".$rs->Value('ca_ciuorigen')."</TD>";
+        echo "  <TD style='font-size: 9px;' Class=invertir>".$rs->Value('ca_ciudestino')."</TD>";
+        echo "  <TD style='font-size: 9px;' Class=invertir>".$rs->Value('ca_transporte')."</TD>";
+        echo "  <TD style='font-size: 9px;' Class=invertir>".$rs->Value('ca_fchreporte')."</TD>";
+        echo "  <TD style='font-size: 9px;' Class=invertir COLSPAN=2>".$rs->Value('ca_mercancia_desc')."</TD>";
+        echo "</TR>";
+        echo "<TR HEIGHT=5>";
+        echo "  <TD Class=resaltar COLSPAN=7></TD>";
+        echo "</TR>";
+        $rs->MoveNext();
+    }
+    echo "<TR HEIGHT=5>";
+    echo "  <TD Class=titulo COLSPAN=7></TD>";
+    echo "</TR>";
     echo "</TABLE>";
 
     echo "</FORM>";
@@ -171,11 +171,11 @@ require_once("menu.php");
     echo "<script>menuform.opcion.focus()</script>";
 //  echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
     require_once("footer.php");
-echo "</BODY>";
+    echo "</BODY>";
     echo "</HTML>";
     }
 elseif (!isset($boton) and !isset($accion) and isset($criterio)){
-	set_time_limit(600);
+    set_time_limit(600);
     SetCookie ("cadena", $criterio);
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
@@ -224,10 +224,10 @@ require_once("menu.php");
            echo "<script>document.location.href = 'entrada.php';</script>";
            exit; }
 
-	   echo "<TH>ID Reporte</TH>";
+       echo "<TH>ID Reporte</TH>";
        echo "<TH>Versión</TH>";
        echo "<TH>Trayecto</TH>";
-	   $vista_1 = ($nivel >= 0)?'visible':'hidden'; 					// Habilita la opción para creación de reportes AG
+       $vista_1 = ($nivel >= 0)?'visible':'hidden'; 					// Habilita la opción para creación de reportes AG
        echo "<TH>";
        echo "   <TABLE CELLSPACING=1>";
        echo "   <TR>";
@@ -260,7 +260,7 @@ require_once("menu.php");
           }else {
                echo "  <TD Class=listar ROWSPAN=2></TD>";
           }
-          echo "  <TD Class=listar ROWSPAN=2 onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href=\"reportenegocio.php?boton=Consultar\&id=".$rs->Value('ca_idreporte')."\";'>No.&nbsp".$rs->Value('ca_version')."</TD>";
+          echo "  <TD Class=listar ROWSPAN=2 onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='javascript:document.location.href=\"reportenegocio.php?boton=Consultar\&id=".$rs->Value('ca_idreporte')."\";'>No.&nbsp;".$rs->Value('ca_version')."</TD>";
           echo "  <TD Class=listar style='font-weight:bold;'>".$rs->Value('ca_nombre_cli')." (".$rs->Value('ca_transporte')." - ".$rs->Value('ca_modalidad').") ".ucwords(strtolower($rs->Value('ca_nombre')))."</TD>";
           echo "  <TD Class=listar ROWSPAN=2></TD>";
           echo "</TR>";
@@ -349,21 +349,26 @@ elseif (isset($boton)) {                                                       /
              echo "<TITLE>$titulo</TITLE>";
              echo "<script language='JavaScript' type='text/JavaScript'>";              // Código en JavaScript para validar las opciones de mantenimiento
              echo "function elegir(opcion, id){";
-			 echo "    if (opcion == 'Cerrar'){";
-			 echo "        if (confirm(\"¿Esta seguro que desea Cerrar el Caso y establecer fecha/hora para entrega de antecedentes a operativo?\")) {";
+             echo "    if (opcion == 'Cerrar'){";
+             echo "        if (confirm(\"¿Esta seguro que desea Cerrar el Caso y establecer fecha/hora para entrega de antecedentes a operativo?\")) {";
              echo "            document.location.href = 'reportenegocio.php?accion='+opcion+'\&id='+id;";
              echo "        }";
-			 echo "    }else if (opcion == 'Abrir'){";
-			 echo "        if (confirm(\"¿Esta seguro que desea Re-Abrir el Caso?\")) {";
+             echo "    }else if (opcion == 'Abrir'){";
+             echo "        if (confirm(\"¿Esta seguro que desea Re-Abrir el Caso?\")) {";
              echo "            document.location.href = 'reportenegocio.php?accion='+opcion+'\&id='+id;";
              echo "        }";
-			 echo "    }else if (opcion == 'Anular'){";
-			 echo "        if (confirm(\"¿Esta seguro que desea Anular el Reporte?\")) {";
-             echo "            document.location.href = 'reportenegocio.php?accion='+opcion+'\&id='+id;";
+             echo "    }else if (opcion == 'Anular'){";
+             echo "        if (confirm(\"¿Esta seguro que desea Anular el Reporte?\")) {";
+             echo "            var det_mem = '';";
+             echo "            while (det_mem.length == 0){";
+             echo "                 det_mem = prompt('Por favor ingrese un breve detalle del motivo de la anulación:');";
+             echo "                 if (det_mem.length != 0)";
+             echo "                     document.location.href = 'reportenegocio.php?accion='+opcion+'\&id='+id+'\&det='+det_mem;";
+             echo "            }";
              echo "        }";
-			 echo "    }else{";
-			 echo "        document.location.href = 'reportenegocio.php?boton='+opcion+'\&id='+id;";
-			 echo "    }";
+             echo "    }else{";
+             echo "        document.location.href = 'reportenegocio.php?boton='+opcion+'\&id='+id;";
+             echo "    }";
              echo "}";
              echo "</script>";
              echo "</HEAD>";
@@ -620,7 +625,7 @@ require_once("menu.php");
              echo "<TR>";
              echo "  <TD Class=listar><B>Ciudad :</B><BR><CENTER>".$rs->Value('ca_sucursal')."</CENTER></TD>";
              echo "  <TD Class=listar><B>Elaboró :</B><BR><CENTER>$usu_mem</CENTER></TD>";
-             echo "  <TD Class=listar><B>Fecha:</B><BR><CENTER>".date("Y-m-d",mktime($hor,$min,$seg,$mes,$dia,$anno))."&nbsp".date("h:i a",mktime($hor,$min,$seg,$mes,$dia,$anno))."</CENTER></TD>";
+             echo "  <TD Class=listar><B>Fecha:</B><BR><CENTER>".date("Y-m-d",mktime($hor,$min,$seg,$mes,$dia,$anno))."&nbsp;".date("h:i a",mktime($hor,$min,$seg,$mes,$dia,$anno))."</CENTER></TD>";
              echo "  <TD Class=listar COLSPAN=2><B>Rep. Comercial:</B><BR><CENTER>".$rs->Value('ca_vendedor')."</CENTER></TD>";
              echo "</TR>";
              echo "<TR HEIGHT=5>";
@@ -654,7 +659,7 @@ require_once("menu.php");
                 echo "  <TD Class=mostrar><CENTER><IMG src='./graficos/mail.gif' alt='Ver correo electrónico' border=0 onclick='javascript:window.open(\"ventanas.php?opcion=Email\&id=".$tm->Value('ca_idemail')."\",\"Email\",\"scrollbars=yes,width=650,height=400,top=200,left=150\")'></CENTER></TD>";
                 echo "</TR>";
                 $tm->MoveNext();
-                }
+             }
              echo "<TR HEIGHT=5>";
              echo "  <TD Class=captura COLSPAN=6></TD>";
              echo "</TR>";
@@ -675,7 +680,7 @@ require_once("menu.php");
              echo "</CENTER>";
 //           echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
              require_once("footer.php");
-echo "</BODY>";
+             echo "</BODY>";
              echo "</HTML>";
              break;
              }
@@ -739,7 +744,7 @@ echo "</BODY>";
              echo "<TR>";
              echo "  <TD Class=titulo style='text-align:left; vertical-align:top;'>Información :</TD>";
              echo "  <TD Class=mostrar COLSPAN=2 style='text-align:left; vertical-align:bottom;'>Fecha del Reporte: <INPUT TYPE='TEXT' NAME='fchreporte' SIZE=12 VALUE='".date("Y-m-d")."' READONLY></TD>";
-             echo "  <TD Class=mostrar COLSPAN=2 style='text-align:left; vertical-align:bottom;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"><INPUT TYPE='TEXT' NAME='idcotizacion' ONBLUR='valores(this);' SIZE=11 MAXLENGTH=10>&nbsp<a onclick='terceros(\"find_contacto\",\"_pro\",\"findcotizacion\");'><IMG alt='Click aquí para Buscar Cotización' src='graficos/lupa.gif' hspace='0' vspace='0'>&nbspBuscar&nbspCotización</a></TD>";
+             echo "  <TD Class=mostrar COLSPAN=2 style='text-align:left; vertical-align:bottom;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"><INPUT TYPE='TEXT' NAME='idcotizacion' ONBLUR='valores(this);' SIZE=11 MAXLENGTH=10>&nbsp;<a onclick='terceros(\"find_contacto\",\"_pro\",\"findcotizacion\");'><IMG alt='Click aquí para Buscar Cotización' src='graficos/lupa.gif' hspace='0' vspace='0'>&nbsp;Buscar&nbsp;Cotización</a></TD>";
              echo "</TR>";
 
              echo "<TR>";
@@ -748,11 +753,11 @@ echo "</BODY>";
              echo "  <TD Class=titulo COLSPAN=2>3. Destino</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align:top;'>&nbsp&nbsp&nbsp&nbsp<SELECT ID=impoexpo NAME='impoexpo' ONCHANGE='llenar_traficos();' ONMOUSEWHEEL='return false;'>";
+             echo "  <TD Class=captura style='vertical-align:top;'>&nbsp;&nbsp;&nbsp;&nbsp;<SELECT ID=impoexpo NAME='impoexpo' ONCHANGE='llenar_traficos();' ONMOUSEWHEEL='return false;'>";
              for ($i=0; $i < count($imporexpor); $i++) {
                   echo " <OPTION VALUE=".$imporexpor[$i].">".$imporexpor[$i]."</OPTION>";
                   }
-             echo "  </SELECT>&nbsp&nbsp&nbsp</TD>";
+             echo "  </SELECT>&nbsp;&nbsp;&nbsp;</TD>";
              echo "  <TD Class=listar WIDTH=160><SELECT NAME='idtraorigen' ONCHANGE='llenar_origenes();' ONMOUSEWHEEL='return false;'>";  // Llena el cuadro de lista con los valores de la tabla Traficos
              echo "  </SELECT></TD>";
              echo "  <TD Class=listar WIDTH=160><SELECT NAME='idciuorigen' ONMOUSEWHEEL='return false;' SIZE=7>";          // Llena el cuadro de lista con los valores de la tabla Origenes
@@ -764,11 +769,11 @@ echo "</BODY>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=titulo style='text-align:left; vertical-align:top;' ROWSPAN=2>4. Fecha Despacho:<BR><CENTER><INPUT TYPE='TEXT' NAME='fchdespacho' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
-             echo "  <TD Class=listar COLSPAN=4>5. Agente:&nbsp&nbsp[Listar Todos&nbsp<INPUT TYPE='CHECKBOX' NAME='todos_ag' WIDTH=10 ONCHANGE='llenar_agentes();'>]<BR><SELECT NAME='idagente' ONMOUSEWHEEL='return false;'>";                              // Llena el cuadro de lista con los valores de la tabla Agentes
+             echo "  <TD Class=listar COLSPAN=4>5. Agente:&nbsp;&nbsp;[Listar Todos&nbsp;<INPUT TYPE='CHECKBOX' NAME='todos_ag' WIDTH=10 ONCHANGE='llenar_agentes();'>]<BR><SELECT NAME='idagente' ONMOUSEWHEEL='return false;'>";                              // Llena el cuadro de lista con los valores de la tabla Agentes
              echo "  </SELECT></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>6. Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=93></TEXTAREA></TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>6. Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=93></TEXTAREA><BR>¿Es Mercancía Peligrosa? <INPUT TYPE=CHECKBOX NAME='mcia_peligrosa'><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Marque esta opción para indicar que Sí es Mercancia Peligrosa'></TD>";
              echo "</TR>";
 
              echo "<TR>";
@@ -779,7 +784,7 @@ echo "</BODY>";
              echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_pro_1 src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>7. Nombre:<BR><INPUT ID=nombre_pro_1 READONLY TYPE='TEXT' NAME='proveedor[]' SIZE=50 MAXLENGTH=60></TD>";
              echo "    <TD Class=mostrar>7.1 Orden:<BR><INPUT ID=orden_pro_1 TYPE='TEXT' NAME='orden_prov[]' SIZE=20 MAXLENGTH=500></TD>";
-             echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_pro_1\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'>&nbspBuscar</a></TD>";
+             echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_pro_1\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'>&nbsp;Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
              echo "    <TD Class=mostrar COLSPAN=2>7.2 Contacto:<BR><INPUT ID=contacto_pro_1 READONLY TYPE='TEXT' NAME='proveedor[]' SIZE=50 MAXLENGTH=60></TD>";
@@ -834,12 +839,12 @@ echo "</BODY>";
 
              echo "<TR>";
              echo "  <INPUT ID=id_con TYPE='HIDDEN' NAME='idconsignatario'>";
-             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='cons_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbspConsignatario:<BR></TD>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='cons_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Consignatario:<BR></TD>";
              echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='cons_tbl' WIDTH=400 CELLSPACING=1 style='display: none'>";
              echo "  <TR>";
              echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_con src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>9.1 Nombre:<BR><INPUT ID=nombre_con READONLY TYPE='TEXT' NAME='consignatario[]' SIZE=50 MAXLENGTH=60></TD>";
-             echo "    <TD Class=mostrar>9.1.1 Enviar Información:<BR>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'Sí'>Sí&nbsp&nbsp&nbsp<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
+             echo "    <TD Class=mostrar>9.1.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
              echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_con\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
@@ -862,12 +867,12 @@ echo "</BODY>";
 
              echo "<TR>";
              echo "  <INPUT ID=id_not TYPE='HIDDEN' NAME='idnotify'>";
-             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='noti_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbspNotify:</TD>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='noti_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Notify:</TD>";
              echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='noti_tbl' WIDTH=400 CELLSPACING=1 style='display: none'>";
              echo "  <TR>";
              echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_not src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>9.2 Nombre:<BR><INPUT ID=nombre_not READONLY TYPE='TEXT' NAME='notify[]' SIZE=50 MAXLENGTH=60></TD>";
-             echo "    <TD Class=mostrar>9.2.1 Enviar Información:<BR>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'Sí'>Sí&nbsp&nbsp&nbsp<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
+             echo "    <TD Class=mostrar>9.2.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
              echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_not\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
@@ -890,12 +895,12 @@ echo "</BODY>";
 
              echo "<TR>";
              echo "  <INPUT ID=id_mas TYPE='HIDDEN' NAME='idmaster'>";
-             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='mast_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbspConsigna.Master:</TD>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='mast_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Consigna.Master:</TD>";
              echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='mast_tbl' WIDTH=400 CELLSPACING=1 style='display: none'>";
              echo "  <TR>";
              echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_mas src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>9.3 Nombre:<BR><INPUT ID=nombre_mas READONLY TYPE='TEXT' NAME='master[]' SIZE=50 MAXLENGTH=60></TD>";
-             echo "    <TD Class=mostrar>9.3.1 Enviar Información:<BR>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'Sí'>Sí&nbsp&nbsp&nbsp<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
+             echo "    <TD Class=mostrar>9.3.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
              echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_mas\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
@@ -915,12 +920,12 @@ echo "</BODY>";
 
              echo "<TR>";
              echo "  <INPUT ID=id_rep TYPE='HIDDEN' NAME='idrepresentante'>";
-             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='repr_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbspRepresentante:<BR></TD>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='repr_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Representante:<BR></TD>";
              echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='repr_tbl' WIDTH=400 CELLSPACING=1 style='display: none'>";
              echo "  <TR>";
              echo "    <TD Class=mostrar ROWSPAN=3 style='text-align:center; vertical-align:top;'><IMG ID=clean_rep src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>10. Nombre:<BR><INPUT ID=nombre_rep READONLY TYPE='TEXT' NAME='representante[]' SIZE=50 MAXLENGTH=60></TD>";
-             echo "    <TD Class=mostrar>10.1 Enviar Información:<BR>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'Sí'>Sí&nbsp&nbsp&nbsp<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
+             echo "    <TD Class=mostrar>10.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
              echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_rep\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
@@ -954,7 +959,7 @@ echo "</BODY>";
              echo "  </TABLE></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=invertir COLSPAN=4>11.2 Instrucciones Especiales para el Agente:&nbsp<IMG src='graficos/cerrado.gif' ALT='Click para incluir textos predefinidos' ONCLICK='terceros(\"find_texts\",\"Instructions_sea\",\"ventanas\");'><BR><TEXTAREA ID=instrucciones NAME='instrucciones' WRAP=virtual ROWS=9 COLS=80></TEXTAREA></TD>";
+             echo "  <TD Class=invertir COLSPAN=4>11.2 Instrucciones Especiales para el Agente:&nbsp;<IMG src='graficos/cerrado.gif' ALT='Click para incluir textos predefinidos' ONCLICK='terceros(\"find_texts\",\"Instructions_sea\",\"ventanas\");'><BR><TEXTAREA ID=instrucciones NAME='instrucciones' WRAP=virtual ROWS=9 COLS=80></TEXTAREA></TD>";
              echo "</TR>";
 
              echo "  </TABLE></TD>";
@@ -983,9 +988,9 @@ echo "</BODY>";
              echo "    </TR>";
 
              echo "    <TR>";
-             echo "      <TD Class=mostrar>15. Colmas S.I.A. Ltda:<BR><CENTER><INPUT NAME='colmas' TYPE='radio' VALUE = 'Sí' CHECKED>Sí&nbsp&nbsp&nbsp&nbsp<INPUT NAME='colmas' TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
-             echo "      <TD Class=mostrar>16. Seguro:<BR><CENTER><INPUT NAME='seguro' TYPE='radio' VALUE = 'Sí' CHECKED>Sí&nbsp&nbsp&nbsp&nbsp<INPUT NAME='seguro' TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
-             echo "      <TD Class=mostrar>17. Lib. Automática:<BR><CENTER><INPUT ID=si NAME='liberacion' DISABLED TYPE='radio' VALUE = 'Sí'>Sí&nbsp&nbsp&nbsp<INPUT ID=no NAME='liberacion' DISABLED TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
+             echo "      <TD Class=mostrar>15. Colmas S.I.A. Ltda:<BR><CENTER><INPUT NAME='colmas' TYPE='radio' VALUE = 'Sí' CHECKED>Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='colmas' TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
+             echo "      <TD Class=mostrar>16. Seguro:<BR><CENTER><INPUT NAME='seguro' TYPE='radio' VALUE = 'Sí' CHECKED>Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='seguro' TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
+             echo "      <TD Class=mostrar>17. Lib. Automática:<BR><CENTER><INPUT ID=si NAME='liberacion' DISABLED TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT ID=no NAME='liberacion' DISABLED TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
              echo "      <TD Class=mostrar>Tiempo de Crédito:<BR><CENTER><INPUT DISABLED TYPE='TEXT' NAME='tiempocredito' VALUE='-' SIZE=18 MAXLENGTH=20></CENTER></TD>";
              echo "    </TR>";
              echo "    <TR HEIGHT=5>";
@@ -994,27 +999,27 @@ echo "</BODY>";
              echo "    <TR>";
              echo "      <TD Class=listar WIDTH=175>18.1 Continuación/Viaje:</TD>";
              echo "      <TD Class=listar><SELECT NAME='continuacion' ONCHANGE='llenar_finales();'></SELECT></TD>";  // Llena el cuadro de lista con la lista de continuaciones de viaje
-             echo "      <TD Class=listar>18.2&nbspDestino&nbspFinal:</TD>";
+             echo "      <TD Class=listar>18.2&nbsp;Destino&nbsp;Final:</TD>";
              echo "      <TD Class=listar><SELECT NAME='continuacion_dest'></SELECT></TD>";                          // Llena el cuadro de lista con la lista de ciudades destino de continuaciones de viaje
              echo "    </TR>";
 
              echo "    <TR>";
              echo "      <TD Class=listar>18.3 Notificar C/Viaje al email:</TD>";
              echo "      <TD Class=listar COLSPAN=4><TABLE WIDTH=100% CELLSPACING=1 BORDER=1>";
-			 $tm->MoveFirst();
-			 for($i=0; $i<round($tm->GetRowCount()-(round($tm->GetRowCount()%3))/3)/3; $i++){
-				 echo "<TR>";
-				 for($j=0; $j<3; $j++){
-				 	 $econf_mem = (!$tm->Eof() and !$tm->IsEmpty())?$tm->Value('ca_login'):'';
-					 if (strlen($econf_mem)!=0){
-					 	echo "<TD Class=invertir style='vertical-align:bottom;' WIDTH=130><INPUT ID=econt_$z TYPE='CHECKBOX' NAME='econt[]' VALUE='$econf_mem' WIDTH=10 $check_mem>".$tm->Value('ca_email')."</TD>";
-					 }else{
-					 	echo "<TD Class=invertir style='vertical-align:bottom;' WIDTH=130></TD>";
-					 }
-					 $tm->MoveNext();
-				 }
-				 echo "</TR>";
-			 }
+             $tm->MoveFirst();
+             for($i=0; $i<round($tm->GetRowCount()-(round($tm->GetRowCount()%3))/3)/3; $i++){
+                 echo "<TR>";
+                 for($j=0; $j<3; $j++){
+                     $econf_mem = (!$tm->Eof() and !$tm->IsEmpty())?$tm->Value('ca_login'):'';
+                     if (strlen($econf_mem)!=0){
+                        echo "<TD Class=invertir style='vertical-align:bottom;' WIDTH=130><INPUT ID=econt_$z TYPE='CHECKBOX' NAME='econt[]' VALUE='$econf_mem' WIDTH=10 $check_mem>".$tm->Value('ca_email')."</TD>";
+                     }else{
+                        echo "<TD Class=invertir style='vertical-align:bottom;' WIDTH=130></TD>";
+                     }
+                     $tm->MoveNext();
+                 }
+                 echo "</TR>";
+             }
              echo "      </TABLE></TD>";
              echo "    </TR>";
 
@@ -1031,7 +1036,7 @@ echo "</BODY>";
              echo "      <TD Class=mostrar COLSPAN=3><SELECT NAME='tipo' ONCHANGE='llenar_bodegas();'></SELECT></TD>";
              echo "    </TR>";
              echo "    <TR>";
-             echo "      <TD Class=mostrar>19.3&nbspIgualar&nbspMaster/Hijo:&nbsp<SELECT NAME='mastersame'><OPTION VALUE='No'>No</OPTION><OPTION VALUE='Sí'>Sí</OPTION></SELECT></TD>";
+             echo "      <TD Class=mostrar>19.3&nbsp;Igualar&nbsp;Master/Hijo:&nbsp;<SELECT NAME='mastersame'><OPTION VALUE='No'>No</OPTION><OPTION VALUE='Sí'>Sí</OPTION></SELECT></TD>";
              echo "      <TD Class=mostrar COLSPAN=4><SELECT NAME='idbodega'></SELECT></TD>";                   // Llena el cuadro de lista con las zonas o depósitos aduaneros
              echo "    </TR>";
              echo "  </TABLE></TD>";
@@ -1070,7 +1075,7 @@ echo "</BODY>";
              echo "</CENTER>";
 //           echo "<P DIR='RTL'><A HREF=\"#\" ONCLICK='javascript:window.open(\"./help/$modulo.html\",\"Ayuda\",\"scrollbars=yes,width=600,height=400,top=200,left=150\")'><IMG SRC='./graficos/help.gif' border=0 ALT='Ayuda en Línea'><BR>Ayuda</A></P>";  // Link que proporciona la Ayuda en línea
              require_once("footer.php");
-echo "</BODY>";
+             echo "</BODY>";
              if (isset($contenido)) {                                                                                            // Recupera los contenidos del formulario
                 echo "<script>";
                 while (list ($clave, $val) = each ($contenido)) {
@@ -1129,7 +1134,7 @@ echo "</BODY>";
              echo "</HEAD>";
 
              echo "<BODY ID=Cuerpo onscroll='dalt=document.body.scrollTop+3; find_contacto.style.top=dalt; find_texts.style.top=dalt'>";
-			 require_once("menu.php");
+             require_once("menu.php");
              echo "<DIV ID='find_contacto' STYLE='visibility:hidden; position:absolute; border-width:3; border-color:#666666; border-style:solid;'>";
              echo "<IFRAME ID='find_contacto_frame' SRC='blanco.html' MARGINWIDTH=0 MARGINHEIGHT=0 FRAMEBORDER='NO' SCROLLING='YES' STYLE='width:645; height:200'>";
              echo "</IFRAME>";
@@ -1167,11 +1172,11 @@ echo "</BODY>";
              echo "  <TD Class=titulo COLSPAN=2>3. Destino</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align:top;'>&nbsp&nbsp&nbsp&nbsp<SELECT ID=impoexpo NAME='impoexpo' ONCHANGE='llenar_traficos();'>";
+             echo "  <TD Class=captura style='vertical-align:top;'>&nbsp;&nbsp;&nbsp;&nbsp;<SELECT ID=impoexpo NAME='impoexpo' ONCHANGE='llenar_traficos();'>";
              for ($i=0; $i < count($imporexpor); $i++) {
                   echo " <OPTION VALUE=".$imporexpor[$i].">".$imporexpor[$i]."</OPTION>";
                   }
-             echo "  </SELECT>&nbsp&nbsp&nbsp</TD>";
+             echo "  </SELECT>&nbsp;&nbsp;&nbsp;</TD>";
              echo "  <TD Class=listar WIDTH=160><SELECT NAME='idtraorigen' ONCHANGE='llenar_origenes();' ONMOUSEWHEEL='return false;'>";  // Llena el cuadro de lista con los valores de la tabla Traficos
              echo "  </SELECT></TD>";
              echo "  <TD Class=listar WIDTH=160><SELECT NAME='idciuorigen' ONMOUSEWHEEL='return false;' SIZE=7>";          // Llena el cuadro de lista con los valores de la tabla Origenes
@@ -1183,11 +1188,11 @@ echo "</BODY>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=titulo style='text-align:left; vertical-align:top;' ROWSPAN=2>4. Fecha Despacho:<BR><CENTER><INPUT TYPE='TEXT' NAME='fchdespacho' SIZE=12 VALUE='".date("Y-m-d")."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
-             echo "  <TD Class=listar COLSPAN=4>5. Agente:&nbsp&nbsp[Listar Todos&nbsp<INPUT TYPE='CHECKBOX' NAME='todos_ag' WIDTH=10 ONCHANGE='llenar_agentes();'>]<BR><SELECT NAME='idagente' ONMOUSEWHEEL='return false;'>";                              // Llena el cuadro de lista con los valores de la tabla Agentes
+             echo "  <TD Class=listar COLSPAN=4>5. Agente:&nbsp;&nbsp;[Listar Todos&nbsp;<INPUT TYPE='CHECKBOX' NAME='todos_ag' WIDTH=10 ONCHANGE='llenar_agentes();'>]<BR><SELECT NAME='idagente' ONMOUSEWHEEL='return false;'>";                              // Llena el cuadro de lista con los valores de la tabla Agentes
              echo "  </SELECT></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>6. Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=93></TEXTAREA></TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>6. Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=93></TEXTAREA><BR>¿Es Mercancía Peligrosa? <INPUT TYPE=CHECKBOX NAME='mcia_peligrosa'><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Marque esta opción para indicar que Sí es Mercancia Peligrosa'></TD>";
              echo "</TR>";
 
              echo "<TR>";
@@ -1198,7 +1203,7 @@ echo "</BODY>";
              echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_pro_1 src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>7. Nombre:<BR><INPUT ID=nombre_pro_1 READONLY TYPE='TEXT' NAME='proveedor[]' SIZE=50 MAXLENGTH=60></TD>";
              echo "    <TD Class=mostrar>7.1 Orden:<BR><INPUT ID=orden_pro_1 TYPE='TEXT' NAME='orden_prov[]' SIZE=20 MAXLENGTH=500></TD>";
-             echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_pro_1\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'>&nbspBuscar</a></TD>";
+             echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_pro_1\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'>&nbsp;Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
              echo "    <TD Class=mostrar COLSPAN=2>7.2 Contacto:<BR><INPUT ID=contacto_pro_1 READONLY TYPE='TEXT' NAME='proveedor[]' SIZE=50 MAXLENGTH=60></TD>";
@@ -1251,10 +1256,117 @@ echo "</BODY>";
              echo "<TR HEIGHT=5>";
              echo "  <TD Class=invertir COLSPAN=4></TD>";
              echo "</TR>";
+
+             echo "<TR>";
+             echo "  <INPUT ID=id_con TYPE='HIDDEN' NAME='idconsignatario'>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='cons_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Consignatario:<BR></TD>";
+             echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='cons_tbl' WIDTH=400 CELLSPACING=1 style='display: none'>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_con src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.1 Nombre:<BR><INPUT ID=nombre_con READONLY TYPE='TEXT' NAME='consignatario[]' SIZE=50 MAXLENGTH=60></TD>";
+             echo "    <TD Class=mostrar>9.1.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
+             echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_con\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.1.2 Contacto:<BR><INPUT ID=contacto_con READONLY TYPE='TEXT' NAME='consignatario[]' SIZE=50 MAXLENGTH=60></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.1.3 Dirección:<BR><INPUT ID=direccion_con READONLY TYPE='TEXT' NAME='consignatario[]' SIZE=40 MAXLENGTH=80></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar>9.1.4 Teléfono:<BR><INPUT ID=telefonos_con READONLY TYPE='TEXT' NAME='consignatario[]' SIZE=23 MAXLENGTH=30></TD>";
+             echo "    <TD Class=mostrar>9.1.5 Fax:<BR><INPUT ID=fax_con READONLY TYPE='TEXT' NAME='consignatario[]' SIZE=23 MAXLENGTH=30></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.1.6 Correo Electrónico:<BR><INPUT ID=email_con READONLY TYPE='TEXT' NAME='consignatario[]' SIZE=30 MAXLENGTH=40></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar COLSPAN=4>9.1.7 Reportar como Notify: <INPUT NAME='repnotify' TYPE='radio' VALUE='1'></TD>";
+             echo "  </TR>";
+             echo "  </TABLE></TD>";
+             echo "</TR>";
+             echo "<TR HEIGHT=5>";
+             echo "  <TD Class=invertir COLSPAN=4></TD>";
+             echo "</TR>";
+
+             echo "<TR>";
+             echo "  <INPUT ID=id_not TYPE='HIDDEN' NAME='idnotify'>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='noti_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Notify:</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='noti_tbl' WIDTH=400 CELLSPACING=1 style='display: none'>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_not src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.2 Nombre:<BR><INPUT ID=nombre_not READONLY TYPE='TEXT' NAME='notify[]' SIZE=50 MAXLENGTH=60></TD>";
+             echo "    <TD Class=mostrar>9.2.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
+             echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_not\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.2.2 Contacto:<BR><INPUT ID=contacto_not READONLY TYPE='TEXT' NAME='notify[]' SIZE=50 MAXLENGTH=60></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.2.3 Dirección:<BR><INPUT ID=direccion_not READONLY TYPE='TEXT' NAME='notify[]' SIZE=40 MAXLENGTH=80></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar>9.2.4 Teléfono:<BR><INPUT ID=telefonos_not READONLY TYPE='TEXT' NAME='notify[]' SIZE=23 MAXLENGTH=30></TD>";
+             echo "    <TD Class=mostrar>9.2.5 Fax:<BR><INPUT ID=fax_not READONLY TYPE='TEXT' NAME='notify[]' SIZE=23 MAXLENGTH=30></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.2.6 Correo Electrónico:<BR><INPUT ID=email_not READONLY TYPE='TEXT' NAME='notify[]' SIZE=30 MAXLENGTH=40></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar COLSPAN=4>9.2.7 Reportar como Notify: <INPUT ID=default_not NAME='repnotify' TYPE='radio' VALUE='2'></TD>";
+             echo "  </TR>";
+             echo "  </TABLE></TD>";
+             echo "</TR>";
+             echo "<TR HEIGHT=5>";
+             echo "  <TD Class=invertir COLSPAN=4></TD>";
+             echo "</TR>";
+
+             echo "<TR>";
+             echo "  <INPUT ID=id_mas TYPE='HIDDEN' NAME='idmaster'>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='mast_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Consigna.Master:</TD>";
+             echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='mast_tbl' WIDTH=400 CELLSPACING=1 style='display: none'>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_mas src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.3 Nombre:<BR><INPUT ID=nombre_mas READONLY TYPE='TEXT' NAME='master[]' SIZE=50 MAXLENGTH=60></TD>";
+             echo "    <TD Class=mostrar>9.3.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
+             echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_mas\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.3.2 Contacto:<BR><INPUT ID=contacto_mas READONLY TYPE='TEXT' NAME='master[]' SIZE=50 MAXLENGTH=60></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.3.3 Dirección:<BR><INPUT ID=direccion_mas READONLY TYPE='TEXT' NAME='master[]' SIZE=40 MAXLENGTH=80></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar>9.3.4 Teléfono:<BR><INPUT ID=telefonos_mas READONLY TYPE='TEXT' NAME='master[]' SIZE=23 MAXLENGTH=30></TD>";
+             echo "    <TD Class=mostrar>9.3.5 Fax:<BR><INPUT ID=fax_mas READONLY TYPE='TEXT' NAME='master[]' SIZE=23 MAXLENGTH=30></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>9.3.6 Correo Electrónico:<BR><INPUT ID=email_mas READONLY TYPE='TEXT' NAME='master[]' SIZE=30 MAXLENGTH=40></TD>";
+             echo "  </TR>";
+             echo "  </TABLE></TD>";
+             echo "</TR>";
+             echo "<TR HEIGHT=5>";
+             echo "  <TD Class=invertir COLSPAN=4></TD>";
+             echo "</TR>";
+
+             echo "<TR>";
+             echo "  <INPUT ID=id_rep TYPE='HIDDEN' NAME='idrepresentante'>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='repr_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Representante:<BR></TD>";
+             echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='repr_tbl' WIDTH=400 CELLSPACING=1 style='display: none'>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar ROWSPAN=3 style='text-align:center; vertical-align:top;'><IMG ID=clean_rep src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>10. Nombre:<BR><INPUT ID=nombre_rep READONLY TYPE='TEXT' NAME='representante[]' SIZE=50 MAXLENGTH=60></TD>";
+             echo "    <TD Class=mostrar>10.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'No' CHECKED>No</TD>";
+             echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_rep\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar COLSPAN=2>10.2 Contacto:<BR><INPUT ID=contacto_rep READONLY TYPE='TEXT' NAME='representante[]' SIZE=50 MAXLENGTH=60></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>10.3 Dirección:<BR><INPUT ID=direccion_rep READONLY TYPE='TEXT' NAME='representante[]' SIZE=40 MAXLENGTH=80></TD>";
+             echo "  </TR>";
+             echo "  <TR>";
+             echo "    <TD Class=mostrar>10.4 Teléfono:<BR><INPUT ID=telefonos_rep READONLY TYPE='TEXT' NAME='representante[]' SIZE=23 MAXLENGTH=30></TD>";
+             echo "    <TD Class=mostrar>10.5 Fax:<BR><INPUT ID=fax_rep READONLY TYPE='TEXT' NAME='representante[]' SIZE=23 MAXLENGTH=30></TD>";
+             echo "    <TD Class=mostrar COLSPAN=2>10.6 Correo Electrónico:<BR><INPUT ID=email_rep READONLY TYPE='TEXT' NAME='representante[]' SIZE=30 MAXLENGTH=40></TD>";
+             echo "  </TR>";
+             echo "  </TABLE></TD>";
+             echo "</TR>";
+             echo "<TR HEIGHT=5>";
+             echo "  <TD Class=invertir COLSPAN=4></TD>";
+             echo "</TR>";
+
              echo "<TR>";
              echo "  <TD Class=titulo style='text-align:left;'>Rep. Comercial:";                 // Llena el cuadro de lista con los valores de la tabla Vendedores
              echo "  <TD Class=mostrar COLSPAN=2><SELECT ID=login NAME='login' $cambiar>";
-			 echo "<OPTION VALUE=''></OPTION>";
+             echo "<OPTION VALUE=''></OPTION>";
              while (!$us->Eof()) {
                     echo"<OPTION VALUE='".$us->Value('ca_login')."'".(($us->Value('ca_login')==$usuario)?" SELECTED":"").">".$us->Value('ca_nombre')."</OPTION>";
                     $us->MoveNext();
@@ -1262,9 +1374,6 @@ echo "</BODY>";
              echo "  </SELECT></TD>";
              echo "  <TD Class=invertir>Elabora: </TD>";
              echo "  <TD Class=invertir><B>$usuario</B></TD>";
-             echo "</TR>";
-             echo "<TR HEIGHT=5>";
-             echo "  <TD Class=invertir COLSPAN=5></TD>";
              echo "</TR>";
 
              echo "<TR>";
@@ -1320,7 +1429,7 @@ echo "</BODY>";
 					}
 			 }else{
 				 if (!$rs->Open("select b.ca_idreporte, b.ca_version, b.ca_versiones, b.ca_fchreporte, b.ca_consecutivo, a.ca_idcotizacion, b.ca_origen, b.ca_ciuorigen, b.ca_idtraorigen, b.ca_traorigen, b.ca_destino, b.ca_ciudestino, b.ca_idtradestino, b.ca_tradestino, b.ca_impoexpo, b.ca_fchdespacho, b.ca_idagente,
-								 b.ca_agente, a.ca_incoterms, a.ca_mercancia_desc, b.ca_idproveedor, b.ca_orden_prov, a.ca_idconcliente, b.ca_orden_clie, a.ca_confirmar_clie, a.ca_idconsignatario, a.ca_informar_cons, a.ca_idrepresentante, a.ca_informar_repr, a.ca_transporte, a.ca_modalidad, a.ca_colmas, a.ca_seguro,
+								 b.ca_agente, a.ca_incoterms, a.ca_mercancia_desc, a.ca_mcia_peligrosa, b.ca_idproveedor, b.ca_orden_prov, a.ca_idconcliente, b.ca_orden_clie, a.ca_confirmar_clie, a.ca_idconsignatario, a.ca_informar_cons, a.ca_idrepresentante, a.ca_informar_repr, a.ca_transporte, a.ca_modalidad, a.ca_colmas, a.ca_seguro,
 								 a.ca_liberacion, a.ca_tiempocredito, a.ca_preferencias_clie, a.ca_instrucciones, a.ca_idconsignar, a.ca_consignar, a.ca_idbodega, a.ca_bodega, a.ca_tipobodega, a.ca_mastersame, a.ca_continuacion, a.ca_continuacion_dest, a.ca_final_dest, a.ca_continuacion_conf, a.ca_idlinea, a.ca_nombre,
 								 b.ca_fchcreado, b.ca_usucreado, b.ca_fchactualizado, b.ca_usuactualizado, b.ca_fchanulado, b.ca_usuanulado, b.ca_nombre_pro, b.ca_contacto_pro, b.ca_direccion_pro, b.ca_telefonos_pro, b.ca_fax_pro, b.ca_email_pro, a.ca_nombre_cli, a.ca_idcliente, a.ca_digito, a.ca_contacto_cli, a.ca_telefonos_cli,
 								 a.ca_fax_cli, a.ca_email_cli, a.ca_direccion_cli, a.ca_nombre_rep, a.ca_contacto_rep, a.ca_direccion_rep, a.ca_telefonos_rep, a.ca_fax_rep, a.ca_email_rep, a.ca_nombre_con, a.ca_contacto_con, a.ca_direccion_con, a.ca_telefonos_con, a.ca_fax_con, a.ca_email_con,
@@ -1389,8 +1498,8 @@ echo "</BODY>";
              echo "  <TD Class=mostrar style='text-align:left; vertical-align:top;'>Fecha del Reporte:<BR><CENTER><INPUT TYPE='TEXT' NAME='fchreporte' SIZE=12 VALUE='".$rs->Value('ca_fchreporte')."' READONLY></CENTER></TD>";
              echo "  <TD Class=mostrar style='text-align:left; vertical-align:top;'>Cotización No.:<BR><CENTER><INPUT TYPE='TEXT' NAME='idcotizacion' VALUE='".$rs->Value('ca_idcotizacion')."' ONBLUR='valores(this);' SIZE=11 MAXLENGTH=10></CENTER></TD>";
              echo "  <TD Class=invertir style='text-align:left; vertical-align:top;'><TABLE WIDTH=100% CELLSPACING=0>";
-             echo "  	<TR><TD Class=mostrar style='text-align:left; vertical-align:bottom;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='terceros(\"find_texts\",\"impreporte\",\"findreporte\");'><CENTER><IMG alt='Click aquí para Buscar Reporte' src='graficos/importar.gif' hspace='0' vspace='0'>&nbspImportar&nbspun&nbspReporte</CENTER></TD></TR>";
-             echo "  	<TR><TD Class=mostrar style='text-align:left; vertical-align:bottom;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='terceros(\"find_contacto\",\"_pro_1\",\"findcotizacion\");'><CENTER><IMG alt='Click aquí para Buscar Cotización' src='graficos/lupa.gif' hspace='0' vspace='0'>&nbspBuscar&nbspCotización</CENTER></TD></TR>";
+             echo "  	<TR><TD Class=mostrar style='text-align:left; vertical-align:bottom;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='terceros(\"find_texts\",\"impreporte\",\"findreporte\");'><CENTER><IMG alt='Click aquí para Buscar Reporte' src='graficos/importar.gif' hspace='0' vspace='0'>&nbsp;Importar&nbsp;un&nbsp;Reporte</CENTER></TD></TR>";
+             echo "  	<TR><TD Class=mostrar style='text-align:left; vertical-align:bottom;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='terceros(\"find_contacto\",\"_pro_1\",\"findcotizacion\");'><CENTER><IMG alt='Click aquí para Buscar Cotización' src='graficos/lupa.gif' hspace='0' vspace='0'>&nbsp;Buscar&nbsp;Cotización</CENTER></TD></TR>";
              echo "  </TABLE></TD>";
              echo "</TR>";
 
@@ -1400,14 +1509,14 @@ echo "</BODY>";
              echo "  <TD Class=titulo COLSPAN=2>3. Destino</TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=captura style='vertical-align:top;'>&nbsp&nbsp&nbsp&nbsp<SELECT ID=impoexpo NAME='impoexpo' ONCHANGE='llenar_traficos();'>";
+             echo "  <TD Class=captura style='vertical-align:top;'>&nbsp;&nbsp;&nbsp;&nbsp;<SELECT ID=impoexpo NAME='impoexpo' ONCHANGE='llenar_traficos();'>";
              for ($i=0; $i < count($imporexpor); $i++) {
                   echo " <OPTION VALUE=".$imporexpor[$i];
                   if ($rs->Value('ca_impoexpo')==$imporexpor[$i]) {
                       echo " SELECTED"; }
                   echo ">".$imporexpor[$i]."</OPTION>";
                   }
-             echo "  </SELECT>&nbsp&nbsp&nbsp</TD>";
+             echo "  </SELECT>&nbsp;&nbsp;&nbsp;</TD>";
              echo "  <TD Class=listar WIDTH=160><SELECT NAME='idtraorigen' ONCHANGE='llenar_origenes();' ONMOUSEWHEEL='return false;'>";  // Llena el cuadro de lista con los valores de la tabla Traficos
              echo "  </SELECT></TD>";
              echo "  <TD Class=listar WIDTH=160><SELECT NAME='idciuorigen' ONMOUSEWHEEL='return false;' SIZE=7>";          // Llena el cuadro de lista con los valores de la tabla Origenes
@@ -1419,11 +1528,11 @@ echo "</BODY>";
              echo "</TR>";
              echo "<TR>";
              echo "  <TD Class=titulo style='text-align:left; vertical-align:top;' ROWSPAN=2>4. Fecha Despacho:<BR><CENTER><INPUT TYPE='TEXT' NAME='fchdespacho' SIZE=12 VALUE='".$rs->Value('ca_fchdespacho')."' ONKEYDOWN=\"chkDate(this)\" ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"></CENTER></TD>";
-             echo "  <TD Class=listar COLSPAN=4>5. Agente:&nbsp&nbsp[Listar Todos&nbsp<INPUT TYPE='CHECKBOX' NAME='todos_ag' WIDTH=10 ONCHANGE='llenar_agentes();'>]<BR><SELECT NAME='idagente' ONMOUSEWHEEL='return false;'>";                              // Llena el cuadro de lista con los valores de la tabla Agentes
+             echo "  <TD Class=listar COLSPAN=4>5. Agente:&nbsp;&nbsp;[Listar Todos&nbsp;<INPUT TYPE='CHECKBOX' NAME='todos_ag' WIDTH=10 ONCHANGE='llenar_agentes();'>]<BR><SELECT NAME='idagente' ONMOUSEWHEEL='return false;'>";                              // Llena el cuadro de lista con los valores de la tabla Agentes
              echo "  </SELECT></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>6. Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=93>".$rs->Value('ca_mercancia_desc')."</TEXTAREA></TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>6. Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=93>".$rs->Value('ca_mercancia_desc')."</TEXTAREA><BR>¿Es Mercancía Peligrosa? <INPUT TYPE=CHECKBOX NAME='mcia_peligrosa' ".(($rs->Value("ca_mcia_peligrosa"))?"CHECKED":"")."><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Marque esta opción para indicar que Sí es Mercancia Peligrosa'></TD>";
              echo "</TR>";
              $cadena = (trim(strlen($rs->Value('ca_idproveedor'))) != 0)?"ca_idtercero in (".str_replace("|",",",$rs->Value('ca_idproveedor')).")":"false";
              if (!$tm->Open("select * from vi_terceros where $cadena union (select vi_terceros.* from vi_terceros RIGHT OUTER JOIN tb_terceros on (null) limit 1)")) {
@@ -1505,12 +1614,12 @@ echo "</BODY>";
              echo "</TR>";
              echo "<TR>";
              echo "  <INPUT ID=id_con TYPE='HIDDEN' NAME='idconsignatario' VALUE='".$rs->Value('ca_idconsignatario')."'>";
-             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='cons_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbspConsignatario:<BR></TD>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='cons_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Consignatario:<BR></TD>";
              echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='cons_tbl' WIDTH=400 CELLSPACING=1 style='display:".(($rs->Value('ca_idconsignatario')!=0 and $rs->Value('ca_idconsignatario')!=null)?"block":"none")."'>";
              echo "  <TR>";
              echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_con src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>9.1 Nombre:<BR><INPUT ID=nombre_con READONLY TYPE='TEXT' NAME='consignatario[]' VALUE='".$rs->Value('ca_nombre_con')."' SIZE=50 MAXLENGTH=60></TD>";
-             echo "    <TD Class=mostrar>9.1.1 Enviar Información:<BR>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_informar_cons')=='Sí'?'CHECKED':'').">Sí&nbsp&nbsp&nbsp<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_informar_cons')=='No'?'CHECKED':'').">No</TD>";
+             echo "    <TD Class=mostrar>9.1.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_informar_cons')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_cons' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_informar_cons')=='No'?'CHECKED':'').">No</TD>";
              echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_con\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
@@ -1533,12 +1642,12 @@ echo "</BODY>";
              echo "</TR>";
              echo "<TR>";
              echo "  <INPUT ID=id_not TYPE='HIDDEN' NAME='idnotify' VALUE='".$rs->Value('ca_idnotify')."'>";
-             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='noti_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbspNotify:<BR></TD>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='noti_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Notify:<BR></TD>";
              echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='noti_tbl' WIDTH=400 CELLSPACING=1 style='display:".(($rs->Value('ca_idnotify')!=0 and $rs->Value('ca_idnotify')!=null)?"block":"none")."'>";
              echo "  <TR>";
              echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_not src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>9.2 Nombre:<BR><INPUT ID=nombre_not READONLY TYPE='TEXT' NAME='notify[]' VALUE='".$rs->Value('ca_nombre_not')."' SIZE=50 MAXLENGTH=60></TD>";
-             echo "    <TD Class=mostrar>9.2.1 Enviar Información:<BR>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_informar_noti')=='Sí'?'CHECKED':'').">Sí&nbsp&nbsp&nbsp<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_informar_noti')=='No'?'CHECKED':'').">No</TD>";
+             echo "    <TD Class=mostrar>9.2.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_informar_noti')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_noti' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_informar_noti')=='No'?'CHECKED':'').">No</TD>";
              echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_not\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
@@ -1561,12 +1670,12 @@ echo "</BODY>";
              echo "</TR>";
              echo "<TR>";
              echo "  <INPUT ID=id_mas TYPE='HIDDEN' NAME='idmaster' VALUE='".$rs->Value('ca_idmaster')."'>";
-             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='mast_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbspConsigna.Master:<BR></TD>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='mast_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Consigna.Master:<BR></TD>";
              echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='mast_tbl' WIDTH=400 CELLSPACING=1 style='display:".(($rs->Value('ca_idmaster')!=0 and $rs->Value('ca_idmaster')!=null)?"block":"none")."'>";
              echo "  <TR>";
              echo "    <TD Class=mostrar ROWSPAN=4 style='text-align:center; vertical-align:top;'><IMG ID=clean_mas src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>9.3 Nombre:<BR><INPUT ID=nombre_mas READONLY TYPE='TEXT' NAME='master[]' VALUE='".$rs->Value('ca_nombre_mas')."' SIZE=50 MAXLENGTH=60></TD>";
-             echo "    <TD Class=mostrar>9.3.1 Enviar Información:<BR>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_informar_mast')=='Sí'?'CHECKED':'').">Sí&nbsp&nbsp&nbsp<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_informar_mast')=='No'?'CHECKED':'').">No</TD>";
+             echo "    <TD Class=mostrar>9.3.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_informar_mast')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_mast' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_informar_mast')=='No'?'CHECKED':'').">No</TD>";
              echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_mas\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
@@ -1586,12 +1695,12 @@ echo "</BODY>";
 
              echo "<TR>";
              echo "  <INPUT ID=id_rep TYPE='HIDDEN' NAME='idrepresentante' VALUE='".$rs->Value('ca_idrepresentante')."'>";
-             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='repr_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbspRepresentante:<BR></TD>";
+             echo "  <TD Class=titulo ROWSPAN=2 style='text-align:left; vertical-align:top;'><IMG id='repr_btn' SRC='./graficos/cerrado.gif' border=0 ALT='Pulse aquí para extender el cuadro' onclick='extender(this);'>&nbsp;Representante:<BR></TD>";
              echo "  <TD Class=mostrar COLSPAN=4><TABLE ID='repr_tbl' WIDTH=400 CELLSPACING=1 style='display:".(($rs->Value('ca_idrepresentante')!=0 and $rs->Value('ca_idrepresentante')!=null)?"block":"none")."'>";
              echo "  <TR>";
              echo "    <TD Class=mostrar ROWSPAN=3 style='text-align:center; vertical-align:top;'><IMG ID=clean_rep src='graficos/no.gif' alt='Eliminar entrada' hspace='0' vspace='0' onclick='clean_subform(this);'></TD>";
              echo "    <TD Class=mostrar COLSPAN=2>10. Nombre:<BR><INPUT ID=nombre_rep READONLY TYPE='TEXT' NAME='representante[]' VALUE='".$rs->Value('ca_nombre_rep')."' SIZE=50 MAXLENGTH=60></TD>";
-             echo "    <TD Class=mostrar>10.1 Enviar Información:<BR>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_informar_repr')=='Sí'?'CHECKED':'').">Sí&nbsp&nbsp&nbsp<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_informar_repr')=='No'?'CHECKED':'').">No</TD>";
+             echo "    <TD Class=mostrar>10.1 Enviar Información:<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_informar_repr')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;<INPUT NAME='informar_repr' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_informar_repr')=='No'?'CHECKED':'').">No</TD>";
              echo "    <TD Class=mostrar style='text-align:right;' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\" onclick='terceros(\"find_contacto\",\"_rep\",\"findtercero\");'><a><IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0'> Buscar</a></TD>";
              echo "  </TR>";
              echo "  <TR>";
@@ -1627,7 +1736,7 @@ echo "</BODY>";
              echo "  </TABLE></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=invertir COLSPAN=4>11.2 Instrucciones Especiales para el Agente:&nbsp<IMG src='graficos/cerrado.gif' ALT='Click para incluir textos predefinidos' ONCLICK='terceros(\"find_texts\",\"Instructions_sea\",\"ventanas\");'<BR><TEXTAREA ID=instrucciones NAME='instrucciones' WRAP=virtual ROWS=9 COLS=80>".$rs->Value('ca_instrucciones')."</TEXTAREA></TD>";
+             echo "  <TD Class=invertir COLSPAN=4>11.2 Instrucciones Especiales para el Agente:&nbsp;<IMG src='graficos/cerrado.gif' ALT='Click para incluir textos predefinidos' ONCLICK='terceros(\"find_texts\",\"Instructions_sea\",\"ventanas\");'<BR><TEXTAREA ID=instrucciones NAME='instrucciones' WRAP=virtual ROWS=9 COLS=80>".$rs->Value('ca_instrucciones')."</TEXTAREA></TD>";
              echo "</TR>";
 
              echo "  </TABLE></TD>";
@@ -1666,9 +1775,9 @@ echo "</BODY>";
              $tm->MoveFirst();
              $lib_mem = ($tm->Value('ca_cupo') != 0 or $tm->Value('ca_diascredito') != 0)?true:false;
              echo "    <TR>";
-             echo "      <TD Class=mostrar>15. Colmas S.I.A. Ltda:<BR><CENTER><INPUT ID='chk_colmas_0' NAME='colmas' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_colmas')=='Sí'?'CHECKED':'').">Sí&nbsp&nbsp&nbsp&nbsp<INPUT ID='chk_colmas_1' NAME='colmas' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_colmas')=='No'?'CHECKED':'').">No</CENTER></TD>";
-             echo "      <TD Class=mostrar>16. Seguro:<BR><CENTER><INPUT ID='chk_seguro_0' NAME='seguro' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_seguro')=='Sí'?'CHECKED':'').">Sí&nbsp&nbsp&nbsp&nbsp<INPUT ID='chk_seguro_1' NAME='seguro' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_seguro')=='No'?'CHECKED':'').">No</CENTER></TD>";
-             echo "      <TD Class=mostrar>17. Lib. Automática:<BR><CENTER><INPUT ID=si NAME='liberacion' TYPE='radio' VALUE = 'Sí' ".($lib_mem?'CHECKED':'')." DISABLED>Sí&nbsp&nbsp&nbsp<INPUT ID=no NAME='liberacion' TYPE='radio' VALUE = 'No' ".(!$lib_mem?'CHECKED':'')." DISABLED>No</CENTER></TD>";
+             echo "      <TD Class=mostrar>15. Colmas S.I.A. Ltda:<BR><CENTER><INPUT ID='chk_colmas_0' NAME='colmas' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_colmas')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT ID='chk_colmas_1' NAME='colmas' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_colmas')=='No'?'CHECKED':'').">No</CENTER></TD>";
+             echo "      <TD Class=mostrar>16. Seguro:<BR><CENTER><INPUT ID='chk_seguro_0' NAME='seguro' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_seguro')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT ID='chk_seguro_1' NAME='seguro' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_seguro')=='No'?'CHECKED':'').">No</CENTER></TD>";
+             echo "      <TD Class=mostrar>17. Lib. Automática:<BR><CENTER><INPUT ID=si NAME='liberacion' TYPE='radio' VALUE = 'Sí' ".($lib_mem?'CHECKED':'')." DISABLED>Sí&nbsp;&nbsp;&nbsp;<INPUT ID=no NAME='liberacion' TYPE='radio' VALUE = 'No' ".(!$lib_mem?'CHECKED':'')." DISABLED>No</CENTER></TD>";
              echo "      <TD Class=mostrar>Tiempo de Crédito:<BR><CENTER><INPUT DISABLED TYPE='TEXT' NAME='tiempocredito' VALUE='".($tm->Value('ca_diascredito')!=0?$tm->Value('ca_diascredito').' Días':'-')."' SIZE=18 MAXLENGTH=20></CENTER></TD>";
              echo "    </TR>";
              echo "    <TR HEIGHT=5>";
@@ -1925,7 +2034,7 @@ echo "</BODY>";
              echo "<CENTER>";
              echo "<H3>$titulo</H3>";
              echo "<FORM METHOD=post NAME='adicionar' ACTION='reportenegocio.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
-			 echo "<INPUT TYPE='HIDDEN' NAME='coltrans_usa' VALUE=".(($rs->Value('ca_idagente')=='400001018')?'true':'false').">";                 // Condición especial para Coltrans MIA
+             echo "<INPUT TYPE='HIDDEN' NAME='coltrans_usa' VALUE=".(($rs->Value('ca_idagente')=='400001018')?'true':'false').">";                 // Condición especial para Coltrans MIA
              datos_basicos($nivel,$rs,$tm);
              if ($rs->Value('ca_seguro')== "Sí") {
                  $mn =& DlRecordset::NewRecordset($conn);
@@ -2084,7 +2193,7 @@ echo "</BODY>";
                     echo "  <INPUT ID=foidt_$i TYPE='HIDDEN' NAME='conceptos[$i][foidt]' VALUE=".$tm->Value('ca_oid').">";
 					echo "  <INPUT ID=fidco_$i TYPE='HIDDEN' NAME='conceptos[$i][fidco]' VALUE=".$tm->Value('ca_idconcepto').">";
 					echo "  <INPUT ID=fobvs_$i TYPE='HIDDEN' NAME='conceptos[$i][fobvs]' VALUE=\"".$tm->Value('ca_observaciones')."\">";
-                    echo "  <TD align=left><INPUT ID=fconc_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY VALUE=\"".$tm->Value('ca_concepto')."\">&nbsp</TD>";
+                    echo "  <TD align=left><INPUT ID=fconc_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY VALUE=\"".$tm->Value('ca_concepto')."\">&nbsp;</TD>";
                     echo "  <TD align=right WIDTH=40><INPUT ID=fcant_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][fcant]' VALUE=".$tm->Value('ca_cantidad')."></TD>";
                     echo "  <TD align=right WIDTH=65><INPUT ID=fntar_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][fntar]' VALUE=".$tm->Value('ca_neta_tar')."></TD>";
                     echo "  <TD align=right WIDTH=65><INPUT ID=fnmin_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][fnmin]' VALUE=".$tm->Value('ca_neta_min')."></TD>";
@@ -2103,7 +2212,7 @@ echo "</BODY>";
 					echo "  <INPUT ID=foidt_$i TYPE='HIDDEN' NAME='conceptos[$i][foidt]'>";
                     echo "  <INPUT ID=fidco_$i TYPE='HIDDEN' NAME='conceptos[$i][fidco]'>";
 					echo "  <INPUT ID=fobvs_$i TYPE='HIDDEN' NAME='conceptos[$i][fobvs]'>";
-                    echo "  <TD align=left><INPUT ID=fconc_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY>&nbsp</TD>";
+                    echo "  <TD align=left><INPUT ID=fconc_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY>&nbsp;</TD>";
                     echo "  <TD align=right WIDTH=40><INPUT ID=fcant_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][fcant]'></TD>";
                     echo "  <TD align=right WIDTH=65><INPUT ID=fntar_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][fntar]'></TD>";
                     echo "  <TD align=right WIDTH=65><INPUT ID=fnmin_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][fnmin]'></TD>";
@@ -2137,7 +2246,7 @@ echo "</BODY>";
                     echo "  <INPUT ID=fidco_$i TYPE='HIDDEN' NAME='conceptos[$i][fidco]' VALUE=".$tm->Value('ca_idconcepto').">";
 					echo "  <INPUT ID=fobvs_$i TYPE='HIDDEN' NAME='conceptos[$i][fobvs]' VALUE=\"".$tm->Value('ca_observaciones')."\">";
                     echo "  <TD Class=invertir WIDTH=50></TD>";
-                    echo "  <TD align=left><INPUT ID=fconc_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY VALUE=\"".$tm->Value('ca_concepto')."\">&nbsp</TD>";
+                    echo "  <TD align=left><INPUT ID=fconc_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY VALUE=\"".$tm->Value('ca_concepto')."\">&nbsp;</TD>";
                     echo "  <TD align=right WIDTH=75><INPUT ID=frtar_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][frtar]' VALUE=".$tm->Value('ca_reportar_tar')."></TD>";
                     echo "  <TD align=right WIDTH=75><INPUT ID=frmin_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][frmin]' VALUE=".$tm->Value('ca_reportar_min')."></TD>";
                     echo "  <TD align=right WIDTH=25><INPUT ID=fridm_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][fridm]' VALUE=\"".$tm->Value('ca_reportar_idm')."\"></TD>";
@@ -2154,7 +2263,7 @@ echo "</BODY>";
                     echo "  <INPUT ID=fidco_$i TYPE='HIDDEN' NAME='conceptos[$i][fidco]'>";
 					echo "  <INPUT ID=fobvs_$i TYPE='HIDDEN' NAME='conceptos[$i][fobvs]'>";
                     echo "  <TD Class=invertir WIDTH=50></TD>";
-                    echo "  <TD align=left><INPUT ID=fconc_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY>&nbsp</TD>";
+                    echo "  <TD align=left><INPUT ID=fconc_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY>&nbsp;</TD>";
                     echo "  <TD align=right WIDTH=75><INPUT ID=frtar_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][frtar]'></TD>";
                     echo "  <TD align=right WIDTH=75><INPUT ID=frmin_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][frmin]'></TD>";
                     echo "  <TD align=right WIDTH=25><INPUT ID=fridm_$i Class=field TYPE='TEXT' READONLY NAME='conceptos[$i][fridm]'></TD>";
@@ -2192,7 +2301,7 @@ echo "</BODY>";
                 echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='javascript:capturas(\"Recargos_Org\",$i, $id);'>";
                 echo "  <INPUT ID=roidr_$i TYPE='HIDDEN' NAME='recargos_org[$i][roidr]' VALUE=".$tm->Value('ca_oid').">";
                 echo "  <INPUT ID=ridrc_$i TYPE='HIDDEN' NAME='recargos_org[$i][ridrc]' VALUE=".$tm->Value('ca_idrecargo').">";
-                echo "  <TD align=left><INPUT ID=rreco_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY VALUE=\"".$tm->Value('ca_recargo')."\">&nbsp</TD>";
+                echo "  <TD align=left><INPUT ID=rreco_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY VALUE=\"".$tm->Value('ca_recargo')."\">&nbsp;</TD>";
                 echo "  <TD align=left WIDTH=80><INPUT ID=rapli_$i Class=field TYPE='TEXT' READONLY NAME='recargos_org[$i][rapli]' VALUE=\"".$tm->Value('ca_aplicacion')."\"></TD>";
                 echo "  <TD align=center WIDTH=10><INPUT ID=rtipo_$i Class=field TYPE='TEXT' READONLY NAME='recargos_org[$i][rtipo]' VALUE=\"".$tm->Value('ca_tipo')."\"></TD>";
                 echo "  <TD align=right WIDTH=50><INPUT ID=rntar_$i Class=field TYPE='TEXT' READONLY NAME='recargos_org[$i][rntar]' VALUE=".$tm->Value('ca_neta_tar')."></TD>";
@@ -2211,7 +2320,7 @@ echo "</BODY>";
                 echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='javascript:capturas(\"Recargos_Org\",$i, $id);'>";
                 echo "  <INPUT ID=roidr_$i TYPE='HIDDEN' NAME='recargos_org[$i][roidr]'>";
                 echo "  <INPUT ID=ridrc_$i TYPE='HIDDEN' NAME='recargos_org[$i][ridrc]'>";
-                echo "  <TD align=left><INPUT ID=rreco_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY>&nbsp</TD>";
+                echo "  <TD align=left><INPUT ID=rreco_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY>&nbsp;</TD>";
                 echo "  <TD align=left WIDTH=80><INPUT ID=rapli_$i Class=field TYPE='TEXT' READONLY NAME='recargos_org[$i][rapli]'></TD>";
                 echo "  <TD align=center WIDTH=10><INPUT ID=rtipo_$i Class=field TYPE='TEXT' READONLY NAME='recargos_org[$i][rtipo]'></TD>";
                 echo "  <TD align=right WIDTH=50><INPUT ID=rntar_$i Class=field TYPE='TEXT' READONLY NAME='recargos_org[$i][rntar]'></TD>";
@@ -2246,7 +2355,7 @@ echo "</BODY>";
                 echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='javascript:capturas(\"Recargos_Loc\",$i, $id);'>";
 				echo "  <INPUT ID=loidr_$i TYPE='HIDDEN' NAME='recargos_loc[$i][loidr]' VALUE=".$tm->Value('ca_oid').">";
                 echo "  <INPUT ID=lidrc_$i TYPE='HIDDEN' NAME='recargos_loc[$i][lidrc]' VALUE=".$tm->Value('ca_idrecargo').">";
-                echo "  <TD align=left><INPUT ID=lrecl_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY VALUE=\"".$tm->Value('ca_recargo')."\">&nbsp</TD>";
+                echo "  <TD align=left><INPUT ID=lrecl_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY VALUE=\"".$tm->Value('ca_recargo')."\">&nbsp;</TD>";
                 echo "  <TD align=left WIDTH=80><INPUT ID=lapli_$i Class=field TYPE='TEXT' READONLY NAME='recargos_loc[$i][lapli]' VALUE=\"".$tm->Value('ca_aplicacion')."\"></TD>";
                 echo "  <TD align=center WIDTH=10><INPUT ID=ltipo_$i Class=field TYPE='TEXT' READONLY NAME='recargos_loc[$i][ltipo]' VALUE=\"".$tm->Value('ca_tipo')."\"></TD>";
                 echo "  <TD align=right WIDTH=50><INPUT ID=lctar_$i Class=field TYPE='TEXT' READONLY NAME='recargos_loc[$i][lctar]' VALUE=".$tm->Value('ca_cobrar_tar')."></TD>";
@@ -2261,7 +2370,7 @@ echo "</BODY>";
                 echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='javascript:capturas(\"Recargos_Loc\",$i, $id);'>";
 				echo "  <INPUT ID=loidr_$i TYPE='HIDDEN' NAME='recargos_loc[$i][loidr]'>";
                 echo "  <INPUT ID=lidrc_$i TYPE='HIDDEN' NAME='recargos_loc[$i][lidrc]'>";
-                echo "  <TD align=left><INPUT ID=lrecl_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY>&nbsp</TD>";
+                echo "  <TD align=left><INPUT ID=lrecl_$i Class=field style='text-align:left; font-weight:bold;' TYPE='TEXT' READONLY>&nbsp;</TD>";
                 echo "  <TD align=left WIDTH=80><INPUT ID=lapli_$i Class=field TYPE='TEXT' READONLY NAME='recargos_loc[$i][lapli]'></TD>";
                 echo "  <TD align=center WIDTH=10><INPUT ID=ltipo_$i Class=field TYPE='TEXT' READONLY NAME='recargos_loc[$i][ltipo]'></TD>";
                 echo "  <TD align=right WIDTH=50><INPUT ID=lctar_$i Class=field TYPE='TEXT' READONLY NAME='recargos_loc[$i][lctar]'></TD>";
@@ -2275,57 +2384,57 @@ echo "</BODY>";
              echo "</TR>";
 
              if ($rs->Value('ca_colmas')== "Sí") {
-				 echo "<TR>";
+                 echo "<TR>";
                  echo "  <TD Class=invertir COLSPAN=5><CENTER><TABLE WIDTH=100% CELLSPACING=1>";
                  echo "  <TR>";
                  echo "    <TD Class=invertir COLSPAN=7 style='text-align:center; font-weight:bold;'>CONCEPTOS DE COBRO EN AGENCIAMIENTO COLMAS SIA LTDA.</TD>";
                  echo "  </TR>";
 
-				 echo "<TH>Concepto</TH>";
-				 echo "<TH>Tipo</TH>";
-				 echo "<TH>Neto</TH>";
-				 echo "<TH>Valor</TH>";
-				 echo "<TH>Mínimo</TH>";
-				 echo "<TH>Mnd</TH>";
-				 echo "<TH WIDTH=200>Detalles</TH>";
-				 if (!$tm->Open("select r.oid as ca_oid, r.*, c.ca_costo from tb_repaduanadet r, tb_costos c where r.ca_idcosto = c.ca_idcosto and ca_idreporte = $id and ca_idrepaduana = $rp")) {       // Selecciona todos lo registros de la tabla Costos
-					 echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit; }
-				 $i = 0;
-				 $tm->MoveFirst();
-				 while (!$tm->Eof() and !$tm->IsEmpty()) {
-					echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='javascript:capturas(\"Aduana\",$i, $id);'>";
-					echo "  <INPUT ID=aoids_$i TYPE='HIDDEN' NAME='aduanas[$i][aoids]' VALUE=".$tm->Value('ca_oid').">";
-					echo "  <INPUT ID=aidco_$i TYPE='HIDDEN' NAME='aduanas[$i][aidco]' VALUE=".$tm->Value('ca_idcosto').">";
-					echo "  <INPUT ID=adelt_$i TYPE='HIDDEN' NAME='aduanas[$i][adelt]' VALUE=0>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=acsto_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][acsto]' VALUE='".$tm->Value('ca_costo')."'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=atipo_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][atipo]' VALUE='".$tm->Value('ca_tipo')."'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrn_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrn]' VALUE='".$tm->Value('ca_netcosto')."'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrc_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrc]' VALUE='".$tm->Value('ca_vlrcosto')."'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrm_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrm]' VALUE='".$tm->Value('ca_mincosto')."'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=amnda_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][amnda]' VALUE='".$tm->Value('ca_idmoneda')."'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=aobsv_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][aobsv]' VALUE='".$tm->Value('ca_detalles')."'></TD>";
-					echo "</TR>";
-					$tm->MoveNext();
-					$i++;
-					}
-				 for ( $i=$tm->GetRowCount(); $i<($tm->GetRowCount()+5); $i++ ){
-					echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='javascript:capturas(\"Aduana\",$i, $id);'>";
-					echo "  <INPUT ID=aoids_$i TYPE='HIDDEN' NAME='aduanas[$i][aoids]'>";
-					echo "  <INPUT ID=aidco_$i TYPE='HIDDEN' NAME='aduanas[$i][aidco]'>";
-					echo "  <INPUT ID=adelt_$i TYPE='HIDDEN' NAME='aduanas[$i][adelt]' VALUE=0>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=acsto_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][acsto]'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=atipo_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][atipo]'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrn_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrn]'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrc_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrc]'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrm_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrm]'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=amnda_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][amnda]'></TD>";
-					echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=aobsv_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][aobsv]'></TD>";
-					echo "</TR>";
-					}
-				 echo "  </TABLE></CENTER></TD>";
-				 echo "</TR>";
+                 echo "<TH>Concepto</TH>";
+                 echo "<TH>Tipo</TH>";
+                 echo "<TH>Neto</TH>";
+                 echo "<TH>Valor</TH>";
+                 echo "<TH>Mínimo</TH>";
+                 echo "<TH>Mnd</TH>";
+                 echo "<TH WIDTH=200>Detalles</TH>";
+                 if (!$tm->Open("select r.oid as ca_oid, r.*, c.ca_costo from tb_repaduanadet r, tb_costos c where r.ca_idcosto = c.ca_idcosto and ca_idreporte = $id and ca_idrepaduana = $rp")) {       // Selecciona todos lo registros de la tabla Costos
+                         echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                         exit; }
+                 $i = 0;
+                 $tm->MoveFirst();
+                 while (!$tm->Eof() and !$tm->IsEmpty()) {
+                        echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='javascript:capturas(\"Aduana\",$i, $id);'>";
+                        echo "  <INPUT ID=aoids_$i TYPE='HIDDEN' NAME='aduanas[$i][aoids]' VALUE=".$tm->Value('ca_oid').">";
+                        echo "  <INPUT ID=aidco_$i TYPE='HIDDEN' NAME='aduanas[$i][aidco]' VALUE=".$tm->Value('ca_idcosto').">";
+                        echo "  <INPUT ID=adelt_$i TYPE='HIDDEN' NAME='aduanas[$i][adelt]' VALUE=0>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=acsto_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][acsto]' VALUE='".$tm->Value('ca_costo')."'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=atipo_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][atipo]' VALUE='".$tm->Value('ca_tipo')."'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrn_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrn]' VALUE='".$tm->Value('ca_netcosto')."'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrc_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrc]' VALUE='".$tm->Value('ca_vlrcosto')."'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrm_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrm]' VALUE='".$tm->Value('ca_mincosto')."'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=amnda_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][amnda]' VALUE='".$tm->Value('ca_idmoneda')."'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=aobsv_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][aobsv]' VALUE='".$tm->Value('ca_detalles')."'></TD>";
+                        echo "</TR>";
+                        $tm->MoveNext();
+                        $i++;
+                        }
+                 for ( $i=$tm->GetRowCount(); $i<($tm->GetRowCount()+5); $i++ ){
+                        echo "<TR style='background:\"F0F0F0\"' onMouseOver=\"uno(this,'CCCCCC');\" onMouseOut=\"dos(this,'F0F0F0');\"  onclick='javascript:capturas(\"Aduana\",$i, $id);'>";
+                        echo "  <INPUT ID=aoids_$i TYPE='HIDDEN' NAME='aduanas[$i][aoids]'>";
+                        echo "  <INPUT ID=aidco_$i TYPE='HIDDEN' NAME='aduanas[$i][aidco]'>";
+                        echo "  <INPUT ID=adelt_$i TYPE='HIDDEN' NAME='aduanas[$i][adelt]' VALUE=0>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=acsto_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][acsto]'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=atipo_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][atipo]'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrn_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrn]'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrc_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrc]'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=avlrm_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][avlrm]'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=amnda_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][amnda]'></TD>";
+                        echo "  <TD style='vertical-align=top; text-align: left'><INPUT ID=aobsv_$i Class=field TYPE='TEXT' READONLY NAME='aduanas[$i][aobsv]'></TD>";
+                        echo "</TR>";
+                        }
+                 echo "  </TABLE></CENTER></TD>";
+                 echo "</TR>";
              }
              echo "<TR HEIGHT=5>";
              echo "  <TD Class=invertir COLSPAN=5></TD>";
@@ -2352,20 +2461,20 @@ elseif (isset($accion)) {                                                       
         $idconcliente = (strlen($idconcliente)==0)?0:$idconcliente;
         $contactos = (isset($contactos))?implode(",",array_filter($contactos, "vacios")):"";           // Retira las posiciones en blanco del arreglo
         if (isset($actualizar_pref)) {
-			$comando = "update tb_clientes set ca_preferencias = '$preferencias_clie', ";
-			$comando.= "ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' ";
-			$comando.= "where ca_idcliente in (select ca_idcliente from tb_concliente where ca_idcontacto = $idconcliente)";
-			if (!$rs->Open($comando)) {
-				echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-				echo "<script>document.location.href = 'reportenegocio.php';</script>";
-				exit;
-			   }
-		}
-		if (!$rs->Open("select fun_confirmarcli($idconcliente, '$contactos', '$usuario')")) {
-			echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-			echo "<script>document.location.href = 'reportenegocio.php';</script>";
-			exit;
-		   }
+            $comando = "update tb_clientes set ca_preferencias = '$preferencias_clie', ";
+            $comando.= "ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' ";
+            $comando.= "where ca_idcliente in (select ca_idcliente from tb_concliente where ca_idcontacto = $idconcliente)";
+            if (!$rs->Open($comando)) {
+                echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                exit;
+            }
+        }
+        if (!$rs->Open("select fun_confirmarcli($idconcliente, '$contactos', '$usuario')")) {
+            echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+            echo "<script>document.location.href = 'reportenegocio.php';</script>";
+            exit;
+        }
         $idconsignatario = (strlen($idconsignatario)==0)?0:$idconsignatario;
         $informar_cons = (strlen($idconsignatario)==0)?"No":$informar_cons;
         $idnotify = (strlen($idnotify)==0)?0:$idnotify;
@@ -2382,74 +2491,89 @@ elseif (isset($accion)) {                                                       
     }else if ($accion == 'Crear Reporte AG'){
         $idconcliente = (strlen($idconcliente)==0)?0:$idconcliente;
         $contactos = (isset($contactos))?implode(",",array_filter($contactos, "vacios")):"";           // Retira las posiciones en blanco del arreglo
-		if (!$rs->Open("select fun_confirmarcli($idconcliente, '$contactos', '$usuario')")) {
-			echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-			echo "<script>document.location.href = 'reportenegocio.php';</script>";
-			exit;
-		   }
-        $confirmar = (isset($confirmar))?implode(",",array_filter($confirmar, "vacios")):"";           // Retira las posiciones en blanco del arreglo
+        if (!$rs->Open("select fun_confirmarcli($idconcliente, '$contactos', '$usuario')")) {
+            echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+            echo "<script>document.location.href = 'reportenegocio.php';</script>";
+            exit;
+        }
+        $idconsignatario = (strlen($idconsignatario)==0)?0:$idconsignatario;
+        $informar_cons = (strlen($idconsignatario)==0)?"No":$informar_cons;
+        $idnotify = (strlen($idnotify)==0)?0:$idnotify;
+        $informar_noti = (strlen($idnotify)==0)?"No":$informar_noti;
+        $idrepresentante = (strlen($idrepresentante)==0)?0:$idrepresentante;
+        $informar_repr = (strlen($idrepresentante)==0)?"No":$informar_repr;
+        $idmaster = (strlen($idmaster)==0)?0:$idmaster;
+        $informar_mast = (strlen($idmaster)==0)?"No":$informar_mast;
         $idproveedor = (isset($idproveedor))?implode("|",array_filter($idproveedor, "vacios")):"";       // Retira las posiciones en blanco del arreglo
         $orden_prov = (isset($orden_prov))?implode("|",array_filter($orden_prov, "vacios")):"";         // Retira las posiciones en blanco del arreglo
         $incoterms = (isset($incoterms))?implode("|",array_filter($incoterms, "vacios")):"";         // Retira las posiciones en blanco del arreglo
-		$modalidad = (isset($modalidad))?$modalidad:"";
-	}
+        $confirmar = (isset($confirmar))?implode(",",array_filter($confirmar, "vacios")):"";           // Retira las posiciones en blanco del arreglo
+        $modalidad = (isset($modalidad))?$modalidad:"";
+    }
+    if (isset($mcia_peligrosa)){
+        if ($mcia_peligrosa == "on"){
+            $mcia_peligrosa = "TRUE";
+        }else{
+            $mcia_peligrosa = "FALSE";
+        }
+    }
     switch(trim($accion)) {                                                     // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar Modificación': {                                          // El Botón Guardar fue pulsado
-             if (!$rs->Open("update tb_reportes set ca_idcotizacion = $idcotizacion, ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_impoexpo = '$impoexpo', ca_fchdespacho = '$fchdespacho', ca_idagente =  $idagente, ca_incoterms = '$incoterms', ca_mercancia_desc = '".AddSlashes($mercancia_desc)."', ca_idproveedor = '$idproveedor', ca_orden_prov = '$orden_prov', ca_idconcliente = $idconcliente, ca_orden_clie = '$orden_clie', ca_confirmar_clie = '$confirmar', ca_idconsignatario = $idconsignatario, ca_informar_cons = '$informar_cons', ca_idnotify = $idnotify, ca_informar_noti = '$informar_noti', ca_idmaster = $idmaster, ca_informar_mast = '$informar_mast', ca_notify = $repnotify, ca_idrepresentante = $idrepresentante, ca_informar_repr = '$informar_repr', ca_transporte = '$transporte', ca_modalidad = '$modalidad', ca_colmas = '$colmas', ca_seguro = '$seguro', ca_liberacion = '$liberacion', ca_tiempocredito = '$tiempocredito', ca_preferencias_clie = '".addslashes($preferencias_clie)."', ca_instrucciones = '".addslashes($instrucciones)."', ca_idlinea = $idlinea, ca_idconsignar = $idconsignar, ca_idbodega = $idbodega, ca_mastersame = '$mastersame', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_continuacion_conf = ".($continuacion_conf?"'$continuacion_conf'":"null").", ca_login = '$login', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $id")) {
+             if (!$rs->Open("update tb_reportes set ca_idcotizacion = $idcotizacion, ca_origen = '$idciuorigen', ca_destino = '$idciudestino', ca_impoexpo = '$impoexpo', ca_fchdespacho = '$fchdespacho', ca_idagente =  $idagente, ca_incoterms = '$incoterms', ca_mercancia_desc = '".AddSlashes($mercancia_desc)."', ca_mcia_peligrosa = '$mcia_peligrosa', ca_idproveedor = '$idproveedor', ca_orden_prov = '$orden_prov', ca_idconcliente = $idconcliente, ca_orden_clie = '$orden_clie', ca_confirmar_clie = '$confirmar', ca_idconsignatario = $idconsignatario, ca_informar_cons = '$informar_cons', ca_idnotify = $idnotify, ca_informar_noti = '$informar_noti', ca_idmaster = $idmaster, ca_informar_mast = '$informar_mast', ca_notify = $repnotify, ca_idrepresentante = $idrepresentante, ca_informar_repr = '$informar_repr', ca_transporte = '$transporte', ca_modalidad = '$modalidad', ca_colmas = '$colmas', ca_seguro = '$seguro', ca_liberacion = '$liberacion', ca_tiempocredito = '$tiempocredito', ca_preferencias_clie = '".addslashes($preferencias_clie)."', ca_instrucciones = '".addslashes($instrucciones)."', ca_idlinea = $idlinea, ca_idconsignar = $idconsignar, ca_idbodega = $idbodega, ca_mastersame = '$mastersame', ca_continuacion = '$continuacion', ca_continuacion_dest = '$continuacion_dest', ca_continuacion_conf = ".($continuacion_conf?"'$continuacion_conf'":"null").", ca_login = '$login', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'reportenegocio.php';</script>";
                  exit;
                 }
-			 if (isset($nw)){
-				 if (!$rs->Open("delete from tb_reptarifas where ca_idreporte = $id")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-				 if (!$rs->Open("delete from tb_repgastos where ca_idreporte = $id")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-				 if (!$rs->Open("delete from tb_repseguro where ca_idreporte = $id")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-				 if (!$rs->Open("insert into tb_reptarifas select $id, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_reptarifas where ca_idreporte = $nw")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-				 if (!$rs->Open("insert into tb_repgastos select $id, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_detalles, ca_idconcepto from tb_repgastos where ca_idreporte = $nw")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-				 if (!$rs->Open("insert into tb_repseguro select $id, ca_vlrasegurado, ca_idmoneda_vlr, ca_primaventa, ca_minimaventa, ca_idmoneda_vta, ca_obtencionpoliza, ca_idmoneda_pol, ca_seguro_conf from tb_repseguro where ca_idreporte = $nw")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-				 if ($colmas == 'Sí') {
-					 if (!$rs->Open("select nextval('tb_repaduana_id')")) {
-						 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-						 echo "<script>document.location.href = 'comisiones.php';</script>";
-						 exit;
-						}
-					 $id_adu = $rs->Value('nextval');
-					 if (!$rs->Open("insert into tb_repaduana select $id, $id_adu, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') as ca_fchcreado, '$usuario' as ca_usucreado from tb_repaduana where ca_idreporte = $nw")) {
-						 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-						 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-						 exit;
-						}
-					 if (!$rs->Open("insert into tb_repaduanadet select $id, $id_adu, ca_idcosto, ca_tipo, ca_vlrcosto, ca_mincosto, ca_netcosto, ca_idmoneda, ca_detalles, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') as ca_fchcreado, '$usuario' as ca_usucreado from tb_repaduanadet where ca_idreporte = $nw")) {
-						 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-						 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-						 exit;
-						}
-					}
-			 	}
+             if (isset($nw)){
+                 if (!$rs->Open("delete from tb_reptarifas where ca_idreporte = $id")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                    }
+                 if (!$rs->Open("delete from tb_repgastos where ca_idreporte = $id")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                    }
+                 if (!$rs->Open("delete from tb_repseguro where ca_idreporte = $id")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                    }
+                 if (!$rs->Open("insert into tb_reptarifas select $id, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_reptarifas where ca_idreporte = $nw")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                    }
+                 if (!$rs->Open("insert into tb_repgastos select $id, ca_idrecargo, ca_aplicacion, ca_tipo, ca_neta_tar, ca_neta_min, ca_reportar_tar, ca_reportar_min, ca_cobrar_tar, ca_cobrar_min, ca_idmoneda, ca_detalles, ca_idconcepto from tb_repgastos where ca_idreporte = $nw")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                    }
+                 if (!$rs->Open("insert into tb_repseguro select $id, ca_vlrasegurado, ca_idmoneda_vlr, ca_primaventa, ca_minimaventa, ca_idmoneda_vta, ca_obtencionpoliza, ca_idmoneda_pol, ca_seguro_conf from tb_repseguro where ca_idreporte = $nw")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                    }
+                 if ($colmas == 'Sí') {
+                     if (!$rs->Open("select nextval('tb_repaduana_id')")) {
+                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                         echo "<script>document.location.href = 'comisiones.php';</script>";
+                         exit;
+                        }
+                     $id_adu = $rs->Value('nextval');
+                     if (!$rs->Open("insert into tb_repaduana select $id, $id_adu, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') as ca_fchcreado, '$usuario' as ca_usucreado from tb_repaduana where ca_idreporte = $nw")) {
+                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                         exit;
+                        }
+                     if (!$rs->Open("insert into tb_repaduanadet select $id, $id_adu, ca_idcosto, ca_tipo, ca_vlrcosto, ca_mincosto, ca_netcosto, ca_idmoneda, ca_detalles, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss') as ca_fchcreado, '$usuario' as ca_usucreado from tb_repaduanadet where ca_idreporte = $nw")) {
+                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                         exit;
+                        }
+                    }
+                }
              break;
              }
         case 'Guardar Liquidación': {                                                      // El Botón Guardar fue pulsado
@@ -2549,49 +2673,49 @@ elseif (isset($accion)) {                                                       
              }
 
              if ($idrepaduana == 0 and strlen($coordinador) != 0) {
-				 if (!$rs->Open("insert into tb_repaduana (ca_idreporte, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, ca_fchcreado, ca_usucreado) values($idreporte, '$coordinador', '$transnacarga', '$transnatipo', '$instrucciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-				 if (!$rs->Open("select ca_idrepaduana from tb_repaduana where ca_idreporte = $idreporte")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-				 $idrepaduana = $rs->Value('ca_idrepaduana');
+                 if (!$rs->Open("insert into tb_repaduana (ca_idreporte, ca_coordinador, ca_transnacarga, ca_transnatipo, ca_instrucciones, ca_fchcreado, ca_usucreado) values($idreporte, '$coordinador', '$transnacarga', '$transnatipo', '$instrucciones', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                         exit;
+                        }
+                 if (!$rs->Open("select ca_idrepaduana from tb_repaduana where ca_idreporte = $idreporte")) {
+                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                         exit;
+                        }
+                 $idrepaduana = $rs->Value('ca_idrepaduana');
              }else if ($idrepaduana != 0 and strlen($coordinador) != 0){
-				 if (!$rs->Open("update tb_repaduana set ca_coordinador = '$coordinador', ca_transnacarga = '$transnacarga', ca_transnatipo = '$transnatipo', ca_instrucciones = '$instrucciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $idreporte and ca_idrepaduana = $idrepaduana")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-			 }
-			 if (isset($aduanas)){
-				 while (list ($clave, $val) = each ($aduanas)) {
-					if ($val[aoids] != 0 and $val[adelt] == 0) {
-						if (!$rs->Open("update tb_repaduanadet set ca_idcosto = '$val[aidco]', ca_tipo = '$val[atipo]', ca_netcosto = '$val[avlrn]', ca_vlrcosto = '$val[avlrc]', ca_mincosto = '$val[avlrm]', ca_idmoneda = '$val[amnda]', ca_detalles = '".AddSlashes($val[aobsv])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[aoids])) {
-							echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-							echo "<script>document.location.href = 'reportenegocio.php';</script>";
-							exit;
-						   }
-					}else if ($val[adelt] != 0) {
-						if (!$rs->Open("delete from tb_repaduanadet where oid = ".$val[adelt])) {
-							echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-							echo "<script>document.location.href = 'reportenegocio.php';</script>";
-							exit;
-						   }
-					}else if (strlen($val[aidco]) == 0) {
-						continue;
-					}else {
-						if (!$rs->Open("insert into tb_repaduanadet (ca_idreporte, ca_idrepaduana, ca_idcosto, ca_tipo, ca_netcosto, ca_vlrcosto, ca_mincosto, ca_idmoneda, ca_detalles, ca_fchcreado, ca_usucreado) values ($idreporte, $idrepaduana, '$val[aidco]', '$val[atipo]', '$val[avlrn]', '$val[avlrc]', '$val[avlrm]', '$val[amnda]', '".AddSlashes($val[aobsv])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
-							echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-							echo "<script>document.location.href = 'reportenegocio.php';</script>";
-							exit;
-						   }
-						}
-					}
-			 }
+                 if (!$rs->Open("update tb_repaduana set ca_coordinador = '$coordinador', ca_transnacarga = '$transnacarga', ca_transnatipo = '$transnatipo', ca_instrucciones = '$instrucciones', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $idreporte and ca_idrepaduana = $idrepaduana")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                    }
+                 }
+                 if (isset($aduanas)){
+                     while (list ($clave, $val) = each ($aduanas)) {
+                        if ($val[aoids] != 0 and $val[adelt] == 0) {
+                            if (!$rs->Open("update tb_repaduanadet set ca_idcosto = '$val[aidco]', ca_tipo = '$val[atipo]', ca_netcosto = '$val[avlrn]', ca_vlrcosto = '$val[avlrc]', ca_mincosto = '$val[avlrm]', ca_idmoneda = '$val[amnda]', ca_detalles = '".AddSlashes($val[aobsv])."', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where oid = ".$val[aoids])) {
+                                echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                                echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                                exit;
+                               }
+                        }else if ($val[adelt] != 0) {
+                            if (!$rs->Open("delete from tb_repaduanadet where oid = ".$val[adelt])) {
+                                echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                                echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                                exit;
+                               }
+                        }else if (strlen($val[aidco]) == 0) {
+                            continue;
+                        }else {
+                            if (!$rs->Open("insert into tb_repaduanadet (ca_idreporte, ca_idrepaduana, ca_idcosto, ca_tipo, ca_netcosto, ca_vlrcosto, ca_mincosto, ca_idmoneda, ca_detalles, ca_fchcreado, ca_usucreado) values ($idreporte, $idrepaduana, '$val[aidco]', '$val[atipo]', '$val[avlrn]', '$val[avlrc]', '$val[avlrm]', '$val[amnda]', '".AddSlashes($val[aobsv])."', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                                    echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                                    echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                                    exit;
+                               }
+                            }
+                        }
+                 }
              if (!$rs->Open("update tb_reportes set ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idreporte = $idreporte")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'reportenegocio.php';</script>";
@@ -2624,7 +2748,7 @@ elseif (isset($accion)) {                                                       
              break;
              }
         case 'Anular': {                                                          // El Botón Guardar Borrador fue pulsado
-             if (!$rs->Open("update tb_reportes set ca_fchanulado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuanulado = '$usuario' where ca_idreporte = $id")) {
+             if (!$rs->Open("update tb_reportes set ca_fchanulado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuanulado = '$usuario', ca_detanulado = '$det' where ca_idreporte = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'reportenegocio.php';</script>";
                  exit;
@@ -2633,102 +2757,127 @@ elseif (isset($accion)) {                                                       
              break;
              }
         case 'Crear Reporte AG': {                                   // El Botón Reporte AG fue pulsado
-			 /*$uploaddir  = '';*/
-			 $uploadfile = /*$uploaddir.*/ basename($_FILES['attachment']['name']);
-			 /*$hiddenPath = '';*/
-			
-			 if (strlen($uploadfile) != 0){
-				 // VARIABLES
-				 $file = str_replace('%20', ' ', $attachment);
-				 // $file_real = $hiddenPath . $category . $file;
-				 $file_real = $_FILES['attachment']['tmp_name'];
-							
-				
-				 // echo $_FILES['attachment']['name'];
-			
-				 // HACK ATTEMPT CHECK
-				 // Make sure the request isn't escaping to another directory
-				 /*
-				 if (substr($file, 0, 1) == '.' || strpos($file, '..') > 0 || substr($file, 0, 1) == '/' || strpos($file, '/') > 0){
-					 // Display hack attempt error
-					 echo("Hack attempt detected!");
-					 die();
-				 }
-				 */
-				 // If requested file exists
-				 if (file_exists($file_real)){
-					 // Get extension of requested file
-					 $extension = strtolower(substr(strrchr($uploadfile, "."), 1));
-					 // Fix IE bug [0]
-					 $header_file = (strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE')) ? preg_replace('/\./', '%2e', $file, substr_count($file, '.') - 1) : $file;
-					 // Read file to attach
-					 $stream = fopen($file_real, 'rb');
-					 $content = fread($stream, filesize($file_real));
-					 $content_escaped = pg_escape_bytea($content);
-					 fclose($stream);
-				 }else{
-					 // Requested file does not exist (File not found)
-					 echo("Requested file does not exist");
-					 die();
-				 }
-			 }
+             /*$uploaddir  = '';*/
+             $uploadfile = /*$uploaddir.*/ basename($_FILES['attachment']['name']);
+             /*$hiddenPath = '';*/
 
-			 if (!$rs->Open("select nextval('tb_reportes_id')")) {
-				 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-				 echo "<script>document.location.href = 'comisiones.php';</script>";
-				 exit;
-			 }
+             if (strlen($uploadfile) != 0){
+                 // VARIABLES
+                 $file = str_replace('%20', ' ', $attachment);
+                 // $file_real = $hiddenPath . $category . $file;
+                 $file_real = $_FILES['attachment']['tmp_name'];
+
+
+                 // echo $_FILES['attachment']['name'];
+
+                 // HACK ATTEMPT CHECK
+                 // Make sure the request isn't escaping to another directory
+                 /*
+                 if (substr($file, 0, 1) == '.' || strpos($file, '..') > 0 || substr($file, 0, 1) == '/' || strpos($file, '/') > 0){
+                         // Display hack attempt error
+                         echo("Hack attempt detected!");
+                         die();
+                 }
+                 */
+                 // If requested file exists
+                 if (file_exists($file_real)){
+                     // Get extension of requested file
+                     $extension = strtolower(substr(strrchr($uploadfile, "."), 1));
+                     // Fix IE bug [0]
+                     $header_file = (strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE')) ? preg_replace('/\./', '%2e', $file, substr_count($file, '.') - 1) : $file;
+                     // Read file to attach
+                     $stream = fopen($file_real, 'rb');
+                     $content = fread($stream, filesize($file_real));
+                     $content_escaped = pg_escape_bytea($content);
+                     fclose($stream);
+                 }else{
+                     // Requested file does not exist (File not found)
+                     echo("Requested file does not exist");
+                     die();
+                 }
+             }
+
+             if (!$rs->Open("select nextval('tb_reportes_id')")) {
+                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'comisiones.php';</script>";
+                 exit;
+             }
              $id = $rs->Value('nextval');
 			 			
-			 if( !$login ){
-			 	if (!$rs->Open("select ca_vendedor from tb_clientes inner join tb_concliente on tb_clientes.ca_idcliente=tb_concliente.ca_idcliente where tb_concliente.ca_idcontacto=$idconcliente")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'comisiones.php';</script>";
-					 exit;
-				 }
-				 $login = $rs->Value('ca_vendedor');
-			 } 			
-			 if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idrepresentante, ca_informar_repr, ca_notify, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', fun_reportecon('".substr($fchreporte,0,4)."'), 0, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', 0, 'No', 0, 'No', 0, 'No', 0, '$transporte', '$modalidad', '', '', '', '', '', '', 0, 1, 1, 'No', 'N/A', '$idciudestino', '', '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
-				 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-				 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-				 exit;
-			   }
-             if (!$rs->Open("select ca_idreporte, ca_consecutivo, ca_agente, ca_traorigen, ca_ciuorigen, ca_ciudestino, ca_nombre_pro, ca_orden_prov, ca_nombre_cli, ca_orden_clie, ca_mercancia_desc from vi_reportes where ca_idreporte = $id")) {
+             if( !$login ){
+                if (!$rs->Open("select ca_vendedor from tb_clientes inner join tb_concliente on tb_clientes.ca_idcliente=tb_concliente.ca_idcliente where tb_concliente.ca_idcontacto=$idconcliente")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'comisiones.php';</script>";
+                     exit;
+                 }
+                 $login = $rs->Value('ca_vendedor');
+             }
+             if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', fun_reportecon('".substr($fchreporte,0,4)."'), 0, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '', '', '', '', '', '', 0, 1, 1, 'No', 'N/A', '$idciudestino', '', '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                 echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                 exit;
+               }
+             if (!$rs->Open("select ca_idreporte, ca_consecutivo, ca_agente, ca_traorigen, ca_ciuorigen, ca_ciudestino, ca_nombre_pro, ca_orden_prov, ca_nombre_cli, ca_orden_clie, ca_idconsignatario, ca_nombre_con, ca_informar_cons, ca_idnotify, ca_nombre_not, ca_informar_noti, ca_idmaster, ca_nombre_mas, ca_informar_mast, ca_idrepresentante, ca_nombre_rep, ca_informar_repr, ca_mercancia_desc, ca_mcia_peligrosa from vi_reportes where ca_idreporte = $id")) {
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                  echo "<script>document.location.href = 'reportenegocio.php';</script>";
                  exit;
                 }
-			 $asunto.= " No. ".$rs->Value('ca_consecutivo');
+             $asunto.= " No. ".$rs->Value('ca_consecutivo');
              $contenido ="<TABLE WIDTH=600 CELLSPACING=1 BORDER=1>\n";
              $contenido.="<TR>\n";
              $contenido.="  <TD COLSPAN=4><CENTER><B>REPORTE AG No. ".$rs->Value('ca_consecutivo')."</B></CENTER></TD>\n";
              $contenido.="</TR>\n";
 
-			 $contenido.="<TR>\n";
-			 $contenido.="  <TD COLSPAN=4><B>".$rs->Value('ca_agente')."</B></TD>\n";
-			 $contenido.="</TR>\n";
+             $contenido.="<TR>\n";
+             $contenido.="  <TD COLSPAN=4><B>".$rs->Value('ca_agente')."</B></TD>\n";
+             $contenido.="</TR>\n";
 
-			 $contenido.="<TR>\n";
-			 $contenido.="  <TD><B>Trayecto :</B></TD>\n";
-			 $contenido.="  <TD>«".$rs->Value('ca_traorigen')."» ".$rs->Value('ca_ciuorigen')."</TD>\n";
-			 $contenido.="  <TD><CENTER>-><CENTER></TD>\n";
-			 $contenido.="  <TD>".$rs->Value('ca_ciudestino')."</TD>\n";
-			 $contenido.="</TR>\n";
+             $contenido.="<TR>\n";
+             $contenido.="  <TD><B>Trayecto :</B></TD>\n";
+             $contenido.="  <TD>«".$rs->Value('ca_traorigen')."» ".$rs->Value('ca_ciuorigen')."</TD>\n";
+             $contenido.="  <TD><CENTER>-><CENTER></TD>\n";
+             $contenido.="  <TD>".$rs->Value('ca_ciudestino')."</TD>\n";
+             $contenido.="</TR>\n";
 
-			 $contenido.="<TR>\n";
-			 $contenido.="  <TD><B>Proveedor :</B></TD>\n";
-			 $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_nombre_pro')." Orden No. ".$rs->Value('ca_orden_prov')."</TD>\n";
-			 $contenido.="</TR>\n";
+             $contenido.="<TR>\n";
+             $contenido.="  <TD><B>Proveedor :</B></TD>\n";
+             $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_nombre_pro')." Orden No. ".$rs->Value('ca_orden_prov')."</TD>\n";
+             $contenido.="</TR>\n";
 
-			 $contenido.="<TR>\n";
-			 $contenido.="  <TD><B>Cliente :</B></TD>\n";
-			 $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_nombre_cli')." Orden No. ".$rs->Value('ca_orden_clie')."</TD>\n";
-			 $contenido.="</TR>\n";
+             $contenido.="<TR>\n";
+             $contenido.="  <TD><B>Cliente :</B></TD>\n";
+             $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_nombre_cli')." Orden No. ".$rs->Value('ca_orden_clie')."</TD>\n";
+             $contenido.="</TR>\n";
 
-			 $contenido.="<TR>\n";
-			 $contenido.="  <TD><B>Mercancia :</B></TD>\n";
-			 $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_mercancia_desc')."</TD>\n";
-			 $contenido.="</TR>\n";
+             if($rs->Value('ca_idconsignatario') != 0){
+                 $contenido.="<TR>\n";
+                 $contenido.="  <TD><B>Cliente :</B></TD>\n";
+                 $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_nombre_con')." Enviar Información: ".$rs->Value('ca_informar_cons')."</TD>\n";
+                 $contenido.="</TR>\n";
+             }
+             if($rs->Value('ca_idnotify') != 0){
+                 $contenido.="<TR>\n";
+                 $contenido.="  <TD><B>Cliente :</B></TD>\n";
+                 $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_nombre_not')." Enviar Información: ".$rs->Value('ca_informar_noti')."</TD>\n";
+                 $contenido.="</TR>\n";
+             }
+             if($rs->Value('ca_idmaster') != 0){
+                 $contenido.="<TR>\n";
+                 $contenido.="  <TD><B>Cliente :</B></TD>\n";
+                 $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_nombre_mas')." Enviar Información: ".$rs->Value('ca_informar_mast')."</TD>\n";
+                 $contenido.="</TR>\n";
+             }
+             if($rs->Value('ca_idrepresentante') != 0){
+                 $contenido.="<TR>\n";
+                 $contenido.="  <TD><B>Cliente :</B></TD>\n";
+                 $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_nombre_rep')." Enviar Información: ".$rs->Value('ca_informar_repr')."</TD>\n";
+                 $contenido.="</TR>\n";
+             }
+
+             $contenido.="<TR>\n";
+             $contenido.="  <TD><B>Mercancia :</B></TD>\n";
+             $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_mercancia_desc')."<BR><BR>".(($rs->value("ca_mcia_peligrosa"))?"SÍ":"NO")." es Mercancía Peligrosa!</TD>\n";
+             $contenido.="</TR>\n";
              $contenido.="</TABLE>\n";
 
              if (!$rs->Open("select u1.ca_nombre, u1.ca_email, u2.ca_email as ca_destino from control.tb_usuarios u1 LEFT OUTER JOIN control.tb_usuarios u2 ON (u2.ca_login = '$login') where u1.ca_login = '$usuario'")) {
@@ -2739,20 +2888,20 @@ elseif (isset($accion)) {                                                       
              $remitente = $rs->Value('ca_nombre');
              $recorreo = $rs->Value('ca_email');
              $address = $rs->Value('ca_destino');
- 			 $contenido.="<BR>".nl2br($mensaje)."<BR><BR>".$remitente."<BR>".$rs->Value('ca_email');
-			 $contenido = AddSlashes($contenido);
-			 
-			 if (isset($confirmar)){
-				$cn = explode(",",$confirmar);
-			 	$cc = "";
-			 	while (list ($clave, $val) = each ($cn)) {
-					if (stripos(strtolower($val), '@coltrans.com.co') !== false) {
-						$cc.= $val.",";
-					}
-				}
-				if ( strlen($cc) != 0){
-					$cc = substr($cc,0,strlen($c)-1);
-				}
+             $contenido.="<BR>".nl2br($mensaje)."<BR><BR>".$remitente."<BR>".$rs->Value('ca_email');
+             $contenido = AddSlashes($contenido);
+
+             if (isset($confirmar)){
+                $cn = explode(",",$confirmar);
+                $cc = "";
+                while (list ($clave, $val) = each ($cn)) {
+                    if (stripos(strtolower($val), '@coltrans.com.co') !== false) {
+                            $cc.= $val.",";
+                    }
+                }
+                if ( strlen($cc) != 0){
+                    $cc = substr($cc,0,strlen($c)-1);
+                }
              }
 			 
              if (!$rs->Open("select nextval('tb_emails_id')")) {
@@ -2766,13 +2915,13 @@ elseif (isset($accion)) {                                                       
                 echo "<script>document.location.href = 'reportenegocio.php';</script>";
                 exit;
                 }
-			 if (strlen($uploadfile) != 0){
-				 if (!$rs->Open("insert into tb_attachments (ca_idemail, ca_extension, ca_header_file, ca_filesize, ca_content) values('$id_email', '$extension', '$uploadfile', '".filesize($file_real)."', '$content_escaped')")) {
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-				 }
-			 }
+             if (strlen($uploadfile) != 0){
+                 if (!$rs->Open("insert into tb_attachments (ca_idemail, ca_extension, ca_header_file, ca_filesize, ca_content) values('$id_email', '$extension', '$uploadfile', '".filesize($file_real)."', '$content_escaped')")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                 }
+             }
              enviar_email($rs, $id_email, $_FILES);                                           // Llamado a la función que envia los emails
              break;
              }
@@ -2781,37 +2930,36 @@ elseif (isset($accion)) {                                                       
              $fchreporte = ($accion =='Reporte Nuevo')?date("Y-m-d"):$fchreporte;
              $fchdespacho = ($accion =='Reporte Nuevo')?date("Y-m-d"):$fchdespacho;
 
-			 if (!$rs->Open("select nextval('tb_reportes_id')")) {
-				 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
-				 echo "<script>document.location.href = 'comisiones.php';</script>";
-				 exit;
-			 }
+             if (!$rs->Open("select nextval('tb_reportes_id')")) {
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'comisiones.php';</script>";
+                     exit;
+             }
              $id = $rs->Value('nextval');
              if ($accion !='Nueva Versión'){			 	
-                if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', fun_reportecon('".substr($fchreporte,0,4)."'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' )")) {
+                if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', fun_reportecon('".substr($fchreporte,0,4)."'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' )")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
                    }
              }else{		
 			 		 	
-                if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_version, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_idetapa,ca_fchultstatus, ca_propiedades, ca_idseguimiento,  ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', '$consecutivo', fun_reportever('$consecutivo'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", ".($idetapa?"'$idetapa'":"null").", ".($fchultstatus?"'$fchultstatus'":"null").",'$propiedades', ".($idseguimiento?"'$idseguimiento'":"null").",  '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                if (!$rs->Open("insert into tb_reportes (ca_idreporte, ca_fchreporte, ca_consecutivo, ca_version, ca_idcotizacion, ca_origen, ca_destino, ca_impoexpo, ca_fchdespacho, ca_idagente, ca_incoterms, ca_mercancia_desc, ca_mcia_peligrosa, ca_idproveedor, ca_orden_prov, ca_idconcliente, ca_orden_clie, ca_confirmar_clie, ca_idconsignatario, ca_informar_cons, ca_idnotify, ca_informar_noti, ca_idmaster, ca_informar_mast, ca_notify, ca_idrepresentante, ca_informar_repr, ca_transporte, ca_modalidad, ca_colmas, ca_seguro, ca_liberacion, ca_tiempocredito, ca_preferencias_clie, ca_instrucciones, ca_idlinea, ca_idconsignar, ca_idbodega, ca_mastersame, ca_continuacion, ca_continuacion_dest, ca_continuacion_conf, ca_idetapa,ca_fchultstatus, ca_propiedades, ca_idseguimiento,  ca_login, ca_fchcreado, ca_usucreado) values($id, '$fchreporte', '$consecutivo', fun_reportever('$consecutivo'), $idcotizacion, '$idciuorigen', '$idciudestino', '$impoexpo', '$fchdespacho', $idagente, '$incoterms', '".addslashes($mercancia_desc)."', '$mcia_peligrosa','$idproveedor', '$orden_prov', $idconcliente, '$orden_clie', '$confirmar', $idconsignatario, '$informar_cons', $idnotify, '$informar_noti', $idmaster, '$informar_mast', $repnotify, $idrepresentante, '$informar_repr', '$transporte', '$modalidad', '$colmas', '$seguro', '$liberacion', '$tiempocredito', '".addslashes($preferencias_clie)."', '".addslashes($instrucciones)."', $idlinea, $idconsignar, $idbodega, '$mastersame', '$continuacion', '$continuacion_dest', ".($continuacion_conf?"'$continuacion_conf'":"null").", ".($idetapa?"'$idetapa'":"null").", ".($fchultstatus?"'$fchultstatus'":"null").",'$propiedades', ".($idseguimiento?"'$idseguimiento'":"null").",  '$login', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
                    }
              }
-			 /*
-			 * Actualiza el valor idreporte en tb_inolientes_sea
-			 */			
-			 if ( $accion =='Nueva Versión') {
-			 					
-			 	 if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $id  where ca_idreporte = $id_old")) {
+             /*
+             * Actualiza el valor idreporte en tb_inolientes_sea
+             */
+             if ( $accion =='Nueva Versión') {
+                 if (!$rs->Open("update tb_inoclientes_sea set ca_idreporte = $id  where ca_idreporte = $id_old")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
                     exit;
                    }
-			 }
+             }
 			 
              if ($accion =='Reporte Nuevo' or $accion =='Nueva Versión') {
                 if (!$rs->Open("insert into tb_reptarifas (ca_idreporte, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, ca_fchcreado, ca_usucreado)  select $id, ca_idconcepto, ca_cantidad, ca_neta_tar, ca_neta_min, ca_neta_idm, ca_reportar_tar, ca_reportar_min, ca_reportar_idm, ca_cobrar_tar, ca_cobrar_min, ca_cobrar_idm, ca_observaciones, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario' from tb_reptarifas where ca_idreporte = $id_old")) {
@@ -2959,12 +3107,12 @@ function datos_basicos(&$visible,&$rs,&$tm){
      echo "<TR>";
      echo "  <TH Class=invertir COLSPAN=5 style='font-weight:bold;'>INFORMACION GENERAL</TH>";
      echo "<TR>";
-     echo "  <TD Class=partir>1.&nbspImportación</TD>";
+     echo "  <TD Class=partir>1.&nbsp;Importación</TD>";
      echo "  <TD Class=partir style='font-size: 11px; text-align: center;' COLSPAN=2>2. Origen</TD>";
      echo "  <TD Class=partir style='font-size: 11px; text-align: center;' COLSPAN=2>3. Destino</TD>";
      echo "</TR>";
      echo "<TR>";
-     echo "  <TD Class=partir style='font-size: 11px; text-align: center; font-weight:bold;'>".$rs->Value('ca_impoexpo')."<BR>&nbsp<BR>&nbsp</TD>";
+     echo "  <TD Class=partir style='font-size: 11px; text-align: center; font-weight:bold;'>".$rs->Value('ca_impoexpo')."<BR>&nbsp;<BR>&nbsp;</TD>";
      echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_ciuorigen')."</TD>";
      echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_traorigen')."</TD>";
      echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_ciudestino')."</TD>";
@@ -2996,7 +3144,7 @@ function datos_basicos(&$visible,&$rs,&$tm){
 
      echo "</TR>";
      echo "<TR>";
-     echo "  <TD Class=listar COLSPAN=3><B>6. Descripción de la Mercancía:</B><BR>".nl2br($rs->Value('ca_mercancia_desc'))."</TD>";
+     echo "  <TD Class=listar COLSPAN=3><B>6. Descripción de la Mercancía:</B><BR>".nl2br($rs->Value('ca_mercancia_desc'))."<BR><BR>".(($rs->value("ca_mcia_peligrosa"))?"SÍ":"NO")." es Mercancía Peligrosa!</TD>";
      echo "</TR>";
 
      $cadena = (trim(strlen($rs->Value('ca_idproveedor'))) != 0)?"ca_idtercero in (".str_replace("|",",",$rs->Value('ca_idproveedor')).")":"false";
@@ -3169,7 +3317,7 @@ function datos_basicos(&$visible,&$rs,&$tm){
      for ($i=0; $i<4; $i++){
          echo "  <TR>";
          for ($j=0; $j<3; $j++){
-            $cadena = (strlen($emails[$z])==0)?"&nbsp":$emails[$z];
+            $cadena = (strlen($emails[$z])==0)?"&nbsp;":$emails[$z];
             echo "<TD Class=invertir>$cadena</TD>";
             $z++;
          }
@@ -3190,9 +3338,9 @@ function datos_basicos(&$visible,&$rs,&$tm){
      echo "  <TD Class=invertir COLSPAN=4></TD>";
      echo "</TR>";
      echo "<TR>";
-     echo "  <TD Class=listar>15.&nbspColmas&nbspS.I.A.&nbspLtda:<BR><CENTER><B>".$rs->Value('ca_colmas')."</B></CENTER></TD>";
-     echo "  <TD Class=listar>16.&nbspSeguro:<BR><CENTER><B>".$rs->Value('ca_seguro')."</B></CENTER></TD>";
-     echo "  <TD Class=listar COLSPAN=2>17.&nbspLib.&nbspAutomática:&nbsp&nbsp<B>".$rs->Value('ca_liberacion')."</B><BR>Tiempo de Crédito: <B>".$rs->Value('ca_tiempocredito')."</B></TD>";
+     echo "  <TD Class=listar>15.&nbsp;Colmas&nbsp;S.I.A.&nbsp;Ltda:<BR><CENTER><B>".$rs->Value('ca_colmas')."</B></CENTER></TD>";
+     echo "  <TD Class=listar>16.&nbsp;Seguro:<BR><CENTER><B>".$rs->Value('ca_seguro')."</B></CENTER></TD>";
+     echo "  <TD Class=listar COLSPAN=2>17.&nbsp;Lib.&nbsp;Automática:&nbsp;&nbsp;<B>".$rs->Value('ca_liberacion')."</B><BR>Tiempo de Crédito: <B>".$rs->Value('ca_tiempocredito')."</B></TD>";
      echo "</TR>";
      echo "<TR HEIGHT=5>";
      echo "  <TD Class=invertir COLSPAN=4></TD>";
@@ -3202,7 +3350,7 @@ function datos_basicos(&$visible,&$rs,&$tm){
      echo "    <TR>";
      echo "      <TD Class=listar WIDTH=175>18.1 Continuación/Viaje:";
      echo "      <TD Class=listar><CENTER><B>".$rs->Value('ca_continuacion')."</B></CENTER></TD>";  // Llena el cuadro de lista con la lista de continuaciones de viaje
-     echo "      <TD Class=listar>18.2&nbspDestino&nbspFinal:";
+     echo "      <TD Class=listar>18.2&nbsp;Destino&nbsp;Final:";
      echo "      <TD Class=listar><B>".$rs->Value('ca_final_dest')."</B></TD>";                         // Llena el cuadro de lista con la lista de ciudades destino de continuaciones de viaje
      echo "    </TR>";
 	
@@ -3231,7 +3379,7 @@ function datos_basicos(&$visible,&$rs,&$tm){
      echo "      <TD Class=mostrar COLSPAN=3><B>".$rs->Value('ca_tipobodega')."</B></TD>";
      echo "    </TR>";
      echo "    <TR>";
-     echo "      <TD Class=mostrar>19.3&nbspIgualar&nbspMaster/Hijo:&nbsp<B>".$rs->Value('ca_mastersame')."</B></TD>";
+     echo "      <TD Class=mostrar>19.3&nbsp;Igualar&nbsp;Master/Hijo:&nbsp;<B>".$rs->Value('ca_mastersame')."</B></TD>";
      echo "      <TD Class=mostrar COLSPAN=4><B>".$rs->Value('ca_bodega')."</B></TD>";                  // Llena el cuadro de lista con las zonas o depósitos aduaneros
      echo "    </TR>";
      echo "  </TABLE></TD>";
