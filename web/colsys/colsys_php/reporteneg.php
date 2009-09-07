@@ -93,7 +93,7 @@ if (true){
 
     $pdf->SetWidths(array(200));
     $pdf->SetStyles(array(""));
-    $pdf->Row(array('Descripción de la Mercancia:'."\n".$rs->Value('ca_mercancia_desc')));
+    $pdf->Row(array('Descripción de la Mercancia:'.'\n'.$rs->Value('ca_mercancia_desc').' <'.(($rs->value("ca_mcia_peligrosa"))?"SÍ":"NO")." es Mercancía Peligrosa!>"));
 
     $pdf->Ln(3);
 	
