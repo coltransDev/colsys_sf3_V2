@@ -41,7 +41,6 @@ class falabellaActions extends sfActions {
 	* Permite ver los detalles del PO y confirmar los datos para generar el archivo de salida
 	*/
 	public function executeDetails(){
-
 		$this->fala_header = FalaHeaderPeer::retrieveByPk ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($this->fala_header);
 		$c = new Criteria();
@@ -237,7 +236,6 @@ class falabellaActions extends sfActions {
 			$new_shipping->setCaIddoc($doc_mem);
 			$new_shipping->save();
 		}
-
 		$this->redirect("falabella/generarArchivo?iddoc=".$this->getRequestParameter ( 'iddoc' ));
 		return sfView::NONE;
 	}
