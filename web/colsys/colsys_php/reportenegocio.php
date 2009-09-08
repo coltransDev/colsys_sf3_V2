@@ -2505,6 +2505,7 @@ elseif (isset($accion)) {                                                       
         $incoterms = (isset($incoterms))?implode("|",array_filter($incoterms, "vacios")):"";         // Retira las posiciones en blanco del arreglo
         $confirmar = (isset($confirmar))?implode(",",array_filter($confirmar, "vacios")):"";           // Retira las posiciones en blanco del arreglo
         $modalidad = (isset($modalidad))?$modalidad:"";
+        $repnotify = (isset($repnotify))?$repnotify:0;
     }
     if (isset($mcia_peligrosa) and $mcia_peligrosa == "on"){
         $mcia_peligrosa = "TRUE";
