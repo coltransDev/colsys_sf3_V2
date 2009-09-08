@@ -21,6 +21,7 @@ $letras  = array(" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N");
 $parte_1 = array(" ","Avenida","Autopista","Calle","Carrera","Circular","Diagonal","Transversal","Via");
 $parte_2 = array(" ","Bis");
 $parte_3 = array(" ","Norte","Sur","Este","Oeste");
+$numero = array("No.","");
 $localidades = array("Usaquén","Chapinero","Santafé","San Cristóbal","Usme","Tunjuelito","Bosa","Kennedy","Fontibón","Engativa","Suba","Barrios Unidos","Teusaquillo","Mártires","Antonio Nariño","Puente Aranda","Candelaria","Rafael Uribe","Ciudad Bolívar","Sumapaz","Cajicá","Chia","Cota","La Calera","Funza","Mosquera","Sibaté","Siberia","Soacha","Tocancipá","Otra");
 $sexos = array("Femenino","Masculino");
 $calificaciones = array("A","B","C","D","E");
@@ -924,7 +925,11 @@ require_once("menu.php");
                   echo " <OPTION VALUE='".$parte_2[$i]."'>".$parte_2[$i];
                   }
              echo "  </SELECT>";
-             echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE=No. READONLY SIZE=2 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+             echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
+             for ($i=0; $i < count($numero); $i++) {
+                  echo " <OPTION VALUE='".$numero[$i]."'>".$numero[$i];
+                  }
+             echo "  </SELECT>";
              echo "  <INPUT TYPE='TEXT' NAME='direccion[]' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
              echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(adicionar.elements[\"direccion[]\"]);'>";
              for ($i=0; $i < count($letras); $i++) {
@@ -1227,7 +1232,15 @@ require_once("menu.php");
                   echo " >".$parte_2[$i];
                   }
              echo "  </SELECT>";
-             echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE=No. READONLY SIZE=2 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+             echo "  <SELECT NAME='direccion[]' VALUE='".$dir_anterior[4]."' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
+             for ($i=0; $i < count($numero); $i++) {
+                  echo " <OPTION VALUE='".$numero[$i]."'";
+                  if ($numero[$i]==$dir_anterior[4]) {
+                      echo" SELECTED"; }
+                  echo " >".$numero[$i];
+                  }
+             echo "  </SELECT>";
+
              echo "  <INPUT TYPE='TEXT' NAME='direccion[]' VALUE='".$dir_anterior[5]."' SIZE=2 MAXLENGTH=3 ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
              echo "  <SELECT NAME='direccion[]' ONCHANGE='completar(modificar.elements[\"direccion[]\"]);'>";
              for ($i=0; $i < count($letras); $i++) {
