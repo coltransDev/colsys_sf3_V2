@@ -173,8 +173,8 @@ function export_file(){
 		if (confirm('¿Desea generar una nueva order de pedido con la cantidad de productos faltantes?')) {
 			document.location='<?=url_for("falabella/generarNuevaOrden?iddoc=".base64_encode( $fala_header->getCaIddoc()) )?>';
 		}
-        }
-	document.location='<?=url_for("falabella/generarArchivo?iddoc=".base64_encode( $fala_header->getCaIddoc()) )?>';
+	}
+        document.location='<?=url_for("falabella/generarArchivo?iddoc=".base64_encode( $fala_header->getCaIddoc()) )?>';
 }
 
 function factura_file(){
