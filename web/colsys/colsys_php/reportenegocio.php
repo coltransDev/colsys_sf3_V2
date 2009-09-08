@@ -1532,7 +1532,7 @@ echo "</BODY>";
              echo "  </SELECT></TD>";
              echo "</TR>";
              echo "<TR>";
-             echo "  <TD Class=mostrar COLSPAN=4>6. Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=93>".$rs->Value('ca_mercancia_desc')."</TEXTAREA><BR>¿Es Mercancía Peligrosa? <INPUT TYPE=CHECKBOX NAME='mcia_peligrosa' ".(($rs->Value("ca_mcia_peligrosa"))?"CHECKED":"")."><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Marque esta opción para indicar que Sí es Mercancia Peligrosa'></TD>";
+             echo "  <TD Class=mostrar COLSPAN=4>6. Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=93>".$rs->Value('ca_mercancia_desc')."</TEXTAREA><BR>¿Es Mercancía Peligrosa? <INPUT TYPE=CHECKBOX NAME='mcia_peligrosa' ".(($rs->Value("ca_mcia_peligrosa")=='t')?"CHECKED":"")."><IMG SRC='./graficos/nuevo.gif' border=0 ALT='Marque esta opción para indicar que Sí es Mercancia Peligrosa'></TD>";
              echo "</TR>";
              $cadena = (trim(strlen($rs->Value('ca_idproveedor'))) != 0)?"ca_idtercero in (".str_replace("|",",",$rs->Value('ca_idproveedor')).")":"false";
              if (!$tm->Open("select * from vi_terceros where $cadena union (select vi_terceros.* from vi_terceros RIGHT OUTER JOIN tb_terceros on (null) limit 1)")) {
@@ -2876,7 +2876,7 @@ elseif (isset($accion)) {                                                       
 
              $contenido.="<TR>\n";
              $contenido.="  <TD><B>Mercancia :</B></TD>\n";
-             $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_mercancia_desc')."<BR><BR>".(($rs->value("ca_mcia_peligrosa"))?"SÍ":"NO")." es Mercancía Peligrosa!</TD>\n";
+             $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_mercancia_desc')."<BR><BR>".(($rs->value("ca_mcia_peligrosa")=='t')?"SÍ":"NO")." es Mercancía Peligrosa!</TD>\n";
              $contenido.="</TR>\n";
              $contenido.="</TABLE>\n";
 
@@ -3144,7 +3144,7 @@ function datos_basicos(&$visible,&$rs,&$tm){
 
      echo "</TR>";
      echo "<TR>";
-     echo "  <TD Class=listar COLSPAN=3><B>6. Descripción de la Mercancía:</B><BR>".nl2br($rs->Value('ca_mercancia_desc'))."<BR><BR>".(($rs->value("ca_mcia_peligrosa"))?"SÍ":"NO")." es Mercancía Peligrosa!</TD>";
+     echo "  <TD Class=listar COLSPAN=3><B>6. Descripción de la Mercancía:</B><BR>".nl2br($rs->Value('ca_mercancia_desc'))."<BR><BR>".(($rs->value("ca_mcia_peligrosa")=='t')?"SÍ":"NO")." es Mercancía Peligrosa!</TD>";
      echo "</TR>";
 
      $cadena = (trim(strlen($rs->Value('ca_idproveedor'))) != 0)?"ca_idtercero in (".str_replace("|",",",$rs->Value('ca_idproveedor')).")":"false";
