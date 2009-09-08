@@ -445,8 +445,8 @@ require_once("menu.php");
              echo "  <TD Class=titulo COLSPAN=5><CENTER><TABLE WIDTH=100% CELLSPACING=1 BORDER=0>";
              echo "      <TR>";
              echo "        <TD Class=invertir style='text-align:center; font-weight:bold;' WIDTH='98%'>EMBARQUE ".strtoupper($rs->Value('ca_transporte'))."</TD>";
-			 echo "        <TD Class=invertir style='text-align:center;' WIDTH='2%'><IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Liquidar\", $id);'>";
-			 echo "      </TR>";
+             echo "        <TD Class=invertir style='text-align:center;' WIDTH='2%'><IMG style='visibility: $visible;' src='./graficos/edit.gif' alt='Editar el Registro' border=0 onclick='elegir(\"Liquidar\", $id);'>";
+             echo "      </TR>";
              echo "  </TABLE></TD>";
              echo "</TR>";
 
@@ -685,8 +685,7 @@ require_once("menu.php");
              break;
              }
         case 'Imprimir': {                                                    // Opcion para Consultar un solo registro
-			header("Location: /reportes/verReporte/id/".$id);             
-
+             header("Location: /reportes/verReporte/id/".$id);
              break;
              }
         case 'Adicionar': {                                                    // Opcion para Adicionar Registros a la tabla
@@ -721,7 +720,7 @@ require_once("menu.php");
              echo "</HEAD>";
 
              echo "<BODY ID=Cuerpo onscroll='dalt=document.body.scrollTop+3; find_contacto.style.top=dalt; find_texts.style.top=dalt'>";
-			 require_once("menu.php");
+             require_once("menu.php");
              echo "<DIV ID='find_contacto' STYLE='visibility:hidden; position:absolute; border-width:3; border-color:#666666; border-style:solid;'>";
              echo "<IFRAME ID='find_contacto_frame' SRC='blanco.html' MARGINWIDTH=0 MARGINHEIGHT=0 FRAMEBORDER='NO' SCROLLING='YES' STYLE='width:645; height:200'>";
              echo "</IFRAME>";
@@ -1421,25 +1420,25 @@ echo "</BODY>";
         case 'Editar': {                                                    // Opcion para Adicionar Registros a la tabla
              $modulo = "00100100";                                             // Identificación del módulo para la ayuda en línea
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
-			 if (!isset($nw)){
-				 if (!$rs->Open("select * from vi_reportes where ca_idreporte = ".$id)) {    // Mueve el apuntador al registro que se desea modificar
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";     // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-			 }else{
-				 if (!$rs->Open("select b.ca_idreporte, b.ca_version, b.ca_versiones, b.ca_fchreporte, b.ca_consecutivo, a.ca_idcotizacion, b.ca_origen, b.ca_ciuorigen, b.ca_idtraorigen, b.ca_traorigen, b.ca_destino, b.ca_ciudestino, b.ca_idtradestino, b.ca_tradestino, b.ca_impoexpo, b.ca_fchdespacho, b.ca_idagente,
-								 b.ca_agente, a.ca_incoterms, a.ca_mercancia_desc, a.ca_mcia_peligrosa, b.ca_idproveedor, b.ca_orden_prov, a.ca_idconcliente, b.ca_orden_clie, a.ca_confirmar_clie, a.ca_idconsignatario, a.ca_informar_cons, a.ca_idrepresentante, a.ca_informar_repr, a.ca_transporte, a.ca_modalidad, a.ca_colmas, a.ca_seguro,
-								 a.ca_liberacion, a.ca_tiempocredito, a.ca_preferencias_clie, a.ca_instrucciones, a.ca_idconsignar, a.ca_consignar, a.ca_idbodega, a.ca_bodega, a.ca_tipobodega, a.ca_mastersame, a.ca_continuacion, a.ca_continuacion_dest, a.ca_final_dest, a.ca_continuacion_conf, a.ca_idlinea, a.ca_nombre,
-								 b.ca_fchcreado, b.ca_usucreado, b.ca_fchactualizado, b.ca_usuactualizado, b.ca_fchanulado, b.ca_usuanulado, b.ca_nombre_pro, b.ca_contacto_pro, b.ca_direccion_pro, b.ca_telefonos_pro, b.ca_fax_pro, b.ca_email_pro, a.ca_nombre_cli, a.ca_idcliente, a.ca_digito, a.ca_contacto_cli, a.ca_telefonos_cli,
-								 a.ca_fax_cli, a.ca_email_cli, a.ca_direccion_cli, a.ca_nombre_rep, a.ca_contacto_rep, a.ca_direccion_rep, a.ca_telefonos_rep, a.ca_fax_rep, a.ca_email_rep, a.ca_nombre_con, a.ca_contacto_con, a.ca_direccion_con, a.ca_telefonos_con, a.ca_fax_con, a.ca_email_con,
-								 a.ca_vlrasegurado, a.ca_idmoneda_vlr, a.ca_primaventa, a.ca_minimaventa, a.ca_idmoneda_vta, a.ca_obtencionpoliza, a.ca_idmoneda_pol, a.ca_seguro_conf, a.ca_login, a.ca_vendedor, a.ca_sucursal
-								 from (select * from vi_reportes where ca_idreporte = '$nw') a LEFT OUTER JOIN (select * from vi_reportes where ca_idreporte = '$id') b ON (true)")) {    // Mueve el apuntador al registro que se desea modificar
-					 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";     // Muestra el mensaje de error
-					 echo "<script>document.location.href = 'reportenegocio.php';</script>";
-					 exit;
-					}
-			 }
+             if (!isset($nw)){
+                 if (!$rs->Open("select * from vi_reportes where ca_idreporte = ".$id)) {    // Mueve el apuntador al registro que se desea modificar
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                 }
+             }else{
+                 if (!$rs->Open("select b.ca_idreporte, b.ca_version, b.ca_versiones, b.ca_fchreporte, b.ca_consecutivo, a.ca_idcotizacion, b.ca_origen, b.ca_ciuorigen, b.ca_idtraorigen, b.ca_traorigen, b.ca_destino, b.ca_ciudestino, b.ca_idtradestino, b.ca_tradestino, b.ca_impoexpo, b.ca_fchdespacho, b.ca_idagente,
+                     b.ca_agente, a.ca_incoterms, a.ca_mercancia_desc, a.ca_mcia_peligrosa, b.ca_idproveedor, b.ca_orden_prov, a.ca_idconcliente, b.ca_orden_clie, a.ca_confirmar_clie, a.ca_idconsignatario, a.ca_informar_cons, a.ca_idrepresentante, a.ca_informar_repr, a.ca_transporte, a.ca_modalidad, a.ca_colmas, a.ca_seguro,
+                     a.ca_liberacion, a.ca_tiempocredito, a.ca_preferencias_clie, a.ca_instrucciones, a.ca_idconsignar, a.ca_consignar, a.ca_idbodega, a.ca_bodega, a.ca_tipobodega, a.ca_mastersame, a.ca_continuacion, a.ca_continuacion_dest, a.ca_final_dest, a.ca_continuacion_conf, a.ca_idlinea, a.ca_nombre,
+                     b.ca_fchcreado, b.ca_usucreado, b.ca_fchactualizado, b.ca_usuactualizado, b.ca_fchanulado, b.ca_usuanulado, b.ca_nombre_pro, b.ca_contacto_pro, b.ca_direccion_pro, b.ca_telefonos_pro, b.ca_fax_pro, b.ca_email_pro, a.ca_nombre_cli, a.ca_idcliente, a.ca_digito, a.ca_contacto_cli, a.ca_telefonos_cli,
+                     a.ca_fax_cli, a.ca_email_cli, a.ca_direccion_cli, a.ca_nombre_rep, a.ca_contacto_rep, a.ca_direccion_rep, a.ca_telefonos_rep, a.ca_fax_rep, a.ca_email_rep, a.ca_nombre_con, a.ca_contacto_con, a.ca_direccion_con, a.ca_telefonos_con, a.ca_fax_con, a.ca_email_con,
+                     a.ca_vlrasegurado, a.ca_idmoneda_vlr, a.ca_primaventa, a.ca_minimaventa, a.ca_idmoneda_vta, a.ca_obtencionpoliza, a.ca_idmoneda_pol, a.ca_seguro_conf, a.ca_login, a.ca_vendedor, a.ca_sucursal
+                     from (select * from vi_reportes where ca_idreporte = '$nw') a LEFT OUTER JOIN (select * from vi_reportes where ca_idreporte = '$id') b ON (true)")) {    // Mueve el apuntador al registro que se desea modificar
+                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                     echo "<script>document.location.href = 'reportenegocio.php';</script>";
+                     exit;
+                }
+             }
              $tm =& DlRecordset::NewRecordset($conn);
              $us =& DlRecordset::NewRecordset($conn);
              carga_arreglos($tm);
@@ -1463,7 +1462,7 @@ echo "</BODY>";
              echo "</HEAD>";
 
              echo "<BODY ID=Cuerpo onscroll='dalt=document.body.scrollTop+3; find_contacto.style.top=dalt; find_texts.style.top=dalt'>";
-			 require_once("menu.php");
+             require_once("menu.php");
              echo "<DIV ID='find_contacto' STYLE='visibility:hidden; position:absolute; border-width:3; border-color:#666666; border-style:solid;'>";
              echo "<IFRAME ID='find_contacto_frame' SRC='blanco.html' MARGINWIDTH=0 MARGINHEIGHT=0 FRAMEBORDER='NO' SCROLLING='YES' STYLE='width:645; height:200'>";
              echo "</IFRAME>";
@@ -1861,14 +1860,11 @@ echo "</BODY>";
              echo "</TR>";
              echo "</TABLE><BR>";
              echo "<TABLE CELLSPACING=10>";
-			 
 			 	
-			 if ( strlen($rs->Value('ca_usucerrado')) == 0  ){			 
-				 echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Guardar Modificación' ONCLICK='validar(this);'></TH>";    // Ordena almacenar los datos ingresados
-				 //if(  !($rs->Value('ca_idetapa')=='99999' && $rs->Value('ca_transporte')=="Aéreo" ) ){			 	
-					 echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Nueva Versión' ONCLICK='validar(this);'></TH>";         // Ordena almacenar los datos ingresados
-				 //}
-			 }
+             if ( strlen($rs->Value('ca_usucerrado')) == 0  ){
+                 echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Guardar Modificación' ONCLICK='validar(this);'></TH>";    // Ordena almacenar los datos ingresados
+                 echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Nueva Versión' ONCLICK='validar(this);'></TH>";         // Ordena almacenar los datos ingresados
+             }
              echo "<TH><INPUT Class=submit TYPE='SUBMIT' NAME='accion' VALUE='Reporte Nuevo' ONCLICK='validar(this);'></TH>";         // Ordena almacenar los datos ingresados
              echo "<TH><INPUT Class=button TYPE='BUTTON' NAME='boton' VALUE='Cancelar' ONCLICK='javascript:document.location.href = \"reportenegocio.php?boton=Consultar\&id=$id\"'></TH>";  // Cancela la operación
              echo "<script>llenar_traficos();</script>";
@@ -2510,12 +2506,10 @@ elseif (isset($accion)) {                                                       
         $confirmar = (isset($confirmar))?implode(",",array_filter($confirmar, "vacios")):"";           // Retira las posiciones en blanco del arreglo
         $modalidad = (isset($modalidad))?$modalidad:"";
     }
-    if (isset($mcia_peligrosa)){
-        if ($mcia_peligrosa == "on"){
-            $mcia_peligrosa = "TRUE";
-        }else{
-            $mcia_peligrosa = "FALSE";
-        }
+    if (isset($mcia_peligrosa) and $mcia_peligrosa == "on"){
+        $mcia_peligrosa = "TRUE";
+    }else{
+        $mcia_peligrosa = "FALSE";
     }
     switch(trim($accion)) {                                                     // Switch que evalua cual botòn de comando fue pulsado por el usuario
         case 'Guardar Modificación': {                                          // El Botón Guardar fue pulsado
@@ -2876,7 +2870,7 @@ elseif (isset($accion)) {                                                       
 
              $contenido.="<TR>\n";
              $contenido.="  <TD><B>Mercancia :</B></TD>\n";
-             $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_mercancia_desc')."<BR><BR>".(($rs->value("ca_mcia_peligrosa")=='t')?"SÍ":"NO")." es Mercancía Peligrosa!</TD>\n";
+             $contenido.="  <TD COLSPAN=3>".$rs->Value('ca_mercancia_desc')."<BR><BR>&laquo;".(($rs->value("ca_mcia_peligrosa")=='t')?"SÍ":"NO")." es Mercancía Peligrosa&raquo;</TD>\n";
              $contenido.="</TR>\n";
              $contenido.="</TABLE>\n";
 
@@ -3126,25 +3120,25 @@ function datos_basicos(&$visible,&$rs,&$tm){
      echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;' onclick='elegir(\"Editar\", \"".$rs->Value('ca_idreporte')."\");'>Editar Reporte:<br /><IMG src='./graficos/edit.gif' alt='Editar el Registro' border=0></TD>";
      echo "   </TR>";
 	 if (strlen($rs->Value('ca_usucerrado')) != 0){
-		 echo "   <TR>";
-		 echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;'><B>".$rs->Value('ca_usucerrado')."</B><br />".$rs->Value('ca_fchcerrado')."</TD>";
-		 echo "   </TR>";
-		 echo "   <TR>";
-		 echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;'>Abrir el Caso:<br /><IMG src='./graficos/lock_close.gif' onclick='elegir(\"Abrir\", \"".$rs->Value('ca_idreporte')."\");' alt='Abrir nuevamente el Reporte' border=0></TD>";
-		 echo "   </TR>";
+             echo "   <TR>";
+             echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;'><B>".$rs->Value('ca_usucerrado')."</B><br />".$rs->Value('ca_fchcerrado')."</TD>";
+             echo "   </TR>";
+             echo "   <TR>";
+             echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;'>Abrir el Caso:<br /><IMG src='./graficos/lock_close.gif' onclick='elegir(\"Abrir\", \"".$rs->Value('ca_idreporte')."\");' alt='Abrir nuevamente el Reporte' border=0></TD>";
+             echo "   </TR>";
 	 }else{
-		 echo "   <TR>";
-		 echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;'>Cierre del Caso:<br /><IMG src='./graficos/lock_open.gif' onclick='elegir(\"Cerrar\", \"".$rs->Value('ca_idreporte')."\");' alt='Cerrar el Caso y Entregar Antecedentes' border=0></TD>";
-		 echo "   </TR>";
-		 echo "   <TR>";
-		 echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;'>Anular Reporte:<br /><IMG src='./graficos/no.gif' onclick='elegir(\"Anular\", \"".$rs->Value('ca_idreporte')."\");' alt='Anular y Ocultar el Reporte' border=0></TD>";
-		 echo "   </TR>";
+             echo "   <TR>";
+             echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;'>Cierre del Caso:<br /><IMG src='./graficos/lock_open.gif' onclick='elegir(\"Cerrar\", \"".$rs->Value('ca_idreporte')."\");' alt='Cerrar el Caso y Entregar Antecedentes' border=0></TD>";
+             echo "   </TR>";
+             echo "   <TR>";
+             echo "  	<TD style='visibility: $visible;' Class=invertir style='text-align: right; vertical-align: bottom;'>Anular Reporte:<br /><IMG src='./graficos/no.gif' onclick='elegir(\"Anular\", \"".$rs->Value('ca_idreporte')."\");' alt='Anular y Ocultar el Reporte' border=0></TD>";
+             echo "   </TR>";
 	 }
      echo "	 </TABLE></TD>";
 
      echo "</TR>";
      echo "<TR>";
-     echo "  <TD Class=listar COLSPAN=3><B>6. Descripción de la Mercancía:</B><BR>".nl2br($rs->Value('ca_mercancia_desc'))."<BR><BR>".(($rs->value("ca_mcia_peligrosa")=='t')?"SÍ":"NO")." es Mercancía Peligrosa!</TD>";
+     echo "  <TD Class=listar COLSPAN=3><B>6. Descripción de la Mercancía:</B><BR>".nl2br($rs->Value('ca_mercancia_desc'))."<BR><BR>&laquo;".(($rs->value("ca_mcia_peligrosa")=='t')?"SÍ":"NO")." es Mercancía Peligrosa&raquo;</TD>";
      echo "</TR>";
 
      $cadena = (trim(strlen($rs->Value('ca_idproveedor'))) != 0)?"ca_idtercero in (".str_replace("|",",",$rs->Value('ca_idproveedor')).")":"false";
