@@ -542,8 +542,8 @@ require_once("menu.php");
                         echo "	<TH>Fch.Llegada/Planilla</TH>";
                 }
                 echo "	<TH>Fch.Factura</TH>";
-                echo "	<TH>Dif.</TH>";
                 echo "	<TH>Observaciones</TH>";
+                echo "	<TH>Dif.</TH>";
                 break;
             case 5:
                 echo "	<TH>Fch.Status</TH>";
@@ -956,7 +956,7 @@ require_once("menu.php");
     echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".$lcs_var."</TD>";
     echo "</TR>";
     echo "<TR>";
-    echo "  <TD Class=listar>Promedio Penderado:</TD>";
+    echo "  <TD Class=listar>Promedio Ponderado:</TD>";
     echo "  <TD Class=listar>No. Casos ".count($array_avg)."</TD>";
     echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".(($format_avg=="H:i:s")?date($format_avg,array_avg($array_avg)):array_avg($array_avg))."</TD>";
     echo "  <TD Class=listar>LC:</TD>";
