@@ -1,3 +1,4 @@
+
 /* Sistema de Información Coltrans S.A. - Script SLQ */;
 
 /* Tabla de monedas con su equivalencia en dolares y de dolar a pesos Col. */;
@@ -2277,8 +2278,8 @@ GRANT ALL ON vi_terceros TO GROUP "Usuarios";
 Create view vi_reportes as
 select r.ca_idreporte, r.ca_version, (select max(rr.ca_version) from tb_reportes rr where r.ca_consecutivo = rr.ca_consecutivo) as ca_versiones, r.ca_fchreporte, r.ca_consecutivo, r.ca_idcotizacion, r.ca_origen, c1.ca_ciudad as ca_ciuorigen, t1.ca_idtrafico as ca_idtraorigen, t1.ca_nombre as ca_traorigen, r.ca_destino, c2.ca_ciudad as ca_ciudestino, t2.ca_idtrafico as ca_idtradestino, t2.ca_nombre as ca_tradestino,
        r.ca_impoexpo, r.ca_fchdespacho, r.ca_idagente, a.ca_nombre as ca_agente, r.ca_incoterms, r.ca_mercancia_desc, r.ca_mcia_peligrosa, r.ca_idproveedor, r.ca_orden_prov, r.ca_idconcliente, r.ca_orden_clie, r.ca_confirmar_clie, r.ca_idconsignatario, r.ca_informar_cons, r.ca_idnotify, r.ca_informar_noti, r.ca_idmaster, r.ca_informar_mast, r.ca_notify, r.ca_idrepresentante, r.ca_informar_repr, r.ca_transporte, r.ca_modalidad, r.ca_colmas, r.ca_seguro, r.ca_liberacion,
-       r.ca_tiempocredito, r.ca_preferencias_clie, r.ca_instrucciones, r.ca_idconsignar, b1.ca_nombre as ca_consignar, r.ca_idbodega, b2.ca_nombre as ca_bodega, b2.ca_tipo as ca_tipobodega, r.ca_mastersame, r.ca_continuacion, r.ca_continuacion_dest, c3.ca_ciudad as ca_final_dest, r.ca_continuacion_conf, r.ca_etapa_actual, r.ca_idlinea, l.ca_nombre, r.ca_propiedades, r.ca_fchcreado, r.ca_usucreado, r.ca_fchactualizado, r.ca_usuactualizado, r.ca_fchanulado, r.ca_usuanulado, r.ca_fchcerrado, r.ca_usucerrado,
-       tr1.ca_nombre as ca_nombre_pro, tr1.ca_contacto as ca_contacto_pro, tr1.ca_direccion as ca_direccion_pro, tr1.ca_telefonos as ca_telefonos_pro, tr1.ca_fax as ca_fax_pro, tr1.ca_email as ca_email_pro,
+       r.ca_tiempocredito, r.ca_preferencias_clie, r.ca_instrucciones, r.ca_idconsignar, b1.ca_nombre as ca_consignar, r.ca_idbodega, b2.ca_nombre as ca_bodega, b2.ca_tipo as ca_tipobodega, r.ca_mastersame, r.ca_continuacion, r.ca_continuacion_dest, c3.ca_ciudad as ca_final_dest, r.ca_continuacion_conf, r.ca_etapa_actual, r.ca_idlinea, r.ca_idetapa, r.ca_fchultstatus, r.ca_idtarea_rext, r.ca_idseguimiento, l.ca_nombre, r.ca_propiedades,
+       r.ca_fchcreado, r.ca_usucreado, r.ca_fchactualizado, r.ca_usuactualizado, r.ca_fchanulado, r.ca_usuanulado, r.ca_detanulado, r.ca_fchcerrado, r.ca_usucerrado, tr1.ca_nombre as ca_nombre_pro, tr1.ca_contacto as ca_contacto_pro, tr1.ca_direccion as ca_direccion_pro, tr1.ca_telefonos as ca_telefonos_pro, tr1.ca_fax as ca_fax_pro, tr1.ca_email as ca_email_pro,
        tr2.ca_compania as ca_nombre_cli, tr2.ca_idcliente, tr2.ca_digito, tr2.ca_ncompleto_cn as ca_contacto_cli, tr2.ca_telefonos as ca_telefonos_cli, tr2.ca_fax as ca_fax_cli, tr2.ca_email as ca_email_cli,
        replace(tr2.ca_direccion_cl,'|',' ')|| case when tr2.ca_oficina <> '' then ' Of. '||tr2.ca_oficina else '' end|| case when tr2.ca_torre <> '' then ' Torre '||tr2.ca_torre else '' end|| case when tr2.ca_bloque <> '' then ' Bl. '||tr2.ca_bloque else '' end|| case when tr2.ca_interior <> '' then ' Int. '||tr2.ca_interior else '' end|| case when tr2.ca_complemento <> '' then ' '||tr2.ca_complemento else '' end ||' '|| tr2.ca_ciudad as ca_direccion_cli,
        tr3.ca_nombre as ca_nombre_rep, tr3.ca_contacto as ca_contacto_rep, tr3.ca_direccion||' '|| tr3.ca_ciudad as ca_direccion_rep, tr3.ca_telefonos as ca_telefonos_rep, tr3.ca_fax as ca_fax_rep, tr3.ca_email as ca_email_rep,
@@ -2878,12 +2879,12 @@ Create view vi_repindicador_brk as
 select bkm.ca_referencia, bkm.ca_fchreferencia, bkm.ca_fcharribo, bkm.ca_idcliente, bkm.ca_coordinador, (((string_to_array(bkm.ca_referencia,'.'))[5]::int)+2000)::text as ca_ano, ((string_to_array(bkm.ca_referencia,'.'))[3])::text as ca_mes, sc.ca_nombre as ca_sucursal,
         tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, 'Aduana'::text as ca_transporte, 'Aduana'::text as ca_modalidad, 'Importación'::text as ca_impoexpo, ccl.ca_compania
 from tb_brk_maestra bkm
-	LEFT OUTER JOIN control.tb_usuarios us ON (bkm.ca_vendedor = us.ca_login)
-	LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
-	LEFT OUTER JOIN tb_ciudades cio ON (bkm.ca_origen = cio.ca_idciudad)
-	LEFT OUTER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
-	LEFT OUTER JOIN tb_ciudades cid ON (bkm.ca_destino = cid.ca_idciudad)
-	LEFT OUTER JOIN tb_clientes ccl ON (bkm.ca_idcliente = ccl.ca_idcliente)
+	INNER JOIN control.tb_usuarios us ON (bkm.ca_vendedor = us.ca_login)
+	INNER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
+	INNER JOIN tb_ciudades cio ON (bkm.ca_origen = cio.ca_idciudad)
+	INNER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
+	INNER JOIN tb_ciudades cid ON (bkm.ca_destino = cid.ca_idciudad)
+	INNER JOIN tb_clientes ccl ON (bkm.ca_idcliente::numeric = ccl.ca_idcliente::numeric)
 order by ca_ano, ca_mes, ca_sucursal, ca_referencia;
 
 REVOKE ALL ON vi_repindicador_brk FROM PUBLIC;
