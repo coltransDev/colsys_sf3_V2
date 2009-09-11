@@ -82,7 +82,7 @@ require_once("menu.php");
 
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
         echo "<TR>";
-        echo "  <TD Class=mostrar><A HREF='comision.php?id=".$rs->Value('ca_comprobante')."' TARGET='_blank'>Comprobante No.: ".$rs->Value('ca_comprobante')."&nbsp&nbspde Fecha : ".$rs->Value('ca_fchliquidacion')."</A></TD>";
+        echo "  <TD Class=mostrar><A HREF='comision.php?id=".$rs->Value('ca_comprobante')."' TARGET='_blank'>Comprobante No.: ".$rs->Value('ca_comprobante')."&nbsp;&nbsp;de Fecha : ".$rs->Value('ca_fchliquidacion')."</A></TD>";
         echo "</TR>";
         $rs->MoveNext();
     }
@@ -187,18 +187,18 @@ require_once("menu.php");
            if ($imp_mem and $mul_lin) {
                echo "</TR>";
                echo "<TR>";
-               echo "  <TD Class=listar COLSPAN=7>&nbsp</TD>";
+               echo "  <TD Class=listar COLSPAN=7>&nbsp;</TD>";
            }
            if ($imp_mem and $rs->Value('ca_valor_ded') != 0) {
-               echo "  <TD Class=listar style='font-size: 9px;'>".str_replace(" ","&nbsp","&nbsp".$rs->Value('ca_costo_ded'))."</TD>";
+               echo "  <TD Class=listar style='font-size: 9px;'>".str_replace(" ","&nbsp;","&nbsp;".$rs->Value('ca_costo_ded'))."</TD>";
                echo "  <TD Class=valores style='font-size: 9px;'>".number_format($rs->Value('ca_valor_ded'))."</TD>";
                $sob_ven+= $rs->Value('ca_valor_ded');
                array_push($arr_fac,$rs->Value('ca_factura_ded'));
                $mul_lin = true;
               }
            else if ($imp_mem) {
-               echo "  <TD Class=listar>&nbsp</TD>";
-               echo "  <TD Class=listar>&nbsp</TD>";
+               echo "  <TD Class=listar>&nbsp;</TD>";
+               echo "  <TD Class=listar>&nbsp;</TD>";
                array_push($arr_fac,$rs->Value('ca_factura_ded'));
               }
            $rs->MoveNext();
@@ -211,8 +211,8 @@ require_once("menu.php");
             echo "<TR>";
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Totales por Vendedor :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con)."</TD>";
-            echo "  <TD Class=listar style='font-weight:bold;'>&nbspSobreventa :</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp&nbsp".number_format($sob_ven)."</TD>";
+            echo "  <TD Class=listar style='font-weight:bold;'>&nbsp;Sobreventa :</TD>";
+            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($sob_ven)."</TD>";
             echo "</TR>";
             echo "<TR HEIGHT=5>";
             echo "  <TD Class=invertir COLSPAN=9></TD>";
@@ -220,8 +220,8 @@ require_once("menu.php");
             echo "<TR>";
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Comisión en Ventas :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con*$rs->Value('ca_porcentaje')/100)."</TD>";
-            echo "  <TD Class=listar style='font-weight:bold;'>&nbspCom. Sobreventa :</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp&nbsp".number_format($sob_ven*$rs->Value('ca_porcentaje')/100)."</TD>";
+            echo "  <TD Class=listar style='font-weight:bold;'>&nbsp;Com. Sobreventa :</TD>";
+            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($sob_ven*$rs->Value('ca_porcentaje')/100)."</TD>";
             echo "</TR>";
             echo "<TR>";
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=8>Gran Total para ".ucwords(strtolower($nom_ven))." :</TD>";
@@ -243,7 +243,7 @@ require_once("menu.php");
     echo "<TR>";
     echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=6>Totales del Informe:</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_tot)."</TD>";
-    echo "  <TD Class=valores style='font-weight:bold;'>&nbspTotal Sobreventa:</TD>";
+    echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;Total Sobreventa:</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($sob_tot)."</TD>";
     echo "</TR>";
     echo "<TR HEIGHT=5>";
@@ -415,8 +415,8 @@ require_once("menu.php");
                 echo "  <TD Class=listar  WIDTH=50 style='font-size: 9px;$back_col'>".$rs->Value('ca_factura')."</TD>";
                 echo "  <TD Class=listar  WIDTH=70 style='font-size: 9px;$back_col'>".$rs->Value('ca_fchfactura')."</TD>";
                 echo "  <TD Class=valores WIDTH=75 style='font-size: 9px;$back_col'>".number_format($rs->Value('ca_valor'))."</TD>";
-                echo "  <TD Class=listar  WIDTH=75><INPUT ID=".$num_oid."_".$j." TYPE='TEXT' NAME='reccaja[".$rs->Value('ca_oid')."][recibo]' VALUE='".$rs->Value('ca_reccaja')."' SIZE=13 MAXLENGTH=15 ONBLUR='habilitar(this);' ".((strlen($rs->Value('ca_reccaja'))!=0)?'READONLY':'')."></TD>";
-                echo "  <TD Class=listar  WIDTH=75><INPUT TYPE='TEXT' NAME='reccaja[".$rs->Value('ca_oid')."][fchpago]' SIZE=12 VALUE='".(strlen($rs->Value('ca_fchpago'))!=0?$rs->Value('ca_fchpago'):date("Y-m-d"))."' ONKEYDOWN=\"chkDate(this)\" ".(strlen($rs->Value('ca_fchpago'))==0?"ONDBLCLICK=\"popUpCalendar(this, this, 'yyyy-mm-dd')\"":" READONLY")."></TD>";
+                echo "  <TD Class=listar  WIDTH=75><INPUT ID=".$num_oid."_".$j." TYPE='TEXT' NAME='reccaja[".$rs->Value('ca_oid')."][recibo]' VALUE='".$rs->Value('ca_reccaja')."' SIZE=13 MAXLENGTH=15 READONLY></TD>";
+                echo "  <TD Class=listar  WIDTH=75><INPUT TYPE='TEXT' NAME='reccaja[".$rs->Value('ca_oid')."][fchpago]' SIZE=12 VALUE='".$rs->Value('ca_fchpago')."' READONLY></TD>";
                 if ($rec_com) {
                     echo "  <TD Class=invertir WIDTH=140>";
                     echo "    <TABLE CELLSPACING=1>";
