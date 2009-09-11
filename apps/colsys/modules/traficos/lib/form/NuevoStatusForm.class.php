@@ -45,7 +45,7 @@ class NuevoStatusForm extends sfForm{
 										
 		$widgets['asunto'] = new sfWidgetFormInput(array(), array("size"=>120 ));
 		$widgets['introduccion'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
-		$widgets['mensaje'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140, "onChange=validarMensaje" ));
+		$widgets['mensaje'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140, "onChange"=>"validarMensaje()" ));
 		$widgets['notas'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
 		
 		
@@ -157,7 +157,7 @@ class NuevoStatusForm extends sfForm{
 		
 		$validator['mensaje'] = new sfValidatorString(array('required' => true ), 
 														array('required' => 'Por favor coloque el status'));	
-		
+		$validator['mensaje_dirty'] = new sfValidatorString(array('required' => false ));
 		$validator['notas'] = new sfValidatorString(array('required' => false ));
 		
 		$validator['piezas'] = new sfValidatorNumber(array('required' => false ), 

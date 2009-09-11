@@ -67,6 +67,8 @@ class IdsContactoMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
 
+		$tMap->addColumn('CA_VISIBILIDAD', 'CaVisibilidad', 'INTEGER', false, null);
+
 		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', true, null);
 
 		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', true, null);

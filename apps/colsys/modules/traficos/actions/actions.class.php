@@ -337,6 +337,7 @@ class traficosActions extends sfActions
 			$bindValues["asunto"] = $request->getParameter("asunto");
 			$bindValues["introduccion"] = $request->getParameter("introduccion");
 			$bindValues["mensaje"] = $request->getParameter("mensaje");
+            $bindValues["mensaje_dirty"] = $request->getParameter("mensaje_dirty");
 			$bindValues["notas"] = $request->getParameter("notas");
 			
 			$bindValues["mensaje_mask"] = $request->getParameter("mensaje_mask");

@@ -61,6 +61,9 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 	protected $ca_activo;
 
 	
+	protected $ca_visibilidad;
+
+	
 	protected $ca_fchcreado;
 
 	
@@ -199,6 +202,12 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 	public function getCaActivo()
 	{
 		return $this->ca_activo;
+	}
+
+	
+	public function getCaVisibilidad()
+	{
+		return $this->ca_visibilidad;
 	}
 
 	
@@ -534,6 +543,20 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 		return $this;
 	} 
 	
+	public function setCaVisibilidad($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->ca_visibilidad !== $v) {
+			$this->ca_visibilidad = $v;
+			$this->modifiedColumns[] = IdsContactoPeer::CA_VISIBILIDAD;
+		}
+
+		return $this;
+	} 
+	
 	public function setCaFchcreado($v)
 	{
 						if ($v === null || $v === '') {
@@ -702,12 +725,13 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 			$this->ca_observaciones = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
 			$this->ca_sugerido = ($row[$startcol + 15] !== null) ? (boolean) $row[$startcol + 15] : null;
 			$this->ca_activo = ($row[$startcol + 16] !== null) ? (boolean) $row[$startcol + 16] : null;
-			$this->ca_fchcreado = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
-			$this->ca_usucreado = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
-			$this->ca_fchactualizado = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
-			$this->ca_usuactualizado = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
-			$this->ca_fcheliminado = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
-			$this->ca_usueliminado = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_visibilidad = ($row[$startcol + 17] !== null) ? (int) $row[$startcol + 17] : null;
+			$this->ca_fchcreado = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+			$this->ca_usucreado = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+			$this->ca_fchactualizado = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+			$this->ca_usuactualizado = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+			$this->ca_fcheliminado = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+			$this->ca_usueliminado = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -716,7 +740,7 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 				$this->ensureConsistency();
 			}
 
-						return $startcol + 23; 
+						return $startcol + 24; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating IdsContacto object", $e);
 		}
@@ -982,21 +1006,24 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 				return $this->getCaActivo();
 				break;
 			case 17:
-				return $this->getCaFchcreado();
+				return $this->getCaVisibilidad();
 				break;
 			case 18:
-				return $this->getCaUsucreado();
+				return $this->getCaFchcreado();
 				break;
 			case 19:
-				return $this->getCaFchactualizado();
+				return $this->getCaUsucreado();
 				break;
 			case 20:
-				return $this->getCaUsuactualizado();
+				return $this->getCaFchactualizado();
 				break;
 			case 21:
-				return $this->getCaFcheliminado();
+				return $this->getCaUsuactualizado();
 				break;
 			case 22:
+				return $this->getCaFcheliminado();
+				break;
+			case 23:
 				return $this->getCaUsueliminado();
 				break;
 			default:
@@ -1026,12 +1053,13 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 			$keys[14] => $this->getCaObservaciones(),
 			$keys[15] => $this->getCaSugerido(),
 			$keys[16] => $this->getCaActivo(),
-			$keys[17] => $this->getCaFchcreado(),
-			$keys[18] => $this->getCaUsucreado(),
-			$keys[19] => $this->getCaFchactualizado(),
-			$keys[20] => $this->getCaUsuactualizado(),
-			$keys[21] => $this->getCaFcheliminado(),
-			$keys[22] => $this->getCaUsueliminado(),
+			$keys[17] => $this->getCaVisibilidad(),
+			$keys[18] => $this->getCaFchcreado(),
+			$keys[19] => $this->getCaUsucreado(),
+			$keys[20] => $this->getCaFchactualizado(),
+			$keys[21] => $this->getCaUsuactualizado(),
+			$keys[22] => $this->getCaFcheliminado(),
+			$keys[23] => $this->getCaUsueliminado(),
 		);
 		return $result;
 	}
@@ -1099,21 +1127,24 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 				$this->setCaActivo($value);
 				break;
 			case 17:
-				$this->setCaFchcreado($value);
+				$this->setCaVisibilidad($value);
 				break;
 			case 18:
-				$this->setCaUsucreado($value);
+				$this->setCaFchcreado($value);
 				break;
 			case 19:
-				$this->setCaFchactualizado($value);
+				$this->setCaUsucreado($value);
 				break;
 			case 20:
-				$this->setCaUsuactualizado($value);
+				$this->setCaFchactualizado($value);
 				break;
 			case 21:
-				$this->setCaFcheliminado($value);
+				$this->setCaUsuactualizado($value);
 				break;
 			case 22:
+				$this->setCaFcheliminado($value);
+				break;
+			case 23:
 				$this->setCaUsueliminado($value);
 				break;
 		} 	}
@@ -1140,12 +1171,13 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[14], $arr)) $this->setCaObservaciones($arr[$keys[14]]);
 		if (array_key_exists($keys[15], $arr)) $this->setCaSugerido($arr[$keys[15]]);
 		if (array_key_exists($keys[16], $arr)) $this->setCaActivo($arr[$keys[16]]);
-		if (array_key_exists($keys[17], $arr)) $this->setCaFchcreado($arr[$keys[17]]);
-		if (array_key_exists($keys[18], $arr)) $this->setCaUsucreado($arr[$keys[18]]);
-		if (array_key_exists($keys[19], $arr)) $this->setCaFchactualizado($arr[$keys[19]]);
-		if (array_key_exists($keys[20], $arr)) $this->setCaUsuactualizado($arr[$keys[20]]);
-		if (array_key_exists($keys[21], $arr)) $this->setCaFcheliminado($arr[$keys[21]]);
-		if (array_key_exists($keys[22], $arr)) $this->setCaUsueliminado($arr[$keys[22]]);
+		if (array_key_exists($keys[17], $arr)) $this->setCaVisibilidad($arr[$keys[17]]);
+		if (array_key_exists($keys[18], $arr)) $this->setCaFchcreado($arr[$keys[18]]);
+		if (array_key_exists($keys[19], $arr)) $this->setCaUsucreado($arr[$keys[19]]);
+		if (array_key_exists($keys[20], $arr)) $this->setCaFchactualizado($arr[$keys[20]]);
+		if (array_key_exists($keys[21], $arr)) $this->setCaUsuactualizado($arr[$keys[21]]);
+		if (array_key_exists($keys[22], $arr)) $this->setCaFcheliminado($arr[$keys[22]]);
+		if (array_key_exists($keys[23], $arr)) $this->setCaUsueliminado($arr[$keys[23]]);
 	}
 
 	
@@ -1170,6 +1202,7 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(IdsContactoPeer::CA_OBSERVACIONES)) $criteria->add(IdsContactoPeer::CA_OBSERVACIONES, $this->ca_observaciones);
 		if ($this->isColumnModified(IdsContactoPeer::CA_SUGERIDO)) $criteria->add(IdsContactoPeer::CA_SUGERIDO, $this->ca_sugerido);
 		if ($this->isColumnModified(IdsContactoPeer::CA_ACTIVO)) $criteria->add(IdsContactoPeer::CA_ACTIVO, $this->ca_activo);
+		if ($this->isColumnModified(IdsContactoPeer::CA_VISIBILIDAD)) $criteria->add(IdsContactoPeer::CA_VISIBILIDAD, $this->ca_visibilidad);
 		if ($this->isColumnModified(IdsContactoPeer::CA_FCHCREADO)) $criteria->add(IdsContactoPeer::CA_FCHCREADO, $this->ca_fchcreado);
 		if ($this->isColumnModified(IdsContactoPeer::CA_USUCREADO)) $criteria->add(IdsContactoPeer::CA_USUCREADO, $this->ca_usucreado);
 		if ($this->isColumnModified(IdsContactoPeer::CA_FCHACTUALIZADO)) $criteria->add(IdsContactoPeer::CA_FCHACTUALIZADO, $this->ca_fchactualizado);
@@ -1239,6 +1272,8 @@ abstract class BaseIdsContacto extends BaseObject  implements Persistent {
 		$copyObj->setCaSugerido($this->ca_sugerido);
 
 		$copyObj->setCaActivo($this->ca_activo);
+
+		$copyObj->setCaVisibilidad($this->ca_visibilidad);
 
 		$copyObj->setCaFchcreado($this->ca_fchcreado);
 

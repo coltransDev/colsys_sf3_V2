@@ -1,5 +1,5 @@
 <?php
-
+//exit("deprecated");
 /**
  * cotizaciones actions.
  *

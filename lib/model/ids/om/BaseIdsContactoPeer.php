@@ -13,7 +13,7 @@ abstract class BaseIdsContactoPeer {
 	const CLASS_DEFAULT = 'lib.model.ids.IdsContacto';
 
 	
-	const NUM_COLUMNS = 23;
+	const NUM_COLUMNS = 24;
 
 	
 	const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -70,6 +70,9 @@ abstract class BaseIdsContactoPeer {
 	const CA_ACTIVO = 'ids.tb_contactos.CA_ACTIVO';
 
 	
+	const CA_VISIBILIDAD = 'ids.tb_contactos.CA_VISIBILIDAD';
+
+	
 	const CA_FCHCREADO = 'ids.tb_contactos.CA_FCHCREADO';
 
 	
@@ -95,20 +98,20 @@ abstract class BaseIdsContactoPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcontacto', 'CaIdsucursal', 'CaNombres', 'CaPapellido', 'CaSapellido', 'CaSaludo', 'CaDireccion', 'CaTelefonos', 'CaFax', 'CaEmail', 'CaImpoexpo', 'CaTransporte', 'CaCargo', 'CaDepartamento', 'CaObservaciones', 'CaSugerido', 'CaActivo', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFcheliminado', 'CaUsueliminado', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcontacto', 'caIdsucursal', 'caNombres', 'caPapellido', 'caSapellido', 'caSaludo', 'caDireccion', 'caTelefonos', 'caFax', 'caEmail', 'caImpoexpo', 'caTransporte', 'caCargo', 'caDepartamento', 'caObservaciones', 'caSugerido', 'caActivo', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caFcheliminado', 'caUsueliminado', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCONTACTO, self::CA_IDSUCURSAL, self::CA_NOMBRES, self::CA_PAPELLIDO, self::CA_SAPELLIDO, self::CA_SALUDO, self::CA_DIRECCION, self::CA_TELEFONOS, self::CA_FAX, self::CA_EMAIL, self::CA_IMPOEXPO, self::CA_TRANSPORTE, self::CA_CARGO, self::CA_DEPARTAMENTO, self::CA_OBSERVACIONES, self::CA_SUGERIDO, self::CA_ACTIVO, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_FCHELIMINADO, self::CA_USUELIMINADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcontacto', 'ca_idsucursal', 'ca_nombres', 'ca_papellido', 'ca_sapellido', 'ca_saludo', 'ca_direccion', 'ca_telefonos', 'ca_fax', 'ca_email', 'ca_impoexpo', 'ca_transporte', 'ca_cargo', 'ca_departamento', 'ca_observaciones', 'ca_sugerido', 'ca_activo', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fcheliminado', 'ca_usueliminado', ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcontacto', 'CaIdsucursal', 'CaNombres', 'CaPapellido', 'CaSapellido', 'CaSaludo', 'CaDireccion', 'CaTelefonos', 'CaFax', 'CaEmail', 'CaImpoexpo', 'CaTransporte', 'CaCargo', 'CaDepartamento', 'CaObservaciones', 'CaSugerido', 'CaActivo', 'CaVisibilidad', 'CaFchcreado', 'CaUsucreado', 'CaFchactualizado', 'CaUsuactualizado', 'CaFcheliminado', 'CaUsueliminado', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcontacto', 'caIdsucursal', 'caNombres', 'caPapellido', 'caSapellido', 'caSaludo', 'caDireccion', 'caTelefonos', 'caFax', 'caEmail', 'caImpoexpo', 'caTransporte', 'caCargo', 'caDepartamento', 'caObservaciones', 'caSugerido', 'caActivo', 'caVisibilidad', 'caFchcreado', 'caUsucreado', 'caFchactualizado', 'caUsuactualizado', 'caFcheliminado', 'caUsueliminado', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCONTACTO, self::CA_IDSUCURSAL, self::CA_NOMBRES, self::CA_PAPELLIDO, self::CA_SAPELLIDO, self::CA_SALUDO, self::CA_DIRECCION, self::CA_TELEFONOS, self::CA_FAX, self::CA_EMAIL, self::CA_IMPOEXPO, self::CA_TRANSPORTE, self::CA_CARGO, self::CA_DEPARTAMENTO, self::CA_OBSERVACIONES, self::CA_SUGERIDO, self::CA_ACTIVO, self::CA_VISIBILIDAD, self::CA_FCHCREADO, self::CA_USUCREADO, self::CA_FCHACTUALIZADO, self::CA_USUACTUALIZADO, self::CA_FCHELIMINADO, self::CA_USUELIMINADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcontacto', 'ca_idsucursal', 'ca_nombres', 'ca_papellido', 'ca_sapellido', 'ca_saludo', 'ca_direccion', 'ca_telefonos', 'ca_fax', 'ca_email', 'ca_impoexpo', 'ca_transporte', 'ca_cargo', 'ca_departamento', 'ca_observaciones', 'ca_sugerido', 'ca_activo', 'ca_visibilidad', 'ca_fchcreado', 'ca_usucreado', 'ca_fchactualizado', 'ca_usuactualizado', 'ca_fcheliminado', 'ca_usueliminado', ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdcontacto' => 0, 'CaIdsucursal' => 1, 'CaNombres' => 2, 'CaPapellido' => 3, 'CaSapellido' => 4, 'CaSaludo' => 5, 'CaDireccion' => 6, 'CaTelefonos' => 7, 'CaFax' => 8, 'CaEmail' => 9, 'CaImpoexpo' => 10, 'CaTransporte' => 11, 'CaCargo' => 12, 'CaDepartamento' => 13, 'CaObservaciones' => 14, 'CaSugerido' => 15, 'CaActivo' => 16, 'CaFchcreado' => 17, 'CaUsucreado' => 18, 'CaFchactualizado' => 19, 'CaUsuactualizado' => 20, 'CaFcheliminado' => 21, 'CaUsueliminado' => 22, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcontacto' => 0, 'caIdsucursal' => 1, 'caNombres' => 2, 'caPapellido' => 3, 'caSapellido' => 4, 'caSaludo' => 5, 'caDireccion' => 6, 'caTelefonos' => 7, 'caFax' => 8, 'caEmail' => 9, 'caImpoexpo' => 10, 'caTransporte' => 11, 'caCargo' => 12, 'caDepartamento' => 13, 'caObservaciones' => 14, 'caSugerido' => 15, 'caActivo' => 16, 'caFchcreado' => 17, 'caUsucreado' => 18, 'caFchactualizado' => 19, 'caUsuactualizado' => 20, 'caFcheliminado' => 21, 'caUsueliminado' => 22, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDCONTACTO => 0, self::CA_IDSUCURSAL => 1, self::CA_NOMBRES => 2, self::CA_PAPELLIDO => 3, self::CA_SAPELLIDO => 4, self::CA_SALUDO => 5, self::CA_DIRECCION => 6, self::CA_TELEFONOS => 7, self::CA_FAX => 8, self::CA_EMAIL => 9, self::CA_IMPOEXPO => 10, self::CA_TRANSPORTE => 11, self::CA_CARGO => 12, self::CA_DEPARTAMENTO => 13, self::CA_OBSERVACIONES => 14, self::CA_SUGERIDO => 15, self::CA_ACTIVO => 16, self::CA_FCHCREADO => 17, self::CA_USUCREADO => 18, self::CA_FCHACTUALIZADO => 19, self::CA_USUACTUALIZADO => 20, self::CA_FCHELIMINADO => 21, self::CA_USUELIMINADO => 22, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idcontacto' => 0, 'ca_idsucursal' => 1, 'ca_nombres' => 2, 'ca_papellido' => 3, 'ca_sapellido' => 4, 'ca_saludo' => 5, 'ca_direccion' => 6, 'ca_telefonos' => 7, 'ca_fax' => 8, 'ca_email' => 9, 'ca_impoexpo' => 10, 'ca_transporte' => 11, 'ca_cargo' => 12, 'ca_departamento' => 13, 'ca_observaciones' => 14, 'ca_sugerido' => 15, 'ca_activo' => 16, 'ca_fchcreado' => 17, 'ca_usucreado' => 18, 'ca_fchactualizado' => 19, 'ca_usuactualizado' => 20, 'ca_fcheliminado' => 21, 'ca_usueliminado' => 22, ),
-		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
+		BasePeer::TYPE_PHPNAME => array ('CaIdcontacto' => 0, 'CaIdsucursal' => 1, 'CaNombres' => 2, 'CaPapellido' => 3, 'CaSapellido' => 4, 'CaSaludo' => 5, 'CaDireccion' => 6, 'CaTelefonos' => 7, 'CaFax' => 8, 'CaEmail' => 9, 'CaImpoexpo' => 10, 'CaTransporte' => 11, 'CaCargo' => 12, 'CaDepartamento' => 13, 'CaObservaciones' => 14, 'CaSugerido' => 15, 'CaActivo' => 16, 'CaVisibilidad' => 17, 'CaFchcreado' => 18, 'CaUsucreado' => 19, 'CaFchactualizado' => 20, 'CaUsuactualizado' => 21, 'CaFcheliminado' => 22, 'CaUsueliminado' => 23, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdcontacto' => 0, 'caIdsucursal' => 1, 'caNombres' => 2, 'caPapellido' => 3, 'caSapellido' => 4, 'caSaludo' => 5, 'caDireccion' => 6, 'caTelefonos' => 7, 'caFax' => 8, 'caEmail' => 9, 'caImpoexpo' => 10, 'caTransporte' => 11, 'caCargo' => 12, 'caDepartamento' => 13, 'caObservaciones' => 14, 'caSugerido' => 15, 'caActivo' => 16, 'caVisibilidad' => 17, 'caFchcreado' => 18, 'caUsucreado' => 19, 'caFchactualizado' => 20, 'caUsuactualizado' => 21, 'caFcheliminado' => 22, 'caUsueliminado' => 23, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDCONTACTO => 0, self::CA_IDSUCURSAL => 1, self::CA_NOMBRES => 2, self::CA_PAPELLIDO => 3, self::CA_SAPELLIDO => 4, self::CA_SALUDO => 5, self::CA_DIRECCION => 6, self::CA_TELEFONOS => 7, self::CA_FAX => 8, self::CA_EMAIL => 9, self::CA_IMPOEXPO => 10, self::CA_TRANSPORTE => 11, self::CA_CARGO => 12, self::CA_DEPARTAMENTO => 13, self::CA_OBSERVACIONES => 14, self::CA_SUGERIDO => 15, self::CA_ACTIVO => 16, self::CA_VISIBILIDAD => 17, self::CA_FCHCREADO => 18, self::CA_USUCREADO => 19, self::CA_FCHACTUALIZADO => 20, self::CA_USUACTUALIZADO => 21, self::CA_FCHELIMINADO => 22, self::CA_USUELIMINADO => 23, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idcontacto' => 0, 'ca_idsucursal' => 1, 'ca_nombres' => 2, 'ca_papellido' => 3, 'ca_sapellido' => 4, 'ca_saludo' => 5, 'ca_direccion' => 6, 'ca_telefonos' => 7, 'ca_fax' => 8, 'ca_email' => 9, 'ca_impoexpo' => 10, 'ca_transporte' => 11, 'ca_cargo' => 12, 'ca_departamento' => 13, 'ca_observaciones' => 14, 'ca_sugerido' => 15, 'ca_activo' => 16, 'ca_visibilidad' => 17, 'ca_fchcreado' => 18, 'ca_usucreado' => 19, 'ca_fchactualizado' => 20, 'ca_usuactualizado' => 21, 'ca_fcheliminado' => 22, 'ca_usueliminado' => 23, ),
+		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
 	);
 
 	
@@ -183,6 +186,8 @@ abstract class BaseIdsContactoPeer {
 		$criteria->addSelectColumn(IdsContactoPeer::CA_SUGERIDO);
 
 		$criteria->addSelectColumn(IdsContactoPeer::CA_ACTIVO);
+
+		$criteria->addSelectColumn(IdsContactoPeer::CA_VISIBILIDAD);
 
 		$criteria->addSelectColumn(IdsContactoPeer::CA_FCHCREADO);
 

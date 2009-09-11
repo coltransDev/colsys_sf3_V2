@@ -27,8 +27,8 @@ if( date("G")<12 ){
 ?>
 <script language="javascript" type="text/javascript">
 
-var validarMensaje=function(){
-	document.form1.mensaje_dirty.value = "1";
+var validarMensaje=function(){	
+    document.getElementById("mensaje_dirty").value = "1";
 }
 
 var mostrar=function( oid ){
@@ -154,7 +154,9 @@ var crearSeguimiento=function(){
 	}else{
 		document.getElementById("row_seguimiento").style.display="none";
 	}
-}	
+}
+
+
 
 </script>
 

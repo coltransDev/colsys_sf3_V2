@@ -107,21 +107,21 @@ class reportesActions extends sfActions
         if( $reporte->getCaColmas()=="Sí" ){
 			$repAduana = $reporte->getRepAduana(); 
 			if( $repAduana && $repAduana->getCaCoordinador() ){
-				$grupos["colmas"][] = array($repAduana->getCaCoordinador());
+				$grupos["colmas"] = array($repAduana->getCaCoordinador());
 			}
 		}
 		
 		if( $reporte->getCaSeguro()=="Sí" ){
 			$repSeguro = $reporte->getRepSeguro(); 
 			if( $repSeguro && $repSeguro->getCaSeguroConf() ){
-				$grupos["seguros"][] = array($repSeguro->getCaSeguroConf());
+				$grupos["seguros"] = array($repSeguro->getCaSeguroConf());
 			}
 		}
 			
 		if( $reporte->getCaContinuacion()!="N/A" ){
 			
 			if( $reporte->getCaContinuacionConf() ){
-				$grupos["otm"][] = array( $reporte->getCaContinuacionConf());
+				$grupos["otm"] = array( $reporte->getCaContinuacionConf());
 			}
 		}
 
@@ -133,38 +133,43 @@ class reportesActions extends sfActions
                 $tarea = NotTareaPeer::retrieveByPk( $reporte->getCaIdTareaRext() );
                 $tarea->delete();
             }
-            $tarea = new NotTarea();
-            if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
-                $tarea->setCaUrl( "/colsys_php/traficos_sea.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
-            }else{
-                $tarea->setCaUrl( "/colsys_php/traficos_air.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
-            }
 
-            $tarea->setCaIdlistatarea( 4 );
-            $tarea->setCaFchcreado( time() );
-            $festivos = Utils::getFestivos();
-            $tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
-            $tarea->setCaPrioridad( 1 );
-            $tarea->setCaUsucreado( "Administrador" );
+            if( $reporte->getCaImpoExpo()==Constantes::IMPO ||  $reporte->getCaImpoExpo()==Constantes::TRIANGULACION ){
 
-            $titulo = "Crear Reporte al Ext. RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
-
-            $tarea->setCaTitulo( $titulo );
-            $tarea->setCaTexto( "Debe crear el reporte al exterior del reporte de negocio en referencia para cumplir esta tarea" );
-            $tarea->save();
-
-            $logins =  $grupos["operativo"];
-            $asignaciones = array();
-            
-            foreach( $logins as $login ){                
-                if( in_array($login, $notificar ) ){
-                    $asignaciones[]=$login;
+                $tarea = new NotTarea();
+                if( $reporte->getCaTransporte()==Constantes::MARITIMO ){
+                    $tarea->setCaUrl( "/colsys_php/traficos_sea.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
+                }else{
+                    $tarea->setCaUrl( "/colsys_php/traficos_air.php?boton=Consultar&id=".$reporte->getCaIdreporte() );
                 }
-            }                       
-            $tarea->setAsignaciones( $asignaciones );
-            $reporte->setCaIdtareaRext( $tarea->getCaIdtarea() );
-			$reporte->save();
 
+                $tarea->setCaIdlistatarea( 4 );
+                $tarea->setCaFchcreado( time() );
+                $festivos = Utils::getFestivos();
+                $tarea->setCaFchvencimiento( Utils::addTimeWorkingHours( $festivos, date("Y-m-d H:i:s") , 57600)); // dos días habiles
+                $tarea->setCaPrioridad( 1 );
+                $tarea->setCaUsucreado( "Administrador" );
+
+                $titulo = "Crear Reporte al Ext. RN".$reporte->getCaConsecutivo()." [".$reporte->getCaModalidad()." ".$reporte->getOrigen()->getCaCiudad()."->".$reporte->getDestino()->getCaCiudad()."]";
+
+                $tarea->setCaTitulo( $titulo );
+                $tarea->setCaTexto( "Debe crear el reporte al exterior del reporte de negocio en referencia para cumplir esta tarea" );
+                $tarea->save();
+
+                if( isset($grupos["operativo"]) ){
+                    $logins =  $grupos["operativo"];
+                    $asignaciones = array();
+
+                    foreach( $logins as $login ){
+                        if( in_array($login, $notificar ) ){
+                            $asignaciones[]=$login;
+                        }
+                    }
+                    $tarea->setAsignaciones( $asignaciones );
+                    $reporte->setCaIdtareaRext( $tarea->getCaIdtarea() );
+                    $reporte->save();
+                }
+            }
             //Ver reporte
             $asignacionesReporte = $reporte->getRepasignacions();
             //Borra las tareas existentes

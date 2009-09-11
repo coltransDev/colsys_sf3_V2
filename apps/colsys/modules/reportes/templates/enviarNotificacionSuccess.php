@@ -13,11 +13,14 @@
 	<th width="25%" scope="col"><b>Acci&oacute;n</b></th>
 	<th width="31%" scope="col"><b>Usuario</b></th>
 	<th width="30%" scope="col"><b>e-mail</b></th>
+    <th width="30%" scope="col"><b>Sucursal</b></th>
 </tr>
 <?
 foreach( $grupos as $grupo=>$logins ){		
 	foreach( $logins as $login ){
 		$usuario = UsuarioPeer::retrieveByPk( $login );
+
+        
 	?>		
 	<tr>
         <td><input type="checkbox" name="notificar[]" value="<?=$login?>" ></td>
@@ -36,6 +39,9 @@ foreach( $grupos as $grupo=>$logins ){
 			?></td>
 		<td><?
 				echo $usuario->getCaEmail();				
+			?></td>
+        <td><?
+				echo $usuario->getSucursal()->getcaNombre();
 			?></td>
 	</tr>
 	<?

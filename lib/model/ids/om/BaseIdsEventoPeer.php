@@ -31,7 +31,7 @@ abstract class BaseIdsEventoPeer {
 	const CA_REFERENCIA = 'ids.tb_eventos.CA_REFERENCIA';
 
 	
-	const CA_TIPO = 'ids.tb_eventos.CA_TIPO';
+	const CA_IDCRITERIO = 'ids.tb_eventos.CA_IDCRITERIO';
 
 	
 	const CA_FCHCREADO = 'ids.tb_eventos.CA_FCHCREADO';
@@ -47,19 +47,19 @@ abstract class BaseIdsEventoPeer {
 
 	
 	private static $fieldNames = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdevento', 'CaId', 'CaEvento', 'CaReferencia', 'CaTipo', 'CaFchcreado', 'CaUsucreado', ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdevento', 'caId', 'caEvento', 'caReferencia', 'caTipo', 'caFchcreado', 'caUsucreado', ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDEVENTO, self::CA_ID, self::CA_EVENTO, self::CA_REFERENCIA, self::CA_TIPO, self::CA_FCHCREADO, self::CA_USUCREADO, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idevento', 'ca_id', 'ca_evento', 'ca_referencia', 'ca_tipo', 'ca_fchcreado', 'ca_usucreado', ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdevento', 'CaId', 'CaEvento', 'CaReferencia', 'CaIdcriterio', 'CaFchcreado', 'CaUsucreado', ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdevento', 'caId', 'caEvento', 'caReferencia', 'caIdcriterio', 'caFchcreado', 'caUsucreado', ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDEVENTO, self::CA_ID, self::CA_EVENTO, self::CA_REFERENCIA, self::CA_IDCRITERIO, self::CA_FCHCREADO, self::CA_USUCREADO, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idevento', 'ca_id', 'ca_evento', 'ca_referencia', 'ca_idcriterio', 'ca_fchcreado', 'ca_usucreado', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
 	
 	private static $fieldKeys = array (
-		BasePeer::TYPE_PHPNAME => array ('CaIdevento' => 0, 'CaId' => 1, 'CaEvento' => 2, 'CaReferencia' => 3, 'CaTipo' => 4, 'CaFchcreado' => 5, 'CaUsucreado' => 6, ),
-		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdevento' => 0, 'caId' => 1, 'caEvento' => 2, 'caReferencia' => 3, 'caTipo' => 4, 'caFchcreado' => 5, 'caUsucreado' => 6, ),
-		BasePeer::TYPE_COLNAME => array (self::CA_IDEVENTO => 0, self::CA_ID => 1, self::CA_EVENTO => 2, self::CA_REFERENCIA => 3, self::CA_TIPO => 4, self::CA_FCHCREADO => 5, self::CA_USUCREADO => 6, ),
-		BasePeer::TYPE_FIELDNAME => array ('ca_idevento' => 0, 'ca_id' => 1, 'ca_evento' => 2, 'ca_referencia' => 3, 'ca_tipo' => 4, 'ca_fchcreado' => 5, 'ca_usucreado' => 6, ),
+		BasePeer::TYPE_PHPNAME => array ('CaIdevento' => 0, 'CaId' => 1, 'CaEvento' => 2, 'CaReferencia' => 3, 'CaIdcriterio' => 4, 'CaFchcreado' => 5, 'CaUsucreado' => 6, ),
+		BasePeer::TYPE_STUDLYPHPNAME => array ('caIdevento' => 0, 'caId' => 1, 'caEvento' => 2, 'caReferencia' => 3, 'caIdcriterio' => 4, 'caFchcreado' => 5, 'caUsucreado' => 6, ),
+		BasePeer::TYPE_COLNAME => array (self::CA_IDEVENTO => 0, self::CA_ID => 1, self::CA_EVENTO => 2, self::CA_REFERENCIA => 3, self::CA_IDCRITERIO => 4, self::CA_FCHCREADO => 5, self::CA_USUCREADO => 6, ),
+		BasePeer::TYPE_FIELDNAME => array ('ca_idevento' => 0, 'ca_id' => 1, 'ca_evento' => 2, 'ca_referencia' => 3, 'ca_idcriterio' => 4, 'ca_fchcreado' => 5, 'ca_usucreado' => 6, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
 	);
 
@@ -110,7 +110,7 @@ abstract class BaseIdsEventoPeer {
 
 		$criteria->addSelectColumn(IdsEventoPeer::CA_REFERENCIA);
 
-		$criteria->addSelectColumn(IdsEventoPeer::CA_TIPO);
+		$criteria->addSelectColumn(IdsEventoPeer::CA_IDCRITERIO);
 
 		$criteria->addSelectColumn(IdsEventoPeer::CA_FCHCREADO);
 
@@ -309,6 +309,48 @@ abstract class BaseIdsEventoPeer {
 
 
 	
+	public static function doCountJoinIdsCriterio(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+								$criteria->setPrimaryTableName(IdsEventoPeer::TABLE_NAME);
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			IdsEventoPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(IdsEventoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+
+		$criteria->addJoin(array(IdsEventoPeer::CA_IDCRITERIO,), array(IdsCriterioPeer::CA_IDCRITERIO,), $join_behavior);
+
+
+    foreach (sfMixer::getCallables('BaseIdsEventoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseIdsEventoPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
 	public static function doSelectJoinIds(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 
@@ -367,6 +409,57 @@ abstract class BaseIdsEventoPeer {
 
 
 	
+	public static function doSelectJoinIdsCriterio(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+				if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		IdsEventoPeer::addSelectColumns($c);
+		$startcol = (IdsEventoPeer::NUM_COLUMNS - IdsEventoPeer::NUM_LAZY_LOAD_COLUMNS);
+		IdsCriterioPeer::addSelectColumns($c);
+
+		$c->addJoin(array(IdsEventoPeer::CA_IDCRITERIO,), array(IdsCriterioPeer::CA_IDCRITERIO,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = IdsEventoPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = IdsEventoPeer::getInstanceFromPool($key1))) {
+															} else {
+
+				$omClass = IdsEventoPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				IdsEventoPeer::addInstanceToPool($obj1, $key1);
+			} 
+			$key2 = IdsCriterioPeer::getPrimaryKeyHashFromRow($row, $startcol);
+			if ($key2 !== null) {
+				$obj2 = IdsCriterioPeer::getInstanceFromPool($key2);
+				if (!$obj2) {
+
+					$omClass = IdsCriterioPeer::getOMClass();
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol);
+					IdsCriterioPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->addIdsEvento($obj1);
+
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
 	public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
 				$criteria = clone $criteria;
@@ -389,6 +482,7 @@ abstract class BaseIdsEventoPeer {
 		}
 
 		$criteria->addJoin(array(IdsEventoPeer::CA_ID,), array(IdsPeer::CA_ID,), $join_behavior);
+		$criteria->addJoin(array(IdsEventoPeer::CA_IDCRITERIO,), array(IdsCriterioPeer::CA_IDCRITERIO,), $join_behavior);
 
     foreach (sfMixer::getCallables('BaseIdsEventoPeer:doCount:doCount') as $callable)
     {
@@ -428,7 +522,11 @@ abstract class BaseIdsEventoPeer {
 		IdsPeer::addSelectColumns($c);
 		$startcol3 = $startcol2 + (IdsPeer::NUM_COLUMNS - IdsPeer::NUM_LAZY_LOAD_COLUMNS);
 
+		IdsCriterioPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (IdsCriterioPeer::NUM_COLUMNS - IdsCriterioPeer::NUM_LAZY_LOAD_COLUMNS);
+
 		$c->addJoin(array(IdsEventoPeer::CA_ID,), array(IdsPeer::CA_ID,), $join_behavior);
+		$c->addJoin(array(IdsEventoPeer::CA_IDCRITERIO,), array(IdsCriterioPeer::CA_IDCRITERIO,), $join_behavior);
 		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
@@ -458,6 +556,217 @@ abstract class BaseIdsEventoPeer {
 					IdsPeer::addInstanceToPool($obj2, $key2);
 				} 
 								$obj2->addIdsEvento($obj1);
+			} 
+			
+			$key3 = IdsCriterioPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+			if ($key3 !== null) {
+				$obj3 = IdsCriterioPeer::getInstanceFromPool($key3);
+				if (!$obj3) {
+
+					$omClass = IdsCriterioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj3 = new $cls();
+					$obj3->hydrate($row, $startcol3);
+					IdsCriterioPeer::addInstanceToPool($obj3, $key3);
+				} 
+								$obj3->addIdsEvento($obj1);
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
+	public static function doCountJoinAllExceptIds(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			IdsEventoPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(IdsEventoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(IdsEventoPeer::CA_IDCRITERIO,), array(IdsCriterioPeer::CA_IDCRITERIO,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseIdsEventoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseIdsEventoPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
+	public static function doCountJoinAllExceptIdsCriterio(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+				$criteria = clone $criteria;
+
+		if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
+			$criteria->setDistinct();
+		}
+
+		if (!$criteria->hasSelectClause()) {
+			IdsEventoPeer::addSelectColumns($criteria);
+		}
+
+		$criteria->clearOrderByColumns(); 
+				$criteria->setDbName(self::DATABASE_NAME);
+
+		if ($con === null) {
+			$con = Propel::getConnection(IdsEventoPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+		}
+	
+				$criteria->addJoin(array(IdsEventoPeer::CA_ID,), array(IdsPeer::CA_ID,), $join_behavior);
+
+    foreach (sfMixer::getCallables('BaseIdsEventoPeer:doCount:doCount') as $callable)
+    {
+      call_user_func($callable, 'BaseIdsEventoPeer', $criteria, $con);
+    }
+
+
+		$stmt = BasePeer::doCount($criteria, $con);
+
+		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$count = (int) $row[0];
+		} else {
+			$count = 0; 		}
+		$stmt->closeCursor();
+		return $count;
+	}
+
+
+	
+	public static function doSelectJoinAllExceptIds(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+
+    foreach (sfMixer::getCallables('BaseIdsEventoPeer:doSelectJoinAllExcept:doSelectJoinAllExcept') as $callable)
+    {
+      call_user_func($callable, 'BaseIdsEventoPeer', $c, $con);
+    }
+
+
+		$c = clone $c;
+
+								if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		IdsEventoPeer::addSelectColumns($c);
+		$startcol2 = (IdsEventoPeer::NUM_COLUMNS - IdsEventoPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		IdsCriterioPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (IdsCriterioPeer::NUM_COLUMNS - IdsCriterioPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(IdsEventoPeer::CA_IDCRITERIO,), array(IdsCriterioPeer::CA_IDCRITERIO,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = IdsEventoPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = IdsEventoPeer::getInstanceFromPool($key1))) {
+															} else {
+				$omClass = IdsEventoPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				IdsEventoPeer::addInstanceToPool($obj1, $key1);
+			} 
+				
+				$key2 = IdsCriterioPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = IdsCriterioPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = IdsCriterioPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					IdsCriterioPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->addIdsEvento($obj1);
+
+			} 
+			$results[] = $obj1;
+		}
+		$stmt->closeCursor();
+		return $results;
+	}
+
+
+	
+	public static function doSelectJoinAllExceptIdsCriterio(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		$c = clone $c;
+
+								if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
+		}
+
+		IdsEventoPeer::addSelectColumns($c);
+		$startcol2 = (IdsEventoPeer::NUM_COLUMNS - IdsEventoPeer::NUM_LAZY_LOAD_COLUMNS);
+
+		IdsPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (IdsPeer::NUM_COLUMNS - IdsPeer::NUM_LAZY_LOAD_COLUMNS);
+
+				$c->addJoin(array(IdsEventoPeer::CA_ID,), array(IdsPeer::CA_ID,), $join_behavior);
+
+		$stmt = BasePeer::doSelect($c, $con);
+		$results = array();
+
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$key1 = IdsEventoPeer::getPrimaryKeyHashFromRow($row, 0);
+			if (null !== ($obj1 = IdsEventoPeer::getInstanceFromPool($key1))) {
+															} else {
+				$omClass = IdsEventoPeer::getOMClass();
+
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+				$obj1 = new $cls();
+				$obj1->hydrate($row);
+				IdsEventoPeer::addInstanceToPool($obj1, $key1);
+			} 
+				
+				$key2 = IdsPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+				if ($key2 !== null) {
+					$obj2 = IdsPeer::getInstanceFromPool($key2);
+					if (!$obj2) {
+	
+						$omClass = IdsPeer::getOMClass();
+
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
+					$obj2 = new $cls();
+					$obj2->hydrate($row, $startcol2);
+					IdsPeer::addInstanceToPool($obj2, $key2);
+				} 
+								$obj2->addIdsEvento($obj1);
+
 			} 
 			$results[] = $obj1;
 		}

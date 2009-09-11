@@ -28,6 +28,12 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 	protected $ca_usuaprobado;
 
 	
+	protected $ca_sigla;
+
+	
+	protected $ca_transporte;
+
+	
 	protected $ca_activo;
 
 	
@@ -112,6 +118,18 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 	public function getCaUsuaprobado()
 	{
 		return $this->ca_usuaprobado;
+	}
+
+	
+	public function getCaSigla()
+	{
+		return $this->ca_sigla;
+	}
+
+	
+	public function getCaTransporte()
+	{
+		return $this->ca_transporte;
 	}
 
 	
@@ -231,6 +249,34 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		return $this;
 	} 
 	
+	public function setCaSigla($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_sigla !== $v) {
+			$this->ca_sigla = $v;
+			$this->modifiedColumns[] = IdsProveedorPeer::CA_SIGLA;
+		}
+
+		return $this;
+	} 
+	
+	public function setCaTransporte($v)
+	{
+		if ($v !== null) {
+			$v = (string) $v;
+		}
+
+		if ($this->ca_transporte !== $v) {
+			$this->ca_transporte = $v;
+			$this->modifiedColumns[] = IdsProveedorPeer::CA_TRANSPORTE;
+		}
+
+		return $this;
+	} 
+	
 	public function setCaActivo($v)
 	{
 		if ($v !== null) {
@@ -264,7 +310,9 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 			$this->ca_controladoporsig = ($row[$startcol + 3] !== null) ? (boolean) $row[$startcol + 3] : null;
 			$this->ca_fchaprobado = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
 			$this->ca_usuaprobado = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-			$this->ca_activo = ($row[$startcol + 6] !== null) ? (boolean) $row[$startcol + 6] : null;
+			$this->ca_sigla = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+			$this->ca_transporte = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+			$this->ca_activo = ($row[$startcol + 8] !== null) ? (boolean) $row[$startcol + 8] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -273,7 +321,7 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 				$this->ensureConsistency();
 			}
 
-						return $startcol + 7; 
+						return $startcol + 9; 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating IdsProveedor object", $e);
 		}
@@ -542,6 +590,12 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 				return $this->getCaUsuaprobado();
 				break;
 			case 6:
+				return $this->getCaSigla();
+				break;
+			case 7:
+				return $this->getCaTransporte();
+				break;
+			case 8:
 				return $this->getCaActivo();
 				break;
 			default:
@@ -560,7 +614,9 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 			$keys[3] => $this->getCaControladoporsig(),
 			$keys[4] => $this->getCaFchaprobado(),
 			$keys[5] => $this->getCaUsuaprobado(),
-			$keys[6] => $this->getCaActivo(),
+			$keys[6] => $this->getCaSigla(),
+			$keys[7] => $this->getCaTransporte(),
+			$keys[8] => $this->getCaActivo(),
 		);
 		return $result;
 	}
@@ -595,6 +651,12 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 				$this->setCaUsuaprobado($value);
 				break;
 			case 6:
+				$this->setCaSigla($value);
+				break;
+			case 7:
+				$this->setCaTransporte($value);
+				break;
+			case 8:
 				$this->setCaActivo($value);
 				break;
 		} 	}
@@ -610,7 +672,9 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		if (array_key_exists($keys[3], $arr)) $this->setCaControladoporsig($arr[$keys[3]]);
 		if (array_key_exists($keys[4], $arr)) $this->setCaFchaprobado($arr[$keys[4]]);
 		if (array_key_exists($keys[5], $arr)) $this->setCaUsuaprobado($arr[$keys[5]]);
-		if (array_key_exists($keys[6], $arr)) $this->setCaActivo($arr[$keys[6]]);
+		if (array_key_exists($keys[6], $arr)) $this->setCaSigla($arr[$keys[6]]);
+		if (array_key_exists($keys[7], $arr)) $this->setCaTransporte($arr[$keys[7]]);
+		if (array_key_exists($keys[8], $arr)) $this->setCaActivo($arr[$keys[8]]);
 	}
 
 	
@@ -624,6 +688,8 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		if ($this->isColumnModified(IdsProveedorPeer::CA_CONTROLADOPORSIG)) $criteria->add(IdsProveedorPeer::CA_CONTROLADOPORSIG, $this->ca_controladoporsig);
 		if ($this->isColumnModified(IdsProveedorPeer::CA_FCHAPROBADO)) $criteria->add(IdsProveedorPeer::CA_FCHAPROBADO, $this->ca_fchaprobado);
 		if ($this->isColumnModified(IdsProveedorPeer::CA_USUAPROBADO)) $criteria->add(IdsProveedorPeer::CA_USUAPROBADO, $this->ca_usuaprobado);
+		if ($this->isColumnModified(IdsProveedorPeer::CA_SIGLA)) $criteria->add(IdsProveedorPeer::CA_SIGLA, $this->ca_sigla);
+		if ($this->isColumnModified(IdsProveedorPeer::CA_TRANSPORTE)) $criteria->add(IdsProveedorPeer::CA_TRANSPORTE, $this->ca_transporte);
 		if ($this->isColumnModified(IdsProveedorPeer::CA_ACTIVO)) $criteria->add(IdsProveedorPeer::CA_ACTIVO, $this->ca_activo);
 
 		return $criteria;
@@ -666,6 +732,10 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		$copyObj->setCaFchaprobado($this->ca_fchaprobado);
 
 		$copyObj->setCaUsuaprobado($this->ca_usuaprobado);
+
+		$copyObj->setCaSigla($this->ca_sigla);
+
+		$copyObj->setCaTransporte($this->ca_transporte);
 
 		$copyObj->setCaActivo($this->ca_activo);
 
@@ -863,6 +933,40 @@ abstract class BaseIdsProveedor extends BaseObject  implements Persistent {
 		if (!in_array($l, $this->collTransportadors, true)) { 			array_push($this->collTransportadors, $l);
 			$l->setIdsProveedor($this);
 		}
+	}
+
+
+	
+	public function getTransportadorsJoinTransportista($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsProveedorPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collTransportadors === null) {
+			if ($this->isNew()) {
+				$this->collTransportadors = array();
+			} else {
+
+				$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idproveedor);
+
+				$this->collTransportadors = TransportadorPeer::doSelectJoinTransportista($criteria, $con, $join_behavior);
+			}
+		} else {
+									
+			$criteria->add(TransportadorPeer::CA_IDTRANSPORTISTA, $this->ca_idproveedor);
+
+			if (!isset($this->lastTransportadorCriteria) || !$this->lastTransportadorCriteria->equals($criteria)) {
+				$this->collTransportadors = TransportadorPeer::doSelectJoinTransportista($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastTransportadorCriteria = $criteria;
+
+		return $this->collTransportadors;
 	}
 
 	

@@ -68,7 +68,8 @@ class sfWidgetFormExtDate extends sfWidgetFormDate
   
  		 new Ext.form.DateField({
 				 applyTo: '%s',
-				 value: '%s'
+				 value: '%s',
+                 format: 'Y-m-d'
 			});
 			
 			/*

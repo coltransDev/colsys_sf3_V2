@@ -39,8 +39,7 @@ class Cliente extends BaseCliente
         $direccion.=$this->getCaOficina()." ";
         $direccion.=$this->getCaTorre()." ";
         $direccion.=$this->getCaBloque()." ";
-        $direccion.=$this->getCaInterior()." ";
-        $direccion.=$this->getCaLocalidad()." ";
+        $direccion.=$this->getCaInterior()." ";       
         $direccion.=$this->getCaComplemento()." ";
 
 		return $direccion;

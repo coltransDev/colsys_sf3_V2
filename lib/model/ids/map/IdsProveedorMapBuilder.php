@@ -35,7 +35,7 @@ class IdsProveedorMapBuilder implements MapBuilder {
 
 		$tMap->addForeignPrimaryKey('CA_IDPROVEEDOR', 'CaIdproveedor', 'INTEGER' , 'ids.tb_ids', 'CA_ID', true, null);
 
-		$tMap->addColumn('CA_TIPO', 'CaTipo', 'INTEGER', true, null);
+		$tMap->addForeignKey('CA_TIPO', 'CaTipo', 'VARCHAR', 'ids.tb_tipos', 'CA_TIPO', true, null);
 
 		$tMap->addColumn('CA_CRITICO', 'CaCritico', 'BOOLEAN', true, null);
 
@@ -44,6 +44,12 @@ class IdsProveedorMapBuilder implements MapBuilder {
 		$tMap->addColumn('CA_FCHAPROBADO', 'CaFchaprobado', 'TIMESTAMP', false, null);
 
 		$tMap->addColumn('CA_USUAPROBADO', 'CaUsuaprobado', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_SIGLA', 'CaSigla', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_TRANSPORTE', 'CaTransporte', 'VARCHAR', false, null);
+
+		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', true, null);
 
 	} 
 } 

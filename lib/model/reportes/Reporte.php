@@ -721,10 +721,11 @@ class Reporte extends BaseReporte
 			}else{
 				$c->add( UsuarioPerfilPeer::CA_PERFIL, "operativo-aereo" );					
 			}
+            $c->add( UsuarioPeer::CA_IDSUCURSAL, $usuario->getCaIdsucursal()  );
 		}else{
 			$c->add( UsuarioPerfilPeer::CA_PERFIL, "operativo-expo" );				
 		}								
-		$c->add( UsuarioPeer::CA_IDSUCURSAL, $usuario->getCaIdsucursal()  );
+		
 		$c->add( UsuarioPeer::CA_ACTIVO, true );
 		return  UsuarioPeer::doSelect( $c );
 	}

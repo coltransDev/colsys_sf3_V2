@@ -49,7 +49,7 @@ class InoMaestraSeaMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_MODALIDAD', 'CaModalidad', 'VARCHAR', false, null);
 
-		$tMap->addForeignKey('CA_IDLINEA', 'CaIdlinea', 'INTEGER', 'tb_transporlineas', 'CA_IDLINEA', false, null);
+		$tMap->addForeignKey('CA_IDLINEA', 'CaIdlinea', 'INTEGER', 'vi_transporlineas', 'CA_IDLINEA', false, null);
 
 		$tMap->addColumn('CA_MOTONAVE', 'CaMotonave', 'VARCHAR', false, null);
 

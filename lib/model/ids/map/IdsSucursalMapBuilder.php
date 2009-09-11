@@ -61,6 +61,8 @@ class IdsSucursalMapBuilder implements MapBuilder {
 
 		$tMap->addForeignKey('CA_IDCIUDAD', 'CaIdciudad', 'VARCHAR', 'tb_ciudades', 'CA_IDCIUDAD', false, null);
 
+		$tMap->addColumn('CA_ZIPCODE', 'CaZipcode', 'VARCHAR', false, null);
+
 		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', true, null);
 
 		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', true, null);

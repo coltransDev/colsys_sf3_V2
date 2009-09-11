@@ -1549,6 +1549,40 @@ abstract class BaseIds extends BaseObject  implements Persistent {
 		}
 	}
 
+
+	
+	public function getIdsEventosJoinIdsCriterio($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	{
+		if ($criteria === null) {
+			$criteria = new Criteria(IdsPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collIdsEventos === null) {
+			if ($this->isNew()) {
+				$this->collIdsEventos = array();
+			} else {
+
+				$criteria->add(IdsEventoPeer::CA_ID, $this->ca_id);
+
+				$this->collIdsEventos = IdsEventoPeer::doSelectJoinIdsCriterio($criteria, $con, $join_behavior);
+			}
+		} else {
+									
+			$criteria->add(IdsEventoPeer::CA_ID, $this->ca_id);
+
+			if (!isset($this->lastIdsEventoCriteria) || !$this->lastIdsEventoCriteria->equals($criteria)) {
+				$this->collIdsEventos = IdsEventoPeer::doSelectJoinIdsCriterio($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastIdsEventoCriteria = $criteria;
+
+		return $this->collIdsEventos;
+	}
+
 	
 	public function clearAllReferences($deep = false)
 	{

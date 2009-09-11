@@ -42,11 +42,16 @@ class reporteExtActions extends sfActions
 		$this->usuario = UsuarioPeer::retrieveByPk( $this->getuser()->getUserId() );
 		
 		if( $this->reporte->getCaIdAgente() ){
-			$c = new Criteria();
+			$c = new Criteria();           
 			$c->add( ContactoAgentePeer::CA_IDAGENTE , $this->reporte->getCaIdAgente() );
 			$c->add( ContactoAgentePeer::CA_IMPOEXPO , "%".$this->reporte->getCaImpoexpo()."%", Criteria::LIKE );
+            if( $this->reporte->getCaImpoexpo()==Constantes::TRIANGULACION ){
+                    $c->add( ContactoAgentePeer::CA_IMPOEXPO , Constantes::IMPO, Criteria::LIKE );
+
+            }
 			$c->add( ContactoAgentePeer::CA_TRANSPORTE ,  "%".$this->reporte->getCaTransporte()."%" , Criteria::LIKE );
-			$c->add( ContactoAgentePeer::CA_ACTIVO , true );
+
+            $c->add( ContactoAgentePeer::CA_ACTIVO , true );
 			$c->addAscendingOrderByColumn( ContactoAgentePeer::CA_IDCIUDAD );
 			$c->addDescendingOrderByColumn( ContactoAgentePeer::CA_SUGERIDO );
 			$c->addAscendingOrderByColumn( ContactoAgentePeer::CA_NOMBRE );

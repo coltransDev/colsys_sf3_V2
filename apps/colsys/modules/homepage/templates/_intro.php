@@ -4,4 +4,4 @@ Las politicas, normas y procedimientos sobre el manejo de la informaci&oacute;n 
 <br>
 <br>
 	
-Para mas informaci&oacute;n consulte el documento POLITICAS GENERALES SOBRE MANEJO DE LA INFORMACION EN COLTRANS S.A. y COLMAS SIA LTDA. en ISO Q.C.S.. 
+Para mas informaci&oacute;n consulte el documento POLITICAS GENERALES SOBRE MANEJO DE LA INFORMACION EN COLTRANS S.A. y AGENCIA DE ADUANAS COLMAS LTDA. en ISO Q.C.S..

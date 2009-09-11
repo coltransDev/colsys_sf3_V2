@@ -3147,9 +3147,103 @@ ORDER BY ca_fchstatus ";
                 echo "rm -rf ".$file."/.svn<br />";
             }
         }
+    }
+
+
+    /*
+     *  Se modifico el programa de tal manera que idopcion fuera la llave primaria
+     */
+    public function executeFixCotOpciones(){
+
+
+        $sql = "SELECT DISTINCT ca_idcotizacion, ca_idopcion FROM tb_cotopciones
+WHERE ca_idopcion In
+(SELECT ca_idopcion FROM tb_cotopciones As asd
+GROUP BY ca_idopcion HAVING Count(*) > 1 )
+ORDER BY ca_idopcion ";
+        $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+
+		$stmt = $con->prepare ( $sql );
+		$stmt->execute();
+
+        $lastIdopcion = null;
+
+        $this->setTemplate("blank");
+
+		while($row= $stmt->fetch() ){
+            $idcotizacion = $row['ca_idcotizacion'];
+            $idopcion = $row['ca_idopcion'];
+            
+
+
+            if( $lastIdopcion != $idopcion ){
+                 $lastIdopcion = $idopcion;
+            }else{
+
+
+                 echo $idcotizacion." ".$idopcion."<br />";
+
+                $sql = "SELECT nextval('tb_cotopciones_id') as next";
+                $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+
+                $stmt2 = $con->prepare ( $sql );
+                $stmt2->execute();
+
+                $row2= $stmt2->fetch();
+
+                $nextval = $row2["next"];
+
+                $sql = "UPDATE tb_cotopciones SET ca_idopcion= $nextval WHERE ca_idcotizacion = $idcotizacion AND ca_idopcion = $idopcion";
+                $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+                $stmt2 = $con->prepare ( $sql );
+                $stmt2->execute();
+
+
+                $sql = "UPDATE tb_cotrecargos SET ca_idopcion= $nextval WHERE ca_idcotizacion = $idcotizacion AND ca_idopcion = $idopcion";
+                $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+                $stmt2 = $con->prepare ( $sql );
+                $stmt2->execute();
+            }
+        }
+    }
+
+    /*
+     * Se perdieron unos datos por la actualización de uno datos
+     */
+
+    public function executeFixEtapaReportes(){
+        exit("Quedo OK");
+         $sql = "SELECT * from tb_repstatus WHERE ca_fchenvio>='2009-09-07'";
+        $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+
+		$stmt = $con->prepare ( $sql );
+		$stmt->execute();
+
+        $lastIdopcion = null;
+
+        $this->setTemplate("blank");
+        $i = 0;
+		while($row= $stmt->fetch() ){
+            echo $i." ".$row['ca_idetapa']." ".$row['ca_idstatus']."<br />";
+
+            $etapa = $row['ca_idetapa'];
+
+            $sql = "UPDATE tb_repstatus SET ca_idetapa = '88888' WHERE ca_idstatus='".$row['ca_idstatus']."'";
+            $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+            //echo $sql;
+            $stmt2 = $con->prepare ( $sql );
+            $stmt2->execute();
+
+            $sql = "UPDATE tb_repstatus SET ca_idetapa = '".$etapa."' WHERE ca_idstatus='".$row['ca_idstatus']."'";
+            $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+
+            $stmt2 = $con->prepare ( $sql );
+            $stmt2->execute();
 
 
 
+            $i++;
+        }
     }
 		
 }
