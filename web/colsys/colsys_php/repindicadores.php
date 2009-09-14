@@ -1,6 +1,6 @@
 <?php
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
-// Archivo:       REPINDICADORES.PHP                                           \\
+// Archivo:       REPINDICADORES.PHP                                          \\
 // Creado:        2004-05-11                                                  \\
 // Autor:         Carlos Gilberto López M.                                    \\
 // Ver:           1.00                                                        \\
@@ -467,7 +467,7 @@ require_once("menu.php");
             $format_avg = "H:i:s";
             $source   = "vi_repindicador_brk";
             $transporte = "ca_transporte = 'Aduana'";
-            $subque = " LEFT OUTER JOIN ( select bke.*, prm.ca_valor from tb_brk_evento bke	LEFT OUTER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU037' and prm.ca_identificacion = bke.ca_idevento) order by ca_referencia) bke ON ($source.ca_referencia = bke.ca_referencia) ";
+            $subque = " INNER JOIN ( select bke.*, prm.ca_valor from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' order by ca_identificacion) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
 
             if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
                 echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -646,11 +646,14 @@ require_once("menu.php");
                     echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchfactura')."</TD>";
                     echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value("ca_observaciones")."</TD>";
                     echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
+                    $avanza = false;
                     if ($rs->Value('ca_continuacion') == "N/A"){
+                        $avanza = true;
                         while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()){
                             $rs->MoveNext();	// Omite las facturas adicionales sobre una misma carga.
                         }
                     }else if ($rs->Value('ca_continuacion') == "OTM" or $rs->Value('ca_continuacion') == "DTA"){
+                        $avanza = true;
                         while ($rs->Value('ca_referencia') == $ref_tmp and $rs->Value('ca_idcliente') == $idc_tmp and $rs->Value('ca_hbls') == $hbl_tmp and !$rs->Eof()){
                             if ($rs->Value('ca_observaciones') == "OTM/DTA"){ // Busca la Factura por el OTM o el DTA
                                 echo "<TR>";
@@ -670,7 +673,7 @@ require_once("menu.php");
                             $rs->MoveNext();
                         }
                     }
-                    if (!$rs->Eof()){           // Retrocede un registro para quedar en la última factura del Hbl de una Referencia
+                    if ($avanza and !$rs->Eof()){           // Retrocede un registro para quedar en la última factura del Hbl de una Referencia
                         $rs->MovePrevious();
                     }
                     break;
@@ -678,8 +681,8 @@ require_once("menu.php");
                     $idreporte = $rs->Value('ca_idreporte');
                     while ($idreporte == $rs->Value('ca_idreporte') and !$rs->Eof() and !$rs->IsEmpty()) {
                             if ($adicionales){
-                                    echo "<TR>";
-                                    echo "  <TD Class=mostrar COLSPAN=11></TD>";
+                                echo "<TR>";
+                                echo "  <TD Class=mostrar COLSPAN=11></TD>";
                             }
                             list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($rs->Value('ca_fchrecibo'), "%d-%d-%d %d:%d:%d");
                             $tstamp_recibido = mktime($hor, $min, $seg, $mes, $dia, $ano);
@@ -691,7 +694,7 @@ require_once("menu.php");
                             echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchenvio')."</TD>";
                             echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
                             if ($adicionales){
-                                    echo "</TR>";
+                                echo "</TR>";
                             }
                             $adicionales = true;
                             $rs->MoveNext();	// Buscar Todos los Status de un Embarque
@@ -799,12 +802,15 @@ require_once("menu.php");
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_coordinador')."</TD>";
 
                     echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
+                    $int_uno = $int_dos = "";
                     $matriz_eventos = array();
                     $referencia = $rs->Value('ca_referencia');
                     if ($rs->Value('ca_fchreferencia') > $rs->Value('ca_fcharribo')){
                         $matriz_eventos["intervalo_1"]["Fch. Referencia"] = $rs->Value('ca_fchreferencia');
+                        $int_uno = "Fch. Referencia";
                     }else{
                         $matriz_eventos["intervalo_1"]["Fch. Arribo"] = $rs->Value('ca_fcharribo');
+                        $int_uno = "Fch. Arribo";
                     }
                     echo "<TR>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>Fch. Referencia</TD>";
@@ -815,7 +821,9 @@ require_once("menu.php");
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fcharribo')."</TD>";
                     echo "</TR>";
 
-                    $int_uno = $int_dos = "";
+                    echo "*****";
+                    print_r($matriz_eventos);
+
                     $dif_ref = null;
                     while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
                         $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
@@ -830,7 +838,7 @@ require_once("menu.php");
                                 $matriz_eventos["intervalo_1"][$rs->Value('ca_valor')] = $fchEvento;
                             } else if ($rs->Value('ca_idevento')==3){
                                 if ($matriz_eventos["intervalo_1"][$int_uno] < $fchEvento){
-                                     array_pop($matriz_eventos["intervalo_1"]);
+                                     // array_pop($matriz_eventos["intervalo_1"]);
                                      $matriz_eventos["intervalo_1"][$rs->Value('ca_valor')] = $fchEvento;
                                 }
                             }
@@ -902,8 +910,8 @@ require_once("menu.php");
                         $rs->MoveNext();	// Buscar Todos los Registros de la referencia
                     }
                     echo "  </TABLE></TD>";
-                    echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
 
+                    echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
                     foreach($matriz_eventos as $intervalo){
                         echo "<TR>";
                         $flag = true;
@@ -930,10 +938,17 @@ require_once("menu.php");
                     echo "  </TABLE></TD>";
                     $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                     echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_ref."</TD>";
+
                     continue;
                     break;
             }
     	$rs->MoveNext();
+                    if ($rs->Value('ca_referencia') == '200.10.07.004.9'){
+                        echo "===========================";
+                        print_r($matriz_eventos);
+                        die("final");
+                    }
+
     }
 
     echo "<TR HEIGHT=5>";
