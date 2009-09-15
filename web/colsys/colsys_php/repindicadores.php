@@ -24,7 +24,6 @@ if (!isset($usuario)) {                                                        /
     echo "<script>document.location.href = 'entrada.php';</script>";
    }
 
-
 $rs =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
 if (!isset($boton) and !isset($agrupamiento)){
     echo "<HTML>";
@@ -354,7 +353,7 @@ require_once("menu.php");
             $ind_mem  = 3;
             $add_cols = 4;
             break;
-        case "Oportunidad en la Facturación":
+        case "Oportunidad en la Facturación" and $procesos != "Aduana":
             if ($tra_mem == 'Aéreo'){
                 $source   = "vi_repindicador_air";
                 $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
@@ -483,7 +482,7 @@ require_once("menu.php");
             $cot_ant  = null;
             $campos.= ", vi_repindicador_brk.ca_referencia, bke.ca_fchevento, bke.ca_idevento";
             break;
-        case "Oportunidad en Facturación (Aduanas)":
+        case "Oportunidad en la Facturación" and $procesos == "Aduana":
             $tipo = "T";
             $format_avg = "H:i:s";
             $source   = "vi_repindicador_brk";
