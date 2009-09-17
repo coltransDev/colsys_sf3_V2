@@ -482,7 +482,7 @@ elseif (isset($accion)) {                                                      /
 				 exit; }
 				 
 			 $id_email = $rs->Value('nextval');
-			 if (!$rs->Open("insert into tb_emails (ca_idemail, ca_fchenvio, ca_usuenvio, ca_tipo, ca_idcaso, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_attachment, ca_subject, ca_body) values($id_email, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario', '$subtit', ".($oid[$i]?"'$oid[$i]'":"null").", '".$us->Value('ca_email')."', '".$us->Value('ca_nombre')."', '', '".$us->Value('ca_email')."', '$confirmar', '', '$asunto', '$mensaje')")) {
+			 if (!$rs->Open("insert into tb_emails (ca_idemail, ca_fchenvio, ca_usuenvio, ca_tipo, ca_idcaso, ca_from, ca_fromname, ca_cc, ca_replyto, ca_address, ca_attachment, ca_subject, ca_body) values($id_email, NULL, '$usuario', '$subtit', ".($oid[$i]?"'$oid[$i]'":"null").", '".$us->Value('ca_email')."', '".$us->Value('ca_nombre')."', '', '".$us->Value('ca_email')."', '$confirmar', '', '$asunto', '$mensaje')")) {
 				 echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
 				/* echo "<script>document.location.href = 'confirma_puerto.php';</script>";*/
 				 exit; }				
@@ -493,7 +493,7 @@ elseif (isset($accion)) {                                                      /
 				 	 echo "<script>document.location.href = 'traficos_sea.php';</script>";
 				 	 exit; }
 				 }
-			 enviar_email($mail, $rs, $id_email, $i, $_FILES);                                           // Llamado a la función que envia los emails
+			 // enviar_email($mail, $rs, $id_email, $i, $_FILES);                                           // Llamado a la función que envia los emails
              break;
            }
         }
