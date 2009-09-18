@@ -23,7 +23,7 @@ $cliente = $reporte->getCliente();
 	<table width="100%" cellspacing="0" border="1" class="tableList">
 	<tr>
 		<td width="13%"><b>Orden:</b></td>
-		<td colspan="3"><?=$reporte->getCaOrdenClie()?></td>
+		<td ><?=$reporte->getCaOrdenClie()?></td>
 		<td><b>T&eacute;rmino de Negociaci&oacute;n:</b></td>
 		<td>
 		<?
@@ -32,6 +32,13 @@ $cliente = $reporte->getCliente();
 		$incoterms = implode(" ", $array );
 		echo $incoterms;
 		?>
+		</td>
+        <?
+        //Ticket # 938
+        ?>
+        <td><b>Cotizaci&oacute;n:</b></td>
+		<td>
+		<?=$reporte->getCaIdcotizacion()?$reporte->getCaIdcotizacion():"&nbsp;"?>
 		</td>
 	</tr>
 	<tr>
