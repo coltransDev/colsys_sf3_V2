@@ -2805,7 +2805,7 @@ ORDER BY ca_fchstatus ";
 	}
 
     public function executeImportarTransportistas( $request ){
-        
+        exit("Ya importados");
         $c = new Criteria();
         $c->addAscendingOrderByColumn( TransportistaPeer::CA_NOMBRE );
         $transportistas = TransportistaPeer::doSelect($c);
@@ -2932,18 +2932,40 @@ ORDER BY ca_fchstatus ";
     }
 
 
+    public function executeFixIdAgentes(){
+
+        $i = 282;
+
+        $c = new Criteria();
+        $c->addAscendingOrderByColumn( AgentePeer::CA_NOMBRE );
+        //$c->add( AgentePeer::CA_IDAGENTE, 400056103 );
+        $agentes = AgentePeer::doSelect($c);        
+        foreach( $agentes as  $agente ){
+            $sql = "UPDATE tb_agentes SET ca_idagente='".$i."' WHERE ca_idagente='".$agente->getCaIdagente()."'";
+            echo $sql.";<br />";
+            $i++;
+
+        }
+        $this->setTemplate("blank");
+
+    }
+
+
     public function executeImportarAgentes(){
         $c = new Criteria();
         $c->addAscendingOrderByColumn( AgentePeer::CA_NOMBRE );
         //$c->add( AgentePeer::CA_IDAGENTE, 400056103 );
         $agentes = AgentePeer::doSelect($c);
 
-        $i = 280;
+        //$i = 280;
 
         foreach( $agentes as $agente ){
             $ids = new Ids();
+
+            $i = $agente->getCaIdagente();
+
             //$ids->setCaId( $agente->getCaIdagente() );
-            $ids->setCaId( $i++ );
+            $ids->setCaId( $i );
             
             $ids->setCaTipoidentificacion( 3 );
             $ids->setCaDv( null );
@@ -2955,6 +2977,11 @@ ORDER BY ca_fchstatus ";
 
 
             $ids->setCaIdgrupo( $ids->getCaId() );
+
+            $ids->setCaFchcreado( $agente->getCaFchcreado() );
+            $ids->setCaUsucreado( $agente->getCaUsucreado() );
+            $ids->setCaFchactualizado( $agente->getCaFchactualizado() );
+            $ids->setCaUsuactualizado( $agente->getCaUsuactualizado() );
             $ids->save();
             $idsAgente = new IdsAgente();
             $idsAgente->setCaTipo( $agente->getCaTipo() );
@@ -3014,7 +3041,7 @@ ORDER BY ca_fchstatus ";
 
                 $contacto = new IdsContacto();
                 
-
+                $contacto->setCaIdcontacto($transContacto->getCaIdcontacto());
                 $contacto->setCaNombres(ucwords($transContacto->getCaNombre()));
                 $contacto->setCaPapellido(ucwords($transContacto->getCaApellido()));
                 $contacto->setCaIdsucursal( $sucursal->getcaIdsucursal() );
@@ -3037,12 +3064,21 @@ ORDER BY ca_fchstatus ";
                 $contacto->setCaCargo( $transContacto->getCaCargo() );
                 $contacto->setCaImpoexpo( $transContacto->getCaImpoexpo() );
                 $contacto->setCaTransporte( $transContacto->getCaTransporte() );
+
+
+                $contacto->setCaFchcreado( $transContacto->getCaFchcreado() );
+                $contacto->setCaUsucreado( $transContacto->getCaUsucreado() );
+                $contacto->setCaFchactualizado( $transContacto->getCaFchactualizado() );
+                $contacto->setCaUsuactualizado( $transContacto->getCaUsuactualizado() );
+
                 $contacto->save();
             }
 
         }
         $this->setTemplate("blank");
     }
+
+
 
     public function executeFixContactoCotizaciones(){
         set_time_limit(0);
@@ -3087,10 +3123,12 @@ ORDER BY ca_fchstatus ";
 
     public function executeFixIdcontactoAgentes(){
         $c = new Criteria();
+
+         $c->addAscendingOrderByColumn( ContactoAgentePeer::CA_IDCONTACTO."" );
         $c->addAscendingOrderByColumn( ContactoAgentePeer::CA_IDAGENTE );
         $c->addAscendingOrderByColumn( ContactoAgentePeer::CA_NOMBRE );
         $contactos = ContactoAgentePeer::doSelect( $c );
-        $i=1;
+        $i=118;
         foreach( $contactos as  $contacto ){
             $sql = "UPDATE tb_contactos SET ca_idcontacto='".$i."' WHERE ca_idcontacto='".$contacto->getCaIdcontacto()."'";
             echo $sql.";<br />";

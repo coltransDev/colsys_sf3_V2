@@ -148,8 +148,12 @@ if( !$reporte->getCaNotify() ){
 	}elseif(  $reporte->getCaNotify()==3 ){
 		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdmaster() );
 	}
-	
-	$notify_h = $notify->getCaNombre()." Nit. ".$notify->getCaIdentificacion()."<BR>Contacto: ".$notify->getCaContacto()."<BR>Dirección: ".$notify->getCaDireccion()."<BR>Teléfonos:".$notify->getCaTelefonos()." Fax:".$notify->getCaFax()."<BR>Email: ".$notify->getCaEmail();	
+    
+	if( $notify ){
+        $notify_h = $notify->getCaNombre()." Nit. ".$notify->getCaIdentificacion()."<BR>Contacto: ".$notify->getCaContacto()."<BR>Dirección: ".$notify->getCaDireccion()."<BR>Teléfonos:".$notify->getCaTelefonos()." Fax:".$notify->getCaFax()."<BR>Email: ".$notify->getCaEmail();
+    }else{
+        $notify_h = "";
+    }
 }
 
 if ( $reporte->getCaMastersame() == 'Sí' ){

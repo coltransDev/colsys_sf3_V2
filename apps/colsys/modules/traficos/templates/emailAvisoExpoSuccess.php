@@ -1,20 +1,4 @@
-<?
-if( $reporte->getCaModalidad()=="FCL" ){
-?>
-<div align="center" class="vigencia">F_03 Versi&oacute;n 04 Vigencia 07-11-2007 Aprobado por Sandra Camargo </div>
-<?
-}
-if( $reporte->getCaModalidad()=="LCL" ){
-?>
-<div align="center" class="vigencia">F_22  Versi&oacute;n 04 Vigencia 07-11-2007 Aprobado por Sandra Camargo </div>
-<?
-}
-if(  $reporte->getCaTransporte() == Constantes::AEREO ){
-?>
-<div align="center" class="vigencia">F_02 Versi&oacute;n 04 Vigencia 07-09-2007  </div>
-<?
-}
-?>
+
 <div class="htmlContent">
 <?
 $repexpo = $reporte->getRepExpo();

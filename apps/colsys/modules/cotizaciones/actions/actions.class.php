@@ -654,7 +654,9 @@ class cotizacionesActions extends sfActions
 		$newCotizacion->setCaUsucreado( $user->getUserId() );
 		$newCotizacion->setCaFchactualizado( null );
 		$newCotizacion->setCaUsuactualizado( null );
-		
+		$newCotizacion->setCaFchanulado( null );
+		$newCotizacion->setCaUsuanulado( null );
+
 	
 		$newCotizacion->save();
 		
