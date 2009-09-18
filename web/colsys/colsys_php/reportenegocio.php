@@ -2888,7 +2888,7 @@ elseif (isset($accion)) {                                                       
 
                 if (isset($confirmar)) {
                     $cn = explode(",",$confirmar);
-                    $cc = "";
+                    $cc = $recorreo.",";
                     while (list ($clave, $val) = each ($cn)) {
                         if (stripos(strtolower($val), '@coltrans.com.co') !== false) {
                             $cc.= $val.",";
