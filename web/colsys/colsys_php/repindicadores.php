@@ -456,7 +456,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $format_avg = "H:i:s";
         $source   = "vi_repindicador_brk";
         $transporte = "ca_transporte = 'Aduana'";
-        $subque = " INNER JOIN ( select bke.*, prm.ca_valor from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' order by ca_identificacion) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
+        $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' order by ca_identificacion) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
 
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -817,26 +817,24 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_coordinador')."</TD>";
 
                 echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
-                $int_uno = $int_dos = "";
+                $int_dos = "";
+                $int_tres = "";
+                $array_eventos = array();
                 $matriz_eventos = array();
                 $referencia = $rs->Value('ca_referencia');
-                $fcn_ini = null;
-                if ($rs->Value('ca_fchreferencia') > $rs->Value('ca_fcharribo')) {
-                    $fcn_ini = (strlen($rs->Value('ca_fchreferencia'))<=10)?$rs->Value('ca_fchreferencia')." 08:00":$rs->Value('ca_fchreferencia'); // Se hace ajuste por no manejar timestamp en estos campos.
-                    $matriz_eventos["intervalo_1"]["Fch. Referencia"] = $fcn_ini;
-                    $int_uno = "Fch. Referencia";
-                }
+                $fcn_ini = (strlen($rs->Value('ca_fchreferencia'))<=10)?$rs->Value('ca_fchreferencia')." 08:00":$rs->Value('ca_fchreferencia'); // Se hace ajuste por no manejar timestamp en estos campos.
+                $matriz_eventos["intervalo_1"]["00"] = $fcn_ini;
+                $array_eventos["00"] = "Fch. Referencia";
+                $int_uno = "Fch. Referencia";
+
                 echo "<TR>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>Fch. Referencia</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchreferencia')."</TD>";
                 echo "</TR>";
-                echo "<TR>";
-                echo "  <TD Class=mostrar style='font-size: 9px;'>Fch. Arribo</TD>";
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fcharribo')."</TD>";
-                echo "</TR>";
 
                 $dif_ref = null;
                 while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
+                    $array_eventos[$rs->Value('ca_valor2')] = $rs->Value('ca_valor');
                     $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
                     $fchEvento = date("Y-m-d H:i",mktime($fchEventoArry["hour"],$fchEventoArry["minutes"],$fchEventoArry["secons"],$fchEventoArry["month"],$fchEventoArry["day"],$fchEventoArry["year"]));
                     echo "<TR>";
@@ -847,77 +845,84 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     if (in_array($rs->Value('ca_idevento'),array(25))) { //Evalua si el evento abre el primer invervalo
                         if ($matriz_eventos["intervalo_1"][$int_uno] < $fchEvento) {
                             array_pop($matriz_eventos["intervalo_1"]);
-                            $matriz_eventos["intervalo_1"][$rs->Value('ca_valor')] = $fchEvento;
+                            $matriz_eventos["intervalo_1"][$rs->Value('ca_valor2')] = $fchEvento;
                             $fcn_ini = $fchEvento;
                         }
                     }
 
                     if (in_array($rs->Value('ca_idevento'),array(26))) { //Evalua si el evento cierra el primer invervalo
-                        $matriz_eventos["intervalo_1"][$rs->Value('ca_valor')] = $fchEvento;
+                        $matriz_eventos["intervalo_1"][$rs->Value('ca_valor2')] = $fchEvento;
                     }
 
                     if (in_array($rs->Value('ca_idevento'),array(1)))  //Evalua si el evento abre el segundo invervalo
-                        $matriz_eventos["intervalo_2"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        $matriz_eventos["intervalo_2"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
                     if (in_array($rs->Value('ca_idevento'),array(2,3))) {  //Evalua si el evento cierra el segundo invervalo
-                        if ($rs->Value('ca_idevento')==2) {
-                            $int_dos = $rs->Value('ca_valor');
-                            $matriz_eventos["intervalo_2"][$rs->Value('ca_valor')] = $fchEvento;
-                        } else if ($rs->Value('ca_idevento')==3) {
-                                if ($matriz_eventos["intervalo_2"][$int_dos] < $fchEvento) {
-                                    array_pop($matriz_eventos["intervalo_2"]);
-                                    $matriz_eventos["intervalo_2"][$rs->Value('ca_valor')] = $fchEvento;
-                                }
+                        if (strlen($int_dos) != 0){
+                            if ($matriz_eventos["intervalo_2"][$int_dos] < $fchEvento) {
+                                unset($matriz_eventos["intervalo_2"][$int_dos]);
                             }
+                        }else{
+                            $int_dos = $rs->Value('ca_valor2');
+                        }
+                        $matriz_eventos["intervalo_2"][$rs->Value('ca_valor2')] = $fchEvento;
                     }
 
                     if (in_array($rs->Value('ca_idevento'),array(7)))  //Evalua si el evento abre el tercer invervalo
-                        $matriz_eventos["intervalo_3"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        $matriz_eventos["intervalo_3"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
-                    if (in_array($rs->Value('ca_idevento'),array(8)))  //Evalua si el evento cierra el tercer invervalo
-                        $matriz_eventos["intervalo_3"][$rs->Value('ca_valor')] = $fchEvento;
+                    if (in_array($rs->Value('ca_idevento'),array(6,8))) {  //Evalua si el evento cierra el tercer invervalo
+                        if (strlen($int_tres) != 0){
+                            if ($matriz_eventos["intervalo_3"][$int_tres] < $fchEvento) {
+                                unset($matriz_eventos["intervalo_3"][$int_tres]);
+                            }
+                        }else{
+                            $int_tres = $rs->Value('ca_valor2');
+                        }
+                        $matriz_eventos["intervalo_3"][$rs->Value('ca_valor2')] = $fchEvento;
+                    }
 
                     if (in_array($rs->Value('ca_idevento'),array(9)))  //Evalua si el evento abre el cuarto invervalo
-                        $matriz_eventos["intervalo_4"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        $matriz_eventos["intervalo_4"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
                     if (in_array($rs->Value('ca_idevento'),array(10)))  //Evalua si el evento cierra el cuarto invervalo
-                        $matriz_eventos["intervalo_4"][$rs->Value('ca_valor')] = $fchEvento;
+                        $matriz_eventos["intervalo_4"][$rs->Value('ca_valor2')] = $fchEvento;
 
                     if (in_array($rs->Value('ca_idevento'),array(19)))  //Evalua si el evento abre el quinto invervalo
-                        $matriz_eventos["intervalo_5"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        $matriz_eventos["intervalo_5"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
                     if (in_array($rs->Value('ca_idevento'),array(20)))  //Evalua si el evento cierra el quinto invervalo
-                        $matriz_eventos["intervalo_5"][$rs->Value('ca_valor')] = $fchEvento;
+                        $matriz_eventos["intervalo_5"][$rs->Value('ca_valor2')] = $fchEvento;
 
-                    if (in_array($rs->Value('ca_idevento'),array(18)))  //Evalua si el evento abre el sexto invervalo
-                        $matriz_eventos["intervalo_6"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                    if (in_array($rs->Value('ca_idevento'),array(13)))  //Evalua si el evento abre el sexto invervalo
+                        $matriz_eventos["intervalo_6"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
-                    if (in_array($rs->Value('ca_idevento'),array(12)))  //Evalua si el evento cierra el sexto invervalo
-                        $matriz_eventos["intervalo_6"][$rs->Value('ca_valor')] = $fchEvento;
+                    if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento cierra el sexto invervalo
+                        $matriz_eventos["intervalo_6"][$rs->Value('ca_valor2')] = $fchEvento;
 
                     if (in_array($rs->Value('ca_idevento'),array(14)))  //Evalua si el evento abre el septimo invervalo
-                        $matriz_eventos["intervalo_7"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        $matriz_eventos["intervalo_7"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
                     if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento cierra el septimo invervalo
-                        $matriz_eventos["intervalo_7"][$rs->Value('ca_valor')] = $fchEvento;
+                        $matriz_eventos["intervalo_7"][$rs->Value('ca_valor2')] = $fchEvento;
 
                     if (in_array($rs->Value('ca_idevento'),array(14)))  //Evalua si el evento abre el octavo invervalo
-                        $matriz_eventos["intervalo_8"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        $matriz_eventos["intervalo_8"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
                     if (in_array($rs->Value('ca_idevento'),array(21)))  //Evalua si el evento cierra el octavo invervalo
-                        $matriz_eventos["intervalo_8"][$rs->Value('ca_valor')] = $fchEvento;
+                        $matriz_eventos["intervalo_8"][$rs->Value('ca_valor2')] = $fchEvento;
 
                     if (in_array($rs->Value('ca_idevento'),array(22)))  //Evalua si el evento abre el noveno invervalo
-                        $matriz_eventos["intervalo_9"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        $matriz_eventos["intervalo_9"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
                     if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento cierra el noveno invervalo
-                        $matriz_eventos["intervalo_9"][$rs->Value('ca_valor')] = $fchEvento;
+                        $matriz_eventos["intervalo_9"][$rs->Value('ca_valor2')] = $fchEvento;
 
                     if (in_array($rs->Value('ca_idevento'),array(23)))  //Evalua si el evento abre el decimo invervalo
-                        $matriz_eventos["intervalo_10"][$rs->Value('ca_valor')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        $matriz_eventos["intervalo_10"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
                     if (in_array($rs->Value('ca_idevento'),array(24)))  //Evalua si el evento cierra el decimo invervalo
-                        $matriz_eventos["intervalo_10"][$rs->Value('ca_valor')] = $fchEvento;
+                        $matriz_eventos["intervalo_10"][$rs->Value('ca_valor2')] = $fchEvento;
 
                     $rs->MoveNext();	// Buscar Todos los Registros de la referencia
                 }
@@ -929,6 +934,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     $flag = true;
                     $ini_event = null;
                     $fin_event = null;
+                    ksort($intervalo);
                     while (list ($clave, $val) = each ($intervalo)) {
                         if ($flag) {
                             $ini_event = $val;
@@ -936,7 +942,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                         }else {
                             $fin_event = $val;
                         }
-                        echo "<TD>$clave <br /> $val</TD>";
+                        echo "<TD>$array_eventos[$clave]<br /> $val</TD>";
                     }
                     list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($ini_event, "%d-%d-%d %d:%d:%d");
                     $tstamp_inicial = mktime($hor, $min, $seg, $mes, $dia, $ano);
