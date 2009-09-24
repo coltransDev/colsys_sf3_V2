@@ -99,10 +99,10 @@ function calc_dif(&$festiv, $inicio, $final) {
         }else if (!is_null($festiv) and in_array(date("Y-m-d", $start),$festiv)) {  // Evalua si es un día festivo
             $start = mktime(8,0,0,$mes,$dia+1,$ano);
             continue;
-        }else if ($start < mktime(8,0,0,$mes,$dia,$ano)) {             // Evalua si es antes de las 8:00 am
+        }else if (!is_null($festiv) and $start < mktime(8,0,0,$mes,$dia,$ano)) {             // Evalua si es antes de las 8:00 am
             $start = mktime(8,0,0,$mes,$dia,$ano);
             continue;
-        }else if ($start > mktime(16,59,0,$mes,$dia,$ano)) {            // Evalua si es después de las 5:00 pm
+        }else if (!is_null($festiv) and $start > mktime(16,59,0,$mes,$dia,$ano)) {            // Evalua si es después de las 5:00 pm
             $start = mktime(8,0,0,$mes,$dia+1,$ano);
             continue;
         }else if (date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final) and date("Y-m-d H:i:s", $start+3600) <= date("Y-m-d H:i:s", mktime(17,0,0,$mes,$dia,$ano))) {
