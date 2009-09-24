@@ -1,27 +1,26 @@
 <?php
 function vacios($var) {
-  if (strlen (trim($var)) == 0){
-    return false;
-  }else{
-    return true;
-  }
+    if (strlen (trim($var)) == 0) {
+        return false;
+    }else {
+        return true;
+    }
 }
 
 function formatNumber($number, $decimals=2, $dec_point=".", $thousands_sep=",") {
-   $nachkomma = abs($number - floor($number));
-   $strnachkomma = number_format($nachkomma , $decimals, $dec_point, $thousands_sep);
+    $nachkomma = abs($number - floor($number));
+    $strnachkomma = number_format($nachkomma , $decimals, $dec_point, $thousands_sep);
 
-   for ($i = 1; $i <= $decimals; $i++) {
-       if (substr($strnachkomma, ($i * -1), 1) != "0") {
-           break;
-       }
-   }
-   return number_format($number, ($decimals - $i +1), $dec_point, $thousands_sep);
+    for ($i = 1; $i <= $decimals; $i++) {
+        if (substr($strnachkomma, ($i * -1), 1) != "0") {
+            break;
+        }
+    }
+    return number_format($number, ($decimals - $i +1), $dec_point, $thousands_sep);
 }
 
-function dateDiff($startDate, $endDate)
-{
-    if (strlen($startDate) == 0 or strlen($endDate) == 0){ // Valida si Inicio o Final viene en Blanco
+function dateDiff($startDate, $endDate) {
+    if (strlen($startDate) == 0 or strlen($endDate) == 0) { // Valida si Inicio o Final viene en Blanco
         return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
     }
     // Parse dates for conversion
@@ -33,17 +32,16 @@ function dateDiff($startDate, $endDate)
     $end_date = gregoriantojd($endArry["month"], $endArry["day"], $endArry["year"]);
 
     // Return difference
-	$difference = (round(($end_date-$start_date),0)==0)?1:round(($end_date-$start_date),0);
+    $difference = (round(($end_date-$start_date),0)==0)?1:round(($end_date-$start_date),0);
     return $difference;
 } 
 
-function workDiff(&$festiv, $startDate, $endDate)
-{
-    if (strlen($startDate) == 0 or strlen($endDate) == 0){ // Valida si Inicio o Final viene en Blanco
+function workDiff(&$festiv, $startDate, $endDate) {
+    if (strlen($startDate) == 0 or strlen($endDate) == 0) { // Valida si Inicio o Final viene en Blanco
         return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
     }
 
-    if ($startDate > $endDate){
+    if ($startDate > $endDate) {
         $fact = -1;
         $tempDate = $startDate;
         $startDate= $endDate;
@@ -65,13 +63,13 @@ function workDiff(&$festiv, $startDate, $endDate)
     $endDate = mktime(0,0,0,$endArry["month"], $endArry["day"], $endArry["year"]);
 
     while ($startDate < $endDate) {
-        // Parse dates for conversion
+    // Parse dates for conversion
         $startArry = date_parse($start_Date);
 
         // Convert dates to TimeStamp
         $startDate = mktime(0,0,0,$startArry["month"], $startArry["day"], $startArry["year"]);
-        if (date("N", $startDate)<= 5 and !in_array(date("Y-m-d", $startDate),$festiv)){		// Evalua si no es fin de semana ni festivo
-           $difference+=1;
+        if (date("N", $startDate)<= 5 and !in_array(date("Y-m-d", $startDate),$festiv)) {		// Evalua si no es fin de semana ni festivo
+            $difference+=1;
         }
         $startDate = mktime(0,0,0,$startArry["month"], $startArry["day"]+1, $startArry["year"]);
         $start_Date = date("Y-m-d", $startDate);
@@ -85,67 +83,67 @@ function workDiff(&$festiv, $startDate, $endDate)
 
 
 
-function calc_dif(&$festiv, $inicio, $final){
-	$difer = 0;
+function calc_dif(&$festiv, $inicio, $final) {
+    $difer = 0;
     $start = $inicio;
-	if ($inicio == mktime(0,0,0,11,30,1999) or $final == mktime(0,0,0,11,30,1999)){ // Valida si Inicio o Final viene en Blanco
-		return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
-	}
-
-    while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)){
-       list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");
-
-       if (date("N", $start)> 5){                                    // Evalua si es un fin de semana
-           $start = mktime(8,0,0,$mes,$dia+1,$ano);
-           continue;
-       }else if (in_array(date("Y-m-d", $start),$festiv)){           // Evalua si es un día festivo
-           $start = mktime(8,0,0,$mes,$dia+1,$ano);
-           continue;
-       }else if ($start < mktime(8,0,0,$mes,$dia,$ano)){             // Evalua si es antes de las 8:00 am
-           $start = mktime(8,0,0,$mes,$dia,$ano);
-           continue;
-       }else if ($start > mktime(16,59,0,$mes,$dia,$ano)){            // Evalua si es después de las 5:00 pm
-           $start = mktime(8,0,0,$mes,$dia+1,$ano);
-           continue;
-       }else if (date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final) and date("Y-m-d H:i:s", $start+3600) <= date("Y-m-d H:i:s", mktime(17,0,0,$mes,$dia,$ano))){ // Evalua la posibilidad de incrementos de una hora sin sobrepasar las 5:00pm
-		   $difer+=3600;
-           $start+=3600;
-           continue;
-       }else{
-		   $difer+=60;
-		   $start+=60;
-	   }
-       // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
+    if ($inicio == mktime(0,0,0,11,30,1999) or $final == mktime(0,0,0,11,30,1999)) { // Valida si Inicio o Final viene en Blanco
+        return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
     }
-	// echo "------------- <br /><br />";
+    
+    while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)) {     // Si festiv es NULL no descuenta Fines de Semana ni festivos
+        list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");
+
+        if (!is_null($festiv) and date("N", $start)> 5) {               // Evalua si es un fin de semana
+            $start = mktime(8,0,0,$mes,$dia+1,$ano);
+            continue;
+        }else if (!is_null($festiv) and in_array(date("Y-m-d", $start),$festiv)) {  // Evalua si es un día festivo
+            $start = mktime(8,0,0,$mes,$dia+1,$ano);
+            continue;
+        }else if ($start < mktime(8,0,0,$mes,$dia,$ano)) {             // Evalua si es antes de las 8:00 am
+            $start = mktime(8,0,0,$mes,$dia,$ano);
+            continue;
+        }else if ($start > mktime(16,59,0,$mes,$dia,$ano)) {            // Evalua si es después de las 5:00 pm
+            $start = mktime(8,0,0,$mes,$dia+1,$ano);
+            continue;
+        }else if (date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final) and date("Y-m-d H:i:s", $start+3600) <= date("Y-m-d H:i:s", mktime(17,0,0,$mes,$dia,$ano))) {
+            $difer+=3600;                                               // Evalua la posibilidad de incrementos de una hora sin sobrepasar las 5:00pm
+            $start+=3600;
+            continue;
+        }else {
+            $difer+=60;
+            $start+=60;
+        }
+        // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
+    }
+    // echo "------------- <br /><br />";
     return(tiempo_segundos($difer));
 }
 
 
-function tiempo_segundos($segundos){
-	$minutos=$segundos/60;
-	$horas=floor($minutos/60);
-	$minutos2=$minutos%60;
-	$segundos2=$segundos%60%60%60;
-	return substr(100+$horas,1,2).":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
+function tiempo_segundos($segundos) {
+    $minutos=$segundos/60;
+    $horas=floor($minutos/60);
+    $minutos2=$minutos%60;
+    $segundos2=$segundos%60%60%60;
+    return substr(100+$horas,1,2).":".substr(100+$minutos2,1,2).":".substr(100+$segundos2,1,2);
 }
 
 
-function array_avg($array,$precision="2"){
+function array_avg($array,$precision="2") {
     $a=0;
-    if(is_array($array)){
+    if(is_array($array)) {
         foreach($array as $value):
-            if(!is_numeric($value)){
+            if(!is_numeric($value)) {
                 $a++;
             }
         endforeach;
-        if($a==0){
+        if($a==0) {
             $cuantos=count($array);
             return round(array_sum($array)/$cuantos,$precision);
-        }else{
+        }else {
             return "ERROR in function array_avg(): the array contains one or more non-numeric values";
-        }       
-    }else{
+        }
+    }else {
         return "ERROR in function array_avg(): this is a not array";
     }
 } 
