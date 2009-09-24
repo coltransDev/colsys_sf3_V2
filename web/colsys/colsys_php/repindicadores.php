@@ -822,21 +822,22 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $array_eventos = array();
                 $matriz_eventos = array();
                 $referencia = $rs->Value('ca_referencia');
-                $fcn_ini = (strlen($rs->Value('ca_fchreferencia'))<=10)?$rs->Value('ca_fchreferencia')." 08:00":$rs->Value('ca_fchreferencia'); // Se hace ajuste por no manejar timestamp en estos campos.
+                $fcn_ini = $rs->Value('ca_fchcreado');  // Toma la Fecha y hora de creacion de la referencia
                 $matriz_eventos["intervalo_1"]["00"] = $fcn_ini;
                 $array_eventos["00"] = "Fch. Referencia";
                 $int_uno = "Fch. Referencia";
 
                 echo "<TR>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>Fch. Referencia</TD>";
-                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchreferencia')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchcreado')."</TD>";
                 echo "</TR>";
 
                 $dif_ref = null;
                 while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
                     $array_eventos[$rs->Value('ca_valor2')] = $rs->Value('ca_valor');
                     $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
-                    $fchEvento = date("Y-m-d H:i",mktime($fchEventoArry["hour"],$fchEventoArry["minutes"],$fchEventoArry["secons"],$fchEventoArry["month"],$fchEventoArry["day"],$fchEventoArry["year"]));
+                    $fchEvento = date("Y-m-d H:i:s",mktime($fchEventoArry["hour"],$fchEventoArry["minute"],$fchEventoArry["second"],$fchEventoArry["month"],$fchEventoArry["day"],$fchEventoArry["year"]));
+
                     echo "<TR>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_valor')."</TD>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$fchEvento."</TD>";
@@ -929,6 +930,9 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 echo "  </TABLE></TD>";
 
                 echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
+                $fecha_uno = $fecha_dos = time();
+
+                $ini_mem = true;
                 foreach($matriz_eventos as $intervalo) {
                     echo "<TR>";
                     $flag = true;
@@ -949,11 +953,17 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($fin_event, "%d-%d-%d %d:%d:%d");
                     $tstamp_final   = mktime($hor, $min, $seg, $mes, $dia, $ano);
                     $dif_mem = calc_dif($festi, $tstamp_inicial, $tstamp_final);
-                    $dif_ref+= $dif_mem;
+
+                    list($hour, $minute, $second) = sscanf($dif_mem, "%d:%d:%d");
+                    list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date('Y-m-d h:i:s',$fecha_dos), "%d-%d-%d %d:%d:%d");
+                    $fecha_dos = mktime($hor+$hour, $min+$minute, $seg+$second, $mes, $dia, $ano);
+
                     echo "<TD>Diferencia :<br /> $dif_mem</TD>";
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
+
+                $dif_ref = calc_dif($nofesti = null, $fecha_uno, $fecha_dos);
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_ref."</TD>";
 
@@ -965,7 +975,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
                 echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
 
-                $dif_ref = null;
+                $dif_ref = time();
                 $matriz_eventos = array();
                 $referencia = $rs->Value('ca_referencia');
                 while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
@@ -1011,7 +1021,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 }
                 echo "  </TABLE></TD>";
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
-                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_ref."</TD>";
+                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".date($format_avg,$dif_ref)."</TD>";
 
                 continue;
                 break;
