@@ -89,7 +89,6 @@ function calc_dif(&$festiv, $inicio, $final) {
     if ($inicio == mktime(0,0,0,11,30,1999) or $final == mktime(0,0,0,11,30,1999)) { // Valida si Inicio o Final viene en Blanco
         return (null);  // Retorna un Null cuando no se puede calcular la diferencia.
     }
-    
     while (date("Y-m-d H:i", $start) < date("Y-m-d H:i", $final)) {     // Si festiv es NULL no descuenta Fines de Semana ni festivos
         list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d H:i:s", $start), "%d-%d-%d %d:%d:%d");
 
@@ -105,13 +104,16 @@ function calc_dif(&$festiv, $inicio, $final) {
         }else if (!is_null($festiv) and $start > mktime(16,59,0,$mes,$dia,$ano)) {            // Evalua si es después de las 5:00 pm
             $start = mktime(8,0,0,$mes,$dia+1,$ano);
             continue;
-        }else if (date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final) and date("Y-m-d H:i:s", $start+3600) <= date("Y-m-d H:i:s", mktime(17,0,0,$mes,$dia,$ano))) {
+        }else if ((is_null($festiv) and date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final)) or (date("Y-m-d H:i:s", $start+3600) < date("Y-m-d H:i:s", $final) and date("Y-m-d H:i:s", $start+3600) <= date("Y-m-d H:i:s", mktime(17,0,0,$mes,$dia,$ano)))) {
             $difer+=3600;                                               // Evalua la posibilidad de incrementos de una hora sin sobrepasar las 5:00pm
             $start+=3600;
             continue;
         }else {
             $difer+=60;
             $start+=60;
+        }
+        if (is_null($festiv)){
+            echo "<br />".date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer);
         }
         // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
     }
