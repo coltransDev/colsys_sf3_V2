@@ -112,9 +112,6 @@ function calc_dif(&$festiv, $inicio, $final) {
             $difer+=60;
             $start+=60;
         }
-        if (is_null($festiv)){
-            echo "<br />".date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer);
-        }
         // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
     }
     // echo "------------- <br /><br />";
