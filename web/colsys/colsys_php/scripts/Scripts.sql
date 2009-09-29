@@ -2892,6 +2892,25 @@ GRANT ALL ON vi_repindicador_brk TO "Administrador";
 GRANT ALL ON vi_repindicador_brk TO GROUP "Usuarios";
 
 
+// Drop view vi_repindicador_exp cascade;
+Create view vi_repindicador_exp as
+select exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, (((string_to_array(exm.ca_referencia,'.'))[5]::int)+2000)::text as ca_ano, ((string_to_array(exm.ca_referencia,'.'))[3])::text as ca_mes, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen,
+	cid.ca_ciudad as ca_ciudestino, (case when ca_via = 'Aereo' then 'Aéreo' else (case when ca_via = 'Maritimo' then 'Marítimo' else ca_via end) end) as ca_transporte, exm.ca_modalidad, 'Exportación'::text as ca_impoexpo, ccl.ca_compania
+
+from tb_expo_maestra exm
+	INNER JOIN tb_expo_ingresos exi ON (exm.ca_referencia = exi.ca_referencia)
+	INNER JOIN control.tb_usuarios us ON (exi.ca_loginvendedor = us.ca_login)
+	INNER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
+	INNER JOIN tb_ciudades cio ON (exm.ca_origen = cio.ca_idciudad)
+	INNER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
+	INNER JOIN tb_ciudades cid ON (exm.ca_destino = cid.ca_idciudad)
+	INNER JOIN tb_clientes ccl ON (exm.ca_idcliente::numeric = ccl.ca_idcliente::numeric)
+order by ca_ano, ca_mes, ca_sucursal, ca_referencia;
+
+REVOKE ALL ON vi_repindicador_exp FROM PUBLIC;
+GRANT ALL ON vi_repindicador_exp TO "Administrador";
+GRANT ALL ON vi_repindicador_exp TO GROUP "Usuarios";
+
 
 // Drop view vi_cotizaciones;
 Create view vi_cotizaciones as
