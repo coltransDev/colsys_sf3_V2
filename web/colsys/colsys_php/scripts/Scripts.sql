@@ -2855,7 +2855,7 @@ GRANT ALL ON vi_repindicador_air TO GROUP "Usuarios";
 // Drop view vi_cotindicadores cascade;
 Create view vi_cotindicadores as
 select ct.ca_idcotizacion, ct.ca_consecutivo, TO_CHAR(TO_DATE(date_part('year',ct.ca_fchcreado)::text,'yyyy'),'yyyy') as ca_ano, TO_CHAR(TO_DATE(date_part('month',ct.ca_fchcreado)::text,'mm'),'mm') as ca_mes,
-	tr.ca_fchcreado as ca_fchsolicitud, tr.ca_fchterminada as ca_fchpresentacion, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, cp.ca_impoexpo, cp.ca_transporte, cp.ca_modalidad, ccl.ca_compania
+	tr.ca_fchcreado as ca_fchsolicitud, tr.ca_fchterminada as ca_fchpresentacion, tr.ca_observaciones, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, cp.ca_impoexpo, cp.ca_transporte, cp.ca_modalidad, ccl.ca_compania, ct.ca_usuario
 from tb_cotproductos cp
 	LEFT OUTER JOIN tb_cotizaciones ct ON (cp.ca_idcotizacion = ct.ca_idcotizacion)
 	LEFT OUTER JOIN notificaciones.tb_tareas tr ON (tr.ca_idtarea = ct.ca_idg_envio_oportuno)
@@ -3576,100 +3576,6 @@ $$ LANGUAGE 'plpgsql';
 
 
 
-DROP TRIGGER actualiza_clientes ON tb_clientes CASCADE;
-DROP TRIGGER adicion_inomaestra_sea ON tb_inoclientes_sea CASCADE;
-DROP TRIGGER adicion_inomaestra_air ON tb_inoclientes_air CASCADE;
-DROP TRIGGER adicion_inomaestra_exp ON tb_expo_maestra CASCADE;
-DROP TRIGGER adicion_inomaestra_brk ON tb_brk_maestra CASCADE;
-
-CREATE OR REPLACE FUNCTION fun_stdcliente_tri() RETURNS trigger AS $$
-DECLARE
-    referrer_keys RECORD;  -- Declare a generic record to be used in a FOR
-	v_estado1 text:= '';
-	v_estado2 text:= '';
-
-BEGIN
-	IF (NOT nullvalue(TG_ARGV[0])) THEN
-		NEW.ca_idcliente = TG_ARGV[0];
-	END IF;
-
-	IF (TG_RELNAME = 'tb_clientes') THEN
-		IF (TG_OP = 'INSERT') THEN
-			INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
-			INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
-		ELSIF (TG_OP = 'UPDATE' AND NEW.ca_status != OLD.ca_status) THEN
-			INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Coltrans');
-			INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Colmas');
-		END IF;
-	ELSE
-		FOR referrer_keys IN select vc.ca_idcliente, vc.ca_coltrans_std, vc.ca_colmas_std from vi_clientes vc where vc.ca_idcliente = NEW.ca_idcliente LOOP
-			IF NOT nullvalue(referrer_keys.ca_coltrans_std) AND NOT nullvalue(referrer_keys.ca_colmas_std) THEN
-				v_estado1 = referrer_keys.ca_coltrans_std;
-				v_estado2 = referrer_keys.ca_colmas_std;
-			END IF;
-		END LOOP;
-		
-		FOR referrer_keys IN select * from vi_stdcliente where ca_idcliente = NEW.ca_idcliente LOOP
-			IF (TG_RELNAME = 'tb_inoclientes_sea' OR TG_RELNAME = 'tb_inoclientes_air') THEN 
-				IF (referrer_keys.ca_cantidad_sea + referrer_keys.ca_cantidad_air) = 0 THEN
-					IF v_estado1 != 'Potencial' THEN
-						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
-					END IF;
-				ELSIF (referrer_keys.ca_ultimos_sea + referrer_keys.ca_ultimos_air) > 0 THEN
-					IF v_estado1 = 'Potencial' THEN
-						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Coltrans');
-					END IF;
-				END IF;
-			ELSIF (TG_RELNAME = 'tb_expo_maestra' OR TG_RELNAME = 'tb_inomaestra_brk') THEN
-				IF (referrer_keys.ca_cantidad_exp + referrer_keys.ca_cantidad_brk) = 0 THEN
-					IF v_estado2 != 'Potencial' THEN
-						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
-					END IF;
-				ELSIF (referrer_keys.ca_ultimos_exp + referrer_keys.ca_ultimos_brk) > 0 THEN
-					IF v_estado2 = 'Potencial' THEN
-						INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Colmas');
-					END IF;
-				END IF;
-			END IF;
-			
-			UPDATE tb_clientes SET ca_status = '' WHERE ca_idcliente = NEW.ca_idcliente;
-		END LOOP;
-	END IF;
-
-	RETURN NULL;
-END;
-$$ LANGUAGE 'plpgsql';
-
-CREATE TRIGGER actualiza_clientes
-	AFTER INSERT OR UPDATE ON tb_clientes
-	FOR EACH ROW
-EXECUTE PROCEDURE fun_stdcliente_tri();
-
-CREATE TRIGGER adicion_inomaestra_sea
-	AFTER INSERT ON tb_inoclientes_sea
-	FOR EACH ROW
-EXECUTE PROCEDURE fun_stdcliente_tri();
-
-CREATE TRIGGER adicion_inomaestra_air
-	AFTER INSERT ON tb_inoclientes_air
-	FOR EACH ROW
-EXECUTE PROCEDURE fun_stdcliente_tri();
-
-CREATE TRIGGER adicion_inomaestra_exp
-	AFTER INSERT ON tb_expo_maestra
-	FOR EACH ROW
-EXECUTE PROCEDURE fun_stdcliente_tri();
-
-CREATE TRIGGER adicion_inomaestra_brk
-	AFTER INSERT ON tb_brk_maestra
-	FOR EACH ROW
-EXECUTE PROCEDURE fun_stdcliente_tri();
-
-
-select ca_idcliente, max(ca_fchestado) from tb_stdcliente 
-	where ca_estado = 'Perdido'
-	group by ca_idcliente
-
 ================================ CONTROL DE AUDITORÍA ================================
 insert into tb_parametros values ('CU044',1,'ca_idtrayecto, ca_idconcepto, ca_vlrneto, ca_vlrminimo, ca_fleteminimo, ca_idmoneda, ca_fchinicio, ca_fchvencimiento, ca_sugerida, ca_mantenimiento');
 insert into tb_parametros values ('CU044',2,'ca_idtrayecto, ca_idconcepto, ca_idrecargo, ca_aplicacion, ca_fchinicio, ca_fchvencimiento, ca_vlrfijo, ca_porcentaje, ca_baseporcentaje, ca_vlrunitario, ca_baseunitario, ca_recargominimo, ca_idmoneda');
@@ -3775,4 +3681,123 @@ GRANT ALL ON tb_inomaestralog_sea TO GROUP "Usuarios";
 CREATE OR REPLACE RULE rl_inomaestra_sea AS
     ON UPDATE TO tb_inomaestra_sea WHERE trim(old.ca_usucerrado::text) != trim(new.ca_usucerrado::text)
     DO INSERT INTO tb_inomaestralog_sea (ca_referencia, ca_fchcerrado, ca_usucerrado, ca_fchactualizado, ca_usuactualizado) values (new.ca_referencia, old.ca_fchcerrado, old.ca_usucerrado, to_char(current_timestamp,'YYYY-mm-dd hh24:mi:ss')::timestamp, new.ca_usuoperacion);
+
+
+
+
+======================================= CAMBIOS DE ESTADOS EN CLIENTES  =======================================
+
+DROP TRIGGER adicion_inomaestra_exp ON tb_expo_maestra CASCADE;
+DROP TRIGGER adicion_inomaestra_brk ON tb_brk_maestra CASCADE;
+
+
+DROP TRIGGER actualiza_clientes ON tb_clientes CASCADE;
+DROP TRIGGER adicion_inomaestra_sea ON tb_inoclientes_sea CASCADE;
+DROP TRIGGER adicion_inomaestra_air ON tb_inoclientes_air CASCADE;
+DROP TRIGGER adicion_inomaestra_exp ON tb_expo_ingresos CASCADE;
+DROP TRIGGER adicion_inomaestra_brk ON tb_brk_ingresos CASCADE;
+
+CREATE OR REPLACE FUNCTION fun_stdcliente_tri() RETURNS trigger AS $$
+DECLARE
+    referrer_keys RECORD;  -- Declare a generic record to be used in a FOR
+    referrer_refs RECORD;  -- Declare a generic record to be used in a FOR
+    v_estado1 text:= '';
+    v_estado2 text:= '';
+    v_idcliente text:= '';
+
+BEGIN
+    IF (NOT nullvalue(TG_ARGV[0])) THEN
+            NEW.ca_idcliente = TG_ARGV[0];
+    END IF;
+
+    IF (TG_RELNAME = 'tb_clientes') THEN
+        IF (TG_OP = 'INSERT') THEN
+            INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
+            INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
+        ELSIF (TG_OP = 'UPDATE' AND NEW.ca_status != OLD.ca_status) THEN
+            INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Coltrans');
+            INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Colmas');
+        END IF;
+    ELSE
+        FOR referrer_keys IN select vc.ca_idcliente, vc.ca_coltrans_std, vc.ca_colmas_std from vi_clientes vc where vc.ca_idcliente = NEW.ca_idcliente LOOP
+            IF NOT nullvalue(referrer_keys.ca_coltrans_std) AND NOT nullvalue(referrer_keys.ca_colmas_std) THEN
+                v_estado1 = referrer_keys.ca_coltrans_std;
+                v_estado2 = referrer_keys.ca_colmas_std;
+            END IF;
+        END LOOP;
+
+        FOR referrer_keys IN select * from vi_stdcliente where ca_idcliente = NEW.ca_idcliente LOOP
+            IF (TG_RELNAME = 'tb_inoclientes_sea' OR TG_RELNAME = 'tb_inoclientes_air') THEN
+                IF (referrer_keys.ca_cantidad_sea + referrer_keys.ca_cantidad_air) = 0 THEN
+                    IF v_estado1 != 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
+                    END IF;
+                ELSIF (referrer_keys.ca_ultimos_sea + referrer_keys.ca_ultimos_air) > 0 THEN
+                    IF v_estado1 = 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Coltrans');
+                    END IF;
+                END IF;
+            ELSIF (TG_RELNAME = 'tb_expo_ingresos') THEN
+                IF (referrer_keys.ca_cantidad_exp) = 0 THEN
+                    IF v_estado2 != 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
+                    END IF;
+                ELSIF (referrer_keys.ca_ultimos_exp) > 0 THEN
+                    IF v_estado2 = 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Colmas');
+                    END IF;
+                END IF;
+            ELSIF (TG_RELNAME = 'tb_brk_ingresos') THEN
+                FOR referrer_refs IN select ima.ca_idcliente from tb_brk_maestra ima where ima.ca_referencia = NEW.ca_referencia LOOP
+                    IF NOT nullvalue(referrer_refs.ca_idcliente) THEN
+                        v_idcliente = referrer_refs.ca_idcliente;
+                    END IF;
+                END LOOP;
+                IF (referrer_keys.ca_cantidad_brk) = 0 THEN
+                    IF v_estado2 != 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
+                    END IF;
+                ELSIF (referrer_keys.ca_ultimos_brk) > 0 THEN
+                    IF v_estado2 = 'Potencial' THEN
+                        INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Colmas');
+                    END IF;
+                END IF;
+            END IF;
+            UPDATE tb_clientes SET ca_status = '' WHERE ca_idcliente = NEW.ca_idcliente;
+        END LOOP;
+    END IF;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER actualiza_clientes
+	AFTER INSERT OR UPDATE ON tb_clientes
+	FOR EACH ROW
+EXECUTE PROCEDURE fun_stdcliente_tri();
+
+CREATE TRIGGER adicion_inomaestra_sea
+	AFTER INSERT ON tb_inoclientes_sea
+	FOR EACH ROW
+EXECUTE PROCEDURE fun_stdcliente_tri();
+
+CREATE TRIGGER adicion_inomaestra_air
+	AFTER INSERT ON tb_inoclientes_air
+	FOR EACH ROW
+EXECUTE PROCEDURE fun_stdcliente_tri();
+
+CREATE TRIGGER adicion_inomaestra_exp
+	AFTER INSERT ON tb_expo_ingresos
+	FOR EACH ROW
+EXECUTE PROCEDURE fun_stdcliente_tri();
+
+CREATE TRIGGER adicion_inomaestra_brk
+	AFTER INSERT ON tb_brk_ingresos
+	FOR EACH ROW
+EXECUTE PROCEDURE fun_stdcliente_tri();
+
+
+select ca_idcliente, max(ca_fchestado) from tb_stdcliente
+	where ca_estado = 'Perdido'
+	group by ca_idcliente
 
