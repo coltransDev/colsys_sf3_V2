@@ -425,7 +425,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tm->MoveNext();
         }
         $ind_mem  = 8;
-        $add_cols = 3;
+        $add_cols = 5;
         $tot_cols--;
         $cot_ant  = null;
         $campos.= ", to_number(substr(ca_consecutivo,0,position('-' in ca_consecutivo)),'99999999')";
@@ -598,6 +598,8 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         case 8:
             echo "	<TH>Fch.Solicitud</TH>";
             echo "	<TH>Fch.Envio</TH>";
+            echo "	<TH>Vendedor</TH>";
+            echo "	<TH>Observaciones</TH>";
             echo "	<TH>Dif.</TH>";
             break;
         case 9:
@@ -791,9 +793,14 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     $ini_ant = $rs->Value('ca_fchsolicitud');
                     $fin_ant = $rs->Value('ca_fchpresentacion');
                 }
+                if ($rs->Value("ca_observaciones") == "Licitaciones" or $rs->Value("ca_observaciones") == "Acuerdos autorizados"){
+                    $dif_mem = null;
+                }
                 $color = analizar_dif("T", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchsolicitud')."</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchpresentacion')."</TD>";
+                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_usuario')."</TD>";
+                echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_observaciones')."</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
                 $cot_ant = $rs->Value('ca_consecutivo');
                 while ($cot_ant == $rs->Value('ca_consecutivo') and !$rs->Eof() and !$rs->IsEmpty()) {
@@ -803,7 +810,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     echo "  <TD Class=invertir style='font-size: 9px;'>".$rs->Value('ca_ciudestino')."</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>".$rs->Value('ca_transporte')."</TD>";
                     echo "  <TD Class=invertir style='font-size: 9px;'>".$rs->Value('ca_modalidad')."</TD>";
-                    echo "  <TD Class=mostrar style='font-size: 9px;' COLSPAN=4>&nbsp;</TD>";
+                    echo "  <TD Class=mostrar style='font-size: 9px;' COLSPAN=6>&nbsp;</TD>";
                     echo "</TR>";
                     $rs->MoveNext();
                 }
@@ -1062,6 +1069,9 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".date($format_avg,$dif_ref)."</TD>";
 
+                if (!$rs->Eof()) {           // Retrocede un registro para quedar en el último Producto de la Cotización
+                    $rs->MovePrevious();
+                }
                 continue;
                 break;
         }
