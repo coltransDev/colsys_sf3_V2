@@ -295,10 +295,12 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     $mes_fes = "to_char(ca_fchfestivo,'MM') ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
     $mes = "ca_mes ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
     $sucursal = "ca_sucursal ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
+    $ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
     $cliente = ((strlen($cliente)!=0)?"and upper(ca_compania) like upper('%$cliente%')":"");
     $traorigen = "ca_traorigen ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
     $modalidad = "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')");
     $transporte = "ca_transporte ".((count($transporte)==1)?"like '$transporte[0]'":"in ('".implode("','",$transporte)."')");
+    $impoexpo = "Importación";
 
     $campos = "";
     while (list ($clave, $val) = each ($agrupamiento)) {
@@ -451,12 +453,18 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $add_cols = 4;
         $ini_ant  = null;
         $fin_ant  = null;
-    } else if ($indicador == "Oportunidad en Nacionalización de Mcias") {
+    } else if ($indicador == "Oportunidad en Nacionalización de Mcias Sucursal" or $indicador == "Oportunidad en Nacionalización de Mcias Puerto") {
         $tipo = "T";
         $format_avg = "H:i:s";
-        $source   = "vi_repindicador_brk";
+        $source = "vi_repindicador_brk";
         $transporte = "ca_transporte = 'Aduana'";
-        $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' order by ca_identificacion) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
+        $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from (select * from tb_brk_evento where ca_realizado = 1) bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' order by ca_identificacion) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
+
+        if (strpos($indicador, 'Puerto') === false){
+            $sucursal = "((string_to_array($source.ca_referencia,'.'))[1]) = '200'";
+        }else {
+            $sucursal = "((string_to_array($source.ca_referencia,'.'))[1]) != '200'";
+        }
 
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -470,13 +478,13 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $ind_mem  = 10;
         $add_cols = 3;
         $cot_ant  = null;
-        $campos.= ", vi_repindicador_brk.ca_referencia, bke.ca_fchevento, bke.ca_idevento";
+        $campos.= ", $source.ca_referencia, bke.ca_valor2";
     } else if ($indicador == "Oportunidad en la Facturación" and $procesos == "Aduana") {
         $tipo = "T";
         $format_avg = "H:i:s";
-        $source   = "vi_repindicador_brk";
+        $source = "vi_repindicador_brk";
         $transporte = "ca_transporte = 'Aduana'";
-        $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' and ca_identificacion in (15, 17) order by ca_valor2) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) order by bke.ca_referencia, prm.ca_valor2 ";
+        $subque = " INNER JOIN ( select bke.*, prm.ca_valor, prm.ca_valor2 from tb_brk_evento bke INNER JOIN (select * from tb_parametros where ca_casouso = 'CU037' and ca_identificacion in (15, 17) order by ca_valor2) prm ON (prm.ca_identificacion = bke.ca_idevento) order by ca_referencia ) bke ON ($source.ca_referencia = bke.ca_referencia) ";
 
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -490,10 +498,29 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $ind_mem  = 11;
         $add_cols = 3;
         $cot_ant  = null;
-        $campos.= ", vi_repindicador_brk.ca_referencia, bke.ca_fchevento, bke.ca_idevento";
+        $campos.= ", $source.ca_referencia, ca_valor2";
+    } else if ($indicador == "Oportunidad en Exportación") {
+        $tipo = "D";
+        $impoexpo = "Exportación";
+        $source = "vi_repindicador_exp";
+        $subque = " INNER JOIN ( select ext.*,pre.* from (select ca_referencia, ca_tipoexpo from tb_expo_maestra) exm INNER JOIN tb_expo_tracking ext ON (ext.ca_referencia = exm.ca_referencia) INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion) INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento) order by ca_referencia) exe ON ($source.ca_referencia = exe.ca_referencia) ";
+
+        if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
+            echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+            echo "<script>document.location.href = 'entrada.php';</script>";
+            exit; }
+        $festi = array();
+        while (!$tm->Eof() and !$tm->IsEmpty()) {
+            $festi[] = $tm->Value('ca_fchfestivo');
+            $tm->MoveNext();
+        }
+        $ind_mem  = 12;
+        $add_cols = 3;
+        $cot_ant  = null;
+        // $campos.= ", vi_repindicador_brk.ca_referencia, bke.ca_fchevento, bke.ca_idevento";
     }
 
-    $queries = "select * from $source $subque where ca_impoexpo = 'Importación' and $sucursal $cliente and $transporte and $ano and $mes";
+    $queries = "select * from $source $subque where ca_impoexpo = '$impoexpo' and $sucursal and $ciudestino $cliente and $transporte and $ano and $mes";
     $queries.= " order by $campos";
     // die($queries);
 
@@ -823,16 +850,17 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $matriz_eventos = array();
                 $referencia = $rs->Value('ca_referencia');
                 $fcn_ini = $rs->Value('ca_fchcreado');  // Toma la Fecha y hora de creacion de la referencia
-                $matriz_eventos["intervalo_1"]["00"] = $fcn_ini;
-                $array_eventos["00"] = "Fch. Referencia";
-                $int_uno = "Fch. Referencia";
+                $int_uno = "00";
+                $matriz_eventos["intervalo_1"][$int_uno] = $fcn_ini;
+                $array_eventos[$int_uno] = "Fch. Referencia";
+                
 
                 echo "<TR>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>Fch. Referencia</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchcreado')."</TD>";
                 echo "</TR>";
 
-                $dif_ref = null;
+                $dif_ref = 0;
                 while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
                     $array_eventos[$rs->Value('ca_valor2')] = $rs->Value('ca_valor');
                     $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
@@ -845,7 +873,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
                     if (in_array($rs->Value('ca_idevento'),array(25))) { //Evalua si el evento abre el primer invervalo
                         if ($matriz_eventos["intervalo_1"][$int_uno] < $fchEvento) {
-                            array_pop($matriz_eventos["intervalo_1"]);
+                            unset($matriz_eventos["intervalo_1"][$int_uno]);
                             $matriz_eventos["intervalo_1"][$rs->Value('ca_valor2')] = $fchEvento;
                             $fcn_ini = $fchEvento;
                         }
@@ -859,78 +887,83 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                         $matriz_eventos["intervalo_2"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
                     if (in_array($rs->Value('ca_idevento'),array(2,3))) {  //Evalua si el evento cierra el segundo invervalo
+
                         if (strlen($int_dos) != 0){
                             if ($matriz_eventos["intervalo_2"][$int_dos] < $fchEvento) {
                                 unset($matriz_eventos["intervalo_2"][$int_dos]);
+                                $matriz_eventos["intervalo_2"][$rs->Value('ca_valor2')] = $fchEvento;
                             }
                         }else{
+                            $matriz_eventos["intervalo_2"][$rs->Value('ca_valor2')] = $fchEvento;
                             $int_dos = $rs->Value('ca_valor2');
                         }
-                        $matriz_eventos["intervalo_2"][$rs->Value('ca_valor2')] = $fchEvento;
                     }
 
-                    if (in_array($rs->Value('ca_idevento'),array(7)))  //Evalua si el evento abre el tercer invervalo
+                    if (in_array($rs->Value('ca_idevento'),array(7))){  //Evalua si el evento abre el tercer invervalo
                         $matriz_eventos["intervalo_3"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                    }
 
                     if (in_array($rs->Value('ca_idevento'),array(6,8))) {  //Evalua si el evento cierra el tercer invervalo
+
                         if (strlen($int_tres) != 0){
                             if ($matriz_eventos["intervalo_3"][$int_tres] < $fchEvento) {
                                 unset($matriz_eventos["intervalo_3"][$int_tres]);
+                                $matriz_eventos["intervalo_3"][$rs->Value('ca_valor2')] = $fchEvento;
                             }
                         }else{
+                            $matriz_eventos["intervalo_3"][$rs->Value('ca_valor2')] = $fchEvento;
                             $int_tres = $rs->Value('ca_valor2');
                         }
-                        $matriz_eventos["intervalo_3"][$rs->Value('ca_valor2')] = $fchEvento;
                     }
 
-                    if (in_array($rs->Value('ca_idevento'),array(9)))  //Evalua si el evento abre el cuarto invervalo
-                        $matriz_eventos["intervalo_4"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                    if (in_array($rs->Value('ca_idevento'),array(9)))  //Evalua si el evento abre el cuarto A invervalo
+                        $matriz_eventos["intervalo_4a"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
-                    if (in_array($rs->Value('ca_idevento'),array(10)))  //Evalua si el evento cierra el cuarto invervalo
-                        $matriz_eventos["intervalo_4"][$rs->Value('ca_valor2')] = $fchEvento;
+                    if (in_array($rs->Value('ca_idevento'),array(10)))  //Evalua si el evento cierra el cuarto A invervalo
+                        $matriz_eventos["intervalo_4a"][$rs->Value('ca_valor2')] = $fchEvento;
 
-                    if (in_array($rs->Value('ca_idevento'),array(19)))  //Evalua si el evento abre el quinto invervalo
+                    if (in_array($rs->Value('ca_idevento'),array(19)))  //Evalua si el evento abre el cuarto B invervalo
+                        $matriz_eventos["intervalo_4b"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+
+                    if (in_array($rs->Value('ca_idevento'),array(20)))  //Evalua si el evento cierra el cuarto B invervalo
+                        $matriz_eventos["intervalo_4b"][$rs->Value('ca_valor2')] = $fchEvento;
+
+                    if (in_array($rs->Value('ca_idevento'),array(18)))  //Evalua si el evento abre el quinto invervalo
                         $matriz_eventos["intervalo_5"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
-                    if (in_array($rs->Value('ca_idevento'),array(20)))  //Evalua si el evento cierra el quinto invervalo
+                    if (in_array($rs->Value('ca_idevento'),array(12)))  //Evalua si el evento cierra el quinto invervalo
                         $matriz_eventos["intervalo_5"][$rs->Value('ca_valor2')] = $fchEvento;
 
-                    if (in_array($rs->Value('ca_idevento'),array(13)))  //Evalua si el evento abre el sexto invervalo
-                        $matriz_eventos["intervalo_6"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                    if (substr($rs->Value('ca_referencia'), 0, 3) == '200'){        // Evalua si es un referencia de Sucursal o de Puerto
+                        if (in_array($rs->Value('ca_idevento'),array(13)))  //Evalua si el evento abre el sexto invervalo
+                            $matriz_eventos["intervalo_6"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
-                    if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento cierra el sexto invervalo
-                        $matriz_eventos["intervalo_6"][$rs->Value('ca_valor2')] = $fchEvento;
+                        if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento cierra el sexto invervalo
+                            $matriz_eventos["intervalo_6"][$rs->Value('ca_valor2')] = $fchEvento;
+                    } else {
+                        if (in_array($rs->Value('ca_idevento'),array(14)))  //Evalua si el evento abre el sexto invervalo
+                            $matriz_eventos["intervalo_7"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
-                    if (in_array($rs->Value('ca_idevento'),array(14)))  //Evalua si el evento abre el septimo invervalo
-                        $matriz_eventos["intervalo_7"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        if (in_array($rs->Value('ca_idevento'),array(21)))  //Evalua si el evento cierra el sexto invervalo
+                            $matriz_eventos["intervalo_7"][$rs->Value('ca_valor2')] = $fchEvento;
 
-                    if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento cierra el septimo invervalo
-                        $matriz_eventos["intervalo_7"][$rs->Value('ca_valor2')] = $fchEvento;
+                        if (in_array($rs->Value('ca_idevento'),array(22)))  //Evalua si el evento abre el noveno invervalo
+                            $matriz_eventos["intervalo_9"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
-                    if (in_array($rs->Value('ca_idevento'),array(14)))  //Evalua si el evento abre el octavo invervalo
-                        $matriz_eventos["intervalo_8"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
+                        if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento cierra el noveno invervalo
+                            $matriz_eventos["intervalo_9"][$rs->Value('ca_valor2')] = $fchEvento;
 
-                    if (in_array($rs->Value('ca_idevento'),array(21)))  //Evalua si el evento cierra el octavo invervalo
-                        $matriz_eventos["intervalo_8"][$rs->Value('ca_valor2')] = $fchEvento;
+                        if (in_array($rs->Value('ca_idevento'),array(23)))  //Evalua si el evento abre el decimo invervalo
+                            $matriz_eventos["intervalo_10"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
 
-                    if (in_array($rs->Value('ca_idevento'),array(22)))  //Evalua si el evento abre el noveno invervalo
-                        $matriz_eventos["intervalo_9"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
-
-                    if (in_array($rs->Value('ca_idevento'),array(15)))  //Evalua si el evento cierra el noveno invervalo
-                        $matriz_eventos["intervalo_9"][$rs->Value('ca_valor2')] = $fchEvento;
-
-                    if (in_array($rs->Value('ca_idevento'),array(23)))  //Evalua si el evento abre el decimo invervalo
-                        $matriz_eventos["intervalo_10"][$rs->Value('ca_valor2')] = (($fcn_ini>$fchEvento)?$fcn_ini:$fchEvento);
-
-                    if (in_array($rs->Value('ca_idevento'),array(24)))  //Evalua si el evento cierra el decimo invervalo
-                        $matriz_eventos["intervalo_10"][$rs->Value('ca_valor2')] = $fchEvento;
-
+                        if (in_array($rs->Value('ca_idevento'),array(24)))  //Evalua si el evento cierra el decimo invervalo
+                            $matriz_eventos["intervalo_10"][$rs->Value('ca_valor2')] = $fchEvento;
+                    }
                     $rs->MoveNext();	// Buscar Todos los Registros de la referencia
                 }
                 echo "  </TABLE></TD>";
 
                 echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
-                $fecha_uno = $fecha_dos = time();
 
                 $ini_mem = true;
                 foreach($matriz_eventos as $intervalo) {
@@ -955,18 +988,24 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     $dif_mem = calc_dif($festi, $tstamp_inicial, $tstamp_final);
 
                     list($hour, $minute, $second) = sscanf($dif_mem, "%d:%d:%d");
-                    list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date('Y-m-d h:i:s',$fecha_dos), "%d-%d-%d %d:%d:%d");
-                    $fecha_dos = mktime($hor+$hour, $min+$minute, $seg+$second, $mes, $dia, $ano);
+                    $temp = ($hour*60)+($minute);
+                    $dif_ref+= $temp;
 
-                    echo "<TD>Diferencia :<br /> $dif_mem</TD>";
+                    echo "<TD>Diferencia :<br />$dif_mem</TD>";
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
 
-                $dif_ref = calc_dif($nofesti = null, $fecha_uno, $fecha_dos);
+                $hour   = intval($dif_ref / 60);
+                $minute = $dif_ref % 60;
+                
+                $dif_ref = str_pad($hour,2,"0", STR_PAD_LEFT).":".str_pad($minute,2,"0", STR_PAD_LEFT).":".str_pad(null,2,"0", STR_PAD_LEFT);
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_ref."</TD>";
 
+                if (!$rs->Eof()) {           // Retrocede un registro para quedar en el último Producto de la Cotización
+                    $rs->MovePrevious();
+                }
                 continue;
                 break;
             case 11:
