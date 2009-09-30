@@ -16,7 +16,7 @@ $i=1;
   <th>Empresa</th>
   <th>Vendedor</th>
   <th>Sucursal</th>
-  <th>Fecha Anterior</th>
+  <th>Fecha Estado Anterior</th>
   <th>Estado Anterior</th>
   <th>&Uacute;ltima Factura</th>
   <th>Facturaci&oacute;n Periodo</th>
