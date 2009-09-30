@@ -413,7 +413,11 @@ class clientesActions extends sfActions
 		
 		$this->clientesEstados = array();
 		
-		$stmt = ClientePeer::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
+		list($year, $month, $day) = sscanf($inicio, "%d-%d-%d");
+                $ultimo = date('Y-m-d',mktime(0,0,0,$month,$day-1,$year));
+
+                $stmt = ClientePeer::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
+                $ante = ClientePeer::estadoClientes(null, $ultimo, $empresa, null, "Potencial", $sucursal);
 		while($row = $stmt->fetch()) {
 			$actual = $row;
 			
@@ -436,6 +440,11 @@ class clientesActions extends sfActions
 			$this->clientesEstados[] = array_merge($actual, $anterior, $facturar);
 
 		}
+                $i = 0;
+                while($row = $ante->fetch()) {      // Calcula el número de Clientes Potenciales al inicio del periodo
+                    $i++;
+                }
+                $this->poblacion = $i;
 		$this->inicio = $inicio;
 		$this->final = $final;
 	}
