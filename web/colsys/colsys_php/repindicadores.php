@@ -283,16 +283,18 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     include_once 'include/functions.php';                                      // Módulo de Funciones Varias
     //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    $ano_mem = implode(',',$ano);
-    $mes_mem = implode(',',$mes);
-    $suc_mem = implode(',',$sucursal);
+    $ano_tit = implode(',',$ano);
+    $mes_tit = implode(',',$mes);
+    $suc_tit = implode(',',$sucursal);
 
     $tra_mem = $transporte[0];
 
     $tot_cols = 11;
     $ano_fes = "to_char(ca_fchfestivo,'YYYY') ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
+    $ano_mem = "'".implode("','",$ano)."'";
     $ano = "ca_ano ".((count($ano)==1)?"like '$ano[0]'":"in ('".implode("','",$ano)."')");
     $mes_fes = "to_char(ca_fchfestivo,'MM') ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
+    $mes_mem = "'".implode("','",$mes)."'";
     $mes = "ca_mes ".((count($mes)==1)?"like '$mes[0]'":"in ('".implode("','",$mes)."')");
     $sucursal = "ca_sucursal ".((count($sucursal)==1)?"like '$sucursal[0]'":"in ('".implode("','",$sucursal)."')");
     $ciudestino = "ca_ciudestino ".((count($ciudestino)==1)?"like '$ciudestino[0]'":"in ('".implode("','",$ciudestino)."')");
@@ -355,13 +357,13 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         if ($tra_mem == 'Aéreo') {
             $source   = "vi_repindicador_air";
             $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IACAD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
-            $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hawb as ca_hawb_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_air where ((string_to_array(ca_referencia,'.'))[5]::int)+2000 in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ('$mes_mem') order by ca_referencia, ca_idcliente, ca_hawb, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hawb = ii.ca_hawb_fac) ";
+            $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hawb as ca_hawb_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_air where ((string_to_array(ca_referencia,'.'))[5]::int)+2000 in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ($mes_mem) order by ca_referencia, ca_idcliente, ca_hawb, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hawb = ii.ca_hawb_fac) ";
             $campos.= ", ca_referencia, ca_idcliente_fac, ca_hawb, ca_fchfactura";
         } else if ($tra_mem == 'Marítimo') {
                 $source = "vi_repindicador_sea";
                 $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, rs.ca_fchllegada, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
                 $subque.= " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_cont, rs.ca_fchllegada as ca_fchplanilla, min(rs.ca_fchenvio) as ca_fchconf_plan from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = '99999') group by rp.ca_consecutivo, rs.ca_fchllegada order by rp.ca_consecutivo) rs2 ON ($source.ca_consecutivo = rs2.ca_consecutivo_cont) ";
-                $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where ((string_to_array(ca_referencia,'.'))[5]::int)+2000 in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ('$mes_mem') order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) ";
+                $subque.= " LEFT OUTER JOIN (select ca_referencia as ca_referencia_fac, ca_idcliente as ca_idcliente_fac, ca_hbls as ca_hbls_fac, ca_fchfactura, ca_observaciones from tb_inoingresos_sea where ((string_to_array(ca_referencia,'.'))[5]::int)+2000 in ($ano_mem) and ((string_to_array(ca_referencia,'.'))[3])::text in ($mes_mem) order by ca_referencia, ca_idcliente, ca_hbls, ca_fchfactura) ii ON ($source.ca_referencia = ii.ca_referencia_fac and $source.ca_idcliente = ii.ca_idcliente_fac and $source.ca_hbls = ii.ca_hbls_fac) ";
                 $campos.= ", ca_referencia, ca_idcliente_fac, ca_hbls, ca_fchfactura";
             }
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
@@ -530,7 +532,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         exit; }
 
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=".($tot_cols+$add_cols).">COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_mem / $ano_mem</TH>";
+    echo "  <TH Class=titulo COLSPAN=".($tot_cols+$add_cols).">COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_tit / $ano_tit</TH>";
     echo "</TR>";
     $saltos = array();
     $titems = array();
@@ -1021,12 +1023,11 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
                 echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
 
-                $dif_ref = time();
                 $matriz_eventos = array();
                 $referencia = $rs->Value('ca_referencia');
                 while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
                     $fchEventoArry = date_parse($rs->Value('ca_fchevento'));
-                    $fchEvento = date("Y-m-d H:i",mktime($fchEventoArry["hour"],$fchEventoArry["minutes"],$fchEventoArry["secons"],$fchEventoArry["month"],$fchEventoArry["day"],$fchEventoArry["year"]));
+                    $fchEvento = date("Y-m-d H:i:s",mktime($fchEventoArry["hour"],$fchEventoArry["minute"],$fchEventoArry["second"],$fchEventoArry["month"],$fchEventoArry["day"],$fchEventoArry["year"]));
                     echo "<TR>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_valor')."</TD>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$fchEvento."</TD>";
@@ -1061,13 +1062,11 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     list($ano, $mes, $dia, $hor, $min, $seg) = sscanf($fin_event, "%d-%d-%d %d:%d:%d");
                     $tstamp_final   = mktime($hor, $min, $seg, $mes, $dia, $ano);
                     $dif_mem = calc_dif($festi, $tstamp_inicial, $tstamp_final);
-                    $dif_ref+= $dif_mem;
-                    echo "<TD>Diferencia :<br /> $dif_mem</TD>";
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
-                $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
-                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".date($format_avg,$dif_ref)."</TD>";
+                $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
+                echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 
                 if (!$rs->Eof()) {           // Retrocede un registro para quedar en el último Producto de la Cotización
                     $rs->MovePrevious();
@@ -1086,10 +1085,10 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
     echo "<BR />";
     echo "<TABLE WIDTH=500 BORDER=0 CELLSPACING=1 CELLPADDING=1>";
-    echo "<TH Class=titulo COLSPAN=7>COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_mem / $ano_mem</TH>";
+    echo "<TH Class=titulo COLSPAN=7>COLTRANS S.A.<BR>$titulo<BR>Indicador $indicador $mes_tit / $ano_tit</TH>";
 
     echo "<TR>";
-    echo "  <TD Class=listar ROWSPAN=4><b>Sucursal(es):</b><br /> - ".str_replace(",","<br /> - ",str_replace("%","Todas",$suc_mem))."</TD>";
+    echo "  <TD Class=listar ROWSPAN=4><b>Sucursal(es):</b><br /> - ".str_replace(",","<br /> - ",str_replace("%","Todas",$suc_tit))."</TD>";
     echo "  <TD Class=listar>Producto NO Conforme (%)</TD>";
     echo "  <TD Class=listar>No. Casos ".count($array_pnc)."</TD>";
     echo "  <TD Class=listar style='font-size: 9px; text-align:right; font-weight:bold;'>".formatNumber(round(count($array_pnc)/count($array_avg)*100,2),2)."%</TD>";
@@ -1131,21 +1130,45 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     echo "</HTML>";
 }
 
-function analizar_dif($tipo, $lci_var, $lcs_var, &$dif_mem, &$array_avg, &$array_pnc, &$array_pmc, &$array_null) {
+function analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, &$array_avg, &$array_pnc, &$array_pmc, &$array_null) {
     $contar = true;
     if ($dif_mem == null) {
         $color = "resaltar";
         $array_null[] = null;
         $contar = false;
-    }else if ($dif_mem > $lcs_var) {
-            $color = "negativo";
-            $array_pnc[] = $dif_mem;
-        }else if ($dif_mem < $lci_var) {
+    } else {
+        if ($tipo == "T") {
+            list($hor, $min, $seg) = sscanf($lci_var, "%d:%d:%d");
+            $lci_sec = ($hor * 3600) + ($min * 60) + $seg;
+
+            list($hor, $min, $seg) = sscanf($lcs_var, "%d:%d:%d");
+            $lcs_sec = ($hor * 3600) + ($min * 60) + $seg;
+
+            list($hor, $min, $seg) = sscanf($dif_mem, "%d:%d:%d");
+            $dif_sec = ($hor * 3600) + ($min * 60) + $seg;
+
+            if ($dif_sec > $lcs_sec) {
+                $color = "negativo";
+                $array_pnc[] = $dif_mem;
+            }else if ($dif_sec < $lci_sec) {
                 $color = "destacar";
                 $array_pmc[] = $dif_mem;
             }else {
                 $color = "invertir";
             }
+        }else {
+            if ($dif_mem > $lcs_var) {
+                $color = "negativo";
+                $array_pnc[] = $dif_mem;
+            }else if ($dif_mem < $lci_var) {
+                $color = "destacar";
+                $array_pmc[] = $dif_mem;
+            }else {
+                $color = "invertir";
+            }
+        }
+    }
+
     if ($contar) {
         if ($tipo == "D") {
             $array_avg[] = $dif_mem;
