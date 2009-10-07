@@ -2185,12 +2185,13 @@ GRANT ALL ON vi_liberaciones TO GROUP "Usuarios";
 // Drop view vi_clientes cascade;
 Create view vi_clientes as
 Select c.ca_idcliente, c.ca_digito, c.ca_compania, c.ca_papellido, c.ca_sapellido, c.ca_nombres, c.ca_nombres ||' '|| c.ca_papellido ||' '|| c.ca_sapellido as ca_ncompleto, c.ca_saludo, c.ca_sexo, c.ca_cumpleanos, c.ca_direccion, c.ca_oficina, c.ca_torre, c.ca_bloque, c.ca_interior, c.ca_localidad, c.ca_complemento, c.ca_telefonos, c.ca_fax, c.ca_idciudad, cd.ca_ciudad, tr.ca_nombre as ca_pais, c.ca_website, c.ca_email, c.ca_actividad, c.ca_sectoreco, c.ca_vendedor, tu.ca_sucursal, c.ca_confirmar,
-       c.ca_fchcircular, case when nullvalue(c.ca_fchcircular) then 'Sin' else case when (c.ca_fchcircular+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcircular, c.ca_nvlriesgo, c.ca_fchcotratoag, case when nullvalue(c.ca_fchcircular) then 'Sin' else case when (c.ca_fchcotratoag+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcotratoag, c.ca_listaclinton, c.ca_leyinsolvencia, c.ca_comentario, c.ca_status, c.ca_calificacion, c.ca_coordinador, u.ca_nombre as ca_nombre_coor,
-	   c.ca_preferencias, (select max(e.ca_fchvisita) from vi_enccliente e where c.ca_idcliente = e.ca_idcliente) as ca_fchvisita, c.ca_fchcreado, c.ca_usucreado, c.ca_fchactualizado, c.ca_usuactualizado, cl.ca_diascredito, cl.ca_cupo, cl.ca_observaciones, cm.ca_fchfirmado, cm.ca_fchvencimiento, cl.ca_fchcreado as ca_fchcreado_lb, cl.ca_usucreado as ca_usucreado_lb, cl.ca_fchactualizado as ca_fchactualizado_lb, cl.ca_usuactualizado as ca_usuactualizado_lb,
+       c.ca_fchcircular, case when nullvalue(c.ca_fchcircular) then 'Sin' else case when (c.ca_fchcircular+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcircular, c.ca_nvlriesgo, c.ca_fchcotratoag, case when nullvalue(c.ca_fchcotratoag) then 'Sin' else case when (c.ca_fchcotratoag+365<now()) then 'Vencido' else 'Vigente' end end as ca_stdcotratoag, c.ca_listaclinton, c.ca_leyinsolvencia, c.ca_comentario, c.ca_status, c.ca_calificacion, c.ca_coordinador, u.ca_nombre as ca_nombre_coor,
+       c.ca_preferencias, (select max(e.ca_fchvisita) from vi_enccliente e where c.ca_idcliente = e.ca_idcliente) as ca_fchvisita, c.ca_fchcreado, c.ca_usucreado, c.ca_fchactualizado, c.ca_usuactualizado, cl.ca_diascredito, cl.ca_cupo, cl.ca_observaciones, cm.ca_fchfirmado, cm.ca_fchvencimiento, case when nullvalue(cm.ca_fchvencimiento) then 'Sin'::text else case when cm.ca_fchvencimiento < now() then 'Vencido'::text else 'Vigente'::text end end as ca_stdcarta_gtia, cl.ca_fchcreado as ca_fchcreado_lb,
+       cl.ca_usucreado as ca_usucreado_lb, cl.ca_fchactualizado as ca_fchactualizado_lb, cl.ca_usuactualizado as ca_usuactualizado_lb,
        st1.ca_estado as ca_coltrans_std, st1.ca_fchestado as ca_coltrans_fch, st2.ca_estado as ca_colmas_std, st2.ca_fchestado as ca_colmas_fch  
        from tb_clientes c
-       LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente)) as st1 ON (c.ca_idcliente = st1.ca_idcliente)
-       LEFT OUTER JOIN (select * from tb_stdcliente where OID IN (select max(sc.OID) from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente)) as st2 ON (c.ca_idcliente = st2.ca_idcliente)
+       LEFT OUTER JOIN (select std.* from tb_stdcliente std, (select ca_idcliente, max(sc.ca_fchestado) as ca_fchestado from tb_stdcliente sc where ca_empresa = 'Coltrans' group by ca_idcliente order by ca_idcliente) stm where std.ca_idcliente = stm.ca_idcliente and std.ca_empresa = 'Coltrans' and std.ca_fchestado = stm.ca_fchestado) as st1 ON (c.ca_idcliente = st1.ca_idcliente)
+       LEFT OUTER JOIN (select std.* from tb_stdcliente std, (select ca_idcliente, max(sc.ca_fchestado) as ca_fchestado from tb_stdcliente sc where ca_empresa = 'Colmas' group by ca_idcliente order by ca_idcliente) stm where std.ca_idcliente = stm.ca_idcliente and std.ca_empresa = 'Colmas' and std.ca_fchestado = stm.ca_fchestado) as st2 ON (c.ca_idcliente = st2.ca_idcliente)
        LEFT OUTER JOIN tb_libcliente cl ON (c.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN control.tb_usuarios u ON (c.ca_coordinador = u.ca_login) 
        LEFT OUTER JOIN (select cf.ca_idcliente, cf.ca_fchfirmado, ca_fchvencimiento from (select ca_idcliente, max(ca_fchfirmado) as ca_fchfirmado from tb_comcliente group by ca_idcliente) as cf INNER JOIN (select ca_idcliente, ca_fchfirmado, ca_fchvencimiento from tb_comcliente) as cm ON (cf.ca_idcliente = cm.ca_idcliente and cf.ca_fchfirmado = cm.ca_fchfirmado)) as cm ON (c.ca_idcliente = cm.ca_idcliente)
        LEFT OUTER JOIN control.tb_usuarios tu ON (c.ca_vendedor = tu.ca_login)
@@ -2498,6 +2499,7 @@ GRANT ALL ON vi_inocostos_sea TO GROUP "Usuarios";
 Create view vi_inocomisiones_sea as
 Select i.ca_ano, i.ca_mes, i.ca_trafico, i.ca_modal, i.ca_traorigen, i.ca_ciuorigen, i.ca_ciudestino, i.ca_modalidad, i.ca_referencia, c.ca_login, l.ca_sucursal, c.ca_idcliente, cl.ca_compania, c.ca_hbls, c.ca_volumen, i.ca_facturacion AS ca_facturacion_r, i.ca_deduccion AS ca_deduccion_r, i.ca_utilidad AS ca_utilidad_r, i.ca_volumen AS ca_volumen_r,
        u.ca_idcosto AS ca_idcosto_ded, s.ca_costo AS ca_costo_ded, u.ca_factura AS ca_factura_ded, u.ca_valor AS ca_valor_ded, i.ca_estado,
+       (select fun_getcomision(c.ca_idcliente, i.ca_referencia, 'Coltrans')) as ca_porcentaje,
        (select sum(n.ca_valor) from tb_inoingresos_sea n where c.ca_referencia = n.ca_referencia AND c.ca_idcliente = n.ca_idcliente AND c.ca_hbls = n.ca_hbls) as ca_valor,
        (select sum(s.ca_vlrcomision) from tb_inocomisiones_sea s where s.ca_referencia = c.ca_referencia AND s.ca_idcliente = c.ca_idcliente AND s.ca_hbls = c.ca_hbls) as ca_vlrcomisiones,
        (select sum(s.ca_sbrcomision) from tb_inocomisiones_sea s where s.ca_referencia = c.ca_referencia AND s.ca_idcliente = c.ca_idcliente AND s.ca_hbls = c.ca_hbls) as ca_sbrcomisiones
@@ -2727,7 +2729,7 @@ select substr(ic.ca_referencia,15) as ca_ano, substr(ic.ca_referencia,8,2) as ca
 	nv.ca_nombre as ca_nomlinea, ic.ca_login, us.ca_nombre as ca_vendedor
 	
 	from tb_inoclientes_sea ic
-		LEFT OUTER JOIN (select ca_referencia, ca_hbls, ca_idcliente, sum(to_number(ca_valor::text,'9999999999.99')) as ca_facturacion from tb_inoingresos_sea group by ca_referencia, ca_hbls, ca_idcliente) ii ON (ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls)
+		LEFT OUTER JOIN (select ca_referencia, ca_hbls, ca_idcliente, sum(to_number(ca_valor::text,'999999999999.99')) as ca_facturacion from tb_inoingresos_sea group by ca_referencia, ca_hbls, ca_idcliente) ii ON (ic.ca_referencia = ii.ca_referencia and ic.ca_idcliente = ii.ca_idcliente and ic.ca_hbls = ii.ca_hbls)
 		LEFT OUTER JOIN (
 			select im.ca_referencia, iv.ca_volumen_r, (case when not nullvalue(ii.ca_facturacion_r) then ii.ca_facturacion_r else 0 end)-(case when not nullvalue(id.ca_deduccion_r) then id.ca_deduccion_r else 0 end)-(case when not nullvalue(ic.ca_costosplus_r) then ic.ca_costosplus_r else 0 end) as ca_utilidad_r from tb_inomaestra_sea im
 			LEFT OUTER JOIN (select ca_referencia, sum(ca_volumen) as ca_volumen_r from tb_inoclientes_sea group by ca_referencia) iv on (im.ca_referencia = iv.ca_referencia)
@@ -2894,8 +2896,8 @@ GRANT ALL ON vi_repindicador_brk TO GROUP "Usuarios";
 
 // Drop view vi_repindicador_exp cascade;
 Create view vi_repindicador_exp as
-select exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, (((string_to_array(exm.ca_referencia,'.'))[5]::int)+2000)::text as ca_ano, ((string_to_array(exm.ca_referencia,'.'))[3])::text as ca_mes, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen,
-	cid.ca_ciudad as ca_ciudestino, (case when ca_via = 'Aereo' then 'Aéreo' else (case when ca_via = 'Maritimo' then 'Marítimo' else ca_via end) end) as ca_transporte, exm.ca_modalidad, 'Exportación'::text as ca_impoexpo, ccl.ca_compania
+select exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, (((string_to_array(exm.ca_referencia,'.'))[5]::int)+2000)::text as ca_ano, ((string_to_array(exm.ca_referencia,'.'))[3])::text as ca_mes, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen,
+	cid.ca_ciudad as ca_ciudestino, (case when ca_via = 'Aereo' then 'Aéreo' else (case when ca_via = 'Maritimo' then 'Marítimo' else ca_via end) end) as ca_transporte, exm.ca_modalidad, 'Exportación'::text as ca_impoexpo, exm.ca_consecutivo, ccl.ca_compania
 
 from tb_expo_maestra exm
 	INNER JOIN tb_expo_ingresos exi ON (exm.ca_referencia = exi.ca_referencia)
@@ -3703,70 +3705,65 @@ DECLARE
     referrer_refs RECORD;  -- Declare a generic record to be used in a FOR
     v_estado1 text:= '';
     v_estado2 text:= '';
-    v_idcliente text:= '';
+    v_idcliente integer;
 
 BEGIN
     IF (NOT nullvalue(TG_ARGV[0])) THEN
-            NEW.ca_idcliente = TG_ARGV[0];
+        NEW.ca_idcliente = TG_ARGV[0];
     END IF;
+
+    IF (TG_RELNAME = 'tb_brk_ingresos') THEN
+        FOR referrer_refs IN select ima.ca_idcliente from tb_brk_maestra ima where ima.ca_referencia = NEW.ca_referencia LOOP
+            IF NOT nullvalue(referrer_refs.ca_idcliente) THEN
+                v_idcliente = referrer_refs.ca_idcliente;
+            END IF;
+        END LOOP;
+    ELSE
+        v_idcliente = NEW.ca_idcliente;
+    END IF;
+
 
     IF (TG_RELNAME = 'tb_clientes') THEN
         IF (TG_OP = 'INSERT') THEN
-            INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
-            INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
-        ELSIF (TG_OP = 'UPDATE' AND NEW.ca_status != OLD.ca_status) THEN
-            INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Coltrans');
-            INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Colmas');
+            INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
+            INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
+        ELSIF (TG_OP = 'UPDATE' AND NEW.ca_status != OLD.ca_status AND NEW.ca_status != '') THEN
+            INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Coltrans');
+            INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), NEW.ca_status, 'Colmas');
         END IF;
     ELSE
-        FOR referrer_keys IN select vc.ca_idcliente, vc.ca_coltrans_std, vc.ca_colmas_std from vi_clientes vc where vc.ca_idcliente = NEW.ca_idcliente LOOP
+        FOR referrer_keys IN select vc.ca_idcliente, vc.ca_coltrans_std, vc.ca_colmas_std from vi_clientes vc where vc.ca_idcliente = v_idcliente LOOP
             IF NOT nullvalue(referrer_keys.ca_coltrans_std) AND NOT nullvalue(referrer_keys.ca_colmas_std) THEN
                 v_estado1 = referrer_keys.ca_coltrans_std;
                 v_estado2 = referrer_keys.ca_colmas_std;
             END IF;
         END LOOP;
 
-        FOR referrer_keys IN select * from vi_stdcliente where ca_idcliente = NEW.ca_idcliente LOOP
+        FOR referrer_keys IN select * from vi_stdcliente where ca_idcliente = v_idcliente LOOP
             IF (TG_RELNAME = 'tb_inoclientes_sea' OR TG_RELNAME = 'tb_inoclientes_air') THEN
                 IF (referrer_keys.ca_cantidad_sea + referrer_keys.ca_cantidad_air) = 0 THEN
                     IF v_estado1 != 'Potencial' THEN
-                        INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
+                        INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Coltrans');
                     END IF;
                 ELSIF (referrer_keys.ca_ultimos_sea + referrer_keys.ca_ultimos_air) > 0 THEN
                     IF v_estado1 = 'Potencial' THEN
-                        INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Coltrans');
+                        INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Coltrans');
                     END IF;
                 END IF;
-            ELSIF (TG_RELNAME = 'tb_expo_ingresos') THEN
-                IF (referrer_keys.ca_cantidad_exp) = 0 THEN
-                    IF v_estado2 != 'Potencial' THEN
-                        INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
-                    END IF;
-                ELSIF (referrer_keys.ca_ultimos_exp) > 0 THEN
-                    IF v_estado2 = 'Potencial' THEN
-                        INSERT INTO tb_stdcliente VALUES (NEW.ca_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Colmas');
-                    END IF;
-                END IF;
-            ELSIF (TG_RELNAME = 'tb_brk_ingresos') THEN
-                FOR referrer_refs IN select ima.ca_idcliente from tb_brk_maestra ima where ima.ca_referencia = NEW.ca_referencia LOOP
-                    IF NOT nullvalue(referrer_refs.ca_idcliente) THEN
-                        v_idcliente = referrer_refs.ca_idcliente;
-                    END IF;
-                END LOOP;
-                IF (referrer_keys.ca_cantidad_brk) = 0 THEN
+            ELSIF (TG_RELNAME = 'tb_expo_ingresos' OR TG_RELNAME = 'tb_brk_ingresos') THEN
+                IF (referrer_keys.ca_cantidad_exp + referrer_keys.ca_cantidad_brk) = 0 THEN
                     IF v_estado2 != 'Potencial' THEN
                         INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Potencial', 'Colmas');
                     END IF;
-                ELSIF (referrer_keys.ca_ultimos_brk) > 0 THEN
+                ELSIF (referrer_keys.ca_ultimos_exp + referrer_keys.ca_ultimos_brk) > 0 THEN
                     IF v_estado2 = 'Potencial' THEN
                         INSERT INTO tb_stdcliente VALUES (v_idcliente, to_timestamp(to_char(current_timestamp,'YYYY-MM-DD hh:mi:ss'),'YYYY-MM-DD hh:mi:ss'), 'Activo', 'Colmas');
                     END IF;
                 END IF;
             END IF;
-            UPDATE tb_clientes SET ca_status = '' WHERE ca_idcliente = NEW.ca_idcliente;
+            UPDATE tb_clientes SET ca_status = '' WHERE ca_idcliente = v_idcliente;
         END LOOP;
     END IF;
-
     RETURN NULL;
 END;
 $$ LANGUAGE 'plpgsql';
@@ -3801,3 +3798,48 @@ select ca_idcliente, max(ca_fchestado) from tb_stdcliente
 	where ca_estado = 'Perdido'
 	group by ca_idcliente
 
+
+CREATE OR REPLACE FUNCTION fun_numreserva(INTEGER, INTEGER, TEXT) RETURNS TEXT AS
+$BODY$
+DECLARE
+    v_numenvio ALIAS FOR $1;
+    v_anno ALIAS FOR $2;
+    v_usuario ALIAS FOR $3;
+
+    referrer_keys RECORD;  -- Declare a generic record to be used in a FOR
+    a_output text;
+
+BEGIN
+  a_output:= NULL;
+    FOR referrer_keys IN select min(ca_numero_resv) as ca_numero_resv from tb_dianreservados where ca_anno is null LOOP
+	    IF referrer_keys.ca_numero_resv IS NOT NULL THEN
+		update tb_dianreservados set ca_numenvio = v_numenvio, ca_anno = v_anno, ca_fchreservado =  date_trunc('seconds', localtimestamp), ca_usureservado = v_usuario where ca_numero_resv = referrer_keys.ca_numero_resv;
+		a_output:= referrer_keys.ca_numero_resv;
+	    END IF;
+    END LOOP;
+  RETURN a_output;
+END;
+$BODY$
+LANGUAGE 'plpgsql';
+
+
+
+-- Function: fun_localtimestamp()
+
+-- DROP FUNCTION fun_localtimestamp();
+
+CREATE OR REPLACE FUNCTION fun_localtimestamp()
+  RETURNS timestamp without time zone AS
+$BODY$
+DECLARE
+
+    fch timestamp without time zone;
+
+
+BEGIN
+  SELECT INTO fch DATE_TRUNC('SECONDS', LOCALTIMESTAMP) ;
+
+  RETURN fch;
+END;
+$BODY$
+  LANGUAGE 'plpgsql';
