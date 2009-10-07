@@ -11,14 +11,13 @@ new Ext.form.ComboBox({
 	allowBlank: <?=$allowBlank?>,
 	listClass: 'x-combo-list-small',	
 	store : [
+            ['', '']
 			<?
-			$i=0;
+			
 			foreach( $aplicaciones as $aplicacion ){
-				if( $i++!=0){
-					echo ",";
-				}
+				
 			?>
-				['<?=$aplicacion->getCaValor()?>', '<?=$aplicacion->getCaValor()?>']
+				,['<?=$aplicacion->getCaValor()?>', '<?=$aplicacion->getCaValor()?>']
 			<?
 			}
 			?>

@@ -1,3 +1,6 @@
+<script>
+    document.location="/colsys_sf3/seguimientos";
+</script>
 <div align="center" >
 <br />
 <h3> Modulo de seguimiento de cotizaciones </h3>

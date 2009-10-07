@@ -45,7 +45,7 @@ if( strpos($user_agent , "MSIE 6")!==false ){
 if( $ie6 ){
 	?>
 	<div align="center">
-	<a href="http://www.coltrans.com.co/download/IE8-WindowsXP-x86-ESN.exe">
+	<a href="http://www.coltrans.com.co/download/Aplicaciones/IE8-WindowsXP-x86-ESN.exe">
 	<br />
 	<br />
 

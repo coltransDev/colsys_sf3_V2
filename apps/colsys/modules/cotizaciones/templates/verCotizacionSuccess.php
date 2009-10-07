@@ -68,21 +68,25 @@ if( !$cotizacion->getCaUsuanulado() ){
 				</div>
 			</td>
 		</tr>
-		<?php 
+		<?php
 		}
-		
-		$archivos = $cotizacion->getCotArchivos();
-		foreach( $archivos as $archivo ){					
-		
+
+        $directorio = $cotizacion->getDirectorio();
+		$archivos = sfFinder::type('file')->maxDepth(0)->in($directorio);
+		foreach( $archivos as $archivo ){
 		?>
 		<tr>
 			<td>
 				<div align="left">
-					<input type="checkbox" name="attachments[]" value="<?=$archivo->getCaIdarchivo()?>" checked="checked"> <a href="#" onclick="window.open('<?=url_for("cotizaciones/verArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion()."&idarchivo=".$archivo->getCaIdarchivo())?>')"><?=$archivo->getCaNombre()?></a>
+					<input type="checkbox" name="attachments[]" value="<?=base64_encode(basename($archivo))?>" checked="checked">
+                        <a href="#"
+                           onclick="window.open('<?=url_for("gestDocumental/verArchivo?folder=".base64_encode($cotizacion->getDirectorioBase())."&idarchivo=".base64_encode(basename($archivo)))?>')">
+                            <?=basename($archivo)?>
+                        </a>
 				</div>
 			</td>
 		</tr>
-		<?php 
+		<?php
 		}
 		?>
 	</table>	

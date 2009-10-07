@@ -15,6 +15,10 @@ if( $login ){
 	$url.="&login=".$login;
 }
 
+if( $seguimiento ){
+	$url.="&seguimiento=".$seguimiento;
+}
+
 if ($pager->haveToPaginate()):   
 	if ($pager->getPage() != 1):				
 		 echo link_to(image_tag("first.png"), $url.'&page=1',"border=0 ") ;	
@@ -54,7 +58,10 @@ endif;
 		$cliente = $contacto->getCliente(); 
 	?>
 	<tr>
-	  <td rowspan="2"  ><?=link_to("C".$cotizacion->getCaConsecutivo(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?></td>
+	  <td rowspan="2"  >
+        <?=link_to("C".$cotizacion->getCaConsecutivo(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?>
+          <?=$cotizacion->getCaFchanulado()?"<br />Anulada":""?>
+      </td>
 	  <td ><b>Fch.Cotizacion:</b><br />
       <?=$cotizacion->getCaFchCreado()?></td>
       <td ><b>Cliente:</b><br />
@@ -84,7 +91,9 @@ endif;
           <td width="35%" class="listar"><?=$origen->getTrafico()." ".$origen->getCaCiudad()?>
             &raquo;
             <?=$destino->getTrafico()." ".$destino->getCaCiudad()?></td>
+             <td width="35%" class="listar"><?=isset($estados[$producto->getCaEtapa()])?$estados[$producto->getCaEtapa()]:""?></td>
           </tr>
+
        
         <?
 							}

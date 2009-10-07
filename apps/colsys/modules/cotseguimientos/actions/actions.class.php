@@ -256,9 +256,12 @@ class cotseguimientosActions extends sfActions
 	
 	
 	public function executeVerSeguimiento( $request ){
+
+
 		$this->cotizacion = CotizacionPeer::retrieveByPk( $request->getParameter("idcotizacion") );
 		$this->forward404Unless( $this->cotizacion );
-		
+		$this->redirect("/colsys_sf3/cotseguimientos/verSeguimiento?idcotizacion=".$this->cotizacion->getCaIdcotizacion() );
+
 		
 		$this->productos = $this->cotizacion->getCotProductos();
 			

@@ -132,12 +132,19 @@ if( !$reporte->getCaNotify() ){
 	$consignatario_h = $cliente->getCaCompania()."<br /><br />".$cliente->getDireccion()."<br />".$cliente->getCiudad()->getTrafico()->getcaNombre();
 }else{    
 	if( $reporte->getCaNotify()==1 ) {	
-		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );
+		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdConsignatario() );       
+        
 	}elseif(  $reporte->getCaNotify()==2 ){
-		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdNotify() );
+		$notify = TerceroPeer::retrieveByPk( $reporte->getCaIdNotify() );        
 	}
+
+    if($notify){
+        $consignatario_h = $notify->getCaNombre()."<br />".$notify->getCaDireccion();
+    }else{
+        $consignatario_h = "";
+    }
 	
-	$consignatario_h = $notify->getCaNombre()."<br />".$notify->getCaDireccion();
+	
 }
 
 if ( $reporte->getCaMastersame() == 'Sí' ){

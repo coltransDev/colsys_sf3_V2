@@ -3193,7 +3193,7 @@ ORDER BY ca_fchstatus ";
      */
     public function executeFixCotOpciones(){
 
-
+        exit();
         $sql = "SELECT DISTINCT ca_idcotizacion, ca_idopcion FROM tb_cotopciones
 WHERE ca_idopcion In
 (SELECT ca_idopcion FROM tb_cotopciones As asd
@@ -3245,6 +3245,64 @@ ORDER BY ca_idopcion ";
         }
     }
 
+
+    /*
+     *  Se modifico el programa de tal manera que idopcion fuera la llave primaria
+     */
+    public function executeFixCotProductos(){
+
+        exit();
+        $sql = "SELECT DISTINCT ca_idcotizacion, ca_idproducto  FROM tb_cotproductos
+WHERE ca_idproducto In
+(SELECT ca_idproducto FROM tb_cotproductos As asd
+GROUP BY ca_idproducto HAVING Count(*) > 1 )
+ORDER BY ca_idproducto";
+        $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+
+		$stmt = $con->prepare ( $sql );
+		$stmt->execute();
+
+        $lastIdproducto = null;
+
+        $this->setTemplate("blank");
+
+		while($row= $stmt->fetch() ){
+            $idcotizacion = $row['ca_idcotizacion'];
+            $idproducto = $row['ca_idproducto'];
+
+
+
+            if( $lastIdproducto != $idproducto ){
+                 $lastIdproducto = $idproducto;
+            }else{
+
+
+                 echo $idcotizacion." ".$idproducto."<br />";
+
+                $sql = "SELECT nextval('tb_cotproductos_id') as next";
+                $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+
+                $stmt2 = $con->prepare ( $sql );
+                $stmt2->execute();
+
+                $row2= $stmt2->fetch();
+
+                $nextval = $row2["next"];
+
+                $sql = "UPDATE tb_cotproductos SET ca_idproducto= $nextval WHERE ca_idcotizacion = $idcotizacion AND ca_idproducto = $idproducto";
+                $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+                $stmt2 = $con->prepare ( $sql );
+                $stmt2->execute();
+
+
+                $sql = "UPDATE tb_cotrecargos SET ca_idproducto= $nextval WHERE ca_idcotizacion = $idcotizacion AND ca_idproducto = $idproducto";
+                $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+                $stmt2 = $con->prepare ( $sql );
+                $stmt2->execute();
+            }
+        }
+    }
+
     /*
      * Se perdieron unos datos por la actualización de uno datos
      */
@@ -3282,6 +3340,114 @@ ORDER BY ca_idopcion ";
 
             $i++;
         }
+    }
+
+    public function  executeImportArchivosTarifario(){
+
+        $c = new Criteria();
+        $archivos = PricArchivoPeer::doSelect($c);
+
+        foreach( $archivos as $archivo ){
+            $folder = "Tarifario".DIRECTORY_SEPARATOR.substr($archivo->getCaImpoexpo(),0,1)."_".substr($archivo->getCaTransporte(),0,1)."_".$archivo->getCaModalidad()."_".$archivo->getCaIdtrafico();
+            $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
+            if( !is_dir($directory) ){
+                mkdir($directory, 0777, true);
+            }
+            $filename = $directory.$archivo->getCaNombre();
+
+            echo $filename."<br />";
+
+            $fp = $archivo->getCaDatos();
+            if ($fp !== null) {
+              file_put_contents($filename, $fp);
+            }
+
+
+
+        }
+
+        $this->setTemplate("blank");
+    }
+
+
+    public function  executeImportArchivosCotizaciones(){
+
+        $c = new Criteria();
+        //$c->setLimit(10);
+        $archivos = CotArchivoPeer::doSelect($c);
+
+        foreach( $archivos as $archivo ){
+            $cotizacion = $archivo->getCotizacion();
+            $folder = "Cotizaciones".DIRECTORY_SEPARATOR."Coltrans".DIRECTORY_SEPARATOR.$cotizacion->getCaConsecutivo();
+            $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
+
+            $filename = $directory.$archivo->getCaNombre();
+
+            echo $filename."<br />";
+            if( !is_dir($directory) ){
+                mkdir($directory, 0777, true);
+            }
+            
+
+            $fp = $archivo->getCaDatos();
+            if ($fp !== null) {
+              file_put_contents($filename, $fp);
+            }
+        }
+
+        $this->setTemplate("blank");
+    }
+
+
+    public function executeFixTarifarioFcheliminado(){
+        $sql = "SELECT ca_fchcreado, ca_fcheliminado, ca_idconcepto, ca_recargo,  * FROM log_pricrecargosxconcepto INNER JOIN tb_tiporecargo ON log_pricrecargosxconcepto.ca_idrecargo = tb_tiporecargo.ca_idrecargo
+where ca_idtrayecto::text||ca_idconcepto::text||log_pricrecargosxconcepto.ca_idrecargo::text not in
+ ( SELECT ca_idtrayecto::text||ca_idconcepto::text||ca_idrecargo::text FROM tb_pricrecargosxconcepto )
+AND ca_idtrayecto <=4636
+ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_consecutivo ASC ";
+        $this->setTemplate("blank");
+
+
+        $con = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+
+		$stmt = $con->prepare ( $sql );
+		$stmt->execute();
+
+
+        $lastRow['ca_idtrayecto'] = null;
+        $lastRow['ca_idconcepto'] = null;
+        $lastRow['ca_idrecargo'] = null;
+        $lastRow['ca_fcheliminado'] = null;
+        $lastRow['ca_consecutivo'] = null;
+
+
+        $i = 0;
+		while($row= $stmt->fetch() ){
+            if( ($lastRow['ca_idtrayecto'] != $row['ca_idtrayecto']
+                || $lastRow['ca_idconcepto'] != $row['ca_idconcepto']
+                || $lastRow['ca_idrecargo'] != $row['ca_idrecargo'] )
+                && !$lastRow['ca_fcheliminado'] && $lastRow['ca_consecutivo']
+                ){
+
+                echo $lastRow['ca_idtrayecto']." ".$lastRow['ca_idconcepto']." ".$lastRow['ca_idrecargo']." ".$lastRow['ca_consecutivo']." ".$lastRow['ca_fcheliminado']."<br />";
+
+                
+                $sql = "UPDATE log_pricrecargosxconcepto SET ca_fcheliminado = '2009-02-23' WHERE ca_consecutivo = '".$lastRow['ca_consecutivo']."'";
+                //echo $sql."<br ><br >";
+
+                $con2 = Propel::getConnection ( CotizacionPeer::DATABASE_NAME );
+                $stmt2 = $con2->prepare ( $sql );
+                $stmt2->execute();
+                
+                
+            }
+
+            $lastRow = $row;
+
+            $i++;
+        }
+
+
     }
 		
 }

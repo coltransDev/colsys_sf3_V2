@@ -236,7 +236,7 @@ function mostrar(oid){
 				<td class="partir">&nbsp;</td>
 				<td class="partir">Transportista:</td>
 				<td class="listar" colspan="2"><?=$linea->getCaNombre()." ".$linea->getCaSigla()?></td>
-				<td class="listar" colspan="2"><?=$transportista->getCaNombre()?></td>
+				<td class="listar" colspan="2"><?=$transportista?$transportista->getCaNombre():""?></td>
 			</tr>
 			<tr>
 				<td class="partir" rowspan="2">&nbsp;</td>

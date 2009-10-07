@@ -34,16 +34,12 @@ Ext.onReady(function(){
 	* ================  Panel de archivos adjuntos  =======================
 	* Crea el objeto $object que contine el panel solicitado
 	*/
-	<?	
+	<?
 	if( $cotizacion->getCaIdcotizacion() ){
-	
-		include_component("gestDocumental", "panelArchivos", 
-						array("dataUrl"=>"cotizaciones/dataArchivosCotizacion?idcotizacion=".$cotizacion->getCaIdcotizacion(),
-							"viewUrl"=>"cotizaciones/verArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion(),
-							"deleteUrl"=>"cotizaciones/eliminarArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion(),
-							"object"=>"panelArchivos", 
-							"closable"=>false, 
-							"uploadURL"=>"cotizaciones/adjuntarArchivo?idcotizacion=".$cotizacion->getCaIdcotizacion() 
+        include_component("gestDocumental", "panelArchivos",
+						array("folder"=>$cotizacion->getDirectorioBase(),
+							"object"=>"panelArchivos",
+							"closable"=>false
 						));
 	}
 	?>

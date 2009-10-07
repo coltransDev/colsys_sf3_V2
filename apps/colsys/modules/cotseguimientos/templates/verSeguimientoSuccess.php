@@ -1,3 +1,6 @@
+<script>
+    document.location="/colsys_sf3/seguimientos/idcotizacion/<?=$cotizacion->getCaIdcotizacion()?>";
+</script>
 <div align="center" class="content">
 
 <h3>Seguimientos Cotizaci&oacute;n No <?=$cotizacion->getCaConsecutivo()?></h3>

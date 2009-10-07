@@ -7,7 +7,8 @@
  * @subpackage cotizaciones
  * @author     Your name here
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
- */ 
+ */
+//exit("deprecated");
 class cotizacionesActions extends sfActions
 {
 	
@@ -37,7 +38,9 @@ class cotizacionesActions extends sfActions
 		
 		if( $this->nivel==-1 ){
 			$this->forward404();
-		}	
+		}
+
+        $this->estados = ParametroPeer::retrieveByCaso( "CU074" );
 		
 	}
 		
@@ -51,6 +54,7 @@ class cotizacionesActions extends sfActions
 		$criterio = $this->getRequestParameter("criterio");
 		$cadena = $this->getRequestParameter("cadena");
 		$login = $this->getRequestParameter("login");
+        $seguimiento = $this->getRequestParameter("seguimiento");
 		
 				
 		$c = new Criteria();	
@@ -86,11 +90,18 @@ class cotizacionesActions extends sfActions
 				$c->addJoin( CotizacionPeer::CA_USUARIO , UsuarioPeer::CA_LOGIN );
 				$c->addJoin( UsuarioPeer::CA_IDSUCURSAL , SucursalPeer::CA_IDSUCURSAL );
 				$c->add( SucursalPeer::CA_NOMBRE, "lower(".SucursalPeer::CA_NOMBRE.") LIKE '%".strtolower( $cadena )."%'", Criteria::CUSTOM );	
-				break;	
+				break;
+            case "seguimiento":
+				$c->add( CotizacionPeer::CA_USUARIO, "%".$user->getUserId()."%", Criteria::LIKE );
+                $c->addJoin( CotizacionPeer::CA_IDCOTIZACION , CotProductoPeer::CA_IDCOTIZACION );
+                $c->add(CotProductoPeer::CA_ETAPA, $seguimiento );
+                $c->setDistinct();
+				break;
 		}	
 		//$c->add( CotizacionPeer::CA_USUANULADO, null, Criteria::ISNULL );
 		$c->addDescendingOrderByColumn( CotizacionPeer::CA_IDCOTIZACION );	
 		$c->setLimit( 200 );
+        
 		
 		$this->pager = new sfPropelPager('Cotizacion', 30);		
 		$this->pager->setCriteria($c);	
@@ -105,6 +116,15 @@ class cotizacionesActions extends sfActions
 		$this->criterio = $criterio;
 		$this->cadena = $cadena;
 		$this->login = $login;
+        $this->seguimiento = $seguimiento;
+
+
+        $estados = ParametroPeer::retrieveByCaso( "CU074" );
+        $this->estados = array();
+        foreach( $estados as $estado ){
+            $this->estados[$estado->getCaValor()] = $estado->getCaValor2();
+        }
+
 				
 	}
 
@@ -114,7 +134,8 @@ class cotizacionesActions extends sfActions
 	* @author Carlos G. López M., Andres Botero
 	*/
 	public function executeConsultaCotizacion(){
-		
+		$this->redirect("/colsys_sf3/cotizaciones/consultaCotizacion?id=".$this->getRequestParameter("id"));
+
 		$response = sfContext::getInstance()->getResponse();		
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/myRowExpander",'last');		
@@ -469,6 +490,7 @@ class cotizacionesActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeVerCotizacion(){
+        
 		$this->cotizacion =  CotizacionPeer::retrieveByPk( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
 		$c = new Criteria();
@@ -595,7 +617,7 @@ class cotizacionesActions extends sfActions
 		}
 		
 		$attachments = $this->getRequestParameter("attachments");
-		
+		/*
 		$archivos = $this->cotizacion->getCotArchivos();				
 		foreach($archivos as $archivo ){	
 			if( $attachments && in_array($archivo->getCaIdArchivo(),$attachments )){
@@ -610,7 +632,18 @@ class cotizacionesActions extends sfActions
 				}
 				fclose($fp);
 			}
-		}
+		}*/
+        
+        $attachments = $this->getRequestParameter("attachments");
+		if( $attachments ){
+            $directorioCotizaciones = $this->cotizacion->getDirectorio();
+            foreach($attachments as $attachment ){
+                $fileName = base64_decode($attachment);
+                $email->addAttachment($directorioCotizaciones.DIRECTORY_SEPARATOR.$fileName);
+
+            }
+        }
+
   
 		$email->save(); //guarda el cuerpo del mensaje
 		$this->error = $email->send();	
@@ -924,8 +957,7 @@ class cotizacionesActions extends sfActions
 					$idopcion = $_SESSION['idopcion_'.$parent]; 					
 				}
 			}
-			$this->responseArray["idopcion"]=$idopcion;
-					
+			$this->responseArray["idopcion"]=$idopcion;			
 			$recargo = CotRecargoPeer::retrieveByPk( $idcotizacion, $idproducto, $idopcion, $idconcepto, $iditem, $modalidad );
 						
 			if( !$recargo ){			
