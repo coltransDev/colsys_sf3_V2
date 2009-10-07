@@ -25,7 +25,10 @@ class gestDocumentalComponents extends sfComponents
 		
 		if(!isset( $this->readOnly )){
 			$this->readOnly=false;
-		}				
+		}
+       
+
+        
 	}
 	
 	
