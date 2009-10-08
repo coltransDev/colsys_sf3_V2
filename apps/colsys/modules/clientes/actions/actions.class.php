@@ -403,6 +403,7 @@ class clientesActions extends sfActions
 	public function executeReporteEstados(){
 		$anterior = array();
 		$facturar = array();
+
 		set_time_limit(0);
 		$inicio =  $this->getRequestParameter("fchStart");
 		$final =  $this->getRequestParameter("fchEnd");
@@ -418,25 +419,43 @@ class clientesActions extends sfActions
                 $stmt = ClientePeer::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
                 $ante = ClientePeer::estadoClientes(null, $ultimo, $empresa, null, "Potencial", $sucursal);
 		while($row = $stmt->fetch()) {
-			$actual = $row;
-			
-			list($year, $month, $day) = sscanf($row["ca_fchestado"], "%d-%d-%d");
-			
-			$sb = ClientePeer::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $row["ca_idcliente"], null, null);
-			while($row1 = $sb->fetch()) {
-				$anterior = array('ca_fchestado_ant'=>$row1["ca_fchestado"],
-	                              'ca_estado_ant'=>$row1["ca_estado"]
-	                             );
-			}
-			
-			$sb = ClientePeer::facturacionClientes($inicio, $final, $empresa, $row["ca_idcliente"]);
-			while($row2 = $sb->fetch()) {
-				$facturar = $row2;
-			}
-			if (count($anterior)==0){
-				$anterior = array('ca_fchestado_ant'=>null, 'ca_estado_ant'=>null);
-			}
-			$this->clientesEstados[] = array_merge($actual, $anterior, $facturar);
+                    $actual = $row;
+
+                    list($year, $month, $day) = sscanf($row["ca_fchestado"], "%d-%d-%d");
+
+                    $sb = ClientePeer::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $row["ca_idcliente"], null, null);
+                    while($row1 = $sb->fetch()) {
+                        $anterior = array('ca_fchestado_ant'=>$row1["ca_fchestado"],
+                              'ca_estado_ant'=>$row1["ca_estado"]
+                         );
+                    }
+
+                    $sb = ClientePeer::facturacionClientes($inicio, $final, $empresa, $row["ca_idcliente"]);
+                    while($row2 = $sb->fetch()) {
+                        $facturar = $row2;
+                    }
+                    if (count($anterior)==0){
+                        $anterior = array('ca_fchestado_ant'=>null, 'ca_estado_ant'=>null);
+                    }
+
+                    $term_mem = "";
+                    $terminos = array();
+                    $sb = ClientePeer::terminosClientes($inicio, $final, $row["ca_idcliente"]);
+                    while($row2 = $sb->fetch()) {
+                        if (strpos($row2['ca_incoterms'], "|") !== false){
+                            foreach(explode("|",$row2['ca_incoterms']) as $termino){
+                                if (!in_array($termino, $terminos)){
+                                    $term_mem.= $termino."|";
+                                }
+                            }
+                        }else{
+                            if (!in_array($row2['ca_incoterms'], $terminos)){
+                                $term_mem.= $row2['ca_incoterms']."|";
+                            }
+                        }
+                    }
+                    $terminos = array('ca_terminos'=>$term_mem);
+                    $this->clientesEstados[] = array_merge($actual, $anterior, $facturar, $terminos);
 
 		}
                 $i = 0;
