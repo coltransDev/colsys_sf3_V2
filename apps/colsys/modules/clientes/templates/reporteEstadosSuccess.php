@@ -20,6 +20,7 @@ $i=1;
   <th>Estado Anterior</th>
   <th>&Uacute;ltima Factura</th>
   <th>Facturaci&oacute;n Periodo</th>
+  <th>Incoterms/Perido</th>
 </tr>
 </thead>
 <tbody>
@@ -37,6 +38,8 @@ $i=1;
       <td><?php echo $clienteEstado["ca_estado_ant"] ?></td>
       <td><?php echo $clienteEstado["ca_fchfactura"] ?></td>
       <td align="right"><?php echo number_format($clienteEstado["ca_valor"],2) ?></td>
+      <td><?php echo str_replace("|", "<br />", $clienteEstado["ca_terminos"]) ?></td>
+
 </tr>
 <?php 
 	endforeach; 
