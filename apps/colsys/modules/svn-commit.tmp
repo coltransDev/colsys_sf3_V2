@@ -1,0 +1,21 @@
+
+--This line, and those below, will be ignored--
+
+A    deprecated/reportes
+A    deprecated/reportes/actions
+A  + deprecated/reportes/actions/components.class.php
+A  + deprecated/reportes/actions/actions.class.php
+A    deprecated/reportes/templates
+A  + deprecated/reportes/templates/indexSuccess.php
+A  + deprecated/reportes/templates/_submenuBar.php
+A  + deprecated/reportes/templates/enviarNotificacionResultSuccess.php
+A  + deprecated/reportes/templates/enviarNotificacionSuccess.php
+A  + deprecated/reportes/templates/verReporteSuccess.php
+A    deprecated/notificaciones
+A    deprecated/notificaciones/actions
+A  + deprecated/notificaciones/actions/components.class.php
+A  + deprecated/notificaciones/actions/actions.class.php
+A    deprecated/notificaciones/templates
+A  + deprecated/notificaciones/templates/_tareasPendientes.php
+A  + deprecated/notificaciones/templates/realizarTareaSuccess.php
+A  + deprecated/notificaciones/templates/indexSuccess.php
