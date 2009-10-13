@@ -235,15 +235,15 @@ class confirmacionesActions extends sfActions
 			if( $attachment ){
 				$file = $directory.DIRECTORY_SEPARATOR.$attachment['name'];
 				copy( $attachment['tmp_name'] , $file ); 
-				$attachments[] = $file;
+				$attachments[] = $reporte->getDirectorioBase().$attachment['name'];
 			}
 			
 			if( $attachment2 ){
 				$file = $directory.DIRECTORY_SEPARATOR.$attachment2['name'];
 				copy( $attachment2['tmp_name'] , $file ); 
-				$attachments[] = $file;
+				$attachments[] = $reporte->getDirectorioBase().$attachment2['name'];
 			}
-							
+				
 			$ultimostatus = $reporte->getUltimoStatus();
 			
 			$status = new RepStatus();
@@ -266,8 +266,6 @@ class confirmacionesActions extends sfActions
 				$status->setCaFchcontinuacion( $ultimostatus->getCaFchcontinuacion() );
 				$status->setCaDoctransporte( $ultimostatus->getCaDoctransporte() );
 			}
-			
-			
 			
 			
 			switch( $modo ){
