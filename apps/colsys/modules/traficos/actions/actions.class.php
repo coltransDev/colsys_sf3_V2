@@ -8,6 +8,7 @@
  * @author     Your name here
  * @version    SVN: $Id: actions.class.php 2692 2006-11-15 21:03:55Z fabien $
  */
+ //exit("deprecated");
 class traficosActions extends sfActions
 {
 	
@@ -572,13 +573,15 @@ class traficosActions extends sfActions
 		
 		$user = $this->getUser();
 		$attachments = $this->getRequestParameter( "attachments" );
+
+       
 		$att = array();
 		if( $attachments ){
 			foreach( $attachments as $attachment){				
-				$att[]=base64_decode( $attachment );
-				
+				$att[]=$reporte->getDirectorioBase().base64_decode( $attachment );				
 			}
 		}
+        
 		
 		$options["from"] =  $request->getParameter("remitente");
 		
@@ -760,19 +763,6 @@ class traficosActions extends sfActions
 		$this->forward404unless( $this->modo );
 		$this->forward404unless( $this->idCliente );
 		
-
-		$this->getRequest()->setParameter("save", "true");
-		
-		if( $adjuntar_excel ){
-			$fileName = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR."status".$cliente->getCaIdCliente().".xls";			
-			
-			//Genera el archivo de excel			
-			$this->getRequest()->setParameter('filename',$fileName);
-			sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'informeTraficosFormato1');
-			
-			
-		}
-		
 		
 		$user = $this->getUser();		
 		//Guarda el correo y lo envia
@@ -789,13 +779,13 @@ class traficosActions extends sfActions
 			$email->setCaFrom( $user->getEmail() );
 		}
 		$email->setCaFromname( $user->getNombre() );
-		if( $adjuntar_excel ){		
-			$email->AddAttachment( $fileName );
-		}
+		
 		
 		if( $this->getRequestParameter("readreceipt") ){
-			$email->setCaReadReceipt( $this->getRequestParameter("readreceipt") );
-		}
+			$email->setCaReadReceipt( true );
+		}else{
+            $email->setCaReadReceipt( false );         
+        }
 
 		$email->setCaReplyto( $user->getEmail() );
 		
@@ -823,6 +813,26 @@ class traficosActions extends sfActions
 		}
 			
 		$email->setCaSubject( $this->getRequestParameter("asunto") );
+        $email->setCaBody( $this->getRequestParameter("mensaje"));
+		$email->setCaBodyhtml( Utils::replace($this->getRequestParameter("mensaje"))) ;
+		$email->save();
+
+        if( $adjuntar_excel ){
+            $this->getRequest()->setParameter("save", "true");
+            $directory = $email->getDirectorio();
+            
+
+            if( !is_dir($directory) ){
+                @mkdir($directory, 0777, true);
+            }
+            $fileName = "status".$cliente->getCaIdCliente().".xls";
+            
+			//Genera el archivo de excel
+			$this->getRequest()->setParameter('filename',$email->getDirectorio().$fileName);
+			sfContext::getInstance()->getController()->getPresentationFor( 'traficos', 'informeTraficosFormato1');
+			$email->AddAttachment( $email->getDirectorioBase().$fileName );
+		}
+
 		$attachments = $this->getRequestParameter( "attachments" );
 		if( $attachments ){
 			foreach( $attachments as $attachment){
@@ -832,16 +842,12 @@ class traficosActions extends sfActions
 				$this->forward404Unless( $reporte );
 								
 				$file = base64_decode($params[1]);				
-				$directory = $reporte->getDirectorio();
+				$directory = $reporte->getDirectorioBase();
 				 
 				$name = $directory.DIRECTORY_SEPARATOR.$file;	
 				$email->AddAttachment(  $name  );
 			}
 		}
-		
-				
-		$email->setCaBody( $this->getRequestParameter("mensaje"));		
-		$email->setCaBodyHtml( Utils::replace($this->getRequestParameter("mensaje"))) ;			
 		$email->save();
 		$email->send();		
 	}

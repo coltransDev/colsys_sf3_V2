@@ -641,7 +641,7 @@ if( !sfConfig::get("app_smtp_user") ){
 					$option = '';
 				}
 				?>
-				<input type="checkbox" name="attachments[]" value="<?=base64_encode($file)?>"  <?=$option?> />  
+				<input type="checkbox" name="attachments[]" value="<?=base64_encode(basename($file))?>"  <?=$option?> />
 				<?
 				echo mime_type_icon( basename($file) )." ".link_to(basename( $file ), url_for("traficos/fileViewer?idreporte=".$reporte->getCaIdreporte()."&file=".base64_encode(basename($file)) ) )."<br />";				
 			}
