@@ -493,7 +493,15 @@ class Reporte extends BaseReporte
 	* @author Andres Botero	
 	*/
 	public function getDirectorio(){
-		return sfConfig::get("app_digitalFile_root")."reportes".DIRECTORY_SEPARATOR.$this->getCaConsecutivo();
+		return sfConfig::get("app_digitalFile_root").$this->getDirectorioBase();
+	}
+
+    /*
+	* Devuelve la ubicacion del directorio donde se encuentran los archivos de la referencia
+	* @author Andres Botero
+	*/
+	public function getDirectorioBase(){
+		return "reportes".DIRECTORY_SEPARATOR.$this->getCaConsecutivo().DIRECTORY_SEPARATOR;
 	}
 	
 	/*
