@@ -41,9 +41,9 @@ use_helper('ExtCalendar');
 
 		<td>
 			<span ><b>Estado :</b> <br />
-                <select name="estado">
-                   
+                <select name="estado">                   
                     <option value="Activo">Activo</option>
+                    <option value="Potencial">Potencial</option>
                     <option value="Vetado">Vetado</option>
                 </select>
 			</span>
