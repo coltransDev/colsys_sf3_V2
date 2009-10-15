@@ -21,6 +21,7 @@
  * @property string $ca_bodyhtml
  * @property boolean $ca_readreceipt
  * @property Reporte $Reporte
+ * @property Doctrine_Collection $EmailAttachment
  * @property Doctrine_Collection $RepStatus
  * 
  * @package    ##PACKAGE##
@@ -87,6 +88,10 @@ abstract class BaseEmail extends myDoctrineRecord
         $this->hasOne('Reporte', array(
              'local' => 'ca_idcaso',
              'foreign' => 'ca_idreporte'));
+
+        $this->hasMany('EmailAttachment', array(
+             'local' => 'ca_idemail',
+             'foreign' => 'ca_idemail'));
 
         $this->hasMany('RepStatus', array(
              'local' => 'ca_idemail',

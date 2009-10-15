@@ -186,7 +186,7 @@ class Email extends BaseEmail
 			}
 		}
 
-        /*
+        
 		$attachments = $this->getEmailAttachment();
 		foreach( $attachments as $attachment ){
 			try{
@@ -204,7 +204,7 @@ class Email extends BaseEmail
 
 				Utils::writeLog($logFile , $event );
 			}
-		}*/
+		}
 
 		$failures = null;
 		try{
