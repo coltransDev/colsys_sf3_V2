@@ -82,7 +82,7 @@ class reporteExtComponents extends sfComponents
             if( $reporte->getCaNotify()==1 ) {
                 $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
             }elseif(  $reporte->getCaNotify()==2 ){
-                $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdNotify() );
+                $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdnotify() );
             }elseif(  $reporte->getCaNotify()==3 ){
                 $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdmaster() );
             }
@@ -186,7 +186,7 @@ class reporteExtComponents extends sfComponents
                 $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdconsignatario() );
 
             }elseif(  $reporte->getCaNotify()==2 ){
-                $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdNotify() );
+                $notify = Doctrine::getTable("Tercero")->find( $reporte->getCaIdnotify() );
             }
 
             if($notify){
