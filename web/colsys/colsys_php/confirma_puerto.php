@@ -570,11 +570,11 @@ function enviar_email(&$mail, &$rs, $id, &$i, &$attachment) {
     }
 
     if ($send_it) {
-        if(!$mail->Send()) {
+        /*if(!$mail->Send()) {
             echo "<script>alert(\"".addslashes($mail->ErrorInfo)."\");</script>";  // Muestra el mensaje de error
             echo "<script>document.location.href = 'confirma_puerto.php';</script>";
             exit;
-        }
+        }*/
     }
 }
 ?>
