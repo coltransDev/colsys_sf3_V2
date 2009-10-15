@@ -1,0 +1,17 @@
+default:
+  http_metas:
+    content-type: text/html; charset=iso-8859-1 
+
+  metas:
+    title:        Sistema de informacion - Coltrans S.A.
+    robots:       index, follow
+    description:  Sistema integrado de informacion Coltrans S.A., Colmas Ltda.
+    keywords:     colsys
+    language:     en	
+
+  stylesheets:    [coltrans, print: { media: print }, jquery/jquery.tooltip.css, ext/css/ext-all, ext/css/xtheme-blue.css, menu/menu]
+
+  javascripts:    [comunes,  jquery/jquery.js, jquery/jquery.tooltip.js ,ext/adapter/ext/ext-base, ext/ext-all, ext/src/locale/ext-lang-es.js , menu/menu]
+
+  has_layout:     on
+  layout:         layout

@@ -1,0 +1,35 @@
+# default values
+all:
+  digitalFile:
+    root:  /home/abotero/Desarrollo/digitalFile/
+    pricing:  /home/abotero/colsys_sf12/web/colsys/uploads
+#    root:  C:\Desarrollo\digitalFile\
+
+  smtp:
+    host: 10.192.1.30
+    user:  tasas_cambios
+    passwd:  tasas_cambios
+#    host: smtp.colmas.com.co
+#    user: bogota-aduana@colmas.com.co
+#    passwd:  gbvFR5
+    port: 25
+    debugAddress: abotero@coltrans.com.co
+#    debugAddress: botero82@gmail.com
+#    public_ip: 200.14.235.62
+
+  ldap:
+    host: 10.192.1.15
+    user: abotero
+    passwd: krxo4578
+
+  ip:
+    trusted: 127.0.0.1 10.192.1 10.192.2
+#archivos de falabella
+  falabella:
+    input:  /home/falabella/OUT  
+    input_processed:  /home/falabella/OUT/processed
+    output:  /home/falabella/IN    
+#    input: c:\fala\
+#    input_processed: c:\fala\procesados\
+
+ 

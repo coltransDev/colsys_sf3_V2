@@ -1,0 +1,320 @@
+Cotizacion:
+  generatePath: cotizaciones
+  tableName: tb_cotizaciones
+  attributes:
+    export: tables
+  columns:
+    ca_idcotizacion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcontacto: integer
+    ca_consecutivo: string
+    ca_saludo: string
+    ca_asunto: string
+    ca_entrada: string
+    ca_despedida: string
+    ca_anexos: string
+    ca_usuario: string
+    ca_empresa: string
+    ca_fuente: string
+    ca_idg_envio_oportuno: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+    ca_usuanulado: string(20)
+    ca_fchanulado: timestamp
+  relations:
+    Usuario:
+      local: ca_usuario
+      foreign: ca_login
+      type: one
+    Contacto:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: one
+    NotTarea:
+      local: ca_idg_envio_oportuno
+      foreign: ca_idtarea
+      type: one
+    CotProducto:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    CotContinuacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    CotSeguro:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many
+    CotContactoAg:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: many 
+      
+
+CotProducto:
+  generatePath: cotizaciones
+  tableName: tb_cotproductos
+  attributes:
+    export: tables
+  columns:    
+    ca_idproducto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer     
+    ca_transporte: string
+    ca_modalidad: string
+    ca_origen: string
+    ca_destino: string
+    ca_escala: string
+    ca_impoexpo: string
+    ca_imprimir: string
+    ca_producto: string
+    ca_incoterms: string
+    ca_frecuencia: string
+    ca_tiempotransito: string
+    ca_observaciones: string
+    ca_idlinea: string
+    ca_postularlinea: boolean
+    ca_etapa: string
+    ca_idtarea: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    CotOpcion:
+      local: ca_idproducto
+      foreign: ca_idproducto
+      type: many
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one
+    NotTarea:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    
+    
+
+CotOpcion:
+  generatePath: cotizaciones
+  tableName: tb_cotopciones
+  attributes:
+    export: tables
+  columns:
+    ca_idopcion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idproducto:
+      type: integer      
+    ca_idcotizacion: 
+      type: integer      
+    ca_idconcepto: integer
+    ca_valor_tar: decimal
+    ca_aplica_tar: string
+    ca_valor_min: decimal
+    ca_aplica_min: string
+    ca_idmoneda: string
+    ca_observaciones: string
+    ca_consecutivo: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    CotProducto:
+      local: ca_idproducto
+      foreign: ca_idproducto
+      type: one
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+
+CotRecargo:
+  generatePath: cotizaciones
+  tableName: tb_cotrecargos
+  attributes:
+    export: tables
+  columns:
+    ca_idcotrecargo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer
+    ca_idproducto: integer
+    ca_idopcion: integer
+    ca_idconcepto: integer      
+    ca_idrecargo: integer      
+    ca_modalidad: string      
+    ca_idrecargo: integer
+    ca_valor_tar: decimal
+    ca_aplica_tar: string
+    ca_valor_min: decimal
+    ca_aplica_min: string
+    ca_idmoneda: string
+    ca_observaciones: string
+    ca_consecutivo: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:    
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    TipoRecargo:
+      local: ca_idrecargo
+      foreign: ca_idrecargo
+      type: one
+
+
+CotContinuacion:
+  generatePath: cotizaciones
+  tableName: tb_cotcontinuacion
+  attributes:
+    export: tables
+  columns:
+    ca_idcontinuacion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer
+    ca_tipo: string
+    ca_modalidad: string
+    ca_origen: string
+    ca_destino: string
+    ca_idconcepto: integer
+    ca_idequipo: integer
+    ca_idmoneda: string
+    ca_frecuencia: string
+    ca_tiempotransito: string
+    ca_observaciones: string
+    ca_valor_tar: decimal
+    ca_valor_min: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Equipo:
+      local: ca_idequipo
+      foreign: ca_idconcepto
+      type: one
+      class: Concepto
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one      
+
+CotContactoAg:
+  generatePath: cotizaciones
+  tableName: tb_cotcontactosag
+  attributes:
+    export: tables
+  columns:
+    ca_idcontacto:
+      type: string
+      primary: true
+    ca_idcotizacion: 
+       type: integer
+       primary: true
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+    IdsContacto:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: one
+
+CotSeguro:
+  generatePath: cotizaciones
+  tableName: tb_cotseguro
+  attributes:
+    export: tables
+  columns:
+    ca_idseguro:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcotizacion: integer
+    ca_idmoneda: string
+    ca_prima_tip: string
+    ca_prima_vlr: decimal
+    ca_prima_min: decimal
+    ca_obtencion: decimal
+    ca_observaciones: string
+    ca_transporte: string
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
+      type: one
+
+CotSeguimiento:
+  generatePath: cotizaciones
+  tableName: tb_cotseguimientos
+  attributes:
+    export: tables
+  columns:
+    ca_idseguimiento:
+      type: integer
+      primary: true
+    ca_fchseguimiento: timestamp
+    ca_idproducto: integer
+    ca_fchseguimiento: timestamp
+    ca_login: string
+    ca_seguimiento: string
+    ca_etapa: string   
+  relations:
+    CotProducto:
+      local: ca_idproducto
+      foreign: ca_idproducto
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one

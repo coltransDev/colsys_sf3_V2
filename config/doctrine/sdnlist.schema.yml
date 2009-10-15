@@ -1,0 +1,89 @@
+Sdn:
+  generatePath: sdn
+  tableName: tb_sdn
+  columns:
+    ca_uid:
+      type: integer
+      primary: true
+    ca_firstName: string
+    ca_lastName: string
+    ca_title: string
+    ca_sdnType: string
+    ca_remarks: string
+  relations:
+    SdnId:
+      local: ca_uid
+      foreign: ca_uid
+      type: many
+    SdnAka:
+      local: ca_uid
+      foreign: ca_uid
+      type: many
+    SdnAddress:
+      local: ca_uid
+      foreign: ca_uid
+      type: many
+
+SdnId:
+  generatePath: sdn
+  tableName: tb_sdnid
+  columns:
+    ca_uid:
+      type: integer
+      primary: true
+    ca_uid_id:
+      type: integer
+      primary: true
+    ca_idType: string
+    ca_idNumber: string
+    ca_idCountry: string
+    ca_issueDate: string
+    ca_expirationDate: string
+  relations:
+    Sdn:
+      local: ca_uid
+      foreign: ca_uid
+      type: one
+
+SdnAka:
+  generatePath: sdn
+  tableName: tb_sdnaka
+  columns:
+    ca_uid:
+      type: integer
+      primary: true
+    ca_uid_aka:
+      type: integer
+      primary: true
+    ca_type: string
+    ca_category: string
+    ca_firstName: string
+    ca_lastName: string
+  relations:
+    Sdn:
+      local: ca_uid
+      foreign: ca_uid
+      type: one
+
+SdnAddress:
+  generatePath: sdn
+  tableName: tb_sdnaddress
+  columns:
+    ca_uid:
+      type: integer
+      primary: true      
+    ca_uid_address: 
+      type: integer
+      primary: true    
+    ca_address1: string
+    ca_address2: string
+    ca_address3: string
+    ca_city: string
+    ca_state: string
+    ca_postal: string
+    ca_country: string
+  relations:
+    Sdn:
+      local: ca_uid
+      foreign: ca_uid
+      type: one

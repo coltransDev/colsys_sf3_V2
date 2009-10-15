@@ -1,0 +1,58 @@
+new Ext.form.ComboBox({		
+		fieldLabel: '<?=$label?>',
+		typeAhead: true,
+		forceSelection: true,
+		triggerAction: 'all',
+		emptyText:'Seleccione',
+		selectOnFocus: true,					
+		hiddenName: '<?=$id?>',
+		id: '<?=$id?>_id',
+		displayField: 'linea',
+		valueField: 'idlinea',
+		allowBlank: <?=$allowBlank?>,
+		minChars : 2,
+		mode : 'local',
+		lazyRender:true,
+		listClass: 'x-combo-list-small',
+		listeners:{focus:function( field, newVal, oldVal ){
+							<?
+							if( isset($link) ){
+							?>	
+								linea = Ext.getCmp('<?=$id?>_id');
+								var transporte = Ext.getCmp('<?=$link?>').getValue();
+								
+								linea.store.baseParams = {
+									transporte: transporte
+								};
+								linea.store.reload();
+							<?
+							}
+							?>
+						  }
+		},
+		store : new Ext.data.Store({
+			autoLoad : <?=isset( $idlinea )?"true":"false"?>,
+			url: '<?=url_for("widgets/datosLineas")?>',
+			reader: new Ext.data.JsonReader(
+				{
+					id: 'idlinea',
+					root: 'root',
+					totalProperty: 'total',
+					successProperty: 'success'
+				}, 
+				Ext.data.Record.create([
+					{name: 'idlinea'},
+					{name: 'linea'}
+				])
+			)
+			<?
+			if(isset( $idlinea )){
+			?>			
+			,
+			baseParams: {	idlinea: '<?=$idlinea?>'	}
+			<?
+			}
+			?>
+						
+		})
+	})

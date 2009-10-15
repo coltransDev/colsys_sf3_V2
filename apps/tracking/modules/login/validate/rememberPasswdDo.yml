@@ -1,0 +1,11 @@
+fillin:
+  enabled: true  # Enable the form repopulation
+  param:
+    exclude_types: [hidden, password] # Do not repopulate these field types
+fields:
+  user_email:
+    required:
+      msg:       Por favor ingresa un correo electr&oacute;nico
+    sfEmailValidator:
+        strict:       true
+        email_error:  Esta direcci&oacute;n de correo electr&oacute;nico es invalida

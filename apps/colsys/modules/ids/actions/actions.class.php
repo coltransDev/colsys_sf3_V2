@@ -1,0 +1,947 @@
+<?php
+ 
+/**
+ * homepage actions.
+ *
+ * @package    colsys
+ * @subpackage homepage
+ * @author     Your name here
+ * @version    SVN: $Id: actions.class.php 12479 2008-10-31 10:54:40Z fabien $
+ */
+class idsActions extends sfActions
+{
+
+    const RUTINA_AGENTES = "8";
+	const RUTINA_PROV = "81";
+    /*
+     * Retorna el nivel de acceso de acuerdo al modo
+     */
+    public function getNivel( ){
+        $this->modo = $this->getRequestParameter("modo");
+        
+        $this->nivel = -1;
+		if( !$this->modo ){
+			$this->forward( "ids", "seleccionModo" );
+		}
+
+		if( $this->modo=="agentes" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );			
+		}
+		
+		if( $this->modo=="prov" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );            
+		}
+        
+        
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}        
+        return $this->nivel;
+    }
+	/**
+	* Muestra la pagina inicial del modulo, le permite al usuario hacer busquedas.
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeIndex(sfWebRequest $request)
+	{
+        
+        $this->modo = $request->getParameter("modo");
+        $this->nivel = $this->getNivel();
+
+        $this->traficos = Doctrine::getTable('Trafico')->createQuery('t')
+                            ->where('t.ca_idtrafico != ?', '99-999')
+                            ->addOrderBy('t.ca_nombre ASC')
+                            ->execute();
+
+        $ciudades = Doctrine::getTable('Ciudad')->createQuery('c')
+                            ->where('c.ca_idciudad != ?', '999-9999')
+                            ->addOrderBy('c.ca_idtrafico ASC')
+                            ->addOrderBy('c.ca_ciudad ASC')
+                            ->execute();
+       
+		$result = array();
+		foreach( $ciudades as $ciudad ){
+			$result[ $ciudad->getCaIdtrafico() ][] = array("idciudad"=>$ciudad->getCaIdciudad(),
+															"ciudad"=>utf8_encode($ciudad->getCaCiudad())
+													 );
+		}
+
+		$this->ciudades = json_encode($result);
+	}
+
+    /**
+	 * Permite seleccionar el modo de operacion del programa
+	 * @author: Andres Botero
+	 */
+	public function executeSeleccionModo()
+	{
+		$this->nivelAgentes = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );		
+		$this->nivelProveedores = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );
+	}
+
+    /**
+	* Permite realizar busquedas en la tabla de proveedores
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeBusqueda(sfWebRequest $request)
+	{
+        $this->modo = $request->getParameter("modo");
+        $this->nivel = $this->getNivel();
+        $criterio = $request->getParameter("criterio");
+        $cadena = $request->getParameter("cadena");
+        
+        $q = Doctrine_Query::create()->from('Ids i');
+
+        switch( $this->modo ){
+            case "agentes":
+                $q->innerJoin( "i.IdsAgente ag" );
+                break;
+            case "prov":
+                 $q->innerJoin( "i.IdsProveedor prov" );
+                break;
+        }
+
+        switch( $criterio ){
+			case "nombre":
+                $q->where('i.ca_nombre like ?', '%'.strtoupper($cadena).'%');				
+				break;
+            case "id":				
+                $q->where('i.ca_idalterno like ?', strtoupper($cadena).'%');
+				break;
+            case "ciudad":
+                $idtrafico = $request->getParameter("idtrafico");
+                $idciudad = $request->getParameter("idciudad");
+                $q->innerJoin("i.IdsSucursal s");
+                $q->innerJoin("s.Ciudad c");
+                $q->innerJoin("c.Trafico t");
+				
+                if( $idtrafico ){                    
+                    $q->where('t.ca_idtrafico = ?', $idtrafico);
+                }
+                if( $idciudad ){                    
+                    $q->where('c.ca_idciudad = ?', $idciudad);
+                }
+				break;
+		}
+
+        $q->addOrderBy("i.ca_nombre");
+        $q->limit(200);
+
+        // Defining initial variables
+        $currentPage = $this->getRequestParameter('page', 1);
+        $resultsPerPage = 30;
+
+        // Creating pager object
+        $this->pager = new Doctrine_Pager(
+              $q,
+              $currentPage, 
+              $resultsPerPage
+        );
+
+        $this->idsList = $this->pager->execute();
+		if( $this->pager->getResultsInPage()==1 && $this->pager->getPage()==1 ){
+            $ids = $this->idsList;
+			$this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids[0]->getCaId());
+		}
+		$this->criterio = $criterio;
+		$this->cadena = $cadena;
+	}
+
+
+    /**
+	* Muestra el formulario de creación y edicion de proveedores
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeVerIds(sfWebRequest $request)
+	{
+        $this->nivel = $this->getNivel();
+        $this->modo = $request->getParameter("modo");
+        $this->forward404Unless($request->getParameter("id"));
+
+        $this->ids = Doctrine::getTable('Ids')->find($request->getParameter("id"));
+        $this->forward404Unless($this->ids);
+       
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("tabpane/tabpane",'last');
+        $response->addStylesheet("tabpane/luna/tab",'last');
+    }
+
+    /**
+	* Muestra el formulario de creación y edicion de proveedores
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeFormIds(sfWebRequest $request)
+	{
+        $this->nivel = $this->getNivel();
+        $this->modo = $request->getParameter("modo");
+        $this->form = new NuevoIdsForm();
+
+        $formSucursal = new NuevaSucursalForm();
+        $this->form->mergeForm($formSucursal);
+
+        if( $this->modo=="prov" ){
+            $this->formProveedor = new NuevoProveedorForm();
+            $this->form->mergeForm($this->formProveedor);
+        }
+
+        if( $this->modo=="agentes" ){
+            $this->formAgente = new NuevoAgenteForm();
+            $this->form->mergeForm($this->formAgente);
+        }
+
+        $ids = null;
+
+        if( $request->getParameter("id") ){
+            $ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));           
+        }
+
+        if( !$ids ){
+            $ids = new Ids();
+        }
+        
+        if ($request->isMethod('post')){		
+		
+			$bindValues = array();
+
+            $bindValues["tipo_identificacion"] = $request->getParameter("tipo_identificacion");
+            $bindValues["id"] = $request->getParameter("id");
+            $bindValues["idalterno"] = $request->getParameter("idalterno");
+            $bindValues["dv"] = $request->getParameter("dv");
+            $bindValues["nombre"] = strtoupper($request->getParameter("nombre"));
+            $bindValues["website"] = $request->getParameter("website");
+            $bindValues["idgrupo"] = $request->getParameter("idgrupo");
+            
+            $bindValues["direccion"] = $request->getParameter("direccion");
+            $bindValues["telefonos"] = $request->getParameter("telefonos");
+            $bindValues["fax"] = $request->getParameter("fax");
+            $bindValues["idciudad"] = $request->getParameter("idciudad");
+
+            if( $this->modo=="prov" ){
+                $bindValues["tipo_proveedor"] = $request->getParameter("tipo_proveedor");
+                $bindValues["controladoporsig"] = $request->getParameter("controladoporsig");
+                $bindValues["critico"] = $request->getParameter("critico");
+                $bindValues["esporadico"] = $request->getParameter("esporadico");
+                $bindValues["aprobado"] = $request->getParameter("aprobado");
+                $bindValues["activo"] = $request->getParameter("activo");
+
+
+                if( $bindValues["tipo_proveedor"]=="TRI" ){
+                    $bindValues["sigla"] = $request->getParameter("sigla");
+                    $bindValues["transporte"] = $request->getParameter("transporte");
+                }
+
+            }
+            
+            if( $this->modo=="agentes" ){
+                $bindValues["tipo"] = $request->getParameter("tipo");
+                $bindValues["activo"] = $request->getParameter("activo");
+            }
+
+            $this->form->bind( $bindValues );
+            
+			if( $this->form->isValid() ){
+
+                if( $bindValues["tipo_identificacion"] ){                    
+                    $ids->setCaTipoidentificacion( intval($bindValues["tipo_identificacion"]));
+                }
+
+                if( $bindValues["idalterno"] ){
+                    $ids->setCaIdalterno( $bindValues["idalterno"]);
+                }
+                
+
+                if( $bindValues["dv"] ){
+                    $ids->setCaDv( intval($bindValues["dv"]));
+                }
+                
+                $ids->setCaNombre($bindValues["nombre"]);
+                $ids->setCaWebsite($bindValues["website"]);
+                                              
+                $ids->save();
+
+                //exit( $ids->getCaId() );
+                if( $bindValues["idgrupo"] ){
+                    $ids->setCaIdgrupo( intval($bindValues["idgrupo"]));
+                }else{
+                    $ids->setCaIdgrupo( intval($ids->getCaId()) );
+                }
+                $ids->save();
+
+
+                // Guarda el proveedor
+                if( isset($this->formProveedor) ){
+                    $proveedor = $ids->getIdsProveedor();
+                    if( !$proveedor ){
+                        $proveedor = new IdsProveedor();
+                        $proveedor->setCaIdproveedor($ids->getCaId());
+                    }
+
+                    $proveedor->setCaTipo( $bindValues["tipo_proveedor"] );
+
+                    if( $bindValues["activo"] ){
+                        $proveedor->setCaActivo( true );
+                    }else{
+                        $proveedor->setCaActivo( false );
+                    }
+
+                    
+                    if( $bindValues["tipo_proveedor"]=="TRI" ){                        
+                        $proveedor->setCaSigla($bindValues["sigla"] );
+                        //$proveedor->setCaTransporte( $bindValues["transporte"] );
+                    }                   
+                    
+                    if( $this->nivel>=5 ){
+                        if( $bindValues["controladoporsig"] ){
+                            $proveedor->setCaControladoporsig( true );
+                        }else{
+                            $proveedor->setCaControladoporsig( false );
+                        }
+
+                        if( $bindValues["critico"] ){
+                            $proveedor->setCaCritico( true );
+                        }else{
+                            $proveedor->setCaCritico( false );
+                        }
+
+                         if( $bindValues["esporadico"] ){
+                            $proveedor->setCaEsporadico( true );
+                        }else{
+                            $proveedor->setCaEsporadico( false );
+                        }
+
+                        if( $bindValues["aprobado"] ){
+                            
+                            $proveedor->setCaFchaprobado( $bindValues["aprobado"] );
+                            $proveedor->setCaUsuaprobado( $this->getUser()->getUserId() );
+                            
+                        }else{
+                            $proveedor->setCaFchaprobado( null );
+                            $proveedor->setCaUsuaprobado( null );
+
+                        }
+                    }
+
+                    $proveedor->save();
+                }
+
+
+                if( isset($this->formAgente) ){
+                    $agente = $ids->getIdsAgente();
+                    if( !$agente ){
+                        $agente = new IdsAgente();
+                        $agente->setCaIdagente($ids->getCaId());
+                    }
+
+                    $agente->setCaTipo( $bindValues["tipo"] );
+                   
+                    if( $bindValues["activo"] ){
+                        $agente->setCaActivo( true );
+                    }else{
+                        $agente->setCaActivo( false );
+                    }
+
+                    $agente->save();
+                }
+                
+                // Guardar Sucursal
+                $sucursal = $ids->getSucursalPrincipal();
+                if( !$sucursal ){
+                    $sucursal = new IdsSucursal();
+                    $sucursal->setCaPrincipal( true );
+                }
+                
+                $sucursal->setCaId( $ids->getCaId());
+                $sucursal->setCaDireccion( $request->getParameter("direccion"));
+                $sucursal->setCaTelefonos( $request->getParameter("telefonos"));
+                $sucursal->setCaIdciudad( $request->getParameter("idciudad"));
+                $sucursal->setCaFax( $request->getParameter("fax"));
+                
+                $sucursal->save();
+                
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
+
+            }
+        }
+
+        $this->ids = $ids;
+	}
+
+
+   /**
+	* Comprueba si existe un ID en la BD
+	*
+	* @param sfRequest $request A request object
+	*/
+
+    public function executeComprobarId(sfWebRequest $request){
+        $idalterno = $request->getParameter("idalterno");
+        $tipo_identificacion = $request->getParameter("tipo_identificacion");        
+        $id = Doctrine::getTable("Ids")
+                  ->createQuery("id")
+                  ->where("id.ca_idalterno = ? AND id.ca_tipoidentificacion = ? ", array($idalterno, $tipo_identificacion))
+                  ->fetchOne();
+        $this->responseArray = array();
+        if( $id ){
+            $this->responseArray["id"] = $id->getCaId();
+        }else{
+            $this->responseArray["id"] = false;
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
+    /**
+	* Muestra el formulario de creación y edicion de contactos
+	*
+	* @param sfRequest $request A request object
+	*/
+
+    public function executeFormContactosIds(sfWebRequest $request){
+        $this->nivel = $this->getNivel();
+        
+		if( $this->nivel<3 ){
+			$this->forward404();
+		}
+        $this->modo = $request->getParameter("modo");
+		
+		$this->contacto = Doctrine::getTable("IdsContacto")->find( $request->getParameter("idcontacto") );
+
+        if( $this->contacto ){
+            $this->sucursal = $this->contacto->getIdsSucursal();
+        }else{
+            $this->sucursal = Doctrine::getTable("IdsSucursal")->find( $request->getParameter("idsucursal") );
+        }
+		$this->forward404Unless( $this->sucursal );
+
+		$this->form = new NuevoContactoForm();
+
+		if ($request->isMethod('post')){
+			$bindValues = array();
+
+			$bindValues["idcontacto"] = $request->getParameter("idcontacto");
+			$bindValues["idsucursal"] = $request->getParameter("idsucursal");
+			$bindValues["nombre"] = trim($request->getParameter("nombre"));
+			$bindValues["apellido"] = trim($request->getParameter("apellido"));
+			//$bindValues["direccion"] = $request->getParameter("direccion");
+			//$bindValues["idciudad"] = $request->getParameter("idciudad");
+			$bindValues["telefonos"] = $request->getParameter("telefonos");
+			$bindValues["fax"] = $request->getParameter("fax");
+			$bindValues["email"] = trim($request->getParameter("email"));
+			$bindValues["cargo"] = $request->getParameter("cargo");
+			$bindValues["sugerido"] = $request->getParameter("sugerido");
+			$bindValues["activo"] = $request->getParameter("activo");
+			$bindValues["detalles"] = $request->getParameter("detalles");
+
+			$bindValues["impoexpo"] =  $request->getParameter("impoexpo");
+			$bindValues["transporte"] = $request->getParameter("transporte");
+            $bindValues["visibilidad"] = $request->getParameter("visibilidad");
+            $bindValues["codigoarea"] = $request->getParameter("codigoarea");
+			$this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+				if( $bindValues["idcontacto"] ){
+                    $contacto = Doctrine::getTable("IdsContacto")->find($bindValues["idcontacto"]);
+				}else{					
+					$contacto = new IdsContacto();
+					$contacto->setCaIdsucursal( $this->sucursal->getCaIdsucursal() );					
+				}
+
+				$contacto->setCaNombres( ucfirst( trim($bindValues["nombre"]) ));
+				$contacto->setCaPapellido( ucfirst( trim($bindValues["apellido"]) ));
+				//$contacto->setCaDireccion( trim($bindValues["direccion"]) );
+				//$contacto->setCaIdciudad( $bindValues["idciudad"] );
+				$contacto->setCaTelefonos( $bindValues["telefonos"] );
+				$contacto->setCaFax( $bindValues["fax"] );
+				$contacto->setCaEmail( $bindValues["email"] );
+				$contacto->setCaImpoexpo( implode("|",$bindValues["impoexpo"]) );
+				$contacto->setCaTransporte( implode("|",$bindValues["transporte"]) );
+				$contacto->setCaCargo( $bindValues["cargo"] );
+                if( $bindValues["codigoarea"] && $this->sucursal->getCiudad()->getCodigoarea() ){
+                    $contacto->setCaCodigoarea( $bindValues["codigoarea"] );
+                }else{
+                    $contacto->setCaCodigoarea( null );
+                }
+				$contacto->setCaObservaciones( $bindValues["detalles"] );
+                $contacto->setCaVisibilidad( intval($bindValues["visibilidad"]) );
+				if( $bindValues["sugerido"] ){
+					$contacto->setCaSugerido( true );
+				}else{
+					$contacto->setCaSugerido( false );
+				}
+
+				if( $bindValues["activo"] ){
+					$contacto->setCaActivo( true );
+				}else{
+					$contacto->setCaActivo( false );
+				}
+				$contacto->save();
+
+				$this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->sucursal->getCaId() );
+
+
+			}
+		}
+    }
+
+    /**
+	* Elimina un contacto de una sucursal
+	*
+	* @param sfRequest $request A request object
+	*/
+    public function executeEliminarContactoIds(sfWebRequest $request){
+        $this->nivel = $this->getNivel();
+
+		/*if( $this->nivel<=0 ){
+			$this->forward404();
+		}*/
+
+        $this->modo = $request->getParameter("modo");
+
+        $contacto = Doctrine::getTable("IdsContacto")->find($request->getParameter("idcontacto"));
+        $this->forward404Unless( $contacto );
+        $this->sucursal = $contacto->getIdsSucursal();
+        $contacto->setCaFcheliminado(date("Y-m-d H:i:s"));        
+        $contacto->setCaUsueliminado($this->getUser()->getUserId());
+        $contacto->save();
+        $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->sucursal->getCaId() );
+
+    }
+
+    /**
+	* Muestra el formulario de creación y edicion de sucursales
+	*
+	* @param sfRequest $request A request object
+	*/
+    public function executeFormSucursalIds(sfWebRequest $request){
+        $this->nivel = $this->getNivel();
+        /*
+		if( $this->nivel<=0 ){
+			$this->forward404();
+		}*/
+        $this->modo = $request->getParameter("modo");
+        if( $request->getParameter("idsucursal") ){
+            $sucursal = Doctrine::getTable("IdsSucursal")->find($request->getParameter("idsucursal"));
+            $ids = $sucursal->getIds();
+        }else{
+            $ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+            $sucursal=null;
+        }
+
+        
+		$this->forward404Unless( $ids );
+
+		$this->form = new NuevaSucursalForm();
+
+		if ($request->isMethod('post')){
+			$bindValues = array();
+            
+			$bindValues["direccion"] = $request->getParameter("direccion");
+			$bindValues["idciudad"] = $request->getParameter("idciudad");
+			$bindValues["telefonos"] = $request->getParameter("telefonos");
+			$bindValues["fax"] = $request->getParameter("fax");
+			
+           			
+			$this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+
+
+                if( !$sucursal ){
+                    $sucursal = new IdsSucursal();
+                    $sucursal->setCaPrincipal( false );
+                }
+
+                $sucursal->setCaId( $ids->getCaId());
+                $sucursal->setCaDireccion( $request->getParameter("direccion"));
+                $sucursal->setCaTelefonos( $request->getParameter("telefonos"));
+                $sucursal->setCaIdciudad( $request->getParameter("idciudad"));
+                $sucursal->setCaFax( $request->getParameter("fax"));
+
+                $sucursal->save();
+
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
+			}
+		}
+        $this->sucursal = $sucursal;
+        $this->ids = $ids;
+
+    }
+
+
+    /*
+     * Manejo de documentos
+     *
+     * @param sfRequest $request A request object
+     */
+    public function executeFormDocumentos(sfWebRequest $request){
+         $this->nivel = $this->getNivel();
+        
+		if( $this->nivel<=0 ){
+			$this->forward404();
+		}
+        $this->modo = $request->getParameter("modo");
+
+        $documento = Doctrine::getTable("IdsDocumento")->find( $request->getParameter("iddocumento") );
+
+        if( $documento ){
+            $ids = $documento->getIds();
+        }else{
+            $ids = Doctrine::getTable("Ids")->find( $request->getParameter("id") );            
+        }              
+		$this->forward404Unless( $ids );
+
+		$this->form = new NuevoDocumentoForm();
+        
+		if ($request->isMethod('post')){
+			$bindValues = array();
+
+			$bindValues["id"] = $request->getParameter("id");
+			$bindValues["idtipo"] = $request->getParameter("idtipo");
+            if( $request->getParameter("inicio") ){
+                $bindValues["inicio"] = Utils::parseDate($request->getParameter("inicio"));                
+            }
+
+            if( $request->getParameter("vencimiento") ){
+                $bindValues["vencimiento"] = Utils::parseDate($request->getParameter("vencimiento"));
+            }
+
+            $bindFiles["archivo"] = $_FILES["archivo"];
+
+			$this->form->bind( $bindValues, $bindFiles );
+            
+			if( $this->form->isValid() ){
+                
+
+                if( !$documento ){
+                    $documento = new IdsDocumento();
+                    $documento->setCaId( $ids->getCaId() );
+                }
+
+                $documento->setCaIdtipo( $request->getParameter("idtipo"));
+
+                if( $request->getParameter("inicio") ){
+                    $documento->setCaFchinicio( Utils::parseDate($request->getParameter("inicio")));
+                }
+
+                
+
+                if( $request->getParameter("vencimiento") ){                    
+                    $documento->setCaFchvencimiento( Utils::parseDate($request->getParameter("vencimiento")));
+                }
+                $documento->save();
+
+                if( $bindFiles["archivo"] ){
+                    $directorio = $documento->getDirectorio();
+                    
+                    if( !is_dir($directorio) ){
+                        mkdir($directorio, 0777, true);
+                    }
+                    print_r( $bindFiles["archivo"] );
+                    move_uploaded_file( $bindFiles["archivo"]["tmp_name"], $directorio.DIRECTORY_SEPARATOR. $bindFiles["archivo"]["name"]);
+                    $documento->setCaUbicacion( $bindFiles["archivo"]["name"] );
+                    $documento->save();                   
+                }                
+                
+
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
+			}
+		}
+        $this->documento = $documento;
+        $this->ids = $ids;
+    }
+
+    /*
+    * Visualiza documentos
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeVerDocumento(sfWebRequest $request){
+        $documento = Doctrine::getTable("IdsDocumento")->find( $request->getParameter("iddocumento") );
+		$this->forward404Unless( $documento);
+        $this->file = $documento->getArchivo();
+    }
+
+
+    /*
+    * Visualiza documentos
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormEvaluacion(sfWebRequest $request){
+        $this->nivel = $this->getNivel();
+
+        if( $this->nivel<=2 ){
+            $this->forward404();
+        }
+
+        
+
+        if( $request->getParameter("idevaluacion") ){
+            $evaluacion = Doctrine::getTable("IdsEvaluacion")->find( $request->getParameter("idevaluacion") );
+            $this->ids = $evaluacion->getIds();
+            $this->tipo = $evaluacion->getCaTipo();
+            $this->proveedor = Doctrine::getTable("IdsProveedor")->find( $request->getParameter("id") );
+        }else{
+            $this->ids = Doctrine::getTable("Ids")->find( $request->getParameter("id") );
+            $evaluacion = new IdsEvaluacion();
+            $this->tipo = $request->getParameter("tipo");
+            $this->proveedor = Doctrine::getTable("IdsProveedor")->find( $request->getParameter("id") );
+
+        }
+
+        if( $this->nivel<=3 &&  $this->tipo=="seleccion" ){
+            $this->forward404();
+        }
+
+        $this->modo = $request->getParameter("modo");
+		$this->forward404Unless( $this->ids );
+        
+        $q = Doctrine::getTable("IdsCriterio")->createQuery("c");
+        
+        if( $this->tipo=="reevaluacion" ){
+            $q->where("c.ca_tipocriterio = ?", "desempeno");
+        }else{
+            $q->where("c.ca_tipocriterio = ?", $this->tipo);            
+        }
+        if( $this->proveedor && $this->tipo!="desempeno" && $this->tipo!="reevaluacion" ){            
+            $q->where("c.ca_tipo = ?", $this->proveedor->getCaTipo());
+        }
+        $this->criterios = $q->execute();
+
+        $this->form = new NuevaEvaluacionForm();
+        $this->form->setCriterios( $this->criterios );
+        $this->form->configure();
+        
+        if ($request->isMethod('post')){
+
+            $bindValues = array();
+            
+			$bindValues["fchevaluacion"] = $request->getParameter("fchevaluacion");
+			$bindValues["concepto"] = $request->getParameter("concepto");
+			$bindValues["tipo"] = $request->getParameter("tipo");
+            foreach( $this->criterios as $criterio ){
+                $bindValues["ponderacion_".$criterio->getCaIdcriterio() ] = $request->getParameter("ponderacion_".$criterio->getCaIdcriterio());
+                $bindValues["calificacion_".$criterio->getCaIdcriterio() ] = $request->getParameter("calificacion_".$criterio->getCaIdcriterio());
+                $bindValues["observaciones_".$criterio->getCaIdcriterio() ] = $request->getParameter("observaciones_".$criterio->getCaIdcriterio());
+            }
+            
+			$this->form->bind( $bindValues);
+			if( $this->form->isValid() ){              
+                
+                $evaluacion->setCaId( $this->ids->getCaId() );
+                $evaluacion->setCaFchevaluacion( Utils::parseDate( $request->getParameter('fchevaluacion' )) );
+                $evaluacion->setCaConcepto( $request->getParameter('concepto') );
+                $evaluacion->setCaTipo( $request->getParameter('tipo') );
+                $evaluacion->save();
+
+                $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterio();
+                foreach( $evaluacionxCriterios as $evaluacionxCriterio ){
+                    $evaluacionxCriterio->delete();
+                }
+
+                $criterios = $request->getParameter("idcriterio");
+
+                foreach( $criterios as $idcriterio ){
+                    $evaluacionxcriterio = new IdsEvaluacionxCriterio();
+                    $evaluacionxcriterio->setCaIdcriterio( $idcriterio );
+                    $evaluacionxcriterio->setCaPonderacion( trim($request->getParameter("ponderacion_".$idcriterio)) );                    
+                    $evaluacionxcriterio->setCaValor( trim($request->getParameter("calificacion_".$idcriterio)) );
+                    $evaluacionxcriterio->setCaIdevaluacion(  $evaluacion->getCaIdevaluacion() );
+                    if( $request->getParameter("observaciones_".$idcriterio) ){
+                        $evaluacionxcriterio->setCaObservaciones( $request->getParameter("observaciones_".$idcriterio) );
+                    }else{
+                        $evaluacionxcriterio->setCaObservaciones( null );
+                    }
+                    $evaluacionxcriterio->save();
+                }
+
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+                
+            }
+        }
+
+        $this->evaluacion = $evaluacion;
+
+        $this->evaluacionxCriterios = array();
+        $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterio();
+        foreach( $evaluacionxCriterios as $evaluacionxCriterio ){
+            $this->evaluacionxCriterios[$evaluacionxCriterio->getCaIdcriterio()]= $evaluacionxCriterio;
+        }
+
+    }
+
+
+    /*
+    * Muestra una evaluacion
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeVerEvaluacion(sfWebRequest $request){
+        $this->evaluacion = Doctrine::getTable("IdsEvaluacion")->find($request->getParameter("idevaluacion"));
+
+        $this->forward404Unless( $this->evaluacion );
+
+        $this->ids = $this->evaluacion->getIds();
+        $this->modo=$request->getParameter("modo");
+        
+        $this->nivel = $this->getNivel();
+        $this->user = $this->getUser();
+
+
+
+    }
+
+    
+
+    /*
+    * Permite registrar eventos por referencia
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormEventos(sfWebRequest $request){
+        //Se debe verificar que la referencia exista y determinar el proveedor.
+
+        $this->modo=$request->getParameter("modo");
+        $this->form = new NuevoEventoForm();
+
+        if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
+            $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+            $this->url = "ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
+            $numreferencia = "";
+            
+        }else{ // Esta ingresando desde la referencia
+            $numreferencia = str_replace("_",".",$request->getParameter("referencia"));
+            $this->forward404Unless(  $numreferencia );
+
+            $idproveedores = array();
+
+            if( substr($numreferencia,0,1)=="4" || substr($numreferencia,0,1)=="5" ){                
+                $referencia = Doctrine::getTable("InoMaestraSea")->find($numreferencia);
+                $linea = $referencia->getCaIdlinea();
+
+                $idproveedores[] = $linea;
+
+                $this->url = "/colsys_php/inosea.php?boton=Consultar&id=".$numreferencia;
+            }
+
+            if( substr($numreferencia,0,1)=="1"  ){
+                $referencia = Doctrine::getTable("InoMaestraAir")->find($numreferencia);
+
+                $linea = $referencia->getCaIdlinea();
+
+                $idproveedores[] = $linea;
+
+                $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
+            }
+            $this->form->setIdproveedores($idproveedores);
+
+            $this->numreferencia = $numreferencia;
+        }
+
+        $this->form->configure();
+        
+
+        if ($request->isMethod('post')){
+
+			$bindValues = array();
+            $bindValues["id"] = $request->getParameter("id");
+            $bindValues["tipo_evento"] = $request->getParameter("tipo_evento");
+            $bindValues["evento"] = $request->getParameter("evento");           
+            
+            $this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+                $evento = new IdsEvento();
+                $evento->setCaId( $bindValues["id"] );
+                $evento->setCaEvento( $bindValues["evento"] );
+                if( $numreferencia ){
+                    $evento->setCaReferencia( $numreferencia );
+                }
+                $evento->setCaIdcriterio( $bindValues["tipo_evento"] );
+                $evento->save();
+                
+                $this->redirect($this->url);
+
+                
+            }
+
+        }
+
+    }
+
+
+     /*
+    * Permite agregar lineas de transporte
+    *
+    * @param sfRequest $request A request object
+    */
+   
+
+    /*
+    * Permite agregar lineas de transporte
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeListadoProveedoresAprobados(sfWebRequest $request){
+       $this->proveedores = Doctrine::getTable("IdsProveedor")
+                             ->createQuery("p")
+                             ->innerJoin("p.Ids i")
+                             ->innerJoin("p.IdsTipo t")
+                             ->where("p.ca_fchaprobado IS NOT NULL")
+                             ->addWhere("p.ca_controladoporsig = true")
+                             ->addOrderBy("t.ca_nombre ASC")
+                             ->addOrderBy("p.ca_transporte ASC")
+                             ->addOrderBy("i.ca_nombre ASC")
+
+                             ->execute();
+
+        
+    }
+    
+    
+    /*
+    * Permite agregar grupos a una cabeza de grupo
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormGrupos(sfWebRequest $request){
+        $this->modo=$request->getParameter("modo");
+        $this->form = new NuevoGrupoForm();
+        $this->form->setModo( $this->modo );
+        $this->form->configure();
+        $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+
+       if ($request->isMethod('post')){
+			$bindValues = array();
+            $bindValues["idgrupo"] = $request->getParameter("idgrupo");
+            $this->form->bind( $bindValues );
+			if( $this->form->isValid() ){
+                $idsGrupo = Doctrine::getTable("Ids")->find($request->getParameter("idgrupo"));
+                $idsGrupo->setCaIdgrupo($this->ids->getCaId());
+                $idsGrupo->save();
+                $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+            }
+        }
+    }
+
+
+    /*
+    * Permite eliminar la pertenecia a un grupo
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeEliminarGrupo(sfWebRequest $request){
+        $this->modo=$request->getParameter("modo");       
+        $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+
+        $idsGrupo = Doctrine::getTable("Ids")->find($request->getParameter("idgrupo"));
+        $idsGrupo->setCaIdgrupo($idsGrupo->getCaId());
+        $idsGrupo->save();
+        $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+    }
+
+
+
+}
+?>

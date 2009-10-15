@@ -1,0 +1,252 @@
+Usuario:
+  generatePath: control
+  tableName: control.tb_usuarios
+  attributes:
+    export: tables
+  columns:
+    ca_login:
+      type: string(15)
+      primary: true
+    ca_nombre: string(250)
+    ca_cargo: string(40)
+    ca_departamento: string(50) 
+    ca_email: string(50) 
+    ca_extension: string(50)
+    ca_idsucursal: string(3)
+    ca_authmethod: string(5)
+    ca_passwd: string(40)
+    ca_salt: string(40)
+    ca_activo: boolean
+    ca_forcechange: boolean
+    ca_sucursal: string(40)
+  relations:
+    AccesoUsuario:
+      local: ca_login
+      foreign: ca_login
+      type: many      
+    UsuarioPerfil:
+      local: ca_login
+      foreign: ca_login
+      type: many
+    Sucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+    Cotizacion:
+      local: ca_login
+      foreign: ca_usuario
+      type: many
+
+AccesoUsuario:
+  generatePath: control
+  tableName: control.tb_accesos_user
+  columns:
+    ca_rutina:
+      type: integer(4)
+      primary: true
+    ca_login:
+      type: string(250)
+      primary: true
+    ca_acceso:
+      type: integer(4)
+
+AccesoPerfil:
+  generatePath: control
+  tableName: control.tb_accesos_perfiles
+  columns:
+    ca_rutina:
+      type: integer(4)
+      primary: true
+    ca_perfil:
+      type: string(255)
+      primary: true
+    ca_acceso:
+      type: integer(4)
+  relations:
+    Perfil:
+      local: ca_perfil
+      foreign: ca_perfil
+      type: one
+    Rutina:
+      local: ca_rutina
+      foreign: ca_rutina
+      type: many
+      
+Perfil:
+  generatePath: control
+  tableName: control.tb_perfiles
+  columns:
+    ca_perfil:
+      type: string(50)
+      primary: true
+    ca_nombre:
+      type: string(50)
+    ca_departamento:
+      type: string(30)
+    ca_descripcion:
+      type: string(255)
+  relations:
+    AccesoPerfil:
+      local: ca_perfil
+      foreign: ca_perfil
+      type: many
+
+UsuarioPerfil:
+  generatePath: control
+  tableName: control.tb_usuarios_perfil
+  columns:
+    ca_login:
+      type: string(50)
+      primary: true
+    ca_perfil:
+      type: string(50)
+      primary: true     
+  relations:
+    Perfil:
+      local: ca_perfil
+      foreign: ca_perfil
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+
+
+AccesoPerfil:
+  generatePath: control
+  tableName: control.tb_accesos_perfiles
+  columns:
+    ca_rutina:
+      type: string(50)
+      primary: true
+    ca_perfil:
+      type: string(50)
+      primary: true
+    ca_acceso:
+      type: string(30)
+  relations:
+    Rutina:
+      local: ca_rutina
+      foreign: ca_rutina
+      type: one
+    Perfil:
+      local: ca_perfil
+      foreign: ca_perfil
+      type: one
+      foreignAlias: Perfiles
+    UsuarioPerfil:
+      local: ca_perfil
+      foreign: ca_perfil
+      type: many
+
+AccesoUsuario:
+  generatePath: control
+  tableName: control.tb_accesos_user
+  columns:
+    ca_rutina:
+      type: string(50)
+      primary: true
+    ca_login:
+      type: string(50)
+      primary: true
+    ca_acceso:
+      type: string(30)
+  relations:
+    Rutina:
+      local: ca_rutina
+      foreign: ca_rutina
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+
+Rutina:
+  generatePath: control
+  tableName: control.tb_rutinas
+  columns:
+    ca_rutina:
+      type: string(50)
+      primary: true
+      autoincrement: true
+    ca_opcion: string(30)
+    ca_descripcion: string(250)
+    ca_programa: string(100)
+    ca_grupo: string(21)
+  relations:
+    AccesoPerfil:
+      local: ca_rutina
+      foreign: ca_rutina
+      type: many
+    AccesoUsuario:
+      local: ca_rutina
+      foreign: ca_rutina
+      type: many
+    RutinaNivel:
+      local: ca_rutina
+      foreign: ca_rutina
+      type: many
+
+Departamento:
+  generatePath: control
+  tableName: control.tb_departamentos
+  columns:
+    ca_iddepartamento:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_nombre: string(30)
+    ca_inhelpdesk: boolean
+
+
+Sucursal:
+  generatePath: control
+  tableName: control.tb_sucursales
+  columns:
+    ca_idsucursal:
+      type: string(3)
+      primary: true
+      autoincrement: true
+    ca_nombre: string(50)
+    ca_telefono: string
+    ca_fax: string
+    ca_direccion: string
+
+RutinaNivel:
+  generatePath: control
+  tableName: control.tb_rutinas_niveles
+  columns:
+    ca_rutina:
+      type: integer
+      primary: true
+    ca_nivel:
+      type: integer
+      primary: true
+    ca_valor: string
+  relations:
+    Rutina:
+      local: ca_rutina
+      foreign: ca_rutina
+      type: one
+
+
+UsuarioLog:
+  generatePath: control
+  tableName: control.tb_usuarios_log
+  columns:
+    ca_id:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_login: string
+    ca_fchevento: timestamp
+    ca_url: string
+    ca_event: string
+    ca_ipaddress: string
+    ca_useragent: string
+  relations:
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+

@@ -1,0 +1,497 @@
+Trayecto:
+  generatePath: pricing
+  tableName: tb_trayectos
+  attributes:
+    export: tables
+  columns:
+    ca_idtrayecto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_origen: string(8)
+    ca_destino: string(8)
+    ca_idlinea: integer
+    ca_transporte: string
+    ca_impoexpo: string
+    ca_frecuencia: string
+    ca_modalidad: string    
+    ca_frecuencia: string
+    ca_tiempotransito: string
+    ca_observaciones: string
+    ca_idagente: integer
+    ca_activo: boolean
+    ca_fchcreado: timestamp
+  relations:
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one
+    IdsAgente:
+      local: ca_idagente
+      foreign: ca_idagente
+      type: one
+
+PricFlete:
+  generatePath: pricing
+  tableName: tb_pricfletes
+  attributes:
+    export: tables
+  columns:
+    ca_idtrayecto:
+      type: integer
+      primary: true      
+    ca_idconcepto: 
+      type: integer
+      primary: true
+    ca_vlrneto: decimal
+    ca_vlrsugerido: decimal
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_estado: string
+    ca_aplicacion: string
+    ca_consecutivo: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one      
+
+PricFleteBs:
+  generatePath: pricing
+  tableName: bs_pricfletes
+  attributes:
+    export: tables
+  columns:
+    ca_idtrayecto: integer
+    ca_idconcepto: integer
+    ca_vlrneto: decimal
+    ca_vlrsugerido: decimal
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_estado: string
+    ca_aplicacion: string
+    ca_consecutivo:
+      type: integer
+      primary: true
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+
+PricRecargoxConcepto:
+  generatePath: pricing
+  tableName: tb_pricrecargosxconcepto
+  attributes:
+    export: tables
+  columns:
+    ca_idtrayecto:
+      type: integer
+      primary: true
+    ca_idconcepto:
+      type: integer
+      primary: true
+    ca_idrecargo:
+      type: integer
+      primary: true
+    ca_vlrrecargo: decimal
+    ca_aplicacion: string
+    ca_vlrminimo: decimal
+    ca_aplicacion_min: string
+    ca_observaciones: string
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_aplicacion: string
+    ca_consecutivo: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    TipoRecargo:
+      local: ca_idrecargo
+      foreign: ca_idrecargo
+      type: one
+
+PricRecargoxConceptoBs:
+  generatePath: pricing
+  tableName: bs_pricrecargosxconcepto
+  attributes:
+    export: tables
+  columns:
+    ca_idtrayecto:
+      type: integer
+    ca_idconcepto:
+      type: integer
+    ca_idrecargo:
+      type: integer
+    ca_vlrrecargo: decimal
+    ca_aplicacion: string
+    ca_vlrminimo: decimal
+    ca_aplicacion_min: string
+    ca_observaciones: string
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_aplicacion: string
+    ca_consecutivo:
+      type: integer
+      primary: true
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    TipoRecargo:
+      local: ca_idrecargo
+      foreign: ca_idrecargo
+      type: one
+
+
+PricRecargoxCiudad:
+  generatePath: pricing
+  tableName: tb_pricrecargosxciudad
+  attributes:
+    export: tables
+  columns:
+    ca_idtrafico:
+      type: string
+      primary: true
+    ca_idciudad:
+      type: string
+      primary: true
+    ca_idrecargo:
+      type: integer
+      primary: true
+    ca_modalidad:
+      type: string
+      primary: true
+    ca_impoexpo:
+      type: string
+      primary: true
+    ca_vlrrecargo: decimal
+    ca_aplicacion: string
+    ca_vlrminimo: decimal
+    ca_aplicacion_min: string
+    ca_observaciones: string
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_aplicacion: string
+    ca_consecutivo: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    TipoRecargo:
+      local: ca_idrecargo
+      foreign: ca_idrecargo
+      type: one
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one
+    Ciudad:
+      local: ca_idciudad
+      foreign: ca_idciudad
+      type: one
+
+PricRecargoxCiudadBs:
+  generatePath: pricing
+  tableName: bs_pricrecargosxciudad
+  attributes:
+    export: tables
+  columns:
+    ca_idtrafico:
+      type: string
+      primary: true
+    ca_idciudad:
+      type: string
+      primary: true
+    ca_idrecargo:
+      type: integer
+      primary: true
+    ca_modalidad:
+      type: string
+      primary: true
+    ca_impoexpo:
+      type: string
+      primary: true
+    ca_vlrrecargo: decimal
+    ca_aplicacion: string
+    ca_vlrminimo: decimal
+    ca_aplicacion_min: string
+    ca_observaciones: string
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_aplicacion: string
+    ca_consecutivo: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    TipoRecargo:
+      local: ca_idrecargo
+      foreign: ca_idrecargo
+      type: one
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one
+    Ciudad:
+      local: ca_idciudad
+      foreign: ca_idciudad
+      type: one
+
+
+PricRecargoxLinea:
+  generatePath: pricing
+  tableName: tb_pricrecargosxlinea
+  attributes:
+    export: tables
+  columns:
+    ca_idtrafico:
+      type: string
+      primary: true
+    ca_idlinea:
+      type: integer
+      primary: true
+    ca_idrecargo:
+      type: integer
+      primary: true
+    ca_idconcepto:
+      type: integer
+      primary: true
+    ca_modalidad:
+      type: string
+      primary: true
+    ca_impoexpo:
+      type: string
+      primary: true
+    ca_vlrrecargo: decimal
+    ca_aplicacion: string
+    ca_vlrminimo: decimal
+    ca_aplicacion_min: string
+    ca_observaciones: string
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_aplicacion: string
+    ca_consecutivo: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    Concepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    TipoRecargo:
+      local: ca_idrecargo
+      foreign: ca_idrecargo
+      type: one
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one
+
+PricRecargoxLineaBs:
+  generatePath: pricing
+  tableName: bs_pricrecargosxlinea
+  attributes:
+    export: tables
+  columns:
+    ca_idtrafico:
+      type: string
+      primary: true
+    ca_idlinea:
+      type: integer
+      primary: true
+    ca_idrecargo:
+      type: integer
+      primary: true
+    ca_idconcepto:
+      type: integer
+      primary: true
+    ca_modalidad:
+      type: string
+      primary: true
+    ca_impoexpo:
+      type: string
+      primary: true
+    ca_vlrrecargo: decimal
+    ca_aplicacion: string
+    ca_vlrminimo: decimal
+    ca_aplicacion_min: string
+    ca_observaciones: string
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_idmoneda: string
+    ca_aplicacion: string
+    ca_consecutivo: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fcheliminado: timestamp
+  relations:
+    TipoRecargo:
+      local: ca_idrecargo
+      foreign: ca_idrecargo
+      type: one
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one
+
+
+PricPatio:
+  generatePath: pricing
+  tableName: tb_pricpatios
+  attributes:
+    export: tables
+  columns:
+    ca_idpatio:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_nombre: string
+    ca_idciudad: string
+    ca_direccion: string
+  relations:
+     Ciudad:
+      local: ca_idciudad
+      foreign: ca_idciudad
+      type: one
+
+PricPatioLinea:
+  generatePath: pricing
+  tableName: tb_pricpatioslinea
+  attributes:
+    export: tables
+  columns:
+    ca_idpatio:
+      type: integer
+      primary: true
+    ca_idlinea:
+      type: integer
+      primary: true
+    ca_transporte:
+      type: string
+      primary: true
+    ca_modalidad:
+      type: string
+      primary: true
+    ca_impoexpo:
+      type: string
+      primary: true
+    ca_observaciones:
+      type: string
+  relations:
+    PricPatio:
+      local: ca_idpatio
+      foreign: ca_idpatio
+      type: one
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one
+
+PricRecargoParametro:
+  generatePath: pricing
+  tableName: tb_pricrecargosparametros
+  attributes:
+    export: tables
+  columns:
+    ca_idlinea:
+      type: integer
+      primary: true
+    ca_transporte:
+      type: string
+      primary: true
+    ca_modalidad:
+      type: string
+      primary: true
+    ca_impoexpo:
+      type: string
+      primary: true
+    ca_concepto:
+      type: string
+      primary: true
+    ca_valor: string
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+  relations:
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
+      type: one
+
+PricSeguro:
+  generatePath: pricing
+  tableName: tb_pricseguros
+  attributes:
+    export: tables
+  columns:
+    ca_idgrupo:
+      type: integer
+      primary: true
+    ca_transporte:
+      type: string
+      primary: true
+    ca_vlrprima: decimal
+    ca_vlrminima: decimal
+    ca_vlrobtencionpoliza: decimal
+    ca_idmoneda: string
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+  
+PricNotificacion:
+  generatePath: pricing
+  tableName: tb_pricnotificaciones
+  attributes:
+    export: tables
+  columns:
+    ca_idnotificacion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_titulo: string
+    ca_mensaje: string
+    ca_caducidad: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string

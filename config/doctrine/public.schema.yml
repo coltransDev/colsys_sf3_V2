@@ -1,0 +1,354 @@
+Ciudad:
+  generatePath: public
+  tableName: tb_ciudades
+  columns:
+    ca_idciudad:
+      type: string(8)
+      fixed: false
+      primary: true
+    ca_ciudad:
+      type: string(50)
+      fixed: false
+      notnull: true
+      primary: false
+    ca_idtrafico:
+      type: string(6)
+      fixed: false
+      notnull: true
+      primary: false
+    ca_puerto:
+      type: string(10)
+      fixed: false
+      notnull: true
+      primary: false
+  relations:
+    Trafico:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: one    
+
+Trafico:
+  generatePath: public
+  tableName: tb_traficos
+  columns:
+    ca_idtrafico:
+      type: string(6)
+      fixed: false
+      primary: true
+    ca_nombre:
+      type: string(40)
+      fixed: false
+      notnull: true
+      primary: false
+    ca_bandera:
+      type: string(30)
+      fixed: false
+      notnull: true
+      primary: false
+    ca_idmoneda:
+      type: string(3)
+      fixed: false
+      notnull: true
+      primary: false
+    ca_idgrupo:
+      type: integer(2)
+      unsigned: false
+      notnull: true
+      primary: false
+    ca_link:
+      type: string(256)
+      fixed: false
+      notnull: false
+      primary: false
+    ca_conceptos:
+      type: string(255)
+      fixed: false
+      notnull: false
+      primary: false
+    ca_recargos:
+      type: string(255)
+      fixed: false
+      notnull: false
+      primary: false
+  relations:
+    TraficoGrupo:
+      local: ca_idgrupo
+      foreign: ca_idgrupo
+      type: one
+    Moneda:
+      local: ca_idmoneda
+      foreign: ca_idmoneda
+      type: one
+    
+    Ciudad:
+      local: ca_idtrafico
+      foreign: ca_idtrafico
+      type: many
+    
+
+
+
+TraficoGrupo:
+  generatePath: public
+  tableName: tb_grupos
+  columns:
+    ca_idgrupo:
+      type: integer(2)
+      unsigned: false
+      primary: true
+    ca_descripcion:
+      type: string(40)
+      fixed: false
+      notnull: true
+      primary: false
+  relations:
+    Trafico:
+      local: ca_idgrupo
+      foreign: ca_idgrupo
+      type: many
+
+Moneda:
+  generatePath: public
+  tableName: tb_monedas
+  columns:
+    ca_idmoneda:
+      type: string(3)
+      fixed: false
+      primary: true
+    ca_nombre:
+      type: string(30)
+      fixed: false
+      notnull: true
+      primary: false
+    ca_referencia:
+      type: string(3)
+      fixed: false
+      notnull: true
+      primary: false
+  relations:
+    Moneda:
+      local: ca_referencia
+      foreign: ca_idmoneda
+      type: one
+    Trafico:
+      local: ca_idmoneda
+      foreign: ca_idmoneda
+      type: many
+
+
+Email:
+  generatePath: public
+  tableName: tb_emails
+  columns:
+    ca_idemail:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_fchenvio: timestamp
+    ca_usuenvio: string
+    ca_tipo: string
+    ca_idcaso: string    
+    ca_from: string
+    ca_fromname: string
+    ca_cc: string
+    ca_replyto: string
+    ca_address: string
+    ca_attachment: string
+    ca_subject: string
+    ca_body: string
+    ca_bodyhtml: string
+    ca_readreceipt: boolean
+  relations:
+     Reporte:
+       local: ca_idcaso
+       foreign: ca_idreporte
+       type: one
+
+#    EmailAttachment:
+#      local: ca_idemail
+#      foreign: ca_idemail
+#      type: many
+      
+      
+
+#EmailAttachment:
+#  generatePath: public
+#  tableName: tb_attachments
+#  columns:
+#    ca_idattachment:
+#      type: integer
+#      primary: true
+#      autoincrement: true
+#    ca_idemail: integer
+#    ca_extension: string
+#    ca_header_file: string
+#    ca_filesize: string
+#    ca_content: blob
+#  relations:
+#    Email:
+#      local: ca_idemail
+#      foreign: ca_idemail
+#      type: one
+
+Festivo:
+  generatePath: public
+  tableName: tb_festivos
+  columns:
+    ca_fchfestivo:
+      type: date
+      primary: true
+
+Parametro:
+  generatePath: public
+  tableName: tb_parametros
+  columns:
+    ca_casouso:
+      type: string
+      primary: true      
+    ca_identificacion:
+      type: integer
+      primary: true
+    ca_valor:
+      type: string
+      primary: true
+    ca_valor2:
+      type: string
+
+Cliente:
+  generatePath: public
+  tableName: tb_clientes
+  columns:
+    ca_idcliente:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_digito: integer
+    ca_compania: string
+    ca_papellido: string
+    ca_sapellido: string
+    ca_nombres: string
+    ca_saludo: string
+    ca_sexo: string
+    ca_cumpleanos: string
+    ca_oficina: string
+    ca_email: string
+    ca_vendedor: string
+    ca_coordinador: string
+    ca_vendedor: string
+    ca_direccion: string
+    ca_torre: string
+    ca_bloque: string
+    ca_interior: string
+    ca_localidad: string
+    ca_complemento: string
+    ca_telefonos: string
+    ca_fax: string
+    ca_preferencias: string
+    ca_confirmar: string
+    ca_idciudad: string
+    ca_idgrupo: string
+    ca_listaclinton: string
+    ca_fchcircular: date
+    ca_status: string
+  relations:
+    Contacto:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: many
+    Usuario:
+      local: ca_vendedor
+      foreign: ca_login
+      type: one
+    Ciudad:
+      local: ca_idciudad
+      foreign: ca_idciudad
+      type: one
+
+
+Contacto:
+  generatePath: public
+  tableName: tb_concliente
+  columns:
+    ca_idcontacto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idcliente: integer
+    ca_papellido: string
+    ca_sapellido: string
+    ca_nombres: string
+    ca_saludo: string
+    ca_cargo: string
+    ca_departamento: string
+    ca_telefonos: string
+    ca_fax: string
+    ca_email: string
+    ca_observaciones: string
+    ca_fchcreado: string
+    ca_fchcreado: string
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+
+Concepto:
+  generatePath: public
+  tableName: tb_conceptos
+  columns:
+    ca_idconcepto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_concepto: string
+    ca_unidad: string
+    ca_transporte: string
+    ca_modalidad: string
+    ca_liminferior: integer
+
+TipoRecargo:
+  generatePath: public
+  tableName: tb_tiporecargo
+  columns:
+    ca_idrecargo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_recargo: string
+    ca_tipo: string
+    ca_transporte: string
+    ca_incoterms: string
+    ca_impoexpo: string
+
+
+ColNovedad:
+  generatePath: public
+  tableName: tb_colnovedades
+  columns:
+    ca_idnovedad:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_fchpublicacion: date
+    ca_asunto: string
+    ca_detalle: string
+    ca_fcharchivar: date
+    ca_extension: string
+    ca_header_file: string
+    ca_content: string
+    ca_fchpublicado: timestamp
+    ca_usupublicado: string
+
+
+Sia:
+  generatePath: public
+  tableName: tb_sia
+  columns:
+    ca_idsia:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_nombre: string
+    ca_tel: string
+    ca_contacto: string
+   
