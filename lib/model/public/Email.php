@@ -167,7 +167,8 @@ class Email extends BaseEmail
 		if( $this->getCaAttachment() ){
 			$atchFiles = explode( "|",  $this->getCaAttachment() );
 			//Attachments	
-			foreach( $atchFiles as $file ){	
+			foreach( $atchFiles as $file ){
+                $file = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$file;
 				if( file_exists($file) ){						
 					try{
 						$message->attach(Swift_Attachment::fromPath($file)->setFilename(Utils::replace(basename($file))));							
@@ -225,7 +226,17 @@ class Email extends BaseEmail
 		}					
 		return false;		
 	}
-	
+
+
+     public function getDirectorioBase(){
+        return EmailPeer::FOLDER.DIRECTORY_SEPARATOR.$this->getCaIdemail().DIRECTORY_SEPARATOR;
+
+    }
+
+    public function getDirectorio(){
+        return sfConfig::get("app_digitalFile_root").DIRECTORY_SEPARATOR.$this->getDirectorioBase();
+
+    }
 	
 	
 }

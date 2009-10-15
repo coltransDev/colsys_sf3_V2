@@ -9,4 +9,5 @@
  */ 
 class EmailPeer extends BaseEmailPeer
 {
+    const FOLDER = "Attachements";
 }
