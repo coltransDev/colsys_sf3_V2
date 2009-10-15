@@ -85,7 +85,7 @@
 		<column name="ca_identificacion" type="varchar" />		
 	</table>	
 	
-	<table name="tb_agentes" phpName="Agente">
+	<table name="vi_agentes" phpName="Agente">
 		<column name="ca_idagente" type="integer" required="true" primaryKey="true" autoIncrement="true" />	
 		<id-method-parameter value="tb_agentes_id"/>		
 		<column name="ca_nombre" type="varchar" />		
@@ -97,19 +97,20 @@
 		<column name="ca_website" type="varchar" />
 		<column name="ca_email" type="varchar" />
 		<column name="ca_tipo" type="varchar" />	
-		<column name="ca_activo" type="boolean" />        
+		<column name="ca_activo" type="boolean" />
+        <!--
 		<column name="ca_fchcreado" type="timestamp"   />	
 		<column name="ca_fchactualizado" type="timestamp"   />	
 		<column name="ca_usucreado" type="varchar"   />	
 		<column name="ca_usuactualizado" type="varchar"   />	
-		
+		-->
 		
 		<foreign-key foreignTable="tb_ciudades">
 			<reference local="ca_idciudad" foreign="ca_idciudad"/>
 		</foreign-key>	
 	</table>
 	
-	<table name="tb_contactos" phpName="ContactoAgente">
+	<table name="vi_contactos" phpName="ContactoAgente">
 		<column name="ca_idcontacto" type="varchar" required="true" primaryKey="true" autoIncrement="true" />
 		<id-method-parameter value="tb_contactos_id"/>
 		<column name="ca_idagente" type="integer" />		
@@ -125,12 +126,13 @@
 		<column name="ca_cargo" type="varchar" />
 		<column name="ca_detalle" type="varchar" />	
 		<column name="ca_sugerido" type="boolean" />
-		<column name="ca_activo" type="boolean" />	
+		<column name="ca_activo" type="boolean" />
+        <!--
 		<column name="ca_fchcreado" type="timestamp"   />	
-		<column name="ca_fchactualizado" type="timestamp"   />	
+		<column name="ca_fchactualizado" type="timestamp"   />        
 		<column name="ca_usucreado" type="varchar"   />	
-		<column name="ca_usuactualizado" type="varchar"   />
-		<foreign-key foreignTable="tb_agentes">
+		<column name="ca_usuactualizado" type="varchar"   />-->
+		<foreign-key foreignTable="vi_agentes">
 			<reference local="ca_idagente" foreign="ca_idagente"/>
 		</foreign-key>	
 		<foreign-key foreignTable="tb_ciudades">

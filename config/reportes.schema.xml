@@ -68,7 +68,7 @@
 		<foreign-key foreignTable="tb_terceros">
 			<reference local="ca_idproveedor" foreign="ca_idtercero"/>
 		</foreign-key>		
-		<foreign-key foreignTable="tb_agentes">
+		<foreign-key foreignTable="vi_agentes">
 			<reference local="ca_idagente" foreign="ca_idagente"/>
 		</foreign-key>		
 		<foreign-key foreignTable="tb_bodegas">

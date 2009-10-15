@@ -21,7 +21,7 @@
 		<foreign-key foreignTable="vi_transporlineas">
 			<reference local="ca_idlinea" foreign="ca_idlinea"/>
 		</foreign-key>	
-		<foreign-key foreignTable="tb_agentes">
+		<foreign-key foreignTable="vi_agentes">
 			<reference local="ca_idagente" foreign="ca_idagente"/>
 		</foreign-key>		
 	</table>
