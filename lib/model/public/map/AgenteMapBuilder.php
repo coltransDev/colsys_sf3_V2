@@ -57,13 +57,5 @@ class AgenteMapBuilder implements MapBuilder {
 
 		$tMap->addColumn('CA_ACTIVO', 'CaActivo', 'BOOLEAN', false, null);
 
-		$tMap->addColumn('CA_FCHCREADO', 'CaFchcreado', 'TIMESTAMP', false, null);
-
-		$tMap->addColumn('CA_FCHACTUALIZADO', 'CaFchactualizado', 'TIMESTAMP', false, null);
-
-		$tMap->addColumn('CA_USUCREADO', 'CaUsucreado', 'VARCHAR', false, null);
-
-		$tMap->addColumn('CA_USUACTUALIZADO', 'CaUsuactualizado', 'VARCHAR', false, null);
-
 	} 
 } 
