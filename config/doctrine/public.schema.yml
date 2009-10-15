@@ -163,32 +163,31 @@ Email:
        local: ca_idcaso
        foreign: ca_idreporte
        type: one
-
-#    EmailAttachment:
-#      local: ca_idemail
-#      foreign: ca_idemail
-#      type: many
+     EmailAttachment:
+      local: ca_idemail
+      foreign: ca_idemail
+      type: many
       
       
 
-#EmailAttachment:
-#  generatePath: public
-#  tableName: tb_attachments
-#  columns:
-#    ca_idattachment:
-#      type: integer
-#      primary: true
-#      autoincrement: true
-#    ca_idemail: integer
-#    ca_extension: string
-#    ca_header_file: string
-#    ca_filesize: string
-#    ca_content: blob
-#  relations:
-#    Email:
-#      local: ca_idemail
-#      foreign: ca_idemail
-#      type: one
+EmailAttachment:
+  generatePath: public
+  tableName: tb_attachments
+  columns:
+    ca_idattachment:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idemail: integer
+    ca_extension: string
+    ca_header_file: string
+    ca_filesize: string
+    ca_content: blob
+  relations:
+    Email:
+      local: ca_idemail
+      foreign: ca_idemail
+      type: one
 
 Festivo:
   generatePath: public
