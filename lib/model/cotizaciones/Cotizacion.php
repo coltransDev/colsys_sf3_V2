@@ -10,7 +10,8 @@
 class Cotizacion extends BaseCotizacion
 {	
 	const EN_SEGUIMIENTO = "SEG";  
-	const TIEMPO_IDG_ENTREGA_OPORTUNA = 43200; //12 h  
+	const TIEMPO_IDG_ENTREGA_OPORTUNA = 43200; //12 h
+    const FOLDER = "Cotizaciones";
 	
 	public function getId(){
 		return $this->getCaIdcotizacion();
@@ -168,7 +169,17 @@ class Cotizacion extends BaseCotizacion
 		
 	}
 	
-	
+	public function getDirectorio(){
+        $folder = Cotizacion::FOLDER;
+        return $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->getDirectorioBase();
+
+    }
+
+     public function getDirectorioBase(){
+        $folder = Cotizacion::FOLDER;
+        return $directory = $folder.DIRECTORY_SEPARATOR.$this->getCaEmpresa().DIRECTORY_SEPARATOR.$this->getCaConsecutivo();
+
+    }
 	
 	
 	
