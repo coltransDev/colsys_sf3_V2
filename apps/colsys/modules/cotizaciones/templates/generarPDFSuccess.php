@@ -2,6 +2,11 @@
 
 $cotizacion = $sf_data->getRaw("cotizacion");
 
+$usuario = $cotizacion->getUsuario();
+$contacto = $cotizacion->getContacto();
+$cliente = $contacto->getCliente();
+
+
 $meses = array("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre");
 
 

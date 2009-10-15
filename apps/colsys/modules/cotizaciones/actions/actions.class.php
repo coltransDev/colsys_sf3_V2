@@ -538,9 +538,7 @@ class cotizacionesActions extends sfActions
 		
 		$this->cotizacion =  Doctrine::getTable("Cotizacion")->find( $this->getRequestParameter("id") );
 		$this->forward404Unless( $this->cotizacion );
-		$this->usuario = $this->cotizacion->getUsuario();
-		$this->contacto = $this->cotizacion->getContacto();
-		$this->cliente = $this->contacto->getCliente();
+		
 		$this->filename=$this->getRequestParameter("filename");
 		$this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."notas.yml");
 		
