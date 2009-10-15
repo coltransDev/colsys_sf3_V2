@@ -3,10 +3,10 @@
 /**
  * Subclass for performing query and update operations on the 'tb_sdn' table.
  *
- * 
+ *
  *
  * @package lib.model.sdnlist
- */ 
+ */
 class SdnPeer extends BaseSdnPeer
 {
 	/*
@@ -22,7 +22,7 @@ class SdnPeer extends BaseSdnPeer
 		}
 		return;
 	}
-	
+
 	/*
 	* Compara los Registros importados con la Base de Datos de Clientes
 	* @author Carlos G. López M.
@@ -58,5 +58,5 @@ class SdnPeer extends BaseSdnPeer
 		$stmt->execute();
 		return $stmt;
 	}
-	
+
 }
