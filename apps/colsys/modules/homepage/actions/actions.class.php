@@ -1,5 +1,5 @@
 <?php
- 
+  
 /**
  * homepage actions.
  *
