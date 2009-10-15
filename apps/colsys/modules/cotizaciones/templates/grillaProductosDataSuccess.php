@@ -1,1 +1,0 @@
-<?=json_encode( array("productos"=>$productos, "total"=>count($productos)) )?>

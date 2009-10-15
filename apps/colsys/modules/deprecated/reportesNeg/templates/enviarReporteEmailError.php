@@ -1,1 +1,0 @@
-<h3> Ha ocurrido un error al enviar el correo electronico <?=$error?></h3>
