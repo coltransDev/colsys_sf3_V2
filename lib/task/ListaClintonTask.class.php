@@ -1,6 +1,6 @@
 <?php
 
-class ListaClintonTask extends sfPropelBaseTask
+class ListaClintonTask extends sfDoctrineBaseTask
 {
   protected function configure()
   {

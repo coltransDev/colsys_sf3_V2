@@ -40,7 +40,6 @@ class inoActions extends sfActions
     */
     public function executeFormIno(sfWebRequest $request)
     {
-
-
+        
     }
 }

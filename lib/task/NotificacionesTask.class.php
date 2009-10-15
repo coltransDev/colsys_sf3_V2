@@ -1,6 +1,6 @@
 <?php
  
-class NotificacionesTask extends sfPropelBaseTask
+class NotificacionesTask extends sfDoctrineBaseTask
 {
   protected function configure()
   {

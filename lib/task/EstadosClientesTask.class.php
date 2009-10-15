@@ -1,6 +1,6 @@
 <?php
 
-class EstadosClientesTask extends sfPropelBaseTask
+class EstadosClientesTask extends sfDoctrineBaseTask
 {
   protected function configure()
   {

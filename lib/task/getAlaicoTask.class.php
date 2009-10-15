@@ -1,6 +1,6 @@
 <?php
 
-class getAlaicoTask extends sfPropelBaseTask
+class getAlaicoTask extends sfDoctrineBaseTask
 {
   protected function configure()
   {

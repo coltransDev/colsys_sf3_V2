@@ -1,6 +1,6 @@
 <?php
  
-class ReporteExteriorTask extends sfPropelBaseTask
+class ReporteExteriorTask extends sfDoctrineBaseTask
 {
 	protected function configure()
 	{

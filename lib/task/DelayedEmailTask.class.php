@@ -1,6 +1,6 @@
 <?php
  
-class DelayedEmailTask extends sfPropelBaseTask
+class DelayedEmailTask extends sfDoctrineBaseTask
 {
   protected function configure()
   {
@@ -26,18 +26,18 @@ EOF;
 	// Borra las dos líneas siguientes si no utilizas una base de datos
 	$databaseManager = new sfDatabaseManager($this->configuration);
 	$databaseManager->loadConfiguration();
-	
-	$c = new Criteria();		
-	$c->add( EmailPeer::CA_FCHENVIO, null, Criteria::ISNULL );		
+		
 					
-	$emails = EmailPeer::doSelect( $c );
+	$emails = Doctrine::getTable("Email")
+                        ->createQuery("e")
+                        ->where("e.ca_fchenvio IS NULL")
+                        ->execute();
 		
 	foreach( $emails as $email ){
 		try{
             $email->send();
         }catch(Exception $e){
             echo $e."<br />";
-
         }
 	}		
   }

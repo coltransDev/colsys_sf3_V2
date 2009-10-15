@@ -1,6 +1,6 @@
 <?php
 
-class CircularClientesTask extends sfPropelBaseTask
+class CircularClientesTask extends sfDoctrineBaseTask
 {
   protected function configure()
   {

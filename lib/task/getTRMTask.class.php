@@ -1,6 +1,6 @@
 <?php
 
-class getTRMTask extends sfPropelBaseTask
+class getTRMTask extends sfDoctrineBaseTask
 {
   protected function configure()
   {
