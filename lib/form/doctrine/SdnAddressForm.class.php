@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * SdnAddress form.
+ *
+ * @package    form
+ * @subpackage SdnAddress
+ * @version    SVN: $Id: sfDoctrineFormTemplate.php 6174 2007-11-27 06:22:40Z fabien $
+ */
+class SdnAddressForm extends BaseSdnAddressForm
+{
+  public function configure()
+  {
+  }
+}
