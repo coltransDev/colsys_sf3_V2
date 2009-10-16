@@ -131,7 +131,7 @@ class RepStatus extends BaseRepStatus
 		if( !$this->bodega ){
 			$idbodega = $this->getProperty("idbodega");
 			if( $idbodega ){
-				$this->bodega = BodegaPeer::retrieveByPk( $idbodega );
+				$this->bodega = Doctrine::getTable("Bodega")->find( $idbodega );
 			}
 		}
 
