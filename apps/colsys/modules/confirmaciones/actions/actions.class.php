@@ -154,17 +154,8 @@ class confirmacionesActions extends sfActions
                                   ->addOrderBy("t.ca_orden")
                                   ->execute();
 		
-		if( $this->modo=="otm" ){
+		if( $this->modo!="otm" ){
 			
-			$tipos = array('Zona Franca', 'Zona Aduanera','Depósito Aduanero', 'Depósito Privado', 'Industria Militar');	
-						
-			$this->bodegas = Doctrine::getTable("Bodega")
-                                       ->createQuery("b")
-                                       ->whereIn("b.ca_tipo", $tipos)
-                                       ->addOrderBy("b.ca_tipo")
-                                       ->addOrderBy("b.ca_nombre")
-                                       ->execute();
-		}else{		
 			/*
 			* Confirmaciones de llegada de puerto
 			*/

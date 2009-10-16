@@ -4,7 +4,7 @@
  * 
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-
+//print_r( $bodegas );
 ?>
 
 <table id="tb_<?=$inoCliente->getOid()?>" style='display:none' cellspacing="1" width="100%">
@@ -92,14 +92,14 @@
         <td class="listar" colspan="3" style='vertical-align:bottom;'><div id="divbodega_<?=$inoCliente->getOid()?>"> <b>Bodega:</b><br />
                         <select name='bodega_<?=$inoCliente->getOid()?>'>
                             <?
-                    foreach($bodegas as $bodega){
-                    ?>
-                            <option value='<?=$bodega->getCaIdbodega()?>'>
-                            <?=substr($bodega->getCaNombre(),0,65)?>
-                            </option>
-                            <?
-                    }
-                    ?>
+                            foreach($bodegas as $bodega){
+                            ?>
+                                    <option value='<?=$bodega->getCaIdbodega()?>'>
+                                    <?=substr($bodega->getCaNombre(),0,65)?>
+                                    </option>
+                                    <?
+                            }
+                            ?>
                         </select>
             </div>
               </td>

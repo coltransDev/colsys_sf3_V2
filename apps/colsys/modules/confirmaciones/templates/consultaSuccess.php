@@ -2,6 +2,8 @@
 use_helper("ExtCalendar");
 
 $inoClientes = $sf_data->getRaw("inoClientes");
+$bodegas = $sf_data->getRaw("bodegas");
+
 
 switch( $modo ){
 	case "otm":
@@ -485,7 +487,8 @@ function mostrar(oid){
 			
 			<td class="invertir" colspan="6">
 				<?
-                include_partial("formConfirmacion", array("inoCliente"=>$inoCliente, "modo"=>$modo, "reporte"=>$reporte, "cliente"=>$cliente, "etapas"=>$etapas, "coordinadores"=>$coordinadores, "textos"=>$textos))
+                
+                include_component("confirmaciones","formConfirmacion", array("inoCliente"=>$inoCliente, "modo"=>$modo, "reporte"=>$reporte, "cliente"=>$cliente, "etapas"=>$etapas, "coordinadores"=>$coordinadores, "textos"=>$textos, $bodegas="bodegas"))
                 ?>
             </td>
 			</tr>
