@@ -1,4 +1,5 @@
 <?
+$statusList = $sf_data->getRaw("statusList");
 foreach( $statusList as $status ){
 	$txt = "<b>".Utils::fechaMes( $status->getCaFchenvio() )."&gt;&gt;". $status->getTrackingEtapa()->getCaEtapa()."</b>
 	";

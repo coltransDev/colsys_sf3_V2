@@ -1,3 +1,6 @@
+<?
+$statusList = $sf_data->getRaw("statusList");
+?>
 <table width="100%" cellspacing="0" border="1" class="tableList">
 	<tr>
 		<th colspan="<?=$linkEmail?3:2?>">Status del Embarque</th>
