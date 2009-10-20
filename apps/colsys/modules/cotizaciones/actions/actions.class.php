@@ -727,6 +727,7 @@ class cotizacionesActions extends sfActions
 			$newProducto = $producto->copy( false );
 			$newProducto->setCaIdcotizacion( $newCotizacion->getCaIdcotizacion() );
             $newProducto->setCaEtapa( Cotizacion::EN_SEGUIMIENTO );
+            $newProducto->setCaIdtarea( null );
 			$newProducto->save();
 
 			$opciones = $producto->getCotOpciones();
