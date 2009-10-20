@@ -69,6 +69,33 @@ class widgetsActions extends sfActions
 		$this->setTemplate("responseTemplate");
 				
 	}
+
+
+    /**
+	* Retorna un objeto JSON con la información de todas las ciudades
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeDatosCiudadesPaises($request)
+	{
+		$ciudades_rs = Doctrine::getTable("Ciudad")
+                       ->createQuery("c")
+                       ->select("c.ca_idciudad, c.ca_ciudad, c.ca_idtrafico ")
+                       ->addOrderBy("c.ca_idtrafico")
+                       ->addOrderBy("c.ca_ciudad")
+                       ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                       ->execute();
+
+		$ciudades = array();
+		foreach($ciudades_rs as $ciudad){
+			$row = array('idciudad'=>$ciudad["c_ca_idciudad"],"ciudad"=>utf8_encode($ciudad["c_ca_ciudad"]));
+			$ciudades[$ciudad["c_ca_idtrafico"]][]=$row;
+		}
+
+        $this->responseArray = array("root"=>$ciudades, "total"=>count($ciudades), "success"=>true);
+		$this->setTemplate("responseTemplate");
+
+	}
 	
 	/**
 	* Retorna un objeto JSON con la información de todas las lineas
