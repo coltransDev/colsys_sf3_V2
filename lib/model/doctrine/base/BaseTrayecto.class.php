@@ -11,17 +11,19 @@
  * @property integer $ca_idlinea
  * @property string $ca_transporte
  * @property string $ca_impoexpo
- * @property string $ca_frecuencia
  * @property string $ca_modalidad
+ * @property string $ca_frecuencia
  * @property string $ca_tiempotransito
  * @property string $ca_observaciones
  * @property integer $ca_idagente
  * @property boolean $ca_activo
  * @property timestamp $ca_fchcreado
+ * @property boolean $ca_inpricing
  * @property Ciudad $Origen
  * @property Ciudad $Destino
  * @property IdsProveedor $IdsProveedor
  * @property IdsAgente $IdsAgente
+ * @property Doctrine_Collection $InoMaestra
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -40,25 +42,31 @@ abstract class BaseTrayecto extends myDoctrineRecord
              ));
         $this->hasColumn('ca_origen', 'string', 8, array(
              'type' => 'string',
+             'notnull' => true,
              'length' => '8',
              ));
         $this->hasColumn('ca_destino', 'string', 8, array(
              'type' => 'string',
+             'notnull' => true,
              'length' => '8',
              ));
         $this->hasColumn('ca_idlinea', 'integer', null, array(
              'type' => 'integer',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_transporte', 'string', null, array(
              'type' => 'string',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_impoexpo', 'string', null, array(
              'type' => 'string',
-             ));
-        $this->hasColumn('ca_frecuencia', 'string', null, array(
-             'type' => 'string',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_modalidad', 'string', null, array(
+             'type' => 'string',
+             'notnull' => true,
+             ));
+        $this->hasColumn('ca_frecuencia', 'string', null, array(
              'type' => 'string',
              ));
         $this->hasColumn('ca_tiempotransito', 'string', null, array(
@@ -75,6 +83,9 @@ abstract class BaseTrayecto extends myDoctrineRecord
              ));
         $this->hasColumn('ca_fchcreado', 'timestamp', null, array(
              'type' => 'timestamp',
+             ));
+        $this->hasColumn('ca_inpricing', 'boolean', null, array(
+             'type' => 'boolean',
              ));
 
 
@@ -98,5 +109,9 @@ abstract class BaseTrayecto extends myDoctrineRecord
         $this->hasOne('IdsAgente', array(
              'local' => 'ca_idagente',
              'foreign' => 'ca_idagente'));
+
+        $this->hasMany('InoMaestra', array(
+             'local' => 'ca_idtrayecto',
+             'foreign' => 'ca_idtrayecto'));
     }
 }

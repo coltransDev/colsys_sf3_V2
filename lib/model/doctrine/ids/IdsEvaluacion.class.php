@@ -30,7 +30,7 @@ class IdsEvaluacion extends BaseIdsEvaluacion
         if( $i==0 ){
             return 0;
         }else{
-            return $resultado/$i;
+            return round($resultado/$i, 1);
         }
 
     }

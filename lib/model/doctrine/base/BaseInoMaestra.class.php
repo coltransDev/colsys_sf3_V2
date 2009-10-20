@@ -25,6 +25,12 @@
  * @property string $ca_usucerrado
  * @property timestamp $ca_fchanulado
  * @property string $ca_usuanulado
+ * @property Trayecto $Trayecto
+ * @property Usuario $UsuCreado
+ * @property Usuario $UsuActualizado
+ * @property Usuario $UsuLiquidado
+ * @property Usuario $UsuCerrado
+ * @property Usuario $UsuAnulado
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -38,8 +44,8 @@ abstract class BaseInoMaestra extends myDoctrineRecord
         $this->setTableName('ino.tb_maestra');
         $this->hasColumn('ca_idmaestra', 'integer', null, array(
              'type' => 'integer',
-             'primary' => true,
              'autoincrement' => true,
+             'primary' => true,
              ));
         $this->hasColumn('ca_fchreferencia', 'date', null, array(
              'type' => 'date',
@@ -49,12 +55,15 @@ abstract class BaseInoMaestra extends myDoctrineRecord
              ));
         $this->hasColumn('ca_idtrayecto', 'integer', null, array(
              'type' => 'integer',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_master', 'string', null, array(
              'type' => 'string',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_fchmaster', 'date', null, array(
              'type' => 'date',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_piezas', 'decimal', null, array(
              'type' => 'decimal',
@@ -98,6 +107,35 @@ abstract class BaseInoMaestra extends myDoctrineRecord
         $this->hasColumn('ca_usuanulado', 'string', null, array(
              'type' => 'string',
              ));
+
+
+        $this->setAttribute(Doctrine::ATTR_EXPORT, Doctrine::EXPORT_TABLES);
     }
 
+    public function setUp()
+    {
+        $this->hasOne('Trayecto', array(
+             'local' => 'ca_idtrayecto',
+             'foreign' => 'ca_idtrayecto'));
+
+        $this->hasOne('Usuario as UsuCreado', array(
+             'local' => 'ca_usucreado',
+             'foreign' => 'ca_login'));
+
+        $this->hasOne('Usuario as UsuActualizado', array(
+             'local' => 'ca_usuactualizado',
+             'foreign' => 'ca_login'));
+
+        $this->hasOne('Usuario as UsuLiquidado', array(
+             'local' => 'ca_usuliquidado',
+             'foreign' => 'ca_login'));
+
+        $this->hasOne('Usuario as UsuCerrado', array(
+             'local' => 'ca_usucerrado',
+             'foreign' => 'ca_login'));
+
+        $this->hasOne('Usuario as UsuAnulado', array(
+             'local' => 'ca_usuanulado',
+             'foreign' => 'ca_login'));
+    }
 }

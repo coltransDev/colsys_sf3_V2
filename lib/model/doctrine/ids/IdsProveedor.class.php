@@ -12,6 +12,11 @@
  */
 class IdsProveedor extends BaseIdsProveedor
 {
+    public function __toString(){
+        $ids = $this->getIds();
+        return $ids->getcaNombre();
+
+    }
     public function getEvaluacionDesempeno( $year ){
 
         $evaluaciones = Doctrine::getTable("IdsEvaluacion")

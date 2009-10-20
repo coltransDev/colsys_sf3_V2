@@ -27,6 +27,7 @@
  * @property Doctrine_Collection $HdeskResponse
  * @property Doctrine_Collection $HdeskUserGroup
  * @property Doctrine_Collection $HdeskTicketUser
+ * @property Doctrine_Collection $InoMaestra
  * @property Doctrine_Collection $Cliente
  * @property Doctrine_Collection $NotTareaAsignacion
  * @property Doctrine_Collection $Reporte
@@ -135,6 +136,10 @@ abstract class BaseUsuario extends myDoctrineRecord
         $this->hasMany('HdeskTicketUser', array(
              'local' => 'ca_login',
              'foreign' => 'ca_login'));
+
+        $this->hasMany('InoMaestra', array(
+             'local' => 'ca_login',
+             'foreign' => 'ca_usucreado'));
 
         $this->hasMany('Cliente', array(
              'local' => 'ca_login',

@@ -15,6 +15,7 @@
  * @property string $ca_usuaprobado
  * @property string $ca_sigla
  * @property string $ca_transporte
+ * @property string $ca_empresa
  * @property Ids $Ids
  * @property IdsTipo $IdsTipo
  * @property Doctrine_Collection $Trayecto
@@ -70,6 +71,9 @@ abstract class BaseIdsProveedor extends myDoctrineRecord
         $this->hasColumn('ca_transporte', 'string', 10, array(
              'type' => 'string',
              'length' => '10',
+             ));
+        $this->hasColumn('ca_empresa', 'string', null, array(
+             'type' => 'string',
              ));
     }
 
