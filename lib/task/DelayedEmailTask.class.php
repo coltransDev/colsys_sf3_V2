@@ -5,7 +5,7 @@ class DelayedEmailTask extends sfDoctrineBaseTask
   protected function configure()
   {
     $this->namespace        = 'colsys';
-    $this->name             = 'delayedEmail';
+    $this->name             = 'delayed-email';
     $this->briefDescription = 'Envia emails retrasados por errores';
     $this->detailedDescription = <<<EOF
 The [circularClientes|INFO] task does things.
