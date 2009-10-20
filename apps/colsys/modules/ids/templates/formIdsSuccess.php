@@ -26,7 +26,7 @@
                         var res = Ext.util.JSON.decode( response.responseText );
                         //alert(res.id);
                         if(res.id){
-                            document.location = '<?=url_for("ids/verIds?modo=prov")?>?id='+res.id
+                            document.location = '<?=url_for("ids/verIds?modo=".$modo)?>?id='+res.id
                         }
                     }
                  }
@@ -213,6 +213,24 @@
             ?>
             </div>
            
+        </td>
+	</tr>
+    <tr >
+        <td> <div align="left"><b>Empresa:</b></div></td>
+		<td >
+            <div align="left">
+            <?
+            echo $form['empresa']->renderError();
+            if( $proveedor ){
+                $form->setDefault('empresa', $proveedor->getCaEmpresa() );
+            }
+            echo $form['empresa']->render();
+            ?>
+            </div>
+        </td>
+        <td> &nbsp;</td>
+		<td colspan="3">
+               &nbsp;
         </td>
 	</tr>
 

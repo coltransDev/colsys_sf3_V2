@@ -38,6 +38,10 @@ class NuevoProveedorForm extends sfForm{
                                                                                  Constantes::TERRESTRE=>Constantes::TERRESTRE
                                                                                 )));
 
+        $widgets['empresa'] = new sfWidgetFormChoice(array('choices' => array( ""=>"Ambas",
+                                                                                  Constantes::COLTRANS=>Constantes::COLTRANS,
+                                                                                 Constantes::COLMAS=>Constantes::COLMAS
+                                                                                )));
 		$this->setWidgets( $widgets );
 
 
@@ -64,6 +68,7 @@ class NuevoProveedorForm extends sfForm{
 														array('required' => 'El transporte es requerido'));
         $validator["sigla"] =new sfValidatorString( array('required' => false ) );
 
+        $validator["empresa"] =new sfValidatorString( array('required' => false ) );
         $this->setValidators( $validator );
     }
 }

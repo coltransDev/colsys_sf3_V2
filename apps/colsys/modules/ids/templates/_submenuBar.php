@@ -28,6 +28,7 @@ switch($action){
             $button[$i]["link"]= "ids/formIds?modo=".$this->getRequestParameter("modo");
             $i++;
         }
+
 		break;	
 
 	case "verIds":
@@ -39,7 +40,7 @@ switch($action){
             $button[$i]["link"]= "ids/formIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
             $i++;
 
-            $button[$i]["name"]="Nueva sucursal";
+            $button[$i]["name"]="Nueva suc.";
             $button[$i]["tooltip"]="";
             $button[$i]["image"]="22x22/add_group.gif";
             $button[$i]["link"]= "ids/formSucursalIds?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo") ;
@@ -49,11 +50,22 @@ switch($action){
 }
 
 if( $this->getRequestParameter("modo")=="prov" && $action!="listadoProveedoresAprobados" ){
-    $button[$i]["name"]="Prov. aprobados ";
+    $button[$i]["name"]="Prov.Aprobados ";
     $button[$i]["tooltip"]="Listado de proveedores aprobados";
     $button[$i]["image"]="22x22/gohome.gif";
     $button[$i]["link"]= "ids/listadoProveedoresAprobados?modo=".$this->getRequestParameter("modo");
     $i++;
+
+    @$nivel = idsActions::getNivel();
+    if( $nivel>=2 ){
+        $button[$i]["name"]="Vencimientos";
+        $button[$i]["tooltip"]="Listado de documentos proximos a vencerse";
+        $button[$i]["image"]="22x22/todo.gif";
+        $button[$i]["link"]= "ids/alertasDocumentos?modo=".$this->getRequestParameter("modo");
+        $i++;
+    }
+
+
 }
 
 

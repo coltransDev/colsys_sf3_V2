@@ -43,7 +43,7 @@
                 }
                 ?>
                 <option value="desempeno" selected="selected">Desempe&ntilde;o</option>
-                <option value="reevaluacion">Reevaluaci&oacute;n</option>
+                <option value="reevaluacion">Reevaluaci&oacute;n:Desempe&ntilde;o</option>
 
             </select>
            <?

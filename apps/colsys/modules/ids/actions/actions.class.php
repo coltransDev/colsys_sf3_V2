@@ -228,6 +228,7 @@ class idsActions extends sfActions
                 $bindValues["esporadico"] = $request->getParameter("esporadico");
                 $bindValues["aprobado"] = $request->getParameter("aprobado");
                 $bindValues["activo"] = $request->getParameter("activo");
+                $bindValues["empresa"] = $request->getParameter("empresa");
 
 
                 if( $bindValues["tipo_proveedor"]=="TRI" ){
@@ -287,6 +288,12 @@ class idsActions extends sfActions
                         $proveedor->setCaActivo( true );
                     }else{
                         $proveedor->setCaActivo( false );
+                    }
+
+                    if( $bindValues["empresa"] ){
+                        $proveedor->setCaEmpresa($bindValues["empresa"]);
+                    }else{
+                        $proveedor->setCaEmpresa(null);
                     }
 
                     

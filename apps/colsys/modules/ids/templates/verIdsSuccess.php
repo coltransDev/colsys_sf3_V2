@@ -97,6 +97,21 @@
                    <div align="left"><?=$proveedor->getCaFchaprobado()?Utils::fechaMes($proveedor->getCaFchaprobado())." por ".$proveedor->getCaUsuaprobado():"No Aprobado"?></div>
                </td>
             </tr>
+            <tr>
+                <td>
+                    <div align="left"><b>Empresa</b></div>
+               </td>
+               <td>
+                   <div align="left"><?=$proveedor->getCaEmpresa()?$proveedor->getCaEmpresa():"Ambas"?></div>
+               </td>
+               <td>
+                   <div align="left">&nbsp;</div>
+               </td>
+               <td>
+                   <div align="left">&nbsp;</div>
+               </td>
+            </tr>
+
                 <?
                 if( $proveedor->getCaTipo()=="TRI" ){
                 ?>
