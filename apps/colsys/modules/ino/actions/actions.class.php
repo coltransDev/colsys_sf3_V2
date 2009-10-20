@@ -10,6 +10,29 @@
  */
 class inoActions extends sfActions
 {
+
+    public function getNivel( ){
+        $this->modo = $this->getRequestParameter("modo");
+
+        $this->nivel = -1;
+		if( !$this->modo ){
+			$this->forward( "ids", "seleccionModo" );
+		}
+
+		if( $this->modo=="agentes" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );
+		}
+
+		if( $this->modo=="prov" ){
+			$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_PROV );
+		}
+
+
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+        return $this->nivel;
+    }
     /**
     * Executes index action
     *
@@ -18,7 +41,6 @@ class inoActions extends sfActions
     public function executeIndex(sfWebRequest $request)
     {
         $this->comerciales = UsuarioTable::getComerciales();
-
     }
 
     /**
@@ -40,6 +62,98 @@ class inoActions extends sfActions
     */
     public function executeFormIno(sfWebRequest $request)
     {
+        $this->modo = $request->getParameter("modo");
+
+        switch( $this->modo ){
+            case "maritimo":
+                $this->transporte = Constantes::MARITIMO;
+                break;
+        }
+        
+        $this->referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
+        if( !$this->referencia ){
+            $this->referencia = new InoMaestra();
+        }
+
+        $form = new InoMaestraForm( $this->referencia );
+        
+
+        $trayectoForm =  new TrayectoForm();
+
+        $this->origen = $request->getParameter("origen");
+        $this->destino = $request->getParameter("destino");
+        if ($request->isMethod('post')){
+
+            $trayectoObj = $request->getParameter($trayectoForm->getName());
+            $trayectoObj["ca_impoexpo"] ="Importación";
+            $trayectoObj["ca_transporte"] ="Marítimo";
+            $trayectoObj["ca_modalidad"] ="FCL";
+
+            if( isset($trayectoObj["ca_idagente"]) ){
+                $idagente = $trayectoObj["ca_idagente"];
+            }else{
+                $idagente = null;
+            }
+
+            $trayecto = TrayectoTable::findByParametros( $trayectoObj["ca_transporte"], $trayectoObj["ca_modalidad"], $trayectoObj["ca_origen"], $trayectoObj["ca_destino"], $trayectoObj["ca_idlinea"], $idagente  );
+            if( !$trayecto ){
+                $trayecto = new Trayecto();
+                $trayecto->setCaImpoexpo($trayectoObj["ca_impoexpo"]);
+                $trayecto->setCaTransporte($trayectoObj["ca_transporte"]);
+                $trayecto->setCaModalidad($trayectoObj["ca_modalidad"]);
+                $trayecto->setCaOrigen($trayectoObj["ca_origen"]);
+                $trayecto->setCaDestino($trayectoObj["ca_destino"]);
+                $trayecto->setCaIdlinea($trayectoObj["ca_idlinea"]);
+                if( $idagente ){
+                    $trayecto->setCaIdagente($idagente);
+                }
+                $trayecto->save();
+            }
+
+
+            $referenciaObj = $request->getParameter($form->getName());
+            $referenciaObj["ca_idtrayecto"] = $trayecto->getCaIdtrayecto();
+            $referenciaObj["ca_referencia"] =  "assad";
+            $referenciaObj["ca_fchreferencia"] =  date("Y-m-d H.i:s");
+            $form->bind( $referenciaObj );
+
+            if($form->hasErrors()){
+                print_r( $obj );
+                //print_r($form->getErrorSchema()->getErrors());
+                echo "ERROR";
+            }
+            
+
+			if( $form->isValid() ){
+               
+                $this->referencia = $form->save();
+                echo $this->referencia->getCaIdmaestra();                
+                $this->redirect("ino/verReferencia?id=".$this->referencia->getCaIdmaestra());
+            }
+        }
+
+        $this->form = $form;
+        $this->trayectoForm = $trayectoForm;
+    }
+
+
+    /**
+    * Executes index action
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeVerReferencia(sfWebRequest $request)
+    {
+        $this->modo = $request->getParameter("modo");
+
+        $this->forward404Unless( $request->getParameter("id") );
+        $this->referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
+
+        $this->forward404Unless( $this->referencia );
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("tabpane/tabpane",'last');
+        $response->addStylesheet("tabpane/luna/tab",'last');
         
     }
 }
