@@ -292,7 +292,7 @@ class idsActions extends sfActions
                     
                     if( $bindValues["tipo_proveedor"]=="TRI" ){                        
                         $proveedor->setCaSigla($bindValues["sigla"] );
-                        //$proveedor->setCaTransporte( $bindValues["transporte"] );
+                        $proveedor->setCaTransporte( $bindValues["transporte"] );
                     }                   
                     
                     if( $this->nivel>=5 ){
@@ -939,6 +939,70 @@ class idsActions extends sfActions
         $idsGrupo->setCaIdgrupo($idsGrupo->getCaId());
         $idsGrupo->save();
         $this->redirect("ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId() );
+    }
+
+    /*
+    * Envia alertas sobre los vencimientos de los documentos 
+    *
+    * @param sfRequest $request A request object
+    */
+
+    public function executeAlertasDocumentos(sfWebRequest $request){
+       $this->modo=$request->getParameter("modo");  
+       $this->fecha = date("Y-m-d", time()+86400*16);
+       $q = Doctrine::getTable("IdsDocumento")
+                               ->createQuery("d")
+                               ->select("i.ca_id, d.ca_iddocumento, d.ca_fchvencimiento, t.ca_tipo, i.ca_nombre")
+                               ->innerJoin("d.Ids i")
+                               ->innerJoin("d.IdsTipoDocumento t")
+                               ->where("d.ca_fchvencimiento<=?", $this->fecha )
+                               ->addWhere("d.ca_idtipo IN (SELECT dd.ca_idtipo FROM IdsDocumento dd WHERE dd.ca_iddocumento=d.ca_iddocumento ORDER BY dd.ca_fchvencimiento DESC LIMIT 1)")
+                               ->addOrderBy("d.ca_fchvencimiento ASC")
+                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+       if( $this->modo ){
+            $q->innerJoin("i.IdsProveedor p");
+            $q->addWhere("p.ca_controladoporsig = ?", true);
+            $this->titulo = "Documentos de proveedores controlados por SIG";
+       }
+
+       if( $request->getParameter("layout") ){
+            $this->setLayout($request->getParameter("layout"));
+       }
+
+       $this->documentos = $q->execute();
+    }
+
+    public function executeAlertasDocumentosEmail(sfWebRequest $request){
+
+        $this->modo=$request->getParameter("modo");
+
+        $usuarios = Doctrine::getTable("Usuario")
+                          ->createQuery("u")
+                          ->innerJoin("u.UsuarioPerfil p")
+                          ->where("p.ca_perfil = ? ", "asistente-de-pricing")
+                          ->addWhere("u.ca_activo = ?", true)
+                          ->execute();
+
+        $contentHTML = sfContext::getInstance()->getController()->getPresentationFor( 'ids', 'alertasDocumentos');
+
+        $email = new Email();
+        $email->setCaUsuenvio( "Administrador" );
+        $email->setCaTipo( "Not. Vencimiento" );
+        $email->setCaFrom( "no-reply@coltrans.com.co" );
+        $email->setCaReplyto( "no-reply@coltrans.com.co" );
+        $email->setCaFromname( "Colsys" );
+        foreach( $usuarios as $usuario ){
+            $email->addTo( $usuario->getCaEmail() );
+        }
+        $email->setCaSubject( "Vencimiento de documentos" );
+        $email->setCaBodyhtml( $contentHTML );
+
+        $email->save();
+        $email->send();
+
+
+        return sfView::NONE;
+
     }
 
 
