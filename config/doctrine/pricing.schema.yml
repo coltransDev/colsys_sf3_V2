@@ -8,19 +8,31 @@ Trayecto:
       type: integer
       primary: true
       autoincrement: true
-    ca_origen: string(8)
-    ca_destino: string(8)
-    ca_idlinea: integer
-    ca_transporte: string
-    ca_impoexpo: string
-    ca_frecuencia: string
-    ca_modalidad: string    
+    ca_origen:
+      type: string(8)
+      notnull: true
+    ca_destino:
+      type: string(8)
+      notnull: true
+    ca_idlinea:
+      type: integer
+      notnull: true
+    ca_transporte:
+      type: string
+      notnull: true
+    ca_impoexpo:
+      type: string
+      notnull: true
+    ca_modalidad:
+      type: string
+      notnull: true
     ca_frecuencia: string
     ca_tiempotransito: string
     ca_observaciones: string
     ca_idagente: integer
     ca_activo: boolean
     ca_fchcreado: timestamp
+    ca_inpricing: boolean
   relations:
     Origen:
       local: ca_origen

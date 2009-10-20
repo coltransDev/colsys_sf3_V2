@@ -162,6 +162,7 @@ IdsProveedor:
     ca_usuaprobado: string(20)
     ca_sigla: string(20)
     ca_transporte: string(10)
+    ca_empresa: string
   relations:
     Ids:
       local: ca_idproveedor

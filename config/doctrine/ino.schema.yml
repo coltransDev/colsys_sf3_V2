@@ -1,17 +1,27 @@
+
 InoMaestra:
   generatePath: ino
   tableName: ino.tb_maestra
+  attributes:
+    export: tables
   columns:
     ca_idmaestra:
       type: integer
-      primary: true
       autoincrement: true
-    ca_fchreferencia: date
+      primary: true
+    ca_fchreferencia:
+      type: date      
     ca_referencia: string
-    ca_idtrayecto: integer
+    ca_idtrayecto: 
+      type: integer
+      notnull: true
     ca_referencia: string
-    ca_master: string
-    ca_fchmaster: date
+    ca_master:
+        type: string
+        notnull: true
+    ca_fchmaster:
+        type: date
+        notnull: true
     ca_piezas: decimal
     ca_peso: decimal
     ca_volumen: decimal
@@ -26,6 +36,36 @@ InoMaestra:
     ca_usucerrado: string
     ca_fchanulado: timestamp
     ca_usuanulado: string
+  relations:
+    Trayecto:
+      local: ca_idtrayecto
+      foreign: ca_idtrayecto
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuLiquidado:
+      local: ca_usuliquidado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuCerrado:
+      local: ca_usucerrado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuAnulado:
+      local: ca_usuanulado
+      foreign: ca_login
+      type: one
+      class: Usuario
 
 
 
