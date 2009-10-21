@@ -80,8 +80,8 @@ class clientesActions extends sfActions
 		$email->save();
 		$email->send();
 	}
-	
-	
+
+
 	/*
 	* Entrada Reporte de Estados Clientes
 	*/
@@ -94,9 +94,9 @@ class clientesActions extends sfActions
                           ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                           ->execute();
 
-		
+
 	}
-	
+
 	/*
 	* Entrada Reporte de Circular 170 Clientes
 	*/
@@ -108,199 +108,182 @@ class clientesActions extends sfActions
                           ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
                           ->execute();
 	}
-	
-	public function executeReporteEstados(){
-		$anterior = array();
-		$facturar = array();
 
-		set_time_limit(0);
-		$inicio =  $this->getRequestParameter("fchStart");
-		$final =  $this->getRequestParameter("fchEnd");
-		$empresa =  $this->getRequestParameter("empresa");
-		$estado =  $this->getRequestParameter("estado");
-		$sucursal =  $this->getRequestParameter("sucursal");
-		
-		$this->clientesEstados = array();
-		
-		list($year, $month, $day) = sscanf($inicio, "%d-%d-%d");
-                $ultimo = date('Y-m-d',mktime(0,0,0,$month,$day-1,$year));
+        public function executeReporteEstados() {
+            $anterior = array();
+            $facturar = array();
 
-                $stmt = ClienteTable::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
-                $ante = ClienteTable::estadoClientes(null, $ultimo, $empresa, null, "Potencial", $sucursal);
-		while($row = $stmt->fetch()) {
-                    $actual = $row;
+            set_time_limit(0);
+            $inicio =  $this->getRequestParameter("fchStart");
+            $final =  $this->getRequestParameter("fchEnd");
+            $empresa =  $this->getRequestParameter("empresa");
+            $estado =  $this->getRequestParameter("estado");
+            $sucursal =  $this->getRequestParameter("sucursal");
 
-                    list($year, $month, $day) = sscanf($row["ca_fchestado"], "%d-%d-%d");
+            $this->clientesEstados = array();
 
-                    $sb = ClienteTable::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $row["ca_idcliente"], null, null);
-                    while($row1 = $sb->fetch()) {
-                        $anterior = array('ca_fchestado_ant'=>$row1["ca_fchestado"],
-                              'ca_estado_ant'=>$row1["ca_estado"]
-                         );
-                    }
+            list($year, $month, $day) = sscanf($inicio, "%d-%d-%d");
+            $ultimo = date('Y-m-d',mktime(0,0,0,$month,$day-1,$year));
 
-                    $sb = ClienteTable::facturacionClientes($inicio, $final, $empresa, $row["ca_idcliente"]);
-                    while($row2 = $sb->fetch()) {
-                        $facturar = $row2;
-                    }
-                    if (count($anterior)==0){
-                        $anterior = array('ca_fchestado_ant'=>null, 'ca_estado_ant'=>null);
-                    }
+            $stmt = ClienteTable::estadoClientes($inicio, $final, $empresa, null, $estado, $sucursal);
+            $ante = ClienteTable::estadoClientes(null, $ultimo, $empresa, null, "Potencial", $sucursal);
 
-                    $term_mem = "";
-                    $terminos = array();
-                    $sb = ClienteTable::terminosClientes($inicio, $final, $row["ca_idcliente"]);
-                    while($row2 = $sb->fetch()) {
-                        if (strpos($row2['ca_incoterms'], "|") !== false){
-                            foreach(explode("|",$row2['ca_incoterms']) as $termino){
-                                if (!in_array($termino, $terminos)){
-                                    $term_mem.= $termino."|";
-                                }
-                            }
-                        }else{
-                            if (!in_array($row2['ca_incoterms'], $terminos)){
-                                $term_mem.= $row2['ca_incoterms']."|";
-                            }
-                        }
-                    }
-                    $terminos = array('ca_terminos'=>$term_mem);
-                    $this->clientesEstados[] = array_merge($actual, $anterior, $facturar, $terminos);
+            while($row = $stmt->fetch()) {
+                $actual = $row;
 
-		}
-                $i = 0;
-                while($row = $ante->fetch()) {      // Calcula el número de Clientes Potenciales al inicio del periodo
-                    $i++;
+                list($year, $month, $day) = sscanf($row["ca_fchestado"], "%d-%d-%d");
+
+                $sb = ClienteTable::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $row["ca_idcliente"], null, null);
+                while($row1 = $sb->fetch()) {
+                    $anterior = array('ca_fchestado_ant'=>$row1["ca_fchestado"],
+                        'ca_estado_ant'=>$row1["ca_estado"]
+                    );
                 }
-                $this->poblacion = $i;
-		$this->inicio = $inicio;
-		$this->final = $final;
 
-        $layout =  $this->getRequestParameter("layout");
-        if( $layout ){
-            $this->setLayout($layout);
-        }
-	}
-	
-	public function executeReporteCircular(){
-		set_time_limit(0);
-		$inicio =  $this->getRequestParameter("fchStart");
-		$final =  $this->getRequestParameter("fchEnd");
-		$sucursal =  $this->getRequestParameter("sucursal");
-		
-		$this->clientesCircular = array();
-		
-		$stmt = ClienteTable::circularClientes( $inicio, $final, $sucursal );
-		while($row = $stmt->fetch() ) {
-			$this->clientesCircular[] = $row;
-		}
-		$this->inicio = $inicio;
-		$this->final = $final;
-        $layout =  $this->getRequestParameter("layout");
-        if( $layout ){
-            $this->setLayout($layout);
+                $sb = ClienteTable::facturacionClientes($inicio, $final, $empresa, $row["ca_idcliente"]);
+                while($row2 = $sb->fetch()) {
+                    $facturar = $row2;
+                }
+                if (count($anterior)==0) {
+                    $anterior = array('ca_fchestado_ant'=>null, 'ca_estado_ant'=>null);
+                }
+                $this->clientesEstados[] = array_merge($actual, $anterior, $facturar);
+
+            }
+            $i = 0;
+            while($row = $ante->fetch()) {      // Calcula el número de Clientes Potenciales al inicio del periodo
+                $i++;
+            }
+            $this->poblacion = $i;
+            $this->inicio = $inicio;
+            $this->final = $final;
+
+            $layout =  $this->getRequestParameter("layout");
+            if( $layout ) {
+                $this->setLayout($layout);
+            }
         }
 
-	}
-	
-	public function executeReporteEstadosEmail(){
-		$parametro = Doctrine::getTable("Parametro")->find(array("CU066",1,"defaultEmails"));
-		if ($parametro) {
-			if (stripos($parametro->getCaValor2(), ',') !== false) {
-				$defaultEmail = explode(",", $parametro->getCaValor2());
-			}else{
-				$defaultEmail = array($parametro->getCaValor2());
-			}
-		}
-		$parametro = Doctrine::getTable("Parametro")->find(array("CU066",2,"ccEmails"));
-		if ($parametro) {
-			if (stripos($parametro->getCaValor2(), ',') !== false) {
-				$ccEmails = explode(",", $parametro->getCaValor2());
-			}else{
-				$ccEmails = array($parametro->getCaValor2());
-			}
-		}
-		$email = new Email();
-		$email->setCaUsuenvio( "Administrador" );
-		$email->setCaTipo( "EstadosClientes" ); 		
-		$email->setCaIdcaso( "1" );
-		$email->setCaFrom( "admin@coltrans.com.co" );
-		$email->setCaFromname( "Administrador Sistema Colsys" );
-		$email->setCaReplyto( "admin@coltrans.com.co" );
+        public function executeReporteCircular() {
+            set_time_limit(0);
+            $inicio =  $this->getRequestParameter("fchStart");
+            $final =  $this->getRequestParameter("fchEnd");
+            $sucursal =  $this->getRequestParameter("sucursal");
 
-		while (list ($clave, $val) = each ($defaultEmail)) {
-			$email->addTo( $val );
-		}
-		
-		while (list ($clave, $val) = each ($ccEmails)) {
-			$email->addCc( $val );
-		}
+            $this->clientesCircular = array();
 
-		$inicio =  $this->getRequestParameter("fchStart");
-		$final =  $this->getRequestParameter("fchEnd");
-		$empresa =  $this->getRequestParameter("empresa");
-		
-		$this->getRequest()->setParameter("fchStart", $inicio);
-		$this->getRequest()->setParameter("fchEnd", $final);
-		$this->getRequest()->setParameter("empresa", $empresa);
-        $this->getRequest()->setParameter("layout", "email");
-		
-		$email->setCaSubject( "Cliente con cambio de Estado, periodo:$inicio a $final en $empresa" );
-		$email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstados') );
-		
-		$email->save();
-		$email->send();
+            $stmt = ClienteTable::circularClientes( $inicio, $final, $sucursal );
+            while($row = $stmt->fetch() ) {
+                $this->clientesCircular[] = $row;
+            }
+            $this->inicio = $inicio;
+            $this->final = $final;
+            $layout =  $this->getRequestParameter("layout");
+            if( $layout ) {
+                $this->setLayout($layout);
+            }
+
+        }
+
+        public function executeReporteEstadosEmail() {
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU066",1,"defaultEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $defaultEmail = explode(",", $parametro->getCaValor2());
+                }else {
+                    $defaultEmail = array($parametro->getCaValor2());
+                }
+            }
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU066",2,"ccEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $ccEmails = explode(",", $parametro->getCaValor2());
+                }else {
+                    $ccEmails = array($parametro->getCaValor2());
+                }
+            }
+            $email = new Email();
+            $email->setCaUsuenvio( "Administrador" );
+            $email->setCaTipo( "EstadosClientes" );
+            $email->setCaIdcaso( "1" );
+            $email->setCaFrom( "admin@coltrans.com.co" );
+            $email->setCaFromname( "Administrador Sistema Colsys" );
+            $email->setCaReplyto( "admin@coltrans.com.co" );
+
+            while (list ($clave, $val) = each ($defaultEmail)) {
+                $email->addTo( $val );
+            }
+
+            while (list ($clave, $val) = each ($ccEmails)) {
+                $email->addCc( $val );
+            }
+
+            $inicio =  $this->getRequestParameter("fchStart");
+            $final =  $this->getRequestParameter("fchEnd");
+            $empresa =  $this->getRequestParameter("empresa");
+
+            $this->getRequest()->setParameter("fchStart", $inicio);
+            $this->getRequest()->setParameter("fchEnd", $final);
+            $this->getRequest()->setParameter("empresa", $empresa);
+            $this->getRequest()->setParameter("layout", "email");
+
+            $email->setCaSubject( "Cliente con cambio de Estado, periodo:$inicio a $final en $empresa" );
+            $email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteEstados') );
+
+            $email->save();
+            $email->send();
 
 
-	}
+        }
 
-	public function executeReporteCircularEmail(){
-		$parametro = Doctrine::getTable("Parametro")->find(array("CU067",1,"defaultEmails"));
-		if ($parametro) {
-			if (stripos($parametro->getCaValor2(), ',') !== false) {
-				$defaultEmail = explode(",", $parametro->getCaValor2());
-			}else{
-				$defaultEmail = array($parametro->getCaValor2());
-			}
-		}
-		$parametro = Doctrine::getTable("Parametro")->find(array("CU067",2,"ccEmails"));
-		if ($parametro) {
-			if (stripos($parametro->getCaValor2(), ',') !== false) {
-				$ccEmails = explode(",", $parametro->getCaValor2());
-			}else{
-				$ccEmails = array($parametro->getCaValor2());
-			}
-		}
-		$email = new Email();
-		$email->setCaUsuenvio( "Administrador" );
-		$email->setCaTipo( "CircularClientes" ); 		
-		$email->setCaIdcaso( "1" );
-		$email->setCaFrom( "admin@coltrans.com.co" );
-		$email->setCaFromname( "Administrador Sistema Colsys" );
-		$email->setCaReplyto( "admin@coltrans.com.co" );
+        public function executeReporteCircularEmail() {
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU067",1,"defaultEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $defaultEmail = explode(",", $parametro->getCaValor2());
+                }else {
+                    $defaultEmail = array($parametro->getCaValor2());
+                }
+            }
+            $parametro = Doctrine::getTable("Parametro")->find(array("CU067",2,"ccEmails"));
+            if ($parametro) {
+                if (stripos($parametro->getCaValor2(), ',') !== false) {
+                    $ccEmails = explode(",", $parametro->getCaValor2());
+                }else {
+                    $ccEmails = array($parametro->getCaValor2());
+                }
+            }
+            $email = new Email();
+            $email->setCaUsuenvio( "Administrador" );
+            $email->setCaTipo( "CircularClientes" );
+            $email->setCaIdcaso( "1" );
+            $email->setCaFrom( "admin@coltrans.com.co" );
+            $email->setCaFromname( "Administrador Sistema Colsys" );
+            $email->setCaReplyto( "admin@coltrans.com.co" );
 
-		while (list ($clave, $val) = each ($defaultEmail)) {
-			$email->addTo( $val );
-		}
-		
-		while (list ($clave, $val) = each ($ccEmails)) {
-			$email->addCc( $val );
-		}
+            while (list ($clave, $val) = each ($defaultEmail)) {
+                $email->addTo( $val );
+            }
 
-		$inicio =  $this->getRequestParameter("fchStart");
-		$final =  $this->getRequestParameter("fchEnd");
-		$sucursal =  $this->getRequestParameter("sucursal");
-		
-		$this->getRequest()->setParameter("fchStart", $inicio);
-		$this->getRequest()->setParameter("fchEnd", $final);
-		$this->getRequest()->setParameter("sucursal", $sucursal);
-        $this->getRequest()->setParameter("layout", "email");
-		
-		$email->setCaSubject( "Cliente con Vencimiento de Circular 170 a : $inicio" );
-		$email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircular') );
-		
-		$email->save();
-		$email->send();
-	}
+            while (list ($clave, $val) = each ($ccEmails)) {
+                $email->addCc( $val );
+            }
+
+            $inicio =  $this->getRequestParameter("fchStart");
+            $final =  $this->getRequestParameter("fchEnd");
+            $sucursal =  $this->getRequestParameter("sucursal");
+
+            $this->getRequest()->setParameter("fchStart", $inicio);
+            $this->getRequest()->setParameter("fchEnd", $final);
+            $this->getRequest()->setParameter("sucursal", $sucursal);
+            $this->getRequest()->setParameter("layout", "email");
+
+            $email->setCaSubject( "Cliente con Vencimiento de Circular 170 a : $inicio" );
+            $email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircular') );
+
+            $email->save();
+            $email->send();
+        }
 
 	public function executeReporteListaClinton(){
             $this->setLayout("email");
@@ -316,7 +299,7 @@ class clientesActions extends sfActions
 
                 $handleLocal = fopen($file, 'x');
                 //Descarga el archivo
-                
+                /*
                 $handle = fopen($url, 'r');
                 while (!feof($handle)) {
                     $data = fgets($handle, 512);
@@ -325,12 +308,12 @@ class clientesActions extends sfActions
                         exit;
                     }
                 }
-                fclose($handle);
+                fclose($handle);*/
                 echo "Temina Lectura de Archivo Plano desde la Pagina Web www.treas.gov : ".date("h:i:s A")."\n\n";
 
                 echo "Inicia Seleccion de Registro para Colombia y Carga de tablas : ".date("h:i:s A")."\n\n";
                     /*Extrae los datos y los coloca*/
-                
+
                 $doc = new DOMDocument();
                 $doc->load( $file );
                 foreach( $doc->childNodes as $sdnEntryTag ) {
@@ -529,8 +512,8 @@ class clientesActions extends sfActions
                         print_r($sdnEntryTag);
                     }
                 }
-                 
-                 
+
+
                 echo "Termina Carga de tablas : ".date("h:i:s A")."\n\n";
 
                 echo "Inicia comparativo con Maestra de Clientes: ".date("h:i:s A")."\n\n";
