@@ -17,7 +17,7 @@ ciudades = [];
 
 
 </script>
-<div align="center">
+<div align="center" class="content">
     <h1>Sistema Administrador de Referencias</h1>
     <br />
     <form action="<?=url_for("ino/formIno")?>" method="post">
@@ -147,7 +147,21 @@ ciudades = [];
                 </td>                
             </tr>
             <tr>
-                <td colspan="8"><div align="center"><input type="submit" value="Guardar" class="button" /></div></td>
+                <td colspan="4">
+                    <div align="center">
+                        <input type="submit" value="Guardar" class="button" />
+                        <?
+                        if( $referencia->isNew() ){
+                            $url = "ino/index?modo=".$modo;
+                        }else{
+                            $url = "ino/verReferencia?id=".$referencia->getCaIdmaestra()."&modo=".$modo;
+                        }
+                        ?>
+                        <input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for($url)?>'" />
+                    </div>
+                
+                </td>
+
             </tr>
         </table>
     </form>

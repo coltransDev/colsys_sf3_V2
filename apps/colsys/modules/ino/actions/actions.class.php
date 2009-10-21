@@ -56,7 +56,7 @@ class inoActions extends sfActions
 
 
     /**
-    * Executes index action
+    * 
     *
     * @param sfRequest $request A request object
     */
@@ -113,7 +113,7 @@ class inoActions extends sfActions
 
             $referenciaObj = $request->getParameter($form->getName());
             $referenciaObj["ca_idtrayecto"] = $trayecto->getCaIdtrayecto();
-            $referenciaObj["ca_referencia"] =  "assad";
+            $referenciaObj["ca_referencia"] =  InoMaestraTable::getNumReferencia( $trayectoObj["ca_transporte"], $trayectoObj["ca_modalidad"], $trayectoObj["ca_origen"], $trayectoObj["ca_destino"], "01", "9" );
             $referenciaObj["ca_fchreferencia"] =  date("Y-m-d H.i:s");
             $form->bind( $referenciaObj );
 
@@ -138,7 +138,7 @@ class inoActions extends sfActions
 
 
     /**
-    * Executes index action
+    * 
     *
     * @param sfRequest $request A request object
     */
@@ -155,5 +155,43 @@ class inoActions extends sfActions
 		$response->addJavaScript("tabpane/tabpane",'last');
         $response->addStylesheet("tabpane/luna/tab",'last');
         
+    }
+
+
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormClientes(sfWebRequest $request)
+    {
+        $this->modo = $request->getParameter("modo");
+
+        $this->forward404Unless( $request->getParameter("id") );
+        $this->referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
+
+        $this->inoCliente = Doctrine::getTable("InoCliente")->find($request->getParameter("idinocliente"));
+
+
+        $form = new InoClienteForm( $this->inoCliente );
+
+        if ($request->isMethod('post')){            
+            $bindValues = $request->getParameter($form->getName());
+            $bindValues["ca_idmaestra"] = $this->referencia->getCaIdmaestra();
+            $form->bind( $bindValues );
+
+
+			if( $form->isValid() ){
+
+                $inocliente = $form->save();
+
+                $this->redirect("ino/verReferencia?id=".$inocliente->getCaIdmaestra());
+            }else{
+                echo "Error";
+            }
+        }
+
+        $this->form = $form;
+
     }
 }

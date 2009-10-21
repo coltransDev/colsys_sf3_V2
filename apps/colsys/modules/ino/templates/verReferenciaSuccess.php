@@ -72,11 +72,14 @@
 
                    <div class="tab-page">
                       <h2 class="tab">Clientes</h2>
-
+                        <?=include_component("ino", "clientes", array("referencia"=>$referencia))?>
+                       </div>
+                       
+                       <div class="tab-page">
+                           <h2 class="tab">Ingresos</h2>
                        </div>
                        <div class="tab-page">
-                           <h2 class="tab">Facturaci&oacute;n</h2>
-
+                           <h2 class="tab">Gastos</h2>
                        </div>
                        <div class="tab-page">
                            <h2 class="tab">Documentos</h2>
