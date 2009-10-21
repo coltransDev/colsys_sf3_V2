@@ -1,6 +1,6 @@
 <?php
 
-$sf_symfony_lib_dir  = '/home/abotero/Desarrollo/symfony1.2/lib';
+$sf_symfony_lib_dir  = '/home/abotero/Desarrollo/symfony1.3/lib';
 
 require_once $sf_symfony_lib_dir .'/autoload/sfCoreAutoload.class.php';
 sfCoreAutoload::register();
@@ -12,6 +12,8 @@ class ProjectConfiguration extends sfProjectConfiguration
     public function setup()
     {
         $this->enableAllPluginsExcept(array('sfPropelPlugin', 'sfCompat10Plugin'));
+
+        sfConfig::set('sfDoctrinePlugin_doctrine_lib_path', sfConfig::get('sf_lib_dir') . '/vendor/doctrine/Doctrine.php');
     }
 
   
@@ -23,8 +25,9 @@ class ProjectConfiguration extends sfProjectConfiguration
         //$manager->setAttribute(Doctrine::ATTR_QUERY_CACHE, new Doctrine_Cache_Apc());
 
         $options = array('baseClassName' => 'myDoctrineRecord');
-        sfConfig::set('doctrine_model_builder_options', $options);        
-        sfConfig::set('sfDoctrinePlugin_doctrine_lib_path', sfConfig::get('sf_lib_dir') . '/vendor/doctrine/Doctrine.php');
+        sfConfig::set('doctrine_model_builder_options', $options);
+
+        $manager->setAttribute(Doctrine::ATTR_SEQNAME_FORMAT, '%s_id');
 
     }
 

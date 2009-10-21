@@ -1,0 +1,13 @@
+autoload:
+  FPDF:
+    name:      FPDF
+    path:      %SF_LIB_DIR%/vendor/FPDF
+    recursive: on
+  Doctrine:
+    name:      Doctrine
+    path:      %SF_LIB_DIR%/vendor/Doctrine
+    recursive: on
+  Swift:
+    name:      Swift
+    path:      %SF_LIB_DIR%/vendor/Swift
+    recursive: on
