@@ -3,9 +3,10 @@
 /**
  * IdsContacto form base class.
  *
- * @package    form
- * @subpackage ids_contacto
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseIdsContactoForm extends BaseFormDoctrine
 {
@@ -13,34 +14,34 @@ class BaseIdsContactoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idcontacto'     => new sfWidgetFormInputHidden(),
-      'ca_idsucursal'     => new sfWidgetFormDoctrineSelect(array('model' => 'IdsSucursal', 'add_empty' => true)),
-      'ca_nombres'        => new sfWidgetFormInput(),
-      'ca_papellido'      => new sfWidgetFormInput(),
-      'ca_sapellido'      => new sfWidgetFormInput(),
-      'ca_saludo'         => new sfWidgetFormInput(),
-      'ca_direccion'      => new sfWidgetFormInput(),
-      'ca_telefonos'      => new sfWidgetFormInput(),
-      'ca_fax'            => new sfWidgetFormInput(),
-      'ca_email'          => new sfWidgetFormInput(),
-      'ca_impoexpo'       => new sfWidgetFormInput(),
-      'ca_transporte'     => new sfWidgetFormInput(),
-      'ca_cargo'          => new sfWidgetFormInput(),
-      'ca_departamento'   => new sfWidgetFormInput(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
+      'ca_idsucursal'     => new sfWidgetFormDoctrineChoice(array('model' => 'IdsSucursal', 'add_empty' => true)),
+      'ca_nombres'        => new sfWidgetFormInputText(),
+      'ca_papellido'      => new sfWidgetFormInputText(),
+      'ca_sapellido'      => new sfWidgetFormInputText(),
+      'ca_saludo'         => new sfWidgetFormInputText(),
+      'ca_direccion'      => new sfWidgetFormInputText(),
+      'ca_telefonos'      => new sfWidgetFormInputText(),
+      'ca_fax'            => new sfWidgetFormInputText(),
+      'ca_email'          => new sfWidgetFormInputText(),
+      'ca_impoexpo'       => new sfWidgetFormTextarea(),
+      'ca_transporte'     => new sfWidgetFormTextarea(),
+      'ca_cargo'          => new sfWidgetFormInputText(),
+      'ca_departamento'   => new sfWidgetFormInputText(),
+      'ca_observaciones'  => new sfWidgetFormInputText(),
       'ca_sugerido'       => new sfWidgetFormInputCheckbox(),
-      'ca_visibilidad'    => new sfWidgetFormInput(),
+      'ca_visibilidad'    => new sfWidgetFormInputText(),
       'ca_activo'         => new sfWidgetFormInputCheckbox(),
-      'ca_codigoarea'     => new sfWidgetFormInput(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_codigoarea'     => new sfWidgetFormInputText(),
+      'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormInputText(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
       'ca_fcheliminado'   => new sfWidgetFormDateTime(),
-      'ca_usueliminado'   => new sfWidgetFormInput(),
+      'ca_usueliminado'   => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_idcontacto'     => new sfValidatorDoctrineChoice(array('model' => 'IdsContacto', 'column' => 'ca_idcontacto', 'required' => false)),
+      'ca_idcontacto'     => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idcontacto', 'required' => false)),
       'ca_idsucursal'     => new sfValidatorDoctrineChoice(array('model' => 'IdsSucursal', 'required' => false)),
       'ca_nombres'        => new sfValidatorString(array('max_length' => 60, 'required' => false)),
       'ca_papellido'      => new sfValidatorString(array('max_length' => 60, 'required' => false)),
@@ -70,6 +71,8 @@ class BaseIdsContactoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ids_contacto[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

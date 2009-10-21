@@ -3,9 +3,10 @@
 /**
  * NotTareaAsignacion form base class.
  *
- * @package    form
- * @subpackage not_tarea_asignacion
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseNotTareaAsignacionForm extends BaseFormDoctrine
 {
@@ -17,13 +18,15 @@ class BaseNotTareaAsignacionForm extends BaseFormDoctrine
     ));
 
     $this->setValidators(array(
-      'ca_idtarea' => new sfValidatorDoctrineChoice(array('model' => 'NotTareaAsignacion', 'column' => 'ca_idtarea', 'required' => false)),
-      'ca_login'   => new sfValidatorDoctrineChoice(array('model' => 'NotTareaAsignacion', 'column' => 'ca_login', 'required' => false)),
+      'ca_idtarea' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idtarea', 'required' => false)),
+      'ca_login'   => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_login', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('not_tarea_asignacion[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

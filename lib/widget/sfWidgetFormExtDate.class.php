@@ -1,21 +1,14 @@
 <?php
 
-/*
- * This file is part of the symfony package.
- * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
- * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 /**
- * sfWidgetFormJQueryDate represents a date widget rendered by JQuery UI.
+ * sfWidgetFormExtDate represents a date widget rendered by ExtJs.
  *
- * This widget needs JQuery and JQuery UI to work.
+ * This widget needs ExtJs to work.
  *
- * @package    symfony
+ * @package    colsys
  * @subpackage widget
- * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
+ * @author     Andres Botero
  * @version    SVN: $Id$
  */
 class sfWidgetFormExtDate extends sfWidgetFormDate

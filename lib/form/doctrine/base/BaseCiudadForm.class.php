@@ -3,9 +3,10 @@
 /**
  * Ciudad form base class.
  *
- * @package    form
- * @subpackage ciudad
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseCiudadForm extends BaseFormDoctrine
 {
@@ -13,13 +14,13 @@ class BaseCiudadForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idciudad'  => new sfWidgetFormInputHidden(),
-      'ca_ciudad'    => new sfWidgetFormInput(),
-      'ca_idtrafico' => new sfWidgetFormDoctrineSelect(array('model' => 'Trafico', 'add_empty' => false)),
-      'ca_puerto'    => new sfWidgetFormInput(),
+      'ca_ciudad'    => new sfWidgetFormInputText(),
+      'ca_idtrafico' => new sfWidgetFormDoctrineChoice(array('model' => 'Trafico', 'add_empty' => false)),
+      'ca_puerto'    => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_idciudad'  => new sfValidatorDoctrineChoice(array('model' => 'Ciudad', 'column' => 'ca_idciudad', 'required' => false)),
+      'ca_idciudad'  => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idciudad', 'required' => false)),
       'ca_ciudad'    => new sfValidatorString(array('max_length' => 50)),
       'ca_idtrafico' => new sfValidatorDoctrineChoice(array('model' => 'Trafico')),
       'ca_puerto'    => new sfValidatorString(array('max_length' => 10)),
@@ -28,6 +29,8 @@ class BaseCiudadForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ciudad[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

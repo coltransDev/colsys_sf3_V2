@@ -3,9 +3,10 @@
 /**
  * HdeskGroup form base class.
  *
- * @package    form
- * @subpackage hdesk_group
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseHdeskGroupForm extends BaseFormDoctrine
 {
@@ -13,13 +14,13 @@ class BaseHdeskGroupForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idgroup'         => new sfWidgetFormInputHidden(),
-      'ca_iddepartament'   => new sfWidgetFormDoctrineSelect(array('model' => 'Departamento', 'add_empty' => true)),
-      'ca_name'            => new sfWidgetFormInput(),
-      'ca_maxresponsetime' => new sfWidgetFormInput(),
+      'ca_iddepartament'   => new sfWidgetFormDoctrineChoice(array('model' => 'Departamento', 'add_empty' => true)),
+      'ca_name'            => new sfWidgetFormTextarea(),
+      'ca_maxresponsetime' => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_idgroup'         => new sfValidatorDoctrineChoice(array('model' => 'HdeskGroup', 'column' => 'ca_idgroup', 'required' => false)),
+      'ca_idgroup'         => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idgroup', 'required' => false)),
       'ca_iddepartament'   => new sfValidatorDoctrineChoice(array('model' => 'Departamento', 'required' => false)),
       'ca_name'            => new sfValidatorString(array('required' => false)),
       'ca_maxresponsetime' => new sfValidatorInteger(array('required' => false)),
@@ -28,6 +29,8 @@ class BaseHdeskGroupForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('hdesk_group[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

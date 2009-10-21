@@ -3,9 +3,10 @@
 /**
  * HdeskTicketUser form base class.
  *
- * @package    form
- * @subpackage hdesk_ticket_user
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseHdeskTicketUserForm extends BaseFormDoctrine
 {
@@ -17,13 +18,15 @@ class BaseHdeskTicketUserForm extends BaseFormDoctrine
     ));
 
     $this->setValidators(array(
-      'ca_idticket' => new sfValidatorDoctrineChoice(array('model' => 'HdeskTicketUser', 'column' => 'ca_idticket', 'required' => false)),
-      'ca_login'    => new sfValidatorDoctrineChoice(array('model' => 'HdeskTicketUser', 'column' => 'ca_login', 'required' => false)),
+      'ca_idticket' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idticket', 'required' => false)),
+      'ca_login'    => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_login', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('hdesk_ticket_user[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

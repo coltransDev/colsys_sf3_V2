@@ -3,9 +3,10 @@
 /**
  * myDoctrineRecord form base class.
  *
- * @package    form
- * @subpackage my_doctrine_record
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BasemyDoctrineRecordForm extends BaseFormDoctrine
 {
@@ -16,12 +17,14 @@ class BasemyDoctrineRecordForm extends BaseFormDoctrine
     ));
 
     $this->setValidators(array(
-      'id' => new sfValidatorDoctrineChoice(array('model' => 'myDoctrineRecord', 'column' => 'id', 'required' => false)),
+      'id' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'id', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('my_doctrine_record[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

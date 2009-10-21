@@ -3,9 +3,10 @@
 /**
  * PricPatio form base class.
  *
- * @package    form
- * @subpackage pric_patio
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BasePricPatioForm extends BaseFormDoctrine
 {
@@ -13,13 +14,13 @@ class BasePricPatioForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idpatio'   => new sfWidgetFormInputHidden(),
-      'ca_nombre'    => new sfWidgetFormInput(),
-      'ca_idciudad'  => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_direccion' => new sfWidgetFormInput(),
+      'ca_nombre'    => new sfWidgetFormTextarea(),
+      'ca_idciudad'  => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_direccion' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idpatio'   => new sfValidatorDoctrineChoice(array('model' => 'PricPatio', 'column' => 'ca_idpatio', 'required' => false)),
+      'ca_idpatio'   => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idpatio', 'required' => false)),
       'ca_nombre'    => new sfValidatorString(array('required' => false)),
       'ca_idciudad'  => new sfValidatorDoctrineChoice(array('model' => 'Ciudad', 'required' => false)),
       'ca_direccion' => new sfValidatorString(array('required' => false)),
@@ -28,6 +29,8 @@ class BasePricPatioForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('pric_patio[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

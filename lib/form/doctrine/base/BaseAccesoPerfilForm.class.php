@@ -3,9 +3,10 @@
 /**
  * AccesoPerfil form base class.
  *
- * @package    form
- * @subpackage acceso_perfil
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseAccesoPerfilForm extends BaseFormDoctrine
 {
@@ -14,18 +15,20 @@ class BaseAccesoPerfilForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_rutina' => new sfWidgetFormInputHidden(),
       'ca_perfil' => new sfWidgetFormInputHidden(),
-      'ca_acceso' => new sfWidgetFormInput(),
+      'ca_acceso' => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_rutina' => new sfValidatorDoctrineChoice(array('model' => 'AccesoPerfil', 'column' => 'ca_rutina', 'required' => false)),
-      'ca_perfil' => new sfValidatorDoctrineChoice(array('model' => 'AccesoPerfil', 'column' => 'ca_perfil', 'required' => false)),
+      'ca_rutina' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_rutina', 'required' => false)),
+      'ca_perfil' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_perfil', 'required' => false)),
       'ca_acceso' => new sfValidatorString(array('max_length' => 30, 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('acceso_perfil[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

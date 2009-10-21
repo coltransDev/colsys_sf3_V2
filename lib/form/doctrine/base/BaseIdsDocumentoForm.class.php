@@ -3,9 +3,10 @@
 /**
  * IdsDocumento form base class.
  *
- * @package    form
- * @subpackage ids_documento
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseIdsDocumentoForm extends BaseFormDoctrine
 {
@@ -13,18 +14,18 @@ class BaseIdsDocumentoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_iddocumento'    => new sfWidgetFormInputHidden(),
-      'ca_id'             => new sfWidgetFormDoctrineSelect(array('model' => 'Ids', 'add_empty' => true)),
-      'ca_idtipo'         => new sfWidgetFormDoctrineSelect(array('model' => 'IdsTipoDocumento', 'add_empty' => true)),
-      'ca_ubicacion'      => new sfWidgetFormInput(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
+      'ca_id'             => new sfWidgetFormDoctrineChoice(array('model' => 'Ids', 'add_empty' => true)),
+      'ca_idtipo'         => new sfWidgetFormDoctrineChoice(array('model' => 'IdsTipoDocumento', 'add_empty' => true)),
+      'ca_ubicacion'      => new sfWidgetFormInputText(),
+      'ca_observaciones'  => new sfWidgetFormInputText(),
       'ca_fchinicio'      => new sfWidgetFormDate(),
       'ca_fchvencimiento' => new sfWidgetFormDate(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_iddocumento'    => new sfValidatorDoctrineChoice(array('model' => 'IdsDocumento', 'column' => 'ca_iddocumento', 'required' => false)),
+      'ca_iddocumento'    => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_iddocumento', 'required' => false)),
       'ca_id'             => new sfValidatorDoctrineChoice(array('model' => 'Ids', 'required' => false)),
       'ca_idtipo'         => new sfValidatorDoctrineChoice(array('model' => 'IdsTipoDocumento', 'required' => false)),
       'ca_ubicacion'      => new sfValidatorString(array('max_length' => 255, 'required' => false)),
@@ -38,6 +39,8 @@ class BaseIdsDocumentoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ids_documento[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

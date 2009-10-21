@@ -3,9 +3,10 @@
 /**
  * CotSeguro form base class.
  *
- * @package    form
- * @subpackage cot_seguro
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseCotSeguroForm extends BaseFormDoctrine
 {
@@ -13,22 +14,22 @@ class BaseCotSeguroForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idseguro'       => new sfWidgetFormInputHidden(),
-      'ca_idcotizacion'   => new sfWidgetFormDoctrineSelect(array('model' => 'Cotizacion', 'add_empty' => true)),
-      'ca_idmoneda'       => new sfWidgetFormInput(),
-      'ca_prima_tip'      => new sfWidgetFormInput(),
-      'ca_prima_vlr'      => new sfWidgetFormInput(),
-      'ca_prima_min'      => new sfWidgetFormInput(),
-      'ca_obtencion'      => new sfWidgetFormInput(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
-      'ca_transporte'     => new sfWidgetFormInput(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_idcotizacion'   => new sfWidgetFormDoctrineChoice(array('model' => 'Cotizacion', 'add_empty' => true)),
+      'ca_idmoneda'       => new sfWidgetFormTextarea(),
+      'ca_prima_tip'      => new sfWidgetFormTextarea(),
+      'ca_prima_vlr'      => new sfWidgetFormInputText(),
+      'ca_prima_min'      => new sfWidgetFormInputText(),
+      'ca_obtencion'      => new sfWidgetFormInputText(),
+      'ca_observaciones'  => new sfWidgetFormTextarea(),
+      'ca_transporte'     => new sfWidgetFormTextarea(),
+      'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormInputText(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_idseguro'       => new sfValidatorDoctrineChoice(array('model' => 'CotSeguro', 'column' => 'ca_idseguro', 'required' => false)),
+      'ca_idseguro'       => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idseguro', 'required' => false)),
       'ca_idcotizacion'   => new sfValidatorDoctrineChoice(array('model' => 'Cotizacion', 'required' => false)),
       'ca_idmoneda'       => new sfValidatorString(array('required' => false)),
       'ca_prima_tip'      => new sfValidatorString(array('required' => false)),
@@ -46,6 +47,8 @@ class BaseCotSeguroForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('cot_seguro[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

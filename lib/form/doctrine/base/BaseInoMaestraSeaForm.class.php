@@ -3,9 +3,10 @@
 /**
  * InoMaestraSea form base class.
  *
- * @package    form
- * @subpackage ino_maestra_sea
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseInoMaestraSeaForm extends BaseFormDoctrine
 {
@@ -14,51 +15,51 @@ class BaseInoMaestraSeaForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_referencia'          => new sfWidgetFormInputHidden(),
       'ca_fchreferencia'       => new sfWidgetFormDate(),
-      'ca_impoexpo'            => new sfWidgetFormInput(),
-      'ca_origen'              => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_destino'             => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_impoexpo'            => new sfWidgetFormTextarea(),
+      'ca_origen'              => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_destino'             => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
       'ca_fchembarque'         => new sfWidgetFormDate(),
       'ca_fcharribo'           => new sfWidgetFormDate(),
-      'ca_modalidad'           => new sfWidgetFormInput(),
-      'ca_idlinea'             => new sfWidgetFormDoctrineSelect(array('model' => 'IdsProveedor', 'add_empty' => true)),
-      'ca_motonave'            => new sfWidgetFormInput(),
-      'ca_ciclo'               => new sfWidgetFormInput(),
-      'ca_mbls'                => new sfWidgetFormInput(),
-      'ca_observaciones'       => new sfWidgetFormInput(),
+      'ca_modalidad'           => new sfWidgetFormTextarea(),
+      'ca_idlinea'             => new sfWidgetFormDoctrineChoice(array('model' => 'IdsProveedor', 'add_empty' => true)),
+      'ca_motonave'            => new sfWidgetFormTextarea(),
+      'ca_ciclo'               => new sfWidgetFormTextarea(),
+      'ca_mbls'                => new sfWidgetFormTextarea(),
+      'ca_observaciones'       => new sfWidgetFormTextarea(),
       'ca_fchconfirmacion'     => new sfWidgetFormDate(),
       'ca_horaconfirmacion'    => new sfWidgetFormTime(),
-      'ca_registroadu'         => new sfWidgetFormInput(),
-      'ca_registrocap'         => new sfWidgetFormInput(),
-      'ca_bandera'             => new sfWidgetFormInput(),
+      'ca_registroadu'         => new sfWidgetFormTextarea(),
+      'ca_registrocap'         => new sfWidgetFormTextarea(),
+      'ca_bandera'             => new sfWidgetFormTextarea(),
       'ca_fchliberacion'       => new sfWidgetFormDate(),
-      'ca_nroliberacion'       => new sfWidgetFormInput(),
-      'ca_anulado'             => new sfWidgetFormInput(),
-      'ca_mensaje'             => new sfWidgetFormInput(),
+      'ca_nroliberacion'       => new sfWidgetFormTextarea(),
+      'ca_anulado'             => new sfWidgetFormTextarea(),
+      'ca_mensaje'             => new sfWidgetFormTextarea(),
       'ca_fchdesconsolidacion' => new sfWidgetFormDate(),
-      'ca_mnllegada'           => new sfWidgetFormInput(),
+      'ca_mnllegada'           => new sfWidgetFormTextarea(),
       'ca_fchregistroadu'      => new sfWidgetFormDate(),
-      'ca_asunto_otm'          => new sfWidgetFormInput(),
-      'ca_mensaje_otm'         => new sfWidgetFormInput(),
+      'ca_asunto_otm'          => new sfWidgetFormTextarea(),
+      'ca_mensaje_otm'         => new sfWidgetFormTextarea(),
       'ca_fchllegada_otm'      => new sfWidgetFormDate(),
-      'ca_ciudad_otm'          => new sfWidgetFormInput(),
+      'ca_ciudad_otm'          => new sfWidgetFormTextarea(),
       'ca_provisional'         => new sfWidgetFormInputCheckbox(),
-      'ca_sitiodevolucion'     => new sfWidgetFormInput(),
+      'ca_sitiodevolucion'     => new sfWidgetFormTextarea(),
       'ca_fchcreado'           => new sfWidgetFormDateTime(),
-      'ca_usucreado'           => new sfWidgetFormInput(),
+      'ca_usucreado'           => new sfWidgetFormTextarea(),
       'ca_fchactualizado'      => new sfWidgetFormDateTime(),
-      'ca_usuactualizado'      => new sfWidgetFormInput(),
+      'ca_usuactualizado'      => new sfWidgetFormTextarea(),
       'ca_fchliquidado'        => new sfWidgetFormDateTime(),
-      'ca_usuliquidado'        => new sfWidgetFormInput(),
+      'ca_usuliquidado'        => new sfWidgetFormTextarea(),
       'ca_fchcerrado'          => new sfWidgetFormDateTime(),
-      'ca_usucerrado'          => new sfWidgetFormInput(),
+      'ca_usucerrado'          => new sfWidgetFormTextarea(),
       'ca_fchconfirmado'       => new sfWidgetFormDateTime(),
-      'ca_usuconfirmado'       => new sfWidgetFormInput(),
+      'ca_usuconfirmado'       => new sfWidgetFormTextarea(),
       'ca_fchconfirma_otm'     => new sfWidgetFormDateTime(),
-      'ca_usuconfirma_otm'     => new sfWidgetFormInput(),
+      'ca_usuconfirma_otm'     => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_referencia'          => new sfValidatorDoctrineChoice(array('model' => 'InoMaestraSea', 'column' => 'ca_referencia', 'required' => false)),
+      'ca_referencia'          => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_referencia', 'required' => false)),
       'ca_fchreferencia'       => new sfValidatorDate(array('required' => false)),
       'ca_impoexpo'            => new sfValidatorString(array('required' => false)),
       'ca_origen'              => new sfValidatorDoctrineChoice(array('model' => 'Ciudad', 'required' => false)),
@@ -106,6 +107,8 @@ class BaseInoMaestraSeaForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ino_maestra_sea[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

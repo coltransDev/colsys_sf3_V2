@@ -3,9 +3,10 @@
 /**
  * InoContratosSea form base class.
  *
- * @package    form
- * @subpackage ino_contratos_sea
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseInoContratosSeaForm extends BaseFormDoctrine
 {
@@ -14,20 +15,20 @@ class BaseInoContratosSeaForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_referencia'     => new sfWidgetFormInputHidden(),
       'ca_idequipo'       => new sfWidgetFormInputHidden(),
-      'ca_idcontrato'     => new sfWidgetFormInput(),
+      'ca_idcontrato'     => new sfWidgetFormTextarea(),
       'ca_fchcontrato'    => new sfWidgetFormDate(),
-      'ca_inspeccion_nta' => new sfWidgetFormInput(),
+      'ca_inspeccion_nta' => new sfWidgetFormTextarea(),
       'ca_inspeccion_fch' => new sfWidgetFormDate(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
+      'ca_observaciones'  => new sfWidgetFormTextarea(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormTextarea(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_referencia'     => new sfValidatorDoctrineChoice(array('model' => 'InoContratosSea', 'column' => 'ca_referencia', 'required' => false)),
-      'ca_idequipo'       => new sfValidatorDoctrineChoice(array('model' => 'InoContratosSea', 'column' => 'ca_idequipo', 'required' => false)),
+      'ca_referencia'     => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_referencia', 'required' => false)),
+      'ca_idequipo'       => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idequipo', 'required' => false)),
       'ca_idcontrato'     => new sfValidatorString(array('required' => false)),
       'ca_fchcontrato'    => new sfValidatorDate(array('required' => false)),
       'ca_inspeccion_nta' => new sfValidatorString(array('required' => false)),
@@ -42,6 +43,8 @@ class BaseInoContratosSeaForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ino_contratos_sea[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

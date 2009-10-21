@@ -21,7 +21,7 @@ EOF;
 
   protected function execute($arguments = array(), $options = array())
   {
-    $configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'batch', true);
+    $configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'cli', true);
     
     sfContext::createInstance($configuration)->dispatch();
 		

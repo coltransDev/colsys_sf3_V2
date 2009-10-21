@@ -3,9 +3,10 @@
 /**
  * Email form base class.
  *
- * @package    form
- * @subpackage email
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseEmailForm extends BaseFormDoctrine
 {
@@ -14,23 +15,23 @@ class BaseEmailForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_idemail'     => new sfWidgetFormInputHidden(),
       'ca_fchenvio'    => new sfWidgetFormDateTime(),
-      'ca_usuenvio'    => new sfWidgetFormInput(),
-      'ca_tipo'        => new sfWidgetFormInput(),
-      'ca_idcaso'      => new sfWidgetFormDoctrineSelect(array('model' => 'Reporte', 'add_empty' => true)),
-      'ca_from'        => new sfWidgetFormInput(),
-      'ca_fromname'    => new sfWidgetFormInput(),
-      'ca_cc'          => new sfWidgetFormInput(),
-      'ca_replyto'     => new sfWidgetFormInput(),
-      'ca_address'     => new sfWidgetFormInput(),
-      'ca_attachment'  => new sfWidgetFormInput(),
-      'ca_subject'     => new sfWidgetFormInput(),
-      'ca_body'        => new sfWidgetFormInput(),
-      'ca_bodyhtml'    => new sfWidgetFormInput(),
+      'ca_usuenvio'    => new sfWidgetFormTextarea(),
+      'ca_tipo'        => new sfWidgetFormTextarea(),
+      'ca_idcaso'      => new sfWidgetFormDoctrineChoice(array('model' => 'Reporte', 'add_empty' => true)),
+      'ca_from'        => new sfWidgetFormTextarea(),
+      'ca_fromname'    => new sfWidgetFormTextarea(),
+      'ca_cc'          => new sfWidgetFormTextarea(),
+      'ca_replyto'     => new sfWidgetFormTextarea(),
+      'ca_address'     => new sfWidgetFormTextarea(),
+      'ca_attachment'  => new sfWidgetFormTextarea(),
+      'ca_subject'     => new sfWidgetFormTextarea(),
+      'ca_body'        => new sfWidgetFormTextarea(),
+      'ca_bodyhtml'    => new sfWidgetFormTextarea(),
       'ca_readreceipt' => new sfWidgetFormInputCheckbox(),
     ));
 
     $this->setValidators(array(
-      'ca_idemail'     => new sfValidatorDoctrineChoice(array('model' => 'Email', 'column' => 'ca_idemail', 'required' => false)),
+      'ca_idemail'     => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idemail', 'required' => false)),
       'ca_fchenvio'    => new sfValidatorDateTime(array('required' => false)),
       'ca_usuenvio'    => new sfValidatorString(array('required' => false)),
       'ca_tipo'        => new sfValidatorString(array('required' => false)),
@@ -50,6 +51,8 @@ class BaseEmailForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('email[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

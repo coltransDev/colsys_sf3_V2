@@ -3,9 +3,10 @@
 /**
  * TipoRecargo form base class.
  *
- * @package    form
- * @subpackage tipo_recargo
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseTipoRecargoForm extends BaseFormDoctrine
 {
@@ -13,15 +14,15 @@ class BaseTipoRecargoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idrecargo'  => new sfWidgetFormInputHidden(),
-      'ca_recargo'    => new sfWidgetFormInput(),
-      'ca_tipo'       => new sfWidgetFormInput(),
-      'ca_transporte' => new sfWidgetFormInput(),
-      'ca_incoterms'  => new sfWidgetFormInput(),
-      'ca_impoexpo'   => new sfWidgetFormInput(),
+      'ca_recargo'    => new sfWidgetFormTextarea(),
+      'ca_tipo'       => new sfWidgetFormTextarea(),
+      'ca_transporte' => new sfWidgetFormTextarea(),
+      'ca_incoterms'  => new sfWidgetFormTextarea(),
+      'ca_impoexpo'   => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idrecargo'  => new sfValidatorDoctrineChoice(array('model' => 'TipoRecargo', 'column' => 'ca_idrecargo', 'required' => false)),
+      'ca_idrecargo'  => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idrecargo', 'required' => false)),
       'ca_recargo'    => new sfValidatorString(array('required' => false)),
       'ca_tipo'       => new sfValidatorString(array('required' => false)),
       'ca_transporte' => new sfValidatorString(array('required' => false)),
@@ -32,6 +33,8 @@ class BaseTipoRecargoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('tipo_recargo[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

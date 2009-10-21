@@ -3,9 +3,10 @@
 /**
  * ColNovedad form base class.
  *
- * @package    form
- * @subpackage col_novedad
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseColNovedadForm extends BaseFormDoctrine
 {
@@ -14,18 +15,18 @@ class BaseColNovedadForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_idnovedad'      => new sfWidgetFormInputHidden(),
       'ca_fchpublicacion' => new sfWidgetFormDate(),
-      'ca_asunto'         => new sfWidgetFormInput(),
-      'ca_detalle'        => new sfWidgetFormInput(),
+      'ca_asunto'         => new sfWidgetFormTextarea(),
+      'ca_detalle'        => new sfWidgetFormTextarea(),
       'ca_fcharchivar'    => new sfWidgetFormDate(),
-      'ca_extension'      => new sfWidgetFormInput(),
-      'ca_header_file'    => new sfWidgetFormInput(),
-      'ca_content'        => new sfWidgetFormInput(),
+      'ca_extension'      => new sfWidgetFormTextarea(),
+      'ca_header_file'    => new sfWidgetFormTextarea(),
+      'ca_content'        => new sfWidgetFormTextarea(),
       'ca_fchpublicado'   => new sfWidgetFormDateTime(),
-      'ca_usupublicado'   => new sfWidgetFormInput(),
+      'ca_usupublicado'   => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idnovedad'      => new sfValidatorDoctrineChoice(array('model' => 'ColNovedad', 'column' => 'ca_idnovedad', 'required' => false)),
+      'ca_idnovedad'      => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idnovedad', 'required' => false)),
       'ca_fchpublicacion' => new sfValidatorDate(array('required' => false)),
       'ca_asunto'         => new sfValidatorString(array('required' => false)),
       'ca_detalle'        => new sfValidatorString(array('required' => false)),
@@ -40,6 +41,8 @@ class BaseColNovedadForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('col_novedad[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

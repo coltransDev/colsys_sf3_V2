@@ -3,9 +3,10 @@
 /**
  * RepAduana form base class.
  *
- * @package    form
- * @subpackage rep_aduana
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseRepAduanaForm extends BaseFormDoctrine
 {
@@ -13,17 +14,17 @@ class BaseRepAduanaForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idreporte'      => new sfWidgetFormInputHidden(),
-      'ca_coordinador'    => new sfWidgetFormInput(),
-      'ca_transnacarga'   => new sfWidgetFormInput(),
-      'ca_transnatipo'    => new sfWidgetFormInput(),
+      'ca_coordinador'    => new sfWidgetFormTextarea(),
+      'ca_transnacarga'   => new sfWidgetFormTextarea(),
+      'ca_transnatipo'    => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormTextarea(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idreporte'      => new sfValidatorDoctrineChoice(array('model' => 'RepAduana', 'column' => 'ca_idreporte', 'required' => false)),
+      'ca_idreporte'      => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idreporte', 'required' => false)),
       'ca_coordinador'    => new sfValidatorString(array('required' => false)),
       'ca_transnacarga'   => new sfValidatorString(array('required' => false)),
       'ca_transnatipo'    => new sfValidatorNumber(array('required' => false)),
@@ -36,6 +37,8 @@ class BaseRepAduanaForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('rep_aduana[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

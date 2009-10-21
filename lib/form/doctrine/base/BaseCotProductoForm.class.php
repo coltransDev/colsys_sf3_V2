@@ -3,9 +3,10 @@
 /**
  * CotProducto form base class.
  *
- * @package    form
- * @subpackage cot_producto
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseCotProductoForm extends BaseFormDoctrine
 {
@@ -13,31 +14,31 @@ class BaseCotProductoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idproducto'     => new sfWidgetFormInputHidden(),
-      'ca_idcotizacion'   => new sfWidgetFormDoctrineSelect(array('model' => 'Cotizacion', 'add_empty' => true)),
-      'ca_transporte'     => new sfWidgetFormInput(),
-      'ca_modalidad'      => new sfWidgetFormInput(),
-      'ca_origen'         => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_destino'        => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_escala'         => new sfWidgetFormInput(),
-      'ca_impoexpo'       => new sfWidgetFormInput(),
-      'ca_imprimir'       => new sfWidgetFormInput(),
-      'ca_producto'       => new sfWidgetFormInput(),
-      'ca_incoterms'      => new sfWidgetFormInput(),
-      'ca_frecuencia'     => new sfWidgetFormInput(),
-      'ca_tiempotransito' => new sfWidgetFormInput(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
-      'ca_idlinea'        => new sfWidgetFormDoctrineSelect(array('model' => 'IdsProveedor', 'add_empty' => true)),
+      'ca_idcotizacion'   => new sfWidgetFormDoctrineChoice(array('model' => 'Cotizacion', 'add_empty' => true)),
+      'ca_transporte'     => new sfWidgetFormTextarea(),
+      'ca_modalidad'      => new sfWidgetFormTextarea(),
+      'ca_origen'         => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_destino'        => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_escala'         => new sfWidgetFormTextarea(),
+      'ca_impoexpo'       => new sfWidgetFormTextarea(),
+      'ca_imprimir'       => new sfWidgetFormTextarea(),
+      'ca_producto'       => new sfWidgetFormTextarea(),
+      'ca_incoterms'      => new sfWidgetFormTextarea(),
+      'ca_frecuencia'     => new sfWidgetFormTextarea(),
+      'ca_tiempotransito' => new sfWidgetFormTextarea(),
+      'ca_observaciones'  => new sfWidgetFormTextarea(),
+      'ca_idlinea'        => new sfWidgetFormDoctrineChoice(array('model' => 'IdsProveedor', 'add_empty' => true)),
       'ca_postularlinea'  => new sfWidgetFormInputCheckbox(),
-      'ca_etapa'          => new sfWidgetFormInput(),
-      'ca_idtarea'        => new sfWidgetFormDoctrineSelect(array('model' => 'NotTarea', 'add_empty' => true)),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_etapa'          => new sfWidgetFormTextarea(),
+      'ca_idtarea'        => new sfWidgetFormDoctrineChoice(array('model' => 'NotTarea', 'add_empty' => true)),
+      'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormInputText(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_idproducto'     => new sfValidatorDoctrineChoice(array('model' => 'CotProducto', 'column' => 'ca_idproducto', 'required' => false)),
+      'ca_idproducto'     => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idproducto', 'required' => false)),
       'ca_idcotizacion'   => new sfValidatorDoctrineChoice(array('model' => 'Cotizacion', 'required' => false)),
       'ca_transporte'     => new sfValidatorString(array('required' => false)),
       'ca_modalidad'      => new sfValidatorString(array('required' => false)),
@@ -64,6 +65,8 @@ class BaseCotProductoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('cot_producto[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

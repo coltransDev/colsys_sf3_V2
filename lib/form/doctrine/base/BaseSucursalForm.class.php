@@ -3,9 +3,10 @@
 /**
  * Sucursal form base class.
  *
- * @package    form
- * @subpackage sucursal
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseSucursalForm extends BaseFormDoctrine
 {
@@ -13,14 +14,14 @@ class BaseSucursalForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idsucursal' => new sfWidgetFormInputHidden(),
-      'ca_nombre'     => new sfWidgetFormInput(),
-      'ca_telefono'   => new sfWidgetFormInput(),
-      'ca_fax'        => new sfWidgetFormInput(),
-      'ca_direccion'  => new sfWidgetFormInput(),
+      'ca_nombre'     => new sfWidgetFormInputText(),
+      'ca_telefono'   => new sfWidgetFormTextarea(),
+      'ca_fax'        => new sfWidgetFormTextarea(),
+      'ca_direccion'  => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idsucursal' => new sfValidatorDoctrineChoice(array('model' => 'Sucursal', 'column' => 'ca_idsucursal', 'required' => false)),
+      'ca_idsucursal' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idsucursal', 'required' => false)),
       'ca_nombre'     => new sfValidatorString(array('max_length' => 50, 'required' => false)),
       'ca_telefono'   => new sfValidatorString(array('required' => false)),
       'ca_fax'        => new sfValidatorString(array('required' => false)),
@@ -30,6 +31,8 @@ class BaseSucursalForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('sucursal[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

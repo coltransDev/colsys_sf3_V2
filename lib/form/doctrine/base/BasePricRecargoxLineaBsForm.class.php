@@ -3,9 +3,10 @@
 /**
  * PricRecargoxLineaBs form base class.
  *
- * @package    form
- * @subpackage pric_recargox_linea_bs
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BasePricRecargoxLineaBsForm extends BaseFormDoctrine
 {
@@ -18,27 +19,27 @@ class BasePricRecargoxLineaBsForm extends BaseFormDoctrine
       'ca_idconcepto'     => new sfWidgetFormInputHidden(),
       'ca_modalidad'      => new sfWidgetFormInputHidden(),
       'ca_impoexpo'       => new sfWidgetFormInputHidden(),
-      'ca_vlrrecargo'     => new sfWidgetFormInput(),
-      'ca_aplicacion'     => new sfWidgetFormInput(),
-      'ca_vlrminimo'      => new sfWidgetFormInput(),
-      'ca_aplicacion_min' => new sfWidgetFormInput(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
+      'ca_vlrrecargo'     => new sfWidgetFormInputText(),
+      'ca_aplicacion'     => new sfWidgetFormTextarea(),
+      'ca_vlrminimo'      => new sfWidgetFormInputText(),
+      'ca_aplicacion_min' => new sfWidgetFormTextarea(),
+      'ca_observaciones'  => new sfWidgetFormTextarea(),
       'ca_fchinicio'      => new sfWidgetFormDate(),
       'ca_fchvencimiento' => new sfWidgetFormDate(),
-      'ca_idmoneda'       => new sfWidgetFormInput(),
-      'ca_consecutivo'    => new sfWidgetFormInput(),
+      'ca_idmoneda'       => new sfWidgetFormTextarea(),
+      'ca_consecutivo'    => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormTextarea(),
       'ca_fcheliminado'   => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_idtrafico'      => new sfValidatorDoctrineChoice(array('model' => 'PricRecargoxLineaBs', 'column' => 'ca_idtrafico', 'required' => false)),
-      'ca_idlinea'        => new sfValidatorDoctrineChoice(array('model' => 'PricRecargoxLineaBs', 'column' => 'ca_idlinea', 'required' => false)),
-      'ca_idrecargo'      => new sfValidatorDoctrineChoice(array('model' => 'PricRecargoxLineaBs', 'column' => 'ca_idrecargo', 'required' => false)),
-      'ca_idconcepto'     => new sfValidatorDoctrineChoice(array('model' => 'PricRecargoxLineaBs', 'column' => 'ca_idconcepto', 'required' => false)),
-      'ca_modalidad'      => new sfValidatorDoctrineChoice(array('model' => 'PricRecargoxLineaBs', 'column' => 'ca_modalidad', 'required' => false)),
-      'ca_impoexpo'       => new sfValidatorDoctrineChoice(array('model' => 'PricRecargoxLineaBs', 'column' => 'ca_impoexpo', 'required' => false)),
+      'ca_idtrafico'      => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idtrafico', 'required' => false)),
+      'ca_idlinea'        => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idlinea', 'required' => false)),
+      'ca_idrecargo'      => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idrecargo', 'required' => false)),
+      'ca_idconcepto'     => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idconcepto', 'required' => false)),
+      'ca_modalidad'      => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_modalidad', 'required' => false)),
+      'ca_impoexpo'       => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_impoexpo', 'required' => false)),
       'ca_vlrrecargo'     => new sfValidatorNumber(array('required' => false)),
       'ca_aplicacion'     => new sfValidatorString(array('required' => false)),
       'ca_vlrminimo'      => new sfValidatorNumber(array('required' => false)),
@@ -56,6 +57,8 @@ class BasePricRecargoxLineaBsForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('pric_recargox_linea_bs[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

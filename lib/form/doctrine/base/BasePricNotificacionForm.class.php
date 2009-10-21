@@ -3,9 +3,10 @@
 /**
  * PricNotificacion form base class.
  *
- * @package    form
- * @subpackage pric_notificacion
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BasePricNotificacionForm extends BaseFormDoctrine
 {
@@ -13,15 +14,15 @@ class BasePricNotificacionForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idnotificacion' => new sfWidgetFormInputHidden(),
-      'ca_titulo'         => new sfWidgetFormInput(),
-      'ca_mensaje'        => new sfWidgetFormInput(),
-      'ca_caducidad'      => new sfWidgetFormInput(),
+      'ca_titulo'         => new sfWidgetFormTextarea(),
+      'ca_mensaje'        => new sfWidgetFormTextarea(),
+      'ca_caducidad'      => new sfWidgetFormTextarea(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idnotificacion' => new sfValidatorDoctrineChoice(array('model' => 'PricNotificacion', 'column' => 'ca_idnotificacion', 'required' => false)),
+      'ca_idnotificacion' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idnotificacion', 'required' => false)),
       'ca_titulo'         => new sfValidatorString(array('required' => false)),
       'ca_mensaje'        => new sfValidatorString(array('required' => false)),
       'ca_caducidad'      => new sfValidatorString(array('required' => false)),
@@ -32,6 +33,8 @@ class BasePricNotificacionForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('pric_notificacion[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

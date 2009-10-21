@@ -36,6 +36,7 @@
  * @property Doctrine_Collection $Contacto
  * @property Usuario $Usuario
  * @property Ciudad $Ciudad
+ * @property Doctrine_Collection $InoCliente
  * @property Doctrine_Collection $InoClientesSea
  * 
  * @package    ##PACKAGE##
@@ -150,6 +151,10 @@ abstract class BaseCliente extends myDoctrineRecord
         $this->hasOne('Ciudad', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_idciudad'));
+
+        $this->hasMany('InoCliente', array(
+             'local' => 'ca_idcliente',
+             'foreign' => 'ca_idcliente'));
 
         $this->hasMany('InoClientesSea', array(
              'local' => 'ca_idcliente',

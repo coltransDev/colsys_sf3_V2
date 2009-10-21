@@ -3,9 +3,10 @@
 /**
  * EmailAttachment form base class.
  *
- * @package    form
- * @subpackage email_attachment
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseEmailAttachmentForm extends BaseFormDoctrine
 {
@@ -13,15 +14,15 @@ class BaseEmailAttachmentForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idattachment' => new sfWidgetFormInputHidden(),
-      'ca_idemail'      => new sfWidgetFormDoctrineSelect(array('model' => 'Email', 'add_empty' => true)),
-      'ca_extension'    => new sfWidgetFormInput(),
-      'ca_header_file'  => new sfWidgetFormInput(),
-      'ca_filesize'     => new sfWidgetFormInput(),
+      'ca_idemail'      => new sfWidgetFormDoctrineChoice(array('model' => 'Email', 'add_empty' => true)),
+      'ca_extension'    => new sfWidgetFormTextarea(),
+      'ca_header_file'  => new sfWidgetFormTextarea(),
+      'ca_filesize'     => new sfWidgetFormTextarea(),
       'ca_content'      => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idattachment' => new sfValidatorDoctrineChoice(array('model' => 'EmailAttachment', 'column' => 'ca_idattachment', 'required' => false)),
+      'ca_idattachment' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idattachment', 'required' => false)),
       'ca_idemail'      => new sfValidatorDoctrineChoice(array('model' => 'Email', 'required' => false)),
       'ca_extension'    => new sfValidatorString(array('required' => false)),
       'ca_header_file'  => new sfValidatorString(array('required' => false)),
@@ -32,6 +33,8 @@ class BaseEmailAttachmentForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('email_attachment[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

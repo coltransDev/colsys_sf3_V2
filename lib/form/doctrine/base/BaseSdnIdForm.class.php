@@ -3,9 +3,10 @@
 /**
  * SdnId form base class.
  *
- * @package    form
- * @subpackage sdn_id
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseSdnIdForm extends BaseFormDoctrine
 {
@@ -14,16 +15,16 @@ class BaseSdnIdForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_uid'            => new sfWidgetFormInputHidden(),
       'ca_uid_id'         => new sfWidgetFormInputHidden(),
-      'ca_idType'         => new sfWidgetFormInput(),
-      'ca_idNumber'       => new sfWidgetFormInput(),
-      'ca_idCountry'      => new sfWidgetFormInput(),
-      'ca_issueDate'      => new sfWidgetFormInput(),
-      'ca_expirationDate' => new sfWidgetFormInput(),
+      'ca_idType'         => new sfWidgetFormTextarea(),
+      'ca_idNumber'       => new sfWidgetFormTextarea(),
+      'ca_idCountry'      => new sfWidgetFormTextarea(),
+      'ca_issueDate'      => new sfWidgetFormTextarea(),
+      'ca_expirationDate' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_uid'            => new sfValidatorDoctrineChoice(array('model' => 'SdnId', 'column' => 'ca_uid', 'required' => false)),
-      'ca_uid_id'         => new sfValidatorDoctrineChoice(array('model' => 'SdnId', 'column' => 'ca_uid_id', 'required' => false)),
+      'ca_uid'            => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_uid', 'required' => false)),
+      'ca_uid_id'         => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_uid_id', 'required' => false)),
       'ca_idType'         => new sfValidatorString(array('required' => false)),
       'ca_idNumber'       => new sfValidatorString(array('required' => false)),
       'ca_idCountry'      => new sfValidatorString(array('required' => false)),
@@ -34,6 +35,8 @@ class BaseSdnIdForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('sdn_id[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

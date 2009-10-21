@@ -3,9 +3,10 @@
 /**
  * UsuarioPerfil form base class.
  *
- * @package    form
- * @subpackage usuario_perfil
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseUsuarioPerfilForm extends BaseFormDoctrine
 {
@@ -17,13 +18,15 @@ class BaseUsuarioPerfilForm extends BaseFormDoctrine
     ));
 
     $this->setValidators(array(
-      'ca_login'  => new sfValidatorDoctrineChoice(array('model' => 'UsuarioPerfil', 'column' => 'ca_login', 'required' => false)),
-      'ca_perfil' => new sfValidatorDoctrineChoice(array('model' => 'UsuarioPerfil', 'column' => 'ca_perfil', 'required' => false)),
+      'ca_login'  => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_login', 'required' => false)),
+      'ca_perfil' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_perfil', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('usuario_perfil[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

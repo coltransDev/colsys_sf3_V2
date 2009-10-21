@@ -3,9 +3,10 @@
 /**
  * SdnAddress form base class.
  *
- * @package    form
- * @subpackage sdn_address
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseSdnAddressForm extends BaseFormDoctrine
 {
@@ -14,18 +15,18 @@ class BaseSdnAddressForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_uid'         => new sfWidgetFormInputHidden(),
       'ca_uid_address' => new sfWidgetFormInputHidden(),
-      'ca_address1'    => new sfWidgetFormInput(),
-      'ca_address2'    => new sfWidgetFormInput(),
-      'ca_address3'    => new sfWidgetFormInput(),
-      'ca_city'        => new sfWidgetFormInput(),
-      'ca_state'       => new sfWidgetFormInput(),
-      'ca_postal'      => new sfWidgetFormInput(),
-      'ca_country'     => new sfWidgetFormInput(),
+      'ca_address1'    => new sfWidgetFormTextarea(),
+      'ca_address2'    => new sfWidgetFormTextarea(),
+      'ca_address3'    => new sfWidgetFormTextarea(),
+      'ca_city'        => new sfWidgetFormTextarea(),
+      'ca_state'       => new sfWidgetFormTextarea(),
+      'ca_postal'      => new sfWidgetFormTextarea(),
+      'ca_country'     => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_uid'         => new sfValidatorDoctrineChoice(array('model' => 'SdnAddress', 'column' => 'ca_uid', 'required' => false)),
-      'ca_uid_address' => new sfValidatorDoctrineChoice(array('model' => 'SdnAddress', 'column' => 'ca_uid_address', 'required' => false)),
+      'ca_uid'         => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_uid', 'required' => false)),
+      'ca_uid_address' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_uid_address', 'required' => false)),
       'ca_address1'    => new sfValidatorString(array('required' => false)),
       'ca_address2'    => new sfValidatorString(array('required' => false)),
       'ca_address3'    => new sfValidatorString(array('required' => false)),
@@ -38,6 +39,8 @@ class BaseSdnAddressForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('sdn_address[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

@@ -3,9 +3,10 @@
 /**
  * CotContinuacion form base class.
  *
- * @package    form
- * @subpackage cot_continuacion
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseCotContinuacionForm extends BaseFormDoctrine
 {
@@ -13,27 +14,27 @@ class BaseCotContinuacionForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idcontinuacion' => new sfWidgetFormInputHidden(),
-      'ca_idcotizacion'   => new sfWidgetFormDoctrineSelect(array('model' => 'Cotizacion', 'add_empty' => true)),
-      'ca_tipo'           => new sfWidgetFormInput(),
-      'ca_modalidad'      => new sfWidgetFormInput(),
-      'ca_origen'         => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_destino'        => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_idconcepto'     => new sfWidgetFormDoctrineSelect(array('model' => 'Concepto', 'add_empty' => true)),
-      'ca_idequipo'       => new sfWidgetFormDoctrineSelect(array('model' => 'Concepto', 'add_empty' => true)),
-      'ca_idmoneda'       => new sfWidgetFormInput(),
-      'ca_frecuencia'     => new sfWidgetFormInput(),
-      'ca_tiempotransito' => new sfWidgetFormInput(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
-      'ca_valor_tar'      => new sfWidgetFormInput(),
-      'ca_valor_min'      => new sfWidgetFormInput(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_idcotizacion'   => new sfWidgetFormDoctrineChoice(array('model' => 'Cotizacion', 'add_empty' => true)),
+      'ca_tipo'           => new sfWidgetFormTextarea(),
+      'ca_modalidad'      => new sfWidgetFormTextarea(),
+      'ca_origen'         => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_destino'        => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_idconcepto'     => new sfWidgetFormDoctrineChoice(array('model' => 'Concepto', 'add_empty' => true)),
+      'ca_idequipo'       => new sfWidgetFormDoctrineChoice(array('model' => 'Concepto', 'add_empty' => true)),
+      'ca_idmoneda'       => new sfWidgetFormTextarea(),
+      'ca_frecuencia'     => new sfWidgetFormTextarea(),
+      'ca_tiempotransito' => new sfWidgetFormTextarea(),
+      'ca_observaciones'  => new sfWidgetFormTextarea(),
+      'ca_valor_tar'      => new sfWidgetFormInputText(),
+      'ca_valor_min'      => new sfWidgetFormInputText(),
+      'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormInputText(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_idcontinuacion' => new sfValidatorDoctrineChoice(array('model' => 'CotContinuacion', 'column' => 'ca_idcontinuacion', 'required' => false)),
+      'ca_idcontinuacion' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idcontinuacion', 'required' => false)),
       'ca_idcotizacion'   => new sfValidatorDoctrineChoice(array('model' => 'Cotizacion', 'required' => false)),
       'ca_tipo'           => new sfValidatorString(array('required' => false)),
       'ca_modalidad'      => new sfValidatorString(array('required' => false)),
@@ -56,6 +57,8 @@ class BaseCotContinuacionForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('cot_continuacion[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

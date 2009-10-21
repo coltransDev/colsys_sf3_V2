@@ -3,9 +3,10 @@
 /**
  * TrackingEtapa form base class.
  *
- * @package    form
- * @subpackage tracking_etapa
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseTrackingEtapaForm extends BaseFormDoctrine
 {
@@ -13,22 +14,22 @@ class BaseTrackingEtapaForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idetapa'         => new sfWidgetFormInputHidden(),
-      'ca_impoexpo'        => new sfWidgetFormInput(),
-      'ca_transporte'      => new sfWidgetFormInput(),
-      'ca_departamento'    => new sfWidgetFormInput(),
-      'ca_etapa'           => new sfWidgetFormInput(),
-      'ca_orden'           => new sfWidgetFormInput(),
-      'ca_ttl'             => new sfWidgetFormInput(),
-      'ca_class'           => new sfWidgetFormInput(),
-      'ca_template'        => new sfWidgetFormInput(),
-      'ca_message'         => new sfWidgetFormInput(),
-      'ca_message_default' => new sfWidgetFormInput(),
-      'ca_intro'           => new sfWidgetFormInput(),
-      'ca_title'           => new sfWidgetFormInput(),
+      'ca_impoexpo'        => new sfWidgetFormTextarea(),
+      'ca_transporte'      => new sfWidgetFormTextarea(),
+      'ca_departamento'    => new sfWidgetFormTextarea(),
+      'ca_etapa'           => new sfWidgetFormTextarea(),
+      'ca_orden'           => new sfWidgetFormInputText(),
+      'ca_ttl'             => new sfWidgetFormInputText(),
+      'ca_class'           => new sfWidgetFormTextarea(),
+      'ca_template'        => new sfWidgetFormTextarea(),
+      'ca_message'         => new sfWidgetFormTextarea(),
+      'ca_message_default' => new sfWidgetFormTextarea(),
+      'ca_intro'           => new sfWidgetFormTextarea(),
+      'ca_title'           => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idetapa'         => new sfValidatorDoctrineChoice(array('model' => 'TrackingEtapa', 'column' => 'ca_idetapa', 'required' => false)),
+      'ca_idetapa'         => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idetapa', 'required' => false)),
       'ca_impoexpo'        => new sfValidatorString(array('required' => false)),
       'ca_transporte'      => new sfValidatorString(array('required' => false)),
       'ca_departamento'    => new sfValidatorString(array('required' => false)),
@@ -46,6 +47,8 @@ class BaseTrackingEtapaForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('tracking_etapa[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

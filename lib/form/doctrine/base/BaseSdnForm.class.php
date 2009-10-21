@@ -3,9 +3,10 @@
 /**
  * Sdn form base class.
  *
- * @package    form
- * @subpackage sdn
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseSdnForm extends BaseFormDoctrine
 {
@@ -13,15 +14,15 @@ class BaseSdnForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_uid'       => new sfWidgetFormInputHidden(),
-      'ca_firstName' => new sfWidgetFormInput(),
-      'ca_lastName'  => new sfWidgetFormInput(),
-      'ca_title'     => new sfWidgetFormInput(),
-      'ca_sdnType'   => new sfWidgetFormInput(),
-      'ca_remarks'   => new sfWidgetFormInput(),
+      'ca_firstName' => new sfWidgetFormTextarea(),
+      'ca_lastName'  => new sfWidgetFormTextarea(),
+      'ca_title'     => new sfWidgetFormTextarea(),
+      'ca_sdnType'   => new sfWidgetFormTextarea(),
+      'ca_remarks'   => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_uid'       => new sfValidatorDoctrineChoice(array('model' => 'Sdn', 'column' => 'ca_uid', 'required' => false)),
+      'ca_uid'       => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_uid', 'required' => false)),
       'ca_firstName' => new sfValidatorString(array('required' => false)),
       'ca_lastName'  => new sfValidatorString(array('required' => false)),
       'ca_title'     => new sfValidatorString(array('required' => false)),
@@ -32,6 +33,8 @@ class BaseSdnForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('sdn[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

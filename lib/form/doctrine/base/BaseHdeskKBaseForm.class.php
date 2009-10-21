@@ -3,9 +3,10 @@
 /**
  * HdeskKBase form base class.
  *
- * @package    form
- * @subpackage hdesk_k_base
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseHdeskKBaseForm extends BaseFormDoctrine
 {
@@ -13,16 +14,16 @@ class BaseHdeskKBaseForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idkbase'    => new sfWidgetFormInputHidden(),
-      'ca_idcategory' => new sfWidgetFormDoctrineSelect(array('model' => 'HdeskKBaseCategory', 'add_empty' => true)),
-      'ca_login'      => new sfWidgetFormInput(),
+      'ca_idcategory' => new sfWidgetFormDoctrineChoice(array('model' => 'HdeskKBaseCategory', 'add_empty' => true)),
+      'ca_login'      => new sfWidgetFormTextarea(),
       'ca_createdat'  => new sfWidgetFormDateTime(),
-      'ca_text'       => new sfWidgetFormInput(),
-      'ca_title'      => new sfWidgetFormInput(),
+      'ca_text'       => new sfWidgetFormTextarea(),
+      'ca_title'      => new sfWidgetFormTextarea(),
       'ca_private'    => new sfWidgetFormInputCheckbox(),
     ));
 
     $this->setValidators(array(
-      'ca_idkbase'    => new sfValidatorDoctrineChoice(array('model' => 'HdeskKBase', 'column' => 'ca_idkbase', 'required' => false)),
+      'ca_idkbase'    => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idkbase', 'required' => false)),
       'ca_idcategory' => new sfValidatorDoctrineChoice(array('model' => 'HdeskKBaseCategory', 'required' => false)),
       'ca_login'      => new sfValidatorString(array('required' => false)),
       'ca_createdat'  => new sfValidatorDateTime(array('required' => false)),
@@ -34,6 +35,8 @@ class BaseHdeskKBaseForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('hdesk_k_base[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

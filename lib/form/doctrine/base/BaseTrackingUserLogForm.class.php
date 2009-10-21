@@ -3,9 +3,10 @@
 /**
  * TrackingUserLog form base class.
  *
- * @package    form
- * @subpackage tracking_user_log
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseTrackingUserLogForm extends BaseFormDoctrine
 {
@@ -13,16 +14,16 @@ class BaseTrackingUserLogForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_id'        => new sfWidgetFormInputHidden(),
-      'ca_email'     => new sfWidgetFormDoctrineSelect(array('model' => 'TrackingUser', 'add_empty' => true)),
+      'ca_email'     => new sfWidgetFormDoctrineChoice(array('model' => 'TrackingUser', 'add_empty' => true)),
       'ca_fchevento' => new sfWidgetFormDateTime(),
-      'ca_url'       => new sfWidgetFormInput(),
-      'ca_evento'    => new sfWidgetFormInput(),
-      'ca_ipaddress' => new sfWidgetFormInput(),
-      'ca_useragent' => new sfWidgetFormInput(),
+      'ca_url'       => new sfWidgetFormTextarea(),
+      'ca_evento'    => new sfWidgetFormTextarea(),
+      'ca_ipaddress' => new sfWidgetFormTextarea(),
+      'ca_useragent' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_id'        => new sfValidatorDoctrineChoice(array('model' => 'TrackingUserLog', 'column' => 'ca_id', 'required' => false)),
+      'ca_id'        => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_id', 'required' => false)),
       'ca_email'     => new sfValidatorDoctrineChoice(array('model' => 'TrackingUser', 'required' => false)),
       'ca_fchevento' => new sfValidatorDateTime(array('required' => false)),
       'ca_url'       => new sfValidatorString(array('required' => false)),
@@ -34,6 +35,8 @@ class BaseTrackingUserLogForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('tracking_user_log[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

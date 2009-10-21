@@ -3,9 +3,10 @@
 /**
  * Sia form base class.
  *
- * @package    form
- * @subpackage sia
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseSiaForm extends BaseFormDoctrine
 {
@@ -13,13 +14,13 @@ class BaseSiaForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idsia'    => new sfWidgetFormInputHidden(),
-      'ca_nombre'   => new sfWidgetFormInput(),
-      'ca_tel'      => new sfWidgetFormInput(),
-      'ca_contacto' => new sfWidgetFormInput(),
+      'ca_nombre'   => new sfWidgetFormTextarea(),
+      'ca_tel'      => new sfWidgetFormTextarea(),
+      'ca_contacto' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idsia'    => new sfValidatorDoctrineChoice(array('model' => 'Sia', 'column' => 'ca_idsia', 'required' => false)),
+      'ca_idsia'    => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idsia', 'required' => false)),
       'ca_nombre'   => new sfValidatorString(array('required' => false)),
       'ca_tel'      => new sfValidatorString(array('required' => false)),
       'ca_contacto' => new sfValidatorString(array('required' => false)),
@@ -28,6 +29,8 @@ class BaseSiaForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('sia[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

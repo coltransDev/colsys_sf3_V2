@@ -3,9 +3,10 @@
 /**
  * Tercero form base class.
  *
- * @package    form
- * @subpackage tercero
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseTerceroForm extends BaseFormDoctrine
 {
@@ -13,20 +14,20 @@ class BaseTerceroForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idtercero'      => new sfWidgetFormInputHidden(),
-      'ca_nombre'         => new sfWidgetFormInput(),
-      'ca_contacto'       => new sfWidgetFormInput(),
-      'ca_direccion'      => new sfWidgetFormInput(),
-      'ca_telefonos'      => new sfWidgetFormInput(),
-      'ca_fax'            => new sfWidgetFormInput(),
-      'ca_idciudad'       => new sfWidgetFormInput(),
-      'ca_email'          => new sfWidgetFormInput(),
-      'ca_vendedor'       => new sfWidgetFormInput(),
-      'ca_tipo'           => new sfWidgetFormInput(),
-      'ca_identificacion' => new sfWidgetFormInput(),
+      'ca_nombre'         => new sfWidgetFormTextarea(),
+      'ca_contacto'       => new sfWidgetFormTextarea(),
+      'ca_direccion'      => new sfWidgetFormTextarea(),
+      'ca_telefonos'      => new sfWidgetFormTextarea(),
+      'ca_fax'            => new sfWidgetFormTextarea(),
+      'ca_idciudad'       => new sfWidgetFormTextarea(),
+      'ca_email'          => new sfWidgetFormTextarea(),
+      'ca_vendedor'       => new sfWidgetFormTextarea(),
+      'ca_tipo'           => new sfWidgetFormTextarea(),
+      'ca_identificacion' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idtercero'      => new sfValidatorDoctrineChoice(array('model' => 'Tercero', 'column' => 'ca_idtercero', 'required' => false)),
+      'ca_idtercero'      => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idtercero', 'required' => false)),
       'ca_nombre'         => new sfValidatorString(array('required' => false)),
       'ca_contacto'       => new sfValidatorString(array('required' => false)),
       'ca_direccion'      => new sfValidatorString(array('required' => false)),
@@ -42,6 +43,8 @@ class BaseTerceroForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('tercero[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

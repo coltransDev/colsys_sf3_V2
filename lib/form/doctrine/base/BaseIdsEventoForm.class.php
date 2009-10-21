@@ -3,9 +3,10 @@
 /**
  * IdsEvento form base class.
  *
- * @package    form
- * @subpackage ids_evento
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseIdsEventoForm extends BaseFormDoctrine
 {
@@ -13,16 +14,16 @@ class BaseIdsEventoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idevento'   => new sfWidgetFormInputHidden(),
-      'ca_id'         => new sfWidgetFormDoctrineSelect(array('model' => 'Ids', 'add_empty' => true)),
-      'ca_evento'     => new sfWidgetFormInput(),
-      'ca_referencia' => new sfWidgetFormInput(),
-      'ca_idcriterio' => new sfWidgetFormDoctrineSelect(array('model' => 'IdsCriterio', 'add_empty' => true)),
-      'ca_usucreado'  => new sfWidgetFormInput(),
+      'ca_id'         => new sfWidgetFormDoctrineChoice(array('model' => 'Ids', 'add_empty' => true)),
+      'ca_evento'     => new sfWidgetFormTextarea(),
+      'ca_referencia' => new sfWidgetFormInputText(),
+      'ca_idcriterio' => new sfWidgetFormDoctrineChoice(array('model' => 'IdsCriterio', 'add_empty' => true)),
+      'ca_usucreado'  => new sfWidgetFormInputText(),
       'ca_fchcreado'  => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_idevento'   => new sfValidatorDoctrineChoice(array('model' => 'IdsEvento', 'column' => 'ca_idevento', 'required' => false)),
+      'ca_idevento'   => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idevento', 'required' => false)),
       'ca_id'         => new sfValidatorDoctrineChoice(array('model' => 'Ids', 'required' => false)),
       'ca_evento'     => new sfValidatorString(array('required' => false)),
       'ca_referencia' => new sfValidatorString(array('max_length' => 16, 'required' => false)),
@@ -34,6 +35,8 @@ class BaseIdsEventoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ids_evento[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

@@ -3,9 +3,10 @@
 /**
  * UsuarioLog form base class.
  *
- * @package    form
- * @subpackage usuario_log
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseUsuarioLogForm extends BaseFormDoctrine
 {
@@ -13,16 +14,16 @@ class BaseUsuarioLogForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_id'        => new sfWidgetFormInputHidden(),
-      'ca_login'     => new sfWidgetFormDoctrineSelect(array('model' => 'Usuario', 'add_empty' => true)),
+      'ca_login'     => new sfWidgetFormDoctrineChoice(array('model' => 'Usuario', 'add_empty' => true)),
       'ca_fchevento' => new sfWidgetFormDateTime(),
-      'ca_url'       => new sfWidgetFormInput(),
-      'ca_event'     => new sfWidgetFormInput(),
-      'ca_ipaddress' => new sfWidgetFormInput(),
-      'ca_useragent' => new sfWidgetFormInput(),
+      'ca_url'       => new sfWidgetFormTextarea(),
+      'ca_event'     => new sfWidgetFormTextarea(),
+      'ca_ipaddress' => new sfWidgetFormTextarea(),
+      'ca_useragent' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_id'        => new sfValidatorDoctrineChoice(array('model' => 'UsuarioLog', 'column' => 'ca_id', 'required' => false)),
+      'ca_id'        => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_id', 'required' => false)),
       'ca_login'     => new sfValidatorDoctrineChoice(array('model' => 'Usuario', 'required' => false)),
       'ca_fchevento' => new sfValidatorDateTime(array('required' => false)),
       'ca_url'       => new sfValidatorString(array('required' => false)),
@@ -34,6 +35,8 @@ class BaseUsuarioLogForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('usuario_log[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

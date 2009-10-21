@@ -3,27 +3,28 @@
 /**
  * PricFleteBs form base class.
  *
- * @package    form
- * @subpackage pric_flete_bs
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BasePricFleteBsForm extends BaseFormDoctrine
 {
   public function setup()
   {
     $this->setWidgets(array(
-      'ca_idtrayecto'     => new sfWidgetFormInput(),
-      'ca_idconcepto'     => new sfWidgetFormDoctrineSelect(array('model' => 'Concepto', 'add_empty' => true)),
-      'ca_vlrneto'        => new sfWidgetFormInput(),
-      'ca_vlrsugerido'    => new sfWidgetFormInput(),
+      'ca_idtrayecto'     => new sfWidgetFormInputText(),
+      'ca_idconcepto'     => new sfWidgetFormDoctrineChoice(array('model' => 'Concepto', 'add_empty' => true)),
+      'ca_vlrneto'        => new sfWidgetFormInputText(),
+      'ca_vlrsugerido'    => new sfWidgetFormInputText(),
       'ca_fchinicio'      => new sfWidgetFormDate(),
       'ca_fchvencimiento' => new sfWidgetFormDate(),
-      'ca_idmoneda'       => new sfWidgetFormInput(),
-      'ca_estado'         => new sfWidgetFormInput(),
-      'ca_aplicacion'     => new sfWidgetFormInput(),
+      'ca_idmoneda'       => new sfWidgetFormTextarea(),
+      'ca_estado'         => new sfWidgetFormTextarea(),
+      'ca_aplicacion'     => new sfWidgetFormTextarea(),
       'ca_consecutivo'    => new sfWidgetFormInputHidden(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormTextarea(),
       'ca_fcheliminado'   => new sfWidgetFormDateTime(),
     ));
 
@@ -37,7 +38,7 @@ class BasePricFleteBsForm extends BaseFormDoctrine
       'ca_idmoneda'       => new sfValidatorString(array('required' => false)),
       'ca_estado'         => new sfValidatorString(array('required' => false)),
       'ca_aplicacion'     => new sfValidatorString(array('required' => false)),
-      'ca_consecutivo'    => new sfValidatorDoctrineChoice(array('model' => 'PricFleteBs', 'column' => 'ca_consecutivo', 'required' => false)),
+      'ca_consecutivo'    => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_consecutivo', 'required' => false)),
       'ca_fchcreado'      => new sfValidatorDateTime(array('required' => false)),
       'ca_usucreado'      => new sfValidatorString(array('required' => false)),
       'ca_fcheliminado'   => new sfValidatorDateTime(array('required' => false)),
@@ -46,6 +47,8 @@ class BasePricFleteBsForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('pric_flete_bs[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

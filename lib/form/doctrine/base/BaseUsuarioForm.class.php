@@ -3,9 +3,10 @@
 /**
  * Usuario form base class.
  *
- * @package    form
- * @subpackage usuario
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseUsuarioForm extends BaseFormDoctrine
 {
@@ -13,22 +14,22 @@ class BaseUsuarioForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_login'        => new sfWidgetFormInputHidden(),
-      'ca_nombre'       => new sfWidgetFormInput(),
-      'ca_cargo'        => new sfWidgetFormInput(),
-      'ca_departamento' => new sfWidgetFormInput(),
-      'ca_email'        => new sfWidgetFormInput(),
-      'ca_extension'    => new sfWidgetFormInput(),
-      'ca_idsucursal'   => new sfWidgetFormDoctrineSelect(array('model' => 'Sucursal', 'add_empty' => true)),
-      'ca_authmethod'   => new sfWidgetFormInput(),
-      'ca_passwd'       => new sfWidgetFormInput(),
-      'ca_salt'         => new sfWidgetFormInput(),
+      'ca_nombre'       => new sfWidgetFormInputText(),
+      'ca_cargo'        => new sfWidgetFormInputText(),
+      'ca_departamento' => new sfWidgetFormInputText(),
+      'ca_email'        => new sfWidgetFormInputText(),
+      'ca_extension'    => new sfWidgetFormInputText(),
+      'ca_idsucursal'   => new sfWidgetFormDoctrineChoice(array('model' => 'Sucursal', 'add_empty' => true)),
+      'ca_authmethod'   => new sfWidgetFormInputText(),
+      'ca_passwd'       => new sfWidgetFormInputText(),
+      'ca_salt'         => new sfWidgetFormInputText(),
       'ca_activo'       => new sfWidgetFormInputCheckbox(),
       'ca_forcechange'  => new sfWidgetFormInputCheckbox(),
-      'ca_sucursal'     => new sfWidgetFormInput(),
+      'ca_sucursal'     => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_login'        => new sfValidatorDoctrineChoice(array('model' => 'Usuario', 'column' => 'ca_login', 'required' => false)),
+      'ca_login'        => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_login', 'required' => false)),
       'ca_nombre'       => new sfValidatorString(array('max_length' => 250, 'required' => false)),
       'ca_cargo'        => new sfValidatorString(array('max_length' => 40, 'required' => false)),
       'ca_departamento' => new sfValidatorString(array('max_length' => 50, 'required' => false)),
@@ -46,6 +47,8 @@ class BaseUsuarioForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('usuario[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

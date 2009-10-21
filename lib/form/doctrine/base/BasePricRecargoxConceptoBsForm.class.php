@@ -3,29 +3,30 @@
 /**
  * PricRecargoxConceptoBs form base class.
  *
- * @package    form
- * @subpackage pric_recargox_concepto_bs
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BasePricRecargoxConceptoBsForm extends BaseFormDoctrine
 {
   public function setup()
   {
     $this->setWidgets(array(
-      'ca_idtrayecto'     => new sfWidgetFormInput(),
-      'ca_idconcepto'     => new sfWidgetFormDoctrineSelect(array('model' => 'Concepto', 'add_empty' => true)),
-      'ca_idrecargo'      => new sfWidgetFormDoctrineSelect(array('model' => 'TipoRecargo', 'add_empty' => true)),
-      'ca_vlrrecargo'     => new sfWidgetFormInput(),
-      'ca_aplicacion'     => new sfWidgetFormInput(),
-      'ca_vlrminimo'      => new sfWidgetFormInput(),
-      'ca_aplicacion_min' => new sfWidgetFormInput(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
+      'ca_idtrayecto'     => new sfWidgetFormInputText(),
+      'ca_idconcepto'     => new sfWidgetFormDoctrineChoice(array('model' => 'Concepto', 'add_empty' => true)),
+      'ca_idrecargo'      => new sfWidgetFormDoctrineChoice(array('model' => 'TipoRecargo', 'add_empty' => true)),
+      'ca_vlrrecargo'     => new sfWidgetFormInputText(),
+      'ca_aplicacion'     => new sfWidgetFormTextarea(),
+      'ca_vlrminimo'      => new sfWidgetFormInputText(),
+      'ca_aplicacion_min' => new sfWidgetFormTextarea(),
+      'ca_observaciones'  => new sfWidgetFormTextarea(),
       'ca_fchinicio'      => new sfWidgetFormDate(),
       'ca_fchvencimiento' => new sfWidgetFormDate(),
-      'ca_idmoneda'       => new sfWidgetFormInput(),
+      'ca_idmoneda'       => new sfWidgetFormTextarea(),
       'ca_consecutivo'    => new sfWidgetFormInputHidden(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormTextarea(),
       'ca_fcheliminado'   => new sfWidgetFormDateTime(),
     ));
 
@@ -41,7 +42,7 @@ class BasePricRecargoxConceptoBsForm extends BaseFormDoctrine
       'ca_fchinicio'      => new sfValidatorDate(array('required' => false)),
       'ca_fchvencimiento' => new sfValidatorDate(array('required' => false)),
       'ca_idmoneda'       => new sfValidatorString(array('required' => false)),
-      'ca_consecutivo'    => new sfValidatorDoctrineChoice(array('model' => 'PricRecargoxConceptoBs', 'column' => 'ca_consecutivo', 'required' => false)),
+      'ca_consecutivo'    => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_consecutivo', 'required' => false)),
       'ca_fchcreado'      => new sfValidatorDateTime(array('required' => false)),
       'ca_usucreado'      => new sfValidatorString(array('required' => false)),
       'ca_fcheliminado'   => new sfValidatorDateTime(array('required' => false)),
@@ -50,6 +51,8 @@ class BasePricRecargoxConceptoBsForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('pric_recargox_concepto_bs[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

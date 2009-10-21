@@ -3,9 +3,10 @@
 /**
  * Concepto form base class.
  *
- * @package    form
- * @subpackage concepto
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseConceptoForm extends BaseFormDoctrine
 {
@@ -13,15 +14,15 @@ class BaseConceptoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idconcepto'  => new sfWidgetFormInputHidden(),
-      'ca_concepto'    => new sfWidgetFormInput(),
-      'ca_unidad'      => new sfWidgetFormInput(),
-      'ca_transporte'  => new sfWidgetFormInput(),
-      'ca_modalidad'   => new sfWidgetFormInput(),
-      'ca_liminferior' => new sfWidgetFormInput(),
+      'ca_concepto'    => new sfWidgetFormTextarea(),
+      'ca_unidad'      => new sfWidgetFormTextarea(),
+      'ca_transporte'  => new sfWidgetFormTextarea(),
+      'ca_modalidad'   => new sfWidgetFormTextarea(),
+      'ca_liminferior' => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_idconcepto'  => new sfValidatorDoctrineChoice(array('model' => 'Concepto', 'column' => 'ca_idconcepto', 'required' => false)),
+      'ca_idconcepto'  => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idconcepto', 'required' => false)),
       'ca_concepto'    => new sfValidatorString(array('required' => false)),
       'ca_unidad'      => new sfValidatorString(array('required' => false)),
       'ca_transporte'  => new sfValidatorString(array('required' => false)),
@@ -32,6 +33,8 @@ class BaseConceptoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('concepto[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

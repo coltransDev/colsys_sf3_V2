@@ -3,9 +3,10 @@
 /**
  * CotContactoAg form base class.
  *
- * @package    form
- * @subpackage cot_contacto_ag
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseCotContactoAgForm extends BaseFormDoctrine
 {
@@ -17,13 +18,15 @@ class BaseCotContactoAgForm extends BaseFormDoctrine
     ));
 
     $this->setValidators(array(
-      'ca_idcontacto'   => new sfValidatorDoctrineChoice(array('model' => 'CotContactoAg', 'column' => 'ca_idcontacto', 'required' => false)),
-      'ca_idcotizacion' => new sfValidatorDoctrineChoice(array('model' => 'CotContactoAg', 'column' => 'ca_idcotizacion', 'required' => false)),
+      'ca_idcontacto'   => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idcontacto', 'required' => false)),
+      'ca_idcotizacion' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idcotizacion', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('cot_contacto_ag[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

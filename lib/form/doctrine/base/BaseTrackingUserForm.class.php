@@ -3,9 +3,10 @@
 /**
  * TrackingUser form base class.
  *
- * @package    form
- * @subpackage tracking_user
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseTrackingUserForm extends BaseFormDoctrine
 {
@@ -14,15 +15,15 @@ class BaseTrackingUserForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_email'           => new sfWidgetFormInputHidden(),
       'ca_blocked'         => new sfWidgetFormInputCheckbox(),
-      'ca_activation_code' => new sfWidgetFormInput(),
-      'ca_passwd'          => new sfWidgetFormInput(),
+      'ca_activation_code' => new sfWidgetFormTextarea(),
+      'ca_passwd'          => new sfWidgetFormTextarea(),
       'ca_password_expiry' => new sfWidgetFormDate(),
       'ca_activated'       => new sfWidgetFormInputCheckbox(),
-      'ca_idcontacto'      => new sfWidgetFormDoctrineSelect(array('model' => 'Contacto', 'add_empty' => true)),
+      'ca_idcontacto'      => new sfWidgetFormDoctrineChoice(array('model' => 'Contacto', 'add_empty' => true)),
     ));
 
     $this->setValidators(array(
-      'ca_email'           => new sfValidatorDoctrineChoice(array('model' => 'TrackingUser', 'column' => 'ca_email', 'required' => false)),
+      'ca_email'           => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_email', 'required' => false)),
       'ca_blocked'         => new sfValidatorBoolean(array('required' => false)),
       'ca_activation_code' => new sfValidatorString(array('required' => false)),
       'ca_passwd'          => new sfValidatorString(array('required' => false)),
@@ -34,6 +35,8 @@ class BaseTrackingUserForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('tracking_user[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

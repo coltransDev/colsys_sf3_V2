@@ -3,9 +3,10 @@
 /**
  * CotRecargo form base class.
  *
- * @package    form
- * @subpackage cot_recargo
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseCotRecargoForm extends BaseFormDoctrine
 {
@@ -13,27 +14,27 @@ class BaseCotRecargoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idcotrecargo'   => new sfWidgetFormInputHidden(),
-      'ca_idcotizacion'   => new sfWidgetFormInput(),
-      'ca_idproducto'     => new sfWidgetFormInput(),
-      'ca_idopcion'       => new sfWidgetFormInput(),
-      'ca_idconcepto'     => new sfWidgetFormDoctrineSelect(array('model' => 'Concepto', 'add_empty' => true)),
-      'ca_idrecargo'      => new sfWidgetFormDoctrineSelect(array('model' => 'TipoRecargo', 'add_empty' => true)),
-      'ca_modalidad'      => new sfWidgetFormInput(),
-      'ca_valor_tar'      => new sfWidgetFormInput(),
-      'ca_aplica_tar'     => new sfWidgetFormInput(),
-      'ca_valor_min'      => new sfWidgetFormInput(),
-      'ca_aplica_min'     => new sfWidgetFormInput(),
-      'ca_idmoneda'       => new sfWidgetFormInput(),
-      'ca_observaciones'  => new sfWidgetFormInput(),
-      'ca_consecutivo'    => new sfWidgetFormInput(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_idcotizacion'   => new sfWidgetFormInputText(),
+      'ca_idproducto'     => new sfWidgetFormInputText(),
+      'ca_idopcion'       => new sfWidgetFormInputText(),
+      'ca_idconcepto'     => new sfWidgetFormDoctrineChoice(array('model' => 'Concepto', 'add_empty' => true)),
+      'ca_idrecargo'      => new sfWidgetFormDoctrineChoice(array('model' => 'TipoRecargo', 'add_empty' => true)),
+      'ca_modalidad'      => new sfWidgetFormTextarea(),
+      'ca_valor_tar'      => new sfWidgetFormInputText(),
+      'ca_aplica_tar'     => new sfWidgetFormTextarea(),
+      'ca_valor_min'      => new sfWidgetFormInputText(),
+      'ca_aplica_min'     => new sfWidgetFormTextarea(),
+      'ca_idmoneda'       => new sfWidgetFormTextarea(),
+      'ca_observaciones'  => new sfWidgetFormTextarea(),
+      'ca_consecutivo'    => new sfWidgetFormInputText(),
+      'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormInputText(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_idcotrecargo'   => new sfValidatorDoctrineChoice(array('model' => 'CotRecargo', 'column' => 'ca_idcotrecargo', 'required' => false)),
+      'ca_idcotrecargo'   => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idcotrecargo', 'required' => false)),
       'ca_idcotizacion'   => new sfValidatorInteger(array('required' => false)),
       'ca_idproducto'     => new sfValidatorInteger(array('required' => false)),
       'ca_idopcion'       => new sfValidatorInteger(array('required' => false)),
@@ -56,6 +57,8 @@ class BaseCotRecargoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('cot_recargo[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

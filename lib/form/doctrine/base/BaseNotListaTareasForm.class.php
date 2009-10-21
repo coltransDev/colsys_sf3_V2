@@ -3,9 +3,10 @@
 /**
  * NotListaTareas form base class.
  *
- * @package    form
- * @subpackage not_lista_tareas
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseNotListaTareasForm extends BaseFormDoctrine
 {
@@ -13,12 +14,12 @@ class BaseNotListaTareasForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idlistatarea' => new sfWidgetFormInputHidden(),
-      'ca_nombre'       => new sfWidgetFormInput(),
-      'ca_descripcion'  => new sfWidgetFormInput(),
+      'ca_nombre'       => new sfWidgetFormTextarea(),
+      'ca_descripcion'  => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idlistatarea' => new sfValidatorDoctrineChoice(array('model' => 'NotListaTareas', 'column' => 'ca_idlistatarea', 'required' => false)),
+      'ca_idlistatarea' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idlistatarea', 'required' => false)),
       'ca_nombre'       => new sfValidatorString(array('required' => false)),
       'ca_descripcion'  => new sfValidatorString(array('required' => false)),
     ));
@@ -26,6 +27,8 @@ class BaseNotListaTareasForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('not_lista_tareas[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

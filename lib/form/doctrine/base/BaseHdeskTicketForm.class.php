@@ -3,9 +3,10 @@
 /**
  * HdeskTicket form base class.
  *
- * @package    form
- * @subpackage hdesk_ticket
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseHdeskTicketForm extends BaseFormDoctrine
 {
@@ -13,26 +14,26 @@ class BaseHdeskTicketForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idticket'       => new sfWidgetFormInputHidden(),
-      'ca_idgroup'        => new sfWidgetFormDoctrineSelect(array('model' => 'HdeskGroup', 'add_empty' => true)),
-      'ca_idproject'      => new sfWidgetFormDoctrineSelect(array('model' => 'HdeskProject', 'add_empty' => true)),
-      'ca_login'          => new sfWidgetFormDoctrineSelect(array('model' => 'Usuario', 'add_empty' => true)),
-      'ca_title'          => new sfWidgetFormInput(),
-      'ca_text'           => new sfWidgetFormInput(),
-      'ca_priority'       => new sfWidgetFormInput(),
+      'ca_idgroup'        => new sfWidgetFormDoctrineChoice(array('model' => 'HdeskGroup', 'add_empty' => true)),
+      'ca_idproject'      => new sfWidgetFormDoctrineChoice(array('model' => 'HdeskProject', 'add_empty' => true)),
+      'ca_login'          => new sfWidgetFormDoctrineChoice(array('model' => 'Usuario', 'add_empty' => true)),
+      'ca_title'          => new sfWidgetFormInputText(),
+      'ca_text'           => new sfWidgetFormTextarea(),
+      'ca_priority'       => new sfWidgetFormInputText(),
       'ca_opened'         => new sfWidgetFormDateTime(),
-      'ca_type'           => new sfWidgetFormInput(),
-      'ca_assignedto'     => new sfWidgetFormInput(),
-      'ca_action'         => new sfWidgetFormInput(),
+      'ca_type'           => new sfWidgetFormInputText(),
+      'ca_assignedto'     => new sfWidgetFormInputText(),
+      'ca_action'         => new sfWidgetFormInputText(),
       'ca_responsetime'   => new sfWidgetFormDateTime(),
-      'ca_idtarea'        => new sfWidgetFormDoctrineSelect(array('model' => 'NotTarea', 'add_empty' => true)),
-      'ca_idseguimiento'  => new sfWidgetFormInput(),
-      'ca_order'          => new sfWidgetFormInput(),
-      'ca_estimatedhours' => new sfWidgetFormInput(),
-      'ca_percentage'     => new sfWidgetFormInput(),
+      'ca_idtarea'        => new sfWidgetFormDoctrineChoice(array('model' => 'NotTarea', 'add_empty' => true)),
+      'ca_idseguimiento'  => new sfWidgetFormInputText(),
+      'ca_order'          => new sfWidgetFormInputText(),
+      'ca_estimatedhours' => new sfWidgetFormInputText(),
+      'ca_percentage'     => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_idticket'       => new sfValidatorDoctrineChoice(array('model' => 'HdeskTicket', 'column' => 'ca_idticket', 'required' => false)),
+      'ca_idticket'       => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idticket', 'required' => false)),
       'ca_idgroup'        => new sfValidatorDoctrineChoice(array('model' => 'HdeskGroup', 'required' => false)),
       'ca_idproject'      => new sfValidatorDoctrineChoice(array('model' => 'HdeskProject', 'required' => false)),
       'ca_login'          => new sfValidatorDoctrineChoice(array('model' => 'Usuario', 'required' => false)),
@@ -54,6 +55,8 @@ class BaseHdeskTicketForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('hdesk_ticket[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

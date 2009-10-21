@@ -3,9 +3,10 @@
 /**
  * IdsEvaluacion form base class.
  *
- * @package    form
- * @subpackage ids_evaluacion
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseIdsEvaluacionForm extends BaseFormDoctrine
 {
@@ -13,18 +14,18 @@ class BaseIdsEvaluacionForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idevaluacion'   => new sfWidgetFormInputHidden(),
-      'ca_id'             => new sfWidgetFormDoctrineSelect(array('model' => 'Ids', 'add_empty' => true)),
-      'ca_tipo'           => new sfWidgetFormInput(),
-      'ca_concepto'       => new sfWidgetFormInput(),
+      'ca_id'             => new sfWidgetFormDoctrineChoice(array('model' => 'Ids', 'add_empty' => true)),
+      'ca_tipo'           => new sfWidgetFormInputText(),
+      'ca_concepto'       => new sfWidgetFormInputText(),
       'ca_fchevaluacion'  => new sfWidgetFormDate(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormInputText(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_idevaluacion'   => new sfValidatorDoctrineChoice(array('model' => 'IdsEvaluacion', 'column' => 'ca_idevaluacion', 'required' => false)),
+      'ca_idevaluacion'   => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idevaluacion', 'required' => false)),
       'ca_id'             => new sfValidatorDoctrineChoice(array('model' => 'Ids', 'required' => false)),
       'ca_tipo'           => new sfValidatorString(array('max_length' => 15, 'required' => false)),
       'ca_concepto'       => new sfValidatorString(array('max_length' => 15, 'required' => false)),
@@ -38,6 +39,8 @@ class BaseIdsEvaluacionForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ids_evaluacion[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

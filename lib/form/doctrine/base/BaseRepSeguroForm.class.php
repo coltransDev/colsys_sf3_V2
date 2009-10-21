@@ -3,9 +3,10 @@
 /**
  * RepSeguro form base class.
  *
- * @package    form
- * @subpackage rep_seguro
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseRepSeguroForm extends BaseFormDoctrine
 {
@@ -13,18 +14,18 @@ class BaseRepSeguroForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idreporte'       => new sfWidgetFormInputHidden(),
-      'ca_vlrasegurado'    => new sfWidgetFormInput(),
-      'ca_idmoneda_vlr'    => new sfWidgetFormInput(),
-      'ca_primaventa'      => new sfWidgetFormInput(),
-      'ca_minimaventa'     => new sfWidgetFormInput(),
-      'ca_idmoneda_vta'    => new sfWidgetFormInput(),
-      'ca_obtencionpoliza' => new sfWidgetFormInput(),
-      'ca_idmoneda_pol'    => new sfWidgetFormInput(),
-      'ca_seguro_conf'     => new sfWidgetFormInput(),
+      'ca_vlrasegurado'    => new sfWidgetFormInputText(),
+      'ca_idmoneda_vlr'    => new sfWidgetFormTextarea(),
+      'ca_primaventa'      => new sfWidgetFormInputText(),
+      'ca_minimaventa'     => new sfWidgetFormInputText(),
+      'ca_idmoneda_vta'    => new sfWidgetFormTextarea(),
+      'ca_obtencionpoliza' => new sfWidgetFormInputText(),
+      'ca_idmoneda_pol'    => new sfWidgetFormTextarea(),
+      'ca_seguro_conf'     => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idreporte'       => new sfValidatorDoctrineChoice(array('model' => 'RepSeguro', 'column' => 'ca_idreporte', 'required' => false)),
+      'ca_idreporte'       => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idreporte', 'required' => false)),
       'ca_vlrasegurado'    => new sfValidatorNumber(array('required' => false)),
       'ca_idmoneda_vlr'    => new sfValidatorString(array('required' => false)),
       'ca_primaventa'      => new sfValidatorNumber(array('required' => false)),
@@ -38,6 +39,8 @@ class BaseRepSeguroForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('rep_seguro[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

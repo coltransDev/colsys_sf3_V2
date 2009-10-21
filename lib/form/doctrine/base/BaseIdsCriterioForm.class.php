@@ -3,9 +3,10 @@
 /**
  * IdsCriterio form base class.
  *
- * @package    form
- * @subpackage ids_criterio
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseIdsCriterioForm extends BaseFormDoctrine
 {
@@ -13,19 +14,19 @@ class BaseIdsCriterioForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idcriterio'     => new sfWidgetFormInputHidden(),
-      'ca_tipo'           => new sfWidgetFormInput(),
-      'ca_criterio'       => new sfWidgetFormInput(),
-      'ca_ponderacion'    => new sfWidgetFormInput(),
-      'ca_tipocriterio'   => new sfWidgetFormInput(),
+      'ca_tipo'           => new sfWidgetFormInputText(),
+      'ca_criterio'       => new sfWidgetFormInputText(),
+      'ca_ponderacion'    => new sfWidgetFormInputText(),
+      'ca_tipocriterio'   => new sfWidgetFormInputText(),
       'ca_activo'         => new sfWidgetFormInputCheckbox(),
-      'ca_usucreado'      => new sfWidgetFormInput(),
+      'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
-      'ca_usuactualizado' => new sfWidgetFormInput(),
+      'ca_usuactualizado' => new sfWidgetFormInputText(),
       'ca_fchactualizado' => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_idcriterio'     => new sfValidatorDoctrineChoice(array('model' => 'IdsCriterio', 'column' => 'ca_idcriterio', 'required' => false)),
+      'ca_idcriterio'     => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idcriterio', 'required' => false)),
       'ca_tipo'           => new sfValidatorString(array('max_length' => 3, 'required' => false)),
       'ca_criterio'       => new sfValidatorString(array('max_length' => 60, 'required' => false)),
       'ca_ponderacion'    => new sfValidatorInteger(array('required' => false)),
@@ -40,6 +41,8 @@ class BaseIdsCriterioForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ids_criterio[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

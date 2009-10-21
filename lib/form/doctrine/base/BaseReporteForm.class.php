@@ -3,9 +3,10 @@
 /**
  * Reporte form base class.
  *
- * @package    form
- * @subpackage reporte
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseReporteForm extends BaseFormDoctrine
 {
@@ -14,65 +15,65 @@ class BaseReporteForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_idreporte'         => new sfWidgetFormInputHidden(),
       'ca_fchreporte'        => new sfWidgetFormDate(),
-      'ca_consecutivo'       => new sfWidgetFormInput(),
-      'ca_version'           => new sfWidgetFormInput(),
-      'ca_idcotizacion'      => new sfWidgetFormInput(),
-      'ca_origen'            => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_destino'           => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_impoexpo'          => new sfWidgetFormInput(),
+      'ca_consecutivo'       => new sfWidgetFormTextarea(),
+      'ca_version'           => new sfWidgetFormInputText(),
+      'ca_idcotizacion'      => new sfWidgetFormInputText(),
+      'ca_origen'            => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_destino'           => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_impoexpo'          => new sfWidgetFormTextarea(),
       'ca_fchdespacho'       => new sfWidgetFormDate(),
-      'ca_idagente'          => new sfWidgetFormDoctrineSelect(array('model' => 'IdsAgente', 'add_empty' => true)),
-      'ca_incoterms'         => new sfWidgetFormInput(),
-      'ca_mercancia_desc'    => new sfWidgetFormInput(),
-      'ca_idproveedor'       => new sfWidgetFormDoctrineSelect(array('model' => 'Tercero', 'add_empty' => true)),
-      'ca_orden_prov'        => new sfWidgetFormInput(),
-      'ca_idconcliente'      => new sfWidgetFormDoctrineSelect(array('model' => 'Contacto', 'add_empty' => true)),
-      'ca_orden_clie'        => new sfWidgetFormInput(),
-      'ca_confirmar_clie'    => new sfWidgetFormInput(),
-      'ca_idrepresentante'   => new sfWidgetFormInput(),
-      'ca_informar_repr'     => new sfWidgetFormInput(),
-      'ca_idconsignatario'   => new sfWidgetFormInput(),
-      'ca_informar_cons'     => new sfWidgetFormInput(),
-      'ca_idnotify'          => new sfWidgetFormInput(),
-      'ca_informar_noti'     => new sfWidgetFormInput(),
-      'ca_idmaster'          => new sfWidgetFormInput(),
-      'ca_informar_mast'     => new sfWidgetFormInput(),
-      'ca_notify'            => new sfWidgetFormInput(),
-      'ca_transporte'        => new sfWidgetFormInput(),
-      'ca_modalidad'         => new sfWidgetFormInput(),
-      'ca_seguro'            => new sfWidgetFormInput(),
-      'ca_liberacion'        => new sfWidgetFormInput(),
-      'ca_tiempocredito'     => new sfWidgetFormInput(),
-      'ca_preferencias_clie' => new sfWidgetFormInput(),
-      'ca_instrucciones'     => new sfWidgetFormInput(),
-      'ca_idlinea'           => new sfWidgetFormDoctrineSelect(array('model' => 'IdsProveedor', 'add_empty' => true)),
-      'ca_idconsignar'       => new sfWidgetFormInput(),
-      'ca_idconsignarmaster' => new sfWidgetFormInput(),
-      'ca_idbodega'          => new sfWidgetFormDoctrineSelect(array('model' => 'Bodega', 'add_empty' => true)),
-      'ca_mastersame'        => new sfWidgetFormInput(),
-      'ca_continuacion'      => new sfWidgetFormInput(),
-      'ca_continuacion_dest' => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_continuacion_conf' => new sfWidgetFormInput(),
-      'ca_etapa_actual'      => new sfWidgetFormInput(),
-      'ca_login'             => new sfWidgetFormDoctrineSelect(array('model' => 'Usuario', 'add_empty' => true)),
-      'ca_colmas'            => new sfWidgetFormInput(),
-      'ca_propiedades'       => new sfWidgetFormInput(),
-      'ca_idetapa'           => new sfWidgetFormDoctrineSelect(array('model' => 'TrackingEtapa', 'add_empty' => true)),
+      'ca_idagente'          => new sfWidgetFormDoctrineChoice(array('model' => 'IdsAgente', 'add_empty' => true)),
+      'ca_incoterms'         => new sfWidgetFormTextarea(),
+      'ca_mercancia_desc'    => new sfWidgetFormTextarea(),
+      'ca_idproveedor'       => new sfWidgetFormDoctrineChoice(array('model' => 'Tercero', 'add_empty' => true)),
+      'ca_orden_prov'        => new sfWidgetFormTextarea(),
+      'ca_idconcliente'      => new sfWidgetFormDoctrineChoice(array('model' => 'Contacto', 'add_empty' => true)),
+      'ca_orden_clie'        => new sfWidgetFormTextarea(),
+      'ca_confirmar_clie'    => new sfWidgetFormTextarea(),
+      'ca_idrepresentante'   => new sfWidgetFormInputText(),
+      'ca_informar_repr'     => new sfWidgetFormTextarea(),
+      'ca_idconsignatario'   => new sfWidgetFormInputText(),
+      'ca_informar_cons'     => new sfWidgetFormTextarea(),
+      'ca_idnotify'          => new sfWidgetFormInputText(),
+      'ca_informar_noti'     => new sfWidgetFormTextarea(),
+      'ca_idmaster'          => new sfWidgetFormInputText(),
+      'ca_informar_mast'     => new sfWidgetFormTextarea(),
+      'ca_notify'            => new sfWidgetFormInputText(),
+      'ca_transporte'        => new sfWidgetFormTextarea(),
+      'ca_modalidad'         => new sfWidgetFormTextarea(),
+      'ca_seguro'            => new sfWidgetFormTextarea(),
+      'ca_liberacion'        => new sfWidgetFormTextarea(),
+      'ca_tiempocredito'     => new sfWidgetFormTextarea(),
+      'ca_preferencias_clie' => new sfWidgetFormTextarea(),
+      'ca_instrucciones'     => new sfWidgetFormTextarea(),
+      'ca_idlinea'           => new sfWidgetFormDoctrineChoice(array('model' => 'IdsProveedor', 'add_empty' => true)),
+      'ca_idconsignar'       => new sfWidgetFormInputText(),
+      'ca_idconsignarmaster' => new sfWidgetFormInputText(),
+      'ca_idbodega'          => new sfWidgetFormDoctrineChoice(array('model' => 'Bodega', 'add_empty' => true)),
+      'ca_mastersame'        => new sfWidgetFormTextarea(),
+      'ca_continuacion'      => new sfWidgetFormTextarea(),
+      'ca_continuacion_dest' => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_continuacion_conf' => new sfWidgetFormTextarea(),
+      'ca_etapa_actual'      => new sfWidgetFormTextarea(),
+      'ca_login'             => new sfWidgetFormDoctrineChoice(array('model' => 'Usuario', 'add_empty' => true)),
+      'ca_colmas'            => new sfWidgetFormTextarea(),
+      'ca_propiedades'       => new sfWidgetFormTextarea(),
+      'ca_idetapa'           => new sfWidgetFormDoctrineChoice(array('model' => 'TrackingEtapa', 'add_empty' => true)),
       'ca_fchultstatus'      => new sfWidgetFormDateTime(),
-      'ca_idtarea_rext'      => new sfWidgetFormInput(),
-      'ca_idseguimiento'     => new sfWidgetFormDoctrineSelect(array('model' => 'NotTarea', 'add_empty' => true)),
+      'ca_idtarea_rext'      => new sfWidgetFormInputText(),
+      'ca_idseguimiento'     => new sfWidgetFormDoctrineChoice(array('model' => 'NotTarea', 'add_empty' => true)),
       'ca_fchcreado'         => new sfWidgetFormDateTime(),
-      'ca_usucreado'         => new sfWidgetFormInput(),
+      'ca_usucreado'         => new sfWidgetFormTextarea(),
       'ca_fchactualizado'    => new sfWidgetFormDateTime(),
-      'ca_usuactualizado'    => new sfWidgetFormInput(),
+      'ca_usuactualizado'    => new sfWidgetFormTextarea(),
       'ca_fchanulado'        => new sfWidgetFormDateTime(),
-      'ca_usuanulado'        => new sfWidgetFormInput(),
+      'ca_usuanulado'        => new sfWidgetFormTextarea(),
       'ca_fchcerrado'        => new sfWidgetFormDateTime(),
-      'ca_usucerrado'        => new sfWidgetFormInput(),
+      'ca_usucerrado'        => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idreporte'         => new sfValidatorDoctrineChoice(array('model' => 'Reporte', 'column' => 'ca_idreporte', 'required' => false)),
+      'ca_idreporte'         => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idreporte', 'required' => false)),
       'ca_fchreporte'        => new sfValidatorDate(array('required' => false)),
       'ca_consecutivo'       => new sfValidatorString(array('required' => false)),
       'ca_version'           => new sfValidatorInteger(array('required' => false)),
@@ -134,6 +135,8 @@ class BaseReporteForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('reporte[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

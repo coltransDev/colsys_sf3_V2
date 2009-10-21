@@ -3,9 +3,10 @@
 /**
  * Bodega form base class.
  *
- * @package    form
- * @subpackage bodega
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseBodegaForm extends BaseFormDoctrine
 {
@@ -13,13 +14,13 @@ class BaseBodegaForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idbodega'   => new sfWidgetFormInputHidden(),
-      'ca_nombre'     => new sfWidgetFormInput(),
-      'ca_tipo'       => new sfWidgetFormInput(),
-      'ca_transporte' => new sfWidgetFormInput(),
+      'ca_nombre'     => new sfWidgetFormTextarea(),
+      'ca_tipo'       => new sfWidgetFormTextarea(),
+      'ca_transporte' => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idbodega'   => new sfValidatorDoctrineChoice(array('model' => 'Bodega', 'column' => 'ca_idbodega', 'required' => false)),
+      'ca_idbodega'   => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idbodega', 'required' => false)),
       'ca_nombre'     => new sfValidatorString(array('required' => false)),
       'ca_tipo'       => new sfValidatorString(array('required' => false)),
       'ca_transporte' => new sfValidatorString(array('required' => false)),
@@ -28,6 +29,8 @@ class BaseBodegaForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('bodega[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

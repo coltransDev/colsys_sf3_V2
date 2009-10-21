@@ -3,9 +3,10 @@
 /**
  * Cliente form base class.
  *
- * @package    form
- * @subpackage cliente
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseClienteForm extends BaseFormDoctrine
 {
@@ -13,37 +14,37 @@ class BaseClienteForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idcliente'    => new sfWidgetFormInputHidden(),
-      'ca_digito'       => new sfWidgetFormInput(),
-      'ca_compania'     => new sfWidgetFormInput(),
-      'ca_papellido'    => new sfWidgetFormInput(),
-      'ca_sapellido'    => new sfWidgetFormInput(),
-      'ca_nombres'      => new sfWidgetFormInput(),
-      'ca_saludo'       => new sfWidgetFormInput(),
-      'ca_sexo'         => new sfWidgetFormInput(),
-      'ca_cumpleanos'   => new sfWidgetFormInput(),
-      'ca_oficina'      => new sfWidgetFormInput(),
-      'ca_email'        => new sfWidgetFormInput(),
-      'ca_vendedor'     => new sfWidgetFormDoctrineSelect(array('model' => 'Usuario', 'add_empty' => true)),
-      'ca_coordinador'  => new sfWidgetFormInput(),
-      'ca_direccion'    => new sfWidgetFormInput(),
-      'ca_torre'        => new sfWidgetFormInput(),
-      'ca_bloque'       => new sfWidgetFormInput(),
-      'ca_interior'     => new sfWidgetFormInput(),
-      'ca_localidad'    => new sfWidgetFormInput(),
-      'ca_complemento'  => new sfWidgetFormInput(),
-      'ca_telefonos'    => new sfWidgetFormInput(),
-      'ca_fax'          => new sfWidgetFormInput(),
-      'ca_preferencias' => new sfWidgetFormInput(),
-      'ca_confirmar'    => new sfWidgetFormInput(),
-      'ca_idciudad'     => new sfWidgetFormDoctrineSelect(array('model' => 'Ciudad', 'add_empty' => true)),
-      'ca_idgrupo'      => new sfWidgetFormInput(),
-      'ca_listaclinton' => new sfWidgetFormInput(),
+      'ca_digito'       => new sfWidgetFormInputText(),
+      'ca_compania'     => new sfWidgetFormTextarea(),
+      'ca_papellido'    => new sfWidgetFormTextarea(),
+      'ca_sapellido'    => new sfWidgetFormTextarea(),
+      'ca_nombres'      => new sfWidgetFormTextarea(),
+      'ca_saludo'       => new sfWidgetFormTextarea(),
+      'ca_sexo'         => new sfWidgetFormTextarea(),
+      'ca_cumpleanos'   => new sfWidgetFormTextarea(),
+      'ca_oficina'      => new sfWidgetFormTextarea(),
+      'ca_email'        => new sfWidgetFormTextarea(),
+      'ca_vendedor'     => new sfWidgetFormDoctrineChoice(array('model' => 'Usuario', 'add_empty' => true)),
+      'ca_coordinador'  => new sfWidgetFormTextarea(),
+      'ca_direccion'    => new sfWidgetFormTextarea(),
+      'ca_torre'        => new sfWidgetFormTextarea(),
+      'ca_bloque'       => new sfWidgetFormTextarea(),
+      'ca_interior'     => new sfWidgetFormTextarea(),
+      'ca_localidad'    => new sfWidgetFormTextarea(),
+      'ca_complemento'  => new sfWidgetFormTextarea(),
+      'ca_telefonos'    => new sfWidgetFormTextarea(),
+      'ca_fax'          => new sfWidgetFormTextarea(),
+      'ca_preferencias' => new sfWidgetFormTextarea(),
+      'ca_confirmar'    => new sfWidgetFormTextarea(),
+      'ca_idciudad'     => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
+      'ca_idgrupo'      => new sfWidgetFormTextarea(),
+      'ca_listaclinton' => new sfWidgetFormTextarea(),
       'ca_fchcircular'  => new sfWidgetFormDate(),
-      'ca_status'       => new sfWidgetFormInput(),
+      'ca_status'       => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idcliente'    => new sfValidatorDoctrineChoice(array('model' => 'Cliente', 'column' => 'ca_idcliente', 'required' => false)),
+      'ca_idcliente'    => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idcliente', 'required' => false)),
       'ca_digito'       => new sfValidatorInteger(array('required' => false)),
       'ca_compania'     => new sfValidatorString(array('required' => false)),
       'ca_papellido'    => new sfValidatorString(array('required' => false)),
@@ -76,6 +77,8 @@ class BaseClienteForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('cliente[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

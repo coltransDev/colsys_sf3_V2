@@ -3,9 +3,10 @@
 /**
  * Contacto form base class.
  *
- * @package    form
- * @subpackage contacto
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseContactoForm extends BaseFormDoctrine
 {
@@ -13,22 +14,22 @@ class BaseContactoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idcontacto'    => new sfWidgetFormInputHidden(),
-      'ca_idcliente'     => new sfWidgetFormDoctrineSelect(array('model' => 'Cliente', 'add_empty' => true)),
-      'ca_papellido'     => new sfWidgetFormInput(),
-      'ca_sapellido'     => new sfWidgetFormInput(),
-      'ca_nombres'       => new sfWidgetFormInput(),
-      'ca_saludo'        => new sfWidgetFormInput(),
-      'ca_cargo'         => new sfWidgetFormInput(),
-      'ca_departamento'  => new sfWidgetFormInput(),
-      'ca_telefonos'     => new sfWidgetFormInput(),
-      'ca_fax'           => new sfWidgetFormInput(),
-      'ca_email'         => new sfWidgetFormInput(),
-      'ca_observaciones' => new sfWidgetFormInput(),
-      'ca_fchcreado'     => new sfWidgetFormInput(),
+      'ca_idcliente'     => new sfWidgetFormDoctrineChoice(array('model' => 'Cliente', 'add_empty' => true)),
+      'ca_papellido'     => new sfWidgetFormTextarea(),
+      'ca_sapellido'     => new sfWidgetFormTextarea(),
+      'ca_nombres'       => new sfWidgetFormTextarea(),
+      'ca_saludo'        => new sfWidgetFormTextarea(),
+      'ca_cargo'         => new sfWidgetFormTextarea(),
+      'ca_departamento'  => new sfWidgetFormTextarea(),
+      'ca_telefonos'     => new sfWidgetFormTextarea(),
+      'ca_fax'           => new sfWidgetFormTextarea(),
+      'ca_email'         => new sfWidgetFormTextarea(),
+      'ca_observaciones' => new sfWidgetFormTextarea(),
+      'ca_fchcreado'     => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idcontacto'    => new sfValidatorDoctrineChoice(array('model' => 'Contacto', 'column' => 'ca_idcontacto', 'required' => false)),
+      'ca_idcontacto'    => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idcontacto', 'required' => false)),
       'ca_idcliente'     => new sfValidatorDoctrineChoice(array('model' => 'Cliente', 'required' => false)),
       'ca_papellido'     => new sfValidatorString(array('required' => false)),
       'ca_sapellido'     => new sfValidatorString(array('required' => false)),
@@ -46,6 +47,8 @@ class BaseContactoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('contacto[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

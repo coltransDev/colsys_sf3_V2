@@ -17,6 +17,7 @@
  * @property string $ca_tipo
  * @property string $ca_identificacion
  * @property Ciudad $Ciudad
+ * @property Doctrine_Collection $InoCliente
  * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $InoClientesSea
  * 
@@ -73,6 +74,10 @@ abstract class BaseTercero extends myDoctrineRecord
     $this->hasOne('Ciudad', array(
              'local' => 'ca_origen',
              'foreign' => 'ca_idciudad'));
+
+        $this->hasMany('InoCliente', array(
+             'local' => 'ca_idtercero',
+             'foreign' => 'ca_idproveedor'));
 
         $this->hasMany('Reporte', array(
              'local' => 'ca_idtercero',

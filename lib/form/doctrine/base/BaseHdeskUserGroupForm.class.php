@@ -3,9 +3,10 @@
 /**
  * HdeskUserGroup form base class.
  *
- * @package    form
- * @subpackage hdesk_user_group
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseHdeskUserGroupForm extends BaseFormDoctrine
 {
@@ -17,13 +18,15 @@ class BaseHdeskUserGroupForm extends BaseFormDoctrine
     ));
 
     $this->setValidators(array(
-      'ca_idgroup' => new sfValidatorDoctrineChoice(array('model' => 'HdeskUserGroup', 'column' => 'ca_idgroup', 'required' => false)),
-      'ca_login'   => new sfValidatorDoctrineChoice(array('model' => 'HdeskUserGroup', 'column' => 'ca_login', 'required' => false)),
+      'ca_idgroup' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idgroup', 'required' => false)),
+      'ca_login'   => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_login', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('hdesk_user_group[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

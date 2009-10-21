@@ -3,9 +3,10 @@
 /**
  * Ids form base class.
  *
- * @package    form
- * @subpackage ids
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseIdsForm extends BaseFormDoctrine
 {
@@ -13,22 +14,22 @@ class BaseIdsForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_id'                 => new sfWidgetFormInputHidden(),
-      'ca_dv'                 => new sfWidgetFormInput(),
-      'ca_idalterno'          => new sfWidgetFormInput(),
-      'ca_tipoidentificacion' => new sfWidgetFormInput(),
-      'ca_idgrupo'            => new sfWidgetFormDoctrineSelect(array('model' => 'Ids', 'add_empty' => true)),
-      'ca_nombre'             => new sfWidgetFormInput(),
-      'ca_website'            => new sfWidgetFormInput(),
-      'ca_actividad'          => new sfWidgetFormInput(),
-      'ca_sectoreco'          => new sfWidgetFormInput(),
-      'ca_usucreado'          => new sfWidgetFormInput(),
+      'ca_dv'                 => new sfWidgetFormInputText(),
+      'ca_idalterno'          => new sfWidgetFormInputText(),
+      'ca_tipoidentificacion' => new sfWidgetFormInputText(),
+      'ca_idgrupo'            => new sfWidgetFormDoctrineChoice(array('model' => 'Ids', 'add_empty' => true)),
+      'ca_nombre'             => new sfWidgetFormInputText(),
+      'ca_website'            => new sfWidgetFormInputText(),
+      'ca_actividad'          => new sfWidgetFormTextarea(),
+      'ca_sectoreco'          => new sfWidgetFormInputText(),
+      'ca_usucreado'          => new sfWidgetFormInputText(),
       'ca_fchcreado'          => new sfWidgetFormDateTime(),
-      'ca_usuactualizado'     => new sfWidgetFormInput(),
+      'ca_usuactualizado'     => new sfWidgetFormInputText(),
       'ca_fchactualizado'     => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'ca_id'                 => new sfValidatorDoctrineChoice(array('model' => 'Ids', 'column' => 'ca_id', 'required' => false)),
+      'ca_id'                 => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_id', 'required' => false)),
       'ca_dv'                 => new sfValidatorInteger(array('required' => false)),
       'ca_idalterno'          => new sfValidatorString(array('max_length' => 20, 'required' => false)),
       'ca_tipoidentificacion' => new sfValidatorInteger(array('required' => false)),
@@ -46,6 +47,8 @@ class BaseIdsForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('ids[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

@@ -3,9 +3,10 @@
 /**
  * PricSeguro form base class.
  *
- * @package    form
- * @subpackage pric_seguro
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BasePricSeguroForm extends BaseFormDoctrine
 {
@@ -14,18 +15,18 @@ class BasePricSeguroForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_idgrupo'            => new sfWidgetFormInputHidden(),
       'ca_transporte'         => new sfWidgetFormInputHidden(),
-      'ca_vlrprima'           => new sfWidgetFormInput(),
-      'ca_vlrminima'          => new sfWidgetFormInput(),
-      'ca_vlrobtencionpoliza' => new sfWidgetFormInput(),
-      'ca_idmoneda'           => new sfWidgetFormInput(),
-      'ca_observaciones'      => new sfWidgetFormInput(),
+      'ca_vlrprima'           => new sfWidgetFormInputText(),
+      'ca_vlrminima'          => new sfWidgetFormInputText(),
+      'ca_vlrobtencionpoliza' => new sfWidgetFormInputText(),
+      'ca_idmoneda'           => new sfWidgetFormTextarea(),
+      'ca_observaciones'      => new sfWidgetFormTextarea(),
       'ca_fchcreado'          => new sfWidgetFormDateTime(),
-      'ca_usucreado'          => new sfWidgetFormInput(),
+      'ca_usucreado'          => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_idgrupo'            => new sfValidatorDoctrineChoice(array('model' => 'PricSeguro', 'column' => 'ca_idgrupo', 'required' => false)),
-      'ca_transporte'         => new sfValidatorDoctrineChoice(array('model' => 'PricSeguro', 'column' => 'ca_transporte', 'required' => false)),
+      'ca_idgrupo'            => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idgrupo', 'required' => false)),
+      'ca_transporte'         => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_transporte', 'required' => false)),
       'ca_vlrprima'           => new sfValidatorNumber(array('required' => false)),
       'ca_vlrminima'          => new sfValidatorNumber(array('required' => false)),
       'ca_vlrobtencionpoliza' => new sfValidatorNumber(array('required' => false)),
@@ -38,6 +39,8 @@ class BasePricSeguroForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('pric_seguro[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

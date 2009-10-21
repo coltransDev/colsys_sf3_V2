@@ -25,6 +25,7 @@
  * @property string $ca_usucerrado
  * @property timestamp $ca_fchanulado
  * @property string $ca_usuanulado
+ * @property Doctrine_Collection $InoCliente
  * @property Trayecto $Trayecto
  * @property Usuario $UsuCreado
  * @property Usuario $UsuActualizado
@@ -115,7 +116,11 @@ abstract class BaseInoMaestra extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-    $this->hasOne('Trayecto', array(
+    $this->hasMany('InoCliente', array(
+             'local' => 'ca_idmaestra',
+             'foreign' => 'ca_idmaestra'));
+
+        $this->hasOne('Trayecto', array(
              'local' => 'ca_idtrayecto',
              'foreign' => 'ca_idtrayecto'));
 

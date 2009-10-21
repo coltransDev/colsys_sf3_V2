@@ -3,9 +3,10 @@
 /**
  * Trafico form base class.
  *
- * @package    form
- * @subpackage trafico
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseTraficoForm extends BaseFormDoctrine
 {
@@ -13,17 +14,17 @@ class BaseTraficoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idtrafico' => new sfWidgetFormInputHidden(),
-      'ca_nombre'    => new sfWidgetFormInput(),
-      'ca_bandera'   => new sfWidgetFormInput(),
-      'ca_idmoneda'  => new sfWidgetFormDoctrineSelect(array('model' => 'Moneda', 'add_empty' => false)),
-      'ca_idgrupo'   => new sfWidgetFormDoctrineSelect(array('model' => 'TraficoGrupo', 'add_empty' => false)),
+      'ca_nombre'    => new sfWidgetFormInputText(),
+      'ca_bandera'   => new sfWidgetFormInputText(),
+      'ca_idmoneda'  => new sfWidgetFormDoctrineChoice(array('model' => 'Moneda', 'add_empty' => false)),
+      'ca_idgrupo'   => new sfWidgetFormDoctrineChoice(array('model' => 'TraficoGrupo', 'add_empty' => false)),
       'ca_link'      => new sfWidgetFormTextarea(),
-      'ca_conceptos' => new sfWidgetFormInput(),
-      'ca_recargos'  => new sfWidgetFormInput(),
+      'ca_conceptos' => new sfWidgetFormInputText(),
+      'ca_recargos'  => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_idtrafico' => new sfValidatorDoctrineChoice(array('model' => 'Trafico', 'column' => 'ca_idtrafico', 'required' => false)),
+      'ca_idtrafico' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idtrafico', 'required' => false)),
       'ca_nombre'    => new sfValidatorString(array('max_length' => 40)),
       'ca_bandera'   => new sfValidatorString(array('max_length' => 30)),
       'ca_idmoneda'  => new sfValidatorDoctrineChoice(array('model' => 'Moneda')),
@@ -36,6 +37,8 @@ class BaseTraficoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('trafico[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

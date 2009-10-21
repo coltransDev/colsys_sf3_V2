@@ -3,9 +3,10 @@
 /**
  * RutinaNivel form base class.
  *
- * @package    form
- * @subpackage rutina_nivel
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseRutinaNivelForm extends BaseFormDoctrine
 {
@@ -14,18 +15,20 @@ class BaseRutinaNivelForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'ca_rutina' => new sfWidgetFormInputHidden(),
       'ca_nivel'  => new sfWidgetFormInputHidden(),
-      'ca_valor'  => new sfWidgetFormInput(),
+      'ca_valor'  => new sfWidgetFormTextarea(),
     ));
 
     $this->setValidators(array(
-      'ca_rutina' => new sfValidatorDoctrineChoice(array('model' => 'RutinaNivel', 'column' => 'ca_rutina', 'required' => false)),
-      'ca_nivel'  => new sfValidatorDoctrineChoice(array('model' => 'RutinaNivel', 'column' => 'ca_nivel', 'required' => false)),
+      'ca_rutina' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_rutina', 'required' => false)),
+      'ca_nivel'  => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_nivel', 'required' => false)),
       'ca_valor'  => new sfValidatorString(array('required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('rutina_nivel[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

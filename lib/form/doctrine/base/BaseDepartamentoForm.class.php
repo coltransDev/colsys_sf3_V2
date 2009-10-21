@@ -3,9 +3,10 @@
 /**
  * Departamento form base class.
  *
- * @package    form
- * @subpackage departamento
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseDepartamentoForm extends BaseFormDoctrine
 {
@@ -13,12 +14,12 @@ class BaseDepartamentoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_iddepartamento' => new sfWidgetFormInputHidden(),
-      'ca_nombre'         => new sfWidgetFormInput(),
+      'ca_nombre'         => new sfWidgetFormInputText(),
       'ca_inhelpdesk'     => new sfWidgetFormInputCheckbox(),
     ));
 
     $this->setValidators(array(
-      'ca_iddepartamento' => new sfValidatorDoctrineChoice(array('model' => 'Departamento', 'column' => 'ca_iddepartamento', 'required' => false)),
+      'ca_iddepartamento' => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_iddepartamento', 'required' => false)),
       'ca_nombre'         => new sfValidatorString(array('max_length' => 30, 'required' => false)),
       'ca_inhelpdesk'     => new sfValidatorBoolean(array('required' => false)),
     ));
@@ -26,6 +27,8 @@ class BaseDepartamentoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('departamento[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }

@@ -3,9 +3,10 @@
 /**
  * RepExpo form base class.
  *
- * @package    form
- * @subpackage rep_expo
- * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 8508 2008-04-17 17:39:15Z fabien $
+ * @package    symfony
+ * @subpackage form
+ * @author     Your name here
+ * @version    SVN: $Id$
  */
 class BaseRepExpoForm extends BaseFormDoctrine
 {
@@ -13,23 +14,23 @@ class BaseRepExpoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'ca_idreporte'        => new sfWidgetFormInputHidden(),
-      'ca_peso'             => new sfWidgetFormInput(),
-      'ca_volumen'          => new sfWidgetFormInput(),
-      'ca_piezas'           => new sfWidgetFormInput(),
-      'ca_dimensiones'      => new sfWidgetFormInput(),
-      'ca_valorcarga'       => new sfWidgetFormInput(),
-      'ca_anticipo'         => new sfWidgetFormInput(),
-      'ca_idsia'            => new sfWidgetFormDoctrineSelect(array('model' => 'Sia', 'add_empty' => true)),
-      'ca_tipoexpo'         => new sfWidgetFormInput(),
-      'ca_idlineaterrestre' => new sfWidgetFormInput(),
-      'ca_motonave'         => new sfWidgetFormInput(),
-      'ca_emisionbl'        => new sfWidgetFormInput(),
-      'ca_datosbl'          => new sfWidgetFormInput(),
-      'ca_numbl'            => new sfWidgetFormInput(),
+      'ca_peso'             => new sfWidgetFormInputText(),
+      'ca_volumen'          => new sfWidgetFormInputText(),
+      'ca_piezas'           => new sfWidgetFormTextarea(),
+      'ca_dimensiones'      => new sfWidgetFormTextarea(),
+      'ca_valorcarga'       => new sfWidgetFormTextarea(),
+      'ca_anticipo'         => new sfWidgetFormTextarea(),
+      'ca_idsia'            => new sfWidgetFormDoctrineChoice(array('model' => 'Sia', 'add_empty' => true)),
+      'ca_tipoexpo'         => new sfWidgetFormInputText(),
+      'ca_idlineaterrestre' => new sfWidgetFormInputText(),
+      'ca_motonave'         => new sfWidgetFormTextarea(),
+      'ca_emisionbl'        => new sfWidgetFormTextarea(),
+      'ca_datosbl'          => new sfWidgetFormTextarea(),
+      'ca_numbl'            => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
-      'ca_idreporte'        => new sfValidatorDoctrineChoice(array('model' => 'RepExpo', 'column' => 'ca_idreporte', 'required' => false)),
+      'ca_idreporte'        => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idreporte', 'required' => false)),
       'ca_peso'             => new sfValidatorNumber(array('required' => false)),
       'ca_volumen'          => new sfValidatorNumber(array('required' => false)),
       'ca_piezas'           => new sfValidatorString(array('required' => false)),
@@ -48,6 +49,8 @@ class BaseRepExpoForm extends BaseFormDoctrine
     $this->widgetSchema->setNameFormat('rep_expo[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
+
+    $this->setupInheritance();
 
     parent::setup();
   }
