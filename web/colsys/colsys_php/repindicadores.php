@@ -283,6 +283,16 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     include_once 'include/functions.php';                                      // Módulo de Funciones Varias
     //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
+    $ult_ano = 0;
+    foreach($ano as $num){
+        $ult_ano = ($num > $ult_ano)?$num:$ult_ano;
+    }
+    $ult_mes = 0;
+    foreach($mes as $num){
+        $ult_mes = ($num > $ult_mes)?$num:$ult_mes;
+    }
+    $ult_dia = date("Y-m-d", mktime(0,0,0,$ult_mes+1,0,$ult_ano));
+
     $ano_tit = implode(',',$ano);
     $mes_tit = implode(',',$mes);
     $suc_tit = implode(',',$sucursal);
@@ -441,7 +451,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tipo = "T";
             $format_avg = "H:i:s";
             $source = "vi_repindicador_sea";
-            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD','IMCOL')) group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
         }
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -453,7 +463,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tm->MoveNext();
         }
         $ind_mem  = 9;
-        $add_cols = 4;
+        $add_cols = 5;
         $ini_ant  = null;
         $fin_ant  = null;
     } else if ($indicador == "Oportunidad en Nacionalización de Mcias Sucursal" or $indicador == "Oportunidad en Nacionalización de Mcias Puerto") {
@@ -468,10 +478,11 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         }else {
             $pto_nam = array("Cartagena"=>10,"Buenaventura"=>20);
             foreach(explode(',',$ciu_tit) as $ciu){
-                $num_mem = 200;
                 if ($ciu != '%'){
-                    $num_mem+= $pto_nam[$ciu];
+                    $num_mem = 200 +$pto_nam[$ciu];
                     $sucursal = "((string_to_array($source.ca_referencia,'.'))[1]) = '$num_mem'";
+                }else{
+                    $sucursal = "((string_to_array($source.ca_referencia,'.'))[1]) in ('210','220')";
                 }
             }
         }
@@ -645,6 +656,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             break;
         case 9:
             echo "	<TH>Referencia</TH>";
+            echo "      <TH>ETA</TH>";
             echo "	<TH>Fch.Llegada</TH>";
             echo "	<TH>Fch.Confirmación</TH>";
             echo "	<TH>Dif.</TH>";
@@ -846,7 +858,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                     $ini_ant = $rs->Value('ca_fchsolicitud');
                     $fin_ant = $rs->Value('ca_fchpresentacion');
                 }
-                if ($rs->Value("ca_observaciones") == "Licitaciones" or $rs->Value("ca_observaciones") == "Acuerdos autorizados"){
+                if (trim($rs->Value("ca_observaciones")) == "Licitaciones" or trim($rs->Value("ca_observaciones")) == "Acuerdos autorizados"){
                     $dif_mem = null;
                 }
                 $color = analizar_dif("T", $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
@@ -873,6 +885,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 break;
             case 9:
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_eta')."</TD>";
                 if ($rs->Value('ca_transporte') == 'Aéreo') {
                     $fch_mem = $rs->Value('ca_fchllegada');
                     if ($rs->Value('ca_fchllegada') != $ini_ant or $rs->Value('ca_fchconf_lleg') != $fin_ant) {
@@ -893,6 +906,8 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                         }
                     }
                 $dif_mem = (is_null($dif_mem) and $rs->Value('ca_transporte') == 'Marítimo')?"48:00:00":$dif_mem;
+                $dif_mem = ($rs->Value("ca_eta") > $ult_dia or $rs->Value("ca_eta") >= date("Y-m-d"))?null:$dif_mem;
+
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$fch_mem."</TD>";
                 echo "  <TD Class=$color style='font-size: 9px; text-align:left;'>".$rs->Value('ca_fchconf_lleg')."</TD>";
@@ -913,7 +928,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 $int_uno = "00";
                 $matriz_eventos["intervalo_1"][$int_uno] = $fcn_ini;
                 $array_eventos[$int_uno] = "Fch. Referencia";
-                
+
 
                 echo "<TR>";
                 echo "  <TD Class=mostrar style='font-size: 9px;'>Fch. Referencia</TD>";
@@ -1065,7 +1080,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
                 $hour   = intval($dif_ref / 60);
                 $minute = $dif_ref % 60;
-                
+
                 $dif_ref = ($exc_dig or $exc_fac)?null:str_pad($hour,2,"0", STR_PAD_LEFT).":".str_pad($minute,2,"0", STR_PAD_LEFT).":".str_pad(null,2,"0", STR_PAD_LEFT);
 
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_ref, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
