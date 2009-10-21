@@ -110,9 +110,6 @@ class clientesActions extends sfActions
 	}
 
         public function executeReporteEstados() {
-            $anterior = array();
-            $facturar = array();
-
             set_time_limit(0);
             $inicio =  $this->getRequestParameter("fchStart");
             $final =  $this->getRequestParameter("fchEnd");
@@ -129,11 +126,13 @@ class clientesActions extends sfActions
             $ante = ClienteTable::estadoClientes(null, $ultimo, $empresa, null, "Potencial", $sucursal);
 
             while($row = $stmt->fetch()) {
+                $anterior = array();
+                $facturar = array();
                 $actual = $row;
 
-                list($year, $month, $day) = sscanf($row["ca_fchestado"], "%d-%d-%d");
+                list($year, $month, $day, $hour, $mins, $secn) = sscanf($row["ca_fchestado"], "%d-%d-%d %d:%d:%d");
 
-                $sb = ClienteTable::estadoClientes(null, date('Y-m-d',mktime(0,0,0,$month,$day-1,$year)), $empresa, $row["ca_idcliente"], null, null);
+                $sb = ClienteTable::estadoClientes(null, date('Y-m-d H:i:s',mktime($hour, $mins, $secn-1,$month,$day,$year)), $empresa, $row["ca_idcliente"], null, null);
                 while($row1 = $sb->fetch()) {
                     $anterior = array('ca_fchestado_ant'=>$row1["ca_fchestado"],
                         'ca_estado_ant'=>$row1["ca_estado"]
