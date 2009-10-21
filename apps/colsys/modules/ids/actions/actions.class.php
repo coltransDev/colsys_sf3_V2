@@ -289,13 +289,14 @@ class idsActions extends sfActions
                     }else{
                         $proveedor->setCaActivo( false );
                     }
+                    
+                   
 
                     if( $bindValues["empresa"] ){
                         $proveedor->setCaEmpresa($bindValues["empresa"]);
                     }else{
                         $proveedor->setCaEmpresa(null);
                     }
-
                     
                     if( $bindValues["tipo_proveedor"]=="TRI" ){                        
                         $proveedor->setCaSigla($bindValues["sigla"] );
@@ -899,8 +900,7 @@ class idsActions extends sfActions
                              ->addWhere("p.ca_controladoporsig = true")
                              ->addOrderBy("t.ca_nombre ASC")
                              ->addOrderBy("p.ca_transporte ASC")
-                             ->addOrderBy("i.ca_nombre ASC")
-
+                             ->addOrderBy("i.ca_nombre ASC")                             
                              ->execute();
 
         

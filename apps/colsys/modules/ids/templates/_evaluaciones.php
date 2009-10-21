@@ -15,7 +15,47 @@
     }
 
 </script>
+<?
+$initialYear = 2007;
+$actualYear = date("Y");
+$numYears = $actualYear-$initialYear+1;
+?>
+<table class="tableList" width="100%" border="1">
+    <tr>
+        <?
+        for( $year=$initialYear;$year<=$actualYear; $year++ ){
+        ?>
+        <th><div align="center"><?=$year?></div></th>
+        <?
+        }
+        ?>
+        <th><div align="center">+</div></th>
+        <th><div align="center">=</div></th>
+        <th><div align="center">-</div></th>
+    </tr>
+    <tr>
+            <?
+            $evals = $ids->getCalificaciones();
 
+            $evaluacionAnt=null;
+            $evaluacion=null;
+            for( $year=$initialYear;$year<=$actualYear; $year++ ){
+                $evaluacionAnt = $evaluacion;
+
+                if( isset( $evals[$year] )){
+                    $evaluacion = $evals[$year];
+                }
+                ?>
+                <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
+                <?
+            }
+            ?>
+            <td><div align="center"><?=$evaluacionAnt&&$evaluacionAnt<$evaluacion?"X":"&nbsp;"?></div></td>
+            <td><div align="center"><?=$evaluacionAnt&&$evaluacionAnt==$evaluacion?"X":"&nbsp;"?></div></td>
+            <td><div align="center"><?=$evaluacionAnt&&$evaluacionAnt>$evaluacion?"X":"&nbsp;"?></div></td>
+     </tr>
+</table>
+<br>
 <table class="tableList" width="100%" border="1">
     <tr class="row0">
         <td width="20%">

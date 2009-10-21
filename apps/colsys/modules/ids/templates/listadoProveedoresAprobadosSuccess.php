@@ -72,11 +72,16 @@ $numYears = $actualYear-$initialYear+1;
             <td>
                 <div align="left">
                     <?
-                    $doc = $ids->getDocumento( 4 );                    
+                    $doc = $ids->getDocumento( 4 );
+                    
                     if( $doc ){
-                        echo Utils::fechaMes($doc->getCaFchvencimiento());
+                        if( $doc->getCaFchvencimiento() ){
+                            echo Utils::fechaMes($doc->getCaFchvencimiento());
+                        }else{
+                            echo "Sin vencimiento";
+                        }
                     }else{
-                        echo "No";
+                        echo "Sin Poliza";
                     }
                     ?>
                 </div></td>
@@ -84,9 +89,13 @@ $numYears = $actualYear-$initialYear+1;
                     <?
                     $doc = $ids->getDocumento( 7 );
                     if( $doc ){
-                        echo Utils::fechaMes($doc->getCaFchvencimiento());
+                        if( $doc->getCaFchvencimiento() ){
+                            echo Utils::fechaMes($doc->getCaFchvencimiento());
+                        }else{
+                            echo "Sin venc.";
+                        }
                     }else{
-                        echo "No";
+                        echo "Sin BASC";
                     }
                     ?>
 
@@ -103,11 +112,17 @@ $numYears = $actualYear-$initialYear+1;
             <td><div align="center"><?=$proovedor->getCaCritico()?"X":""?></div></td>
              <td><div align="center"><?=$proovedor->getCaEsporadico()?"X":""?></div></td>
             <?
+
+            $evaluaciones = $ids->getCalificaciones();
+            
             $evaluacionAnt=null;
             $evaluacion=null;
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
                 $evaluacionAnt = $evaluacion;
-                //$evaluacion = $proovedor->getEvaluacionDesempeno( $year );
+
+                if( isset( $evaluaciones[$year] )){
+                    $evaluacion = $evaluaciones[$year];
+                }
                 ?>
                 <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
                 <?

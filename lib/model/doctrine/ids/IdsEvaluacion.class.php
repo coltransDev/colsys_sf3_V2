@@ -16,7 +16,15 @@ class IdsEvaluacion extends BaseIdsEvaluacion
      * Promedia los resultados de la evaluacion
      */
     public function getCalificacion(){
-        $resultado = 0;
+        
+        return round(Doctrine::getTable("IdsEvaluacionxCriterio")
+                ->createQuery("e")                
+                ->select("SUM(e.ca_valor*e.ca_ponderacion )/100")                
+                ->addWhere("e.ca_idevaluacion = ?",$this->getCaIdevaluacion() )
+                ->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)
+                ->execute(), 1 );
+
+       /* $resultado = 0;
         $i = 0;
 
         $conceptos = $this->getIdsEvaluacionxCriterio();
@@ -31,7 +39,7 @@ class IdsEvaluacion extends BaseIdsEvaluacion
             return 0;
         }else{
             return round($resultado/$i, 1);
-        }
+        }*/
 
     }
 }

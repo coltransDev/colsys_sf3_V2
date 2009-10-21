@@ -31,13 +31,33 @@ class Ids extends BaseIds
     /*
     *
     */
-    public function getDocumento( $idtipo ){        
+    public function getDocumento( $idtipo ){
+        
         return Doctrine::getTable("IdsDocumento")
                 ->createQuery("d")
+                ->select("d.*")
                 ->where("d.ca_idtipo = ?",$idtipo )
-                ->where("d.ca_id = ?",$this->getCaId() )
-                ->addOrderBy("d.ca_iddocumento")
+                ->addWhere("d.ca_id = ?",$this->getCaId() )
+                ->addOrderBy("d.ca_iddocumento DESC")
                 ->fetchOne();
+    }
 
+
+    public function getCalificaciones( ){       
+
+        $sql = "SELECT to_char(i2.ca_fchevaluacion, 'YYYY') AS yy ,SUM(i.ca_valor*i.ca_ponderacion)/SUM(i.ca_ponderacion) AS calificacion
+FROM ids.tb_evaluacionxcriterio i INNER JOIN ids.tb_evaluacion i2 ON i.ca_idevaluacion = i2.ca_idevaluacion
+WHERE (i2.ca_tipo = 'desempeno' AND i2.ca_id = ".$this->getCaId().")
+GROUP BY yy ORDER BY yy";
+
+        $result = array();
+        $q = Doctrine_Manager::getInstance()->connection();
+        $stmt = $q->execute($sql);
+
+        while( $row = $stmt->fetch( PDO::FETCH_ASSOC ) ){
+           $result[$row["yy"]]=round($row["calificacion"], 1);
+        }
+        return $result;
+        
     }
 }
