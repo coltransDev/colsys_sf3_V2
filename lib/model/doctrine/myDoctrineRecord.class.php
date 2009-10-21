@@ -13,8 +13,9 @@
 class myDoctrineRecord extends sfDoctrineRecord{
     public function save(Doctrine_Connection $con = null){
        
-        if ($this->isNew() ){            
-            if( $this->contains('ca_usucreado') ){
+        if ($this->isNew() ){
+           
+            if( $this->contains('ca_usucreado') ){                
                 $this->setCaUsucreado(sfContext::getinstance()->getUser()->getUserId());
             }
             if(  $this->contains('ca_fchcreado') ){
@@ -22,11 +23,13 @@ class myDoctrineRecord extends sfDoctrineRecord{
             }
            
         }else{
-            if( $this->contains('ca_usuactualizado') ){
-                $this->setCaUsuactualizado(sfContext::getinstance()->getUser()->getUserId());
-            }
-            if( $this->contains('ca_fchactualizado') ){
-                $this->setCaFchactualizado(date('Y-m-d H:i:s'));
+            if( $this->isModified() ){
+                if( $this->contains('ca_usuactualizado') ){
+                    $this->setCaUsuactualizado(sfContext::getinstance()->getUser()->getUserId());
+                }
+                if( $this->contains('ca_fchactualizado') ){
+                    $this->setCaFchactualizado(date('Y-m-d H:i:s'));
+                }
             }
         }
         return parent::save($con);      
