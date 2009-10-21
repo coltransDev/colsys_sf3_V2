@@ -583,7 +583,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
         $identifier = (array) $table->getIdentifier();
 
         $seq = $record->getTable()->sequenceName;
-
+        
         if ( ! empty($seq)) {
             $id = $this->conn->sequence->nextId($seq);
             $seqName = $table->getIdentifier();
@@ -591,7 +591,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
 
             $record->assignIdentifier($id);
         }
-
+        
         $this->conn->insert($table, $fields);
 
         if (empty($seq) && count($identifier) == 1 && $identifier[0] == $table->getIdentifier() &&
@@ -604,7 +604,7 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
             }
 
             $id = $this->conn->sequence->lastInsertId($seq);
-
+            
             if ( ! $id) {
                 throw new Doctrine_Connection_Exception("Couldn't get last insert identifier.");
             }
