@@ -15,9 +15,11 @@ class ClienteTable extends Doctrine_Table
 		if ($fch_fin == null){
 			$fch_fin = date('Y-m-d'); }
 
-		$query = "select std0.*,cl.ca_compania, cl.ca_vendedor, u.ca_sucursal from tb_stdcliente std0 LEFT OUTER JOIN tb_clientes cl ON (std0.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN control.tb_usuarios u ON (cl.ca_vendedor = u.ca_login), ";
-		$query.= "(select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa) std1 ";
-		$query.= "where std0.ca_idcliente = std1.ca_idcliente and std0.ca_fchestado = std1.ca_fchestado and std0.ca_empresa = std1.ca_empresa and std0.ca_empresa = '$empresa' " ;
+		$query = "select std0.*,cl.ca_compania, cl.ca_vendedor, u.ca_sucursal from tb_stdcliente std0 INNER JOIN tb_clientes cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
+                $query.= "INNER JOIN control.tb_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
+                $query.= "INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa order by ca_idcliente) std1 ON (std0.ca_idcliente = std1.ca_idcliente) ";
+                // $query.= "INNER JOIN (select DISTINCT cc.ca_idcliente, rps.ca_incoterms from tb_reportes rps INNER JOIN tb_concliente cc ON (rps.ca_idconcliente = cc.ca_idcontacto) where rps.ca_version = fun_last_version(ca_consecutivo) and rps.ca_incoterms != '' and rps.ca_incoterms IS NOT NULL and rps.ca_fchreporte between '$fch_ini' and '$fch_fin' order by ca_idcliente) term ON std0.ca_idcliente = term.ca_idcliente ";
+		$query.= "where std0.ca_fchestado = std1.ca_fchestado and std0.ca_empresa = std1.ca_empresa and std0.ca_empresa = '$empresa' ";
 		if ($idcliente != null){
 			$query.= "and std0.ca_idcliente = $idcliente ";
 		}
@@ -31,7 +33,7 @@ class ClienteTable extends Doctrine_Table
 
 		// echo "<br />".$query."<br />";
 		$q = Doctrine_Manager::getInstance()->connection();
-        $stmt = $q->execute($query);
+                $stmt = $q->execute($query);
 		return $stmt;
 	}
 
@@ -52,14 +54,14 @@ class ClienteTable extends Doctrine_Table
 			$query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_inoingresos_sea where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_inoingresos_air where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
 			$query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, ca_valor from tb_inoingresos_sea where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tcalaico) as ca_valor from tb_inoingresos_air where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
 		}else{
-			$query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_brk_ingresos where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_expo_ingresos where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
-			$query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_brk_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
+			$query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchfactura) as ca_fchfactura from (select ca_idcliente, ca_fchfactura from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura <= '$fch_fin' UNION select ca_idcliente, ca_fchfactura from tb_expo_ingresos where ca_fchfactura <= '$fch_fin') fc group by ca_idcliente) fac_fch ON (cl.ca_idcliente = fac_fch.ca_idcliente) ";
+			$query.= "LEFT OUTER JOIN (select ca_idcliente, sum(ca_valor) as ca_valor from (select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_brk_ingresos LEFT OUTER JOIN tb_brk_maestra ON tb_brk_ingresos.ca_referencia = tb_brk_maestra.ca_referencia where ca_fchfactura between '$fch_ini' and '$fch_fin' UNION select ca_idcliente, (ca_valor*ca_tasacambio) as ca_valor from tb_expo_ingresos where ca_fchfactura between '$fch_ini' and '$fch_fin') fc group by ca_idcliente) fac_val ON (cl.ca_idcliente = fac_val.ca_idcliente) ";
 		}
 		$query.= "where cl.ca_idcliente = $idcliente";
 
 		// echo "<br />".$query."<br />";
 		$q = Doctrine_Manager::getInstance()->connection();
-        $stmt = $q->execute($query);
+                $stmt = $q->execute($query);
 		return $stmt;
 	}
 
@@ -75,14 +77,14 @@ class ClienteTable extends Doctrine_Table
 		if ($fch_fin == null){
 			$fch_fin = date('Y-m-d'); }
 
-		$query = "select DISTINCT cc.ca_idcliente, rp.ca_incoterms ";
-                $query.= "from ( select rps.ca_fchreporte, rps.ca_consecutivo, rps.ca_version, rps.ca_idconcliente, rps.ca_incoterms from tb_reportes rps INNER JOIN (select ca_consecutivo as ca_consecutivo_f, ca_fchreporte, max(ca_version) ";
-                $query.= "as ca_version, min(ca_fchcreado) as ca_fchcreado from tb_reportes where ca_impoexpo = 'Importación' and ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo_f) rx ON (rps.ca_consecutivo = rx.ca_consecutivo_f and rps.ca_version = rx.ca_version)) rp ";
-                $query.= "LEFT OUTER JOIN tb_concliente cc ON (rp.ca_idconcliente = cc.ca_idcontacto) where rp.ca_incoterms != '' and cc.ca_idcliente = $idcliente and rp.ca_incoterms IS NOT NULL and rp.ca_fchreporte between '$fch_ini' and '$fch_fin' ";
+                $query = "select DISTINCT cc.ca_idcliente, rps.ca_incoterms from tb_reportes rps ";
+                $query.= "INNER JOIN tb_concliente cc ON (rps.ca_idconcliente = cc.ca_idcontacto) ";
+                $query.= "where rps.ca_version = fun_last_version(ca_consecutivo) and rps.ca_incoterms != '' and rps.ca_incoterms IS NOT NULL ";
+                $query.= "and cc.ca_idcliente = $idcliente and rps.ca_fchreporte between '$fch_ini' and '$fch_fin'";
 
 		// echo "<br />".$query."<br />";
 		$q = Doctrine_Manager::getInstance()->connection();
-        $stmt = $q->execute($query);
+                $stmt = $q->execute($query);
 		return $stmt;
 	}
 
@@ -104,14 +106,14 @@ class ClienteTable extends Doctrine_Table
 		$query.= "where to_date(to_char(to_char(ca_fchcircular, 'YYYY')::int+1, '9999')||'-'||to_char(ca_fchcircular, 'MM')||'-'||to_char(ca_fchcircular, 'DD'),'YYYY-MM-DD') between '$fch_ini' and '$fch_fin'" ;
 
 		if ($sucursal != null){
-			$query.= "and u.ca_sucursal = '$sucursal' ";
+                    $query.= "and u.ca_sucursal = '$sucursal' ";
 		}
 
 		$query.= "order by 18, 15 ";
 
 		// echo "<br />".$query."<br />";
 		$q = Doctrine_Manager::getInstance()->connection();
-        $stmt = $q->execute($query);
+                $stmt = $q->execute($query);
 		return $stmt;
 	}
 
