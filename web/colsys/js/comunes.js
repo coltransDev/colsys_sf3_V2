@@ -253,19 +253,38 @@ var expandCollapseGroup = function( obj , id ){
 
 
 function actualizarContenido( id , url, params ){
-		var content = document.getElementById( id );
+    var content = document.getElementById( id );
 
-		content.innerHTML = "<div id='indicator'></div>";
-		Ext.Ajax.request({
-			url: url,
-			params: params,
-			success: function(xhr) {
-				content.innerHTML = xhr.responseText;
+    content.innerHTML = "<div id='indicator'></div>";
+    Ext.Ajax.request({
+        url: url,
+        params: params,
+        success: function(xhr) {
+            content.innerHTML = xhr.responseText;
 
-			},
-			failure: function() {
-				Ext.Msg.alert("Error", "Server communication failure");
-			}
-		});
+        },
+        failure: function() {
+            Ext.Msg.alert("Error", "Server communication failure");
+        }
+    });
+}
 
-	}
+
+ function llenarCiudades( idtraficoFld, idciudadFld, includeBlank ){
+    var idtrafico = document.getElementById(idtraficoFld).value;
+    var fldCiudades = document.getElementById(idciudadFld);
+    
+    fldCiudades.length=0;
+    if( typeof(includeBlank)!="undefined" && includeBlank ){
+        fldCiudades[fldCiudades.length] = new Option('','',false,false);
+    }
+    var ciudadesTrafico = ciudades[idtrafico];
+    
+    for( i in ciudadesTrafico ){
+
+        if( typeof(ciudadesTrafico[i]['idciudad'])!="undefined" ){
+            fldCiudades[fldCiudades.length] = new Option(ciudadesTrafico[i]['ciudad'],ciudadesTrafico[i]['idciudad'],false,false);
+        }
+    }
+
+}
