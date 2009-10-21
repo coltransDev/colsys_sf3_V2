@@ -12,7 +12,7 @@ localeValidation:                 # Filters need a unique name
     culture: es_ES	
 
 cache:     ~
-common:    ~
+
 
 
 execution: ~

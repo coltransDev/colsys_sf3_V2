@@ -1,37 +1,37 @@
 prod:
   .settings:
-    logging_enabled: off
-    no_script_name:           on
+    logging_enabled: true
+    no_script_name:           true
 
 dev:
   .settings:
     # E_ALL | E_STRICT = 4095
     error_reporting:        <?php echo (E_ALL | E_STRICT)."\n" ?>
-    logging_enabled: on
-    web_debug:              on
-    cache:                  off
-    no_script_name:         on
-    etag:                   off
+    logging_enabled:        true
+    web_debug:              true
+    cache:                  false
+    no_script_name:         true
+    etag:                   true
 
 
 test:
   .settings:
     # E_ALL | E_STRICT & ~E_NOTICE = 2047
     error_reporting:        <?php echo ((E_ALL | E_STRICT) ^ E_NOTICE)."\n" ?>
-    cache:                  off
-    web_debug:              off
-    no_script_name:         off
-    etag:                   off
+    cache:                  false
+    web_debug:              false
+    no_script_name:         false
+    etag:                   false
 
-batch:
+cli:
   .settings:
     # E_ALL | E_STRICT = 4095
     error_reporting:        <?php echo (E_ALL | E_STRICT)."\n" ?>
-    logging_enabled: off
-    web_debug:              off
-    cache:                  off
-    no_script_name:         off
-    etag:                   off		
+    logging_enabled:        true
+    web_debug:              false
+    cache:                  false
+    no_script_name:         false
+    etag:                   false		
 
 all:
   .actions:
@@ -53,7 +53,7 @@ all:
     # Cache settings
     lazy_cache_key:         on        # Delays creation of a cache key until after checking whether an action or partial is cacheable
     # Output escaping settings
-    escaping_strategy:      on
+    escaping_strategy:      true
     escaping_method:        ESC_SPECIALCHARS
 #    # Optional features. Deactivating unused features boots performance a bit.
 #    use_database:           on        # Enable database manager. Set to off if you don't use a database.
@@ -102,7 +102,7 @@ all:
 #    max_forwards:           5
 #
 #    # Logging
-#    logging_enabled:        on
+#    logging_enabled:        true
 #
 #    # i18n
 #    default_culture:        en        # Default user culture

@@ -10,7 +10,7 @@ class loginValidationFilter extends sfFilter
 			$filterChain->execute();
 		}else{
 		
-			if( sfContext::getInstance()->getConfiguration()->getEnvironment()!="batch" ){		
+			if( sfContext::getInstance()->getConfiguration()->getEnvironment()!="cli" ){
 				
 				if( sfContext::getInstance()->getUser()->isAuthenticated() ){
 					$module = sfContext::getInstance()->getModuleName ();

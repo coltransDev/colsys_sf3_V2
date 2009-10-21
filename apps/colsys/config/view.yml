@@ -13,5 +13,5 @@ default:
 
   javascripts:    [comunes,  jquery/jquery.js, jquery/jquery.tooltip.js ,ext/adapter/ext/ext-base, ext/ext-all, ext/src/locale/ext-lang-es.js , menu/menu]
 
-  has_layout:     on
+  has_layout:     true
   layout:         layout

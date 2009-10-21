@@ -5,7 +5,7 @@ prod:
       level: err
       loggers:
         sf_file_debug:
-          class: sfFileLogger
+          class: myLogger
           param:
             level: err
             file: %SF_LOG_DIR%/%SF_APP%_%SF_ENVIRONMENT%.log
@@ -14,6 +14,7 @@ prod:
 #    param:
 #      level:   err
 #      loggers: ~
+
 cli:
   controller:
     class: sfConsoleController
@@ -21,6 +22,16 @@ cli:
     class: sfConsoleRequest
   response:
     class: sfConsoleResponse
+  logger:
+    class: sfAggregateLogger
+    param:
+      level: err
+      loggers:
+        sf_file_debug:
+          class: myLogger
+          param:
+            level: err
+            file: %SF_LOG_DIR%/%SF_APP%_%SF_ENVIRONMENT%.log
 
 test:
   response:
@@ -48,16 +59,7 @@ all:
 #    class: sfSessionStorage
 #    param:
 #      session_name: colsys  
-  logger:
-    class: sfAggregateLogger
-    param:
-      level: err
-      loggers:
-        sf_file_debug:
-          class: sfFileLogger
-          param:
-            level: err
-            file: %SF_LOG_DIR%/%SF_APP%_%SF_ENVIRONMENT%.log
+  
 
   storage:
     class: mySessionStorage
