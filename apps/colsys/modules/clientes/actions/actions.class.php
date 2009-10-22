@@ -298,7 +298,6 @@ class clientesActions extends sfActions
 
                 $handleLocal = fopen($file, 'x');
                 //Descarga el archivo
-                /*
                 $handle = fopen($url, 'r');
                 while (!feof($handle)) {
                     $data = fgets($handle, 512);
@@ -307,11 +306,11 @@ class clientesActions extends sfActions
                         exit;
                     }
                 }
-                fclose($handle);*/
+                fclose($handle);
                 echo "Temina Lectura de Archivo Plano desde la Pagina Web www.treas.gov : ".date("h:i:s A")."\n\n";
 
                 echo "Inicia Seleccion de Registro para Colombia y Carga de tablas : ".date("h:i:s A")."\n\n";
-                    /*Extrae los datos y los coloca*/
+                /*Extrae los datos y los coloca*/
 
                 $doc = new DOMDocument();
                 $doc->load( $file );
