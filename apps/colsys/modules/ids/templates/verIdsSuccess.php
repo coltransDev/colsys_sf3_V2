@@ -113,7 +113,7 @@
             </tr>
 
                 <?
-                if( $proveedor->getCaTipo()=="TRI" ){
+                if( $proveedor->getCaTipo()=="TRI" || $proveedor->getCaTipo()=="TRN" ){
                 ?>
                 <tr>
                     <td>

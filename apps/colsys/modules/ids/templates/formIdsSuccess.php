@@ -40,7 +40,7 @@
 
     var changeTipo = function(){
 
-        if( document.getElementById("tipo_proveedor").value=="TRI" ){
+        if( document.getElementById("tipo_proveedor").value=="TRI" || document.getElementById("tipo_proveedor").value=="TRN" ){
             document.getElementById("prov_tri").style.display="";
         }else{
             document.getElementById("prov_tri").style.display="none";

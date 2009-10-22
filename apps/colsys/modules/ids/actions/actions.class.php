@@ -230,8 +230,8 @@ class idsActions extends sfActions
                 $bindValues["activo"] = $request->getParameter("activo");
                 $bindValues["empresa"] = $request->getParameter("empresa");
 
-
-                if( $bindValues["tipo_proveedor"]=="TRI" ){
+               
+                if( $bindValues["tipo_proveedor"]=="TRI" || $bindValues["tipo_proveedor"]=="TRN" ){
                     $bindValues["sigla"] = $request->getParameter("sigla");
                     $bindValues["transporte"] = $request->getParameter("transporte");
                 }
@@ -298,7 +298,7 @@ class idsActions extends sfActions
                         $proveedor->setCaEmpresa(null);
                     }
                     
-                    if( $bindValues["tipo_proveedor"]=="TRI" ){                        
+                    if( $bindValues["tipo_proveedor"]=="TRI" || $bindValues["tipo_proveedor"]=="TRN" ){
                         $proveedor->setCaSigla($bindValues["sigla"] );
                         $proveedor->setCaTransporte( $bindValues["transporte"] );
                     }                   
