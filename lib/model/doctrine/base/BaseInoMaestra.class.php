@@ -36,7 +36,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6365 2009-09-15 18:22:38Z jwage $
+ * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
  */
 abstract class BaseInoMaestra extends myDoctrineRecord
 {
@@ -110,13 +110,13 @@ abstract class BaseInoMaestra extends myDoctrineRecord
              ));
 
 
-        $this->setAttribute(Doctrine::ATTR_EXPORT, Doctrine::EXPORT_TABLES);
+        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
     }
 
     public function setUp()
     {
         parent::setUp();
-    $this->hasMany('InoCliente', array(
+        $this->hasMany('InoCliente', array(
              'local' => 'ca_idmaestra',
              'foreign' => 'ca_idmaestra'));
 

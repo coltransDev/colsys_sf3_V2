@@ -19,7 +19,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6365 2009-09-15 18:22:38Z jwage $
+ * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
  */
 abstract class BaseSdnAddress extends myDoctrineRecord
 {
@@ -60,7 +60,7 @@ abstract class BaseSdnAddress extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-    $this->hasOne('Sdn', array(
+        $this->hasOne('Sdn', array(
              'local' => 'ca_uid',
              'foreign' => 'ca_uid'));
     }

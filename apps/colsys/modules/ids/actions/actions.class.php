@@ -729,6 +729,7 @@ class idsActions extends sfActions
 			$bindValues["fchevaluacion"] = $request->getParameter("fchevaluacion");
 			$bindValues["concepto"] = $request->getParameter("concepto");
 			$bindValues["tipo"] = $request->getParameter("tipo");
+            $bindValues["ano"] = $request->getParameter("ano");
             foreach( $this->criterios as $criterio ){
                 $bindValues["ponderacion_".$criterio->getCaIdcriterio() ] = $request->getParameter("ponderacion_".$criterio->getCaIdcriterio());
                 $bindValues["calificacion_".$criterio->getCaIdcriterio() ] = $request->getParameter("calificacion_".$criterio->getCaIdcriterio());
@@ -740,7 +741,9 @@ class idsActions extends sfActions
                 
                 $evaluacion->setCaId( $this->ids->getCaId() );
                 $evaluacion->setCaFchevaluacion( Utils::parseDate( $request->getParameter('fchevaluacion' )) );
+                $evaluacion->setCaAno( $request->getParameter('ano') );
                 $evaluacion->setCaConcepto( $request->getParameter('concepto') );
+
                 $evaluacion->setCaTipo( $request->getParameter('tipo') );
                 $evaluacion->save();
 

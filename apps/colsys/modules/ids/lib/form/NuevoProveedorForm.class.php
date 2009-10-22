@@ -10,7 +10,7 @@
  *
  * @author abotero
  */
-class NuevoProveedorForm extends sfForm{
+class NuevoProveedorForm extends BaseForm{
 
 
 	public function configure(){
@@ -31,7 +31,7 @@ class NuevoProveedorForm extends sfForm{
         $widgets['controladoporsig'] = new sfWidgetFormInputCheckbox();
         $widgets['aprobado'] = new sfWidgetFormExtDate();
         $widgets['activo'] = new sfWidgetFormInputCheckbox();
-        $widgets['sigla'] = new sfWidgetFormInput();
+        $widgets['sigla'] = new sfWidgetFormInputText();
         $widgets['transporte'] = new sfWidgetFormChoice(array('choices' => array( ""=>"",
                                                                                   Constantes::AEREO=>Constantes::AEREO,
                                                                                  Constantes::MARITIMO=>Constantes::MARITIMO,

@@ -20,13 +20,27 @@
                 <td width="50%"><b>Proveedor:</b><br /><?=$ids->getCaNombre()?></td>
             </tr>
             <tr>
-                <td> <b>Fecha Evaluaci&acute;n:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchevaluacion())?></td>
+                <td> <b>Fecha Evaluaci&oacute;n:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchevaluacion())?></td>
+                <td> <b>A&ntilde;o:</b><br /><?=$evaluacion->getCaAno()?></td>
+            </tr>
+            <tr>
                 <td> <b>Concepto:</b><br /><?=$evaluacion->getCaConcepto()?></td>
+                <td> &nbsp;</td>
             </tr>
              <tr>
                 <td> <b>Fecha Creaci&oacute;n:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchcreado())?></td>
                 <td> <b>Usuario Creador:</b><br /><?=$evaluacion->getCaUsucreado()?></td>
             </tr>
+            <?
+            if( $evaluacion->getCaFchactualizado() ){
+            ?>
+            <tr>
+                <td> <b>Fecha Modificaci&oacute;n:</b><br /><?=Utils::fechaMes($evaluacion->getCaFchactualizado())?></td>
+                <td> <b>Usuario Modificaci&oacute;n:</b><br /><?=$evaluacion->getCaUsuactualizado()?></td>
+            </tr>
+            <?
+            }
+            ?>
             <tr>
                 <td colspan="2">
                     <table class="tablerList" width="100%" cellspacing="0">
@@ -109,7 +123,7 @@
                                 ?>
                             </div>
                         </td>
-                    </tr>
+                    </tr>                    
                 </table>
                 </td>
             </tr>

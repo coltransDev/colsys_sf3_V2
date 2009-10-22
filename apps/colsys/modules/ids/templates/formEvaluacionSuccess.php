@@ -49,6 +49,19 @@ use_helper("ExtCalendar");
             </td>
         
             <td>
+                <b>A&ntilde;o:</b><br />
+                <?
+                echo $form["ano"]->renderError();
+                if( $evaluacion->getCaAno() ){
+                    $form->setDefault('ano', $evaluacion->getCaAno() );
+                }
+                echo $form["ano"]->render();
+                ?>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <b>Concepto:</b><br />
                 <?
                 echo $form["concepto"]->renderError();
@@ -59,8 +72,11 @@ use_helper("ExtCalendar");
                 ?>
 
             </td>
-
-            <tr>
+            <td>
+                &nbsp;
+            </td>
+        </tr>
+        <tr>
             <td colspan="2">
                 <table class="tablerList" width="100%" cellspacing="0">
                     <tr>

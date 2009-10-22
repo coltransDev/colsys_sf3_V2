@@ -10,7 +10,7 @@
  *
  * @author abotero
  */
-class NuevoGrupoForm extends sfForm{
+class NuevoGrupoForm extends BaseForm{
     private $modo;
     public function configure(){
 

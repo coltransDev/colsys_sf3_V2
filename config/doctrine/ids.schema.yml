@@ -251,6 +251,7 @@ IdsEvaluacion:
     ca_id: integer
     ca_tipo: string(15)
     ca_concepto: string(15)
+    ca_ano: integer
     ca_fchevaluacion: date
     ca_usucreado: string(20)
     ca_fchcreado: timestamp

@@ -41,7 +41,8 @@ $numYears = $actualYear-$initialYear+1;
             $evaluacion=null;
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
                 $evaluacionAnt = $evaluacion;
-
+                $evaluacion=null;
+                
                 if( isset( $evals[$year] )){
                     $evaluacion = $evals[$year];
                 }
@@ -61,13 +62,16 @@ $numYears = $actualYear-$initialYear+1;
         <td width="20%">
             <b>Fecha </b>
         </td>
+        <td width="10%">
+            <b>A&ntilde;o</b>
+        </td>
         <td width="20%">
            <b>Tipo</b>
         </td>
         <td width="20%">
             <b>Concepto</b>
         </td>
-        <td width="20%">
+        <td width="10%">
             <b>Calificaci&oacute;n</b>
         </td>
         <td width="20%" align="center">
@@ -104,6 +108,10 @@ $numYears = $actualYear-$initialYear+1;
     <tr   >
         <td>
             <?=Utils::fechaMes($evaluacion->getCaFchevaluacion() )?>
+
+        </td>
+        <td>
+            <?=$evaluacion->getCaAno() ?>
 
         </td>
         <td>

@@ -12,7 +12,7 @@
  */
 
 
-class NuevoEventoForm extends sfForm{
+class NuevoEventoForm extends BaseForm{
 
     private $idproveedores;
 	public function configure(){

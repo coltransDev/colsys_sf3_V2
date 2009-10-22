@@ -1,5 +1,5 @@
 <?
-class NuevoIdsForm extends sfForm{
+class NuevoIdsForm extends BaseForm{
 	
 		
 	public function configure(){
@@ -20,10 +20,10 @@ class NuevoIdsForm extends sfForm{
                                                             array("onChange"=>"getDV(true)")
                                                     );
         $widgets['id'] = new sfWidgetFormInputHidden();
-        $widgets['idalterno'] = new sfWidgetFormInput(array(), array("size"=>30, "onChange"=>"getDV(true)" ));
-        $widgets['dv'] = new sfWidgetFormInput(array(), array("size"=>3, "readOnly"=>"true" ));
-        $widgets['nombre'] = new sfWidgetFormInput(array(), array("size"=>80 ));
-        $widgets['website'] = new sfWidgetFormInput(array(), array("size"=>80 ));
+        $widgets['idalterno'] = new sfWidgetFormInputText(array(), array("size"=>30, "onChange"=>"getDV(true)" ));
+        $widgets['dv'] = new sfWidgetFormInputText(array(), array("size"=>3, "readOnly"=>"true" ));
+        $widgets['nombre'] = new sfWidgetFormInputText(array(), array("size"=>80 ));
+        $widgets['website'] = new sfWidgetFormInputText(array(), array("size"=>80 ));
 		
 		
 		$this->setWidgets( $widgets );

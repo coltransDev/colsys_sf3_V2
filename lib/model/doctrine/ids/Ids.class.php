@@ -44,20 +44,23 @@ class Ids extends BaseIds
 
 
     public function getCalificaciones( ){       
-
-        $sql = "SELECT to_char(i2.ca_fchevaluacion, 'YYYY') AS yy ,SUM(i.ca_valor*i.ca_ponderacion)/SUM(i.ca_ponderacion) AS calificacion
-FROM ids.tb_evaluacionxcriterio i INNER JOIN ids.tb_evaluacion i2 ON i.ca_idevaluacion = i2.ca_idevaluacion
-WHERE (i2.ca_tipo = 'desempeno' AND i2.ca_id = ".$this->getCaId().")
-GROUP BY yy ORDER BY yy";
+        
 
         $result = array();
-        $q = Doctrine_Manager::getInstance()->connection();
-        $stmt = $q->execute($sql);
-
-        while( $row = $stmt->fetch( PDO::FETCH_ASSOC ) ){
-           $result[$row["yy"]]=round($row["calificacion"], 1);
+        $rows  = Doctrine::getTable("IdsEvaluacion")
+                ->createQuery("ev")
+                ->innerJoin("ev.IdsEvaluacionxCriterio e")
+                ->select("ev.ca_ano,SUM(e.ca_valor*e.ca_ponderacion )/SUM(e.ca_ponderacion ) as calificacion")
+                ->addWhere("ev.ca_id = ?",$this->getCaId() )
+                ->addGroupBy("ev.ca_ano")
+                ->addOrderBy("ev.ca_ano")
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
+        foreach( $rows as $row ){           
+            $result[$row["ev_ca_ano"]]=round($row["e_calificacion"], 1);
         }
         return $result;
+
         
     }
 }

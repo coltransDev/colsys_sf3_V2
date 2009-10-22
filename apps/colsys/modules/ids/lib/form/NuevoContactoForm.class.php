@@ -1,5 +1,5 @@
 <?
-class NuevoContactoForm extends sfForm{
+class NuevoContactoForm extends BaseForm{
 	
 	
 	
@@ -13,14 +13,14 @@ class NuevoContactoForm extends sfForm{
 		$this->setWidgets(array(
 		  'idsucursal'    => new sfWidgetFormInputHidden(),
 		  'idcontacto'    => new sfWidgetFormInputHidden(),
-		  'nombre'      => new sfWidgetFormInput(array(), array("maxlength"=>"60" ,"size"=>"60")),
-		  'apellido'      => new sfWidgetFormInput(array(), array("maxlength"=>"60" ,"size"=>"60")),
-		  //'direccion'   => new sfWidgetFormInput(array(), array("maxlength"=>"100" ,"size"=>"60")),
-          'codigoarea'   => new sfWidgetFormInput(array(), array("maxlength"=>"4" ,"size"=>"10") ),
-		  'telefonos'   => new sfWidgetFormInput(array(), array("maxlength"=>"30" ,"size"=>"60") ),
-		  'fax'         => new sfWidgetFormInput(array(), array("maxlength"=>"30" ,"size"=>"60")),
+		  'nombre'      => new sfWidgetFormInputText(array(), array("maxlength"=>"60" ,"size"=>"60")),
+		  'apellido'      => new sfWidgetFormInputText(array(), array("maxlength"=>"60" ,"size"=>"60")),
+		  //'direccion'   => new sfWidgetFormInputText(array(), array("maxlength"=>"100" ,"size"=>"60")),
+          'codigoarea'   => new sfWidgetFormInputText(array(), array("maxlength"=>"4" ,"size"=>"10") ),
+		  'telefonos'   => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60") ),
+		  'fax'         => new sfWidgetFormInputText(array(), array("maxlength"=>"30" ,"size"=>"60")),
 		
-		  'email'       => new sfWidgetFormInput( array(), array("maxlength"=>"40" ,"size"=>"60")),
+		  'email'       => new sfWidgetFormInputText( array(), array("maxlength"=>"40" ,"size"=>"60")),
 		  'impoexpo'     => new sfWidgetFormChoice(array(
   								'choices' => array( Constantes::IMPO=>Constantes::IMPO,
 													Constantes::EXPO=>Constantes::EXPO), 

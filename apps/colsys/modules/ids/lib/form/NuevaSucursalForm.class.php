@@ -11,7 +11,7 @@
  *
  * @author abotero
  */
-class NuevaSucursalForm extends sfForm {
+class NuevaSucursalForm extends BaseForm {
     public function configure(){
 
 		sfValidatorBase::setCharset('ISO-8859-1');
@@ -24,9 +24,9 @@ class NuevaSucursalForm extends sfForm {
                              ->addOrderBy("c.ca_ciudad");
 		$widgets = array();
         $widgets['idsucursal'] = new sfWidgetFormInputHidden(array(), array("size"=>80 ));
-        $widgets['direccion'] = new sfWidgetFormInput(array(), array("size"=>80, "maxlength"=>100 ));
-        $widgets['telefonos'] = new sfWidgetFormInput(array(), array("size"=>40, "maxlength"=>30 ));
-        $widgets['fax'] = new sfWidgetFormInput(array(), array("size"=>40, "maxlength"=>30 ));
+        $widgets['direccion'] = new sfWidgetFormInputText(array(), array("size"=>80, "maxlength"=>100 ));
+        $widgets['telefonos'] = new sfWidgetFormInputText(array(), array("size"=>40, "maxlength"=>30 ));
+        $widgets['fax'] = new sfWidgetFormInputText(array(), array("size"=>40, "maxlength"=>30 ));
         $widgets['idciudad'] = new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => false, 'query' => $q));
         $this->setWidgets( $widgets );
 

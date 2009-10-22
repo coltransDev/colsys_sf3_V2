@@ -76,8 +76,8 @@ class Doctrine_Import_Schema
                                 'generateAccessors'     =>  false,
                                 'baseClassPrefix'       =>  'Base',
                                 'baseClassesDirectory'  =>  'generated',
-                                'baseClassName'         =>  'Doctrine_Record',
-                                'generatePath'          =>  '' );
+                                'baseClassName'         =>  'Doctrine_Record'
+                                 );
 
     /**
      * _validation
@@ -105,7 +105,8 @@ class Doctrine_Import_Schema
                                                           'detect_relations',
                                                           'listeners',
                                                           'checks',
-                                                          'comment'),
+                                                          'comment',
+                                                          'generatePath'),
 
                                    'column'     =>  array('name',
                                                           'format',

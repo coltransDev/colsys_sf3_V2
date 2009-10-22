@@ -9,6 +9,7 @@
  * @property integer $ca_id
  * @property string $ca_tipo
  * @property string $ca_concepto
+ * @property integer $ca_ano
  * @property date $ca_fchevaluacion
  * @property string $ca_usucreado
  * @property timestamp $ca_fchcreado
@@ -20,7 +21,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6365 2009-09-15 18:22:38Z jwage $
+ * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
  */
 abstract class BaseIdsEvaluacion extends myDoctrineRecord
 {
@@ -42,6 +43,9 @@ abstract class BaseIdsEvaluacion extends myDoctrineRecord
         $this->hasColumn('ca_concepto', 'string', 15, array(
              'type' => 'string',
              'length' => '15',
+             ));
+        $this->hasColumn('ca_ano', 'integer', null, array(
+             'type' => 'integer',
              ));
         $this->hasColumn('ca_fchevaluacion', 'date', null, array(
              'type' => 'date',
@@ -65,7 +69,7 @@ abstract class BaseIdsEvaluacion extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-    $this->hasOne('Ids', array(
+        $this->hasOne('Ids', array(
              'local' => 'ca_id',
              'foreign' => 'ca_id'));
 

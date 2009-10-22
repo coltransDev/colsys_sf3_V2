@@ -34,7 +34,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6365 2009-09-15 18:22:38Z jwage $
+ * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
  */
 abstract class BaseCotizacion extends myDoctrineRecord
 {
@@ -102,13 +102,13 @@ abstract class BaseCotizacion extends myDoctrineRecord
              ));
 
 
-        $this->setAttribute(Doctrine::ATTR_EXPORT, Doctrine::EXPORT_TABLES);
+        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
     }
 
     public function setUp()
     {
         parent::setUp();
-    $this->hasOne('Usuario', array(
+        $this->hasOne('Usuario', array(
              'local' => 'ca_usuario',
              'foreign' => 'ca_login'));
 

@@ -116,10 +116,10 @@ $numYears = $actualYear-$initialYear+1;
             $evaluaciones = $ids->getCalificaciones();
             
             $evaluacionAnt=null;
-            $evaluacion=null;
+            
             for( $year=$initialYear;$year<=$actualYear; $year++ ){
                 $evaluacionAnt = $evaluacion;
-
+                $evaluacion=null;
                 if( isset( $evaluaciones[$year] )){
                     $evaluacion = $evaluaciones[$year];
                 }

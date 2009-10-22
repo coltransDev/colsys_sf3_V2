@@ -79,7 +79,10 @@
                            <h2 class="tab">Ingresos</h2>
                        </div>
                        <div class="tab-page">
-                           <h2 class="tab">Gastos</h2>
+                           <h2 class="tab">Egresos</h2>
+                       </div>
+                       <div class="tab-page">
+                           <h2 class="tab">Balance</h2>
                        </div>
                        <div class="tab-page">
                            <h2 class="tab">Documentos</h2>

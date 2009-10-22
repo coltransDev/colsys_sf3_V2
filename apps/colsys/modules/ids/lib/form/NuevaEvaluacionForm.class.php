@@ -10,7 +10,7 @@
  *
  * @author abotero
  */
-class NuevaEvaluacionForm extends sfForm{
+class NuevaEvaluacionForm extends BaseForm{
 
      
 
@@ -32,14 +32,14 @@ class NuevaEvaluacionForm extends sfForm{
 												  )
 								 ));
         $widgets['fchevaluacion'] = new sfWidgetFormExtDate();
-
+        $widgets['ano'] = new sfWidgetFormInputText(array(), array("size"=>10 ));
         $criterios = $this->getCriterios();
         if( $criterios ){            
             foreach( $criterios as $criterio ){
                
-                $widgets['ponderacion_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInput(array(), array("size"=>5 , "readOnly"=>"true"));
-                $widgets['calificacion_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInput(array(), array("size"=>5 ));
-                $widgets['observaciones_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInput(array(), array("size"=>50));
+                $widgets['ponderacion_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInputText(array(), array("size"=>5 , "readOnly"=>"true"));
+                $widgets['calificacion_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInputText(array(), array("size"=>5 ));
+                $widgets['observaciones_'.$criterio->getCaIdcriterio()] = new sfWidgetFormInputText(array(), array("size"=>50));
             }
         }
         
@@ -52,6 +52,10 @@ class NuevaEvaluacionForm extends sfForm{
 														array('required' => 'Este campo es requerido'));
         $validator["fchevaluacion"] =new sfValidatorString( array('required' => true ),
 														array('required' => 'Este campo es requerido'));
+
+        $validator["ano"] =new sfValidatorString( array('required' => true ),
+														array('required' => 'Este campo es requerido'));
+
 
 
         if( $criterios ){

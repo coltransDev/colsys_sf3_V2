@@ -20,7 +20,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6365 2009-09-15 18:22:38Z jwage $
+ * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
  */
 abstract class BaseInoEquiposSea extends myDoctrineRecord
 {
@@ -61,7 +61,7 @@ abstract class BaseInoEquiposSea extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-    $this->hasOne('InoMaestraSea', array(
+        $this->hasOne('InoMaestraSea', array(
              'local' => 'ca_referencia',
              'foreign' => 'ca_referencia'));
 

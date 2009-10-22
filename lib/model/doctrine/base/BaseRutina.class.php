@@ -17,7 +17,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6365 2009-09-15 18:22:38Z jwage $
+ * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
  */
 abstract class BaseRutina extends myDoctrineRecord
 {
@@ -51,7 +51,7 @@ abstract class BaseRutina extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-    $this->hasMany('AccesoPerfil', array(
+        $this->hasMany('AccesoPerfil', array(
              'local' => 'ca_rutina',
              'foreign' => 'ca_rutina'));
 

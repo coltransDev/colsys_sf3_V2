@@ -31,7 +31,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6365 2009-09-15 18:22:38Z jwage $
+ * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
  */
 abstract class BaseNotTarea extends myDoctrineRecord
 {
@@ -84,13 +84,13 @@ abstract class BaseNotTarea extends myDoctrineRecord
              ));
 
 
-        $this->setAttribute(Doctrine::ATTR_EXPORT, Doctrine::EXPORT_TABLES);
+        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
     }
 
     public function setUp()
     {
         parent::setUp();
-    $this->hasMany('Notificacion', array(
+        $this->hasMany('Notificacion', array(
              'local' => 'ca_idtarea',
              'foreign' => 'ca_idtarea'));
 
