@@ -601,7 +601,8 @@ class Doctrine_Connection_UnitOfWork extends Doctrine_Connection_Module
         if (empty($seq) && count($identifier) == 1 && $identifier[0] == $table->getIdentifier() &&
             $table->getIdentifierType() != Doctrine_Core::IDENTIFIER_NATURAL) {
             if (($driver = strtolower($this->conn->getDriverName())) == 'pgsql') {
-                $seq = $table->getTableName() . '_' . $identifier[0];
+                //$seq = $table->getTableName() . '_' . $identifier[0];
+                $seq = $table->getTableName();
             } elseif ($driver == 'oracle') {
                 $seq = $table->getTableName();
             }
