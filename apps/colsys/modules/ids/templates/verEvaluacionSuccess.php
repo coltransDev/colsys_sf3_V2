@@ -115,7 +115,7 @@
                             <div align="center">
                                 <input type="button" value="Volver" class="button" onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$ids->getCaId())?>'">
                                 <?
-                                if( $user->getUserId()==$evaluacion->getCaUsucreado() ){
+                                if( $user->getUserId()==$evaluacion->getCaUsucreado() || $nivel>=2 ){
                                 ?>
                                 <input type="button" value="Editar" class="button" onClick="document.location='<?=url_for("ids/formEvaluacion?modo=".$modo."&idevaluacion=".$evaluacion->getCaIdevaluacion())?>'">
                                 <?

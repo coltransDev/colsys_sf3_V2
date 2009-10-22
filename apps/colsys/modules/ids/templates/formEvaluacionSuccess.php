@@ -150,6 +150,13 @@ use_helper("ExtCalendar");
                             <div align="center">
                                 <input type="Submit" value="Guardar" class="button">&nbsp;
                                 <input type="button" value="Cancelar" class="button" onClick="document.location='<?=url_for("ids/verIds?modo=".$modo."&id=".$ids->getCaId())?>'">
+                                <?
+                                if( $evaluacion->getCaIdevaluacion() ){
+                                ?>
+                                <input type="button" value="Eliminar" class="button" onClick="if(confirm('Esta seguro?')){document.location='<?=url_for("ids/eliminarEvaluacion?modo=".$modo."&idevaluacion=".$evaluacion->getCaIdevaluacion())?>';}">
+                                <?
+                                }
+                                ?>
                             </div>
                         </td>
                     </tr>

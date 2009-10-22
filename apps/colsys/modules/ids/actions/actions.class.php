@@ -690,7 +690,7 @@ class idsActions extends sfActions
             $evaluacion = Doctrine::getTable("IdsEvaluacion")->find( $request->getParameter("idevaluacion") );
             $this->ids = $evaluacion->getIds();
             $this->tipo = $evaluacion->getCaTipo();
-            $this->proveedor = Doctrine::getTable("IdsProveedor")->find( $request->getParameter("id") );
+            $this->proveedor = $evaluacion->getIds()->getIdsProveedor();
         }else{
             $this->ids = Doctrine::getTable("Ids")->find( $request->getParameter("id") );
             $evaluacion = new IdsEvaluacion();
@@ -713,11 +713,14 @@ class idsActions extends sfActions
         }else{
             $q->where("c.ca_tipocriterio = ?", $this->tipo);            
         }
+        
         if( $this->proveedor && $this->tipo!="desempeno" && $this->tipo!="reevaluacion" ){            
-            $q->where("c.ca_tipo = ?", $this->proveedor->getCaTipo());
+            $q->addWhere("c.ca_tipo = ?", $this->proveedor->getCaTipo());
         }
+
         $this->criterios = $q->execute();
 
+        
         $this->form = new NuevaEvaluacionForm();
         $this->form->setCriterios( $this->criterios );
         $this->form->configure();
@@ -799,6 +802,47 @@ class idsActions extends sfActions
         
         $this->nivel = $this->getNivel();
         $this->user = $this->getUser();
+
+
+
+    }
+
+    /*
+    * Elimina una evaluacion
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeEliminarEvaluacion(sfWebRequest $request){
+
+
+
+        $this->modo=$request->getParameter("modo");
+        $this->nivel = $this->getNivel();
+        $this->user = $this->getUser();
+
+        if( $this->nivel<=2 ){
+            $this->forward404();
+        }
+
+
+        $evaluacion = Doctrine::getTable("IdsEvaluacion")->find($request->getParameter("idevaluacion"));
+
+        $ids = $evaluacion->getIds();
+        $this->forward404Unless( $evaluacion );
+
+
+        $evaluacionxCriterios = $evaluacion->getIdsEvaluacionxCriterio();
+        foreach( $evaluacionxCriterios as $evaluacionxCriterio ){
+            $evaluacionxCriterio->delete();
+        }
+
+        $evaluacion->delete();
+
+        $this->redirect("ids/verIds?modo=".$this->modo."&id=".$ids->getCaId() );
+
+
+
+
 
 
 
