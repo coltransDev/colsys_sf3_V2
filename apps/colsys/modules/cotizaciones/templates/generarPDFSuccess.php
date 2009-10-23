@@ -163,18 +163,35 @@ for( $k=0; $k<count($transportes); $k++ ):
 			$pdf->SetAligns(array("L"));
 			$pdf->SetStyles(array("B"));
 			$pdf->Row(array('Producto : '.$producto->getCaProducto()));
-			
+
+
+            $titulos = array( 'Términos' ,'Origen', 'Destino');
+            if( $producto->getCaVigencia() ){
+                array_push($titulos, "Vigencia");
+            }
+
 			$pdf->SetFont($font,'B',8);
-			$pdf->SetWidths(array( 50, 60, 60));
+            if( count( $titulos ) == 3 ){
+                $pdf->SetWidths(array( 50, 60, 60));
+            }
+            if( count( $titulos ) == 4 ){
+                $pdf->SetWidths(array( 50, 45, 45, 30));
+            }
 			$pdf->SetAligns(array_fill(0, 5, "C"));
 			$pdf->SetStyles(array_fill(0, 5, "B"));
 			$pdf->SetFills(array_fill(0, 5, 1));
-			$pdf->Row(array( 'Términos' ,'Origen', 'Destino'));
+			$pdf->Row( $titulos );
 					
 			$pdf->SetStyles(array_fill(0, 5, ""));
 			$pdf->SetFills(array_fill(0, 5, 0));
 			$pdf->SetFont($font,'',8);
-			$pdf->Row(array( $producto->getCaIncoterms(), $producto->getOrigen()->getCaCiudad()." - ".$producto->getOrigen()->getCaTrafico(),  $producto->getDestino()->getCaCiudad()." - ".$producto->getDestino()->getCaTrafico() ));		
+            $row = array( $producto->getCaIncoterms(), $producto->getOrigen()->getCaCiudad()." - ".$producto->getOrigen()->getCaTrafico(),  $producto->getDestino()->getCaCiudad()." - ".$producto->getDestino()->getCaTrafico() );
+
+            if( $producto->getCaVigencia() ){
+                array_push($row, Utils::fechaMes($producto->getCaVigencia()) );
+            }
+
+			$pdf->Row( $row );
 			
 			if( $linea && $producto->getCaPostularlinea()){
 				$pdf->SetFont($font,'',8);
@@ -358,18 +375,22 @@ for( $k=0; $k<count($transportes); $k++ ):
 					$tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()]="";
 				}
 				
-				$tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()].=$concepto->getCaConcepto()." - ".substr($producto->getCaIncoterms(),0,3);
+				$tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()].=$concepto->getCaConcepto()." - ".substr($producto->getCaIncoterms(),0,3)." ";
 				
 				$tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()].=$opcion->getTextoFlete()."\n";
 				
 				$textoRecargos = $opcion->getTextoRecargos();		
 				$tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()].=$textoRecargos;	
 				
-			}	
+			}
+
+            if( $producto->getCaVigencia() ){
+                $tabla[$producto->getOrigen()->getCaCiudad()][$producto->getDestino()->getCaCiudad()].=" Vigencia: ".Utils::fechaMes( $producto->getCaVigencia() );
+            }
 			
 			$recgen = $producto->getRecargosGenerales();
-			if( $recgen ){
-				$recargosGenPuerto = array_merge( $recargosGenPuerto , $recgen );	
+			if( $recgen && count($recgen)>0 ){
+				@$recargosGenPuerto = array_merge( $recargosGenPuerto , $recgen );
 			}			
 		endif; 
 	endforeach;
@@ -544,6 +565,13 @@ for( $k=0; $k<count($transportes); $k++ ):
 						}	
 						$tablaConceptos[ $trayecto ][ "observaciones" ] .= "T.T.: ".nl2br($producto->getCaTiempotransito());
 					}
+
+                    if( $producto->getCaVigencia() ){
+                        if($tablaConceptos[ $trayecto ][ "observaciones" ]!=""){
+							$tablaConceptos[ $trayecto ][ "observaciones" ] .= "\n";
+						}
+						$tablaConceptos[ $trayecto ][ "observaciones" ] .= "Vigencia: ".Utils::fechaMes($producto->getCaVigencia());
+                    }
 					
 					if( $producto->getCaObservaciones() ){					
 						if($tablaConceptos[ $trayecto ][ "observaciones" ]!=""){

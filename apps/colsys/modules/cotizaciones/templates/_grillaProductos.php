@@ -85,7 +85,8 @@ var recordProductos = Ext.data.Record.create([
 	{name: 'idlinea', type: 'string'},
 	{name: 'linea', type: 'string'},
 	{name: 'postular_linea', type: 'string'},
-	{name: 'consecutivo', type: 'string'},	
+	{name: 'consecutivo', type: 'string'},
+    {name: 'vigencia', type: 'date', dateFormat:'Y-m-d'},
 	{name: 'orden', type: 'string'},	
 	{name: 'parent', type: 'int'},				
 ]);
@@ -454,7 +455,16 @@ var crearVentanaProducto=function( record ){
                         lazyRender:true,
                         listClass: 'x-combo-list-small',
                         store: [['Por Item', 'Por Item'],['Puerto', 'Puerto'],['Concepto', 'Concepto'],['Trayecto', 'Trayecto']]
-                    })
+                    }),
+                    {
+						xtype: 'datefield',
+						width: 100,
+						fieldLabel: 'Vigencia',
+						name: 'vigencia',
+                        format: 'Y-m-d',
+						value: '',
+	                    allowBlank:false
+					}
 				]
 				
 					

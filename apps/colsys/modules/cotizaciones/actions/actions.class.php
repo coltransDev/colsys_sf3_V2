@@ -847,6 +847,13 @@ class cotizacionesActions extends sfActions
         if( $this->getRequestParameter("modalidad") ){
             $producto->setCaModalidad( $this->getRequestParameter("modalidad") );
         }
+
+        if( $this->getRequestParameter("vigencia") ){
+            $producto->setCaVigencia( $this->getRequestParameter("vigencia") );
+        }else{
+            $producto->setCaVigencia( null );
+        }
+
 		$producto->setCaIncoterms( $this->getRequestParameter("incoterms") );
 		$producto->setCaOrigen( $this->getRequestParameter("ciu_origen") );
 		if( $this->getRequestParameter("ciu_escala") ){ 
@@ -1100,7 +1107,8 @@ class cotizacionesActions extends sfActions
 							 'observaciones'=>utf8_encode($producto->getCaObservaciones()),
 							 'idlinea'=>$producto->getCaIdlinea(),
 							 'linea'=>utf8_encode($lineaStr),
-							 'postular_linea'=>	$producto->getCaPostularlinea()							
+							 'postular_linea'=>	$producto->getCaPostularlinea(),
+                             'vigencia'=>$producto->getCaVigencia(),
 						);
 						
 			foreach( $opciones as $opcion ){
