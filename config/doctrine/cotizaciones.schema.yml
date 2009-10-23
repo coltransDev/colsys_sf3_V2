@@ -83,6 +83,7 @@ CotProducto:
     ca_postularlinea: boolean
     ca_etapa: string
     ca_idtarea: integer
+    ca_vigencia: date
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
