@@ -23,6 +23,7 @@
  * @property boolean $ca_postularlinea
  * @property string $ca_etapa
  * @property integer $ca_idtarea
+ * @property date $ca_vigencia
  * @property string $ca_usucreado
  * @property timestamp $ca_fchcreado
  * @property string $ca_usuactualizado
@@ -100,6 +101,9 @@ abstract class BaseCotProducto extends myDoctrineRecord
              ));
         $this->hasColumn('ca_idtarea', 'integer', null, array(
              'type' => 'integer',
+             ));
+        $this->hasColumn('ca_vigencia', 'date', null, array(
+             'type' => 'date',
              ));
         $this->hasColumn('ca_usucreado', 'string', 20, array(
              'type' => 'string',
