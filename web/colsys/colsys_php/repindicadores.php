@@ -451,7 +451,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tipo = "T";
             $format_avg = "H:i:s";
             $source = "vi_repindicador_sea";
-            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD','IMCOL')) group by rp.ca_consecutivo, rs.ca_fchllegada, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD','IMCOL')) group by rp.ca_consecutivo, rs.ca_idetapa, rs.ca_fchllegada, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
         }
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -574,7 +574,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
     $queries = "select * from $source $subque where ca_impoexpo = '$impoexpo' and $sucursal and $ciudestino $cliente and $transporte and $ano and $mes";
     $queries.= " order by $campos";
-    // die($queries);
+    die($queries);
 
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
