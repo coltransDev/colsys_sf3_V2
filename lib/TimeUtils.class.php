@@ -1,5 +1,5 @@
-<?php
-class Utils{
+<?
+class TimeUtils{
 
 	/*
 	* Retorna la diferencia en días de dos fechas
