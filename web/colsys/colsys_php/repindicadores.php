@@ -574,7 +574,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
     $queries = "select * from $source $subque where ca_impoexpo = '$impoexpo' and $sucursal and $ciudestino $cliente and $transporte and $ano and $mes";
     $queries.= " order by $campos";
-    die($queries);
+    // die($queries);
 
     if (!$rs->Open("$queries")) {                       							// Selecciona todos lo registros de la vista vi_repgerencia_sea
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      		// Muestra el mensaje de error
