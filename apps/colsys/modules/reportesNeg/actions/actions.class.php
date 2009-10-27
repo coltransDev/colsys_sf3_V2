@@ -18,8 +18,8 @@ class reportesNegActions extends sfActions
 	*/
 	public function executeIndex()
 	{	
-		$this->modo = $this->getRequestParameter("modo");					
-		$this->forward404Unless( $this->modo );
+		/*$this->modo = $this->getRequestParameter("modo");
+		$this->forward404Unless( $this->modo );*/
 	}
 	
 	
@@ -74,7 +74,9 @@ class reportesNegActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeFormReporte(){
-		$this->modo = $this->getRequestParameter("modo");					
+        
+
+        /*$this->modo = $this->getRequestParameter("modo");
 		$this->forward404Unless( $this->modo );
 		
 		if( $this->getRequestParameter("reporteId") ){
@@ -135,7 +137,7 @@ class reportesNegActions extends sfActions
 		$this->ciudades = CiudadPeer::doSelect( $c );	
 						
 		$this->user = $this->getUser();									
-		
+		*/
 		
 /*		$cotProducto = $reporteNegocio->getCotProducto();		
 	
