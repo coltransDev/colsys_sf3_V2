@@ -60,6 +60,7 @@ class reporteExtActions extends sfActions
                                      ->addWhere("c.ca_impoexpo like ?", "%".$impoexpo."%" )
                                      ->addWhere("c.ca_transporte like ?", "%".$this->reporte->getCaTransporte()."%" )
                                      ->addWhere("c.ca_activo = ?", true )
+                                     ->addWhere("c.ca_fcheliminado IS NULL" )
                                      ->addOrderBy("ci.ca_ciudad")
                                      ->addOrderBy("c.ca_sugerido DESC")
                                      ->addOrderBy("c.ca_nombres")
