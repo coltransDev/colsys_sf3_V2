@@ -12,7 +12,7 @@ class PasswordValidator {
     public static function execute ($oValidator, $sValue, $aArguments) {
         
 			
-		$user = UsuarioPeer::retrieveByPk( sfContext::getInstance()->getUser()->getUserId() );
+		$user = Doctrine::getTable("Usuario")->find( sfContext::getInstance()->getUser()->getUserId() );
 		if( $user ){	
 			if( $user->checkPasswd( $sValue ) ){
 				return $sValue;
