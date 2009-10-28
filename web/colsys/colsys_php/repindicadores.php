@@ -313,7 +313,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     $traorigen = "ca_traorigen ".((count($traorigen)==1)?"like '$traorigen[0]'":"in ('".implode("','",$traorigen)."')");
     $modalidad = "ca_modalidad ".((count($modalidad)==1)?"like '$modalidad[0]'":"in ('".implode("','",$modalidad)."')");
     $transporte = "ca_transporte ".((count($transporte)==1)?"like '$transporte[0]'":"in ('".implode("','",$transporte)."')");
-    $impoexpo = "Importación";
+    $impoexpo = "ca_impoexpo = 'Importación'";
 
     $campos = "";
     while (list ($clave, $val) = each ($agrupamiento)) {
@@ -428,6 +428,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
     } else if ($indicador == "Oportunidad en la Entrega de Cotizaciones") {
         $format_avg = "H:i:s";
         $source   = "vi_cotindicadores";
+        $impoexpo = "ca_impoexpo like '%'";
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
             echo "<script>document.location.href = 'entrada.php';</script>";
@@ -451,7 +452,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tipo = "T";
             $format_avg = "H:i:s";
             $source = "vi_repindicador_sea";
-            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa in ('IMCPD','IMCOL')) group by rp.ca_consecutivo, rs.ca_idetapa, rs.ca_fchllegada, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
+            $subque = " LEFT OUTER JOIN (select rp.ca_consecutivo as ca_consecutivo_conf, min(rs.ca_fchenvio) as ca_fchconf_lleg from tb_repstatus rs INNER JOIN tb_reportes rp ON (rs.ca_idreporte = rp.ca_idreporte and rs.ca_idetapa = 'IMCPD') group by rp.ca_consecutivo, rs.ca_idetapa, rs.ca_fchllegada, rs.ca_horallegada order by rp.ca_consecutivo) rs1 ON ($source.ca_consecutivo = rs1.ca_consecutivo_conf) ";
         }
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -528,7 +529,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $campos.= ", $source.ca_referencia, ca_valor2";
     } else if ($indicador == "Oportunidad en Exportación") {
         $tipo = "D";
-        $impoexpo = "Exportación";
+        $impoexpo = "ca_impoexpo = 'Exportación'";
         $no_docs = array ("SAE","DEX","Cancelación Póliza Seguro","Radicación Documento de Transporte","Recibo de Soportes desde Puerto");
         $source = "vi_repindicador_exp";
 	$subque = "INNER JOIN (select ext.ca_referencia, ext.ca_idevento, ext.ca_fchevento, pre.ca_valor from (select ca_referencia, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
@@ -552,7 +553,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $campos.= ", $source.ca_referencia, exe.ca_fchevento, exe.ca_idevento";
     } else if ($indicador == "Oportunidad en la Facturación" and $procesos == "Exportaciones") {
         $tipo = "D";
-        $impoexpo = "Exportación";
+        $impoexpo = "ca_impoexpo = 'Exportación'";
         $source = "vi_repindicador_exp";
         $subque = "LEFT OUTER JOIN ( select ca_consecutivo, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srps.ca_idetapa = 'EECEM'  and srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo ) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo = vi_repindicador_exp.ca_consecutivo) ";
        	$subque.= "LEFT OUTER JOIN ( select ca_referencia, min(ca_fchfactura) as ca_fchfactura from tb_expo_ingresos group by ca_referencia ) rf ON (rf.ca_referencia = vi_repindicador_exp.ca_referencia) ";
@@ -572,7 +573,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $campos.= ", $source.ca_referencia, ca_fchsalida";
     }
 
-    $queries = "select * from $source $subque where ca_impoexpo = '$impoexpo' and $sucursal and $ciudestino $cliente and $transporte and $ano and $mes";
+    $queries = "select * from $source $subque where $impoexpo and $sucursal and $ciudestino $cliente and $transporte and $ano and $mes";
     $queries.= " order by $campos";
     // die($queries);
 
