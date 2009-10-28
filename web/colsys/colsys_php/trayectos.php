@@ -372,7 +372,7 @@ elseif (isset($boton)) {                                                       /
              echo "           }";
              echo "       }";
              echo "}";
-             echo "function llenar_agentes(){";
+             echo "function llenar_agentes(){";            
              echo "  document.adicionar.idagente.length=0;";
              echo "  document.adicionar.idagente.options[document.adicionar.idagente.length] = new Option();";
              echo "  document.adicionar.idagente.length=0;";
@@ -383,8 +383,15 @@ elseif (isset($boton)) {                                                       /
              echo "          }";
              echo "     }";
              echo "  else {";
+             echo "     ";
+             echo "     if( document.adicionar.impoexpo.value=='Importación' ){";
+             echo "         var val = document.adicionar.idtraorigen.value;";
+             echo "     }else{";
+             echo "         var val = document.adicionar.idtradestino.value;";
+             echo "     }";
              echo "     for (cont=0; cont<idagentes.length; cont++) {";
-             echo "          if (document.adicionar.idtraorigen.value == idtraficoags[cont].value){";
+
+             echo "          if (val == idtraficoags[cont].value){";
              echo "              document.adicionar.idagente[document.adicionar.idagente.length] = new Option(agentes[cont].value,idagentes[cont].value,false,false);";
              echo "           }";
              echo "       }";
@@ -607,7 +614,12 @@ require_once("menu.php");
                    }
              echo "  </SELECT></TD>";
              echo "</TR>";
-             if (!$tm->Open("select ca_idagente, ca_nombre, ca_idtrafico from vi_agentes where ca_activo=true and ca_idtrafico = '".$rs->Value('ca_idtraorigen')."' order by ca_nombre")) { // Selecciona todos lo registros de la tabla Agentes
+             if( $rs->Value('ca_impoexpo')=="Importación" ){
+                $idtrafico = $rs->Value('ca_idtraorigen');
+             }else{
+                $idtrafico = $rs->Value('ca_idtradestino');
+             }
+             if (!$tm->Open("select ca_idagente, ca_nombre, ca_idtrafico from vi_agentes where ca_activo=true and ca_idtrafico = '".$idtrafico."' order by ca_nombre")) { // Selecciona todos lo registros de la tabla Agentes
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
                  echo "<script>document.location.href = 'trayectos.php';</script>";
                  exit; }
