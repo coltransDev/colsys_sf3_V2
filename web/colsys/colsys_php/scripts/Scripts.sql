@@ -2775,25 +2775,24 @@ Select substr(i.ca_referencia,15,1) as ca_ano, substr(i.ca_referencia,8,2)||'-'|
 
 // Drop view vi_repindicadores cascade;
 Create view vi_repindicadores as
-select rp.ca_idreporte, rp.ca_consecutivo, rx.ca_fchcreado, rx.ca_version, TO_CHAR(TO_DATE(date_part('year',rx.ca_fchreporte)::text,'yyyy'),'yyyy') as ca_ano, TO_CHAR(TO_DATE(date_part('month',rx.ca_fchreporte)::text,'mm'),'mm') as ca_mes,
+select rp.ca_idreporte, rp.ca_consecutivo, rx.ca_fchcreado, rx.ca_version, substr(rx.ca_fchreporte::text,1,4) as ca_ano, substr(rx.ca_fchreporte::text,6,2) as ca_mes,
        sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, rp.ca_transporte, rp.ca_modalidad, rp.ca_impoexpo, rp.ca_continuacion, ccl.ca_compania
 --      , rs.ca_idemail, rs.ca_piezas, rs.ca_peso, rs.ca_volumen, rs.ca_doctransporte
 from tb_reportes rp
+-- La última versión del reporte
+	LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_f, ca_fchreporte, max(ca_version) as ca_version, min(ca_fchcreado) as ca_fchcreado from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo_f) rx ON (rp.ca_consecutivo = rx.ca_consecutivo_f and rp.ca_version = rx.ca_version)
 
-	LEFT OUTER JOIN control.tb_usuarios us ON (rp.ca_login = us.ca_login)
-	LEFT OUTER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
-	LEFT OUTER JOIN tb_ciudades cio ON (rp.ca_origen = cio.ca_idciudad)
-	LEFT OUTER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
-	LEFT OUTER JOIN tb_ciudades cid ON (rp.ca_destino = cid.ca_idciudad)
-	LEFT OUTER JOIN tb_concliente ccn ON (rp.ca_idconcliente = ccn.ca_idcontacto)
-	LEFT OUTER JOIN tb_clientes ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
+	INNER JOIN control.tb_usuarios us ON (rp.ca_login = us.ca_login)
+	INNER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
+	INNER JOIN tb_ciudades cio ON (rp.ca_origen = cio.ca_idciudad)
+	INNER JOIN tb_traficos tro ON (cio.ca_idtrafico = tro.ca_idtrafico)
+	INNER JOIN tb_ciudades cid ON (rp.ca_destino = cid.ca_idciudad)
+	INNER JOIN tb_concliente ccn ON (rp.ca_idconcliente = ccn.ca_idcontacto)
+	INNER JOIN tb_clientes ccl ON (ccn.ca_idcliente = ccl.ca_idcliente)
 
 -- El último status
 --	LEFT OUTER JOIN (select rpt.ca_consecutivo as ca_consecutivo_f, max(rps.ca_idemail) as ca_idemail from tb_repstatus rps, tb_reportes rpt where rpt.ca_idreporte = rps.ca_idreporte group by ca_consecutivo) rf ON (rp.ca_consecutivo = rf.ca_consecutivo_f)
 --	LEFT OUTER JOIN tb_repstatus rs ON (rs.ca_idemail = rf.ca_idemail)
-
--- La última versión del reporte
-	INNER JOIN (select ca_consecutivo as ca_consecutivo_f, ca_fchreporte, max(ca_version) as ca_version, min(ca_fchcreado) as ca_fchcreado from tb_reportes where ca_usuanulado IS NULL group by ca_consecutivo, ca_fchreporte order by ca_consecutivo_f) rx ON (rp.ca_consecutivo = rx.ca_consecutivo_f and rp.ca_version = rx.ca_version)
 
 order by ca_ano, ca_mes, ca_sucursal, to_number(substr(rp.ca_consecutivo,0,position('-' in rp.ca_consecutivo)),'99999999');
 REVOKE ALL ON vi_repindicadores FROM PUBLIC;
@@ -2853,7 +2852,7 @@ GRANT ALL ON vi_repindicador_air TO GROUP "Usuarios";
 
 // Drop view vi_cotindicadores cascade;
 Create view vi_cotindicadores as
-select ct.ca_idcotizacion, ct.ca_consecutivo, TO_CHAR(TO_DATE(date_part('year',ct.ca_fchcreado)::text,'yyyy'),'yyyy') as ca_ano, TO_CHAR(TO_DATE(date_part('month',ct.ca_fchcreado)::text,'mm'),'mm') as ca_mes,
+select ct.ca_idcotizacion, ct.ca_consecutivo, substr(ct.ca_fchcreado::text,1,4) as ca_ano, substr(ct.ca_fchcreado::text,6,2) as ca_mes,
 	tr.ca_fchcreado as ca_fchsolicitud, tr.ca_fchterminada as ca_fchpresentacion, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, cp.ca_impoexpo, cp.ca_transporte, cp.ca_modalidad, ccl.ca_compania
 from tb_cotproductos cp
 	LEFT OUTER JOIN tb_cotizaciones ct ON (cp.ca_idcotizacion = ct.ca_idcotizacion)
@@ -3755,4 +3754,56 @@ GRANT ALL ON tb_inomaestralog_sea TO GROUP "Usuarios";
 CREATE OR REPLACE RULE rl_inomaestra_sea AS
     ON UPDATE TO tb_inomaestra_sea WHERE trim(old.ca_usucerrado::text) != trim(new.ca_usucerrado::text)
     DO INSERT INTO tb_inomaestralog_sea (ca_referencia, ca_fchcerrado, ca_usucerrado, ca_fchactualizado, ca_usuactualizado) values (new.ca_referencia, old.ca_fchcerrado, old.ca_usucerrado, to_char(current_timestamp,'YYYY-mm-dd hh24:mi:ss')::timestamp, new.ca_usuoperacion);
+
+
+
+CREATE OR REPLACE FUNCTION fun_last_version(TEXT) RETURNS INTEGER AS
+$BODY$
+DECLARE
+	v_consecutivo ALIAS FOR $1;
+        referrer_keys RECORD;  -- Declare a generic record to be used in a FOR
+	a_output integer;
+
+BEGIN
+	FOR referrer_keys IN select ca_version from tb_reportes where ca_consecutivo = v_consecutivo order by ca_version DESC limit 1 LOOP
+            IF referrer_keys.ca_version IS NOT NULL THEN
+                a_output = referrer_keys.ca_version;
+            END IF;
+	END LOOP;
+	RETURN a_output;
+END;
+$BODY$
+LANGUAGE 'plpgsql';
+
+
+CREATE OR REPLACE FUNCTION fun_incoterms_clie(NUMERIC, DATE, DATE) RETURNS TEXT AS
+$BODY$
+DECLARE
+	v_idcliente ALIAS FOR $1;
+        v_fch_ini ALIAS FOR $2;
+        v_fch_fin ALIAS FOR $3;
+	referrer_keys RECORD;  -- Declare a generic record to be used in a FOR
+	a_terminos text[];
+        a_reporte_term text[];
+	a_output text:= '';
+
+BEGIN
+	FOR referrer_keys IN
+            select DISTINCT cc.ca_idcliente, rps.ca_incoterms from tb_reportes rps
+                INNER JOIN tb_concliente cc ON (rps.ca_idconcliente = cc.ca_idcontacto)
+            where rps.ca_version = fun_last_version(ca_consecutivo) and rps.ca_incoterms != '' and cc.ca_idcliente = v_idcliente and rps.ca_incoterms IS NOT NULL and rps.ca_fchreporte between v_fch_ini and v_fch_fin LOOP
+		IF referrer_keys.ca_idcliente IS NOT NULL THEN
+		    a_reporte_term = string_to_array(referrer_keys.ca_incoterms,'|');
+                    FOR i IN array_lower(a_reporte_term, 1)..array_upper(a_reporte_term, 1)
+                    LOOP
+                        IF NOT arraycontains(a_terminos, a_reporte_term[i])  THEN
+                            a_terminos = array_cat(a_terminos, array(a_reporte_term[i]));
+                        END IF;
+                    END LOOP;
+		END IF;
+	END LOOP;
+	RETURN a_output;
+END;
+$BODY$
+LANGUAGE 'plpgsql';
 
