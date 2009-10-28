@@ -60,12 +60,13 @@
             <tr>
                 <td><b>Transporte</b></td>
                 <td>
-                    <select name="transporte">
-                        <option value="<?=Constantes::AEREO?>"><?=Constantes::AEREO?></option>
-                        <option value="<?=Constantes::MARITIMO?>"><?=Constantes::MARITIMO?></option>
-                        <option value="<?=Constantes::TERRESTRE?>"><?=Constantes::TERRESTRE?></option>                    
-                        <option value="">Ninguno</option>
-                    </select>
+                     <?
+                    echo $form['ca_transporte']->renderError();
+                    if( $reporte ){
+                        $form->setDefault('ca_transporte', $reporte->getCaTransporte() );
+                    }
+                    echo $form['ca_transporte']->render();
+                    ?>                   
                 </td>
                 <td><b>Modalidad</b></td>
                 <td>&nbsp;</td>

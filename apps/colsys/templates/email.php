@@ -3,6 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>Coltrans S.A.</title>
+
+    <?php include_stylesheets() ?>
+    <?php include_javascripts() ?>
 </head>
 <body>
 <style type="text/css" >

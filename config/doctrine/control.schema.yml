@@ -38,6 +38,10 @@ Usuario:
       type: many
 
 AccesoUsuario:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_accesos_user
   columns:

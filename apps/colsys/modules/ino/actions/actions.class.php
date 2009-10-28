@@ -194,4 +194,50 @@ class inoActions extends sfActions
         $this->form = $form;
 
     }
+
+
+
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormComprobante(sfWebRequest $request)
+    {
+        $this->modo = $request->getParameter("modo");
+
+        $this->forward404Unless( $request->getParameter("id") );
+        $this->referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
+
+
+
+    }
+
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormComprobanteData(sfWebRequest $request)
+    {
+
+        $this->modo = $request->getParameter("modo");
+
+        $this->forward404Unless( $request->getParameter("id") );
+        $referencia = Doctrine::getTable("InoMaestra")->find($request->getParameter("id"));
+        $this->forward404Unless( $referencia );
+        $baseRow = array( "idmaestra"=>$referencia->getCaIdmaestra(),
+
+                        );
+        $items = array();
+
+
+
+        $items[] = array_merge($baseRow, array( "idcuenta"=>"",
+                            "idconcepto"=>"",
+                            "concepto"=>"+"
+                     ));
+        $this->responseArray = array("items"=>$items);
+        $this->setTemplate("responseTemplate");
+    }
 }

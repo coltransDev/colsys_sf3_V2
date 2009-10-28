@@ -12,6 +12,21 @@
 */
 class reportesNegActions extends sfActions
 {
+
+
+    public function getNivel( ){
+
+        /*
+        $this->nivel = -1;
+		$this->nivel = $this->getUser()->getNivelAcceso( idsActions::RUTINA_AGENTES );
+         
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+        return $this->nivel;
+         */
+    }
+
 	/**
 	* Pantalla de bienvenida para el modulo de reportes 
 	* @author Andres Botero
@@ -72,22 +87,53 @@ class reportesNegActions extends sfActions
 	/*
 	* Permite crear y editar el encabezado de un reporte de negocios 
 	* @author Andres Botero
-	*/
-	public function executeFormReporte(){
+    * @param sfRequest $request A request object
+    */
+    public function executeFormReporte(sfWebRequest $request){           
+
+        $this->nivel = $this->getNivel();
+
+        $form = new NuevoReporteForm( );
+
         
 
-        /*$this->modo = $this->getRequestParameter("modo");
-		$this->forward404Unless( $this->modo );
+        $this->origen = $request->getParameter("origen");
+        $this->destino = $request->getParameter("destino");
 		
-		if( $this->getRequestParameter("reporteId") ){
-			$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("reporteId") );
-			$this->forward404Unless( $reporteNegocio );
+		if( $this->getRequestParameter("id") ){
+			$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+			$this->forward404Unless( $reporte );
 			
 		}else{		
-			$reporteNegocio = new Reporte();			
+			$reporte = new Reporte();
 		}
+
+
+        if ($request->isMethod('post')){
+            $bindValues = $request->getParameter("reporte");
+            //print_r( $bindValues );
+            //exit();
+            if( !$reporte->getCaIdreporte() ){
+                $bindValues["ca_fchreporte"] = date("Y-m-d");
+                $bindValues["ca_login"] = "abotero";
+                $bindValues["ca_consecutivo"] = ReporteTable::siguienteConsecutivo(date("Y"));
+                $bindValues["ca_version"] = 1;               
+            }
+            $form->bind( $bindValues );
+
+			if( $form->isValid() ){
+               
+                $reporte  = $form->save();
+
+                
+                $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
+
+
+
+            }
+        }
 		
-		$this->reporteNegocio=$reporteNegocio;
+		/*
 			
 		$c=new Criteria();
 		$c->addAscendingOrderByColumn(AgentePeer::CA_NOMBRE);
@@ -149,9 +195,126 @@ class reportesNegActions extends sfActions
 			$this->id_producto = null;
 			$this->id_cotizacion = null;
 		} */
-		
+
+
+        $this->reporte=$reporte;
+        
+        $this->form = $form;
 	}
-	
+
+    /*
+    * Datos para el panel de conceptos
+    * @param sfRequest $request A request object
+    */
+    public function executePanelConceptosData(sfWebRequest $request){
+        $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+	    $this->forward404Unless( $reporte );
+
+        $conceptos = array();
+
+
+        
+
+        
+        $baseRow = array(
+	 					 'idreporte'=>$reporte->getCaIdreporte()
+						);
+
+        $tarifas = Doctrine::getTable("RepTarifa")
+                             ->createQuery("t")
+                             ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                             ->execute();
+
+
+        foreach( $tarifas as $tarifa ){
+            $row = $baseRow;
+            $row["iditem"] = $tarifa->getCaIdconcepto();
+            $row["item"] = $tarifa->getConcepto()->getCaConcepto();
+            $row["neta_tar"] = $tarifa->getCaNetaTar();
+            $row["neta_min"] = $tarifa->getCaNetaMin();
+            $row["neta_idm"] = $tarifa->getCaNetaIdm();
+            $row["reportar_tar"] = $tarifa->getCaReportarTar();
+            $row["reportar_min"] = $tarifa->getCaReportarMin();
+            $row["reportar_idm"] = $tarifa->getCaReportarIdm();
+            $row["cobrar_tar"] = $tarifa->getCaCobrarTar();
+            $row["cobrar_min"] = $tarifa->getCaCobrarMin();
+            $row["cobrar_idm"] = $tarifa->getCaCobrarIdm();
+            $row['tipo']="concepto";
+            $row['orden']=$tarifa->getConcepto()->getCaConcepto();
+            $conceptos[] = $row;
+        }
+
+        $row = $baseRow;		
+        $row['iditem']="";
+        $row['item']="+";       
+        $row['tipo']="concepto";
+        $row['orden']="Z";
+        $conceptos[] = $row;
+
+
+
+        $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
+
+
+
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+    /*
+    * Datos para el panel de conceptos
+    * @param sfRequest $request A request object
+    */
+    public function executeObservePanelConceptoFletes(sfWebRequest $request){
+        $id = $request->getParameter("id");
+        $this->responseArray=array("id"=>$id,  "success"=>false);
+
+
+        $tipo = $request->getParameter("tipo");
+
+        if( $tipo=="concepto" ){
+            $idreporte = $request->getParameter("idreporte");
+            $idconcepto = $request->getParameter("iditem");
+            $tarifa = Doctrine::getTable("RepTarifa")->find(array($idreporte, $idconcepto));
+            if( !$tarifa ){
+                $tarifa = new RepTarifa();
+                $tarifa->setCaIdreporte( $idreporte );
+                $tarifa->setCaIdconcepto( $idconcepto );
+            }
+
+            if( $request->getParameter("neta_tar")!==null ){
+                $tarifa->setCaNetaTar( $request->getParameter("neta_tar") );
+            }
+
+            if( $request->getParameter("neta_min")!==null ){
+                $tarifa->setCaNetaMin( $request->getParameter("neta_min") );
+            }
+
+            if( $request->getParameter("neta_idm")!==null ){
+                $tarifa->setCaNetaIdm( $request->getParameter("neta_idm") );
+            }
+            $tarifa->save();
+            $this->responseArray["success"]=true;
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+
+    /*
+	* Copia un reporte en otro nuevo creando una nueva version o un
+	* nuevo consecutivo
+	* @author Andres Botero
+	*/
+	public function executeLiquidarReporte(){
+        $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+	    $this->forward404Unless( $reporte );
+        
+        $this->reporte=$reporte;
+    }
+
 	/*
 	* Copia un reporte en otro nuevo creando una nueva version o un 
 	* nuevo consecutivo 
@@ -627,23 +790,13 @@ class reportesNegActions extends sfActions
 	* @author Andres Botero
 	*/
 	public function executeConsultaReporte(){
-		$this->modo = $this->getRequestParameter("modo");					
-		$this->forward404Unless( $this->modo );
 		
-		$id_reporte = $this->getRequestParameter("reporteId");
-
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $id_reporte );
-		$this->forward404Unless( $reporteNegocio );					
+		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+		$this->forward404Unless( $reporte );
 		
-		$this->reporteNegocio = $reporteNegocio;
-		
-		$this->option = $this->getRequestParameter("option");	
+		$this->reporte = $reporte;
 		
 		
-		$response = sfContext::getInstance()->getResponse();
-		
-		$user = $this->getUser();
-		$this->forward404Unless( $user );		
 	  
 	}		
 	
@@ -653,12 +806,12 @@ class reportesNegActions extends sfActions
 	*/
 	public function executeVerReporte(){
 		
-        header("Location: /reportes/verReporte?id=".$this->getRequestParameter("reporteId"));
+        /*header("Location: /reportes/verReporte?id=".$this->getRequestParameter("reporteId"));
         exit();
         $this->modo = $this->getRequestParameter("modo");
 		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("reporteId") );
 		$this->forward404Unless( $this->reporteNegocio );	
-		
+		*/
 		
 			
 	}

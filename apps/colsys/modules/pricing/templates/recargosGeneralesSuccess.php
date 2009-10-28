@@ -641,6 +641,7 @@ new Ext.grid.<?=$opcion!="consulta"?"Editor":""?>GridPanel({
 	cm: colModel,
 	sm: selModel,	
 	clicksToEdit: 1,
+    loadMask: {msg:'Cargando...'},
 	stripeRows: true,
 	//autoExpandColumn: 'nconcepto',
 	title: 'Recargos <?=($idtrafico!="99-999"?$trafico->getCaNombre():"locales")." ".$modalidad?>',

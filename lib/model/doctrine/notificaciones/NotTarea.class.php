@@ -108,6 +108,16 @@ class NotTarea extends BaseNotTarea
 		return Utils::getHumanTime(Utils::diffTimeWorkingHours( $festivos, $this->getCaFchcreado(), $this->getCaFchvencimiento() ));
 	}
 
+    /*
+    public function getTiempoRestante( $festivos  ){
+		//echo "<br /> <b>Ini. ".date("Y-m-d H:i:s")." <br />Ven. ".$this->getCaFchvencimiento()."</b><br />";
+        return Utils::getHumanTime(TimeUtils::calcDiff( $festivos, time(), strtotime($this->getCaFchvencimiento()) ));
+	}
+	public function getTiempo( $festivos  ){
+		return Utils::getHumanTime(TimeUtils::calcDiff( $festivos, $this->getCaFchcreado(), $this->getCaFchvencimiento() ));
+	}
+     */
+
 
 
 	/*

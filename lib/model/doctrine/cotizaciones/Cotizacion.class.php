@@ -149,16 +149,22 @@ class Cotizacion extends BaseCotizacion
 	*/
 	public function getCotContinuacions( ){
 
-        return Doctrine::getTable("CotContinuacion")
-                 ->createQuery("c")
-                 ->where("c.ca_idcotizacion = ? ", $this->getCaIdcotizacion())
-                 ->addOrderBy("c.ca_tipo ASC")
-                 ->addOrderBy("c.ca_modalidad ASC")
-                 ->addOrderBy("c.ca_origen ASC")
-                 ->addOrderBy("c.ca_destino ASC")
-                 ->addOrderBy("c.ca_idequipo ASC")
-                 ->addOrderBy("c.ca_idconcepto ASC")
-                 ->addOrderBy("c.ca_valor_tar ASC")
+        
+
+
+          return  Doctrine::getTable("CotContinuacion")
+                 ->createQuery("cont")
+                 ->select("cont.*")
+                 ->innerJoin("cont.Concepto conc")
+                 ->leftJoin("cont.Equipo e")
+                 ->where("cont.ca_idcotizacion=?", $this->getCaIdcotizacion())
+                 ->addOrderBy("cont.ca_tipo ASC")
+                 ->addOrderBy("cont.ca_modalidad ASC")
+                 ->addOrderBy("cont.ca_origen ASC")
+                 ->addOrderBy("cont.ca_destino ASC")
+                 ->addOrderBy("e.ca_liminferior ASC")
+                 ->addOrderBy("conc.ca_liminferior ASC")
+                 ->addOrderBy("cont.ca_valor_tar ASC")
                  ->execute();
     }
     

@@ -10,13 +10,10 @@ class ReporteTable extends Doctrine_Table
 	public static function siguienteConsecutivo( $yy ){
 		if( $yy ){
 			$sql =  "SELECT fun_reportecon('".$yy."') as next";
-
-			$con = Propel::getConnection(ReportePeer::DATABASE_NAME);
-
-			$stmt = $con->prepareStatement($sql);
-			$rs = $stmt->executeQuery();
-			$rs->next();
-			return $rs->getString('next');
+			$q = Doctrine_Manager::getInstance()->connection();
+            $stmt = $q->execute($sql);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+			return $row['next'];
 		}
 	}
 
@@ -50,7 +47,7 @@ class ReporteTable extends Doctrine_Table
                 $q->addOrderBy("r.ca_orden_clie");				
 				break;
 			default:
-                $q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero::text");
+                $q->leftJoin("r.Proveedor p ON r.ca_idproveedor=?", "p.ca_idtercero::text");
                 $q->addOrderBy("p.ca_nombre");
                 $q->addOrderBy("r.ca_orden_clie");                
 				break;

@@ -15,6 +15,7 @@ class Constantes{
 	const IMPO = "Importación";
 	const EXPO = "Exportación";
 	const TRIANGULACION = "Triangulación";
+    const ADUANA = "Aduana";
 	
 	const AEREO = "Aéreo";
 	const MARITIMO = "Marítimo";

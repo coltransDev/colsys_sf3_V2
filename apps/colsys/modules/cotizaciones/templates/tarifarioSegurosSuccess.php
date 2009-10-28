@@ -164,7 +164,8 @@ var seleccionarTodo = function(){
 new Ext.grid.GridPanel({
 	store: storeSeguros,	
 	cm: colModelSeguros,
-	sm: new  Ext.grid.CellSelectionModel(),	
+	sm: new  Ext.grid.CellSelectionModel(),
+    loadMask: {msg:'Cargando...'},
 	clicksToEdit: 1,
 	stripeRows: true,	
 	title: 'Seguros',

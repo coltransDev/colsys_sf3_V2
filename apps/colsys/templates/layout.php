@@ -12,6 +12,9 @@
 
 
 
+
+    <?php include_stylesheets() ?>
+    <?php include_javascripts() ?>
 </head>
 <body>
 	<div align="center">

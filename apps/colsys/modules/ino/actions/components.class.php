@@ -26,5 +26,18 @@ class inoComponents extends sfComponents
                                  ->addOrderBy( "cl.ca_compania" )
                                  ->execute();
     }
+
+    public function executeIngresos(){
+        
+    }
+
+
+    public function executeFormComprobantePanel(){
+
+    }
+
+    public function executeFormComprobanteSubpanel(){
+
+    }
 }
 

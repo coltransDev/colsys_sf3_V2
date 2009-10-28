@@ -22,7 +22,7 @@
         <?
         }
 
-        if( $inoCliente->getCaIdinocliente() ){
+        if( $inoCliente && $inoCliente->getCaIdinocliente() ){
         ?>
         <input type="hidden" name="idinocliente" value="<?=$inoCliente->getCaIdinocliente()?>">
         <?

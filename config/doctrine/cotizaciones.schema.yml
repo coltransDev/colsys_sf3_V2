@@ -245,6 +245,7 @@ CotContinuacion:
       foreign: ca_idconcepto
       type: one      
 
+
 CotContactoAg:
   generatePath: cotizaciones
   tableName: tb_cotcontactosag

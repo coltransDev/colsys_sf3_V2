@@ -770,6 +770,7 @@ var seleccionarTodo = function(){
 	cm: colModel,
 	sm: selModel,	
 	clicksToEdit: 1,
+    loadMask: {msg:'Cargando...'},
 	stripeRows: true,
 	//autoExpandColumn: 'nconcepto',
 	title: '<?=$titulo?>',

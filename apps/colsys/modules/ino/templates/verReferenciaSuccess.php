@@ -77,6 +77,7 @@
                        
                        <div class="tab-page">
                            <h2 class="tab">Ingresos</h2>
+                           <?=include_component("ino", "ingresos", array("referencia"=>$referencia))?>
                        </div>
                        <div class="tab-page">
                            <h2 class="tab">Egresos</h2>

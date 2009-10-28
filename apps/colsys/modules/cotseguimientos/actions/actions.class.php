@@ -185,8 +185,9 @@ class cotseguimientosActions extends sfActions
 			$tarea->setCaTitulo( $titulo );		
 			$tarea->setCaTexto( $texto );
 			$tarea->save();
-			$loginsAsignaciones = array( $this->getUser()->getUserId() );
-			$tarea->setAsignaciones( $loginsAsignaciones );	
+			$loginsAsignaciones = array( $this->getUser()->getUserId(), $cotizacion->getCaUsuario() );
+			$loginsAsignaciones = array_unique( $loginsAsignaciones );
+            $tarea->setAsignaciones( $loginsAsignaciones );
 			
 			
 			$producto->setCaIdtarea( $tarea->getCaIdtarea() );

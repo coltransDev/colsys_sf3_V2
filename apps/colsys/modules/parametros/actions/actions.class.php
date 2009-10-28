@@ -10,6 +10,27 @@
  */
 class parametrosActions extends sfActions
 {
+
+    /**
+    * Executes index action
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeIndex(){
+        
+    }
+
+
+    /**
+    * Executes index action
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeBusqueda(){
+        
+    }
+
+
     /**
     * Datos de los conceptos para usar en pricing cotizaciones etc.
     *

@@ -10,17 +10,29 @@ Reporte:
     ca_consecutivo: string
     ca_version: integer
     ca_idcotizacion: integer
-    ca_origen: string
-    ca_destino: string
-    ca_impoexpo: string
-    ca_fchdespacho: date
+    ca_origen:
+      type: string
+      notnull: true
+    ca_destino:
+      type: string
+      notnull: true
+    ca_impoexpo:
+      type: string
+      notnull: true
+    ca_fchdespacho:
+      type: date
+      notnull: true
     ca_idagente: integer
     ca_incoterms: string
-    ca_mercancia_desc: string
+    ca_mercancia_desc:
+      type: string
+      notnull: true
     ca_idproveedor: string
     ca_orden_prov: string
     ca_idconcliente: integer
-    ca_orden_clie: string
+    ca_orden_clie:
+      type: string
+      notnull: true
     ca_confirmar_clie: string
     ca_idrepresentante: integer
     ca_informar_repr: string
@@ -266,10 +278,12 @@ RepTarifa:
   columns:
     oid:
       type: integer
+    ca_idreporte:
+      type: integer
       primary: true
-      autoincrement: true    
-    ca_idreporte: integer
-    ca_idconcepto: integer
+    ca_idconcepto:
+      type: integer
+      primary: true
     ca_cantidad: decimal
     ca_neta_tar: decimal
     ca_neta_min: decimal

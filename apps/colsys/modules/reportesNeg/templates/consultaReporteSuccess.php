@@ -1,13 +1,13 @@
 <?
-use_helper("Javascript", "Object", "Validation");
+
 
 ?>
 
-
-<h3>Sistema administrador de negocios</h3>
+<div class="content" align="center">
+<h3>Reportes de Negocio</h3>
 <br />
 <br />
-<table cellspacing="1" width="700" id="mainTable">
+<table cellspacing="1" width="80%" class="tableList">
 	<tbody>
 		<tr>
 			<th colspan="6" class="titulo">REPORTE DE NEGOCIO</th>
@@ -15,18 +15,18 @@ use_helper("Javascript", "Object", "Validation");
 		<tr>
 			<th width="173" class="titulo">&nbsp;</th>
 			<td width="122" class="mostrar"><div align="center"><strong>Reporte No.:</strong><br />
-							<?=$reporteNegocio->getCaConsecutivo()?>
+							<?=$reporte->getCaConsecutivo()?>
 			</div></td>
 			<td width="90" class="mostrar" ><div align="center"><span class="titulo"><strong>Fecha</strong></span><br />
-							<?=Utils::fechaMes($reporteNegocio->getCaFchreporte())?>
+							<?=Utils::fechaMes($reporte->getCaFchreporte())?>
 			</div></td>
 			<td width="107" class="mostrar"><div align="center"><strong>Versi&oacute;n No.</strong>:<br />
-							<?=$reporteNegocio->getCaVersion()."/".$reporteNegocio->numVersiones()?>
+							<?=$reporte->getCaVersion()."/".$reporte->numVersiones()?>
 			</div></td>
-			<td width="85" class="mostrar"><div align="left"><strong>Cotizaci&oacute;n</strong><br /><?=$reporteNegocio->getCaIdcotizacion()?>
+			<td width="85" class="mostrar"><div align="left"><strong>Cotizaci&oacute;n</strong><br /><?=$reporte->getCaIdcotizacion()?>
 </div></td>
 			<?
-		/*$cotProducto = $reporteNegocio->getCotProducto();
+		/*$cotProducto = $reporte->getCotProducto();
 		if( $cotProducto ){
 			
 			$id_cotizacion = $cotProducto->getCaIdcotizacion();
@@ -51,33 +51,33 @@ use_helper("Javascript", "Object", "Validation");
 		</tr>
 		<tr>
 			<td class="captura" style="vertical-align: top;"><div align="center">
-				<?=Utils::replace($reporteNegocio->getCaImpoexpo())?>
+				<?=Utils::replace($reporte->getCaImpoexpo())?>
 			</div></td>
 			<td colspan="2" class="listar"><div align="center">
-				<?=$reporteNegocio->getOrigen()?>
+				<?=$reporte->getOrigen()?>
 			</div></td>
 			<td colspan="3" class="listar"><div align="center">
-				<?=$reporteNegocio->getDestino()?>
+				<?=$reporte->getDestino()?>
 			</div></td>
 		</tr>
 		<tr>
 			<td rowspan="2" class="captura" valign="top"><div align="center"><strong>4. Fecha Despacho:</strong><br />
-							<?=Utils::fechaMes($reporteNegocio->getCaFchdespacho())?>
+							<?=Utils::fechaMes($reporte->getCaFchdespacho())?>
 			</div></td>
 			<td height="46" colspan="4" class="mostrar"><strong>5. Agente: </strong><br />
 					<span class="listar">
-						<?=$reporteNegocio->getIdsAgente()?$reporteNegocio->getIdsAgente()->getIds()->getCaNombre():"Directo"?>
+						<?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?>
 			</span></td>
 			<td rowspan="2" class="invertir">
 				<table width="100%" border="0" cellspacing="2">
 					<tr>
 						<td><div align="right">Editar reporte:<br />
-										<?=link_to(image_tag("22x22/edit.gif"), "reportesNeg/formReporte?reporteId=".$reporteNegocio->getCaIdreporte()."&modo=".$modo."&token=".md5(time()) )?>
+										<?=link_to(image_tag("22x22/edit.gif"), "reportesNeg/formReporte?reporteId=".$reporte->getCaIdreporte()."&token=".md5(time()) )?>
 						</div></td>
 					</tr>
 					<tr>
 						<td><div align="right">Anular Reporte:<br />
-								<?=link_to(image_tag("16x16/no.gif"), "reportesNeg/anularReporte?reporteId=".$reporteNegocio->getCaIdreporte()."&modo=".$modo, "confirm='Esta seguro?'")?>
+								<?=link_to(image_tag("16x16/no.gif"), "reportesNeg/anularReporte?reporteId=".$reporte->getCaIdreporte(), "confirm='Esta seguro?'")?>
 						</div></td>
 					</tr>
 					<tr>
@@ -87,13 +87,13 @@ use_helper("Javascript", "Object", "Validation");
 		</tr>
 		<tr>
 			<td colspan="4" class="mostrar"><strong>6. Descripci&oacute;n de la Mercanc&iacute;a:</strong><br />				
-				<?=Utils::replace($reporteNegocio->getCaMercanciaDesc())?>			</td>
+				<?=Utils::replace($reporte->getCaMercanciaDesc())?>			</td>
 		</tr>
 		<tr>
 			<td class="captura" valign="top"><strong>Cliente</strong></td>
 			<td colspan="5" class="mostrar">		
 				<?											
-				$contacto = $reporteNegocio->getContacto();
+				$contacto = $reporte->getContacto();
 				if( $contacto ){
 					$cliente = $contacto->getCliente();
 				?>
@@ -104,7 +104,7 @@ use_helper("Javascript", "Object", "Validation");
 							<td width="220" colspan="2"><strong>8. Nombre:</strong><br />
 								<?=Utils::replace($cliente->getCaCompania())?></td>
 							<td width="280" colspan="2"><strong>8.1 Orden:</strong><br />								
-								<?=$reporteNegocio->getCaOrdenClie()?></td>
+								<?=$reporte->getCaOrdenClie()?></td>
 						</tr>
 						<tr>
 							<td colspan="2"><strong>8.2 Contacto:</strong><br />
@@ -129,7 +129,7 @@ use_helper("Javascript", "Object", "Validation");
 			<td class="captura" valign="top"><strong>Consignatario:</strong></td>
 			<td colspan="5" class="mostrar">
 				<?
-				$consignatario = $reporteNegocio->getConsignatario();
+				$consignatario = $reporte->getConsignatario();
 				if( $consignatario ){
 				?>
 				<table cellspacing="0" cellpadding="0">
@@ -141,7 +141,7 @@ use_helper("Javascript", "Object", "Validation");
 						<td><strong>9.1 Enviar Informaci&oacute;n</strong>:<br />
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<?=Utils::replace( $reporteNegocio->getCaInformarCons() )?>						</td>
+							<?=Utils::replace( $reporte->getCaInformarCons() )?>						</td>
 					</tr>
 					<tr>
 						<td colspan="2"><strong>9.1.2 Contacto:</strong><br />
@@ -163,7 +163,7 @@ use_helper("Javascript", "Object", "Validation");
 				?>			</td>
 		</tr>
 		<?
-				$notify = $reporteNegocio->getNotify();
+				$notify = $reporte->getNotify();
 				if( $notify ){
 				?>
 		<tr>
@@ -179,7 +179,7 @@ use_helper("Javascript", "Object", "Validation");
 						<td><strong>9.2 Enviar Informaci&oacute;n</strong>:<br />
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<?=Utils::replace( $reporteNegocio->getCaInformarNoti() )?>						</td>
+							<?=Utils::replace( $reporte->getCaInformarNoti() )?>						</td>
 					</tr>
 					<tr>
 						<td colspan="2"><strong>9.1.2 Contacto:</strong><br />
@@ -201,46 +201,34 @@ use_helper("Javascript", "Object", "Validation");
 		<?
 		}
 				
-		if( $modo=="expo" ){
 		?>
-		<tr>
-			<td valign="top" class="captura"><strong>Informaci&oacute;n de exportaciones </strong></td>
-			<td colspan="5" class="mostrar">
-			<?				
-			include_component("reportesNeg","formExpo", array("reporteNegocio"=>$reporteNegocio, "editable"=>false));				
-			?>	
-			</td>
-		</tr>
-		<?
-		}
-		?>		
 		<tr>
 			<td rowspan="3" class="captura" valign="top"><strong>Instrucciones:</strong></td>
 			<td class="listar" colspan="5"><strong>11.1 Preferencias del Cliente:</strong><br />
-			<?=Utils::replace($reporteNegocio->getCaPreferenciasClie())?></td>
+			<?=Utils::replace($reporte->getCaPreferenciasClie())?></td>
 		</tr>
 		<tr>
 			<td class="listar" colspan="5">
 				<strong>11.2 Instrucciones Especiales para el Agente:</strong>
 				
 				<br />
-				<?=Utils::replace($reporteNegocio->getCaInstrucciones())?></td>
+				<?=Utils::replace($reporte->getCaInstrucciones())?></td>
 		</tr>
 		<tr>
 			<td height="28" colspan="5" class="listar">
 				<strong>11.3 Copiar comunicaciones a:</strong><br />
-				<?=$reporteNegocio->getCaConfirmarClie() ?>
+				<?=$reporte->getCaConfirmarClie() ?>
 				
 			</td>
 		</tr>
 		<tr>
-			<td rowspan="4" valign="top" class="captura"><strong>12. Transporte:</strong><br /><?=Utils::replace($reporteNegocio->getCaTransporte())?>			</td>
+			<td rowspan="4" valign="top" class="captura"><strong>12. Transporte:</strong><br /><?=Utils::replace($reporte->getCaTransporte())?>			</td>
 			<td colspan="2" class="listar"><strong>13. Modalidad <br />
-			</strong><?=$reporteNegocio->getCaModalidad()?></td>
+			</strong><?=$reporte->getCaModalidad()?></td>
 			<td colspan="3" class="listar"><strong>14.1 L&iacute;nea Transporte:</strong>			
 			<br />
 			<?
-			$transporte = $reporteNegocio->getIdsProveedor();
+			$transporte = $reporte->getIdsProveedor();
 			if( $transporte ){
 				echo $transporte->getIds()->getCaNombre();
 			}
@@ -248,7 +236,7 @@ use_helper("Javascript", "Object", "Validation");
 			
 			<?
 			if( $modo=="expo" ){			
-				$repexpo = $reporteNegocio->getRepExpo();
+				$repexpo = $reporte->getRepExpo();
 				if( $repexpo->getCaIdlineaterrestre() ){
 					?>
 					<br />
@@ -263,54 +251,29 @@ use_helper("Javascript", "Object", "Validation");
 		<tr>
 			<td colspan="2" class="listar"><strong>15. Transporte terrestre <br /> 
 				<?
-				echo $reporteNegocio->getCaColmas()
+				echo $reporte->getCaColmas()
 				?>
 			</strong></td>
 			<td colspan="3" class="listar"><strong>16.&nbsp;Seguro:</strong><br />
 				<?
-				echo $reporteNegocio->getCaSeguro()
+				echo $reporte->getCaSeguro()
 				?>			</td>
 		</tr>
 		<tr>
 			<td colspan="2" class="listar"><strong>Incoterms<br />
-			</strong><?=$reporteNegocio->getCaIncoterms()?></td>
+			</strong><?=$reporte->getCaIncoterms()?></td>
 			<td colspan="3" class="listar"><strong>Consignar MAWB/BL a :<br />
-			</strong><?=$reporteNegocio->getConsignarmaster()?></td>
+			</strong><?=$reporte->getConsignarmaster()?></td>
 		</tr>
 		<tr>
 			<td colspan="2" class="listar"><strong>Consignar HAWB/HBL a :<br />
-			</strong><?=$reporteNegocio->getConsignar()?></td>
+			</strong><?=$reporte->getConsignar()?></td>
 			<td colspan="3" class="listar">&nbsp;</td>
 		</tr>
-		<?
-		
-		if( $reporteNegocio->getCaColmas() == "Sí"  ){		
-		?>
-		
-		<tr>
-			<td valign="top" class="captura"><strong>Transporte terrestre nacional: </strong></td>
-			<td colspan="5" class="listar">
-				<?		
-				include_component("reportesNeg", "formTransporteNal", array("reporteNegocio"=>$reporteNegocio, "editable"=>false));				
-				?>			</td>
-		</tr>
-		<?
-		}
-		if( $reporteNegocio->getCaSeguro() == "Sí"  ){			
-		?>
-		<tr>
-			<td valign="top" class="captura"><strong> Informaci&oacute;n para la aseguradora </strong></td>
-			<td colspan="5" class="listar">
-				<?									
-				include_partial("reportesNeg/formAseguradora", array("reporteNegocio"=>$reporteNegocio, "editable"=>false));				
-				?>			</td>
-		</tr>
-		<?
-		}
-		?>		
+			
 		<tr>
 			<td class="invertir" colspan="7"><div align="right">
-				<?=$option!="liquidar"?link_to(image_tag("22x22/edit.gif"), "reportesNeg/consultaReporte?reporteId=".$reporteNegocio->getCaIdreporte()."&modo=expo&option=liquidar&token=".md5(time()) ):"&nbsp;"?>
+				<?=link_to(image_tag("16x16/edit.gif"), "reportesNeg/liquidarReporte?id=".$reporte->getCaIdreporte()) ?>
 			</div></td>
 		</tr>				
 		
@@ -318,126 +281,17 @@ use_helper("Javascript", "Object", "Validation");
 		<tr>
 			<td class="invertir" colspan="7"><div align="center"><strong>CONCEPTOS EMBARQUE </strong></div></td>
 		</tr>
+   </table>
+   <table cellspacing="1" width="80%" >
 		<tr>
-			<td class="invertir" colspan="7">
-				<?
-				if( $option=="liquidar" ){
-					echo form_remote_tag(array("url"=>"reportesNeg/guardarConcepto?reporteId=".$reporteNegocio->getCaIdreporte()."&token=".md5(time()),
-							"update"=>"embarque" ,
-							"script"=>true,
-							'loading'  => "Element.show('indicator')",
-							'complete' => "Element.hide('indicator')",
-							), "name=formConceptos id=formConceptos");
-				
-				}
-				?>
-				<div align="center" id="embarque">
-					<?
-					include_component("reportesNeg","relacionDeConceptos", array( "reporteNegocio"=>$reporteNegocio,  "editable"=>$option=="liquidar" ));
-					?>
-				</div>
-				<?
-				if( $option=="liquidar" ){
-					echo "</form>";
-				}
-				?>			</td>
+			<td colspan="7">
+                <div id="panel-conceptos"></div>
+			</td>
 		</tr>
 		<?		
-	   if( $reporteNegocio->getCatransporte() != "Terrestre"  ){//Queda pendiente agreagar los conceptos en la tabla
-			
-	   ?>
-		<tr>
-			<td class="invertir" colspan="7"><div align="center"><strong>RELACI&Oacute;N DE RECARGOS </strong></div></td>
-		</tr>
-		<tr>
-			<td class="invertir" colspan="7">				
-				<?				
-				if( $option=="liquidar" ){
-					echo form_remote_tag(array("url"=>"reportesNeg/guardarRecargo?reporteId=".$reporteNegocio->getCaIdreporte()."&tipo=origen&token=".md5(time()),
-							"update"=>"recargos_origen" ,
-							"script"=>true,
-							'loading'  => "Element.show('indicator')",
-							'complete' => "Element.hide('indicator')",
-							), "name=formRecargos id=formRecargos");
-				
-				}
-				?>
-				<div align="center" id="recargos_origen">
-				<?
-				//En exportaciones no es necesario diferenciar entre recargos de origen y locales, 
-				//luego en este punto se muestran todos y los locales no se muestran 			
-				include_component("reportesNeg", "relacionDeRecargos", array("reporteNegocio"=>$reporteNegocio, "tipo"=>"origen", "editable"=>$option=="liquidar" ))?>
-				</div>
-			<?
-				if( $option=="liquidar" ){
-					echo "</form>";
-				}
-				?>
-			</tr>
-			<?
-			if( $modo=="impo" ){ 
-			?>	
-			<tr>
-				<td class="invertir" colspan="7">
-				
-				<?								
-				if( $option=="liquidar" ){
-					echo form_remote_tag(array("url"=>"reportesNeg/guardarRecargo?reporteId=".$reporteNegocio->getCaIdreporte()."&tipo=local&token=".md5(time()),
-							"update"=>"recargos_local" ,
-							"script"=>true,
-							'loading'  => "Element.show('indicator')",
-							'complete' => "Element.hide('indicator')",
-							), "name=formRecargosLoc id=formRecargosLoc");
-				
-				}
-				?>
-				<div align="center" id="recargos_local">
-				<?			
-				include_component("reportesNeg", "relacionDeRecargos", array("reporteNegocio"=>$reporteNegocio, "tipo"=>"local", "editable"=>$option=="liquidar" ))?>
-				</div>
-				<?
-				if( $option=="liquidar" ){
-					echo "</form>";
-				}
-				?>			</td>
-		</tr>
-		<?
-		}
-   }
-   
+	  
 	
-	if( ($reporteNegocio->getCaImpoexpo()=="Importación" && $reporteNegocio->getCaColmas()=="Sí") || ($reporteNegocio->getCaImpoexpo()=="Exportación" && ( $repexpo->getCaIdSia()==17 || $repexpo->getCaIdSia()==9 )  ) ){
-	?>
-		<tr>
-			<td class="invertir" colspan="7"><div align="center"><strong>CONCEPTOS DE COBRO EN AGENCIAMIENTO COLMAS LTDA.</strong></div></td>
-		</tr>
-		<tr>
-			<td class="invertir" colspan="7">
-				<?
-				if( $option=="liquidar" ){
-					echo form_remote_tag(array("url"=>"reportesNeg/guardarCosto?reporteId=".$reporteNegocio->getCaIdreporte()."&tipo=expo&token=".md5(time()),
-							"update"=>"costos_colmas" ,
-							"script"=>true,
-							'loading'  => "Element.show('indicator')",
-							'complete' => "Element.hide('indicator')",
-							), "name=formColmas id=formColmas");
-				
-				}
-				?>
-
-			<div align="center" id="costos_colmas">
-				<?
-				echo include_component("reportesNeg", "relacionDeCostos", array("reporteNegocio"=>$reporteNegocio, "editable"=>$option=="liquidar"))?>
-			</div>
-			<?
-			if( $option=="liquidar" ){
-				echo "</form>";
-			}
-			?>			</td>
-		</tr>
-	<?
-	}	
-	$usuario = $reporteNegocio->getUsuario();
+	$usuario = $reporte->getUsuario();
 	$sucursal = $usuario->getSucursal();
 	?>
 	<tr>
@@ -450,11 +304,11 @@ use_helper("Javascript", "Object", "Validation");
 								</td>
 						<td class="listar"><strong>Elabor&oacute; :</strong><br />
 								<center>
-									<?=$reporteNegocio->getCaUsucreado()?>
+									<?=$reporte->getCaUsucreado()?>
 								</center></td>
 						<td class="listar"><strong>Fecha:</strong><br />
 								<center>									
-									<?=$reporteNegocio->getCaFchactualizado()?$reporteNegocio->getCaFchactualizado():$reporteNegocio->getCaFchcreado()?>
+									<?=$reporte->getCaFchactualizado()?$reporte->getCaFchactualizado():$reporte->getCaFchcreado()?>
 								</center></td>
 						<td colspan="2" class="listar"><strong>Rep. Comercial:</strong><br />
 								<center>
@@ -472,3 +326,45 @@ use_helper("Javascript", "Object", "Validation");
 </table>
 <br />
  
+</div>
+
+
+
+<?
+include_component("reportesNeg","mainPanel", array("reporte"=>$reporte));
+include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
+
+?>
+<script language="javascript">
+      
+      var guardarCambios = function(){
+          panelFletes.guardarCambios();
+          
+      }
+
+      var panelFletes = new PanelConceptosFletes({
+          title: 'Conceptos de fletes'
+      });
+
+      tbarObj = [{
+            text:'Guardar',            
+            iconCls: 'disk',
+            scope:this,
+            handler: guardarCambios
+        },
+        '-'
+      ]
+
+      var mainPanel = new MainPanel({
+                            width: 800,
+                            height: 400,                            
+                            items: [panelFletes],
+                            tbar: tbarObj
+
+                      });
+      mainPanel.render("panel-conceptos");
+
+      mainPanel.setWidth(Ext.getBody().getWidth()-250);
+
+
+</script>

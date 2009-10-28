@@ -106,7 +106,7 @@ class TimeUtils{
                 }
                 // echo date("Y-m-d H:i:s", $start)." -> ".tiempo_segundos($difer)."<BR>";
             }
-            // echo "------------- <br /><br />";
+            // echo "------------- <br /><br />";            
             return($difer);
         }
 
