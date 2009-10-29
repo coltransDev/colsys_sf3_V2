@@ -68,12 +68,12 @@ if( $reporte->getCaImpoexpo()=="Exportación" ){
 		}
 		
 		if( $reporte->getCaIdtareaRext() ){
-			$tarea = NotTareaPeer::retrieveByPk( $reporte->getCaIdtareaRext() );
-			$asignacionesTarea  = $tarea->getNotTareaAsignacions();
+			$tarea = Doctrine::getTable("NotTarea")->find( $reporte->getCaIdtareaRext() );
+			$asignacionesTarea  = $tarea->getNotTareaAsignacion();
 			$i=0;
 			foreach( $asignacionesTarea as $asignacionTarea ){
 					
-				$usuario = UsuarioPeer::retrieveByPk( $asignacionTarea->getCaLogin() );
+				$usuario = Doctrine::getTable("Usuario")->find( $asignacionTarea->getCaLogin() );
 				?>		
 			<tr>
 				<?

@@ -25,7 +25,41 @@ class reportesNegComponents extends sfComponents
 	public function executePanelConceptosFletes()
 	{
 				
-		
+		$this->conceptos = Doctrine::getTable("Concepto")
+                                     ->createQuery("c")
+                                     ->select("ca_idconcepto, ca_concepto")
+                                     ->where("c.ca_transporte = ?", $this->reporte->getCaTransporte() )
+                                     ->addWhere("c.ca_modalidad = ?", $this->reporte->getCaModalidad() )
+                                     ->addOrderBy("c.ca_liminferior")
+                                     ->addOrderBy("c.ca_concepto")
+                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                     ->execute();
+         
+         foreach( $this->conceptos as $key=>$val){
+             $this->conceptos[$key]['ca_concepto'] = utf8_encode($this->conceptos[$key]['ca_concepto']);
+             
+         }
+
+         array_push( $this->conceptos , array("ca_idconcepto"=>"9999", "ca_concepto"=>"Recargo general del trayecto"));
+
+         $this->recargos = Doctrine::getTable("TipoRecargo")
+                                     ->createQuery("c")
+                                     ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
+                                     /*->where("c.ca_transporte = ?", $this->reporte->getCaTransporte() )
+                                     ->addWhere("c.ca_modalidad = ?", $this->reporte->getCaModalidad() )
+                                     ->addOrderBy("c.ca_liminferior")
+                                     ->addOrderBy("c.ca_concepto")*/
+                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                     ->execute();
+
+         foreach( $this->conceptos as $key=>$val){
+             $this->recargos[$key]['ca_concepto'] = utf8_encode($this->recargos[$key]['ca_concepto']);
+
+         }
+
+       
+
+
 	}
 	
 		

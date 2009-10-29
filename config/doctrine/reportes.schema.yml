@@ -313,13 +313,16 @@ RepGasto:
   generatePath: reportes
   tableName: tb_repgastos
   columns:
-    oid:
+    oid: integer
+    ca_idreporte:
+      type: integer
+      primary: true    
+    ca_idconcepto:
       type: integer
       primary: true
-      autoincrement: true
-    ca_idreporte: integer
-    ca_idrecargo: integer
-    ca_idconcepto: integer
+    ca_idrecargo:
+      type: integer
+      primary: true
     ca_aplicacion: string
     ca_tipo: string
     ca_neta_tar: decimal

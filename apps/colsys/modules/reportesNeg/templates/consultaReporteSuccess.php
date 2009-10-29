@@ -7,7 +7,11 @@
 <h3>Reportes de Negocio</h3>
 <br />
 <br />
-<table cellspacing="1" width="80%" class="tableList">
+
+<table cellspacing="1" width="80%" >
+    <tr>
+        <td>
+<table cellspacing="1" width="100%" class="tableList">
 	<tbody>
 		<tr>
 			<th colspan="6" class="titulo">REPORTE DE NEGOCIO</th>
@@ -282,7 +286,9 @@
 			<td class="invertir" colspan="7"><div align="center"><strong>CONCEPTOS EMBARQUE </strong></div></td>
 		</tr>
    </table>
-   <table cellspacing="1" width="80%" >
+    </td>
+		</tr>
+   
 		<tr>
 			<td colspan="7">
                 <div id="panel-conceptos"></div>
@@ -353,6 +359,20 @@ include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$report
             handler: guardarCambios
         },
         '-'
+        ,
+        {
+            text:'Importar Cotizacion',
+            iconCls: 'import',
+            scope:this,
+            handler: guardarCambios
+        },
+        {
+            text:'Importar del tarifario',
+            iconCls: 'import',
+            scope:this,
+            handler: guardarCambios
+        }
+
       ]
 
       var mainPanel = new MainPanel({
