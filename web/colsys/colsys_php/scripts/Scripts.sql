@@ -2853,7 +2853,7 @@ GRANT ALL ON vi_repindicador_air TO GROUP "Usuarios";
 // Drop view vi_cotindicadores cascade;
 Create view vi_cotindicadores as
 select ct.ca_idcotizacion, ct.ca_consecutivo, substr(ct.ca_fchcreado::text,1,4) as ca_ano, substr(ct.ca_fchcreado::text,6,2) as ca_mes,
-	tr.ca_fchcreado as ca_fchsolicitud, tr.ca_fchterminada as ca_fchpresentacion, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, cp.ca_impoexpo, cp.ca_transporte, cp.ca_modalidad, ccl.ca_compania
+	tr.ca_fchcreado as ca_fchsolicitud, tr.ca_fchterminada as ca_fchpresentacion, tr.ca_observaciones, sc.ca_nombre as ca_sucursal, tro.ca_nombre as ca_traorigen, cid.ca_ciudad as ca_ciudestino, cp.ca_impoexpo, cp.ca_transporte, cp.ca_modalidad, ccl.ca_compania
 from tb_cotproductos cp
 	LEFT OUTER JOIN tb_cotizaciones ct ON (cp.ca_idcotizacion = ct.ca_idcotizacion)
 	LEFT OUTER JOIN notificaciones.tb_tareas tr ON (tr.ca_idtarea = ct.ca_idg_envio_oportuno)
@@ -2890,6 +2890,26 @@ GRANT ALL ON vi_repindicador_brk TO "Administrador";
 GRANT ALL ON vi_repindicador_brk TO GROUP "Usuarios";
 
 
+-- DROP VIEW vi_repindicador_exp;
+CREATE OR REPLACE VIEW vi_repindicador_exp AS
+ SELECT DISTINCT exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text AS ca_ano, (string_to_array(exm.ca_referencia::text, '.'::text))[3] AS ca_mes, sc.ca_nombre AS ca_sucursal, tro.ca_nombre AS ca_traorigen, cid.ca_ciudad AS ca_ciudestino,
+        CASE WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying ELSE CASE WHEN exm.ca_via::text = 'Maritimo'::text THEN 'Marítimo'::character varying ELSE exm.ca_via END
+        END AS ca_transporte, exm.ca_modalidad, 'Exportación'::text AS ca_impoexpo, exm.ca_consecutivo, ccl.ca_compania
+   FROM tb_expo_maestra exm
+   LEFT OUTER JOIN tb_expo_ingresos exi ON exm.ca_referencia::text = exi.ca_referencia::text
+   LEFT OUTER JOIN control.tb_usuarios us ON exi.ca_loginvendedor::text = us.ca_login::text
+   LEFT OUTER JOIN control.tb_sucursales sc ON us.ca_idsucursal = sc.ca_idsucursal
+   LEFT OUTER JOIN tb_ciudades cio ON exm.ca_origen::text = cio.ca_idciudad::text
+   LEFT OUTER JOIN tb_traficos tro ON cio.ca_idtrafico::text = tro.ca_idtrafico::text
+   LEFT OUTER JOIN tb_ciudades cid ON exm.ca_destino::text = cid.ca_idciudad::text
+   LEFT OUTER JOIN tb_clientes ccl ON exm.ca_idcliente = ccl.ca_idcliente
+  ORDER BY ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text, (string_to_array(exm.ca_referencia::text, '.'::text))[3], sc.ca_nombre, exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, tro.ca_nombre, cid.ca_ciudad,
+CASE WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying ELSE CASE WHEN exm.ca_via::text = 'Maritimo'::text THEN 'Marítimo'::character varying ELSE exm.ca_via END END, exm.ca_modalidad, 12, exm.ca_consecutivo, ccl.ca_compania;
+
+ALTER TABLE vi_repindicador_exp OWNER TO postgres;
+GRANT ALL ON TABLE vi_repindicador_exp TO postgres;
+GRANT ALL ON TABLE vi_repindicador_exp TO "Administrador";
+GRANT ALL ON TABLE vi_repindicador_exp TO "Usuarios";
 
 // Drop view vi_cotizaciones;
 Create view vi_cotizaciones as
