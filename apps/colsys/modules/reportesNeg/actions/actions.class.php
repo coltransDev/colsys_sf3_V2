@@ -83,7 +83,44 @@ class reportesNegActions extends sfActions
 		
 		$this->reportes = $q->execute();
 	}
-		
+
+    /**
+	* Permite consultar un reporte de negocio ya creado y permite
+	* agregar nuevas
+	* @author Andres Botero
+	*/
+	public function executeConsultaReporte(){
+
+		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+		$this->forward404Unless( $reporte );
+
+		$this->reporte = $reporte;
+
+        $response = sfContext::getInstance()->getResponse();
+
+		$response->addJavaScript("extExtras/RowExpander",'last');
+
+
+
+
+	}
+
+
+	/*
+	* Permite ver una cotización en formato PDF
+	*/
+	public function executeVerReporte(){
+
+        /*header("Location: /reportes/verReporte?id=".$this->getRequestParameter("reporteId"));
+        exit();
+        $this->modo = $this->getRequestParameter("modo");
+		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("reporteId") );
+		$this->forward404Unless( $this->reporteNegocio );
+		*/
+
+
+	}
+    
 	/*
 	* Permite crear y editar el encabezado de un reporte de negocios 
 	* @author Andres Botero
@@ -212,10 +249,6 @@ class reportesNegActions extends sfActions
 
         $conceptos = array();
 
-
-        
-
-        
         $baseRow = array(
 	 					 'idreporte'=>$reporte->getCaIdreporte()
 						);
@@ -240,6 +273,7 @@ class reportesNegActions extends sfActions
             $row["cobrar_tar"] = $tarifa->getCaCobrarTar();
             $row["cobrar_min"] = $tarifa->getCaCobrarMin();
             $row["cobrar_idm"] = $tarifa->getCaCobrarIdm();
+            $row["observaciones"] = $tarifa->getCaObservaciones();
             $row['tipo']="concepto";
             $row['orden']=$tarifa->getConcepto()->getCaConcepto();
             $conceptos[] = $row;
@@ -263,6 +297,7 @@ class reportesNegActions extends sfActions
                 $row["cobrar_tar"] = $recargo->getCaCobrarTar();
                 $row["cobrar_min"] = $recargo->getCaCobrarMin();
                 $row["cobrar_idm"] = $recargo->getCaIdmoneda();
+                $row["observaciones"] = $recargo->getCaDetalles();
                 $row['tipo']="recargo";
                 $row['orden']=$tarifa->getConcepto()->getCaConcepto()."-".$recargo->getTipoRecargo()->getCaRecargo();
                 $conceptos[] = $row;
@@ -280,12 +315,12 @@ class reportesNegActions extends sfActions
         if( count($recargos)>0){
 
             $row = $baseRow;
-                $row["iditem"] = 9999;
+            $row["iditem"] = 9999;
 
-                $row["item"] = "Recargo general del trayecto";
-                $row['tipo']="concepto";
-                $row['orden']="Y";
-                $conceptos[] = $row;
+            $row["item"] = "Recargo general del trayecto";
+            $row['tipo']="concepto";
+            $row['orden']="Y";
+            $conceptos[] = $row;
 
             foreach( $recargos as $recargo ){
                 $row = $baseRow;
@@ -301,6 +336,7 @@ class reportesNegActions extends sfActions
                 $row["cobrar_tar"] = $recargo->getCaCobrarTar();
                 $row["cobrar_min"] = $recargo->getCaCobrarMin();
                 $row["cobrar_idm"] = $recargo->getCaIdmoneda();
+                $row["observaciones"] = $recargo->getCaDetalles();
                 $row['tipo']="recargo";
                 $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
                 $conceptos[] = $row;
@@ -317,10 +353,6 @@ class reportesNegActions extends sfActions
 
 
         $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
-
-
-
-
         $this->setTemplate("responseTemplate");
     }
 
@@ -388,6 +420,12 @@ class reportesNegActions extends sfActions
                 $tarifa->setCaCobrarIdm( $request->getParameter("cobrar_idm") );
             }
 
+            if( $request->getParameter("observaciones")!==null ){
+                $tarifa->setCaObservaciones( $request->getParameter("observaciones") );
+            }else{
+                $tarifa->setCaObservaciones( null );
+            }
+
             $tarifa->save();
             $this->responseArray["success"]=true;
         }
@@ -442,6 +480,12 @@ class reportesNegActions extends sfActions
                 $tarifa->setCaIdmoneda( $request->getParameter("cobrar_idm") );
             }
 
+            if( $request->getParameter("observaciones")!==null ){
+                $tarifa->setCaDetalles( $request->getParameter("observaciones") );
+            }else{
+                $tarifa->setCaDetalles( null );
+            }
+
             $tarifa->save();
             $this->responseArray["success"]=true;
         }
@@ -456,8 +500,6 @@ class reportesNegActions extends sfActions
     */
     public function executeEliminarPanelConceptosFletes(sfWebRequest $request){
 
-
-
         $tipo = $request->getParameter("tipo");
 
         if( $tipo=="concepto" ){
@@ -465,7 +507,21 @@ class reportesNegActions extends sfActions
             $idconcepto = $request->getParameter("idconcepto");
             $tarifa = Doctrine::getTable("RepTarifa")->find(array($idreporte, $idconcepto));
 
+
+            $gastos = Doctrine_Query::create()
+                                ->select("g.*")
+                                ->from("RepGasto g")
+                                ->innerJoin("g.TipoRecargo t")
+                                ->where("g.ca_idreporte = ? AND g.ca_idconcepto = ?", array($idreporte, $idconcepto))
+                                ->addWhere("t.ca_tipo = ?", Constantes::RECARGO_EN_ORIGEN)                                
+                                ->execute();
+
+            foreach( $gastos as $gasto ){
+                $gasto->delete();
+            }
+
             if( $tarifa ){               
+
                 $tarifa->delete();
             }
         }
@@ -490,49 +546,95 @@ class reportesNegActions extends sfActions
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /*
-	* Copia un reporte en otro nuevo creando una nueva version o un
-	* nuevo consecutivo
-	* @author Andres Botero
-	*/
-	public function executeLiquidarReporte(){
+    * Datos para el panel de conceptos
+    * @param sfRequest $request A request object
+    */
+    public function executePanelRecargosData(sfWebRequest $request){
         $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
 	    $this->forward404Unless( $reporte );
+
+        $conceptos = array();
+
+        $baseRow = array(
+	 					 'idreporte'=>$reporte->getCaIdreporte()
+						);
+
+
+
+        $recargos = Doctrine::getTable("RepGasto")
+                             ->createQuery("t")
+                             ->innerJoin("t.TipoRecargo tr")
+                             ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                             ->addWhere("t.ca_idconcepto = ?", 9999 )
+                             ->addWhere("tr.ca_tipo = ?", Constantes::RECARGO_LOCAL )
+                             ->execute();
+
         
-        $this->reporte=$reporte;
+            
+        foreach( $recargos as $recargo ){
+            $row = $baseRow;
+            $row["iditem"] = $recargo->getCaIdrecargo();
+            $row["idconcepto"] = 9999;
+            $row["item"] = utf8_encode($recargo->getTipoRecargo()->getCaRecargo());
+            $row["tipo_app"] = $recargo->getCaTipo();
+            $row["aplicacion"] = $recargo->getCaAplicacion();
+            $row["neta_tar"] = $recargo->getCaNetaTar();
+            $row["neta_min"] = $recargo->getCaNetaMin();
+            $row["reportar_tar"] = $recargo->getCaReportarTar();
+            $row["reportar_min"] = $recargo->getCaReportarMin();
+            $row["cobrar_tar"] = $recargo->getCaCobrarTar();
+            $row["cobrar_min"] = $recargo->getCaCobrarMin();
+            $row["cobrar_idm"] = $recargo->getCaIdmoneda();
+            $row["observaciones"] = $recargo->getCaDetalles();
+            $row['tipo']="recargo";
+            $row['orden']="Y-".$recargo->getTipoRecargo()->getCaRecargo();
+            $conceptos[] = $row;
+        }
+        
+
+        $row = $baseRow;
+        $row['iditem']="";
+        $row['item']="+";
+        $row['tipo']="recargo";
+        $row['orden']="Z";
+        $conceptos[] = $row;
+
+
+
+        $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
+        $this->setTemplate("responseTemplate");
+        
+
     }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/*
 	* Copia un reporte en otro nuevo creando una nueva version o un 
@@ -630,15 +732,6 @@ class reportesNegActions extends sfActions
 		
 	}
 	
-	/*
-	* Si ocurre un error reenvia a la pagina original y muestra los mensajes 
-	* de error
-	* @author: Andres Botero
-	*/
-	public function handleErrorFormReporteGuardar()
-	{
-		$this->forward("reportesNeg", "formReporte");
-	}
 	
 	/*
 	* Guarda los cambios realizados  
@@ -1003,37 +1096,7 @@ class reportesNegActions extends sfActions
 	}
 	
 	
-	/**
-	* Permite consultar un reporte de negocio ya creado y permite 
-	* agregar nuevas  
-	* @author Andres Botero
-	*/
-	public function executeConsultaReporte(){
-		
-		$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
-		$this->forward404Unless( $reporte );
-		
-		$this->reporte = $reporte;
-		
-		
-	  
-	}		
 	
-	
-	/*
-	* Permite ver una cotización en formato PDF
-	*/
-	public function executeVerReporte(){
-		
-        /*header("Location: /reportes/verReporte?id=".$this->getRequestParameter("reporteId"));
-        exit();
-        $this->modo = $this->getRequestParameter("modo");
-		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("reporteId") );
-		$this->forward404Unless( $this->reporteNegocio );	
-		*/
-		
-			
-	}
 	
 	/**
 	* Genera un archivo PDF con el reporte de negocio
@@ -1062,445 +1125,7 @@ class reportesNegActions extends sfActions
 		
 	}
 	
-	/****************************************************************************
-	*  Manejo de recargos
-	****************************************************************************/
 	
-	/*
-	* Envia al formulario en caso de que ocurra un error
-	* @author: Andres Botero
-	*/
-	public function handleErrorGuardarRecargo(){
-		$this->opcion = $this->getRequestParameter("opcion");
-		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->tipo = $this->getRequestParameter("tipo");
-		
-		return sfView::SUCCESS;
-	}
-	
-	/*
-	* Inserta un nuevo recargo 
-	* @author: Andres Botero
-	*/
-	public function executeGuardarRecargo(){
-		
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($reporteNegocio);				
-		
-		$this->tipo = $this->getRequestParameter("tipo");	
-				
-		$oid = $this->getRequestParameter("oid");
-		
-		if( $oid ){
-			$gasto = RepGastoPeer::retrieveByPk( $oid );
-			$this->forward404Unless( $gasto );
-		}else{
-			$gasto = new RepGasto();
-			$gasto->setCaIdReporte( $reporteNegocio->getCaIdreporte() );
-		}
-		
-		$conceptoId = $this->getRequestParameter("concepto_id");
-		$recargoId = $this->getRequestParameter("idrecargo");			
-		$conceptoId = $this->getRequestParameter("idconcepto");
-		
-		//En caso de que ya se haya creado un recargo del mismo tipo muestra error. 
-		$c = new Criteria();
-		$c->add( RepGastoPeer::CA_IDREPORTE, $reporteNegocio->getCaIdreporte() );
-		$c->add( RepGastoPeer::CA_IDCONCEPTO, $conceptoId );		
-		$c->add( RepGastoPeer::CA_IDRECARGO, $recargoId );
-		$count = RepGastoPeer::doCount( $c );			
-		if( $count>0 ){
-			$this->getRequest()->setError("idrecargo", "El recargo ya existe");
-		}else{		
-			$gasto->setCaIdconcepto( $conceptoId );
-			$gasto->setCaIdrecargo( $recargoId );
-			$gasto->setCaIdconcepto( $conceptoId  );
-					
-			$gasto->setCaNetaTar(  $this->getRequestParameter("neta_tar") );
-			$gasto->setCaNetaMin(  $this->getRequestParameter("neta_min") );
-			$gasto->setCaReportarTar(  $this->getRequestParameter("reportar_tar") );
-			$gasto->setCaReportarMin(  $this->getRequestParameter("reportar_min") );	
-			$gasto->setCaCobrarTar(  $this->getRequestParameter("cobrar_tar") );
-			$gasto->setCaCobrarMin(  $this->getRequestParameter("cobrar_min") );
-			$gasto->setCaIdmoneda(  $this->getRequestParameter("id_moneda") );
-			$gasto->setCaAplicacion(  $this->getRequestParameter("aplicacion") );
-			$gasto->setCaTipo(  $this->getRequestParameter("ca_tipo") );
-			
-			
-			if( $this->getRequestParameter("detalle") ){	
-				$gasto->setCaDetalles(  $this->getRequestParameter("detalle") );				
-			}else{
-				$gasto->setCaDetalles(  '' );					
-			}	
-			$gasto->save();			
-		}
-		
-		$this->opcion = $this->getRequestParameter("opcion");
-		$this->reporteNegocio = $reporteNegocio;
-		$this->setLayout("ajax");			
-	}
-	
-	/*
-	* Guardar los cambios cuando un usuario hace click sobre un recargo y modifica un dato
-	* author: Andres Botero
-	*/
-	public function executeObserveRecargos(){
-		$oid = $this->getRequestParameter("oid");
-		
-		$gasto = RepGastoPeer::retrieveByPk( $oid );
-		$this->forward404Unless( $gasto );
-		
-		
-		$ca_tipo =  $this->getRequestParameter("ca_tipo");
-		if( $ca_tipo ){
-			$gasto->setCaTipo( $ca_tipo );
-		}
-		
-		$neta_tar =  $this->getRequestParameter("neta_tar");
-		if( $neta_tar!==null ){
-			$gasto->setCaNetaTar( $neta_tar );
-		}
-		
-		$neta_min =  $this->getRequestParameter("neta_min");
-		if( $neta_min!==null ){
-			$gasto->setCaNetaMin( $neta_min );
-		}
-		
-		$reportar_tar =  $this->getRequestParameter("reportar_tar");
-		if( $reportar_tar!==null ){
-			$gasto->setCaReportarTar( $reportar_tar );
-		}
-		
-		$reportar_min =  $this->getRequestParameter("reportar_min");
-		if( $reportar_min!==null ){
-			$gasto->setCaReportarMin( $reportar_min );
-		}
-		
-		$cobrar_tar =  $this->getRequestParameter("cobrar_tar");
-		if( $cobrar_tar!==null ){
-			$gasto->setCaCobrarTar( $cobrar_tar );
-		}
-						
-		$cobrar_min =  $this->getRequestParameter("cobrar_min");
-		if( $cobrar_min!==null ){
-			$gasto->setCaCobrarMin( $cobrar_min );
-		}	
-		
-		$id_moneda =  $this->getRequestParameter("id_moneda");
-		if( $id_moneda ){
-			$gasto->setCaIdmoneda( $id_moneda );
-		}
-		
-		$aplicacion =  $this->getRequestParameter("aplicacion");
-		if( $aplicacion ){
-			$gasto->setCaAplicacion( $aplicacion );
-		}	
-		
-		$observaciones =  $this->getRequestParameter("observaciones");
-		
-		if( $observaciones!==null ){			
-			$gasto->setCaDetalles( $observaciones );
-		}	
-				
-		$gasto->save();			
-		
-		return sfViwew::NONE;						
-	}
-	
-	
-	/*
-	* Elimina un recargo
-	* author: Andres Botero
-	*/
-	public function executeEliminarRecargo(){
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($reporteNegocio);		
-		
-		$oid = $this->getRequestParameter("oid");		
-		$gasto = RepGastoPeer::retrieveByPk( $oid );
-		$this->forward404Unless( $gasto );
-		$gasto->delete();
-		
-		
-		$this->reporteNegocio = $reporteNegocio;		
-		$this->opcion = $this->getRequestParameter("opcion");		
-		$this->tipo = $this->getRequestParameter("tipo");		
-		$this->setLayout("ajax");	
-		$this->setTemplate("guardarRecargo");
-		
-	}
-	
-	/****************************************************************************
-	*  Manejo de costos
-	****************************************************************************/
-	
-	/*
-	* Envia al formulario en caso de que ocurra un error
-	* @author: Andres Botero
-	*/
-	public function handleErrorGuardarCosto(){
-		
-		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->tipo = $this->getRequestParameter("tipo");		
-		return sfView::SUCCESS;
-	}
-	/*
-	* Inserta un nuevo costo 
-	* @author: Andres Botero
-	*/
-	public function executeGuardarCosto(){
-			
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($reporteNegocio);				
-		
-		$this->tipo = $this->getRequestParameter("tipo");	
-			
-		$user_id = $this->getUser()->getUserId();
-				
-		$oid = $this->getRequestParameter("oid");				
-		if( $oid ){
-			$costo = RepCostoPeer::retrieveByPk( $oid );
-			$this->forward404Unless( $costo );
-		}else{
-			$costo = new RepCosto();
-			$costo->setCaIdReporte( $reporteNegocio->getCaIdreporte() );
-			
-			$costo->setCaFchcreado( date("Y-m-d") );	
-			$costo->setCaUsucreado( $user_id );	
-		}
-		$costoId = $this->getRequestParameter("idcosto");
-					
-		$c = new Criteria();
-		$c->add( RepCostoPeer::CA_IDREPORTE, $reporteNegocio->getCaIdreporte() );
-		$c->add( RepCostoPeer::CA_IDCOSTO, $costoId );		
-		$count  = RepCostoPeer::doCount( $c );
-		
-		
-		
-		if( $count ){	
-			$this->getRequest()->setError("idcosto", "El costo ya existe");
-		}else{
-			$costo->setCaIdcosto( $costoId );	
-			$costo->setCaTipo(  $this->getRequestParameter("catipo") );		
-			$costo->setCaNetcosto( $this->getRequestParameter("netcosto") );				
-			$costo->setCaVlrcosto(  $this->getRequestParameter("vlrcosto") );
-			$costo->setCaMincosto(  $this->getRequestParameter("mincosto") );		
-			$costo->setCaIdMoneda(  $this->getRequestParameter("id_moneda") );
-			$costo->setCaDetalles(  $this->getRequestParameter("observaciones") );		
-			$costo->save();	
-		}
-		$this->reporteNegocio = $reporteNegocio;
-		$this->setLayout("ajax");			
-	}
-	
-	/*
-	* Guardar los cambios cuando un usuario hace click sobre un costo y modifica un dato
-	* author: Andres Botero
-	*/
-	public function executeObserveCostos(){
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($reporteNegocio);				
-		
-		$this->tipo = $this->getRequestParameter("tipo");	
-				
-		$user_id = $this->getUser()->getUserId();
-				
-		$oid = $this->getRequestParameter("oid");				
-		if( $oid ){
-			$costo = RepCostoPeer::retrieveByPk( $oid );
-			$this->forward404Unless( $costo );
-									
-			if( $this->getRequestParameter("catipo") ){	
-				$costo->setCaTipo(  $this->getRequestParameter("catipo") );		
-			}
-			
-			if( $this->getRequestParameter("netcosto")!==null ){
-				$costo->setCaNetcosto( $this->getRequestParameter("netcosto") );				
-			}
-			
-			if( $this->getRequestParameter("vlrcosto")!==null ){
-				$costo->setCaVlrcosto(  $this->getRequestParameter("vlrcosto") );
-			}
-			
-			if( $this->getRequestParameter("mincosto")!==null ){
-				$costo->setCaMincosto(  $this->getRequestParameter("mincosto") );		
-			}
-			
-			if( $this->getRequestParameter("id_moneda") ){
-				$costo->setCaIdMoneda(  $this->getRequestParameter("id_moneda") );
-			}
-			
-			if(  $this->getRequestParameter("observaciones")!==null ){
-				$costo->setCaDetalles(  $this->getRequestParameter("observaciones") );		
-			}
-			$costo->setCaFchactualizado( date("Y-m-d H:i:s") );	
-			$costo->setCaUsuactualizado( $user_id );	
-			$costo->save();	
-		}
-		$this->reporteNegocio = $reporteNegocio;
-		$this->setLayout("ajax");	
-		
-		return sfView::NONE;		
-	}
-	
-	/*
-	* Elimina un recargo
-	* author: Andres Botero
-	*/
-	public function executeEliminarCosto(){
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($reporteNegocio);		
-		
-		$oid = $this->getRequestParameter("oid");		
-		$costo = RepCostoPeer::retrieveByPk( $oid );
-		$this->forward404Unless( $costo );
-		$costo->delete();		
-
-					
-		$this->reporteNegocio = $reporteNegocio;		
-		$this->opcion = $this->getRequestParameter("opcion");		
-		$this->tipo = $this->getRequestParameter("tipo");		
-		$this->setLayout("ajax");	
-		$this->setTemplate("guardarCosto");		
-	}
-	
-	/******************************************************************
-	*  Manejo de conceptos
-	*******************************************************************/
-	
-	/*
-	* Envia al formulario en caso de que ocurra un error
-	* @author: Andres Botero
-	*/
-	public function handleErrorGuardarConcepto(){
-		
-		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		return sfView::SUCCESS;
-	}
-	
-	/*
-	* Inserta un nuevo concepto 
-	* @author: Andres Botero
-	*/
-	public function executeGuardarConcepto(){	
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($reporteNegocio);	
-		
-		$via = $reporteNegocio->getCaTransporte();
-		
-		$idconcepto = $this->getRequestParameter("idconcepto");
-		
-		$c = new Criteria();
-		$c->add( RepTarifaPeer::CA_IDREPORTE, $reporteNegocio->getCaIdreporte() );
-		$c->add( RepTarifaPeer::CA_IDCONCEPTO, $idconcepto );		
-		$count = RepTarifaPeer::doCount( $c );
-		
-		
-		if( $count ){	
-			$this->getRequest()->setError("idconcepto", "El costo ya existe");
-		}else{			
-			$concepto = new RepTarifa();
-			$concepto->setCaIdConcepto( $idconcepto );
-			$concepto->setCaIdReporte( $reporteNegocio->getCaIdreporte() );
-			$concepto->setCaCantidad( $this->getRequestParameter("cantidad") );				
-			$concepto->setCaNetaTar(  $this->getRequestParameter("neta_tar") );
-			$concepto->setCaNetaMin(  $this->getRequestParameter("neta_min") );
-			$concepto->setCaNetaIdm(  $this->getRequestParameter("neta_idm") );				
-				
-			$concepto->setCaReportarTar(  $this->getRequestParameter("reportar_tar") );
-			$concepto->setCaReportarMin(  $this->getRequestParameter("reportar_min") );
-			$concepto->setCaReportaridm(  $this->getRequestParameter("reportar_idm") );
-			$concepto->setCaCobrarTar(  $this->getRequestParameter("cobrar_tar") );
-			$concepto->setCaCobrarMin(  $this->getRequestParameter("cobrar_min") );
-			$concepto->setCaCobraridm(  $this->getRequestParameter("cobrar_idm") );
-			
-			$user = $this->getUser();
-			$concepto->setCaUsucreado( $user->getUserId() );
-			$concepto->setCaFchcreado( date("Y-m-d H:i:s") );
-			$concepto->save();		
-			
-		}
-		$this->reporteNegocio = $reporteNegocio;
-		$this->setLayout("ajax");	
-	}
-	
-	public function executeObserveConceptos(){
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($reporteNegocio);	
-		
-		$via = $reporteNegocio->getCaTransporte();
-		
-		
-		$concepto = RepTarifaPeer::retrieveByPk( $this->getRequestParameter("oid") );
-		$this->forward404Unless($concepto);	
-		if( $this->getRequestParameter("cantidad") ){
-			$concepto->setCaCantidad( $this->getRequestParameter("cantidad") );				
-		}
-		if( $this->getRequestParameter("neta_tar")!==null ){
-			$concepto->setCaNetaTar(  $this->getRequestParameter("neta_tar") );
-		}
-		if( $this->getRequestParameter("neta_min")!==null ){
-			$concepto->setCaNetaMin(  $this->getRequestParameter("neta_min") );
-		}
-
-		if( $this->getRequestParameter("neta_idm") ){
-			$concepto->setCaNetaIdm(  $this->getRequestParameter("neta_idm") );				
-		}
-							
-		if( $this->getRequestParameter("reportar_tar")!==null ){			
-			$concepto->setCaReportarTar(  $this->getRequestParameter("reportar_tar") );
-		}
-		if( $this->getRequestParameter("reportar_min")!==null ){
-			$concepto->setCaReportarMin(  $this->getRequestParameter("reportar_min") );
-		}
-		if( $this->getRequestParameter("reportar_idm") ){
-			$concepto->setCaReportaridm(  $this->getRequestParameter("reportar_idm") );
-		}
-		if( $this->getRequestParameter("cobrar_tar")!==null ){
-			$concepto->setCaCobrarTar(  $this->getRequestParameter("cobrar_tar") );
-		}
-		if( $this->getRequestParameter("cobrar_min")!==null ){
-			$concepto->setCaCobrarMin(  $this->getRequestParameter("cobrar_min") );
-		}
-		if( $this->getRequestParameter("cobrar_idm") ){ 
-			$concepto->setCaCobraridm(  $this->getRequestParameter("cobrar_idm") );
-		}
-		
-		if( $this->getRequestParameter("observaciones")!==null ){
-			$concepto->setCaObservaciones(  $this->getRequestParameter("observaciones") );
-		}
-		
-		$user = $this->getUser();
-		$concepto->setCaUsuactualizado( $user->getuserId() );
-		$concepto->setCaFchactualizado( date("Y-m-d H:i:s") );
-		
-		$concepto->save();	
-		
-		return sfView::NONE;	
-	}
-	
-	/*
-	* Elimina un concepto
-	* author: Andres Botero
-	*/
-	public function executeEliminarConcepto(){
-		$reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($reporteNegocio);		
-		
-		$oid = $this->getRequestParameter("oid");
-		
-		$via = $reporteNegocio->getCaTransporte();		
-		
-		$concepto = RepTarifaPeer::retrieveByPk( $this->getRequestParameter("oid") );		
-		
-		$this->forward404Unless($concepto);
-		$concepto->delete();		
-		
-		$this->reporteNegocio = $reporteNegocio;		
-		
-		$this->setLayout("ajax");	
-		$this->setTemplate("guardarConcepto");		
-	}
 	
 	/*
 	* Envia un reporte por correo 	

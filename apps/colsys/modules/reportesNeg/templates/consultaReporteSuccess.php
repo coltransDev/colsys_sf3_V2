@@ -339,17 +339,24 @@
 <?
 include_component("reportesNeg","mainPanel", array("reporte"=>$reporte));
 include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
+include_component("reportesNeg","panelRecargos", array("reporte"=>$reporte));
 
 ?>
 <script language="javascript">
       
       var guardarCambios = function(){
           panelFletes.guardarCambios();
+          panelRecargosLocales.guardarCambios();
           
       }
 
       var panelFletes = new PanelConceptosFletes({
           title: 'Conceptos de fletes'
+      });
+
+
+      var panelRecargosLocales = new PanelRecargos({
+          title: 'Recargos locales'
       });
 
       tbarObj = [{
@@ -359,7 +366,7 @@ include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$report
             handler: guardarCambios
         },
         '-'
-        ,
+        /*,
         {
             text:'Importar Cotizacion',
             iconCls: 'import',
@@ -371,14 +378,14 @@ include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$report
             iconCls: 'import',
             scope:this,
             handler: guardarCambios
-        }
+        }*/
 
       ]
 
       var mainPanel = new MainPanel({
                             width: 800,
                             height: 400,                            
-                            items: [panelFletes],
+                            items: [panelFletes, panelRecargosLocales ],
                             tbar: tbarObj
 
                       });
