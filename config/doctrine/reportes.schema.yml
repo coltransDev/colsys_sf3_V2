@@ -11,11 +11,9 @@ Reporte:
     ca_version: integer
     ca_idcotizacion: integer
     ca_origen:
-      type: string
-      notnull: true
+      type: string      
     ca_destino:
-      type: string
-      notnull: true
+      type: string      
     ca_impoexpo:
       type: string
       notnull: true
@@ -29,7 +27,9 @@ Reporte:
       notnull: true
     ca_idproveedor: string
     ca_orden_prov: string
-    ca_idconcliente: integer
+    ca_idconcliente:
+      type: integer
+      notnull: true
     ca_orden_clie:
       type: string
       notnull: true
@@ -66,6 +66,8 @@ Reporte:
     ca_fchultstatus: timestamp
     ca_idtarea_rext: integer
     ca_idseguimiento: integer
+    ca_detanulado: string
+    ca_mcia_peligrosa: boolean
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
@@ -231,9 +233,10 @@ Tercero:
     ca_vendedor: string
     ca_tipo: string
     ca_identificacion: string
+    ca_idciudad: string
   relations:
     Ciudad:
-      local: ca_origen
+      local: ca_idciudad
       foreign: ca_idciudad
       type: one
 
@@ -452,3 +455,30 @@ RepAsignacion:
       foreign: ca_idtarea
       type: one
 
+RepCosto:
+  generatePath: reportes
+  tableName: tb_repaduanadet
+  attributes:
+    export: tables
+  columns:
+    ca_idreporte:
+      type: integer
+      primary: true
+    ca_idcosto:
+      type: integer
+      primary: true
+    ca_tipo: string
+    ca_vlrcosto: decimal
+    ca_mincosto: decimal
+    ca_netcosto: decimal
+    ca_idmoneda: string
+    ca_detalles: string
+  relations:
+    Reporte:
+      local: ca_idreporte
+      foreign: ca_idreporte
+      type: one
+    Costo:
+      local: ca_idcosto
+      foreign: ca_idcosto
+      type: one

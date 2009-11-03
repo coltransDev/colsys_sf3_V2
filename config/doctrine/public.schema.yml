@@ -319,6 +319,19 @@ TipoRecargo:
     ca_incoterms: string
     ca_impoexpo: string
 
+Costo:
+  generatePath: public
+  tableName: tb_costos
+  columns:
+    ca_idcosto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_costo: string
+    ca_transporte: string
+    ca_impoexpo: string
+    ca_modalidad: string
+    ca_comisionable: string
 
 ColNovedad:
   generatePath: public
@@ -350,4 +363,5 @@ Sia:
     ca_nombre: string
     ca_tel: string
     ca_contacto: string
-   
+
+
