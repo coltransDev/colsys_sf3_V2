@@ -1,11 +1,30 @@
 
+<script language="javascript">
+    var cambiarImpoexpo = function(){
+        var clase = document.getElementById("reporte_ca_impoexpo").value;
 
+        if( clase=="<?=Constantes::ADUANA?>" ){
+             document.getElementById("info-trayectos").style.display="none";             
+             document.getElementById("combo-consignatario").style.display="none";
+        }else{
+             document.getElementById("info-trayectos").style.display="";
+             document.getElementById("combo-consignatario").style.display="";
+        }
+
+    }
+</script>
+
+<?
+include_partial("ventanaTercero", array("reporte"=>$reporte));
+?>
 
 <div align="center" class="content">
     <h1>Reportes de Negocio</h1>
     <br />
     <form action="<?=url_for("reportesNeg/formReporte")?>" method="post">
-        <?
+        <?        
+        
+
         echo $form->renderHiddenFields();
 
         if( $reporte->getCaIdreporte() ){
@@ -53,76 +72,90 @@
                     ?>
                 </td>
             </tr>
-            <tr class="row0">
-                <td colspan="4"><b>Datos del trayecto</b></td>
-            </tr>            
-           
-            <tr>
-                <td><b>Transporte</b></td>
-                <td>
-                     <?
-                    echo $form['ca_transporte']->renderError();
-                    if( $reporte ){
-                        $form->setDefault('ca_transporte', $reporte->getCaTransporte() );
-                    }
-                    echo $form['ca_transporte']->render();
-                    ?>                   
-                </td>
-                <td><b>Modalidad</b></td>
-                <td>&nbsp;</td>
+            <tr id="info-trayectos">
+                <td colspan="4">
+                    <table class="tableList" width="100%">
+                        <tr class="row0">
+                            <td colspan="4"><b>Datos del trayecto</b></td>
+                        </tr>
+
+                        <tr>
+                            <td><b>Transporte</b></td>
+                            <td>
+                                 <?
+                                echo $form['ca_transporte']->renderError();
+                                if( $reporte ){
+                                    $form->setDefault('ca_transporte', $reporte->getCaTransporte() );
+                                }
+                                echo $form['ca_transporte']->render();
+                                ?>
+                            </td>
+                            <td><b>Modalidad</b></td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><b>Origen</b></td>
+                            <td>
+                                <?
+                                echo $form['ca_origen']->renderError();
+                                if( $reporte ){
+                                    $form->setDefault('ca_origen', $reporte->getCaOrigen() );
+                                }
+                                echo $form['ca_origen']->render();
+                                ?>
+                            </td>
+                            <td>
+                                <b>Destino</b>
+                            </td>
+                            <td>
+                                <?
+                                echo $form['ca_destino']->renderError();
+                                if( $reporte ){
+                                    $form->setDefault('destino', $reporte->getCaDestino() );
+                                }
+                                echo $form['ca_destino']->render();
+                                ?>
+                            </td>
+                          </tr>
+
+                         <tr>
+                             <td><b>Linea</b></td>
+                             <td colspan="3">
+                                <?
+                                echo $form['ca_idlinea']->renderError();
+                                if( $reporte ){
+                                    $form->setDefault('ca_idlinea', $reporte->getCaIdlinea() );
+                                }
+                                echo $form['ca_idlinea']->render();
+                                ?>
+                            </td>
+
+                        </tr>
+                        <tr>
+                             <td><b>Agente</b></td>
+                             <td colspan="3">
+                                <?
+                                echo $form['ca_idagente']->renderError();
+                                if( $reporte ){
+                                    $form->setDefault('ca_idagente', $reporte->getCaIdagente() );
+                                }
+                                echo $form['ca_idagente']->render();
+                                ?>
+                            </td>
+
+                        </tr>
+                         <tr>
+                             <td><b>Aduana</b></td>
+                             <td colspan="3">
+                                <select name="colmas">
+                                    <option value="Sí">S&iacute;</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </td>
+                       </tr>
+                    </table>
+                 </td>
             </tr>
-            <tr>
-                <td><b>Origen</b></td>
-                <td>
-                    <?
-                    echo $form['ca_origen']->renderError();
-                    if( $reporte ){
-                        $form->setDefault('ca_origen', $reporte->getCaOrigen() );
-                    }
-                    echo $form['ca_origen']->render();
-                    ?>
-                </td>
-                <td>
-                    <b>Destino</b>
-                </td>
-                <td>
-                    <?
-                    echo $form['ca_destino']->renderError();
-                    if( $reporte ){
-                        $form->setDefault('destino', $reporte->getCaDestino() );
-                    }
-                    echo $form['ca_destino']->render();
-                    ?>
-                </td>
-              </tr>
-
-             <tr>
-                 <td><b>Linea</b></td>
-                 <td colspan="3">
-                    <?
-                    echo $form['ca_idlinea']->renderError();
-                    if( $reporte ){
-                        $form->setDefault('ca_idlinea', $reporte->getCaIdlinea() );
-                    }
-                    echo $form['ca_idlinea']->render();
-                    ?>
-                </td>
-
-            </tr>
-            <tr>
-                 <td><b>Agente</b></td>
-                 <td colspan="3">
-                    <?
-                    echo $form['ca_idagente']->renderError();
-                    if( $reporte ){
-                        $form->setDefault('ca_idagente', $reporte->getCaIdagente() );
-                    }
-                    echo $form['ca_idagente']->render();
-                    ?>
-                </td>
-
-            </tr>
-
             <tr>
                  <td><b>Mercancia</b></td>
                  <td colspan="3">
@@ -133,51 +166,87 @@
                     }
                     echo $form['ca_mercancia_desc']->render();
                     ?>
-                </td>
-
-            </tr>
-            <tr class="row0">
-                <td colspan="4"><b>Aduana</b></td>
-            </tr>
-            <tr>
-                <td>
-                    <select name="colmas">
-                        <option value="Sí">S&iacute;</option>
-                        <option value="No">No</option>
-                    </select>
-                </td>
-                <td>
-                    &nbsp;
-                </td>
-                <td><b>&nbsp;</b></td>
-                <td>&nbsp;</td>
-            </tr>
-
+                    <br />
+                    <b>¿Es mercancia peligrosa?</b>
+                    <?
+                    echo $form['ca_mcia_peligrosa']->renderError();
+                    if( $reporte ){
+                        $form->setDefault('ca_mcia_peligrosa', $reporte->getCaMciaPeligrosa() );
+                    }
+                    echo $form['ca_mcia_peligrosa']->render();
+                    ?>
+                </td>               
+           </tr>           
            <tr class="row0">
-                <td colspan="4"><b>Datos de la guia</b></td>
+                <td colspan="4"><b>Datos del cliente</b></td>
             </tr>
             <tr>
-                <td class="row0"><b>Cliente:</b></td>
+                <td><b>Cliente:</b></td>
                 <td>
                     <?
                     echo $form['ca_idconcliente']->renderError();
+                    
                     ?>
-                    <input type="text" id="idconcliente">                   
+                    <input type="hidden" name="ca_idconcliente" id="ca_idconcliente"  value="<?=$ca_idconcliente?$ca_idconcliente:$reporte->getCaIdconcliente()?>">
+                    <input type="text" name="idconcliente" id="idconcliente" value="<?=$idconcliente?>">
                 </td>
                 <td><b> Contacto: </b></td>
-                <td>&nbsp;<div id="div_contacto"></div></td>
+                <td>&nbsp;
+                    <div id="div_contacto" align="left">
+                         <?
+                        if( $reporte->getCaIdconcliente() ){
+                            echo $reporte->getContacto()->getNombre();
+                        }
+                        ?>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Orden del Cliente:</b></td>
+                <td>
+                    <?
+                    echo $form['ca_orden_clie']->renderError();
+                    if( $reporte ){
+                        $form->setDefault('ca_orden_clie', $reporte->getCaOrdenClie() );
+                    }
+                    echo $form['ca_orden_clie']->render();
+                    ?>
+                </td>
+                <td><b> &nbsp; </b></td>
+                <td>&nbsp;</td>
             </tr>
             <tr>
                 <td class="row0"><b>Proveedor:</b></td>
                 <td>
-                    &nbsp;
+                    <?
+                    if( $idproveedor ){
+                        $value = $idproveedor;
+                    }else{
+                        $value = $reporte->getCaIdproveedor();                        
+                    }
+                    include_component("widgets", "comboTercero", array( "tipo"=>"Proveedor", "id"=>"idproveedor", "name"=>"idproveedor", "value"=>$value));
+                    ?>
                 </td>
                 <td><b> &nbsp;</b></td>
-                <td> &nbsp;
-
-
-                </td>
+                <td> &nbsp; </td>
             </tr>
+           
+            <tr id="combo-consignatario">
+                <td class="row0"><b>Consignatario:</b></td>
+                <td>
+                    <?
+                    if( $idconsignatario ){
+                        $value = $idconsignatario;
+                    }else{
+                        $value = $reporte->getCaIdconsignatario();                        
+                    }
+                    include_component("widgets", "comboTercero", array( "tipo"=>"Consignatario", "id"=>"idconsignatario", "name"=>"idconsignatario", "value"=>$value));
+                    ?>
+                </td>
+                <td><b> &nbsp;</b></td>
+                <td> &nbsp; </td>
+            </tr>
+            
             <tr>
                 <td colspan="4">
                     <div align="center">
@@ -228,7 +297,14 @@
             '<tpl for="."><div class="search-item"><b>{compania}</b><br /><span>{nombre} {papellido} {sapellido} <br />{cargo}</span> </div></tpl>'
     );
 
-       var comboclientes =  new Ext.form.ComboBox({
+        <?
+        if( $reporte->getCaIdconcliente() ){
+            $value = $reporte->getCliente()->getCaCompania();
+        }else{
+            $value = "";
+        }
+        ?>
+        var comboclientes =  new Ext.form.ComboBox({
                             store: ds,
                             fieldLabel: 'Cliente',
                             displayField:'compania',
@@ -241,7 +317,7 @@
                             applyTo: "idconcliente",
                             itemSelector: 'div.search-item',
                             emptyText:'Escriba el nombre del cliente...',
-                            value: '<?=str_replace("'", "\\'", (isset($cliente)&&$cliente)?$cliente->getCaCompania():"")?>',
+                            value: '<?=str_replace("'", "\\'", $value)?>',
                             forceSelection:true,
                             selectOnFocus:true,
                             allowBlank:false,
@@ -253,7 +329,8 @@
                                     this.fireEvent('select', this, record, index);
                                 }
                                 var mensaje = "";
-                                document.getElementById("reporte_ca_idconcliente").value = record.get("idcontacto");
+                                
+                                document.getElementById("ca_idconcliente").value = record.get("idcontacto");
                                 document.getElementById("div_contacto").innerHTML = record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") ;
 
                                 
@@ -264,3 +341,8 @@
     </script>
 
 </div>
+
+
+<script language="javascript">
+    cambiarImpoexpo();
+</script>

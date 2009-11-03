@@ -129,44 +129,76 @@ class reportesNegActions extends sfActions
     public function executeFormReporte(sfWebRequest $request){           
 
         $this->nivel = $this->getNivel();
-
-        $form = new NuevoReporteForm( );
-
         
-
         $this->origen = $request->getParameter("origen");
         $this->destino = $request->getParameter("destino");
-		
+        $this->idconcliente = $request->getParameter("idconcliente");
+        $this->ca_idconcliente = $request->getParameter("ca_idconcliente");
+		$this->idconsignatario = $request->getParameter("idconsignatario");
+        $this->idproveedor = $request->getParameter("idproveedor");
+
 		if( $this->getRequestParameter("id") ){
-			$reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
 			$this->forward404Unless( $reporte );
 			
 		}else{		
 			$reporte = new Reporte();
 		}
 
+        $form = new NuevoReporteForm( $reporte  );
+
 
         if ($request->isMethod('post')){
             $bindValues = $request->getParameter("reporte");
             //print_r( $bindValues );
             //exit();
-            if( !$reporte->getCaIdreporte() ){
-                $bindValues["ca_fchreporte"] = date("Y-m-d");
-                $bindValues["ca_login"] = "abotero";
-                $bindValues["ca_consecutivo"] = ReporteTable::siguienteConsecutivo(date("Y"));
-                $bindValues["ca_version"] = 1;               
-            }
+
+            $bindValues["ca_idconcliente"] = $request->getParameter("ca_idconcliente");
+
+            
+            
             $form->bind( $bindValues );
 
-			if( $form->isValid() ){
-               
-                $reporte  = $form->save();
+			if( $form->isValid() ){               
+                //$reporte  = $form->save();
+                if( !$reporte->getCaIdreporte() ){
+                    $reporte->setCaFchreporte( date("Y-m-d") );
+                    $reporte->setCaLogin( "abotero" );
+                    $reporte->setCaConsecutivo( ReporteTable::siguienteConsecutivo(date("Y")) );
+                    $reporte->setCaVersion( 1 );
+                }
 
-                
+                if( $this->ca_idconcliente ){
+                    $reporte->setCaIdconcliente( $this->ca_idconcliente );
+                }
+
+                if( $this->idproveedor ){
+                    $reporte->setCaIdproveedor( $this->idproveedor );
+                }
+
+                if( $this->idconsignatario ){
+                    $reporte->setCaIdconsignatario( $this->idconsignatario );
+                }
+
+                if( $request->getParameter("ca_impoexpo") ){
+                    $reporte->setCaImpoexpo( $request->getParameter("ca_impoexpo") );
+                }
+
+                if( $request->getParameter("ca_fchdespacho") ){
+                    $reporte->setCaFchdespacho( $request->getParameter("ca_fchdespacho") );
+                }
+
+                if( $request->getParameter("ca_mercancia_desc") ){
+                    $reporte->setCaMercanciaDesc( $request->getParameter("ca_mercancia_desc") );
+                }
+
+                if( $request->getParameter("ca_mcia_peligrosa") ){
+                    $reporte->setCaMciaPeligrosa( $request->getParameter("ca_mcia_peligrosa") );
+                }
+
+
+                $reporte->save();
                 $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
-
-
-
             }
         }
 		
@@ -421,9 +453,11 @@ class reportesNegActions extends sfActions
             }
 
             if( $request->getParameter("observaciones")!==null ){
-                $tarifa->setCaObservaciones( $request->getParameter("observaciones") );
-            }else{
-                $tarifa->setCaObservaciones( null );
+                if( $request->getParameter("observaciones") ){
+                    $tarifa->setCaObservaciones( $request->getParameter("observaciones") );
+                }else{
+                    $tarifa->setCaObservaciones( null );
+                }
             }
 
             $tarifa->save();
@@ -481,9 +515,11 @@ class reportesNegActions extends sfActions
             }
 
             if( $request->getParameter("observaciones")!==null ){
-                $tarifa->setCaDetalles( $request->getParameter("observaciones") );
-            }else{
-                $tarifa->setCaDetalles( null );
+                if( $request->getParameter("observaciones") ){
+                    $tarifa->setCaDetalles( $request->getParameter("observaciones") );
+                }else{
+                    $tarifa->setCaDetalles( null );
+                }
             }
 
             $tarifa->save();
@@ -609,13 +645,150 @@ class reportesNegActions extends sfActions
     }
     
 
+    /*
+    * Datos para el panel de recargos de aduana
+    * @param sfRequest $request A request object
+    */
+    public function executePanelRecargosAduanaData(sfWebRequest $request){
+
+        $reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+	    $this->forward404Unless( $reporte );
+
+        $conceptos = array();
+
+        $baseRow = array(
+	 					 'idreporte'=>$reporte->getCaIdreporte()
+						);
 
 
 
+        $recargos = Doctrine::getTable("RepCosto")
+                             ->createQuery("t")
+                             //->innerJoin("t.Costo c")
+                             ->where("t.ca_idreporte = ?", $reporte->getCaIdreporte())
+                             //->addWhere("t.ca_idconcepto = ?", 9999 )
+                             //->addWhere("tr.ca_tipo = ?", Constantes::RECARGO_LOCAL )
+                             ->execute();
 
 
 
+        foreach( $recargos as $recargo ){
+            $row = $baseRow;
+            $row["iditem"] = $recargo->getCaIdcosto();           
+            $row["item"] = utf8_encode($recargo->getCosto()->getCaCosto());
+            $row["tipo_app"] = $recargo->getCaTipo();           
+            $row["vlrcosto"] = $recargo->getCaVlrcosto();
+            $row["mincosto"] = $recargo->getCaMincosto();
+            $row["netcosto"] = $recargo->getCaNetcosto();
+            $row["idmoneda"] = $recargo->getCaIdmoneda();
+            $row["observaciones"] = $recargo->getCaDetalles();
+            $row['tipo']="costo";
+            $row['orden']="Y-".$recargo->getCosto()->getCaCosto();
+            $conceptos[] = $row;
+        }
 
+        $row = $baseRow;
+        $row['iditem']="";
+        $row['item']="+";
+        $row['tipo']="costo";
+        $row['orden']="Z";
+        $conceptos[] = $row;
+        $this->responseArray=array("items"=>$conceptos, "total"=>count($conceptos), "success"=>true);
+        $this->setTemplate("responseTemplate");
+    }
+
+
+
+    /*
+    * Guarda para el panel de recargos de aduana
+     *
+    * @param sfRequest $request A request object
+    */
+    public function executeObservePanelRecargosAduana(sfWebRequest $request){
+        $id = $request->getParameter("id");
+        $this->responseArray=array("id"=>$id,  "success"=>false);
+
+
+        $tipo = $request->getParameter("tipo");
+
+
+
+        if( $tipo=="costo" ){
+            $idreporte = $request->getParameter("idreporte");            
+            $idcosto = $request->getParameter("iditem");
+            $tarifa = Doctrine::getTable("RepCosto")->find(array($idreporte, $idcosto ));
+            if( !$tarifa ){
+                $tarifa = new RepCosto();
+                $tarifa->setCaIdreporte( $idreporte );
+                $tarifa->setCaIdcosto( $idcosto );
+               
+            }
+
+            
+
+            if( $request->getParameter("tipo_app")!==null ){
+                $tarifa->setCaTipo( $request->getParameter("tipo_app") );
+            }
+
+            if( $request->getParameter("vlrcosto")!==null ){
+                $tarifa->setCaVlrcosto( $request->getParameter("vlrcosto") );
+            }
+
+            if( $request->getParameter("mincosto")!==null ){
+                $tarifa->setCaMincosto( $request->getParameter("mincosto") );
+            }
+
+            if( $request->getParameter("netcosto")!==null ){
+                $tarifa->setCaNetcosto( $request->getParameter("netcosto") );
+            }
+
+            
+
+            if( $request->getParameter("idmoneda")!==null ){
+                $tarifa->setCaIdmoneda( $request->getParameter("idmoneda") );
+            }
+
+            if( $request->getParameter("observaciones")!==null ){
+
+                if( $request->getParameter("observaciones") ){
+                    $tarifa->setCaDetalles( $request->getParameter("observaciones") );
+                }else{
+                    $tarifa->setCaDetalles( null );
+                }
+            }
+
+            $tarifa->save();
+            $this->responseArray["success"]=true;
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+    /*
+    * Datos para el panel de conceptos
+    * @param sfRequest $request A request object
+    */
+    public function executeEliminarRecargosAduana(sfWebRequest $request){
+
+        $tipo = $request->getParameter("tipo");
+
+        if( $tipo=="costo" ){
+            $idreporte = $request->getParameter("idreporte");
+            $idcosto = $request->getParameter("iditem");
+            $tarifa = Doctrine::getTable("RepCosto")->find(array($idreporte, $idcosto));
+            
+            if( $tarifa ){
+                $tarifa->delete();
+            }
+        }
+
+        $this->setTemplate("responseTemplate");
+
+        $id = $request->getParameter("id");
+        $this->responseArray=array("id"=>$id,  "success"=>true);
+
+    }
 
 
 

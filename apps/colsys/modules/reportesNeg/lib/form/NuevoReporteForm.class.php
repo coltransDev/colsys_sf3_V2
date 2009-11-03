@@ -28,10 +28,19 @@ class NuevoReporteForm extends BaseReporteForm
                                                                             'query' => $q
                                                                       ));
 
+        
         $this->widgetSchema['ca_idconcliente']=new sfWidgetFormInputHidden();
         $this->widgetSchema['ca_fchreporte']=new sfWidgetFormInputHidden();
+
         $this->widgetSchema['ca_fchdespacho']=new sfWidgetFormExtDate();
-        $this->widgetSchema['ca_impoexpo']=new sfWidgetFormChoice( array( "choices" => array(Constantes::EXPO=>Constantes::EXPO) ) );
+        $this->widgetSchema['ca_orden_clie']=new sfWidgetFormInputText(); 
+        $this->widgetSchema['ca_impoexpo']=new sfWidgetFormChoice( array( "choices" => array(
+                                                                                              //Constantes::IMPO=>Constantes::IMPO,
+                                                                                              //Constantes::TRIANGULACION=>Constantes::TRIANGULACION,
+                                                                                              //Constantes::EXPO=>Constantes::EXPO,
+                                                                                              //Constantes::OTMDTA=>Constantes::OTMDTA,
+                                                                                              Constantes::ADUANA=>Constantes::ADUANA,
+                                                                                          ) ), array("onChange"=>"cambiarImpoexpo()") );
         $this->widgetSchema['ca_transporte']=new sfWidgetFormChoice( array( "choices" => array(Constantes::AEREO=>Constantes::AEREO,
                                                                                                Constantes::MARITIMO=>Constantes::MARITIMO,
                                                                                                Constantes::TERRESTRE=>Constantes::TERRESTRE
@@ -45,9 +54,9 @@ class NuevoReporteForm extends BaseReporteForm
         $this->validatorSchema['ca_idconcliente'] = new sfValidatorDoctrineChoice(array('model' => 'Contacto', 'required' => true));
 
 
-         $this->useFields(array('ca_origen', 'ca_destino', 'ca_idlinea', 'ca_idagente', 'ca_idconcliente',
-                               'ca_fchreporte', 'ca_fchdespacho', 'ca_impoexpo', 'ca_transporte', 'ca_modalidad',
-                               'ca_mercancia_desc', 'ca_login', 'ca_consecutivo', 'ca_version', 'ca_orden_clie'
+         $this->useFields(array('ca_origen', 'ca_destino', 'ca_idlinea', 'ca_idagente',
+                               'ca_fchdespacho', 'ca_impoexpo', 'ca_transporte', 'ca_modalidad',
+                               'ca_mercancia_desc', 'ca_mcia_peligrosa', 'ca_login', 'ca_consecutivo', 'ca_version', 'ca_orden_clie'
                               ));
          
     }
