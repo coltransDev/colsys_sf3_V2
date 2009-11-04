@@ -4052,8 +4052,12 @@ elseif (isset($boton)) {                                                       /
                             }
                             $cu->MoveNext();
                         }
-                        $xml_hijo->setAttribute("hde3", $arribo_array[0]);
-                        $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                        if (strlen($arribo_array[0])!=0){
+                            $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                        }
+                        if (strlen($arribo_array[1])!=0){
+                            $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                        }
                     } else if ($rp->Value("ca_idconsignatario")!=0) {
                             if (!$tm->Open("select * from tb_terceros where ca_idtercero = ".$rp->Value("ca_idconsignatario"))) {    //
                                 echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
@@ -4074,8 +4078,12 @@ elseif (isset($boton)) {                                                       /
                                 }
                                 $cu->MoveNext();
                             }
-                            $xml_hijo->setAttribute("hde3", $arribo_array[0]);
-                            $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                            if (strlen($arribo_array[0])!=0){
+                                $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                            }
+                            if (strlen($arribo_array[1])!=0){
+                                $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                            }
                         } else {
                             $xml_hijo->setAttribute("hdo3", 31);
                             $xml_hijo->setAttribute("hni3", $rp->Value("ca_idcliente"));
@@ -4091,8 +4099,12 @@ elseif (isset($boton)) {                                                       /
                                 }
                                 $cu->MoveNext();
                             }
-                            $xml_hijo->setAttribute("hde3", $arribo_array[0]);
-                            $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                            if (strlen($arribo_array[0])!=0){
+                                $xml_hijo->setAttribute("hde3", $arribo_array[0]);
+                            }
+                            if (strlen($arribo_array[1])!=0){
+                                $xml_hijo->setAttribute("hci3", $arribo_array[1]);
+                            }
                         }
 
                     // =========================== Carga Peligrosa ===========================
