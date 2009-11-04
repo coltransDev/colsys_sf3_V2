@@ -3413,8 +3413,8 @@ elseif (isset($boton)) {                                                       /
                     exit;
                 }
                 $tm =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                $query = "select DISTINCT rp.ca_consecutivo, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.*  from tb_inoclientes_sea ic";
-                $query.= " LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and ic.ca_idreporte = rp.ca_idreporte) LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
+                $query = "select DISTINCT ic.ca_idreporte, ic.ca_login, ic.ca_idproveedor, ic.ca_proveedor, ic.ca_idcliente, cl.ca_compania, ic.ca_numorden, ic.ca_hbls, ic.ca_fchhbls, ic.ca_numpiezas, ic.ca_peso, ic.ca_volumen, ic.ca_continuacion, ic.ca_continuacion_dest, bg.ca_nombre as ca_bodega, dc.* from tb_inoclientes_sea ic";
+                $query.= " LEFT OUTER JOIN tb_clientes cl ON (ic.ca_idcliente = cl.ca_idcliente) LEFT OUTER JOIN tb_bodegas bg ON (ic.ca_idbodega = bg.ca_idbodega)";
                 $query.= " LEFT OUTER JOIN tb_dianclientes dc ON (ic.ca_referencia = dc.ca_referencia AND ic.ca_idcliente = dc.ca_idcliente AND ic.ca_hbls = dc.ca_house)";
                 $query.= " where ic.ca_referencia = '$id' and ic.ca_idcliente = '$cl' and ic.ca_hbls = '$hb' order by ca_idinfodian DESC";
                 if (!$tm->Open("$query")) {    // Trae de la Tabla de la Dian por lo menos un registr vacio de la referencia.
@@ -3422,6 +3422,18 @@ elseif (isset($boton)) {                                                       /
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
                 }
+                $rp =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
+                $query = "select uv.ca_idconsignatario, cl.ca_idcliente, cl.ca_digito, cl.ca_compania as ca_nombre_cli, tr.ca_identificacion as ca_identificacion_con, tr.ca_nombre as ca_nombre_con, uv.ca_mercancia_desc, uv.ca_idconsignar, b1.ca_nombre as ca_consignar, b2.ca_tipo as ca_tipobodega, b2.ca_nombre as ca_bodega from tb_reportes uv ";
+                $query.= " INNER JOIN tb_concliente cc ON (cc.ca_idcontacto = uv.ca_idconcliente) INNER JOIN tb_clientes cl ON (cl.ca_idcliente = cc.ca_idcliente) LEFT OUTER JOIN tb_terceros tr ON (tr.ca_idtercero = uv.ca_idconsignatario) LEFT OUTER JOIN tb_bodegas b1 ON (b1.ca_idbodega = uv.ca_idconsignar) LEFT OUTER JOIN tb_bodegas b2 ON (b2.ca_idbodega = uv.ca_idbodega) ";
+                $query.= " INNER JOIN (select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_consecutivo = (select ca_consecutivo from tb_reportes where ca_idreporte = ".$tm->Value("ca_idreporte").") group by ca_consecutivo) sr ON (sr.ca_consecutivo = uv.ca_consecutivo and sr.ca_version = uv.ca_version)";
+                if (!$rp->Open("$query")) {    // Trae de la Tabla de Reportes la Ultima Versión del Reporte.
+                    echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'inosea.php';</script>";
+                    exit;
+                }
+                $consignatario = ($rp->Value('ca_idconsignatario')!=0)?$rp->Value('ca_nombre_con')." Nit. ".$rp->Value('ca_identificacion_con'):$rp->Value('ca_nombre_cli')." Nit. ".number_format($rp->Value('ca_idcliente'),0)."-".$rp->Value('ca_digito');
+                $consignatario = (($rp->Value('ca_idconsignar')==1)?$consignatario:$rp->Value('ca_consignar')).(($rp->Value('ca_tipobodega')!= "Coordinador Logistico")?" / ".$rp->Value('ca_tipobodega')." ".(($rp->Value('ca_bodega')!='N/A')?$rp->Value('ca_bodega'):""):"");
+                $descripcion_merc = (strlen(trim($tm->Value('ca_mercancia_desc')))!=0)?$tm->Value('ca_mercancia_desc'):$rp->Value('ca_mercancia_desc');
                 $cu =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
                 if (!$cu->Open("select ca_identificacion, ca_valor, ca_valor2 from tb_parametros where ca_casouso = 'CU073'")) {          // Selecciona los correos de la tabla Parametros
                     echo "<script>alert(\"".addslashes($cu->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -3465,7 +3477,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<INPUT TYPE='HIDDEN' NAME='house' VALUE=\"".$hb."\">";                    // Hereda el Id del Cliente que se esta modificando
                 echo "<TH Class=titulo COLSPAN=5 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información del Cliente</TH>";
                 echo "<TR>";
-                echo "  <TD Class=listar style='font-size: 11px;'><B>ID Reporte:</B><BR>".$tm->Value('ca_consecutivo')."</TD>";
+                echo "  <TD Class=listar style='font-size: 11px;'><B>ID Reporte:</B><BR>".$rp->Value('ca_consecutivo')."</TD>";
                 echo "  <TD Class=listar style='font-size: 11px;'><B>Vendedor:</B><BR>".$tm->Value('ca_login')."</TD>";
                 echo "  <TD Class=listar style='font-size: 11px;'><B>ID Proveedor:</B><BR>".$tm->Value('ca_idproveedor')."</TD>";
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=2><B>Proveedor:</B><BR>".$tm->Value('ca_proveedor')."</TD>";
@@ -3475,7 +3487,9 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=3><B>Nombre del Cliente:</B><BR>".$tm->Value('ca_compania')."</TD>";
                 echo "  <TD Class=mostrar>Orden Cliente No.<BR>".$tm->Value('ca_numorden')."</TD>";
                 echo "</TR>";
-
+                echo "<TR>";
+                echo "  <TD Class=listar style='font-size: 11px;' COLSPAN=5><B>Carga Consignada a:</B><BR>$consignatario</TD>";
+                echo "</TR>";
                 echo "<TR>";
                 echo " <TD Class=invertir COLSPAN=2>";
                 echo "  <TABLE WIDTH=100% CELLSPACING=1>";
@@ -3606,6 +3620,11 @@ elseif (isset($boton)) {                                                       /
                 echo "  <TD Class=mostrar>Vlr.FOB:<BR><INPUT TYPE='TEXT' NAME='vlrfob' VALUE='".((strlen($tm->Value('ca_vlrfob'))==0)?0:$tm->Value('ca_vlrfob'))."' SIZE=20 MAXLENGTH=20></TD>";
                 echo "  <TD Class=mostrar COLSPAN=2>Vlr.Flete:<BR><INPUT TYPE='TEXT' NAME='vlrflete' VALUE='".((strlen($tm->Value('ca_vlrflete'))==0)?0:$tm->Value('ca_vlrflete'))."' SIZE=20 MAXLENGTH=20></TD>";
                 echo "</TR>";
+
+                echo "<TR>";
+                echo "  <TD Class=mostrar COLSPAN=5>Descripción de la Mercancía:<BR><TEXTAREA NAME='mercancia_desc' WRAP=virtual ROWS=3 COLS=110>$descripcion_merc</TEXTAREA></TD>";
+                echo "</TR>";
+
                 echo "  </TABLE></TD>";
                 echo "</TR>";
                 echo "<TR HEIGHT=5>";
@@ -4162,10 +4181,11 @@ elseif (isset($boton)) {                                                       /
                                 $xml_h267->setAttribute("bul", $unidades_carga[$ie->Value("ca_idequipo")]['pz']);
 
                                 // Se Crear el elemento item
-                                $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
+                                $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
                                 $string.= "	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte)";
                                 $string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
                                 $string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
+
                                 if (!$rp->Open("$string")) {    // Trae de la Tabla de la Reportes de Negocio última version.
                                     echo "<script>alert(\"".addslashes($rp->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                                     echo "<script>document.location.href = 'inosea.php';</script>";
@@ -4173,10 +4193,13 @@ elseif (isset($boton)) {                                                       /
                                 }
                                 $xml_item = $xml->createElement( "item" );
                                 $item = 1;
+                                $mercancia_peli = ($rp->Value("ca_mcia_peligrosa"))?"S":"N";
+                                $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
+                                $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                                 $xml_item->setAttribute("item", $item);
                                 $xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-                                $xml_item->setAttribute("idg", utf8_encode(substr($rp->Value("ca_mercancia_desc"),0,200)));
-                                $xml_item->setAttribute("mpel", "N");
+                                $xml_item->setAttribute("idg", $mercancia_desc);
+                                $xml_item->setAttribute("mpel", $mercancia_peli);
                                 $xml_h267->appendChild( $xml_item );
 
                                 $xml_h167->appendChild( $xml_h267 );
@@ -4202,7 +4225,7 @@ elseif (isset($boton)) {                                                       /
                         $sub_cn+= 1;
 
                         // Se Crear el elemento item
-                        $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
+                        $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
                         $string.= "	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte)";
                         $string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
                         $string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
@@ -4213,10 +4236,13 @@ elseif (isset($boton)) {                                                       /
                         }
                         $xml_item = $xml->createElement( "item" );
                         $item = 1;
+                        $mercancia_peli = ($rp->Value("ca_mcia_peligrosa"))?"S":"N";
+                        $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
+                        $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                         $xml_item->setAttribute("item", $item);
                         $xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-                        $xml_item->setAttribute("idg", utf8_encode(substr($rp->Value("ca_mercancia_desc"),0,200)));
-                        $xml_item->setAttribute("mpel", "N");
+                        $xml_item->setAttribute("idg", $mercancia_desc);
+                        $xml_item->setAttribute("mpel", $mercancia_peli);
                         $xml_h267->appendChild( $xml_item );
 
                         $xml_h167->appendChild( $xml_h267 );
@@ -4264,6 +4290,11 @@ elseif (isset($boton)) {                                                       /
                         // Se Crear el elemento h267
                         $ic->MoveFirst();
                         while (!$ic->Eof() and !$ic->IsEmpty()) {
+                            if (!$dc->Open("select * from tb_dianclientes where ca_idinfodian = ".$dm->Value("ca_idinfodian")." and ca_referencia = '".$ic->Value("ca_referencia")."' and ca_idcliente = '".$ic->Value("ca_idcliente")."' and ca_house = '".$ic->Value("ca_hbls")."'")) {    // Trae de la Tabla de la Dian Clientes.
+                                echo "<script>alert(\"".addslashes($dm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                                echo "<script>document.location.href = 'inosea.php';</script>";
+                                exit;
+                            }
                             $contenedores = explode("|",$ic->Value("ca_contenedores"));
                             foreach($contenedores as $cargas) {
                                 $carga = explode(";",$cargas);
@@ -4278,7 +4309,7 @@ elseif (isset($boton)) {                                                       /
                                     $xml_h267->setAttribute("peso", round($carga[2],2));
                                     $xml_h167->appendChild( $xml_h267 );
                                     // Se Crear el elemento item
-                                    $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
+                                    $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
                                     $string.= "	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte)";
                                     $string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
                                     $string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
@@ -4289,10 +4320,13 @@ elseif (isset($boton)) {                                                       /
                                     }
                                     $xml_item = $xml->createElement( "item" );
                                     $item = 1;
+                                    $mercancia_peli = ($rp->Value("ca_mcia_peligrosa"))?"S":"N";
+                                    $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
+                                    $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                                     $xml_item->setAttribute("item", $item);
                                     $xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-                                    $xml_item->setAttribute("idg", utf8_encode(substr($rp->Value("ca_mercancia_desc"),0,200)));
-                                    $xml_item->setAttribute("mpel", "N");
+                                    $xml_item->setAttribute("idg", $mercancia_desc);
+                                    $xml_item->setAttribute("mpel", $mercancia_peli);
                                     $xml_h267->appendChild( $xml_item );
                                 }
                             }
@@ -4317,6 +4351,11 @@ elseif (isset($boton)) {                                                       /
                     $sub_cn = 0;
                     while (!$ic->Eof() and !$ic->IsEmpty()) {
                         $grp++;
+                        if (!$dc->Open("select * from tb_dianclientes where ca_idinfodian = ".$dm->Value("ca_idinfodian")." and ca_referencia = '".$ic->Value("ca_referencia")."' and ca_idcliente = '".$ic->Value("ca_idcliente")."' and ca_house = '".$ic->Value("ca_hbls")."'")) {    // Trae de la Tabla de la Dian Clientes.
+                            echo "<script>alert(\"".addslashes($dm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
+                            echo "<script>document.location.href = 'inosea.php';</script>";
+                            exit;
+                        }
                         // Se Crear el elemento h267
                         $xml_h267 = $xml->createElement( "h267" );
                         $xml_h267->setAttribute("grp", $grp);
@@ -4327,7 +4366,7 @@ elseif (isset($boton)) {                                                       /
                         $sub_cn+= 1;
 
                         // Se Crear el elemento item
-                        $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
+                        $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
                         $string.= "	LEFT OUTER JOIN tb_reportes rp ON (rp.ca_fchanulado is null and rs.ca_idreporte = rp.ca_idreporte)";
                         $string.= "	LEFT OUTER JOIN tb_parametros pr ON (pr.ca_casouso = 'CU047' and (string_to_array(ca_piezas,'|'))[2] = pr.ca_valor)";
                         $string.= "	where rp.ca_consecutivo = '".$ic->Value("ca_consecutivo")."' and ca_idemail is not null order by ca_idemail DESC limit 1";
@@ -4338,10 +4377,13 @@ elseif (isset($boton)) {                                                       /
                         }
                         $xml_item = $xml->createElement( "item" );
                         $item = 1;
+                        $mercancia_peli = ($rp->Value("ca_mcia_peligrosa"))?"S":"N";
+                        $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
+                        $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                         $xml_item->setAttribute("item", $item);
                         $xml_item->setAttribute("cemb", $rp->Value("ca_codembalaje"));
-                        $xml_item->setAttribute("idg", utf8_encode(substr($rp->Value("ca_mercancia_desc"),0,200)));
-                        $xml_item->setAttribute("mpel", "N");
+                        $xml_item->setAttribute("idg", $mercancia_desc);
+                        $xml_item->setAttribute("mpel", $mercancia_peli);
                         $xml_h267->appendChild( $xml_item );
 
                         $xml_h167->appendChild( $xml_h267 );
@@ -4602,13 +4644,13 @@ elseif (isset($accion)) {                                                      /
                         echo "<script>alert(\"¡No se encuentran datos de cabecera, de información para la Dian!\");</script>";  // Muestra el mensaje de error
                         exit;
                     }
-                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_fchcreado, ca_usucreado) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', '$vlrfob', '$vlrflete', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_fchcreado, ca_usucreado) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', '$vlrfob', '$vlrflete', '$mercancia_desc', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
                         exit;
                     }
                 } else {
-                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$house'")) {
+                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$house'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
                         exit;
