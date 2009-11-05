@@ -108,22 +108,30 @@ class widgetsActions extends sfActions
 		$transporte = utf8_decode($this->getRequestParameter("transporte"));
 		$query = utf8_decode($this->getRequestParameter("query"));
 		
-		$lineas = Doctrine_Query::create()
-                  ->select("p.ca_idproveedor, id.ca_nombre")
+		$q = Doctrine_Query::create()
+                  ->select("p.ca_idproveedor, id.ca_nombre, p.ca_transporte ")
                   ->from("IdsProveedor p")
-                  ->innerJoin("p.Ids id")
-                  ->where("p.ca_transporte = ?", $transporte )
-                  ->addWhere("id.ca_nombre like ?", $query."%")
-                  ->addOrderBy("id.ca_nombre")
-                  ->fetchArray();
+                  ->innerJoin("p.Ids id")                  
+                  ->addOrderBy("id.ca_nombre");
 
+        if( $transporte ){
+            $q->where("p.ca_transporte = ?", $transporte );
+        }
 
+        if( $query ){
+            $q->addWhere("id.ca_nombre like ?", $query."%");
+        }
+
+        $q->fetchArray();
+
+        $lineas = $q->execute();
         
 		$this->lineas = array();	
 		foreach( $lineas as $linea ){            
 			$this->lineas[] = array(  "idlinea"=>$linea['ca_idproveedor'],
-									"linea"=>utf8_encode($linea['Ids']['ca_nombre'])
-								);	
+									  "linea"=>utf8_encode($linea['Ids']['ca_nombre']),
+                                      "transporte"=>utf8_encode($linea['ca_transporte']),
+								   );
 		}						
 
 
@@ -138,18 +146,36 @@ class widgetsActions extends sfActions
 	public function executeDatosModalidades(){
 		$transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
 		$impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
-		
+		/*
 		if ( $transport_parameter == Constantes::MARITIMO)	{
 			$transportes = ParametroTable::retrieveByCaso( "CU051",null, $impoexpo_parameter);
 		}else if ( $transport_parameter == Constantes::AEREO )	{
 			$transportes = ParametroTable::retrieveByCaso( "CU052",null, $impoexpo_parameter);
 		}else if ( $transport_parameter ==  Constantes::TERRESTRE )	{
 			$transportes = ParametroTable::retrieveByCaso( "CU053",null, $impoexpo_parameter);
-		}
+		}*/
+
+        $q = Doctrine::getTable("Modalidad")
+                  ->createQuery("m");
+                  
+        if( $impoexpo_parameter ){
+            $q->where( " m.ca_impoexpo = ? ", $impoexpo_parameter);
+        }
+
+
+        if( $transport_parameter ){
+            $q->addWhere( "m.ca_transporte = ? ", $transport_parameter );
+        }
+
+        $transportes = $q->execute();
+
 		$this->modalidades = array();
 		
 		foreach($transportes as $transporte){
-			$row = array("modalidad"=>$transporte->getCaValor());
+			$row = array("idmodalidad"=>utf8_encode($transporte->getCaIdmodalidad()),
+                         "impoexpo"=>utf8_encode($transporte->getCaImpoexpo()),
+                         "transporte"=>utf8_encode($transporte->getCaTransporte()),
+                         "modalidad"=>utf8_encode($transporte->getCaModalidad()));
 			$this->modalidades[]=$row;
 		}
 
@@ -296,6 +322,99 @@ class widgetsActions extends sfActions
         $this->setTemplate("responseTemplate");
 	}
 
+
+    public function executeListaTercerosJSON(){
+		$criterio =  $this->getRequestParameter("query");
+        $tipo =  $this->getRequestParameter("tipo");
+
+        $rows = Doctrine_Query::create()
+                        ->select("t.ca_idtercero, t.ca_nombre, c.ca_ciudad, p.ca_nombre")
+                        ->from("Tercero t")
+                        ->innerJoin("t.Ciudad c")
+                        ->innerJoin("c.Trafico p")
+                        ->where("UPPER(t.ca_nombre) like ?", "%".strtoupper( $criterio )."%")
+                        ->addWhere("t.ca_tipo = ?", $tipo)
+                        ->addOrderBy("t.ca_nombre ASC")
+                        ->setHydrationMode( Doctrine::HYDRATE_SCALAR )
+                        ->distinct()
+                        ->limit(40)
+                        ->execute();
+
+
+
+		$terceros = array();
+
+   		foreach ( $rows as $row ) {            
+			$row["t_ca_nombre"]=utf8_encode($row["t_ca_nombre"]);
+            $row["c_ca_ciudad"]=utf8_encode($row["c_ca_ciudad"]);
+            $row["p_ca_nombre"]=utf8_encode($row["p_ca_nombre"]);
+            $terceros[]=$row;
+
+		}
+        $this->responseArray = array( "totalCount"=>count( $terceros ), "terceros"=>$terceros  );
+        $this->setTemplate("responseTemplate");
+	}
+
+
+    /*
+	* Permite guardar un tercero
+	* @author: Andres Botero
+	*/
+	public function executeGuardarTercero(){
+		$this->tipo=$this->getRequestParameter("tipo");
+		$this->forward404unless($this->tipo);
+
+        $fldId = $this->getRequestParameter("fldId");
+
+		if($this->getRequestParameter("nombre")){
+			$idtercero = $this->getRequestParameter("idtercero");
+			if( !$idtercero ){
+				$tercero = new Tercero();
+			}else{
+				$tercero = Doctrine::getTable("Tercero")->find( $idtercero );
+			}
+			$tercero->setCaNombre( $this->getRequestParameter("nombre") );
+			$tercero->setCaDireccion( $this->getRequestParameter("direccion") );
+			$tercero->setCaTelefonos( $this->getRequestParameter("telefono") );
+			$tercero->setCaFax( $this->getRequestParameter("fax") );
+			$tercero->setCaEmail( $this->getRequestParameter("email") );
+			$tercero->setCaContacto( $this->getRequestParameter("contacto") );
+			$tercero->setCaIdciudad( $this->getRequestParameter("ciudad") );
+			$tercero->setCaIdentificacion( $this->getRequestParameter("identificacion") );
+			$tercero->setCaVendedor( $this->getRequestParameter( "vendedor") );
+			$tercero->setCaTipo( $this->tipo );
+			$tercero->save();
+		}
+
+		$this->responseArray = array("success"=>true, "nombre"=>$this->getRequestParameter("nombre"), "idtercero"=>$tercero->getCaIdtercero() , "tipo"=>$this->tipo, "fldId"=>$fldId);
+		$this->setTemplate("responseTemplate");
+	}
+
+
+    /*
+	* Carga los datos de un tercero en un objeto JSON
+	* @author: Andres Botero
+	*/
+	public function executeDatosTercero(){
+		$tercero = Doctrine::getTable("Tercero")->find( $this->getRequestParameter("idtercero") );
+		$this->forward404Unless($tercero);
+
+		$this->responseArray = array("success"=>true,
+									"nombre"=>utf8_encode($tercero->getCaNombre()),
+									"idtercero"=>$tercero->getCaIdtercero(),
+									"direccion"=>utf8_encode($tercero->getCaDireccion()),
+									"telefonos"=>$tercero->getCaTelefonos(),
+									"fax"=>$tercero->getCaFax(),
+									"email"=>$tercero->getCaEmail(),
+									"contacto"=>utf8_encode($tercero->getCaContacto()),
+									"identificacion"=>$tercero->getCaIdentificacion(),
+									//"ciudad"=>$tercero->getCaCiudad(),
+									"idciudad"=>$tercero->getCaIdciudad(),
+                                    "idtrafico"=>$tercero->getCiudad()->getCaIdtrafico()
+
+									);
+		$this->setTemplate("responseTemplate");
+	}
     /*
 	* Datos de los conceptos según sea el medio de transporte y la modalidad
 	*/

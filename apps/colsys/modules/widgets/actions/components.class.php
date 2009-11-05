@@ -255,5 +255,19 @@ class widgetsComponents extends sfComponents
 	}
 
 
+    /*
+	* Muestra un campo que permite autocompletar el tercero (Cliente, proveedor, consignatario, etc.).
+	*/
+	public function executeComboTercero()
+	{        
+		if($this->value){
+			$this->tercero = Doctrine::getTable("Tercero")->find( $this->value );
+		}else{
+            $this->tercero = new Tercero();
+        }
+        
+	}
+
+
 }
 ?>
