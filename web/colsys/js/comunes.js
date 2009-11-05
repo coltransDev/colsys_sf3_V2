@@ -1,5 +1,5 @@
 //Funcion que hace visible la pagina de busqueda de clientes
-function cuadro_busqueda( url ){
+/*function cuadro_busqueda( url ){
 	var findcliente = document.getElementById('cuadroBusqueda');
 	var cuadroBusquedaClienteFrame = document.getElementById('frameBusqueda');	
 	cuadroBusquedaClienteFrame.src = url; 	
@@ -45,7 +45,7 @@ function seleccionCotizacion(formName, idCotizacion, idproducto ){
 	}
 	 window.parent.frames.cuadroBusqueda.style.display = 'none';
 }
-
+*/
 
 
 
@@ -70,6 +70,7 @@ function popup(url, width, height){
 /*
 * Funcion utilizada para editar un campo en una grilla
 */
+/*
 function editarGrilla( fieldname){
 		
 	var field1 = document.getElementById(fieldname+"_div");		
@@ -78,11 +79,12 @@ function editarGrilla( fieldname){
 	field1.style.display = 'none';
 	field2.style.display = 'inline';		
 	//document.getElementById(fieldname).focus();
-}
+}*/
 
 /*
 * Funcion utilizada para actualizar un campo en una grilla
 */
+/*
 function actualizarGrilla( fielname ){
 	var field = document.getElementById(fielname);
 	var div1 = document.getElementById( fielname+"_div");
@@ -96,6 +98,8 @@ function actualizarGrilla( fielname ){
 	div2.style.display = 'none';
 	div1.style.display = 'inline';	
 }
+*/
+
 
 /*
 * Funcion utilizada para mostrar u ocultar elemento del documento
@@ -269,8 +273,8 @@ function actualizarContenido( id , url, params ){
     });
 }
 
-
- function llenarCiudades( idtraficoFld, idciudadFld, includeBlank ){
+ var ciudades = [];
+ function llenarCiudades( idtraficoFld, idciudadFld, includeBlank , defaultVal){   
     var idtrafico = document.getElementById(idtraficoFld).value;
     var fldCiudades = document.getElementById(idciudadFld);
     
@@ -278,13 +282,146 @@ function actualizarContenido( id , url, params ){
     if( typeof(includeBlank)!="undefined" && includeBlank ){
         fldCiudades[fldCiudades.length] = new Option('','',false,false);
     }
-    var ciudadesTrafico = ciudades[idtrafico];
-    
-    for( i in ciudadesTrafico ){
 
-        if( typeof(ciudadesTrafico[i]['idciudad'])!="undefined" ){
-            fldCiudades[fldCiudades.length] = new Option(ciudadesTrafico[i]['ciudad'],ciudadesTrafico[i]['idciudad'],false,false);
+
+    
+    if( ciudades.length == 0 ){
+        
+        Ext.Ajax.request(
+            {
+                waitMsg: '',
+                url: '/widgets/datosCiudadesPaises',
+                callback :function(options, success, response){
+                    //alert( response.responseText );
+
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.success){
+                        ciudades = res.root;
+                        var ciudadesTrafico = ciudades[idtrafico];
+                        cargarTraficos( ciudadesTrafico, fldCiudades, defaultVal );
+                    }
+                }
+             }
+            );
+     }else{
+        var ciudadesTrafico = ciudades[idtrafico];
+        cargarTraficos( ciudadesTrafico, fldCiudades, defaultVal );
+     }
+}
+
+function cargarTraficos( ciudadesTrafico, fldCiudades, defaultVal ){
+    for( i in ciudadesTrafico ){
+            if( defaultVal == ciudadesTrafico[i]['idciudad'] ){
+                var selected = true;
+            }else{
+                var selected = false;
+            }
+            if( typeof(ciudadesTrafico[i]['idciudad'])!="undefined" ){
+                fldCiudades[fldCiudades.length] = new Option(ciudadesTrafico[i]['ciudad'],ciudadesTrafico[i]['idciudad'],false,selected);
+            }
         }
+
+}
+
+
+var modalidades = [];
+function llenarModalidades( impoexpoFldId, transporteFldId, modalidadFldId, includeBlank , defaultVal ){
+    var impoexpo = document.getElementById(impoexpoFldId).value;
+    var transporte = document.getElementById(transporteFldId).value;
+    var modalidadFld = document.getElementById(modalidadFldId);
+
+    modalidadFld.length=0;
+    if( typeof(includeBlank)!="undefined" && includeBlank ){
+        modalidadFld[modalidadFld.length] = new Option('','',false,false);
     }
+
+    
+    if( modalidades.length == 0 ){
+
+        Ext.Ajax.request(
+            {
+                waitMsg: '',
+                url: '/widgets/datosModalidades',
+                callback :function(options, success, response){
+                    //alert( response.responseText );
+
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.success){
+                        modalidades = res.root;
+                        
+                        cargarModalidades( modalidades, impoexpo, transporte, modalidadFld, defaultVal )
+                    }
+                }
+             }
+            );
+     }else{        
+           cargarModalidades( modalidades, impoexpo, transporte, modalidadFld, defaultVal )
+     }    
+}
+
+function cargarModalidades( modalidades, impoexpo, transporte, modalidadFld, defaultVal ){
+    for( i in modalidades ){
+            if( typeof(modalidades[i]['modalidad'])!="undefined" ){
+                if( impoexpo == modalidades[i]['impoexpo'] && transporte == modalidades[i]['transporte'] ){
+                    if( defaultVal == modalidades[i]['modalidad'] ){
+                        var selected = true;
+                    }else{
+                        var selected = false;
+                    }
+                    modalidadFld[modalidadFld.length] = new Option(modalidades[i]['modalidad'],modalidades[i]['modalidad'],false, selected);
+                }
+            }
+        }
+}
+
+
+
+var lineas = [];
+function llenarLineas( transporteFldId, lineaFldId, includeBlank , defaultVal ){
+
+    var transporte = document.getElementById(transporteFldId).value;
+    var lineaFld = document.getElementById(lineaFldId);
+
+    lineaFld.length=0;
+    if( typeof(includeBlank)!="undefined" && includeBlank ){
+        lineaFld[lineaFld.length] = new Option('','',false,false);
+    }
+
+
+    if( lineas.length == 0 ){
+
+        Ext.Ajax.request(
+            {
+                waitMsg: '',
+                url: '/widgets/datosLineas',
+                callback :function(options, success, response){
+                    //alert( response.responseText );
+
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if(res.success){
+                        lineas = res.root;
+                        cargarDatosLineas( lineas, transporte, lineaFld, defaultVal);
+                    }
+                }
+             }
+            );
+     }else{
+        cargarDatosLineas( lineas, transporte,  lineaFld, defaultVal);
+     }
+}
+
+function cargarDatosLineas( lineas , transporte,  lineaFld, defaultVal){
+    for( i in lineas ){
+            if( typeof(lineas[i]['transporte'])!="undefined" ){
+                if( transporte == lineas[i]['transporte'] ){
+                    if( defaultVal == lineas[i]['idlinea'] ){
+                        var selected = true;
+                    }else{
+                        var selected = false;
+                    }
+                    lineaFld[lineaFld.length] = new Option(lineas[i]['linea'],lineas[i]['idlinea'],false, selected);
+                }
+            }
+        }
 
 }
