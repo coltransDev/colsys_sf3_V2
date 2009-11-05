@@ -863,7 +863,7 @@ class idsActions extends sfActions
 
         if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
             $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
-            $this->url = "ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
+            $this->url = "/ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
             $numreferencia = "";
             
         }else{ // Esta ingresando desde la referencia

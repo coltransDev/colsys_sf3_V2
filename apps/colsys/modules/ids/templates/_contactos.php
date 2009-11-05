@@ -23,7 +23,8 @@
                     <div style="font-size:16px">
                         <b><?=$sucursal->getCiudad()->getCaCiudad() ?></b>
                     </div>
-                    <?=$sucursal->getCaPrincipal()?"Oficina Principal":""?>
+                    <?=$sucursal->getCiudad()->getTrafico()->getCaNombre() ?>
+                    <?=$sucursal->getCaPrincipal()?" (Oficina Principal)":""?>
                 </div>
             </td>
              <td >
