@@ -136,7 +136,9 @@ class reportesNegActions extends sfActions
         $this->ca_idconcliente = $request->getParameter("ca_idconcliente");
 		$this->idconsignatario = $request->getParameter("idconsignatario");
         $this->idproveedor = $request->getParameter("idproveedor");
-
+        $this->idnotify = $request->getParameter("idnotify");
+        $this->idrepresentante = $request->getParameter("idrepresentante");
+        $this->idmaster = $request->getParameter("idmaster");
 		if( $this->getRequestParameter("id") ){
 			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
 			$this->forward404Unless( $reporte );
@@ -155,8 +157,9 @@ class reportesNegActions extends sfActions
 
             $bindValues["ca_idconcliente"] = $request->getParameter("ca_idconcliente");
 
-            
-            
+            $bindValues["ca_modalidad"] = "LCL";
+            $bindValues["ca_idlinea"] = 0;
+
             $form->bind( $bindValues );
 
 			if( $form->isValid() ){               
@@ -174,34 +177,99 @@ class reportesNegActions extends sfActions
 
                 if( $this->idproveedor ){
                     $reporte->setCaIdproveedor( $this->idproveedor );
+                }else{
+                    $reporte->setCaIdproveedor( null );                    
                 }
 
                 if( $this->idconsignatario ){
                     $reporte->setCaIdconsignatario( $this->idconsignatario );
+                }else{
+                    $reporte->setCaIdconsignatario( null );                    
                 }
 
-                if( $request->getParameter("ca_impoexpo") ){
-                    $reporte->setCaImpoexpo( $request->getParameter("ca_impoexpo") );
+                if( $this->idmaster ){
+                    $reporte->setCaIdmaster( $this->idmaster );
+                }else{
+                    $reporte->setCaIdmaster( null );
                 }
 
-                if( $request->getParameter("ca_fchdespacho") ){
-                    $reporte->setCaFchdespacho( $request->getParameter("ca_fchdespacho") );
+                if( $this->idnotify ){
+                    $reporte->setCaIdnotify( $this->idnotify );
+                }else{
+                    $reporte->setCaIdnotify( null );
                 }
 
-                if( $request->getParameter("ca_mercancia_desc") ){
-                    $reporte->setCaMercanciaDesc( $request->getParameter("ca_mercancia_desc") );
+                if( $this->idrepresentante ){
+                    $reporte->setCaIdrepresentante( $this->idrepresentante );
+                }else{
+                    $reporte->setCaIdrepresentante( null );
                 }
 
-                if( $request->getParameter("ca_mcia_peligrosa") ){
-                    $reporte->setCaMciaPeligrosa( $request->getParameter("ca_mcia_peligrosa") );
+                if( $bindValues["ca_impoexpo"] ){
+                    $reporte->setCaImpoexpo( $bindValues["ca_impoexpo"] );
+                }
+
+                if( $bindValues["ca_transporte"] ){
+                    $reporte->setCaTransporte( $bindValues["ca_transporte"] );
+                }
+
+                if( $bindValues["ca_modalidad"] ){
+                    $reporte->setCaModalidad( $bindValues["ca_modalidad"] );
+                }
+
+                if( $bindValues["ca_idlinea"]!==null ){
+                    $reporte->setCaIdlinea( $bindValues["ca_idlinea"] );
+                }
+
+                if( $bindValues["ca_origen"] ){
+                    $reporte->setCaOrigen( $bindValues["ca_origen"] );
+                }
+
+                if( $bindValues["ca_destino"] ){
+                    $reporte->setCaDestino( $bindValues["ca_destino"] );
+                }
+
+                if( $bindValues["ca_orden_clie"] ){
+                    $reporte->setCaOrdenClie( $bindValues["ca_orden_clie"] );
+                }
+
+                if( $bindValues["ca_fchdespacho"] ){
+                    $reporte->setCaFchdespacho( $bindValues["ca_fchdespacho"] );
+                }
+
+                if( $bindValues["ca_mercancia_desc"] ){
+                    $reporte->setCaMercanciaDesc( $bindValues["ca_mercancia_desc"] );
+                }
+
+                if( $bindValues["ca_mcia_peligrosa"] ){
+                    $reporte->setCaMciaPeligrosa( true );
+                }else{
+                    $reporte->setCaMciaPeligrosa( false );
+                }
+
+                if( $bindValues["ca_colmas"]!==null ){
+                    $reporte->setCaColmas( $bindValues["ca_colmas"] );
+                }
+
+                if( $bindValues["ca_seguro"]!==null ){
+                    $reporte->setCaSeguro( $bindValues["ca_seguro"] );
                 }
 
 
                 $reporte->save();
-                $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
+                //$this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
             }
         }
-		
+
+        $this->traficos = Doctrine::getTable('Trafico')->createQuery('t')
+                            ->where('t.ca_idtrafico != ?', '99-999')
+                            ->addOrderBy('t.ca_nombre ASC')
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            ->execute();
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("tabpane/tabpane",'last');
+        $response->addStylesheet("tabpane/luna/tab",'last');
 		/*
 			
 		$c=new Criteria();

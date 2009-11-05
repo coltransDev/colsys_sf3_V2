@@ -35,16 +35,24 @@ class NuevoReporteForm extends BaseReporteForm
         $this->widgetSchema['ca_fchdespacho']=new sfWidgetFormExtDate();
         $this->widgetSchema['ca_orden_clie']=new sfWidgetFormInputText(); 
         $this->widgetSchema['ca_impoexpo']=new sfWidgetFormChoice( array( "choices" => array(
-                                                                                              //Constantes::IMPO=>Constantes::IMPO,
+                                                                                              Constantes::IMPO=>Constantes::IMPO,
                                                                                               //Constantes::TRIANGULACION=>Constantes::TRIANGULACION,
-                                                                                              //Constantes::EXPO=>Constantes::EXPO,
-                                                                                              //Constantes::OTMDTA=>Constantes::OTMDTA,
-                                                                                              Constantes::ADUANA=>Constantes::ADUANA,
+                                                                                              Constantes::EXPO=>Constantes::EXPO,
+                                                                                             // Constantes::OTMDTA=>Constantes::OTMDTA,
+                                                                                             //Constantes::NACIONALIZACION=>Constantes::NACIONALIZACION,
+
+                                                                                             
                                                                                           ) ), array("onChange"=>"cambiarImpoexpo()") );
         $this->widgetSchema['ca_transporte']=new sfWidgetFormChoice( array( "choices" => array(Constantes::AEREO=>Constantes::AEREO,
                                                                                                Constantes::MARITIMO=>Constantes::MARITIMO,
-                                                                                               Constantes::TERRESTRE=>Constantes::TERRESTRE
-                                                                                              ) ) );
+                                                                                               Constantes::TERRESTRE=>Constantes::TERRESTRE,
+                                                                                               Constantes::ADUANA=>Constantes::ADUANA
+                                                                                              ) ), array("onChange" => "cambiarTransporte()")  );
+        $this->widgetSchema['ca_modalidad']=new sfWidgetFormChoice( array( "choices" => array() ));
+        //[TODO] Volver Booleano
+        $this->widgetSchema['ca_colmas']=new sfWidgetFormChoice( array( "choices" => array("Sí"=>"Sí", "No"=>"No" )));
+        $this->widgetSchema['ca_seguro']=new sfWidgetFormChoice( array( "choices" => array("Sí"=>"Sí", "No"=>"No" )));
+
 
         $this->validatorSchema['ca_origen'] = new sfValidatorString(array('required'=>true));
         $this->validatorSchema['ca_destino'] = new sfValidatorString(array('required'=>true));
@@ -54,10 +62,11 @@ class NuevoReporteForm extends BaseReporteForm
         $this->validatorSchema['ca_idconcliente'] = new sfValidatorDoctrineChoice(array('model' => 'Contacto', 'required' => true));
 
 
-         $this->useFields(array('ca_origen', 'ca_destino', 'ca_idlinea', 'ca_idagente',
+        /*
+        $this->useFields(array('ca_origen', 'ca_destino', 'ca_idlinea', 'ca_idagente','ca_colmas',
                                'ca_fchdespacho', 'ca_impoexpo', 'ca_transporte', 'ca_modalidad',
                                'ca_mercancia_desc', 'ca_mcia_peligrosa', 'ca_login', 'ca_consecutivo', 'ca_version', 'ca_orden_clie'
-                              ));
+                              ));*/
          
     }
   /*public function setup()

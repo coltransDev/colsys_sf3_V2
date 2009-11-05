@@ -69,9 +69,7 @@
             <td ><b>&nbsp;</b></td>
             <td >&nbsp;</td>
 		</tr>
-        <?
-        if( $reporte->getCaImpoexpo()!=Constantes::ADUANA ){
-        ?>
+       
         <tr>
 			<td ><b>Transporte:</b></td>
             <td ><?=Utils::replace($reporte->getCaTransporte())?></td>
@@ -88,10 +86,7 @@
             <td ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
             <td >&nbsp;</td>
             <td >&nbsp;</td>
-		</tr>
-        <?
-        }
-        ?>
+		</tr>        
 		<tr>
 			<td colspan="6" ><b>Descripci&oacute;n de la Mercanc&iacute;a:</b><br />
 				<?=Utils::replace($reporte->getCaMercanciaDesc())?>			</td>
@@ -135,7 +130,6 @@
 				?>			</td>
 		</tr>
         <?
-
         if( $reporte->getCaIdproveedor() ){
         ?>
 		<tr>
@@ -161,7 +155,45 @@
 		</tr>
 		<?
         }
-				
+
+        if( $reporte->getCaIdnotify() ){
+        ?>
+		<tr>
+			<td  valign="top"><b>Notify:</b></td>
+			<td colspan="5" >
+				<?
+                include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdnotify(), "reporte"=>$reporte));
+                ?>
+            </td>
+		</tr>
+		<?
+        }
+
+        if( $reporte->getCaIdrepresentante() ){
+        ?>
+		<tr>
+			<td  valign="top"><b>Representante:</b></td>
+			<td colspan="5" >
+				<?
+                include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdrepresentante(), "reporte"=>$reporte));
+                ?>
+            </td>
+		</tr>
+		<?
+        }
+
+        if( $reporte->getCaIdmaster() ){
+        ?>
+		<tr>
+			<td  valign="top"><b>Consigna. Master:</b></td>
+			<td colspan="5" >
+				<?
+                include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdmaster(), "reporte"=>$reporte));
+                ?>
+            </td>
+		</tr>
+		<?
+        }
 		?>
         <tr class="row0">
             <td  colspan="6"><b>Informaci&oacute;n del Cliente</b></td>
@@ -241,7 +273,7 @@
 <?
 
 include_component("reportesNeg","mainPanel", array("reporte"=>$reporte));
-if( $reporte->getCaImpoexpo()!=Constantes::ADUANA ){
+if( $reporte->getCaTransporte()!=Constantes::ADUANA ){
     include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
     $panelConceptosFletes = true;
     if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
@@ -255,7 +287,7 @@ if( $reporte->getCaImpoexpo()!=Constantes::ADUANA ){
     $panelRecargos = false;
 }
 
-if( $reporte->getCaImpoexpo()==Constantes::ADUANA ){
+if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::ADUANA ){
     include_component("reportesNeg","panelRecargosAduana", array("reporte"=>$reporte));
     $panelAduana = true;
 }else{

@@ -100,12 +100,12 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executePanelRecargosAduana()
 	{
-        $this->recargos = Doctrine::getTable("TipoRecargo")
+        $this->recargos = Doctrine::getTable("Costo")
                                      ->createQuery("c")
-                                     ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
-                                     ->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
+                                     ->select("ca_idcosto as ca_idconcepto, ca_costo as ca_concepto")
+                                     //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
                                      ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
-                                     ->addOrderBy("c.ca_recargo")
+                                     ->addOrderBy("c.ca_costo")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                      ->execute();
 
@@ -122,6 +122,25 @@ class reportesNegComponents extends sfComponents
 	public function executePreviewTercero()
 	{
         $this->tercero = Doctrine::getTable("Tercero")->find($this->idtercero);
+    }
+
+
+    /*
+	* Edita la informacion basica del trayecto
+	* @author: Andres Botero
+	*/
+	public function executeTrayecto()
+	{
+        
+    }
+
+    /*
+	* Edita la informacion basica del cliente
+	* @author: Andres Botero
+	*/
+	public function executeClientes()
+	{
+
     }
 
 	
