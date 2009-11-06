@@ -102,22 +102,7 @@ EOF
         $js = sprintf(<<<EOF
         <script type="text/javascript">
             $js2
-
-            Ext.Ajax.request(
-                {
-                    waitMsg: 'Comprobando ID...',
-                    url: '/widgets/datosCiudadesPaises',
-                    callback :function(options, success, response){
-                        //alert( response.responseText );
-
-                        var res = Ext.util.JSON.decode( response.responseText );
-                        if(res.success){
-                            ciudades = res.root;
-                            $js3
-                        }
-                    }
-                 }
-                );
+            $js3
          </script>
 EOF
 );
