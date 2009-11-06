@@ -6,6 +6,7 @@
  */
 
 $traficos = $sf_data->getRaw("traficos");
+$reporte = $sf_data->getRaw("reporte");
 ?>
 <script language="javascript">
     
@@ -28,8 +29,22 @@ $traficos = $sf_data->getRaw("traficos");
             }
         }
 
-        fldTrafico.value = '<?=$reporte->getOrigen()->getCaIdtrafico()?>';
-        llenarCiudades("country_reporte_ca_origen", "reporte_ca_origen", false, '<?=$reporte->getCaOrigen()?>' );
+        <?
+        if( $ca_traorigen ){
+            $value = $ca_traorigen;
+        }else{
+            $value = $reporte->getOrigen()->getCaIdtrafico();
+        }
+        ?>
+        fldTrafico.value = '<?=$value?>';
+        <?
+        if( $ca_origen ){
+            $value = $ca_origen;
+        }else{
+            $value = $reporte->getCaOrigen();
+        }
+        ?>
+        llenarCiudades("country_reporte_ca_origen", "reporte_ca_origen", false, '<?=$value?>' );
 
 
         //Hace el mismo procedimiento parqa eldestino
@@ -47,19 +62,36 @@ $traficos = $sf_data->getRaw("traficos");
             }
         }
 
-        fldTrafico.value = '<?=$reporte->getDestino()->getCaIdtrafico()?>';
-        llenarCiudades("country_reporte_ca_destino", "reporte_ca_destino", false, '<?=$reporte->getCaDestino()?>' );
+        <?
+        if( $ca_tradestino ){
+            $value = $ca_tradestino;
+        }else{
+            $value = $reporte->getDestino()->getCaIdtrafico();
+        }
+        ?>
+        fldTrafico.value = '<?=$value?>';
+        <?
+        if( $ca_destino ){
+            $value = $ca_destino;
+        }else{
+            $value = $reporte->getCaDestino();
+        }
+        ?>
+        llenarCiudades("country_reporte_ca_destino", "reporte_ca_destino", false, '<?=$value?>' );
 
 
 
 
         //Muestra u oculta los combos de proveedor, consignatario etc.
         if( clase=="<?=Constantes::EXPO?>"  ){
-             //document.getElementById("combo-consignatario").style.display="none";
+             document.getElementById("combo-proveedor").style.display="none";
+             document.getElementById("combo-representante").style.display="none";
+             document.getElementById("combo-master").style.display="none";
         }
-
         else{
-             //document.getElementById("combo-consignatario").style.display="";
+             document.getElementById("combo-proveedor").style.display="";
+             document.getElementById("combo-representante").style.display="";
+             document.getElementById("combo-master").style.display="";
         }
 
 
@@ -71,7 +103,51 @@ $traficos = $sf_data->getRaw("traficos");
         llenarModalidades('reporte_ca_impoexpo','reporte_ca_transporte', 'reporte_ca_modalidad', null, '<?=$reporte->getCaModalidad()?>');
         llenarLineas('reporte_ca_transporte', 'reporte_ca_idlinea', null, '<?=$reporte->getCaIdlinea()?>');
         //llenarAgentes('reporte_ca_impoexpo','reporte_ca_transporte', 'reporte_ca_modalidad', null, '<?=$reporte->getCaModalidad()?>');
+        cambiarAduana();
+    }
 
+    function cambiarAduana(){
+        var transporte = document.getElementById("reporte_ca_transporte").value;
+        var impoexpo = document.getElementById("reporte_ca_impoexpo").value;
+
+
+        if( transporte=="Aduana" ){
+            document.getElementById("reporte_ca_colmas").value = "Sí";
+            document.getElementById("reporte_ca_colmas").disabled = true;
+        }else{
+            document.getElementById("reporte_ca_colmas").disabled = false;
+        }
+
+
+        if( document.getElementById("reporte_ca_colmas").value == "Sí" ){
+            document.getElementById("aduana-row0").style.display = "";
+            if( impoexpo!="<?=Constantes::EXPO?>" ){
+                document.getElementById("aduana-row1").style.display = "";
+                document.getElementById("titulo-aduana").innerHTML = "<b>Transporte de Carga Nacionalizada</b>";
+            }else{
+                document.getElementById("aduana-row1").style.display = "none";
+                document.getElementById("titulo-aduana").innerHTML = "<b>Transporte Nacional</b>";
+            }
+            document.getElementById("aduana-row2").style.display = "";
+            
+            
+        }else{
+            document.getElementById("aduana-row0").style.display = "none";
+            document.getElementById("aduana-row1").style.display = "none";
+            document.getElementById("aduana-row2").style.display = "none";
+        }
+    }
+
+
+    function cambiarSeguros(){
+
+        if( document.getElementById("reporte_ca_seguro").value == "Sí" ){
+            document.getElementById("seguros-row0").style.display = "";
+            document.getElementById("seguros-row1").style.display = "";
+        }else{
+            document.getElementById("seguros-row0").style.display = "none";
+            document.getElementById("seguros-row1").style.display = "none";
+        }
     }
 
     
@@ -102,6 +178,19 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             <tr>
                 <th colspan="4">Datos para la referencia</th>
             </tr>
+             <?
+            if( $form->hasErrors() ){
+            ?>
+            <tr>
+                <td colspan="4">
+                    <ul class="error_list">
+                        <li><div align="center">Hay un error, por favor verifique los datos digitados.</div></li>
+                    </ul>
+                </td>
+            </tr>
+            <?
+            }
+            ?>
             <?
             if( $form->renderGlobalErrors() ){
             ?>
@@ -189,7 +278,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                     <td><b> &nbsp; </b></td>
                                     <td>&nbsp;</td>
                                 </tr>
-                                <tr>
+                                <tr id="combo-proveedor">
                                     <td class="row0"><b>Proveedor:</b></td>
                                     <td>
                                         <?
@@ -221,7 +310,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                     <td> &nbsp; </td>
                                 </tr>
 
-                                <tr id="combo-consignatario">
+                                <tr id="combo-master">
                                     <td class="row0"><b>Consigna. Master:</b></td>
                                     <td>
                                         <?
@@ -238,7 +327,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                 </tr>
 
 
-                                <tr>
+                                <tr id="combo-notify">
                                     <td class="row0"><b>Notify:</b></td>
                                     <td>
                                         <?
@@ -254,7 +343,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                     <td> &nbsp; </td>
                                 </tr>
                                 
-                                <tr>
+                                <tr id="combo-representante">
                                     <td class="row0"><b>Representante:</b></td>
                                     <td>
                                         <?
@@ -275,46 +364,22 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                         </div>
                         <div class="tab-page">
                             <h2 class="tab">Preferencias</h2>
+                            <?
+                            include_component("reportesNeg", "preferenciasCliente", array("form"=>$form, "reporte"=>$reporte, "contactos"=>$contactos))
+                            ?>
                         </div>
                         <div class="tab-page">
                             <h2 class="tab">Aduana</h2>
-                            <table class="tableList" width="100%">
-                                 <tr >
-                                     <th colspan="4" ><b>Aduana</b></th>
-                                 </tr>
-                                 <tr>
-                                     <td colspan="4">
-                                        <?
-                                        echo $form['ca_colmas']->renderError();
-                                        if( $reporte ){
-                                            $form->setDefault('ca_colmas', $reporte->getCaColmas() );
-                                        }
-                                        echo $form['ca_colmas']->render();
-                                        ?>
-                                    </td>
-                                </tr>
-
-                            </table>
+                            <?
+                            include_component("reportesNeg", "aduana", array("form"=>$form, "formAduana"=>$formAduana, "reporte"=>$reporte) );
+                            ?>
                         </div>
                         <div class="tab-page">
                             <h2 class="tab">Seguros</h2>
-                            <table class="tableList" width="100%">
-                                 <tr >
-                                     <th colspan="4" ><b>Seguros</b></th>
-                                 </tr>
-                                 <tr>
-                                     <td colspan="4">
-                                        <?
-                                        echo $form['ca_seguro']->renderError();
-                                        if( $reporte ){
-                                            $form->setDefault('ca_seguro', $reporte->getCaSeguro() );
-                                        }
-                                        echo $form['ca_seguro']->render();
-                                        ?>
-                                    </td>
-                                </tr>
-
-                            </table>
+                            <?
+                            include_component("reportesNeg", "seguros", array("form"=>$form, "formSeguro"=>$formSeguro, "reporte"=>$reporte, "seguro_conf"=>$seguro_conf) );
+                            ?>
+                            
                         </div>
                         <div class="tab-page">
                             <h2 class="tab">Guias</h2>
@@ -369,7 +434,10 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                 {name: 'nombre_ven', mapping: 'ca_nombre'},
                 {name: 'listaclinton', mapping: 'ca_listaclinton'},
                 {name: 'fchcircular', mapping: 'ca_fchcircular', type:'int'},
-                {name: 'status', mapping: 'ca_status'}
+                {name: 'status', mapping: 'ca_status'},
+                {name: 'confirmar', mapping: 'ca_confirmar'},
+                {name: 'preferencias', mapping: 'ca_preferencias'}
+
             ])
         });
 
@@ -420,7 +488,42 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                 document.getElementById("ca_idconcliente").value = record.get("idcontacto");
                                 document.getElementById("div_contacto").innerHTML = record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") ;
 
-                                
+
+                                document.getElementById("reporte_ca_preferencias_clie").value=record.data.preferencias;
+
+                                for(i=0; i< <?=NuevoReporteForm::NUM_CC?>; i++){
+                                    document.getElementById("reporte_contactos_"+i).value="";
+                                    document.getElementById("reporte_confirmar_"+i).checked=false;
+                                }
+
+
+                                var confirmar =  record.data.confirmar ;
+                                var brokenconfirmar=confirmar.split(",");
+
+                                for(i=0; i<brokenconfirmar.length; i++){
+                                    document.getElementById("reporte_contactos_"+i).value=brokenconfirmar[i];
+                                    document.getElementById("reporte_confirmar_"+i).checked=true;
+                                }
+
+                                if( record.data.ca_listaclinton=="Sí" ){
+                                    alert("Este cliente se encuentra en lista Clinton");
+                                }
+                                /*
+                                document.getElementById("listaclinton").value=record.data.listaclinton;
+
+                                var fchcircular = record.get("fchcircular");
+                                //alert( fchcircular);
+                                if( !fchcircular ){
+                                    Ext.MessageBox.alert("Alerta","El cliente no tiene circular 170");
+                                }else{
+                                    if( fchcircular+(86400*365)<=<?=time()?> ){
+                                        Ext.MessageBox.alert("Alerta","La circular 170 se encuentra vencida");
+                                    }else{
+                                        if( fchcircular+(86400*335)<=<?=time()?> ){
+                                            Ext.MessageBox.alert("Alerta","La circular 170 se vencera en menos de 30 dias");
+                                        }
+                                    }
+                                }*/
 
                             }
                         });
@@ -432,5 +535,9 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 
 <script language="javascript">
     cambiarImpoexpo();
+    cambiarAduana();
+    cambiarSeguros();
+
+    
     
 </script>

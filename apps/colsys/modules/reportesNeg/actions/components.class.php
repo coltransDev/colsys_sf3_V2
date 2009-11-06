@@ -138,9 +138,39 @@ class reportesNegComponents extends sfComponents
 	* Edita la informacion basica del cliente
 	* @author: Andres Botero
 	*/
-	public function executeClientes()
+	public function executePreferenciasCliente()
 	{
 
+    }
+
+    /*
+	* Edita la informacion aduana
+	* @author: Andres Botero
+	*/
+	public function executeAduana()
+	{
+        $this->repaduana = Doctrine::getTable("RepAduana")->find( $this->reporte->getCaIdreporte());
+        if( !$this->repaduana ){
+            $this->repaduana = new RepAduana();
+        }
+
+        //print_r( $this->repaduana );
+        //exit();
+
+    }
+
+    /*
+	* Edita la informacion seguro
+	* @author: Andres Botero
+	*/
+	public function executeSeguros()
+	{
+        $this->usuarios = UsuarioTable::getUsuariosSeguros();
+
+        $this->repseguro = Doctrine::getTable("RepSeguro")->find( $this->reporte->getCaIdreporte());
+        if( !$this->repseguro ){
+            $this->repseguro = new RepSeguro();
+        }
     }
 
 	

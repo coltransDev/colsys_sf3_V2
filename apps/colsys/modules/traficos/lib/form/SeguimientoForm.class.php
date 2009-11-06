@@ -1,5 +1,5 @@
 <?
-class SeguimientoForm extends sfForm{
+class SeguimientoForm extends BaseForm{
 		
 	public function configure(){
 		

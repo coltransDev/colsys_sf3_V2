@@ -387,9 +387,10 @@ RepAduana:
     ca_idreporte:
       type: integer
       primary: true
+    ca_instrucciones: string
     ca_coordinador: string
     ca_transnacarga: string
-    ca_transnatipo: decimal
+    ca_transnatipo: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp

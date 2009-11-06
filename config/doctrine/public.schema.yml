@@ -365,3 +365,14 @@ Sia:
     ca_contacto: string
 
 
+Modalidad:
+  generatePath: public
+  tableName: tb_modalidades
+  columns:
+    ca_idmodalidad:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_impoexpo: string
+    ca_transporte: string
+    ca_modalidad: string

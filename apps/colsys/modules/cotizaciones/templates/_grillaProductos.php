@@ -307,7 +307,8 @@ var grid_productosOnvalidateedit = function(e){
 						   observaciones: rec.data.observaciones,
 						   idlinea: '',
 						   linea: '',
-						   postular_linea: '',				  
+						   postular_linea: '',
+                           vigencia: rec.data.vigencia,
 						   
 						   item: '+',
 						   iditem: '',	
@@ -736,6 +737,7 @@ var ventanaTarifario = function( record ){
                                        ttransito: activeRecord.data.ttransito,
                                        imprimir: activeRecord.data.imprimir,
                                        observaciones: activeRecord.data.observaciones,
+                                       vigencia: activeRecord.data.vigencia,
                                        item: '',
                                        iditem: '',
                                        tipo: '',
@@ -962,6 +964,7 @@ var grid_productosOnRowcontextmenu =  function(grid, index, e){
                                ttransito: rec.data.ttransito,
                                imprimir: rec.data.imprimir,
                                observaciones: rec.data.observaciones,
+                               vigencia: rec.data.vigencia,
 
                                item: '+',
                                iditem: '',

@@ -1,5 +1,5 @@
 <?
-class NuevoStatusForm extends sfForm{
+class NuevoStatusForm extends BaseForm{
 	
 	
 	const NUM_CC = 7;
@@ -26,7 +26,7 @@ class NuevoStatusForm extends sfForm{
 		}
 		
 		for( $i=0; $i< self::NUM_CC ; $i++ ){
-			$widgets["cc_".$i] = new sfWidgetFormInput(array(), array("size"=>60, "style"=>"margin-bottom:3px"));			
+			$widgets["cc_".$i] = new sfWidgetFormInputText(array(), array("size"=>60, "style"=>"margin-bottom:3px"));			
 		}		
 					
 		$widgets['idetapa'] = new sfWidgetFormDoctrineChoice(array(
@@ -43,7 +43,7 @@ class NuevoStatusForm extends sfForm{
 															  'choices' => array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co'),
 															));
 										
-		$widgets['asunto'] = new sfWidgetFormInput(array(), array("size"=>120 ));
+		$widgets['asunto'] = new sfWidgetFormInputText(array(), array("size"=>120 ));
 		$widgets['introduccion'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
 		$widgets['mensaje'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140, "onChange"=>"validarMensaje()" ));
 		$widgets['notas'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
@@ -53,9 +53,9 @@ class NuevoStatusForm extends sfForm{
 		$widgets['mensaje_mask'] = new sfWidgetFormInputHidden();
 		
 		
-		$widgets['piezas'] = new sfWidgetFormInput(array(), array("size"=>8 ));
-		$widgets['peso'] = new sfWidgetFormInput(array(), array("size"=>8 ));
-		$widgets['volumen'] = new sfWidgetFormInput(array(), array("size"=>8 ));
+		$widgets['piezas'] = new sfWidgetFormInputText(array(), array("size"=>8 ));
+		$widgets['peso'] = new sfWidgetFormInputText(array(), array("size"=>8 ));
+		$widgets['volumen'] = new sfWidgetFormInputText(array(), array("size"=>8 ));
 		
 		$widgets['fchsalida'] = new sfWidgetFormExtDate();
 		$widgets['horasalida'] = new sfWidgetFormTime();
@@ -63,9 +63,9 @@ class NuevoStatusForm extends sfForm{
 		$widgets['fchcontinuacion'] = new sfWidgetFormExtDate();
 		
 		
-		$widgets['doctransporte'] = new sfWidgetFormInput(array(), array("size"=>40, "maxlength"=>50 ));
-		$widgets['docmaster'] = new sfWidgetFormInput(array(), array("size"=>40, "maxlength"=>100 ));
-		$widgets['idnave'] = new sfWidgetFormInput(array(), array("size"=>40, "maxlength"=>50 ));
+		$widgets['doctransporte'] = new sfWidgetFormInputText(array(), array("size"=>40, "maxlength"=>50 ));
+		$widgets['docmaster'] = new sfWidgetFormInputText(array(), array("size"=>40, "maxlength"=>100 ));
+		$widgets['idnave'] = new sfWidgetFormInputText(array(), array("size"=>40, "maxlength"=>50 ));
 		
 		$widgets['un_piezas'] = new sfWidgetFormDoctrineChoice(array(
 															  'model' => 'Parametro',
@@ -101,8 +101,8 @@ class NuevoStatusForm extends sfForm{
 															  'query' => $this->queryConcepto,
 															  "add_empty" => true
 															));	
-			$widgets["equipos_serial_".$i] = new sfWidgetFormInput(array(), array("size"=>14, "style"=>"margin-bottom:3px"));
-			$widgets["equipos_cant_".$i] = new sfWidgetFormInput(array(), array("size"=>5, "style"=>"margin-bottom:3px"));		
+			$widgets["equipos_serial_".$i] = new sfWidgetFormInputText(array(), array("size"=>14, "style"=>"margin-bottom:3px"));
+			$widgets["equipos_cant_".$i] = new sfWidgetFormInputText(array(), array("size"=>5, "style"=>"margin-bottom:3px"));		
 		}	
 		
 		$widgets['datosbl'] = new sfWidgetFormTextarea(array(), array("rows"=>3, "cols"=>140 ));
@@ -115,7 +115,7 @@ class NuevoStatusForm extends sfForm{
 				$validator[$name] = new sfValidatorDate(array('required' => false ) ) ;		
 							
 			}else{
-				$widgets[$name] = new sfWidgetFormInput();	
+				$widgets[$name] = new sfWidgetFormInputText();	
 				$validator[$name] = new sfValidatorString(array('required' => false ) ) ;			
 			}				
 		}

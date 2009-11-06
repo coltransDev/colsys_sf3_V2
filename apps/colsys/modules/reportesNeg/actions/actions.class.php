@@ -139,6 +139,9 @@ class reportesNegActions extends sfActions
         $this->idnotify = $request->getParameter("idnotify");
         $this->idrepresentante = $request->getParameter("idrepresentante");
         $this->idmaster = $request->getParameter("idmaster");
+
+        $this->seguro_conf = $request->getParameter("seguro_conf");
+        
 		if( $this->getRequestParameter("id") ){
 			$reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
 			$this->forward404Unless( $reporte );
@@ -147,11 +150,32 @@ class reportesNegActions extends sfActions
 			$reporte = new Reporte();
 		}
 
-        $form = new NuevoReporteForm( $reporte  );
+        $form = new NuevoReporteForm();
+
+
+        $formAduana = new myRepAduanaForm();
+        $formSeguro = new myRepSeguroForm();
+
+        $country_reporte = $request->getParameter("country_reporte");
+        $this->ca_traorigen = $country_reporte["ca_origen"];
+        $this->ca_tradestino = $country_reporte["ca_destino"];
+
+        $bindValues = $request->getParameter("reporte");
+        $this->ca_origen = $bindValues["ca_origen"];
+        $this->ca_destino = $bindValues["ca_destino"];
+        $this->contactos = array();
+
+        for( $i=0; $i<NuevoReporteForm::NUM_CC; $i++ ){
+            if( isset( $bindValues["contactos_".$i] )){
+                $bindValues["contactos_".$i] = trim($bindValues["contactos_".$i]);
+                $this->contactos[] = $bindValues["contactos_".$i];
+            }
+        }
+
 
 
         if ($request->isMethod('post')){
-            $bindValues = $request->getParameter("reporte");
+            
             //print_r( $bindValues );
             //exit();
 
@@ -162,7 +186,35 @@ class reportesNegActions extends sfActions
 
             $form->bind( $bindValues );
 
-			if( $form->isValid() ){               
+
+            if( $bindValues["ca_colmas"]=="Sí" || $bindValues["ca_transporte"]==Constantes::ADUANA ){
+                $bindValuesAduana = $request->getParameter( $formAduana->getName() );
+                $formAduana->bind( $bindValuesAduana );
+
+                if( $formAduana->isValid() ){
+                    $aduanaValido = true;
+                }else{
+                    $aduanaValido = false;
+                }
+            }else{
+                $aduanaValido = true;
+            }
+
+
+            if( $bindValues["ca_seguro"]=="Sí" ){
+                $bindValuesSeguro = $request->getParameter( $formSeguro->getName() );
+                $formSeguro->bind( $bindValuesSeguro );
+
+                if( $formSeguro->isValid() ){
+                    $seguroValido = true;
+                }else{
+                    $seguroValido = false;
+                }
+            }else{
+                $seguroValido = true;
+            }
+
+			if( $form->isValid() && $aduanaValido && $seguroValido ){
                 //$reporte  = $form->save();
                 if( !$reporte->getCaIdreporte() ){
                     $reporte->setCaFchreporte( date("Y-m-d") );
@@ -241,22 +293,87 @@ class reportesNegActions extends sfActions
                     $reporte->setCaMercanciaDesc( $bindValues["ca_mercancia_desc"] );
                 }
 
-                if( $bindValues["ca_mcia_peligrosa"] ){
+                if( isset($bindValues["ca_mcia_peligrosa"]) ){
                     $reporte->setCaMciaPeligrosa( true );
                 }else{
                     $reporte->setCaMciaPeligrosa( false );
                 }
 
-                if( $bindValues["ca_colmas"]!==null ){
-                    $reporte->setCaColmas( $bindValues["ca_colmas"] );
+
+                if( $bindValues["ca_preferencias_clie"]!==null ){
+                    $reporte->setCaPreferenciasClie( $bindValues["ca_preferencias_clie"] );
+                }
+
+                if( $bindValues["ca_instrucciones"]!==null ){
+                    $reporte->setCaInstrucciones( $bindValues["ca_instrucciones"] );
+                }
+
+                 for( $i=0; $i<NuevoReporteForm::NUM_CC; $i++ ){
+                    if( isset( $bindValues["contactos_".$i] ) && isset( $bindValues["confirmar_".$i] ) && $bindValues["confirmar_".$i] ){
+                        $contactos[] = $bindValues["contactos_".$i];
+                    }
+                 }
+                 
+                 if( count( $contactos )>0 ){
+                     $reporte->setCaConfirmarClie( implode(",",$contactos) );
+
+                 }
+
+                if( $bindValues["ca_colmas"]=="Sí" || $bindValues["ca_transporte"]==Constantes::ADUANA ){
+                    $reporte->setCaColmas( "Sí" );
+                }else{
+                    $reporte->setCaColmas( "No" );
                 }
 
                 if( $bindValues["ca_seguro"]!==null ){
                     $reporte->setCaSeguro( $bindValues["ca_seguro"] );
                 }
 
-
                 $reporte->save();
+                $repaduana = Doctrine::getTable("RepAduana")->find( $reporte->getCaIdreporte() );
+                if( $bindValues["ca_colmas"]=="Sí" || $bindValues["ca_transporte"]==Constantes::ADUANA ){                    
+                    if( !$repaduana ){
+                        $repaduana = new RepAduana();
+                        $repaduana->setCaIdreporte( $reporte->getCaIdreporte() );
+                    }                    
+                    $repaduana->setCaInstrucciones( $bindValuesAduana["ca_instrucciones"] );
+                    if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
+                        $repaduana->setCaTransnacarga( $bindValuesAduana["ca_transnacarga"] );
+                    }else{
+                        $repaduana->setCaTransnacarga( null );
+                    }
+                    $repaduana->setCaTransnatipo( $bindValuesAduana["ca_transnatipo"] );
+                    $repaduana->save();
+
+                }else{
+                    if( $repaduana ){
+                        $repaduana->delete();
+                    }
+                }
+
+
+                $repseguro = Doctrine::getTable("RepSeguro")->find( $reporte->getCaIdreporte() );
+                if( $bindValues["ca_seguro"]=="Sí"  ){
+                    if( !$repseguro ){
+                        $repseguro = new RepSeguro();
+                        $repseguro->setCaIdreporte( $reporte->getCaIdreporte() );
+                    }
+                    $repseguro->setCaVlrasegurado( $bindValuesSeguro["ca_vlrasegurado"] );
+                    $repseguro->setCaIdmonedaVlr( $bindValuesSeguro["ca_idmoneda_vlr"] );
+                    $repseguro->setCaPrimaventa( $bindValuesSeguro["ca_primaventa"] );
+                    $repseguro->setCaMinimaventa( $bindValuesSeguro["ca_minimaventa"] );
+                    $repseguro->setCaIdmonedaVta( $bindValuesSeguro["ca_idmoneda_vta"] );
+                    $repseguro->setCaObtencionpoliza( $bindValuesSeguro["ca_obtencionpoliza"] );
+                    $repseguro->setCaIdmonedaPol( $bindValuesSeguro["ca_idmoneda_pol"] );
+                    $repseguro->setCaSeguroConf( $this->seguro_conf );
+                    $repseguro->save();
+
+                }else{
+                    if( $repseguro ){
+                        $repseguro->delete();
+                    }
+                }
+
                 //$this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
             }
         }
@@ -270,6 +387,12 @@ class reportesNegActions extends sfActions
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("tabpane/tabpane",'last');
         $response->addStylesheet("tabpane/luna/tab",'last');
+
+        $this->reporte=$reporte;
+        $this->form = $form;
+        $this->formAduana = $formAduana;
+        $this->formSeguro = $formSeguro;
+        
 		/*
 			
 		$c=new Criteria();
@@ -305,38 +428,20 @@ class reportesNegActions extends sfActions
 		$this->comerciales = UsuarioPeer::doSelect( $c );	
 			
 			
-		$this->aerolineas = TransportadorPeer::retrieveByTransporte( "Aéreo" );							
-		$this->navieras = TransportadorPeer::retrieveByTransporte( "Marítimo" );		
-		$this->transportadores = TransportadorPeer::retrieveByTransporte( "Terrestre" );	
+			
 						
 		$c = new Criteria();
 		$this->monedas = MonedaPeer::doSelect($c);
 			
-		$c = new Criteria();
-		$c->add( TraficoPeer::CA_IDTRAFICO, '99-999', Criteria::NOT_EQUAL );
-		$c->addAscendingOrderByColumn( TraficoPeer::CA_NOMBRE );
-		$c->addJoin( TraficoPeer::CA_IDTRAFICO, CiudadPeer::CA_IDTRAFICO );	
-		$c->addAscendingOrderByColumn( CiudadPeer::CA_CIUDAD );		
-		$this->ciudades = CiudadPeer::doSelect( $c );	
+			
 						
 		$this->user = $this->getUser();									
 		*/
 		
-/*		$cotProducto = $reporteNegocio->getCotProducto();		
-	
-		if( $cotProducto ){	
-			$this->id_producto = $cotProducto->getId();
-			$this->id_cotizacion = $cotProducto->getCaIdcotizacion();
-		
-		}else{	
-			$this->id_producto = null;
-			$this->id_cotizacion = null;
-		} */
+/*		 */
 
 
-        $this->reporte=$reporte;
         
-        $this->form = $form;
 	}
 
     /*
