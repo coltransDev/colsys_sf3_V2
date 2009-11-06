@@ -12,4 +12,14 @@ class UsuarioTable extends Doctrine_Table
                              ->addOrderBy("u.ca_nombre")
                              ->execute();
     }
+
+    public static function getUsuariosSeguros(){
+
+        return Doctrine::getTable("Usuario")
+                             ->createQuery("u")
+                             ->where("( u.ca_cargo like '%Pólizas%')")
+                             ->addWhere("u.ca_activo = true")
+                             ->addOrderBy("u.ca_nombre")
+                             ->execute();
+    }
 }

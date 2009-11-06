@@ -14,12 +14,13 @@ class Constantes{
 	
 	const IMPO = "Importación";
 	const EXPO = "Exportación";
-	const TRIANGULACION = "Triangulación";
-    const ADUANA = "Aduana";
+	const TRIANGULACION = "Triangulación";    
+    const OTMDTA = "OTM/DTA";
 	
 	const AEREO = "Aéreo";
 	const MARITIMO = "Marítimo";
-	const TERRESTRE = "Terrestre";	
+	const TERRESTRE = "Terrestre";
+    const ADUANA = "Aduana";
 
 	const RECARGO_LOCAL = "Recargo Local";
 	const RECARGO_EN_ORIGEN = "Recargo en Origen";
