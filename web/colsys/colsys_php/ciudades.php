@@ -13,7 +13,7 @@
 /*================-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*\
 */
 
-$programa = 64;
+$programa = 65;
   
 $titulo = 'Maestra de Ciudades para Tráfico';
 $puertos = array("Aéreo","Marítimo","Ambos","Ninguno");                        // Arreglo con los tipos de Ciudades
