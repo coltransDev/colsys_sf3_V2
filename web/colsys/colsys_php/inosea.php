@@ -3762,7 +3762,7 @@ elseif (isset($boton)) {                                                       /
                     exit;
                 }
                 $ic =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$ic->Open("select * from vi_inoclientes_sea where ca_referencia = '".$id."' order by ca_idcliente")) {    // Trae de la Tabla de la Dian el último registro.
+                if (!$ic->Open("select DISTINCT ic.ca_referencia, ic.ca_idcliente, ic.ca_hbls, ic.ca_fchhbls, ic.ca_continuacion, ic.ca_continuacion_dest, ic.ca_contenedores, ic.ca_numpiezas, ic.ca_peso, rp.ca_consecutivo from tb_inoclientes_sea ic INNER JOIN tb_reportes rp ON (ic.ca_idreporte = rp.ca_idreporte) where ic.ca_referencia = '".$id."' order by ic.ca_idcliente")) {    // Trae de la Tabla de la Dian el último registro.
                     echo "<script>alert(\"".addslashes($dc->mErrMsg)."\");</script>";     // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -4167,8 +4167,8 @@ elseif (isset($boton)) {                                                       /
                     $sub_ps = 0;
                     $sub_pz = 0;
                     $sub_cn = 0;
-
                     if ( $dm->Value("ca_tipocarga") == 2 ) {
+                        $array_cont = array();
                         foreach (explode("|",$ic->Value('ca_contenedores')) as $parciales) {
                             $parcial = explode(";",$parciales);
                             $unidades_carga[$parcial[0]]['pz'] = $parcial[1];
@@ -4213,16 +4213,18 @@ elseif (isset($boton)) {                                                       /
                                 $xml_item->setAttribute("idg", $mercancia_desc);
                                 $xml_item->setAttribute("mpel", $mercancia_peli);
                                 $xml_h267->appendChild( $xml_item );
-
                                 $xml_h167->appendChild( $xml_h267 );
 
-                                // Se Crear el elemento contenedor
-                                if ($dm->Value("ca_tipodocviaje") == 10) {
-                                    $xml_contenedor = $xml->createElement( "contenedor" );
-                                    $xml_contenedor->setAttribute("contp", str_replace("-","",$ie->Value("ca_idequipo")));
-                                    $xml_h167->appendChild( $xml_contenedor );
-                                }
+                                $array_cont[] = str_replace("-","",$ie->Value("ca_idequipo"));
                                 $ie->MoveNext();
+                            }
+                        }
+                        // Se Crear el elemento contenedor
+                        if ($dm->Value("ca_tipodocviaje") == 10) {
+                            foreach($array_cont as $cont){
+                                $xml_contenedor = $xml->createElement( "contenedor" );
+                                $xml_contenedor->setAttribute("contp", $cont);
+                                $xml_h167->appendChild( $xml_contenedor );
                             }
                         }
                     } else {

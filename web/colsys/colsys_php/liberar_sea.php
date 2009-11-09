@@ -72,16 +72,20 @@ elseif (!isset($boton) and !isset($accion) and isset($criterio)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
 
-    if (isset($criterio) and strlen(trim($criterio)) != 0 and !isset($condicion)) {
-        if ($opcion == 'ca_referencia' or $opcion == 'ca_mbls' or $opcion == 'ca_motonave') {
-            $condicion= "where lower($opcion) like lower('%".$criterio."%')"; }
+    $condicion = "where ca_fchreferencia between '$fchinicial' and '$fchfinal' ";
+    if (isset($criterio) and strlen(trim($criterio)) != 0) {
+        if ($opcion == 'ca_referencia') {
+            $condicion = "where $opcion like lower('%".$criterio."%')"; }
+        elseif ($opcion == 'ca_mbls' or $opcion == 'ca_motonave') {
+            $condicion.= "and lower($opcion) like lower('%".$criterio."%')"; }
         elseif ($opcion == 'ca_idequipo') {
-            $condicion= "where ca_referencia in (select ca_referencia from vi_inoequipos_sea where lower($opcion) like lower('%".$criterio."%'))"; }
+            $condicion.= "and ca_referencia in (select ca_referencia from vi_inoequipos_sea where lower($opcion) like lower('%".$criterio."%') order by ca_referencia)"; }
         elseif ($opcion == 'ca_hbls' or $opcion == 'ca_idcliente' or $opcion == 'ca_compania' or $opcion == 'ca_factura') {
-            $condicion= "where ca_referencia in (select ca_referencia from vi_inoclientes_sea where lower($opcion) like lower('%".$criterio."%'))"; }
+            $condicion.= "and ca_referencia in (select ca_referencia from vi_inoclientes_sea where lower($opcion) like lower('%".$criterio."%') order by ca_referencia)"; }
         elseif ($opcion == 'ca_factura_prov') {
-            $condicion= "where ca_referencia in (select ca_referencia from vi_inocostos_sea where lower(".substr($opcion,0,10).") like lower('%".$criterio."%'))"; }
+            $condicion.= "and ca_referencia in (select ca_referencia from vi_inocostos_sea where lower(".substr($opcion,0,10).") like lower('%".$criterio."%') order by ca_referencia)"; }
        }
+    // die("select * from vi_inomaestra_sea $condicion");
     if (!$rs->Open("select * from vi_inomaestra_sea $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
