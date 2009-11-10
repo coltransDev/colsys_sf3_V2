@@ -1,0 +1,96 @@
+Notificacion:
+  generatePath: notificaciones
+  tableName: notificaciones.tb_notificaciones
+  attributes:
+    export: tables
+  columns:
+    ca_idtarea:
+      type: integer
+      primary: true
+    ca_idemail:
+      type: integer
+      primary: true
+  relations:
+    NotTarea:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
+
+NotTarea:
+  generatePath: notificaciones
+  tableName: notificaciones.tb_tareas
+  attributes:
+    export: tables
+  columns:
+    ca_idtarea:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idlistatarea : integer
+    ca_url: string
+    ca_titulo: string
+    ca_texto: string
+    ca_fchvisible: timestamp
+    ca_fchvencimiento: timestamp
+    ca_fchterminada: timestamp
+    ca_usuterminada: string
+    ca_prioridad: integer
+    ca_notificar: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_observaciones: string
+  relations:
+    Notificacion:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: many
+    NotListaTareas:
+      local: ca_idlistatarea
+      foreign: ca_idlistatarea
+      type: one
+    RepAsignacion:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: many
+
+NotListaTareas:
+  generatePath: notificaciones
+  tableName: notificaciones.tb_listatareas
+  attributes:
+    export: tables
+  columns:
+    ca_idlistatarea:
+      type: integer
+      primary: true
+      autoincrement: true   
+    ca_nombre: string
+    ca_descripcion: string   
+  relations:
+    NotTarea:
+      local: ca_idlistatarea
+      foreign: ca_idlistatarea
+      type: many
+
+
+NotTareaAsignacion:
+  generatePath: notificaciones
+  tableName: notificaciones.tb_tareas_asignaciones
+  attributes:
+    export: tables
+  columns:
+    ca_idtarea:
+      type: integer
+      primary: true
+    ca_login:
+      type: string
+      primary: true
+  relations:
+    NotTarea:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+

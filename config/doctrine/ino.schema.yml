@@ -1,0 +1,268 @@
+
+InoMaestra:
+  generatePath: ino
+  tableName: ino.tb_maestra
+  attributes:
+    export: tables
+  columns:
+    ca_idmaestra:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_fchreferencia:
+      type: date      
+    ca_referencia: string
+    ca_idtrayecto: 
+      type: integer
+      notnull: true
+    ca_referencia: string
+    ca_master:
+        type: string
+        notnull: true
+    ca_fchmaster:
+        type: date
+        notnull: true
+    ca_piezas: decimal
+    ca_peso: decimal
+    ca_volumen: decimal
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_fchliquidado: timestamp
+    ca_usuliquidado: string
+    ca_fchcerrado: timestamp
+    ca_usucerrado: string
+    ca_fchanulado: timestamp
+    ca_usuanulado: string
+  relations:
+    InoCliente:
+      local: ca_idmaestra
+      foreign: ca_idmaestra
+      type: many
+    Trayecto:
+      local: ca_idtrayecto
+      foreign: ca_idtrayecto
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuLiquidado:
+      local: ca_usuliquidado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuCerrado:
+      local: ca_usucerrado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuAnulado:
+      local: ca_usuanulado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
+
+
+InoCliente:
+  generatePath: ino
+  tableName: ino.tb_clientes
+  attributes:
+    export: tables
+  columns:
+    ca_idinocliente:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idmaestra:
+      type: integer
+      notnull: true
+    ca_idcliente:
+      type: integer
+      notnull: true
+    ca_hbls:
+      type: string
+      notnull: true
+    ca_fchhbls:
+      type: date
+      notnull: true
+    ca_idreporte:
+      type: integer
+      notnull: true
+    ca_idproveedor:
+      type: integer
+      notnull: true
+    ca_proveedor:
+      type: string
+    ca_numpiezas:
+      type: decimal
+      notnull: true
+    ca_peso:
+      type: decimal
+      notnull: true
+    ca_volumen:
+      type: decimal
+      notnull: true
+    ca_numorden:
+      type: string
+      notnull: true
+    ca_vendedor:
+      type: string
+      notnull: true
+    ca_idsubtrayecto:
+      type: integer      
+    ca_idbodega:
+      type: integer
+    ca_observaciones:
+      type: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    InoMaestra:
+      local: ca_idmaestra
+      foreign: ca_idmaestra
+      type: many
+    Proveedor:
+      local: ca_idproveedor
+      foreign: ca_idtercero
+      type: one
+      class: Tercero
+    Vendedor:
+      local: ca_vendedor
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+
+InoComprobante:
+  generatePath: ino
+  tableName: ino.tb_comprobantes
+  attributes:
+    export: tables
+  columns:
+    ca_idcomprobante:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_id: integer
+    ca_idtipo: integer
+    ca_consecutivo: integer
+    ca_fchcomprobante: date
+    ca_idmaestra: integer
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:    
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    InoTransaccion:
+      local: ca_idcomprobante
+      foreign: ca_idcomprobante
+      type: many
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+
+InoTransaccion:
+  generatePath: ino
+  tableName: ino.tb_transacciones
+  attributes:
+    export: tables
+  columns:
+    ca_idtransaccion:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idcomprobante: integer
+    ca_idcuenta: integer
+    ca_idconcepto: integer
+    ca_id: integer
+    ca_db: string
+    ca_cr: timestamp
+    ca_idmoneda: string
+    ca_observaciones: timestamp
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+  relations:
+    InoCliente:
+      local: ca_idinocliente
+      foreign: ca_idinocliente
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    InoComprobante:
+      local: ca_idcomprobante
+      foreign: ca_idcomprobante
+      type: one
+    TipoRecargo:
+      local: ca_idconcepto
+      foreign: ca_idrecargo
+      type: one
+
+
+InoConcepto:
+  generatePath: ino
+  tableName: ino.tb_conceptos
+  attributes:
+    export: tables
+  columns:
+    ca_idconcepto:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_concepto:
+      type: string
+      notnull: true
+    ca_tipo: string   
+    ca_liminferior: integer
+    ca_incoterms: string
+    ca_comisionable: booolean
+    ca_cuenta: integer
+    ca_ingreso_propio: booolean
+    ca_iva: decimal
+    ca_baseretencion: decimal
+    ca_cuentaretencion: integer
+    ca_valor: decimal
+    ca_convenios: boolean
+    ca_autoretencion: decimal
+    ca_tipoautoretencion: smallint
+    
+    

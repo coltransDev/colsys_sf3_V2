@@ -1,0 +1,349 @@
+Ids:
+  generatePath: ids
+  tableName: ids.tb_ids
+  columns:
+    ca_id:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_dv: integer
+    ca_idalterno: string(20)
+    ca_tipoidentificacion: integer
+    ca_idgrupo: integer
+    ca_nombre: string(255)
+    ca_website: string(60)
+    ca_actividad: string
+    ca_sectoreco: string(30)
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    IdsSucursal:
+      local: ca_id
+      foreign: ca_id
+      type: many
+    IdsAgente:
+      local: ca_id
+      foreign: ca_idagente
+      type: one
+    IdsProveedor:
+      local: ca_id
+      foreign: ca_idproveedor
+      type: one
+    IdsDocumento:
+       local: ca_id
+       foreign: ca_id
+       type: many
+    IdsEvento:
+      local: ca_id
+      foreign: ca_id
+      type: many
+    Grupo:
+      local: ca_id
+      foreign: ca_idgrupo
+      type: one
+      class: Ids
+      
+IdsSucursal:
+  generatePath: ids
+  tableName: ids.tb_sucursales
+  columns:
+    ca_idsucursal:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id: integer
+    ca_principal: boolean
+    ca_direccion: string(100)
+    ca_oficina: string(15)
+    ca_torre: string(15)
+    ca_bloque: string(15)
+    ca_interior: string(15)
+    ca_localidad: string(20)
+    ca_complemento: string(50)
+    ca_telefonos: string(30)
+    ca_fax: string(30)
+    ca_idciudad: string(8)
+    ca_zipcode: string(20)
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+    Grupo:
+      local: ca_id
+      foreign: ca_idgrupo
+      type: one
+      class: Ids
+    Ciudad:
+      local: ca_idciudad
+      foreign: ca_idciudad
+      type: one
+
+IdsContacto:
+  generatePath: ids
+  tableName: ids.tb_contactos
+  columns:
+    ca_idcontacto:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idsucursal: integer
+    ca_nombres: string(60)
+    ca_papellido: string(60)
+    ca_sapellido: string(60)
+    ca_saludo: string(15)
+    ca_direccion: string(100)
+    ca_telefonos: string(30)
+    ca_fax: string(30)
+    ca_email: string(50)
+    ca_impoexpo: string
+    ca_transporte: string
+    ca_cargo: string(20)
+    ca_departamento: string(30)
+    ca_observaciones: string(100)
+    ca_sugerido: boolean
+    ca_visibilidad: integer
+    ca_activo: boolean
+    ca_codigoarea: string(4)
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string(20)
+  relations:
+    IdsSucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+    CotContactoAg:
+      local: ca_idcontacto
+      foreign: ca_idcontacto
+      type: many
+      
+IdsAgente:
+  generatePath: ids
+  tableName: ids.tb_agentes
+  columns:
+    ca_idagente:
+      type: integer
+      primary: true
+    ca_tipo: string
+    ca_activo: boolean
+  relations:
+    Ids:
+      local: ca_idagente
+      foreign: ca_id
+      type: one
+    IdsTipo:
+      local: ca_tipo
+      foreign: ca_tipo
+      type: one
+
+IdsProveedor:
+  generatePath: ids
+  tableName: ids.tb_proveedores
+  columns:
+    ca_idproveedor:
+      type: integer
+      primary: true
+    ca_tipo: string(5)
+    ca_activo: boolean
+    ca_critico: boolean
+    ca_esporadico: boolean
+    ca_controladoporsig: boolean
+    ca_fchaprobado: date
+    ca_usuaprobado: string(20)
+    ca_sigla: string(20)
+    ca_transporte: string(10)
+    ca_empresa: string
+  relations:
+    Ids:
+      local: ca_idproveedor
+      foreign: ca_id
+      type: one
+    IdsTipo:
+      local: ca_tipo
+      foreign: ca_tipo
+      type: one
+
+IdsTipo:
+  generatePath: ids
+  tableName: ids.tb_tipos
+  columns:
+    ca_tipo:
+      type: string(3)
+      primary: true
+    ca_nombre: string(50)
+    ca_aplicacion: string(50)
+  relations:
+    IdsAgente:
+      local: ca_tipo
+      foreign: ca_tipo
+      type: one
+    IdsProveedor:
+      local: ca_tipo
+      foreign: ca_tipo
+      type: one
+
+IdsDocumento:
+  generatePath: ids
+  tableName: ids.tb_documentos
+  columns:
+    ca_iddocumento:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id: integer
+    ca_idtipo: integer
+    ca_ubicacion: string(255)
+    ca_observaciones: string(255)
+    ca_fchinicio: date
+    ca_fchvencimiento: date
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+    IdsTipodocumento:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: one
+
+IdsTipoDocumento:
+  generatePath: ids
+  tableName: ids.tb_tipodocumentos
+  columns:
+    ca_idtipo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_tipo: string(60)
+    ca_equivalentea: integer
+    ca_vigencia: string(15)
+    ca_observaciones: string(15)
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    IdsDocumento:
+      local: ca_idtipo
+      foreign: ca_idtipo
+      type: many
+
+IdsEvaluacion:
+  generatePath: ids
+  tableName: ids.tb_evaluacion
+  columns:
+    ca_idevaluacion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id: integer
+    ca_tipo: string(15)
+    ca_concepto: string(15)
+    ca_ano: integer
+    ca_fchevaluacion: date
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+    IdsEvaluacionxCriterio:
+      local: ca_idevaluacion
+      foreign: ca_idevaluacion
+      type: many
+      
+
+
+IdsEvaluacionxCriterio:
+  generatePath: ids
+  tableName: ids.tb_evaluacionxcriterio
+  columns:
+    ca_idevaluacion:
+      type: integer
+      primary: true
+    ca_idcriterio:
+      type: integer
+      primary: true
+    ca_valor: decimal
+    ca_ponderacion: decimal
+    ca_observaciones: string(255)
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    IdsEvaluacion:
+      local: ca_idevaluacion
+      foreign: ca_idevaluacion
+      type: one
+    IdsCriterio:
+      local: ca_idcriterio
+      foreign: ca_idcriterio
+      type: one
+    
+
+IdsCriterio:
+  generatePath: ids
+  tableName: ids.tb_criterios
+  columns:
+    ca_idcriterio:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_tipo: string(3)
+    ca_criterio: string(60)
+    ca_ponderacion: integer(4)
+    ca_tipocriterio: string(30)
+    ca_activo: boolean
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    IdsEvaluacionxCriterio:
+      local: ca_idcriterio
+      foreign: ca_idcriterio
+      type: many
+    IdsEvento:
+      local: ca_idcriterio
+      foreign: ca_idcriterio
+      type: many
+
+IdsEvento:
+  generatePath: ids
+  tableName: ids.tb_eventos
+  columns:
+    ca_idevento:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_id: integer
+    ca_evento: string
+    ca_referencia: string(16)
+    ca_idcriterio: integer
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+  relations:
+    IdsCriterio:
+      local: ca_idcriterio
+      foreign: ca_idcriterio
+      type: one
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
