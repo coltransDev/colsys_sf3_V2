@@ -50,7 +50,7 @@ $reporte = $sf_data->getRaw("reporte");
         //Hace el mismo procedimiento parqa eldestino
         var fldTrafico = document.getElementById("country_reporte_ca_destino");
 
-        if( clase!="<?=Constantes::EXPO?>" ){
+        if( clase!="<?=Constantes::EXPO?>" && clase!="<?=Constantes::TRIANGULACION?>"){
             fldTrafico.length=0;
             fldTrafico[fldTrafico.length] = new Option('Colombia','CO-057',false,false);
         }else{
@@ -382,7 +382,13 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                             
                         </div>
                         <div class="tab-page">
+                            <h2 class="tab">Cont. Viaje</h2>
+                        </div>
+                        <div class="tab-page">
                             <h2 class="tab">Guias</h2>
+                            <?
+                            include_component("reportesNeg", "corteGuias", array("form"=>$form, "formSeguro"=>$formSeguro, "reporte"=>$reporte ) );
+                            ?>
                         </div>
                         <div class="tab-page">
                             <h2 class="tab">Exportaciones</h2>

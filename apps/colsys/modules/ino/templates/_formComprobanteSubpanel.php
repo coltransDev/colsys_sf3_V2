@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+$recargos = $sf_data->getRaw( "recargos" );
 
 ?>
 <script type="text/javascript">
@@ -13,30 +14,80 @@
 FormComprobanteSubpanel = function(){
 
     
-    this.columns = [{
+    this.dataRecargos = <?=json_encode(array("root"=>$recargos))?>;
+
+    this.storeConceptos = new Ext.data.Store({
+        autoLoad : true,
+        proxy: new Ext.data.MemoryProxy( this.dataRecargos ),
+        reader: new Ext.data.JsonReader(
+            {
+                id: 'idconcepto',
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'idconcepto',  mapping: 'ca_idconcepto'},
+                {name: 'concepto',  mapping: 'ca_concepto'}
+            ])
+        )
+    });
+
+    this.editorConceptos = new Ext.form.ComboBox({
         
-        header: "Concepto",
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,        
+        mode: 'local',
+        displayField: 'concepto',
+        valueField: 'idconcepto',
+        lazyRender:true,
+        listClass: 'x-combo-list-small',
+        store : this.storeConceptos
+    });
+
+    this.columns = [
+      {
+        header: "Código",
         dataIndex: 'idconcepto',
         sortable:true,
-        width: 420
-
+        width: 50,
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left',
+				decimalPrecision :0
+			})
         
+      },
+
+      {
+        header: "Concepto",
+        dataIndex: 'concepto',
+        sortable:true,
+        width: 420,
+        editor: this.editorConceptos
       },{
         header: "Valor",
         dataIndex: 'valor',
         width: 100,        
-        sortable:true
-      },{        
-        header: "Cuenta",
-        dataIndex: 'idcuenta',
-        width: 150,        
-        sortable:true
-    }];
+        sortable:true,
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left',
+				decimalPrecision :3
+			})
+      }
+    ];
 
     
     this.record = Ext.data.Record.create([            
-            {name: 'idmaestra', type: 'string'},
-            {name: 'idconcepto', type: 'string'},
+            {name: 'idmaestra', type: 'int'},
+            {name: 'idcomprobante', type: 'int'},
+            {name: 'idtransaccion', type: 'int'},
+            {name: 'idconcepto', type: 'int'},
             {name: 'concepto', type: 'string'},
             {name: 'valor', type: 'float'},
             {name: 'idcuenta', type: 'int'}
@@ -46,7 +97,7 @@ FormComprobanteSubpanel = function(){
     this.store = new Ext.data.Store({       
 
         autoLoad : true,
-        url: '<?=url_for("ino/formComprobanteData?id=".$referencia->getCaIdmaestra())?>',
+        url: '<?=url_for("ino/formComprobanteData?id=".$referencia->getCaIdmaestra()."&idcomprobante=".$comprobante->getCaIdcomprobante())?>',
         reader: new Ext.data.JsonReader(
             {
 
@@ -62,13 +113,41 @@ FormComprobanteSubpanel = function(){
 
     FormComprobanteSubpanel.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
+       clicksToEdit: 1,
        view: new Ext.grid.GridView({
        
-            //forceFit:true,
+            forceFit:true
             //enableRowBody:true,
             //showPreview:true//,
             //getRowClass : this.applyRowClass
-        })
+        }),
+        listeners:{
+            validateedit: this.onValidateEdit,
+            rowcontextmenu: this.onRowcontextMenu
+            //dblclick:this.onDblClickHandler
+        },
+        tbar: [{
+            text:'Guardar',
+            iconCls: 'disk',
+            scope:this,
+            handler: this.guardarCambios
+        },
+        '-'
+        /*,
+        {
+            text:'Importar Cotizacion',
+            iconCls: 'import',
+            scope:this,
+            handler: guardarCambios
+        },
+        {
+            text:'Importar del tarifario',
+            iconCls: 'import',
+            scope:this,
+            handler: guardarCambios
+        }*/
+
+      ]
 
 
     });
@@ -78,6 +157,248 @@ FormComprobanteSubpanel = function(){
 
 Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
     height: 300
+    ,
+    onValidateEdit : function(e){
+        if( e.field == "concepto"){            
+            var rec = e.record;
+            var ed = this.colModel.getCellEditor(e.column, e.row);
+            var store = ed.field.store;
+
+            var recordConcepto = this.record;
+            var storeGrid = this.store;
+            store.each( function( r ){
+
+                    if( r.data.idconcepto==e.value ){
+                        if( !rec.data.idconcepto ){
+                            var newRec = new recordConcepto({
+
+                               idmaestra: '<?=$comprobante->getCaIdmaestra()?>',
+                               idcomprobante: '<?=$comprobante->getCaIdcomprobante()?>',
+                               concepto: '+',
+                               idconcepto: '',
+                               idtransaccion: '',
+                               valor: '',
+                               orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                            });
+
+                            rec.set("idconcepto", r.data.idconcepto);
+                            rec.set("valor", 0);
+                            
+                            rec.set("orden", "Y-Z");
+                                //guardarGridProductosRec( rec );
+
+
+                            //Inserta una columna en blanco al final
+                            storeGrid.addSorted(newRec);
+                            storeGrid.sort("orden", "ASC");
+
+                        }else{
+                            rec.set("idconcepto", r.data.idconcepto);
+                        }
+
+                        e.value = r.data.concepto;
+
+                        return true;
+                    }
+                }
+            )
+        }
+
+        if( e.field == "idconcepto"){
+            var rec = e.record;
+            var ed = this.colModel.getCellEditor(1 , e.row);
+            var store = ed.field.store;
+
+            var recordConcepto = this.record;
+            var storeGrid = this.store;
+            var valido = false;
+            store.each( function( r ){
+
+                    if( r.data.idconcepto==e.value ){
+                       
+                        if( !rec.data.idconcepto ){
+                            var newRec = new recordConcepto({
+                               idmaestra: '<?=$comprobante->getCaIdmaestra()?>',
+                               idcomprobante: '<?=$comprobante->getCaIdcomprobante()?>',
+                               concepto: '+',
+                               idconcepto: '',
+                               idtransaccion: '',
+                               valor: '',
+                               orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                            });
+
+                            rec.set("idconcepto", r.data.idconcepto);
+                            rec.set("valor", 0);
+
+                            rec.set("orden", "Y-Z");
+                                //guardarGridProductosRec( rec );
+
+
+                            //Inserta una columna en blanco al final
+                            storeGrid.addSorted(newRec);
+                            storeGrid.sort("orden", "ASC");
+
+                        }else{
+                            rec.set("idconcepto", r.data.idconcepto);
+                        }
+                        
+                        rec.set("concepto", r.data.concepto);
+                        valido = true;
+                        return true;
+                    }
+                }
+            );
+            return valido;
+        }
+    }
+    ,
+    guardarCambios: function(){
+        var store = this.store;
+        var records = store.getModifiedRecords();
+
+        var lenght = records.length;
+
+        /*
+        for( var i=0; i< lenght; i++){
+            r = records[i];
+            if(!r.data.moneda && (r.data.tipo=="concepto"||r.data.recargo=="concepto") ){
+                if( r.data.iditem!=9999){
+                    Ext.MessageBox.alert('Warning','Por favor coloque la moneda en todos los items');
+                    return 0;
+                }
+            }
+        }	*/
+
+        for( var i=0; i< lenght; i++){
+            r = records[i];
+
+            var changes = r.getChanges();
+
+            //Da formato a las fechas antes de enviarlas
+
+
+            changes['id']=r.id;
+            changes['idconcepto']=r.data.idconcepto;
+            changes['valor']=r.data.valor;
+            changes['idtransaccion']=r.data.idtransaccion;
+
+
+            if( r.data.idconcepto ){
+                //envia los datos al servidor
+                Ext.Ajax.request(
+                    {
+                        waitMsg: 'Guardando cambios...',
+                        url: '<?=url_for("ino/observeFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+						//method: 'POST',
+                        //Solamente se envian los cambios
+                        params :	changes,
+
+                        callback :function(options, success, response){
+
+                            var res = Ext.util.JSON.decode( response.responseText );
+                            if( res.id && res.success){
+                                var rec = store.getById( res.id );
+                                rec.set("idtransaccion", res.idtransaccion);
+                                //rec.set("sel", false); //Quita la seleccion de todas las columnas
+                                rec.commit();
+                            }
+                        }
+                     }
+                );
+            }
+        }
+    }
+    ,
+    onRowcontextMenu: function(grid, index, e){
+        rec = this.store.getAt(index);
+
+        if(!this.menu){ // create context menu on first right click
+
+            this.menu = new Ext.menu.Menu({
+            id:'grid_productos-ctx',
+            enableScrolling : false,
+            items: [                   
+                    {
+                        text: 'Eliminar item',
+                        iconCls: 'delete',
+                        scope:this,
+                        handler: this.eliminarItem
+                    }
+                    ]
+            });
+            this.menu.on('hide', this.onContextHide , this);
+        }
+        e.stopEvent();
+        if(this.ctxRow){
+            Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+            this.ctxRow = null;
+        }
+        this.ctxRecord = rec;
+        this.ctxRow = this.view.getRow(index);
+        Ext.fly(this.ctxRow).addClass('x-node-ctx');
+        this.menu.showAt(e.getXY());
+    }
+    ,
+    onContextHide: function(){
+        if(this.ctxRow){
+            Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+            this.ctxRow = null;
+        }
+    }
+    ,
+
+    eliminarItem : function(){
+        var storeTransacciones = this.store;
+        
+        if( this.ctxRecord && this.ctxRecord.data.idtransaccion && confirm("Desea continuar?") ){
+
+            var id = this.ctxRecord.id;
+
+            
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Eliminando...',
+                url: '<?=url_for("ino/eliminarFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+                //method: 'POST',
+                //Solamente se envian los cambios
+                params :	{
+                    id: id,
+                    idtransaccion: this.ctxRecord.data.idtransaccion
+                },
+
+                //Ejecuta esta accion en caso de fallo
+                //(404 error etc, ***NOT*** success=false)
+                failure:function(response,options){
+                    alert( response.responseText );
+                    success = false;
+                },
+
+
+
+                //Ejecuta esta accion cuando el resultado es exitoso
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        record = storeTransacciones.getById( res.id );
+                        storeTransacciones.remove(record);
+                    }
+                }
+            });
+
+        }else{
+            storeTransacciones.remove(this.ctxRecord);
+        }
+    }
+
+    ,
+    formatItem: function(value, p, record) {
+
+        return String.format(
+            '<b>{0}</b>',
+            value
+        );
+
+    }
 
 });
 

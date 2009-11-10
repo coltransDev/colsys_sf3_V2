@@ -379,11 +379,15 @@ class reportesNegActions extends sfActions
         }
 
         $this->traficos = Doctrine::getTable('Trafico')->createQuery('t')
+                            ->select("t.ca_idtrafico, t.ca_nombre")
                             ->where('t.ca_idtrafico != ?', '99-999')
                             ->addOrderBy('t.ca_nombre ASC')
                             ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                             ->execute();
-
+        
+        foreach($this->traficos as $key=>$val){
+			$this->traficos[$key]["ca_nombre"] = utf8_encode( $this->traficos[$key]["ca_nombre"] );
+		}
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("tabpane/tabpane",'last');
         $response->addStylesheet("tabpane/luna/tab",'last');

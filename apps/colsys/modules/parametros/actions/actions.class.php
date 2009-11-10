@@ -90,4 +90,45 @@ class parametrosActions extends sfActions
 		$this->setTemplate("responseTemplate");		
 
     }
+
+
+    /**
+    * Datos de los conceptos para usar en pricing cotizaciones etc.
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormConcepto(sfWebRequest $request){
+
+
+        if( $request->getParameter("idconcepto") ){
+            $concepto = Doctrine::getTable("InoConcepto")->find( $request->getParameter("idconcepto") );
+            $this->forward404Unless($concepto);
+        }else{
+            $concepto = new InoConcepto();
+        }
+        $form = new myInoConceptoForm();
+
+
+         if ($request->isMethod('post')){
+             $bindValues = $request->getParameter($form->getName());
+             //print_r( $bindValues );
+             $form->bind( $bindValues );
+             if( $form->isValid() ){
+
+                $concepto->setCaConcepto($bindValues["ca_concepto"]);
+                if( !$request->getParameter("idconcepto") ){
+                    $concepto->setCaTipo($bindValues["ca_tipo"]);
+                }
+                $concepto->save();
+                //$this->redirect("ino/verReferencia?id=".$this->referencia->getCaIdmaestra());
+            }
+         }
+
+         $this->form = $form;
+         $this->concepto = $concepto;
+
+    }
+
+
+
 }

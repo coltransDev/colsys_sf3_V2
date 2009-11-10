@@ -323,6 +323,34 @@ class widgetsActions extends sfActions
 	}
 
 
+    public function executeListaIdsJSON(){
+		$criterio =  $this->getRequestParameter("query");
+
+        $rows = Doctrine_Query::create()
+                        ->select("i.ca_id, i.ca_nombre")
+                        ->from("Ids i")
+                        ->where("UPPER(i.ca_nombre) like ?", "%".strtoupper( $criterio )."%")
+                        ->addOrderBy("i.ca_nombre ASC")
+                        ->setHydrationMode( Doctrine::HYDRATE_SCALAR )
+                        ->limit(40)
+                        ->execute();
+
+
+
+		$ids = array();
+
+   		foreach ( $rows as $row ) {
+            $row["ca_id"]=$row["i_ca_id"];
+			$row["ca_nombre"]=utf8_encode($row["i_ca_nombre"]);
+
+            $ids[]=$row;
+
+		}
+        $this->responseArray = array( "totalCount"=>count( $ids ), "root"=>$ids  );
+        $this->setTemplate("responseTemplate");
+	}
+
+
     public function executeListaTercerosJSON(){
 		$criterio =  $this->getRequestParameter("query");
         $tipo =  $this->getRequestParameter("tipo");

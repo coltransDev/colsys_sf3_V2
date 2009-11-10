@@ -426,7 +426,7 @@ function mostrar(oid){
 							<td>
 							<?
 							if( $confirmacion->getCaIdemail() ){
-								echo "<a href='#' onClick=window.open('".url_for("general/verEmail?id=".$confirmacion->getCaIdemail())."')>".image_tag("22x22/email.gif")."</a>";
+								echo "<a href='#' onClick=window.open('".url_for("email/verEmail?id=".$confirmacion->getCaIdemail())."')>".image_tag("22x22/email.gif")."</a>";
 							}else{	
 								echo "&nbsp;";
 							}

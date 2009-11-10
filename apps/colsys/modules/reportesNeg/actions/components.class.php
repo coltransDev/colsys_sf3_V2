@@ -173,6 +173,17 @@ class reportesNegComponents extends sfComponents
         }
     }
 
+    /*
+	* Instrucciones para el corte de la guia
+	* @author: Andres Botero
+	*/
+	public function executeCorteGuias()
+	{
+
+		
+    }
+
+
 	
 		
 }

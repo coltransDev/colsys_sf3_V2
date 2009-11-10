@@ -11,31 +11,21 @@
 
 var ds = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-            url: '<?=url_for('widgets/listaContactosClientesJSON')?>'
+            url: '<?=url_for('widgets/listaIdsJSON')?>'
         }),
         reader: new Ext.data.JsonReader({
-            root: 'clientes',
-            totalProperty: 'totalCount',
-            id: 'id'
+            root: 'root',
+            totalProperty: 'totalCount'            
         }, [
-            {name: 'idcontacto', mapping: 'ca_idcontacto'},
-            {name: 'compania', mapping: 'ca_compania'},
-			{name: 'cargo', mapping: 'ca_cargo'},
-			{name: 'nombre', mapping: 'ca_nombres'},
-			{name: 'papellido', mapping: 'ca_papellido'},
-			{name: 'sapellido', mapping: 'ca_sapellido'},
-            {name: 'vendedor', mapping: 'ca_vendedor'},
-            {name: 'nombre_ven', mapping: 'ca_nombre'},
-			{name: 'listaclinton', mapping: 'ca_listaclinton'},
-			{name: 'fchcircular', mapping: 'ca_fchcircular', type:'int'},
-			{name: 'status', mapping: 'ca_status'}
+            {name: 'id', mapping: 'ca_id'},
+            {name: 'nombre', mapping: 'ca_nombre'}
         ])
     });
 
 	//var data_productos = <?//json_encode();?>
 
 	var resultTpl = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item"><b>{compania}</b><br /><span>{nombre} {papellido} {sapellido} <br />{cargo}</span> </div></tpl>'
+        '<tpl for="."><div class="search-item"><b>{nombre}</b></div></tpl>'
 );
 
 FormComprobantePanel = function(){
@@ -81,19 +71,15 @@ FormComprobantePanel = function(){
 							xtype:'textfield',
 							fieldLabel: 'Consecutivo',
 							name: 'consecutivo',
-							value: 'C',
-							allowBlank:false,
+							value: '<?=$comprobante->getCaConsecutivo()?>',
+							allowBlank:true,
 							readOnly: true,
 							width: 120
-		                },
+		                },						
 						{
 							xtype:'hidden',
-							id: 'listaclinton'
-
-		                },
-						{
-							xtype:'hidden',
-							id: 'status'
+							id: 'id',
+                            value: '<?=$comprobante->getCaIdcomprobante()?>'
 
 		                }
 						]
@@ -103,7 +89,7 @@ FormComprobantePanel = function(){
 					new Ext.form.ComboBox({
 				        store: ds,
 				        fieldLabel: 'Cliente',
-				        displayField:'compania',
+				        displayField:'nombre',
 				        typeAhead: false,
 				        loadingText: 'Buscando...',
 				        valueNotFoundText: 'No encontrado' ,
@@ -111,7 +97,7 @@ FormComprobantePanel = function(){
 				        tpl: resultTpl,
 				        itemSelector: 'div.search-item',
 					    emptyText:'Escriba el nombre del cliente...',
-					    value: '',
+					    value: '<?=$comprobante->getIds()?$comprobante->getIds()->getCaNombre():""?>',
 					    forceSelection:true,
 						selectOnFocus:true,
 						allowBlank:false,
@@ -122,93 +108,17 @@ FormComprobantePanel = function(){
 								this.collapse();
 								this.fireEvent('select', this, record, index);
 							}
-							var mensaje = "";
-							Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
-							Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
+							//var mensaje = "";
+							Ext.getCmp("id").setValue(record.get("id"));
+							//Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido") );
 
-							/*Ext.getCmp("usuario").setValue(record.get("vendedor"));
-							Ext.getCmp("vendedor_id").setValue(record.get("nombre_ven"));*/
-							<?
-							/*if( $user->getIddepartamento()!=5 ){
-							?>
-								Ext.getCmp("vendedor_id").setRawValue(record.get("nombre_ven"));
-								Ext.getCmp("vendedor_id").hiddenField.value = record.get("vendedor");
-							<?
-							}*/
-							?>
+							
 
-							Ext.getCmp("listaclinton").setValue(record.get("listaclinton"));
-							Ext.getCmp("status").setValue(record.get("status"));
-
-							if( record.get("status")=="Vetado" ){
-								if( mensaje!=""){
-									mensaje+="<br />";
-								}
-								mensaje += "Este cliente se encuentra vetado";
-							}
-
-							if( record.get("listaclinton")=="Sí" ){
-								//Ext.MessageBox.alert("Alerta","Este cliente se encuentra en lista clinton");
-								if( mensaje!=""){
-									mensaje+="<br />";
-								}
-								mensaje += "Este cliente se encuentra en lista clinton";
-							}
-
-							var fchcircular = record.get("fchcircular");
-							//alert( fchcircular);
-							if( !fchcircular ){
-								//Ext.MessageBox.alert("Alerta","El cliente no tiene circular 170");
-								if( mensaje!=""){
-									mensaje+="<br />";
-								}
-								mensaje += "El cliente no tiene circular 170";
-
-							}else{
-								if( fchcircular+(86400*365)<=<?=time()?> ){
-									if( mensaje!=""){
-										mensaje+="<br />";
-									}
-									mensaje += "La circular 170 se encuentra vencida";
-									//Ext.MessageBox.alert("Alerta","La circular 170 se encuentra vencida");
-								}else{
-									if( fchcircular+(86400*335)<=<?=time()?> ){
-										//Ext.MessageBox.alert("Alerta","La circular 170 se vencera en menos de 30 dias");
-										if( mensaje!=""){
-											mensaje+="<br />";
-										}
-										mensaje += "La circular 170 se vencera en menos de 30 dias";
-									}
-								}
-							}
-
-							if( mensaje!=""){
-								Ext.MessageBox.alert("Alerta", mensaje);
-							}
+							
 
 						}
 					})
-				,{
-					id: 'cotizacionId',
-					xtype:'hidden',
-					name: 'cotizacionId',
-					value: '',
-                    allowBlank:false
-				},{
-					id: 'idconcliente',
-					xtype:'hidden',
-					name: 'idconcliente',
-					value: '',
-                    allowBlank:false
-				},{
-					id: 'contacto',
-					xtype:'textfield',
-					fieldLabel: 'Persona de Contacto',
-					name: 'contacto',
-					value: '',
-                    allowBlank:false,
-					readOnly: true
-				}
+				
 
 				]
             },{
@@ -223,14 +133,14 @@ FormComprobantePanel = function(){
 					fieldLabel: 'Asunto',
 					name: 'asunto',
 					value: '',
-                    allowBlank:false
+                    allowBlank:true
                 }, {
 					xtype: 'textarea',
 					width: 500,
 					fieldLabel: 'Notas',
 					name: 'entrada',
 					value: '',
-                    allowBlank:false
+                    allowBlank:true
                 }]
             }
 			
@@ -266,15 +176,15 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
 
         if( this.getForm().isValid() ){
 
-            this.getForm().submit({url:'<?=url_for('cotizaciones/formCotizacionGuardar')?>',
-                                    waitMsg:'Salvando Datos básicos de la Cotizaci&oacute;n...',
+            this.getForm().submit({url:'<?=url_for('ino/observeFormComprobantePanel?idmaestra='.$referencia->getCaIdmaestra())?>',
+                                    waitMsg:'Salvando Datos básicos...',
                                     success:function(response,options){
                                         <?
-                                        //if( !$cotizacion->getCaIdcotizacion() || !$tarea ){
+                                        if( !$comprobante->getCaIdcomprobante()  ){
                                         ?>
-                                            document.location='<?=url_for("cotizaciones/consultaCotizacion?id=")?>'+options.result.idcotizacion;
+                                            document.location='<?=url_for("ino/formComprobante?id=".$referencia->getCaIdmaestra()."&idcomprobante=")?>'+options.result.idcomprobante;
                                         <?
-                                        //}
+                                        }
                                         ?>
                                        //Ext.Msg.alert( "Msg "+response.responseText );
                                     },
@@ -284,7 +194,7 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
                                     }//end failure block
                                 });
         }else{
-            Ext.MessageBox.alert('Sistema de Cotizaciones - Error:', '¡Atención: La información básica de la cotización no es válida o está incompleta!');
+            Ext.MessageBox.alert('Sistema de Comprobantes - Error:', '¡Atención: La información básica no es válida o está incompleta!');
         }
     }
 

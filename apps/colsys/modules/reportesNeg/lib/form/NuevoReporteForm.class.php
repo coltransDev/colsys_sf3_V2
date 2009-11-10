@@ -66,6 +66,18 @@ class NuevoReporteForm extends BaseReporteForm
 		}
 
 
+        //Corte de guias
+        $consignarMaster = ParametroTable::retrieveByCaso( "CU048" );
+        $choices = array();
+        foreach( $consignarMaster as $consignar){
+            $choices[$consignar->getCaIdentificacion()] = $consignar->getCaValor();
+        }
+        $this->widgetSchema['ca_idconsignarmaster']=new sfWidgetFormChoice( array( "choices" => $choices) );
+
+        //Expo
+        //$consignar = ParametroPeer::retrieveByCaso( "CU055" );
+        
+
         $this->validatorSchema['ca_origen'] = new sfValidatorString(array('required'=>true));
         $this->validatorSchema['ca_destino'] = new sfValidatorString(array('required'=>true));
         $this->validatorSchema['ca_idlinea'] = new sfValidatorString(array('required'=>true));
