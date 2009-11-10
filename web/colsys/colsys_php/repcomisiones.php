@@ -227,7 +227,7 @@ require_once("menu.php");
            echo "  <TD Class=invertir COLSPAN=11></TD>";
            echo "</TR>";
            echo "<TR>";
-           echo "  <TD Class=invertir style='font-weight:bold; font-size:10px;' COLSPAN=11>&nbsp&nbsp".substr(ucwords(strtolower($rs->Value('ca_compania'))),0,30)."</TD>";
+           echo "  <TD Class=invertir style='font-weight:bold; font-size:10px;' COLSPAN=11>&nbsp;&nbsp;".substr(ucwords(strtolower($rs->Value('ca_compania'))),0,30)."</TD>";
            echo "</TR>";
            $cia_mem = $rs->Value('ca_compania');
        }
@@ -252,23 +252,23 @@ require_once("menu.php");
        while ($ref_mem == $rs->Value('ca_referencia') and $nom_cli == $rs->Value('ca_compania') and $hbl_cli == $rs->Value('ca_hbls') and !$rs->Eof()) {
            $imp_mem = (in_array($rs->Value('ca_factura_ded'),$arr_fac))?false:true;
            if ($imp_mem and $mul_lin) {
-               echo "  <TD Class=listar>&nbsp</TD>";
-               echo "  <TD Class=listar>&nbsp</TD>";
+               echo "  <TD Class=listar>&nbsp;</TD>";
+               echo "  <TD Class=listar>&nbsp;</TD>";
                echo "</TR>";
                echo "<TR>";
-               echo "  <TD Class=listar COLSPAN=7>&nbsp</TD>";
+               echo "  <TD Class=listar COLSPAN=7>&nbsp;</TD>";
            }
            if ($imp_mem and $rs->Value('ca_valor_ded') != 0) {
                $sob_cas = round($rs->Value('ca_valor_ded') * $rs->Value('ca_porcentaje') / 100, 0);
-               echo "  <TD Class=listar style='font-size: 9px;$back_col'>".str_replace(" ","&nbsp","&nbsp".$rs->Value('ca_costo_ded'))."</TD>";
+               echo "  <TD Class=listar style='font-size: 9px;$back_col'>".str_replace(" ","&nbsp;","&nbsp;".$rs->Value('ca_costo_ded'))."</TD>";
                echo "  <TD Class=valores style='font-size: 9px;$back_col'>".number_format($sob_cas)."</TD>";
                $sob_ven+= $sob_cas;
                array_push($arr_fac,$rs->Value('ca_factura_ded'));
                $mul_lin = true;
               }
            else if ($imp_mem) {
-               echo "  <TD Class=listar>&nbsp</TD>";
-               echo "  <TD Class=listar>&nbsp</TD>";
+               echo "  <TD Class=listar>&nbsp;</TD>";
+               echo "  <TD Class=listar>&nbsp;</TD>";
                array_push($arr_fac,$rs->Value('ca_factura_ded'));
               }
            $rs->MoveNext();
@@ -276,7 +276,7 @@ require_once("menu.php");
        echo "  <TD Class=valores style='font-size: 9px;'>".number_format($com_cas)."</TD>";
        echo "  <TD Class=valores  style='font-size: 9px;'>";
        while (list ($clave, $val) = each ($arr_com)) {
-          echo "<A HREF='comision.php?id=$val' TARGET='_blank'>$val&nbsp</A>";
+          echo "<A HREF='comision.php?id=$val' TARGET='_blank'>$val&nbsp;</A>";
        }
        echo "  </TD>";
        echo "</TR>";
@@ -288,15 +288,15 @@ require_once("menu.php");
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=5>Totales por Vendedor :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($cmb_ven,2)."</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con)."</TD>";
-            echo "  <TD Class=listar style='font-weight:bold;'>&nbspSobreventa :</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp&nbsp".number_format($sob_ven)."</TD>";
+            echo "  <TD Class=listar style='font-weight:bold;'>&nbsp;Sobreventa :</TD>";
+            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($sob_ven)."</TD>";
             echo "  <TD Class=listar style='font-weight:bold;'></TD>";
             echo "  <TD Class=listar style='font-weight:bold;'></TD>";
             echo "</TR>";
             echo "<TR>";
             echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=8>Gran Total para ".ucwords(strtolower($nom_ven))." :</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_con+$sob_ven)."</TD>";
-            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp&nbsp".number_format($com_ven)."</TD>";
+            echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;&nbsp;".number_format($com_ven)."</TD>";
             echo "  <TD Class=valores style='font-weight:bold;'></TD>";
             echo "</TR>";
             echo "<TR HEIGHT=5>";
@@ -318,7 +318,7 @@ require_once("menu.php");
     echo "  <TD Class=Valores style='font-weight:bold;' COLSPAN=5>Totales del Informe:</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($cmb_tot,2)."</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($utl_tot)."</TD>";
-    echo "  <TD Class=valores style='font-weight:bold;'>&nbspTot.Sobreventa:</TD>";
+    echo "  <TD Class=valores style='font-weight:bold;'>&nbsp;Tot.Sobreventa:</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($sob_tot)."</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'>".number_format($com_tot)."</TD>";
     echo "  <TD Class=valores style='font-weight:bold;'></TD>";
