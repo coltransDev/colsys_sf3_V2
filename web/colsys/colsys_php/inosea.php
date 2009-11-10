@@ -1064,7 +1064,8 @@ elseif (isset($boton)) {                                                       /
                 echo "<FORM METHOD=post NAME='modificar' ACTION='inosea.php' ONSUBMIT='return validar();'>";// Crea una forma con datos vacios
                 echo "<TABLE WIDTH=610 CELLSPACING=1>";
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";        // Hereda el Id de la Referencia que se esta modificando
-                echo "<INPUT TYPE='HIDDEN' NAME='oid' VALUE=\"".$cl."\">";              // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='oid' VALUE=\"".$cl."\">";               // Hereda el Id de la Referencia que se esta modificando
+                echo "<INPUT TYPE='HIDDEN' NAME='old_fact' VALUE=\"".$rs->Value('ca_factura')."\">";          // Controla el Número Actual de la Factura
                 echo "<TH Class=titulo COLSPAN=6 style='font-size: 11px; vertical-align:bottom'>$id<BR>Información de la Factura</TH>";
                 echo "<TR>";
                 echo "  <TD Class=listar COLSPAN=2>Tabla de Costos:<BR><SELECT NAME='idcosto'>";  // Llena el cuadro de lista con los valores de la tabla Vendedores
@@ -4898,7 +4899,7 @@ elseif (isset($accion)) {                                                      /
         case 'Actualizar Costo': {                                                      // El Botón Guardar fue pulsado
                 settype($neto,"double");
                 settype($venta,"double");
-                if (!$rs->Open("delete from tb_inoutilidad_sea where ca_referencia = '$referencia' and ca_idcosto = $idcosto and ca_factura = '$factura'")) {
+                if (!$rs->Open("delete from tb_inoutilidad_sea where ca_referencia = '$referencia' and ca_idcosto = $idcosto and ca_factura = '$old_fact'")) {
                     echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
