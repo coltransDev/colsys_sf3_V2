@@ -1,11 +1,11 @@
 <?
-class LoginForm extends sfForm{
+class LoginForm extends BaseForm{
 	public function configure(){
 		//$this->setValidatorSchema(new RegisterValidatorSchema());
 		//$this->setWidgetSchema(new RegisterWidgetFormSchema());
 		
 		$this->setWidgets(array(		  
-		  'email' => new sfWidgetFormInput(),
+		  'email' => new sfWidgetFormInputText(),
 		  'clave' => new sfWidgetFormInputPassword(),
 		));
 		

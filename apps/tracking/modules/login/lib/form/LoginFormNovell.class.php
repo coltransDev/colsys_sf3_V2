@@ -1,11 +1,11 @@
 <?
-class LoginFormNovell extends sfForm{
+class LoginFormNovell extends BaseForm{
 	public function configure(){
 		//$this->setValidatorSchema(new RegisterValidatorSchema());
 		//$this->setWidgetSchema(new RegisterWidgetFormSchema());
 		
 		$this->setWidgets(array(		  
-		  'username' => new sfWidgetFormInput(array(), array("Autocomplete"=>"off")),
+		  'username' => new sfWidgetFormInputText(array(), array("Autocomplete"=>"off")),
 		  'passwd' => new sfWidgetFormInputPassword(),
 		));
 		

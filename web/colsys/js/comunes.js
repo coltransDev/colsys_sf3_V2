@@ -362,6 +362,7 @@ function llenarModalidades( impoexpoFldId, transporteFldId, modalidadFldId, incl
 function cargarModalidades( modalidades, impoexpo, transporte, modalidadFld, defaultVal ){
     for( i in modalidades ){
             if( typeof(modalidades[i]['modalidad'])!="undefined" ){
+               
                 if( impoexpo == modalidades[i]['impoexpo'] && transporte == modalidades[i]['transporte'] ){
                     if( defaultVal == modalidades[i]['modalidad'] ){
                         var selected = true;

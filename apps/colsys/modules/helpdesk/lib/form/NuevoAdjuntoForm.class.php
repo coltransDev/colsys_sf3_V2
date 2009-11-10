@@ -11,7 +11,7 @@
  *
  * @author abotero
  */
-class NuevoAdjuntoForm extends sfForm {
+class NuevoAdjuntoForm extends BaseForm {
     public function configure(){
 
 		sfValidatorBase::setCharset('ISO-8859-1');

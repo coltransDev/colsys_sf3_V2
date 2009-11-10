@@ -1,5 +1,5 @@
 <?
-class SeguimientoForm extends sfForm{
+class SeguimientoForm extends BaseForm{
 	private $etapas = null;
 
 	public function configure(){

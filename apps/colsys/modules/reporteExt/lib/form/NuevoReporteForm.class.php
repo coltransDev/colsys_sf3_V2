@@ -1,5 +1,5 @@
 <?
-class NuevoReporteForm extends sfForm{
+class NuevoReporteForm extends BaseForm{
 	
 	
 	const NUM_CC = 7;
@@ -21,7 +21,7 @@ class NuevoReporteForm extends sfForm{
 		
 		
 		for( $i=0; $i< self::NUM_CC ; $i++ ){
-			$widgets["cc_".$i] = new sfWidgetFormInput(array(), array("size"=>60, "style"=>"margin-bottom:3px"));			
+			$widgets["cc_".$i] = new sfWidgetFormInputText(array(), array("size"=>60, "style"=>"margin-bottom:3px"));			
 		}		
 		
 		
@@ -29,7 +29,7 @@ class NuevoReporteForm extends sfForm{
 															  'choices' => array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co'),
 															));
 										
-		$widgets['asunto'] = new sfWidgetFormInput(array(), array("size"=>120 ));
+		$widgets['asunto'] = new sfWidgetFormInputText(array(), array("size"=>120 ));
 		$widgets['introduccion'] = new sfWidgetFormTextarea(array(), array("rows"=>4, "cols"=>140 ));		
 		$widgets['instrucciones'] = new sfWidgetFormTextarea(array(), array("rows"=>5, "cols"=>140 ));		
 		$widgets['notas'] = new sfWidgetFormTextarea(array(), array("rows"=>4, "cols"=>140 ));				

@@ -1,10 +1,10 @@
 <?
-class LoginForm extends sfForm{
+class LoginForm extends BaseForm{
 	public function configure(){
 		//$this->setValidatorSchema(new RegisterValidatorSchema());
 		//$this->setWidgetSchema(new RegisterWidgetFormSchema());
 		
-		$username = new sfWidgetFormInput(array(), array("Autocomplete"=>"off"));
+		$username = new sfWidgetFormInputText(array(), array("Autocomplete"=>"off"));
 		
 		$this->setWidgets(array(		  
 		  'username' => $username,

@@ -567,12 +567,12 @@ a.toolbar:active {
 
 
 
-.x-grid3-td-titulo .topic {
+.topic {
     padding-left:20px;	
     background:transparent url('../images/16x16/post.gif') no-repeat 0 2px !important;
 }
 
-.x-grid3-td-concepto .recargo {
+.recargo {
     padding-left:20px;	
     background:transparent url('../images/16x16/elbow-end.gif') no-repeat 0 2px !important;
 }

@@ -13,5 +13,5 @@ default:
 
   javascripts:    [tracking, ext/adapter/ext/ext-base, ext/ext-all-debug, tracking ]
 
-  has_layout:     on
+  has_layout:     true
   layout:         layout

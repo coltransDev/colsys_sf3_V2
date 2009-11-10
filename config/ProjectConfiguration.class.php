@@ -24,7 +24,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     {
         //$manager->setAttribute(Doctrine::ATTR_QUERY_CACHE, new Doctrine_Cache_Apc());
 
-        $options = array('baseClassName' => 'myDoctrineRecord');
+        $options = array('baseClassName' => 'myDoctrineRecord'); 
         sfConfig::set('doctrine_model_builder_options', $options);
 
         $manager->setAttribute(Doctrine::ATTR_SEQNAME_FORMAT, '%s_id');
