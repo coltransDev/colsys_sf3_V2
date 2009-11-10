@@ -33,6 +33,61 @@
  * @property IdsSucursal $IdsSucursal
  * @property Doctrine_Collection $CotContactoAg
  * 
+ * @method integer             getCaIdcontacto()      Returns the current record's "ca_idcontacto" value
+ * @method integer             getCaIdsucursal()      Returns the current record's "ca_idsucursal" value
+ * @method string              getCaNombres()         Returns the current record's "ca_nombres" value
+ * @method string              getCaPapellido()       Returns the current record's "ca_papellido" value
+ * @method string              getCaSapellido()       Returns the current record's "ca_sapellido" value
+ * @method string              getCaSaludo()          Returns the current record's "ca_saludo" value
+ * @method string              getCaDireccion()       Returns the current record's "ca_direccion" value
+ * @method string              getCaTelefonos()       Returns the current record's "ca_telefonos" value
+ * @method string              getCaFax()             Returns the current record's "ca_fax" value
+ * @method string              getCaEmail()           Returns the current record's "ca_email" value
+ * @method string              getCaImpoexpo()        Returns the current record's "ca_impoexpo" value
+ * @method string              getCaTransporte()      Returns the current record's "ca_transporte" value
+ * @method string              getCaCargo()           Returns the current record's "ca_cargo" value
+ * @method string              getCaDepartamento()    Returns the current record's "ca_departamento" value
+ * @method string              getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method boolean             getCaSugerido()        Returns the current record's "ca_sugerido" value
+ * @method integer             getCaVisibilidad()     Returns the current record's "ca_visibilidad" value
+ * @method boolean             getCaActivo()          Returns the current record's "ca_activo" value
+ * @method string              getCaCodigoarea()      Returns the current record's "ca_codigoarea" value
+ * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method timestamp           getCaFcheliminado()    Returns the current record's "ca_fcheliminado" value
+ * @method string              getCaUsueliminado()    Returns the current record's "ca_usueliminado" value
+ * @method IdsSucursal         getIdsSucursal()       Returns the current record's "IdsSucursal" value
+ * @method Doctrine_Collection getCotContactoAg()     Returns the current record's "CotContactoAg" collection
+ * @method IdsContacto         setCaIdcontacto()      Sets the current record's "ca_idcontacto" value
+ * @method IdsContacto         setCaIdsucursal()      Sets the current record's "ca_idsucursal" value
+ * @method IdsContacto         setCaNombres()         Sets the current record's "ca_nombres" value
+ * @method IdsContacto         setCaPapellido()       Sets the current record's "ca_papellido" value
+ * @method IdsContacto         setCaSapellido()       Sets the current record's "ca_sapellido" value
+ * @method IdsContacto         setCaSaludo()          Sets the current record's "ca_saludo" value
+ * @method IdsContacto         setCaDireccion()       Sets the current record's "ca_direccion" value
+ * @method IdsContacto         setCaTelefonos()       Sets the current record's "ca_telefonos" value
+ * @method IdsContacto         setCaFax()             Sets the current record's "ca_fax" value
+ * @method IdsContacto         setCaEmail()           Sets the current record's "ca_email" value
+ * @method IdsContacto         setCaImpoexpo()        Sets the current record's "ca_impoexpo" value
+ * @method IdsContacto         setCaTransporte()      Sets the current record's "ca_transporte" value
+ * @method IdsContacto         setCaCargo()           Sets the current record's "ca_cargo" value
+ * @method IdsContacto         setCaDepartamento()    Sets the current record's "ca_departamento" value
+ * @method IdsContacto         setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method IdsContacto         setCaSugerido()        Sets the current record's "ca_sugerido" value
+ * @method IdsContacto         setCaVisibilidad()     Sets the current record's "ca_visibilidad" value
+ * @method IdsContacto         setCaActivo()          Sets the current record's "ca_activo" value
+ * @method IdsContacto         setCaCodigoarea()      Sets the current record's "ca_codigoarea" value
+ * @method IdsContacto         setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method IdsContacto         setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method IdsContacto         setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method IdsContacto         setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method IdsContacto         setCaFcheliminado()    Sets the current record's "ca_fcheliminado" value
+ * @method IdsContacto         setCaUsueliminado()    Sets the current record's "ca_usueliminado" value
+ * @method IdsContacto         setIdsSucursal()       Sets the current record's "IdsSucursal" value
+ * @method IdsContacto         setCotContactoAg()     Sets the current record's "CotContactoAg" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

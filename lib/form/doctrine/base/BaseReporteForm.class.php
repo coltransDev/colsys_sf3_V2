@@ -3,6 +3,8 @@
 /**
  * Reporte form base class.
  *
+ * @method Reporte getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here
@@ -27,7 +29,7 @@ class BaseReporteForm extends BaseFormDoctrine
       'ca_mercancia_desc'    => new sfWidgetFormTextarea(),
       'ca_idproveedor'       => new sfWidgetFormDoctrineChoice(array('model' => 'Tercero', 'add_empty' => true)),
       'ca_orden_prov'        => new sfWidgetFormTextarea(),
-      'ca_idconcliente'      => new sfWidgetFormDoctrineChoice(array('model' => 'Contacto', 'add_empty' => true)),
+      'ca_idconcliente'      => new sfWidgetFormDoctrineChoice(array('model' => 'Contacto', 'add_empty' => false)),
       'ca_orden_clie'        => new sfWidgetFormTextarea(),
       'ca_confirmar_clie'    => new sfWidgetFormTextarea(),
       'ca_idrepresentante'   => new sfWidgetFormInputText(),
@@ -62,6 +64,8 @@ class BaseReporteForm extends BaseFormDoctrine
       'ca_fchultstatus'      => new sfWidgetFormDateTime(),
       'ca_idtarea_rext'      => new sfWidgetFormInputText(),
       'ca_idseguimiento'     => new sfWidgetFormDoctrineChoice(array('model' => 'NotTarea', 'add_empty' => true)),
+      'ca_detanulado'        => new sfWidgetFormTextarea(),
+      'ca_mcia_peligrosa'    => new sfWidgetFormInputCheckbox(),
       'ca_fchcreado'         => new sfWidgetFormDateTime(),
       'ca_usucreado'         => new sfWidgetFormTextarea(),
       'ca_fchactualizado'    => new sfWidgetFormDateTime(),
@@ -80,15 +84,15 @@ class BaseReporteForm extends BaseFormDoctrine
       'ca_idcotizacion'      => new sfValidatorInteger(array('required' => false)),
       'ca_origen'            => new sfValidatorDoctrineChoice(array('model' => 'Ciudad', 'required' => false)),
       'ca_destino'           => new sfValidatorDoctrineChoice(array('model' => 'Ciudad', 'required' => false)),
-      'ca_impoexpo'          => new sfValidatorString(array('required' => false)),
-      'ca_fchdespacho'       => new sfValidatorDate(array('required' => false)),
+      'ca_impoexpo'          => new sfValidatorString(),
+      'ca_fchdespacho'       => new sfValidatorDate(),
       'ca_idagente'          => new sfValidatorDoctrineChoice(array('model' => 'IdsAgente', 'required' => false)),
       'ca_incoterms'         => new sfValidatorString(array('required' => false)),
-      'ca_mercancia_desc'    => new sfValidatorString(array('required' => false)),
+      'ca_mercancia_desc'    => new sfValidatorString(),
       'ca_idproveedor'       => new sfValidatorDoctrineChoice(array('model' => 'Tercero', 'required' => false)),
       'ca_orden_prov'        => new sfValidatorString(array('required' => false)),
-      'ca_idconcliente'      => new sfValidatorDoctrineChoice(array('model' => 'Contacto', 'required' => false)),
-      'ca_orden_clie'        => new sfValidatorString(array('required' => false)),
+      'ca_idconcliente'      => new sfValidatorDoctrineChoice(array('model' => 'Contacto')),
+      'ca_orden_clie'        => new sfValidatorString(),
       'ca_confirmar_clie'    => new sfValidatorString(array('required' => false)),
       'ca_idrepresentante'   => new sfValidatorInteger(array('required' => false)),
       'ca_informar_repr'     => new sfValidatorString(array('required' => false)),
@@ -122,6 +126,8 @@ class BaseReporteForm extends BaseFormDoctrine
       'ca_fchultstatus'      => new sfValidatorDateTime(array('required' => false)),
       'ca_idtarea_rext'      => new sfValidatorInteger(array('required' => false)),
       'ca_idseguimiento'     => new sfValidatorDoctrineChoice(array('model' => 'NotTarea', 'required' => false)),
+      'ca_detanulado'        => new sfValidatorString(array('required' => false)),
+      'ca_mcia_peligrosa'    => new sfValidatorBoolean(array('required' => false)),
       'ca_fchcreado'         => new sfValidatorDateTime(array('required' => false)),
       'ca_usucreado'         => new sfValidatorString(array('required' => false)),
       'ca_fchactualizado'    => new sfValidatorDateTime(array('required' => false)),

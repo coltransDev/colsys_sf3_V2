@@ -10,6 +10,15 @@
  * @property HdeskTicket $HdeskTicket
  * @property Usuario $Usuario
  * 
+ * @method integer         getCaIdticket()  Returns the current record's "ca_idticket" value
+ * @method string          getCaLogin()     Returns the current record's "ca_login" value
+ * @method HdeskTicket     getHdeskTicket() Returns the current record's "HdeskTicket" value
+ * @method Usuario         getUsuario()     Returns the current record's "Usuario" value
+ * @method HdeskTicketUser setCaIdticket()  Sets the current record's "ca_idticket" value
+ * @method HdeskTicketUser setCaLogin()     Sets the current record's "ca_login" value
+ * @method HdeskTicketUser setHdeskTicket() Sets the current record's "HdeskTicket" value
+ * @method HdeskTicketUser setUsuario()     Sets the current record's "Usuario" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

@@ -13,6 +13,21 @@
  * @property string $ca_lastName
  * @property Sdn $Sdn
  * 
+ * @method integer getCaUid()        Returns the current record's "ca_uid" value
+ * @method integer getCaUidAka()     Returns the current record's "ca_uid_aka" value
+ * @method string  getCaType()       Returns the current record's "ca_type" value
+ * @method string  getCaCategory()   Returns the current record's "ca_category" value
+ * @method string  getCaFirstName()  Returns the current record's "ca_firstName" value
+ * @method string  getCaLastName()   Returns the current record's "ca_lastName" value
+ * @method Sdn     getSdn()          Returns the current record's "Sdn" value
+ * @method SdnAka  setCaUid()        Sets the current record's "ca_uid" value
+ * @method SdnAka  setCaUidAka()     Sets the current record's "ca_uid_aka" value
+ * @method SdnAka  setCaType()       Sets the current record's "ca_type" value
+ * @method SdnAka  setCaCategory()   Sets the current record's "ca_category" value
+ * @method SdnAka  setCaFirstName()  Sets the current record's "ca_firstName" value
+ * @method SdnAka  setCaLastName()   Sets the current record's "ca_lastName" value
+ * @method SdnAka  setSdn()          Sets the current record's "Sdn" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

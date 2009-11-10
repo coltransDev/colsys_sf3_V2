@@ -18,6 +18,31 @@
  * @property string $ca_usuactualizado
  * @property InoMaestraSea $InoMaestraSea
  * 
+ * @method string          getCaReferencia()      Returns the current record's "ca_referencia" value
+ * @method integer         getCaIdequipo()        Returns the current record's "ca_idequipo" value
+ * @method string          getCaIdcontrato()      Returns the current record's "ca_idcontrato" value
+ * @method date            getCaFchcontrato()     Returns the current record's "ca_fchcontrato" value
+ * @method string          getCaInspeccionNta()   Returns the current record's "ca_inspeccion_nta" value
+ * @method date            getCaInspeccionFch()   Returns the current record's "ca_inspeccion_fch" value
+ * @method string          getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method timestamp       getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string          getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp       getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method string          getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method InoMaestraSea   getInoMaestraSea()     Returns the current record's "InoMaestraSea" value
+ * @method InoContratosSea setCaReferencia()      Sets the current record's "ca_referencia" value
+ * @method InoContratosSea setCaIdequipo()        Sets the current record's "ca_idequipo" value
+ * @method InoContratosSea setCaIdcontrato()      Sets the current record's "ca_idcontrato" value
+ * @method InoContratosSea setCaFchcontrato()     Sets the current record's "ca_fchcontrato" value
+ * @method InoContratosSea setCaInspeccionNta()   Sets the current record's "ca_inspeccion_nta" value
+ * @method InoContratosSea setCaInspeccionFch()   Sets the current record's "ca_inspeccion_fch" value
+ * @method InoContratosSea setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method InoContratosSea setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method InoContratosSea setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method InoContratosSea setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method InoContratosSea setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method InoContratosSea setInoMaestraSea()     Sets the current record's "InoMaestraSea" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

@@ -25,6 +25,45 @@
  * @property IdsAgente $IdsAgente
  * @property Doctrine_Collection $InoMaestra
  * 
+ * @method integer             getCaIdtrayecto()      Returns the current record's "ca_idtrayecto" value
+ * @method string              getCaOrigen()          Returns the current record's "ca_origen" value
+ * @method string              getCaDestino()         Returns the current record's "ca_destino" value
+ * @method integer             getCaIdlinea()         Returns the current record's "ca_idlinea" value
+ * @method string              getCaTransporte()      Returns the current record's "ca_transporte" value
+ * @method string              getCaImpoexpo()        Returns the current record's "ca_impoexpo" value
+ * @method string              getCaModalidad()       Returns the current record's "ca_modalidad" value
+ * @method string              getCaFrecuencia()      Returns the current record's "ca_frecuencia" value
+ * @method string              getCaTiempotransito()  Returns the current record's "ca_tiempotransito" value
+ * @method string              getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method integer             getCaIdagente()        Returns the current record's "ca_idagente" value
+ * @method boolean             getCaActivo()          Returns the current record's "ca_activo" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method boolean             getCaInpricing()       Returns the current record's "ca_inpricing" value
+ * @method Ciudad              getOrigen()            Returns the current record's "Origen" value
+ * @method Ciudad              getDestino()           Returns the current record's "Destino" value
+ * @method IdsProveedor        getIdsProveedor()      Returns the current record's "IdsProveedor" value
+ * @method IdsAgente           getIdsAgente()         Returns the current record's "IdsAgente" value
+ * @method Doctrine_Collection getInoMaestra()        Returns the current record's "InoMaestra" collection
+ * @method Trayecto            setCaIdtrayecto()      Sets the current record's "ca_idtrayecto" value
+ * @method Trayecto            setCaOrigen()          Sets the current record's "ca_origen" value
+ * @method Trayecto            setCaDestino()         Sets the current record's "ca_destino" value
+ * @method Trayecto            setCaIdlinea()         Sets the current record's "ca_idlinea" value
+ * @method Trayecto            setCaTransporte()      Sets the current record's "ca_transporte" value
+ * @method Trayecto            setCaImpoexpo()        Sets the current record's "ca_impoexpo" value
+ * @method Trayecto            setCaModalidad()       Sets the current record's "ca_modalidad" value
+ * @method Trayecto            setCaFrecuencia()      Sets the current record's "ca_frecuencia" value
+ * @method Trayecto            setCaTiempotransito()  Sets the current record's "ca_tiempotransito" value
+ * @method Trayecto            setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method Trayecto            setCaIdagente()        Sets the current record's "ca_idagente" value
+ * @method Trayecto            setCaActivo()          Sets the current record's "ca_activo" value
+ * @method Trayecto            setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method Trayecto            setCaInpricing()       Sets the current record's "ca_inpricing" value
+ * @method Trayecto            setOrigen()            Sets the current record's "Origen" value
+ * @method Trayecto            setDestino()           Sets the current record's "Destino" value
+ * @method Trayecto            setIdsProveedor()      Sets the current record's "IdsProveedor" value
+ * @method Trayecto            setIdsAgente()         Sets the current record's "IdsAgente" value
+ * @method Trayecto            setInoMaestra()        Sets the current record's "InoMaestra" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

@@ -26,6 +26,47 @@
  * @property Trafico $Trafico
  * @property Ciudad $Ciudad
  * 
+ * @method string             getCaIdtrafico()       Returns the current record's "ca_idtrafico" value
+ * @method string             getCaIdciudad()        Returns the current record's "ca_idciudad" value
+ * @method integer            getCaIdrecargo()       Returns the current record's "ca_idrecargo" value
+ * @method string             getCaModalidad()       Returns the current record's "ca_modalidad" value
+ * @method string             getCaImpoexpo()        Returns the current record's "ca_impoexpo" value
+ * @method decimal            getCaVlrrecargo()      Returns the current record's "ca_vlrrecargo" value
+ * @method string             getCaAplicacion()      Returns the current record's "ca_aplicacion" value
+ * @method decimal            getCaVlrminimo()       Returns the current record's "ca_vlrminimo" value
+ * @method string             getCaAplicacionMin()   Returns the current record's "ca_aplicacion_min" value
+ * @method string             getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method date               getCaFchinicio()       Returns the current record's "ca_fchinicio" value
+ * @method date               getCaFchvencimiento()  Returns the current record's "ca_fchvencimiento" value
+ * @method string             getCaIdmoneda()        Returns the current record's "ca_idmoneda" value
+ * @method integer            getCaConsecutivo()     Returns the current record's "ca_consecutivo" value
+ * @method timestamp          getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string             getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp          getCaFcheliminado()    Returns the current record's "ca_fcheliminado" value
+ * @method TipoRecargo        getTipoRecargo()       Returns the current record's "TipoRecargo" value
+ * @method Trafico            getTrafico()           Returns the current record's "Trafico" value
+ * @method Ciudad             getCiudad()            Returns the current record's "Ciudad" value
+ * @method PricRecargoxCiudad setCaIdtrafico()       Sets the current record's "ca_idtrafico" value
+ * @method PricRecargoxCiudad setCaIdciudad()        Sets the current record's "ca_idciudad" value
+ * @method PricRecargoxCiudad setCaIdrecargo()       Sets the current record's "ca_idrecargo" value
+ * @method PricRecargoxCiudad setCaModalidad()       Sets the current record's "ca_modalidad" value
+ * @method PricRecargoxCiudad setCaImpoexpo()        Sets the current record's "ca_impoexpo" value
+ * @method PricRecargoxCiudad setCaVlrrecargo()      Sets the current record's "ca_vlrrecargo" value
+ * @method PricRecargoxCiudad setCaAplicacion()      Sets the current record's "ca_aplicacion" value
+ * @method PricRecargoxCiudad setCaVlrminimo()       Sets the current record's "ca_vlrminimo" value
+ * @method PricRecargoxCiudad setCaAplicacionMin()   Sets the current record's "ca_aplicacion_min" value
+ * @method PricRecargoxCiudad setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method PricRecargoxCiudad setCaFchinicio()       Sets the current record's "ca_fchinicio" value
+ * @method PricRecargoxCiudad setCaFchvencimiento()  Sets the current record's "ca_fchvencimiento" value
+ * @method PricRecargoxCiudad setCaIdmoneda()        Sets the current record's "ca_idmoneda" value
+ * @method PricRecargoxCiudad setCaConsecutivo()     Sets the current record's "ca_consecutivo" value
+ * @method PricRecargoxCiudad setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method PricRecargoxCiudad setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method PricRecargoxCiudad setCaFcheliminado()    Sets the current record's "ca_fcheliminado" value
+ * @method PricRecargoxCiudad setTipoRecargo()       Sets the current record's "TipoRecargo" value
+ * @method PricRecargoxCiudad setTrafico()           Sets the current record's "Trafico" value
+ * @method PricRecargoxCiudad setCiudad()            Sets the current record's "Ciudad" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

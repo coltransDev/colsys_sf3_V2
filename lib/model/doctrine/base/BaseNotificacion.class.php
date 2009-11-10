@@ -9,6 +9,13 @@
  * @property integer $ca_idemail
  * @property NotTarea $NotTarea
  * 
+ * @method integer      getCaIdtarea()  Returns the current record's "ca_idtarea" value
+ * @method integer      getCaIdemail()  Returns the current record's "ca_idemail" value
+ * @method NotTarea     getNotTarea()   Returns the current record's "NotTarea" value
+ * @method Notificacion setCaIdtarea()  Sets the current record's "ca_idtarea" value
+ * @method Notificacion setCaIdemail()  Sets the current record's "ca_idemail" value
+ * @method Notificacion setNotTarea()   Sets the current record's "NotTarea" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

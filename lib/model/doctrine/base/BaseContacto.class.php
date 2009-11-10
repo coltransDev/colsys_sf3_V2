@@ -19,9 +19,44 @@
  * @property string $ca_observaciones
  * @property string $ca_fchcreado
  * @property Cliente $Cliente
- * @property Doctrine_Collection $TrackingUser
- * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $Cotizacion
+ * @property Doctrine_Collection $Reporte
+ * @property Doctrine_Collection $TrackingUser
+ * 
+ * @method integer             getCaIdcontacto()     Returns the current record's "ca_idcontacto" value
+ * @method integer             getCaIdcliente()      Returns the current record's "ca_idcliente" value
+ * @method string              getCaPapellido()      Returns the current record's "ca_papellido" value
+ * @method string              getCaSapellido()      Returns the current record's "ca_sapellido" value
+ * @method string              getCaNombres()        Returns the current record's "ca_nombres" value
+ * @method string              getCaSaludo()         Returns the current record's "ca_saludo" value
+ * @method string              getCaCargo()          Returns the current record's "ca_cargo" value
+ * @method string              getCaDepartamento()   Returns the current record's "ca_departamento" value
+ * @method string              getCaTelefonos()      Returns the current record's "ca_telefonos" value
+ * @method string              getCaFax()            Returns the current record's "ca_fax" value
+ * @method string              getCaEmail()          Returns the current record's "ca_email" value
+ * @method string              getCaObservaciones()  Returns the current record's "ca_observaciones" value
+ * @method string              getCaFchcreado()      Returns the current record's "ca_fchcreado" value
+ * @method Cliente             getCliente()          Returns the current record's "Cliente" value
+ * @method Doctrine_Collection getCotizacion()       Returns the current record's "Cotizacion" collection
+ * @method Doctrine_Collection getReporte()          Returns the current record's "Reporte" collection
+ * @method Doctrine_Collection getTrackingUser()     Returns the current record's "TrackingUser" collection
+ * @method Contacto            setCaIdcontacto()     Sets the current record's "ca_idcontacto" value
+ * @method Contacto            setCaIdcliente()      Sets the current record's "ca_idcliente" value
+ * @method Contacto            setCaPapellido()      Sets the current record's "ca_papellido" value
+ * @method Contacto            setCaSapellido()      Sets the current record's "ca_sapellido" value
+ * @method Contacto            setCaNombres()        Sets the current record's "ca_nombres" value
+ * @method Contacto            setCaSaludo()         Sets the current record's "ca_saludo" value
+ * @method Contacto            setCaCargo()          Sets the current record's "ca_cargo" value
+ * @method Contacto            setCaDepartamento()   Sets the current record's "ca_departamento" value
+ * @method Contacto            setCaTelefonos()      Sets the current record's "ca_telefonos" value
+ * @method Contacto            setCaFax()            Sets the current record's "ca_fax" value
+ * @method Contacto            setCaEmail()          Sets the current record's "ca_email" value
+ * @method Contacto            setCaObservaciones()  Sets the current record's "ca_observaciones" value
+ * @method Contacto            setCaFchcreado()      Sets the current record's "ca_fchcreado" value
+ * @method Contacto            setCliente()          Sets the current record's "Cliente" value
+ * @method Contacto            setCotizacion()       Sets the current record's "Cotizacion" collection
+ * @method Contacto            setReporte()          Sets the current record's "Reporte" collection
+ * @method Contacto            setTrackingUser()     Sets the current record's "TrackingUser" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -83,7 +118,7 @@ abstract class BaseContacto extends myDoctrineRecord
              'local' => 'ca_idcliente',
              'foreign' => 'ca_idcliente'));
 
-        $this->hasMany('TrackingUser', array(
+        $this->hasMany('Cotizacion', array(
              'local' => 'ca_idcontacto',
              'foreign' => 'ca_idcontacto'));
 
@@ -91,7 +126,7 @@ abstract class BaseContacto extends myDoctrineRecord
              'local' => 'ca_idcontacto',
              'foreign' => 'ca_idconcliente'));
 
-        $this->hasMany('Cotizacion', array(
+        $this->hasMany('TrackingUser', array(
              'local' => 'ca_idcontacto',
              'foreign' => 'ca_idcontacto'));
     }

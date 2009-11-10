@@ -3,6 +3,8 @@
 /**
  * CotRecargo form base class.
  *
+ * @method CotRecargo getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

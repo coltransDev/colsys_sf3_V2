@@ -11,6 +11,17 @@
  * @property string $ca_transporte
  * @property Doctrine_Collection $Reporte
  * 
+ * @method integer             getCaIdbodega()    Returns the current record's "ca_idbodega" value
+ * @method string              getCaNombre()      Returns the current record's "ca_nombre" value
+ * @method string              getCaTipo()        Returns the current record's "ca_tipo" value
+ * @method string              getCaTransporte()  Returns the current record's "ca_transporte" value
+ * @method Doctrine_Collection getReporte()       Returns the current record's "Reporte" collection
+ * @method Bodega              setCaIdbodega()    Sets the current record's "ca_idbodega" value
+ * @method Bodega              setCaNombre()      Sets the current record's "ca_nombre" value
+ * @method Bodega              setCaTipo()        Sets the current record's "ca_tipo" value
+ * @method Bodega              setCaTransporte()  Sets the current record's "ca_transporte" value
+ * @method Bodega              setReporte()       Sets the current record's "Reporte" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

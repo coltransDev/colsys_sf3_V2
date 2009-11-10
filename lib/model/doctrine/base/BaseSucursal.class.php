@@ -12,6 +12,19 @@
  * @property string $ca_direccion
  * @property Doctrine_Collection $Usuario
  * 
+ * @method string              getCaIdsucursal()  Returns the current record's "ca_idsucursal" value
+ * @method string              getCaNombre()      Returns the current record's "ca_nombre" value
+ * @method string              getCaTelefono()    Returns the current record's "ca_telefono" value
+ * @method string              getCaFax()         Returns the current record's "ca_fax" value
+ * @method string              getCaDireccion()   Returns the current record's "ca_direccion" value
+ * @method Doctrine_Collection getUsuario()       Returns the current record's "Usuario" collection
+ * @method Sucursal            setCaIdsucursal()  Sets the current record's "ca_idsucursal" value
+ * @method Sucursal            setCaNombre()      Sets the current record's "ca_nombre" value
+ * @method Sucursal            setCaTelefono()    Sets the current record's "ca_telefono" value
+ * @method Sucursal            setCaFax()         Sets the current record's "ca_fax" value
+ * @method Sucursal            setCaDireccion()   Sets the current record's "ca_direccion" value
+ * @method Sucursal            setUsuario()       Sets the current record's "Usuario" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

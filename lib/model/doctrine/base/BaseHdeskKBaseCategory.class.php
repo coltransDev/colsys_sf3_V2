@@ -10,6 +10,15 @@
  * @property string $ca_name
  * @property Doctrine_Collection $HdeskKBase
  * 
+ * @method integer             getCaIdcategory()  Returns the current record's "ca_idcategory" value
+ * @method integer             getCaParent()      Returns the current record's "ca_parent" value
+ * @method string              getCaName()        Returns the current record's "ca_name" value
+ * @method Doctrine_Collection getHdeskKBase()    Returns the current record's "HdeskKBase" collection
+ * @method HdeskKBaseCategory  setCaIdcategory()  Sets the current record's "ca_idcategory" value
+ * @method HdeskKBaseCategory  setCaParent()      Sets the current record's "ca_parent" value
+ * @method HdeskKBaseCategory  setCaName()        Sets the current record's "ca_name" value
+ * @method HdeskKBaseCategory  setHdeskKBase()    Sets the current record's "HdeskKBase" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

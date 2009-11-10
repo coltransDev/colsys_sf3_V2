@@ -22,11 +22,56 @@
  * @property Doctrine_Collection $Notificacion
  * @property NotListaTareas $NotListaTareas
  * @property Doctrine_Collection $RepAsignacion
+ * @property Doctrine_Collection $Cotizacion
+ * @property Doctrine_Collection $CotProducto
  * @property Doctrine_Collection $HdeskTicket
  * @property Doctrine_Collection $NotTareaAsignacion
  * @property Doctrine_Collection $Reporte
- * @property Doctrine_Collection $Cotizacion
- * @property Doctrine_Collection $CotProducto
+ * 
+ * @method integer             getCaIdtarea()          Returns the current record's "ca_idtarea" value
+ * @method integer             getCaIdlistatarea()     Returns the current record's "ca_idlistatarea" value
+ * @method string              getCaUrl()              Returns the current record's "ca_url" value
+ * @method string              getCaTitulo()           Returns the current record's "ca_titulo" value
+ * @method string              getCaTexto()            Returns the current record's "ca_texto" value
+ * @method timestamp           getCaFchvisible()       Returns the current record's "ca_fchvisible" value
+ * @method timestamp           getCaFchvencimiento()   Returns the current record's "ca_fchvencimiento" value
+ * @method timestamp           getCaFchterminada()     Returns the current record's "ca_fchterminada" value
+ * @method string              getCaUsuterminada()     Returns the current record's "ca_usuterminada" value
+ * @method integer             getCaPrioridad()        Returns the current record's "ca_prioridad" value
+ * @method string              getCaNotificar()        Returns the current record's "ca_notificar" value
+ * @method timestamp           getCaFchcreado()        Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsucreado()        Returns the current record's "ca_usucreado" value
+ * @method string              getCaObservaciones()    Returns the current record's "ca_observaciones" value
+ * @method Doctrine_Collection getNotificacion()       Returns the current record's "Notificacion" collection
+ * @method NotListaTareas      getNotListaTareas()     Returns the current record's "NotListaTareas" value
+ * @method Doctrine_Collection getRepAsignacion()      Returns the current record's "RepAsignacion" collection
+ * @method Doctrine_Collection getCotizacion()         Returns the current record's "Cotizacion" collection
+ * @method Doctrine_Collection getCotProducto()        Returns the current record's "CotProducto" collection
+ * @method Doctrine_Collection getHdeskTicket()        Returns the current record's "HdeskTicket" collection
+ * @method Doctrine_Collection getNotTareaAsignacion() Returns the current record's "NotTareaAsignacion" collection
+ * @method Doctrine_Collection getReporte()            Returns the current record's "Reporte" collection
+ * @method NotTarea            setCaIdtarea()          Sets the current record's "ca_idtarea" value
+ * @method NotTarea            setCaIdlistatarea()     Sets the current record's "ca_idlistatarea" value
+ * @method NotTarea            setCaUrl()              Sets the current record's "ca_url" value
+ * @method NotTarea            setCaTitulo()           Sets the current record's "ca_titulo" value
+ * @method NotTarea            setCaTexto()            Sets the current record's "ca_texto" value
+ * @method NotTarea            setCaFchvisible()       Sets the current record's "ca_fchvisible" value
+ * @method NotTarea            setCaFchvencimiento()   Sets the current record's "ca_fchvencimiento" value
+ * @method NotTarea            setCaFchterminada()     Sets the current record's "ca_fchterminada" value
+ * @method NotTarea            setCaUsuterminada()     Sets the current record's "ca_usuterminada" value
+ * @method NotTarea            setCaPrioridad()        Sets the current record's "ca_prioridad" value
+ * @method NotTarea            setCaNotificar()        Sets the current record's "ca_notificar" value
+ * @method NotTarea            setCaFchcreado()        Sets the current record's "ca_fchcreado" value
+ * @method NotTarea            setCaUsucreado()        Sets the current record's "ca_usucreado" value
+ * @method NotTarea            setCaObservaciones()    Sets the current record's "ca_observaciones" value
+ * @method NotTarea            setNotificacion()       Sets the current record's "Notificacion" collection
+ * @method NotTarea            setNotListaTareas()     Sets the current record's "NotListaTareas" value
+ * @method NotTarea            setRepAsignacion()      Sets the current record's "RepAsignacion" collection
+ * @method NotTarea            setCotizacion()         Sets the current record's "Cotizacion" collection
+ * @method NotTarea            setCotProducto()        Sets the current record's "CotProducto" collection
+ * @method NotTarea            setHdeskTicket()        Sets the current record's "HdeskTicket" collection
+ * @method NotTarea            setNotTareaAsignacion() Sets the current record's "NotTareaAsignacion" collection
+ * @method NotTarea            setReporte()            Sets the current record's "Reporte" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -102,6 +147,14 @@ abstract class BaseNotTarea extends myDoctrineRecord
              'local' => 'ca_idtarea',
              'foreign' => 'ca_idtarea'));
 
+        $this->hasMany('Cotizacion', array(
+             'local' => 'ca_idtarea',
+             'foreign' => 'ca_idg_envio_oportuno'));
+
+        $this->hasMany('CotProducto', array(
+             'local' => 'ca_idtarea',
+             'foreign' => 'ca_idtarea'));
+
         $this->hasMany('HdeskTicket', array(
              'local' => 'ca_idtarea',
              'foreign' => 'ca_idtarea'));
@@ -113,13 +166,5 @@ abstract class BaseNotTarea extends myDoctrineRecord
         $this->hasMany('Reporte', array(
              'local' => 'ca_idtarea',
              'foreign' => 'ca_idseguimiento'));
-
-        $this->hasMany('Cotizacion', array(
-             'local' => 'ca_idtarea',
-             'foreign' => 'ca_idg_envio_oportuno'));
-
-        $this->hasMany('CotProducto', array(
-             'local' => 'ca_idtarea',
-             'foreign' => 'ca_idtarea'));
     }
 }

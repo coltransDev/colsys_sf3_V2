@@ -18,14 +18,57 @@
  * @property string $ca_empresa
  * @property Ids $Ids
  * @property IdsTipo $IdsTipo
+ * @property Doctrine_Collection $CotProducto
+ * @property Doctrine_Collection $InoMaestraSea
  * @property Doctrine_Collection $Trayecto
  * @property Doctrine_Collection $PricRecargoxLinea
  * @property Doctrine_Collection $PricRecargoxLineaBs
  * @property Doctrine_Collection $PricPatioLinea
  * @property Doctrine_Collection $PricRecargoParametro
- * @property Doctrine_Collection $InoMaestraSea
  * @property Doctrine_Collection $Reporte
- * @property Doctrine_Collection $CotProducto
+ * 
+ * @method integer             getCaIdproveedor()        Returns the current record's "ca_idproveedor" value
+ * @method string              getCaTipo()               Returns the current record's "ca_tipo" value
+ * @method boolean             getCaActivo()             Returns the current record's "ca_activo" value
+ * @method boolean             getCaCritico()            Returns the current record's "ca_critico" value
+ * @method boolean             getCaEsporadico()         Returns the current record's "ca_esporadico" value
+ * @method boolean             getCaControladoporsig()   Returns the current record's "ca_controladoporsig" value
+ * @method date                getCaFchaprobado()        Returns the current record's "ca_fchaprobado" value
+ * @method string              getCaUsuaprobado()        Returns the current record's "ca_usuaprobado" value
+ * @method string              getCaSigla()              Returns the current record's "ca_sigla" value
+ * @method string              getCaTransporte()         Returns the current record's "ca_transporte" value
+ * @method string              getCaEmpresa()            Returns the current record's "ca_empresa" value
+ * @method Ids                 getIds()                  Returns the current record's "Ids" value
+ * @method IdsTipo             getIdsTipo()              Returns the current record's "IdsTipo" value
+ * @method Doctrine_Collection getCotProducto()          Returns the current record's "CotProducto" collection
+ * @method Doctrine_Collection getInoMaestraSea()        Returns the current record's "InoMaestraSea" collection
+ * @method Doctrine_Collection getTrayecto()             Returns the current record's "Trayecto" collection
+ * @method Doctrine_Collection getPricRecargoxLinea()    Returns the current record's "PricRecargoxLinea" collection
+ * @method Doctrine_Collection getPricRecargoxLineaBs()  Returns the current record's "PricRecargoxLineaBs" collection
+ * @method Doctrine_Collection getPricPatioLinea()       Returns the current record's "PricPatioLinea" collection
+ * @method Doctrine_Collection getPricRecargoParametro() Returns the current record's "PricRecargoParametro" collection
+ * @method Doctrine_Collection getReporte()              Returns the current record's "Reporte" collection
+ * @method IdsProveedor        setCaIdproveedor()        Sets the current record's "ca_idproveedor" value
+ * @method IdsProveedor        setCaTipo()               Sets the current record's "ca_tipo" value
+ * @method IdsProveedor        setCaActivo()             Sets the current record's "ca_activo" value
+ * @method IdsProveedor        setCaCritico()            Sets the current record's "ca_critico" value
+ * @method IdsProveedor        setCaEsporadico()         Sets the current record's "ca_esporadico" value
+ * @method IdsProveedor        setCaControladoporsig()   Sets the current record's "ca_controladoporsig" value
+ * @method IdsProveedor        setCaFchaprobado()        Sets the current record's "ca_fchaprobado" value
+ * @method IdsProveedor        setCaUsuaprobado()        Sets the current record's "ca_usuaprobado" value
+ * @method IdsProveedor        setCaSigla()              Sets the current record's "ca_sigla" value
+ * @method IdsProveedor        setCaTransporte()         Sets the current record's "ca_transporte" value
+ * @method IdsProveedor        setCaEmpresa()            Sets the current record's "ca_empresa" value
+ * @method IdsProveedor        setIds()                  Sets the current record's "Ids" value
+ * @method IdsProveedor        setIdsTipo()              Sets the current record's "IdsTipo" value
+ * @method IdsProveedor        setCotProducto()          Sets the current record's "CotProducto" collection
+ * @method IdsProveedor        setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
+ * @method IdsProveedor        setTrayecto()             Sets the current record's "Trayecto" collection
+ * @method IdsProveedor        setPricRecargoxLinea()    Sets the current record's "PricRecargoxLinea" collection
+ * @method IdsProveedor        setPricRecargoxLineaBs()  Sets the current record's "PricRecargoxLineaBs" collection
+ * @method IdsProveedor        setPricPatioLinea()       Sets the current record's "PricPatioLinea" collection
+ * @method IdsProveedor        setPricRecargoParametro() Sets the current record's "PricRecargoParametro" collection
+ * @method IdsProveedor        setReporte()              Sets the current record's "Reporte" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -88,6 +131,14 @@ abstract class BaseIdsProveedor extends myDoctrineRecord
              'local' => 'ca_tipo',
              'foreign' => 'ca_tipo'));
 
+        $this->hasMany('CotProducto', array(
+             'local' => 'ca_idproveedor',
+             'foreign' => 'ca_idlinea'));
+
+        $this->hasMany('InoMaestraSea', array(
+             'local' => 'ca_idproveedor',
+             'foreign' => 'ca_idlinea'));
+
         $this->hasMany('Trayecto', array(
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idlinea'));
@@ -108,15 +159,7 @@ abstract class BaseIdsProveedor extends myDoctrineRecord
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idlinea'));
 
-        $this->hasMany('InoMaestraSea', array(
-             'local' => 'ca_idproveedor',
-             'foreign' => 'ca_idlinea'));
-
         $this->hasMany('Reporte', array(
-             'local' => 'ca_idproveedor',
-             'foreign' => 'ca_idlinea'));
-
-        $this->hasMany('CotProducto', array(
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idlinea'));
     }

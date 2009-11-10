@@ -28,6 +28,51 @@
  * @property Ciudad $Ciudad
  * @property Doctrine_Collection $IdsContacto
  * 
+ * @method integer             getCaIdsucursal()      Returns the current record's "ca_idsucursal" value
+ * @method integer             getCaId()              Returns the current record's "ca_id" value
+ * @method boolean             getCaPrincipal()       Returns the current record's "ca_principal" value
+ * @method string              getCaDireccion()       Returns the current record's "ca_direccion" value
+ * @method string              getCaOficina()         Returns the current record's "ca_oficina" value
+ * @method string              getCaTorre()           Returns the current record's "ca_torre" value
+ * @method string              getCaBloque()          Returns the current record's "ca_bloque" value
+ * @method string              getCaInterior()        Returns the current record's "ca_interior" value
+ * @method string              getCaLocalidad()       Returns the current record's "ca_localidad" value
+ * @method string              getCaComplemento()     Returns the current record's "ca_complemento" value
+ * @method string              getCaTelefonos()       Returns the current record's "ca_telefonos" value
+ * @method string              getCaFax()             Returns the current record's "ca_fax" value
+ * @method string              getCaIdciudad()        Returns the current record's "ca_idciudad" value
+ * @method string              getCaZipcode()         Returns the current record's "ca_zipcode" value
+ * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method Ids                 getIds()               Returns the current record's "Ids" value
+ * @method Ids                 getGrupo()             Returns the current record's "Grupo" value
+ * @method Ciudad              getCiudad()            Returns the current record's "Ciudad" value
+ * @method Doctrine_Collection getIdsContacto()       Returns the current record's "IdsContacto" collection
+ * @method IdsSucursal         setCaIdsucursal()      Sets the current record's "ca_idsucursal" value
+ * @method IdsSucursal         setCaId()              Sets the current record's "ca_id" value
+ * @method IdsSucursal         setCaPrincipal()       Sets the current record's "ca_principal" value
+ * @method IdsSucursal         setCaDireccion()       Sets the current record's "ca_direccion" value
+ * @method IdsSucursal         setCaOficina()         Sets the current record's "ca_oficina" value
+ * @method IdsSucursal         setCaTorre()           Sets the current record's "ca_torre" value
+ * @method IdsSucursal         setCaBloque()          Sets the current record's "ca_bloque" value
+ * @method IdsSucursal         setCaInterior()        Sets the current record's "ca_interior" value
+ * @method IdsSucursal         setCaLocalidad()       Sets the current record's "ca_localidad" value
+ * @method IdsSucursal         setCaComplemento()     Sets the current record's "ca_complemento" value
+ * @method IdsSucursal         setCaTelefonos()       Sets the current record's "ca_telefonos" value
+ * @method IdsSucursal         setCaFax()             Sets the current record's "ca_fax" value
+ * @method IdsSucursal         setCaIdciudad()        Sets the current record's "ca_idciudad" value
+ * @method IdsSucursal         setCaZipcode()         Sets the current record's "ca_zipcode" value
+ * @method IdsSucursal         setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method IdsSucursal         setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method IdsSucursal         setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method IdsSucursal         setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method IdsSucursal         setIds()               Sets the current record's "Ids" value
+ * @method IdsSucursal         setGrupo()             Sets the current record's "Grupo" value
+ * @method IdsSucursal         setCiudad()            Sets the current record's "Ciudad" value
+ * @method IdsSucursal         setIdsContacto()       Sets the current record's "IdsContacto" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

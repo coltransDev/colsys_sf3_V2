@@ -14,6 +14,23 @@
  * @property string $ca_useragent
  * @property TrackingUser $TrackingUser
  * 
+ * @method string          getCaId()         Returns the current record's "ca_id" value
+ * @method string          getCaEmail()      Returns the current record's "ca_email" value
+ * @method timestamp       getCaFchevento()  Returns the current record's "ca_fchevento" value
+ * @method string          getCaUrl()        Returns the current record's "ca_url" value
+ * @method string          getCaEvento()     Returns the current record's "ca_evento" value
+ * @method string          getCaIpaddress()  Returns the current record's "ca_ipaddress" value
+ * @method string          getCaUseragent()  Returns the current record's "ca_useragent" value
+ * @method TrackingUser    getTrackingUser() Returns the current record's "TrackingUser" value
+ * @method TrackingUserLog setCaId()         Sets the current record's "ca_id" value
+ * @method TrackingUserLog setCaEmail()      Sets the current record's "ca_email" value
+ * @method TrackingUserLog setCaFchevento()  Sets the current record's "ca_fchevento" value
+ * @method TrackingUserLog setCaUrl()        Sets the current record's "ca_url" value
+ * @method TrackingUserLog setCaEvento()     Sets the current record's "ca_evento" value
+ * @method TrackingUserLog setCaIpaddress()  Sets the current record's "ca_ipaddress" value
+ * @method TrackingUserLog setCaUseragent()  Sets the current record's "ca_useragent" value
+ * @method TrackingUserLog setTrackingUser() Sets the current record's "TrackingUser" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

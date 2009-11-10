@@ -29,6 +29,53 @@
  * @property NotTarea $NotTarea
  * @property Usuario $Usuario
  * 
+ * @method integer             getCaIdticket()        Returns the current record's "ca_idticket" value
+ * @method integer             getCaIdgroup()         Returns the current record's "ca_idgroup" value
+ * @method integer             getCaIdproject()       Returns the current record's "ca_idproject" value
+ * @method string              getCaLogin()           Returns the current record's "ca_login" value
+ * @method string              getCaTitle()           Returns the current record's "ca_title" value
+ * @method string              getCaText()            Returns the current record's "ca_text" value
+ * @method string              getCaPriority()        Returns the current record's "ca_priority" value
+ * @method timestamp           getCaOpened()          Returns the current record's "ca_opened" value
+ * @method string              getCaType()            Returns the current record's "ca_type" value
+ * @method string              getCaAssignedto()      Returns the current record's "ca_assignedto" value
+ * @method string              getCaAction()          Returns the current record's "ca_action" value
+ * @method timestamp           getCaResponsetime()    Returns the current record's "ca_responsetime" value
+ * @method integer             getCaIdtarea()         Returns the current record's "ca_idtarea" value
+ * @method integer             getCaIdseguimiento()   Returns the current record's "ca_idseguimiento" value
+ * @method integer             getCaOrder()           Returns the current record's "ca_order" value
+ * @method integer             getCaEstimatedhours()  Returns the current record's "ca_estimatedhours" value
+ * @method integer             getCaPercentage()      Returns the current record's "ca_percentage" value
+ * @method Doctrine_Collection getHdeskResponse()     Returns the current record's "HdeskResponse" collection
+ * @method HdeskGroup          getHdeskGroup()        Returns the current record's "HdeskGroup" value
+ * @method HdeskProject        getHdeskProject()      Returns the current record's "HdeskProject" value
+ * @method Doctrine_Collection getHdeskTicketUser()   Returns the current record's "HdeskTicketUser" collection
+ * @method NotTarea            getNotTarea()          Returns the current record's "NotTarea" value
+ * @method Usuario             getUsuario()           Returns the current record's "Usuario" value
+ * @method HdeskTicket         setCaIdticket()        Sets the current record's "ca_idticket" value
+ * @method HdeskTicket         setCaIdgroup()         Sets the current record's "ca_idgroup" value
+ * @method HdeskTicket         setCaIdproject()       Sets the current record's "ca_idproject" value
+ * @method HdeskTicket         setCaLogin()           Sets the current record's "ca_login" value
+ * @method HdeskTicket         setCaTitle()           Sets the current record's "ca_title" value
+ * @method HdeskTicket         setCaText()            Sets the current record's "ca_text" value
+ * @method HdeskTicket         setCaPriority()        Sets the current record's "ca_priority" value
+ * @method HdeskTicket         setCaOpened()          Sets the current record's "ca_opened" value
+ * @method HdeskTicket         setCaType()            Sets the current record's "ca_type" value
+ * @method HdeskTicket         setCaAssignedto()      Sets the current record's "ca_assignedto" value
+ * @method HdeskTicket         setCaAction()          Sets the current record's "ca_action" value
+ * @method HdeskTicket         setCaResponsetime()    Sets the current record's "ca_responsetime" value
+ * @method HdeskTicket         setCaIdtarea()         Sets the current record's "ca_idtarea" value
+ * @method HdeskTicket         setCaIdseguimiento()   Sets the current record's "ca_idseguimiento" value
+ * @method HdeskTicket         setCaOrder()           Sets the current record's "ca_order" value
+ * @method HdeskTicket         setCaEstimatedhours()  Sets the current record's "ca_estimatedhours" value
+ * @method HdeskTicket         setCaPercentage()      Sets the current record's "ca_percentage" value
+ * @method HdeskTicket         setHdeskResponse()     Sets the current record's "HdeskResponse" collection
+ * @method HdeskTicket         setHdeskGroup()        Sets the current record's "HdeskGroup" value
+ * @method HdeskTicket         setHdeskProject()      Sets the current record's "HdeskProject" value
+ * @method HdeskTicket         setHdeskTicketUser()   Sets the current record's "HdeskTicketUser" collection
+ * @method HdeskTicket         setNotTarea()          Sets the current record's "NotTarea" value
+ * @method HdeskTicket         setUsuario()           Sets the current record's "Usuario" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

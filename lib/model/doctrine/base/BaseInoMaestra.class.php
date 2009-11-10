@@ -33,6 +33,61 @@
  * @property Usuario $UsuCerrado
  * @property Usuario $UsuAnulado
  * 
+ * @method integer             getCaIdmaestra()       Returns the current record's "ca_idmaestra" value
+ * @method date                getCaFchreferencia()   Returns the current record's "ca_fchreferencia" value
+ * @method string              getCaReferencia()      Returns the current record's "ca_referencia" value
+ * @method integer             getCaIdtrayecto()      Returns the current record's "ca_idtrayecto" value
+ * @method string              getCaMaster()          Returns the current record's "ca_master" value
+ * @method date                getCaFchmaster()       Returns the current record's "ca_fchmaster" value
+ * @method decimal             getCaPiezas()          Returns the current record's "ca_piezas" value
+ * @method decimal             getCaPeso()            Returns the current record's "ca_peso" value
+ * @method decimal             getCaVolumen()         Returns the current record's "ca_volumen" value
+ * @method string              getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchliquidado()    Returns the current record's "ca_fchliquidado" value
+ * @method string              getCaUsuliquidado()    Returns the current record's "ca_usuliquidado" value
+ * @method timestamp           getCaFchcerrado()      Returns the current record's "ca_fchcerrado" value
+ * @method string              getCaUsucerrado()      Returns the current record's "ca_usucerrado" value
+ * @method timestamp           getCaFchanulado()      Returns the current record's "ca_fchanulado" value
+ * @method string              getCaUsuanulado()      Returns the current record's "ca_usuanulado" value
+ * @method Doctrine_Collection getInoCliente()        Returns the current record's "InoCliente" collection
+ * @method Trayecto            getTrayecto()          Returns the current record's "Trayecto" value
+ * @method Usuario             getUsuCreado()         Returns the current record's "UsuCreado" value
+ * @method Usuario             getUsuActualizado()    Returns the current record's "UsuActualizado" value
+ * @method Usuario             getUsuLiquidado()      Returns the current record's "UsuLiquidado" value
+ * @method Usuario             getUsuCerrado()        Returns the current record's "UsuCerrado" value
+ * @method Usuario             getUsuAnulado()        Returns the current record's "UsuAnulado" value
+ * @method InoMaestra          setCaIdmaestra()       Sets the current record's "ca_idmaestra" value
+ * @method InoMaestra          setCaFchreferencia()   Sets the current record's "ca_fchreferencia" value
+ * @method InoMaestra          setCaReferencia()      Sets the current record's "ca_referencia" value
+ * @method InoMaestra          setCaIdtrayecto()      Sets the current record's "ca_idtrayecto" value
+ * @method InoMaestra          setCaMaster()          Sets the current record's "ca_master" value
+ * @method InoMaestra          setCaFchmaster()       Sets the current record's "ca_fchmaster" value
+ * @method InoMaestra          setCaPiezas()          Sets the current record's "ca_piezas" value
+ * @method InoMaestra          setCaPeso()            Sets the current record's "ca_peso" value
+ * @method InoMaestra          setCaVolumen()         Sets the current record's "ca_volumen" value
+ * @method InoMaestra          setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method InoMaestra          setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method InoMaestra          setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method InoMaestra          setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method InoMaestra          setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method InoMaestra          setCaFchliquidado()    Sets the current record's "ca_fchliquidado" value
+ * @method InoMaestra          setCaUsuliquidado()    Sets the current record's "ca_usuliquidado" value
+ * @method InoMaestra          setCaFchcerrado()      Sets the current record's "ca_fchcerrado" value
+ * @method InoMaestra          setCaUsucerrado()      Sets the current record's "ca_usucerrado" value
+ * @method InoMaestra          setCaFchanulado()      Sets the current record's "ca_fchanulado" value
+ * @method InoMaestra          setCaUsuanulado()      Sets the current record's "ca_usuanulado" value
+ * @method InoMaestra          setInoCliente()        Sets the current record's "InoCliente" collection
+ * @method InoMaestra          setTrayecto()          Sets the current record's "Trayecto" value
+ * @method InoMaestra          setUsuCreado()         Sets the current record's "UsuCreado" value
+ * @method InoMaestra          setUsuActualizado()    Sets the current record's "UsuActualizado" value
+ * @method InoMaestra          setUsuLiquidado()      Sets the current record's "UsuLiquidado" value
+ * @method InoMaestra          setUsuCerrado()        Sets the current record's "UsuCerrado" value
+ * @method InoMaestra          setUsuAnulado()        Sets the current record's "UsuAnulado" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

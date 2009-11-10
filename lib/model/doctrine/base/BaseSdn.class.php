@@ -15,6 +15,25 @@
  * @property Doctrine_Collection $SdnAka
  * @property Doctrine_Collection $SdnAddress
  * 
+ * @method integer             getCaUid()        Returns the current record's "ca_uid" value
+ * @method string              getCaFirstName()  Returns the current record's "ca_firstName" value
+ * @method string              getCaLastName()   Returns the current record's "ca_lastName" value
+ * @method string              getCaTitle()      Returns the current record's "ca_title" value
+ * @method string              getCaSdnType()    Returns the current record's "ca_sdnType" value
+ * @method string              getCaRemarks()    Returns the current record's "ca_remarks" value
+ * @method Doctrine_Collection getSdnId()        Returns the current record's "SdnId" collection
+ * @method Doctrine_Collection getSdnAka()       Returns the current record's "SdnAka" collection
+ * @method Doctrine_Collection getSdnAddress()   Returns the current record's "SdnAddress" collection
+ * @method Sdn                 setCaUid()        Sets the current record's "ca_uid" value
+ * @method Sdn                 setCaFirstName()  Sets the current record's "ca_firstName" value
+ * @method Sdn                 setCaLastName()   Sets the current record's "ca_lastName" value
+ * @method Sdn                 setCaTitle()      Sets the current record's "ca_title" value
+ * @method Sdn                 setCaSdnType()    Sets the current record's "ca_sdnType" value
+ * @method Sdn                 setCaRemarks()    Sets the current record's "ca_remarks" value
+ * @method Sdn                 setSdnId()        Sets the current record's "SdnId" collection
+ * @method Sdn                 setSdnAka()       Sets the current record's "SdnAka" collection
+ * @method Sdn                 setSdnAddress()   Sets the current record's "SdnAddress" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

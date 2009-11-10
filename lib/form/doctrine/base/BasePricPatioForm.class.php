@@ -3,6 +3,8 @@
 /**
  * PricPatio form base class.
  *
+ * @method PricPatio getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

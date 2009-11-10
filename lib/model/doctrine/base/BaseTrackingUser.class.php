@@ -15,6 +15,25 @@
  * @property Contacto $Contacto
  * @property Doctrine_Collection $TrackingUserLog
  * 
+ * @method string              getCaEmail()            Returns the current record's "ca_email" value
+ * @method boolean             getCaBlocked()          Returns the current record's "ca_blocked" value
+ * @method string              getCaActivationCode()   Returns the current record's "ca_activation_code" value
+ * @method string              getCaPasswd()           Returns the current record's "ca_passwd" value
+ * @method date                getCaPasswordExpiry()   Returns the current record's "ca_password_expiry" value
+ * @method boolean             getCaActivated()        Returns the current record's "ca_activated" value
+ * @method integer             getCaIdcontacto()       Returns the current record's "ca_idcontacto" value
+ * @method Contacto            getContacto()           Returns the current record's "Contacto" value
+ * @method Doctrine_Collection getTrackingUserLog()    Returns the current record's "TrackingUserLog" collection
+ * @method TrackingUser        setCaEmail()            Sets the current record's "ca_email" value
+ * @method TrackingUser        setCaBlocked()          Sets the current record's "ca_blocked" value
+ * @method TrackingUser        setCaActivationCode()   Sets the current record's "ca_activation_code" value
+ * @method TrackingUser        setCaPasswd()           Sets the current record's "ca_passwd" value
+ * @method TrackingUser        setCaPasswordExpiry()   Sets the current record's "ca_password_expiry" value
+ * @method TrackingUser        setCaActivated()        Sets the current record's "ca_activated" value
+ * @method TrackingUser        setCaIdcontacto()       Sets the current record's "ca_idcontacto" value
+ * @method TrackingUser        setContacto()           Sets the current record's "Contacto" value
+ * @method TrackingUser        setTrackingUserLog()    Sets the current record's "TrackingUserLog" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

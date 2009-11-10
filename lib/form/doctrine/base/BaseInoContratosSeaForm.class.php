@@ -3,6 +3,8 @@
 /**
  * InoContratosSea form base class.
  *
+ * @method InoContratosSea getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

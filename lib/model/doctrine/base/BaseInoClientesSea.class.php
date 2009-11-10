@@ -37,6 +37,69 @@
  * @property Tercero $Tercero
  * @property Ciudad $DestinoCont
  * 
+ * @method string         getCaReferencia()         Returns the current record's "ca_referencia" value
+ * @method integer        getCaIdcliente()          Returns the current record's "ca_idcliente" value
+ * @method string         getCaHbls()               Returns the current record's "ca_hbls" value
+ * @method integer        getOid()                  Returns the current record's "oid" value
+ * @method integer        getCaIdreporte()          Returns the current record's "ca_idreporte" value
+ * @method integer        getCaIdproveedor()        Returns the current record's "ca_idproveedor" value
+ * @method string         getCaProveedor()          Returns the current record's "ca_proveedor" value
+ * @method decimal        getCaNumpiezas()          Returns the current record's "ca_numpiezas" value
+ * @method decimal        getCaPeso()               Returns the current record's "ca_peso" value
+ * @method decimal        getCaVolumen()            Returns the current record's "ca_volumen" value
+ * @method decimal        getCaNumorden()           Returns the current record's "ca_numorden" value
+ * @method string         getCaConfirmar()          Returns the current record's "ca_confirmar" value
+ * @method string         getCaLogin()              Returns the current record's "ca_login" value
+ * @method string         getCaObservaciones()      Returns the current record's "ca_observaciones" value
+ * @method date           getCaFchliberacion()      Returns the current record's "ca_fchliberacion" value
+ * @method string         getCaNotaliberacion()     Returns the current record's "ca_notaliberacion" value
+ * @method string         getCaMensaje()            Returns the current record's "ca_mensaje" value
+ * @method string         getCaContinuacion()       Returns the current record's "ca_continuacion" value
+ * @method string         getCaContinuacionDest()   Returns the current record's "ca_continuacion_dest" value
+ * @method integer        getCaIdbodega()           Returns the current record's "ca_idbodega" value
+ * @method timestamp      getCaFchcreado()          Returns the current record's "ca_fchcreado" value
+ * @method string         getCaUsucreado()          Returns the current record's "ca_usucreado" value
+ * @method timestamp      getCaFchactualizado()     Returns the current record's "ca_fchactualizado" value
+ * @method string         getCaUsuactualizado()     Returns the current record's "ca_usuactualizado" value
+ * @method timestamp      getCaFchliberado()        Returns the current record's "ca_fchliberado" value
+ * @method string         getCaUsuliberado()        Returns the current record's "ca_usuliberado" value
+ * @method Reporte        getReporte()              Returns the current record's "Reporte" value
+ * @method InoMaestraSea  getInoMaestraSea()        Returns the current record's "InoMaestraSea" value
+ * @method Cliente        getCliente()              Returns the current record's "Cliente" value
+ * @method Tercero        getTercero()              Returns the current record's "Tercero" value
+ * @method Ciudad         getDestinoCont()          Returns the current record's "DestinoCont" value
+ * @method InoClientesSea setCaReferencia()         Sets the current record's "ca_referencia" value
+ * @method InoClientesSea setCaIdcliente()          Sets the current record's "ca_idcliente" value
+ * @method InoClientesSea setCaHbls()               Sets the current record's "ca_hbls" value
+ * @method InoClientesSea setOid()                  Sets the current record's "oid" value
+ * @method InoClientesSea setCaIdreporte()          Sets the current record's "ca_idreporte" value
+ * @method InoClientesSea setCaIdproveedor()        Sets the current record's "ca_idproveedor" value
+ * @method InoClientesSea setCaProveedor()          Sets the current record's "ca_proveedor" value
+ * @method InoClientesSea setCaNumpiezas()          Sets the current record's "ca_numpiezas" value
+ * @method InoClientesSea setCaPeso()               Sets the current record's "ca_peso" value
+ * @method InoClientesSea setCaVolumen()            Sets the current record's "ca_volumen" value
+ * @method InoClientesSea setCaNumorden()           Sets the current record's "ca_numorden" value
+ * @method InoClientesSea setCaConfirmar()          Sets the current record's "ca_confirmar" value
+ * @method InoClientesSea setCaLogin()              Sets the current record's "ca_login" value
+ * @method InoClientesSea setCaObservaciones()      Sets the current record's "ca_observaciones" value
+ * @method InoClientesSea setCaFchliberacion()      Sets the current record's "ca_fchliberacion" value
+ * @method InoClientesSea setCaNotaliberacion()     Sets the current record's "ca_notaliberacion" value
+ * @method InoClientesSea setCaMensaje()            Sets the current record's "ca_mensaje" value
+ * @method InoClientesSea setCaContinuacion()       Sets the current record's "ca_continuacion" value
+ * @method InoClientesSea setCaContinuacionDest()   Sets the current record's "ca_continuacion_dest" value
+ * @method InoClientesSea setCaIdbodega()           Sets the current record's "ca_idbodega" value
+ * @method InoClientesSea setCaFchcreado()          Sets the current record's "ca_fchcreado" value
+ * @method InoClientesSea setCaUsucreado()          Sets the current record's "ca_usucreado" value
+ * @method InoClientesSea setCaFchactualizado()     Sets the current record's "ca_fchactualizado" value
+ * @method InoClientesSea setCaUsuactualizado()     Sets the current record's "ca_usuactualizado" value
+ * @method InoClientesSea setCaFchliberado()        Sets the current record's "ca_fchliberado" value
+ * @method InoClientesSea setCaUsuliberado()        Sets the current record's "ca_usuliberado" value
+ * @method InoClientesSea setReporte()              Sets the current record's "Reporte" value
+ * @method InoClientesSea setInoMaestraSea()        Sets the current record's "InoMaestraSea" value
+ * @method InoClientesSea setCliente()              Sets the current record's "Cliente" value
+ * @method InoClientesSea setTercero()              Sets the current record's "Tercero" value
+ * @method InoClientesSea setDestinoCont()          Sets the current record's "DestinoCont" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

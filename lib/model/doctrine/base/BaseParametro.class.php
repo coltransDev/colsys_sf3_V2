@@ -10,6 +10,15 @@
  * @property string $ca_valor
  * @property string $ca_valor2
  * 
+ * @method string    getCaCasouso()         Returns the current record's "ca_casouso" value
+ * @method integer   getCaIdentificacion()  Returns the current record's "ca_identificacion" value
+ * @method string    getCaValor()           Returns the current record's "ca_valor" value
+ * @method string    getCaValor2()          Returns the current record's "ca_valor2" value
+ * @method Parametro setCaCasouso()         Sets the current record's "ca_casouso" value
+ * @method Parametro setCaIdentificacion()  Sets the current record's "ca_identificacion" value
+ * @method Parametro setCaValor()           Sets the current record's "ca_valor" value
+ * @method Parametro setCaValor2()          Sets the current record's "ca_valor2" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

@@ -13,6 +13,21 @@
  * @property Doctrine_Collection $Trayecto
  * @property Doctrine_Collection $Reporte
  * 
+ * @method integer             getCaIdagente()  Returns the current record's "ca_idagente" value
+ * @method string              getCaTipo()      Returns the current record's "ca_tipo" value
+ * @method boolean             getCaActivo()    Returns the current record's "ca_activo" value
+ * @method Ids                 getIds()         Returns the current record's "Ids" value
+ * @method IdsTipo             getIdsTipo()     Returns the current record's "IdsTipo" value
+ * @method Doctrine_Collection getTrayecto()    Returns the current record's "Trayecto" collection
+ * @method Doctrine_Collection getReporte()     Returns the current record's "Reporte" collection
+ * @method IdsAgente           setCaIdagente()  Sets the current record's "ca_idagente" value
+ * @method IdsAgente           setCaTipo()      Sets the current record's "ca_tipo" value
+ * @method IdsAgente           setCaActivo()    Sets the current record's "ca_activo" value
+ * @method IdsAgente           setIds()         Sets the current record's "Ids" value
+ * @method IdsAgente           setIdsTipo()     Sets the current record's "IdsTipo" value
+ * @method IdsAgente           setTrayecto()    Sets the current record's "Trayecto" collection
+ * @method IdsAgente           setReporte()     Sets the current record's "Reporte" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

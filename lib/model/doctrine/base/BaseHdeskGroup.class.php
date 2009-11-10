@@ -14,6 +14,23 @@
  * @property HdeskProject $HdeskProject
  * @property Doctrine_Collection $HdeskUserGroup
  * 
+ * @method integer             getCaIdgroup()          Returns the current record's "ca_idgroup" value
+ * @method integer             getCaIddepartament()    Returns the current record's "ca_iddepartament" value
+ * @method string              getCaName()             Returns the current record's "ca_name" value
+ * @method integer             getCaMaxresponsetime()  Returns the current record's "ca_maxresponsetime" value
+ * @method Departamento        getDepartamento()       Returns the current record's "Departamento" value
+ * @method Doctrine_Collection getHdeskTicket()        Returns the current record's "HdeskTicket" collection
+ * @method HdeskProject        getHdeskProject()       Returns the current record's "HdeskProject" value
+ * @method Doctrine_Collection getHdeskUserGroup()     Returns the current record's "HdeskUserGroup" collection
+ * @method HdeskGroup          setCaIdgroup()          Sets the current record's "ca_idgroup" value
+ * @method HdeskGroup          setCaIddepartament()    Sets the current record's "ca_iddepartament" value
+ * @method HdeskGroup          setCaName()             Sets the current record's "ca_name" value
+ * @method HdeskGroup          setCaMaxresponsetime()  Sets the current record's "ca_maxresponsetime" value
+ * @method HdeskGroup          setDepartamento()       Sets the current record's "Departamento" value
+ * @method HdeskGroup          setHdeskTicket()        Sets the current record's "HdeskTicket" collection
+ * @method HdeskGroup          setHdeskProject()       Sets the current record's "HdeskProject" value
+ * @method HdeskGroup          setHdeskUserGroup()     Sets the current record's "HdeskUserGroup" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

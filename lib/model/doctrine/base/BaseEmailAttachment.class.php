@@ -13,6 +13,21 @@
  * @property blob $ca_content
  * @property Email $Email
  * 
+ * @method integer         getCaIdattachment()  Returns the current record's "ca_idattachment" value
+ * @method integer         getCaIdemail()       Returns the current record's "ca_idemail" value
+ * @method string          getCaExtension()     Returns the current record's "ca_extension" value
+ * @method string          getCaHeaderFile()    Returns the current record's "ca_header_file" value
+ * @method string          getCaFilesize()      Returns the current record's "ca_filesize" value
+ * @method blob            getCaContent()       Returns the current record's "ca_content" value
+ * @method Email           getEmail()           Returns the current record's "Email" value
+ * @method EmailAttachment setCaIdattachment()  Sets the current record's "ca_idattachment" value
+ * @method EmailAttachment setCaIdemail()       Sets the current record's "ca_idemail" value
+ * @method EmailAttachment setCaExtension()     Sets the current record's "ca_extension" value
+ * @method EmailAttachment setCaHeaderFile()    Sets the current record's "ca_header_file" value
+ * @method EmailAttachment setCaFilesize()      Sets the current record's "ca_filesize" value
+ * @method EmailAttachment setCaContent()       Sets the current record's "ca_content" value
+ * @method EmailAttachment setEmail()           Sets the current record's "Email" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

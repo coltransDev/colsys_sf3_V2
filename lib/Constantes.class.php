@@ -22,9 +22,12 @@ class Constantes{
 	const TERRESTRE = "Terrestre";
     const ADUANA = "Aduana";
 
+
+    const FLETE = "Flete";
 	const RECARGO_LOCAL = "Recargo Local";
 	const RECARGO_EN_ORIGEN = "Recargo en Origen";
 	const RECARGO_OTM_DTA = "Recargo OTM-DTA";
+    const COSTO = "Costo";
 	
 }
 ?>

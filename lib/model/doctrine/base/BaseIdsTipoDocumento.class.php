@@ -16,6 +16,27 @@
  * @property timestamp $ca_fchactualizado
  * @property Doctrine_Collection $IdsDocumento
  * 
+ * @method integer             getCaIdtipo()          Returns the current record's "ca_idtipo" value
+ * @method string              getCaTipo()            Returns the current record's "ca_tipo" value
+ * @method integer             getCaEquivalentea()    Returns the current record's "ca_equivalentea" value
+ * @method string              getCaVigencia()        Returns the current record's "ca_vigencia" value
+ * @method string              getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method Doctrine_Collection getIdsDocumento()      Returns the current record's "IdsDocumento" collection
+ * @method IdsTipoDocumento    setCaIdtipo()          Sets the current record's "ca_idtipo" value
+ * @method IdsTipoDocumento    setCaTipo()            Sets the current record's "ca_tipo" value
+ * @method IdsTipoDocumento    setCaEquivalentea()    Sets the current record's "ca_equivalentea" value
+ * @method IdsTipoDocumento    setCaVigencia()        Sets the current record's "ca_vigencia" value
+ * @method IdsTipoDocumento    setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method IdsTipoDocumento    setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method IdsTipoDocumento    setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method IdsTipoDocumento    setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method IdsTipoDocumento    setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method IdsTipoDocumento    setIdsDocumento()      Sets the current record's "IdsDocumento" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

@@ -47,7 +47,7 @@ class sfWidgetFormCity extends sfWidgetFormSelect
 
         $choices = array();
         foreach( $traficos as $trafico ){
-           $choices[$trafico->getCaIdtrafico()] = $trafico->getCaNombre();
+           $choices[$trafico->getCaIdtrafico()] = utf8_encode($trafico->getCaNombre());
         }
 
         $this->addOption('choicesCountry', $choices);

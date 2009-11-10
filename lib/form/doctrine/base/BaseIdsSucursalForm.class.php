@@ -3,6 +3,8 @@
 /**
  * IdsSucursal form base class.
  *
+ * @method IdsSucursal getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

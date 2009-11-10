@@ -14,6 +14,23 @@
  * @property string $ca_useragent
  * @property Usuario $Usuario
  * 
+ * @method integer    getCaId()         Returns the current record's "ca_id" value
+ * @method string     getCaLogin()      Returns the current record's "ca_login" value
+ * @method timestamp  getCaFchevento()  Returns the current record's "ca_fchevento" value
+ * @method string     getCaUrl()        Returns the current record's "ca_url" value
+ * @method string     getCaEvent()      Returns the current record's "ca_event" value
+ * @method string     getCaIpaddress()  Returns the current record's "ca_ipaddress" value
+ * @method string     getCaUseragent()  Returns the current record's "ca_useragent" value
+ * @method Usuario    getUsuario()      Returns the current record's "Usuario" value
+ * @method UsuarioLog setCaId()         Sets the current record's "ca_id" value
+ * @method UsuarioLog setCaLogin()      Sets the current record's "ca_login" value
+ * @method UsuarioLog setCaFchevento()  Sets the current record's "ca_fchevento" value
+ * @method UsuarioLog setCaUrl()        Sets the current record's "ca_url" value
+ * @method UsuarioLog setCaEvent()      Sets the current record's "ca_event" value
+ * @method UsuarioLog setCaIpaddress()  Sets the current record's "ca_ipaddress" value
+ * @method UsuarioLog setCaUseragent()  Sets the current record's "ca_useragent" value
+ * @method UsuarioLog setUsuario()      Sets the current record's "Usuario" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

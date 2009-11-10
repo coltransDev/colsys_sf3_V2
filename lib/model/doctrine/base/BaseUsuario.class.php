@@ -23,16 +23,79 @@
  * @property Sucursal $Sucursal
  * @property Doctrine_Collection $Cotizacion
  * @property Doctrine_Collection $UsuarioLog
+ * @property Doctrine_Collection $CotSeguimiento
  * @property Doctrine_Collection $HdeskTicket
  * @property Doctrine_Collection $HdeskResponse
  * @property Doctrine_Collection $HdeskUserGroup
  * @property Doctrine_Collection $HdeskTicketUser
  * @property Doctrine_Collection $InoMaestra
  * @property Doctrine_Collection $InoCliente
- * @property Doctrine_Collection $Cliente
+ * @property Doctrine_Collection $InoComprobante
+ * @property Doctrine_Collection $InoTransaccion
  * @property Doctrine_Collection $NotTareaAsignacion
+ * @property Doctrine_Collection $Cliente
  * @property Doctrine_Collection $Reporte
- * @property Doctrine_Collection $CotSeguimiento
+ * 
+ * @method string              getCaLogin()            Returns the current record's "ca_login" value
+ * @method string              getCaNombre()           Returns the current record's "ca_nombre" value
+ * @method string              getCaCargo()            Returns the current record's "ca_cargo" value
+ * @method string              getCaDepartamento()     Returns the current record's "ca_departamento" value
+ * @method string              getCaEmail()            Returns the current record's "ca_email" value
+ * @method string              getCaExtension()        Returns the current record's "ca_extension" value
+ * @method string              getCaIdsucursal()       Returns the current record's "ca_idsucursal" value
+ * @method string              getCaAuthmethod()       Returns the current record's "ca_authmethod" value
+ * @method string              getCaPasswd()           Returns the current record's "ca_passwd" value
+ * @method string              getCaSalt()             Returns the current record's "ca_salt" value
+ * @method boolean             getCaActivo()           Returns the current record's "ca_activo" value
+ * @method boolean             getCaForcechange()      Returns the current record's "ca_forcechange" value
+ * @method string              getCaSucursal()         Returns the current record's "ca_sucursal" value
+ * @method Doctrine_Collection getAccesoUsuario()      Returns the current record's "AccesoUsuario" collection
+ * @method Doctrine_Collection getUsuarioPerfil()      Returns the current record's "UsuarioPerfil" collection
+ * @method Sucursal            getSucursal()           Returns the current record's "Sucursal" value
+ * @method Doctrine_Collection getCotizacion()         Returns the current record's "Cotizacion" collection
+ * @method Doctrine_Collection getUsuarioLog()         Returns the current record's "UsuarioLog" collection
+ * @method Doctrine_Collection getCotSeguimiento()     Returns the current record's "CotSeguimiento" collection
+ * @method Doctrine_Collection getHdeskTicket()        Returns the current record's "HdeskTicket" collection
+ * @method Doctrine_Collection getHdeskResponse()      Returns the current record's "HdeskResponse" collection
+ * @method Doctrine_Collection getHdeskUserGroup()     Returns the current record's "HdeskUserGroup" collection
+ * @method Doctrine_Collection getHdeskTicketUser()    Returns the current record's "HdeskTicketUser" collection
+ * @method Doctrine_Collection getInoMaestra()         Returns the current record's "InoMaestra" collection
+ * @method Doctrine_Collection getInoCliente()         Returns the current record's "InoCliente" collection
+ * @method Doctrine_Collection getInoComprobante()     Returns the current record's "InoComprobante" collection
+ * @method Doctrine_Collection getInoTransaccion()     Returns the current record's "InoTransaccion" collection
+ * @method Doctrine_Collection getNotTareaAsignacion() Returns the current record's "NotTareaAsignacion" collection
+ * @method Doctrine_Collection getCliente()            Returns the current record's "Cliente" collection
+ * @method Doctrine_Collection getReporte()            Returns the current record's "Reporte" collection
+ * @method Usuario             setCaLogin()            Sets the current record's "ca_login" value
+ * @method Usuario             setCaNombre()           Sets the current record's "ca_nombre" value
+ * @method Usuario             setCaCargo()            Sets the current record's "ca_cargo" value
+ * @method Usuario             setCaDepartamento()     Sets the current record's "ca_departamento" value
+ * @method Usuario             setCaEmail()            Sets the current record's "ca_email" value
+ * @method Usuario             setCaExtension()        Sets the current record's "ca_extension" value
+ * @method Usuario             setCaIdsucursal()       Sets the current record's "ca_idsucursal" value
+ * @method Usuario             setCaAuthmethod()       Sets the current record's "ca_authmethod" value
+ * @method Usuario             setCaPasswd()           Sets the current record's "ca_passwd" value
+ * @method Usuario             setCaSalt()             Sets the current record's "ca_salt" value
+ * @method Usuario             setCaActivo()           Sets the current record's "ca_activo" value
+ * @method Usuario             setCaForcechange()      Sets the current record's "ca_forcechange" value
+ * @method Usuario             setCaSucursal()         Sets the current record's "ca_sucursal" value
+ * @method Usuario             setAccesoUsuario()      Sets the current record's "AccesoUsuario" collection
+ * @method Usuario             setUsuarioPerfil()      Sets the current record's "UsuarioPerfil" collection
+ * @method Usuario             setSucursal()           Sets the current record's "Sucursal" value
+ * @method Usuario             setCotizacion()         Sets the current record's "Cotizacion" collection
+ * @method Usuario             setUsuarioLog()         Sets the current record's "UsuarioLog" collection
+ * @method Usuario             setCotSeguimiento()     Sets the current record's "CotSeguimiento" collection
+ * @method Usuario             setHdeskTicket()        Sets the current record's "HdeskTicket" collection
+ * @method Usuario             setHdeskResponse()      Sets the current record's "HdeskResponse" collection
+ * @method Usuario             setHdeskUserGroup()     Sets the current record's "HdeskUserGroup" collection
+ * @method Usuario             setHdeskTicketUser()    Sets the current record's "HdeskTicketUser" collection
+ * @method Usuario             setInoMaestra()         Sets the current record's "InoMaestra" collection
+ * @method Usuario             setInoCliente()         Sets the current record's "InoCliente" collection
+ * @method Usuario             setInoComprobante()     Sets the current record's "InoComprobante" collection
+ * @method Usuario             setInoTransaccion()     Sets the current record's "InoTransaccion" collection
+ * @method Usuario             setNotTareaAsignacion() Sets the current record's "NotTareaAsignacion" collection
+ * @method Usuario             setCliente()            Sets the current record's "Cliente" collection
+ * @method Usuario             setReporte()            Sets the current record's "Reporte" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -123,6 +186,10 @@ abstract class BaseUsuario extends myDoctrineRecord
              'local' => 'ca_login',
              'foreign' => 'ca_login'));
 
+        $this->hasMany('CotSeguimiento', array(
+             'local' => 'ca_login',
+             'foreign' => 'ca_login'));
+
         $this->hasMany('HdeskTicket', array(
              'local' => 'ca_login',
              'foreign' => 'ca_login'));
@@ -147,19 +214,23 @@ abstract class BaseUsuario extends myDoctrineRecord
              'local' => 'ca_login',
              'foreign' => 'ca_vendedor'));
 
-        $this->hasMany('Cliente', array(
+        $this->hasMany('InoComprobante', array(
              'local' => 'ca_login',
-             'foreign' => 'ca_vendedor'));
+             'foreign' => 'ca_usucreado'));
+
+        $this->hasMany('InoTransaccion', array(
+             'local' => 'ca_login',
+             'foreign' => 'ca_usucreado'));
 
         $this->hasMany('NotTareaAsignacion', array(
              'local' => 'ca_login',
              'foreign' => 'ca_login'));
 
-        $this->hasMany('Reporte', array(
+        $this->hasMany('Cliente', array(
              'local' => 'ca_login',
-             'foreign' => 'ca_login'));
+             'foreign' => 'ca_vendedor'));
 
-        $this->hasMany('CotSeguimiento', array(
+        $this->hasMany('Reporte', array(
              'local' => 'ca_login',
              'foreign' => 'ca_login'));
     }

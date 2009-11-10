@@ -21,6 +21,37 @@
  * @property Doctrine_Collection $PricRecargoxLinea
  * @property Doctrine_Collection $PricRecargoxLineaBs
  * 
+ * @method string              getCaIdtrafico()          Returns the current record's "ca_idtrafico" value
+ * @method string              getCaNombre()             Returns the current record's "ca_nombre" value
+ * @method string              getCaBandera()            Returns the current record's "ca_bandera" value
+ * @method string              getCaIdmoneda()           Returns the current record's "ca_idmoneda" value
+ * @method integer             getCaIdgrupo()            Returns the current record's "ca_idgrupo" value
+ * @method string              getCaLink()               Returns the current record's "ca_link" value
+ * @method string              getCaConceptos()          Returns the current record's "ca_conceptos" value
+ * @method string              getCaRecargos()           Returns the current record's "ca_recargos" value
+ * @method TraficoGrupo        getTraficoGrupo()         Returns the current record's "TraficoGrupo" value
+ * @method Moneda              getMoneda()               Returns the current record's "Moneda" value
+ * @method Doctrine_Collection getCiudad()               Returns the current record's "Ciudad" collection
+ * @method Doctrine_Collection getPricRecargoxCiudad()   Returns the current record's "PricRecargoxCiudad" collection
+ * @method Doctrine_Collection getPricRecargoxCiudadBs() Returns the current record's "PricRecargoxCiudadBs" collection
+ * @method Doctrine_Collection getPricRecargoxLinea()    Returns the current record's "PricRecargoxLinea" collection
+ * @method Doctrine_Collection getPricRecargoxLineaBs()  Returns the current record's "PricRecargoxLineaBs" collection
+ * @method Trafico             setCaIdtrafico()          Sets the current record's "ca_idtrafico" value
+ * @method Trafico             setCaNombre()             Sets the current record's "ca_nombre" value
+ * @method Trafico             setCaBandera()            Sets the current record's "ca_bandera" value
+ * @method Trafico             setCaIdmoneda()           Sets the current record's "ca_idmoneda" value
+ * @method Trafico             setCaIdgrupo()            Sets the current record's "ca_idgrupo" value
+ * @method Trafico             setCaLink()               Sets the current record's "ca_link" value
+ * @method Trafico             setCaConceptos()          Sets the current record's "ca_conceptos" value
+ * @method Trafico             setCaRecargos()           Sets the current record's "ca_recargos" value
+ * @method Trafico             setTraficoGrupo()         Sets the current record's "TraficoGrupo" value
+ * @method Trafico             setMoneda()               Sets the current record's "Moneda" value
+ * @method Trafico             setCiudad()               Sets the current record's "Ciudad" collection
+ * @method Trafico             setPricRecargoxCiudad()   Sets the current record's "PricRecargoxCiudad" collection
+ * @method Trafico             setPricRecargoxCiudadBs() Sets the current record's "PricRecargoxCiudadBs" collection
+ * @method Trafico             setPricRecargoxLinea()    Sets the current record's "PricRecargoxLinea" collection
+ * @method Trafico             setPricRecargoxLineaBs()  Sets the current record's "PricRecargoxLineaBs" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

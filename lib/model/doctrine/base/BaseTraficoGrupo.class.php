@@ -9,6 +9,13 @@
  * @property string $ca_descripcion
  * @property Doctrine_Collection $Trafico
  * 
+ * @method integer             getCaIdgrupo()      Returns the current record's "ca_idgrupo" value
+ * @method string              getCaDescripcion()  Returns the current record's "ca_descripcion" value
+ * @method Doctrine_Collection getTrafico()        Returns the current record's "Trafico" collection
+ * @method TraficoGrupo        setCaIdgrupo()      Sets the current record's "ca_idgrupo" value
+ * @method TraficoGrupo        setCaDescripcion()  Sets the current record's "ca_descripcion" value
+ * @method TraficoGrupo        setTrafico()        Sets the current record's "Trafico" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

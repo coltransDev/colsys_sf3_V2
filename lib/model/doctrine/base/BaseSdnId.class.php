@@ -14,6 +14,23 @@
  * @property string $ca_expirationDate
  * @property Sdn $Sdn
  * 
+ * @method integer getCaUid()             Returns the current record's "ca_uid" value
+ * @method integer getCaUidId()           Returns the current record's "ca_uid_id" value
+ * @method string  getCaIdType()          Returns the current record's "ca_idType" value
+ * @method string  getCaIdNumber()        Returns the current record's "ca_idNumber" value
+ * @method string  getCaIdCountry()       Returns the current record's "ca_idCountry" value
+ * @method string  getCaIssueDate()       Returns the current record's "ca_issueDate" value
+ * @method string  getCaExpirationDate()  Returns the current record's "ca_expirationDate" value
+ * @method Sdn     getSdn()               Returns the current record's "Sdn" value
+ * @method SdnId   setCaUid()             Sets the current record's "ca_uid" value
+ * @method SdnId   setCaUidId()           Sets the current record's "ca_uid_id" value
+ * @method SdnId   setCaIdType()          Sets the current record's "ca_idType" value
+ * @method SdnId   setCaIdNumber()        Sets the current record's "ca_idNumber" value
+ * @method SdnId   setCaIdCountry()       Sets the current record's "ca_idCountry" value
+ * @method SdnId   setCaIssueDate()       Sets the current record's "ca_issueDate" value
+ * @method SdnId   setCaExpirationDate()  Sets the current record's "ca_expirationDate" value
+ * @method SdnId   setSdn()               Sets the current record's "Sdn" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

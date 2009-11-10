@@ -11,6 +11,17 @@
  * @property Rutina $Rutina
  * @property Usuario $Usuario
  * 
+ * @method string        getCaRutina()  Returns the current record's "ca_rutina" value
+ * @method string        getCaLogin()   Returns the current record's "ca_login" value
+ * @method string        getCaAcceso()  Returns the current record's "ca_acceso" value
+ * @method Rutina        getRutina()    Returns the current record's "Rutina" value
+ * @method Usuario       getUsuario()   Returns the current record's "Usuario" value
+ * @method AccesoUsuario setCaRutina()  Sets the current record's "ca_rutina" value
+ * @method AccesoUsuario setCaLogin()   Sets the current record's "ca_login" value
+ * @method AccesoUsuario setCaAcceso()  Sets the current record's "ca_acceso" value
+ * @method AccesoUsuario setRutina()    Sets the current record's "Rutina" value
+ * @method AccesoUsuario setUsuario()   Sets the current record's "Usuario" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

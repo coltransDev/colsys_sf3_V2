@@ -10,6 +10,15 @@
  * @property Reporte $Reporte
  * @property NotTarea $NotTarea
  * 
+ * @method integer       getCaIdreporte()  Returns the current record's "ca_idreporte" value
+ * @method integer       getCaIdtarea()    Returns the current record's "ca_idtarea" value
+ * @method Reporte       getReporte()      Returns the current record's "Reporte" value
+ * @method NotTarea      getNotTarea()     Returns the current record's "NotTarea" value
+ * @method RepAsignacion setCaIdreporte()  Sets the current record's "ca_idreporte" value
+ * @method RepAsignacion setCaIdtarea()    Sets the current record's "ca_idtarea" value
+ * @method RepAsignacion setReporte()      Sets the current record's "Reporte" value
+ * @method RepAsignacion setNotTarea()     Sets the current record's "NotTarea" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

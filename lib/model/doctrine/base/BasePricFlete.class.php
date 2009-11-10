@@ -20,6 +20,35 @@
  * @property timestamp $ca_fcheliminado
  * @property Concepto $Concepto
  * 
+ * @method integer   getCaIdtrayecto()      Returns the current record's "ca_idtrayecto" value
+ * @method integer   getCaIdconcepto()      Returns the current record's "ca_idconcepto" value
+ * @method decimal   getCaVlrneto()         Returns the current record's "ca_vlrneto" value
+ * @method decimal   getCaVlrsugerido()     Returns the current record's "ca_vlrsugerido" value
+ * @method date      getCaFchinicio()       Returns the current record's "ca_fchinicio" value
+ * @method date      getCaFchvencimiento()  Returns the current record's "ca_fchvencimiento" value
+ * @method string    getCaIdmoneda()        Returns the current record's "ca_idmoneda" value
+ * @method string    getCaEstado()          Returns the current record's "ca_estado" value
+ * @method string    getCaAplicacion()      Returns the current record's "ca_aplicacion" value
+ * @method integer   getCaConsecutivo()     Returns the current record's "ca_consecutivo" value
+ * @method timestamp getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string    getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp getCaFcheliminado()    Returns the current record's "ca_fcheliminado" value
+ * @method Concepto  getConcepto()          Returns the current record's "Concepto" value
+ * @method PricFlete setCaIdtrayecto()      Sets the current record's "ca_idtrayecto" value
+ * @method PricFlete setCaIdconcepto()      Sets the current record's "ca_idconcepto" value
+ * @method PricFlete setCaVlrneto()         Sets the current record's "ca_vlrneto" value
+ * @method PricFlete setCaVlrsugerido()     Sets the current record's "ca_vlrsugerido" value
+ * @method PricFlete setCaFchinicio()       Sets the current record's "ca_fchinicio" value
+ * @method PricFlete setCaFchvencimiento()  Sets the current record's "ca_fchvencimiento" value
+ * @method PricFlete setCaIdmoneda()        Sets the current record's "ca_idmoneda" value
+ * @method PricFlete setCaEstado()          Sets the current record's "ca_estado" value
+ * @method PricFlete setCaAplicacion()      Sets the current record's "ca_aplicacion" value
+ * @method PricFlete setCaConsecutivo()     Sets the current record's "ca_consecutivo" value
+ * @method PricFlete setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method PricFlete setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method PricFlete setCaFcheliminado()    Sets the current record's "ca_fcheliminado" value
+ * @method PricFlete setConcepto()          Sets the current record's "Concepto" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

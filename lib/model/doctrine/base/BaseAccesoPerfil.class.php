@@ -12,6 +12,19 @@
  * @property Perfil $Perfil
  * @property Doctrine_Collection $UsuarioPerfil
  * 
+ * @method string              getCaRutina()      Returns the current record's "ca_rutina" value
+ * @method string              getCaPerfil()      Returns the current record's "ca_perfil" value
+ * @method string              getCaAcceso()      Returns the current record's "ca_acceso" value
+ * @method Rutina              getRutina()        Returns the current record's "Rutina" value
+ * @method Perfil              getPerfil()        Returns the current record's "Perfil" value
+ * @method Doctrine_Collection getUsuarioPerfil() Returns the current record's "UsuarioPerfil" collection
+ * @method AccesoPerfil        setCaRutina()      Sets the current record's "ca_rutina" value
+ * @method AccesoPerfil        setCaPerfil()      Sets the current record's "ca_perfil" value
+ * @method AccesoPerfil        setCaAcceso()      Sets the current record's "ca_acceso" value
+ * @method AccesoPerfil        setRutina()        Sets the current record's "Rutina" value
+ * @method AccesoPerfil        setPerfil()        Sets the current record's "Perfil" value
+ * @method AccesoPerfil        setUsuarioPerfil() Sets the current record's "UsuarioPerfil" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

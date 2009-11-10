@@ -11,6 +11,17 @@
  * @property IdsAgente $IdsAgente
  * @property IdsProveedor $IdsProveedor
  * 
+ * @method string       getCaTipo()        Returns the current record's "ca_tipo" value
+ * @method string       getCaNombre()      Returns the current record's "ca_nombre" value
+ * @method string       getCaAplicacion()  Returns the current record's "ca_aplicacion" value
+ * @method IdsAgente    getIdsAgente()     Returns the current record's "IdsAgente" value
+ * @method IdsProveedor getIdsProveedor()  Returns the current record's "IdsProveedor" value
+ * @method IdsTipo      setCaTipo()        Sets the current record's "ca_tipo" value
+ * @method IdsTipo      setCaNombre()      Sets the current record's "ca_nombre" value
+ * @method IdsTipo      setCaAplicacion()  Sets the current record's "ca_aplicacion" value
+ * @method IdsTipo      setIdsAgente()     Sets the current record's "IdsAgente" value
+ * @method IdsTipo      setIdsProveedor()  Sets the current record's "IdsProveedor" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

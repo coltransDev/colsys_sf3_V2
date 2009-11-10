@@ -21,6 +21,37 @@
  * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $InoClientesSea
  * 
+ * @method string              getCaIdtercero()       Returns the current record's "ca_idtercero" value
+ * @method string              getCaNombre()          Returns the current record's "ca_nombre" value
+ * @method string              getCaContacto()        Returns the current record's "ca_contacto" value
+ * @method string              getCaDireccion()       Returns the current record's "ca_direccion" value
+ * @method string              getCaTelefonos()       Returns the current record's "ca_telefonos" value
+ * @method string              getCaFax()             Returns the current record's "ca_fax" value
+ * @method string              getCaIdciudad()        Returns the current record's "ca_idciudad" value
+ * @method string              getCaEmail()           Returns the current record's "ca_email" value
+ * @method string              getCaVendedor()        Returns the current record's "ca_vendedor" value
+ * @method string              getCaTipo()            Returns the current record's "ca_tipo" value
+ * @method string              getCaIdentificacion()  Returns the current record's "ca_identificacion" value
+ * @method Ciudad              getCiudad()            Returns the current record's "Ciudad" value
+ * @method Doctrine_Collection getInoCliente()        Returns the current record's "InoCliente" collection
+ * @method Doctrine_Collection getReporte()           Returns the current record's "Reporte" collection
+ * @method Doctrine_Collection getInoClientesSea()    Returns the current record's "InoClientesSea" collection
+ * @method Tercero             setCaIdtercero()       Sets the current record's "ca_idtercero" value
+ * @method Tercero             setCaNombre()          Sets the current record's "ca_nombre" value
+ * @method Tercero             setCaContacto()        Sets the current record's "ca_contacto" value
+ * @method Tercero             setCaDireccion()       Sets the current record's "ca_direccion" value
+ * @method Tercero             setCaTelefonos()       Sets the current record's "ca_telefonos" value
+ * @method Tercero             setCaFax()             Sets the current record's "ca_fax" value
+ * @method Tercero             setCaIdciudad()        Sets the current record's "ca_idciudad" value
+ * @method Tercero             setCaEmail()           Sets the current record's "ca_email" value
+ * @method Tercero             setCaVendedor()        Sets the current record's "ca_vendedor" value
+ * @method Tercero             setCaTipo()            Sets the current record's "ca_tipo" value
+ * @method Tercero             setCaIdentificacion()  Sets the current record's "ca_identificacion" value
+ * @method Tercero             setCiudad()            Sets the current record's "Ciudad" value
+ * @method Tercero             setInoCliente()        Sets the current record's "InoCliente" collection
+ * @method Tercero             setReporte()           Sets the current record's "Reporte" collection
+ * @method Tercero             setInoClientesSea()    Sets the current record's "InoClientesSea" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
@@ -72,7 +103,7 @@ abstract class BaseTercero extends myDoctrineRecord
     {
         parent::setUp();
         $this->hasOne('Ciudad', array(
-             'local' => 'ca_origen',
+             'local' => 'ca_idciudad',
              'foreign' => 'ca_idciudad'));
 
         $this->hasMany('InoCliente', array(

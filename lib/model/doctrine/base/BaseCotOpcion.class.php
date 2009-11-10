@@ -23,6 +23,41 @@
  * @property CotProducto $CotProducto
  * @property Concepto $Concepto
  * 
+ * @method integer     getCaIdopcion()        Returns the current record's "ca_idopcion" value
+ * @method integer     getCaIdproducto()      Returns the current record's "ca_idproducto" value
+ * @method integer     getCaIdcotizacion()    Returns the current record's "ca_idcotizacion" value
+ * @method integer     getCaIdconcepto()      Returns the current record's "ca_idconcepto" value
+ * @method decimal     getCaValorTar()        Returns the current record's "ca_valor_tar" value
+ * @method string      getCaAplicaTar()       Returns the current record's "ca_aplica_tar" value
+ * @method decimal     getCaValorMin()        Returns the current record's "ca_valor_min" value
+ * @method string      getCaAplicaMin()       Returns the current record's "ca_aplica_min" value
+ * @method string      getCaIdmoneda()        Returns the current record's "ca_idmoneda" value
+ * @method string      getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method integer     getCaConsecutivo()     Returns the current record's "ca_consecutivo" value
+ * @method string      getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp   getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string      getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp   getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method CotProducto getCotProducto()       Returns the current record's "CotProducto" value
+ * @method Concepto    getConcepto()          Returns the current record's "Concepto" value
+ * @method CotOpcion   setCaIdopcion()        Sets the current record's "ca_idopcion" value
+ * @method CotOpcion   setCaIdproducto()      Sets the current record's "ca_idproducto" value
+ * @method CotOpcion   setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
+ * @method CotOpcion   setCaIdconcepto()      Sets the current record's "ca_idconcepto" value
+ * @method CotOpcion   setCaValorTar()        Sets the current record's "ca_valor_tar" value
+ * @method CotOpcion   setCaAplicaTar()       Sets the current record's "ca_aplica_tar" value
+ * @method CotOpcion   setCaValorMin()        Sets the current record's "ca_valor_min" value
+ * @method CotOpcion   setCaAplicaMin()       Sets the current record's "ca_aplica_min" value
+ * @method CotOpcion   setCaIdmoneda()        Sets the current record's "ca_idmoneda" value
+ * @method CotOpcion   setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method CotOpcion   setCaConsecutivo()     Sets the current record's "ca_consecutivo" value
+ * @method CotOpcion   setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method CotOpcion   setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method CotOpcion   setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method CotOpcion   setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method CotOpcion   setCotProducto()       Sets the current record's "CotProducto" value
+ * @method CotOpcion   setConcepto()          Sets the current record's "Concepto" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

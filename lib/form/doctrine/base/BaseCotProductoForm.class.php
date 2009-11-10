@@ -3,6 +3,8 @@
 /**
  * CotProducto form base class.
  *
+ * @method CotProducto getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here
@@ -31,6 +33,7 @@ class BaseCotProductoForm extends BaseFormDoctrine
       'ca_postularlinea'  => new sfWidgetFormInputCheckbox(),
       'ca_etapa'          => new sfWidgetFormTextarea(),
       'ca_idtarea'        => new sfWidgetFormDoctrineChoice(array('model' => 'NotTarea', 'add_empty' => true)),
+      'ca_vigencia'       => new sfWidgetFormDate(),
       'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
       'ca_usuactualizado' => new sfWidgetFormInputText(),
@@ -56,6 +59,7 @@ class BaseCotProductoForm extends BaseFormDoctrine
       'ca_postularlinea'  => new sfValidatorBoolean(array('required' => false)),
       'ca_etapa'          => new sfValidatorString(array('required' => false)),
       'ca_idtarea'        => new sfValidatorDoctrineChoice(array('model' => 'NotTarea', 'required' => false)),
+      'ca_vigencia'       => new sfValidatorDate(array('required' => false)),
       'ca_usucreado'      => new sfValidatorString(array('max_length' => 20, 'required' => false)),
       'ca_fchcreado'      => new sfValidatorDateTime(array('required' => false)),
       'ca_usuactualizado' => new sfValidatorString(array('max_length' => 20, 'required' => false)),

@@ -29,6 +29,53 @@
  * @property Concepto $Equipo
  * @property Concepto $Concepto
  * 
+ * @method integer         getCaIdcontinuacion()  Returns the current record's "ca_idcontinuacion" value
+ * @method integer         getCaIdcotizacion()    Returns the current record's "ca_idcotizacion" value
+ * @method string          getCaTipo()            Returns the current record's "ca_tipo" value
+ * @method string          getCaModalidad()       Returns the current record's "ca_modalidad" value
+ * @method string          getCaOrigen()          Returns the current record's "ca_origen" value
+ * @method string          getCaDestino()         Returns the current record's "ca_destino" value
+ * @method integer         getCaIdconcepto()      Returns the current record's "ca_idconcepto" value
+ * @method integer         getCaIdequipo()        Returns the current record's "ca_idequipo" value
+ * @method string          getCaIdmoneda()        Returns the current record's "ca_idmoneda" value
+ * @method string          getCaFrecuencia()      Returns the current record's "ca_frecuencia" value
+ * @method string          getCaTiempotransito()  Returns the current record's "ca_tiempotransito" value
+ * @method string          getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method decimal         getCaValorTar()        Returns the current record's "ca_valor_tar" value
+ * @method decimal         getCaValorMin()        Returns the current record's "ca_valor_min" value
+ * @method string          getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp       getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string          getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp       getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method Cotizacion      getCotizacion()        Returns the current record's "Cotizacion" value
+ * @method Ciudad          getOrigen()            Returns the current record's "Origen" value
+ * @method Ciudad          getDestino()           Returns the current record's "Destino" value
+ * @method Concepto        getEquipo()            Returns the current record's "Equipo" value
+ * @method Concepto        getConcepto()          Returns the current record's "Concepto" value
+ * @method CotContinuacion setCaIdcontinuacion()  Sets the current record's "ca_idcontinuacion" value
+ * @method CotContinuacion setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
+ * @method CotContinuacion setCaTipo()            Sets the current record's "ca_tipo" value
+ * @method CotContinuacion setCaModalidad()       Sets the current record's "ca_modalidad" value
+ * @method CotContinuacion setCaOrigen()          Sets the current record's "ca_origen" value
+ * @method CotContinuacion setCaDestino()         Sets the current record's "ca_destino" value
+ * @method CotContinuacion setCaIdconcepto()      Sets the current record's "ca_idconcepto" value
+ * @method CotContinuacion setCaIdequipo()        Sets the current record's "ca_idequipo" value
+ * @method CotContinuacion setCaIdmoneda()        Sets the current record's "ca_idmoneda" value
+ * @method CotContinuacion setCaFrecuencia()      Sets the current record's "ca_frecuencia" value
+ * @method CotContinuacion setCaTiempotransito()  Sets the current record's "ca_tiempotransito" value
+ * @method CotContinuacion setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method CotContinuacion setCaValorTar()        Sets the current record's "ca_valor_tar" value
+ * @method CotContinuacion setCaValorMin()        Sets the current record's "ca_valor_min" value
+ * @method CotContinuacion setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method CotContinuacion setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method CotContinuacion setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method CotContinuacion setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method CotContinuacion setCotizacion()        Sets the current record's "Cotizacion" value
+ * @method CotContinuacion setOrigen()            Sets the current record's "Origen" value
+ * @method CotContinuacion setDestino()           Sets the current record's "Destino" value
+ * @method CotContinuacion setEquipo()            Sets the current record's "Equipo" value
+ * @method CotContinuacion setConcepto()          Sets the current record's "Concepto" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

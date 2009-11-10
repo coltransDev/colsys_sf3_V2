@@ -11,6 +11,17 @@
  * @property Moneda $Moneda
  * @property Doctrine_Collection $Trafico
  * 
+ * @method string              getCaIdmoneda()    Returns the current record's "ca_idmoneda" value
+ * @method string              getCaNombre()      Returns the current record's "ca_nombre" value
+ * @method string              getCaReferencia()  Returns the current record's "ca_referencia" value
+ * @method Moneda              getMoneda()        Returns the current record's "Moneda" value
+ * @method Doctrine_Collection getTrafico()       Returns the current record's "Trafico" collection
+ * @method Moneda              setCaIdmoneda()    Sets the current record's "ca_idmoneda" value
+ * @method Moneda              setCaNombre()      Sets the current record's "ca_nombre" value
+ * @method Moneda              setCaReferencia()  Sets the current record's "ca_referencia" value
+ * @method Moneda              setMoneda()        Sets the current record's "Moneda" value
+ * @method Moneda              setTrafico()       Sets the current record's "Trafico" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

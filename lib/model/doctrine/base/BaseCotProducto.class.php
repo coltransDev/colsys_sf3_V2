@@ -36,6 +36,67 @@
  * @property Ciudad $Destino
  * @property Doctrine_Collection $CotSeguimiento
  * 
+ * @method integer             getCaIdproducto()      Returns the current record's "ca_idproducto" value
+ * @method integer             getCaIdcotizacion()    Returns the current record's "ca_idcotizacion" value
+ * @method string              getCaTransporte()      Returns the current record's "ca_transporte" value
+ * @method string              getCaModalidad()       Returns the current record's "ca_modalidad" value
+ * @method string              getCaOrigen()          Returns the current record's "ca_origen" value
+ * @method string              getCaDestino()         Returns the current record's "ca_destino" value
+ * @method string              getCaEscala()          Returns the current record's "ca_escala" value
+ * @method string              getCaImpoexpo()        Returns the current record's "ca_impoexpo" value
+ * @method string              getCaImprimir()        Returns the current record's "ca_imprimir" value
+ * @method string              getCaProducto()        Returns the current record's "ca_producto" value
+ * @method string              getCaIncoterms()       Returns the current record's "ca_incoterms" value
+ * @method string              getCaFrecuencia()      Returns the current record's "ca_frecuencia" value
+ * @method string              getCaTiempotransito()  Returns the current record's "ca_tiempotransito" value
+ * @method string              getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method string              getCaIdlinea()         Returns the current record's "ca_idlinea" value
+ * @method boolean             getCaPostularlinea()   Returns the current record's "ca_postularlinea" value
+ * @method string              getCaEtapa()           Returns the current record's "ca_etapa" value
+ * @method integer             getCaIdtarea()         Returns the current record's "ca_idtarea" value
+ * @method date                getCaVigencia()        Returns the current record's "ca_vigencia" value
+ * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method Cotizacion          getCotizacion()        Returns the current record's "Cotizacion" value
+ * @method Doctrine_Collection getCotOpcion()         Returns the current record's "CotOpcion" collection
+ * @method IdsProveedor        getIdsProveedor()      Returns the current record's "IdsProveedor" value
+ * @method NotTarea            getNotTarea()          Returns the current record's "NotTarea" value
+ * @method Ciudad              getOrigen()            Returns the current record's "Origen" value
+ * @method Ciudad              getDestino()           Returns the current record's "Destino" value
+ * @method Doctrine_Collection getCotSeguimiento()    Returns the current record's "CotSeguimiento" collection
+ * @method CotProducto         setCaIdproducto()      Sets the current record's "ca_idproducto" value
+ * @method CotProducto         setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
+ * @method CotProducto         setCaTransporte()      Sets the current record's "ca_transporte" value
+ * @method CotProducto         setCaModalidad()       Sets the current record's "ca_modalidad" value
+ * @method CotProducto         setCaOrigen()          Sets the current record's "ca_origen" value
+ * @method CotProducto         setCaDestino()         Sets the current record's "ca_destino" value
+ * @method CotProducto         setCaEscala()          Sets the current record's "ca_escala" value
+ * @method CotProducto         setCaImpoexpo()        Sets the current record's "ca_impoexpo" value
+ * @method CotProducto         setCaImprimir()        Sets the current record's "ca_imprimir" value
+ * @method CotProducto         setCaProducto()        Sets the current record's "ca_producto" value
+ * @method CotProducto         setCaIncoterms()       Sets the current record's "ca_incoterms" value
+ * @method CotProducto         setCaFrecuencia()      Sets the current record's "ca_frecuencia" value
+ * @method CotProducto         setCaTiempotransito()  Sets the current record's "ca_tiempotransito" value
+ * @method CotProducto         setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method CotProducto         setCaIdlinea()         Sets the current record's "ca_idlinea" value
+ * @method CotProducto         setCaPostularlinea()   Sets the current record's "ca_postularlinea" value
+ * @method CotProducto         setCaEtapa()           Sets the current record's "ca_etapa" value
+ * @method CotProducto         setCaIdtarea()         Sets the current record's "ca_idtarea" value
+ * @method CotProducto         setCaVigencia()        Sets the current record's "ca_vigencia" value
+ * @method CotProducto         setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method CotProducto         setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method CotProducto         setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method CotProducto         setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method CotProducto         setCotizacion()        Sets the current record's "Cotizacion" value
+ * @method CotProducto         setCotOpcion()         Sets the current record's "CotOpcion" collection
+ * @method CotProducto         setIdsProveedor()      Sets the current record's "IdsProveedor" value
+ * @method CotProducto         setNotTarea()          Sets the current record's "NotTarea" value
+ * @method CotProducto         setOrigen()            Sets the current record's "Origen" value
+ * @method CotProducto         setDestino()           Sets the current record's "Destino" value
+ * @method CotProducto         setCotSeguimiento()    Sets the current record's "CotSeguimiento" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

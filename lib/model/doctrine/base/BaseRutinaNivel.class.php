@@ -10,6 +10,15 @@
  * @property string $ca_valor
  * @property Rutina $Rutina
  * 
+ * @method integer     getCaRutina()  Returns the current record's "ca_rutina" value
+ * @method integer     getCaNivel()   Returns the current record's "ca_nivel" value
+ * @method string      getCaValor()   Returns the current record's "ca_valor" value
+ * @method Rutina      getRutina()    Returns the current record's "Rutina" value
+ * @method RutinaNivel setCaRutina()  Sets the current record's "ca_rutina" value
+ * @method RutinaNivel setCaNivel()   Sets the current record's "ca_nivel" value
+ * @method RutinaNivel setCaValor()   Sets the current record's "ca_valor" value
+ * @method RutinaNivel setRutina()    Sets the current record's "Rutina" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

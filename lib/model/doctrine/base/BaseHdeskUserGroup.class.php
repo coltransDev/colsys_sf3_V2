@@ -10,6 +10,15 @@
  * @property HdeskGroup $HdeskGroup
  * @property Usuario $Usuario
  * 
+ * @method integer        getCaIdgroup()  Returns the current record's "ca_idgroup" value
+ * @method string         getCaLogin()    Returns the current record's "ca_login" value
+ * @method HdeskGroup     getHdeskGroup() Returns the current record's "HdeskGroup" value
+ * @method Usuario        getUsuario()    Returns the current record's "Usuario" value
+ * @method HdeskUserGroup setCaIdgroup()  Sets the current record's "ca_idgroup" value
+ * @method HdeskUserGroup setCaLogin()    Sets the current record's "ca_login" value
+ * @method HdeskUserGroup setHdeskGroup() Sets the current record's "HdeskGroup" value
+ * @method HdeskUserGroup setUsuario()    Sets the current record's "Usuario" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

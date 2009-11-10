@@ -14,6 +14,23 @@
  * @property Doctrine_Collection $AccesoUsuario
  * @property Doctrine_Collection $RutinaNivel
  * 
+ * @method string              getCaRutina()       Returns the current record's "ca_rutina" value
+ * @method string              getCaOpcion()       Returns the current record's "ca_opcion" value
+ * @method string              getCaDescripcion()  Returns the current record's "ca_descripcion" value
+ * @method string              getCaPrograma()     Returns the current record's "ca_programa" value
+ * @method string              getCaGrupo()        Returns the current record's "ca_grupo" value
+ * @method Doctrine_Collection getAccesoPerfil()   Returns the current record's "AccesoPerfil" collection
+ * @method Doctrine_Collection getAccesoUsuario()  Returns the current record's "AccesoUsuario" collection
+ * @method Doctrine_Collection getRutinaNivel()    Returns the current record's "RutinaNivel" collection
+ * @method Rutina              setCaRutina()       Sets the current record's "ca_rutina" value
+ * @method Rutina              setCaOpcion()       Sets the current record's "ca_opcion" value
+ * @method Rutina              setCaDescripcion()  Sets the current record's "ca_descripcion" value
+ * @method Rutina              setCaPrograma()     Sets the current record's "ca_programa" value
+ * @method Rutina              setCaGrupo()        Sets the current record's "ca_grupo" value
+ * @method Rutina              setAccesoPerfil()   Sets the current record's "AccesoPerfil" collection
+ * @method Rutina              setAccesoUsuario()  Sets the current record's "AccesoUsuario" collection
+ * @method Rutina              setRutinaNivel()    Sets the current record's "RutinaNivel" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

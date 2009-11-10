@@ -20,6 +20,35 @@
  * @property timestamp $ca_fchactualizado
  * @property Cotizacion $Cotizacion
  * 
+ * @method integer    getCaIdseguro()        Returns the current record's "ca_idseguro" value
+ * @method integer    getCaIdcotizacion()    Returns the current record's "ca_idcotizacion" value
+ * @method string     getCaIdmoneda()        Returns the current record's "ca_idmoneda" value
+ * @method string     getCaPrimaTip()        Returns the current record's "ca_prima_tip" value
+ * @method decimal    getCaPrimaVlr()        Returns the current record's "ca_prima_vlr" value
+ * @method decimal    getCaPrimaMin()        Returns the current record's "ca_prima_min" value
+ * @method decimal    getCaObtencion()       Returns the current record's "ca_obtencion" value
+ * @method string     getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method string     getCaTransporte()      Returns the current record's "ca_transporte" value
+ * @method string     getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp  getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string     getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp  getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method Cotizacion getCotizacion()        Returns the current record's "Cotizacion" value
+ * @method CotSeguro  setCaIdseguro()        Sets the current record's "ca_idseguro" value
+ * @method CotSeguro  setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
+ * @method CotSeguro  setCaIdmoneda()        Sets the current record's "ca_idmoneda" value
+ * @method CotSeguro  setCaPrimaTip()        Sets the current record's "ca_prima_tip" value
+ * @method CotSeguro  setCaPrimaVlr()        Sets the current record's "ca_prima_vlr" value
+ * @method CotSeguro  setCaPrimaMin()        Sets the current record's "ca_prima_min" value
+ * @method CotSeguro  setCaObtencion()       Sets the current record's "ca_obtencion" value
+ * @method CotSeguro  setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method CotSeguro  setCaTransporte()      Sets the current record's "ca_transporte" value
+ * @method CotSeguro  setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method CotSeguro  setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method CotSeguro  setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method CotSeguro  setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method CotSeguro  setCotizacion()        Sets the current record's "Cotizacion" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

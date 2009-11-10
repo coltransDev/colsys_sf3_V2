@@ -11,6 +11,17 @@
  * @property Usuario $Usuario
  * @property AccesoPerfil $AccesoPerfil
  * 
+ * @method string        getCaLogin()      Returns the current record's "ca_login" value
+ * @method string        getCaPerfil()     Returns the current record's "ca_perfil" value
+ * @method Perfil        getPerfil()       Returns the current record's "Perfil" value
+ * @method Usuario       getUsuario()      Returns the current record's "Usuario" value
+ * @method AccesoPerfil  getAccesoPerfil() Returns the current record's "AccesoPerfil" value
+ * @method UsuarioPerfil setCaLogin()      Sets the current record's "ca_login" value
+ * @method UsuarioPerfil setCaPerfil()     Sets the current record's "ca_perfil" value
+ * @method UsuarioPerfil setPerfil()       Sets the current record's "Perfil" value
+ * @method UsuarioPerfil setUsuario()      Sets the current record's "Usuario" value
+ * @method UsuarioPerfil setAccesoPerfil() Sets the current record's "AccesoPerfil" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

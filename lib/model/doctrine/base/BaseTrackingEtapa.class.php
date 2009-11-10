@@ -21,6 +21,37 @@
  * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $RepStatus
  * 
+ * @method string              getCaIdetapa()          Returns the current record's "ca_idetapa" value
+ * @method string              getCaImpoexpo()         Returns the current record's "ca_impoexpo" value
+ * @method string              getCaTransporte()       Returns the current record's "ca_transporte" value
+ * @method string              getCaDepartamento()     Returns the current record's "ca_departamento" value
+ * @method string              getCaEtapa()            Returns the current record's "ca_etapa" value
+ * @method integer             getCaOrden()            Returns the current record's "ca_orden" value
+ * @method integer             getCaTtl()              Returns the current record's "ca_ttl" value
+ * @method string              getCaClass()            Returns the current record's "ca_class" value
+ * @method string              getCaTemplate()         Returns the current record's "ca_template" value
+ * @method string              getCaMessage()          Returns the current record's "ca_message" value
+ * @method string              getCaMessageDefault()   Returns the current record's "ca_message_default" value
+ * @method string              getCaIntro()            Returns the current record's "ca_intro" value
+ * @method string              getCaTitle()            Returns the current record's "ca_title" value
+ * @method Doctrine_Collection getReporte()            Returns the current record's "Reporte" collection
+ * @method Doctrine_Collection getRepStatus()          Returns the current record's "RepStatus" collection
+ * @method TrackingEtapa       setCaIdetapa()          Sets the current record's "ca_idetapa" value
+ * @method TrackingEtapa       setCaImpoexpo()         Sets the current record's "ca_impoexpo" value
+ * @method TrackingEtapa       setCaTransporte()       Sets the current record's "ca_transporte" value
+ * @method TrackingEtapa       setCaDepartamento()     Sets the current record's "ca_departamento" value
+ * @method TrackingEtapa       setCaEtapa()            Sets the current record's "ca_etapa" value
+ * @method TrackingEtapa       setCaOrden()            Sets the current record's "ca_orden" value
+ * @method TrackingEtapa       setCaTtl()              Sets the current record's "ca_ttl" value
+ * @method TrackingEtapa       setCaClass()            Sets the current record's "ca_class" value
+ * @method TrackingEtapa       setCaTemplate()         Sets the current record's "ca_template" value
+ * @method TrackingEtapa       setCaMessage()          Sets the current record's "ca_message" value
+ * @method TrackingEtapa       setCaMessageDefault()   Sets the current record's "ca_message_default" value
+ * @method TrackingEtapa       setCaIntro()            Sets the current record's "ca_intro" value
+ * @method TrackingEtapa       setCaTitle()            Sets the current record's "ca_title" value
+ * @method TrackingEtapa       setReporte()            Sets the current record's "Reporte" collection
+ * @method TrackingEtapa       setRepStatus()          Sets the current record's "RepStatus" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

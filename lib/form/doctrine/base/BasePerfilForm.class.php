@@ -3,6 +3,8 @@
 /**
  * Perfil form base class.
  *
+ * @method Perfil getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

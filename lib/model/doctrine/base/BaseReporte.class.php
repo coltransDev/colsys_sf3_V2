@@ -54,6 +54,8 @@
  * @property timestamp $ca_fchultstatus
  * @property integer $ca_idtarea_rext
  * @property integer $ca_idseguimiento
+ * @property string $ca_detanulado
+ * @property boolean $ca_mcia_peligrosa
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
  * @property timestamp $ca_fchactualizado
@@ -79,11 +81,177 @@
  * @property IdsAgente $IdsAgente
  * @property IdsProveedor $IdsProveedor
  * @property Tercero $Proveedor
- * @property Doctrine_Collection $Email
  * @property Doctrine_Collection $InoMaestraSea
+ * @property Doctrine_Collection $Email
  * @property Doctrine_Collection $RepSeguro
  * @property Doctrine_Collection $RepAduana
  * @property Doctrine_Collection $RepExpo
+ * @property Doctrine_Collection $RepCosto
+ * 
+ * @method integer             getCaIdreporte()          Returns the current record's "ca_idreporte" value
+ * @method date                getCaFchreporte()         Returns the current record's "ca_fchreporte" value
+ * @method string              getCaConsecutivo()        Returns the current record's "ca_consecutivo" value
+ * @method integer             getCaVersion()            Returns the current record's "ca_version" value
+ * @method integer             getCaIdcotizacion()       Returns the current record's "ca_idcotizacion" value
+ * @method string              getCaOrigen()             Returns the current record's "ca_origen" value
+ * @method string              getCaDestino()            Returns the current record's "ca_destino" value
+ * @method string              getCaImpoexpo()           Returns the current record's "ca_impoexpo" value
+ * @method date                getCaFchdespacho()        Returns the current record's "ca_fchdespacho" value
+ * @method integer             getCaIdagente()           Returns the current record's "ca_idagente" value
+ * @method string              getCaIncoterms()          Returns the current record's "ca_incoterms" value
+ * @method string              getCaMercanciaDesc()      Returns the current record's "ca_mercancia_desc" value
+ * @method string              getCaIdproveedor()        Returns the current record's "ca_idproveedor" value
+ * @method string              getCaOrdenProv()          Returns the current record's "ca_orden_prov" value
+ * @method integer             getCaIdconcliente()       Returns the current record's "ca_idconcliente" value
+ * @method string              getCaOrdenClie()          Returns the current record's "ca_orden_clie" value
+ * @method string              getCaConfirmarClie()      Returns the current record's "ca_confirmar_clie" value
+ * @method integer             getCaIdrepresentante()    Returns the current record's "ca_idrepresentante" value
+ * @method string              getCaInformarRepr()       Returns the current record's "ca_informar_repr" value
+ * @method integer             getCaIdconsignatario()    Returns the current record's "ca_idconsignatario" value
+ * @method string              getCaInformarCons()       Returns the current record's "ca_informar_cons" value
+ * @method integer             getCaIdnotify()           Returns the current record's "ca_idnotify" value
+ * @method string              getCaInformarNoti()       Returns the current record's "ca_informar_noti" value
+ * @method integer             getCaIdmaster()           Returns the current record's "ca_idmaster" value
+ * @method string              getCaInformarMast()       Returns the current record's "ca_informar_mast" value
+ * @method integer             getCaNotify()             Returns the current record's "ca_notify" value
+ * @method string              getCaTransporte()         Returns the current record's "ca_transporte" value
+ * @method string              getCaModalidad()          Returns the current record's "ca_modalidad" value
+ * @method string              getCaSeguro()             Returns the current record's "ca_seguro" value
+ * @method string              getCaLiberacion()         Returns the current record's "ca_liberacion" value
+ * @method string              getCaTiempocredito()      Returns the current record's "ca_tiempocredito" value
+ * @method string              getCaPreferenciasClie()   Returns the current record's "ca_preferencias_clie" value
+ * @method string              getCaInstrucciones()      Returns the current record's "ca_instrucciones" value
+ * @method integer             getCaIdlinea()            Returns the current record's "ca_idlinea" value
+ * @method integer             getCaIdconsignar()        Returns the current record's "ca_idconsignar" value
+ * @method integer             getCaIdconsignarmaster()  Returns the current record's "ca_idconsignarmaster" value
+ * @method integer             getCaIdbodega()           Returns the current record's "ca_idbodega" value
+ * @method string              getCaMastersame()         Returns the current record's "ca_mastersame" value
+ * @method string              getCaContinuacion()       Returns the current record's "ca_continuacion" value
+ * @method string              getCaContinuacionDest()   Returns the current record's "ca_continuacion_dest" value
+ * @method string              getCaContinuacionConf()   Returns the current record's "ca_continuacion_conf" value
+ * @method string              getCaEtapaActual()        Returns the current record's "ca_etapa_actual" value
+ * @method string              getCaLogin()              Returns the current record's "ca_login" value
+ * @method string              getCaColmas()             Returns the current record's "ca_colmas" value
+ * @method string              getCaPropiedades()        Returns the current record's "ca_propiedades" value
+ * @method string              getCaIdetapa()            Returns the current record's "ca_idetapa" value
+ * @method timestamp           getCaFchultstatus()       Returns the current record's "ca_fchultstatus" value
+ * @method integer             getCaIdtareaRext()        Returns the current record's "ca_idtarea_rext" value
+ * @method integer             getCaIdseguimiento()      Returns the current record's "ca_idseguimiento" value
+ * @method string              getCaDetanulado()         Returns the current record's "ca_detanulado" value
+ * @method boolean             getCaMciaPeligrosa()      Returns the current record's "ca_mcia_peligrosa" value
+ * @method timestamp           getCaFchcreado()          Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsucreado()          Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchactualizado()     Returns the current record's "ca_fchactualizado" value
+ * @method string              getCaUsuactualizado()     Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchanulado()         Returns the current record's "ca_fchanulado" value
+ * @method string              getCaUsuanulado()         Returns the current record's "ca_usuanulado" value
+ * @method timestamp           getCaFchcerrado()         Returns the current record's "ca_fchcerrado" value
+ * @method string              getCaUsucerrado()         Returns the current record's "ca_usucerrado" value
+ * @method Doctrine_Collection getRepStatus()            Returns the current record's "RepStatus" collection
+ * @method Doctrine_Collection getRepTarifa()            Returns the current record's "RepTarifa" collection
+ * @method Doctrine_Collection getRepGasto()             Returns the current record's "RepGasto" collection
+ * @method Doctrine_Collection getRepAsignacion()        Returns the current record's "RepAsignacion" collection
+ * @method Usuario             getUsuario()              Returns the current record's "Usuario" value
+ * @method Contacto            getContacto()             Returns the current record's "Contacto" value
+ * @method TrackingEtapa       getTrackingEtapa()        Returns the current record's "TrackingEtapa" value
+ * @method Ciudad              getOrigen()               Returns the current record's "Origen" value
+ * @method Ciudad              getDestino()              Returns the current record's "Destino" value
+ * @method Ciudad              getDestinoCont()          Returns the current record's "DestinoCont" value
+ * @method NotTarea            getNotTarea()             Returns the current record's "NotTarea" value
+ * @method Doctrine_Collection getRepEquipo()            Returns the current record's "RepEquipo" collection
+ * @method InoClientesSea      getInoClientesSea()       Returns the current record's "InoClientesSea" value
+ * @method Bodega              getBodega()               Returns the current record's "Bodega" value
+ * @method IdsAgente           getIdsAgente()            Returns the current record's "IdsAgente" value
+ * @method IdsProveedor        getIdsProveedor()         Returns the current record's "IdsProveedor" value
+ * @method Tercero             getProveedor()            Returns the current record's "Proveedor" value
+ * @method Doctrine_Collection getInoMaestraSea()        Returns the current record's "InoMaestraSea" collection
+ * @method Doctrine_Collection getEmail()                Returns the current record's "Email" collection
+ * @method Doctrine_Collection getRepSeguro()            Returns the current record's "RepSeguro" collection
+ * @method Doctrine_Collection getRepAduana()            Returns the current record's "RepAduana" collection
+ * @method Doctrine_Collection getRepExpo()              Returns the current record's "RepExpo" collection
+ * @method Doctrine_Collection getRepCosto()             Returns the current record's "RepCosto" collection
+ * @method Reporte             setCaIdreporte()          Sets the current record's "ca_idreporte" value
+ * @method Reporte             setCaFchreporte()         Sets the current record's "ca_fchreporte" value
+ * @method Reporte             setCaConsecutivo()        Sets the current record's "ca_consecutivo" value
+ * @method Reporte             setCaVersion()            Sets the current record's "ca_version" value
+ * @method Reporte             setCaIdcotizacion()       Sets the current record's "ca_idcotizacion" value
+ * @method Reporte             setCaOrigen()             Sets the current record's "ca_origen" value
+ * @method Reporte             setCaDestino()            Sets the current record's "ca_destino" value
+ * @method Reporte             setCaImpoexpo()           Sets the current record's "ca_impoexpo" value
+ * @method Reporte             setCaFchdespacho()        Sets the current record's "ca_fchdespacho" value
+ * @method Reporte             setCaIdagente()           Sets the current record's "ca_idagente" value
+ * @method Reporte             setCaIncoterms()          Sets the current record's "ca_incoterms" value
+ * @method Reporte             setCaMercanciaDesc()      Sets the current record's "ca_mercancia_desc" value
+ * @method Reporte             setCaIdproveedor()        Sets the current record's "ca_idproveedor" value
+ * @method Reporte             setCaOrdenProv()          Sets the current record's "ca_orden_prov" value
+ * @method Reporte             setCaIdconcliente()       Sets the current record's "ca_idconcliente" value
+ * @method Reporte             setCaOrdenClie()          Sets the current record's "ca_orden_clie" value
+ * @method Reporte             setCaConfirmarClie()      Sets the current record's "ca_confirmar_clie" value
+ * @method Reporte             setCaIdrepresentante()    Sets the current record's "ca_idrepresentante" value
+ * @method Reporte             setCaInformarRepr()       Sets the current record's "ca_informar_repr" value
+ * @method Reporte             setCaIdconsignatario()    Sets the current record's "ca_idconsignatario" value
+ * @method Reporte             setCaInformarCons()       Sets the current record's "ca_informar_cons" value
+ * @method Reporte             setCaIdnotify()           Sets the current record's "ca_idnotify" value
+ * @method Reporte             setCaInformarNoti()       Sets the current record's "ca_informar_noti" value
+ * @method Reporte             setCaIdmaster()           Sets the current record's "ca_idmaster" value
+ * @method Reporte             setCaInformarMast()       Sets the current record's "ca_informar_mast" value
+ * @method Reporte             setCaNotify()             Sets the current record's "ca_notify" value
+ * @method Reporte             setCaTransporte()         Sets the current record's "ca_transporte" value
+ * @method Reporte             setCaModalidad()          Sets the current record's "ca_modalidad" value
+ * @method Reporte             setCaSeguro()             Sets the current record's "ca_seguro" value
+ * @method Reporte             setCaLiberacion()         Sets the current record's "ca_liberacion" value
+ * @method Reporte             setCaTiempocredito()      Sets the current record's "ca_tiempocredito" value
+ * @method Reporte             setCaPreferenciasClie()   Sets the current record's "ca_preferencias_clie" value
+ * @method Reporte             setCaInstrucciones()      Sets the current record's "ca_instrucciones" value
+ * @method Reporte             setCaIdlinea()            Sets the current record's "ca_idlinea" value
+ * @method Reporte             setCaIdconsignar()        Sets the current record's "ca_idconsignar" value
+ * @method Reporte             setCaIdconsignarmaster()  Sets the current record's "ca_idconsignarmaster" value
+ * @method Reporte             setCaIdbodega()           Sets the current record's "ca_idbodega" value
+ * @method Reporte             setCaMastersame()         Sets the current record's "ca_mastersame" value
+ * @method Reporte             setCaContinuacion()       Sets the current record's "ca_continuacion" value
+ * @method Reporte             setCaContinuacionDest()   Sets the current record's "ca_continuacion_dest" value
+ * @method Reporte             setCaContinuacionConf()   Sets the current record's "ca_continuacion_conf" value
+ * @method Reporte             setCaEtapaActual()        Sets the current record's "ca_etapa_actual" value
+ * @method Reporte             setCaLogin()              Sets the current record's "ca_login" value
+ * @method Reporte             setCaColmas()             Sets the current record's "ca_colmas" value
+ * @method Reporte             setCaPropiedades()        Sets the current record's "ca_propiedades" value
+ * @method Reporte             setCaIdetapa()            Sets the current record's "ca_idetapa" value
+ * @method Reporte             setCaFchultstatus()       Sets the current record's "ca_fchultstatus" value
+ * @method Reporte             setCaIdtareaRext()        Sets the current record's "ca_idtarea_rext" value
+ * @method Reporte             setCaIdseguimiento()      Sets the current record's "ca_idseguimiento" value
+ * @method Reporte             setCaDetanulado()         Sets the current record's "ca_detanulado" value
+ * @method Reporte             setCaMciaPeligrosa()      Sets the current record's "ca_mcia_peligrosa" value
+ * @method Reporte             setCaFchcreado()          Sets the current record's "ca_fchcreado" value
+ * @method Reporte             setCaUsucreado()          Sets the current record's "ca_usucreado" value
+ * @method Reporte             setCaFchactualizado()     Sets the current record's "ca_fchactualizado" value
+ * @method Reporte             setCaUsuactualizado()     Sets the current record's "ca_usuactualizado" value
+ * @method Reporte             setCaFchanulado()         Sets the current record's "ca_fchanulado" value
+ * @method Reporte             setCaUsuanulado()         Sets the current record's "ca_usuanulado" value
+ * @method Reporte             setCaFchcerrado()         Sets the current record's "ca_fchcerrado" value
+ * @method Reporte             setCaUsucerrado()         Sets the current record's "ca_usucerrado" value
+ * @method Reporte             setRepStatus()            Sets the current record's "RepStatus" collection
+ * @method Reporte             setRepTarifa()            Sets the current record's "RepTarifa" collection
+ * @method Reporte             setRepGasto()             Sets the current record's "RepGasto" collection
+ * @method Reporte             setRepAsignacion()        Sets the current record's "RepAsignacion" collection
+ * @method Reporte             setUsuario()              Sets the current record's "Usuario" value
+ * @method Reporte             setContacto()             Sets the current record's "Contacto" value
+ * @method Reporte             setTrackingEtapa()        Sets the current record's "TrackingEtapa" value
+ * @method Reporte             setOrigen()               Sets the current record's "Origen" value
+ * @method Reporte             setDestino()              Sets the current record's "Destino" value
+ * @method Reporte             setDestinoCont()          Sets the current record's "DestinoCont" value
+ * @method Reporte             setNotTarea()             Sets the current record's "NotTarea" value
+ * @method Reporte             setRepEquipo()            Sets the current record's "RepEquipo" collection
+ * @method Reporte             setInoClientesSea()       Sets the current record's "InoClientesSea" value
+ * @method Reporte             setBodega()               Sets the current record's "Bodega" value
+ * @method Reporte             setIdsAgente()            Sets the current record's "IdsAgente" value
+ * @method Reporte             setIdsProveedor()         Sets the current record's "IdsProveedor" value
+ * @method Reporte             setProveedor()            Sets the current record's "Proveedor" value
+ * @method Reporte             setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
+ * @method Reporte             setEmail()                Sets the current record's "Email" collection
+ * @method Reporte             setRepSeguro()            Sets the current record's "RepSeguro" collection
+ * @method Reporte             setRepAduana()            Sets the current record's "RepAduana" collection
+ * @method Reporte             setRepExpo()              Sets the current record's "RepExpo" collection
+ * @method Reporte             setRepCosto()             Sets the current record's "RepCosto" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -120,9 +288,11 @@ abstract class BaseReporte extends myDoctrineRecord
              ));
         $this->hasColumn('ca_impoexpo', 'string', null, array(
              'type' => 'string',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_fchdespacho', 'date', null, array(
              'type' => 'date',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_idagente', 'integer', null, array(
              'type' => 'integer',
@@ -132,6 +302,7 @@ abstract class BaseReporte extends myDoctrineRecord
              ));
         $this->hasColumn('ca_mercancia_desc', 'string', null, array(
              'type' => 'string',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_idproveedor', 'string', null, array(
              'type' => 'string',
@@ -141,9 +312,11 @@ abstract class BaseReporte extends myDoctrineRecord
              ));
         $this->hasColumn('ca_idconcliente', 'integer', null, array(
              'type' => 'integer',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_orden_clie', 'string', null, array(
              'type' => 'string',
+             'notnull' => true,
              ));
         $this->hasColumn('ca_confirmar_clie', 'string', null, array(
              'type' => 'string',
@@ -244,6 +417,12 @@ abstract class BaseReporte extends myDoctrineRecord
         $this->hasColumn('ca_idseguimiento', 'integer', null, array(
              'type' => 'integer',
              ));
+        $this->hasColumn('ca_detanulado', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_mcia_peligrosa', 'boolean', null, array(
+             'type' => 'boolean',
+             ));
         $this->hasColumn('ca_fchcreado', 'timestamp', null, array(
              'type' => 'timestamp',
              ));
@@ -341,13 +520,13 @@ abstract class BaseReporte extends myDoctrineRecord
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idtercero'));
 
-        $this->hasMany('Email', array(
-             'local' => 'ca_idreporte',
-             'foreign' => 'ca_idcaso'));
-
         $this->hasMany('InoMaestraSea', array(
              'local' => 'ca_idreporte',
              'foreign' => 'ca_idreporte'));
+
+        $this->hasMany('Email', array(
+             'local' => 'ca_idreporte',
+             'foreign' => 'ca_idcaso'));
 
         $this->hasMany('RepSeguro', array(
              'local' => 'ca_idreporte',
@@ -358,6 +537,10 @@ abstract class BaseReporte extends myDoctrineRecord
              'foreign' => 'ca_idreporte'));
 
         $this->hasMany('RepExpo', array(
+             'local' => 'ca_idreporte',
+             'foreign' => 'ca_idreporte'));
+
+        $this->hasMany('RepCosto', array(
              'local' => 'ca_idreporte',
              'foreign' => 'ca_idreporte'));
     }

@@ -157,3 +157,112 @@ InoCliente:
       foreign: ca_login
       type: one
       class: Usuario
+
+InoComprobante:
+  generatePath: ino
+  tableName: ino.tb_comprobantes
+  attributes:
+    export: tables
+  columns:
+    ca_idcomprobante:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_id: integer
+    ca_idtipo: integer
+    ca_consecutivo: integer
+    ca_fchcomprobante: date
+    ca_idmaestra: integer
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:    
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    UsuActualizado:
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    InoTransaccion:
+      local: ca_idcomprobante
+      foreign: ca_idcomprobante
+      type: many
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one
+
+InoTransaccion:
+  generatePath: ino
+  tableName: ino.tb_transacciones
+  attributes:
+    export: tables
+  columns:
+    ca_idtransaccion:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idcomprobante: integer
+    ca_idcuenta: integer
+    ca_idconcepto: integer
+    ca_id: integer
+    ca_db: string
+    ca_cr: timestamp
+    ca_idmoneda: string
+    ca_observaciones: timestamp
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+  relations:
+    InoCliente:
+      local: ca_idinocliente
+      foreign: ca_idinocliente
+      type: one
+    UsuCreado:
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+      class: Usuario
+    InoComprobante:
+      local: ca_idcomprobante
+      foreign: ca_idcomprobante
+      type: one
+    TipoRecargo:
+      local: ca_idconcepto
+      foreign: ca_idrecargo
+      type: one
+
+
+InoConcepto:
+  generatePath: ino
+  tableName: ino.tb_conceptos
+  attributes:
+    export: tables
+  columns:
+    ca_idconcepto:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_concepto:
+      type: string
+      notnull: true
+    ca_tipo: string   
+    ca_liminferior: integer
+    ca_incoterms: string
+    ca_comisionable: booolean
+    ca_cuenta: integer
+    ca_ingreso_propio: booolean
+    ca_iva: decimal
+    ca_baseretencion: decimal
+    ca_cuentaretencion: integer
+    ca_valor: decimal
+    ca_convenios: boolean
+    ca_autoretencion: decimal
+    ca_tipoautoretencion: smallint
+    
+    

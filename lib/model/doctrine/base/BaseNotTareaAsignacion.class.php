@@ -10,6 +10,15 @@
  * @property NotTarea $NotTarea
  * @property Usuario $Usuario
  * 
+ * @method integer            getCaIdtarea()  Returns the current record's "ca_idtarea" value
+ * @method string             getCaLogin()    Returns the current record's "ca_login" value
+ * @method NotTarea           getNotTarea()   Returns the current record's "NotTarea" value
+ * @method Usuario            getUsuario()    Returns the current record's "Usuario" value
+ * @method NotTareaAsignacion setCaIdtarea()  Sets the current record's "ca_idtarea" value
+ * @method NotTareaAsignacion setCaLogin()    Sets the current record's "ca_login" value
+ * @method NotTareaAsignacion setNotTarea()   Sets the current record's "NotTarea" value
+ * @method NotTareaAsignacion setUsuario()    Sets the current record's "Usuario" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

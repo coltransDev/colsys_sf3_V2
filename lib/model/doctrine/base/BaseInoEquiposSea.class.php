@@ -17,6 +17,29 @@
  * @property InoMaestraSea $InoMaestraSea
  * @property Concepto $Concepto
  * 
+ * @method string        getCaReferencia()      Returns the current record's "ca_referencia" value
+ * @method integer       getCaIdequipo()        Returns the current record's "ca_idequipo" value
+ * @method integer       getCaIdconcepto()      Returns the current record's "ca_idconcepto" value
+ * @method integer       getCaCantidad()        Returns the current record's "ca_cantidad" value
+ * @method string        getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method timestamp     getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string        getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp     getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method string        getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method InoMaestraSea getInoMaestraSea()     Returns the current record's "InoMaestraSea" value
+ * @method Concepto      getConcepto()          Returns the current record's "Concepto" value
+ * @method InoEquiposSea setCaReferencia()      Sets the current record's "ca_referencia" value
+ * @method InoEquiposSea setCaIdequipo()        Sets the current record's "ca_idequipo" value
+ * @method InoEquiposSea setCaIdconcepto()      Sets the current record's "ca_idconcepto" value
+ * @method InoEquiposSea setCaCantidad()        Sets the current record's "ca_cantidad" value
+ * @method InoEquiposSea setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method InoEquiposSea setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method InoEquiposSea setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method InoEquiposSea setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method InoEquiposSea setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method InoEquiposSea setInoMaestraSea()     Sets the current record's "InoMaestraSea" value
+ * @method InoEquiposSea setConcepto()          Sets the current record's "Concepto" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

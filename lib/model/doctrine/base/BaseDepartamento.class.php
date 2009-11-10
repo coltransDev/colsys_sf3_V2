@@ -10,6 +10,15 @@
  * @property boolean $ca_inhelpdesk
  * @property Doctrine_Collection $HdeskGroup
  * 
+ * @method integer             getCaIddepartamento()  Returns the current record's "ca_iddepartamento" value
+ * @method string              getCaNombre()          Returns the current record's "ca_nombre" value
+ * @method boolean             getCaInhelpdesk()      Returns the current record's "ca_inhelpdesk" value
+ * @method Doctrine_Collection getHdeskGroup()        Returns the current record's "HdeskGroup" collection
+ * @method Departamento        setCaIddepartamento()  Sets the current record's "ca_iddepartamento" value
+ * @method Departamento        setCaNombre()          Sets the current record's "ca_nombre" value
+ * @method Departamento        setCaInhelpdesk()      Sets the current record's "ca_inhelpdesk" value
+ * @method Departamento        setHdeskGroup()        Sets the current record's "HdeskGroup" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

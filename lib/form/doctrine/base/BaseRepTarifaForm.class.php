@@ -3,6 +3,8 @@
 /**
  * RepTarifa form base class.
  *
+ * @method RepTarifa getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here
@@ -13,9 +15,9 @@ class BaseRepTarifaForm extends BaseFormDoctrine
   public function setup()
   {
     $this->setWidgets(array(
-      'oid'               => new sfWidgetFormInputHidden(),
-      'ca_idreporte'      => new sfWidgetFormDoctrineChoice(array('model' => 'Reporte', 'add_empty' => true)),
-      'ca_idconcepto'     => new sfWidgetFormDoctrineChoice(array('model' => 'Concepto', 'add_empty' => true)),
+      'oid'               => new sfWidgetFormInputText(),
+      'ca_idreporte'      => new sfWidgetFormInputHidden(),
+      'ca_idconcepto'     => new sfWidgetFormInputHidden(),
       'ca_cantidad'       => new sfWidgetFormInputText(),
       'ca_neta_tar'       => new sfWidgetFormInputText(),
       'ca_neta_min'       => new sfWidgetFormInputText(),
@@ -34,9 +36,9 @@ class BaseRepTarifaForm extends BaseFormDoctrine
     ));
 
     $this->setValidators(array(
-      'oid'               => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'oid', 'required' => false)),
-      'ca_idreporte'      => new sfValidatorDoctrineChoice(array('model' => 'Reporte', 'required' => false)),
-      'ca_idconcepto'     => new sfValidatorDoctrineChoice(array('model' => 'Concepto', 'required' => false)),
+      'oid'               => new sfValidatorInteger(array('required' => false)),
+      'ca_idreporte'      => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idreporte', 'required' => false)),
+      'ca_idconcepto'     => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idconcepto', 'required' => false)),
       'ca_cantidad'       => new sfValidatorNumber(array('required' => false)),
       'ca_neta_tar'       => new sfValidatorNumber(array('required' => false)),
       'ca_neta_min'       => new sfValidatorNumber(array('required' => false)),

@@ -26,6 +26,47 @@
  * @property Reporte $Reporte
  * @property Concepto $Concepto
  * 
+ * @method integer   getOid()               Returns the current record's "oid" value
+ * @method integer   getCaIdreporte()       Returns the current record's "ca_idreporte" value
+ * @method integer   getCaIdconcepto()      Returns the current record's "ca_idconcepto" value
+ * @method decimal   getCaCantidad()        Returns the current record's "ca_cantidad" value
+ * @method decimal   getCaNetaTar()         Returns the current record's "ca_neta_tar" value
+ * @method decimal   getCaNetaMin()         Returns the current record's "ca_neta_min" value
+ * @method string    getCaNetaIdm()         Returns the current record's "ca_neta_idm" value
+ * @method decimal   getCaReportarTar()     Returns the current record's "ca_reportar_tar" value
+ * @method decimal   getCaReportarMin()     Returns the current record's "ca_reportar_min" value
+ * @method string    getCaReportarIdm()     Returns the current record's "ca_reportar_idm" value
+ * @method decimal   getCaCobrarTar()       Returns the current record's "ca_cobrar_tar" value
+ * @method decimal   getCaCobrarMin()       Returns the current record's "ca_cobrar_min" value
+ * @method string    getCaCobrarIdm()       Returns the current record's "ca_cobrar_idm" value
+ * @method string    getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method timestamp getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string    getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method string    getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method Reporte   getReporte()           Returns the current record's "Reporte" value
+ * @method Concepto  getConcepto()          Returns the current record's "Concepto" value
+ * @method RepTarifa setOid()               Sets the current record's "oid" value
+ * @method RepTarifa setCaIdreporte()       Sets the current record's "ca_idreporte" value
+ * @method RepTarifa setCaIdconcepto()      Sets the current record's "ca_idconcepto" value
+ * @method RepTarifa setCaCantidad()        Sets the current record's "ca_cantidad" value
+ * @method RepTarifa setCaNetaTar()         Sets the current record's "ca_neta_tar" value
+ * @method RepTarifa setCaNetaMin()         Sets the current record's "ca_neta_min" value
+ * @method RepTarifa setCaNetaIdm()         Sets the current record's "ca_neta_idm" value
+ * @method RepTarifa setCaReportarTar()     Sets the current record's "ca_reportar_tar" value
+ * @method RepTarifa setCaReportarMin()     Sets the current record's "ca_reportar_min" value
+ * @method RepTarifa setCaReportarIdm()     Sets the current record's "ca_reportar_idm" value
+ * @method RepTarifa setCaCobrarTar()       Sets the current record's "ca_cobrar_tar" value
+ * @method RepTarifa setCaCobrarMin()       Sets the current record's "ca_cobrar_min" value
+ * @method RepTarifa setCaCobrarIdm()       Sets the current record's "ca_cobrar_idm" value
+ * @method RepTarifa setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method RepTarifa setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method RepTarifa setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method RepTarifa setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method RepTarifa setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method RepTarifa setReporte()           Sets the current record's "Reporte" value
+ * @method RepTarifa setConcepto()          Sets the current record's "Concepto" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
@@ -38,14 +79,14 @@ abstract class BaseRepTarifa extends myDoctrineRecord
         $this->setTableName('tb_reptarifas');
         $this->hasColumn('oid', 'integer', null, array(
              'type' => 'integer',
-             'primary' => true,
-             'autoincrement' => true,
              ));
         $this->hasColumn('ca_idreporte', 'integer', null, array(
              'type' => 'integer',
+             'primary' => true,
              ));
         $this->hasColumn('ca_idconcepto', 'integer', null, array(
              'type' => 'integer',
+             'primary' => true,
              ));
         $this->hasColumn('ca_cantidad', 'decimal', null, array(
              'type' => 'decimal',

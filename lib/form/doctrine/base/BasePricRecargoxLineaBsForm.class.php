@@ -3,6 +3,8 @@
 /**
  * PricRecargoxLineaBs form base class.
  *
+ * @method PricRecargoxLineaBs getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

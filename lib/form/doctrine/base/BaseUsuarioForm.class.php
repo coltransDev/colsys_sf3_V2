@@ -3,6 +3,8 @@
 /**
  * Usuario form base class.
  *
+ * @method Usuario getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

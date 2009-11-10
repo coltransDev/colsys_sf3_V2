@@ -10,18 +10,53 @@
  * @property string $ca_idtrafico
  * @property string $ca_puerto
  * @property Trafico $Trafico
+ * @property Doctrine_Collection $CotProducto
+ * @property Doctrine_Collection $CotContinuacion
+ * @property Doctrine_Collection $IdsSucursal
+ * @property Doctrine_Collection $InoMaestraSea
  * @property Doctrine_Collection $Trayecto
  * @property Doctrine_Collection $PricRecargoxCiudad
  * @property Doctrine_Collection $PricRecargoxCiudadBs
  * @property Doctrine_Collection $PricPatio
  * @property Doctrine_Collection $Cliente
- * @property Doctrine_Collection $InoMaestraSea
  * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $Tercero
- * @property Doctrine_Collection $CotProducto
- * @property Doctrine_Collection $CotContinuacion
  * @property Doctrine_Collection $InoClientesSea
- * @property Doctrine_Collection $IdsSucursal
+ * 
+ * @method string              getCaIdciudad()           Returns the current record's "ca_idciudad" value
+ * @method string              getCaCiudad()             Returns the current record's "ca_ciudad" value
+ * @method string              getCaIdtrafico()          Returns the current record's "ca_idtrafico" value
+ * @method string              getCaPuerto()             Returns the current record's "ca_puerto" value
+ * @method Trafico             getTrafico()              Returns the current record's "Trafico" value
+ * @method Doctrine_Collection getCotProducto()          Returns the current record's "CotProducto" collection
+ * @method Doctrine_Collection getCotContinuacion()      Returns the current record's "CotContinuacion" collection
+ * @method Doctrine_Collection getIdsSucursal()          Returns the current record's "IdsSucursal" collection
+ * @method Doctrine_Collection getInoMaestraSea()        Returns the current record's "InoMaestraSea" collection
+ * @method Doctrine_Collection getTrayecto()             Returns the current record's "Trayecto" collection
+ * @method Doctrine_Collection getPricRecargoxCiudad()   Returns the current record's "PricRecargoxCiudad" collection
+ * @method Doctrine_Collection getPricRecargoxCiudadBs() Returns the current record's "PricRecargoxCiudadBs" collection
+ * @method Doctrine_Collection getPricPatio()            Returns the current record's "PricPatio" collection
+ * @method Doctrine_Collection getCliente()              Returns the current record's "Cliente" collection
+ * @method Doctrine_Collection getReporte()              Returns the current record's "Reporte" collection
+ * @method Doctrine_Collection getTercero()              Returns the current record's "Tercero" collection
+ * @method Doctrine_Collection getInoClientesSea()       Returns the current record's "InoClientesSea" collection
+ * @method Ciudad              setCaIdciudad()           Sets the current record's "ca_idciudad" value
+ * @method Ciudad              setCaCiudad()             Sets the current record's "ca_ciudad" value
+ * @method Ciudad              setCaIdtrafico()          Sets the current record's "ca_idtrafico" value
+ * @method Ciudad              setCaPuerto()             Sets the current record's "ca_puerto" value
+ * @method Ciudad              setTrafico()              Sets the current record's "Trafico" value
+ * @method Ciudad              setCotProducto()          Sets the current record's "CotProducto" collection
+ * @method Ciudad              setCotContinuacion()      Sets the current record's "CotContinuacion" collection
+ * @method Ciudad              setIdsSucursal()          Sets the current record's "IdsSucursal" collection
+ * @method Ciudad              setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
+ * @method Ciudad              setTrayecto()             Sets the current record's "Trayecto" collection
+ * @method Ciudad              setPricRecargoxCiudad()   Sets the current record's "PricRecargoxCiudad" collection
+ * @method Ciudad              setPricRecargoxCiudadBs() Sets the current record's "PricRecargoxCiudadBs" collection
+ * @method Ciudad              setPricPatio()            Sets the current record's "PricPatio" collection
+ * @method Ciudad              setCliente()              Sets the current record's "Cliente" collection
+ * @method Ciudad              setReporte()              Sets the current record's "Reporte" collection
+ * @method Ciudad              setTercero()              Sets the current record's "Tercero" collection
+ * @method Ciudad              setInoClientesSea()       Sets the current record's "InoClientesSea" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -69,6 +104,22 @@ abstract class BaseCiudad extends myDoctrineRecord
              'local' => 'ca_idtrafico',
              'foreign' => 'ca_idtrafico'));
 
+        $this->hasMany('CotProducto', array(
+             'local' => 'ca_idciudad',
+             'foreign' => 'ca_origen'));
+
+        $this->hasMany('CotContinuacion', array(
+             'local' => 'ca_idciudad',
+             'foreign' => 'ca_origen'));
+
+        $this->hasMany('IdsSucursal', array(
+             'local' => 'ca_idciudad',
+             'foreign' => 'ca_idciudad'));
+
+        $this->hasMany('InoMaestraSea', array(
+             'local' => 'ca_idciudad',
+             'foreign' => 'ca_origen'));
+
         $this->hasMany('Trayecto', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_origen'));
@@ -89,32 +140,16 @@ abstract class BaseCiudad extends myDoctrineRecord
              'local' => 'ca_idciudad',
              'foreign' => 'ca_idciudad'));
 
-        $this->hasMany('InoMaestraSea', array(
-             'local' => 'ca_idciudad',
-             'foreign' => 'ca_origen'));
-
         $this->hasMany('Reporte', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_origen'));
 
         $this->hasMany('Tercero', array(
              'local' => 'ca_idciudad',
-             'foreign' => 'ca_origen'));
-
-        $this->hasMany('CotProducto', array(
-             'local' => 'ca_idciudad',
-             'foreign' => 'ca_origen'));
-
-        $this->hasMany('CotContinuacion', array(
-             'local' => 'ca_idciudad',
-             'foreign' => 'ca_origen'));
+             'foreign' => 'ca_idciudad'));
 
         $this->hasMany('InoClientesSea', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_continuacion_dest'));
-
-        $this->hasMany('IdsSucursal', array(
-             'local' => 'ca_idciudad',
-             'foreign' => 'ca_idciudad'));
     }
 }

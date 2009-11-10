@@ -17,6 +17,29 @@
  * @property Ids $Ids
  * @property IdsTipoDocumento $IdsTipoDocumento
  * 
+ * @method integer          getCaIddocumento()     Returns the current record's "ca_iddocumento" value
+ * @method integer          getCaId()              Returns the current record's "ca_id" value
+ * @method integer          getCaIdtipo()          Returns the current record's "ca_idtipo" value
+ * @method string           getCaUbicacion()       Returns the current record's "ca_ubicacion" value
+ * @method string           getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method date             getCaFchinicio()       Returns the current record's "ca_fchinicio" value
+ * @method date             getCaFchvencimiento()  Returns the current record's "ca_fchvencimiento" value
+ * @method string           getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp        getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method Ids              getIds()               Returns the current record's "Ids" value
+ * @method IdsTipoDocumento getIdsTipoDocumento()  Returns the current record's "IdsTipoDocumento" value
+ * @method IdsDocumento     setCaIddocumento()     Sets the current record's "ca_iddocumento" value
+ * @method IdsDocumento     setCaId()              Sets the current record's "ca_id" value
+ * @method IdsDocumento     setCaIdtipo()          Sets the current record's "ca_idtipo" value
+ * @method IdsDocumento     setCaUbicacion()       Sets the current record's "ca_ubicacion" value
+ * @method IdsDocumento     setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method IdsDocumento     setCaFchinicio()       Sets the current record's "ca_fchinicio" value
+ * @method IdsDocumento     setCaFchvencimiento()  Sets the current record's "ca_fchvencimiento" value
+ * @method IdsDocumento     setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method IdsDocumento     setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method IdsDocumento     setIds()               Sets the current record's "Ids" value
+ * @method IdsDocumento     setIdsTipoDocumento()  Sets the current record's "IdsTipoDocumento" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

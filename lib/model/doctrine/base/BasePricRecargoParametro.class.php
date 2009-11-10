@@ -16,6 +16,27 @@
  * @property string $ca_usucreado
  * @property IdsProveedor $IdsProveedor
  * 
+ * @method integer              getCaIdlinea()        Returns the current record's "ca_idlinea" value
+ * @method string               getCaTransporte()     Returns the current record's "ca_transporte" value
+ * @method string               getCaModalidad()      Returns the current record's "ca_modalidad" value
+ * @method string               getCaImpoexpo()       Returns the current record's "ca_impoexpo" value
+ * @method string               getCaConcepto()       Returns the current record's "ca_concepto" value
+ * @method string               getCaValor()          Returns the current record's "ca_valor" value
+ * @method string               getCaObservaciones()  Returns the current record's "ca_observaciones" value
+ * @method timestamp            getCaFchcreado()      Returns the current record's "ca_fchcreado" value
+ * @method string               getCaUsucreado()      Returns the current record's "ca_usucreado" value
+ * @method IdsProveedor         getIdsProveedor()     Returns the current record's "IdsProveedor" value
+ * @method PricRecargoParametro setCaIdlinea()        Sets the current record's "ca_idlinea" value
+ * @method PricRecargoParametro setCaTransporte()     Sets the current record's "ca_transporte" value
+ * @method PricRecargoParametro setCaModalidad()      Sets the current record's "ca_modalidad" value
+ * @method PricRecargoParametro setCaImpoexpo()       Sets the current record's "ca_impoexpo" value
+ * @method PricRecargoParametro setCaConcepto()       Sets the current record's "ca_concepto" value
+ * @method PricRecargoParametro setCaValor()          Sets the current record's "ca_valor" value
+ * @method PricRecargoParametro setCaObservaciones()  Sets the current record's "ca_observaciones" value
+ * @method PricRecargoParametro setCaFchcreado()      Sets the current record's "ca_fchcreado" value
+ * @method PricRecargoParametro setCaUsucreado()      Sets the current record's "ca_usucreado" value
+ * @method PricRecargoParametro setIdsProveedor()     Sets the current record's "IdsProveedor" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

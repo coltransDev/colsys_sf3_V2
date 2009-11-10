@@ -3,6 +3,8 @@
 /**
  * Tercero form base class.
  *
+ * @method Tercero getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here
@@ -19,7 +21,7 @@ class BaseTerceroForm extends BaseFormDoctrine
       'ca_direccion'      => new sfWidgetFormTextarea(),
       'ca_telefonos'      => new sfWidgetFormTextarea(),
       'ca_fax'            => new sfWidgetFormTextarea(),
-      'ca_idciudad'       => new sfWidgetFormTextarea(),
+      'ca_idciudad'       => new sfWidgetFormDoctrineChoice(array('model' => 'Ciudad', 'add_empty' => true)),
       'ca_email'          => new sfWidgetFormTextarea(),
       'ca_vendedor'       => new sfWidgetFormTextarea(),
       'ca_tipo'           => new sfWidgetFormTextarea(),
@@ -33,7 +35,7 @@ class BaseTerceroForm extends BaseFormDoctrine
       'ca_direccion'      => new sfValidatorString(array('required' => false)),
       'ca_telefonos'      => new sfValidatorString(array('required' => false)),
       'ca_fax'            => new sfValidatorString(array('required' => false)),
-      'ca_idciudad'       => new sfValidatorString(array('required' => false)),
+      'ca_idciudad'       => new sfValidatorDoctrineChoice(array('model' => 'Ciudad', 'required' => false)),
       'ca_email'          => new sfValidatorString(array('required' => false)),
       'ca_vendedor'       => new sfValidatorString(array('required' => false)),
       'ca_tipo'           => new sfValidatorString(array('required' => false)),

@@ -7,6 +7,9 @@
  * 
  * @property date $ca_fchfestivo
  * 
+ * @method date    getCaFchfestivo()  Returns the current record's "ca_fchfestivo" value
+ * @method Festivo setCaFchfestivo()  Sets the current record's "ca_fchfestivo" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

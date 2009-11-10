@@ -17,6 +17,29 @@
  * @property IdsEvaluacion $IdsEvaluacion
  * @property IdsCriterio $IdsCriterio
  * 
+ * @method integer                getCaIdevaluacion()    Returns the current record's "ca_idevaluacion" value
+ * @method integer                getCaIdcriterio()      Returns the current record's "ca_idcriterio" value
+ * @method decimal                getCaValor()           Returns the current record's "ca_valor" value
+ * @method decimal                getCaPonderacion()     Returns the current record's "ca_ponderacion" value
+ * @method string                 getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method string                 getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp              getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string                 getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method timestamp              getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method IdsEvaluacion          getIdsEvaluacion()     Returns the current record's "IdsEvaluacion" value
+ * @method IdsCriterio            getIdsCriterio()       Returns the current record's "IdsCriterio" value
+ * @method IdsEvaluacionxCriterio setCaIdevaluacion()    Sets the current record's "ca_idevaluacion" value
+ * @method IdsEvaluacionxCriterio setCaIdcriterio()      Sets the current record's "ca_idcriterio" value
+ * @method IdsEvaluacionxCriterio setCaValor()           Sets the current record's "ca_valor" value
+ * @method IdsEvaluacionxCriterio setCaPonderacion()     Sets the current record's "ca_ponderacion" value
+ * @method IdsEvaluacionxCriterio setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method IdsEvaluacionxCriterio setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method IdsEvaluacionxCriterio setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method IdsEvaluacionxCriterio setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method IdsEvaluacionxCriterio setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method IdsEvaluacionxCriterio setIdsEvaluacion()     Sets the current record's "IdsEvaluacion" value
+ * @method IdsEvaluacionxCriterio setIdsCriterio()       Sets the current record's "IdsCriterio" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

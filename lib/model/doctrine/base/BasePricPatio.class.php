@@ -12,6 +12,19 @@
  * @property Ciudad $Ciudad
  * @property Doctrine_Collection $PricPatioLinea
  * 
+ * @method integer             getCaIdpatio()      Returns the current record's "ca_idpatio" value
+ * @method string              getCaNombre()       Returns the current record's "ca_nombre" value
+ * @method string              getCaIdciudad()     Returns the current record's "ca_idciudad" value
+ * @method string              getCaDireccion()    Returns the current record's "ca_direccion" value
+ * @method Ciudad              getCiudad()         Returns the current record's "Ciudad" value
+ * @method Doctrine_Collection getPricPatioLinea() Returns the current record's "PricPatioLinea" collection
+ * @method PricPatio           setCaIdpatio()      Sets the current record's "ca_idpatio" value
+ * @method PricPatio           setCaNombre()       Sets the current record's "ca_nombre" value
+ * @method PricPatio           setCaIdciudad()     Sets the current record's "ca_idciudad" value
+ * @method PricPatio           setCaDireccion()    Sets the current record's "ca_direccion" value
+ * @method PricPatio           setCiudad()         Sets the current record's "Ciudad" value
+ * @method PricPatio           setPricPatioLinea() Sets the current record's "PricPatioLinea" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

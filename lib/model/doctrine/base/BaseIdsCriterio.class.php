@@ -18,6 +18,31 @@
  * @property Doctrine_Collection $IdsEvaluacionxCriterio
  * @property Doctrine_Collection $IdsEvento
  * 
+ * @method integer             getCaIdcriterio()           Returns the current record's "ca_idcriterio" value
+ * @method string              getCaTipo()                 Returns the current record's "ca_tipo" value
+ * @method string              getCaCriterio()             Returns the current record's "ca_criterio" value
+ * @method integer             getCaPonderacion()          Returns the current record's "ca_ponderacion" value
+ * @method string              getCaTipocriterio()         Returns the current record's "ca_tipocriterio" value
+ * @method boolean             getCaActivo()               Returns the current record's "ca_activo" value
+ * @method string              getCaUsucreado()            Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchcreado()            Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsuactualizado()       Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchactualizado()       Returns the current record's "ca_fchactualizado" value
+ * @method Doctrine_Collection getIdsEvaluacionxCriterio() Returns the current record's "IdsEvaluacionxCriterio" collection
+ * @method Doctrine_Collection getIdsEvento()              Returns the current record's "IdsEvento" collection
+ * @method IdsCriterio         setCaIdcriterio()           Sets the current record's "ca_idcriterio" value
+ * @method IdsCriterio         setCaTipo()                 Sets the current record's "ca_tipo" value
+ * @method IdsCriterio         setCaCriterio()             Sets the current record's "ca_criterio" value
+ * @method IdsCriterio         setCaPonderacion()          Sets the current record's "ca_ponderacion" value
+ * @method IdsCriterio         setCaTipocriterio()         Sets the current record's "ca_tipocriterio" value
+ * @method IdsCriterio         setCaActivo()               Sets the current record's "ca_activo" value
+ * @method IdsCriterio         setCaUsucreado()            Sets the current record's "ca_usucreado" value
+ * @method IdsCriterio         setCaFchcreado()            Sets the current record's "ca_fchcreado" value
+ * @method IdsCriterio         setCaUsuactualizado()       Sets the current record's "ca_usuactualizado" value
+ * @method IdsCriterio         setCaFchactualizado()       Sets the current record's "ca_fchactualizado" value
+ * @method IdsCriterio         setIdsEvaluacionxCriterio() Sets the current record's "IdsEvaluacionxCriterio" collection
+ * @method IdsCriterio         setIdsEvento()              Sets the current record's "IdsEvento" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

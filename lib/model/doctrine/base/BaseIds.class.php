@@ -26,6 +26,52 @@
  * @property Ids $Grupo
  * @property Doctrine_Collection $Ids
  * @property Doctrine_Collection $IdsEvaluacion
+ * @property Doctrine_Collection $InoComprobante
+ * 
+ * @method integer             getCaId()                  Returns the current record's "ca_id" value
+ * @method integer             getCaDv()                  Returns the current record's "ca_dv" value
+ * @method string              getCaIdalterno()           Returns the current record's "ca_idalterno" value
+ * @method integer             getCaTipoidentificacion()  Returns the current record's "ca_tipoidentificacion" value
+ * @method integer             getCaIdgrupo()             Returns the current record's "ca_idgrupo" value
+ * @method string              getCaNombre()              Returns the current record's "ca_nombre" value
+ * @method string              getCaWebsite()             Returns the current record's "ca_website" value
+ * @method string              getCaActividad()           Returns the current record's "ca_actividad" value
+ * @method string              getCaSectoreco()           Returns the current record's "ca_sectoreco" value
+ * @method string              getCaUsucreado()           Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchcreado()           Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsuactualizado()      Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchactualizado()      Returns the current record's "ca_fchactualizado" value
+ * @method Doctrine_Collection getIdsSucursal()           Returns the current record's "IdsSucursal" collection
+ * @method IdsAgente           getIdsAgente()             Returns the current record's "IdsAgente" value
+ * @method IdsProveedor        getIdsProveedor()          Returns the current record's "IdsProveedor" value
+ * @method Doctrine_Collection getIdsDocumento()          Returns the current record's "IdsDocumento" collection
+ * @method Doctrine_Collection getIdsEvento()             Returns the current record's "IdsEvento" collection
+ * @method Ids                 getGrupo()                 Returns the current record's "Grupo" value
+ * @method Doctrine_Collection getIds()                   Returns the current record's "Ids" collection
+ * @method Doctrine_Collection getIdsEvaluacion()         Returns the current record's "IdsEvaluacion" collection
+ * @method Doctrine_Collection getInoComprobante()        Returns the current record's "InoComprobante" collection
+ * @method Ids                 setCaId()                  Sets the current record's "ca_id" value
+ * @method Ids                 setCaDv()                  Sets the current record's "ca_dv" value
+ * @method Ids                 setCaIdalterno()           Sets the current record's "ca_idalterno" value
+ * @method Ids                 setCaTipoidentificacion()  Sets the current record's "ca_tipoidentificacion" value
+ * @method Ids                 setCaIdgrupo()             Sets the current record's "ca_idgrupo" value
+ * @method Ids                 setCaNombre()              Sets the current record's "ca_nombre" value
+ * @method Ids                 setCaWebsite()             Sets the current record's "ca_website" value
+ * @method Ids                 setCaActividad()           Sets the current record's "ca_actividad" value
+ * @method Ids                 setCaSectoreco()           Sets the current record's "ca_sectoreco" value
+ * @method Ids                 setCaUsucreado()           Sets the current record's "ca_usucreado" value
+ * @method Ids                 setCaFchcreado()           Sets the current record's "ca_fchcreado" value
+ * @method Ids                 setCaUsuactualizado()      Sets the current record's "ca_usuactualizado" value
+ * @method Ids                 setCaFchactualizado()      Sets the current record's "ca_fchactualizado" value
+ * @method Ids                 setIdsSucursal()           Sets the current record's "IdsSucursal" collection
+ * @method Ids                 setIdsAgente()             Sets the current record's "IdsAgente" value
+ * @method Ids                 setIdsProveedor()          Sets the current record's "IdsProveedor" value
+ * @method Ids                 setIdsDocumento()          Sets the current record's "IdsDocumento" collection
+ * @method Ids                 setIdsEvento()             Sets the current record's "IdsEvento" collection
+ * @method Ids                 setGrupo()                 Sets the current record's "Grupo" value
+ * @method Ids                 setIds()                   Sets the current record's "Ids" collection
+ * @method Ids                 setIdsEvaluacion()         Sets the current record's "IdsEvaluacion" collection
+ * @method Ids                 setInoComprobante()        Sets the current record's "InoComprobante" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -118,6 +164,10 @@ abstract class BaseIds extends myDoctrineRecord
              'foreign' => 'ca_id'));
 
         $this->hasMany('IdsEvaluacion', array(
+             'local' => 'ca_id',
+             'foreign' => 'ca_id'));
+
+        $this->hasMany('InoComprobante', array(
              'local' => 'ca_id',
              'foreign' => 'ca_id'));
     }

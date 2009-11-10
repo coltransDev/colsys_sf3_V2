@@ -27,6 +27,49 @@
  * @property Trafico $Trafico
  * @property IdsProveedor $IdsProveedor
  * 
+ * @method string              getCaIdtrafico()       Returns the current record's "ca_idtrafico" value
+ * @method integer             getCaIdlinea()         Returns the current record's "ca_idlinea" value
+ * @method integer             getCaIdrecargo()       Returns the current record's "ca_idrecargo" value
+ * @method integer             getCaIdconcepto()      Returns the current record's "ca_idconcepto" value
+ * @method string              getCaModalidad()       Returns the current record's "ca_modalidad" value
+ * @method string              getCaImpoexpo()        Returns the current record's "ca_impoexpo" value
+ * @method decimal             getCaVlrrecargo()      Returns the current record's "ca_vlrrecargo" value
+ * @method string              getCaAplicacion()      Returns the current record's "ca_aplicacion" value
+ * @method decimal             getCaVlrminimo()       Returns the current record's "ca_vlrminimo" value
+ * @method string              getCaAplicacionMin()   Returns the current record's "ca_aplicacion_min" value
+ * @method string              getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method date                getCaFchinicio()       Returns the current record's "ca_fchinicio" value
+ * @method date                getCaFchvencimiento()  Returns the current record's "ca_fchvencimiento" value
+ * @method string              getCaIdmoneda()        Returns the current record's "ca_idmoneda" value
+ * @method integer             getCaConsecutivo()     Returns the current record's "ca_consecutivo" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFcheliminado()    Returns the current record's "ca_fcheliminado" value
+ * @method TipoRecargo         getTipoRecargo()       Returns the current record's "TipoRecargo" value
+ * @method Trafico             getTrafico()           Returns the current record's "Trafico" value
+ * @method IdsProveedor        getIdsProveedor()      Returns the current record's "IdsProveedor" value
+ * @method PricRecargoxLineaBs setCaIdtrafico()       Sets the current record's "ca_idtrafico" value
+ * @method PricRecargoxLineaBs setCaIdlinea()         Sets the current record's "ca_idlinea" value
+ * @method PricRecargoxLineaBs setCaIdrecargo()       Sets the current record's "ca_idrecargo" value
+ * @method PricRecargoxLineaBs setCaIdconcepto()      Sets the current record's "ca_idconcepto" value
+ * @method PricRecargoxLineaBs setCaModalidad()       Sets the current record's "ca_modalidad" value
+ * @method PricRecargoxLineaBs setCaImpoexpo()        Sets the current record's "ca_impoexpo" value
+ * @method PricRecargoxLineaBs setCaVlrrecargo()      Sets the current record's "ca_vlrrecargo" value
+ * @method PricRecargoxLineaBs setCaAplicacion()      Sets the current record's "ca_aplicacion" value
+ * @method PricRecargoxLineaBs setCaVlrminimo()       Sets the current record's "ca_vlrminimo" value
+ * @method PricRecargoxLineaBs setCaAplicacionMin()   Sets the current record's "ca_aplicacion_min" value
+ * @method PricRecargoxLineaBs setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method PricRecargoxLineaBs setCaFchinicio()       Sets the current record's "ca_fchinicio" value
+ * @method PricRecargoxLineaBs setCaFchvencimiento()  Sets the current record's "ca_fchvencimiento" value
+ * @method PricRecargoxLineaBs setCaIdmoneda()        Sets the current record's "ca_idmoneda" value
+ * @method PricRecargoxLineaBs setCaConsecutivo()     Sets the current record's "ca_consecutivo" value
+ * @method PricRecargoxLineaBs setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method PricRecargoxLineaBs setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method PricRecargoxLineaBs setCaFcheliminado()    Sets the current record's "ca_fcheliminado" value
+ * @method PricRecargoxLineaBs setTipoRecargo()       Sets the current record's "TipoRecargo" value
+ * @method PricRecargoxLineaBs setTrafico()           Sets the current record's "Trafico" value
+ * @method PricRecargoxLineaBs setIdsProveedor()      Sets the current record's "IdsProveedor" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

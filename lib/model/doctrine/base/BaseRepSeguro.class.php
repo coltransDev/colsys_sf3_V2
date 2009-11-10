@@ -16,6 +16,27 @@
  * @property string $ca_seguro_conf
  * @property Reporte $Reporte
  * 
+ * @method integer   getCaIdreporte()        Returns the current record's "ca_idreporte" value
+ * @method decimal   getCaVlrasegurado()     Returns the current record's "ca_vlrasegurado" value
+ * @method string    getCaIdmonedaVlr()      Returns the current record's "ca_idmoneda_vlr" value
+ * @method decimal   getCaPrimaventa()       Returns the current record's "ca_primaventa" value
+ * @method decimal   getCaMinimaventa()      Returns the current record's "ca_minimaventa" value
+ * @method string    getCaIdmonedaVta()      Returns the current record's "ca_idmoneda_vta" value
+ * @method decimal   getCaObtencionpoliza()  Returns the current record's "ca_obtencionpoliza" value
+ * @method string    getCaIdmonedaPol()      Returns the current record's "ca_idmoneda_pol" value
+ * @method string    getCaSeguroConf()       Returns the current record's "ca_seguro_conf" value
+ * @method Reporte   getReporte()            Returns the current record's "Reporte" value
+ * @method RepSeguro setCaIdreporte()        Sets the current record's "ca_idreporte" value
+ * @method RepSeguro setCaVlrasegurado()     Sets the current record's "ca_vlrasegurado" value
+ * @method RepSeguro setCaIdmonedaVlr()      Sets the current record's "ca_idmoneda_vlr" value
+ * @method RepSeguro setCaPrimaventa()       Sets the current record's "ca_primaventa" value
+ * @method RepSeguro setCaMinimaventa()      Sets the current record's "ca_minimaventa" value
+ * @method RepSeguro setCaIdmonedaVta()      Sets the current record's "ca_idmoneda_vta" value
+ * @method RepSeguro setCaObtencionpoliza()  Sets the current record's "ca_obtencionpoliza" value
+ * @method RepSeguro setCaIdmonedaPol()      Sets the current record's "ca_idmoneda_pol" value
+ * @method RepSeguro setCaSeguroConf()       Sets the current record's "ca_seguro_conf" value
+ * @method RepSeguro setReporte()            Sets the current record's "Reporte" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

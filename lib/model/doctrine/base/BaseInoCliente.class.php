@@ -31,6 +31,62 @@
  * @property Usuario $Vendedor
  * @property Usuario $UsuCreado
  * @property Usuario $UsuActualizado
+ * @property Doctrine_Collection $InoTransaccion
+ * 
+ * @method integer             getCaIdinocliente()    Returns the current record's "ca_idinocliente" value
+ * @method integer             getCaIdmaestra()       Returns the current record's "ca_idmaestra" value
+ * @method integer             getCaIdcliente()       Returns the current record's "ca_idcliente" value
+ * @method string              getCaHbls()            Returns the current record's "ca_hbls" value
+ * @method date                getCaFchhbls()         Returns the current record's "ca_fchhbls" value
+ * @method integer             getCaIdreporte()       Returns the current record's "ca_idreporte" value
+ * @method integer             getCaIdproveedor()     Returns the current record's "ca_idproveedor" value
+ * @method string              getCaProveedor()       Returns the current record's "ca_proveedor" value
+ * @method decimal             getCaNumpiezas()       Returns the current record's "ca_numpiezas" value
+ * @method decimal             getCaPeso()            Returns the current record's "ca_peso" value
+ * @method decimal             getCaVolumen()         Returns the current record's "ca_volumen" value
+ * @method string              getCaNumorden()        Returns the current record's "ca_numorden" value
+ * @method string              getCaVendedor()        Returns the current record's "ca_vendedor" value
+ * @method integer             getCaIdsubtrayecto()   Returns the current record's "ca_idsubtrayecto" value
+ * @method integer             getCaIdbodega()        Returns the current record's "ca_idbodega" value
+ * @method string              getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
+ * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
+ * @method Cliente             getCliente()           Returns the current record's "Cliente" value
+ * @method Doctrine_Collection getInoMaestra()        Returns the current record's "InoMaestra" collection
+ * @method Tercero             getProveedor()         Returns the current record's "Proveedor" value
+ * @method Usuario             getVendedor()          Returns the current record's "Vendedor" value
+ * @method Usuario             getUsuCreado()         Returns the current record's "UsuCreado" value
+ * @method Usuario             getUsuActualizado()    Returns the current record's "UsuActualizado" value
+ * @method Doctrine_Collection getInoTransaccion()    Returns the current record's "InoTransaccion" collection
+ * @method InoCliente          setCaIdinocliente()    Sets the current record's "ca_idinocliente" value
+ * @method InoCliente          setCaIdmaestra()       Sets the current record's "ca_idmaestra" value
+ * @method InoCliente          setCaIdcliente()       Sets the current record's "ca_idcliente" value
+ * @method InoCliente          setCaHbls()            Sets the current record's "ca_hbls" value
+ * @method InoCliente          setCaFchhbls()         Sets the current record's "ca_fchhbls" value
+ * @method InoCliente          setCaIdreporte()       Sets the current record's "ca_idreporte" value
+ * @method InoCliente          setCaIdproveedor()     Sets the current record's "ca_idproveedor" value
+ * @method InoCliente          setCaProveedor()       Sets the current record's "ca_proveedor" value
+ * @method InoCliente          setCaNumpiezas()       Sets the current record's "ca_numpiezas" value
+ * @method InoCliente          setCaPeso()            Sets the current record's "ca_peso" value
+ * @method InoCliente          setCaVolumen()         Sets the current record's "ca_volumen" value
+ * @method InoCliente          setCaNumorden()        Sets the current record's "ca_numorden" value
+ * @method InoCliente          setCaVendedor()        Sets the current record's "ca_vendedor" value
+ * @method InoCliente          setCaIdsubtrayecto()   Sets the current record's "ca_idsubtrayecto" value
+ * @method InoCliente          setCaIdbodega()        Sets the current record's "ca_idbodega" value
+ * @method InoCliente          setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method InoCliente          setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method InoCliente          setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method InoCliente          setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
+ * @method InoCliente          setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
+ * @method InoCliente          setCliente()           Sets the current record's "Cliente" value
+ * @method InoCliente          setInoMaestra()        Sets the current record's "InoMaestra" collection
+ * @method InoCliente          setProveedor()         Sets the current record's "Proveedor" value
+ * @method InoCliente          setVendedor()          Sets the current record's "Vendedor" value
+ * @method InoCliente          setUsuCreado()         Sets the current record's "UsuCreado" value
+ * @method InoCliente          setUsuActualizado()    Sets the current record's "UsuActualizado" value
+ * @method InoCliente          setInoTransaccion()    Sets the current record's "InoTransaccion" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -146,5 +202,9 @@ abstract class BaseInoCliente extends myDoctrineRecord
         $this->hasOne('Usuario as UsuActualizado', array(
              'local' => 'ca_usuactualizado',
              'foreign' => 'ca_login'));
+
+        $this->hasMany('InoTransaccion', array(
+             'local' => 'ca_idinocliente',
+             'foreign' => 'ca_idinocliente'));
     }
 }

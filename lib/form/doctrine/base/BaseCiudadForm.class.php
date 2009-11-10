@@ -3,6 +3,8 @@
 /**
  * Ciudad form base class.
  *
+ * @method Ciudad getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

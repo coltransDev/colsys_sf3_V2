@@ -16,6 +16,27 @@
  * @property string $ca_country
  * @property Sdn $Sdn
  * 
+ * @method integer    getCaUid()          Returns the current record's "ca_uid" value
+ * @method integer    getCaUidAddress()   Returns the current record's "ca_uid_address" value
+ * @method string     getCaAddress1()     Returns the current record's "ca_address1" value
+ * @method string     getCaAddress2()     Returns the current record's "ca_address2" value
+ * @method string     getCaAddress3()     Returns the current record's "ca_address3" value
+ * @method string     getCaCity()         Returns the current record's "ca_city" value
+ * @method string     getCaState()        Returns the current record's "ca_state" value
+ * @method string     getCaPostal()       Returns the current record's "ca_postal" value
+ * @method string     getCaCountry()      Returns the current record's "ca_country" value
+ * @method Sdn        getSdn()            Returns the current record's "Sdn" value
+ * @method SdnAddress setCaUid()          Sets the current record's "ca_uid" value
+ * @method SdnAddress setCaUidAddress()   Sets the current record's "ca_uid_address" value
+ * @method SdnAddress setCaAddress1()     Sets the current record's "ca_address1" value
+ * @method SdnAddress setCaAddress2()     Sets the current record's "ca_address2" value
+ * @method SdnAddress setCaAddress3()     Sets the current record's "ca_address3" value
+ * @method SdnAddress setCaCity()         Sets the current record's "ca_city" value
+ * @method SdnAddress setCaState()        Sets the current record's "ca_state" value
+ * @method SdnAddress setCaPostal()       Sets the current record's "ca_postal" value
+ * @method SdnAddress setCaCountry()      Sets the current record's "ca_country" value
+ * @method SdnAddress setSdn()            Sets the current record's "Sdn" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

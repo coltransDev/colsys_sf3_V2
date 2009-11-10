@@ -14,6 +14,23 @@
  * @property PricPatio $PricPatio
  * @property IdsProveedor $IdsProveedor
  * 
+ * @method integer        getCaIdpatio()        Returns the current record's "ca_idpatio" value
+ * @method integer        getCaIdlinea()        Returns the current record's "ca_idlinea" value
+ * @method string         getCaTransporte()     Returns the current record's "ca_transporte" value
+ * @method string         getCaModalidad()      Returns the current record's "ca_modalidad" value
+ * @method string         getCaImpoexpo()       Returns the current record's "ca_impoexpo" value
+ * @method string         getCaObservaciones()  Returns the current record's "ca_observaciones" value
+ * @method PricPatio      getPricPatio()        Returns the current record's "PricPatio" value
+ * @method IdsProveedor   getIdsProveedor()     Returns the current record's "IdsProveedor" value
+ * @method PricPatioLinea setCaIdpatio()        Sets the current record's "ca_idpatio" value
+ * @method PricPatioLinea setCaIdlinea()        Sets the current record's "ca_idlinea" value
+ * @method PricPatioLinea setCaTransporte()     Sets the current record's "ca_transporte" value
+ * @method PricPatioLinea setCaModalidad()      Sets the current record's "ca_modalidad" value
+ * @method PricPatioLinea setCaImpoexpo()       Sets the current record's "ca_impoexpo" value
+ * @method PricPatioLinea setCaObservaciones()  Sets the current record's "ca_observaciones" value
+ * @method PricPatioLinea setPricPatio()        Sets the current record's "PricPatio" value
+ * @method PricPatioLinea setIdsProveedor()     Sets the current record's "IdsProveedor" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

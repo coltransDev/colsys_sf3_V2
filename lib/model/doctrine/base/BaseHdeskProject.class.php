@@ -13,6 +13,21 @@
  * @property Doctrine_Collection $HdeskGroup
  * @property Doctrine_Collection $HdeskTicket
  * 
+ * @method integer             getCaIdproject()    Returns the current record's "ca_idproject" value
+ * @method integer             getCaIdgroup()      Returns the current record's "ca_idgroup" value
+ * @method string              getCaName()         Returns the current record's "ca_name" value
+ * @method string              getCaDescription()  Returns the current record's "ca_description" value
+ * @method boolean             getCaActive()       Returns the current record's "ca_active" value
+ * @method Doctrine_Collection getHdeskGroup()     Returns the current record's "HdeskGroup" collection
+ * @method Doctrine_Collection getHdeskTicket()    Returns the current record's "HdeskTicket" collection
+ * @method HdeskProject        setCaIdproject()    Sets the current record's "ca_idproject" value
+ * @method HdeskProject        setCaIdgroup()      Sets the current record's "ca_idgroup" value
+ * @method HdeskProject        setCaName()         Sets the current record's "ca_name" value
+ * @method HdeskProject        setCaDescription()  Sets the current record's "ca_description" value
+ * @method HdeskProject        setCaActive()       Sets the current record's "ca_active" value
+ * @method HdeskProject        setHdeskGroup()     Sets the current record's "HdeskGroup" collection
+ * @method HdeskProject        setHdeskTicket()    Sets the current record's "HdeskTicket" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

@@ -18,6 +18,31 @@
  * @property Ids $Ids
  * @property Doctrine_Collection $IdsEvaluacionxCriterio
  * 
+ * @method integer             getCaIdevaluacion()         Returns the current record's "ca_idevaluacion" value
+ * @method integer             getCaId()                   Returns the current record's "ca_id" value
+ * @method string              getCaTipo()                 Returns the current record's "ca_tipo" value
+ * @method string              getCaConcepto()             Returns the current record's "ca_concepto" value
+ * @method integer             getCaAno()                  Returns the current record's "ca_ano" value
+ * @method date                getCaFchevaluacion()        Returns the current record's "ca_fchevaluacion" value
+ * @method string              getCaUsucreado()            Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchcreado()            Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsuactualizado()       Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchactualizado()       Returns the current record's "ca_fchactualizado" value
+ * @method Ids                 getIds()                    Returns the current record's "Ids" value
+ * @method Doctrine_Collection getIdsEvaluacionxCriterio() Returns the current record's "IdsEvaluacionxCriterio" collection
+ * @method IdsEvaluacion       setCaIdevaluacion()         Sets the current record's "ca_idevaluacion" value
+ * @method IdsEvaluacion       setCaId()                   Sets the current record's "ca_id" value
+ * @method IdsEvaluacion       setCaTipo()                 Sets the current record's "ca_tipo" value
+ * @method IdsEvaluacion       setCaConcepto()             Sets the current record's "ca_concepto" value
+ * @method IdsEvaluacion       setCaAno()                  Sets the current record's "ca_ano" value
+ * @method IdsEvaluacion       setCaFchevaluacion()        Sets the current record's "ca_fchevaluacion" value
+ * @method IdsEvaluacion       setCaUsucreado()            Sets the current record's "ca_usucreado" value
+ * @method IdsEvaluacion       setCaFchcreado()            Sets the current record's "ca_fchcreado" value
+ * @method IdsEvaluacion       setCaUsuactualizado()       Sets the current record's "ca_usuactualizado" value
+ * @method IdsEvaluacion       setCaFchactualizado()       Sets the current record's "ca_fchactualizado" value
+ * @method IdsEvaluacion       setIds()                    Sets the current record's "Ids" value
+ * @method IdsEvaluacion       setIdsEvaluacionxCriterio() Sets the current record's "IdsEvaluacionxCriterio" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

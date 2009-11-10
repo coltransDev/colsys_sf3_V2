@@ -10,6 +10,15 @@
  * @property Cotizacion $Cotizacion
  * @property IdsContacto $IdsContacto
  * 
+ * @method string        getCaIdcontacto()    Returns the current record's "ca_idcontacto" value
+ * @method integer       getCaIdcotizacion()  Returns the current record's "ca_idcotizacion" value
+ * @method Cotizacion    getCotizacion()      Returns the current record's "Cotizacion" value
+ * @method IdsContacto   getIdsContacto()     Returns the current record's "IdsContacto" value
+ * @method CotContactoAg setCaIdcontacto()    Sets the current record's "ca_idcontacto" value
+ * @method CotContactoAg setCaIdcotizacion()  Sets the current record's "ca_idcotizacion" value
+ * @method CotContactoAg setCotizacion()      Sets the current record's "Cotizacion" value
+ * @method CotContactoAg setIdsContacto()     Sets the current record's "IdsContacto" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

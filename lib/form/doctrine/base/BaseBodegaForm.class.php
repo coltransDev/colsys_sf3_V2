@@ -3,6 +3,8 @@
 /**
  * Bodega form base class.
  *
+ * @method Bodega getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

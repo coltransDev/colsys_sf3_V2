@@ -14,6 +14,23 @@
  * @property CotProducto $CotProducto
  * @property Usuario $Usuario
  * 
+ * @method integer        getCaIdseguimiento()   Returns the current record's "ca_idseguimiento" value
+ * @method timestamp      getCaFchseguimiento()  Returns the current record's "ca_fchseguimiento" value
+ * @method integer        getCaIdproducto()      Returns the current record's "ca_idproducto" value
+ * @method string         getCaLogin()           Returns the current record's "ca_login" value
+ * @method string         getCaSeguimiento()     Returns the current record's "ca_seguimiento" value
+ * @method string         getCaEtapa()           Returns the current record's "ca_etapa" value
+ * @method CotProducto    getCotProducto()       Returns the current record's "CotProducto" value
+ * @method Usuario        getUsuario()           Returns the current record's "Usuario" value
+ * @method CotSeguimiento setCaIdseguimiento()   Sets the current record's "ca_idseguimiento" value
+ * @method CotSeguimiento setCaFchseguimiento()  Sets the current record's "ca_fchseguimiento" value
+ * @method CotSeguimiento setCaIdproducto()      Sets the current record's "ca_idproducto" value
+ * @method CotSeguimiento setCaLogin()           Sets the current record's "ca_login" value
+ * @method CotSeguimiento setCaSeguimiento()     Sets the current record's "ca_seguimiento" value
+ * @method CotSeguimiento setCaEtapa()           Sets the current record's "ca_etapa" value
+ * @method CotSeguimiento setCotProducto()       Sets the current record's "CotProducto" value
+ * @method CotSeguimiento setUsuario()           Sets the current record's "Usuario" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

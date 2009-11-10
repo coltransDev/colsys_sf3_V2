@@ -3,6 +3,8 @@
 /**
  * IdsEvaluacion form base class.
  *
+ * @method IdsEvaluacion getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here
@@ -17,6 +19,7 @@ class BaseIdsEvaluacionForm extends BaseFormDoctrine
       'ca_id'             => new sfWidgetFormDoctrineChoice(array('model' => 'Ids', 'add_empty' => true)),
       'ca_tipo'           => new sfWidgetFormInputText(),
       'ca_concepto'       => new sfWidgetFormInputText(),
+      'ca_ano'            => new sfWidgetFormInputText(),
       'ca_fchevaluacion'  => new sfWidgetFormDate(),
       'ca_usucreado'      => new sfWidgetFormInputText(),
       'ca_fchcreado'      => new sfWidgetFormDateTime(),
@@ -29,6 +32,7 @@ class BaseIdsEvaluacionForm extends BaseFormDoctrine
       'ca_id'             => new sfValidatorDoctrineChoice(array('model' => 'Ids', 'required' => false)),
       'ca_tipo'           => new sfValidatorString(array('max_length' => 15, 'required' => false)),
       'ca_concepto'       => new sfValidatorString(array('max_length' => 15, 'required' => false)),
+      'ca_ano'            => new sfValidatorInteger(array('required' => false)),
       'ca_fchevaluacion'  => new sfValidatorDate(array('required' => false)),
       'ca_usucreado'      => new sfValidatorString(array('max_length' => 20, 'required' => false)),
       'ca_fchcreado'      => new sfValidatorDateTime(array('required' => false)),

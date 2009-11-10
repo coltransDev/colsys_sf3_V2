@@ -12,6 +12,19 @@
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
  * 
+ * @method integer          getCaIdnotificacion()  Returns the current record's "ca_idnotificacion" value
+ * @method string           getCaTitulo()          Returns the current record's "ca_titulo" value
+ * @method string           getCaMensaje()         Returns the current record's "ca_mensaje" value
+ * @method string           getCaCaducidad()       Returns the current record's "ca_caducidad" value
+ * @method timestamp        getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string           getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method PricNotificacion setCaIdnotificacion()  Sets the current record's "ca_idnotificacion" value
+ * @method PricNotificacion setCaTitulo()          Sets the current record's "ca_titulo" value
+ * @method PricNotificacion setCaMensaje()         Sets the current record's "ca_mensaje" value
+ * @method PricNotificacion setCaCaducidad()       Sets the current record's "ca_caducidad" value
+ * @method PricNotificacion setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method PricNotificacion setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

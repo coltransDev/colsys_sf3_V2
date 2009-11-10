@@ -3,6 +3,8 @@
 /**
  * Festivo form base class.
  *
+ * @method Festivo getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

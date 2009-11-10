@@ -24,6 +24,43 @@
  * @property Doctrine_Collection $EmailAttachment
  * @property Doctrine_Collection $RepStatus
  * 
+ * @method integer             getCaIdemail()       Returns the current record's "ca_idemail" value
+ * @method timestamp           getCaFchenvio()      Returns the current record's "ca_fchenvio" value
+ * @method string              getCaUsuenvio()      Returns the current record's "ca_usuenvio" value
+ * @method string              getCaTipo()          Returns the current record's "ca_tipo" value
+ * @method string              getCaIdcaso()        Returns the current record's "ca_idcaso" value
+ * @method string              getCaFrom()          Returns the current record's "ca_from" value
+ * @method string              getCaFromname()      Returns the current record's "ca_fromname" value
+ * @method string              getCaCc()            Returns the current record's "ca_cc" value
+ * @method string              getCaReplyto()       Returns the current record's "ca_replyto" value
+ * @method string              getCaAddress()       Returns the current record's "ca_address" value
+ * @method string              getCaAttachment()    Returns the current record's "ca_attachment" value
+ * @method string              getCaSubject()       Returns the current record's "ca_subject" value
+ * @method string              getCaBody()          Returns the current record's "ca_body" value
+ * @method string              getCaBodyhtml()      Returns the current record's "ca_bodyhtml" value
+ * @method boolean             getCaReadreceipt()   Returns the current record's "ca_readreceipt" value
+ * @method Reporte             getReporte()         Returns the current record's "Reporte" value
+ * @method Doctrine_Collection getEmailAttachment() Returns the current record's "EmailAttachment" collection
+ * @method Doctrine_Collection getRepStatus()       Returns the current record's "RepStatus" collection
+ * @method Email               setCaIdemail()       Sets the current record's "ca_idemail" value
+ * @method Email               setCaFchenvio()      Sets the current record's "ca_fchenvio" value
+ * @method Email               setCaUsuenvio()      Sets the current record's "ca_usuenvio" value
+ * @method Email               setCaTipo()          Sets the current record's "ca_tipo" value
+ * @method Email               setCaIdcaso()        Sets the current record's "ca_idcaso" value
+ * @method Email               setCaFrom()          Sets the current record's "ca_from" value
+ * @method Email               setCaFromname()      Sets the current record's "ca_fromname" value
+ * @method Email               setCaCc()            Sets the current record's "ca_cc" value
+ * @method Email               setCaReplyto()       Sets the current record's "ca_replyto" value
+ * @method Email               setCaAddress()       Sets the current record's "ca_address" value
+ * @method Email               setCaAttachment()    Sets the current record's "ca_attachment" value
+ * @method Email               setCaSubject()       Sets the current record's "ca_subject" value
+ * @method Email               setCaBody()          Sets the current record's "ca_body" value
+ * @method Email               setCaBodyhtml()      Sets the current record's "ca_bodyhtml" value
+ * @method Email               setCaReadreceipt()   Sets the current record's "ca_readreceipt" value
+ * @method Email               setReporte()         Sets the current record's "Reporte" value
+ * @method Email               setEmailAttachment() Sets the current record's "EmailAttachment" collection
+ * @method Email               setRepStatus()       Sets the current record's "RepStatus" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

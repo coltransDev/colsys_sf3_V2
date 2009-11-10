@@ -3,6 +3,8 @@
 /**
  * Trafico form base class.
  *
+ * @method Trafico getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

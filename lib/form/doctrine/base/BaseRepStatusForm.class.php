@@ -3,6 +3,8 @@
 /**
  * RepStatus form base class.
  *
+ * @method RepStatus getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

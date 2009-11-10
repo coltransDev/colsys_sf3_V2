@@ -31,6 +31,57 @@
  * @property Doctrine_Collection $CotSeguro
  * @property Doctrine_Collection $CotContactoAg
  * 
+ * @method integer             getCaIdcotizacion()        Returns the current record's "ca_idcotizacion" value
+ * @method integer             getCaIdcontacto()          Returns the current record's "ca_idcontacto" value
+ * @method string              getCaConsecutivo()         Returns the current record's "ca_consecutivo" value
+ * @method string              getCaSaludo()              Returns the current record's "ca_saludo" value
+ * @method string              getCaAsunto()              Returns the current record's "ca_asunto" value
+ * @method string              getCaEntrada()             Returns the current record's "ca_entrada" value
+ * @method string              getCaDespedida()           Returns the current record's "ca_despedida" value
+ * @method string              getCaAnexos()              Returns the current record's "ca_anexos" value
+ * @method string              getCaUsuario()             Returns the current record's "ca_usuario" value
+ * @method string              getCaEmpresa()             Returns the current record's "ca_empresa" value
+ * @method string              getCaFuente()              Returns the current record's "ca_fuente" value
+ * @method integer             getCaIdgEnvioOportuno()    Returns the current record's "ca_idg_envio_oportuno" value
+ * @method string              getCaUsucreado()           Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchcreado()           Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsuactualizado()      Returns the current record's "ca_usuactualizado" value
+ * @method timestamp           getCaFchactualizado()      Returns the current record's "ca_fchactualizado" value
+ * @method string              getCaUsuanulado()          Returns the current record's "ca_usuanulado" value
+ * @method timestamp           getCaFchanulado()          Returns the current record's "ca_fchanulado" value
+ * @method Usuario             getUsuario()               Returns the current record's "Usuario" value
+ * @method Contacto            getContacto()              Returns the current record's "Contacto" value
+ * @method NotTarea            getNotTarea()              Returns the current record's "NotTarea" value
+ * @method Doctrine_Collection getCotProducto()           Returns the current record's "CotProducto" collection
+ * @method Doctrine_Collection getCotContinuacion()       Returns the current record's "CotContinuacion" collection
+ * @method Doctrine_Collection getCotSeguro()             Returns the current record's "CotSeguro" collection
+ * @method Doctrine_Collection getCotContactoAg()         Returns the current record's "CotContactoAg" collection
+ * @method Cotizacion          setCaIdcotizacion()        Sets the current record's "ca_idcotizacion" value
+ * @method Cotizacion          setCaIdcontacto()          Sets the current record's "ca_idcontacto" value
+ * @method Cotizacion          setCaConsecutivo()         Sets the current record's "ca_consecutivo" value
+ * @method Cotizacion          setCaSaludo()              Sets the current record's "ca_saludo" value
+ * @method Cotizacion          setCaAsunto()              Sets the current record's "ca_asunto" value
+ * @method Cotizacion          setCaEntrada()             Sets the current record's "ca_entrada" value
+ * @method Cotizacion          setCaDespedida()           Sets the current record's "ca_despedida" value
+ * @method Cotizacion          setCaAnexos()              Sets the current record's "ca_anexos" value
+ * @method Cotizacion          setCaUsuario()             Sets the current record's "ca_usuario" value
+ * @method Cotizacion          setCaEmpresa()             Sets the current record's "ca_empresa" value
+ * @method Cotizacion          setCaFuente()              Sets the current record's "ca_fuente" value
+ * @method Cotizacion          setCaIdgEnvioOportuno()    Sets the current record's "ca_idg_envio_oportuno" value
+ * @method Cotizacion          setCaUsucreado()           Sets the current record's "ca_usucreado" value
+ * @method Cotizacion          setCaFchcreado()           Sets the current record's "ca_fchcreado" value
+ * @method Cotizacion          setCaUsuactualizado()      Sets the current record's "ca_usuactualizado" value
+ * @method Cotizacion          setCaFchactualizado()      Sets the current record's "ca_fchactualizado" value
+ * @method Cotizacion          setCaUsuanulado()          Sets the current record's "ca_usuanulado" value
+ * @method Cotizacion          setCaFchanulado()          Sets the current record's "ca_fchanulado" value
+ * @method Cotizacion          setUsuario()               Sets the current record's "Usuario" value
+ * @method Cotizacion          setContacto()              Sets the current record's "Contacto" value
+ * @method Cotizacion          setNotTarea()              Sets the current record's "NotTarea" value
+ * @method Cotizacion          setCotProducto()           Sets the current record's "CotProducto" collection
+ * @method Cotizacion          setCotContinuacion()       Sets the current record's "CotContinuacion" collection
+ * @method Cotizacion          setCotSeguro()             Sets the current record's "CotSeguro" collection
+ * @method Cotizacion          setCotContactoAg()         Sets the current record's "CotContactoAg" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

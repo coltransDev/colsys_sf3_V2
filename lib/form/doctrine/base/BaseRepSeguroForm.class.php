@@ -3,6 +3,8 @@
 /**
  * RepSeguro form base class.
  *
+ * @method RepSeguro getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

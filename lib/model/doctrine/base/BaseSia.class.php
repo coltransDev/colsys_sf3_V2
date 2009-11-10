@@ -11,6 +11,17 @@
  * @property string $ca_contacto
  * @property Doctrine_Collection $RepExpo
  * 
+ * @method integer             getCaIdsia()     Returns the current record's "ca_idsia" value
+ * @method string              getCaNombre()    Returns the current record's "ca_nombre" value
+ * @method string              getCaTel()       Returns the current record's "ca_tel" value
+ * @method string              getCaContacto()  Returns the current record's "ca_contacto" value
+ * @method Doctrine_Collection getRepExpo()     Returns the current record's "RepExpo" collection
+ * @method Sia                 setCaIdsia()     Sets the current record's "ca_idsia" value
+ * @method Sia                 setCaNombre()    Sets the current record's "ca_nombre" value
+ * @method Sia                 setCaTel()       Sets the current record's "ca_tel" value
+ * @method Sia                 setCaContacto()  Sets the current record's "ca_contacto" value
+ * @method Sia                 setRepExpo()     Sets the current record's "RepExpo" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

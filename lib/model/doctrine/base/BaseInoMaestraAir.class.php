@@ -8,6 +8,11 @@
  * @property string $ca_referencia
  * @property integer $ca_idlinea
  * 
+ * @method string        getCaReferencia()  Returns the current record's "ca_referencia" value
+ * @method integer       getCaIdlinea()     Returns the current record's "ca_idlinea" value
+ * @method InoMaestraAir setCaReferencia()  Sets the current record's "ca_referencia" value
+ * @method InoMaestraAir setCaIdlinea()     Sets the current record's "ca_idlinea" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

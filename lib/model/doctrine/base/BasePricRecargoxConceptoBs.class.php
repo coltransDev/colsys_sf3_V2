@@ -23,6 +23,41 @@
  * @property Concepto $Concepto
  * @property TipoRecargo $TipoRecargo
  * 
+ * @method integer                getCaIdtrayecto()      Returns the current record's "ca_idtrayecto" value
+ * @method integer                getCaIdconcepto()      Returns the current record's "ca_idconcepto" value
+ * @method integer                getCaIdrecargo()       Returns the current record's "ca_idrecargo" value
+ * @method decimal                getCaVlrrecargo()      Returns the current record's "ca_vlrrecargo" value
+ * @method string                 getCaAplicacion()      Returns the current record's "ca_aplicacion" value
+ * @method decimal                getCaVlrminimo()       Returns the current record's "ca_vlrminimo" value
+ * @method string                 getCaAplicacionMin()   Returns the current record's "ca_aplicacion_min" value
+ * @method string                 getCaObservaciones()   Returns the current record's "ca_observaciones" value
+ * @method date                   getCaFchinicio()       Returns the current record's "ca_fchinicio" value
+ * @method date                   getCaFchvencimiento()  Returns the current record's "ca_fchvencimiento" value
+ * @method string                 getCaIdmoneda()        Returns the current record's "ca_idmoneda" value
+ * @method integer                getCaConsecutivo()     Returns the current record's "ca_consecutivo" value
+ * @method timestamp              getCaFchcreado()       Returns the current record's "ca_fchcreado" value
+ * @method string                 getCaUsucreado()       Returns the current record's "ca_usucreado" value
+ * @method timestamp              getCaFcheliminado()    Returns the current record's "ca_fcheliminado" value
+ * @method Concepto               getConcepto()          Returns the current record's "Concepto" value
+ * @method TipoRecargo            getTipoRecargo()       Returns the current record's "TipoRecargo" value
+ * @method PricRecargoxConceptoBs setCaIdtrayecto()      Sets the current record's "ca_idtrayecto" value
+ * @method PricRecargoxConceptoBs setCaIdconcepto()      Sets the current record's "ca_idconcepto" value
+ * @method PricRecargoxConceptoBs setCaIdrecargo()       Sets the current record's "ca_idrecargo" value
+ * @method PricRecargoxConceptoBs setCaVlrrecargo()      Sets the current record's "ca_vlrrecargo" value
+ * @method PricRecargoxConceptoBs setCaAplicacion()      Sets the current record's "ca_aplicacion" value
+ * @method PricRecargoxConceptoBs setCaVlrminimo()       Sets the current record's "ca_vlrminimo" value
+ * @method PricRecargoxConceptoBs setCaAplicacionMin()   Sets the current record's "ca_aplicacion_min" value
+ * @method PricRecargoxConceptoBs setCaObservaciones()   Sets the current record's "ca_observaciones" value
+ * @method PricRecargoxConceptoBs setCaFchinicio()       Sets the current record's "ca_fchinicio" value
+ * @method PricRecargoxConceptoBs setCaFchvencimiento()  Sets the current record's "ca_fchvencimiento" value
+ * @method PricRecargoxConceptoBs setCaIdmoneda()        Sets the current record's "ca_idmoneda" value
+ * @method PricRecargoxConceptoBs setCaConsecutivo()     Sets the current record's "ca_consecutivo" value
+ * @method PricRecargoxConceptoBs setCaFchcreado()       Sets the current record's "ca_fchcreado" value
+ * @method PricRecargoxConceptoBs setCaUsucreado()       Sets the current record's "ca_usucreado" value
+ * @method PricRecargoxConceptoBs setCaFcheliminado()    Sets the current record's "ca_fcheliminado" value
+ * @method PricRecargoxConceptoBs setConcepto()          Sets the current record's "Concepto" value
+ * @method PricRecargoxConceptoBs setTipoRecargo()       Sets the current record's "TipoRecargo" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

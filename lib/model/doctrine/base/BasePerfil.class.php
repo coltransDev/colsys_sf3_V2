@@ -12,6 +12,19 @@
  * @property Doctrine_Collection $AccesoPerfil
  * @property Doctrine_Collection $UsuarioPerfil
  * 
+ * @method string              getCaPerfil()        Returns the current record's "ca_perfil" value
+ * @method string              getCaNombre()        Returns the current record's "ca_nombre" value
+ * @method string              getCaDepartamento()  Returns the current record's "ca_departamento" value
+ * @method string              getCaDescripcion()   Returns the current record's "ca_descripcion" value
+ * @method Doctrine_Collection getAccesoPerfil()    Returns the current record's "AccesoPerfil" collection
+ * @method Doctrine_Collection getUsuarioPerfil()   Returns the current record's "UsuarioPerfil" collection
+ * @method Perfil              setCaPerfil()        Sets the current record's "ca_perfil" value
+ * @method Perfil              setCaNombre()        Sets the current record's "ca_nombre" value
+ * @method Perfil              setCaDepartamento()  Sets the current record's "ca_departamento" value
+ * @method Perfil              setCaDescripcion()   Sets the current record's "ca_descripcion" value
+ * @method Perfil              setAccesoPerfil()    Sets the current record's "AccesoPerfil" collection
+ * @method Perfil              setUsuarioPerfil()   Sets the current record's "UsuarioPerfil" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

@@ -3,6 +3,8 @@
 /**
  * RutinaNivel form base class.
  *
+ * @method RutinaNivel getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

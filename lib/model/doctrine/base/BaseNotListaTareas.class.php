@@ -10,6 +10,15 @@
  * @property string $ca_descripcion
  * @property Doctrine_Collection $NotTarea
  * 
+ * @method integer             getCaIdlistatarea()  Returns the current record's "ca_idlistatarea" value
+ * @method string              getCaNombre()        Returns the current record's "ca_nombre" value
+ * @method string              getCaDescripcion()   Returns the current record's "ca_descripcion" value
+ * @method Doctrine_Collection getNotTarea()        Returns the current record's "NotTarea" collection
+ * @method NotListaTareas      setCaIdlistatarea()  Sets the current record's "ca_idlistatarea" value
+ * @method NotListaTareas      setCaNombre()        Sets the current record's "ca_nombre" value
+ * @method NotListaTareas      setCaDescripcion()   Sets the current record's "ca_descripcion" value
+ * @method NotListaTareas      setNotTarea()        Sets the current record's "NotTarea" collection
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

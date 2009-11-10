@@ -13,6 +13,21 @@
  * @property Reporte $Reporte
  * @property Concepto $Concepto
  * 
+ * @method integer   getCaIdreporte()      Returns the current record's "ca_idreporte" value
+ * @method integer   getCaIdconcepto()     Returns the current record's "ca_idconcepto" value
+ * @method decimal   getCaCantidad()       Returns the current record's "ca_cantidad" value
+ * @method string    getCaIdequipo()       Returns the current record's "ca_idequipo" value
+ * @method string    getCaObservaciones()  Returns the current record's "ca_observaciones" value
+ * @method Reporte   getReporte()          Returns the current record's "Reporte" value
+ * @method Concepto  getConcepto()         Returns the current record's "Concepto" value
+ * @method RepEquipo setCaIdreporte()      Sets the current record's "ca_idreporte" value
+ * @method RepEquipo setCaIdconcepto()     Sets the current record's "ca_idconcepto" value
+ * @method RepEquipo setCaCantidad()       Sets the current record's "ca_cantidad" value
+ * @method RepEquipo setCaIdequipo()       Sets the current record's "ca_idequipo" value
+ * @method RepEquipo setCaObservaciones()  Sets the current record's "ca_observaciones" value
+ * @method RepEquipo setReporte()          Sets the current record's "Reporte" value
+ * @method RepEquipo setConcepto()         Sets the current record's "Concepto" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

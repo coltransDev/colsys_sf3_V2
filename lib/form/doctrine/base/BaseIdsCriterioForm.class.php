@@ -3,6 +3,8 @@
 /**
  * IdsCriterio form base class.
  *
+ * @method IdsCriterio getObject() Returns the current form's model object
+ *
  * @package    symfony
  * @subpackage form
  * @author     Your name here

@@ -15,6 +15,25 @@
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
  * 
+ * @method integer    getCaIdgrupo()             Returns the current record's "ca_idgrupo" value
+ * @method string     getCaTransporte()          Returns the current record's "ca_transporte" value
+ * @method decimal    getCaVlrprima()            Returns the current record's "ca_vlrprima" value
+ * @method decimal    getCaVlrminima()           Returns the current record's "ca_vlrminima" value
+ * @method decimal    getCaVlrobtencionpoliza()  Returns the current record's "ca_vlrobtencionpoliza" value
+ * @method string     getCaIdmoneda()            Returns the current record's "ca_idmoneda" value
+ * @method string     getCaObservaciones()       Returns the current record's "ca_observaciones" value
+ * @method timestamp  getCaFchcreado()           Returns the current record's "ca_fchcreado" value
+ * @method string     getCaUsucreado()           Returns the current record's "ca_usucreado" value
+ * @method PricSeguro setCaIdgrupo()             Sets the current record's "ca_idgrupo" value
+ * @method PricSeguro setCaTransporte()          Sets the current record's "ca_transporte" value
+ * @method PricSeguro setCaVlrprima()            Sets the current record's "ca_vlrprima" value
+ * @method PricSeguro setCaVlrminima()           Sets the current record's "ca_vlrminima" value
+ * @method PricSeguro setCaVlrobtencionpoliza()  Sets the current record's "ca_vlrobtencionpoliza" value
+ * @method PricSeguro setCaIdmoneda()            Sets the current record's "ca_idmoneda" value
+ * @method PricSeguro setCaObservaciones()       Sets the current record's "ca_observaciones" value
+ * @method PricSeguro setCaFchcreado()           Sets the current record's "ca_fchcreado" value
+ * @method PricSeguro setCaUsucreado()           Sets the current record's "ca_usucreado" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>

@@ -22,6 +22,39 @@
  * @property Reporte $Reporte
  * @property Sia $Sia
  * 
+ * @method integer getCaIdreporte()         Returns the current record's "ca_idreporte" value
+ * @method decimal getCaPeso()              Returns the current record's "ca_peso" value
+ * @method decimal getCaVolumen()           Returns the current record's "ca_volumen" value
+ * @method string  getCaPiezas()            Returns the current record's "ca_piezas" value
+ * @method string  getCaDimensiones()       Returns the current record's "ca_dimensiones" value
+ * @method string  getCaValorcarga()        Returns the current record's "ca_valorcarga" value
+ * @method string  getCaAnticipo()          Returns the current record's "ca_anticipo" value
+ * @method integer getCaIdsia()             Returns the current record's "ca_idsia" value
+ * @method integer getCaTipoexpo()          Returns the current record's "ca_tipoexpo" value
+ * @method integer getCaIdlineaterrestre()  Returns the current record's "ca_idlineaterrestre" value
+ * @method string  getCaMotonave()          Returns the current record's "ca_motonave" value
+ * @method string  getCaEmisionbl()         Returns the current record's "ca_emisionbl" value
+ * @method string  getCaDatosbl()           Returns the current record's "ca_datosbl" value
+ * @method integer getCaNumbl()             Returns the current record's "ca_numbl" value
+ * @method Reporte getReporte()             Returns the current record's "Reporte" value
+ * @method Sia     getSia()                 Returns the current record's "Sia" value
+ * @method RepExpo setCaIdreporte()         Sets the current record's "ca_idreporte" value
+ * @method RepExpo setCaPeso()              Sets the current record's "ca_peso" value
+ * @method RepExpo setCaVolumen()           Sets the current record's "ca_volumen" value
+ * @method RepExpo setCaPiezas()            Sets the current record's "ca_piezas" value
+ * @method RepExpo setCaDimensiones()       Sets the current record's "ca_dimensiones" value
+ * @method RepExpo setCaValorcarga()        Sets the current record's "ca_valorcarga" value
+ * @method RepExpo setCaAnticipo()          Sets the current record's "ca_anticipo" value
+ * @method RepExpo setCaIdsia()             Sets the current record's "ca_idsia" value
+ * @method RepExpo setCaTipoexpo()          Sets the current record's "ca_tipoexpo" value
+ * @method RepExpo setCaIdlineaterrestre()  Sets the current record's "ca_idlineaterrestre" value
+ * @method RepExpo setCaMotonave()          Sets the current record's "ca_motonave" value
+ * @method RepExpo setCaEmisionbl()         Sets the current record's "ca_emisionbl" value
+ * @method RepExpo setCaDatosbl()           Sets the current record's "ca_datosbl" value
+ * @method RepExpo setCaNumbl()             Sets the current record's "ca_numbl" value
+ * @method RepExpo setReporte()             Sets the current record's "Reporte" value
+ * @method RepExpo setSia()                 Sets the current record's "Sia" value
+ * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
