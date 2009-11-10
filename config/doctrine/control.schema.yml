@@ -1,5 +1,5 @@
 Usuario:
-  generatePath: control
+  package: control
   tableName: control.tb_usuarios
   attributes:
     export: tables
@@ -42,7 +42,7 @@ AccesoUsuario:
     symfony:
       form: false
       filter: false
-  generatePath: control
+  package: control
   tableName: control.tb_accesos_user
   columns:
     ca_rutina:
@@ -55,7 +55,7 @@ AccesoUsuario:
       type: integer(4)
 
 AccesoPerfil:
-  generatePath: control
+  package: control
   tableName: control.tb_accesos_perfiles
   columns:
     ca_rutina:
@@ -77,7 +77,7 @@ AccesoPerfil:
       type: many
       
 Perfil:
-  generatePath: control
+  package: control
   tableName: control.tb_perfiles
   columns:
     ca_perfil:
@@ -96,7 +96,7 @@ Perfil:
       type: many
 
 UsuarioPerfil:
-  generatePath: control
+  package: control
   tableName: control.tb_usuarios_perfil
   columns:
     ca_login:
@@ -117,7 +117,7 @@ UsuarioPerfil:
 
 
 AccesoPerfil:
-  generatePath: control
+  package: control
   tableName: control.tb_accesos_perfiles
   columns:
     ca_rutina:
@@ -144,7 +144,7 @@ AccesoPerfil:
       type: many
 
 AccesoUsuario:
-  generatePath: control
+  package: control
   tableName: control.tb_accesos_user
   columns:
     ca_rutina:
@@ -166,7 +166,7 @@ AccesoUsuario:
       type: one
 
 Rutina:
-  generatePath: control
+  package: control
   tableName: control.tb_rutinas
   columns:
     ca_rutina:
@@ -192,7 +192,7 @@ Rutina:
       type: many
 
 Departamento:
-  generatePath: control
+  package: control
   tableName: control.tb_departamentos
   columns:
     ca_iddepartamento:
@@ -204,7 +204,7 @@ Departamento:
 
 
 Sucursal:
-  generatePath: control
+  package: control
   tableName: control.tb_sucursales
   columns:
     ca_idsucursal:
@@ -217,7 +217,7 @@ Sucursal:
     ca_direccion: string
 
 RutinaNivel:
-  generatePath: control
+  package: control
   tableName: control.tb_rutinas_niveles
   columns:
     ca_rutina:
@@ -235,7 +235,7 @@ RutinaNivel:
 
 
 UsuarioLog:
-  generatePath: control
+  package: control
   tableName: control.tb_usuarios_log
   columns:
     ca_id:
