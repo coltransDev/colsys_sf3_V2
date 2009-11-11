@@ -4206,7 +4206,7 @@ elseif (isset($boton)) {                                                       /
                                 }
                                 $xml_item = $xml->createElement( "item" );
                                 $item = 1;
-                                $mercancia_peli = ($rp->Value("ca_mcia_peligrosa"))?"S":"N";
+                                $mercancia_peli = ($rp->Value("ca_mcia_peligrosa")=='t')?"S":"N";
                                 $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
                                 $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                                 $xml_item->setAttribute("item", $item);
@@ -4251,7 +4251,7 @@ elseif (isset($boton)) {                                                       /
                         }
                         $xml_item = $xml->createElement( "item" );
                         $item = 1;
-                        $mercancia_peli = ($rp->Value("ca_mcia_peligrosa"))?"S":"N";
+                        $mercancia_peli = ($rp->Value("ca_mcia_peligrosa")=='t')?"S":"N";
                         $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
                         $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                         $xml_item->setAttribute("item", $item);
@@ -4335,7 +4335,7 @@ elseif (isset($boton)) {                                                       /
                                     }
                                     $xml_item = $xml->createElement( "item" );
                                     $item = 1;
-                                    $mercancia_peli = ($rp->Value("ca_mcia_peligrosa"))?"S":"N";
+                                    $mercancia_peli = ($rp->Value("ca_mcia_peligrosa")=='t')?"S":"N";
                                     $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
                                     $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                                     $xml_item->setAttribute("item", $item);
@@ -4392,7 +4392,7 @@ elseif (isset($boton)) {                                                       /
                         }
                         $xml_item = $xml->createElement( "item" );
                         $item = 1;
-                        $mercancia_peli = ($rp->Value("ca_mcia_peligrosa"))?"S":"N";
+                        $mercancia_peli = ($rp->Value("ca_mcia_peligrosa")=='t')?"S":"N";
                         $mercancia_desc = (strlen($dc->Value("ca_mercancia_desc"))!=0)?$dc->Value("ca_mercancia_desc"):$rp->Value("ca_mercancia_desc");
                         $mercancia_desc = utf8_encode(substr($mercancia_desc,0,200));
                         $xml_item->setAttribute("item", $item);
