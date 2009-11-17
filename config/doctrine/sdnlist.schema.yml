@@ -5,10 +5,10 @@ Sdn:
     ca_uid:
       type: integer
       primary: true
-    ca_firstName: string
-    ca_lastName: string
+    ca_firstname: string
+    ca_lastname: string
     ca_title: string
-    ca_sdnType: string
+    ca_sdntype: string
     ca_remarks: string
   relations:
     SdnId:
@@ -34,11 +34,11 @@ SdnId:
     ca_uid_id:
       type: integer
       primary: true
-    ca_idType: string
-    ca_idNumber: string
-    ca_idCountry: string
-    ca_issueDate: string
-    ca_expirationDate: string
+    ca_idtype: string
+    ca_idnumber: string
+    ca_idcountry: string
+    ca_issuedate: string
+    ca_expirationdate: string
   relations:
     Sdn:
       local: ca_uid
@@ -57,8 +57,8 @@ SdnAka:
       primary: true
     ca_type: string
     ca_category: string
-    ca_firstName: string
-    ca_lastName: string
+    ca_firstname: string
+    ca_lastname: string
   relations:
     Sdn:
       local: ca_uid
@@ -71,10 +71,10 @@ SdnAddress:
   columns:
     ca_uid:
       type: integer
-      primary: true      
-    ca_uid_address: 
+      primary: true
+    ca_uid_address:
       type: integer
-      primary: true    
+      primary: true
     ca_address1: string
     ca_address2: string
     ca_address3: string
