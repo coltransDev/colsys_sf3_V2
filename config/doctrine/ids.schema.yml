@@ -39,11 +39,6 @@ Ids:
       local: ca_id
       foreign: ca_id
       type: many
-    Grupo:
-      local: ca_id
-      foreign: ca_idgrupo
-      type: one
-      class: Ids
       
 IdsSucursal:
   generatePath: ids
@@ -75,11 +70,6 @@ IdsSucursal:
       local: ca_id
       foreign: ca_id
       type: one
-    Grupo:
-      local: ca_id
-      foreign: ca_idgrupo
-      type: one
-      class: Ids
     Ciudad:
       local: ca_idciudad
       foreign: ca_idciudad
@@ -110,7 +100,6 @@ IdsContacto:
     ca_sugerido: boolean
     ca_visibilidad: integer
     ca_activo: boolean
-    ca_codigoarea: string(4)
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -122,10 +111,6 @@ IdsContacto:
       local: ca_idsucursal
       foreign: ca_idsucursal
       type: one
-    CotContactoAg:
-      local: ca_idcontacto
-      foreign: ca_idcontacto
-      type: many
       
 IdsAgente:
   generatePath: ids
@@ -156,13 +141,11 @@ IdsProveedor:
     ca_tipo: string(5)
     ca_activo: boolean
     ca_critico: boolean
-    ca_esporadico: boolean
     ca_controladoporsig: boolean
-    ca_fchaprobado: date
+    ca_fchaprobado: timestamp
     ca_usuaprobado: string(20)
     ca_sigla: string(20)
     ca_transporte: string(10)
-    ca_empresa: string
   relations:
     Ids:
       local: ca_idproveedor
@@ -251,7 +234,6 @@ IdsEvaluacion:
     ca_id: integer
     ca_tipo: string(15)
     ca_concepto: string(15)
-    ca_ano: integer
     ca_fchevaluacion: date
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
