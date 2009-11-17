@@ -17,18 +17,9 @@ if( $action!="index" ){
 }
 
 switch($action){
-	case "index":		
-		$button[$i]["name"]="Nuevo";
-		$button[$i]["tooltip"]="Crear una nuevo concepto";
-		$button[$i]["image"]="22x22/new.gif"; 			
-		$button[$i]["link"]= "parametros/formConcepto?token=".md5(time());
-		$i++;
-
-        $button[$i]["name"]="Parametrizacion";
-		$button[$i]["tooltip"]="Crear una nuevo concepto";
-		$button[$i]["image"]="22x22/new.gif";
-		$button[$i]["link"]= "parametros/formConcepto?token=".md5(time());
-		$i++;
+	case "index":
+        
+		
 		break;	
 
 	case "verConcepto":

@@ -17,7 +17,9 @@ class parametrosActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeIndex(){
-        
+        $response = sfContext::getInstance()->getResponse();
+		$response->addJavaScript("extExtras/RowExpander",'last');
+		$response->addJavaScript("extExtras/CheckColumn",'last');
     }
 
 
@@ -91,43 +93,135 @@ class parametrosActions extends sfActions
 
     }
 
+     /**
+    * Datos de los conceptos para usar en pricing cotizaciones etc.
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeDatosPanelParametrosConceptos(sfWebRequest $request){
+        $tipo = $request->getParameter("tipo");
+
+
+        $conceptos = Doctrine::getTable("InoConcepto")
+                         ->createQuery("c")
+                         //->where("c.ca_transporte = ? AND c.ca_modalidad = ?", array($transporte, $modalidad ))
+                         ->addOrderBy( "c.ca_liminferior" )
+                         ->addOrderBy( "c.ca_concepto" )
+                         ->setHydrationMode(Doctrine::HYDRATE_ARRAY )
+                         ->execute();
+
+        $k = 0;
+        foreach( $conceptos as $key=>$val ){
+            $conceptos[ $key ]["ca_concepto"]=utf8_encode( $conceptos[ $key ]["ca_concepto"] );
+            $conceptos[ $key ]["orden"]=$k++;
+        }
+        
+        $conceptos[] = array("ca_idconcepto"=>"", "ca_concepto"=>"", "orden"=>"Z");
+
+        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
+
+		$this->setTemplate("responseTemplate");
+    }
+
+
+
+    /*
+    * guarda el panel de conceptos
+    * @param sfRequest $request A request object
+    */
+    public function executeObservePanelParametros(sfWebRequest $request){
+        $id = $request->getParameter("id");
+        $this->responseArray=array("id"=>$id,  "success"=>false);
+
+
+        $tipo = $request->getParameter("tipo");
+
+
+
+        $idconcepto = $request->getParameter("idconcepto");
+
+        if( $idconcepto ){
+            $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
+            $this->forward404Unless($concepto);
+        }else{
+            $concepto = new InoConcepto();
+        }
+
+        if( $request->getParameter("concepto")!==null ){
+            $concepto->setCaConcepto( $request->getParameter("concepto") );
+        }
+
+
+
+        if( $request->getParameter("observaciones")!==null ){
+            if( $request->getParameter("observaciones") ){
+                $concepto->setCaDetalles( $request->getParameter("observaciones") );
+            }else{
+                $concepto->setCaDetalles( null );
+            }
+        }
+
+        $concepto->save();
+        $this->responseArray["success"]=true;
+
+        $this->responseArray["idconcepto"]=$concepto->getCaIdconcepto();
+
+
+        $this->setTemplate("responseTemplate");
+    }
+
+
+    /*
+    * guarda el panel de conceptos
+    * @param sfRequest $request A request object
+    */
+    public function executeEliminarPanelParametros(sfWebRequest $request){
+        $id = $request->getParameter("id");
+        $this->responseArray=array("id"=>$id,  "success"=>false);
+
+        $idconcepto = $request->getParameter("idconcepto");
+
+        if( $idconcepto ){
+            $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
+            $this->forward404Unless($concepto);
+            $concepto->delete();
+            $this->responseArray["success"]=true;
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
 
     /**
     * Datos de los conceptos para usar en pricing cotizaciones etc.
     *
     * @param sfRequest $request A request object
     */
-    public function executeFormConcepto(sfWebRequest $request){
+    public function executeDatosModalidadGrid(sfWebRequest $request){
+        $tipo = $request->getParameter("tipo");
 
 
-        if( $request->getParameter("idconcepto") ){
-            $concepto = Doctrine::getTable("InoConcepto")->find( $request->getParameter("idconcepto") );
-            $this->forward404Unless($concepto);
-        }else{
-            $concepto = new InoConcepto();
-        }
-        $form = new myInoConceptoForm();
+        /*$conceptos = Doctrine::getTable("InoConcepto")
+                         ->createQuery("c")
+                         //->where("c.ca_transporte = ? AND c.ca_modalidad = ?", array($transporte, $modalidad ))
+                         ->addOrderBy( "c.ca_liminferior" )
+                         ->addOrderBy( "c.ca_concepto" )
+                         ->setHydrationMode(Doctrine::HYDRATE_ARRAY )
+                         ->execute();
 
+        $k = 0;
+        foreach( $conceptos as $key=>$val ){
+            $conceptos[ $key ]["ca_concepto"]=utf8_encode( $conceptos[ $key ]["ca_concepto"] );
+            $conceptos[ $key ]["orden"]=$k++;
+        }*/
 
-         if ($request->isMethod('post')){
-             $bindValues = $request->getParameter($form->getName());
-             //print_r( $bindValues );
-             $form->bind( $bindValues );
-             if( $form->isValid() ){
+        $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
 
-                $concepto->setCaConcepto($bindValues["ca_concepto"]);
-                if( !$request->getParameter("idconcepto") ){
-                    $concepto->setCaTipo($bindValues["ca_tipo"]);
-                }
-                $concepto->save();
-                //$this->redirect("ino/verReferencia?id=".$this->referencia->getCaIdmaestra());
-            }
-         }
+        $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
 
-         $this->form = $form;
-         $this->concepto = $concepto;
-
+		$this->setTemplate("responseTemplate");
     }
+
+
 
 
 
