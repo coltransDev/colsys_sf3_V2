@@ -1,4 +1,8 @@
+<?
+$accesos = $sf_data->getRaw("accesos");
+$accesosPerfil = $sf_data->getRaw("accesosPerfil");
 
+?>
 
 <div class="content" align="center">
 

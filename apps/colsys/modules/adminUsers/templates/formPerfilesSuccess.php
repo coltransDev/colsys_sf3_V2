@@ -1,4 +1,8 @@
+<?
+$perfiles = $sf_data->getRaw("perfiles");
+$perfilesUsuario = $sf_data->getRaw("perfilesUsuario");
 
+?>
 <div class="content" align="center">
 <form name="form1" action="<?=url_for("adminUsers/guardarPerfiles")?>" method="post" >
 	<input type="hidden" name="login" value="<?=$usuario->getCaLogin()?>" />
