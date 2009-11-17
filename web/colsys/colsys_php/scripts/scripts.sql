@@ -2451,7 +2451,13 @@ Select i.oid as ca_oid, i.ca_referencia, i.ca_idcliente, c.ca_compania, i.ca_idr
        (select count(cl.ca_hbls) from tb_inoclientes_sea cl where cl.ca_referencia = i.ca_referencia) as ca_nrohbls,
        f.ca_fchcreado as ca_fchcreado_fc, f.ca_usucreado as ca_usucreado_fc, f.ca_fchactualizado as ca_fchactualizado_fc, f.ca_usuactualizado as ca_usuactualizado_fc,
        (select max(ca_fchvencimiento) as ca_fchvencimiento from tb_comcliente where i.ca_idcliente = ca_idcliente group by ca_idcliente) as ca_fchvencimiento
-       from tb_inoclientes_sea i LEFT OUTER JOIN tb_inoingresos_sea f ON (i.ca_referencia = f.ca_referencia and i.ca_idcliente = f.ca_idcliente and i.ca_hbls = f.ca_hbls) LEFT OUTER JOIN tb_clientes c ON (i.ca_idcliente = c.ca_idcliente) LEFT OUTER JOIN tb_ciudades cu ON (i.ca_continuacion_dest = cu.ca_idciudad) LEFT OUTER JOIN tb_bodegas b ON (i.ca_idbodega = b.ca_idbodega) LEFT OUTER JOIN tb_reportes r ON (i.ca_idreporte = r.ca_idreporte) LEFT OUTER JOIN control.tb_usuarios u ON (i.ca_login = u.ca_login)
+       from tb_inoclientes_sea i
+LEFT OUTER JOIN tb_inoingresos_sea f ON (i.ca_referencia = f.ca_referencia and i.ca_idcliente = f.ca_idcliente and i.ca_hbls = f.ca_hbls)
+LEFT OUTER JOIN tb_clientes c ON (i.ca_idcliente = c.ca_idcliente)
+LEFT OUTER JOIN tb_ciudades cu ON (i.ca_continuacion_dest = cu.ca_idciudad)
+LEFT OUTER JOIN tb_bodegas b ON (i.ca_idbodega = b.ca_idbodega)
+LEFT OUTER JOIN tb_reportes r ON (i.ca_idreporte = r.ca_idreporte)
+LEFT OUTER JOIN control.tb_usuarios u ON (i.ca_login = u.ca_login)
        order by i.ca_referencia, c.ca_compania, i.ca_hbls, f.ca_factura;
 REVOKE ALL ON vi_inoclientes_sea FROM PUBLIC;
 GRANT ALL ON vi_inoclientes_sea TO "Administrador";
@@ -2848,6 +2854,41 @@ order by ca_ano, ca_mes, ca_sucursal, to_number(substr(rx.ca_consecutivo,0,posit
 REVOKE ALL ON vi_repindicador_air FROM PUBLIC;
 GRANT ALL ON vi_repindicador_air TO "Administrador";
 GRANT ALL ON vi_repindicador_air TO GROUP "Usuarios";
+
+
+// DROP VIEW vi_repindicador_exp;
+CREATE OR REPLACE VIEW vi_repindicador_exp AS
+ SELECT DISTINCT exm.ca_referencia, fun_exportacion(exm.ca_referencia) as ca_exportacion, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text AS ca_ano, (string_to_array(exm.ca_referencia::text, '.'::text))[3] AS ca_mes, sc.ca_nombre AS ca_sucursal, tro.ca_nombre AS ca_traorigen, cid.ca_ciudad AS ca_ciudestino,
+        CASE
+            WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying
+            ELSE
+            CASE
+                WHEN exm.ca_via::text = 'Maritimo'::text THEN 'Marítimo'::character varying
+                ELSE exm.ca_via
+            END
+        END AS ca_transporte, exm.ca_modalidad, 'Exportación'::text AS ca_impoexpo, exm.ca_consecutivo, ccl.ca_compania
+   FROM tb_expo_maestra exm
+   LEFT JOIN tb_expo_ingresos exi ON exm.ca_referencia::text = exi.ca_referencia::text
+   LEFT JOIN control.tb_usuarios us ON exi.ca_loginvendedor::text = us.ca_login::text
+   LEFT JOIN control.tb_sucursales sc ON us.ca_idsucursal = sc.ca_idsucursal
+   LEFT JOIN tb_ciudades cio ON exm.ca_origen::text = cio.ca_idciudad::text
+   LEFT JOIN tb_traficos tro ON cio.ca_idtrafico::text = tro.ca_idtrafico::text
+   LEFT JOIN tb_ciudades cid ON exm.ca_destino::text = cid.ca_idciudad::text
+   LEFT JOIN tb_clientes ccl ON exm.ca_idcliente = ccl.ca_idcliente
+  ORDER BY ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text, (string_to_array(exm.ca_referencia::text, '.'::text))[3], sc.ca_nombre, exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, tro.ca_nombre, cid.ca_ciudad,
+CASE
+    WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying
+    ELSE
+    CASE
+        WHEN exm.ca_via::text = 'Maritimo'::text THEN 'Marítimo'::character varying
+        ELSE exm.ca_via
+    END
+END, exm.ca_modalidad, 12, exm.ca_consecutivo, ccl.ca_compania;
+
+ALTER TABLE vi_repindicador_exp OWNER TO postgres;
+GRANT ALL ON TABLE vi_repindicador_exp TO postgres;
+GRANT ALL ON TABLE vi_repindicador_exp TO "Administrador";
+GRANT ALL ON TABLE vi_repindicador_exp TO "Usuarios";
 
 
 // Drop view vi_cotindicadores cascade;
@@ -3736,3 +3777,69 @@ CREATE OR REPLACE RULE rl_inomaestra_sea AS
     ON UPDATE TO tb_inomaestra_sea WHERE trim(old.ca_usucerrado::text) != trim(new.ca_usucerrado::text)
     DO INSERT INTO tb_inomaestralog_sea (ca_referencia, ca_fchcerrado, ca_usucerrado, ca_fchactualizado, ca_usuactualizado) values (new.ca_referencia, old.ca_fchcerrado, old.ca_usucerrado, to_char(current_timestamp,'YYYY-mm-dd hh24:mi:ss')::timestamp, new.ca_usuoperacion);
 
+
+
+
+-- DROP FUNCTION fun_numreserva(integer, integer, text);
+
+CREATE OR REPLACE FUNCTION fun_numreserva(integer, integer, text)
+  RETURNS text AS
+$BODY$
+DECLARE
+    v_numenvio ALIAS FOR $1;
+    v_anno ALIAS FOR $2;
+    v_usuario ALIAS FOR $3;
+
+    referrer_keys RECORD;  -- Declare a generic record to be used in a FOR
+    a_output text;
+
+BEGIN
+  a_output:= NULL;
+    FOR referrer_keys IN select min(ca_numero_resv) as ca_numero_resv from tb_dianreservados where ca_anno is null LOOP
+	    IF referrer_keys.ca_numero_resv IS NOT NULL THEN
+		update tb_dianreservados set ca_numenvio = v_numenvio, ca_anno = v_anno, ca_fchreservado =  date_trunc('seconds', localtimestamp), ca_usureservado = v_usuario where ca_numero_resv = referrer_keys.ca_numero_resv;
+		a_output:= referrer_keys.ca_numero_resv;
+	    END IF;
+    END LOOP;
+  RETURN a_output;
+END;
+$BODY$
+LANGUAGE 'plpgsql' VOLATILE;
+ALTER FUNCTION fun_numreserva(integer, integer, text) OWNER TO postgres;
+
+
+
+CREATE OR REPLACE FUNCTION fun_exportacion(text)
+  RETURNS text AS  -- Función que determina si una referencia es un Exportación o sólo un DEX
+$BODY$
+DECLARE
+    v_referencia ALIAS FOR $1;
+
+    referrer_keys RECORD;  -- Declare a generic record to be used in a FOR
+    a_output text;
+    v_concept text;
+    v_count int;
+
+BEGIN
+  a_output:= 'Sí';
+  v_count:= 0;
+    FOR referrer_keys IN select exm.ca_referencia, pre.ca_valor from tb_expo_maestra exm
+            LEFT OUTER JOIN (select ca_referencia as ca_referencia_ext, ca_idevento, ca_fchevento from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia_ext = exm.ca_referencia)
+            INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion)
+            INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento)
+            where ca_referencia = v_referencia
+            order by ca_referencia LOOP
+
+            v_concept = referrer_keys.ca_valor;
+            v_count = v_count + 1;
+    END LOOP;
+    IF v_count = 0 THEN
+        a_output = NULL;
+    ELSIF v_count = 1 AND v_concept = 'DEX' THEN
+        a_output = 'No';
+    END IF;
+  RETURN a_output;
+END;
+$BODY$
+LANGUAGE 'plpgsql' VOLATILE;
+ALTER FUNCTION fun_exportacion(text) OWNER TO postgres;
