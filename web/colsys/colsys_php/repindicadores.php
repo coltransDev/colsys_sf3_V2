@@ -548,7 +548,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tm->MoveNext();
         }
         $ind_mem  = 12;
-        $add_cols = 4;
+        $add_cols = 5;
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia, exe.ca_fchevento, exe.ca_idevento";
     } else if ($indicador == "Oportunidad en la Facturación" and $procesos == "Exportaciones") {
@@ -576,7 +576,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             $tm->MoveNext();
         }
         $ind_mem  = 13;
-        $add_cols = 3;
+        $add_cols = 4;
         $cot_ant  = null;
         $campos.= ", $source.ca_referencia";
     }
