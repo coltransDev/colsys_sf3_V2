@@ -532,11 +532,11 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $impoexpo = "ca_impoexpo = 'Exportación'";
         $no_docs = array ("SAE","DEX","Cancelación Póliza Seguro","Radicación Documento de Transporte","Recibo de Soportes desde Puerto");
         $source = "vi_repindicador_exp";
-	$subque = "INNER JOIN (select ext.ca_referencia, ext.ca_idevento, ext.ca_fchevento, pre.ca_valor from (select ca_referencia, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
-	$subque.= "INNER JOIN (select * from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia = exm.ca_referencia) ";
+        $subque = "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, pre.ca_valor from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
+        $subque.= "LEFT OUTER JOIN (select ca_referencia as ca_referencia_ext, ca_idevento, ca_fchevento from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
 	$subque.= "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion) ";
 	$subque.= "INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento) ";
-	$subque.= "order by ca_referencia) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia) ";
+	$subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia_exm) ";
 
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
             echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";      // Muestra el mensaje de error
@@ -555,7 +555,15 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $tipo = "D";
         $impoexpo = "ca_impoexpo = 'Exportación'";
         $source = "vi_repindicador_exp";
-        $subque = "LEFT OUTER JOIN ( select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srps.ca_idetapa = 'EECEM'  and srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
+        if ($tra_mem == 'Aéreo') {
+            $subque = "LEFT OUTER JOIN ( select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srps.ca_idetapa = 'EECEM'  and srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
+        } else if ($tra_mem == 'Marítimo') {
+            $subque = "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, pre.ca_valor from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
+            $subque.= "LEFT OUTER JOIN (select ca_referencia as ca_referencia_ext, ca_idevento, ca_fchevento from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
+            $subque.= "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion) ";
+            $subque.= "INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento and pre.ca_valor = 'Recibo de Soportes desde Puerto') ";
+            $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia_exm) ";
+        }
        	$subque.= "LEFT OUTER JOIN ( select ca_referencia as ca_referencia_sub, min(ca_fchfactura) as ca_fchfactura from tb_expo_ingresos group by ca_referencia) rf ON (rf.ca_referencia_sub = vi_repindicador_exp.ca_referencia) ";
 
         if (!$tm->Open("select ca_fchfestivo from tb_festivos")) {        // Selecciona todos lo registros de la tabla Festivos
@@ -570,7 +578,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $ind_mem  = 13;
         $add_cols = 3;
         $cot_ant  = null;
-        $campos.= ", $source.ca_referencia, ca_fchsalida";
+        $campos.= ", $source.ca_referencia";
     }
 
     $queries = "select * from $source $subque where $impoexpo and $sucursal and $ciudestino $cliente and $transporte and $ano and $mes";
@@ -678,12 +686,14 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
             break;
         case 12:
             echo "	<TH>Referencia</TH>";
+            echo "	<TH>Expo</TH>";
             echo "	<TH>Eventos</TH>";
             echo "	<TH>Calculos</TH>";
             echo "	<TH>Dif.</TH>";
             break;
         case 13:
             echo "	<TH>Referencia</TH>";
+            echo "	<TH>Expo</TH>";
             echo "	<TH>Calculos</TH>";
             echo "	<TH>Dif.</TH>";
             break;
@@ -1151,6 +1161,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 break;
             case 12:
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_exportacion')."</TD>";
                 echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
 
                 $ult_mem = $rs->Value('ca_fchevento');
@@ -1188,10 +1199,11 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                         }
                         echo "<TD>$clave <br /> $val</TD>";
                     }
-                    $dif_mem = dateDiff($ini_event,$fin_event);
+                    $dif_mem = workDiff($festi, $ini_event, $fin_event);
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
+                $dif_mem = ($rs->Value("ca_exportacion") == 'No')?null:$dif_mem;
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 
@@ -1202,9 +1214,14 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 break;
             case 13:
                 echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_referencia')."</TD>";
+                echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_exportacion')."</TD>";
 
                 $matriz_eventos = array();
-                $matriz_eventos["intervalo_1"]['Fch.Confirmación Salida'] = $rs->Value('ca_fchsalida');
+                if ($tra_mem == 'Aéreo') {
+                    $matriz_eventos["intervalo_1"]['Fch.Confirmación Salida'] = $rs->Value('ca_fchsalida');
+                } else if ($tra_mem == 'Marítimo') {
+                    $matriz_eventos["intervalo_1"]['Fch.Recibo Soportes'] = $rs->Value('ca_fchevento');
+                }
                 $matriz_eventos["intervalo_1"]['Fch.Factura'] = $rs->Value('ca_fchfactura');
 
                 echo "  <TD Class=mostrar style='font-size: 9px; vertical-align:top;'><TABLE CELLSPACING=1>";
@@ -1222,10 +1239,11 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                         }
                         echo "<TD>$clave <br /> $val</TD>";
                     }
-                    $dif_mem = dateDiff($ini_event,$fin_event);
+                    $dif_mem = workDiff($festi, $ini_event, $fin_event);
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
+                $dif_mem = ($rs->Value("ca_exportacion") == 'No')?null:$dif_mem;
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
                 continue;
