@@ -1,17 +1,17 @@
 <?php
 
-$sf_symfony_lib_dir  = '/home/abotero/Desarrollo/symfony1.3/lib';
+$sf_symfony_lib_dir  = '/home/abotero/Desarrollo/symfony1.4/lib';
 
 require_once $sf_symfony_lib_dir .'/autoload/sfCoreAutoload.class.php';
 sfCoreAutoload::register();
 
 class ProjectConfiguration extends sfProjectConfiguration
 {
-    static protected $zendLoaded = false;
+    //static protected $zendLoaded = false;
 
     public function setup()
     {
-        $this->enableAllPluginsExcept(array('sfPropelPlugin', 'sfCompat10Plugin'));
+        $this->enableAllPluginsExcept(array('sfPropelPlugin'));
 
         sfConfig::set('sfDoctrinePlugin_doctrine_lib_path', sfConfig::get('sf_lib_dir') . '/vendor/doctrine/Doctrine.php');
     }
