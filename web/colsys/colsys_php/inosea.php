@@ -3299,7 +3299,7 @@ elseif (isset($boton)) {                                                       /
                 $cu->MoveFirst();
                 while (!$cu->Eof()) {
                     if ($cu->Value('ca_identificacion')==2) {
-                        $sel = ($tm->Value('ca_dispocarga')==$cu->Value('ca_valor2'))?'SELECTED':'';
+                        $sel = ($tm->Value('ca_dispocarga')==$cu->Value('ca_valor2') or (strlen($tm->Value('ca_dispocarga'))==0 and $cu->Value('ca_valor2')==21))?'SELECTED':'';
                         echo"<OPTION VALUE=".$cu->Value('ca_valor2')." $sel>".$cu->Value('ca_valor')."</OPTION>";
                     }
                     $cu->MoveNext();
@@ -3563,7 +3563,7 @@ elseif (isset($boton)) {                                                       /
                 $cu->MoveFirst();
                 while (!$cu->Eof()) {
                     if ($cu->Value('ca_identificacion')==7) {
-                        $sel = ($tm->Value('ca_tipodocviaje')==$cu->Value('ca_valor2'))?'SELECTED':'';
+                        $sel = ($tm->Value('ca_tipodocviaje')==$cu->Value('ca_valor2') or (strlen($tm->Value('ca_tipodocviaje'))==0 and $cu->Value('ca_valor2')==3))?'SELECTED':'';
                         echo"<OPTION VALUE=".$cu->Value('ca_valor2')." $sel>".$cu->Value('ca_valor')."</OPTION>";
                     }
                     $cu->MoveNext();
@@ -3619,7 +3619,20 @@ elseif (isset($boton)) {                                                       /
                 echo "<TR>";
                 echo "  <TD Class=mostrar>Cod.Depósito:<BR><INPUT TYPE='TEXT' NAME='coddeposito' VALUE='".$tm->Value('ca_coddeposito')."' SIZE=4 MAXLENGTH=4>&nbsp;<IMG src='graficos/lupa.gif' alt='Buscar' hspace='0' vspace='0' onclick='window_find();'></TD>";
                 echo "  <TD Class=mostrar>Vlr.FOB:<BR><INPUT TYPE='TEXT' NAME='vlrfob' VALUE='".((strlen($tm->Value('ca_vlrfob'))==0)?0:$tm->Value('ca_vlrfob'))."' SIZE=20 MAXLENGTH=20></TD>";
-                echo "  <TD Class=mostrar COLSPAN=2>Vlr.Flete:<BR><INPUT TYPE='TEXT' NAME='vlrflete' VALUE='".((strlen($tm->Value('ca_vlrflete'))==0)?0:$tm->Value('ca_vlrflete'))."' SIZE=20 MAXLENGTH=20></TD>";
+                echo "  <TD Class=mostrar>Vlr.Flete:<BR><INPUT TYPE='TEXT' NAME='vlrflete' VALUE='".((strlen($tm->Value('ca_vlrflete'))==0)?0:$tm->Value('ca_vlrflete'))."' SIZE=20 MAXLENGTH=20></TD>";
+                if (!$cu->Open("select ca_idciudad, ca_ciudad from tb_ciudades where ca_idtrafico = 'CO-057' order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
+                    echo "<script>alert(\"".addslashes($cu->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+                    echo "<script>document.location.href = 'repgenerator.php';</script>";
+                    exit; }
+                $cu->MoveFirst();
+                echo " <TD Class=listar COLSPAN=2>Destino DTA/OTM No Cord. por Coltrans:<BR><SELECT NAME='iddestino'>";
+                echo " <OPTION VALUE=''></OPTION>";
+                while ( !$cu->Eof()) {
+                        $sel = ($cu->Value('ca_idciudad')==$tm->Value('ca_iddestino'))?'SELECTED':'';
+                        echo " <OPTION VALUE='".$cu->Value('ca_idciudad')."' $sel>".$cu->Value('ca_ciudad')."</OPTION>";
+                        $cu->MoveNext();
+                      }
+                echo "  </SELECT></TD>";
                 echo "</TR>";
 
                 echo "<TR>";
@@ -3999,6 +4012,8 @@ elseif (isset($boton)) {                                                       /
                     $xml_hijo->setAttribute("hdca", $dc->Value("ca_dispocarga"));
 
                     $destino = ($ic->Value("ca_continuacion")=="N/A")?$rs->Value("ca_destino"):$ic->Value("ca_continuacion_dest");
+                    $destino = (strlen($dc->Value("ca_iddestino"))!=0)?$dc->Value("ca_iddestino"):$destino;
+
                     $arribo_array = array();
                     $cu->MoveFirst();
                     while (!$cu->Eof()) {
@@ -4648,6 +4663,7 @@ elseif (isset($accion)) {                                                      /
                 break;
             }
         case 'Grabar Cliente': {                                                      // El Botón Grabar Encabezado fue pulsado
+                $iddestino = ($iddestino=='')?'null':"'$iddestino'";
                 if ($idinfodian == '') {
                     if (!$rs->Open("select max(ca_idinfodian) as ca_idinfodian from tb_dianmaestra where ca_referencia = '$referencia'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
@@ -4659,13 +4675,13 @@ elseif (isset($accion)) {                                                      /
                         echo "<script>alert(\"¡No se encuentran datos de cabecera, de información para la Dian!\");</script>";  // Muestra el mensaje de error
                         exit;
                     }
-                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_fchcreado, ca_usucreado) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', '$vlrfob', '$vlrflete', '$mercancia_desc', to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
+                    if (!$rs->Open("insert into tb_dianclientes (ca_idinfodian, ca_referencia, ca_idcliente, ca_house, ca_dispocarga, ca_coddeposito, ca_tipodocviaje, ca_idcondiciones, ca_responsabilidad, ca_tiponegociacion, ca_tipocarga, ca_precursores, ca_vlrfob, ca_vlrflete, ca_mercancia_desc, ca_iddestino, ca_fchcreado, ca_usucreado) values ('$idinfodian', '$referencia', '$idcliente', '$house', '$dispocarga', '$coddeposito', '$tipodocviaje', '$idcondiciones', '".substr($responsabilidad,0,1)."', '$tiponegociacion', '$tipocarga', '".substr($precursores,0,1)."', '$vlrfob', '$vlrflete', '$mercancia_desc', $iddestino, to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), '$usuario')")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
                         exit;
                     }
                 } else {
-                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$house'")) {
+                    if (!$rs->Open("update tb_dianclientes set ca_idinfodian = '$idinfodian', ca_referencia = '$referencia', ca_idcliente = '$idcliente', ca_house = '$house', ca_dispocarga = '$dispocarga', ca_coddeposito = '$coddeposito', ca_tipodocviaje = '$tipodocviaje', ca_idcondiciones = '$idcondiciones', ca_responsabilidad = '".substr($responsabilidad,0,1)."', ca_tiponegociacion = '$tiponegociacion', ca_tipocarga = '$tipocarga', ca_precursores = '".substr($precursores,0,1)."', ca_vlrfob = '$vlrfob', ca_vlrflete = '$vlrflete', ca_mercancia_desc = '$mercancia_desc', ca_iddestino = $iddestino, ca_fchactualizado = to_timestamp('".date("d M Y H:i:s")."', 'DD Mon YYYY hh:mi:ss'), ca_usuactualizado = '$usuario' where ca_idinfodian = '$idinfodian' and ca_referencia = '$referencia' and ca_idcliente = '$idcliente' and ca_house = '$house'")) {
                         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";  // Muestra el mensaje de error
                         echo "<script>document.location.href = 'inosea.php?id=$referencia';</script>";
                         exit;
