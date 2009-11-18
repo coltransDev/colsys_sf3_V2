@@ -1552,3 +1552,10 @@ delete from tb_diandepositos;
 =CONCATENAR("insert into tb_diandepositos (ca_codigo, ca_nombre, ca_fchdesde, ca_fchhasta, ca_codadmin, ca_codtipo) values(",A15,",'",B15,"',to_date('",C15,"','YYYMMDD'),to_date('",D15,"','YYYMMDD'),",E15,",",G15,");")
 
 
+
+alter table tb_dianclientes add column ca_mercancia_desc text;
+alter table tb_dianclientes add column ca_iddestino varchar(8);
+
+alter table tb_dianclientes add CONSTRAINT fk_tb_dianclientes_tb_ciudades_ca_idciudad FOREIGN KEY (ca_iddestino)
+      REFERENCES tb_ciudades (ca_idciudad) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION
