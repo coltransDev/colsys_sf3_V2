@@ -1908,6 +1908,8 @@ CREATE TABLE tb_dianclientes
   ca_usuactualizado character varying(20),
   ca_iddocactual character varying(20),
   ca_iddocanterior character varying(20),
+  ca_mercancia_desc text,
+  ca_iddestino varchar(8),
   CONSTRAINT pk_dianclientes PRIMARY KEY (ca_idinfodian, ca_referencia, ca_idcliente, ca_house)
 )
 WITH (
