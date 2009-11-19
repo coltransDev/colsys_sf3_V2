@@ -3847,7 +3847,6 @@ elseif (isset($boton)) {                                                       /
                 }
 
                 // Registra atributos del Elemento pal66
-                $xml_pal66->setAttribute("cpt", $dm->Value("ca_codconcepto"));
                 if ($dm->Value("ca_codconcepto") == 3 or $dm->Value("ca_codconcepto") == 4) {
                     $xml_pal66->setAttribute("ftra", $dm->Value("ca_fchtrans"));
                 }
@@ -3876,7 +3875,7 @@ elseif (isset($boton)) {                                                       /
                 $xml_pal66->setAttribute("cdde", $arribo_array[0]);
                 $xml_pal66->setAttribute("ccd", $arribo_array[1]);
                 $xml_pal66->setAttribute("cpa", $arribo_array[2]);
-                if ($dm->Value("ca_dispocarga") != "21") {
+                if ($dm->Value("ca_dispocarga") != "21" and strlen($dm->Value("ca_coddeposito"))!=0) {
                     $xml_pal66->setAttribute("cdep", $dm->Value("ca_coddeposito"));
                 }
 
@@ -4006,7 +4005,6 @@ elseif (isset($boton)) {                                                       /
                         $iddocactual_clie = $dc->Value("ca_iddocactual");
                     }
 
-                    $xml_hijo->setAttribute("ideDoc", $iddocactual_clie);
                     if ($dm->Value("ca_iddocanterior") != "") {
                         $xml_hijo->setAttribute("hnfa", $dm->Value("ca_iddocanterior"));
                     }
@@ -4162,6 +4160,7 @@ elseif (isset($boton)) {                                                       /
                     }
                     $xml_hijo->setAttribute("hcpe", substr($tm->Value("ca_idtrafico"),0,2));
                     $xml_hijo->setAttribute("hcle", substr($tm->Value("ca_idtrafico"),0,2).substr($tm->Value("ca_idciudad"),0,3));
+                    $xml_hijo->setAttribute("ideDoc", $iddocactual_clie);
 
                     $grp = 0;
                     // Se Crear el elemento h167
@@ -4206,8 +4205,8 @@ elseif (isset($boton)) {                                                       /
                                 // Se Crear el elemento h267
                                 $xml_h267 = $xml->createElement( "h267" );
                                 $xml_h267->setAttribute("grp", $grp);
-                                $xml_h267->setAttribute("peso",$unidades_carga[$ie->Value("ca_idequipo")]['ps']);
                                 $xml_h267->setAttribute("bul", $unidades_carga[$ie->Value("ca_idequipo")]['pz']);
+                                $xml_h267->setAttribute("peso",$unidades_carga[$ie->Value("ca_idequipo")]['ps']);
 
                                 // Se Crear el elemento item
                                 $string = "select (string_to_array(ca_piezas,'|'))[2] as ca_embalaje, ca_mercancia_desc, ca_mcia_peligrosa, pr.ca_valor2 as ca_codembalaje from tb_repstatus rs";
@@ -4249,8 +4248,8 @@ elseif (isset($boton)) {                                                       /
                         // Se Crear el elemento h267
                         $xml_h267 = $xml->createElement( "h267" );
                         $xml_h267->setAttribute("grp", $grp);
-                        $xml_h267->setAttribute("peso",$ic->Value("ca_peso"));
                         $xml_h267->setAttribute("bul", $ic->Value("ca_numpiezas"));
+                        $xml_h267->setAttribute("peso",$ic->Value("ca_peso"));
                         $sub_ps+= $ic->Value("ca_peso");
                         $sub_pz+= $ic->Value("ca_numpiezas");
                         $sub_cn+= 1;
@@ -4390,8 +4389,8 @@ elseif (isset($boton)) {                                                       /
                         // Se Crear el elemento h267
                         $xml_h267 = $xml->createElement( "h267" );
                         $xml_h267->setAttribute("grp", $grp);
-                        $xml_h267->setAttribute("peso",$ic->Value("ca_peso"));
                         $xml_h267->setAttribute("bul", $ic->Value("ca_numpiezas"));
+                        $xml_h267->setAttribute("peso",$ic->Value("ca_peso"));
                         $sub_ps+= $ic->Value("ca_peso");
                         $sub_pz+= $ic->Value("ca_numpiezas");
                         $sub_cn+= 1;
@@ -4441,6 +4440,7 @@ elseif (isset($boton)) {                                                       /
                 }
                 $xml_pal66->setAttribute("pemb", substr($tm->Value("ca_idtrafico"),0,2));
                 $xml_pal66->setAttribute("lemb", substr($tm->Value("ca_idtrafico"),0,2).substr($tm->Value("ca_idciudad"),0,3));
+                $xml_pal66->setAttribute("cpt", $dm->Value("ca_codconcepto"));
 
                 if (!$tm->Open("update tb_dianmaestra set ca_iddocactual = '$iddocactual', ca_vlrtotal = $ValorTotal, ca_cantreg = $CantReg where ca_idinfodian = ".$dm->Value("ca_idinfodian"))) {    // Actualizar la Fecha y Hora de Envio
                     echo "<script>alert(\"".addslashes($tm->mErrMsg)."\");</script>";     // Muestra el mensaje de error
