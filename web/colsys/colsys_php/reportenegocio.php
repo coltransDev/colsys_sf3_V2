@@ -413,7 +413,7 @@ elseif (isset($boton)) {                                                       /
                         echo "<script>document.location.href = 'reportenegocio.php';</script>";
                         exit; }
                     echo "<TR>";
-                    echo "  <TD Class=partir style='text-align:left; vertical-align:top;'>Colmas SIA:<BR></TD>";
+                    echo "  <TD Class=partir style='text-align:left; vertical-align:top;'>Colmas Ltda.:<BR></TD>";
                     echo "  <TD Class=invertir COLSPAN=4><CENTER><TABLE WIDTH=100% CELLSPACING=1 BORDER=0>";
                     echo "  <TR>";
                     echo "    <TD Class=mostrar COLSPAN=4 style='text-align:center; font-weight:bold;'>NACIONALIZACION CON COLMAS SIA LTDA.</TD>";
@@ -987,7 +987,7 @@ elseif (isset($boton)) {                                                       /
                 echo "    </TR>";
 
                 echo "    <TR>";
-                echo "      <TD Class=mostrar>15. Colmas S.I.A. Ltda:<BR><CENTER><INPUT NAME='colmas' TYPE='radio' VALUE = 'Sí' CHECKED>Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='colmas' TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
+                echo "      <TD Class=mostrar>15. Colmas Ltda:<BR><CENTER><INPUT NAME='colmas' TYPE='radio' VALUE = 'Sí' CHECKED>Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='colmas' TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
                 echo "      <TD Class=mostrar>16. Seguro:<BR><CENTER><INPUT NAME='seguro' TYPE='radio' VALUE = 'Sí' CHECKED>Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT NAME='seguro' TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
                 echo "      <TD Class=mostrar>17. Lib. Automática:<BR><CENTER><INPUT ID=si NAME='liberacion' DISABLED TYPE='radio' VALUE = 'Sí'>Sí&nbsp;&nbsp;&nbsp;<INPUT ID=no NAME='liberacion' DISABLED TYPE='radio' VALUE = 'No'>No</CENTER></TD>";
                 echo "      <TD Class=mostrar>Tiempo de Crédito:<BR><CENTER><INPUT DISABLED TYPE='TEXT' NAME='tiempocredito' VALUE='-' SIZE=18 MAXLENGTH=20></CENTER></TD>";
@@ -1774,7 +1774,7 @@ elseif (isset($boton)) {                                                       /
                 $tm->MoveFirst();
                 $lib_mem = ($tm->Value('ca_cupo') != 0 or $tm->Value('ca_diascredito') != 0)?true:false;
                 echo "    <TR>";
-                echo "      <TD Class=mostrar>15. Colmas S.I.A. Ltda:<BR><CENTER><INPUT ID='chk_colmas_0' NAME='colmas' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_colmas')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT ID='chk_colmas_1' NAME='colmas' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_colmas')=='No'?'CHECKED':'').">No</CENTER></TD>";
+                echo "      <TD Class=mostrar>15. Colmas Ltda:<BR><CENTER><INPUT ID='chk_colmas_0' NAME='colmas' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_colmas')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT ID='chk_colmas_1' NAME='colmas' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_colmas')=='No'?'CHECKED':'').">No</CENTER></TD>";
                 echo "      <TD Class=mostrar>16. Seguro:<BR><CENTER><INPUT ID='chk_seguro_0' NAME='seguro' TYPE='radio' VALUE = 'Sí' ".($rs->Value('ca_seguro')=='Sí'?'CHECKED':'').">Sí&nbsp;&nbsp;&nbsp;&nbsp;<INPUT ID='chk_seguro_1' NAME='seguro' TYPE='radio' VALUE = 'No' ".($rs->Value('ca_seguro')=='No'?'CHECKED':'').">No</CENTER></TD>";
                 echo "      <TD Class=mostrar>17. Lib. Automática:<BR><CENTER><INPUT ID=si NAME='liberacion' TYPE='radio' VALUE = 'Sí' ".($lib_mem?'CHECKED':'')." DISABLED>Sí&nbsp;&nbsp;&nbsp;<INPUT ID=no NAME='liberacion' TYPE='radio' VALUE = 'No' ".(!$lib_mem?'CHECKED':'')." DISABLED>No</CENTER></TD>";
                 echo "      <TD Class=mostrar>Tiempo de Crédito:<BR><CENTER><INPUT DISABLED TYPE='TEXT' NAME='tiempocredito' VALUE='".($tm->Value('ca_diascredito')!=0?$tm->Value('ca_diascredito').' Días':'-')."' SIZE=18 MAXLENGTH=20></CENTER></TD>";
@@ -3333,7 +3333,7 @@ function datos_basicos(&$visible,&$rs,&$tm) {
     echo "  <TD Class=invertir COLSPAN=4></TD>";
     echo "</TR>";
     echo "<TR>";
-    echo "  <TD Class=listar>15.&nbsp;Colmas&nbsp;S.I.A.&nbsp;Ltda:<BR><CENTER><B>".$rs->Value('ca_colmas')."</B></CENTER></TD>";
+    echo "  <TD Class=listar>15.&nbsp;Colmas&nbsp;Ltda:<BR><CENTER><B>".$rs->Value('ca_colmas')."</B></CENTER></TD>";
     echo "  <TD Class=listar>16.&nbsp;Seguro:<BR><CENTER><B>".$rs->Value('ca_seguro')."</B></CENTER></TD>";
     echo "  <TD Class=listar COLSPAN=2>17.&nbsp;Lib.&nbsp;Automática:&nbsp;&nbsp;<B>".$rs->Value('ca_liberacion')."</B><BR>Tiempo de Crédito: <B>".$rs->Value('ca_tiempocredito')."</B></TD>";
     echo "</TR>";

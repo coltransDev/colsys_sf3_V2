@@ -228,7 +228,7 @@ if (true){
 
     $tiempo_cred = ($rs->Value('ca_liberacion')=='Sí')?" Tiempo de Crédito: ".$rs->Value('ca_tiempocredito'):"";
     $pdf->SetWidths(array(40,10,35,10,35,70));
-    $pdf->Row(array('15. Colmas S.I.A. Ltda:',$rs->Value('ca_colmas'),'16. Seguro:',$rs->Value('ca_seguro'),'17. Lib. Automática:',$rs->Value('ca_liberacion').$tiempo_cred));
+    $pdf->Row(array('15. Colmas Ltda:',$rs->Value('ca_colmas'),'16. Seguro:',$rs->Value('ca_seguro'),'17. Lib. Automática:',$rs->Value('ca_liberacion').$tiempo_cred));
 
     if ($rs->Value('ca_continuacion')!= "N/A") {
         $pdf->Ln(3);
