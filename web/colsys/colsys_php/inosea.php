@@ -1317,7 +1317,7 @@ elseif (isset($boton)) {                                                       /
                 echo "      alert('El Número de HBL no es válido');";
                 echo "  else if (document.adicionar.fchhbls.value == '' || document.adicionar.fchhbls.value.length < 10)";
                 echo "      alert('Ingrese la Fecha del Hbl, tenga en cuenta que debería ser la misma Fecha del Master.');";
-                echo "  else if (document.adicionar.consecutivo.value == '' && document.adicionar.vigencia.value == 'true' && document.adicionar.impoexpo.value != 'OTM/DTA')";
+                echo "  else if (document.adicionar.consecutivo.value == '' && document.adicionar.vigencia.value == 'true' && document.adicionar.impoexpo.value != 'OTM/DTA' && document.adicionar.modalidad.value != 'PARTICULARES')";
                 echo "      alert('El Número de Reporte de Negocio no es válido');";
                 echo "  else if (document.adicionar.numpiezas.value == '' || document.adicionar.numpiezas.value < 0)";
                 echo "      alert('El número de piezas no es válido');";
@@ -1510,6 +1510,7 @@ elseif (isset($boton)) {                                                       /
                 echo "<TABLE WIDTH=550 CELLSPACING=1>";
                 echo "<INPUT TYPE='HIDDEN' NAME='referencia' VALUE=\"".$id."\">";              // Hereda el Id de la Referencia que se esta modificando
                 echo "<INPUT TYPE='HIDDEN' NAME='impoexpo' VALUE=\"".$impoexpo."\">";
+                echo "<INPUT TYPE='HIDDEN' NAME='modalidad' VALUE=\"".$modalidad."\">";
                 echo "<INPUT TYPE='HIDDEN' NAME='vigencia' VALUE=\"".((mktime(0, 0, 0, $mes, 1, $ano)>=mktime(0, 0, 0, 4, 1, 2008))?'true':'false')."\">"; // Verifica si la Referencia es después de 1 abril/2008
                 echo "<INPUT TYPE='HIDDEN' NAME='vendedor'>";
                 echo "<INPUT TYPE='HIDDEN' NAME='idreporte'>";
@@ -4741,7 +4742,7 @@ elseif (isset($accion)) {                                                      /
                 break;
             }
         case 'Guardar Cliente': {                                                      // El Botón Guardar fue pulsado
-                $idreporte = (strlen($idreporte)==0)?'NULL':$idreporte;
+                $idreporte = (strlen($idreporte)==0)?'null':$idreporte;
                 settype($idproveedor,"integer");
                 settype($numpiezas,"double");
                 settype($peso,"double");
