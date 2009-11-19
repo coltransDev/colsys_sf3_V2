@@ -30,7 +30,19 @@ while (!$rsMenu->Eof() and !$rsMenu->IsEmpty()) {
 $trans = get_html_translation_table(HTML_ENTITIES);
 ?>
 <script type="text/javascript" src="menu/menu.js"></script>
+
+
+<link rel="stylesheet" type="text/css" media="screen" href="/css/ext/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/css/ext/css/xtheme-gray-extend.css" />
+
+<script type="text/javascript" src="/js/ext/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="/js/ext/ext-all-debug.js"></script>
+<script type="text/javascript" src="/js/ext/src/locale/ext-lang-es.js"></script>
+<script type="text/javascript" src="/js/loginWindow.js"></script>
+
 <link rel="stylesheet" type="text/css" media="screen" href="menu/menu.css" />
+
+<div id="mask"></div>
 <div align="center">
 	<div class="header" align="center" >
 		<div class="headerleft" ><img src="menu/head_left.gif" /></div>
