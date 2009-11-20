@@ -23,7 +23,6 @@
  * @property boolean $ca_sugerido
  * @property integer $ca_visibilidad
  * @property boolean $ca_activo
- * @property string $ca_codigoarea
  * @property string $ca_usucreado
  * @property timestamp $ca_fchcreado
  * @property string $ca_usuactualizado
@@ -51,7 +50,6 @@
  * @method boolean             getCaSugerido()        Returns the current record's "ca_sugerido" value
  * @method integer             getCaVisibilidad()     Returns the current record's "ca_visibilidad" value
  * @method boolean             getCaActivo()          Returns the current record's "ca_activo" value
- * @method string              getCaCodigoarea()      Returns the current record's "ca_codigoarea" value
  * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
  * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
  * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
@@ -78,7 +76,6 @@
  * @method IdsContacto         setCaSugerido()        Sets the current record's "ca_sugerido" value
  * @method IdsContacto         setCaVisibilidad()     Sets the current record's "ca_visibilidad" value
  * @method IdsContacto         setCaActivo()          Sets the current record's "ca_activo" value
- * @method IdsContacto         setCaCodigoarea()      Sets the current record's "ca_codigoarea" value
  * @method IdsContacto         setCaUsucreado()       Sets the current record's "ca_usucreado" value
  * @method IdsContacto         setCaFchcreado()       Sets the current record's "ca_fchcreado" value
  * @method IdsContacto         setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
@@ -164,10 +161,6 @@ abstract class BaseIdsContacto extends myDoctrineRecord
              ));
         $this->hasColumn('ca_activo', 'boolean', null, array(
              'type' => 'boolean',
-             ));
-        $this->hasColumn('ca_codigoarea', 'string', 4, array(
-             'type' => 'string',
-             'length' => '4',
              ));
         $this->hasColumn('ca_usucreado', 'string', 20, array(
              'type' => 'string',

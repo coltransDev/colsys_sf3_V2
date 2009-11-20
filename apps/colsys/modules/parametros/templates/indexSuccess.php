@@ -20,7 +20,7 @@ include_component("parametros","modalidadGrid", array());
             renderTo: 'main-panel',
             height: 600
         });
-    mainPanel.store.baseParams={ tipo:'<?=Constantes::RECARGO_EN_ORIGEN?>' };
-    mainPanel.store.load();
+    //mainPanel.store.baseParams={ tipo:'<?=Constantes::RECARGO_EN_ORIGEN?>' };
+    //mainPanel.store.load();
         
 </script>

@@ -114,7 +114,8 @@ PanelParametros = function( config ){
 				style: 'text-align:left'
 			})
         
-      },
+      }
+      /*,
       {
         header: "Modalidades",
         dataIndex: 'modalidades',
@@ -127,7 +128,7 @@ PanelParametros = function( config ){
 				style: 'text-align:left'
 			})
 
-      }
+      }*/
       /*
       ,
       {
@@ -206,7 +207,8 @@ PanelParametros = function( config ){
             {name: 'concepto', type: 'string', mapping: 'ca_concepto'},
             {name: 'valor', type: 'float'},
             {name: 'modalidades', type: 'string'},            
-            {name: 'orden', type: 'string'}
+            {name: 'orden', type: 'string'},
+            {name: 'tipo', type: 'string'}
 
 
             
@@ -381,7 +383,9 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
 
 
     onValidateEdit : function(e){
-        if( e.field == "concepto"){
+        var tipo = Ext.getCmp("combo").getValue();
+        
+        if( e.field == "concepto" && tipo ){
 
             var rec = e.record;
             var recordConcepto = this.record;
@@ -390,11 +394,13 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
                 var newRec = new recordConcepto({
                                idconcepto: '',
                                concepto: '',
-                               tipo: 'recargo',
+                               tipo: '',
+                               modalidades: '',
                                orden: 'Z' // Se utiliza Z por que el orden es alfabetico
                             });
                 
                 rec.set("orden", "Y");
+                rec.set("tipo", tipo);
                 //guardarGridProductosRec( rec );
 
                 //Inserta una columna en blanco al final
@@ -542,12 +548,21 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
 
     ,onComboSelect: function( ){
         var combo = Ext.getCmp("combo");
-       
-        if( combo.getValue()!="" ){
-            this.store.baseParams={ tipo:combo.getValue() };
-            this.store.load();
-        }else{
-            alert("Por favor seleccione un valor");
+        var records = this.store.getModifiedRecords();
+        if( records.length==0|| (records.length>0 && confirm("Perdera los cambios que no ha guardado")) ){
+            if( combo.getValue()!="" ){
+                var records = this.store.getRange();
+                var lenght = records.length;
+                this.store.commitChanges();
+                /*for( var i=0; i< lenght; i++){
+                    r = records[i];
+                    this.store.remove( r );
+                }*/
+                this.store.baseParams={ tipo:combo.getValue() };
+                this.store.reload();
+            }else{
+                alert("Por favor seleccione un valor");
+            }
         }
     },
     onCelldblclick : function( grid, rowIndex, columnIndex, e ){

@@ -3448,9 +3448,61 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
             $i++;
         }
+    }
 
+
+    public function executeImportarTipoRecargo(){
+
+        $recargos = Doctrine::getTable("TipoRecargo")
+                              ->createQuery("t")
+                              ->addOrderBy("t.ca_idrecargo")
+                              ->execute();
+                              
+        Doctrine::getTable("InoConceptoModalidad")->createQuery("m")->delete()->execute();
+        foreach( $recargos as $recargo ){
+            $inoConcepto = Doctrine::getTable("InoConcepto")->find( $recargo->getCaIdrecargo() );
+
+            if( !$inoConcepto ){
+                $inoConcepto = new InoConcepto();
+                $inoConcepto->setCaIdconcepto( $recargo->getCaIdrecargo() );
+            }
+
+            $inoConcepto->setCaConcepto( $recargo->getCaRecargo() );
+            $inoConcepto->setCaTipo( $recargo->getCaTipo() );
+            $inoConcepto->setCaIncoterms( $recargo->getCaIncoterms() );
+            $inoConcepto->save();
+
+
+            $impoexpoParam = explode("|", $recargo->getCaImpoexpo() );
+            
+            foreach( $impoexpoParam as $impoexpo){
+                $modalidades = Doctrine::getTable("Modalidad")
+                                         ->createQuery("m")
+                                         ->where("m.ca_impoexpo = ? ", $impoexpo )
+                                         ->addWhere("m.ca_transporte = ? ", $recargo->getCaTransporte() )
+                                         ->addWhere("m.ca_modalidad IS NOT NULL ")
+                                         ->addWhere("m.ca_modalidad != ? ", "ADUANA")
+                                         ->execute();
+
+               foreach( $modalidades as $modalidad ){
+                    $conceptoModalidad = new InoConceptoModalidad();
+                    $conceptoModalidad->setCaIdconcepto( $inoConcepto->getCaIdconcepto() );
+                    $conceptoModalidad->setCaIdmodalidad( $modalidad->getCaIdmodalidad() );
+                    $conceptoModalidad->save();
+               }
+
+            }
+
+        }
+
+
+
+
+        $this->setTemplate("blank");
 
     }
+
+
 		
 }
 

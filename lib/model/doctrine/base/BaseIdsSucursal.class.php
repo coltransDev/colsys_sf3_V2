@@ -24,7 +24,6 @@
  * @property string $ca_usuactualizado
  * @property timestamp $ca_fchactualizado
  * @property Ids $Ids
- * @property Ids $Grupo
  * @property Ciudad $Ciudad
  * @property Doctrine_Collection $IdsContacto
  * 
@@ -47,7 +46,6 @@
  * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
  * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
  * @method Ids                 getIds()               Returns the current record's "Ids" value
- * @method Ids                 getGrupo()             Returns the current record's "Grupo" value
  * @method Ciudad              getCiudad()            Returns the current record's "Ciudad" value
  * @method Doctrine_Collection getIdsContacto()       Returns the current record's "IdsContacto" collection
  * @method IdsSucursal         setCaIdsucursal()      Sets the current record's "ca_idsucursal" value
@@ -69,7 +67,6 @@
  * @method IdsSucursal         setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
  * @method IdsSucursal         setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
  * @method IdsSucursal         setIds()               Sets the current record's "Ids" value
- * @method IdsSucursal         setGrupo()             Sets the current record's "Grupo" value
  * @method IdsSucursal         setCiudad()            Sets the current record's "Ciudad" value
  * @method IdsSucursal         setIdsContacto()       Sets the current record's "IdsContacto" collection
  * 
@@ -160,10 +157,6 @@ abstract class BaseIdsSucursal extends myDoctrineRecord
         $this->hasOne('Ids', array(
              'local' => 'ca_id',
              'foreign' => 'ca_id'));
-
-        $this->hasOne('Ids as Grupo', array(
-             'local' => 'ca_id',
-             'foreign' => 'ca_idgrupo'));
 
         $this->hasOne('Ciudad', array(
              'local' => 'ca_idciudad',

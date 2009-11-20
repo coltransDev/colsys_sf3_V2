@@ -52,6 +52,11 @@ abstract class BasePerfil extends myDoctrineRecord
              'type' => 'string',
              'length' => '255',
              ));
+
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
+             ));
     }
 
     public function setUp()

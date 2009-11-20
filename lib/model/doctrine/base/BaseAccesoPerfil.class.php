@@ -49,6 +49,11 @@ abstract class BaseAccesoPerfil extends myDoctrineRecord
              'type' => 'string',
              'length' => '30',
              ));
+
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
+             ));
     }
 
     public function setUp()

@@ -83,10 +83,24 @@ class Usuario extends BaseUsuario
 	}
 
 	public function checkPasswd( $passwd ){
+        if( $this->getCaActivo() ){
+            $username = $this->getCaLogin();
+            if( $this->getCaAuthmethod()=="ldap" ){
+                $auth_user="cn=".$username.",o=coltrans_bog";
+                $ldap_server=sfConfig::get("app_ldap_host");
+                $connect=ldap_connect($ldap_server);
+                if( $connect ){
+                    if(@$bind=ldap_bind($connect, $auth_user, utf8_encode($passwd))){
+                        return true;
+                    }
+                    ldap_close($connect);
+                }
+            }
 
-		return $this->getCaPasswd()==sha1($passwd.$this->getCaSalt() );
-
-	}
-     
-
+            if( $this->getCaAuthmethod()=="sha1" ){
+                return $this->getCaPasswd()==sha1($passwd.$this->getCaSalt() );
+            }
+        }
+        return false;
+	}   
 }

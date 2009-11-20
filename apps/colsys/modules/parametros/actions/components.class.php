@@ -17,7 +17,9 @@ class parametrosComponents extends sfComponents
 
         $this->tipos = array(
                              array("id"=>Constantes::RECARGO_EN_ORIGEN, "value"=>Constantes::RECARGO_EN_ORIGEN),
-                             array("id"=>Constantes::RECARGO_LOCAL, "value"=>Constantes::RECARGO_LOCAL)
+                             array("id"=>Constantes::RECARGO_LOCAL, "value"=>Constantes::RECARGO_LOCAL),
+                             array("id"=>Constantes::RECARGO_OTM_DTA, "value"=>Constantes::RECARGO_OTM_DTA),
+                             //array("id"=>Constantes::COSTO, "value"=>Constantes::COSTO)
                            );
 
 	}
@@ -33,6 +35,7 @@ class parametrosComponents extends sfComponents
 	{
         $modalidades = Doctrine::getTable("Modalidad")
                   ->createQuery("m")
+                  ->where("m.ca_modalidad IS NOT NULL")
                   ->addOrderBy("m.ca_impoexpo")
                   ->execute();
         $this->modalidades = array();

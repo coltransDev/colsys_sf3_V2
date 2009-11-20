@@ -9,13 +9,11 @@
  * @property string $ca_tipo
  * @property boolean $ca_activo
  * @property boolean $ca_critico
- * @property boolean $ca_esporadico
  * @property boolean $ca_controladoporsig
- * @property date $ca_fchaprobado
+ * @property timestamp $ca_fchaprobado
  * @property string $ca_usuaprobado
  * @property string $ca_sigla
  * @property string $ca_transporte
- * @property string $ca_empresa
  * @property Ids $Ids
  * @property IdsTipo $IdsTipo
  * @property Doctrine_Collection $CotProducto
@@ -31,13 +29,11 @@
  * @method string              getCaTipo()               Returns the current record's "ca_tipo" value
  * @method boolean             getCaActivo()             Returns the current record's "ca_activo" value
  * @method boolean             getCaCritico()            Returns the current record's "ca_critico" value
- * @method boolean             getCaEsporadico()         Returns the current record's "ca_esporadico" value
  * @method boolean             getCaControladoporsig()   Returns the current record's "ca_controladoporsig" value
- * @method date                getCaFchaprobado()        Returns the current record's "ca_fchaprobado" value
+ * @method timestamp           getCaFchaprobado()        Returns the current record's "ca_fchaprobado" value
  * @method string              getCaUsuaprobado()        Returns the current record's "ca_usuaprobado" value
  * @method string              getCaSigla()              Returns the current record's "ca_sigla" value
  * @method string              getCaTransporte()         Returns the current record's "ca_transporte" value
- * @method string              getCaEmpresa()            Returns the current record's "ca_empresa" value
  * @method Ids                 getIds()                  Returns the current record's "Ids" value
  * @method IdsTipo             getIdsTipo()              Returns the current record's "IdsTipo" value
  * @method Doctrine_Collection getCotProducto()          Returns the current record's "CotProducto" collection
@@ -52,13 +48,11 @@
  * @method IdsProveedor        setCaTipo()               Sets the current record's "ca_tipo" value
  * @method IdsProveedor        setCaActivo()             Sets the current record's "ca_activo" value
  * @method IdsProveedor        setCaCritico()            Sets the current record's "ca_critico" value
- * @method IdsProveedor        setCaEsporadico()         Sets the current record's "ca_esporadico" value
  * @method IdsProveedor        setCaControladoporsig()   Sets the current record's "ca_controladoporsig" value
  * @method IdsProveedor        setCaFchaprobado()        Sets the current record's "ca_fchaprobado" value
  * @method IdsProveedor        setCaUsuaprobado()        Sets the current record's "ca_usuaprobado" value
  * @method IdsProveedor        setCaSigla()              Sets the current record's "ca_sigla" value
  * @method IdsProveedor        setCaTransporte()         Sets the current record's "ca_transporte" value
- * @method IdsProveedor        setCaEmpresa()            Sets the current record's "ca_empresa" value
  * @method IdsProveedor        setIds()                  Sets the current record's "Ids" value
  * @method IdsProveedor        setIdsTipo()              Sets the current record's "IdsTipo" value
  * @method IdsProveedor        setCotProducto()          Sets the current record's "CotProducto" collection
@@ -94,14 +88,11 @@ abstract class BaseIdsProveedor extends myDoctrineRecord
         $this->hasColumn('ca_critico', 'boolean', null, array(
              'type' => 'boolean',
              ));
-        $this->hasColumn('ca_esporadico', 'boolean', null, array(
-             'type' => 'boolean',
-             ));
         $this->hasColumn('ca_controladoporsig', 'boolean', null, array(
              'type' => 'boolean',
              ));
-        $this->hasColumn('ca_fchaprobado', 'date', null, array(
-             'type' => 'date',
+        $this->hasColumn('ca_fchaprobado', 'timestamp', null, array(
+             'type' => 'timestamp',
              ));
         $this->hasColumn('ca_usuaprobado', 'string', 20, array(
              'type' => 'string',
@@ -114,9 +105,6 @@ abstract class BaseIdsProveedor extends myDoctrineRecord
         $this->hasColumn('ca_transporte', 'string', 10, array(
              'type' => 'string',
              'length' => '10',
-             ));
-        $this->hasColumn('ca_empresa', 'string', null, array(
-             'type' => 'string',
              ));
     }
 

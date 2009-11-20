@@ -36,7 +36,7 @@
 
 				<div style="float:left;">
 					<div class="icon">
-						<a href="/colsys_php/tiporecargo.php">
+						<a href="/parametros/index">
 							<?=image_tag("48x48/kspread_ksp.gif")?>				
 							<span>Conceptos de recargos</span></a>
 					</div>

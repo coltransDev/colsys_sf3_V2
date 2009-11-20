@@ -161,6 +161,11 @@ abstract class BaseUsuario extends myDoctrineRecord
 
 
         $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
+
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
+             ));
     }
 
     public function setUp()

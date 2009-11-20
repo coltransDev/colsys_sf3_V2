@@ -52,13 +52,17 @@ Ext.extend(ModalidadWindow, Ext.Window, {
         if(this.rendered){
             //this.feedUrl.setValue('');
         }
+
+        this.grid.store.baseParams={ modalidades:this.ctxRecord.data.modalidades };
+        this.grid.store.load();
+
         ModalidadWindow.superclass.show.apply(this, arguments);
     },
 
     onUpdate: function() {
         this.el.mask('Actualizando...', 'x-mask-loading');
         var store = this.grid.store;
-        var records = store.getModifiedRecords();
+        var records = store.getRange();
 
         var lenght = records.length;
         
@@ -66,11 +70,14 @@ Ext.extend(ModalidadWindow, Ext.Window, {
         for( var i=0; i< lenght; i++){
 
             r = records[i];
-            if( i!=0 ){
-                str+="|";
+
+            if( r.data.idmodalidad ){
+                if( i!=0 ){
+                    str+="|";
+                }
+
+                str+=r.data.idmodalidad;
             }
-            
-            str+=r.data.idmodalidad;
 
             //alert(r.data.idmodalidad + " "+r.data.modalidad );
             
@@ -79,7 +86,7 @@ Ext.extend(ModalidadWindow, Ext.Window, {
         
         this.ctxRecord.set( "modalidades",  str );
         
-        var grid = Ext.getCmp('panel-parametros');
+        /*var grid = Ext.getCmp('panel-parametros');
         var records = grid.store.getModifiedRecords();
 
         var lenght = records.length;
@@ -89,7 +96,7 @@ Ext.extend(ModalidadWindow, Ext.Window, {
             if( r.data.sel ){
                 r.set( "modalidades" , str );
             }
-        }
+        }*/
 
 
         this.el.unmask();

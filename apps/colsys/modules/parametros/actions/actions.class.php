@@ -51,12 +51,16 @@ class parametrosActions extends sfActions
 		if( $modo=="recargos" ){			
 
 			//$c->setLimit(3);
-			$recargos = Doctrine::getTable("TipoRecargo")
+			$q = Doctrine::getTable("TipoRecargo")
                          ->createQuery("c")
-                         ->where("c.ca_transporte = ? AND ca_tipo = ? AND c.ca_impoexpo like ?", array($transporte, $tipo, "%".$impoexpo."%" ))
-                         ->addOrderBy( "c.ca_recargo" )
-                         ->execute();
-
+                         ->where("c.ca_transporte = ? AND ca_tipo = ? ", array($transporte, $tipo ))
+                         ->innerJoin("c.InoConceptoModalidad cm")
+                         ->innerJoin("cm.Modalidad m")
+                         ->addWhere("m.ca_impoexpo like ? ", "%".$impoexpo."%" )
+                         ->distinct()
+                         ->addOrderBy( "c.ca_recargo" );
+                         
+            $recargos = $q->execute();
 			$this->conceptos = array();
 			foreach( $recargos as $recargo ){
 				$row = array("idconcepto"=>$recargo->getCaIdrecargo(),
@@ -104,7 +108,8 @@ class parametrosActions extends sfActions
 
         $conceptos = Doctrine::getTable("InoConcepto")
                          ->createQuery("c")
-                         //->where("c.ca_transporte = ? AND c.ca_modalidad = ?", array($transporte, $modalidad ))
+                         ->select("c.*")
+                         ->where("c.ca_tipo = ? ", $tipo)
                          ->addOrderBy( "c.ca_liminferior" )
                          ->addOrderBy( "c.ca_concepto" )
                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY )
@@ -114,6 +119,20 @@ class parametrosActions extends sfActions
         foreach( $conceptos as $key=>$val ){
             $conceptos[ $key ]["ca_concepto"]=utf8_encode( $conceptos[ $key ]["ca_concepto"] );
             $conceptos[ $key ]["orden"]=$k++;
+
+            $modalidadesConcepto = Doctrine_Query::create()
+                                ->select("cm.ca_idmodalidad")
+                                ->from("InoConceptoModalidad cm")
+                                ->where("cm.ca_idconcepto = ? ", $conceptos[ $key ]["ca_idconcepto"] )
+                                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                ->execute();
+            $modalidades = array();
+
+            foreach( $modalidadesConcepto as $modalidadConcepto ){
+                $modalidades[]=$modalidadConcepto["ca_idmodalidad"];
+            }
+            $conceptos[ $key ]["modalidades"] = implode( "|", $modalidades );
+
         }
         
         $conceptos[] = array("ca_idconcepto"=>"", "ca_concepto"=>"", "orden"=>"Z");
@@ -136,8 +155,6 @@ class parametrosActions extends sfActions
 
         $tipo = $request->getParameter("tipo");
 
-
-
         $idconcepto = $request->getParameter("idconcepto");
 
         if( $idconcepto ){
@@ -145,6 +162,7 @@ class parametrosActions extends sfActions
             $this->forward404Unless($concepto);
         }else{
             $concepto = new InoConcepto();
+            $concepto->setCaTipo( $request->getParameter("tipo") );
         }
 
         if( $request->getParameter("concepto")!==null ){
@@ -152,12 +170,30 @@ class parametrosActions extends sfActions
         }
 
 
-
         if( $request->getParameter("observaciones")!==null ){
             if( $request->getParameter("observaciones") ){
                 $concepto->setCaDetalles( $request->getParameter("observaciones") );
             }else{
                 $concepto->setCaDetalles( null );
+            }
+        }
+
+        if( $concepto->getCaIdconcepto() ){
+            if( $request->getParameter("modalidades")!==null ){
+                Doctrine_Query::create()
+                                ->delete()
+                                ->from("InoConceptoModalidad cm")
+                                ->where("cm.ca_idconcepto = ? ", $concepto->getCaIdconcepto() )
+                                ->execute();
+
+                $modalidadesParam = explode("|",$request->getParameter("modalidades"));
+
+                foreach( $modalidadesParam as $val ){
+                    $cm = new InoConceptoModalidad();
+                    $cm->setCaIdconcepto($concepto->getCaIdconcepto());
+                    $cm->setCaIdmodalidad($val);
+                    $cm->save();
+                }
             }
         }
 
@@ -198,21 +234,29 @@ class parametrosActions extends sfActions
     */
     public function executeDatosModalidadGrid(sfWebRequest $request){
         $tipo = $request->getParameter("tipo");
+        $conceptos = array();
+        if( $request->getParameter("modalidades") ){
+            
+            $modalidadesParam = explode("|", $request->getParameter("modalidades") );
 
-
-        /*$conceptos = Doctrine::getTable("InoConcepto")
-                         ->createQuery("c")
-                         //->where("c.ca_transporte = ? AND c.ca_modalidad = ?", array($transporte, $modalidad ))
-                         ->addOrderBy( "c.ca_liminferior" )
-                         ->addOrderBy( "c.ca_concepto" )
+            if( count( $modalidadesParam ) >0 ){
+                
+                $modalidades = Doctrine::getTable("Modalidad")
+                         ->createQuery("m")
+                         ->select("m.ca_idmodalidad, m.ca_impoexpo, m.ca_transporte, m.ca_modalidad")
+                         ->whereIn("m.ca_idmodalidad", $modalidadesParam)
+                         ->addOrderBy( "m.ca_impoexpo" )
+                         ->addOrderBy( "m.ca_transporte" )
+                         ->addOrderBy( "m.ca_modalidad" )
                          ->setHydrationMode(Doctrine::HYDRATE_ARRAY )
                          ->execute();
+                $k = 0;
+                foreach( $modalidades as $modalidad ){
+                    $conceptos[] = array("idmodalidad"=>$modalidad["ca_idmodalidad"], "modalidad"=>utf8_encode($modalidad["ca_impoexpo"]." ".$modalidad["ca_transporte"]." ".$modalidad["ca_modalidad"]), "orden"=>$k++);
+                }
+            }
 
-        $k = 0;
-        foreach( $conceptos as $key=>$val ){
-            $conceptos[ $key ]["ca_concepto"]=utf8_encode( $conceptos[ $key ]["ca_concepto"] );
-            $conceptos[ $key ]["orden"]=$k++;
-        }*/
+        }
 
         $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
 

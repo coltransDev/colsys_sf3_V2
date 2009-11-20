@@ -23,8 +23,6 @@
  * @property IdsProveedor $IdsProveedor
  * @property Doctrine_Collection $IdsDocumento
  * @property Doctrine_Collection $IdsEvento
- * @property Ids $Grupo
- * @property Doctrine_Collection $Ids
  * @property Doctrine_Collection $IdsEvaluacion
  * @property Doctrine_Collection $InoComprobante
  * 
@@ -46,8 +44,6 @@
  * @method IdsProveedor        getIdsProveedor()          Returns the current record's "IdsProveedor" value
  * @method Doctrine_Collection getIdsDocumento()          Returns the current record's "IdsDocumento" collection
  * @method Doctrine_Collection getIdsEvento()             Returns the current record's "IdsEvento" collection
- * @method Ids                 getGrupo()                 Returns the current record's "Grupo" value
- * @method Doctrine_Collection getIds()                   Returns the current record's "Ids" collection
  * @method Doctrine_Collection getIdsEvaluacion()         Returns the current record's "IdsEvaluacion" collection
  * @method Doctrine_Collection getInoComprobante()        Returns the current record's "InoComprobante" collection
  * @method Ids                 setCaId()                  Sets the current record's "ca_id" value
@@ -68,8 +64,6 @@
  * @method Ids                 setIdsProveedor()          Sets the current record's "IdsProveedor" value
  * @method Ids                 setIdsDocumento()          Sets the current record's "IdsDocumento" collection
  * @method Ids                 setIdsEvento()             Sets the current record's "IdsEvento" collection
- * @method Ids                 setGrupo()                 Sets the current record's "Grupo" value
- * @method Ids                 setIds()                   Sets the current record's "Ids" collection
  * @method Ids                 setIdsEvaluacion()         Sets the current record's "IdsEvaluacion" collection
  * @method Ids                 setInoComprobante()        Sets the current record's "InoComprobante" collection
  * 
@@ -153,14 +147,6 @@ abstract class BaseIds extends myDoctrineRecord
 
         $this->hasMany('IdsEvento', array(
              'local' => 'ca_id',
-             'foreign' => 'ca_id'));
-
-        $this->hasOne('Ids as Grupo', array(
-             'local' => 'ca_id',
-             'foreign' => 'ca_idgrupo'));
-
-        $this->hasMany('Ids', array(
-             'local' => 'ca_idgrupo',
              'foreign' => 'ca_id'));
 
         $this->hasMany('IdsEvaluacion', array(
