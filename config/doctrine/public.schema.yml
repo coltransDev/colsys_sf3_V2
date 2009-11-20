@@ -317,7 +317,13 @@ TipoRecargo:
     ca_tipo: string
     ca_transporte: string
     ca_incoterms: string
-    ca_impoexpo: string
+#    ca_impoexpo: string
+  relations:
+    InoConceptoModalidad:
+      local: ca_idrecargo
+      foreign: ca_idconcepto
+      type: one
+   
 
 Costo:
   generatePath: public

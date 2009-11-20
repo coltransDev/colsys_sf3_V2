@@ -246,7 +246,7 @@ InoConcepto:
   columns:
     ca_idconcepto:
       type: integer
-      autoincrement: true
+#      autoincrement: true
       primary: true
     ca_concepto:
       type: string
@@ -265,4 +265,24 @@ InoConcepto:
     ca_autoretencion: decimal
     ca_tipoautoretencion: smallint
     
-    
+InoConceptoModalidad:
+  generatePath: ino
+  tableName: ino.tb_conceptos_modalidades
+  attributes:
+    export: tables
+  columns:
+    ca_idconcepto:
+      type: integer
+      primary: true
+    ca_idmodalidad:
+      type: integer
+      primary: true
+  relations:
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    Modalidad:
+      local: ca_idmodalidad
+      foreign: ca_idmodalidad
+      type: one

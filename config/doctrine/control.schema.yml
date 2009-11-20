@@ -1,4 +1,8 @@
 Usuario:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_usuarios
   attributes:
@@ -55,6 +59,10 @@ AccesoUsuario:
       type: integer(4)
 
 AccesoPerfil:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_accesos_perfiles
   columns:
@@ -77,6 +85,10 @@ AccesoPerfil:
       type: many
       
 Perfil:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_perfiles
   columns:
@@ -96,6 +108,10 @@ Perfil:
       type: many
 
 UsuarioPerfil:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_usuarios_perfil
   columns:
@@ -117,6 +133,10 @@ UsuarioPerfil:
 
 
 AccesoPerfil:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_accesos_perfiles
   columns:
