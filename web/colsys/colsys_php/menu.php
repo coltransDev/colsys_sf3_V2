@@ -36,7 +36,7 @@ $trans = get_html_translation_table(HTML_ENTITIES);
 <link rel="stylesheet" type="text/css" media="screen" href="/css/ext/css/xtheme-gray-extend.css" />
 
 <script type="text/javascript" src="/js/ext/adapter/ext/ext-base.js"></script>
-<script type="text/javascript" src="/js/ext/ext-all-debug.js"></script>
+<script type="text/javascript" src="/js/ext/ext-all.js"></script>
 <script type="text/javascript" src="/js/ext/src/locale/ext-lang-es.js"></script>
 <script type="text/javascript" src="/js/loginWindow.js"></script>
 
