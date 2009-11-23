@@ -1559,3 +1559,68 @@ alter table tb_dianclientes add column ca_iddestino varchar(8);
 alter table tb_dianclientes add CONSTRAINT fk_tb_dianclientes_tb_ciudades_ca_idciudad FOREIGN KEY (ca_iddestino)
       REFERENCES tb_ciudades (ca_idciudad) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE NO ACTION
+
+
+alter table tb_deducciones add column ca_habilitado boolean default TRUE;
+alter table tb_deducciones alter column ca_habilitado set NOT NULL;
+
+update tb_deducciones set ca_habilitado = FALSE where TRIM(ca_deduccion) = 'Comunicaciones';
+update tb_deducciones set ca_habilitado = FALSE where TRIM(ca_deduccion) = 'Escolta';
+update tb_deducciones set ca_habilitado = FALSE where TRIM(ca_deduccion) = 'Inspecciones';
+update tb_deducciones set ca_habilitado = FALSE where TRIM(ca_deduccion) = 'Repesaje o Movimientos en Pto';
+update tb_deducciones set ca_habilitado = FALSE where TRIM(ca_deduccion) = 'Contenedores';
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Papelería Contrato de Comodato', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Papelería Contrato de Comodato', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Papelería Contrato de Comodato', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Papelería Contrato de Comodato', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Papelería Contrato de Comodato', 'Marítimo','Importaciones','PROYECTOS');
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Administration Fee', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Administration Fee', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Administration Fee', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Administration Fee', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Administration Fee', 'Marítimo','Importaciones','PROYECTOS');
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff (No OTM)', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff (No OTM)', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff (No OTM)', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff (No OTM)', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff (No OTM)', 'Marítimo','Importaciones','PROYECTOS');
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Limpiezas Contenedor', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Limpiezas Contenedor', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Limpiezas Contenedor', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Limpiezas Contenedor', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Limpiezas Contenedor', 'Marítimo','Importaciones','PROYECTOS');
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Coordinación Embarque', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Coordinación Embarque', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Coordinación Embarque', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Coordinación Embarque', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Coordinación Embarque', 'Marítimo','Importaciones','PROYECTOS');
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Seguro y Admin del Riesgo', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Seguro y Admin del Riesgo', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Seguro y Admin del Riesgo', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Seguro y Admin del Riesgo', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Seguro y Admin del Riesgo', 'Marítimo','Importaciones','PROYECTOS');
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Emisión Certificación Póliza', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Emisión Certificación Póliza', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Emisión Certificación Póliza', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Emisión Certificación Póliza', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Emisión Certificación Póliza', 'Marítimo','Importaciones','PROYECTOS');
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff Carga OTM', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff Carga OTM', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff Carga OTM', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff Carga OTM', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Dropoff Carga OTM', 'Marítimo','Importaciones','PROYECTOS');
+
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','FCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','LCL');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','COLOADING');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','PARTICULARES');
+insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','PROYECTOS');
+
