@@ -1297,7 +1297,7 @@ elseif (isset($boton)) {                                                       /
                     $us->MoveNext();
                 }
                 $de =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$de->Open("select d.ca_iddeduccion, d.ca_deduccion from tb_deducciones d, tb_inomaestra_sea i where d.ca_transporte = 'Marítimo' and d.ca_impoexpo = 'Importación' and d.ca_modalidad = i.ca_modalidad and i.ca_referencia = '$id'")) {
+                if (!$de->Open("select d.ca_iddeduccion, d.ca_deduccion from tb_deducciones d, tb_inomaestra_sea i where d.ca_habilitado = 't' and d.ca_transporte = 'Marítimo' and d.ca_impoexpo = 'Importación' and d.ca_modalidad = i.ca_modalidad and i.ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($de->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
@@ -1718,7 +1718,7 @@ elseif (isset($boton)) {                                                       /
                     $us->MoveNext();
                 }
                 $de =& DlRecordset::NewRecordset($conn);                                       // Apuntador que permite manejar la conexiòn a la base de datos
-                if (!$de->Open("select d.ca_iddeduccion, d.ca_deduccion from tb_deducciones d, tb_inomaestra_sea i where d.ca_transporte = 'Marítimo' and d.ca_impoexpo = 'Importación' and d.ca_modalidad = i.ca_modalidad and i.ca_referencia = '$id'")) {
+                if (!$de->Open("select d.ca_iddeduccion, d.ca_deduccion from tb_deducciones d, tb_inomaestra_sea i where d.ca_habilitado = 't' and d.ca_transporte = 'Marítimo' and d.ca_impoexpo = 'Importación' and d.ca_modalidad = i.ca_modalidad and i.ca_referencia = '$id'")) {
                     echo "<script>alert(\"".addslashes($de->mErrMsg)."\");</script>";
                     echo "<script>document.location.href = 'inosea.php';</script>";
                     exit;
