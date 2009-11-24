@@ -275,8 +275,8 @@ class inoActions extends sfActions
 
         $q = Doctrine::getTable("InoTransaccion")
                        ->createQuery("t")
-                       ->select("t.ca_idtransaccion, t.ca_idconcepto, t.ca_db, t.ca_cr, c.ca_recargo as ca_concepto")
-                       ->innerJoin("t.TipoRecargo c")
+                       ->select("t.ca_idtransaccion, t.ca_idconcepto, t.ca_db, t.ca_cr, c.ca_concepto")
+                       ->innerJoin("t.InoConcepto c")
                        ->where("t.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante() )
                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR );
 
@@ -362,4 +362,122 @@ class inoActions extends sfActions
     }
 
 
+
+    /**
+    * Vista previa del comprobante (Prefactura)
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executePreviewComprobante(sfWebRequest $request){
+        $this->forward404Unless( $request->getParameter("id") );
+        $this->comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("id"));
+        $this->forward404Unless( $this->comprobante );
+
+
+        $this->transacciones = Doctrine::getTable("InoTransaccion")
+                                         ->createQuery("t")                                        
+                                         ->innerJoin("t.InoConcepto con")
+                                         ->innerJoin("con.InoCuenta c")
+                                         ->where("t.ca_idcomprobante = ? ", $this->comprobante->getCaIdcomprobante() )
+                                         ->addOrderBy("con.ca_ingreso_propio")    
+                                         ->addOrderBy("c.ca_cuenta")    
+                                         ->execute();
+
+        $this->comprobante->getInoTransaccion();
+        
+    }
+
+    /**
+    * Genera el comprobante y lo transfiere a SIIGO 
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeGenerarComprobante(sfWebRequest $request){
+        $this->forward404Unless( $request->getParameter("id") );
+        $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("id"));
+        $this->forward404Unless( $comprobante );
+
+
+        $transacciones = Doctrine::getTable("InoTransaccion")
+                                         ->createQuery("t")
+                                         ->innerJoin("t.InoConcepto con")
+                                         ->innerJoin("con.InoCuenta c")
+                                         ->where("t.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante() )
+                                         ->addOrderBy("con.ca_ingreso_propio")
+                                         ->addOrderBy("c.ca_cuenta")
+                                         ->execute();
+
+        $impuestos = array();
+        $impuestos["iva"]=0;
+        $totales = array();
+        $totales["general"] = 0;
+
+        foreach( $transacciones as $transaccion ){
+            $concepto = $transaccion->getInoConcepto();
+            $cuenta = $concepto->getInoCuenta();
+
+            $totales["general"] += $transaccion->getCaDb();
+            if( $concepto->getCaIva() ){
+               $impuestos["iva"] += $transaccion->getCaDb()*$concepto->getCaIva();
+            }
+            $transaccion->setCaIdcuenta( $cuenta->getCaIdcuenta() );
+            $transaccion->save();
+        }
+
+        
+
+        if( $impuestos["iva"]>0 ){
+            $transaccion = new InoTransaccion();
+            $transaccion->setCaDb($impuestos["iva"]);
+            $transaccion->setCaCr( 0 );
+            $transaccion->setCaIdmoneda( "USD" );
+            $transaccion->setCaIdconcepto( 240 );
+            $transaccion->setCaIdcuenta( 11 );
+            $transaccion->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
+            $transaccion->save();
+            $totales["general"] += $impuestos["iva"];
+        }
+
+        
+
+        $transaccion = new InoTransaccion();
+        $transaccion->setCaDb( 0 );
+        $transaccion->setCaCr( $totales["general"] );
+        $transaccion->setCaIdmoneda( "USD" );        
+        $transaccion->setCaIdcuenta( 8 );
+        $transaccion->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
+        $transaccion->save();
+
+        //$this->redirect("ino/verComprobante?id=".$comprobante->getCaIdcomprobante());
+
+
+    }
+
+
+
+    /**
+    * Genera el comprobante y lo transfiere a SIIGO
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeVerComprobante(sfWebRequest $request){
+        $this->forward404Unless( $request->getParameter("id") );
+        $this->comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("id"));
+        $this->forward404Unless( $this->comprobante );
+
+
+        $this->transacciones = Doctrine::getTable("InoTransaccion")
+                                         ->createQuery("t")
+                                         ->innerJoin("t.InoConcepto con")
+                                         ->innerJoin("con.InoCuenta c")
+                                         ->where("t.ca_idcomprobante = ? ", $this->comprobante->getCaIdcomprobante() )
+                                         ->addOrderBy("con.ca_ingreso_propio")
+                                         ->addOrderBy("c.ca_cuenta")
+                                         ->execute();
+
+        $this->comprobante->getInoTransaccion();
+        $this->filename = $request->getParameter("filename");
+    }
+
 }
+

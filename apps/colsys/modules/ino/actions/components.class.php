@@ -41,13 +41,14 @@ class inoComponents extends sfComponents
         if( $impoexpo==Constantes::TRIANGULACION ){
             $impoexpo=Constantes::IMPO;
         }*/
-        $this->recargos = Doctrine::getTable("TipoRecargo")
+        $this->recargos = Doctrine::getTable("InoConcepto")
                                      ->createQuery("c")
-                                     ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
-                                     ->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
+                                     ->select("ca_idconcepto,ca_concepto")
+                                     //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
+                                     ->addWhere("c.ca_idcuenta IS NOT NULL" )
                                      /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
                                      ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
-                                     ->addOrderBy("c.ca_recargo")
+                                     ->addOrderBy("c.ca_concepto")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                      ->execute();
 
