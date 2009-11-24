@@ -256,7 +256,6 @@ Cliente:
     ca_idcliente:
       type: integer
       primary: true
-      autoincrement: true
     ca_digito: integer
     ca_compania: string
     ca_papellido: string
@@ -446,3 +445,19 @@ Modalidad:
     ca_impoexpo: string
     ca_transporte: string
     ca_modalidad: string
+
+
+StdCliente:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_stdcliente
+  columns:
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_fchestado: timestamp
+    ca_estado: string
+    ca_empresa: string
