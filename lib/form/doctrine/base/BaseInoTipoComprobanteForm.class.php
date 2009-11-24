@@ -1,16 +1,16 @@
 <?php
 
 /**
- * InoTipoDocumento form base class.
+ * InoTipoComprobante form base class.
  *
- * @method InoTipoDocumento getObject() Returns the current form's model object
+ * @method InoTipoComprobante getObject() Returns the current form's model object
  *
  * @package    symfony
  * @subpackage form
  * @author     Your name here
  * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 24171 2009-11-19 16:37:50Z Kris.Wallsmith $
  */
-abstract class BaseInoTipoDocumentoForm extends BaseFormDoctrine
+abstract class BaseInoTipoComprobanteForm extends BaseFormDoctrine
 {
   public function setup()
   {
@@ -42,7 +42,7 @@ abstract class BaseInoTipoDocumentoForm extends BaseFormDoctrine
       'ca_activo'         => new sfValidatorBoolean(array('required' => false)),
     ));
 
-    $this->widgetSchema->setNameFormat('ino_tipo_documento[%s]');
+    $this->widgetSchema->setNameFormat('ino_tipo_comprobante[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
@@ -53,7 +53,7 @@ abstract class BaseInoTipoDocumentoForm extends BaseFormDoctrine
 
   public function getModelName()
   {
-    return 'InoTipoDocumento';
+    return 'InoTipoComprobante';
   }
 
 }
