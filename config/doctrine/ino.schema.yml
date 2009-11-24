@@ -323,7 +323,7 @@ InoCuenta:
     ca_moneda: string
 
 
-InoTipoDocumento:
+InoTipoComprobante:
   generatePath: ino
   tableName: ino.tb_tipos_comprobante
   columns:
@@ -331,10 +331,17 @@ InoTipoDocumento:
       type: integer
       autoincrement: true
       primary: true
-    ca_tipo: string
-    ca_comprobante: integer
+    ca_tipo:
+      type: string
+      notnull: true
+    ca_comprobante:
+      type: integer
+      notnull: true
     ca_descripcion: string
     ca_titulo: string
+    ca_numeracion_inicial:
+      type: integer
+      notnull: true
     ca_mensaje: string
     ca_noautorizacion: string
     ca_prefijo_aut: string
