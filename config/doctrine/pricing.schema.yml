@@ -1,4 +1,8 @@
 Trayecto:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_trayectos
   attributes:
@@ -54,6 +58,10 @@ Trayecto:
       type: one
 
 PricFlete:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricfletes
   attributes:
@@ -83,6 +91,10 @@ PricFlete:
       type: one      
 
 PricFleteBs:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: bs_pricfletes
   attributes:
@@ -110,6 +122,10 @@ PricFleteBs:
       type: one
 
 PricRecargoxConcepto:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricrecargosxconcepto
   attributes:
@@ -148,6 +164,10 @@ PricRecargoxConcepto:
       type: one
 
 PricRecargoxConceptoBs:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: bs_pricrecargosxconcepto
   attributes:
@@ -186,6 +206,10 @@ PricRecargoxConceptoBs:
 
 
 PricRecargoxCiudad:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricrecargosxciudad
   attributes:
@@ -234,6 +258,10 @@ PricRecargoxCiudad:
       type: one
 
 PricRecargoxCiudadBs:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: bs_pricrecargosxciudad
   attributes:
@@ -283,6 +311,10 @@ PricRecargoxCiudadBs:
 
 
 PricRecargoxLinea:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricrecargosxlinea
   attributes:
@@ -338,6 +370,10 @@ PricRecargoxLinea:
       type: one
 
 PricRecargoxLineaBs:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: bs_pricrecargosxlinea
   attributes:
@@ -390,6 +426,10 @@ PricRecargoxLineaBs:
 
 
 PricPatio:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricpatios
   attributes:
@@ -409,6 +449,10 @@ PricPatio:
       type: one
 
 PricPatioLinea:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricpatioslinea
   attributes:
@@ -442,6 +486,10 @@ PricPatioLinea:
       type: one
 
 PricRecargoParametro:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricrecargosparametros
   attributes:
@@ -473,6 +521,10 @@ PricRecargoParametro:
       type: one
 
 PricSeguro:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricseguros
   attributes:
@@ -493,6 +545,10 @@ PricSeguro:
     ca_usucreado: string
   
 PricNotificacion:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: pricing
   tableName: tb_pricnotificaciones
   attributes:

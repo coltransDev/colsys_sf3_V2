@@ -1,4 +1,8 @@
 InoMaestraAir:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: inoAnterior
   tableName: tb_inomaestra_air
   columns:
@@ -8,12 +12,3 @@ InoMaestraAir:
       autoincrement: true
     ca_idlinea: integer
 
-InoMaestraSea:
-  generatePath: inoAnterior
-  tableName: tb_inomaestra_sea
-  columns:
-    ca_referencia:
-      type: string(16)
-      primary: true
-      autoincrement: true
-    ca_idlinea: integer

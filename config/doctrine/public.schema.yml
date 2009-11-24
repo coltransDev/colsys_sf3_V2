@@ -1,4 +1,8 @@
 Ciudad:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_ciudades
   columns:
@@ -28,6 +32,10 @@ Ciudad:
       type: one    
 
 Trafico:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_traficos
   columns:
@@ -89,6 +97,10 @@ Trafico:
 
 
 TraficoGrupo:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_grupos
   columns:
@@ -108,6 +120,10 @@ TraficoGrupo:
       type: many
 
 Moneda:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_monedas
   columns:
@@ -137,6 +153,10 @@ Moneda:
 
 
 Email:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_emails
   columns:
@@ -171,6 +191,10 @@ Email:
       
 
 EmailAttachment:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_attachments
   columns:
@@ -190,6 +214,10 @@ EmailAttachment:
       type: one
 
 Festivo:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_festivos
   columns:
@@ -198,6 +226,10 @@ Festivo:
       primary: true
 
 Parametro:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_parametros
   columns:
@@ -214,6 +246,10 @@ Parametro:
       type: string
 
 Cliente:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_clientes
   columns:
@@ -265,6 +301,10 @@ Cliente:
 
 
 Contacto:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_concliente
   columns:
@@ -292,6 +332,10 @@ Contacto:
       type: one
 
 Concepto:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_conceptos
   columns:
@@ -306,6 +350,10 @@ Concepto:
     ca_liminferior: integer
 
 TipoRecargo:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_tiporecargo
   columns:
@@ -326,6 +374,10 @@ TipoRecargo:
    
 
 Costo:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_costos
   columns:
@@ -340,6 +392,10 @@ Costo:
     ca_comisionable: string
 
 ColNovedad:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_colnovedades
   columns:
@@ -359,6 +415,10 @@ ColNovedad:
 
 
 Sia:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_sia
   columns:
@@ -372,6 +432,10 @@ Sia:
 
 
 Modalidad:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: public
   tableName: tb_modalidades
   columns:

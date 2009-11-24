@@ -2,8 +2,6 @@
 InoMaestra:
   generatePath: ino
   tableName: ino.tb_maestra
-  attributes:
-    export: tables
   columns:
     ca_idmaestra:
       type: integer
@@ -76,8 +74,6 @@ InoMaestra:
 InoCliente:
   generatePath: ino
   tableName: ino.tb_clientes
-  attributes:
-    export: tables
   columns:
     ca_idinocliente:
       type: integer
@@ -159,10 +155,12 @@ InoCliente:
       class: Usuario
 
 InoComprobante:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ino
   tableName: ino.tb_comprobantes
-  attributes:
-    export: tables
   columns:
     ca_idcomprobante:
       type: integer
@@ -199,10 +197,12 @@ InoComprobante:
       type: one
 
 InoTransaccion:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ino
   tableName: ino.tb_transacciones
-  attributes:
-    export: tables
   columns:
     ca_idtransaccion:
       type: integer
@@ -212,8 +212,8 @@ InoTransaccion:
     ca_idcuenta: integer
     ca_idconcepto: integer
     ca_id: integer
-    ca_db: string
-    ca_cr: timestamp
+    ca_db: decimal
+    ca_cr: decimal
     ca_idmoneda: string
     ca_observaciones: timestamp
     ca_fchcreado: timestamp
@@ -232,17 +232,23 @@ InoTransaccion:
       local: ca_idcomprobante
       foreign: ca_idcomprobante
       type: one
-    TipoRecargo:
+    InoCuenta:
+      local: ca_idcuenta
+      foreign: ca_idcuenta
+      type: one
+    InoConcepto:
       local: ca_idconcepto
-      foreign: ca_idrecargo
+      foreign: ca_idconcepto
       type: one
 
 
 InoConcepto:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ino
   tableName: ino.tb_conceptos
-  attributes:
-    export: tables
   columns:
     ca_idconcepto:
       type: integer
@@ -255,21 +261,33 @@ InoConcepto:
     ca_liminferior: integer
     ca_incoterms: string
     ca_comisionable: booolean
-    ca_cuenta: integer
+    ca_idcuenta: integer
     ca_ingreso_propio: booolean
     ca_iva: decimal
     ca_baseretencion: decimal
-    ca_cuentaretencion: integer
+    ca_idcuentaretencion: integer
     ca_valor: decimal
     ca_convenios: boolean
     ca_autoretencion: decimal
     ca_tipoautoretencion: smallint
+  relations:
+    InoCuenta:
+      local: ca_idcuenta
+      foreign: ca_idcuenta
+      type: one
+    InoCuentaRetencion:
+      local: ca_idcuentaretencion
+      foreign: ca_idcuenta
+      type: one
+      class: InoCuenta
     
 InoConceptoModalidad:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ino
-  tableName: ino.tb_conceptos_modalidades
-  attributes:
-    export: tables
+  tableName: ino.tb_conceptos_modalidades  
   columns:
     ca_idconcepto:
       type: integer
@@ -286,3 +304,41 @@ InoConceptoModalidad:
       local: ca_idmodalidad
       foreign: ca_idmodalidad
       type: one
+
+InoCuenta:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ino
+  tableName: ino.tb_cuentas
+  columns:
+    ca_idcuenta:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_cuenta: string
+    ca_descripcion: string
+    ca_naturaleza: string
+    ca_moneda: string
+
+
+InoTipoDocumento:
+  generatePath: ino
+  tableName: ino.tb_tipos_comprobante
+  columns:
+    ca_idtipo:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_tipo: string
+    ca_comprobante: integer
+    ca_descripcion: string
+    ca_titulo: string
+    ca_mensaje: string
+    ca_noautorizacion: string
+    ca_prefijo_aut: string
+    ca_inicial_aut: integer
+    ca_final_aut: integer
+    ca_activo: boolean
+    

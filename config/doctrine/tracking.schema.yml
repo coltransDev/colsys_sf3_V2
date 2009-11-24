@@ -1,5 +1,9 @@
 
 TrackingUser:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: tracking
   tableName: tb_tracking_users
   attributes:
@@ -21,6 +25,10 @@ TrackingUser:
       type: one
 
 TrackingUserLog:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: tracking
   tableName: tb_tracking_users_log
   attributes:

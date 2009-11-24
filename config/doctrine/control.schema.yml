@@ -41,23 +41,6 @@ Usuario:
       foreign: ca_usuario
       type: many
 
-AccesoUsuario:
-  options:
-    symfony:
-      form: false
-      filter: false
-  generatePath: control
-  tableName: control.tb_accesos_user
-  columns:
-    ca_rutina:
-      type: integer(4)
-      primary: true
-    ca_login:
-      type: string(250)
-      primary: true
-    ca_acceso:
-      type: integer(4)
-
 AccesoPerfil:
   options:
     symfony:
@@ -164,6 +147,10 @@ AccesoPerfil:
       type: many
 
 AccesoUsuario:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_accesos_user
   columns:
@@ -186,6 +173,10 @@ AccesoUsuario:
       type: one
 
 Rutina:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_rutinas
   columns:
@@ -212,6 +203,10 @@ Rutina:
       type: many
 
 Departamento:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_departamentos
   columns:
@@ -224,6 +219,10 @@ Departamento:
 
 
 Sucursal:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_sucursales
   columns:
@@ -237,6 +236,10 @@ Sucursal:
     ca_direccion: string
 
 RutinaNivel:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_rutinas_niveles
   columns:
@@ -255,6 +258,10 @@ RutinaNivel:
 
 
 UsuarioLog:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: control
   tableName: control.tb_usuarios_log
   columns:

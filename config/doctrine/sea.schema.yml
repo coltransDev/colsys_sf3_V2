@@ -1,4 +1,8 @@
 InoMaestraSea:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: sea
   tableName: tb_inomaestra_sea
   columns:
@@ -77,6 +81,10 @@ InoMaestraSea:
     
 
 InoClientesSea:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: sea
   tableName: tb_inoclientes_sea
   columns:
@@ -137,6 +145,10 @@ InoClientesSea:
 
 
 InoEquiposSea:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: sea
   tableName: tb_inoequipos_sea
   columns:
@@ -165,6 +177,10 @@ InoEquiposSea:
 
 
 InoContratosSea:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: sea
   tableName: tb_inocontratos_sea
   columns:

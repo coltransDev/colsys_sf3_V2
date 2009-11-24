@@ -1,4 +1,8 @@
 Ids:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_ids
   columns:
@@ -41,6 +45,10 @@ Ids:
       type: many
       
 IdsSucursal:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_sucursales
   columns:
@@ -76,6 +84,10 @@ IdsSucursal:
       type: one
 
 IdsContacto:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_contactos
   columns:
@@ -100,6 +112,7 @@ IdsContacto:
     ca_sugerido: boolean
     ca_visibilidad: integer
     ca_activo: boolean
+    ca_codigoarea: string
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -113,6 +126,10 @@ IdsContacto:
       type: one
       
 IdsAgente:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_agentes
   columns:
@@ -132,6 +149,10 @@ IdsAgente:
       type: one
 
 IdsProveedor:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_proveedores
   columns:
@@ -146,6 +167,8 @@ IdsProveedor:
     ca_usuaprobado: string(20)
     ca_sigla: string(20)
     ca_transporte: string(10)
+    ca_empresa: string
+    ca_esporadico: boolean
   relations:
     Ids:
       local: ca_idproveedor
@@ -157,6 +180,10 @@ IdsProveedor:
       type: one
 
 IdsTipo:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_tipos
   columns:
@@ -176,6 +203,10 @@ IdsTipo:
       type: one
 
 IdsDocumento:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_documentos
   columns:
@@ -202,6 +233,10 @@ IdsDocumento:
       type: one
 
 IdsTipoDocumento:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_tipodocumentos
   columns:
@@ -224,6 +259,10 @@ IdsTipoDocumento:
       type: many
 
 IdsEvaluacion:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_evaluacion
   columns:
@@ -234,6 +273,7 @@ IdsEvaluacion:
     ca_id: integer
     ca_tipo: string(15)
     ca_concepto: string(15)
+    ca_ano: integer
     ca_fchevaluacion: date
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
@@ -252,6 +292,10 @@ IdsEvaluacion:
 
 
 IdsEvaluacionxCriterio:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_evaluacionxcriterio
   columns:
@@ -280,6 +324,10 @@ IdsEvaluacionxCriterio:
     
 
 IdsCriterio:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_criterios
   columns:
@@ -307,6 +355,10 @@ IdsCriterio:
       type: many
 
 IdsEvento:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: ids
   tableName: ids.tb_eventos
   columns:

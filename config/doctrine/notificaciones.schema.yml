@@ -1,4 +1,8 @@
 Notificacion:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: notificaciones
   tableName: notificaciones.tb_notificaciones
   attributes:
@@ -17,6 +21,10 @@ Notificacion:
       type: one
 
 NotTarea:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: notificaciones
   tableName: notificaciones.tb_tareas
   attributes:
@@ -54,6 +62,10 @@ NotTarea:
       type: many
 
 NotListaTareas:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: notificaciones
   tableName: notificaciones.tb_listatareas
   attributes:
@@ -73,6 +85,10 @@ NotListaTareas:
 
 
 NotTareaAsignacion:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: notificaciones
   tableName: notificaciones.tb_tareas_asignaciones
   attributes:
