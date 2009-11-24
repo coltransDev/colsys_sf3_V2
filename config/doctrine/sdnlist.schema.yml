@@ -1,4 +1,8 @@
 Sdn:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: sdn
   tableName: tb_sdn
   columns:
@@ -25,6 +29,10 @@ Sdn:
       type: many
 
 SdnId:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: sdn
   tableName: tb_sdnid
   columns:
@@ -46,6 +54,10 @@ SdnId:
       type: one
 
 SdnAka:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: sdn
   tableName: tb_sdnaka
   columns:
@@ -66,6 +78,10 @@ SdnAka:
       type: one
 
 SdnAddress:
+  options:
+    symfony:
+      form: false
+      filter: false
   generatePath: sdn
   tableName: tb_sdnaddress
   columns:
