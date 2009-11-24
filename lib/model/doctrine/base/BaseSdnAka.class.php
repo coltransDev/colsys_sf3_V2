@@ -9,23 +9,23 @@
  * @property integer $ca_uid_aka
  * @property string $ca_type
  * @property string $ca_category
- * @property string $ca_firstName
- * @property string $ca_lastName
+ * @property string $ca_firstname
+ * @property string $ca_lastname
  * @property Sdn $Sdn
  * 
  * @method integer getCaUid()        Returns the current record's "ca_uid" value
  * @method integer getCaUidAka()     Returns the current record's "ca_uid_aka" value
  * @method string  getCaType()       Returns the current record's "ca_type" value
  * @method string  getCaCategory()   Returns the current record's "ca_category" value
- * @method string  getCaFirstName()  Returns the current record's "ca_firstName" value
- * @method string  getCaLastName()   Returns the current record's "ca_lastName" value
+ * @method string  getCaFirstname()  Returns the current record's "ca_firstname" value
+ * @method string  getCaLastname()   Returns the current record's "ca_lastname" value
  * @method Sdn     getSdn()          Returns the current record's "Sdn" value
  * @method SdnAka  setCaUid()        Sets the current record's "ca_uid" value
  * @method SdnAka  setCaUidAka()     Sets the current record's "ca_uid_aka" value
  * @method SdnAka  setCaType()       Sets the current record's "ca_type" value
  * @method SdnAka  setCaCategory()   Sets the current record's "ca_category" value
- * @method SdnAka  setCaFirstName()  Sets the current record's "ca_firstName" value
- * @method SdnAka  setCaLastName()   Sets the current record's "ca_lastName" value
+ * @method SdnAka  setCaFirstname()  Sets the current record's "ca_firstname" value
+ * @method SdnAka  setCaLastname()   Sets the current record's "ca_lastname" value
  * @method SdnAka  setSdn()          Sets the current record's "Sdn" value
  * 
  * @package    ##PACKAGE##
@@ -52,10 +52,10 @@ abstract class BaseSdnAka extends myDoctrineRecord
         $this->hasColumn('ca_category', 'string', null, array(
              'type' => 'string',
              ));
-        $this->hasColumn('ca_firstName', 'string', null, array(
+        $this->hasColumn('ca_firstname', 'string', null, array(
              'type' => 'string',
              ));
-        $this->hasColumn('ca_lastName', 'string', null, array(
+        $this->hasColumn('ca_lastname', 'string', null, array(
              'type' => 'string',
              ));
 
