@@ -47,7 +47,27 @@ FormComprobantePanel = function(){
                 iconCls: 'disk',
                 handler : this.guardarEncabezadoForm,
                 scope: this
-            }],
+            }
+            <?
+            if( $comprobante->getCaIdcomprobante() ){
+            ?>
+            
+            ,{
+                text: 'Previsualizar',
+                iconCls: 'page_white_magnify',
+                handler : this.previsualizar,
+                scope: this
+            }
+            ,{
+                text: 'Generar',
+                iconCls: 'page_white_acrobat',
+                handler : this.generar,
+                scope: this
+            }
+            <?
+            }
+            ?>
+            ],
             items:[{
                 title:'Información General',
                 layout:'form',
@@ -196,6 +216,18 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
         }else{
             Ext.MessageBox.alert('Sistema de Comprobantes - Error:', '¡Atención: La información básica no es válida o está incompleta!');
         }
+    }
+    ,
+    previsualizar: function(){
+        window.open("<?=url_for("ino/previewComprobante?id=".$comprobante->getCaIdcomprobante())?>");
+
+    },
+
+    generar: function(){
+        if( confirm("Se generara la factura y se transferira a SIIGO, sera necesario anularla para hacer modificaciones, ¿desea continuar?") ){
+            document.location = "<?=url_for("ino/generarComprobante?id=".$comprobante->getCaIdcomprobante())?>";
+        }
+
     }
 
 
