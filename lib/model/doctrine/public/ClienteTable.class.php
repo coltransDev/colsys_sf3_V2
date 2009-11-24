@@ -4,7 +4,7 @@
 class ClienteTable extends Doctrine_Table
 {
     
-/*
+        /*
 	* Lista los Clientes que hayan cambiado de estado en un determinado periodo de tiempo
 	* @author Carlos G. López M.
 	*/
