@@ -12,7 +12,6 @@
  * @property string $ca_incoterms
  * @property InoConceptoModalidad $InoConceptoModalidad
  * @property Doctrine_Collection $CotRecargo
- * @property Doctrine_Collection $InoTransaccion
  * @property Doctrine_Collection $PricRecargoxConcepto
  * @property Doctrine_Collection $PricRecargoxConceptoBs
  * @property Doctrine_Collection $PricRecargoxCiudad
@@ -28,7 +27,6 @@
  * @method string               getCaIncoterms()            Returns the current record's "ca_incoterms" value
  * @method InoConceptoModalidad getInoConceptoModalidad()   Returns the current record's "InoConceptoModalidad" value
  * @method Doctrine_Collection  getCotRecargo()             Returns the current record's "CotRecargo" collection
- * @method Doctrine_Collection  getInoTransaccion()         Returns the current record's "InoTransaccion" collection
  * @method Doctrine_Collection  getPricRecargoxConcepto()   Returns the current record's "PricRecargoxConcepto" collection
  * @method Doctrine_Collection  getPricRecargoxConceptoBs() Returns the current record's "PricRecargoxConceptoBs" collection
  * @method Doctrine_Collection  getPricRecargoxCiudad()     Returns the current record's "PricRecargoxCiudad" collection
@@ -43,7 +41,6 @@
  * @method TipoRecargo          setCaIncoterms()            Sets the current record's "ca_incoterms" value
  * @method TipoRecargo          setInoConceptoModalidad()   Sets the current record's "InoConceptoModalidad" value
  * @method TipoRecargo          setCotRecargo()             Sets the current record's "CotRecargo" collection
- * @method TipoRecargo          setInoTransaccion()         Sets the current record's "InoTransaccion" collection
  * @method TipoRecargo          setPricRecargoxConcepto()   Sets the current record's "PricRecargoxConcepto" collection
  * @method TipoRecargo          setPricRecargoxConceptoBs() Sets the current record's "PricRecargoxConceptoBs" collection
  * @method TipoRecargo          setPricRecargoxCiudad()     Sets the current record's "PricRecargoxCiudad" collection
@@ -55,7 +52,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
+ * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
  */
 abstract class BaseTipoRecargo extends myDoctrineRecord
 {
@@ -79,6 +76,11 @@ abstract class BaseTipoRecargo extends myDoctrineRecord
         $this->hasColumn('ca_incoterms', 'string', null, array(
              'type' => 'string',
              ));
+
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
+             ));
     }
 
     public function setUp()
@@ -91,10 +93,6 @@ abstract class BaseTipoRecargo extends myDoctrineRecord
         $this->hasMany('CotRecargo', array(
              'local' => 'ca_idrecargo',
              'foreign' => 'ca_idrecargo'));
-
-        $this->hasMany('InoTransaccion', array(
-             'local' => 'ca_idrecargo',
-             'foreign' => 'ca_idconcepto'));
 
         $this->hasMany('PricRecargoxConcepto', array(
              'local' => 'ca_idrecargo',

@@ -55,7 +55,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
+ * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
  */
 abstract class BaseTercero extends myDoctrineRecord
 {
@@ -96,6 +96,11 @@ abstract class BaseTercero extends myDoctrineRecord
              ));
         $this->hasColumn('ca_identificacion', 'string', null, array(
              'type' => 'string',
+             ));
+
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
              ));
     }
 

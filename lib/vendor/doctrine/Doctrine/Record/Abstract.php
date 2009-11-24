@@ -114,23 +114,20 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
     }
 
     /**
-     * Specify an array of fields that are unique and will be validated as such
+     * Defines a n-uple of fields that must be unique for every record. 
      *
+     * This method Will automatically add UNIQUE index definition 
+     * and validate the values on save. The UNIQUE index is not created in the
+     * database until you use @see export().
+     *
+     * @param array $fields     values are fieldnames
+     * @param array $options    array of options for unique validator
+     * @param bool $createUniqueIndex  Whether or not to create a unique index in the database
      * @return void
      */
-    public function unique()
+    public function unique($fields, $options = array(), $createUniqueIndex = true)
     {
-        $args = func_get_args();
-
-        if (count($args) == 1) {
-            $fields = (array) $args[0];
-        } else if (count($args) > 1) {
-            $fields = $args;
-        } else {
-            throw new Doctrine_Record_Exception('You must specify the fields to make a unique constraint on.');
-        }
-
-        return $this->_table->unique($fields);
+        return $this->_table->unique($fields, $options, $createUniqueIndex);
     }
 
     public function setAttribute($attr, $value)
@@ -166,7 +163,7 @@ abstract class Doctrine_Record_Abstract extends Doctrine_Access
         } else {
             // Put an index on the key column
             $mapFieldName = array_keys(end($map));
-            $this->index($mapFieldName[0], array('fields' => array($mapFieldName[0])));
+            $this->index($this->getTable()->getTableName().'_'.$mapFieldName[0], array('fields' => array($mapFieldName[0])));
         }
 
         // Set the subclasses array for the parent class

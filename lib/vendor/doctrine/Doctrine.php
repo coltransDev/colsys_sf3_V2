@@ -18,6 +18,7 @@
  * and is licensed under the LGPL. For more information, see
  * <http://www.phpdoctrine.org>.
  */
+
 require_once 'Doctrine/Core.php';
 
 /**

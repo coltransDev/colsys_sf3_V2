@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Query.php 6581 2009-10-29 21:24:47Z jwage $
+ *  $Id: Query.php 6792 2009-11-23 22:27:26Z jwage $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        www.phpdoctrine.org
  * @since       1.0
- * @version     $Revision: 6581 $
+ * @version     $Revision: 6792 $
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  * @todo        Proposal: This class does far too much. It should have only 1 task: Collecting
  *              the DQL query parts and the query parameters (the query state and caching options/methods
@@ -340,6 +340,21 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         }
     }
 
+    /**
+     * Check if a dql alias has a sql aggregate alias
+     *
+     * @param string $dqlAlias 
+     * @return boolean
+     */
+    public function hasSqlAggregateAlias($dqlAlias)
+    {
+        try {
+            $this->getSqlAggregateAlias($dqlAlias);
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 
     /**
      * Adjust the processed param index for "foo.bar IN ?" support
@@ -1087,9 +1102,10 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
      *
      * @param array $params             an array of prepared statement params (needed only in mysql driver
      *                                  when limit subquery algorithm is used)
+     * @param bool $limitSubquery Whether or not to try and apply the limit subquery algorithm
      * @return string                   the built sql query
      */
-    public function getSqlQuery($params = array())
+    public function getSqlQuery($params = array(), $limitSubquery = true)
     {
         // Assign building/execution specific params
         $this->_params['exec'] = $params;
@@ -1103,15 +1119,16 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             // Return compiled SQL
             return $this->_sql;
         }
-        return $this->buildSqlQuery();
+        return $this->buildSqlQuery($limitSubquery);
     }
 
     /**
      * Build the SQL query from the DQL
      *
+     * @param bool $limitSubquery Whether or not to try and apply the limit subquery algorithm
      * @return string $sql The generated SQL string
      */
-    public function buildSqlQuery()
+    public function buildSqlQuery($limitSubquery = true)
     {
         // reset the state
         if ( ! $this->isSubquery()) {
@@ -1232,7 +1249,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         $modifyLimit = true;
         $limitSubquerySql = '';
 
-        if ( ( ! empty($this->_sqlParts['limit']) || ! empty($this->_sqlParts['offset'])) && $needsSubQuery) {
+        if ( ( ! empty($this->_sqlParts['limit']) || ! empty($this->_sqlParts['offset'])) && $needsSubQuery && $limitSubquery) {
             $subquery = $this->getLimitSubquery();
 
             // what about composite keys?
@@ -1291,21 +1308,30 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         }
 
         // Add the default orderBy statements defined in the relationships and table classes
-        $added = array();
-        foreach ($this->_queryComponents as $alias => $map) {
-            $sqlAlias = $this->getSqlTableAlias($alias);
-            if (isset($map['relation'])) {
-                $orderBy = $map['relation']->getOrderByStatement($sqlAlias, true);
-            } else {
-                $orderBy = $map['table']->getOrderByStatement($sqlAlias, true);
-            }
+        // Only do this for SELECT queries
+        if ($this->_type === self::SELECT) {
+            foreach ($this->_queryComponents as $alias => $map) {
+                $sqlAlias = $this->getSqlTableAlias($alias);
+                if (isset($map['relation'])) {
+                    $orderBy = $map['relation']->getOrderByStatement($sqlAlias, true);
+                    if ($orderBy == $map['relation']['orderBy']) {
+                        if (isset($map['ref'])) {
+                            $orderBy = $map['relation']['refTable']->processOrderBy($sqlAlias, $map['relation']['orderBy'], true);
+                        } else {
+                            $orderBy = null;
+                        }
+                    }
+                } else {
+                    $orderBy = $map['table']->getOrderByStatement($sqlAlias, true);
+                }
 
-            if ($orderBy) {
-                $e = explode(',', $orderBy);
-                $e = array_map('trim', $e);
-                foreach ($e as $v) {
-                    if ( ! in_array($v, $this->_sqlParts['orderby'])) {
-                        $this->_sqlParts['orderby'][] = $v;
+                if ($orderBy) {
+                    $e = explode(',', $orderBy);
+                    $e = array_map('trim', $e);
+                    foreach ($e as $v) {
+                        if ( ! in_array($v, $this->_sqlParts['orderby'])) {
+                            $this->_sqlParts['orderby'][] = $v;
+                        }
                     }
                 }
             }
@@ -1320,25 +1346,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         }
 
         $q .= $this->_sqlParts['forUpdate'] === true ? ' FOR UPDATE ' : '';
-
-        // return to the previous state
-        if ( ! empty($string)) {
-            // We need to double pop if > 2
-            if (count($this->_sqlParts['where']) > 2) {
-                array_pop($this->_sqlParts['where']);
-            }
-
-            array_pop($this->_sqlParts['where']);
-        }
-
-        if ($needsSubQuery) {
-            // We need to double shift if > 2
-            if (count($this->_sqlParts['where']) > 2) {
-                array_shift($this->_sqlParts['where']);
-            }
-
-            array_shift($this->_sqlParts['where']);
-        }
 
         $this->_sql = $q;
 
@@ -1380,31 +1387,36 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         $subquery .= $this->_conn->quoteIdentifier($primaryKey);
 
         // pgsql & oracle need the order by fields to be preserved in select clause
-        if ($driverName == 'pgsql' || $driverName == 'oracle' || $driverName == 'oci') {
+        if ($driverName == 'pgsql' || $driverName == 'oracle' || $driverName == 'oci' || $driverName == 'mssql' || $driverName == 'odbc') {
             foreach ($this->_sqlParts['orderby'] as $part) {
                 // Remove identifier quoting if it exists
                 $e = $this->_tokenizer->bracketExplode($part, ' ');
-                $part_original = trim($e[0]);
-                $callback = create_function('$e', 'return trim($e, \'[]`"\');');
-                $part = trim(implode('.', array_map($callback, explode('.', $part_original))));
-
-                if (strpos($part, '.') === false) {
-                    continue;
-                }
-
-                // don't add functions
-                if (strpos($part, '(') !== false) {
-                    continue;
-                }
-
-                // don't add primarykey column (its already in the select clause)
-                if ($part !== $primaryKey) {
-                    $subquery .= ', ' . $part_original;
+                foreach ($e as $f) {
+                    if ($f == 0 || $f % 2 == 0) {
+                        $partOriginal = trim($f);
+                        $callback = create_function('$e', 'return trim($e, \'[]`"\');');
+                        $part = trim(implode('.', array_map($callback, explode('.', $partOriginal))));
+                
+                        if (strpos($part, '.') === false) {
+                            continue;
+                        }
+                
+                        // don't add functions
+                        if (strpos($part, '(') !== false) {
+                            continue;
+                        }
+                
+                        // don't add primarykey column (its already in the select clause)
+                        if ($part !== $primaryKey) {
+                            $subquery .= ', ' . $partOriginal;
+                        }
+                    }
                 }
             }
         }
 
         $orderby = $this->_sqlParts['orderby'];
+        $having = $this->_sqlParts['having'];
         if ($driverName == 'mysql' || $driverName == 'pgsql') {
             foreach ($this->_expressionMap as $dqlAlias => $expr) {
                 if (isset($expr[1])) {
@@ -1414,6 +1426,9 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         } else {
             foreach ($this->_expressionMap as $dqlAlias => $expr) {
                 if (isset($expr[1])) {
+                    foreach ($having as $k => $v) {
+                        $having[$k] = str_replace($this->_aggregateAliasMap[$dqlAlias], $expr[0], $v);
+                    }
                     foreach ($orderby as $k => $v) {
                         $e = explode(' ', $v);
                         if ($e[0] == $this->_aggregateAliasMap[$dqlAlias]) {
@@ -1442,7 +1457,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         // all conditions must be preserved in subquery
         $subquery .= ( ! empty($this->_sqlParts['where']))?   ' WHERE '    . implode(' ', $this->_sqlParts['where'])  : '';
         $subquery .= ( ! empty($this->_sqlParts['groupby']))? ' GROUP BY ' . implode(', ', $this->_sqlParts['groupby'])   : '';
-        $subquery .= ( ! empty($this->_sqlParts['having']))?  ' HAVING '   . implode(' AND ', $this->_sqlParts['having']) : '';
+        $subquery .= ( ! empty($having))?  ' HAVING '   . implode(' AND ', $having) : '';
         $subquery .= ( ! empty($orderby))? ' ORDER BY ' . implode(', ', $orderby)  : '';
 
         if (($driverName == 'oracle' || $driverName == 'oci') && $this->_isOrderedByJoinedColumn()) {
@@ -1451,9 +1466,10 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
             // in the SELECT list when using DISTINCT. Hence we need to filter out the
             // primary keys with an additional DISTINCT subquery.
             // #1038
-            $subquery = 'SELECT doctrine_subquery_alias.' . $table->getColumnName($table->getIdentifier())
+            $quotedIdentifierColumnName = $this->_conn->quoteIdentifier($table->getColumnName($table->getIdentifier()));
+            $subquery = 'SELECT doctrine_subquery_alias.' . $quotedIdentifierColumnName
                     . ' FROM (' . $subquery . ') doctrine_subquery_alias'
-                    . ' GROUP BY doctrine_subquery_alias.' . $table->getColumnName($table->getIdentifier())
+                    . ' GROUP BY doctrine_subquery_alias.' . $quotedIdentifierColumnName
                     . ' ORDER BY MIN(ROWNUM)';
         }
 
@@ -1746,7 +1762,8 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
                     $this->_queryComponents[$assocPath] = array(
                         'parent' => $prevPath,
                         'relation' => $relation,
-                        'table' => $asf);
+                        'table' => $asf,
+                        'ref' => true);
 
                     $assocAlias = $this->getSqlTableAlias($assocPath, $asf->getTableName());
 
@@ -1900,7 +1917,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
     {
         // get the connection for the component
         $manager = Doctrine_Manager::getInstance();
-        if ($manager->hasConnectionForComponent($name)) {
+        if ( ! $this->_passedConn && $manager->hasConnectionForComponent($name)) {
             $this->_conn = $manager->getConnectionForComponent($name);
         }
 
@@ -1937,7 +1954,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
     {
         // get the connection for the component
         $manager = Doctrine_Manager::getInstance();
-        if ($manager->hasConnectionForComponent($name)) {
+        if ( ! $this->_passedConn && $manager->hasConnectionForComponent($name)) {
             $this->_conn = $manager->getConnectionForComponent($name);
         }
 
@@ -1985,7 +2002,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
     public function getCountSqlQuery()
     {
         // triggers dql parsing/processing
-        $this->getSqlQuery(); // this is ugly
+        $this->getSqlQuery(array(), false); // this is ugly
 
         // initialize temporary variables
         $where   = $this->_sqlParts['where'];
@@ -2000,17 +2017,6 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
 
         // Build the from clause
         $from = $this->_buildSqlFromPart(true);
-
-        // Append column aggregation inheritance (if needed)
-        $string = $this->getInheritanceCondition($rootAlias);
-
-        if ( ! empty($string)) {
-            if ( ! empty($where)) {
-                $where[] = 'AND';
-            }
-
-            $where[] = $string;
-        }
 
         // Build the where clause
         $where = ( ! empty($where)) ? ' WHERE ' . implode(' ', $where) : '';
@@ -2084,7 +2090,23 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
         $q = $this->getCountSqlQuery();
         $params = $this->getCountQueryParams($params);
         $params = $this->_conn->convertBooleans($params);
-        $results = $this->getConnection()->fetchAll($q, $params);
+
+        if ($this->_resultCache) {
+            $conn = $this->getConnection(); 
+            $cacheDriver = $this->getResultCacheDriver();
+            $hash = $this->getResultCacheHash($params).'_count';
+            $cached = ($this->_expireResultCache) ? false : $cacheDriver->fetch($hash);
+
+            if ($cached === false) {
+                // cache miss
+                $results = $this->getConnection()->fetchAll($q, $params);
+                $cacheDriver->save($hash, serialize($results), $this->getResultCacheLifeSpan());
+            } else {
+                $results = unserialize($cached);
+            }
+        } else {
+            $results = $this->getConnection()->fetchAll($q, $params);
+        }
 
         if (count($results) > 1) {
             $count = count($results);
@@ -2141,6 +2163,7 @@ class Doctrine_Query extends Doctrine_Query_Abstract implements Countable
     public function __clone()
     {
         $this->_parsers = array();
+        $this->_hydrator = clone $this->_hydrator;
 
         // Subqueries share some information from the parent so it can intermingle
         // with the dql of the main query. So when a subquery is cloned we need to

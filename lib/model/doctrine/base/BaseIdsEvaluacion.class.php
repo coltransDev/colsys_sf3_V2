@@ -9,6 +9,7 @@
  * @property integer $ca_id
  * @property string $ca_tipo
  * @property string $ca_concepto
+ * @property integer $ca_ano
  * @property date $ca_fchevaluacion
  * @property string $ca_usucreado
  * @property timestamp $ca_fchcreado
@@ -21,6 +22,7 @@
  * @method integer             getCaId()                   Returns the current record's "ca_id" value
  * @method string              getCaTipo()                 Returns the current record's "ca_tipo" value
  * @method string              getCaConcepto()             Returns the current record's "ca_concepto" value
+ * @method integer             getCaAno()                  Returns the current record's "ca_ano" value
  * @method date                getCaFchevaluacion()        Returns the current record's "ca_fchevaluacion" value
  * @method string              getCaUsucreado()            Returns the current record's "ca_usucreado" value
  * @method timestamp           getCaFchcreado()            Returns the current record's "ca_fchcreado" value
@@ -32,6 +34,7 @@
  * @method IdsEvaluacion       setCaId()                   Sets the current record's "ca_id" value
  * @method IdsEvaluacion       setCaTipo()                 Sets the current record's "ca_tipo" value
  * @method IdsEvaluacion       setCaConcepto()             Sets the current record's "ca_concepto" value
+ * @method IdsEvaluacion       setCaAno()                  Sets the current record's "ca_ano" value
  * @method IdsEvaluacion       setCaFchevaluacion()        Sets the current record's "ca_fchevaluacion" value
  * @method IdsEvaluacion       setCaUsucreado()            Sets the current record's "ca_usucreado" value
  * @method IdsEvaluacion       setCaFchcreado()            Sets the current record's "ca_fchcreado" value
@@ -43,7 +46,7 @@
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
+ * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
  */
 abstract class BaseIdsEvaluacion extends myDoctrineRecord
 {
@@ -66,6 +69,9 @@ abstract class BaseIdsEvaluacion extends myDoctrineRecord
              'type' => 'string',
              'length' => '15',
              ));
+        $this->hasColumn('ca_ano', 'integer', null, array(
+             'type' => 'integer',
+             ));
         $this->hasColumn('ca_fchevaluacion', 'date', null, array(
              'type' => 'date',
              ));
@@ -82,6 +88,11 @@ abstract class BaseIdsEvaluacion extends myDoctrineRecord
              ));
         $this->hasColumn('ca_fchactualizado', 'timestamp', null, array(
              'type' => 'timestamp',
+             ));
+
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
              ));
     }
 

@@ -13,7 +13,6 @@
  * @property Doctrine_Collection $CotProducto
  * @property Doctrine_Collection $CotContinuacion
  * @property Doctrine_Collection $IdsSucursal
- * @property Doctrine_Collection $InoMaestraSea
  * @property Doctrine_Collection $Trayecto
  * @property Doctrine_Collection $PricRecargoxCiudad
  * @property Doctrine_Collection $PricRecargoxCiudadBs
@@ -21,6 +20,7 @@
  * @property Doctrine_Collection $Cliente
  * @property Doctrine_Collection $Reporte
  * @property Doctrine_Collection $Tercero
+ * @property Doctrine_Collection $InoMaestraSea
  * @property Doctrine_Collection $InoClientesSea
  * 
  * @method string              getCaIdciudad()           Returns the current record's "ca_idciudad" value
@@ -31,7 +31,6 @@
  * @method Doctrine_Collection getCotProducto()          Returns the current record's "CotProducto" collection
  * @method Doctrine_Collection getCotContinuacion()      Returns the current record's "CotContinuacion" collection
  * @method Doctrine_Collection getIdsSucursal()          Returns the current record's "IdsSucursal" collection
- * @method Doctrine_Collection getInoMaestraSea()        Returns the current record's "InoMaestraSea" collection
  * @method Doctrine_Collection getTrayecto()             Returns the current record's "Trayecto" collection
  * @method Doctrine_Collection getPricRecargoxCiudad()   Returns the current record's "PricRecargoxCiudad" collection
  * @method Doctrine_Collection getPricRecargoxCiudadBs() Returns the current record's "PricRecargoxCiudadBs" collection
@@ -39,6 +38,7 @@
  * @method Doctrine_Collection getCliente()              Returns the current record's "Cliente" collection
  * @method Doctrine_Collection getReporte()              Returns the current record's "Reporte" collection
  * @method Doctrine_Collection getTercero()              Returns the current record's "Tercero" collection
+ * @method Doctrine_Collection getInoMaestraSea()        Returns the current record's "InoMaestraSea" collection
  * @method Doctrine_Collection getInoClientesSea()       Returns the current record's "InoClientesSea" collection
  * @method Ciudad              setCaIdciudad()           Sets the current record's "ca_idciudad" value
  * @method Ciudad              setCaCiudad()             Sets the current record's "ca_ciudad" value
@@ -48,7 +48,6 @@
  * @method Ciudad              setCotProducto()          Sets the current record's "CotProducto" collection
  * @method Ciudad              setCotContinuacion()      Sets the current record's "CotContinuacion" collection
  * @method Ciudad              setIdsSucursal()          Sets the current record's "IdsSucursal" collection
- * @method Ciudad              setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
  * @method Ciudad              setTrayecto()             Sets the current record's "Trayecto" collection
  * @method Ciudad              setPricRecargoxCiudad()   Sets the current record's "PricRecargoxCiudad" collection
  * @method Ciudad              setPricRecargoxCiudadBs() Sets the current record's "PricRecargoxCiudadBs" collection
@@ -56,12 +55,13 @@
  * @method Ciudad              setCliente()              Sets the current record's "Cliente" collection
  * @method Ciudad              setReporte()              Sets the current record's "Reporte" collection
  * @method Ciudad              setTercero()              Sets the current record's "Tercero" collection
+ * @method Ciudad              setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
  * @method Ciudad              setInoClientesSea()       Sets the current record's "InoClientesSea" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
+ * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
  */
 abstract class BaseCiudad extends myDoctrineRecord
 {
@@ -95,6 +95,11 @@ abstract class BaseCiudad extends myDoctrineRecord
              'primary' => false,
              'length' => '10',
              ));
+
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
+             ));
     }
 
     public function setUp()
@@ -115,10 +120,6 @@ abstract class BaseCiudad extends myDoctrineRecord
         $this->hasMany('IdsSucursal', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_idciudad'));
-
-        $this->hasMany('InoMaestraSea', array(
-             'local' => 'ca_idciudad',
-             'foreign' => 'ca_origen'));
 
         $this->hasMany('Trayecto', array(
              'local' => 'ca_idciudad',
@@ -147,6 +148,10 @@ abstract class BaseCiudad extends myDoctrineRecord
         $this->hasMany('Tercero', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_idciudad'));
+
+        $this->hasMany('InoMaestraSea', array(
+             'local' => 'ca_idciudad',
+             'foreign' => 'ca_origen'));
 
         $this->hasMany('InoClientesSea', array(
              'local' => 'ca_idciudad',

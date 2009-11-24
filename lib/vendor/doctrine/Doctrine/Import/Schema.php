@@ -105,8 +105,7 @@ class Doctrine_Import_Schema
                                                           'listeners',
                                                           'checks',
                                                           'comment',
-                                                          'generatePath',
-                                                         ),
+                                                          'generatePath'),
 
                                    'column'     =>  array('name',
                                                           'format',
@@ -325,13 +324,9 @@ class Doctrine_Import_Schema
             }
         }
 
-        // Apply the globals to each table if it does not have a custom value set already
+        // Merge the globals that aren't specifically set to each class
         foreach ($array as $className => $table) {
-            foreach ($globals as $key => $value) {
-                if ( !isset($array[$className][$key])) {
-                    $array[$className][$key] = $value;
-                }
-            }
+            $array[$className] = Doctrine_Lib::arrayDeepMerge($globals, $array[$className]);
         }
 
         $build = array();

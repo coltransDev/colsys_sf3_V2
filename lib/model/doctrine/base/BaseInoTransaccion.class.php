@@ -10,8 +10,8 @@
  * @property integer $ca_idcuenta
  * @property integer $ca_idconcepto
  * @property integer $ca_id
- * @property string $ca_db
- * @property timestamp $ca_cr
+ * @property decimal $ca_db
+ * @property decimal $ca_cr
  * @property string $ca_idmoneda
  * @property timestamp $ca_observaciones
  * @property timestamp $ca_fchcreado
@@ -19,15 +19,16 @@
  * @property InoCliente $InoCliente
  * @property Usuario $UsuCreado
  * @property InoComprobante $InoComprobante
- * @property TipoRecargo $TipoRecargo
+ * @property InoCuenta $InoCuenta
+ * @property InoConcepto $InoConcepto
  * 
  * @method integer        getCaIdtransaccion()  Returns the current record's "ca_idtransaccion" value
  * @method integer        getCaIdcomprobante()  Returns the current record's "ca_idcomprobante" value
  * @method integer        getCaIdcuenta()       Returns the current record's "ca_idcuenta" value
  * @method integer        getCaIdconcepto()     Returns the current record's "ca_idconcepto" value
  * @method integer        getCaId()             Returns the current record's "ca_id" value
- * @method string         getCaDb()             Returns the current record's "ca_db" value
- * @method timestamp      getCaCr()             Returns the current record's "ca_cr" value
+ * @method decimal        getCaDb()             Returns the current record's "ca_db" value
+ * @method decimal        getCaCr()             Returns the current record's "ca_cr" value
  * @method string         getCaIdmoneda()       Returns the current record's "ca_idmoneda" value
  * @method timestamp      getCaObservaciones()  Returns the current record's "ca_observaciones" value
  * @method timestamp      getCaFchcreado()      Returns the current record's "ca_fchcreado" value
@@ -35,7 +36,8 @@
  * @method InoCliente     getInoCliente()       Returns the current record's "InoCliente" value
  * @method Usuario        getUsuCreado()        Returns the current record's "UsuCreado" value
  * @method InoComprobante getInoComprobante()   Returns the current record's "InoComprobante" value
- * @method TipoRecargo    getTipoRecargo()      Returns the current record's "TipoRecargo" value
+ * @method InoCuenta      getInoCuenta()        Returns the current record's "InoCuenta" value
+ * @method InoConcepto    getInoConcepto()      Returns the current record's "InoConcepto" value
  * @method InoTransaccion setCaIdtransaccion()  Sets the current record's "ca_idtransaccion" value
  * @method InoTransaccion setCaIdcomprobante()  Sets the current record's "ca_idcomprobante" value
  * @method InoTransaccion setCaIdcuenta()       Sets the current record's "ca_idcuenta" value
@@ -50,12 +52,13 @@
  * @method InoTransaccion setInoCliente()       Sets the current record's "InoCliente" value
  * @method InoTransaccion setUsuCreado()        Sets the current record's "UsuCreado" value
  * @method InoTransaccion setInoComprobante()   Sets the current record's "InoComprobante" value
- * @method InoTransaccion setTipoRecargo()      Sets the current record's "TipoRecargo" value
+ * @method InoTransaccion setInoCuenta()        Sets the current record's "InoCuenta" value
+ * @method InoTransaccion setInoConcepto()      Sets the current record's "InoConcepto" value
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
+ * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
  */
 abstract class BaseInoTransaccion extends myDoctrineRecord
 {
@@ -79,11 +82,11 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
         $this->hasColumn('ca_id', 'integer', null, array(
              'type' => 'integer',
              ));
-        $this->hasColumn('ca_db', 'string', null, array(
-             'type' => 'string',
+        $this->hasColumn('ca_db', 'decimal', null, array(
+             'type' => 'decimal',
              ));
-        $this->hasColumn('ca_cr', 'timestamp', null, array(
-             'type' => 'timestamp',
+        $this->hasColumn('ca_cr', 'decimal', null, array(
+             'type' => 'decimal',
              ));
         $this->hasColumn('ca_idmoneda', 'string', null, array(
              'type' => 'string',
@@ -98,8 +101,10 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
              'type' => 'string',
              ));
 
-
-        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
+             ));
     }
 
     public function setUp()
@@ -117,8 +122,12 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
              'local' => 'ca_idcomprobante',
              'foreign' => 'ca_idcomprobante'));
 
-        $this->hasOne('TipoRecargo', array(
+        $this->hasOne('InoCuenta', array(
+             'local' => 'ca_idcuenta',
+             'foreign' => 'ca_idcuenta'));
+
+        $this->hasOne('InoConcepto', array(
              'local' => 'ca_idconcepto',
-             'foreign' => 'ca_idrecargo'));
+             'foreign' => 'ca_idconcepto'));
     }
 }

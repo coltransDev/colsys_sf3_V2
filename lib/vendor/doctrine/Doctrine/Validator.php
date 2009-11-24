@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: Validator.php 6638 2009-11-03 05:19:18Z jwage $
+ *  $Id: Validator.php 6669 2009-11-04 19:50:10Z jwage $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,7 +27,7 @@
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        www.phpdoctrine.org
  * @since       1.0
- * @version     $Revision: 6638 $
+ * @version     $Revision: 6669 $
  * @author      Roman Borschel <roman@code-factory.org>
  * @author      Konsta Vesterinen <kvesteri@cc.hut.fi>
  */
@@ -89,17 +89,22 @@ class Doctrine_Validator extends Doctrine_Locator_Injectable
      */
     public static function validateLength($value, $type, $maximumLength)
     {
-        if( $maximumLength === null ) {
+        if ($maximumLength === null ) {
             return true;
         }
         if ($type == 'timestamp' || $type == 'integer' || $type == 'enum') {
             return true;
         } else if ($type == 'array' || $type == 'object') {
             $length = strlen(serialize($value));
-        } else if ($type == 'decimal' || $type == 'float' || $type == 'double') {
+        } else if ($type == 'decimal' || $type == 'float') {
             $value = abs($value);
-            $e = explode('.', $value);
+
+            $localeInfo = localeconv();
+            $decimalPoint = $localeInfo['mon_decimal_point'] ? $localeInfo['mon_decimal_point'] : $localeInfo['decimal_point'];
+            $e = explode($decimalPoint, $value);
+
             $length = strlen($e[0]);
+            
             if (isset($e[1])) {
                 $length = $length + strlen($e[1]);
             }

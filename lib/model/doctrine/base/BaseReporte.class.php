@@ -81,12 +81,12 @@
  * @property IdsAgente $IdsAgente
  * @property IdsProveedor $IdsProveedor
  * @property Tercero $Proveedor
- * @property Doctrine_Collection $InoMaestraSea
  * @property Doctrine_Collection $Email
  * @property Doctrine_Collection $RepSeguro
  * @property Doctrine_Collection $RepAduana
  * @property Doctrine_Collection $RepExpo
  * @property Doctrine_Collection $RepCosto
+ * @property Doctrine_Collection $InoMaestraSea
  * 
  * @method integer             getCaIdreporte()          Returns the current record's "ca_idreporte" value
  * @method date                getCaFchreporte()         Returns the current record's "ca_fchreporte" value
@@ -164,12 +164,12 @@
  * @method IdsAgente           getIdsAgente()            Returns the current record's "IdsAgente" value
  * @method IdsProveedor        getIdsProveedor()         Returns the current record's "IdsProveedor" value
  * @method Tercero             getProveedor()            Returns the current record's "Proveedor" value
- * @method Doctrine_Collection getInoMaestraSea()        Returns the current record's "InoMaestraSea" collection
  * @method Doctrine_Collection getEmail()                Returns the current record's "Email" collection
  * @method Doctrine_Collection getRepSeguro()            Returns the current record's "RepSeguro" collection
  * @method Doctrine_Collection getRepAduana()            Returns the current record's "RepAduana" collection
  * @method Doctrine_Collection getRepExpo()              Returns the current record's "RepExpo" collection
  * @method Doctrine_Collection getRepCosto()             Returns the current record's "RepCosto" collection
+ * @method Doctrine_Collection getInoMaestraSea()        Returns the current record's "InoMaestraSea" collection
  * @method Reporte             setCaIdreporte()          Sets the current record's "ca_idreporte" value
  * @method Reporte             setCaFchreporte()         Sets the current record's "ca_fchreporte" value
  * @method Reporte             setCaConsecutivo()        Sets the current record's "ca_consecutivo" value
@@ -246,17 +246,17 @@
  * @method Reporte             setIdsAgente()            Sets the current record's "IdsAgente" value
  * @method Reporte             setIdsProveedor()         Sets the current record's "IdsProveedor" value
  * @method Reporte             setProveedor()            Sets the current record's "Proveedor" value
- * @method Reporte             setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
  * @method Reporte             setEmail()                Sets the current record's "Email" collection
  * @method Reporte             setRepSeguro()            Sets the current record's "RepSeguro" collection
  * @method Reporte             setRepAduana()            Sets the current record's "RepAduana" collection
  * @method Reporte             setRepExpo()              Sets the current record's "RepExpo" collection
  * @method Reporte             setRepCosto()             Sets the current record's "RepCosto" collection
+ * @method Reporte             setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
  * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6508 2009-10-14 06:28:49Z jwage $
+ * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
  */
 abstract class BaseReporte extends myDoctrineRecord
 {
@@ -447,6 +447,11 @@ abstract class BaseReporte extends myDoctrineRecord
         $this->hasColumn('ca_usucerrado', 'string', null, array(
              'type' => 'string',
              ));
+
+        $this->option('symfony', array(
+             'form' => false,
+             'filter' => false,
+             ));
     }
 
     public function setUp()
@@ -520,10 +525,6 @@ abstract class BaseReporte extends myDoctrineRecord
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idtercero'));
 
-        $this->hasMany('InoMaestraSea', array(
-             'local' => 'ca_idreporte',
-             'foreign' => 'ca_idreporte'));
-
         $this->hasMany('Email', array(
              'local' => 'ca_idreporte',
              'foreign' => 'ca_idcaso'));
@@ -541,6 +542,10 @@ abstract class BaseReporte extends myDoctrineRecord
              'foreign' => 'ca_idreporte'));
 
         $this->hasMany('RepCosto', array(
+             'local' => 'ca_idreporte',
+             'foreign' => 'ca_idreporte'));
+
+        $this->hasMany('InoMaestraSea', array(
              'local' => 'ca_idreporte',
              'foreign' => 'ca_idreporte'));
     }
