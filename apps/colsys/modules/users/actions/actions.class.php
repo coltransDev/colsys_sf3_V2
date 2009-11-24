@@ -302,6 +302,55 @@ class usersActions extends sfActions
 	public function executeNoAccess( $request ){
 	
 	}
+    
+    
+    /*
+	* Verifica si el usuario esta logueado.
+	*/
+	public function executeCheckLogin( $request ){
+        if( $this->getUser()->isAuthenticated() ){
+           $this->responseArray = array( "success"=>true, "login"=>true );
+        }else{
+           $this->responseArray = array( "success"=>true, "login"=>false );
+        }
+        $this->setTemplate("responseTemplate");
+	}
+
+    /*
+	* Verifica si el usuario esta logueado.
+	*/
+	public function executeValidateLogin( $request ){
+        $this->responseArray = array( "success"=>true, "login"=>false );
+
+        $username = $request->getParameter("username");
+        $passwd = $request->getParameter("passwd");
+
+        if( $username && $passwd ){
+
+			$usuario = Doctrine::getTable("Usuario")->find( $username );
+			if( $usuario && $usuario->checkPasswd( $passwd ) ){
+				if( $usuario->getCaAuthmethod()=="ldap" ){
+                    sfContext::getInstance()->getUser()->signInLDAP( $username );
+                    $this->responseArray["login"] = true;
+				}
+
+				if( $usuario->getCaAuthmethod()=="sha1" ){
+                    sfContext::getInstance()->getUser()->signInAlternative( $username );
+                    $this->responseArray["login"] = true;
+				}
+			}
+		}
+
+        $this->setTemplate("responseTemplate");
+	}
+
+
+    public function executeLoginWindow(){
+        $this->setLayout("none");
+        sfConfig::set('sf_web_debug', false) ;			
+    }
+
+
 		
 }
 ?>

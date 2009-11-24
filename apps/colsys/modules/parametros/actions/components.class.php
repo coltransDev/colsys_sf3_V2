@@ -22,6 +22,18 @@ class parametrosComponents extends sfComponents
                              //array("id"=>Constantes::COSTO, "value"=>Constantes::COSTO)
                            );
 
+         
+         $this->cuentas = Doctrine::getTable("InoCuenta")
+                   ->createQuery("c")
+                   ->select("c.ca_idcuenta, c.ca_cuenta")
+                   ->addOrderBy("c.ca_cuenta")
+                   ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                   ->execute();
+
+         foreach( $this->cuentas as $key=>$val ){
+             $this->cuentas[$key]["ca_cuenta"] = utf8_encode($this->cuentas[$key]["ca_cuenta"]);
+         }        
+
 	}
 
     public function executeModalidadWindow()

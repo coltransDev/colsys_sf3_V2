@@ -67,7 +67,9 @@ class menuComponents extends sfComponents
 				$this->grupos[$rutina->getCaGrupo()][]=$rutina;		
 			}
 		}
-		$this->userid = $this->getUser()->getUserId();		
+		$this->userid = $this->getUser()->getUserId();
+
+
 	} 
 	
 	

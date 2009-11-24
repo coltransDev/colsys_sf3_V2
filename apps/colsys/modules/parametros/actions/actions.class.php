@@ -108,22 +108,24 @@ class parametrosActions extends sfActions
 
         $conceptos = Doctrine::getTable("InoConcepto")
                          ->createQuery("c")
-                         ->select("c.*")
+                         ->select("c.*, cu.ca_cuenta as ca_cuenta, cr.ca_cuenta as ca_cuentaretencion")
+                         ->leftJoin("c.InoCuenta cu")
+                         ->leftJoin("c.InoCuentaRetencion cr")
                          ->where("c.ca_tipo = ? ", $tipo)
                          ->addOrderBy( "c.ca_liminferior" )
                          ->addOrderBy( "c.ca_concepto" )
-                         ->setHydrationMode(Doctrine::HYDRATE_ARRAY )
+                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR )
                          ->execute();
 
         $k = 0;
-        foreach( $conceptos as $key=>$val ){
-            $conceptos[ $key ]["ca_concepto"]=utf8_encode( $conceptos[ $key ]["ca_concepto"] );
+        foreach( $conceptos as $key=>$val ){           
+            $conceptos[ $key ]["c_ca_concepto"]=utf8_encode( $conceptos[ $key ]["c_ca_concepto"] );
             $conceptos[ $key ]["orden"]=$k++;
 
             $modalidadesConcepto = Doctrine_Query::create()
                                 ->select("cm.ca_idmodalidad")
                                 ->from("InoConceptoModalidad cm")
-                                ->where("cm.ca_idconcepto = ? ", $conceptos[ $key ]["ca_idconcepto"] )
+                                ->where("cm.ca_idconcepto = ? ", $conceptos[ $key ]["c_ca_idconcepto"] )
                                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                 ->execute();
             $modalidades = array();
@@ -132,6 +134,8 @@ class parametrosActions extends sfActions
                 $modalidades[]=$modalidadConcepto["ca_idmodalidad"];
             }
             $conceptos[ $key ]["modalidades"] = implode( "|", $modalidades );
+
+            $conceptos[ $key ]["iva"] = $conceptos[ $key ]["iva"]*100;
 
         }
         
@@ -168,6 +172,31 @@ class parametrosActions extends sfActions
         if( $request->getParameter("concepto")!==null ){
             $concepto->setCaConcepto( $request->getParameter("concepto") );
         }
+        
+        if( $request->getParameter("idcuenta")!==null ){
+            $concepto->setCaIdcuenta( $request->getParameter("idcuenta") );
+        }
+
+        if( $request->getParameter("ingreso_propio")!==null ){
+            $concepto->setCaIngreso_propio( $request->getParameter("ingreso_propio") );
+        }
+
+        if( $request->getParameter("iva")!==null ){
+            $concepto->setCaIva( $request->getParameter("iva")/100 );
+        }
+
+        if( $request->getParameter("baseretencion")!==null ){
+            $concepto->setCaBaseretencion( $request->getParameter("baseretencion") );
+        }
+
+        if( $request->getParameter("idcuentaretencion")!==null ){
+            $concepto->setCaIdcuentaretencion( $request->getParameter("idcuentaretencion") );
+        }
+
+        if( $request->getParameter("valor")!==null ){
+            $concepto->setCaValor( $request->getParameter("valor") );
+        }
+
 
 
         if( $request->getParameter("observaciones")!==null ){
