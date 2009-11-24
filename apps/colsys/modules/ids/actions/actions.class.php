@@ -300,7 +300,11 @@ class idsActions extends sfActions
                     
                     if( $bindValues["tipo_proveedor"]=="TRI" || $bindValues["tipo_proveedor"]=="TRN" ){
                         $proveedor->setCaSigla($bindValues["sigla"] );
-                        $proveedor->setCaTransporte( $bindValues["transporte"] );
+                        if( $bindValues["transporte"] ){
+                            $proveedor->setCaTransporte( $bindValues["transporte"] );
+                        }else{
+                            $proveedor->setCaTransporte( null );
+                        }
                     }                   
                     
                     if( $this->nivel>=5 ){
