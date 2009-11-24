@@ -13,7 +13,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     {
         $this->enableAllPluginsExcept(array('sfPropelPlugin'));
 
-        sfConfig::set('sfDoctrinePlugin_doctrine_lib_path', sfConfig::get('sf_lib_dir') . '/vendor/doctrine/Doctrine.php');
+        sfConfig::set('sf_doctrine_dir', sfConfig::get('sf_lib_dir') . '/vendor/doctrine');
     }
 
   
