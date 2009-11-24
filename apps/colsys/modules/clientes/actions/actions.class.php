@@ -109,6 +109,49 @@ class clientesActions extends sfActions
                           ->execute();
 	}
 
+
+	/*
+	* Lista los Clientes con Estado Activo y que tinene más de 1 año sin reportar negocios
+	*/
+        public function executeVencimientoEstado() {
+            set_time_limit(0);
+
+            $empresa = 'Coltrans';
+            $stmt = StdClienteTable::vencimientoEstado($empresa, 'Activo', null);
+            $fchestado = date('Y-m-d H:i:s');
+
+            while($row = $stmt->fetch()) {
+                $stdcliente = new StdCliente();
+
+                $stdcliente->ca_idcliente = $row["ca_idcliente"];
+                $stdcliente->ca_empresa = $empresa;
+                $stdcliente->ca_estado = 'Potencial';
+                $stdcliente->ca_fchestado = $fchestado;
+
+                $stdcliente->save();
+            }
+
+            $empresa = 'Colmas';
+            $stmt = StdClienteTable::vencimientoEstado($empresa, 'Activo', null);
+
+            while($row = $stmt->fetch()) {
+                $stdcliente = new StdCliente();
+
+                $stdcliente->ca_idcliente = $row["ca_idcliente"];
+                $stdcliente->ca_empresa = $empresa;
+                $stdcliente->ca_estado = 'Potencial';
+                $stdcliente->ca_fchestado = $fchestado;
+
+                $stdcliente->save();
+            }
+
+            $layout =  $this->getRequestParameter("layout");
+            if( $layout ) {
+                $this->setLayout($layout);
+            }
+        }
+
+
         public function executeReporteEstados() {
             set_time_limit(0);
             $inicio =  $this->getRequestParameter("fchStart");
