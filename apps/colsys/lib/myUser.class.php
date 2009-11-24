@@ -269,7 +269,8 @@ class myUser extends sfBasicSecurityUser
 			if( $departamento ){
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
 			}									
-			
+
+            $this->log("Login LDAP");
 		}
 			
 	}
@@ -308,8 +309,9 @@ class myUser extends sfBasicSecurityUser
                                       ->fetchOne();
 			if( $departamento ){
 				$this->setAttribute('iddepartamento', $departamento->getCaIddepartamento() );
-			}									
-		}		
+			}
+            $this->log("Login SHA1");
+		}
 	}
 	
 	/*

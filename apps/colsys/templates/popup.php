@@ -8,9 +8,12 @@
 
     <?php include_stylesheets() ?>
     <?php include_javascripts() ?>
+    <script type="text/javascript" src="/js/loginWindow.js"></script>
+
 </head>
 <body>
 <div align="center" id="content">
+    <div id="mask"></div>
 <? 
 include_component("menu", "submenubar");
 ?>

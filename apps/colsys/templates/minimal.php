@@ -12,8 +12,11 @@
 
     <?php include_stylesheets() ?>
     <?php include_javascripts() ?>
+    <script type="text/javascript" src="/js/loginWindow.js"></script>
+
 </head>
 <body>
+    <div id="mask"></div>
 	<?php echo $sf_content ?>
 </body>
 </html>

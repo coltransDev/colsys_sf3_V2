@@ -6,30 +6,23 @@ class loginValidationFilter extends sfFilter
 		$module = sfContext::getInstance()->getModuleName ();				
 		$action = sfContext::getInstance()->getActionName ();
 				//$filterChain->execute();	
-		if( $module=="users" && $action=="login" ){
+		if( ($module=="users" && $action=="login") || ($module=="users" && $action=="checkLogin") ||  ($module=="users" && $action=="validateLogin") || sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){
 			$filterChain->execute();
+            
 		}else{
-		
-			if( sfContext::getInstance()->getConfiguration()->getEnvironment()!="cli" ){
-				
-				if( sfContext::getInstance()->getUser()->isAuthenticated() ){
-					$module = sfContext::getInstance()->getModuleName ();
-					$action = sfContext::getInstance()->getActionName ();	
-						
-					if( sfContext::getInstance()->getUser()->getAttribute("forcechange")==true && $module!="adminUsers" && $action!="changePasswd" ){
-						sfContext::getInstance()->getController()->redirect("/adminUsers/changePasswd");
-					}
-					$filterChain->execute();
-				}else{					
-					sfContext::getInstance()->getController()->redirect("users/login");
-                    //header("Location: /users/login");
-                    exit();
-				}
-				
-				
-			}else{
-				$filterChain->execute();	
-			}
+            if( sfContext::getInstance()->getUser()->isAuthenticated() ){
+                $module = sfContext::getInstance()->getModuleName ();
+                $action = sfContext::getInstance()->getActionName ();
+
+                if( sfContext::getInstance()->getUser()->getAttribute("forcechange")==true && $module!="adminUsers" && $action!="changePasswd" ){
+                    sfContext::getInstance()->getController()->redirect("/adminUsers/changePasswd");
+                }
+                $filterChain->execute();
+            }else{
+                sfContext::getInstance()->getController()->redirect("users/login");
+                //header("Location: /users/login");
+                exit();
+            }
 		}
 	}
 }

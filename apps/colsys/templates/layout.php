@@ -15,6 +15,8 @@
 
     <?php include_stylesheets() ?>
     <?php include_javascripts() ?>
+    <script type="text/javascript" src="/js/loginWindow.js"></script>
+
 </head>
 <body>
 	<div align="center">
@@ -33,7 +35,8 @@
 		
 		
 	</div>
-	
+
+    <div id="mask"></div>
 
 
 <? 
@@ -41,7 +44,7 @@ include_component("menu", "submenubar");
 ?>
 <br />
 
- <?php echo $sf_content ?>
+<?php echo $sf_content ?>
 
 
 

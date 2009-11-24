@@ -18,7 +18,7 @@ all:
 #    public_ip: 200.14.235.62
 
   ldap:
-    host: 10.192.1.15
+    host: 10.192.1.2
     user: abotero
     passwd: krxo4578
 

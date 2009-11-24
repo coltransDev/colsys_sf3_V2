@@ -117,7 +117,10 @@ class mySessionStorage  extends sfDatabaseSessionStorage
       {
 
 		$maxinactive = 1800;
-		if( trim(sfConfig::get("app_ip_trusted"))  ){
+        
+		/*
+         Verificar esto
+         if( trim(sfConfig::get("app_ip_trusted"))  ){
 			$trusted = explode(" ", sfConfig::get("app_ip_trusted"));
 
 			$ipsniff = new IPAddressSubnetSniffer( $trusted );
@@ -125,7 +128,7 @@ class mySessionStorage  extends sfDatabaseSessionStorage
 			if( $ipsniff->ip_is_allowed( $_SERVER['REMOTE_ADDR'] ) ){
 				$maxinactive = 3600;
 			}
-		}
+		}*/
 
         // session does not exist, create it
         $sql = 'INSERT INTO '.$db_table.'('.$db_id_col.', '.$db_data_col.', '.$db_time_col.', '.$db_maxinactive_col.') VALUES (?, ?, ?, ?)';
@@ -159,30 +162,38 @@ class mySessionStorage  extends sfDatabaseSessionStorage
   public function sessionWrite($id, $data)
   {
 
-  	$data = pg_escape_bytea($data);
+
+    $module = sfContext::getInstance()->getModuleName ();
+    $action = sfContext::getInstance()->getActionName ();
+            //$filterChain->execute();
+    if( !($module=="users" && $action=="checkLogin") ){
 
 
-  	//$data = chunk_split( base64_encode( $data ) );
-    // get table/column
-    $db_table    = $this->options['db_table'];
-    $db_data_col = $this->options['db_data_col'];
-    $db_id_col   = $this->options['db_id_col'];
-    $db_time_col = $this->options['db_time_col'];
-	$db_maxinactive_col = $this->options['db_maxinactive_col'];
+        $data = pg_escape_bytea($data);
 
 
-    $sql = 'UPDATE '.$db_table.' SET '.$db_data_col.' = ?, '.$db_time_col.' = '.time().' WHERE '.$db_id_col.'= ? AND '.$db_time_col.'+'.$db_maxinactive_col.'>'.time();
+        //$data = chunk_split( base64_encode( $data ) );
+        // get table/column
+        $db_table    = $this->options['db_table'];
+        $db_data_col = $this->options['db_data_col'];
+        $db_id_col   = $this->options['db_id_col'];
+        $db_time_col = $this->options['db_time_col'];
+        $db_maxinactive_col = $this->options['db_maxinactive_col'];
 
-    try
-    {
-      $stmt = $this->db->prepare($sql);
-      $stmt->bindParam(1, $data, PDO::PARAM_STR);
-      $stmt->bindParam(2, $id, PDO::PARAM_STR);
-      $stmt->execute();
-    }
-    catch (PDOException $e)
-    {
-      throw new sfDatabaseException(sprintf('PDOException was thrown when trying to manipulate session data. Message: %s', $e->getMessage()));
+
+        $sql = 'UPDATE '.$db_table.' SET '.$db_data_col.' = ?, '.$db_time_col.' = '.time().' WHERE '.$db_id_col.'= ? AND '.$db_time_col.'+'.$db_maxinactive_col.'>'.time();
+
+        try
+        {
+          $stmt = $this->db->prepare($sql);
+          $stmt->bindParam(1, $data, PDO::PARAM_STR);
+          $stmt->bindParam(2, $id, PDO::PARAM_STR);
+          $stmt->execute();
+        }
+        catch (PDOException $e)
+        {
+          throw new sfDatabaseException(sprintf('PDOException was thrown when trying to manipulate session data. Message: %s', $e->getMessage()));
+        }
     }
 
     return true;
