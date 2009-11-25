@@ -1,7 +1,7 @@
 Trayecto:
   options:
     symfony:
-      form: false
+      form: true
       filter: false
   generatePath: pricing
   tableName: tb_trayectos

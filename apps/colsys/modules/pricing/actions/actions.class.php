@@ -353,6 +353,7 @@ class pricingActions extends sfActions
                         'minima'=>$minima,
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
+                        'actualizado'=>$pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado())
 
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
@@ -404,6 +405,7 @@ class pricingActions extends sfActions
                         'minima'=>$minima,
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
+                        'actualizado'=>$pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado())
 
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
@@ -451,6 +453,7 @@ class pricingActions extends sfActions
                         'minima'=>$minima,
                         'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
                         'consecutivo' => $pricRecargo->getCaConsecutivo(),
+                        'actualizado'=>$pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado())
 
                     );
                     $recargosGenerales[] = array_merge($baseRow, $row);
@@ -529,7 +532,8 @@ class pricingActions extends sfActions
 					'sugerida'=>$sugerida,
 					'aplicacion' => utf8_encode($pricConcepto->getCaAplicacion()),
 					'consecutivo' => $pricConcepto->getCaConsecutivo(),
-					'orden'=>str_pad($i, 3, "0", STR_PAD_LEFT)
+					'orden'=>str_pad($i, 3, "0", STR_PAD_LEFT),
+                    'actualizado'=>$pricConcepto->getCaUsucreado()." ".Utils::fechaMes($pricConcepto->getCaFchcreado())
 
 				);
 
@@ -578,7 +582,8 @@ class pricingActions extends sfActions
 							'minima'=>$minima,
 							'aplicacion_min' => utf8_encode($pricRecargo->getCaAplicacionMin()),
 							'consecutivo' => $pricRecargo->getCaConsecutivo(),
-                            'orden'=>str_pad($i, 3, "0", STR_PAD_LEFT)." ".utf8_encode($tipoRecargo->getCaRecargo())
+                            'orden'=>str_pad($i, 3, "0", STR_PAD_LEFT)." ".utf8_encode($tipoRecargo->getCaRecargo()),
+                            'actualizado'=>$pricRecargo->getCaUsucreado()." ".Utils::fechaMes($pricRecargo->getCaFchcreado())
                         );
                         $data[] = array_merge($baseRow, $row);							
 					}

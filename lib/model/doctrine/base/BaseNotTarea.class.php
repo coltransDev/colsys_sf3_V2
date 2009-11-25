@@ -22,11 +22,11 @@
  * @property Doctrine_Collection $Notificacion
  * @property NotListaTareas $NotListaTareas
  * @property Doctrine_Collection $RepAsignacion
+ * @property Reporte $Reporte
  * @property Doctrine_Collection $Cotizacion
  * @property Doctrine_Collection $CotProducto
  * @property Doctrine_Collection $HdeskTicket
  * @property Doctrine_Collection $NotTareaAsignacion
- * @property Doctrine_Collection $Reporte
  * 
  * @method integer             getCaIdtarea()          Returns the current record's "ca_idtarea" value
  * @method integer             getCaIdlistatarea()     Returns the current record's "ca_idlistatarea" value
@@ -45,11 +45,11 @@
  * @method Doctrine_Collection getNotificacion()       Returns the current record's "Notificacion" collection
  * @method NotListaTareas      getNotListaTareas()     Returns the current record's "NotListaTareas" value
  * @method Doctrine_Collection getRepAsignacion()      Returns the current record's "RepAsignacion" collection
+ * @method Reporte             getReporte()            Returns the current record's "Reporte" value
  * @method Doctrine_Collection getCotizacion()         Returns the current record's "Cotizacion" collection
  * @method Doctrine_Collection getCotProducto()        Returns the current record's "CotProducto" collection
  * @method Doctrine_Collection getHdeskTicket()        Returns the current record's "HdeskTicket" collection
  * @method Doctrine_Collection getNotTareaAsignacion() Returns the current record's "NotTareaAsignacion" collection
- * @method Doctrine_Collection getReporte()            Returns the current record's "Reporte" collection
  * @method NotTarea            setCaIdtarea()          Sets the current record's "ca_idtarea" value
  * @method NotTarea            setCaIdlistatarea()     Sets the current record's "ca_idlistatarea" value
  * @method NotTarea            setCaUrl()              Sets the current record's "ca_url" value
@@ -67,11 +67,11 @@
  * @method NotTarea            setNotificacion()       Sets the current record's "Notificacion" collection
  * @method NotTarea            setNotListaTareas()     Sets the current record's "NotListaTareas" value
  * @method NotTarea            setRepAsignacion()      Sets the current record's "RepAsignacion" collection
+ * @method NotTarea            setReporte()            Sets the current record's "Reporte" value
  * @method NotTarea            setCotizacion()         Sets the current record's "Cotizacion" collection
  * @method NotTarea            setCotProducto()        Sets the current record's "CotProducto" collection
  * @method NotTarea            setHdeskTicket()        Sets the current record's "HdeskTicket" collection
  * @method NotTarea            setNotTareaAsignacion() Sets the current record's "NotTareaAsignacion" collection
- * @method NotTarea            setReporte()            Sets the current record's "Reporte" collection
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -129,7 +129,7 @@ abstract class BaseNotTarea extends myDoctrineRecord
              ));
 
 
-        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
+        
 
         $this->option('symfony', array(
              'form' => false,
@@ -152,6 +152,10 @@ abstract class BaseNotTarea extends myDoctrineRecord
              'local' => 'ca_idtarea',
              'foreign' => 'ca_idtarea'));
 
+        $this->hasOne('Reporte', array(
+             'local' => 'ca_idtarea',
+             'foreign' => 'ca_idseguimiento'));
+
         $this->hasMany('Cotizacion', array(
              'local' => 'ca_idtarea',
              'foreign' => 'ca_idg_envio_oportuno'));
@@ -167,9 +171,5 @@ abstract class BaseNotTarea extends myDoctrineRecord
         $this->hasMany('NotTareaAsignacion', array(
              'local' => 'ca_idtarea',
              'foreign' => 'ca_idtarea'));
-
-        $this->hasMany('Reporte', array(
-             'local' => 'ca_idtarea',
-             'foreign' => 'ca_idseguimiento'));
     }
 }

@@ -19,7 +19,7 @@ foreach( $listaTareas as $lista ){
 	?>
 	<tr>
 		<td><?=$tarea->getCaTitulo()?></td>
-		<td><a href="<?=$tarea->getCaUrl()?>">Click aca</a></td>
+		<td>><div class="qtip" title="<?=$tarea->getCaText()?>"><a href="<?=$tarea->getCaUrl()?>">Click aca</a></div></td>
 		<td><?=$tarea->getCaFchcreado()?></td>
 		<td><?=$tarea->getCaFchvencimiento()?></td>
 		<td>&nbsp;</td>

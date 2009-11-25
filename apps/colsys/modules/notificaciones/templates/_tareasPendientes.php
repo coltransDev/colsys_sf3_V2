@@ -28,7 +28,7 @@ if( count($listaTareas)>0 ){
 		foreach( $tareas as $tarea ){
 		?>
 		<tr>
-			<td><?=$tarea->getCaTitulo()?></td>
+			<td><div class="qtip" title="<?=$tarea->getCaTexto()?>"><?=$tarea->getCaTitulo()?></div></td>
 			<td><a href="<?=url_for("notificaciones/realizarTarea?id=".$tarea->getCaIdtarea())?>">Click aca</a></td>
 			<td><?=Utils::fechaMes($tarea->getCaFchcreado("Y-m-d"))." ".$tarea->getCaFchcreado("H:i:s")?></td>
 			<td>
@@ -52,7 +52,7 @@ if( count($listaTareas)>0 ){
 	?>
 	<br />
 	<br />
-	<div class="nota">* Tiempo restante teniendo en cuenta las horas habiles.</div>
+	<div class="nota">* Tiempo restante teniendo en cuenta las horas habiles.</div>    
 	<?
 }else{
 ?>

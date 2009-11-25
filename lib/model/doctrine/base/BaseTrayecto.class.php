@@ -131,7 +131,7 @@ abstract class BaseTrayecto extends myDoctrineRecord
         $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
 
         $this->option('symfony', array(
-             'form' => false,
+             'form' => true,
              'filter' => false,
              ));
     }

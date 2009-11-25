@@ -8,15 +8,7 @@ Ext.apply(Ext.QuickTips.getQuickTip(), {
    dismissDelay: 200000 //permite que los tips permanezcan por mas tiempo. 
 });
 
-/*
-* Cre un template para renderizar el tooltip
-*/
-var qtipTpl=new Ext.XTemplate(
-			 '<h3>Observaciones: </h3>'
-			,'<tpl for=".">'
-			,'<div >{observaciones}</div>'
-			,'</tpl>'
-		);
+
 
 /**
 * Renderiza una celda incluyendo el tooltip de observaciones
@@ -130,7 +122,8 @@ var record = Ext.data.Record.create([
 	{name: 'minima', type: 'float'}, 
 	{name: 'sugerida', type: 'float'},
 	{name: 'consecutivo', type: 'int'},	
-	{name: 'orden', type: 'string'}
+	{name: 'orden', type: 'string'},
+    {name: 'actualizado', type: 'string'}
 ]);
    		
 /*
@@ -201,6 +194,7 @@ var qtipTpl=new Ext.XTemplate(
 			 '<h3>Observaciones:</h3>'
 			,'<tpl for=".">'
 			,'<div>{observaciones}</div>'
+            ,'<div ><h3>Actualizado: </h3>{actualizado}</div>'
 			,'</tpl>'
 		)
 

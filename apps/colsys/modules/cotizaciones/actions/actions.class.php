@@ -93,6 +93,7 @@ class cotizacionesActions extends sfActions
 				break;
              case "seguimiento":
                 $q->where("c.ca_usuario like ?", "%".$user->getUserId()."%" );
+                $q->addWhere("c.ca_usuanulado IS NULL");
 				$q->innerJoin("c.CotProducto p");
                 $q->addWhere("p.ca_etapa= ? ", $seguimiento );
 
@@ -825,13 +826,16 @@ class cotizacionesActions extends sfActions
        
 		$user_id = $this->getUser()->getUserId();
 
-		if( $this->getRequestParameter("idproducto") ){
+        if( $this->getRequestParameter("idproducto") ){
 			$producto = Doctrine::getTable("CotProducto")->find(  $this->getRequestParameter("idproducto") );
 			$this->forward404Unless( $producto );
-		}else{		
+            $cotizacion = $producto->getCotizacion();
+		}else{
 			$producto = new CotProducto();
-			$producto->setCaIdcotizacion( $this->getRequestParameter("cotizacionId") );
-		}		
+            $cotizacion = Doctrine::getTable("Cotizacion")->find(  $this->getRequestParameter("cotizacionId") );
+            $this->forward404Unless( $cotizacion );
+			$producto->setCaIdcotizacion( $cotizacion->getCaIdcotizacion() );
+		}	
 	
 		$producto->setCaProducto( utf8_decode($this->getRequestParameter("producto")) );
 
@@ -883,6 +887,25 @@ class cotizacionesActions extends sfActions
 		
 		
 		$producto->save();
+
+        $tarea = $cotizacion->getTareaIDGEnvioOportuno();
+		if( $tarea ){
+			$texto = "Debe enviar esta cotizacion por email o colocar la fecha de presentación para cumplir esta tarea.<br />";
+
+            $productos = Doctrine::getTable("CotProducto")
+                      ->createQuery("p")
+                      ->where("p.ca_idcotizacion = ?", $cotizacion->getCaIdcotizacion() )
+                      ->execute();
+            foreach( $productos as $producto ){
+                 $texto.=$producto->getCaImpoexpo()." ".$producto->getCaModalidad()." ".$producto->getOrigen()." - ".$producto->getDestino()."<br />";
+            }
+
+            $tarea->setCaTexto($texto);
+            $tarea->save();
+
+
+        }
+
 
         $this->responseArray=array("success"=>true);
         $this->setTemplate("responseTemplate");

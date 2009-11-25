@@ -4,9 +4,7 @@ Notificacion:
       form: false
       filter: false
   generatePath: notificaciones
-  tableName: notificaciones.tb_notificaciones
-  attributes:
-    export: tables
+  tableName: notificaciones.tb_notificaciones  
   columns:
     ca_idtarea:
       type: integer
@@ -26,9 +24,7 @@ NotTarea:
       form: false
       filter: false
   generatePath: notificaciones
-  tableName: notificaciones.tb_tareas
-  attributes:
-    export: tables
+  tableName: notificaciones.tb_tareas  
   columns:
     ca_idtarea:
       type: integer
@@ -60,6 +56,10 @@ NotTarea:
       local: ca_idtarea
       foreign: ca_idtarea
       type: many
+    Reporte:
+      local: ca_idtarea
+      foreign: ca_idseguimiento
+      type: one
 
 NotListaTareas:
   options:
@@ -67,9 +67,7 @@ NotListaTareas:
       form: false
       filter: false
   generatePath: notificaciones
-  tableName: notificaciones.tb_listatareas
-  attributes:
-    export: tables
+  tableName: notificaciones.tb_listatareas  
   columns:
     ca_idlistatarea:
       type: integer
@@ -91,8 +89,6 @@ NotTareaAsignacion:
       filter: false
   generatePath: notificaciones
   tableName: notificaciones.tb_tareas_asignaciones
-  attributes:
-    export: tables
   columns:
     ca_idtarea:
       type: integer

@@ -114,6 +114,7 @@
 
                 success: function(xhr) {                    
                     document.getElementById("content-homepage" ).innerHTML = xhr.responseText;
+                    $('.qtip').tooltip();
                 },
                 failure: function() {
                     Ext.Msg.alert("Error", "Server communication failure");

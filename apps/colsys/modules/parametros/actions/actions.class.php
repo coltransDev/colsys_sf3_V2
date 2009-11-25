@@ -135,7 +135,9 @@ class parametrosActions extends sfActions
             }
             $conceptos[ $key ]["modalidades"] = implode( "|", $modalidades );
 
-            $conceptos[ $key ]["iva"] = $conceptos[ $key ]["iva"]*100;
+            if( $conceptos[ $key ]["c_ca_iva"] ){
+                $conceptos[ $key ]["c_ca_iva"] = $conceptos[ $key ]["c_ca_iva"]*100;
+            }
 
         }
         
