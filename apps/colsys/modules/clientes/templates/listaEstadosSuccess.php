@@ -68,8 +68,29 @@ use_helper('ExtCalendar');
 			</span>
   		</td>
 
-		<td rowspan="2"><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>
+		<td><input class="submit" type='submit' name='buscar' value=' Buscar' /></td>
 	</tr>
+
+	<tr style="HEIGHT:5">
+            <td  colspan="7">
+                <center><b>MOTIVO DE CAMBIOS DE ESTADO EN CLIENTES</b></center>
+                    <br /><b>Potencial a Activo:</b>
+                    <ul>
+                        <li>Coltrans: Cuando se registra en colsys el documento de transporte</li>
+                        <li>Colmas - Expo.: Cuando se registra en colsys la factura de venta</li>
+                    </ul>
+                    <br /><b>Activo a Potencial:</b>
+                    <ul>
+                        <li>Coltrans-Colmas: Cuando pasado un año el cliente no registra documento de transporte o factura de venta según aplique.</li>
+                    </ul>
+                    <br /><b>Activo o Potencial a Vetado o viceversa:</b>
+                    <ul>
+                        <li>Se realiza manualmente por la Gerencia Comercial/Regional, Gerencia General o Presidencia.</li>
+                    </ul>
+            </td>
+	</tr>
+
+
 	<tr style="HEIGHT:5">
 		<td  colspan="6"></td>
 	</tr>
