@@ -54,8 +54,11 @@
             <?=Utils::fechaMes($evento->getCaFchcreado())?> 
         </td>
         <td align="center">
-           <?
-           //link_to(image_tag("16x16/edit.gif"),"ids/verEvaluacion?modo=".$modo."&idevaluacion=".$evaluacion->getCaIdevaluacion())?>
+        <?
+        if( $nivel>=1 ){
+            echo link_to(image_tag("16x16/edit.gif"),"ids/formEventos?modo=".$modo."&idevento=".$evento->getCaIdevento());
+        }
+        ?>
         </td>
     </tr>
     <?

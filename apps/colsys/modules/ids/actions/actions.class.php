@@ -865,9 +865,21 @@ class idsActions extends sfActions
         $this->modo=$request->getParameter("modo");
         $this->form = new NuevoEventoForm();
 
+        if( $request->getParameter("idevento") ){
+            $evento = Doctrine::getTable("IdsEvento")->find( $request->getParameter("idevento") );
+            $this->forward404Unless($evento);
+            
+        }else{
+            $evento = new IdsEvento();
+        }
+
         if( $this->modo ){ //Esta ingresando desde la maestra de proveedores
-            $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
-            $this->url = "/ids/verIds?modo=".$this->modo."&id=".$request->getParameter("id");
+            if( $request->getParameter("idevento") ){
+                $this->ids = $evento->getIds();
+            }else{
+                $this->ids = Doctrine::getTable("Ids")->find($request->getParameter("id"));
+            }
+            $this->url = "/ids/verIds?modo=".$this->modo."&id=".$this->ids->getCaId();
             $numreferencia = "";
             
         }else{ // Esta ingresando desde la referencia
@@ -895,6 +907,13 @@ class idsActions extends sfActions
                 $this->url = "/Coltrans/InoAir/ConsultaReferenciaAction.do?referencia=".$numreferencia;
             }
             $this->form->setIdproveedores($idproveedores);
+            
+            $this->eventos = Doctrine::getTable("IdsEvento")
+                          ->createQuery("e")
+                          ->select("e.*")
+                          ->where("e.ca_referencia=?",$numreferencia)
+                          ->addOrderBy("e.ca_fchcreado ASC")
+                          ->execute();
 
             $this->numreferencia = $numreferencia;
         }
@@ -911,7 +930,7 @@ class idsActions extends sfActions
             
             $this->form->bind( $bindValues );
 			if( $this->form->isValid() ){
-                $evento = new IdsEvento();
+                
                 $evento->setCaId( $bindValues["id"] );
                 $evento->setCaEvento( $bindValues["evento"] );
                 if( $numreferencia ){
@@ -926,6 +945,8 @@ class idsActions extends sfActions
             }
 
         }
+
+        $this->evento = $evento;
 
     }
 

@@ -16,6 +16,10 @@
         ?>
         <input type="hidden" name="referencia" value="<?=$numreferencia?>" />
         <?
+    }else{
+        ?>
+        <input type="hidden" name="idevento" value="<?=$evento->getCaIdevento()?>" />
+        <?
     }
     ?>
     <table class="tableList" width="50%">
@@ -37,6 +41,7 @@
                 <b>Tipo de evento:</b><br />
                 <?
                 echo $form['tipo_evento']->renderError();
+                $form->setDefault('tipo_evento', $evento->getCaIdcriterio() );
 				echo $form['tipo_evento']->render();
                 ?>
 
@@ -63,6 +68,7 @@
                 <b>Evento:</b><br />
                 <?
                 echo $form['evento']->renderError();
+                $form->setDefault('evento', $evento->getCaEvento() );
 				echo $form['evento']->render();
                 ?>
             </td>
@@ -79,6 +85,45 @@
         
     </table>
     </form>
+
+    <br />
+    <?
+    if( isset($eventos) && count($eventos)>0 ){
+    ?>
+    <table class="tableList" width="50%">
+        <tr>
+            <th colspan="4">Eventos de previos</th>
+        </tr>
+        <tr class="row0">
+            <td width="30%">Criterio</td>
+            <td width="30%">Evento</td>
+            <td width="20%">
+                Usuario
+            </td>
+            <td width="20%">
+                Fecha
+            </td>
+        </tr>
+        <?
+        foreach( $eventos as $evento ){
+        ?>
+        <tr>
+            <td ><?=$evento->getIdsCriterio()?></td>
+            <td ><?=$evento->getCaEvento()?></td>
+            <td >
+                <?=$evento->getCaUsucreado()?>
+            </td>
+            <td >
+                <?=Utils::fechaMes($evento->getCaFchcreado())?>
+            </td>
+        </tr>
+        <?
+        }
+        ?>
+    </table>
+    <?
+    }
+    ?>
 
 </div>
 
