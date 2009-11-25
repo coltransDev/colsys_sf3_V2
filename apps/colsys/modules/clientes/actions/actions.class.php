@@ -123,10 +123,10 @@ class clientesActions extends sfActions
             while($row = $stmt->fetch()) {
                 $stdcliente = new StdCliente();
 
-                $stdcliente->ca_idcliente = $row["ca_idcliente"];
-                $stdcliente->ca_empresa = $empresa;
-                $stdcliente->ca_estado = 'Potencial';
-                $stdcliente->ca_fchestado = $fchestado;
+                $stdcliente->setCaIdcliente($row["ca_idcliente"]);
+                $stdcliente->setCaEmpresa($empresa);
+                $stdcliente->setCaEstado('Potencial');
+                $stdcliente->setCaFchestado($fchestado);
 
                 $stdcliente->save();
             }
@@ -137,18 +137,37 @@ class clientesActions extends sfActions
             while($row = $stmt->fetch()) {
                 $stdcliente = new StdCliente();
 
-                $stdcliente->ca_idcliente = $row["ca_idcliente"];
-                $stdcliente->ca_empresa = $empresa;
-                $stdcliente->ca_estado = 'Potencial';
-                $stdcliente->ca_fchestado = $fchestado;
+                $stdcliente->setCaIdcliente($row["ca_idcliente"]);
+                $stdcliente->setCaEmpresa($empresa);
+                $stdcliente->setCaEstado('Potencial');
+                $stdcliente->setCaFchestado($fchestado);
 
                 $stdcliente->save();
+            }
+
+            $stmt = LibClienteTable::liberacionEstado(null);
+
+            while($row = $stmt->fetch()) {
+
+		$libcliente = Doctrine::getTable("LibCliente")->find($row["ca_idcliente"]);
+
+		$this->forward404Unless( $libcliente );
+
+                $libcliente->setCaDiascredito(0);
+                $libcliente->setCaCupo(0);
+                $libcliente->setCaObservaciones("Pierde Beneficios por Cambio de Estado. ".$libcliente->getCaObservaciones());
+                $libcliente->setCaUsuactualizado('Administrador');
+                $libcliente->setCaFchactualizado($fchestado);
+
+                $libcliente->save();
             }
 
             $layout =  $this->getRequestParameter("layout");
             if( $layout ) {
                 $this->setLayout($layout);
             }
+
+
         }
 
 
