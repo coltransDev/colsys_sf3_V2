@@ -9,9 +9,9 @@ class StdClienteTable extends Doctrine_Table
 	public static function vencimientoEstado($empresa, $estado, $idcliente){
 
             if ($empresa == 'Coltrans') {
-                $query = "select act.ca_idcliente from ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado  from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air) cl group by ca_idcliente ) act";
+                $query = "select act.ca_idcliente from ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select ca_idcliente, ca_fchcreado from tb_inoclientes_sea UNION select ca_idcliente, ca_fchcreado from tb_inoclientes_air) cl group by ca_idcliente ) act";
             } else if ($empresa == 'Colmas'){
-                $query = "select act.ca_idcliente from ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado  from (select ca_idcliente, ca_fchcreado from tb_expo_maestra UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra) cl group by ca_idcliente ) act";
+                $query = "select act.ca_idcliente from ( select ca_idcliente, max(ca_fchcreado) as ca_fchcreado from (select ca_idcliente, ca_fchcreado from tb_expo_maestra UNION select ca_idcliente, ca_fchcreado from tb_brk_maestra) cl group by ca_idcliente ) act";
             }
             $query.= " LEFT OUTER JOIN ( select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = '$empresa' group by ca_idcliente ) ult ON (act.ca_idcliente = ult.ca_idcliente)";
             $query.= " LEFT OUTER JOIN ( select ca_idcliente, ca_fchestado, ca_estado from tb_stdcliente where ca_empresa= '$empresa' ) std ON (std.ca_idcliente = ult.ca_idcliente and std.ca_fchestado = ult.ca_fchestado)";
