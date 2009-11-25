@@ -31,6 +31,7 @@ Ciudad:
       foreign: ca_idtrafico
       type: one    
 
+
 Trafico:
   options:
     symfony:
@@ -92,8 +93,6 @@ Trafico:
       local: ca_idtrafico
       foreign: ca_idtrafico
       type: many
-    
-
 
 
 TraficoGrupo:
@@ -118,6 +117,7 @@ TraficoGrupo:
       local: ca_idgrupo
       foreign: ca_idgrupo
       type: many
+
 
 Moneda:
   options:
@@ -189,7 +189,6 @@ Email:
       type: many
       
       
-
 EmailAttachment:
   options:
     symfony:
@@ -213,6 +212,7 @@ EmailAttachment:
       foreign: ca_idemail
       type: one
 
+
 Festivo:
   options:
     symfony:
@@ -224,6 +224,7 @@ Festivo:
     ca_fchfestivo:
       type: date
       primary: true
+
 
 Parametro:
   options:
@@ -244,6 +245,7 @@ Parametro:
       primary: true
     ca_valor2:
       type: string
+
 
 Cliente:
   options:
@@ -330,6 +332,7 @@ Contacto:
       foreign: ca_idcliente
       type: one
 
+
 Concepto:
   options:
     symfony:
@@ -347,6 +350,7 @@ Concepto:
     ca_transporte: string
     ca_modalidad: string
     ca_liminferior: integer
+
 
 TipoRecargo:
   options:
@@ -389,6 +393,7 @@ Costo:
     ca_impoexpo: string
     ca_modalidad: string
     ca_comisionable: string
+
 
 ColNovedad:
   options:
@@ -461,3 +466,24 @@ StdCliente:
     ca_fchestado: timestamp
     ca_estado: string
     ca_empresa: string
+
+
+LibCliente:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: public
+  tableName: tb_libcliente
+  columns:
+    ca_idcliente:
+      type: integer
+      primary: true
+    ca_diascredito: integer
+    ca_cupo: integer
+    ca_observaciones: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+
