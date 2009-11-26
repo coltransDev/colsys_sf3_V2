@@ -15,6 +15,9 @@ class ClienteTable extends Doctrine_Table
 		if ($fch_fin == null){
 			$fch_fin = date('Y-m-d'); }
 
+                list($ano, $mes, $dia) = sscanf($fch_fin, "%d-%d-%d");
+                $fch_fin = date('Y-m-d',mktime(0, 0, 0, $mes, $dia+1, $ano)); // Incrementa en un día para tener en cuenta los registros el último día dentro de la consulta
+                
 		$query = "select std0.*,cl.ca_compania, cl.ca_vendedor, u.ca_sucursal from tb_stdcliente std0 INNER JOIN tb_clientes cl ON (std0.ca_idcliente = cl.ca_idcliente) ";
                 $query.= "INNER JOIN control.tb_usuarios u ON (cl.ca_vendedor = u.ca_login) ";
                 $query.= "INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado, ca_empresa from tb_stdcliente where ca_fchestado between '$fch_ini' and '$fch_fin' group by ca_idcliente, ca_empresa order by ca_idcliente) std1 ON (std0.ca_idcliente = std1.ca_idcliente) ";
