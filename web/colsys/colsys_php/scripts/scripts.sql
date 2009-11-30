@@ -2860,7 +2860,7 @@ GRANT ALL ON vi_repindicador_air TO GROUP "Usuarios";
 
 // DROP VIEW vi_repindicador_exp;
 CREATE OR REPLACE VIEW vi_repindicador_exp AS
- SELECT DISTINCT exm.ca_referencia, fun_exportacion(exm.ca_referencia) as ca_exportacion, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text AS ca_ano, (string_to_array(exm.ca_referencia::text, '.'::text))[3] AS ca_mes, sc.ca_nombre AS ca_sucursal, tro.ca_nombre AS ca_traorigen, cid.ca_ciudad AS ca_ciudestino,
+ SELECT DISTINCT exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text AS ca_ano, (string_to_array(exm.ca_referencia::text, '.'::text))[3] AS ca_mes, exm.ca_aplicaidg, sia.ca_nombre as ca_nomsia, sc.ca_nombre AS ca_sucursal, tro.ca_nombre AS ca_traorigen, cid.ca_ciudad AS ca_ciudestino,
         CASE
             WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying
             ELSE
@@ -2871,6 +2871,7 @@ CREATE OR REPLACE VIEW vi_repindicador_exp AS
         END AS ca_transporte, exm.ca_modalidad, 'Exportación'::text AS ca_impoexpo, exm.ca_consecutivo, ccl.ca_compania
    FROM tb_expo_maestra exm
    LEFT JOIN tb_expo_ingresos exi ON exm.ca_referencia::text = exi.ca_referencia::text
+   LEFT JOIN tb_sia sia ON exm.ca_idsia::text = sia.ca_idsia::text
    LEFT JOIN control.tb_usuarios us ON exi.ca_loginvendedor::text = us.ca_login::text
    LEFT JOIN control.tb_sucursales sc ON us.ca_idsucursal = sc.ca_idsucursal
    LEFT JOIN tb_ciudades cio ON exm.ca_origen::text = cio.ca_idciudad::text
