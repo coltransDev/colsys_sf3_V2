@@ -1271,21 +1271,16 @@ $pdf->AddPage();
 // Ticket # 1811
 $pdf->Ln(4);
 $pdf->SetFont($font,'B',14);
-$pdf->Cell(0, 4, "DIVULGACIÓN BASC",0,1, "C");
+$pdf->Cell(0, 4, "CIRCULAR 0170",0,1, "C");
 $pdf->Ln(15);
 $pdf->SetFont($font,'',14);
 $pdf->MultiCell(0, 5,
-"Todos los integrantes de la cadena logística debemos implementar por escrito procedimientos de seguridad que nos permitan estudiar tanto a proveedores como a clientes . Estos procedimientos nos ayudaran a identificar riesgos que puedan  afectar los intereses de nuestras compañías.
+"Los Agentes de Carga Internacional  y Agencias de Aduana debemos adoptar las medidas necesarias para prevención  y control al lavado de activos. Así mismo, establecer mecanismos de control orientados a seleccionar y conocer los clientes acerca lo personal, financiero y comercial. Dentro de estas medidas existe una herramienta para el conocimiento del cliente que es la aplicación de la Circular 0170 exigida por la DIAN
 
- Entre los procedimientos que podemos adoptar encontramos:
+Algunos de estos mecanismos de prevención y control del lavado de activos que la DIAN instruye ayudan a identificar las operaciones sospechosas y así mismo controlar los indicios que permite detectar la realización de una operación  inusual.
 
-  -Verficación lista Clinton
-  -Visitas a instalaciones
-  -Análisis Circular 170 de la DIAN
-
-Una de las organizaciones que tiene como principal objetivo la normalización y estandarización en Control y Seguridad dentro de la cadena logística del Comercio Internacional es BASC (Bussiness Alliance for Secure Commerce); los invitamos a visitar la página http://wbasco.org/ en donde podemos encontrar criterios mínimos de seguridad.
-
-Esperamos que esta información sea util y nos sirva para constituir prácticas seguras y efectivas. ", 0,'J',0);
+Nos es muy grato ofrecer los servicios de nuestra empresa, para contribuir con el buen servicio los invitamos a diligenciar la Circular 0170 de manera sincera y oportuna.
+ ", 0,'J',0);
 
 
 $pdf->Ln(2);

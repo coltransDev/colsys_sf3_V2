@@ -7,34 +7,40 @@
  * 
  * @property integer $ca_idseguimiento
  * @property timestamp $ca_fchseguimiento
+ * @property integer $ca_idcotizacion
  * @property integer $ca_idproducto
  * @property string $ca_login
  * @property string $ca_seguimiento
  * @property string $ca_etapa
  * @property CotProducto $CotProducto
+ * @property Cotizacion $Cotizacion
  * @property Usuario $Usuario
  * 
  * @method integer        getCaIdseguimiento()   Returns the current record's "ca_idseguimiento" value
  * @method timestamp      getCaFchseguimiento()  Returns the current record's "ca_fchseguimiento" value
+ * @method integer        getCaIdcotizacion()    Returns the current record's "ca_idcotizacion" value
  * @method integer        getCaIdproducto()      Returns the current record's "ca_idproducto" value
  * @method string         getCaLogin()           Returns the current record's "ca_login" value
  * @method string         getCaSeguimiento()     Returns the current record's "ca_seguimiento" value
  * @method string         getCaEtapa()           Returns the current record's "ca_etapa" value
  * @method CotProducto    getCotProducto()       Returns the current record's "CotProducto" value
+ * @method Cotizacion     getCotizacion()        Returns the current record's "Cotizacion" value
  * @method Usuario        getUsuario()           Returns the current record's "Usuario" value
  * @method CotSeguimiento setCaIdseguimiento()   Sets the current record's "ca_idseguimiento" value
  * @method CotSeguimiento setCaFchseguimiento()  Sets the current record's "ca_fchseguimiento" value
+ * @method CotSeguimiento setCaIdcotizacion()    Sets the current record's "ca_idcotizacion" value
  * @method CotSeguimiento setCaIdproducto()      Sets the current record's "ca_idproducto" value
  * @method CotSeguimiento setCaLogin()           Sets the current record's "ca_login" value
  * @method CotSeguimiento setCaSeguimiento()     Sets the current record's "ca_seguimiento" value
  * @method CotSeguimiento setCaEtapa()           Sets the current record's "ca_etapa" value
  * @method CotSeguimiento setCotProducto()       Sets the current record's "CotProducto" value
+ * @method CotSeguimiento setCotizacion()        Sets the current record's "Cotizacion" value
  * @method CotSeguimiento setUsuario()           Sets the current record's "Usuario" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseCotSeguimiento extends myDoctrineRecord
 {
@@ -47,6 +53,9 @@ abstract class BaseCotSeguimiento extends myDoctrineRecord
              ));
         $this->hasColumn('ca_fchseguimiento', 'timestamp', null, array(
              'type' => 'timestamp',
+             ));
+        $this->hasColumn('ca_idcotizacion', 'integer', null, array(
+             'type' => 'integer',
              ));
         $this->hasColumn('ca_idproducto', 'integer', null, array(
              'type' => 'integer',
@@ -62,7 +71,7 @@ abstract class BaseCotSeguimiento extends myDoctrineRecord
              ));
 
 
-        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
+        //$this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
 
         $this->option('symfony', array(
              'form' => false,
@@ -76,6 +85,10 @@ abstract class BaseCotSeguimiento extends myDoctrineRecord
         $this->hasOne('CotProducto', array(
              'local' => 'ca_idproducto',
              'foreign' => 'ca_idproducto'));
+
+        $this->hasOne('Cotizacion', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
 
         $this->hasOne('Usuario', array(
              'local' => 'ca_login',

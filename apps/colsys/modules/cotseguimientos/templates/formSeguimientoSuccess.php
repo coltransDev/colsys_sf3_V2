@@ -10,14 +10,37 @@ var crearSeguimiento=function(){
 <div align="center" class="content">
 <h3>Nuevo seguimiento cotizaci&oacute;n No <?=$cotizacion->getCaConsecutivo()?></h3>
 <br>
-
-<form action="<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion()."&idproducto=".$producto->getCaIdproducto())?>" method="post">
+<?
+$url = "cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion();
+if( isset($producto) && $producto ){
+    $url .= "&idproducto=".$producto->getCaIdproducto();
+}
+?>
+<form action="<?=url_for($url)?>" method="post">
 <table width="50%" border="0" class="tableList">
+    <?
+    if( isset($producto) && $producto ){
+    ?>
 	<tr>
-		<th scope="col"><b>Trayecto:</b> <?=Utils::replace($producto->__toString())?></th>
+		<th ><b>Trayecto:</b> <?=Utils::replace($producto->__toString())?></th>
 	</tr>
-	
+    <?
+    }else{
+    ?>
+	<tr>
+		<th ><b>Cotizaci&oacute;n:</b> <?=$cotizacion->getCaConsecutivo().Utils::replace($cotizacion->getCliente()->getCaCompania())?></th>
+	</tr>
 	<?
+    }
+    $ultSeguimiento =  null;
+    foreach( $seguimientos as $seguimiento ){
+    ?>
+	<tr class="row0">
+        <td > <?=Utils::fechaMes($seguimiento->getCaFchseguimiento())." > ".$seguimiento->getEtapa()." > ".$seguimiento->getCaSeguimiento()?></td>
+	</tr>
+	<?
+        $ultSeguimiento = $seguimiento;
+    }
 	if( $form->renderGlobalErrors() ){
 	?>
 	<tr>

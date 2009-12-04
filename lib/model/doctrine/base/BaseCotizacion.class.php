@@ -17,6 +17,8 @@
  * @property string $ca_empresa
  * @property string $ca_fuente
  * @property integer $ca_idg_envio_oportuno
+ * @property string $ca_etapa
+ * @property integer $ca_idtarea
  * @property string $ca_usucreado
  * @property timestamp $ca_fchcreado
  * @property string $ca_usuactualizado
@@ -30,6 +32,7 @@
  * @property Doctrine_Collection $CotContinuacion
  * @property Doctrine_Collection $CotSeguro
  * @property Doctrine_Collection $CotContactoAg
+ * @property Doctrine_Collection $CotSeguimiento
  * 
  * @method integer             getCaIdcotizacion()        Returns the current record's "ca_idcotizacion" value
  * @method integer             getCaIdcontacto()          Returns the current record's "ca_idcontacto" value
@@ -43,6 +46,8 @@
  * @method string              getCaEmpresa()             Returns the current record's "ca_empresa" value
  * @method string              getCaFuente()              Returns the current record's "ca_fuente" value
  * @method integer             getCaIdgEnvioOportuno()    Returns the current record's "ca_idg_envio_oportuno" value
+ * @method string              getCaEtapa()               Returns the current record's "ca_etapa" value
+ * @method integer             getCaIdtarea()             Returns the current record's "ca_idtarea" value
  * @method string              getCaUsucreado()           Returns the current record's "ca_usucreado" value
  * @method timestamp           getCaFchcreado()           Returns the current record's "ca_fchcreado" value
  * @method string              getCaUsuactualizado()      Returns the current record's "ca_usuactualizado" value
@@ -56,6 +61,7 @@
  * @method Doctrine_Collection getCotContinuacion()       Returns the current record's "CotContinuacion" collection
  * @method Doctrine_Collection getCotSeguro()             Returns the current record's "CotSeguro" collection
  * @method Doctrine_Collection getCotContactoAg()         Returns the current record's "CotContactoAg" collection
+ * @method Doctrine_Collection getCotSeguimiento()        Returns the current record's "CotSeguimiento" collection
  * @method Cotizacion          setCaIdcotizacion()        Sets the current record's "ca_idcotizacion" value
  * @method Cotizacion          setCaIdcontacto()          Sets the current record's "ca_idcontacto" value
  * @method Cotizacion          setCaConsecutivo()         Sets the current record's "ca_consecutivo" value
@@ -68,6 +74,8 @@
  * @method Cotizacion          setCaEmpresa()             Sets the current record's "ca_empresa" value
  * @method Cotizacion          setCaFuente()              Sets the current record's "ca_fuente" value
  * @method Cotizacion          setCaIdgEnvioOportuno()    Sets the current record's "ca_idg_envio_oportuno" value
+ * @method Cotizacion          setCaEtapa()               Sets the current record's "ca_etapa" value
+ * @method Cotizacion          setCaIdtarea()             Sets the current record's "ca_idtarea" value
  * @method Cotizacion          setCaUsucreado()           Sets the current record's "ca_usucreado" value
  * @method Cotizacion          setCaFchcreado()           Sets the current record's "ca_fchcreado" value
  * @method Cotizacion          setCaUsuactualizado()      Sets the current record's "ca_usuactualizado" value
@@ -81,11 +89,12 @@
  * @method Cotizacion          setCotContinuacion()       Sets the current record's "CotContinuacion" collection
  * @method Cotizacion          setCotSeguro()             Sets the current record's "CotSeguro" collection
  * @method Cotizacion          setCotContactoAg()         Sets the current record's "CotContactoAg" collection
+ * @method Cotizacion          setCotSeguimiento()        Sets the current record's "CotSeguimiento" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseCotizacion extends myDoctrineRecord
 {
@@ -130,6 +139,12 @@ abstract class BaseCotizacion extends myDoctrineRecord
         $this->hasColumn('ca_idg_envio_oportuno', 'integer', null, array(
              'type' => 'integer',
              ));
+        $this->hasColumn('ca_etapa', 'string', null, array(
+             'type' => 'string',
+             ));
+        $this->hasColumn('ca_idtarea', 'integer', null, array(
+             'type' => 'integer',
+             ));
         $this->hasColumn('ca_usucreado', 'string', 20, array(
              'type' => 'string',
              'length' => '20',
@@ -153,7 +168,7 @@ abstract class BaseCotizacion extends myDoctrineRecord
              ));
 
 
-        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
+        //$this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
 
         $this->option('symfony', array(
              'form' => false,
@@ -173,7 +188,7 @@ abstract class BaseCotizacion extends myDoctrineRecord
              'foreign' => 'ca_idcontacto'));
 
         $this->hasOne('NotTarea', array(
-             'local' => 'ca_idg_envio_oportuno',
+             'local' => 'ca_idtarea',
              'foreign' => 'ca_idtarea'));
 
         $this->hasMany('CotProducto', array(
@@ -189,6 +204,10 @@ abstract class BaseCotizacion extends myDoctrineRecord
              'foreign' => 'ca_idcotizacion'));
 
         $this->hasMany('CotContactoAg', array(
+             'local' => 'ca_idcotizacion',
+             'foreign' => 'ca_idcotizacion'));
+
+        $this->hasMany('CotSeguimiento', array(
              'local' => 'ca_idcotizacion',
              'foreign' => 'ca_idcotizacion'));
     }

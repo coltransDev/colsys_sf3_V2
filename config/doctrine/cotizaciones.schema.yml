@@ -4,9 +4,7 @@ Cotizacion:
       form: false
       filter: false
   generatePath: cotizaciones
-  tableName: tb_cotizaciones
-  attributes:
-    export: tables
+  tableName: tb_cotizaciones  
   columns:
     ca_idcotizacion:
       type: integer
@@ -23,6 +21,8 @@ Cotizacion:
     ca_empresa: string
     ca_fuente: string
     ca_idg_envio_oportuno: integer
+    ca_etapa: string
+    ca_idtarea: integer
     ca_usucreado: string(20)
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
@@ -57,7 +57,11 @@ Cotizacion:
     CotContactoAg:
       local: ca_idcotizacion
       foreign: ca_idcotizacion
-      type: many 
+      type: many
+    NotTarea:
+      local: ca_idtarea
+      foreign: ca_idtarea
+      type: one
       
 
 CotProducto:
@@ -66,9 +70,7 @@ CotProducto:
       form: false
       filter: false
   generatePath: cotizaciones
-  tableName: tb_cotproductos
-  attributes:
-    export: tables
+  tableName: tb_cotproductos  
   columns:    
     ca_idproducto:
       type: integer
@@ -132,9 +134,7 @@ CotOpcion:
       form: false
       filter: false
   generatePath: cotizaciones
-  tableName: tb_cotopciones
-  attributes:
-    export: tables
+  tableName: tb_cotopciones  
   columns:
     ca_idopcion:
       type: integer
@@ -172,9 +172,7 @@ CotRecargo:
       form: false
       filter: false
   generatePath: cotizaciones
-  tableName: tb_cotrecargos
-  attributes:
-    export: tables
+  tableName: tb_cotrecargos  
   columns:
     ca_idcotrecargo:
       type: integer
@@ -215,9 +213,7 @@ CotContinuacion:
       form: false
       filter: false
   generatePath: cotizaciones
-  tableName: tb_cotcontinuacion
-  attributes:
-    export: tables
+  tableName: tb_cotcontinuacion  
   columns:
     ca_idcontinuacion:
       type: integer
@@ -273,8 +269,6 @@ CotContactoAg:
       filter: false
   generatePath: cotizaciones
   tableName: tb_cotcontactosag
-  attributes:
-    export: tables
   columns:
     ca_idcontacto:
       type: string
@@ -299,8 +293,6 @@ CotSeguro:
       filter: false
   generatePath: cotizaciones
   tableName: tb_cotseguro
-  attributes:
-    export: tables
   columns:
     ca_idseguro:
       type: integer
@@ -331,13 +323,12 @@ CotSeguimiento:
       filter: false
   generatePath: cotizaciones
   tableName: tb_cotseguimientos
-  attributes:
-    export: tables
   columns:
     ca_idseguimiento:
       type: integer
       primary: true
     ca_fchseguimiento: timestamp
+    ca_idcotizacion: integer
     ca_idproducto: integer
     ca_fchseguimiento: timestamp
     ca_login: string
@@ -347,6 +338,10 @@ CotSeguimiento:
     CotProducto:
       local: ca_idproducto
       foreign: ca_idproducto
+      type: one
+    Cotizacion:
+      local: ca_idcotizacion
+      foreign: ca_idcotizacion
       type: one
     Usuario:
       local: ca_login

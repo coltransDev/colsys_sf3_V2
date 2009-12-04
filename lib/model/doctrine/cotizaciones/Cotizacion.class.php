@@ -245,6 +245,30 @@ class Cotizacion extends BaseCotizacion
 	}
 
 
+    /*
+	* Retorna los seguimientos de la cotización, solo aplica cuando no hay trayectos
+	*/
+	public function getSeguimientos(){
+		return  Doctrine::getTable("CotSeguimiento")
+                          ->createQuery("s")
+                          ->where("s.ca_idcotizacion = ?", array($this->getCaIdcotizacion()))
+                          ->addOrderBy("s.ca_fchseguimiento DESC")
+                          ->execute();
+	}
+
+    /*
+	* Retorna los seguimientos de la cotización
+	*/
+	public function getUltSeguimiento(){
+
+        return  Doctrine::getTable("CotSeguimiento")
+                          ->createQuery("s")
+                          ->where("s.ca_idcotizacion = ?", array( $this->getCaIdcotizacion()))
+                          ->addOrderBy("s.ca_fchseguimiento DESC")
+                          ->limit(1)
+                          ->fetchOne();
+	}
+
     public function getDirectorio(){
         $folder = Cotizacion::FOLDER;
         return $directory = sfConfig::get('app_digitalFile_root').DIRECTORY_SEPARATOR.$this->getDirectorioBase();

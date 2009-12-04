@@ -118,11 +118,19 @@ class cotseguimientosActions extends sfActions
 	public function executeFormSeguimiento( $request ){
 		$this->cotizacion = Doctrine::gettable("Cotizacion")->find( $request->getParameter("idcotizacion") );
 		$this->forward404Unless( $this->cotizacion );
+
+        if( $request->getParameter("idproducto") ){
+            $this->producto = Doctrine::gettable("CotProducto")->find( $request->getParameter("idproducto") );
+            $this->forward404Unless( $this->producto );
+            //$this->ultSeguimiento = $this->producto->getUltSeguimiento();
+            $this->seguimientos = $this->producto->getSeguimientos();
+        }else{
+            //$this->ultSeguimiento = $this->cotizacion->getUltSeguimiento();
+
+            $this->seguimientos = $this->cotizacion->getSeguimientos();
+        }
 		
-		$this->producto = Doctrine::gettable("CotProducto")->find( $request->getParameter("idproducto") );
-		$this->forward404Unless( $this->producto );
 		
-		$this->ultSeguimiento = $this->producto->getUltSeguimiento();
 		$this->form = new SeguimientoForm();				
 		
 		
@@ -149,27 +157,44 @@ class cotseguimientosActions extends sfActions
 
         $cotizacion = Doctrine::gettable("Cotizacion")->find( $request->getParameter("idcotizacion") );
 		$this->forward404Unless( $cotizacion );
+
+        if( $request->getParameter("idproducto") ){
+            $producto = Doctrine::gettable("CotProducto")->find( $request->getParameter("idproducto") );
+            $this->forward404Unless( $producto );
+
+            if( $producto->getCaIdtarea() ){
+                $tarea  =  Doctrine::gettable("NotTarea")->find( $producto->getCaIdtarea() );
+                $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                $tarea->save();
+            }
+        }else{
+             if( $cotizacion->getCaIdtarea() ){
+                $tarea  =  Doctrine::gettable("NotTarea")->find( $cotizacion->getCaIdtarea() );
+                $tarea->setCaFchterminada( date("Y-m-d H:i:s") );
+                $tarea->save();
+            }
+
+        }
+
 		
-		$producto = Doctrine::gettable("CotProducto")->find( $request->getParameter("idproducto") );
-		$this->forward404Unless( $producto );
 		
-		if( $producto->getCaIdtarea() ){
-			$tarea  =  Doctrine::gettable("NotTarea")->find( $producto->getCaIdtarea() );
-			$tarea->setCaFchterminada( date("Y-m-d H:i:s") );
-			$tarea->save();
-		}
-		
-		
-		$seguimiento = new CotSeguimiento();		
-		$seguimiento->setCaIdproducto( $request->getParameter("idproducto") );		
+		$seguimiento = new CotSeguimiento();
+        if( $request->getParameter("idproducto") ){
+            $seguimiento->setCaIdproducto( $request->getParameter("idproducto") );
+            $producto->setCaEtapa( $request->getParameter("etapa") );
+            $producto->save();
+        }else{
+            $seguimiento->setCaIdcotizacion( $request->getParameter("idcotizacion") );
+            $cotizacion->setCaEtapa( $request->getParameter("etapa") );
+            $cotizacion->save();
+        }
 		$seguimiento->setCaLogin( $this->getUser()->getUserId() );
 		$seguimiento->setCaFchseguimiento( date("Y-m-d H:i:s") );
 		$seguimiento->setCaSeguimiento( $request->getParameter("seguimiento") );
 		$seguimiento->setCaEtapa( $request->getParameter("etapa") );
 		$seguimiento->save();
 		
-		$producto->setCaEtapa( $request->getParameter("etapa") );
-		$producto->save();
+		
 		
 		if( $request->getParameter("prog_seguimiento") ){
 			
@@ -189,13 +214,17 @@ class cotseguimientosActions extends sfActions
 			$loginsAsignaciones = array_unique( $loginsAsignaciones );
             $tarea->setAsignaciones( $loginsAsignaciones );
 			
-			
-			$producto->setCaIdtarea( $tarea->getCaIdtarea() );
-			$producto->save();
+			if( $request->getParameter("idproducto") ){
+                $producto->setCaIdtarea( $tarea->getCaIdtarea() );
+                $producto->save();
+            }else{
+                $cotizacion->setCaIdtarea( $tarea->getCaIdtarea() );
+                $cotizacion->save();
+            }
 				
 		}	
 		
-		$this->redirect( "cotseguimientos/verSeguimiento?idcotizacion=".$this->cotizacion->getCaIdcotizacion() );
+		$this->redirect( "cotseguimientos/verSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion() );
 	}
 	
 

@@ -65,15 +65,22 @@ $pagerLayout->display();
 	  <td ><b>Vendedor:</b><br />
         <?=$cotizacion->getCaUsuario()?></td>
 	</tr>
+    
 	<tr>
 	  <td colspan="4" >
-	  	<b>Trayectos:</b>
+        <b>Trayectos:</b>
 	  	<table class="tableList" width="100%" border="1">
+        <?
+        $productos = $cotizacion->getCotProductos();
+
+        if( count($productos)>0 ){
+        ?>
+	  	
         <? 
-						foreach( $cotizacion->getCotProductos() as $producto ){
-							$origen = $producto->getOrigen();
-							$destino = $producto->getDestino();
-						?>
+            foreach( $productos as $producto ){
+                $origen = $producto->getOrigen();
+                $destino = $producto->getDestino();
+            ?>
         <tr>
           <td width="33%" class="listar" >
             <?=$producto->getCaImpoexpo()?>
@@ -81,17 +88,49 @@ $pagerLayout->display();
             <?=$producto->getCaTransporte()?>
             &raquo;
             <?=$producto->getCaModalidad()?> [<?=$producto->getCaProducto()?>]</td>
-          <td width="35%" class="listar"><?=$origen->getTrafico()." ".$origen->getCaCiudad()?>
+          <td width="32%" class="listar"><?=$origen->getTrafico()." ".$origen->getCaCiudad()?>
             &raquo;
             <?=$destino->getTrafico()." ".$destino->getCaCiudad()?></td>
-            <td width="35%" class="listar"><?=isset($estados[$producto->getCaEtapa()])?$estados[$producto->getCaEtapa()]:""?></td>
+            <td width="35%" class="listar">
+                <?
+                echo isset($estados[$producto->getCaEtapa()])?$estados[$producto->getCaEtapa()]:"";
+                if( $producto->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO ){
+                ?>
+                <a onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion()."&idproducto=".$producto->getCaIdproducto())?>')"><?=image_tag("16x16/todo.gif")?></a>
+                <?
+                }
+                ?>
+            </td>
           </tr>
        
         <?
-							}
-						?>
-      </table></td>
+            }            
+        }else{
+            ?>
+
+            <tr>
+                <td width="65%" class="listar" colspan="2" >
+                Sin trayectos</td>
+             
+                <td width="35%" class="listar">
+                    <?
+                    echo isset($estados[$cotizacion->getCaEtapa()])?$estados[$cotizacion->getCaEtapa()]:"";
+                    if( $cotizacion->getCaEtapa()==Cotizacion::EN_SEGUIMIENTO ){
+                    ?>
+                    <a onclick="window.open('<?=url_for("cotseguimientos/formSeguimiento?idcotizacion=".$cotizacion->getCaIdcotizacion())?>')"><?=image_tag("16x16/todo.gif")?></a>
+                    <?
+                    }
+                    ?>
+                </td>
+              </tr>
+
+            <?
+        }
+        ?>
+         </table>
+     </td>
     </tr>
+
 	
 	<?
 	}

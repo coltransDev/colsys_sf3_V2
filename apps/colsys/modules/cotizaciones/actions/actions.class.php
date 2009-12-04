@@ -94,8 +94,9 @@ class cotizacionesActions extends sfActions
              case "seguimiento":
                 $q->where("c.ca_usuario like ?", "%".$user->getUserId()."%" );
                 $q->addWhere("c.ca_usuanulado IS NULL");
-				$q->innerJoin("c.CotProducto p");
-                $q->addWhere("p.ca_etapa= ? ", $seguimiento );
+				$q->leftJoin("c.CotProducto p");
+                $q->addWhere("p.ca_etapa= ? OR c.ca_etapa = ?", array($seguimiento, $seguimiento) );
+
 
 				break;
 		}
@@ -887,6 +888,16 @@ class cotizacionesActions extends sfActions
 		
 		
 		$producto->save();
+
+        //Elimina el seguimiento por cotizacion y lo establece por trayecto
+        if( $cotizacion->getCaEtapa() ){
+            $cotizacion->setCaEtapa(null);
+            $cotizacion->save();
+            $tarea = $cotizacion->getNotTarea();
+            if( $tarea ){
+                $tarea->delete();
+            }
+        }
 
         $tarea = $cotizacion->getTareaIDGEnvioOportuno();
 		if( $tarea ){
