@@ -1109,6 +1109,9 @@ class Doctrine_Import_Builder extends Doctrine_Builder
             // Otherwise lets just put it in the root of the path
             } else {
                 $writePath = $this->_path;
+                if( $definition['generatePath'] ){
+                   $writePath .= DIRECTORY_SEPARATOR . $definition['generatePath'];
+                }
             }
 
             if ($this->generateTableClasses()) {

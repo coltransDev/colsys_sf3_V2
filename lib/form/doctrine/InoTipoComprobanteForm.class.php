@@ -20,6 +20,8 @@ class InoTipoComprobanteForm extends BaseInoTipoComprobanteForm
 
         $this->widgetSchema['ca_noautorizacion']=new sfWidgetFormInputText(array(), array("maxlength"=>20));
         $this->widgetSchema['ca_prefijo_aut']=new sfWidgetFormInputText(array(), array("maxlength"=>5));
+
+        
     }
 
     public function bind(array $taintedValues = null, array $taintedFiles = null){

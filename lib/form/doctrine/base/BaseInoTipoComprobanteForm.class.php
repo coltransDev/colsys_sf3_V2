@@ -23,10 +23,14 @@ abstract class BaseInoTipoComprobanteForm extends BaseFormDoctrine
       'ca_numeracion_inicial' => new sfWidgetFormInputText(),
       'ca_mensaje'            => new sfWidgetFormTextarea(),
       'ca_noautorizacion'     => new sfWidgetFormTextarea(),
+      'ca_fchautorizacion'    => new sfWidgetFormDate(),
       'ca_prefijo_aut'        => new sfWidgetFormTextarea(),
       'ca_inicial_aut'        => new sfWidgetFormInputText(),
       'ca_final_aut'          => new sfWidgetFormInputText(),
       'ca_activo'             => new sfWidgetFormInputCheckbox(),
+      'ca_idsucursal'         => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('IdsSucursal'), 'add_empty' => true)),
+      'ca_idcta_cierre'       => new sfWidgetFormInputText(),
+      'ca_idcta_iva'          => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
@@ -38,10 +42,14 @@ abstract class BaseInoTipoComprobanteForm extends BaseFormDoctrine
       'ca_numeracion_inicial' => new sfValidatorInteger(),
       'ca_mensaje'            => new sfValidatorString(array('required' => false)),
       'ca_noautorizacion'     => new sfValidatorString(array('required' => false)),
+      'ca_fchautorizacion'    => new sfValidatorDate(array('required' => false)),
       'ca_prefijo_aut'        => new sfValidatorString(array('required' => false)),
       'ca_inicial_aut'        => new sfValidatorInteger(array('required' => false)),
       'ca_final_aut'          => new sfValidatorInteger(array('required' => false)),
       'ca_activo'             => new sfValidatorBoolean(array('required' => false)),
+      'ca_idsucursal'         => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('IdsSucursal'), 'required' => false)),
+      'ca_idcta_cierre'       => new sfValidatorInteger(array('required' => false)),
+      'ca_idcta_iva'          => new sfValidatorInteger(array('required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('ino_tipo_comprobante[%s]');

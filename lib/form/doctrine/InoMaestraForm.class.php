@@ -11,23 +11,36 @@ class InoMaestraForm extends BaseInoMaestraForm
 {
     public function configure()
     {
+        
         $this->widgetSchema['ca_fchreferencia']=new sfWidgetFormExtDate();
         $this->widgetSchema['ca_fchmaster']=new sfWidgetFormExtDate();
 
-       /* $this->widgetSchema['ca_fchcreado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_usucreado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_fchactualizado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_usuactualizado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_fchliquidado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_usuliquidado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_fchcerrado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_usucerrado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_fchanulado']=new sfWidgetFormInputHidden();
-        $this->widgetSchema['ca_usuanulado']=new sfWidgetFormInputHidden();*/
+        $this->widgetSchema['ca_origen']=new sfWidgetFormCity( );
+        $this->widgetSchema['ca_destino']=new sfWidgetFormCity();
 
-        $this->useFields(array('ca_idmaestra', 'ca_referencia', 'ca_fchreferencia', 'ca_fchmaster', 'ca_idtrayecto',
+        $this->widgetSchema['ca_impoexpo']=new sfWidgetFormChoice( array( "choices" => array(
+                                                                                              Constantes::IMPO=>Constantes::IMPO,
+                                                                                              Constantes::TRIANGULACION=>Constantes::TRIANGULACION,
+                                                                                              Constantes::EXPO=>Constantes::EXPO,
+                                                                                             // Constantes::OTMDTA=>Constantes::OTMDTA,
+                                                                                          ) ), array("onChange"=>"cambiarImpoexpo()") );
+
+        $this->widgetSchema['ca_transporte']=new sfWidgetFormChoice( array( "choices" => array(Constantes::AEREO=>Constantes::AEREO,
+                                                                                               Constantes::MARITIMO=>Constantes::MARITIMO,
+                                                                                               Constantes::TERRESTRE=>Constantes::TERRESTRE,
+                                                                                               Constantes::ADUANA=>Constantes::ADUANA
+                                                                                              ) ), array("onChange" => "cambiarTransporte()")  );
+
+
+        $this->widgetSchema['ca_idmodalidad']=new sfWidgetFormChoice( array( "choices" => array() ));
+
+
+        $this->validatorSchema['ca_impoexpo'] = new sfValidatorString(array('required' => false));
+        $this->validatorSchema['ca_transporte'] = new sfValidatorString(array('required' => false));
+
+        /*$this->useFields(array('ca_idmaestra', 'ca_referencia', 'ca_fchreferencia', 'ca_fchmaster', 'ca_origen', 'ca_destino', 'ca_idlinea',
                                'ca_master', 'ca_fchmaster', 'ca_piezas', 'ca_peso', 'ca_volumen', 'ca_observaciones'  
-                              ));
+                              ));*/
 
 
 
