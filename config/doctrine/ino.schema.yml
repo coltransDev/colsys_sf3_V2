@@ -10,10 +10,20 @@ InoMaestra:
     ca_fchreferencia:
       type: date      
     ca_referencia: string
-    ca_idtrayecto: 
+    ca_idmodalidad:
       type: integer
       notnull: true
-    ca_referencia: string
+    ca_origen:
+      type: string
+      notnull: true
+    ca_destino:
+      type: string
+      notnull: true
+    ca_idlinea:
+      type: integer
+      notnull: true
+    ca_idagente: integer
+    ca_referencia: string(15)
     ca_master:
         type: string
         notnull: true
@@ -39,9 +49,23 @@ InoMaestra:
       local: ca_idmaestra
       foreign: ca_idmaestra
       type: many
-    Trayecto:
-      local: ca_idtrayecto
-      foreign: ca_idtrayecto
+    Modalidad:
+      local: ca_idmodalidad
+      foreign: ca_idmodalidad
+      type: one
+    Origen:
+      local: ca_origen
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    Destino:
+      local: ca_destino
+      foreign: ca_idciudad
+      type: one
+      class: Ciudad
+    IdsProveedor:
+      local: ca_idlinea
+      foreign: ca_idproveedor
       type: one
     UsuCreado:
       local: ca_usucreado
@@ -85,10 +109,10 @@ InoCliente:
     ca_idcliente:
       type: integer
       notnull: true
-    ca_hbls:
+    ca_doctransporte:
       type: string
       notnull: true
-    ca_fchhbls:
+    ca_fchdoctransporte:
       type: date
       notnull: true
     ca_idreporte:
@@ -125,13 +149,17 @@ InoCliente:
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
   relations:
-    Cliente:
+    Ids:
       local: ca_idcliente
-      foreign: ca_idcliente
+      foreign: ca_id
       type: one
     InoMaestra:
       local: ca_idmaestra
       foreign: ca_idmaestra
+      type: one
+    InoComprobante:
+      local: ca_idinocliente
+      foreign: ca_idinocliente
       type: many
     Proveedor:
       local: ca_idproveedor
@@ -167,16 +195,24 @@ InoComprobante:
       autoincrement: true
       primary: true
     ca_id: integer
-    ca_idtipo: integer
+    ca_idtipo: integer    
     ca_consecutivo: integer
     ca_fchcomprobante: date
-    ca_idmaestra: integer
+#    ca_idmaestra: integer
+    ca_idinocliente: integer
+    ca_plazo: integer
+    ca_tasacambio: decimal
     ca_observaciones: string
+    ca_estado: integer
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
     ca_usuactualizado: string
-  relations:    
+  relations:
+    Ids:
+      local: ca_id
+      foreign: ca_id
+      type: one      
     UsuCreado:
       local: ca_usucreado
       foreign: ca_login
@@ -187,14 +223,19 @@ InoComprobante:
       foreign: ca_login
       type: one
       class: Usuario
+    InoCliente:
+      local: ca_idinocliente
+      foreign: ca_idinocliente
+      type: one
     InoTransaccion:
       local: ca_idcomprobante
       foreign: ca_idcomprobante
       type: many
-    Ids:
-      local: ca_id
-      foreign: ca_id
+    InoTipoComprobante:
+      local: ca_idtipo
+      foreign: ca_idtipo
       type: one
+    
 
 InoTransaccion:
   options:
@@ -211,6 +252,7 @@ InoTransaccion:
     ca_idcomprobante: integer
     ca_idcuenta: integer
     ca_idconcepto: integer
+    ca_idccosto: integer
     ca_id: integer
     ca_db: decimal
     ca_cr: decimal
@@ -222,6 +264,10 @@ InoTransaccion:
     InoCliente:
       local: ca_idinocliente
       foreign: ca_idinocliente
+      type: one
+    InoCentroCosto:
+      local: ca_idccosto
+      foreign: ca_idccosto
       type: one
     UsuCreado:
       local: ca_usucreado
@@ -252,15 +298,43 @@ InoConcepto:
   columns:
     ca_idconcepto:
       type: integer
-#      autoincrement: true
+      autoincrement: true
       primary: true
     ca_concepto:
       type: string
       notnull: true
     ca_tipo: string   
     ca_liminferior: integer
-    ca_incoterms: string
-    ca_comisionable: booolean
+    ca_flete: boolean
+    ca_recargolocal: boolean
+    ca_recargoorigen: boolean
+    ca_costo: boolean
+  relations:
+    InoConceptoModalidad:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: many
+    InoConceptoParametro:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: many
+
+InoConceptoParametro:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ino
+  tableName: ino.tb_conceptos_parametros
+  columns:
+    ca_idparametro:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idconcepto:
+      type: integer
+    ca_idccosto:
+      type: integer
     ca_idcuenta: integer
     ca_ingreso_propio: booolean
     ca_iva: decimal
@@ -271,6 +345,14 @@ InoConcepto:
     ca_autoretencion: decimal
     ca_tipoautoretencion: smallint
   relations:
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    InoCentroCosto:
+      local: ca_idccosto
+      foreign: ca_idccosto
+      type: one
     InoCuenta:
       local: ca_idcuenta
       foreign: ca_idcuenta
@@ -280,7 +362,7 @@ InoConcepto:
       foreign: ca_idcuenta
       type: one
       class: InoCuenta
-    
+
 InoConceptoModalidad:
   options:
     symfony:
@@ -344,8 +426,36 @@ InoTipoComprobante:
       notnull: true
     ca_mensaje: string
     ca_noautorizacion: string
+    ca_fchautorizacion: date
     ca_prefijo_aut: string
     ca_inicial_aut: integer
     ca_final_aut: integer
     ca_activo: boolean
+    ca_idsucursal: integer
+    ca_idcta_cierre: integer
+    ca_idcta_iva: integer
+  relations:
+    IdsSucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+    
+InoCentroCosto:
+  generatePath: ino
+  tableName: ino.tb_ccostos
+  columns:
+    ca_idccosto:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_centro: 
+      type: integer
+      notnull: true
+    ca_subcentro:
+      type: integer      
+    ca_nombre: 
+      type: string
+      notnull: true
+
+
     

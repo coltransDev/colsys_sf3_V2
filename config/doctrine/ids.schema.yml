@@ -34,6 +34,10 @@ Ids:
     IdsProveedor:
       local: ca_id
       foreign: ca_idproveedor
+      type: one    
+    IdsEmpresa:
+      local: ca_id
+      foreign: ca_idempresa
       type: one
     IdsDocumento:
        local: ca_id
@@ -43,6 +47,8 @@ Ids:
       local: ca_id
       foreign: ca_id
       type: many
+    
+
       
 IdsSucursal:
   options:
@@ -178,6 +184,25 @@ IdsProveedor:
       local: ca_tipo
       foreign: ca_tipo
       type: one
+
+IdsEmpresa:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: ids.tb_empresas
+  columns:
+    ca_idempresa:
+      type: integer
+      primary: true
+    ca_sigla: string(20)
+  relations:
+    Ids:
+      local: ca_idempresa
+      foreign: ca_id
+      type: one
+
 
 IdsTipo:
   options:

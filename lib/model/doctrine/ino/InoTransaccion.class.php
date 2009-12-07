@@ -12,5 +12,32 @@
  */
 class InoTransaccion extends BaseInoTransaccion
 {
+    private $parametro = null;
 
+    public function getInoConceptoParametro(){
+        if( !$this->parametro ){
+            $this->parametro = Doctrine::getTable("InoConceptoParametro")
+                                   ->createQuery("p")
+                                   ->select("p.*")
+                                   ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($this->getCaIdconcepto(), $this->getCaIdccosto()) )
+                                   ->fetchOne();
+            
+        }
+        return $this->parametro;
+    }
+
+
+
+    public function getImpuestos(){
+        $impuestos = array();
+        $parametro = $this->getInoConceptoParametro();
+        if( $parametro->getCaIva() ){
+            $impuestos["iva"]["db"] = $this->getCaDb()*$parametro->getCaIva();
+            $impuestos["iva"]["cr"] = $this->getCaCr()*$parametro->getCaIva();
+        }else{
+            $impuestos["iva"]["db"] = 0;
+            $impuestos["iva"]["cr"] = 0;
+        }
+        return $impuestos;
+    }
 }

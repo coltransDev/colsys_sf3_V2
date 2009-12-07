@@ -12,4 +12,20 @@
  */
 class InoTipoComprobante extends BaseInoTipoComprobante
 {
+
+    public function __toString(){
+        return $this->getCaTipo()."-".str_pad($this->getCaComprobante(), 2, "0", STR_PAD_LEFT);
+    }
+    /*
+     * Esta funcion retorna false si los conceptos se deben liquidar automaticamente
+     * en la columna credito, por ej. en las facturas. Esto se hace por que solamente se sabe el valor
+     *
+     */
+    public function isDb(){
+        if( $this->getCaTipo()=="F" ){
+            return false;
+        }else{
+            return true;
+        }
+    }
 }

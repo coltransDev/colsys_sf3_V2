@@ -1,7 +1,7 @@
 Reporte:
   options:
     symfony:
-      form: false
+      form: true
       filter: false
   generatePath: reportes
   tableName: tb_reportes
@@ -390,7 +390,7 @@ RepGasto:
 RepSeguro:
   options:
     symfony:
-      form: false
+      form: true
       filter: false
   generatePath: reportes
   tableName: tb_repseguro
@@ -417,7 +417,7 @@ RepSeguro:
 RepAduana:
   options:
     symfony:
-      form: false
+      form: true
       filter: false
   generatePath: reportes
   tableName: tb_repaduana
@@ -445,7 +445,7 @@ RepAduana:
 RepExpo:
   options:
     symfony:
-      form: false
+      form: true
       filter: false
   generatePath: reportes
   tableName: tb_repexpo
