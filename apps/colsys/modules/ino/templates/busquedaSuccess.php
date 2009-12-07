@@ -6,18 +6,11 @@
 ?>
 <div align="center">
 <?
-$url = "cotizaciones/busquedaCotizacion?criterio=".$criterio;
+$url = "ino/busqueda?modo=".$modo."&criterio=".$criterio;
 if( $cadena ){
 	$url.="&cadena=".$cadena;
 }
 
-if( $login ){
-	$url.="&login=".$login;
-}
-
-if( $seguimiento ){
-	$url.="&seguimiento=".$seguimiento;
-}
 
 $pagerLayout = new Doctrine_Pager_Layout(
       $pager,
@@ -42,60 +35,37 @@ $pagerLayout->display();
 
 <table class="tableList" width="800px" border="1" id="mainTable">
 	<tr>
-		<th width="57" scope="col">Consecutivo</th>
-		<th width="668" colspan="4" scope="col">Cotizaci&oacute;n</th>
+		<th width="57" scope="col">Referencia</th>
+		<th width="668" colspan="4" scope="col">Detalles</th>
 	</tr>
 	<?
 	
-	foreach( $cotizaciones as $cotizacion ){
-		$contacto = $cotizacion->getContacto();
-		$cliente = $contacto->getCliente(); 
+	foreach( $refList as $referencia ){
+		
 	?>
 	<tr>
 	  <td rowspan="2"  >
-        <?=link_to("C".$cotizacion->getCaConsecutivo(), "cotizaciones/consultaCotizacion?id=".$cotizacion->getCaIdcotizacion())?>
-          <?=$cotizacion->getCaFchanulado()?"<br />Anulada":""?>
+        <?=link_to($referencia->getCaReferencia(), "ino/verReferencia?modo=".$modo."&id=".$referencia->getCaIdmaestra())?>
+          <?=$referencia->getCaFchanulado()?"<br />Anulada":""?>
       </td>
-	  <td ><b>Fch.Cotizacion:</b><br />
-      <?=$cotizacion->getCaFchcreado()?></td>
+	  <td ><b>Fch :</b><br />
+      &nbsp;</td>
       <td ><b>Cliente:</b><br />
-      <?=$cliente?></td>
-      <td ><b>Contacto:</b><br />
-      <?=$contacto->getNombre()?></td>
+      &nbsp;</td>
+      <td ><b> </b><br />
+      &nbsp;</td>
 	  <td ><b>Vendedor:</b><br />
-        <?=$cotizacion->getCaUsuario()?></td>
+        &nbsp;</td>
 	</tr>
 	<tr>
 	  <td colspan="4" >
-	  	<b>Trayectos:</b>
-	  	<table class="tableList" width="100%" border="1">
-        <? 
-						foreach( $cotizacion->getCotProductos() as $producto ){
-							$origen = $producto->getOrigen();
-							$destino = $producto->getDestino();
-						?>
-        <tr>
-          <td width="33%" class="listar" >
-            <?=$producto->getCaImpoexpo()?>
-            &raquo;			
-            <?=$producto->getCaTransporte()?>
-            &raquo;
-            <?=$producto->getCaModalidad()?> [<?=$producto->getCaProducto()?>]</td>
-          <td width="35%" class="listar"><?=$origen->getTrafico()." ".$origen->getCaCiudad()?>
-            &raquo;
-            <?=$destino->getTrafico()." ".$destino->getCaCiudad()?></td>
-            <td width="35%" class="listar"><?=isset($estados[$producto->getCaEtapa()])?$estados[$producto->getCaEtapa()]:""?></td>
-          </tr>
-       
-        <?
-							}
-						?>
-      </table></td>
+          &nbsp;
+	  	</td>
     </tr>
 	
 	<?
 	}
-	if( count($cotizaciones)==0 ){
+	if( count($refList)==0 ){
 	?>
 	<tr>
 		

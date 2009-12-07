@@ -4,9 +4,9 @@
 * @author Andres Botero
 */
 
-include_component("parametros","panelParametros", array());
-include_component("parametros","modalidadWindow", array());
-include_component("parametros","modalidadGrid", array());
+include_component("parametros","panelParametros", array("modo"=>$modo,"nivel"=>$nivel));
+include_component("parametros","modalidadWindow", array("modo"=>$modo,"nivel"=>$nivel));
+include_component("parametros","modalidadGrid", array("modo"=>$modo,"nivel"=>$nivel));
 
 ?>
 <div class="content" >
@@ -20,7 +20,15 @@ include_component("parametros","modalidadGrid", array());
             renderTo: 'main-panel',
             height: 600
         });
-    mainPanel.store.baseParams={ tipo:'<?=Constantes::RECARGO_EN_ORIGEN?>' };
-    mainPanel.store.load();
+    
+    //mainPanel.store.baseParams={ tipo:'<?=Constantes::RECARGO_EN_ORIGEN?>' };
+    <?
+    if( $modo=="edicion" ){
+    ?>
+        mainPanel.store.load();
+    <?
+    }
+    ?>
+    
         
 </script>

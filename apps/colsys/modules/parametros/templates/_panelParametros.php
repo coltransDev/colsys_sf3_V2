@@ -1,10 +1,10 @@
 <?php
-/* 
+/*
  *  This file is part of the Colsys Project.
- * 
+ *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
-$tipos = $sf_data->getRaw("tipos");
+$centros = $sf_data->getRaw("centros");
 $cuentas = $sf_data->getRaw("cuentas");
 ?>
 
@@ -48,20 +48,20 @@ PanelParametros = function( config ){
         store : this.storeCuentas
     });
 
-    
-    this.combo = new Ext.form.ComboBox({                
+
+    this.combo = new Ext.form.ComboBox({
         typeAhead: true,
         id: 'combo',
         mode: 'local',
         triggerAction: 'all',
-        emptyText: 'Selecione un tipo...',
+        emptyText: 'Selecione un centro de Costos...',
         selectOnFocus: true,
-        width: 135,
+        width: 185,
         displayField: "value",
         valueField: "id",
         store : new Ext.data.Store({
             autoLoad : true,
-            proxy: new Ext.data.MemoryProxy( <?=json_encode($tipos)?> ),
+            proxy: new Ext.data.MemoryProxy( <?=json_encode($centros)?> ),
             reader: new Ext.data.JsonReader(
                 {
 
@@ -73,7 +73,31 @@ PanelParametros = function( config ){
                 ])
             )
         }),
-        iconCls: 'no-icon'        
+        iconCls: 'no-icon',
+        onSelect: function(record, index){ // override default onSelect to do redirect
+			if(this.fireEvent('beforeselect', this, record, index) !== false){
+				this.setValue(record.data[this.valueField || this.displayField]);
+				this.collapse();
+				this.fireEvent('select', this, record, index);
+			}
+
+			/*
+			document.getElementById("cliente").value=record.data.compania;
+			document.getElementById("idcliente").value=record.data.id;	*/
+
+            var grid = Ext.getCmp("panel-parametros");
+            var records = grid.store.getModifiedRecords();
+            if( records.length==0|| (records.length>0 && confirm("Perdera los cambios que no ha guardado")) ){
+
+                var records = grid.store.getRange();
+                var lenght = records.length;
+                grid.store.commitChanges();
+
+                grid.store.baseParams={ idccosto:record.data.id };
+                grid.store.reload();
+            }
+        }
+
     });
 
 
@@ -90,11 +114,29 @@ PanelParametros = function( config ){
     });
 
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:25});
+    <?
+    if( $modo=="edicion" ){
+    ?>
+        this.fleteCheckColumn = new Ext.grid.CheckColumn({header:'Flete', dataIndex:'flete', width:25});
+        this.recLocalCheckColumn = new Ext.grid.CheckColumn({header:'Rec. Local', dataIndex:'recargolocal', width:25});
+        this.recOrigenCheckColumn = new Ext.grid.CheckColumn({header:'Rec. Origen', dataIndex:'recargoorigen', width:25});
+        this.costoCheckColumn = new Ext.grid.CheckColumn({header:'Costo', dataIndex:'costo', width:25});
+
+    <?
+    }
+    ?>
     this.ingresoPropioCheckColumn = new Ext.grid.CheckColumn({header:'Ing. Propio', dataIndex:'ingreso_propio', width:25});
 
     this.columns = [
-       this.expander,
+       //this.expander,
+       <?
+       if( $modo=="fv" ){
+       ?>
        this.checkColumn,
+       <?
+       }
+       ?>
+
        {
         header: "Código",
         dataIndex: 'idconcepto',
@@ -108,29 +150,36 @@ PanelParametros = function( config ){
         header: "Concepto",
         dataIndex: 'concepto',
         hideable: false,
-        sortable:false,
+
         width: 170,
-        renderer: this.formatItem,
-        editor: new Ext.form.TextField({
-				allowBlank: false ,				
-				style: 'text-align:left'
-			})
-        
-      }
-      /*,
-      {
-        header: "Modalidades",
-        dataIndex: 'modalidades',
-        hideable: false,
-        sortable:false,
-        width: 170,
-        renderer: this.formatItem,
+        renderer: this.formatItem
+        <?
+        if( $modo!="edicion" ){
+        ?>
+        ,sortable:true,
+        <?
+        }else{
+        ?>
+        ,sortable:false,
         editor: new Ext.form.TextField({
 				allowBlank: false ,
 				style: 'text-align:left'
 			})
+        <?
+        }
+        ?>
 
-      }*/
+      }
+      <?
+      if( $modo=="edicion" ){
+      ?>
+      ,
+      this.recLocalCheckColumn,
+      this.recOrigenCheckColumn
+      <?
+      }
+      if( $modo=="fv" ){
+      ?>
       ,
       this.ingresoPropioCheckColumn
       ,
@@ -139,9 +188,9 @@ PanelParametros = function( config ){
         dataIndex: 'cuenta',
         width: 50,
         hideable: false,
-        sortable:false,
+        sortable:true,
         editor: this.editorCuentas
-       
+
 
       },
 
@@ -150,7 +199,7 @@ PanelParametros = function( config ){
         dataIndex: 'iva',
         width: 50,
         hideable: false,
-        sortable:false,
+        sortable:true,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,
@@ -163,7 +212,7 @@ PanelParametros = function( config ){
         dataIndex: 'baseretencion',
         width: 50,
         hideable: false,
-        sortable:false,
+        sortable:true,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,
@@ -176,7 +225,7 @@ PanelParametros = function( config ){
         dataIndex: 'cuentaretencion',
         width: 50,
         hideable: false,
-        sortable:false,
+        sortable:true,
         editor: this.editorCuentas
       }
       /*,
@@ -195,7 +244,7 @@ PanelParametros = function( config ){
       }*/
 
       /*,
-      
+
       {
         header: "Convenios",
         dataIndex: 'cobrar_idm',
@@ -208,12 +257,17 @@ PanelParametros = function( config ){
         header: "Autoretención",
         dataIndex: 'orden',
         width: 50
-      },
+      },*/
+      <?
+      }
+      ?>
+      /*
       {
         header: "Tipo",
         dataIndex: 'orden',
         width: 50
-      },
+      }
+        ,
       {
         header: "Base",
         dataIndex: 'orden',
@@ -226,28 +280,27 @@ PanelParametros = function( config ){
             {name: 'sel', type: 'bool'},
             {name: 'idconcepto', type: 'int', mapping: 'c_ca_idconcepto'},
             {name: 'concepto', type: 'string', mapping: 'c_ca_concepto'},
-            
-            {name: 'modalidades', type: 'string'},            
-            {name: 'orden', type: 'string'},
-            {name: 'tipo', type: 'string'},
-            {name: 'idcuenta', type: 'string', mapping: 'c_ca_idcuenta'},
+            {name: 'idccosto', type: 'string'},
+            {name: 'modalidades', type: 'string'},
+            {name: 'orden', type: 'string'},            
+            {name: 'idcuenta', type: 'string', mapping: 'p_ca_idcuenta'},
             {name: 'cuenta', type: 'string', mapping: 'cu_ca_cuenta'},
-            {name: 'ingreso_propio', type: 'bool', mapping: 'c_ca_ingreso_propio'},
-            {name: 'iva', type: 'string', mapping: 'c_ca_iva'},
-            {name: 'baseretencion', type: 'string', mapping: 'c_ca_baseretencion'},
+            {name: 'ingreso_propio', type: 'bool', mapping: 'p_ca_ingreso_propio'},
+            {name: 'iva', type: 'string', mapping: 'p_ca_iva'},
+            {name: 'baseretencion', type: 'string', mapping: 'p_ca_baseretencion'},
             {name: 'cuentaretencion', type: 'string', mapping: 'cr_ca_cuentaretencion'},
-            {name: 'idcuentaretencion', type: 'string', mapping: 'c_ca_idcuentaretencion'},
-            {name: 'valor', type: 'float', mapping: 'c_ca_valor'}
-
-
-
-            
+            {name: 'idcuentaretencion', type: 'string', mapping: 'p_ca_idcuentaretencion'},
+            {name: 'valor', type: 'float', mapping: 'p_ca_valor'},
+            {name: 'recargolocal', type: 'bool', mapping: 'c_ca_recargolocal'},
+            {name: 'recargoorigen', type: 'bool', mapping: 'c_ca_recargoorigen'},
+            {name: 'flete', type: 'bool', mapping: 'c_ca_flete'},
+            {name: 'costo', type: 'bool', mapping: 'c_ca_costo'}
         ]);
 
     this.store = new Ext.data.Store({
 
         autoLoad : false,
-        url: '<?=url_for("parametros/datosPanelParametrosConceptos")?>',
+        url: '<?=url_for("parametros/datosPanelParametrosConceptos?modo=".$modo)?>',
         reader: new Ext.data.JsonReader(
             {
                 root: 'root',
@@ -265,7 +318,22 @@ PanelParametros = function( config ){
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
        id: 'panel-parametros',
-       plugins: [this.expander, this.checkColumn,  this.ingresoPropioCheckColumn ],
+       plugins: [this.expander, this.checkColumn
+              <?
+              if( $modo=="edicion" ){
+              ?>
+              ,
+              this.recLocalCheckColumn,
+              this.recOrigenCheckColumn
+              <?
+              }
+              if( $modo=="fv" ){
+              ?>
+                ,this.ingresoPropioCheckColumn
+              <?
+              }
+              ?>
+            ],
        view: new Ext.grid.GridView({
 
             forceFit:true,
@@ -285,14 +353,17 @@ PanelParametros = function( config ){
             iconCls: 'disk',
             scope:this,
             handler: this.guardarCambios
-            },
-            '-',
-            this.combo,
-            {
-            text:'Filtrar',           
-            scope:this,
-            handler: this.onComboSelect
-            },
+            }
+            <?
+            if( $modo!="edicion" ){
+            ?>
+            ,
+            '-'
+            ,this.combo
+
+            <?
+            }
+            ?>
 
             /*,
             {
@@ -374,16 +445,16 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
 
 
             changes['id']=r.id;
-            changes['tipo']=r.data.tipo;            
+            changes['idccosto']=r.data.idccosto;
             changes['idconcepto']=r.data.idconcepto;
-            
+
 
             if( r.data.concepto ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("parametros/observePanelParametros")?>', 						//method: 'POST',
+                        url: '<?=url_for("parametros/observePanelParametros?modo=".$modo)?>', 						//method: 'POST',
                         //Solamente se envian los cambios
                         params :	changes,
 
@@ -414,14 +485,25 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
 
 
     onValidateEdit : function(e){
-        var tipo = Ext.getCmp("combo").getValue();
-        
-        if( e.field == "concepto" && tipo ){
+
+        <?
+        if( $modo=="fv" ){
+        ?>
+            var combo = Ext.getCmp("combo");
+            var tipo = combo.getValue();
+            if( tipo=="" ){
+                alert("Por favor seleccione un Centro de costos");
+                return false;
+            }
+        <?
+        }
+        ?>
+        if( e.field == "concepto" ){
 
             var rec = e.record;
             var recordConcepto = this.record;
-            
-            if( rec.data.orden=="Z"){                
+
+            if( rec.data.orden=="Z"){
                 var newRec = new recordConcepto({
                                idconcepto: '',
                                concepto: '',
@@ -429,9 +511,9 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
                                modalidades: '',
                                orden: 'Z' // Se utiliza Z por que el orden es alfabetico
                             });
-                
+
                 rec.set("orden", "Y");
-                rec.set("tipo", tipo);
+
                 //guardarGridProductosRec( rec );
 
                 //Inserta una columna en blanco al final
@@ -529,7 +611,7 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
                 Ext.Ajax.request(
                 {
                     waitMsg: 'Eliminando...',
-                    url: '<?=url_for("parametros/eliminarPanelParametros")?>',
+                    url: '<?=url_for("parametros/eliminarPanelParametros?modo=".$modo)?>',
                     //method: 'POST',
                     //Solamente se envian los cambios
                     params :	{
@@ -608,43 +690,24 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
     }
 
 
-    ,onComboSelect: function( ){
-        var combo = Ext.getCmp("combo");
-        var records = this.store.getModifiedRecords();
-        if( records.length==0|| (records.length>0 && confirm("Perdera los cambios que no ha guardado")) ){
-            if( combo.getValue()!="" ){
-                var records = this.store.getRange();
-                var lenght = records.length;
-                this.store.commitChanges();
-                /*for( var i=0; i< lenght; i++){
-                    r = records[i];
-                    this.store.remove( r );
-                }*/
-                this.store.baseParams={ tipo:combo.getValue() };
-                this.store.reload();
-            }else{
-                alert("Por favor seleccione un valor");
-            }
-        }
-    },
+    ,
     onCelldblclick : function( grid, rowIndex, columnIndex, e ){
-
-
         var record = grid.getStore().getAt(rowIndex);  // Get the Record
 
         var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
-        
+
         var data = record.get(fieldName);
 
         if( fieldName=="idconcepto" && data ){
             this.showWindow( record );
         }
 
+
     },
 
     showWindow : function( record ){
         if(!this.win){
-            this.win = new ModalidadWindow({                         
+            this.win = new ModalidadWindow({
                         });
             //this.win.on('validfeed', this.addFeed, this);
         }
@@ -669,7 +732,7 @@ Ext.extend(PanelParametros, Ext.grid.EditorGridPanel, {
                     if( field=="idconcepto"||field=="concepto"||field=="sel"  ){
                         continue;
                     }
-                    
+
                     r.set(field,e.value);
 
 

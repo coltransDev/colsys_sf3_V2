@@ -230,6 +230,89 @@
                 ?>
             </td>
         </tr>
+        <tr class="row0">
+            <td colspan="4">
+                <b>Cuentas</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Cuenta deudores</b>
+            </td>
+            <td >
+                <?
+                /*echo $form['ca_inicial_aut']->renderError();
+                if( $tipo ){
+                    $form->setDefault('ca_inicial_aut', $tipo->getCaInicialAut() );
+                }
+                echo $form['ca_inicial_aut']->render();*/
+                ?>
+            </td>
+            <td>
+                <b>Cuenta IVA</b>
+            </td>
+            <td >
+                <?
+                /*echo $form['ca_final_aut']->renderError();
+                if( $tipo ){
+                    $form->setDefault('ca_final_aut', $tipo->getCaFinalAut() );
+                }
+                echo $form['ca_final_aut']->render();*/
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Cuenta ICA Anticipo</b>
+            </td>
+            <td >
+                <?
+                /*echo $form['ca_inicial_aut']->renderError();
+                if( $tipo ){
+                    $form->setDefault('ca_inicial_aut', $tipo->getCaInicialAut() );
+                }
+                echo $form['ca_inicial_aut']->render();*/
+                ?>
+            </td>
+            <td>
+                <b>Cuenta ICA Retenido</b>
+            </td>
+            <td >
+                <?
+                /*echo $form['ca_final_aut']->renderError();
+                if( $tipo ){
+                    $form->setDefault('ca_final_aut', $tipo->getCaFinalAut() );
+                }
+                echo $form['ca_final_aut']->render();*/
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Cuenta Retenci&oacute;n IVA </b>
+            </td>
+            <td >
+                <?
+                /*echo $form['ca_inicial_aut']->renderError();
+                if( $tipo ){
+                    $form->setDefault('ca_inicial_aut', $tipo->getCaInicialAut() );
+                }
+                echo $form['ca_inicial_aut']->render();*/
+                ?>
+            </td>
+            <td>
+                <b></b>
+            </td>
+            <td >
+                <?
+                /*echo $form['ca_final_aut']->renderError();
+                if( $tipo ){
+                    $form->setDefault('ca_final_aut', $tipo->getCaFinalAut() );
+                }
+                echo $form['ca_final_aut']->render();*/
+                ?>
+            </td>
+        </tr>
         <tr >
             <td colspan="4">
                 <div align="center">

@@ -15,24 +15,32 @@ class parametrosComponents extends sfComponents
     public function executePanelParametros()
 	{
 
-        $this->tipos = array(
-                             array("id"=>Constantes::RECARGO_EN_ORIGEN, "value"=>Constantes::RECARGO_EN_ORIGEN),
-                             array("id"=>Constantes::RECARGO_LOCAL, "value"=>Constantes::RECARGO_LOCAL),
-                             array("id"=>Constantes::RECARGO_OTM_DTA, "value"=>Constantes::RECARGO_OTM_DTA),
-                             //array("id"=>Constantes::COSTO, "value"=>Constantes::COSTO)
-                           );
+        $this->centros = array();
+
+        $centros = Doctrine::getTable("InoCentroCosto")
+                             ->createQuery("c")
+                             ->orderBy("c.ca_centro ASC")
+                             ->addOrderBy("c.ca_subcentro ASC")
+                             ->execute();
+
+        foreach( $centros as $centro ){
+            $centroStr = utf8_encode($centro->getCaCentro()." ".$centro->getCaSubcentro()." ".$centro->getCaNombre());
+            $this->centros[] = array("id"=>$centro->getCaIdccosto(),
+                                    "value"=> $centroStr
+            );
+        }
 
          
-         $this->cuentas = Doctrine::getTable("InoCuenta")
-                   ->createQuery("c")
-                   ->select("c.ca_idcuenta, c.ca_cuenta")
-                   ->addOrderBy("c.ca_cuenta")
-                   ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                   ->execute();
+        $this->cuentas = Doctrine::getTable("InoCuenta")
+                                ->createQuery("c")
+                                ->select("c.ca_idcuenta, c.ca_cuenta")
+                                ->addOrderBy("c.ca_cuenta")
+                                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                ->execute();
 
-         foreach( $this->cuentas as $key=>$val ){
-             $this->cuentas[$key]["ca_cuenta"] = utf8_encode($this->cuentas[$key]["ca_cuenta"]);
-         }        
+        foreach( $this->cuentas as $key=>$val ){
+            $this->cuentas[$key]["ca_cuenta"] = utf8_encode($this->cuentas[$key]["ca_cuenta"]);
+        }        
 
 	}
 

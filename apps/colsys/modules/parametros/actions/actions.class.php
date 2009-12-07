@@ -11,15 +11,40 @@
 class parametrosActions extends sfActions
 {
 
+    public function getNivel(){
+        $this->modo = $this->getRequestParameter("modo");
+
+        $this->nivel = -1;
+		if( !$this->modo ){
+			$this->forward( "parametros", "seleccionModo" );
+		}
+        return 1;
+    }
+
+    /**
+	 * Permite seleccionar el modo de operacion del programa
+	 * @author: Andres Botero
+	 */
+	public function executeSeleccionModo()
+	{
+		//$this->nivelAereo = $this->getUser()->getNivelAcceso( inoActions::RUTINA_AEREO );
+
+	}
+
     /**
     * Executes index action
     *
     * @param sfRequest $request A request object
     */
     public function executeIndex(){
+
+        $this->modo = $this->getRequestParameter("modo");
+
         $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/RowExpander",'last');
 		$response->addJavaScript("extExtras/CheckColumn",'last');
+
+        $this->nivel = $this->getNivel();
     }
 
 
@@ -103,24 +128,37 @@ class parametrosActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeDatosPanelParametrosConceptos(sfWebRequest $request){
-        $tipo = $request->getParameter("tipo");
+        $modo = $request->getParameter("modo");
+        $nivel = $this->getNivel();
 
+        $idccosto = $request->getParameter("idccosto");
 
-        $conceptos = Doctrine::getTable("InoConcepto")
+        $q = Doctrine::getTable("InoConcepto")
                          ->createQuery("c")
-                         ->select("c.*, cu.ca_cuenta as ca_cuenta, cr.ca_cuenta as ca_cuentaretencion")
-                         ->leftJoin("c.InoCuenta cu")
-                         ->leftJoin("c.InoCuentaRetencion cr")
-                         ->where("c.ca_tipo = ? ", $tipo)
-                         ->addOrderBy( "c.ca_liminferior" )
-                         ->addOrderBy( "c.ca_concepto" )
-                         ->setHydrationMode(Doctrine::HYDRATE_SCALAR )
-                         ->execute();
+                         ->select("c.*") //,                                                                      
+                         ->addOrderBy( "c.ca_concepto" );
+        
+        if( $modo == "fv" ){
+            $q->leftJoin("c.InoConceptoParametro p")
+              ->leftJoin("p.InoCuenta cu")
+              ->leftJoin("p.InoCuentaRetencion cr")
+              ->addSelect("p.*, cu.ca_cuenta as ca_cuenta, cr.ca_cuenta as ca_cuentaretencion")
+              ->addWhere("p.ca_idccosto = ? OR p.ca_idccosto IS NULL", $idccosto );
 
+
+        }
+
+        $conceptos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR )->execute();
+        
         $k = 0;
         foreach( $conceptos as $key=>$val ){           
             $conceptos[ $key ]["c_ca_concepto"]=utf8_encode( $conceptos[ $key ]["c_ca_concepto"] );
-            $conceptos[ $key ]["orden"]=$k++;
+            $conceptos[ $key ]["orden"]=str_pad($k,4, "0",STR_PAD_LEFT);
+            $k++;
+
+            if( $modo != "edicion" ){
+                $conceptos[ $key ]["idccosto"]=$idccosto;
+            }
 
             $modalidadesConcepto = Doctrine_Query::create()
                                 ->select("cm.ca_idmodalidad")
@@ -135,13 +173,16 @@ class parametrosActions extends sfActions
             }
             $conceptos[ $key ]["modalidades"] = implode( "|", $modalidades );
 
-            if( $conceptos[ $key ]["c_ca_iva"] ){
-                $conceptos[ $key ]["c_ca_iva"] = $conceptos[ $key ]["c_ca_iva"]*100;
+
+            if( $modo == "fv" && $conceptos[ $key ]["p_ca_iva"] ){
+                $conceptos[ $key ]["p_ca_iva"] = $conceptos[ $key ]["p_ca_iva"]*100;
             }
 
         }
         
-        $conceptos[] = array("ca_idconcepto"=>"", "ca_concepto"=>"", "orden"=>"Z");
+        if( $nivel>=1 && $this->modo=="edicion" ){
+            $conceptos[] = array("ca_idconcepto"=>"", "ca_concepto"=>"", "orden"=>"Z");
+        }
 
         $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
 
@@ -158,6 +199,7 @@ class parametrosActions extends sfActions
         $id = $request->getParameter("id");
         $this->responseArray=array("id"=>$id,  "success"=>false);
 
+        $modo = $request->getParameter("modo");
 
         $tipo = $request->getParameter("tipo");
 
@@ -174,61 +216,100 @@ class parametrosActions extends sfActions
         if( $request->getParameter("concepto")!==null ){
             $concepto->setCaConcepto( $request->getParameter("concepto") );
         }
-        
-        if( $request->getParameter("idcuenta")!==null ){
-            $concepto->setCaIdcuenta( $request->getParameter("idcuenta") );
-        }
 
-        if( $request->getParameter("ingreso_propio")!==null ){
-            $concepto->setCaIngreso_propio( $request->getParameter("ingreso_propio") );
-        }
-
-        if( $request->getParameter("iva")!==null ){
-            $concepto->setCaIva( $request->getParameter("iva")/100 );
-        }
-
-        if( $request->getParameter("baseretencion")!==null ){
-            $concepto->setCaBaseretencion( $request->getParameter("baseretencion") );
-        }
-
-        if( $request->getParameter("idcuentaretencion")!==null ){
-            $concepto->setCaIdcuentaretencion( $request->getParameter("idcuentaretencion") );
-        }
-
-        if( $request->getParameter("valor")!==null ){
-            $concepto->setCaValor( $request->getParameter("valor") );
-        }
-
-
-
-        if( $request->getParameter("observaciones")!==null ){
-            if( $request->getParameter("observaciones") ){
-                $concepto->setCaDetalles( $request->getParameter("observaciones") );
-            }else{
-                $concepto->setCaDetalles( null );
-            }
-        }
-
-        if( $concepto->getCaIdconcepto() ){
-            if( $request->getParameter("modalidades")!==null ){
-                Doctrine_Query::create()
-                                ->delete()
-                                ->from("InoConceptoModalidad cm")
-                                ->where("cm.ca_idconcepto = ? ", $concepto->getCaIdconcepto() )
-                                ->execute();
-
-                $modalidadesParam = explode("|",$request->getParameter("modalidades"));
-
-                foreach( $modalidadesParam as $val ){
-                    $cm = new InoConceptoModalidad();
-                    $cm->setCaIdconcepto($concepto->getCaIdconcepto());
-                    $cm->setCaIdmodalidad($val);
-                    $cm->save();
+        if( $modo=="edicion" ){
+            if( $request->getParameter("recargoorigen")!==null ){
+                if( $request->getParameter("recargoorigen")=="true" ){
+                    $concepto->setCaRecargoorigen( true );
+                }else{
+                    $concepto->setCaRecargoorigen( false );
                 }
             }
+
+            if( $request->getParameter("recargolocal")!==null ){
+                if( $request->getParameter("recargolocal")=="true" ){
+                    $concepto->setCaRecargolocal( true );
+                }else{
+                    $concepto->setCaRecargolocal( false );
+                }
+            }
+
+
+            if( $request->getParameter("observaciones")!==null ){
+                if( $request->getParameter("observaciones") ){
+                    $concepto->setCaDetalles( $request->getParameter("observaciones") );
+                }else{
+                    $concepto->setCaDetalles( null );
+                }
+            }
+
+            if( $concepto->getCaIdconcepto() ){
+                if( $request->getParameter("modalidades")!==null ){
+                    Doctrine_Query::create()
+                                    ->delete()
+                                    ->from("InoConceptoModalidad cm")
+                                    ->where("cm.ca_idconcepto = ? ", $concepto->getCaIdconcepto() )
+                                    ->execute();
+
+                    $modalidadesParam = explode("|",$request->getParameter("modalidades"));
+
+                    foreach( $modalidadesParam as $val ){
+                        $cm = new InoConceptoModalidad();
+                        $cm->setCaIdconcepto($concepto->getCaIdconcepto());
+                        $cm->setCaIdmodalidad($val);
+                        $cm->save();
+                    }
+                }
+            }
+
         }
 
         $concepto->save();
+
+        if( $modo=="fv" ){
+            //ca_idparametro
+            $idccosto = $request->getParameter("idccosto");
+            $parametro = Doctrine::getTable("InoConceptoParametro")
+                                   ->createQuery("p")
+                                   ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($concepto->getCaIdconcepto(), $idccosto) )
+                                   ->fetchOne();
+
+            if( !$parametro ){
+                $parametro = new InoConceptoParametro();
+                $parametro->setCaIdconcepto( $concepto->getCaIdconcepto() );
+                $parametro->setCaIdccosto( $idccosto );
+            }
+            if( $request->getParameter("idcuenta")!==null ){
+                $parametro->setCaIdcuenta( $request->getParameter("idcuenta") );
+            }
+
+            if( $request->getParameter("ingreso_propio")!==null ){
+                $parametro->setCaIngreso_propio( $request->getParameter("ingreso_propio") );
+            }
+
+            if( $request->getParameter("iva")!==null ){
+                $parametro->setCaIva( $request->getParameter("iva")/100 );
+            }
+
+            if( $request->getParameter("baseretencion")!==null ){
+                $parametro->setCaBaseretencion( $request->getParameter("baseretencion") );
+            }
+
+            if( $request->getParameter("idcuentaretencion")!==null ){
+                $parametro->setCaIdcuentaretencion( $request->getParameter("idcuentaretencion") );
+            }
+
+            if( $request->getParameter("valor")!==null ){
+                $parametro->setCaValor( $request->getParameter("valor") );
+            }
+            $parametro->save();
+
+        }
+
+
+        
+
+        
         $this->responseArray["success"]=true;
 
         $this->responseArray["idconcepto"]=$concepto->getCaIdconcepto();
@@ -243,16 +324,20 @@ class parametrosActions extends sfActions
     * @param sfRequest $request A request object
     */
     public function executeEliminarPanelParametros(sfWebRequest $request){
+        
+
         $id = $request->getParameter("id");
         $this->responseArray=array("id"=>$id,  "success"=>false);
+        $nivel = $this->getNivel();
+        if( $nivel==1 ){
+            $idconcepto = $request->getParameter("idconcepto");
 
-        $idconcepto = $request->getParameter("idconcepto");
-
-        if( $idconcepto ){
-            $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
-            $this->forward404Unless($concepto);
-            $concepto->delete();
-            $this->responseArray["success"]=true;
+            if( $idconcepto ){
+                $concepto = Doctrine::getTable("InoConcepto")->find($idconcepto);
+                $this->forward404Unless($concepto);
+                $concepto->delete();
+                $this->responseArray["success"]=true;
+            }
         }
         $this->setTemplate("responseTemplate");
     }
@@ -265,6 +350,7 @@ class parametrosActions extends sfActions
     */
     public function executeDatosModalidadGrid(sfWebRequest $request){
         $tipo = $request->getParameter("tipo");
+        $modo = $request->getParameter("modo");
         $conceptos = array();
         if( $request->getParameter("modalidades") ){
             
@@ -289,7 +375,10 @@ class parametrosActions extends sfActions
 
         }
 
-        $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
+        $nivel = $this->getNivel();
+        if( $nivel==1 && $modo=="edicion" ){
+            $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
+        }
 
         $this->responseArray = array( "totalCount"=>count( $conceptos ), "root"=>$conceptos  );
 

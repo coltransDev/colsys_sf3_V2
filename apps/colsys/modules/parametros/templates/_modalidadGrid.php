@@ -69,7 +69,7 @@ ModalidadGrid = function( config ){
     this.store = new Ext.data.Store({
 
         autoLoad : true,
-        url: '<?=url_for("parametros/datosModalidadGrid")?>',
+        url: '<?=url_for("parametros/datosModalidadGrid?modo=".$modo)?>',
         reader: new Ext.data.JsonReader(
             {
                 root: 'root',
@@ -90,12 +90,18 @@ ModalidadGrid = function( config ){
        width: 450,
        view: new Ext.grid.GridView({
             forceFit:true                        
-       }),
+       })
+       <?
+       if( $modo=="edicion" ){
+       ?>
+       ,
        listeners:{
             validateedit: this.onValidateEdit,
             rowcontextmenu: this.onRowcontextMenu            
        }
-       
+       <?
+       }
+       ?>
 
 
 
@@ -160,7 +166,7 @@ Ext.extend(ModalidadGrid, Ext.grid.EditorGridPanel, {
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("parametros/observeModalidadGrid")?>', 						//method: 'POST',
+                        url: '<?=url_for("parametros/observeModalidadGrid?modo=".$modo)?>', 						//method: 'POST',
                         //Solamente se envian los cambios
                         params :	changes,
 
@@ -240,18 +246,6 @@ Ext.extend(ModalidadGrid, Ext.grid.EditorGridPanel, {
                         iconCls: 'delete',
                         scope:this,
                         handler: this.eliminarItem
-                    },
-                    {
-                        text: 'Observaciones',
-                        iconCls: 'page_white_edit',
-                        scope:this,
-                        handler: function(){
-                            if( this.ctxRecord.data.iditem  ){
-                                activeRow = this.ctxRecord;
-                                this.ventanaObservaciones( this.ctxRecord );
-                            }
-
-                        }
                     }
                     ]
             });
@@ -266,6 +260,7 @@ Ext.extend(ModalidadGrid, Ext.grid.EditorGridPanel, {
         this.ctxRow = this.view.getRow(index);
         Ext.fly(this.ctxRow).addClass('x-node-ctx');
         this.menu.showAt(e.getXY());
+
     }
     ,
 
@@ -280,7 +275,7 @@ Ext.extend(ModalidadGrid, Ext.grid.EditorGridPanel, {
                 Ext.Ajax.request(
                 {
                     waitMsg: 'Eliminando...',
-                    url: '<?=url_for("parametros/eliminarModalidadGrid")?>',
+                    url: '<?=url_for("parametros/eliminarModalidadGrid?modo=".$modo)?>',
                     //method: 'POST',
                     //Solamente se envian los cambios
                     params :	{

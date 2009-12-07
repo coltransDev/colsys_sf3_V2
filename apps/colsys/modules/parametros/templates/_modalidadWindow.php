@@ -10,7 +10,6 @@
 <script type="text/javascript">
 ModalidadWindow = function() {
 
-
     this.ctxRecord = null;
 
     this.grid = new ModalidadGrid({
@@ -30,11 +29,20 @@ ModalidadWindow = function() {
         autoScroll: true,
         closeAction: 'hide',
 
-        buttons:[{
+        buttons:[
+        <?
+        if( $modo=="edicion" ){
+        ?>
+         {
             text: 'Actualizar',
             handler: this.onUpdate,
             scope: this
-        },{
+         }
+         ,
+         <?
+        }
+         ?>
+         {
             text: 'Cancel',
             handler: this.hide.createDelegate(this, [])
         }],

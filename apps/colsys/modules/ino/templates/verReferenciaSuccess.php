@@ -5,6 +5,9 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
+
+/*echo "--->".InoMaestraTable::getNumReferencia($referencia->getCaIdmodalidad(), $referencia->getCaOrigen()
+                                        , $referencia->getcaDestino(), "08", "9");*/
 ?>
 
 
@@ -28,27 +31,39 @@
             </td>
         </tr>
         <?
-        $trayecto = $referencia->getTrayecto();
+        $modalidad = $referencia->getModalidad();
         ?>
         <tr class="row0">
             <td colspan="4"><b>Datos del trayecto</b></td>
         </tr>
         <tr>
+                <td><b>Clase</b></td>
+                <td><?=$modalidad->getCaImpoexpo()?></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><b>Transporte</b></td>
+                <td><?=$modalidad->getCaTransporte()?></td>
+                <td><b>Modalidad</b></td>
+                <td><?=$modalidad->getCaModalidad()?></td>
+            </tr>
+        <tr>
             <td><b>Origen:</b></td>
-            <td><?=$trayecto->getOrigen()->getTrafico()->getCaNombre()?> <?=$trayecto->getOrigen()->getCaCiudad()?></td>
+            <td><?=$referencia->getOrigen()->getTrafico()->getCaNombre()?> <?=$referencia->getOrigen()->getCaCiudad()?></td>
             <td><b>Destino:</b></td>
-            <td><?=$trayecto->getDestino()->getTrafico()->getCaNombre()?> <?=$trayecto->getDestino()->getCaCiudad()?></td>
+            <td><?=$referencia->getDestino()->getTrafico()->getCaNombre()?> <?=$referencia->getDestino()->getCaCiudad()?></td>
 
         </tr>        
         
          <tr>
              <td><b>Linea</b></td>
             <td>
-               <?=$trayecto->getIdsProveedor()->getIds()->getCaNombre()?>
+               <?=$referencia->getIdsProveedor()->getIds()->getCaNombre()?>
             </td>
-            <td><b>Modalidad</b></td>
+            <td><b>Agente</b></td>
             <td>
-                <?=$trayecto->getCaModalidad()?>
+                <? //=$trayecto->getCaModalidad()?>
             </td>
             
         </tr>
@@ -72,12 +87,12 @@
 
                    <div class="tab-page">
                       <h2 class="tab">Clientes</h2>
-                        <?=include_component("ino", "clientes", array("referencia"=>$referencia))?>
+                        <?=include_component("ino", "clientes", array("referencia"=>$referencia, "modo"=>$modo))?>
                        </div>
                        
                        <div class="tab-page">
                            <h2 class="tab">Facturaci&oacute;n</h2>
-                           <?=include_component("ino", "ingresos", array("referencia"=>$referencia))?>
+                           <?=include_component("ino", "ingresos", array("referencia"=>$referencia, "modo"=>$modo))?>
                        </div>
                        <div class="tab-page">
                            <h2 class="tab">Egresos</h2>
@@ -93,12 +108,6 @@
                        </div>
                     </div>
             </td>
-
-        </tr>
-        
-    </table>
-
-
-
-
+        </tr>        
+    </table>  
 </div>

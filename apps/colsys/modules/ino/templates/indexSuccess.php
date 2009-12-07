@@ -5,7 +5,7 @@
 */
 
 ?>
-<form action="<?=url_for( "ino/busqueda" )?>" method="post" >
+<form action="<?=url_for( "ino/busqueda?modo=".$modo )?>" method="post" >
 <script language="javascript">
 	function cambiarCriterio( field ){
 		

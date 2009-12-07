@@ -12,9 +12,19 @@
 
     <h1>Sistema Administrador de Referencias</h1>
     <br />
-    <form action="<?=url_for("ino/formClientes")?>" method="post">
+    <form action="<?=url_for("ino/formClientes?modo=".$modo)?>" method="post">
         <?
-        echo $form->renderHiddenFields();
+        
+        if( $inoCliente ){
+            $form->setDefault('ca_idreporte', $inoCliente->getCaIdreporte() );
+        }
+        echo $form['ca_idreporte']->render();
+
+        
+        if( $inoCliente ){
+            $form->setDefault('ca_idinocliente', $inoCliente->getCaIdreporte() );
+        }
+        echo $form['ca_idinocliente']->render();
 
         if( $referencia->getCaIdmaestra() ){
         ?>
@@ -46,13 +56,9 @@
             <tr>
                 <td width="17%"><b>Reporte</b></td>
                 <td width="17%">
-                    <?
-                    echo $form['ca_idreporte']->renderError();
-                    if( $inoCliente ){
-                        $form->setDefault('ca_idreporte', $inoCliente->getCaIdreporte() );
-                    }
-                    echo $form['ca_idreporte']->render();
-                    ?>
+                    
+                    <input type="text" id="combo-reporte" />
+                   
 
                 </td>
                 <td width="16%"><b>Vendedor</b></td>
@@ -125,24 +131,24 @@
                 <td colspan="6"><b>Datos de la carga</b></td>
             </tr>
             <tr>
-                <td><b>HBL</b></td>
+                <td><b>Doc. transporte</b></td>
                 <td>
                     <?
-                    echo $form['ca_hbls']->renderError();
+                    echo $form['ca_doctransporte']->renderError();
                     if( $inoCliente ){
-                        $form->setDefault('ca_hbls', $inoCliente->getCaHbls() );
+                        $form->setDefault('ca_doctransporte', $inoCliente->getCaDoctransporte() );
                     }
-                    echo $form['ca_hbls']->render();
+                    echo $form['ca_doctransporte']->render();
                     ?>
                 </td>
-                <td><b>Fecha HBL</b></td>
+                <td><b>Fecha Doc. transporte</b></td>
                 <td>
                     <?
-                    echo $form['ca_fchhbls']->renderError();
+                    echo $form['ca_fchdoctransporte']->renderError();
                     if( $inoCliente ){
-                        $form->setDefault('ca_fchhbls', Utils::parseDate($inoCliente->getCaFchhbls(), "Y-m-d") );
+                        $form->setDefault('ca_fchdoctransporte', Utils::parseDate($inoCliente->getCaFchdoctransporte(), "Y-m-d") );
                     }
-                    echo $form['ca_fchhbls']->render();
+                    echo $form['ca_fchdoctransporte']->render();
                     ?>
                 </td>
                 <td><b>&nbsp;</b></td>
@@ -201,3 +207,73 @@
 
 
 </div>
+<?
+$modalidad = $referencia->getModalidad();
+?>
+<script type="text/javascript">
+
+
+
+    Ext.onReady(function(){
+
+        var ds = new Ext.data.Store({
+        proxy: new Ext.data.HttpProxy({
+            url: '<?=url_for(utf8_encode("widgets/datosComboReportes?extended=true&impoexpo=".$modalidad->getCaImpoexpo()."&transporte=".$modalidad->getCaTransporte()))?>'
+
+        }),
+        reader: new Ext.data.JsonReader({
+            root: 'reportes',
+            totalProperty: 'totalCount'
+        }, [
+            {name: 'idreporte', mapping: 'ca_idreporte'},
+            {name: 'consecutivo', mapping: 'ca_consecutivo'},
+            {name: 'piezas', mapping: 'ca_piezas'},
+            {name: 'peso', mapping: 'ca_peso'},
+            {name: 'volumen', mapping: 'ca_volumen'},
+            {name: 'doctransporte', mapping: 'ca_doctransporte'},
+            {name: 'idnave', mapping: 'ca_idnave'},
+            {name: 'orden_clie', mapping: 'ca_orden_clie'},
+            {name: 'login', mapping: 'ca_login'}
+
+        ])
+    });
+
+
+    var comboReporte = new Ext.form.ComboBox({
+        store: ds,
+		id: 'reporte',
+        displayField:'consecutivo',
+		valueField:'consecutivo',
+        typeAhead: false,
+        loadingText: 'Buscando...',
+        width: 160,        
+		minChars: 1,
+        hideTrigger:false,
+		hideLabel: true	,
+		allowBlank : false,
+        value : '<?=isset($reporte)&&$reporte?$reporte->getCaConsecutivo():""?>',
+        //tpl: resultTpl,
+        applyTo: 'combo-reporte',
+        //itemSelector: 'div.search-item',
+	    emptyText:'',
+	    forceSelection:true,
+		selectOnFocus:true
+
+    });
+
+
+		Ext.getCmp("reporte").addListener("select", function(combo, record, index){ // override default onSelect to do redirect
+
+            document.getElementById("ino_cliente_ca_idreporte").value=record.data.idreporte;
+            document.getElementById("ino_cliente_ca_vendedor").value=record.data.login;
+            document.getElementById("ino_cliente_ca_numorden").value=record.data.orden_clie;
+            document.getElementById("ino_cliente_ca_numpiezas").value=record.data.piezas;
+            document.getElementById("ino_cliente_ca_peso").value=record.data.peso;
+            document.getElementById("ino_cliente_ca_volumen").value=record.data.volumen;
+            document.getElementById("ino_cliente_ca_doctransporte").value=record.data.doctransporte;
+            //document.getElementById("ino_cliente_ca_proveedor").value=record.data.proveedor;
+
+          
+		});
+	});
+</script>
