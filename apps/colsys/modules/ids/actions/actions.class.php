@@ -683,12 +683,11 @@ class idsActions extends sfActions
     */
     public function executeFormEvaluacion(sfWebRequest $request){
         $this->nivel = $this->getNivel();
-
-        if( $this->nivel<=2 ){
-            $this->forward404();
+        
+        if( $this->nivel<2 ){
+            $this->forward404(); 
         }
 
-        
 
         if( $request->getParameter("idevaluacion") ){
             $evaluacion = Doctrine::getTable("IdsEvaluacion")->find( $request->getParameter("idevaluacion") );

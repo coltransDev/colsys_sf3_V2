@@ -49,6 +49,8 @@ class NuevoReporteForm extends BaseReporteForm
                                                                                                Constantes::TERRESTRE=>Constantes::TERRESTRE,
                                                                                                Constantes::ADUANA=>Constantes::ADUANA
                                                                                               ) ), array("onChange" => "cambiarTransporte()")  );
+
+
         $this->widgetSchema['ca_modalidad']=new sfWidgetFormChoice( array( "choices" => array() ));
 
        //[TODO] Volver Booleano

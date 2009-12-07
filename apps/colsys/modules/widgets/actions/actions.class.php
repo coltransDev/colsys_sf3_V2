@@ -224,25 +224,24 @@ class widgetsActions extends sfActions
 	/*
 	* 
 	*/	
-	public function executeDatosComboReportes(){
-		$criterio =  $this->getRequestParameter("query");
+	public function executeDatosComboReportes( $request ){
+		$criterio =  $request->getParameter("query");
 		
 		$transporte =  utf8_decode($this->getRequestParameter("transporte"));
 		$impoexpo =  utf8_decode($this->getRequestParameter("impoexpo"));
-		
-
-
 
         $q = Doctrine_Query::create()
-                  ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_version, MAX(r.ca_version) as max")
+                  ->select("r.ca_consecutivo, r.ca_idreporte, r.ca_version")
                   ->from("Reporte r")                  
                   ->where("r.ca_consecutivo LIKE ?", $criterio."%" )
                   ->addWhere("r.ca_usuanulado IS NULL")
+                  ->addWhere("r.ca_version = (SELECT MAX(r2.ca_version) FROM Reporte r2 WHERE r2.ca_consecutivo = r.ca_consecutivo) AND ca_usuanulado IS NULL")
                   ->addOrderBy("r.ca_fchcreado DESC")
-                  ->groupBy("r.ca_consecutivo, r.ca_idreporte, r.ca_version, r.ca_fchcreado")
-                  ->limit(40);
+                  ->limit(20);
                   
-
+        if( $request->getParameter("extended") ){
+           $q->addSelect("r.ca_login, r.ca_orden_clie");           
+        }
 			
 		if( $transporte ){			
 			$q->addWhere("r.ca_transporte = ?", $transporte);
@@ -261,12 +260,27 @@ class widgetsActions extends sfActions
 		$this->reportes = array();
  
    		foreach ( $reportes as $reporte ) {            
-			if( $reporte['ca_version']==$reporte["max"] ){
-      			$this->reportes[] = array('ca_consecutivo'=>$reporte['ca_consecutivo'],
-										  'ca_idreporte'=>$reporte['ca_idreporte']
-										 
-									 );
-			}
+			
+            $row = $reporte;
+
+            if( $request->getParameter("extended") ){
+                $q = Doctrine::getTable("RepStatus")
+                          ->createQuery("s")
+                          ->select("s.ca_piezas, s.ca_peso, s.ca_volumen, s.ca_doctransporte, s.ca_idnave")
+                          ->where("s.ca_idreporte = ?", $reporte['ca_idreporte'])
+                          ->addOrderBy("s.ca_fchenvio DESC")
+                          ->limit(1);
+                $row2 = $q->fetchOne(null, Doctrine::HYDRATE_ARRAY);
+                if( $row2 ){
+                    $row2["ca_piezas"] = substr($row2["ca_piezas"], 0, strpos($row2["ca_piezas"],"|"));
+                    $row2["ca_peso"] = substr($row2["ca_peso"], 0, strpos($row2["ca_peso"],"|"));
+                    $row2["ca_volumen"] = substr($row2["ca_volumen"], 0, strpos($row2["ca_volumen"],"|"));
+                    $row = array_merge( $row,  $row2 );
+                }
+            }
+
+            $this->reportes[] = $row;
+			
 		}
 
 

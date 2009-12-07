@@ -369,7 +369,7 @@ function cargarModalidades( modalidades, impoexpo, transporte, modalidadFld, def
                     }else{
                         var selected = false;
                     }
-                    modalidadFld[modalidadFld.length] = new Option(modalidades[i]['modalidad'],modalidades[i]['modalidad'],false, selected);
+                    modalidadFld[modalidadFld.length] = new Option(modalidades[i]['modalidad'],modalidades[i]['idmodalidad'],false, selected);
                 }
             }
         }

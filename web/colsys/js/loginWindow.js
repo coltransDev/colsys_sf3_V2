@@ -109,8 +109,8 @@ var checkAccess = function(){
                 var res = Ext.util.JSON.decode( response.responseText );
                 if( res.success ){
                     if( !res.login ){
-                        document.getElementById("mask").style.display = 'inline';
-                        
+                        document.getElementById("mask").style.display = 'inline';                        
+                        document.getElementById("mask").style.height = (Ext.get(document.body).getHeight()+50)+'px';
                         win.show();
                     }else{
                         document.getElementById("mask").style.display = 'none';
@@ -123,6 +123,7 @@ var checkAccess = function(){
 
     );
     window.setTimeout(checkAccess, 60000 );
+    //window.setTimeout(checkAccess, 3000 );
 
 }
 //window.setTimeout(checkAccess, 3000 );
