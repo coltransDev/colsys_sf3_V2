@@ -19,6 +19,7 @@
  * @property Ids $Ids
  * @property IdsTipo $IdsTipo
  * @property Doctrine_Collection $CotProducto
+ * @property Doctrine_Collection $InoMaestra
  * @property Doctrine_Collection $Trayecto
  * @property Doctrine_Collection $PricRecargoxLinea
  * @property Doctrine_Collection $PricRecargoxLineaBs
@@ -41,6 +42,7 @@
  * @method Ids                 getIds()                  Returns the current record's "Ids" value
  * @method IdsTipo             getIdsTipo()              Returns the current record's "IdsTipo" value
  * @method Doctrine_Collection getCotProducto()          Returns the current record's "CotProducto" collection
+ * @method Doctrine_Collection getInoMaestra()           Returns the current record's "InoMaestra" collection
  * @method Doctrine_Collection getTrayecto()             Returns the current record's "Trayecto" collection
  * @method Doctrine_Collection getPricRecargoxLinea()    Returns the current record's "PricRecargoxLinea" collection
  * @method Doctrine_Collection getPricRecargoxLineaBs()  Returns the current record's "PricRecargoxLineaBs" collection
@@ -62,6 +64,7 @@
  * @method IdsProveedor        setIds()                  Sets the current record's "Ids" value
  * @method IdsProveedor        setIdsTipo()              Sets the current record's "IdsTipo" value
  * @method IdsProveedor        setCotProducto()          Sets the current record's "CotProducto" collection
+ * @method IdsProveedor        setInoMaestra()           Sets the current record's "InoMaestra" collection
  * @method IdsProveedor        setTrayecto()             Sets the current record's "Trayecto" collection
  * @method IdsProveedor        setPricRecargoxLinea()    Sets the current record's "PricRecargoxLinea" collection
  * @method IdsProveedor        setPricRecargoxLineaBs()  Sets the current record's "PricRecargoxLineaBs" collection
@@ -70,10 +73,10 @@
  * @method IdsProveedor        setReporte()              Sets the current record's "Reporte" collection
  * @method IdsProveedor        setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseIdsProveedor extends myDoctrineRecord
 {
@@ -137,6 +140,10 @@ abstract class BaseIdsProveedor extends myDoctrineRecord
              'foreign' => 'ca_tipo'));
 
         $this->hasMany('CotProducto', array(
+             'local' => 'ca_idproveedor',
+             'foreign' => 'ca_idlinea'));
+
+        $this->hasMany('InoMaestra', array(
              'local' => 'ca_idproveedor',
              'foreign' => 'ca_idlinea'));
 

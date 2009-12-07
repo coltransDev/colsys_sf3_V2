@@ -11,27 +11,27 @@
  * @property string $ca_naturaleza
  * @property string $ca_moneda
  * @property Doctrine_Collection $InoTransaccion
- * @property Doctrine_Collection $InoConcepto
+ * @property Doctrine_Collection $InoConceptoParametro
  * 
- * @method integer             getCaIdcuenta()     Returns the current record's "ca_idcuenta" value
- * @method string              getCaCuenta()       Returns the current record's "ca_cuenta" value
- * @method string              getCaDescripcion()  Returns the current record's "ca_descripcion" value
- * @method string              getCaNaturaleza()   Returns the current record's "ca_naturaleza" value
- * @method string              getCaMoneda()       Returns the current record's "ca_moneda" value
- * @method Doctrine_Collection getInoTransaccion() Returns the current record's "InoTransaccion" collection
- * @method Doctrine_Collection getInoConcepto()    Returns the current record's "InoConcepto" collection
- * @method InoCuenta           setCaIdcuenta()     Sets the current record's "ca_idcuenta" value
- * @method InoCuenta           setCaCuenta()       Sets the current record's "ca_cuenta" value
- * @method InoCuenta           setCaDescripcion()  Sets the current record's "ca_descripcion" value
- * @method InoCuenta           setCaNaturaleza()   Sets the current record's "ca_naturaleza" value
- * @method InoCuenta           setCaMoneda()       Sets the current record's "ca_moneda" value
- * @method InoCuenta           setInoTransaccion() Sets the current record's "InoTransaccion" collection
- * @method InoCuenta           setInoConcepto()    Sets the current record's "InoConcepto" collection
+ * @method integer             getCaIdcuenta()           Returns the current record's "ca_idcuenta" value
+ * @method string              getCaCuenta()             Returns the current record's "ca_cuenta" value
+ * @method string              getCaDescripcion()        Returns the current record's "ca_descripcion" value
+ * @method string              getCaNaturaleza()         Returns the current record's "ca_naturaleza" value
+ * @method string              getCaMoneda()             Returns the current record's "ca_moneda" value
+ * @method Doctrine_Collection getInoTransaccion()       Returns the current record's "InoTransaccion" collection
+ * @method Doctrine_Collection getInoConceptoParametro() Returns the current record's "InoConceptoParametro" collection
+ * @method InoCuenta           setCaIdcuenta()           Sets the current record's "ca_idcuenta" value
+ * @method InoCuenta           setCaCuenta()             Sets the current record's "ca_cuenta" value
+ * @method InoCuenta           setCaDescripcion()        Sets the current record's "ca_descripcion" value
+ * @method InoCuenta           setCaNaturaleza()         Sets the current record's "ca_naturaleza" value
+ * @method InoCuenta           setCaMoneda()             Sets the current record's "ca_moneda" value
+ * @method InoCuenta           setInoTransaccion()       Sets the current record's "InoTransaccion" collection
+ * @method InoCuenta           setInoConceptoParametro() Sets the current record's "InoConceptoParametro" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseInoCuenta extends myDoctrineRecord
 {
@@ -69,7 +69,7 @@ abstract class BaseInoCuenta extends myDoctrineRecord
              'local' => 'ca_idcuenta',
              'foreign' => 'ca_idcuenta'));
 
-        $this->hasMany('InoConcepto', array(
+        $this->hasMany('InoConceptoParametro', array(
              'local' => 'ca_idcuenta',
              'foreign' => 'ca_idcuenta'));
     }

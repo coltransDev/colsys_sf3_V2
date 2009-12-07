@@ -10,52 +10,67 @@
  * @property integer $ca_idtipo
  * @property integer $ca_consecutivo
  * @property date $ca_fchcomprobante
- * @property integer $ca_idmaestra
+ * @property integer $ca_idinocliente
+ * @property integer $ca_plazo
+ * @property decimal $ca_tasacambio
  * @property string $ca_observaciones
+ * @property integer $ca_estado
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
  * @property timestamp $ca_fchactualizado
  * @property string $ca_usuactualizado
+ * @property Ids $Ids
  * @property Usuario $UsuCreado
  * @property Usuario $UsuActualizado
+ * @property InoCliente $InoCliente
  * @property Doctrine_Collection $InoTransaccion
- * @property Ids $Ids
+ * @property InoTipoComprobante $InoTipoComprobante
  * 
- * @method integer             getCaIdcomprobante()   Returns the current record's "ca_idcomprobante" value
- * @method integer             getCaId()              Returns the current record's "ca_id" value
- * @method integer             getCaIdtipo()          Returns the current record's "ca_idtipo" value
- * @method integer             getCaConsecutivo()     Returns the current record's "ca_consecutivo" value
- * @method date                getCaFchcomprobante()  Returns the current record's "ca_fchcomprobante" value
- * @method integer             getCaIdmaestra()       Returns the current record's "ca_idmaestra" value
- * @method string              getCaObservaciones()   Returns the current record's "ca_observaciones" value
- * @method timestamp           getCaFchcreado()       Returns the current record's "ca_fchcreado" value
- * @method string              getCaUsucreado()       Returns the current record's "ca_usucreado" value
- * @method timestamp           getCaFchactualizado()  Returns the current record's "ca_fchactualizado" value
- * @method string              getCaUsuactualizado()  Returns the current record's "ca_usuactualizado" value
- * @method Usuario             getUsuCreado()         Returns the current record's "UsuCreado" value
- * @method Usuario             getUsuActualizado()    Returns the current record's "UsuActualizado" value
- * @method Doctrine_Collection getInoTransaccion()    Returns the current record's "InoTransaccion" collection
- * @method Ids                 getIds()               Returns the current record's "Ids" value
- * @method InoComprobante      setCaIdcomprobante()   Sets the current record's "ca_idcomprobante" value
- * @method InoComprobante      setCaId()              Sets the current record's "ca_id" value
- * @method InoComprobante      setCaIdtipo()          Sets the current record's "ca_idtipo" value
- * @method InoComprobante      setCaConsecutivo()     Sets the current record's "ca_consecutivo" value
- * @method InoComprobante      setCaFchcomprobante()  Sets the current record's "ca_fchcomprobante" value
- * @method InoComprobante      setCaIdmaestra()       Sets the current record's "ca_idmaestra" value
- * @method InoComprobante      setCaObservaciones()   Sets the current record's "ca_observaciones" value
- * @method InoComprobante      setCaFchcreado()       Sets the current record's "ca_fchcreado" value
- * @method InoComprobante      setCaUsucreado()       Sets the current record's "ca_usucreado" value
- * @method InoComprobante      setCaFchactualizado()  Sets the current record's "ca_fchactualizado" value
- * @method InoComprobante      setCaUsuactualizado()  Sets the current record's "ca_usuactualizado" value
- * @method InoComprobante      setUsuCreado()         Sets the current record's "UsuCreado" value
- * @method InoComprobante      setUsuActualizado()    Sets the current record's "UsuActualizado" value
- * @method InoComprobante      setInoTransaccion()    Sets the current record's "InoTransaccion" collection
- * @method InoComprobante      setIds()               Sets the current record's "Ids" value
+ * @method integer             getCaIdcomprobante()    Returns the current record's "ca_idcomprobante" value
+ * @method integer             getCaId()               Returns the current record's "ca_id" value
+ * @method integer             getCaIdtipo()           Returns the current record's "ca_idtipo" value
+ * @method integer             getCaConsecutivo()      Returns the current record's "ca_consecutivo" value
+ * @method date                getCaFchcomprobante()   Returns the current record's "ca_fchcomprobante" value
+ * @method integer             getCaIdinocliente()     Returns the current record's "ca_idinocliente" value
+ * @method integer             getCaPlazo()            Returns the current record's "ca_plazo" value
+ * @method decimal             getCaTasacambio()       Returns the current record's "ca_tasacambio" value
+ * @method string              getCaObservaciones()    Returns the current record's "ca_observaciones" value
+ * @method integer             getCaEstado()           Returns the current record's "ca_estado" value
+ * @method timestamp           getCaFchcreado()        Returns the current record's "ca_fchcreado" value
+ * @method string              getCaUsucreado()        Returns the current record's "ca_usucreado" value
+ * @method timestamp           getCaFchactualizado()   Returns the current record's "ca_fchactualizado" value
+ * @method string              getCaUsuactualizado()   Returns the current record's "ca_usuactualizado" value
+ * @method Ids                 getIds()                Returns the current record's "Ids" value
+ * @method Usuario             getUsuCreado()          Returns the current record's "UsuCreado" value
+ * @method Usuario             getUsuActualizado()     Returns the current record's "UsuActualizado" value
+ * @method InoCliente          getInoCliente()         Returns the current record's "InoCliente" value
+ * @method Doctrine_Collection getInoTransaccion()     Returns the current record's "InoTransaccion" collection
+ * @method InoTipoComprobante  getInoTipoComprobante() Returns the current record's "InoTipoComprobante" value
+ * @method InoComprobante      setCaIdcomprobante()    Sets the current record's "ca_idcomprobante" value
+ * @method InoComprobante      setCaId()               Sets the current record's "ca_id" value
+ * @method InoComprobante      setCaIdtipo()           Sets the current record's "ca_idtipo" value
+ * @method InoComprobante      setCaConsecutivo()      Sets the current record's "ca_consecutivo" value
+ * @method InoComprobante      setCaFchcomprobante()   Sets the current record's "ca_fchcomprobante" value
+ * @method InoComprobante      setCaIdinocliente()     Sets the current record's "ca_idinocliente" value
+ * @method InoComprobante      setCaPlazo()            Sets the current record's "ca_plazo" value
+ * @method InoComprobante      setCaTasacambio()       Sets the current record's "ca_tasacambio" value
+ * @method InoComprobante      setCaObservaciones()    Sets the current record's "ca_observaciones" value
+ * @method InoComprobante      setCaEstado()           Sets the current record's "ca_estado" value
+ * @method InoComprobante      setCaFchcreado()        Sets the current record's "ca_fchcreado" value
+ * @method InoComprobante      setCaUsucreado()        Sets the current record's "ca_usucreado" value
+ * @method InoComprobante      setCaFchactualizado()   Sets the current record's "ca_fchactualizado" value
+ * @method InoComprobante      setCaUsuactualizado()   Sets the current record's "ca_usuactualizado" value
+ * @method InoComprobante      setIds()                Sets the current record's "Ids" value
+ * @method InoComprobante      setUsuCreado()          Sets the current record's "UsuCreado" value
+ * @method InoComprobante      setUsuActualizado()     Sets the current record's "UsuActualizado" value
+ * @method InoComprobante      setInoCliente()         Sets the current record's "InoCliente" value
+ * @method InoComprobante      setInoTransaccion()     Sets the current record's "InoTransaccion" collection
+ * @method InoComprobante      setInoTipoComprobante() Sets the current record's "InoTipoComprobante" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseInoComprobante extends myDoctrineRecord
 {
@@ -79,11 +94,20 @@ abstract class BaseInoComprobante extends myDoctrineRecord
         $this->hasColumn('ca_fchcomprobante', 'date', null, array(
              'type' => 'date',
              ));
-        $this->hasColumn('ca_idmaestra', 'integer', null, array(
+        $this->hasColumn('ca_idinocliente', 'integer', null, array(
              'type' => 'integer',
+             ));
+        $this->hasColumn('ca_plazo', 'integer', null, array(
+             'type' => 'integer',
+             ));
+        $this->hasColumn('ca_tasacambio', 'decimal', null, array(
+             'type' => 'decimal',
              ));
         $this->hasColumn('ca_observaciones', 'string', null, array(
              'type' => 'string',
+             ));
+        $this->hasColumn('ca_estado', 'integer', null, array(
+             'type' => 'integer',
              ));
         $this->hasColumn('ca_fchcreado', 'timestamp', null, array(
              'type' => 'timestamp',
@@ -107,6 +131,10 @@ abstract class BaseInoComprobante extends myDoctrineRecord
     public function setUp()
     {
         parent::setUp();
+        $this->hasOne('Ids', array(
+             'local' => 'ca_id',
+             'foreign' => 'ca_id'));
+
         $this->hasOne('Usuario as UsuCreado', array(
              'local' => 'ca_usucreado',
              'foreign' => 'ca_login'));
@@ -115,12 +143,16 @@ abstract class BaseInoComprobante extends myDoctrineRecord
              'local' => 'ca_usuactualizado',
              'foreign' => 'ca_login'));
 
+        $this->hasOne('InoCliente', array(
+             'local' => 'ca_idinocliente',
+             'foreign' => 'ca_idinocliente'));
+
         $this->hasMany('InoTransaccion', array(
              'local' => 'ca_idcomprobante',
              'foreign' => 'ca_idcomprobante'));
 
-        $this->hasOne('Ids', array(
-             'local' => 'ca_id',
-             'foreign' => 'ca_id'));
+        $this->hasOne('InoTipoComprobante', array(
+             'local' => 'ca_idtipo',
+             'foreign' => 'ca_idtipo'));
     }
 }

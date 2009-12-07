@@ -16,10 +16,10 @@
  * @method Notificacion setCaIdemail()  Sets the current record's "ca_idemail" value
  * @method Notificacion setNotTarea()   Sets the current record's "NotTarea" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseNotificacion extends myDoctrineRecord
 {
@@ -34,9 +34,6 @@ abstract class BaseNotificacion extends myDoctrineRecord
              'type' => 'integer',
              'primary' => true,
              ));
-
-
-        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
 
         $this->option('symfony', array(
              'form' => false,

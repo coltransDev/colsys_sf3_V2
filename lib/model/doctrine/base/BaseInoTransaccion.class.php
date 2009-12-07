@@ -9,6 +9,7 @@
  * @property integer $ca_idcomprobante
  * @property integer $ca_idcuenta
  * @property integer $ca_idconcepto
+ * @property integer $ca_idccosto
  * @property integer $ca_id
  * @property decimal $ca_db
  * @property decimal $ca_cr
@@ -17,6 +18,7 @@
  * @property timestamp $ca_fchcreado
  * @property string $ca_usucreado
  * @property InoCliente $InoCliente
+ * @property InoCentroCosto $InoCentroCosto
  * @property Usuario $UsuCreado
  * @property InoComprobante $InoComprobante
  * @property InoCuenta $InoCuenta
@@ -26,6 +28,7 @@
  * @method integer        getCaIdcomprobante()  Returns the current record's "ca_idcomprobante" value
  * @method integer        getCaIdcuenta()       Returns the current record's "ca_idcuenta" value
  * @method integer        getCaIdconcepto()     Returns the current record's "ca_idconcepto" value
+ * @method integer        getCaIdccosto()       Returns the current record's "ca_idccosto" value
  * @method integer        getCaId()             Returns the current record's "ca_id" value
  * @method decimal        getCaDb()             Returns the current record's "ca_db" value
  * @method decimal        getCaCr()             Returns the current record's "ca_cr" value
@@ -34,6 +37,7 @@
  * @method timestamp      getCaFchcreado()      Returns the current record's "ca_fchcreado" value
  * @method string         getCaUsucreado()      Returns the current record's "ca_usucreado" value
  * @method InoCliente     getInoCliente()       Returns the current record's "InoCliente" value
+ * @method InoCentroCosto getInoCentroCosto()   Returns the current record's "InoCentroCosto" value
  * @method Usuario        getUsuCreado()        Returns the current record's "UsuCreado" value
  * @method InoComprobante getInoComprobante()   Returns the current record's "InoComprobante" value
  * @method InoCuenta      getInoCuenta()        Returns the current record's "InoCuenta" value
@@ -42,6 +46,7 @@
  * @method InoTransaccion setCaIdcomprobante()  Sets the current record's "ca_idcomprobante" value
  * @method InoTransaccion setCaIdcuenta()       Sets the current record's "ca_idcuenta" value
  * @method InoTransaccion setCaIdconcepto()     Sets the current record's "ca_idconcepto" value
+ * @method InoTransaccion setCaIdccosto()       Sets the current record's "ca_idccosto" value
  * @method InoTransaccion setCaId()             Sets the current record's "ca_id" value
  * @method InoTransaccion setCaDb()             Sets the current record's "ca_db" value
  * @method InoTransaccion setCaCr()             Sets the current record's "ca_cr" value
@@ -50,15 +55,16 @@
  * @method InoTransaccion setCaFchcreado()      Sets the current record's "ca_fchcreado" value
  * @method InoTransaccion setCaUsucreado()      Sets the current record's "ca_usucreado" value
  * @method InoTransaccion setInoCliente()       Sets the current record's "InoCliente" value
+ * @method InoTransaccion setInoCentroCosto()   Sets the current record's "InoCentroCosto" value
  * @method InoTransaccion setUsuCreado()        Sets the current record's "UsuCreado" value
  * @method InoTransaccion setInoComprobante()   Sets the current record's "InoComprobante" value
  * @method InoTransaccion setInoCuenta()        Sets the current record's "InoCuenta" value
  * @method InoTransaccion setInoConcepto()      Sets the current record's "InoConcepto" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseInoTransaccion extends myDoctrineRecord
 {
@@ -77,6 +83,9 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
              'type' => 'integer',
              ));
         $this->hasColumn('ca_idconcepto', 'integer', null, array(
+             'type' => 'integer',
+             ));
+        $this->hasColumn('ca_idccosto', 'integer', null, array(
              'type' => 'integer',
              ));
         $this->hasColumn('ca_id', 'integer', null, array(
@@ -113,6 +122,10 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
         $this->hasOne('InoCliente', array(
              'local' => 'ca_idinocliente',
              'foreign' => 'ca_idinocliente'));
+
+        $this->hasOne('InoCentroCosto', array(
+             'local' => 'ca_idccosto',
+             'foreign' => 'ca_idccosto'));
 
         $this->hasOne('Usuario as UsuCreado', array(
              'local' => 'ca_usucreado',

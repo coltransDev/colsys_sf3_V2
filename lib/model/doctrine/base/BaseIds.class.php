@@ -21,9 +21,11 @@
  * @property Doctrine_Collection $IdsSucursal
  * @property IdsAgente $IdsAgente
  * @property IdsProveedor $IdsProveedor
+ * @property IdsEmpresa $IdsEmpresa
  * @property Doctrine_Collection $IdsDocumento
  * @property Doctrine_Collection $IdsEvento
  * @property Doctrine_Collection $IdsEvaluacion
+ * @property Doctrine_Collection $InoCliente
  * @property Doctrine_Collection $InoComprobante
  * 
  * @method integer             getCaId()                  Returns the current record's "ca_id" value
@@ -42,9 +44,11 @@
  * @method Doctrine_Collection getIdsSucursal()           Returns the current record's "IdsSucursal" collection
  * @method IdsAgente           getIdsAgente()             Returns the current record's "IdsAgente" value
  * @method IdsProveedor        getIdsProveedor()          Returns the current record's "IdsProveedor" value
+ * @method IdsEmpresa          getIdsEmpresa()            Returns the current record's "IdsEmpresa" value
  * @method Doctrine_Collection getIdsDocumento()          Returns the current record's "IdsDocumento" collection
  * @method Doctrine_Collection getIdsEvento()             Returns the current record's "IdsEvento" collection
  * @method Doctrine_Collection getIdsEvaluacion()         Returns the current record's "IdsEvaluacion" collection
+ * @method Doctrine_Collection getInoCliente()            Returns the current record's "InoCliente" collection
  * @method Doctrine_Collection getInoComprobante()        Returns the current record's "InoComprobante" collection
  * @method Ids                 setCaId()                  Sets the current record's "ca_id" value
  * @method Ids                 setCaDv()                  Sets the current record's "ca_dv" value
@@ -62,15 +66,17 @@
  * @method Ids                 setIdsSucursal()           Sets the current record's "IdsSucursal" collection
  * @method Ids                 setIdsAgente()             Sets the current record's "IdsAgente" value
  * @method Ids                 setIdsProveedor()          Sets the current record's "IdsProveedor" value
+ * @method Ids                 setIdsEmpresa()            Sets the current record's "IdsEmpresa" value
  * @method Ids                 setIdsDocumento()          Sets the current record's "IdsDocumento" collection
  * @method Ids                 setIdsEvento()             Sets the current record's "IdsEvento" collection
  * @method Ids                 setIdsEvaluacion()         Sets the current record's "IdsEvaluacion" collection
+ * @method Ids                 setInoCliente()            Sets the current record's "InoCliente" collection
  * @method Ids                 setInoComprobante()        Sets the current record's "InoComprobante" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseIds extends myDoctrineRecord
 {
@@ -146,6 +152,10 @@ abstract class BaseIds extends myDoctrineRecord
              'local' => 'ca_id',
              'foreign' => 'ca_idproveedor'));
 
+        $this->hasOne('IdsEmpresa', array(
+             'local' => 'ca_id',
+             'foreign' => 'ca_idempresa'));
+
         $this->hasMany('IdsDocumento', array(
              'local' => 'ca_id',
              'foreign' => 'ca_id'));
@@ -157,6 +167,10 @@ abstract class BaseIds extends myDoctrineRecord
         $this->hasMany('IdsEvaluacion', array(
              'local' => 'ca_id',
              'foreign' => 'ca_id'));
+
+        $this->hasMany('InoCliente', array(
+             'local' => 'ca_id',
+             'foreign' => 'ca_idcliente'));
 
         $this->hasMany('InoComprobante', array(
              'local' => 'ca_id',

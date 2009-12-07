@@ -13,6 +13,7 @@
  * @property Doctrine_Collection $CotProducto
  * @property Doctrine_Collection $CotContinuacion
  * @property Doctrine_Collection $IdsSucursal
+ * @property Doctrine_Collection $InoMaestra
  * @property Doctrine_Collection $Trayecto
  * @property Doctrine_Collection $PricRecargoxCiudad
  * @property Doctrine_Collection $PricRecargoxCiudadBs
@@ -31,6 +32,7 @@
  * @method Doctrine_Collection getCotProducto()          Returns the current record's "CotProducto" collection
  * @method Doctrine_Collection getCotContinuacion()      Returns the current record's "CotContinuacion" collection
  * @method Doctrine_Collection getIdsSucursal()          Returns the current record's "IdsSucursal" collection
+ * @method Doctrine_Collection getInoMaestra()           Returns the current record's "InoMaestra" collection
  * @method Doctrine_Collection getTrayecto()             Returns the current record's "Trayecto" collection
  * @method Doctrine_Collection getPricRecargoxCiudad()   Returns the current record's "PricRecargoxCiudad" collection
  * @method Doctrine_Collection getPricRecargoxCiudadBs() Returns the current record's "PricRecargoxCiudadBs" collection
@@ -48,6 +50,7 @@
  * @method Ciudad              setCotProducto()          Sets the current record's "CotProducto" collection
  * @method Ciudad              setCotContinuacion()      Sets the current record's "CotContinuacion" collection
  * @method Ciudad              setIdsSucursal()          Sets the current record's "IdsSucursal" collection
+ * @method Ciudad              setInoMaestra()           Sets the current record's "InoMaestra" collection
  * @method Ciudad              setTrayecto()             Sets the current record's "Trayecto" collection
  * @method Ciudad              setPricRecargoxCiudad()   Sets the current record's "PricRecargoxCiudad" collection
  * @method Ciudad              setPricRecargoxCiudadBs() Sets the current record's "PricRecargoxCiudadBs" collection
@@ -58,10 +61,10 @@
  * @method Ciudad              setInoMaestraSea()        Sets the current record's "InoMaestraSea" collection
  * @method Ciudad              setInoClientesSea()       Sets the current record's "InoClientesSea" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseCiudad extends myDoctrineRecord
 {
@@ -120,6 +123,10 @@ abstract class BaseCiudad extends myDoctrineRecord
         $this->hasMany('IdsSucursal', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_idciudad'));
+
+        $this->hasMany('InoMaestra', array(
+             'local' => 'ca_idciudad',
+             'foreign' => 'ca_origen'));
 
         $this->hasMany('Trayecto', array(
              'local' => 'ca_idciudad',

@@ -19,10 +19,10 @@
  * @method CotContactoAg setCotizacion()      Sets the current record's "Cotizacion" value
  * @method CotContactoAg setIdsContacto()     Sets the current record's "IdsContacto" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseCotContactoAg extends myDoctrineRecord
 {
@@ -37,9 +37,6 @@ abstract class BaseCotContactoAg extends myDoctrineRecord
              'type' => 'integer',
              'primary' => true,
              ));
-
-
-        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
 
         $this->option('symfony', array(
              'form' => false,

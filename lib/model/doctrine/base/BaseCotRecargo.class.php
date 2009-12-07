@@ -67,10 +67,10 @@
  * @method CotRecargo  setConcepto()          Sets the current record's "Concepto" value
  * @method CotRecargo  setTipoRecargo()       Sets the current record's "TipoRecargo" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseCotRecargo extends myDoctrineRecord
 {
@@ -135,9 +135,6 @@ abstract class BaseCotRecargo extends myDoctrineRecord
         $this->hasColumn('ca_fchactualizado', 'timestamp', null, array(
              'type' => 'timestamp',
              ));
-
-
-        $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
 
         $this->option('symfony', array(
              'form' => false,

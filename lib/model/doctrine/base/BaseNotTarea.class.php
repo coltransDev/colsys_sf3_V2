@@ -73,10 +73,10 @@
  * @method NotTarea            setHdeskTicket()        Sets the current record's "HdeskTicket" collection
  * @method NotTarea            setNotTareaAsignacion() Sets the current record's "NotTareaAsignacion" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseNotTarea extends myDoctrineRecord
 {
@@ -128,9 +128,6 @@ abstract class BaseNotTarea extends myDoctrineRecord
              'type' => 'string',
              ));
 
-
-        
-
         $this->option('symfony', array(
              'form' => false,
              'filter' => false,
@@ -158,7 +155,7 @@ abstract class BaseNotTarea extends myDoctrineRecord
 
         $this->hasMany('Cotizacion', array(
              'local' => 'ca_idtarea',
-             'foreign' => 'ca_idg_envio_oportuno'));
+             'foreign' => 'ca_idtarea'));
 
         $this->hasMany('CotProducto', array(
              'local' => 'ca_idtarea',

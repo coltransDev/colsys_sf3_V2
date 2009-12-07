@@ -40,10 +40,10 @@
  * @method InoEquiposSea setInoMaestraSea()     Sets the current record's "InoMaestraSea" value
  * @method InoEquiposSea setConcepto()          Sets the current record's "Concepto" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseInoEquiposSea extends myDoctrineRecord
 {

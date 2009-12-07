@@ -157,10 +157,10 @@
  * @method InoMaestraSea       setDestino()                Sets the current record's "Destino" value
  * @method InoMaestraSea       setInoContratosSea()        Sets the current record's "InoContratosSea" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseInoMaestraSea extends myDoctrineRecord
 {

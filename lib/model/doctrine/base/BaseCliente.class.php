@@ -36,7 +36,6 @@
  * @property Doctrine_Collection $Contacto
  * @property Usuario $Usuario
  * @property Ciudad $Ciudad
- * @property Doctrine_Collection $InoCliente
  * @property Doctrine_Collection $InoClientesSea
  * 
  * @method integer             getCaIdcliente()     Returns the current record's "ca_idcliente" value
@@ -70,7 +69,6 @@
  * @method Doctrine_Collection getContacto()        Returns the current record's "Contacto" collection
  * @method Usuario             getUsuario()         Returns the current record's "Usuario" value
  * @method Ciudad              getCiudad()          Returns the current record's "Ciudad" value
- * @method Doctrine_Collection getInoCliente()      Returns the current record's "InoCliente" collection
  * @method Doctrine_Collection getInoClientesSea()  Returns the current record's "InoClientesSea" collection
  * @method Cliente             setCaIdcliente()     Sets the current record's "ca_idcliente" value
  * @method Cliente             setCaDigito()        Sets the current record's "ca_digito" value
@@ -103,13 +101,12 @@
  * @method Cliente             setContacto()        Sets the current record's "Contacto" collection
  * @method Cliente             setUsuario()         Sets the current record's "Usuario" value
  * @method Cliente             setCiudad()          Sets the current record's "Ciudad" value
- * @method Cliente             setInoCliente()      Sets the current record's "InoCliente" collection
  * @method Cliente             setInoClientesSea()  Sets the current record's "InoClientesSea" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseCliente extends myDoctrineRecord
 {
@@ -222,10 +219,6 @@ abstract class BaseCliente extends myDoctrineRecord
         $this->hasOne('Ciudad', array(
              'local' => 'ca_idciudad',
              'foreign' => 'ca_idciudad'));
-
-        $this->hasMany('InoCliente', array(
-             'local' => 'ca_idcliente',
-             'foreign' => 'ca_idcliente'));
 
         $this->hasMany('InoClientesSea', array(
              'local' => 'ca_idcliente',

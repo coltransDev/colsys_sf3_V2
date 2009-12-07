@@ -55,10 +55,10 @@
  * @method RepExpo setReporte()             Sets the current record's "Reporte" value
  * @method RepExpo setSia()                 Sets the current record's "Sia" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseRepExpo extends myDoctrineRecord
 {
@@ -113,7 +113,7 @@ abstract class BaseRepExpo extends myDoctrineRecord
         $this->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_TABLES);
 
         $this->option('symfony', array(
-             'form' => false,
+             'form' => true,
              'filter' => false,
              ));
     }

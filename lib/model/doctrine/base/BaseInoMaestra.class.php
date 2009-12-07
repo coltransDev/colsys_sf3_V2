@@ -8,7 +8,11 @@
  * @property integer $ca_idmaestra
  * @property date $ca_fchreferencia
  * @property string $ca_referencia
- * @property integer $ca_idtrayecto
+ * @property integer $ca_idmodalidad
+ * @property string $ca_origen
+ * @property string $ca_destino
+ * @property integer $ca_idlinea
+ * @property integer $ca_idagente
  * @property string $ca_master
  * @property date $ca_fchmaster
  * @property decimal $ca_piezas
@@ -26,7 +30,10 @@
  * @property timestamp $ca_fchanulado
  * @property string $ca_usuanulado
  * @property Doctrine_Collection $InoCliente
- * @property Trayecto $Trayecto
+ * @property Modalidad $Modalidad
+ * @property Ciudad $Origen
+ * @property Ciudad $Destino
+ * @property IdsProveedor $IdsProveedor
  * @property Usuario $UsuCreado
  * @property Usuario $UsuActualizado
  * @property Usuario $UsuLiquidado
@@ -36,7 +43,11 @@
  * @method integer             getCaIdmaestra()       Returns the current record's "ca_idmaestra" value
  * @method date                getCaFchreferencia()   Returns the current record's "ca_fchreferencia" value
  * @method string              getCaReferencia()      Returns the current record's "ca_referencia" value
- * @method integer             getCaIdtrayecto()      Returns the current record's "ca_idtrayecto" value
+ * @method integer             getCaIdmodalidad()     Returns the current record's "ca_idmodalidad" value
+ * @method string              getCaOrigen()          Returns the current record's "ca_origen" value
+ * @method string              getCaDestino()         Returns the current record's "ca_destino" value
+ * @method integer             getCaIdlinea()         Returns the current record's "ca_idlinea" value
+ * @method integer             getCaIdagente()        Returns the current record's "ca_idagente" value
  * @method string              getCaMaster()          Returns the current record's "ca_master" value
  * @method date                getCaFchmaster()       Returns the current record's "ca_fchmaster" value
  * @method decimal             getCaPiezas()          Returns the current record's "ca_piezas" value
@@ -54,7 +65,10 @@
  * @method timestamp           getCaFchanulado()      Returns the current record's "ca_fchanulado" value
  * @method string              getCaUsuanulado()      Returns the current record's "ca_usuanulado" value
  * @method Doctrine_Collection getInoCliente()        Returns the current record's "InoCliente" collection
- * @method Trayecto            getTrayecto()          Returns the current record's "Trayecto" value
+ * @method Modalidad           getModalidad()         Returns the current record's "Modalidad" value
+ * @method Ciudad              getOrigen()            Returns the current record's "Origen" value
+ * @method Ciudad              getDestino()           Returns the current record's "Destino" value
+ * @method IdsProveedor        getIdsProveedor()      Returns the current record's "IdsProveedor" value
  * @method Usuario             getUsuCreado()         Returns the current record's "UsuCreado" value
  * @method Usuario             getUsuActualizado()    Returns the current record's "UsuActualizado" value
  * @method Usuario             getUsuLiquidado()      Returns the current record's "UsuLiquidado" value
@@ -63,7 +77,11 @@
  * @method InoMaestra          setCaIdmaestra()       Sets the current record's "ca_idmaestra" value
  * @method InoMaestra          setCaFchreferencia()   Sets the current record's "ca_fchreferencia" value
  * @method InoMaestra          setCaReferencia()      Sets the current record's "ca_referencia" value
- * @method InoMaestra          setCaIdtrayecto()      Sets the current record's "ca_idtrayecto" value
+ * @method InoMaestra          setCaIdmodalidad()     Sets the current record's "ca_idmodalidad" value
+ * @method InoMaestra          setCaOrigen()          Sets the current record's "ca_origen" value
+ * @method InoMaestra          setCaDestino()         Sets the current record's "ca_destino" value
+ * @method InoMaestra          setCaIdlinea()         Sets the current record's "ca_idlinea" value
+ * @method InoMaestra          setCaIdagente()        Sets the current record's "ca_idagente" value
  * @method InoMaestra          setCaMaster()          Sets the current record's "ca_master" value
  * @method InoMaestra          setCaFchmaster()       Sets the current record's "ca_fchmaster" value
  * @method InoMaestra          setCaPiezas()          Sets the current record's "ca_piezas" value
@@ -81,17 +99,20 @@
  * @method InoMaestra          setCaFchanulado()      Sets the current record's "ca_fchanulado" value
  * @method InoMaestra          setCaUsuanulado()      Sets the current record's "ca_usuanulado" value
  * @method InoMaestra          setInoCliente()        Sets the current record's "InoCliente" collection
- * @method InoMaestra          setTrayecto()          Sets the current record's "Trayecto" value
+ * @method InoMaestra          setModalidad()         Sets the current record's "Modalidad" value
+ * @method InoMaestra          setOrigen()            Sets the current record's "Origen" value
+ * @method InoMaestra          setDestino()           Sets the current record's "Destino" value
+ * @method InoMaestra          setIdsProveedor()      Sets the current record's "IdsProveedor" value
  * @method InoMaestra          setUsuCreado()         Sets the current record's "UsuCreado" value
  * @method InoMaestra          setUsuActualizado()    Sets the current record's "UsuActualizado" value
  * @method InoMaestra          setUsuLiquidado()      Sets the current record's "UsuLiquidado" value
  * @method InoMaestra          setUsuCerrado()        Sets the current record's "UsuCerrado" value
  * @method InoMaestra          setUsuAnulado()        Sets the current record's "UsuAnulado" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
- * @version    SVN: $Id: Builder.php 6716 2009-11-12 19:26:28Z jwage $
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
+ * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseInoMaestra extends myDoctrineRecord
 {
@@ -106,12 +127,28 @@ abstract class BaseInoMaestra extends myDoctrineRecord
         $this->hasColumn('ca_fchreferencia', 'date', null, array(
              'type' => 'date',
              ));
-        $this->hasColumn('ca_referencia', 'string', null, array(
+        $this->hasColumn('ca_referencia', 'string', 15, array(
              'type' => 'string',
+             'length' => '15',
              ));
-        $this->hasColumn('ca_idtrayecto', 'integer', null, array(
+        $this->hasColumn('ca_idmodalidad', 'integer', null, array(
              'type' => 'integer',
              'notnull' => true,
+             ));
+        $this->hasColumn('ca_origen', 'string', null, array(
+             'type' => 'string',
+             'notnull' => true,
+             ));
+        $this->hasColumn('ca_destino', 'string', null, array(
+             'type' => 'string',
+             'notnull' => true,
+             ));
+        $this->hasColumn('ca_idlinea', 'integer', null, array(
+             'type' => 'integer',
+             'notnull' => true,
+             ));
+        $this->hasColumn('ca_idagente', 'integer', null, array(
+             'type' => 'integer',
              ));
         $this->hasColumn('ca_master', 'string', null, array(
              'type' => 'string',
@@ -172,9 +209,21 @@ abstract class BaseInoMaestra extends myDoctrineRecord
              'local' => 'ca_idmaestra',
              'foreign' => 'ca_idmaestra'));
 
-        $this->hasOne('Trayecto', array(
-             'local' => 'ca_idtrayecto',
-             'foreign' => 'ca_idtrayecto'));
+        $this->hasOne('Modalidad', array(
+             'local' => 'ca_idmodalidad',
+             'foreign' => 'ca_idmodalidad'));
+
+        $this->hasOne('Ciudad as Origen', array(
+             'local' => 'ca_origen',
+             'foreign' => 'ca_idciudad'));
+
+        $this->hasOne('Ciudad as Destino', array(
+             'local' => 'ca_destino',
+             'foreign' => 'ca_idciudad'));
+
+        $this->hasOne('IdsProveedor', array(
+             'local' => 'ca_idlinea',
+             'foreign' => 'ca_idproveedor'));
 
         $this->hasOne('Usuario as UsuCreado', array(
              'local' => 'ca_usucreado',
