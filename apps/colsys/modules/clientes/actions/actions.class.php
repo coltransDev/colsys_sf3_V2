@@ -145,21 +145,25 @@ class clientesActions extends sfActions
                 $stdcliente->save();
             }
 
+            $idClientesSinBeneficio = array();
             $stmt = LibClienteTable::liberacionEstado(null);
 
-            while($row = $stmt->fetch()) {
+            while($row = $stmt->fetch() ) {
+                $idClientesSinBeneficio[] = $row["ca_idcliente"];
+            }
 
-		$libcliente = Doctrine::getTable("LibCliente")->find($row["ca_idcliente"]);
-
-		$this->forward404Unless( $libcliente );
-
-                $libcliente->setCaDiascredito(0);
-                $libcliente->setCaCupo(0);
-                $libcliente->setCaObservaciones("Pierde Beneficios por Cambio de Estado. ".$libcliente->getCaObservaciones());
-                $libcliente->setCaUsuactualizado('Administrador');
-                $libcliente->setCaFchactualizado($fchestado);
-
-                $libcliente->save();
+            if ( count($idClientesSinBeneficio) > 0 ){
+                Doctrine_Query::create()
+                          ->update()
+                          ->from("LibCliente l")
+                          ->set("ca_cupo", 0)
+                          ->set("ca_diascredito", 0)
+                          ->set("ca_usuactualizado", "'Administrador'")
+                          ->set("ca_fchactualizado", "'$fchestado'")
+                          ->set("l.ca_observaciones", "'Pierde Beneficios por Cambio de Estado.\n'||l.ca_observaciones" )
+                          ->whereIn("ca_idcliente", $idClientesSinBeneficio )
+                          ->addWhere("ca_diascredito != 0 OR ca_cupo != 0")
+                          ->execute();
             }
 
             $layout =  $this->getRequestParameter("layout");
@@ -167,9 +171,7 @@ class clientesActions extends sfActions
                 $this->setLayout($layout);
             }
 
-
         }
-
 
         public function executeReporteEstados() {
             set_time_limit(0);
@@ -225,21 +227,68 @@ class clientesActions extends sfActions
             }
         }
 
-        public function executeReporteCircular() {
+        public function executeReporteCircular( $request ) {
             set_time_limit(0);
             $inicio =  $this->getRequestParameter("fchStart");
             $final =  $this->getRequestParameter("fchEnd");
             $sucursal =  $this->getRequestParameter("sucursal");
+            $vendedor =  $this->getRequestParameter("vendedor");
 
             $this->clientesCircular = array();
+            $this->clientesSinCircular = array();
+            $this->clientesSinVisita = array();
+            $this->clientesSinBeneficio = array();
 
-            $stmt = ClienteTable::circularClientes( $inicio, $final, $sucursal );
+            $stmt = ClienteTable::circularClientes( $inicio, $final, $sucursal, $vendedor );
             while($row = $stmt->fetch() ) {
                 $this->clientesCircular[] = $row;
             }
+
+            $stmt = ClienteTable::clientesSinCircular( $final, $sucursal, $vendedor );
+            while($row = $stmt->fetch() ) {
+                $this->clientesSinCircular[] = $row;
+            }
+
+            $stmt = ClienteTable::clientesSinVisita( $final, $sucursal, $vendedor );
+            while($row = $stmt->fetch() ) {
+                $this->clientesSinVisita[] = $row;
+            }
+
+            // Si es el proceso Automático que se ejecuta los 20 de cada mes, verifica los Clientes que tienen más de 60 días
+            // con la Circular 0170 vencida y retira beneficios de Cupo y Tiempo de C?edito.
+
             $this->inicio = $inicio;
             $this->final = $final;
-            $layout =  $this->getRequestParameter("layout");
+            // if( sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){
+                $idClientesSinBeneficio = array();
+                list($year, $month, $day) = sscanf($final, "%d-%d-%d");
+                $inicio = date('Y-m-d',mktime(0,0,0,$month-1,0,$year-5));
+                $final = date('Y-m-d',mktime(0,0,0,$month-1,0,$year));
+                $fchmotivo = date('Y-m-d H:i:s');
+
+                $stmt = ClienteTable::pierdenBeneficios( $final, $sucursal, $vendedor );
+                while($row = $stmt->fetch() ) {
+                    $this->clientesSinBeneficio[] = $row;
+                    $idClientesSinBeneficio[] = $row["ca_idcliente"];
+                }
+
+                if ( count($idClientesSinBeneficio) > 0 ){
+                    Doctrine_Query::create()
+                              ->update()
+                              ->from("LibCliente l")
+                              ->set("ca_cupo", 0)
+                              ->set("ca_diascredito", 0)
+                              ->set("ca_usuactualizado", "'Administrador'")
+                              ->set("ca_fchactualizado", "'".date("Y-m-d H:i:s")."'")
+                              ->set("l.ca_observaciones", "'Pierde Beneficios por Vencimiento de Circular 0170.\n'||l.ca_observaciones" )
+                              ->whereIn("ca_idcliente", $idClientesSinBeneficio )
+                              ->addWhere("ca_diascredito != 0 OR ca_cupo != 0")
+                              ->execute();
+                }
+
+            // }
+
+            $layout = $this->getRequestParameter("layout");
             if( $layout ) {
                 $this->setLayout($layout);
             }
@@ -294,7 +343,6 @@ class clientesActions extends sfActions
             $email->save();
             $email->send();
 
-
         }
 
         public function executeReporteCircularEmail() {
@@ -314,36 +362,48 @@ class clientesActions extends sfActions
                     $ccEmails = array($parametro->getCaValor2());
                 }
             }
-            $email = new Email();
-            $email->setCaUsuenvio( "Administrador" );
-            $email->setCaTipo( "CircularClientes" );
-            $email->setCaIdcaso( "1" );
-            $email->setCaFrom( "admin@coltrans.com.co" );
-            $email->setCaFromname( "Administrador Sistema Colsys" );
-            $email->setCaReplyto( "admin@coltrans.com.co" );
 
-            while (list ($clave, $val) = each ($defaultEmail)) {
-                $email->addTo( $val );
+            $comerciales = UsuarioTable::getComerciales();
+            foreach( $comerciales as $comercial ) {
+
+                $email = new Email();
+                $email->setCaUsuenvio( "Administrador" );
+                $email->setCaTipo( "CircularClientes" );
+                $email->setCaIdcaso( "1" );
+                $email->setCaFrom( "admin@coltrans.com.co" );
+                $email->setCaFromname( "Administrador Sistema Colsys" );
+                $email->setCaReplyto( "admin@coltrans.com.co" );
+
+                $email->addTo( $comercial->getCaEmail() );
+                reset($defaultEmail);
+                while (list ($clave, $val) = each ($defaultEmail)) {
+                    $email->addCc( $val );
+                }
+                reset($ccEmails);
+                while (list ($clave, $val) = each ($ccEmails)) {
+                    $email->addCc( $val );
+                }
+
+                $inicio =  $this->getRequestParameter("fchStart");
+                $final =  $this->getRequestParameter("fchEnd");
+                $sucursal = $comercial->getCaSucursal();
+                $vendedor = $comercial->getCaLogin();
+
+                $this->getRequest()->setParameter("fchStart", $inicio);
+                $this->getRequest()->setParameter("fchEnd", $final);
+                $this->getRequest()->setParameter("sucursal", $sucursal);
+                $this->getRequest()->setParameter("vendedor", $vendedor);
+
+                $this->getRequest()->setParameter("layout", "email");
+
+                $email->setCaSubject( "Clientes Activos con Vencimiento de Circular 170 a : $inicio - $vendedor" );
+                $email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircular') );
+
+                $email->save();
+                // $email->send();
+
             }
 
-            while (list ($clave, $val) = each ($ccEmails)) {
-                $email->addCc( $val );
-            }
-
-            $inicio =  $this->getRequestParameter("fchStart");
-            $final =  $this->getRequestParameter("fchEnd");
-            $sucursal =  $this->getRequestParameter("sucursal");
-
-            $this->getRequest()->setParameter("fchStart", $inicio);
-            $this->getRequest()->setParameter("fchEnd", $final);
-            $this->getRequest()->setParameter("sucursal", $sucursal);
-            $this->getRequest()->setParameter("layout", "email");
-
-            $email->setCaSubject( "Cliente con Vencimiento de Circular 170 a : $inicio" );
-            $email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircular') );
-
-            $email->save();
-            $email->send();
         }
 
 	public function executeReporteListaClinton(){
@@ -605,7 +665,7 @@ class clientesActions extends sfActions
                             while (list ($clave, $val) = each ($ccEmails)) {
                                 $email->addCc( $val );
                             }
-                            $email->setCaSubject( "Verificación Clientes en Lista Clinton" );
+                            $email->setCaSubject( "Verificación Clientes en Lista Clinton $ven_mem" );
                             $email->setCaBodyhtml( $msn_mem );
                             $email->save(); //guarda el cuerpo del mensaje
                             $email->send(); //envia el mensaje de correo
