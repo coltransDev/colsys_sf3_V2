@@ -9,11 +9,9 @@ class SdnTable extends Doctrine_Table
 	*/
 	public static function eliminarRegistros(){
 		$sql_array = array("delete from tb_sdnaddress","delete from tb_sdnaka","delete from tb_sdnid","delete from tb_sdn");
-		//$con = Propel::getConnection(SdnPeer::DATABASE_NAME);
                 $q = Doctrine_Manager::getInstance()->connection();
 		while (list ($clave, $sql) = each ($sql_array)) {
-			
-                    $stmt = $q->execute($query);
+                    $stmt = $q->execute($sql);
 		}
 		return;
 	}
@@ -23,7 +21,7 @@ class SdnTable extends Doctrine_Table
 	* @author Carlos G. López M.
 	*/
 	public static function evaluaClientes(){
-		
+
         $query = "select cl.ca_idcliente, cl.ca_compania, cl.ca_nombres, cl.ca_papellido, cl.ca_sapellido, cl.ca_vendedor,";
 		$query.= " sdnm.ca_uid as sdnm_uid, sdnm.ca_firstname as sdnm_firstname, sdnm.ca_lastname as sdnm_lastname, sdnm.ca_title as sdnm_title, sdnm.ca_sdntype as sdnm_sdntype, sdnm.ca_remarks as sdnm_remarks,";
 		$query.= " sdid.ca_uid_id as sdid_uid_id, sdid.ca_idtype as sdid_idtype, sdid.ca_idnumber as sdid_idnumber, sdid.ca_idcountry as sdid_idcountry, sdid.ca_issuedate as sdid_issuedate, sdid.ca_expirationdate as sdid_expirationdate,";
