@@ -156,11 +156,11 @@ class clientesActions extends sfActions
                 Doctrine_Query::create()
                           ->update()
                           ->from("LibCliente l")
+                          ->set("l.ca_observaciones", "'Pierde Beneficios por Cambio de Estado. [Cupo: '||ca_cupo||' Días: '||ca_diascredito||']\n'||l.ca_observaciones" )
                           ->set("ca_cupo", 0)
                           ->set("ca_diascredito", 0)
                           ->set("ca_usuactualizado", "'Administrador'")
                           ->set("ca_fchactualizado", "'$fchestado'")
-                          ->set("l.ca_observaciones", "'Pierde Beneficios por Cambio de Estado.\n'||l.ca_observaciones" )
                           ->whereIn("ca_idcliente", $idClientesSinBeneficio )
                           ->addWhere("ca_diascredito != 0 OR ca_cupo != 0")
                           ->execute();
@@ -234,21 +234,36 @@ class clientesActions extends sfActions
             $sucursal =  $this->getRequestParameter("sucursal");
             $vendedor =  $this->getRequestParameter("vendedor");
 
+            $this->inicio = $inicio;
+            $this->final = $final;
             $this->clientesCircular = array();
+            $this->clientesVenCircular = array();
             $this->clientesSinCircular = array();
             $this->clientesSinVisita = array();
             $this->clientesSinBeneficio = array();
+            list($year, $month, $day) = sscanf($final, "%d-%d-%d");
 
+            // Lista los Clientes a los cuales se les vence la Circular 0170 en el siguiente mes
             $stmt = ClienteTable::circularClientes( $inicio, $final, $sucursal, $vendedor );
             while($row = $stmt->fetch() ) {
                 $this->clientesCircular[] = $row;
             }
 
+            // Lista los Clientes que hasta antes de iniciar el periodo solicitado, tienen vencida la Circular 0170
+            $final = $inicio;
+            $inicio = date('Y-m-d',mktime(0,0,0,$month,0,$year-5));
+            $stmt = ClienteTable::circularClientes( $inicio, $final, $sucursal, $vendedor );
+            while($row = $stmt->fetch() ) {
+                $this->clientesVenCircular[] = $row;
+            }
+
+            // Lista los Clientes no tienen Circular 0170, sin importar la fecha
             $stmt = ClienteTable::clientesSinCircular( $final, $sucursal, $vendedor );
             while($row = $stmt->fetch() ) {
                 $this->clientesSinCircular[] = $row;
             }
 
+            // Lista los Clientes no tienen Encuesta de Visita
             $stmt = ClienteTable::clientesSinVisita( $final, $sucursal, $vendedor );
             while($row = $stmt->fetch() ) {
                 $this->clientesSinVisita[] = $row;
@@ -257,11 +272,8 @@ class clientesActions extends sfActions
             // Si es el proceso Automático que se ejecuta los 20 de cada mes, verifica los Clientes que tienen más de 60 días
             // con la Circular 0170 vencida y retira beneficios de Cupo y Tiempo de C?edito.
 
-            $this->inicio = $inicio;
-            $this->final = $final;
             // if( sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){
                 $idClientesSinBeneficio = array();
-                list($year, $month, $day) = sscanf($final, "%d-%d-%d");
                 $inicio = date('Y-m-d',mktime(0,0,0,$month-1,0,$year-5));
                 $final = date('Y-m-d',mktime(0,0,0,$month-1,0,$year));
                 $fchmotivo = date('Y-m-d H:i:s');
@@ -276,11 +288,11 @@ class clientesActions extends sfActions
                     Doctrine_Query::create()
                               ->update()
                               ->from("LibCliente l")
+                              ->set("l.ca_observaciones", "'Pierde Beneficios por Vencimiento de Circular 0170. [Cupo: '||ca_cupo||' Días: '||ca_diascredito||']\n'||l.ca_observaciones" )
                               ->set("ca_cupo", 0)
                               ->set("ca_diascredito", 0)
                               ->set("ca_usuactualizado", "'Administrador'")
                               ->set("ca_fchactualizado", "'".date("Y-m-d H:i:s")."'")
-                              ->set("l.ca_observaciones", "'Pierde Beneficios por Vencimiento de Circular 0170.\n'||l.ca_observaciones" )
                               ->whereIn("ca_idcliente", $idClientesSinBeneficio )
                               ->addWhere("ca_diascredito != 0 OR ca_cupo != 0")
                               ->execute();
@@ -400,7 +412,7 @@ class clientesActions extends sfActions
                 $email->setCaBodyhtml(  sfContext::getInstance()->getController()->getPresentationFor( 'clientes', 'reporteCircular') );
 
                 $email->save();
-                // $email->send();
+                $email->send();
 
             }
 
@@ -582,7 +594,8 @@ class clientesActions extends sfActions
                                 $id = $sdnEntry['uid'];
                                 $sdnEntryObj = new Sdn();
                                 while (list ($clave, $val) = each ($sdnEntry)) {
-                                    $campo = "setCa".ucwords($clave);
+                                    $campo = "setCa".ucfirst(strtolower($clave));
+
                                     $sdnEntryObj->$campo($val);
                                 }
                                 $sdnEntryObj->save();
@@ -593,7 +606,7 @@ class clientesActions extends sfActions
                                         $sdnIdListObj->setCaUid($id);
                                         $sdnIdListObj->setCaUidId($sub_id);
                                         while (list ($clave, $val) = each ($arreglo)) {
-                                            $campo = "setCa".ucwords($clave);
+                                            $campo = "setCa".ucfirst(strtolower($clave));
                                             $sdnIdListObj->$campo($val);
                                         }
                                         $sdnIdListObj->save();
@@ -605,7 +618,7 @@ class clientesActions extends sfActions
                                         $sdnAkaListObj->setCaUid($id);
                                         $sdnAkaListObj->setCaUidAka($sub_id);
                                         while (list ($clave, $val) = each ($arreglo)) {
-                                            $campo = "setCa".ucwords($clave);
+                                            $campo = "setCa".ucfirst(strtolower($clave));
                                             $sdnAkaListObj->$campo($val);
                                         }
                                         $sdnAkaListObj->save();
@@ -617,7 +630,7 @@ class clientesActions extends sfActions
                                         $sdnAddressListObj->setCaUid($id);
                                         $sdnAddressListObj->setCaUidAddress($sub_id);
                                         while (list ($clave, $val) = each ($arreglo)) {
-                                            $campo = "setCa".ucwords($clave);
+                                            $campo = "setCa".ucfirst(strtolower($clave));
                                             $sdnAddressListObj->$campo($val);
                                         }
                                         $sdnAddressListObj->save();
@@ -665,13 +678,12 @@ class clientesActions extends sfActions
                             while (list ($clave, $val) = each ($ccEmails)) {
                                 $email->addCc( $val );
                             }
-                            $email->setCaSubject( "Verificación Clientes en Lista Clinton $ven_mem" );
+                            $email->setCaSubject( "Verificación Clientes en Lista Clinton - ".$row["ca_vendedor"] );
                             $email->setCaBodyhtml( $msn_mem );
                             $email->save(); //guarda el cuerpo del mensaje
                             $email->send(); //envia el mensaje de correo
                         }
                         if ($row["ca_vendedor"] != '') {
-
                             $user = Doctrine::getTable("Usuario")->find($row["ca_vendedor"]);
                         }else {
                             $user = new Usuario();
@@ -716,7 +728,7 @@ class clientesActions extends sfActions
                 while (list ($clave, $val) = each ($ccEmails)) {
                     $email->addCc( $val );
                 }
-                $email->setCaSubject( "Verificación Clientes en Lista Clinton" );
+                $email->setCaSubject( "Verificación Clientes en Lista Clinton - ".$ven_mem );
                 $email->setCaBodyhtml( $msn_mem );
                 $email->save(); //guarda el cuerpo del mensaje
                 $email->send(); //envia el mensaje de correo
@@ -730,7 +742,7 @@ class clientesActions extends sfActions
 
             } catch (Exception $e) {
 
-
+                echo $e->getMessage()."\n\n".$e->getTraceAsString();
                 $usuarios = Doctrine::getTable("Usuario")
                           ->createQuery("u")
                           ->innerJoin("u.UsuarioPerfil p")
@@ -761,7 +773,7 @@ class clientesActions extends sfActions
                 }*/
 
                 $email->setCaSubject( "¡Error en la Verificación con Lista Clinton!" );
-                $email->setCaBodyhtml( "Caught exception: ". $e->getMessage()."\n Se ha presentado un error en el proceso que lee la información de Lista Clinton y la compara con la Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!" );
+                $email->setCaBodyhtml( "Caught exception: ". $e->getMessage()."\n\n".$e->getTraceAsString()."\n\n Se ha presentado un error en el proceso que lee la información de Lista Clinton y la compara con la Maestra de Clientes Activos de COLSYS. Agradecemos confirmar que el Departamento de Sistemas esté enterado de esta falla. Gracias!" );
                 $email->save(); //guarda el cuerpo del mensaje
                 $email->send(); //envia el mensaje de correo
 
