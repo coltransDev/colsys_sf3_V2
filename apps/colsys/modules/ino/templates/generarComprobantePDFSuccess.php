@@ -252,7 +252,7 @@ $totales["terceros"] = 0;
 
 $k = 5;
 
-//$transacciones = $comprobante->liquidar( true );
+
 
 foreach( $transacciones as $transaccion ){
     $centro = $transaccion->getInoCentroCosto();

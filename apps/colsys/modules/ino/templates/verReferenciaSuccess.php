@@ -95,7 +95,7 @@
                            <?=include_component("ino", "ingresos", array("referencia"=>$referencia, "modo"=>$modo))?>
                        </div>
                        <div class="tab-page">
-                           <h2 class="tab">Egresos</h2>
+                           <h2 class="tab">Costos</h2>
                        </div>
                        <div class="tab-page">
                            <h2 class="tab">Balance</h2>
