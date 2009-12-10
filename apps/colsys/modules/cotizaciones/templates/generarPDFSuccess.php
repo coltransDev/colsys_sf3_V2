@@ -957,10 +957,10 @@ if(count($continuaciones)>0){
 					}
 				}
 			
-				$pdf->beginGroup(); 
+				$pdf->beginGroup();
 				$pdf->Ln(4);
 				$pdf->SetFont($font,'B',8);
-				$pdf->Cell(200, 84, 'RECARGOS' , 0, 1, 'L', 0);
+				$pdf->Cell(200, 4, 'RECARGOS' , 0, 1, 'L', 0);
 				$pdf->Ln(2);
 				$pdf->SetFont($font,'',7);
 				
