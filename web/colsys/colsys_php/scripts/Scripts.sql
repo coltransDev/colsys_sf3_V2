@@ -2889,22 +2889,29 @@ REVOKE ALL ON vi_repindicador_brk FROM PUBLIC;
 GRANT ALL ON vi_repindicador_brk TO "Administrador";
 GRANT ALL ON vi_repindicador_brk TO GROUP "Usuarios";
 
+-- View: vi_repindicador_exp
 
 -- DROP VIEW vi_repindicador_exp;
+
 CREATE OR REPLACE VIEW vi_repindicador_exp AS
- SELECT DISTINCT exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text AS ca_ano, (string_to_array(exm.ca_referencia::text, '.'::text))[3] AS ca_mes, sc.ca_nombre AS ca_sucursal, tro.ca_nombre AS ca_traorigen, cid.ca_ciudad AS ca_ciudestino,
-        CASE WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying ELSE CASE WHEN exm.ca_via::text = 'Maritimo'::text THEN 'Marítimo'::character varying ELSE exm.ca_via END
-        END AS ca_transporte, exm.ca_modalidad, 'Exportación'::text AS ca_impoexpo, exm.ca_consecutivo, ccl.ca_compania
+ SELECT DISTINCT exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text AS ca_ano, (string_to_array(exm.ca_referencia::text, '.'::text))[3] AS ca_mes, exm.ca_aplicaidg, sia.ca_nombre AS ca_nomsia, rpt.ca_sucursal, tro.ca_nombre AS ca_traorigen, cid.ca_ciudad AS ca_ciudestino,
+        CASE WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying ELSE CASE WHEN exm.ca_via::text = 'Maritimo'::text THEN 'Marítimo'::character varying ELSE exm.ca_via END END AS ca_transporte, exm.ca_modalidad, 'Exportación'::text AS ca_impoexpo, exm.ca_consecutivo, rpt.ca_version, ccl.ca_compania
    FROM tb_expo_maestra exm
-   LEFT OUTER JOIN tb_expo_ingresos exi ON exm.ca_referencia::text = exi.ca_referencia::text
-   LEFT OUTER JOIN control.tb_usuarios us ON exi.ca_loginvendedor::text = us.ca_login::text
-   LEFT OUTER JOIN control.tb_sucursales sc ON us.ca_idsucursal = sc.ca_idsucursal
-   LEFT OUTER JOIN tb_ciudades cio ON exm.ca_origen::text = cio.ca_idciudad::text
-   LEFT OUTER JOIN tb_traficos tro ON cio.ca_idtrafico::text = tro.ca_idtrafico::text
-   LEFT OUTER JOIN tb_ciudades cid ON exm.ca_destino::text = cid.ca_idciudad::text
-   LEFT OUTER JOIN tb_clientes ccl ON exm.ca_idcliente = ccl.ca_idcliente
-  ORDER BY ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text, (string_to_array(exm.ca_referencia::text, '.'::text))[3], sc.ca_nombre, exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, tro.ca_nombre, cid.ca_ciudad,
-CASE WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying ELSE CASE WHEN exm.ca_via::text = 'Maritimo'::text THEN 'Marítimo'::character varying ELSE exm.ca_via END END, exm.ca_modalidad, 12, exm.ca_consecutivo, ccl.ca_compania;
+
+   LEFT OUTER JOIN
+        (select rp.ca_consecutivo, rp.ca_version, sc.ca_nombre as ca_sucursal from tb_reportes rp
+                INNER JOIN ( select ca_consecutivo, max(ca_version) as ca_version from tb_reportes where ca_impoexpo = 'Exportación' and ca_usuanulado IS NULL group by ca_consecutivo order by ca_consecutivo ) rm ON (rp.ca_consecutivo = rm.ca_consecutivo and rp.ca_version = rm.ca_version)
+                INNER JOIN control.tb_usuarios us ON (rp.ca_login = us.ca_login)
+                INNER JOIN control.tb_sucursales sc ON (us.ca_idsucursal = sc.ca_idsucursal)
+        ) rpt ON (exm.ca_consecutivo = rpt.ca_consecutivo)
+   LEFT JOIN tb_sia sia ON exm.ca_idsia::text = sia.ca_idsia::text
+   LEFT JOIN tb_ciudades cio ON exm.ca_origen::text = cio.ca_idciudad::text
+   LEFT JOIN tb_traficos tro ON cio.ca_idtrafico::text = tro.ca_idtrafico::text
+   LEFT JOIN tb_ciudades cid ON exm.ca_destino::text = cid.ca_idciudad::text
+   LEFT JOIN tb_clientes ccl ON exm.ca_idcliente = ccl.ca_idcliente
+   ORDER BY ((string_to_array(exm.ca_referencia::text, '.'::text))[5]::integer + 2000)::text, (string_to_array(exm.ca_referencia::text, '.'::text))[3], rpt.ca_sucursal, exm.ca_referencia, exm.ca_fchreferencia, exm.ca_fchcreado, exm.ca_idcliente, tro.ca_nombre, cid.ca_ciudad,
+   CASE WHEN exm.ca_via::text = 'Aereo'::text THEN 'Aéreo'::character varying ELSE CASE WHEN exm.ca_via::text = 'Maritimo'::text THEN 'Marítimo'::character varying ELSE exm.ca_via END
+END, exm.ca_modalidad, exm.ca_consecutivo, ccl.ca_compania, exm.ca_aplicaidg, sia.ca_nombre, 14;
 
 ALTER TABLE vi_repindicador_exp OWNER TO postgres;
 GRANT ALL ON TABLE vi_repindicador_exp TO postgres;
