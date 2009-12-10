@@ -532,8 +532,9 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $impoexpo = "ca_impoexpo = 'Exportación'";
         $no_docs = array ("SAE","DEX","Cancelación Póliza Seguro","Radicación Documento de Transporte","Recibo de Soportes desde Puerto");
         $source = "vi_repindicador_exp";
-        $subque = "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, pre.ca_valor from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
+        $subque = "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, pre.ca_valor, aed.ca_fechadoc from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
         $subque.= "LEFT OUTER JOIN (select ca_referencia as ca_referencia_ext, ca_idevento, ca_fchevento from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
+        $subque.= "LEFT OUTER JOIN (select DISTINCT ca_referencia as ca_referencia_aed, ca_idevento, ca_fechadoc from tb_expo_aedex) aed ON (aed.ca_referencia_aed = ext.ca_referencia_ext and aed.ca_idevento = ext.ca_idevento) ";
         $subque.= "INNER JOIN tb_parametros prm ON (prm.ca_casouso = 'CU011' and exm.ca_tipoexpo = prm.ca_identificacion) ";
         $subque.= "INNER JOIN tb_parametros pre ON (pre.ca_casouso = prm.ca_valor2 and pre.ca_identificacion = ext.ca_idevento) ";
         $subque.= "order by ca_referencia_exm) exe ON (vi_repindicador_exp.ca_referencia = exe.ca_referencia_exm) ";
@@ -555,7 +556,8 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
         $tipo = "D";
         $impoexpo = "ca_impoexpo = 'Exportación'";
         $source = "vi_repindicador_exp";
-        $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srps.ca_idetapa = 'EEETA'  and srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
+        $etapa = ($tra_mem == 'Aéreo')?"EECEM":"EEETA";
+        $subque = "LEFT OUTER JOIN (select ca_consecutivo as ca_consecutivo_sub, ca_fchsalida, ca_horasalida from tb_repstatus rps LEFT OUTER JOIN ( select max(srps.ca_idstatus) as ca_idstatus, srpt.ca_consecutivo from tb_repstatus srps LEFT OUTER JOIN tb_reportes srpt ON (srps.ca_idreporte = srpt.ca_idreporte) where srps.ca_idetapa = '$etapa'  and srpt.ca_impoexpo = 'Exportación'  group by ca_consecutivo) rpf ON (rps.ca_idstatus = rpf.ca_idstatus)) rs ON (rs.ca_consecutivo_sub = vi_repindicador_exp.ca_consecutivo) ";
         if ($tra_mem == 'Marítimo') {
             $subque.= "LEFT OUTER JOIN (select exm.ca_referencia_exm, ext.ca_idevento, ext.ca_fchevento, pre.ca_valor from (select ca_referencia as ca_referencia_exm, ca_tipoexpo, ca_consecutivo from tb_expo_maestra) exm ";
             $subque.= "LEFT OUTER JOIN (select ca_referencia as ca_referencia_ext, ca_idevento, ca_fchevento from tb_expo_tracking where ca_realizado = 1) ext ON (ext.ca_referencia_ext = exm.ca_referencia_exm) ";
@@ -1167,6 +1169,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
                 $ult_mem = $rs->Value('ca_fchevento');
                 $nom_sia = $rs->Value('ca_nomsia');
+                $apl_idg = $rs->Value("ca_aplicaidg");
                 $rad_mem = null;
                 $sae_mem = null;
 
@@ -1175,14 +1178,16 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                 while ($referencia == $rs->Value('ca_referencia') and !$rs->Eof() and !$rs->IsEmpty()) {
                     echo "<TR>";
                     echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_valor')."</TD>";
-                    echo "  <TD Class=mostrar style='font-size: 9px;'>".$rs->Value('ca_fchevento')."</TD>";
-                    echo "</TR>";
                     $ult_mem = (!in_array($rs->Value('ca_valor'),$no_docs) and $rs->Value('ca_fchevento')>$ult_mem)?$rs->Value('ca_fchevento'):$ult_mem;
                     if ($rs->Value('ca_valor') == 'Radicación Documento de Transporte'){
-                        $rad_mem = $rs->Value('ca_fchevento');
+                        $fch_tmp = $rad_mem = $rs->Value('ca_fchevento');
                     }else if ($rs->Value('ca_valor') == 'SAE'){
-                        $sae_mem = $rs->Value('ca_fchevento');
+                        $fch_tmp = $sae_mem = $rs->Value('ca_fechadoc');
+                    }else{
+                        $fch_tmp = $rs->Value('ca_fchevento');
                     }
+                    echo "  <TD Class=mostrar style='font-size: 9px;'>$fch_tmp</TD>";
+                    echo "</TR>";
                     $rs->MoveNext();	// Buscar Todos los Registros de la referencia
                 }
                 echo "  </TABLE></TD>";
@@ -1210,12 +1215,12 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
                         echo "<TD WIDTH=110>$clave <br /> $val</TD>";
                     }
                     $dif_mem = workDiff($festi, $ini_event, $fin_event);
-                    $dif_mem = (!is_null($ini_event) and !is_null($fin_event) and $ini_event>=$fin_event)?1:$dif_mem;
+                    $dif_mem = (!is_null($ini_event) and !is_null($fin_event) and $ini_event>$fin_event)?1:$dif_mem;
                     echo "</TR>";
                 }
                 echo "  </TABLE></TD>";
 
-                $dif_mem = ($rs->Value("ca_aplicaidg") == 'f')?null:$dif_mem;
+                $dif_mem = ($apl_idg == 'f')?null:$dif_mem;
                 $color = analizar_dif($tipo, $lci_var, $lcs_var, $dif_mem, $array_avg, $array_pnc, $array_pmc, $array_null); // Función que retorna un Arreglo con el resultado de Dif
                 echo "  <TD Class=$color style='font-size: 9px; text-align:right;'>".$dif_mem."</TD>";
 
@@ -1230,7 +1235,7 @@ elseif (!isset($boton) and !isset($accion) and isset($agrupamiento)) {
 
                 $matriz_eventos = array();
                 if ($tra_mem == 'Aéreo') {
-                    $matriz_eventos["intervalo_1"]['Fch.Confirmación Salida'] = $rs->Value('ca_fchsalida');
+                    $matriz_eventos["intervalo_1"]['Fch.Carga Embarcada'] = $rs->Value('ca_fchsalida');
                 } else if ($tra_mem == 'Marítimo') {
                     if (strlen($rs->Value('ca_fchevento')) != 0 and strlen($rs->Value('ca_fchsalida')) != 0) {
                         $matriz_eventos["intervalo_1"]['Fch.Confirmación Salida'] = $rs->Value('ca_fchsalida');
