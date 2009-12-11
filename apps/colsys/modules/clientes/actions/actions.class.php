@@ -678,7 +678,7 @@ class clientesActions extends sfActions
                             while (list ($clave, $val) = each ($ccEmails)) {
                                 $email->addCc( $val );
                             }
-                            $email->setCaSubject( "Verificación Clientes en Lista Clinton - ".$row["ca_vendedor"] );
+                            $email->setCaSubject( "Verificación Clientes en Lista Clinton - $ven_mem" );
                             $email->setCaBodyhtml( $msn_mem );
                             $email->save(); //guarda el cuerpo del mensaje
                             $email->send(); //envia el mensaje de correo
