@@ -30,7 +30,7 @@ $campos = array("Nombre del Cliente" => "ca_compania", "Representante Legal" => 
 $bdatos = array("Maestra Clientes", "Mis Clientes", "Clientes Libres");  // Arreglo con los lugares donde buscar
 $tipos = array("Llamada", "Visita", "Correo Electrónico", "Correspondencia", "Cerrar Caso");
 $estados = array("Potencial","Activo","Vetado");
-$sstatus = array("","Potencial","Vetado");
+$sstatus = array("","Vetado");
 $empresas= array("Coltrans","Colmas");
 $circular=array("Sin","Vencido","Vigente");
 $presentacion=array("Detallado","Columnas");
