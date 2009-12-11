@@ -68,12 +68,12 @@ echo "</BODY>";
 elseif (!isset($boton) and !isset($accion) and isset($criterio)){
     $modulo = "00100000";                                                      // Identificación del módulo para la ayuda en línea
 //  include_once 'include/seguridad.php';                                      // Control de Acceso al módulo
-    $condicion= "where (ca_diascredito <> 0 or ca_cupo <> 0)";
+    $condicion= "";                                                            // where (ca_diascredito <> 0 or ca_cupo <> 0)
     if (isset($criterio)) {
         $columnas = array("Nombre del Cliente"=>"ca_compania", "Vendedor"=>"ca_vendedor", "Ciudad"=>"ca_ciudad", "Observaciones"=>"ca_observaciones");
-        $condicion.= " and lower($columnas[$modalidad]) like lower('%".addslashes($criterio)."%')";
+        $condicion.= "where lower($columnas[$modalidad]) like lower('%".addslashes($criterio)."%')";
        }
-    if (!$rs->Open("select ca_idcliente, ca_compania, ca_ciudad, ca_diascredito, ca_vendedor, ca_cupo, ca_fchcreado_lb, ca_fchactualizado_lb, ca_observaciones from vi_clientes $condicion order by ca_ciudad, ca_compania")) {  // Selecciona todos lo registros de la tabla Grupos
+    if (!$rs->Open("select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones from tb_libcliente lc INNER JOIN tb_clientes cl ON lc.ca_idcliente = cl.ca_idcliente LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login $condicion order by ca_sucursal, ca_compania")) {  // Selecciona todos lo registros de la tabla tb_libcliente
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";                   // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
@@ -93,49 +93,47 @@ require_once("menu.php");
     echo "<FORM METHOD=post NAME='cabecera' ACTION='liberaciones.php'>";       // Hace una llamado nuevamente a este script pero con
     echo "<INPUT TYPE='HIDDEN' NAME='criterio' VALUE=".$criterio.">";          // Hereda el Id del registro que se esta modificando
     echo "<INPUT TYPE='HIDDEN' NAME='modalidad' VALUE=".$modalidad.">";        
-    echo "<TABLE WIDTH=700 CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
+    echo "<TABLE CELLSPACING=1>";                                    // un boton de comando definido para hacer mantemientos
     echo "<TR>";
-    echo "  <TH Class=titulo COLSPAN=7>SISTEMA COLTRANS S.A.<BR>$titulo</TH>";
+    echo "  <TH Class=titulo COLSPAN=9>SISTEMA COLTRANS S.A.<BR>$titulo</TH>";
     echo "</TR>";
     echo "<TH>ID</TH>";
     echo "<TH>Cliente</TH>";
     echo "<TH>Vendedor</TH>";
     echo "<TH>Días<BR>de Crédito</TH>";
     echo "<TH>Cupo Asignado</TH>";
+    echo "<TH>Usu.Creación</TH>";
     echo "<TH>Fch.Creación</TH>";
-    echo "<TH>Actualizado</TH>";
-    $nom_ciu = "";
+    echo "<TH>Usu.Actualizado</TH>";
+    echo "<TH>Fch.Actualizado</TH>";
+    $nom_suc = "";
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
-       if ($rs->Value('ca_ciudad') != $nom_ciu) {
+       if ($rs->Value('ca_sucursal') != $nom_suc) {
            echo "<TR>";
-           echo "<TD WIDTH=120 Class=invertir COLSPAN=8 style='font-size: 13px; font-weight:bold;'>".$rs->Value('ca_ciudad')."</TD>";
+           echo "<TD Class=invertir COLSPAN=9 style='font-size: 13px; font-weight:bold;'>".$rs->Value('ca_sucursal')."</TD>";
            echo "</TR>";
-           $nom_ciu = $rs->Value('ca_ciudad');
+           $nom_suc = $rs->Value('ca_sucursal');
        }
+       $beneficios = ($rs->Value('ca_diascredito')==0 or $rs->Value('ca_cupo')==0)?'background-color:#FFb2b2;':'';
        echo "<TR>";
-       echo "  <TD Class=listar>".$rs->Value('ca_idcliente')."</TD>";
-       echo "  <TD Class=listar WIDTH=260>".$rs->Value('ca_compania')."</TD>";
-       echo "  <TD Class=listar style='text-align:center;'>".$rs->Value('ca_vendedor')."</TD>";
-       echo "  <TD Class=listar style='text-align:center;'>".$rs->Value('ca_diascredito')."</TD>";
-       echo "  <TD Class=listar style='text-align:right;'>".number_format($rs->Value('ca_cupo'),0)."</TD>";
-       echo "  <TD Class=listar style='text-align:center;'>".substr($rs->Value('ca_fchcreado_lb'),0,10)."</TD>";
-       echo "  <TD Class=listar style='text-align:center;'>".substr($rs->Value('ca_fchactualizado_lb'),0,10)."</TD>";
-       if (strlen($rs->Value('ca_observaciones')) != 0) {
-           echo "<TR>";
-           echo "  <TD Class=listar></TD>";
-           echo "  <TD Class=listar COLSPAN=6><B>Observaciones</B>: ".$rs->Value('ca_observaciones')."</TD>";
-           echo "</TR>";
-       }
+       echo "  <TD Class=listar style='$beneficios'>".$rs->Value('ca_idcliente')."</TD>";
+       echo "  <TD Class=listar style='$beneficios' WIDTH=260>".$rs->Value('ca_compania').((strlen($rs->Value('ca_observaciones')) != 0)?"<br />".$rs->Value('ca_observaciones'):"")."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_vendedor')."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_diascredito')."</TD>";
+       echo "  <TD Class=listar style='text-align:right;$beneficios'>".number_format($rs->Value('ca_cupo'),0)."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_usucreado')."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_fchcreado')."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_usuactualizado')."</TD>";
+       echo "  <TD Class=listar style='text-align:center;$beneficios'>".$rs->Value('ca_fchactualizado')."</TD>";
        echo "</TR>";
        $rs->MoveNext();
        }
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=invertir COLSPAN=8></TD>";
+    echo "  <TD Class=invertir COLSPAN=9></TD>";
     echo "</TR>";
     echo "</TABLE><BR><BR>";
 
     list($anno, $mes, $dia, $tiempo, $minuto, $segundo) = sscanf(date("Y-m-d"),"%d-%d-%d %d:%d:%d");
-    
 	
 	if( $comodatovencido ){
 		$condicion= "where ca_fchvencimiento < now()";
@@ -203,7 +201,7 @@ elseif (isset($boton)) {                                                       /
 //           include_once 'include/seguridad.php';                             // Control de Acceso al módulo
              require('include/fpdf.php');                                                   // Incorpora la librería de funciones, para generara Archivos en formato PDF
              require('include/cpdf.php');                                                   // Incorpora la plantilla con formato de Coltrans
-             if (!$rs->Open("select ca_idcliente, ca_compania, ca_ciudad, ca_diascredito, ca_vendedor, ca_cupo, ca_fchcreado_lb, ca_fchactualizado_lb, ca_observaciones from vi_clientes where ca_diascredito <> 0 or ca_cupo <> 0 order by ca_ciudad, ca_compania")) {  // Selecciona todos lo registros de la tabla Clientes
+             if (!$rs->Open("select cl.ca_idcliente, cl.ca_compania, cl.ca_vendedor, us.ca_sucursal, lc.ca_cupo, lc.ca_diascredito, lc.ca_usucreado, lc.ca_fchcreado, lc.ca_usuactualizado, lc.ca_fchactualizado, lc.ca_observaciones from tb_libcliente lc INNER JOIN tb_clientes cl ON lc.ca_idcliente = cl.ca_idcliente LEFT OUTER JOIN vi_usuarios us ON cl.ca_vendedor = us.ca_login order by ca_sucursal, ca_compania")) {  // Selecciona todos lo registros de la tabla tb_libcliente
                  echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";                   // Muestra el mensaje de error
                  echo "<script>document.location.href = 'entrada.php';</script>";
                  exit; }
@@ -223,24 +221,24 @@ elseif (isset($boton)) {                                                       /
              $pdf->SetAligns(array("C","C","C","C","C"));
              $pdf->Row(array('Cliente','Vendedor','Días de Crédito','Cupo Asignado','Actualización'));
 
-             $nom_ciu = "";
+             $nom_suc = "";
              while (!$rs->Eof()) {
-                    if ($rs->Value('ca_ciudad') != $nom_ciu) {
+                    if ($rs->Value('ca_sucursal') != $nom_suc) {
                         $pdf->SetWidths(array(170));
                         $pdf->SetAligns(array("L"));
                         $pdf->SetFont('Arial','B',10);
-                        $pdf->Row(array($rs->Value('ca_ciudad')));
-                        $nom_ciu = $rs->Value('ca_ciudad');
+                        $pdf->Row(array($rs->Value('ca_sucursal')));
+                        $nom_suc = $rs->Value('ca_sucursal');
                         $pdf->SetWidths(array(75,25,20,25,25));
                         $pdf->SetAligns(array("L","C","C","R","C"));
                         $pdf->SetFont('Arial','',6);
                         }
                     $cli_mem = $rs->Value('ca_compania');
                     if (strlen($rs->Value('ca_observaciones')) != 0) {
-                        $cli_mem = $cli_mem.' ('.$rs->Value('ca_observaciones').')';
+                        $cli_mem = $cli_mem.'|'.$rs->Value('ca_observaciones');
                     }
-                    $fch_mem = $rs->Value('ca_fchactualizado')==''?$rs->Value('ca_fchcreado'):$rs->Value('ca_fchactualizado');
-                    $pdf->Row(array($cli_mem, $rs->Value('ca_vendedor'), $rs->Value('ca_diascredito'), number_format($rs->Value('ca_cupo'),0,".",","), $fch_mem));
+                    $fch_mem = $rs->Value('ca_fchactualizado')==''?$rs->Value('ca_usucreado').'|'.$rs->Value('ca_fchcreado'):$rs->Value('ca_usuactualizado').'|'.$rs->Value('ca_fchactualizado');
+                    $pdf->Row(array(str_replace("|", "\n", $cli_mem), $rs->Value('ca_vendedor'), $rs->Value('ca_diascredito'), number_format($rs->Value('ca_cupo'),0,".",","), str_replace("|", "\n", $fch_mem)));
                     $rs->MoveNext();
                 }
 
