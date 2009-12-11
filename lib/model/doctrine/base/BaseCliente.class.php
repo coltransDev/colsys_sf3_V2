@@ -116,6 +116,7 @@ abstract class BaseCliente extends myDoctrineRecord
         $this->hasColumn('ca_idcliente', 'integer', null, array(
              'type' => 'integer',
              'primary' => true,
+             'autoincrement' => true,
              ));
         $this->hasColumn('ca_digito', 'integer', null, array(
              'type' => 'integer',
