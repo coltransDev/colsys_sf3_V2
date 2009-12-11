@@ -1,0 +1,87 @@
+
+FileImported:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: dataimport
+  tableName: tb_fileimported
+  columns:
+    ca_idfileheader:
+      type: integer
+      primary: true
+    ca_fchimportacion: timestamp
+    ca_content: string
+    ca_usuario: string
+    ca_procesado: boolean
+    ca_nombre: string
+  relations:
+    FileHeader:
+      local: ca_idfileheader
+      foreign: ca_idfileheader
+      type: one
+
+
+FileHeader:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: dataimport
+  tableName: tb_fileheader
+  columns:
+    ca_idfileheader:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_descripcion: string
+    ca_tipoarchivo: string
+    ca_separador: string
+    ca_separadordec: boolean
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+  relations:
+    FileColumn:
+      local: ca_idfileheader
+      foreign: ca_idfileheader
+      type: many
+    FileImported:
+      local: ca_idfileheader
+      foreign: ca_idfileheader
+      type: many
+
+FileColumn:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: dataimport
+  tableName: tb_filecolumns
+  columns:
+    ca_idfileheader:
+      type: integer
+      primary: true
+    ca_idcolumna: string
+    ca_columna: string
+    ca_label: string
+    ca_mascara: string
+    ca_tipo: string
+    ca_longitud: integer
+    ca_precision: integer
+    ca_idregistro: integer
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string    
+  relations:
+    FileHeader:
+      local: ca_idfileheader
+      foreign: ca_idfileheader
+      type: one
+    Registro:
+      local: ca_idcolumna
+      foreign: ca_idregistro
+      class: FileColumn
+      type: one

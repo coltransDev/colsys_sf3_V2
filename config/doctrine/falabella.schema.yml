@@ -1,0 +1,175 @@
+
+FalaHeader:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falaheader
+  columns:
+    ca_iddoc:
+      type: string
+      primary: true    
+    ca_fecha_carpeta: date
+    ca_archivo_origen: string
+    ca_reporte: string
+    ca_num_viaje: string
+    ca_cod_carrier: string
+    ca_codigo_puerto_pickup: string
+    ca_codigo_puerto_descarga: string
+    ca_container_mode: string
+    ca_nombre_proveedor: string
+    ca_campo_59: string
+    ca_codigo_proveedor: string
+    ca_campo_61: string
+    ca_monto_invoice_miles: decimal
+    ca_procesado: boolean
+    ca_trader: string
+    ca_vendor_id: string
+    ca_vendor_name: string
+    ca_vendor_addr1: string
+    ca_vendor_city: string
+    ca_vendor_country: string
+    ca_esd: date
+    ca_lsd: date
+    ca_incoterms: string
+    ca_payment_terms: string
+    ca_proforma_number: string
+    ca_origin: string
+    ca_destination: string
+    ca_trans_ship_port: string
+    ca_reqd_delivery: date
+    ca_orden_comments: string
+    ca_manufacturer_contact: string
+    ca_manufacturer_phone: string
+    ca_manufacturer_fax: string
+    ca_fchanulado: timestamp
+    ca_usuanulado: string
+  relations:
+    FalaDetail:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: many
+    FalaShipmentInfo:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: many
+    FalaInstruction:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: many
+      orderBy: ca_sku ASC
+
+
+FalaDetail:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_faladetails
+  columns:
+    ca_iddoc:
+      type: string
+      primary: true    
+    ca_sku:
+      type: string
+      primary: true 
+    ca_vpn: string
+    ca_num_cont_part1: string
+    ca_num_cont_part2: string
+    ca_num_cont_sell: string
+    ca_container_iso: string
+    ca_cantidad_pedido: integer
+    ca_cantidad_miles: integer
+    ca_unidad_medidad_cantidad: string
+    ca_descripcion_item: string
+    ca_cantidad_paquetes_miles: decimal
+    ca_unidad_medida_paquetes: string
+    ca_cantidad_volumen_miles: decimal
+    ca_cantidad_peso_miles: decimal
+    ca_unidad_medida_peso: string
+  relations:
+    FalaHeader:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: one
+
+
+
+FalaShipmentInfo:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falashipmentinfo
+  columns:
+    ca_iddoc:
+      type: string
+      primary: true 
+    ca_begin_window: date
+    ca_end_window: date
+    ca_commodities: string
+    ca_partial: string
+    ca_payment_terms: string
+    ca_incoterms: string
+    ca_container_type: string
+    ca_utv: string
+    ca_etv: string
+    ca_line: string
+    ca_contact_line: string
+    ca_contact_importer: string
+    ca_uppo: numeric
+    ca_eb: string
+    ca_edd: string
+    ca_port: string
+    ca_transshipment: string
+    ca_transshipment_port: string
+    ca_shipping_org: string
+    ca_original_org: string
+    ca_fwd_copy_org: string
+    ca_fcr_org: string
+    ca_shipping_dst: string
+    ca_original_dst: string
+    ca_fwd_copy_dst: string
+    ca_fcr_dst: string
+    ca_transport_via: string
+    ca_invoice_org: string
+    ca_packing_list_org: string
+    ca_document_org: string
+    ca_oc_org: string
+    ca_others_docs_org: string
+    ca_invoice_cps: string
+    ca_packing_list_cps: string
+    ca_document_cps: string
+    ca_oc_cps: string
+    ca_others_docs_cps: varchar
+    ca_final_port: varchar
+    ca_alter_port: varchar
+    ca_limit_date: date
+  relations:
+    FalaHeader:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: one
+
+
+FalaInstruction:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falainstructions
+  columns:    
+    ca_idfalainstructions:
+      type: integer
+      primary: true
+    ca_iddoc: string
+    ca_instructions: string
+  relations:
+    FalaHeader:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: one
