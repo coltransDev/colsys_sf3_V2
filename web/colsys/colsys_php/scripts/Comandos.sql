@@ -1623,4 +1623,3 @@ insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalid
 insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','COLOADING');
 insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','PARTICULARES');
 insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','PROYECTOS');
-
