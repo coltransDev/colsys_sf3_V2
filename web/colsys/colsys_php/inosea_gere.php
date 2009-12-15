@@ -39,7 +39,7 @@ require_once("menu.php");
     echo "<TABLE WIDTH=450 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
     echo "<TH COLSPAN=7 style='font-size: 12px; font-weight:bold;'><B>Ingrese un criterio para realizar las busqueda</TH>";
     echo "<TR>";
-    echo "  <TH ROWSPAN=2>&nbsp</TH>";
+    echo "  <TH ROWSPAN=2>&nbsp;</TH>";
     echo "  <TD Class=listar ROWSPAN=2><B>Buscar por:</B><BR><SELECT NAME='opcion' SIZE=5>";
     while (list ($clave, $val) = each ($columnas)) {
         echo " <OPTION VALUE='".$val."'".(($val=='ca_referencia')?" SELECTED":"").">".$clave;
@@ -104,7 +104,7 @@ require_once("menu.php");
     echo "</TR>";
     echo "<TH>Referencia</TH>";
     echo "<TH>Linea</TH>";
-    echo "<TH>&nbsp</TH>";  // Botón para la creación de un Registro Nuevo
+    echo "<TH>&nbsp;</TH>";  // Botón para la creación de un Registro Nuevo
     $ano_mem = '';
     while (!$rs->Eof() and !$rs->IsEmpty()) {                                                      // Lee la totalidad de los registros obtenidos en la instrucción Select
        if ($rs->Value('ca_ano') != $ano_mem) {
@@ -196,12 +196,12 @@ require_once("menu.php");
                 echo "  <TD WIDTH=44 ROWSPAN=7 Class=listar></TD>";                                            // Botones para hacer Mantenimiento a la Tabla
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=partir>&nbsp</TD>";
+                echo "  <TD Class=partir>&nbsp;</TD>";
                 echo "  <TD Class=partir style='font-size: 11px; text-align: center;' COLSPAN=2>Ciudad de Origen</TD>";
                 echo "  <TD Class=partir style='font-size: 11px; text-align: center;' COLSPAN=2>Ciudad de Destino</TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=partir style='text-align: center; vertical-align:top;'>".$rs->Value('ca_impoexpo')."<BR>&nbsp<BR>&nbsp</TD>";
+                echo "  <TD Class=partir style='text-align: center; vertical-align:top;'>".$rs->Value('ca_impoexpo')."<BR>&nbsp;<BR>&nbsp;</TD>";
                 echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_ciuorigen')."</TD>";
                 echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_traorigen')."</TD>";
                 echo "  <TD Class=listar style='font-size: 11px; text-align: center; font-weight:bold;' WIDTH=160>".$rs->Value('ca_ciudestino')."</TD>";
@@ -276,7 +276,7 @@ require_once("menu.php");
                 echo "  </TD>";
                 echo "</TR>";
                 echo "<TR>";
-                echo "  <TD Class=partir>Tránsito:<BR>&nbsp</TD>";
+                echo "  <TD Class=partir>Tránsito:<BR>&nbsp;</TD>";
                 echo "  <TD Class=listar style='font-weight:bold;'>Fecha Estim.Embarque:</TD>";
                 echo "  <TD Class=listar>".$rs->Value('ca_fchembarque')."</TD>";
                 echo "  <TD Class=listar style='font-weight:bold;'>Fecha Estim.Arribo:</TD>";
@@ -293,26 +293,26 @@ require_once("menu.php");
                 echo "<TR>";
                 echo "  <TD Class=partir ROWSPAN=9>Balance:</TD>";
                 echo "  <TD Class=listar><B>No.Total Piezas:</B></TD>";
-                echo "  <TD Class=listar style='text-align: right;'>".number_format($rs->Value('ca_numpiezas'))."&nbsp</TD>";
+                echo "  <TD Class=listar style='text-align: right;'>".number_format($rs->Value('ca_numpiezas'))."&nbsp;</TD>";
                 echo "  <TD Class=listar><B>Facturación Clientes:</B></TD>";
-                echo "  <TD Class=listar style='text-align: right;'>".number_format($rs->Value('ca_facturacion'))."&nbsp</TD>";
-                echo "  <TD Class=listar ROWSPAN=9>&nbsp</TD>";
+                echo "  <TD Class=listar style='text-align: right;'>".number_format($rs->Value('ca_facturacion'))."&nbsp;</TD>";
+                echo "  <TD Class=listar ROWSPAN=9>&nbsp;</TD>";
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar><B>Peso Total en Kilos:</B></TD>";
-                echo "  <TD Class=listar style='text-align: right;'>".formatNumber($rs->Value('ca_peso'),3)."&nbsp</TD>";
+                echo "  <TD Class=listar style='text-align: right;'>".formatNumber($rs->Value('ca_peso'),3)."&nbsp;</TD>";
                 echo "  <TD Class=listar><B>Menos Deducciones:</B></TD>";
                 echo "  <TD Class=listar style='text-align: right;'>(".number_format($rs->Value('ca_deduccion')).")</TD>";
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar><B>Volumen Total CBM:</B></TD>";
-                echo "  <TD Class=listar style='text-align: right;'>".formatNumber($rs->Value('ca_volumen'),3)."&nbsp</TD>";
+                echo "  <TD Class=listar style='text-align: right;'>".formatNumber($rs->Value('ca_volumen'),3)."&nbsp;</TD>";
                 echo "  <TD Class=listar><B>Costo Neto Embarque:</B></TD>";
                 echo "  <TD Class=listar style='text-align: right;'>(".number_format($rs->Value('ca_costoneto')).")</TD>";
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=listar><B>Total Hbl's Registradas:</B></TD>";
-                echo "  <TD Class=listar style='text-align: right;'>".$cl->Value('ca_nrohbls')."&nbsp</TD>";
+                echo "  <TD Class=listar style='text-align: right;'>".$cl->Value('ca_nrohbls')."&nbsp;</TD>";
                 echo "  <TD Class=listar><B>Venta Extra:</B></TD>";
                 echo "  <TD Class=listar style='text-align: right;'>(".number_format($ext_mem).")</TD>";
                 echo "</TR>";
@@ -355,10 +355,10 @@ require_once("menu.php");
                 echo "</TR>";
                 echo "<TR>";
                 echo "  <TD Class=partir>Auditoría:</TD>";
-                echo "  <TD Class=listar><B>Creación:</B>&nbsp".$rs->Value('ca_usucreado')."<BR>".$rs->Value('ca_fchcreado')."</TD>";
-                echo "  <TD Class=listar><B>Actualización:</B>&nbsp".$rs->Value('ca_usuactualizado')."<BR>".$rs->Value('ca_fchactualizado')."</TD>";
-                echo "  <TD Class=listar><B>Liquidación:</B>&nbsp".$rs->Value('ca_usuliquidado')."<BR>".$rs->Value('ca_fchliquidado')."</TD>";
-                echo "  <TD Class=listar><B>Cierre:</B>&nbsp".$rs->Value('ca_usucerrado')."<BR>".$rs->Value('ca_fchcerrado')."</TD>";
+                echo "  <TD Class=listar><B>Creación:</B>&nbsp;".$rs->Value('ca_usucreado')."<BR>".$rs->Value('ca_fchcreado')."</TD>";
+                echo "  <TD Class=listar><B>Actualización:</B>&nbsp;".$rs->Value('ca_usuactualizado')."<BR>".$rs->Value('ca_fchactualizado')."</TD>";
+                echo "  <TD Class=listar><B>Liquidación:</B>&nbsp;".$rs->Value('ca_usuliquidado')."<BR>".$rs->Value('ca_fchliquidado')."</TD>";
+                echo "  <TD Class=listar><B>Cierre:</B>&nbsp;".$rs->Value('ca_usucerrado')."<BR>".$rs->Value('ca_fchcerrado')."</TD>";
                 echo "  <TD Class=listar style='font-weight:bold; text-align: center; vertical-align: middle;'><B>".(($rs->Value('ca_provisional')=="t")?"Cierre<br>Provisional":"")."</TD>";
                 echo "</TR>";
                 echo "<TR HEIGHT=5>";
@@ -366,7 +366,7 @@ require_once("menu.php");
                 echo "</TR>";
         
                 echo "<TR>";
-                echo "  <TD Class=imprimir COLSPAN=6>&nbsp</TD>";
+                echo "  <TD Class=imprimir COLSPAN=6>&nbsp;</TD>";
                 echo "</TR>";
                 echo "<TH Class=titulo COLSPAN=5>Cuadro de Clientes de la Referencia</TH>";
                 echo "<TH></TH>";  // Botón para la creación de un Registro Nuevo
@@ -411,7 +411,7 @@ require_once("menu.php");
                             echo "<TR>";
                             echo "  <TD Class=destacar><B>Fch.Liberación:</B><BR>".$cl->Value('ca_fchliberacion')."</TD>";
                             echo "  <TD Class=destacar COLSPAN=3><B>Anotaciones:</B><BR>".$cl->Value('ca_notaliberacion')."</TD>";
-                            echo "  <TD Class=destacar COLSPAN=2><B>Liberó:</B>&nbsp".$cl->Value('ca_usuliberado')."<BR>".$cl->Value('ca_fchliberado')."</TD>";
+                            echo "  <TD Class=destacar COLSPAN=2><B>Liberó:</B>&nbsp;".$cl->Value('ca_usuliberado')."<BR>".$cl->Value('ca_fchliberado')."</TD>";
                             echo "</TR>";
                        }
                        $cli_mem = $cl->Value('ca_idcliente');
@@ -434,7 +434,7 @@ require_once("menu.php");
                     echo "<script>document.location.href = 'entrada.php';</script>";
                     exit; }
                 echo "<TR>";
-                echo "  <TD Class=imprimir COLSPAN=6>&nbsp</TD>";
+                echo "  <TD Class=imprimir COLSPAN=6>&nbsp;</TD>";
                 echo "</TR>";
                 echo "<TH Class=titulo COLSPAN=5>Cuadro de Costos de la Referencia</TH>";
                 echo "<TH></TH>";  // Botón para la creación de un Registro Nuevo
