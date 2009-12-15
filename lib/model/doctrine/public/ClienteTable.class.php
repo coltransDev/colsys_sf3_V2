@@ -170,7 +170,7 @@ class ClienteTable extends Doctrine_Table
                 $query.= "LEFT OUTER JOIN (select ca_idcliente, max(ca_fchvisita) as ca_fchvisita from tb_enccliente group by ca_idcliente) e ON (e.ca_idcliente = c.ca_idcliente) ";
 		$query.= "LEFT OUTER JOIN (select colt.ca_idcliente as ca_idcliente_colt, colt.ca_estado as ca_coltrans_std, colt.ca_fchestado as ca_coltrans_fch from tb_stdcliente colt INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Coltrans' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colt.ca_idcliente = sub.ca_idcliente and colt.ca_fchestado = sub.ca_fchestado and colt.ca_empresa = 'Coltrans')) ct ON (ct.ca_idcliente_colt = c.ca_idcliente) ";
 		$query.= "LEFT OUTER JOIN (select colm.ca_idcliente as ca_idcliente_colm, colm.ca_estado as ca_colmas_std, colm.ca_fchestado as ca_colmas_fch from tb_stdcliente colm INNER JOIN (select ca_idcliente, max(ca_fchestado) as ca_fchestado from tb_stdcliente where ca_empresa = 'Colmas' and ca_fchestado <= '$fch_fin' group by ca_idcliente order by ca_idcliente) sub ON (colm.ca_idcliente = sub.ca_idcliente and colm.ca_fchestado = sub.ca_fchestado and colm.ca_empresa = 'Colmas')) cm ON (cm.ca_idcliente_colm = c.ca_idcliente) ";
-		$query.= "where ca_fchcircular IS NULL and (ct.ca_coltrans_std = 'Activo' or cm.ca_colmas_std = 'Activo') ";
+		$query.= "where ca_fchvisita IS NULL and (ct.ca_coltrans_std = 'Activo' or cm.ca_colmas_std = 'Activo') ";
 
 		if ($sucursal != null){
                     $query.= "and u.ca_sucursal = '$sucursal' ";
