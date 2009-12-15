@@ -272,7 +272,7 @@ class clientesActions extends sfActions
             // Si es el proceso Automático que se ejecuta los 20 de cada mes, verifica los Clientes que tienen más de 60 días
             // con la Circular 0170 vencida y retira beneficios de Cupo y Tiempo de C?edito.
 
-            // if( sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){
+            if( sfContext::getInstance()->getConfiguration()->getEnvironment()=="cli" ){
                 $idClientesSinBeneficio = array();
                 $inicio = date('Y-m-d',mktime(0,0,0,$month-1,0,$year-5));
                 $final = date('Y-m-d',mktime(0,0,0,$month-1,0,$year));
@@ -298,7 +298,7 @@ class clientesActions extends sfActions
                               ->execute();
                 }
 
-            // }
+            }
 
             $layout = $this->getRequestParameter("layout");
             if( $layout ) {
