@@ -169,16 +169,16 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
 		$col_one = "Concepto";
 		$col_two = "Util.x Sobreventa";
 		$condicion = "iu.*, isv.ca_util_costo from vi_inoutilidades_sea iu ";
-		$condicion.= "LEFT OUTER JOIN (select ca_referencia, ca_costo, sum(round(ca_venta::numeric-(ca_tcambio::numeric*ca_neto::numeric),2)) as ca_util_costo from tb_inocostos_sea ic RIGHT OUTER JOIN tb_costos ct ON (ic.ca_idcosto = ct.ca_idcosto and ct.ca_costo = '$concepto[$reportar]') ";
+		$condicion.= "INNER JOIN (select ca_referencia, ca_costo, sum(round(ca_venta::numeric-(ca_tcambio::numeric*ca_neto::numeric),2)) as ca_util_costo from tb_inocostos_sea ic INNER JOIN tb_costos ct ON (ic.ca_idcosto = ct.ca_idcosto and ct.ca_costo = '$concepto[$reportar]') ";
 		$condicion.= "group by ca_referencia, ca_costo) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
 	}elseif ($reportar == 'xdeducciones') {
 		$col_one = "Deducible";
 		$col_two = "Vlr.Recaudo";
 		$condicion = "iu.*, isv.ca_recaudo_deduccion from vi_inoutilidades_sea iu ";
-		$condicion.= "LEFT OUTER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id LEFT OUTER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
+		$condicion.= "INNER JOIN (select ca_referencia, ca_deduccion, sum(ca_valor) as ca_recaudo_deduccion from tb_inodeduccion_sea id INNER JOIN tb_deducciones dd ON (id.ca_iddeduccion = dd.ca_iddeduccion and dd.ca_deduccion = '$concepto[$reportar]') ";
 		$condicion.= "group by ca_referencia, ca_deduccion) isv ON (iu.ca_referencia = isv.ca_referencia) where ";
 	}
-    $condicion.= " substr(iu.ca_referencia,8,2) like '$mes' and substr(iu.ca_referencia,15) = ".substr($ano, -1)." and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and ". str_replace("\"","'",$casos);
+    $condicion.= " substr(iu.ca_referencia,8,2) like '$mes' and substr(iu.ca_referencia,15)::int = ".substr($ano, -1)." and iu.ca_traorigen like '%$traorigen%' and iu.ca_modalidad like '%$modalidad%' and ". str_replace("\"","'",$casos);
 
     $co =& DlRecordset::NewRecordset($conn);                                   // Apuntador que permite manejar la conexiòn a la base de datos
     if (!$rs->Open("select $condicion")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
