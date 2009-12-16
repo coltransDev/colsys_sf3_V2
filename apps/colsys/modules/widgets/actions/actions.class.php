@@ -220,6 +220,7 @@ class widgetsActions extends sfActions
 		$this->setTemplate("responseTemplate");
 
 	}
+
 	
 	/*
 	* 
@@ -290,6 +291,26 @@ class widgetsActions extends sfActions
 		$this->setLayout("none");
 	}
 
+
+    /*
+	*
+	*/
+	public function executeDatosComboReferencias(){
+		$criterio =  $this->getRequestParameter("query");
+
+        $referencias = Doctrine_Query::create()
+                        ->select("m.ca_idmaestra, m.ca_referencia")
+                        ->from("InoMaestra m")
+                        ->addOrderBy("m.ca_idmaestra DESC")
+                        ->addOrderBy("m.ca_referencia ASC")
+                        ->setHydrationMode( Doctrine::HYDRATE_ARRAY )
+                        ->limit(40)
+                        ->execute();
+                        
+        $this->responseArray = array( "totalCount"=>count( $referencias ), "root"=>$referencias, "success"=>true  );
+        $this->setTemplate("responseTemplate");
+
+    }
 
 	public function executeListaContactosClientesJSON(){
 		$criterio =  $this->getRequestParameter("query");
