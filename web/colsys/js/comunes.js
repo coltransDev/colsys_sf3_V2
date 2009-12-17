@@ -413,16 +413,19 @@ function llenarLineas( transporteFldId, lineaFldId, includeBlank , defaultVal ){
 
 function cargarDatosLineas( lineas , transporte,  lineaFld, defaultVal){
     for( i in lineas ){
-            if( typeof(lineas[i]['transporte'])!="undefined" ){
-                if( transporte == lineas[i]['transporte'] ){
-                    if( defaultVal == lineas[i]['idlinea'] ){
-                        var selected = true;
-                    }else{
-                        var selected = false;
-                    }
-                    lineaFld[lineaFld.length] = new Option(lineas[i]['linea'],lineas[i]['idlinea'],false, selected);
+        if( typeof(lineas[i]['transporte'])!="undefined" ){
+            if( transporte == lineas[i]['transporte'] ){
+                if( defaultVal == lineas[i]['idlinea'] ){
+                    var selected = true;
+                }else{
+                    var selected = false;
                 }
+                lineaFld[lineaFld.length] = new Option(lineas[i]['linea'],lineas[i]['idlinea'],false, selected);
             }
         }
+    }
 
 }
+
+
+
