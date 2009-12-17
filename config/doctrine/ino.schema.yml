@@ -253,9 +253,10 @@ InoTransaccion:
     ca_idcuenta: integer
     ca_idconcepto: integer
     ca_idccosto: integer
+    ca_idmaestra: integer
     ca_id: integer
-    ca_db: decimal
-    ca_cr: decimal
+    ca_db: boolean
+    ca_valor: decimal
     ca_idmoneda: string
     ca_observaciones: timestamp
     ca_fchcreado: timestamp
@@ -286,7 +287,10 @@ InoTransaccion:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: one
-
+    InoMaestra:
+      local: ca_idmaestra
+      foreign: ca_idmaestra
+      type: one
 
 InoConcepto:
   options:
@@ -298,7 +302,7 @@ InoConcepto:
   columns:
     ca_idconcepto:
       type: integer
-      autoincrement: true
+#      autoincrement: true
       primary: true
     ca_concepto:
       type: string
@@ -308,24 +312,29 @@ InoConcepto:
     ca_flete: boolean
     ca_recargolocal: boolean
     ca_recargoorigen: boolean
+    ca_recargootmdta: boolean
     ca_costo: boolean
   relations:
     InoConceptoModalidad:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: many
-    InoConceptoParametro:
+    InoParametroFacturacion:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: many
+    InoParametroCosto:
       local: ca_idconcepto
       foreign: ca_idconcepto
       type: many
 
-InoConceptoParametro:
+InoParametroFacturacion:
   options:
     symfony:
       form: false
       filter: false
   generatePath: ino
-  tableName: ino.tb_conceptos_parametros
+  tableName: ino.tb_parametros_facturacion
   columns:
     ca_idparametro:
       type: integer
@@ -363,6 +372,37 @@ InoConceptoParametro:
       type: one
       class: InoCuenta
 
+InoParametroCosto:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ino
+  tableName: ino.tb_parametros_costos
+  columns:
+    ca_idparametro:
+      type: integer
+      autoincrement: true
+      primary: true
+    ca_idconcepto:
+      type: integer
+    ca_idccosto:
+      type: integer
+    ca_idcuenta: integer
+  relations:
+    InoConcepto:
+      local: ca_idconcepto
+      foreign: ca_idconcepto
+      type: one
+    InoCentroCosto:
+      local: ca_idccosto
+      foreign: ca_idccosto
+      type: one
+    InoCuenta:
+      local: ca_idcuenta
+      foreign: ca_idcuenta
+      type: one
+
 InoConceptoModalidad:
   options:
     symfony:
@@ -377,6 +417,7 @@ InoConceptoModalidad:
     ca_idmodalidad:
       type: integer
       primary: true
+    ca_comisionable: boolean
   relations:
     InoConcepto:
       local: ca_idconcepto
