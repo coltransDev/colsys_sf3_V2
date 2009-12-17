@@ -329,6 +329,21 @@ class reportesNegActions extends sfActions
                     $reporte->setCaSeguro( $bindValues["ca_seguro"] );
                 }
 
+                $reporte->setCaIncoterms( "EXW" );
+                $reporte->setCaOrdenProv( "EXW" );
+                $reporte->setCaIdrepresentante( 0 );
+                $reporte->setCaInformarRepr( 0 );
+                $reporte->setCaIdconsignatario( 0 );
+                $reporte->setCaInformarCons( 0 );
+                $reporte->setCaIdnotify( 0 );
+                $reporte->setCaInformarNoti( 0 );
+                $reporte->setCaNotify( 0 );
+                $reporte->setCaLiberacion( 0 );
+                $reporte->setCaTiempocredito( 0 );
+                $reporte->setCaIdconsignar( 1 );
+                $reporte->setCaMastersame( 0 );
+                $reporte->setCaContinuacion( 'N/A' );
+
                 $reporte->save();
                 $repaduana = Doctrine::getTable("RepAduana")->find( $reporte->getCaIdreporte() );
                 if( $bindValues["ca_colmas"]=="Sí" || $bindValues["ca_transporte"]==Constantes::ADUANA ){                    
@@ -374,7 +389,7 @@ class reportesNegActions extends sfActions
                     }
                 }
 
-                //$this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
+                $this->redirect("reportesNeg/consultaReporte?id=".$reporte->getCaIdreporte());
             }
         }
 
@@ -595,7 +610,6 @@ class reportesNegActions extends sfActions
             if( $request->getParameter("neta_tar")!==null ){
                 $tarifa->setCaNetaTar( $request->getParameter("neta_tar") );
             }
-
             if( $request->getParameter("neta_min")!==null ){
                 $tarifa->setCaNetaMin( $request->getParameter("neta_min") );
             }
@@ -664,18 +678,28 @@ class reportesNegActions extends sfActions
             
             if( $request->getParameter("neta_tar")!==null ){
                 $tarifa->setCaNetaTar( $request->getParameter("neta_tar") );
+            }else{
+                $tarifa->setCaNetaTar( 0 ); //[TODO] permitir null
             }
+
 
             if( $request->getParameter("neta_min")!==null ){
                 $tarifa->setCaNetaMin( $request->getParameter("neta_min") );
+            }else{
+                $tarifa->setCaNetaMin( 0 ); //[TODO] permitir null
             }
+
 
             if( $request->getParameter("reportar_tar")!==null ){
                 $tarifa->setCaReportarTar( $request->getParameter("reportar_tar") );
+            }else{
+                $tarifa->setCaReportarTar( 0 ); //[TODO] permitir null
             }
 
             if( $request->getParameter("reportar_min")!==null ){
                 $tarifa->setCaReportarMin( $request->getParameter("reportar_min") );
+            }else{
+                $tarifa->setCaReportarMin( 0 ); //[TODO] permitir null
             }
             
 

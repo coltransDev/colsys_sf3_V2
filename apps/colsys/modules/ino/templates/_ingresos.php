@@ -51,9 +51,9 @@
                     </td>
                     <td>
                         <?                        
-                        echo link_to(image_tag("16x16/edit.gif"), "ino/formComprobante?modo=".$modo."&id=".$inoCliente->getCaIdinocliente()."&idcomprobante=".$comprobante->getCaIdcomprobante());
+                        echo link_to(image_tag("16x16/edit.gif"), "ino/formComprobante?modo=".$modo."&idinocliente=".$inoCliente->getCaIdinocliente()."&idcomprobante=".$comprobante->getCaIdcomprobante());
                         if( $k==count($comprobantes) ){
-                            echo "&nbsp;".link_to(image_tag("16x16/edit_add.gif"), "ino/formComprobante?modo=".$modo."&id=".$inoCliente->getCaIdinocliente());
+                            echo "&nbsp;".link_to(image_tag("16x16/edit_add.gif"), "ino/formComprobante?modo=".$modo."&idinocliente=".$inoCliente->getCaIdinocliente());
                         }
                         ?>
                     </td>
@@ -69,7 +69,7 @@
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>
-                <?=link_to(image_tag("16x16/edit_add.gif"), "ino/formComprobante?modo=".$modo."&id=".$inoCliente->getCaIdinocliente())?>
+                <?=link_to(image_tag("16x16/edit_add.gif"), "ino/formComprobante?modo=".$modo."&idinocliente=".$inoCliente->getCaIdinocliente())?>
             </td>
         </tr>
 

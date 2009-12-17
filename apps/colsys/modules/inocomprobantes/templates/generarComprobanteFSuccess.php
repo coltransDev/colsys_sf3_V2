@@ -4,6 +4,7 @@
  *
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
+
 $comprobante = $sf_data->getRaw("comprobante");
 $tipo = $comprobante->getInoTipoComprobante();
 $idsSucursal = $tipo->getIdsSucursal();
@@ -98,7 +99,7 @@ $pdf->Cell(0, 4, "transacciones con el régimen simplificado.",0,1, "L");
 
 $y+=6;
 $pdf->SetXY($x+$marginHeader,$y);
-$pdf->Cell(0, 4, "FACTURA DE VENTA NO ". str_pad($comprobante->getCaConsecutivo(), 14, "0", STR_PAD_LEFT),0,1, "L");
+$pdf->Cell(0, 4, strtoupper($tipo->getCaTitulo())." NO ". str_pad($comprobante->getCaConsecutivo(), 14, "0", STR_PAD_LEFT),0,1, "L");
 
 
 $pdf->Image(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR.'ColtransSA.jpg', 18, 12, 63, 10, 'JPG');
@@ -257,7 +258,7 @@ $k = 5;
 foreach( $transacciones as $transaccion ){
     $centro = $transaccion->getInoCentroCosto();
     $concepto = $transaccion->getInoConcepto();
-    $parametro = $transaccion->getInoConceptoParametro();
+    $parametro = $transaccion->getInoParametroFacturacion();
     if( $lastIngresoPropio===null || $lastIngresoPropio!=$parametro->getCaIngresoPropio() ){
         $lastIngresoPropio=$parametro->getCaIngresoPropio();
         $pdf->SetXY($x+30,$y+$k+$space);
@@ -284,13 +285,13 @@ foreach( $transacciones as $transaccion ){
     //$pdf->Cell(0, 4, $transaccion->getCaCr() ,0,1, "L");
 
     $pdf->SetXY($x,$y+$k);
-    $pdf->Cell(172, 4, number_format($transaccion->getCaCr(), 2, ",", ".")  ,0,1, "R");
+    $pdf->Cell(172, 4, number_format($transaccion->getCaValor(), 2, ",", ".")  ,0,1, "R");
     $k+=$space;
 
     if( !isset($totales[$propios]) ){
         $totales[$propios] = 0;
     }
-    $totales[$propios] += $transaccion->getCaCr()-$transaccion->getCaDb();
+    $totales[$propios] += $transaccion->getCaValor();
     
     $imp = $transaccion->getImpuestos();
 

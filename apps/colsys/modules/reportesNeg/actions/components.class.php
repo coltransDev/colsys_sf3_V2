@@ -24,7 +24,7 @@ class reportesNegComponents extends sfComponents
 	*/
 	public function executePanelConceptosFletes()
 	{
-				
+		
 		$this->conceptos = Doctrine::getTable("Concepto")
                                      ->createQuery("c")
                                      ->select("ca_idconcepto, ca_concepto")
@@ -51,8 +51,8 @@ class reportesNegComponents extends sfComponents
                                      ->createQuery("c")
                                      ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
                                      ->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_EN_ORIGEN )
-                                     ->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
-                                     ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
+                                     /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
+                                     ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
                                      ->addOrderBy("c.ca_recargo")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                      ->execute();
@@ -80,8 +80,8 @@ class reportesNegComponents extends sfComponents
                                      ->createQuery("c")
                                      ->select("ca_idrecargo as ca_idconcepto, ca_recargo as ca_concepto")
                                      ->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
-                                     ->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
-                                     ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
+                                     /*->addWhere("c.ca_impoexpo LIKE ? ", $impoexpo )
+                                     ->addWhere("c.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )*/
                                      ->addOrderBy("c.ca_recargo")
                                      ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
                                      ->execute();

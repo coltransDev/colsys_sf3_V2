@@ -262,6 +262,24 @@ class inoActions extends sfActions
     }
 
 
+    /**
+    *
+    *
+    * @param sfRequest $request A request object
+    */
+    public function executeFormComprobante(sfWebRequest $request)
+    {
+        $this->modo = $request->getParameter("modo");
+        $this->nivel = $this->getNivel();
+
+        $request->setParameter("tipo", "F");
+
+        $this->forward("inocomprobantes", "formComprobante");
+
+
+    }
+
+
     
 }
 

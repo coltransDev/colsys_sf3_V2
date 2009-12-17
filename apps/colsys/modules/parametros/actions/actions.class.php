@@ -139,13 +139,22 @@ class parametrosActions extends sfActions
                          ->addOrderBy( "c.ca_concepto" );
         
         if( $modo == "fv" ){
-            $q->leftJoin("c.InoConceptoParametro p")
+            $q->leftJoin("c.InoParametroFacturacion p")
               ->leftJoin("p.InoCuenta cu")
               ->leftJoin("p.InoCuentaRetencion cr")
               ->addSelect("p.*, cu.ca_cuenta as ca_cuenta, cr.ca_cuenta as ca_cuentaretencion")
-              ->addWhere("p.ca_idccosto = ? OR p.ca_idccosto IS NULL", $idccosto );
+              ->addWhere("p.ca_idccosto = ? OR p.ca_idccosto IS NULL", $idccosto )
+              ->addWhere("c.ca_recargolocal = ? OR c.ca_recargoorigen = ?", array(true, true));
+        }
 
+        if( $modo=="fc" ){
+            $q->addWhere( "c.ca_costo = ? ", true);
 
+            $q->leftJoin("c.InoParametroCosto p")
+              ->leftJoin("p.InoCuenta cu")
+              ->addSelect("p.*, cu.ca_cuenta as ca_cuenta ")
+              ->addWhere("p.ca_idccosto = ? OR p.ca_idccosto IS NULL", $idccosto )
+              ->addWhere("c.ca_costo = ? ", array(true));
         }
 
         $conceptos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR )->execute();
@@ -216,7 +225,7 @@ class parametrosActions extends sfActions
         if( $request->getParameter("concepto")!==null ){
             $concepto->setCaConcepto( $request->getParameter("concepto") );
         }
-
+        
         if( $modo=="edicion" ){
             if( $request->getParameter("recargoorigen")!==null ){
                 if( $request->getParameter("recargoorigen")=="true" ){
@@ -265,17 +274,57 @@ class parametrosActions extends sfActions
         }
 
         $concepto->save();
-
+       
         if( $modo=="fv" ){
             //ca_idparametro
             $idccosto = $request->getParameter("idccosto");
-            $parametro = Doctrine::getTable("InoConceptoParametro")
+            $parametro = Doctrine::getTable("InoParametroFacturacion")
                                    ->createQuery("p")
                                    ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($concepto->getCaIdconcepto(), $idccosto) )
                                    ->fetchOne();
 
             if( !$parametro ){
-                $parametro = new InoConceptoParametro();
+                $parametro = new InoParametroFacturacion();
+                $parametro->setCaIdconcepto( $concepto->getCaIdconcepto() );
+                $parametro->setCaIdccosto( $idccosto );
+            }
+            if( $request->getParameter("idcuenta")!==null ){
+                $parametro->setCaIdcuenta( $request->getParameter("idcuenta") );
+            }
+
+            if( $request->getParameter("ingreso_propio")!==null ){
+                $parametro->setCaIngreso_propio( $request->getParameter("ingreso_propio") );
+            }
+
+            if( $request->getParameter("iva")!==null ){
+                $parametro->setCaIva( $request->getParameter("iva")/100 );
+            }
+
+            if( $request->getParameter("baseretencion")!==null ){
+                $parametro->setCaBaseretencion( $request->getParameter("baseretencion") );
+            }
+
+            if( $request->getParameter("idcuentaretencion")!==null ){
+                $parametro->setCaIdcuentaretencion( $request->getParameter("idcuentaretencion") );
+            }
+
+            if( $request->getParameter("valor")!==null ){
+                $parametro->setCaValor( $request->getParameter("valor") );
+            }
+            $parametro->save();
+
+        }
+         
+        if( $modo=="fc" ){
+            //ca_idparametro
+            $idccosto = $request->getParameter("idccosto");
+            $parametro = Doctrine::getTable("InoParametroCosto")
+                                   ->createQuery("p")
+                                   ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($concepto->getCaIdconcepto(), $idccosto) )
+                                   ->fetchOne();
+
+            if( !$parametro ){
+                $parametro = new InoParametroCosto();
                 $parametro->setCaIdconcepto( $concepto->getCaIdconcepto() );
                 $parametro->setCaIdccosto( $idccosto );
             }
@@ -358,15 +407,17 @@ class parametrosActions extends sfActions
 
             if( count( $modalidadesParam ) >0 ){
                 
-                $modalidades = Doctrine::getTable("Modalidad")
+                $q = Doctrine::getTable("Modalidad")
                          ->createQuery("m")
                          ->select("m.ca_idmodalidad, m.ca_impoexpo, m.ca_transporte, m.ca_modalidad")
                          ->whereIn("m.ca_idmodalidad", $modalidadesParam)
                          ->addOrderBy( "m.ca_impoexpo" )
                          ->addOrderBy( "m.ca_transporte" )
-                         ->addOrderBy( "m.ca_modalidad" )
-                         ->setHydrationMode(Doctrine::HYDRATE_ARRAY )
-                         ->execute();
+                         ->addOrderBy( "m.ca_modalidad" );
+                
+
+                $modalidades = $q->setHydrationMode(Doctrine::HYDRATE_ARRAY )->execute();
+
                 $k = 0;
                 foreach( $modalidades as $modalidad ){
                     $conceptos[] = array("idmodalidad"=>$modalidad["ca_idmodalidad"], "modalidad"=>utf8_encode($modalidad["ca_impoexpo"]." ".$modalidad["ca_transporte"]." ".$modalidad["ca_modalidad"]), "orden"=>$k++);
@@ -376,7 +427,7 @@ class parametrosActions extends sfActions
         }
 
         $nivel = $this->getNivel();
-        if( $nivel==1 && $modo=="edicion" ){
+        if( $nivel>=1 && $modo=="edicion" ){
             $conceptos[] = array("idmodalidad"=>"", "modalidad"=>"+", "orden"=>"Z");
         }
 
@@ -384,9 +435,5 @@ class parametrosActions extends sfActions
 
 		$this->setTemplate("responseTemplate");
     }
-
-
-
-
 
 }

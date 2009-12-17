@@ -96,6 +96,7 @@
                        </div>
                        <div class="tab-page">
                            <h2 class="tab">Costos</h2>
+                           <?=include_component("ino", "costos", array("referencia"=>$referencia, "modo"=>$modo))?>
                        </div>
                        <div class="tab-page">
                            <h2 class="tab">Balance</h2>

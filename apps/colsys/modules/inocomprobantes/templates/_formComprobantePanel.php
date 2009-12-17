@@ -5,7 +5,16 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 if( !$comprobante->getCaConsecutivo() ){
-    $tipos = $sf_data->getRaw("tipos");
+    $tipos = $sf_data->getRaw("tipos");   
+}
+
+
+$saveUrl = "inocomprobantes/observeFormComprobantePanel";
+$saveUrlOkRedirect = "inocomprobantes/formComprobante";
+
+if( isset($inocliente) ){
+    $saveUrl.="?idinocliente=".$inocliente->getCaIdinocliente();
+    $saveUrlOkRedirect .= "?idinocliente=".$inocliente->getCaIdinocliente();
 }
 
 
@@ -107,26 +116,15 @@ FormComprobantePanel = function(){
                                 layout: 'form',
                                 items: [
                                     <?
-                                    if( $comprobante->getCaConsecutivo() ){
+                                    
+                                    if( !$comprobante->getCaConsecutivo() ){
                                     ?>
-                                    {
-                                        xtype:'textfield',
-                                        fieldLabel: 'Consecutivo',
-                                        name: 'consecutivo',
-                                        value: '<?=$comprobante->getCaConsecutivo()?>',
-                                        allowBlank:true,
-                                        readOnly: true,
-                                        width: 120
-                                    },
-                                    <?
-                                    }else{
-                                    ?>
-                                    new Ext.form.ComboBox({                                        
+                                    new Ext.form.ComboBox({
                                         fieldLabel: 'Tipo',
                                         valueField:'idtipo',
                                         displayField:'tipo',
                                         typeAhead: true,
-                                        width: 200,
+                                        width: 300,
                                         emptyText:'',
                                         value: '',
                                         forceSelection:true,
@@ -149,18 +147,42 @@ FormComprobantePanel = function(){
                                             ),
                                             proxy: new Ext.data.MemoryProxy(<?=json_encode($tipos)?>)
                                         }),
-                                       
+
                                         onSelect: function(record, index){ // override default onSelect to do redirect
                                             if(this.fireEvent('beforeselect', this, record, index) !== false){
                                                 this.setValue(record.data[this.valueField || this.displayField]);
                                                 this.collapse();
                                                 this.fireEvent('select', this, record, index);
-                                            }                                                                                       
-                                            Ext.getCmp("idtipo").setValue(record.get("idtipo"));                                            
+                                            }
+                                            Ext.getCmp("idtipo").setValue(record.get("idtipo"));
                                         }
                                     }),
                                     <?
-                                    }                                    
+                                    }
+                                    
+                                    if( $comprobante->getCaConsecutivo()|| $tipo=="P" ){
+                                    ?>
+                                    {
+                                        xtype:'textfield',
+                                        fieldLabel: 'Consecutivo',
+                                        name: 'consecutivo',
+                                        value: '<?=$comprobante->getCaConsecutivo()?>',
+                                        <?
+                                        if( $tipo=="P" ){
+                                        ?>
+                                        allowBlank:false,
+                                        <?
+                                        }else{
+                                        ?>
+                                        allowBlank:true,
+                                        readOnly: true,
+                                        <?
+                                        }
+                                        ?>
+                                        width: 120
+                                    },
+                                    <?
+                                    }                                 
                                     ?>
                                     {
                                         xtype:'hidden',
@@ -244,7 +266,13 @@ FormComprobantePanel = function(){
 					    forceSelection:true,
 						selectOnFocus:true,
 						allowBlank:false,
+                        <?
+                        if( $tipo=="F" ){
+                        ?>
                         readOnly:true,
+                        <?
+                        }
+                        ?>
 						onSelect: function(record, index){ // override default onSelect to do redirect
 							if(this.fireEvent('beforeselect', this, record, index) !== false){
 								this.setValue(record.data[this.valueField || this.displayField]);
@@ -314,13 +342,13 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
 
         if( this.getForm().isValid() ){
 
-            this.getForm().submit({url:'<?=url_for('ino/observeFormComprobantePanel?idinocliente='.$inocliente->getCaIdinocliente())?>',
+            this.getForm().submit({url:'<?=url_for( $saveUrl )?>',
                                     waitMsg:'Salvando Datos básicos...',
                                     success:function(response,options){
                                         <?
                                         if( !$comprobante->getCaIdcomprobante()  ){
                                         ?>
-                                            document.location='<?=url_for("ino/formComprobante?modo=".$modo."&id=".$inocliente->getCaIdinocliente()."&idcomprobante=")?>'+options.result.idcomprobante;
+                                            document.location='<?=url_for($saveUrlOkRedirect)."?idcomprobante="?>'+options.result.idcomprobante;
                                         <?
                                         }
                                         ?>
@@ -337,13 +365,13 @@ Ext.extend(FormComprobantePanel, Ext.FormPanel, {
     }
     ,
     previsualizar: function(){
-        window.open("<?=url_for("ino/generarComprobantePDF?id=".$comprobante->getCaIdcomprobante())?>");
+        window.open("<?=url_for("inocomprobantes/generarComprobantePDF?id=".$comprobante->getCaIdcomprobante())?>");
 
     },
 
     generar: function(){
         if( confirm("Se generara la factura y se transferira a SIIGO, sera necesario anularla para hacer modificaciones, ¿desea continuar?") ){
-            document.location = "<?=url_for("ino/generarComprobante?id=".$comprobante->getCaIdcomprobante())?>";
+            document.location = "<?=url_for("inocomprobantes/generarComprobante?id=".$comprobante->getCaIdcomprobante())?>";
         }
 
     }

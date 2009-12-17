@@ -30,7 +30,20 @@ use_helper("ExtCalendar");
         ?>
         <tr>
             <td colspan="2">
-                <b>Tipo de Evaluaci&oacute;n:</b> <br /> <?=$tipo=="seleccion"?"Selecci&oacute;n":"Desempe&ntilde;o"?>
+                <b>Tipo de Evaluaci&oacute;n:</b> <br /> 
+                <?
+                switch($tipo){
+                    case "seleccion":
+                        echo "Selecci&oacute;n";
+                        break;
+                    case "desempeno":
+                        echo "Desempe&ntilde;o";
+                        break;
+                    case "reevaluacion":
+                        echo "Reevaluacion: Desempe&ntilde;o";
+                        break;
+                }
+                ?>
             </td>
         </tr>
         <tr>

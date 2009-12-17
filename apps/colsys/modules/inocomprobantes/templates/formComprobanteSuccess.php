@@ -5,9 +5,16 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 
-include_component("ino", "formComprobantePanel", array("inocliente"=>$inocliente, "comprobante"=>$comprobante));
+include_component("inocomprobantes", "formComprobantePanel", array("inocliente"=>isset($inocliente)?$inocliente:null, "comprobante"=>$comprobante, "tipo"=>$tipo ));
 if( $comprobante->getCaIdcomprobante() ){
-    include_component("ino", "formComprobanteSubpanel", array("inocliente"=>$inocliente, "comprobante"=>$comprobante ));
+    switch( $comprobante->getInoTipoComprobante()->getcaTipo() ){
+        case "F":
+            include_component("inocomprobantes", "formComprobanteSubpanelF", array("comprobante"=>$comprobante ));
+            break;
+        case "P":
+            include_component("inocomprobantes", "formComprobanteSubpanelP", array("comprobante"=>$comprobante ));
+            break;
+    }
 }
 ?>
 <div class="content">
@@ -25,7 +32,10 @@ if( $comprobante->getCaIdcomprobante() ){
          subpanel.render("sub-panel");
          <?
      }
+
+
      ?>
+    
 </script>
 
 

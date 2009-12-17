@@ -123,6 +123,9 @@ $numYears = $actualYear-$initialYear+1;
                 if( isset( $evaluaciones[$year] )){
                     $evaluacion = $evaluaciones[$year];
                 }
+                if( !$evaluacion && $year!=$actualYear){
+                    $evaluacion = "N/A";
+                }
                 ?>
                 <td><div align="left"><?=$evaluacion?$evaluacion:"&nbsp;"?></div></td>
                 <?

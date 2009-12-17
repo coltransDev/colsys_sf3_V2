@@ -56,7 +56,7 @@ PanelParametros = function( config ){
         triggerAction: 'all',
         emptyText: 'Selecione un centro de Costos...',
         selectOnFocus: true,
-        width: 185,
+        width: 285,
         displayField: "value",
         valueField: "id",
         store : new Ext.data.Store({
@@ -258,6 +258,21 @@ PanelParametros = function( config ){
         dataIndex: 'orden',
         width: 50
       },*/
+      <?
+      }
+      if( $modo=="fc" ){
+      ?>
+      ,
+      {
+        header: "Cuenta",
+        dataIndex: 'cuenta',
+        width: 50,
+        hideable: false,
+        sortable:true,
+        editor: this.editorCuentas
+
+
+      }
       <?
       }
       ?>

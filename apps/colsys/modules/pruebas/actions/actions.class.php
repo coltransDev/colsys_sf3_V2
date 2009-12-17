@@ -2734,8 +2734,6 @@ ORDER BY ca_fchstatus ";
 			
 			}
 			//$accesoGrupo->delete();
-			
-			
 		}
 				
 	}
@@ -3502,6 +3500,129 @@ ORDER BY ca_idtrayecto,ca_idconcepto,log_pricrecargosxconcepto.ca_idrecargo, ca_
 
     }
 
+
+    public function executeImportarCostos(){
+        
+        $costos = Doctrine::getTable("Costo")
+                              ->createQuery("t")
+                              ->addOrderBy("t.ca_idcosto")
+                              ->execute();
+
+        //Doctrine::getTable("InoConceptoModalidad")->createQuery("m")->delete()->execute();
+        foreach( $costos as $costo ){
+            $inoConcepto = Doctrine::getTable("InoConcepto")->find( $costo->getCaIdcosto() );
+
+            if( !$inoConcepto ){
+                $inoConcepto = new InoConcepto();
+                $inoConcepto->setCaIdconcepto( $costo->getCaIdcosto() );
+            }
+
+            $inoConcepto->setCaConcepto( $costo->getCaCosto() );
+            $inoConcepto->setCaCosto( true );
+            
+
+            $inoConcepto->setCaTipo( "Costo" );
+            //$inoConcepto->setCaIncoterms( $costo->getCaIncoterms() );
+
+            $inoConcepto->save();
+
+            $impoexpo = $costo->getCaImpoexpo();
+            $transporte = $costo->getCaTransporte();
+            $mod = $costo->getCaModalidad();
+
+
+            if( $impoexpo=="Importacion" && $transporte=="Aéreo" && $mod=="Consolidado" ){
+               $impoexpo="Importación";
+               $mod = "CONSOLIDADO";
+            }
+
+            if( $impoexpo=="Importacion" && $transporte=="Aéreo" && $mod=="Guia Directa" ){
+               $impoexpo="Importación";
+               $mod = "DIRECTO";
+            }
+
+            if( $impoexpo=="Exportacion" && $transporte=="Aereo" && $mod=="Consolidado" ){
+               $impoexpo="Exportación";
+               $transporte="Aéreo";
+               $mod = "CONSOLIDADO";
+            }
+
+            if( $impoexpo=="Exportacion" && $transporte=="Maritimo" && $mod=="Consolidado" ){
+               $impoexpo="Exportación";
+               $transporte="Marítimo";
+               $mod = "LCL";
+            }
+
+            if( $impoexpo=="Exportacion" && $transporte=="Terrestre" && $mod=="Consolidado" ){
+               $impoexpo="Exportación";
+               $mod = "LCL";
+            }
+
+            if( $impoexpo=="Aduanas" && $transporte=="Marítimo" && $mod=="Consolidado" ){
+               $impoexpo="Importación";
+               $transporte = "Marítimo";
+               $mod = "ADUANA";
+            }
+
+            $q = Doctrine::getTable("Modalidad")
+                                         ->createQuery("m")
+                                         ->where("m.ca_impoexpo = ? ", $impoexpo )
+                                         ->addWhere("m.ca_transporte = ? ", $transporte );
+
+            if( $mod ){
+                $q->addWhere("m.ca_modalidad = ? ", $mod );
+            }else{
+                $q->addWhere("m.ca_modalidad IS NULL" );
+            }
+                                         
+
+           $modalidad = $q->fetchOne();
+
+
+           if( $modalidad ){
+                $conceptoModalidad = new InoConceptoModalidad();
+                $conceptoModalidad->setCaIdconcepto( $inoConcepto->getCaIdconcepto() );
+                $conceptoModalidad->setCaIdmodalidad( $modalidad->getCaIdmodalidad() );
+                if( $costo->getCaComisionable()=="Sí"){
+                    $conceptoModalidad->setCaComisionable( true );
+                }else{
+                    $conceptoModalidad->setCaComisionable( false );
+                }
+                $conceptoModalidad->save();
+           }else{
+                echo "ERROR ---> ".$impoexpo." ".$transporte." ".$mod."<br />";
+           }
+
+
+
+
+            /*
+
+            $impoexpoParam = explode("|", $recargo->getCaImpoexpo() );
+
+            foreach( $impoexpoParam as $impoexpo){
+                $modalidades = Doctrine::getTable("Modalidad")
+                                         ->createQuery("m")
+                                         ->where("m.ca_impoexpo = ? ", $impoexpo )
+                                         ->addWhere("m.ca_transporte = ? ", $recargo->getCaTransporte() )
+                                         ->addWhere("m.ca_modalidad IS NOT NULL ")
+                                         ->addWhere("m.ca_modalidad != ? ", "ADUANA")
+                                         ->execute();
+
+               foreach( $modalidades as $modalidad ){
+                    $conceptoModalidad = new InoConceptoModalidad();
+                    $conceptoModalidad->setCaIdconcepto( $inoConcepto->getCaIdconcepto() );
+                    $conceptoModalidad->setCaIdmodalidad( $modalidad->getCaIdmodalidad() );
+                    $conceptoModalidad->save();
+               }
+
+            }*/
+
+        }
+
+        $this->setTemplate("blank");
+
+    }
 
 		
 }

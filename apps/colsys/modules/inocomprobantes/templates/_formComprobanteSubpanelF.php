@@ -106,7 +106,7 @@ FormComprobanteSubpanel = function(){
     this.store = new Ext.data.Store({       
 
         autoLoad : true,
-        url: '<?=url_for("ino/formComprobanteData?id=".$inocliente->getCaIdinocliente()."&idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+        url: '<?=url_for("inocomprobantes/formComprobanteData?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
         reader: new Ext.data.JsonReader(
             {
                 root: 'items',
@@ -228,8 +228,7 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
                     if( r.data.codigo==e.value ){
                        
                         if( !rec.data.idconcepto ){
-                            var newRec = new recordConcepto({
-                               idinocliente: '<?=$inocliente->getCaIdinocliente()?>',
+                            var newRec = new recordConcepto({                               
                                idcomprobante: '<?=$comprobante->getCaIdcomprobante()?>',
                                concepto: '+',
                                idconcepto: '',
@@ -297,13 +296,13 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
             changes['valor']=r.data.valor;
             changes['idtransaccion']=r.data.idtransaccion;
             changes['idccosto']=r.data.idccosto ;
-
+            
             if( r.data.idconcepto ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("ino/observeFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+                        url: '<?=url_for("inocomprobantes/observeFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
 						//method: 'POST',
                         //Solamente se envian los cambios
                         params :	changes,
@@ -373,7 +372,7 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
             Ext.Ajax.request(
             {
                 waitMsg: 'Eliminando...',
-                url: '<?=url_for("ino/eliminarFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+                url: '<?=url_for("inocomprobantes/eliminarFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
                 //method: 'POST',
                 //Solamente se envian los cambios
                 params :	{

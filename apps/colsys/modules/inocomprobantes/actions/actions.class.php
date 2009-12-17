@@ -28,14 +28,17 @@ class inocomprobantesActions extends sfActions
     */
     public function executeFormComprobante(sfWebRequest $request)
     {
-        
        
+        $this->tipo = $request->getParameter("tipo");
 
-        $this->forward404Unless( $request->getParameter("id") );
-        $this->inocliente = Doctrine::getTable("InoCliente")->find($request->getParameter("id"));
-        $this->forward404Unless( $this->inocliente );
+        if( $request->getParameter("idinocliente") ){
+            $this->inocliente = Doctrine::getTable("InoCliente")->find($request->getParameter("idinocliente"));
+            $this->forward404Unless( $this->inocliente );
 
-        $request->setParameter("idmaestra", $this->inocliente->getCaIdmaestra());
+             $request->setParameter("idmaestra", $this->inocliente->getCaIdmaestra());
+        }
+
+       
 
         if( $request->getParameter("idcomprobante") ){
             $this->comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("idcomprobante"));
@@ -46,7 +49,7 @@ class inocomprobantesActions extends sfActions
         }
 
         if( $this->comprobante->getCaEstado()!=InoComprobante::ABIERTO ){
-            $this->redirect("ino/verComprobante?modo=".$this->modo."&id=".$this->comprobante->getCaIdcomprobante());
+            $this->redirect("inocomprobantes/verComprobante?id=".$this->comprobante->getCaIdcomprobante());
         }
 
 
@@ -73,7 +76,9 @@ class inocomprobantesActions extends sfActions
             $comprobante->setCaIdtipo($request->getParameter("idtipo"));
             $comprobante->setCaConsecutivo(InoComprobanteTable::siguienteConsecutivo($request->getParameter("idtipo")));
         }
-
+        if( $request->getParameter("consecutivo") ){
+            $comprobante->setCaConsecutivo( $request->getParameter("consecutivo") );
+        }
         $comprobante->setCaFchcomprobante($request->getParameter("fechacomprobante"));
         $comprobante->setCaIdinocliente($idinocliente);
         $comprobante->setCaId($request->getParameter("id"));
@@ -108,15 +113,18 @@ class inocomprobantesActions extends sfActions
 
         $baseRow = array( "idinocliente"=>$comprobante->getCaIdinocliente(),
                           "idcomprobante"=>$comprobante->getCaIdcomprobante(),
-
                         );
         $items = array();
 
         $q = Doctrine::getTable("InoTransaccion")
                        ->createQuery("t")
-                       ->select("t.ca_idtransaccion, t.ca_idconcepto, t.ca_db, t.ca_cr, c.ca_idconcepto,c.ca_concepto, cc.ca_idccosto, cc.ca_centro, cc.ca_subcentro, cc.ca_nombre")
+                       ->select("t.ca_idtransaccion, t.ca_idconcepto, t.ca_db, t.ca_valor,
+                                c.ca_idconcepto,c.ca_concepto, cc.ca_idccosto, cc.ca_centro,
+                                cc.ca_subcentro, cc.ca_nombre, cu.ca_cuenta, m.ca_referencia, m.ca_idmaestra")
                        ->innerJoin("t.InoConcepto c")
                        ->leftJoin("t.InoCentroCosto cc")
+                       ->leftJoin("t.InoCuenta cu")
+                       ->leftJoin("t.InoMaestra m")
                        ->where("t.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante() )
                        ->setHydrationMode(Doctrine::HYDRATE_SCALAR );
 
@@ -135,19 +143,22 @@ class inocomprobantesActions extends sfActions
          }
 
         foreach( $transacciones as $transaccion ){
-
-            if( $tipo->isDb() ){
-                $valor = $transaccion["t_ca_db"];
+            if( $transaccion["t_ca_db"]!==null ){
+                $db = $transaccion["t_ca_db"]?"D":"C";
             }else{
-                $valor = $transaccion["t_ca_cr"];
+                $db = null;
             }
             $items[] = array_merge($baseRow, array(
                             "idtransaccion"=>$transaccion["t_ca_idtransaccion"],
                             "idconcepto"=>$transaccion["t_ca_idconcepto"],
+                            "idccosto"=>$transaccion["cc_ca_idccosto"],
                             "concepto"=>utf8_encode($centrosArray[$transaccion['cc_ca_centro']]." ".$transaccion['cc_ca_nombre']." » ".$transaccion["c_ca_concepto"]),
                             "centro" => str_pad($transaccion['cc_ca_centro'], 2, "0", STR_PAD_LEFT)."-".str_pad($transaccion['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT),
                             "codigo" => str_pad($transaccion['cc_ca_centro'], 2, "0", STR_PAD_LEFT).str_pad($transaccion['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT).str_pad($transaccion["c_ca_idconcepto"], 4, "0", STR_PAD_LEFT),
-                            "valor"=>$valor
+                            "db"=>$db,
+                            "valor"=>$transaccion["t_ca_valor"],
+                            "referencia"=>$transaccion["m_ca_referencia"],
+                            "idmaestra"=>$transaccion["m_ca_idmaestra"]
                      ));
 
         }
@@ -187,11 +198,19 @@ class inocomprobantesActions extends sfActions
 
         //$transaccion->setCaId( 1 );
         $transaccion->setCaIdconcepto( $request->getParameter("idconcepto") );
-        if( $tipo->isDb() ){
-            $transaccion->setCaDb( $request->getParameter("valor") );
+        if( $request->getParameter("valor")=="D"){
+            $transaccion->setCaDb( true );
         }else{
-            $transaccion->setCaCr( $request->getParameter("valor") );
+            $transaccion->setCaDb( false );
         }
+        if( $request->getParameter("valor")!==null ){
+            $transaccion->setCaValor( $request->getParameter("valor") );
+        }
+
+        if( $request->getParameter("idmaestra")!==null ){
+            $transaccion->setCaIdmaestra( $request->getParameter("idmaestra") );
+        }
+
         $transaccion->setCaIdccosto( $request->getParameter("idccosto") );
         $transaccion->setCaIdmoneda( "USD" );
         $transaccion->save();
@@ -262,6 +281,8 @@ class inocomprobantesActions extends sfActions
         $comprobante = Doctrine::getTable("InoComprobante")->find($request->getParameter("id"));
         $this->forward404Unless( $comprobante );
         $modo = $request->getParameter("modo");
+        $tipo = $comprobante->getInoTipoComprobante();
+
         if( $comprobante->getcaEstado()==InoComprobante::ABIERTO ){
 
             try{
@@ -281,50 +302,77 @@ class inocomprobantesActions extends sfActions
 
                 $totales = array();
                 $total = 0;
+                if( $tipo=="F" ){
+                    foreach( $transacciones as $transaccion ){
+                        $concepto = $transaccion->getInoConcepto();
 
-                foreach( $transacciones as $transaccion ){
-                    $concepto = $transaccion->getInoConcepto();
 
-                    $parametro = $transaccion->getInoConceptoParametro();
-                    if( !$parametro ){
-                        $conn->rollBack();
-                        throw new Exception('La parametrizacion no esta correctamente definida: Comprobante:'.$comprobante->getCaIdcomprobante()." Transaccion: ".$transaccion->getCaIdtransaccion());
-                    }
-                    $total+=($transaccion->getCaCr()-$transaccion->getCaDb());
-                    $transaccion->setCaIdcuenta( $parametro->getCaIdcuenta() );
-                    $transaccion->save( $conn );
 
-                    $imp = $transaccion->getImpuestos();
-
-                    foreach( $imp as $key=>$val ){
-                        if(!isset( $impuestos[$key] )){
-                            $impuestos[$key]["db"] = 0;
-                            $impuestos[$key]["cr"] = 0;
+                        $parametro = $transaccion->getInoParametroFacturacion();
+                        if( !$parametro ){
+                            $conn->rollBack();
+                            throw new Exception('La parametrizacion no esta correctamente definida: Comprobante:'.$comprobante->getCaIdcomprobante()." Transaccion: ".$transaccion->getCaIdtransaccion());
                         }
-                        $impuestos[$key]["db"]+=$imp[$key]["db"];
-                        $impuestos[$key]["cr"]+=$imp[$key]["cr"];
+
+                        $total+=$transaccion->getCaValor();
+                        $transaccion->setCaIdcuenta( $parametro->getCaIdcuenta() );
+                        $transaccion->save( $conn );
+
+                        $imp = $transaccion->getImpuestos();
+
+                        foreach( $imp as $key=>$val ){
+                            if(!isset( $impuestos[$key] )){
+                                $impuestos[$key]["db"] = 0;
+                                $impuestos[$key]["cr"] = 0;
+                            }
+                            $impuestos[$key]["db"]+=$imp[$key]["db"];
+                            $impuestos[$key]["cr"]+=$imp[$key]["cr"];
+                        }
+                    }
+
+
+
+                    if( $impuestos["iva"]>0 ){
+                        $transaccion = new InoTransaccion();
+                        $transaccion->setCaDb( false );
+                        $transaccion->setCaValor( $impuestos["iva"]["cr"]-$impuestos["iva"]["db"] );
+                        $transaccion->setCaIdmoneda( "USD" );
+                        //$transaccion->setCaIdconcepto( 240 );
+                        $transaccion->setCaIdcuenta( $tipo->getCaIdctaIva() );
+                        $transaccion->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
+                        $transaccion->save( $conn );
+                        $total +=  $impuestos["iva"]["cr"]-$impuestos["iva"]["db"];
                     }
                 }
 
-
-
-                if( $impuestos["iva"]>0 ){
-                    $transaccion = new InoTransaccion();
-                    $transaccion->setCaDb( 0 );
-                    $transaccion->setCaCr( $impuestos["iva"]["cr"]-$impuestos["iva"]["db"] );
-                    $transaccion->setCaIdmoneda( "USD" );
-                    //$transaccion->setCaIdconcepto( 240 );
-                    $transaccion->setCaIdcuenta( $tipo->getCaIdctaIva() );
-                    $transaccion->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
-                    $transaccion->save( $conn );
-                    $total +=  $impuestos["iva"]["cr"]-$impuestos["iva"]["db"];
+                if( $tipo=="P" ){
+                    foreach( $transacciones as $transaccion ){
+                        $concepto = $transaccion->getInoConcepto();
+                        $parametro = $transaccion->getInoParametroCosto();
+                        if( !$parametro ){
+                            $conn->rollBack();
+                            throw new Exception('La parametrizacion no esta correctamente definida: Comprobante:'.$comprobante->getCaIdcomprobante()." Transaccion: ".$transaccion->getCaIdtransaccion());
+                        }
+                        if( $transaccion->getCaDb() ){
+                            $total+=$transaccion->getCaValor();
+                        }else{
+                            $total-=$transaccion->getCaValor();
+                        }
+                        
+                        $transaccion->setCaIdcuenta( $parametro->getCaIdcuenta() );
+                        $transaccion->save( $conn );
+                    }
                 }
-
 
 
                 $transaccion = new InoTransaccion();
-                $transaccion->setCaDb( $total );
-                $transaccion->setCaCr( 0 );
+                if( $total>0 ){
+                    $transaccion->setCaDb( true );
+                    $transaccion->setCaValor( $total );
+                }else{
+                    $transaccion->setCaDb( false );
+                    $transaccion->setCaValor( $total*(-1) );
+                }
                 $transaccion->setCaIdmoneda( "USD" );
                 $transaccion->setCaIdcuenta( $tipo->getCaIdctaCierre() );
                 $transaccion->setCaIdcomprobante( $comprobante->getCaIdcomprobante() );
@@ -337,12 +385,12 @@ class inocomprobantesActions extends sfActions
                 $conn->commit();
             }
             catch (Exception $e){
-                $conn->rollBack();
+                //$conn->rollBack();
                 throw $e;
             }
         }
 
-        $this->redirect("ino/verComprobante?modo=".$modo."&id=".$comprobante->getCaIdcomprobante());
+        $this->redirect("inocomprobantes/verComprobante?id=".$comprobante->getCaIdcomprobante());
 
 
     }
@@ -360,6 +408,10 @@ class inocomprobantesActions extends sfActions
 
         $inoCliente = $this->comprobante->getInoCliente();
         $request->setParameter("idmaestra", $inoCliente->getcaIdmaestra());
+
+        
+
+
     }
 
     /**
@@ -373,20 +425,42 @@ class inocomprobantesActions extends sfActions
         $this->forward404Unless( $this->comprobante );
 
 
-        $this->transacciones = Doctrine::getTable("InoTransaccion")
+        
+
+
+        $this->filename = $request->getParameter("filename");
+
+        $tipo = $this->comprobante->getInoTipoComprobante();
+
+        switch( $tipo->getCaTipo() ){
+            case "P":
+                $this->setTemplate("generarComprobanteP");
+                $this->transacciones = Doctrine::getTable("InoTransaccion")
                                          ->createQuery("t")
                                          ->select("t.*, con.*, p.*")
                                          ->innerJoin("t.InoConcepto con")
-                                         ->innerJoin("con.InoConceptoParametro p")
+                                         ->innerJoin("con.InoParametroCosto p")
+                                         ->addWhere("t.ca_idconcepto IS NOT NULL") //TEMPORAL
+                                         //->innerJoin("con.InoCuenta c")
+                                         ->addWhere("t.ca_idcomprobante = ? ", $this->comprobante->getCaIdcomprobante() )
+                                         //->addOrderBy("c.ca_cuenta")
+                                         ->execute();
+                break;
+            case "F":
+                $this->setTemplate("generarComprobanteF");
+                $this->transacciones = Doctrine::getTable("InoTransaccion")
+                                         ->createQuery("t")
+                                         ->select("t.*, con.*, p.*")
+                                         ->innerJoin("t.InoConcepto con")
+                                         ->innerJoin("con.InoParametroFacturacion p")
                                          ->addWhere("t.ca_idconcepto IS NOT NULL") //TEMPORAL
                                          //->innerJoin("con.InoCuenta c")
                                          ->addWhere("t.ca_idcomprobante = ? ", $this->comprobante->getCaIdcomprobante() )
                                          ->addOrderBy("p.ca_ingreso_propio")
                                          //->addOrderBy("c.ca_cuenta")
                                          ->execute();
-
-
-        $this->filename = $request->getParameter("filename");
+                break;
+        }
     }
 
 }

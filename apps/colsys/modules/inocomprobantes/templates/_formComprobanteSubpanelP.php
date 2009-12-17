@@ -50,29 +50,75 @@ FormComprobanteSubpanel = function(){
         store : this.storeConceptos
     });
 
+    this.storeReferencias = new Ext.data.Store({
+        autoLoad : true,
+        url: '<?=url_for("widgets/datosComboReferencias")?>',
+        reader: new Ext.data.JsonReader(
+            {                
+                root: 'root',
+                totalProperty: 'total',
+                successProperty: 'success'
+            },
+            Ext.data.Record.create([
+                {name: 'idmaestra', mapping:'ca_idmaestra'},
+                {name: 'referencia', mapping:'ca_referencia'}
+                
+            ])
+        )
+    });
+
+    this.editorReferencias = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        minChars: 9,
+        displayField: 'referencia',
+        valueField: 'idmaestra',
+        lazyRender:true,        
+        store : this.storeReferencias
+    });
+
     this.columns = [       
+      
       {
         header: "Código",
         dataIndex: 'codigo',
         sortable:false,
-        width: 50,
+        width: 60,
         editor: new Ext.form.TextField({
 				allowBlank: false 				
-			})
-        
+			})        
       },
       {
         header: "C. de Costos",
         dataIndex: 'centro',
         sortable:false,
-        width: 40
+        width: 50
       },
       {
         header: "Concepto",
         dataIndex: 'concepto',
         sortable:false,
-        width: 420,
+        width: 360,
         editor: this.editorConceptos
+      },
+      {
+        header: "Referencia",
+        dataIndex: 'referencia',
+        sortable:false,
+        width: 100,
+        editor: this.editorReferencias
+      }
+      ,{
+        header: "DB/CR",
+        dataIndex: 'db',
+        width: 100,
+        sortable:false,
+        editor: new Ext.form.TextField({
+				allowBlank: false ,				
+				style: 'text-align:left'				
+			})
       },{
         header: "Valor",
         dataIndex: 'valor',
@@ -90,6 +136,7 @@ FormComprobanteSubpanel = function(){
     
     this.record = Ext.data.Record.create([            
             {name: 'idmaestra', type: 'int'},
+            {name: 'referencia', type: 'string'},
             {name: 'idcomprobante', type: 'int'},
             {name: 'idtransaccion', type: 'int'},
             {name: 'idconcepto', type: 'int'},
@@ -98,15 +145,15 @@ FormComprobanteSubpanel = function(){
             {name: 'centro', type: 'string'},
             {name: 'idccosto', type: 'string'},
             {name: 'concepto', type: 'string'},
+            {name: 'db', type: 'string'},
             {name: 'valor', type: 'float'},
-            {name: 'idcuenta', type: 'int'}
-
+            
         ]);
 
     this.store = new Ext.data.Store({       
 
         autoLoad : true,
-        url: '<?=url_for("ino/formComprobanteData?id=".$inocliente->getCaIdinocliente()."&idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+        url: '<?=url_for("inocomprobantes/formComprobanteData?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
         reader: new Ext.data.JsonReader(
             {
                 root: 'items',
@@ -167,6 +214,19 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
     height: 300
     ,
     onValidateEdit : function(e){
+        if( e.field == "db"){
+            if( e.value=="d" || e.value=="D" ){
+                e.value="D";
+                return true;
+            }
+
+            if( e.value=="c" || e.value=="C" ){
+                e.value="C";
+                return true;
+            }
+            return false;
+        }
+        
         if( e.field == "concepto"){            
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
@@ -177,6 +237,8 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
             store.each( function( r ){
 
                     if( r.data.idconcepto==e.value ){
+
+
                         if( !rec.data.idconcepto ){
                             var newRec = new recordConcepto({
 
@@ -191,6 +253,7 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
 
                             rec.set("idconcepto", r.data.idconcepto);
                             rec.set("valor", 0);
+                            rec.set("db", "C");
                             
                             rec.set("orden", "Y-Z");
                                 //guardarGridProductosRec( rec );
@@ -228,8 +291,7 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
                     if( r.data.codigo==e.value ){
                        
                         if( !rec.data.idconcepto ){
-                            var newRec = new recordConcepto({
-                               idinocliente: '<?=$inocliente->getCaIdinocliente()?>',
+                            var newRec = new recordConcepto({                               
                                idcomprobante: '<?=$comprobante->getCaIdcomprobante()?>',
                                concepto: '+',
                                idconcepto: '',
@@ -265,6 +327,24 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
             );
             return valido;
         }
+
+        if( e.field == "referencia"){
+            var rec = e.record;
+            var ed = this.colModel.getCellEditor(e.column , e.row);
+            var store = ed.field.store;
+            
+            store.each( function( r ){
+                if( r.data.idmaestra==e.value ){
+
+                    rec.set("idmaestra", r.data.idmaestra);
+                    e.value = r.data.referencia;
+                    return true;
+                }
+            });
+        }
+
+
+        
     }
     ,
     guardarCambios: function(){
@@ -303,7 +383,7 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
                 Ext.Ajax.request(
                     {
                         waitMsg: 'Guardando cambios...',
-                        url: '<?=url_for("ino/observeFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+                        url: '<?=url_for("inocomprobantes/observeFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
 						//method: 'POST',
                         //Solamente se envian los cambios
                         params :	changes,
@@ -373,7 +453,7 @@ Ext.extend(FormComprobanteSubpanel, Ext.grid.EditorGridPanel, {
             Ext.Ajax.request(
             {
                 waitMsg: 'Eliminando...',
-                url: '<?=url_for("ino/eliminarFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
+                url: '<?=url_for("inocomprobantes/eliminarFormComprobanteSubpanel?idcomprobante=".$comprobante->getCaIdcomprobante())?>',
                 //method: 'POST',
                 //Solamente se envian los cambios
                 params :	{

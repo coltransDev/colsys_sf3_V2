@@ -1052,6 +1052,7 @@ class idsActions extends sfActions
 
     public function executeAlertasDocumentosEmail(sfWebRequest $request){
 
+        
         $this->modo=$request->getParameter("modo");
 
         $usuarios = Doctrine::getTable("Usuario")
@@ -1062,7 +1063,7 @@ class idsActions extends sfActions
                           ->execute();
 
         $contentHTML = sfContext::getInstance()->getController()->getPresentationFor( 'ids', 'alertasDocumentos');
-
+        
         $email = new Email();
         $email->setCaUsuenvio( "Administrador" );
         $email->setCaTipo( "Not. Vencimiento" );
@@ -1075,12 +1076,10 @@ class idsActions extends sfActions
         $email->setCaSubject( "Vencimiento de documentos" );
         $email->setCaBodyhtml( $contentHTML );
 
-        $email->save();
-        $email->send();
-
+        $email->save();        
+        $email->send();       
 
         return sfView::NONE;
-
     }
 
 
