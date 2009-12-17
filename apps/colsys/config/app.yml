@@ -26,7 +26,7 @@ all:
     trusted: 127.0.0.1 10.192.1 10.192.2
 #archivos de falabella
   falabella:
-    input:  /home/falabella/OUT  
+    input:  /home/falabella/OUT
     input_processed:  /home/falabella/OUT/processed
     output:  /home/falabella/IN    
 #    input: c:\fala\
