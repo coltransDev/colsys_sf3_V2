@@ -22,15 +22,24 @@ class InoComprobante extends BaseInoComprobante
 
         $q = Doctrine::getTable("InoTransaccion")
                   ->createQuery("t");
-        if( $tipo->isDb() ){
-            $q->select("SUM(t.ca_cr)-SUM(t.ca_db)");
-        }else{
-            $q->select("SUM(t.ca_db)-SUM(t.ca_cr)");
-        }
+        $q->select("SUM(t.ca_valor) as valor,t.ca_db");
         $q->addWhere("t.ca_idcomprobante = ?", $this->getCaIdcomprobante());
         $q->addWhere("t.ca_idcuenta = ?", $tipo->getCaIdctaCierre());
-        $val = $q->setHydrationMode(Doctrine::HYDRATE_SINGLE_SCALAR)->execute();
-        return $val;
+        $q->addGroupBy("t.ca_db");
+        $vals = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
+        
+
+
+        $total = 0;
+        foreach( $vals as $val ){
+            if( $val["t_ca_db"] ){
+                $total+=$val["t_valor"];
+            }else{
+                $total-=$val["t_valor"];
+            }
+        }
+        
+        return $total;
     }
     
 }

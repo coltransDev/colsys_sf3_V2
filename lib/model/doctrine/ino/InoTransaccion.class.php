@@ -14,9 +14,9 @@ class InoTransaccion extends BaseInoTransaccion
 {
     private $parametro = null;
 
-    public function getInoConceptoParametro(){
+    public function getInoParametroFacturacion(){
         if( !$this->parametro ){
-            $this->parametro = Doctrine::getTable("InoConceptoParametro")
+            $this->parametro = Doctrine::getTable("InoParametroFacturacion")
                                    ->createQuery("p")
                                    ->select("p.*")
                                    ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($this->getCaIdconcepto(), $this->getCaIdccosto()) )
@@ -26,14 +26,31 @@ class InoTransaccion extends BaseInoTransaccion
         return $this->parametro;
     }
 
+    public function getInoParametroCosto(){
+        if( !$this->parametro ){
+            $this->parametro = Doctrine::getTable("InoParametroCosto")
+                                   ->createQuery("p")
+                                   ->select("p.*")
+                                   ->where("p.ca_idconcepto = ? AND p.ca_idccosto = ?", array($this->getCaIdconcepto(), $this->getCaIdccosto()) )
+                                   ->fetchOne();
+
+        }
+        return $this->parametro;
+    }
+
 
 
     public function getImpuestos(){
         $impuestos = array();
-        $parametro = $this->getInoConceptoParametro();
+        $parametro = $this->getInoParametroFacturacion();
         if( $parametro->getCaIva() ){
-            $impuestos["iva"]["db"] = $this->getCaDb()*$parametro->getCaIva();
-            $impuestos["iva"]["cr"] = $this->getCaCr()*$parametro->getCaIva();
+            if( $this->getCaDb() ){
+                $impuestos["iva"]["db"] = $this->getCaValor()*$parametro->getCaIva();
+                $impuestos["iva"]["cr"] = 0;
+            }else{
+                $impuestos["iva"]["db"] = 0;
+                $impuestos["iva"]["cr"] = $this->getCaValor()*$parametro->getCaIva();
+            }
         }else{
             $impuestos["iva"]["db"] = 0;
             $impuestos["iva"]["cr"] = 0;

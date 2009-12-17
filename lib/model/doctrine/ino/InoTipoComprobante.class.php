@@ -20,7 +20,7 @@ class InoTipoComprobante extends BaseInoTipoComprobante
      * Esta funcion retorna false si los conceptos se deben liquidar automaticamente
      * en la columna credito, por ej. en las facturas. Esto se hace por que solamente se sabe el valor
      *
-     */
+     */    
     public function isDb(){
         if( $this->getCaTipo()=="F" ){
             return false;
