@@ -33,13 +33,14 @@ require_once("menu.php");
     echo "<H3>$titulo</H3>";
     echo "<FORM METHOD=post NAME='menuform' ACTION='repreferencia.php'>";
     echo "<TABLE WIDTH=550 BORDER=0 CELLSPACING=1 CELLPADDING=5>";
-    echo "<TH COLSPAN=8 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
+    echo "<TH COLSPAN=9 style='font-size: 12px; font-weight:bold;'><B>Ingrese los parámetros para el Reporte</TH>";
 
     echo "<TR>";
     echo "  <TD Class=captura ROWSPAN=2></TD>";
     echo "  <TD Class=listar>Año:<BR><SELECT NAME='ano'>";
-    for ( $i=5; $i>=0; $i-- ){
-          echo " <OPTION VALUE=".(date('Y')-$i)." SELECTED>".(date('Y')-$i)."</OPTION>";
+    for ( $i=5; $i>=-1; $i-- ){
+          $sel = (date('Y')==date('Y')-$i)?'SELECTED':'';
+          echo " <OPTION VALUE=".(date('Y')-$i)." $sel>".(date('Y')-$i)."</OPTION>";
         }
     echo "  </SELECT></TD>";
     echo "  <TD Class=listar>Mes:<BR><SELECT NAME='mes'>";
@@ -77,7 +78,19 @@ require_once("menu.php");
             $tm->MoveNext();
           }
     echo "  </TD>";
-	if (!$tm->Open("select ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
+    if (!$tm->Open("select ca_ciudad from vi_ciudades where ca_idtrafico = 'CO-057' and ca_puerto in ('Marítimo','Ambos') order by ca_ciudad")) {       // Selecciona todos lo registros de la tabla ciudades
+        echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
+        echo "<script>document.location.href = 'repgenerator.php';</script>";
+        exit; }
+    $tm->MoveFirst();
+    echo "  <TD Class=mostrar>Puerto de Destino :<BR><SELECT NAME='ciudestino'>";
+    echo " <OPTION VALUE=%>Todos los Puertos</OPTION>";
+    while ( !$tm->Eof()) {
+            echo " <OPTION VALUE=".$tm->Value('ca_ciudad').">".$tm->Value('ca_ciudad')."</OPTION>";
+            $tm->MoveNext();
+          }
+    echo "  </TD>";
+    if (!$tm->Open("select ca_nombre as ca_sucursal from control.tb_sucursales order by ca_sucursal")) {       // Selecciona todos lo registros de la tabla Sucursales
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'repcomisiones.php';</script>";
         exit; }
@@ -99,7 +112,7 @@ require_once("menu.php");
     echo "</TR>";
 
     echo "<TR HEIGHT=5>";
-    echo "  <TD Class=captura COLSPAN=7></TD>";
+    echo "  <TD Class=captura COLSPAN=8></TD>";
     echo "</TR>";
 
     echo "</TABLE><BR>";
@@ -132,7 +145,7 @@ elseif (!isset($boton) and !isset($accion) and isset($traorigen)){
         echo "<script>document.location.href = 'entrada.php';</script>";
         exit; }
 */
-    $condicion = "where substr(ca_referencia,8,2)::text = '$mes' and substr(ca_referencia,15)::text = '".($ano-2000)."' and ca_trafico like '%$trafico%'"." and ca_traorigen like '%$traorigen%' and ".str_replace("\\","", str_replace("\"","'",$casos))." and ca_sucursal like '%$sucursal%'";
+    $condicion = "where substr(ca_referencia,8,2)::text = '$mes' and substr(ca_referencia,15)::text = '".substr(($ano-2000),-1)."' and ca_trafico like '%$trafico%'"." and ca_traorigen like '%$traorigen%' and ca_ciudestino like '%$ciudestino%' and ".str_replace("\\","", str_replace("\"","'",$casos))." and ca_sucursal like '%$sucursal%'";
     if (!$rs->Open("select DISTINCT ca_referencia, ca_trafico, ca_traorigen, ca_modal, ca_observaciones, ca_fcharribo, ca_iddocactual, ca_fchenvio, ca_usuenvio from vi_inoconsulta_sea $condicion order by ca_trafico, ca_modal, ca_referencia")) {                       // Selecciona todos lo registros de la tabla Ino-Marítimo
         echo "<script>alert(\"".addslashes($rs->mErrMsg)."\");</script>";      // Muestra el mensaje de error
         echo "<script>document.location.href = 'entrada.php';</script>";
