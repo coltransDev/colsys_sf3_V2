@@ -1866,15 +1866,17 @@ class pricingActions extends sfActions
 
         $q = Doctrine::getTable("Trayecto")
                                ->createQuery("t")
+                               ->select("t.*")
                                ->where("c.ca_idtrafico = ? AND t.ca_transporte = ? AND t.ca_modalidad = ? AND t.ca_impoexpo = ?", array($idtrafico, $transporte, $modalidad, $impoexpo))
                                ->innerJoin("t.IdsProveedor p")
                                ->innerJoin("p.Ids i")
                                ->addOrderBy("i.ca_nombre");
-        if( $transporte==Constantes::EXPO ){
+        
+        if( $impoexpo==Constantes::EXPO ){
             $q->innerJoin("t.Destino c");
         }else{
             $q->innerJoin("t.Origen c");
-        }
+        }       
 		$trayectos = $q->execute();
 
 		

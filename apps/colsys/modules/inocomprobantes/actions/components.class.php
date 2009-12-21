@@ -100,11 +100,50 @@ class inocomprobantesComponents extends sfComponents
     }
 
     public function executeFormComprobanteSubpanelP(){
+
+    }
+
+    public function executeFormComprobanteSubpanelPConceptos(){
         /*$impoexpo = $this->reporte->getCaImpoexpo();
         if( $impoexpo==Constantes::TRIANGULACION ){
             $impoexpo=Constantes::IMPO;
         }*/
         $this->recargos = Doctrine::getTable("InoConcepto")
+                                     ->createQuery("c")
+                                     ->select("ca_idconcepto,ca_concepto, cc.ca_idccosto, cc.ca_centro, cc.ca_subcentro, cc.ca_nombre")
+                                     ->innerJoin("c.InoParametroCosto p")
+                                     ->innerJoin("p.InoCentroCosto cc")
+                                     //->innerJoin("cc.CentroCosto cp")
+                                     ->innerJoin("c.InoConceptoModalidad cm")
+                                     ->innerJoin("cm.Modalidad m")
+                                     //->addWhere("c.ca_tipo = ? ", Constantes::RECARGO_LOCAL )
+                                     ->addWhere("p.ca_idcuenta IS NOT NULL" )
+                                     //->addWhere("m.ca_impoexpo LIKE ? ", $impoexpo )
+                                     //->addWhere("m.ca_transporte LIKE ? ", $this->reporte->getCaTransporte() )
+                                     ->addOrderBy("c.ca_concepto")
+                                     ->distinct()
+                                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                     ->execute();
+
+         $centros = Doctrine::getTable("InoCentroCosto")
+                              ->createQuery("c")
+                              ->select("c.*")
+                              ->where("c.ca_subcentro IS NULL")
+                              ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                              ->execute();
+         $centrosArray = array();
+         foreach( $centros as $centro ){
+            $centrosArray[ $centro["c_ca_centro"] ] = $centro["c_ca_nombre"];
+         }
+         foreach( $this->recargos as $key=>$val){
+             $this->recargos[$key]['concepto'] = utf8_encode($centrosArray[$this->recargos[$key]['cc_ca_centro']]." ".$this->recargos[$key]['cc_ca_nombre']." » ".$this->recargos[$key]['c_ca_concepto']);
+             $this->recargos[$key]['centro'] = str_pad($this->recargos[$key]['cc_ca_centro'], 2, "0", STR_PAD_LEFT)."-".str_pad($this->recargos[$key]['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT);
+             $this->recargos[$key]['codigo'] = str_pad($this->recargos[$key]['cc_ca_centro'], 2, "0", STR_PAD_LEFT).str_pad($this->recargos[$key]['cc_ca_subcentro'], 2, "0", STR_PAD_LEFT).str_pad($this->recargos[$key]["c_ca_idconcepto"], 4, "0", STR_PAD_LEFT);
+         }
+    }
+
+    public function executeFormComprobanteSubpanelPDeducciones(){
+         $this->recargos = Doctrine::getTable("InoConcepto")
                                      ->createQuery("c")
                                      ->select("ca_idconcepto,ca_concepto, cc.ca_idccosto, cc.ca_centro, cc.ca_subcentro, cc.ca_nombre")
                                      ->innerJoin("c.InoParametroCosto p")

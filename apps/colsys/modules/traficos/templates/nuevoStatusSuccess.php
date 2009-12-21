@@ -325,9 +325,11 @@ if( !sfConfig::get("app_smtp_user") ){
 			<div id="asuntoIntro"></div> 
 			<?
 			 echo " Id.: ".$reporte->getCaConsecutivo()." ";
-			 echo $form['asunto']->renderError(); 			 
-			 echo $form->setDefault('asunto', $asunto); 
+			 echo $form['asunto']->renderError();
+			 $form->setDefault('asunto', $asunto);
 			 echo $form['asunto']->render();
+
+             
 			 ?>		
 		</div></td>
 	</tr>

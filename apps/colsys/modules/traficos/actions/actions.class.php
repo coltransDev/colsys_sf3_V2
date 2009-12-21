@@ -202,7 +202,7 @@ class traficosActions extends sfActions
 	 * @author: Andres Botero
 	 */
 	public function executeNuevoStatus( $request ){
-		
+		//exit("EN Mantenimiento");
 		$this->modo = $request->getParameter( "modo" );
 		$this->forward404unless( $this->modo );		
 		if( $this->modo=="maritimo" ){

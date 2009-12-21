@@ -12,6 +12,8 @@ if( $comprobante->getCaIdcomprobante() ){
             include_component("inocomprobantes", "formComprobanteSubpanelF", array("comprobante"=>$comprobante ));
             break;
         case "P":
+            include_component("inocomprobantes", "formComprobanteSubpanelPConceptos", array("comprobante"=>$comprobante ));
+            include_component("inocomprobantes", "formComprobanteSubpanelPDeducciones", array("comprobante"=>$comprobante ));
             include_component("inocomprobantes", "formComprobanteSubpanelP", array("comprobante"=>$comprobante ));
             break;
     }

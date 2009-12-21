@@ -302,7 +302,8 @@ class inocomprobantesActions extends sfActions
 
                 $totales = array();
                 $total = 0;
-                if( $tipo=="F" ){
+                
+                if( $tipo->getCaTipo()=="F" ){
                     foreach( $transacciones as $transaccion ){
                         $concepto = $transaccion->getInoConcepto();
 
@@ -345,7 +346,9 @@ class inocomprobantesActions extends sfActions
                     }
                 }
 
-                if( $tipo=="P" ){
+                
+
+                if( $tipo->getCaTipo()=="P" ){
                     foreach( $transacciones as $transaccion ){
                         $concepto = $transaccion->getInoConcepto();
                         $parametro = $transaccion->getInoParametroCosto();
@@ -354,15 +357,17 @@ class inocomprobantesActions extends sfActions
                             throw new Exception('La parametrizacion no esta correctamente definida: Comprobante:'.$comprobante->getCaIdcomprobante()." Transaccion: ".$transaccion->getCaIdtransaccion());
                         }
                         if( $transaccion->getCaDb() ){
-                            $total+=$transaccion->getCaValor();
-                        }else{
                             $total-=$transaccion->getCaValor();
+                        }else{
+                            $total+=$transaccion->getCaValor();
                         }
                         
                         $transaccion->setCaIdcuenta( $parametro->getCaIdcuenta() );
                         $transaccion->save( $conn );
                     }
                 }
+
+
 
 
                 $transaccion = new InoTransaccion();
@@ -385,8 +390,9 @@ class inocomprobantesActions extends sfActions
                 $conn->commit();
             }
             catch (Exception $e){
-                //$conn->rollBack();
+                
                 throw $e;
+                $conn->rollBack();
             }
         }
 

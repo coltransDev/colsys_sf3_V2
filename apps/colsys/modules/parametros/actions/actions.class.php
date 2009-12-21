@@ -356,9 +356,6 @@ class parametrosActions extends sfActions
         }
 
 
-        
-
-        
         $this->responseArray["success"]=true;
 
         $this->responseArray["idconcepto"]=$concepto->getCaIdconcepto();
