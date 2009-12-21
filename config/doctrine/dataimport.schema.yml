@@ -15,6 +15,7 @@ FileImported:
     ca_usuario: string
     ca_procesado: boolean
     ca_nombre: string
+    ca_proceso: string
   relations:
     FileHeader:
       local: ca_idfileheader
@@ -63,7 +64,9 @@ FileColumn:
     ca_idfileheader:
       type: integer
       primary: true
-    ca_idcolumna: string
+    ca_idcolumna:
+      type: string
+      primary: true
     ca_columna: string
     ca_label: string
     ca_mascara: string

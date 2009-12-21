@@ -1,4 +1,3 @@
-
 FalaHeader:
   options:
     symfony:
@@ -50,6 +49,7 @@ FalaHeader:
       local: ca_iddoc
       foreign: ca_iddoc
       type: many
+      orderBy: ca_sku ASC
     FalaShipmentInfo:
       local: ca_iddoc
       foreign: ca_iddoc
@@ -58,7 +58,6 @@ FalaHeader:
       local: ca_iddoc
       foreign: ca_iddoc
       type: many
-      orderBy: ca_sku ASC
 
 
 FalaDetail:
@@ -87,6 +86,7 @@ FalaDetail:
     ca_cantidad_paquetes_miles: decimal
     ca_unidad_medida_paquetes: string
     ca_cantidad_volumen_miles: decimal
+    ca_unidad_medida_volumen: string
     ca_cantidad_peso_miles: decimal
     ca_unidad_medida_peso: string
   relations:
@@ -94,7 +94,6 @@ FalaDetail:
       local: ca_iddoc
       foreign: ca_iddoc
       type: one
-
 
 
 FalaShipmentInfo:
@@ -173,3 +172,292 @@ FalaInstruction:
       local: ca_iddoc
       foreign: ca_iddoc
       type: one
+
+
+
+
+FalaHeaderAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falaheader_adu
+  columns:
+    ca_iddoc:
+      type: string
+      primary: true
+    ca_fecha_carpeta: date
+    ca_archivo_origen: string
+    ca_referencia: string
+    ca_num_viaje: string
+    ca_cod_carrier: string
+    ca_codigo_puerto_pickup: string
+    ca_codigo_puerto_descarga: string
+    ca_container_mode: string
+    ca_nombre_proveedor: string
+    ca_campo_59: string
+    ca_codigo_proveedor: string
+    ca_campo_61: string
+    ca_monto_invoice_miles: decimal
+    ca_procesado: boolean
+    ca_trader: string
+    ca_vendor_id: string
+    ca_vendor_name: string
+    ca_vendor_addr1: string
+    ca_vendor_city: string
+    ca_vendor_country: string
+    ca_esd: date
+    ca_lsd: date
+    ca_incoterms: string
+    ca_payment_terms: string
+    ca_proforma_number: string
+    ca_origin: string
+    ca_destination: string
+    ca_trans_ship_port: string
+    ca_reqd_delivery: date
+    ca_orden_comments: string
+    ca_manufacturer_contact: string
+    ca_manufacturer_phone: string
+    ca_manufacturer_fax: string
+    ca_fchanulado: timestamp
+    ca_usuanulado: string
+  relations:
+    FalaDetailAdu:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: many
+      orderBy: ca_sku ASC
+    FalaShipmentInfo:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: many
+    FalaInstruction:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: many
+    FalaDeclaracionImp:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+
+
+FalaDetailAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_faladetails_adu
+  columns:
+    ca_iddoc:
+      type: string
+      primary: true
+    ca_sku:
+      type: string
+      primary: true
+    ca_vpn: string
+    ca_cantidad_pedido: integer
+    ca_cantidad_dav: integer
+    ca_cantidad_dim: integer
+    ca_valor_fob: decimal
+    ca_unidad_medidad_cantidad: string
+    ca_descripcion_item: string
+    ca_cantidad_paquetes_miles: decimal
+    ca_unidad_medida_paquetes: string
+    ca_cantidad_volumen_miles: decimal
+    ca_unidad_medida_volumen: string
+    ca_cantidad_peso_miles: decimal
+    ca_unidad_medida_peso: string
+    ca_unidad_comercial: string
+    ca_referencia_prov: string
+    ca_subpartida: string
+    ca_radicado_num: string
+    ca_registro_num: string
+    ca_descripcion_mcia: string
+    ca_preinspeccion: string
+    ca_marca: string
+    ca_tipo: string
+    ca_clase: string
+    ca_modelo: string
+    ca_ano: string
+    ca_factura_nro: string
+    ca_factura_fch: date
+  relations:
+    FalaHeaderAdu:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: one
+
+    ca_num_cont_part1: string
+    ca_num_cont_part2: string
+    ca_num_cont_sell: string
+    ca_container_iso: string
+
+
+FalaShipmentInfoAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falashipmentinfo_adu
+  columns:
+    ca_iddoc:
+      type: string
+      primary: true
+    ca_begin_window: date
+    ca_end_window: date
+    ca_commodities: string
+    ca_partial: string
+    ca_payment_terms: string
+    ca_incoterms: string
+    ca_container_type: string
+    ca_utv: string
+    ca_etv: string
+    ca_line: string
+    ca_contact_line: string
+    ca_contact_importer: string
+    ca_uppo: numeric
+    ca_eb: string
+    ca_edd: string
+    ca_port: string
+    ca_transshipment: string
+    ca_transshipment_port: string
+    ca_shipping_org: string
+    ca_original_org: string
+    ca_fwd_copy_org: string
+    ca_fcr_org: string
+    ca_shipping_dst: string
+    ca_original_dst: string
+    ca_fwd_copy_dst: string
+    ca_fcr_dst: string
+    ca_transport_via: string
+    ca_invoice_org: string
+    ca_packing_list_org: string
+    ca_document_org: string
+    ca_oc_org: string
+    ca_others_docs_org: string
+    ca_invoice_cps: string
+    ca_packing_list_cps: string
+    ca_document_cps: string
+    ca_oc_cps: string
+    ca_others_docs_cps: varchar
+    ca_final_port: varchar
+    ca_alter_port: varchar
+    ca_limit_date: date
+  relations:
+    FalaHeader:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: one
+
+
+FalaInstructionAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falainstructions_adu
+  columns:
+    ca_idfalainstructions:
+      type: integer
+      primary: true
+    ca_iddoc: string
+    ca_instructions: string
+  relations:
+    FalaHeader:
+      local: ca_iddoc
+      foreign: ca_iddoc
+      type: one
+
+
+FalaDeclaracionImp:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_faladeclaracion_imp
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_numdeclaracion: string
+    ca_numinternacion: string
+    ca_emision_fch: date
+    ca_vencimiento_fch: date
+    ca_aceptacion_fch: date
+    ca_pago_fch: date
+    ca_moneda: string
+    ca_valor_trm: decimal
+    ca_ano_trm: integer
+    ca_semana_trm: integer
+    ca_factor_trm: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+  relations:
+    FalaHeaderAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+    FalaDeclaracionDts:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+      orderBy: ca_referencia ASC
+
+
+FalaDeclaracionDts:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_faladeclaracion_dts
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_item:
+      type: integer
+      primary: true
+    ca_subpartida: string
+    ca_mod: string
+    ca_cantidad: decimal
+    ca_unidad: string
+    ca_valor_fob: decimal
+    ca_gastos_despacho: decimal
+    ca_flete: decimal
+    ca_seguro: decimal
+    ca_gastos_embarque: decimal
+    ca_ajuste_valor: decimal
+    ca_valor_aduana: decimal
+    ca_arancel_porcntj: decimal
+    ca_arancel: integer
+    ca_iva_porctj: decimal
+    ca_iva: integer
+    ca_salvaguarda_porcntj: decimal
+    ca_salvaguarda: integer
+    ca_compensa_porcntj: decimal
+    ca_compensa: integer
+    ca_antidump_porcntj: decimal
+    ca_antidump: integer
+    ca_sancion: integer
+    ca_rescate: integer
+    ca_peso_bruto: decimal
+    ca_peso_neto: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+
+  relations:
+    FalaDeclaracionImp:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+
