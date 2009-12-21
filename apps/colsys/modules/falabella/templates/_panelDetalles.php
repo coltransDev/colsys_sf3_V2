@@ -13,22 +13,72 @@ $details = $sf_data->getRaw( "details" );
 
 PanelDetalles = function(){
 
-        
-
     /*
     * Crea la columna de chequeo
     */
     this.checkColumn = new Ext.grid.CheckColumn({header:' ', dataIndex:'sel', width:30});
 
-    this.editorUnidades = new Ext.form.ComboBox({        
+    this.editorUniCantidad = new Ext.form.ComboBox({
         typeAhead: true,
         forceSelection: true,
         triggerAction: 'all',
-        selectOnFocus: true,        
-        mode: 'local',       
-        lazyRender:true,        
-        store : [[""," "],["Uni","Uni"]]
+        selectOnFocus: true,
+        mode: 'local',
+        lazyRender:true,
+        store : [[""," "],["PC","Uni"]]
     });
+
+    this.editorUniPaquetes = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        lazyRender:true,
+        store : [[""," "],["CT","Ctns"]]
+    });
+
+    this.editorUniPeso = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        lazyRender:true,
+        store : [[""," "],["KG","Kgs"]]
+    });
+
+    this.editorUniVolumen = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        lazyRender:true,
+        store : [[""," "],["CR","M³"]]
+    });
+
+    this.editorTipoContenedor = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        lazyRender:true,
+        store : 
+            [
+            <?
+                $i=0;
+                foreach($container as $tipo){
+                    if($i++!=0){
+                        echo ",";
+                    }
+                    echo "[\"".$tipo->getCaValor2()."\",\"".$tipo->getCaValor()."\"]";
+                }
+            ?>
+            ]
+    });
+
 
     this.columns = [       
       this.checkColumn,
@@ -36,7 +86,7 @@ PanelDetalles = function(){
         header: "SKU",
         dataIndex: 'sku',
         sortable:false,
-        width: 60,
+        width: 30,
         renderer: this.formatItem,
         editor: new Ext.form.TextField({
 				allowBlank: false 				
@@ -46,7 +96,7 @@ PanelDetalles = function(){
         header: "Descripción",
         dataIndex: 'descripcion_item',
         sortable:false,
-        width: 50,
+        width: 100,
         editor: new Ext.form.TextField({
             allowBlank: false
         })
@@ -55,27 +105,120 @@ PanelDetalles = function(){
         header: "#U. Pedidas",
         dataIndex: 'cantidad_pedido',
         sortable:false,
-        width: 360
+        width: 40
       },
       {
         header: "# Unidades",
         dataIndex: 'cantidad_miles',
         sortable:false,
-        width: 100,
+        width: 40,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
 				allowNegative: false,
 				style: 'text-align:left',
-				decimalPrecision :3
+				decimalPrecision :2
 			})
       },
       {
-        header: "# Unidades",
+        header: "U",
         dataIndex: 'unidad_medidad_cantidad',
         sortable:false,
         width: 30,
-        editor: this.editorUnidades
+        editor: this.editorUniCantidad
+      },
+      {
+        header: "# Paquetes",
+        dataIndex: 'cantidad_paquetes_miles',
+        sortable:false,
+        width: 40,
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left',
+				decimalPrecision :2
+			})
+      },
+      {
+        header: "U",
+        dataIndex: 'unidad_medida_paquetes',
+        sortable:false,
+        width: 30,
+        editor: this.editorUniPaquetes
+      },
+      {
+        header: "Peso",
+        dataIndex: 'cantidad_peso_miles',
+        sortable:false,
+        width: 40,
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left',
+				decimalPrecision :2
+			})
+      },
+      {
+        header: "U",
+        dataIndex: 'unidad_medida_peso',
+        sortable:false,
+        width: 30,
+        editor: this.editorUniPeso
+      },
+      {
+        header: "Volumen",
+        dataIndex: 'cantidad_volumen_miles',
+        sortable:false,
+        width: 40,
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:left',
+				decimalPrecision :2
+			})
+      },
+      {
+        header: "U",
+        dataIndex: 'unidad_medida_volumen',
+        sortable:false,
+        width: 30,
+        editor: this.editorUniVolumen
+      },
+      {
+        header: "Id",
+        dataIndex: 'num_cont_part1',
+        sortable:false,
+        width: 20,
+        editor: new Ext.form.TextField({
+				allowBlank: false
+			})
+      },
+      {
+        header: "Contenedor",
+        dataIndex: 'num_cont_part2',
+        sortable:false,
+        width: 40,
+        editor: new Ext.form.TextField({
+				allowBlank: false
+			})
+      },
+      {
+        header: "#Sello",
+        dataIndex: 'num_cont_sell',
+        sortable:false,
+        width: 50,
+        editor: new Ext.form.TextField({
+				allowBlank: false
+			})
+      },
+      {
+        header: "Tipo Contenedor",
+        dataIndex: 'container_iso',
+        sortable:false,
+        width: 80,
+        editor: this.editorTipoContenedor
       }
+
+
     ];
 
     
@@ -86,8 +229,17 @@ PanelDetalles = function(){
             {name: 'descripcion_item', type: 'string', mapping: 'd_ca_descripcion_item'},
             {name: 'cantidad_pedido', type: 'string', mapping: 'd_ca_cantidad_pedido'},
             {name: 'cantidad_miles', type: 'string', mapping: 'd_ca_cantidad_miles'},
-            {name: 'unidad_medidad_cantidad', type: 'string', mapping: 'd_unidad_medidad_cantidad'}
-
+            {name: 'unidad_medidad_cantidad', type: 'string', mapping: 'd_ca_unidad_medidad_cantidad'},
+            {name: 'cantidad_paquetes_miles', type: 'string', mapping: 'd_ca_cantidad_paquetes_miles'},
+            {name: 'unidad_medida_paquetes', type: 'string', mapping: 'd_ca_unidad_medida_paquetes'},
+            {name: 'cantidad_volumen_miles', type: 'string', mapping: 'd_ca_cantidad_volumen_miles'},
+            {name: 'unidad_medida_volumen', type: 'string', mapping: 'd_ca_unidad_medida_volumen'},
+            {name: 'cantidad_peso_miles', type: 'string', mapping: 'd_ca_cantidad_peso_miles'},
+            {name: 'unidad_medida_peso', type: 'string', mapping: 'd_ca_unidad_medida_peso'},
+            {name: 'num_cont_part1', type: 'string', mapping: 'd_ca_num_cont_part1'},
+            {name: 'num_cont_part2', type: 'string', mapping: 'd_ca_num_cont_part2'},
+            {name: 'num_cont_sell', type: 'string', mapping: 'd_ca_num_cont_sell'},
+            {name: 'container_iso', type: 'string', mapping: 'd_ca_container_iso'}
         ]);
 
     this.store = new Ext.data.Store({       
@@ -102,8 +254,6 @@ PanelDetalles = function(){
         )
     });
 
-    
-  
 
     PanelDetalles.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
@@ -129,9 +279,7 @@ PanelDetalles = function(){
         }
       ]
 
-
     });
-
 
 };
 

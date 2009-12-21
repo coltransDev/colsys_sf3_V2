@@ -46,10 +46,9 @@ class falabellaActions extends sfActions {
 		$this->fala_header = Doctrine::getTable("FalaHeader")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
 		$this->forward404Unless($this->fala_header);
 		
-		
 		$this->container = ParametroTable::retrieveByCaso("CU057");
 
-        $response = sfContext::getInstance()->getResponse();
+                $response = sfContext::getInstance()->getResponse();
 		$response->addJavaScript("extExtras/CheckColumn",'last');
 	}
 
@@ -461,6 +460,8 @@ class falabellaActions extends sfActions {
 			$salida.= str_pad("002",50, " "); // 5 Concepto del IVA
 			$salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 6
 			$salida.= "\r\n";
+
+                        
 
 			$directory=sfConfig::get('app_falabella_output');
 			$filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$row["ca_factura"].'.txt';

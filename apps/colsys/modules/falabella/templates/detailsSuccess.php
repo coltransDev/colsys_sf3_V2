@@ -1,5 +1,5 @@
 <?
-include_component("falabella", "panelDetalles", array("fala_header"=>$fala_header) );
+include_component("falabella", "panelDetalles", array("fala_header"=>$fala_header, "container"=>$container) );
 ?>
 
 <script language='JavaScript' type='text/JavaScript'>
