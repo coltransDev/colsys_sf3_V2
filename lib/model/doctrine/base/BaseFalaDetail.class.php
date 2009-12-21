@@ -19,6 +19,7 @@
  * @property decimal $ca_cantidad_paquetes_miles
  * @property string $ca_unidad_medida_paquetes
  * @property decimal $ca_cantidad_volumen_miles
+ * @property string $ca_unidad_medida_volumen
  * @property decimal $ca_cantidad_peso_miles
  * @property string $ca_unidad_medida_peso
  * @property FalaHeader $FalaHeader
@@ -37,6 +38,7 @@
  * @method decimal    getCaCantidadPaquetesMiles()    Returns the current record's "ca_cantidad_paquetes_miles" value
  * @method string     getCaUnidadMedidaPaquetes()     Returns the current record's "ca_unidad_medida_paquetes" value
  * @method decimal    getCaCantidadVolumenMiles()     Returns the current record's "ca_cantidad_volumen_miles" value
+ * @method string     getCaUnidadMedidaVolumen()      Returns the current record's "ca_unidad_medida_volumen" value
  * @method decimal    getCaCantidadPesoMiles()        Returns the current record's "ca_cantidad_peso_miles" value
  * @method string     getCaUnidadMedidaPeso()         Returns the current record's "ca_unidad_medida_peso" value
  * @method FalaHeader getFalaHeader()                 Returns the current record's "FalaHeader" value
@@ -54,13 +56,14 @@
  * @method FalaDetail setCaCantidadPaquetesMiles()    Sets the current record's "ca_cantidad_paquetes_miles" value
  * @method FalaDetail setCaUnidadMedidaPaquetes()     Sets the current record's "ca_unidad_medida_paquetes" value
  * @method FalaDetail setCaCantidadVolumenMiles()     Sets the current record's "ca_cantidad_volumen_miles" value
+ * @method FalaDetail setCaUnidadMedidaVolumen()      Sets the current record's "ca_unidad_medida_volumen" value
  * @method FalaDetail setCaCantidadPesoMiles()        Sets the current record's "ca_cantidad_peso_miles" value
  * @method FalaDetail setCaUnidadMedidaPeso()         Sets the current record's "ca_unidad_medida_peso" value
  * @method FalaDetail setFalaHeader()                 Sets the current record's "FalaHeader" value
  * 
- * @package    symfony
- * @subpackage model
- * @author     Your name here
+ * @package    ##PACKAGE##
+ * @subpackage ##SUBPACKAGE##
+ * @author     ##NAME## <##EMAIL##>
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseFalaDetail extends myDoctrineRecord
@@ -111,6 +114,9 @@ abstract class BaseFalaDetail extends myDoctrineRecord
              ));
         $this->hasColumn('ca_cantidad_volumen_miles', 'decimal', null, array(
              'type' => 'decimal',
+             ));
+        $this->hasColumn('ca_unidad_medida_volumen', 'string', null, array(
+             'type' => 'string',
              ));
         $this->hasColumn('ca_cantidad_peso_miles', 'decimal', null, array(
              'type' => 'decimal',

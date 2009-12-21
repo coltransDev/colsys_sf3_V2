@@ -9,19 +9,22 @@
  * @property string $ca_iddoc
  * @property string $ca_instructions
  * @property FalaHeader $FalaHeader
+ * @property FalaHeaderAdu $FalaHeaderAdu
  * 
  * @method integer         getCaIdfalainstructions()  Returns the current record's "ca_idfalainstructions" value
  * @method string          getCaIddoc()               Returns the current record's "ca_iddoc" value
  * @method string          getCaInstructions()        Returns the current record's "ca_instructions" value
  * @method FalaHeader      getFalaHeader()            Returns the current record's "FalaHeader" value
+ * @method FalaHeaderAdu   getFalaHeaderAdu()         Returns the current record's "FalaHeaderAdu" value
  * @method FalaInstruction setCaIdfalainstructions()  Sets the current record's "ca_idfalainstructions" value
  * @method FalaInstruction setCaIddoc()               Sets the current record's "ca_iddoc" value
  * @method FalaInstruction setCaInstructions()        Sets the current record's "ca_instructions" value
  * @method FalaInstruction setFalaHeader()            Sets the current record's "FalaHeader" value
+ * @method FalaInstruction setFalaHeaderAdu()         Sets the current record's "FalaHeaderAdu" value
  * 
- * @package    symfony
- * @subpackage model
- * @author     Your name here
+ * @package    ##PACKAGE##
+ * @subpackage ##SUBPACKAGE##
+ * @author     ##NAME## <##EMAIL##>
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseFalaInstruction extends myDoctrineRecord
@@ -50,6 +53,10 @@ abstract class BaseFalaInstruction extends myDoctrineRecord
     {
         parent::setUp();
         $this->hasOne('FalaHeader', array(
+             'local' => 'ca_iddoc',
+             'foreign' => 'ca_iddoc'));
+
+        $this->hasOne('FalaHeaderAdu', array(
              'local' => 'ca_iddoc',
              'foreign' => 'ca_iddoc'));
     }
