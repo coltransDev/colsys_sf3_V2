@@ -1,0 +1,14 @@
+InoMaestraAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: inoAnterior
+  tableName: tb_brk_maestra
+  columns:
+    ca_referencia:
+      type: string(16)
+      primary: true
+      autoincrement: true
+    
+
