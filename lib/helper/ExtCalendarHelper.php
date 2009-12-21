@@ -12,6 +12,7 @@ function extDatePicker( $field_id, $value=null , $html_options=null , $mindate=n
 			new Ext.form.DateField({
 				 applyTo: '".$field_id."',
 				 value: '".$value."',
+                 width: 100,
                 format: 'Y-m-d'
 			});
 		</script>

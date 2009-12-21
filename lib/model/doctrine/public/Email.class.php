@@ -58,7 +58,7 @@ class Email extends BaseEmail
 	public function send( ){
 
 
-		require_once(sfConfig::get('sf_lib_dir').'/vendor/swift/swift_init.php'); # needed due to symfony autoloader
+		require_once(sfConfig::get('sf_lib_dir').'/vendor/Swift/swift_init.php'); # needed due to symfony autoloader
 
 
 		$logFile = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."mail_error.log";
