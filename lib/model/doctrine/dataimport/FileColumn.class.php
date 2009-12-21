@@ -13,10 +13,11 @@
 class FileColumn extends BaseFileColumn
 {
     public function getColumnasRegistros(){
-		$c = new Criteria();
-		$c->add( FileColumnPeer::CA_IDREGISTRO, $this->getCaIdColumna() );
-		$c->addAscendingOrderByColumn(FileColumnPeer::CA_IDCOLUMNA);
-		return FileColumnPeer::doSelect( $c );
-
+		$q = Doctrine::getTable("FileColumn")
+                                 ->createQuery("c")
+                                 ->where("c.ca_idregistro = ?", $this->getCaIdcolumna() )
+                                 ->addOrderBy("c.ca_idcolumna");
+                                 
+                return $q->execute();
 	}
 }

@@ -21,16 +21,16 @@ class FileImported extends BaseFileImported
 		$registros = Doctrine::getTable("FileColumn")
                                ->createQuery("f")
                                ->innerJoin("f.Registro")
-                               ->where("f.ca_idfileheader = ? ", $header->getCaIdfileheader());
-
+                               ->where("f.ca_idfileheader = ? ", $header->getCaIdfileheader())
+                               ->execute();
 
 		$resultado = array();
 
 		$content = explode("\n",$this->getCaContent());
-        
+                //echo $this->getCaContent();
+               
 		foreach ($content as $line )
 		{
-
 			foreach( $registros as $registro ){
 				$this->row = array();
 				if( $registro->getCaColumna() == substr( $line, 0, strlen($registro->getCaColumna()) ) ){
@@ -49,7 +49,7 @@ class FileImported extends BaseFileImported
 
 					}
 
-					if(!$this->processFalabella()){
+                                        if(!$this->processFalabella()){
 						return false;
 					}
 				}
@@ -60,12 +60,19 @@ class FileImported extends BaseFileImported
 
 	public function processFalabella(){
 
-		if(isset($this->row['FALPOH01'])){ //REGISTRO TIPO 1
+                $table = ($this->getCaProceso() == 'Coltrans')?'FalaHeader':($this->getCaProceso() == 'Colmas')?'FalaHeaderAdu':'';
 
-			$header = FalaHeaderPeer::retrieveByPk( trim($this->row['po_number']) );
+		if(isset($this->row['FALPOH01'])){ //REGISTRO TIPO 1
+                        $header = Doctrine::getTable($table)->find(trim($this->row['po_number']));
+
 			if( !$header ){ //Verifica que no se haya procesado
-				$falaHeader = new FalaHeader();
-				$falaHeader->setCaIdDoc( trim($this->row['po_number']) );
+                                if ($this->getCaProceso() == 'Coltrans'){
+                                    $falaHeader = new FalaHeader();
+                                }else if ($this->getCaProceso() == 'Colmas'){
+                                    $falaHeader = new FalaHeaderAdu();
+                                }
+
+				$falaHeader->setCaIddoc( trim($this->row['po_number']) );
 				$falaHeader->setCaFechaCarpeta( $this->row['po_date'] );
 				$falaHeader->setCaCodigoPuertoPickup( $this->row['origin'] );
 				$falaHeader->setCaCodigoPuertoDescarga( $this->row['destination'] );
@@ -99,11 +106,14 @@ class FileImported extends BaseFileImported
 		}
 
 		if(isset($this->row['FALPOH02'])){
+			if( Doctrine::getTable($table)->find(trim($this->row['po_number'])) ){
+                                if ($this->getCaProceso() == 'Coltrans'){
+                                    $falaShip = new FalaShipmentInfo();
+                                }else if ($this->getCaProceso() == 'Colmas'){
+                                    $falaShip = new FalaShipmentInfoAdu();
+                                }
 
-			if( FalaHeaderPeer::retrieveByPK( trim($this->row['po_number'] ) ) ){
-
-				$falaShip = new FalaShipmentInfo();
-				$falaShip->setCaIdDoc( trim($this->row['po_number']) );
+				$falaShip->setCaIddoc( trim($this->row['po_number']) );
 				$falaShip->setCaBeginWindow( trim($this->row['esd']) );
 				$falaShip->setCaEndWindow( trim($this->row['lsd']) );
 				$falaShip->setCaCommodities( trim($this->row['commodities']) );
@@ -150,10 +160,14 @@ class FileImported extends BaseFileImported
 		}
 
 		if(isset($this->row['FALPOH03'])){ //REGISTRO TIPO 3
-
-			if( FalaHeaderPeer::retrieveByPK( trim($this->row['po_number'] ) ) ){
-				$falaInst = new FalaInstruction();
-				$falaInst->setCaIdDoc( trim($this->row['po_number']) );
+			if( Doctrine::getTable($table)->find(trim($this->row['po_number'])) ){
+                                if ($this->getCaProceso() == 'Coltrans'){
+                                    $falaInst = new FalaInstruction();
+                                }else if ($this->getCaProceso() == 'Colmas'){
+                                    $falaInst = new FalaInstructionAdu();
+                                }
+                                
+				$falaInst->setCaIddoc( trim($this->row['po_number']) );
 				$falaInst->setCaInstructions( trim($this->row['instructions']) );
 				$falaInst->save();
 			}
@@ -161,27 +175,32 @@ class FileImported extends BaseFileImported
 
 
 		if(isset($this->row['FALPOD01'])){ //REGISTRO TIPO 4
-			if( FalaHeaderPeer::retrieveByPK( trim($this->row['po_number'] ) ) ){
-				$falaDetail = new FalaDetail();
-				$falaDetail->setCaIdDoc( trim($this->row['po_number']) );
+			if( Doctrine::getTable($table)->find(trim($this->row['po_number'])) ){
+                                if ($this->getCaProceso() == 'Coltrans'){
+                                    $falaDetail = new FalaDetail();
+                                    $falaDetail->setCaCantidadMiles( intval($this->row['order_quantity']) );
+                                }else if ($this->getCaProceso() == 'Colmas'){
+                                    $falaDetail = new FalaDetailAdu();
+                                    $falaDetail->setCaSku( trim($this->row['sku']) );
+                                    $falaDetail->setCaCantidadDav( intval($this->row['order_quantity']) );
+                                    $falaDetail->setCaCantidadDim( intval($this->row['order_quantity']) );
+                                    $falaDetail->setCaValorFob( intval($this->row['order_quantity'])*floatval($this->row['unit_price']) );
+                                    $falaDetail->setCaPreinspeccion( 'Color: '.trim($this->row['color']).' Talla:'.trim($this->row['talla']) );
+                                }
+				$falaDetail->setCaIddoc( trim($this->row['po_number']) );
 				$falaDetail->setCaSku( trim($this->row['sku']) );
 				$falaDetail->setCaDescripcionItem( trim($this->row['item_description']) );
-				$falaDetail->setCaCantidadPedido( $this->row['order_quantity'] );
-				$falaDetail->setCaCantidadMiles( $this->row['order_quantity'] );
+                                $falaDetail->setCaCantidadPedido( intval($this->row['order_quantity']) );
 				$falaDetail->setCaUnidadMedidadCantidad( "PC" );
-				$falaDetail->setCaCantidadPaquetesMiles( $this->row['ctns'] );
+				$falaDetail->setCaCantidadPaquetesMiles( floatval($this->row['ctns']) );
 				$falaDetail->setCaUnidadMedidaPaquetes( "CT" );
-				$falaDetail->setCaCantidadVolumenMiles( ($this->row['ctn_hgt'] * $this->row['ctn_wid'] * $this->row['ctn_lgt']) );
-				$falaDetail->setCaUnidadMedidaVolumen( $this->row['long'] );
-				$falaDetail->setCaCantidadPesoMiles( $this->row['kgs_net'] );
+				$falaDetail->setCaCantidadVolumenMiles( floatval(($this->row['ctn_hgt'] * $this->row['ctn_wid'] * $this->row['ctn_lgt'])) );
+				$falaDetail->setCaUnidadMedidaVolumen( substr($this->row['long'],0,2) );
+				$falaDetail->setCaCantidadPesoMiles( floatval($this->row['kgs_net']) );
 				$falaDetail->setCaUnidadMedidaPeso( $this->row['unit_measure'] );
 				$falaDetail->save();
 			}
 		}
-
-
-
-
 		return true;
 
 	}
