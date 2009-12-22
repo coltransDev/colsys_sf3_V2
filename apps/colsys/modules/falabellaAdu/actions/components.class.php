@@ -32,14 +32,21 @@ class falabellaAduComponents extends sfComponents {
 
 	}
 
-        /*
+    /*
 	*
 	*/
 	public function executeMainPanel() {
 		
 	}
 
-        /*
+    /*
+	*
+	*/
+	public function executeSubPanel() {
+        
+	}
+
+    /*
 	*
 	*/
 	public function executeTopPanel() {

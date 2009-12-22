@@ -256,6 +256,8 @@ PanelDeclaracion = function(){
         loadMask: {msg:'Cargando...'},
         clicksToEdit: 1,
         stripeRows: true,
+        title: 'Declaración',
+        activeTab: 0,
         //height: 350,
         //width: 600,
         selModel: new Ext.grid.CellSelectionModel(),
