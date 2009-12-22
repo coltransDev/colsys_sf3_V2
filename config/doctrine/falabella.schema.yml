@@ -538,15 +538,15 @@ FalaNotaDet:
   generatePath: falabella
   tableName: tb_falanota_det
   columns:
+    ca_iddetalle:
+      type: string
+      primary: true
     ca_referencia:
-      type: string
-      primary: true
+      type: string      
     ca_numdocumento:
-      type: string
-      primary: true
+      type: string      
     ca_concepto:
-      type: string
-      primary: true
+      type: string      
     ca_nit_ter: string
     ca_tipo: string
     ca_factura_ter: string
