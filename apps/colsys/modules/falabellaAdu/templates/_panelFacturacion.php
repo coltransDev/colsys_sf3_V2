@@ -21,8 +21,7 @@ PanelFacturacion = function(){
         width: 90,
         editor: new Ext.form.NumberField({
 				allowBlank: false ,
-				allowNegative: false,
-				style: 'text-align:left',
+				allowNegative: false,				
 				decimalPrecision :3
 			})
       },
@@ -30,19 +29,28 @@ PanelFacturacion = function(){
         header: "Fch. Emisión",
         dataIndex: 'emision_fch',
         sortable:false,
-        width: 45
+        width: 45,
+        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+        editor: new Ext.form.DateField({
+            format: 'Y-m-d'
+        })
       },
       {
         header: "Fch Vencimiento",
         dataIndex: 'vencimiento_fch',
         sortable:false,
-        width: 70
+        width: 70,
+        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+        editor: new Ext.form.DateField({
+            format: 'Y-m-d'
+        })
       },
       {
         header: "Moneda",
         dataIndex: 'moneda',
         sortable:false,
-        width: 40
+        width: 40,
+        editor: <?=include_component("widgets", "monedas")?>
       },
       {
         header: "Cambio",
@@ -50,7 +58,12 @@ PanelFacturacion = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney'
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,				
+				decimalPrecision :3
+			})
       },
       {
         header: "Vlr. Afectado",
@@ -58,7 +71,12 @@ PanelFacturacion = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney'
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,				
+				decimalPrecision :3
+			})
       },
       {
         header: "Vlr. IVA",
@@ -66,7 +84,12 @@ PanelFacturacion = function(){
         sortable:false,
         width: 90,
         align: 'right',
-        renderer: 'usMoney'
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,				
+				decimalPrecision :3
+			})
       },
       {
         header: "vlr. Exento",
@@ -74,7 +97,12 @@ PanelFacturacion = function(){
         sortable:false,
         width: 75,
         align: 'right',
-        renderer: 'usMoney'
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,				
+				decimalPrecision :3
+			})
       }/*,
       {
         header: "Orden",
@@ -89,8 +117,8 @@ PanelFacturacion = function(){
     this.record = Ext.data.Record.create([
             {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
             {name: 'numdocumento', type: 'string', mapping: 'd_ca_numdocumento'},
-            {name: 'emision_fch', type: 'string', mapping: 'd_ca_emision_fch'},
-            {name: 'vencimiento_fch', type: 'float', mapping: 'd_ca_vencimiento_fch'},
+            {name: 'emision_fch', type: 'string', dateFormat:'Y-m-d', mapping: 'd_ca_emision_fch'},
+            {name: 'vencimiento_fch', type: 'float', dateFormat:'Y-m-d', mapping: 'd_ca_vencimiento_fch'},
             {name: 'moneda', type: 'string', mapping: 'd_ca_moneda'},
             {name: 'tipo_cambio', type: 'float', mapping: 'd_ca_tipo_cambio'},
             {name: 'afecto_vlr', type: 'float', mapping: 'd_ca_afecto_vlr'},

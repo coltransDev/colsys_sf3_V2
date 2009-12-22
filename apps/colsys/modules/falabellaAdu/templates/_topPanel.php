@@ -115,7 +115,7 @@ TopPanel = function(){
     this.store = new Ext.data.Store({
 
         autoLoad : true,
-        proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>$fala_declaracion))?>),
+        proxy: new Ext.data.MemoryProxy( <?=json_encode(array("root"=>array($fala_declaracion)))?>),
         reader: new Ext.data.JsonReader(
             {
                 root: 'root'
