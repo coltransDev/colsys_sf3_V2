@@ -67,11 +67,21 @@ class falabellaAduComponents extends sfComponents {
 	*
 	*/
 	public function executePanelFacturacion() {
-        $this->data = array();
+        
         
 
         $this->referencia = $this->fala_declaracion["d_ca_referencia"];
-        $this->data[] = array("numdocumento"=>"");
+        
+        $this->data = Doctrine::getTable("FalaFacturacionAdu")
+                                ->createQuery("d")
+                                ->select("d.*")
+                                ->where("d.ca_referencia = ?", $this->referencia)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR )
+                                ->execute();
+        $this->data[] = array("ca_numdocumento"=>"", "orden"=>"Z");
+
+
+
 	}
 
     /*

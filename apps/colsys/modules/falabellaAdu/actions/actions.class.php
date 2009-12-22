@@ -773,5 +773,49 @@ class falabellaAduActions extends sfActions {
             $this->getRequest()->setError("mensaje", "no se ha enviado correctamente");
         }
     }
+
+    /*
+     * Panel de facturacion
+     */
+    public function executeObservePanelFacturacion( sfWebRequest $request ){
+        $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
+
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $numdocumento = $request->getParameter("numdocumento");
+        
+        $factura = Doctrine::getTable("FalaFacturacionAdu")->find(array($referencia, $numdocumento));
+        if( !$factura ){
+            $factura = new FalaFacturacionAdu();
+            $factura->setCaReferencia( $referencia );
+            $factura->setCaNumdocumento( $numdocumento );
+        }
+
+        $factura->save();
+
+        
+        $this->responseArray["success"]=true;
+        $this->setTemplate("responseTemplate");
+    }
+
+    /*
+     * Panel de facturacion
+     */
+    public function executeEliminarFactura( sfWebRequest $request ){
+        $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
+
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $numdocumento = $request->getParameter("numdocumento");
+
+        $factura = Doctrine::getTable("FalaFacturacionAdu")->find(array($referencia, $numdocumento));
+        if( $factura ){
+            
+            $factura->delete();
+        }
+
+        $this->responseArray["success"]=true;
+
+        $this->setTemplate("responseTemplate");
+    }
+
 }
 ?>

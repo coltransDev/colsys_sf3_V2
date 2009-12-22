@@ -75,7 +75,14 @@ PanelFacturacion = function(){
         width: 75,
         align: 'right',
         renderer: 'usMoney'
-      }
+      }/*,
+      {
+        header: "Orden",
+        dataIndex: 'orden',
+        sortable:false,
+        width: 75,
+        align: 'right'       
+      }*/
     ];
 
     
@@ -126,9 +133,9 @@ PanelFacturacion = function(){
         })
         
         ,listeners:{
-            validateEdit: this.onValidateEdit
+            validateEdit: this.onValidateEdit,
+            rowContextMenu: this.onRowcontextMenu
             //afteredit:this.onAfterEdit,
-            //rowContextMenu: this.onRowcontextMenu
         }
 
     });
@@ -138,12 +145,89 @@ PanelFacturacion = function(){
 Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
     height: 290,
     guardarCambios: function(){
-        
+        var store = this.store;
+        var records = store.getModifiedRecords();
+
+        var lenght = records.length;
+
+        for( var i=0; i< lenght; i++){
+            r = records[i];
+
+            var changes = r.getChanges();
+
+            //Da formato a las fechas antes de enviarlas
+
+
+            changes['id']=r.id;
+
+            changes['numdocumento']=r.data.numdocumento;
+            
+            if( r.data.numdocumento ){
+                //envia los datos al servidor
+                Ext.Ajax.request(
+                    {
+                        waitMsg: 'Guardando cambios...',
+                        url: '<?=url_for("falabellaAdu/observePanelFacturacion?referencia=".base64_encode($referencia))?>',
+						//method: 'POST',
+                        //Solamente se envian los cambios
+                        params :	changes,
+
+                        callback :function(options, success, response){
+
+                            var res = Ext.util.JSON.decode( response.responseText );
+                            if( res.id && res.success){
+                                var rec = store.getById( res.id );
+                                
+                                
+                                rec.commit();
+                            }
+                        }
+                     }
+                );
+            }
+        }
     },
 
-    onValidateEdit : function(e){
 
-        if( e.field == "numdocumento" && e.value ){
+    eliminarItem: function(){
+        var storeTransacciones = this.store;
+
+        if( this.ctxRecord &&  confirm("Desea continuar?") ){
+            
+            var id = this.ctxRecord.id;
+            
+            Ext.Ajax.request(
+            {
+                waitMsg: 'Eliminando...',
+                url: '<?=url_for("falabellaAdu/eliminarFactura?referencia=".base64_encode($referencia))?>',
+                //method: 'POST',
+                //Solamente se envian los cambios
+                params :	{
+                    id: id,
+                    numdocumento: this.ctxRecord.data.numdocumento
+                },
+
+                //Ejecuta esta accion en caso de fallo
+                //(404 error etc, ***NOT*** success=false)
+                failure:function(response,options){
+                    alert( response.responseText );
+                    success = false;
+                },
+
+                //Ejecuta esta accion cuando el resultado es exitoso
+                success:function(response,options){
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                        record = storeTransacciones.getById( res.id );
+                        storeTransacciones.remove(record);
+                    }
+                }
+            });
+        }
+        
+    },
+    onValidateEdit : function(e){        
+        if( e.field == "numdocumento" && e.value && e.record.data.orden=="Z" ){
             var rec = e.record;
             var ed = this.colModel.getCellEditor(e.column, e.row);
             var store = ed.field.store;
@@ -164,7 +248,7 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
                                exento_vlr: '',
                                orden: 'Z' // Se utiliza Z por que el orden es alfabetico
             });
-         
+            rec.set("orden", "Y");
             //Inserta una columna en blanco al final
             storeGrid.addSorted(newRec);
             storeGrid.sort("orden", "ASC");
@@ -174,12 +258,45 @@ Ext.extend(PanelFacturacion, Ext.grid.EditorGridPanel, {
         }
 
         return true;
+    },
+    
+    onRowcontextMenu: function(grid, index, e){
+        rec = this.store.getAt(index);
 
+        if(!this.menu){ // create context menu on first right click
 
-
-
-
+            this.menu = new Ext.menu.Menu({
+            id:'grid_facturacion-ctx',
+            enableScrolling : false,
+            items: [                   
+                    {
+                        text: 'Eliminar item',
+                        iconCls: 'delete',
+                        scope:this,
+                        handler: this.eliminarItem
+                    }
+                    ]
+            });
+            this.menu.on('hide', this.onContextHide , this);
+        }
+        e.stopEvent();
+        if(this.ctxRow){
+            Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+            this.ctxRow = null;
+        }
+        this.ctxRecord = rec;
+        this.ctxRow = this.view.getRow(index);
+        Ext.fly(this.ctxRow).addClass('x-node-ctx');
+        this.menu.showAt(e.getXY());
     }
+    ,
+    onContextHide: function(){
+        if(this.ctxRow){
+            Ext.fly(this.ctxRow).removeClass('x-node-ctx');
+            this.ctxRow = null;
+        }
+    }
+
 });
 
 </script>
