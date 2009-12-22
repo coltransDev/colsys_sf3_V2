@@ -25,6 +25,7 @@ class ReporteTable extends Doctrine_Table
 	public static function getReportesActivos( $idCliente , $impoexpo, $transporte=null,  $query=false, $order="" ){
         $q = Doctrine_Query::create()
                             ->from("Reporte r")
+                            ->select("r.*")
                             ->innerJoin("r.Contacto c")
                             ->innerJoin("c.Cliente cl")
                             ->where("cl.ca_idgrupo = ? ", $idCliente)
@@ -46,10 +47,10 @@ class ReporteTable extends Doctrine_Table
 			case "orden":
                 $q->addOrderBy("r.ca_orden_clie");				
 				break;
-			default:
-                $q->leftJoin("r.Proveedor p ON r.ca_idproveedor=?", "p.ca_idtercero::text");
+			default:                
+                /*$q->leftJoin("r.Proveedor p ON r.ca_idproveedor=p.ca_idtercero");
                 $q->addOrderBy("p.ca_nombre");
-                $q->addOrderBy("r.ca_orden_clie");                
+                $q->addOrderBy("r.ca_orden_clie");*/
 				break;
 
 		}
