@@ -14,15 +14,17 @@
         
 
         this.panelDeclaracion = new PanelDeclaracion();
+        this.panelFacturacion = new PanelFacturacion();
 
         SubPanel.superclass.constructor.call(this, {
             id:'subpanel-tabs',
             labelAlign: 'top',
             bodyStyle:'padding:1px',
-
+            activeTab: 1,
             //fileUpload: true,
             items: [
-                this.panelDeclaracion
+                this.panelDeclaracion,
+                this.panelFacturacion
             ]
              
 

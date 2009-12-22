@@ -29,7 +29,15 @@ class falabellaAduComponents extends sfComponents {
 	* Accion por defecto
 	*/
 	public function executePanelDeclaracion() {
+        
 
+        $this->fala_detallesimp = Doctrine::getTable("FalaDeclaracionDts")
+            -> createQuery("d")
+            ->where ( "d.ca_referencia = ?", $this->fala_declaracion["d_ca_referencia"]  )
+            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+            ->execute();
+
+       
 	}
 
     /*
@@ -39,18 +47,38 @@ class falabellaAduComponents extends sfComponents {
 		
 	}
 
-    /*
-	*
-	*/
-	public function executeSubPanel() {
-        
-	}
+    
 
     /*
 	*
 	*/
 	public function executeTopPanel() {
             
+	}
+
+    /*
+	*
+	*/
+	public function executeSubPanel() {
+
+	}
+
+    /*
+	*
+	*/
+	public function executePanelFacturacion() {
+        $this->data = array();
+        
+
+        $this->referencia = $this->fala_declaracion["d_ca_referencia"];
+        $this->data[] = array("numdocumento"=>"");
+	}
+
+    /*
+	*
+	*/
+	public function executePanelNotas() {
+
 	}
 	
 }

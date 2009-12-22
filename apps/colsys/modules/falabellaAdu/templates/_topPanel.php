@@ -187,6 +187,10 @@ TopPanel = function(){
                 );
 
             }
+            
+            var grid = Ext.getCmp("panel-facturacion");
+            grid.guardarCambios();
+
         }
 
     });

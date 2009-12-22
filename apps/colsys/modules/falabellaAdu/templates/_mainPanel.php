@@ -137,7 +137,8 @@ var storeTipos = new Ext.data.Store({
             );
 
             var grid = Ext.getCmp("panel-detalle");
-            grid.guardarCambios();
+            grid.guardarCambios();           
+
 
         }
 
