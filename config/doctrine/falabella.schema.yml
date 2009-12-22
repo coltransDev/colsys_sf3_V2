@@ -289,11 +289,6 @@ FalaDetailAdu:
       foreign: ca_iddoc
       type: one
 
-    ca_num_cont_part1: string
-    ca_num_cont_part2: string
-    ca_num_cont_sell: string
-    ca_container_iso: string
-
 
 FalaShipmentInfoAdu:
   options:
@@ -409,6 +404,11 @@ FalaDeclaracionImp:
       foreign: ca_referencia
       type: many
       orderBy: ca_referencia ASC
+    FalaFacturacionAdu:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: many
+      orderBy: ca_referencia ASC
 
 
 FalaDeclaracionDts:
@@ -459,5 +459,110 @@ FalaDeclaracionDts:
     FalaDeclaracionImp:
       local: ca_referencia
       foreign: ca_referencia
+      type: one
+
+
+FalaFacturacionAdu:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falafacturacion_adu
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_numdocumento:
+      type: string
+      primary: true
+    ca_emision_fch: date
+    ca_vencimiento_fch: date
+    ca_moneda: string
+    ca_tipo_cambio: decimal
+    ca_afecto_vlr: decimal
+    ca_iva_vlr: decimal
+    ca_exento_vlr: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+
+  relations:
+    FalaDeclaracionImp:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+
+
+FalaNotaCab:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falanota_cab
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_numdocumento:
+      type: string
+      primary: true
+    ca_emision_fch: date
+    ca_vlrdocumento: decimal
+    ca_tipo_cambio: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+
+  relations:
+    FalaDeclaracionImp:
+      local: ca_referencia
+      foreign: ca_referencia
+      type: one
+    FalaNotaDet:
+      local: ca_referencia
+      local: ca_numdocumento
+      foreign: ca_referencia
+      foreign: ca_numdocumento
+      type: many
+
+
+FalaNotaDet:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: falabella
+  tableName: tb_falanota_det
+  columns:
+    ca_referencia:
+      type: string
+      primary: true
+    ca_numdocumento:
+      type: string
+      primary: true
+    ca_concepto:
+      type: string
+      primary: true
+    ca_nit_ter: string
+    ca_tipo: string
+    ca_factura_ter: string
+    ca_factura_fch: date
+    ca_factura_vlr: decimal
+    ca_factura_iva: decimal
+    ca_usucreado: string(20)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(20)
+    ca_fchactualizado: timestamp
+
+  relations:
+    FalaNotaCab:
+      local: ca_referencia
+      local: ca_numdocumento
+      foreign: ca_referencia
+      foreign: ca_numdocumento
       type: one
 
