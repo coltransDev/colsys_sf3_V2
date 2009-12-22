@@ -128,7 +128,7 @@ var crearSeguimiento=function(){
 				
 			 $asunto .= " Id.: ".$reporte->getCaConsecutivo()." ";
 			 echo $form['asunto']->renderError(); 			 
-			 echo $form->setDefault('asunto', $asunto); 
+			 $form->setDefault('asunto', $asunto); 
 			 echo $form['asunto']->render();
 			 ?>
 			</div>		</td>
@@ -162,7 +162,7 @@ var crearSeguimiento=function(){
 			<div align="left" id="inst_agente"><b>Instrucciones Especiales para el Agente: <a href="#inst_agente" onclick="verInstruccionesAgente()"><?=image_tag("cerrado.gif")?></a></b>
 			<?		
 			 echo $form['instrucciones']->renderError();
-             echo $form->setDefault('instrucciones', $reporte->getCaInstrucciones());
+             $form->setDefault('instrucciones', $reporte->getCaInstrucciones());
 			 echo $form['instrucciones']->render();
 			 ?>
 			 </div>		</td>
@@ -184,7 +184,7 @@ var crearSeguimiento=function(){
 			 
 			 $notas .= $usuario->getFirma();
 			 echo $form['notas']->renderError(); 
-			 echo $form->setDefault('notas', $notas); 			 
+			 $form->setDefault('notas', $notas);
 			 echo $form['notas']->render();
 			 ?>
 			</div>		</td>
