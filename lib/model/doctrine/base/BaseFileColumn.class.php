@@ -55,9 +55,9 @@
  * @method FileColumn          setRegistro()          Sets the current record's "Registro" value
  * @method FileColumn          setFileColumn()        Sets the current record's "FileColumn" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseFileColumn extends myDoctrineRecord
@@ -71,7 +71,6 @@ abstract class BaseFileColumn extends myDoctrineRecord
              ));
         $this->hasColumn('ca_idcolumna', 'string', null, array(
              'type' => 'string',
-             'primary' => true,
              ));
         $this->hasColumn('ca_columna', 'string', null, array(
              'type' => 'string',

@@ -133,9 +133,9 @@
  * @method FalaShipmentInfoAdu setCaLimitDate()           Sets the current record's "ca_limit_date" value
  * @method FalaShipmentInfoAdu setFalaHeader()            Sets the current record's "FalaHeader" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseFalaShipmentInfoAdu extends myDoctrineRecord

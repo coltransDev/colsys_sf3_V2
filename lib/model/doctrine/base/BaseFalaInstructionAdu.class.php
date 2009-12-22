@@ -19,9 +19,9 @@
  * @method FalaInstructionAdu setCaInstructions()        Sets the current record's "ca_instructions" value
  * @method FalaInstructionAdu setFalaHeader()            Sets the current record's "FalaHeader" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseFalaInstructionAdu extends myDoctrineRecord

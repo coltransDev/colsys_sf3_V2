@@ -10,20 +10,23 @@
  * @property integer $ca_subcentro
  * @property string $ca_nombre
  * @property Doctrine_Collection $InoTransaccion
- * @property Doctrine_Collection $InoConceptoParametro
+ * @property Doctrine_Collection $InoParametroFacturacion
+ * @property Doctrine_Collection $InoParametroCosto
  * 
- * @method integer             getCaIdccosto()           Returns the current record's "ca_idccosto" value
- * @method integer             getCaCentro()             Returns the current record's "ca_centro" value
- * @method integer             getCaSubcentro()          Returns the current record's "ca_subcentro" value
- * @method string              getCaNombre()             Returns the current record's "ca_nombre" value
- * @method Doctrine_Collection getInoTransaccion()       Returns the current record's "InoTransaccion" collection
- * @method Doctrine_Collection getInoConceptoParametro() Returns the current record's "InoConceptoParametro" collection
- * @method InoCentroCosto      setCaIdccosto()           Sets the current record's "ca_idccosto" value
- * @method InoCentroCosto      setCaCentro()             Sets the current record's "ca_centro" value
- * @method InoCentroCosto      setCaSubcentro()          Sets the current record's "ca_subcentro" value
- * @method InoCentroCosto      setCaNombre()             Sets the current record's "ca_nombre" value
- * @method InoCentroCosto      setInoTransaccion()       Sets the current record's "InoTransaccion" collection
- * @method InoCentroCosto      setInoConceptoParametro() Sets the current record's "InoConceptoParametro" collection
+ * @method integer             getCaIdccosto()              Returns the current record's "ca_idccosto" value
+ * @method integer             getCaCentro()                Returns the current record's "ca_centro" value
+ * @method integer             getCaSubcentro()             Returns the current record's "ca_subcentro" value
+ * @method string              getCaNombre()                Returns the current record's "ca_nombre" value
+ * @method Doctrine_Collection getInoTransaccion()          Returns the current record's "InoTransaccion" collection
+ * @method Doctrine_Collection getInoParametroFacturacion() Returns the current record's "InoParametroFacturacion" collection
+ * @method Doctrine_Collection getInoParametroCosto()       Returns the current record's "InoParametroCosto" collection
+ * @method InoCentroCosto      setCaIdccosto()              Sets the current record's "ca_idccosto" value
+ * @method InoCentroCosto      setCaCentro()                Sets the current record's "ca_centro" value
+ * @method InoCentroCosto      setCaSubcentro()             Sets the current record's "ca_subcentro" value
+ * @method InoCentroCosto      setCaNombre()                Sets the current record's "ca_nombre" value
+ * @method InoCentroCosto      setInoTransaccion()          Sets the current record's "InoTransaccion" collection
+ * @method InoCentroCosto      setInoParametroFacturacion() Sets the current record's "InoParametroFacturacion" collection
+ * @method InoCentroCosto      setInoParametroCosto()       Sets the current record's "InoParametroCosto" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -60,7 +63,11 @@ abstract class BaseInoCentroCosto extends myDoctrineRecord
              'local' => 'ca_idccosto',
              'foreign' => 'ca_idccosto'));
 
-        $this->hasMany('InoConceptoParametro', array(
+        $this->hasMany('InoParametroFacturacion', array(
+             'local' => 'ca_idccosto',
+             'foreign' => 'ca_idccosto'));
+
+        $this->hasMany('InoParametroCosto', array(
              'local' => 'ca_idccosto',
              'foreign' => 'ca_idccosto'));
     }

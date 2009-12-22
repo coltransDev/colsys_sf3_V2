@@ -10,9 +10,10 @@
  * @property integer $ca_idcuenta
  * @property integer $ca_idconcepto
  * @property integer $ca_idccosto
+ * @property integer $ca_idmaestra
  * @property integer $ca_id
- * @property decimal $ca_db
- * @property decimal $ca_cr
+ * @property boolean $ca_db
+ * @property decimal $ca_valor
  * @property string $ca_idmoneda
  * @property timestamp $ca_observaciones
  * @property timestamp $ca_fchcreado
@@ -23,15 +24,17 @@
  * @property InoComprobante $InoComprobante
  * @property InoCuenta $InoCuenta
  * @property InoConcepto $InoConcepto
+ * @property InoMaestra $InoMaestra
  * 
  * @method integer        getCaIdtransaccion()  Returns the current record's "ca_idtransaccion" value
  * @method integer        getCaIdcomprobante()  Returns the current record's "ca_idcomprobante" value
  * @method integer        getCaIdcuenta()       Returns the current record's "ca_idcuenta" value
  * @method integer        getCaIdconcepto()     Returns the current record's "ca_idconcepto" value
  * @method integer        getCaIdccosto()       Returns the current record's "ca_idccosto" value
+ * @method integer        getCaIdmaestra()      Returns the current record's "ca_idmaestra" value
  * @method integer        getCaId()             Returns the current record's "ca_id" value
- * @method decimal        getCaDb()             Returns the current record's "ca_db" value
- * @method decimal        getCaCr()             Returns the current record's "ca_cr" value
+ * @method boolean        getCaDb()             Returns the current record's "ca_db" value
+ * @method decimal        getCaValor()          Returns the current record's "ca_valor" value
  * @method string         getCaIdmoneda()       Returns the current record's "ca_idmoneda" value
  * @method timestamp      getCaObservaciones()  Returns the current record's "ca_observaciones" value
  * @method timestamp      getCaFchcreado()      Returns the current record's "ca_fchcreado" value
@@ -42,14 +45,16 @@
  * @method InoComprobante getInoComprobante()   Returns the current record's "InoComprobante" value
  * @method InoCuenta      getInoCuenta()        Returns the current record's "InoCuenta" value
  * @method InoConcepto    getInoConcepto()      Returns the current record's "InoConcepto" value
+ * @method InoMaestra     getInoMaestra()       Returns the current record's "InoMaestra" value
  * @method InoTransaccion setCaIdtransaccion()  Sets the current record's "ca_idtransaccion" value
  * @method InoTransaccion setCaIdcomprobante()  Sets the current record's "ca_idcomprobante" value
  * @method InoTransaccion setCaIdcuenta()       Sets the current record's "ca_idcuenta" value
  * @method InoTransaccion setCaIdconcepto()     Sets the current record's "ca_idconcepto" value
  * @method InoTransaccion setCaIdccosto()       Sets the current record's "ca_idccosto" value
+ * @method InoTransaccion setCaIdmaestra()      Sets the current record's "ca_idmaestra" value
  * @method InoTransaccion setCaId()             Sets the current record's "ca_id" value
  * @method InoTransaccion setCaDb()             Sets the current record's "ca_db" value
- * @method InoTransaccion setCaCr()             Sets the current record's "ca_cr" value
+ * @method InoTransaccion setCaValor()          Sets the current record's "ca_valor" value
  * @method InoTransaccion setCaIdmoneda()       Sets the current record's "ca_idmoneda" value
  * @method InoTransaccion setCaObservaciones()  Sets the current record's "ca_observaciones" value
  * @method InoTransaccion setCaFchcreado()      Sets the current record's "ca_fchcreado" value
@@ -60,6 +65,7 @@
  * @method InoTransaccion setInoComprobante()   Sets the current record's "InoComprobante" value
  * @method InoTransaccion setInoCuenta()        Sets the current record's "InoCuenta" value
  * @method InoTransaccion setInoConcepto()      Sets the current record's "InoConcepto" value
+ * @method InoTransaccion setInoMaestra()       Sets the current record's "InoMaestra" value
  * 
  * @package    symfony
  * @subpackage model
@@ -88,13 +94,16 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
         $this->hasColumn('ca_idccosto', 'integer', null, array(
              'type' => 'integer',
              ));
+        $this->hasColumn('ca_idmaestra', 'integer', null, array(
+             'type' => 'integer',
+             ));
         $this->hasColumn('ca_id', 'integer', null, array(
              'type' => 'integer',
              ));
-        $this->hasColumn('ca_db', 'decimal', null, array(
-             'type' => 'decimal',
+        $this->hasColumn('ca_db', 'boolean', null, array(
+             'type' => 'boolean',
              ));
-        $this->hasColumn('ca_cr', 'decimal', null, array(
+        $this->hasColumn('ca_valor', 'decimal', null, array(
              'type' => 'decimal',
              ));
         $this->hasColumn('ca_idmoneda', 'string', null, array(
@@ -142,5 +151,9 @@ abstract class BaseInoTransaccion extends myDoctrineRecord
         $this->hasOne('InoConcepto', array(
              'local' => 'ca_idconcepto',
              'foreign' => 'ca_idconcepto'));
+
+        $this->hasOne('InoMaestra', array(
+             'local' => 'ca_idmaestra',
+             'foreign' => 'ca_idmaestra'));
     }
 }

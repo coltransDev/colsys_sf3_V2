@@ -39,6 +39,7 @@
  * @property Usuario $UsuLiquidado
  * @property Usuario $UsuCerrado
  * @property Usuario $UsuAnulado
+ * @property Doctrine_Collection $InoTransaccion
  * 
  * @method integer             getCaIdmaestra()       Returns the current record's "ca_idmaestra" value
  * @method date                getCaFchreferencia()   Returns the current record's "ca_fchreferencia" value
@@ -74,6 +75,7 @@
  * @method Usuario             getUsuLiquidado()      Returns the current record's "UsuLiquidado" value
  * @method Usuario             getUsuCerrado()        Returns the current record's "UsuCerrado" value
  * @method Usuario             getUsuAnulado()        Returns the current record's "UsuAnulado" value
+ * @method Doctrine_Collection getInoTransaccion()    Returns the current record's "InoTransaccion" collection
  * @method InoMaestra          setCaIdmaestra()       Sets the current record's "ca_idmaestra" value
  * @method InoMaestra          setCaFchreferencia()   Sets the current record's "ca_fchreferencia" value
  * @method InoMaestra          setCaReferencia()      Sets the current record's "ca_referencia" value
@@ -108,6 +110,7 @@
  * @method InoMaestra          setUsuLiquidado()      Sets the current record's "UsuLiquidado" value
  * @method InoMaestra          setUsuCerrado()        Sets the current record's "UsuCerrado" value
  * @method InoMaestra          setUsuAnulado()        Sets the current record's "UsuAnulado" value
+ * @method InoMaestra          setInoTransaccion()    Sets the current record's "InoTransaccion" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -244,5 +247,9 @@ abstract class BaseInoMaestra extends myDoctrineRecord
         $this->hasOne('Usuario as UsuAnulado', array(
              'local' => 'ca_usuanulado',
              'foreign' => 'ca_login'));
+
+        $this->hasMany('InoTransaccion', array(
+             'local' => 'ca_idmaestra',
+             'foreign' => 'ca_idmaestra'));
     }
 }

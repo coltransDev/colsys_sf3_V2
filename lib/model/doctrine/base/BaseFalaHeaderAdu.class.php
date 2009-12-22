@@ -127,9 +127,9 @@
  * @method FalaHeaderAdu       setFalaInstruction()           Sets the current record's "FalaInstruction" collection
  * @method FalaHeaderAdu       setFalaDeclaracionImp()        Sets the current record's "FalaDeclaracionImp" value
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseFalaHeaderAdu extends myDoctrineRecord

@@ -130,9 +130,9 @@
  * @method FalaHeader          setFalaShipmentInfoAdu()       Sets the current record's "FalaShipmentInfoAdu" collection
  * @method FalaHeader          setFalaInstructionAdu()        Sets the current record's "FalaInstructionAdu" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseFalaHeader extends myDoctrineRecord

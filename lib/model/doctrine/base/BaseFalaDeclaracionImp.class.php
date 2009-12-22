@@ -23,6 +23,8 @@
  * @property timestamp $ca_fchactualizado
  * @property Doctrine_Collection $FalaHeaderAdu
  * @property Doctrine_Collection $FalaDeclaracionDts
+ * @property Doctrine_Collection $FalaFacturacionAdu
+ * @property Doctrine_Collection $FalaNotaCab
  * 
  * @method string              getCaReferencia()       Returns the current record's "ca_referencia" value
  * @method string              getCaNumdeclaracion()   Returns the current record's "ca_numdeclaracion" value
@@ -42,6 +44,8 @@
  * @method timestamp           getCaFchactualizado()   Returns the current record's "ca_fchactualizado" value
  * @method Doctrine_Collection getFalaHeaderAdu()      Returns the current record's "FalaHeaderAdu" collection
  * @method Doctrine_Collection getFalaDeclaracionDts() Returns the current record's "FalaDeclaracionDts" collection
+ * @method Doctrine_Collection getFalaFacturacionAdu() Returns the current record's "FalaFacturacionAdu" collection
+ * @method Doctrine_Collection getFalaNotaCab()        Returns the current record's "FalaNotaCab" collection
  * @method FalaDeclaracionImp  setCaReferencia()       Sets the current record's "ca_referencia" value
  * @method FalaDeclaracionImp  setCaNumdeclaracion()   Sets the current record's "ca_numdeclaracion" value
  * @method FalaDeclaracionImp  setCaNuminternacion()   Sets the current record's "ca_numinternacion" value
@@ -60,10 +64,12 @@
  * @method FalaDeclaracionImp  setCaFchactualizado()   Sets the current record's "ca_fchactualizado" value
  * @method FalaDeclaracionImp  setFalaHeaderAdu()      Sets the current record's "FalaHeaderAdu" collection
  * @method FalaDeclaracionImp  setFalaDeclaracionDts() Sets the current record's "FalaDeclaracionDts" collection
+ * @method FalaDeclaracionImp  setFalaFacturacionAdu() Sets the current record's "FalaFacturacionAdu" collection
+ * @method FalaDeclaracionImp  setFalaNotaCab()        Sets the current record's "FalaNotaCab" collection
  * 
- * @package    ##PACKAGE##
- * @subpackage ##SUBPACKAGE##
- * @author     ##NAME## <##EMAIL##>
+ * @package    symfony
+ * @subpackage model
+ * @author     Your name here
  * @version    SVN: $Id: Builder.php 6820 2009-11-30 17:27:49Z jwage $
  */
 abstract class BaseFalaDeclaracionImp extends myDoctrineRecord
@@ -140,5 +146,14 @@ abstract class BaseFalaDeclaracionImp extends myDoctrineRecord
              'local' => 'ca_referencia',
              'foreign' => 'ca_referencia',
              'orderBy' => 'ca_referencia ASC'));
+
+        $this->hasMany('FalaFacturacionAdu', array(
+             'local' => 'ca_referencia',
+             'foreign' => 'ca_referencia',
+             'orderBy' => 'ca_referencia ASC'));
+
+        $this->hasMany('FalaNotaCab', array(
+             'local' => 'ca_referencia',
+             'foreign' => 'ca_referencia'));
     }
 }

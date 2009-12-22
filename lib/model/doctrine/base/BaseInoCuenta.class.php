@@ -11,22 +11,25 @@
  * @property string $ca_naturaleza
  * @property string $ca_moneda
  * @property Doctrine_Collection $InoTransaccion
- * @property Doctrine_Collection $InoConceptoParametro
+ * @property Doctrine_Collection $InoParametroFacturacion
+ * @property Doctrine_Collection $InoParametroCosto
  * 
- * @method integer             getCaIdcuenta()           Returns the current record's "ca_idcuenta" value
- * @method string              getCaCuenta()             Returns the current record's "ca_cuenta" value
- * @method string              getCaDescripcion()        Returns the current record's "ca_descripcion" value
- * @method string              getCaNaturaleza()         Returns the current record's "ca_naturaleza" value
- * @method string              getCaMoneda()             Returns the current record's "ca_moneda" value
- * @method Doctrine_Collection getInoTransaccion()       Returns the current record's "InoTransaccion" collection
- * @method Doctrine_Collection getInoConceptoParametro() Returns the current record's "InoConceptoParametro" collection
- * @method InoCuenta           setCaIdcuenta()           Sets the current record's "ca_idcuenta" value
- * @method InoCuenta           setCaCuenta()             Sets the current record's "ca_cuenta" value
- * @method InoCuenta           setCaDescripcion()        Sets the current record's "ca_descripcion" value
- * @method InoCuenta           setCaNaturaleza()         Sets the current record's "ca_naturaleza" value
- * @method InoCuenta           setCaMoneda()             Sets the current record's "ca_moneda" value
- * @method InoCuenta           setInoTransaccion()       Sets the current record's "InoTransaccion" collection
- * @method InoCuenta           setInoConceptoParametro() Sets the current record's "InoConceptoParametro" collection
+ * @method integer             getCaIdcuenta()              Returns the current record's "ca_idcuenta" value
+ * @method string              getCaCuenta()                Returns the current record's "ca_cuenta" value
+ * @method string              getCaDescripcion()           Returns the current record's "ca_descripcion" value
+ * @method string              getCaNaturaleza()            Returns the current record's "ca_naturaleza" value
+ * @method string              getCaMoneda()                Returns the current record's "ca_moneda" value
+ * @method Doctrine_Collection getInoTransaccion()          Returns the current record's "InoTransaccion" collection
+ * @method Doctrine_Collection getInoParametroFacturacion() Returns the current record's "InoParametroFacturacion" collection
+ * @method Doctrine_Collection getInoParametroCosto()       Returns the current record's "InoParametroCosto" collection
+ * @method InoCuenta           setCaIdcuenta()              Sets the current record's "ca_idcuenta" value
+ * @method InoCuenta           setCaCuenta()                Sets the current record's "ca_cuenta" value
+ * @method InoCuenta           setCaDescripcion()           Sets the current record's "ca_descripcion" value
+ * @method InoCuenta           setCaNaturaleza()            Sets the current record's "ca_naturaleza" value
+ * @method InoCuenta           setCaMoneda()                Sets the current record's "ca_moneda" value
+ * @method InoCuenta           setInoTransaccion()          Sets the current record's "InoTransaccion" collection
+ * @method InoCuenta           setInoParametroFacturacion() Sets the current record's "InoParametroFacturacion" collection
+ * @method InoCuenta           setInoParametroCosto()       Sets the current record's "InoParametroCosto" collection
  * 
  * @package    symfony
  * @subpackage model
@@ -69,7 +72,11 @@ abstract class BaseInoCuenta extends myDoctrineRecord
              'local' => 'ca_idcuenta',
              'foreign' => 'ca_idcuenta'));
 
-        $this->hasMany('InoConceptoParametro', array(
+        $this->hasMany('InoParametroFacturacion', array(
+             'local' => 'ca_idcuenta',
+             'foreign' => 'ca_idcuenta'));
+
+        $this->hasMany('InoParametroCosto', array(
              'local' => 'ca_idcuenta',
              'foreign' => 'ca_idcuenta'));
     }
