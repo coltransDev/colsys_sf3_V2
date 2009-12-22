@@ -191,6 +191,12 @@ TopPanel = function(){
             var grid = Ext.getCmp("panel-facturacion");
             grid.guardarCambios();
 
+            var grid = Ext.getCmp("panel-notas-cab");
+            grid.guardarCambios();
+
+            var grid = Ext.getCmp("panel-notas-det");
+            grid.guardarCambios();
+
         }
 
     });

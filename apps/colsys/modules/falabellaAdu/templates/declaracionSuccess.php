@@ -2,10 +2,6 @@
 $fala_declaracion = $sf_data->getRaw( "fala_declaracion" );
 //$fala_detallesimp = $sf_data->getRaw( "fala_detallesimp" );
 include_component("falabellaAdu", "topPanel", array("fala_declaracion"=>$fala_declaracion) );
-include_component("falabellaAdu", "panelDeclaracion", array("fala_declaracion"=>$fala_declaracion) );
-
-include_component("falabellaAdu", "panelFacturacion", array("fala_declaracion"=>$fala_declaracion) );
-
 include_component("falabellaAdu", "subPanel", array("fala_declaracion"=>$fala_declaracion) );
 ?>
 

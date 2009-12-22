@@ -90,6 +90,37 @@ class falabellaAduComponents extends sfComponents {
 	public function executePanelNotas() {
 
 	}
+
+    /*
+	*
+	*/
+	public function executePanelNotasCab() {
+        $this->referencia = $this->fala_declaracion["d_ca_referencia"];
+
+        $this->data = Doctrine::getTable("FalaNotaCab")
+                                ->createQuery("d")
+                                ->select("d.*")
+                                ->where("d.ca_referencia = ?", $this->referencia)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR )
+                                ->execute();
+        $this->data[] = array("ca_numdocumento"=>"", "orden"=>"Z");
+	}
+
+    /*
+	*
+	*/
+	public function executePanelNotasDet() {
+        $this->referencia = $this->fala_declaracion["d_ca_referencia"];
+
+        $this->data = Doctrine::getTable("FalaNotaDet")
+                                ->createQuery("d")
+                                ->select("d.*")
+                                ->where("d.ca_referencia = ?", $this->referencia)
+                                ->addWhere("d.ca_numdocumento = ?", $this->referencia)
+                                ->setHydrationMode(Doctrine::HYDRATE_SCALAR )
+                                ->execute();
+        $this->data[] = array("ca_numdocumento"=>"", "orden"=>"Z");
+	}
 	
 }
 ?>

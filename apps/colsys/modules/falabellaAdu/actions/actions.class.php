@@ -797,9 +797,7 @@ class falabellaAduActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    /*
-     * Panel de facturacion
-     */
+   
     public function executeEliminarFactura( sfWebRequest $request ){
         $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
 
@@ -813,6 +811,109 @@ class falabellaAduActions extends sfActions {
         }
 
         $this->responseArray["success"]=true;
+
+        $this->setTemplate("responseTemplate");
+    }
+
+     /*
+     * Panel de Notas
+     */
+    public function executeObservePanelNotasCab( sfWebRequest $request ){
+        $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
+
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $numdocumento = $request->getParameter("numdocumento");
+
+        $factura = Doctrine::getTable("FalaNotaCab")->find(array($referencia, $numdocumento));
+        if( !$factura ){
+            $factura = new FalaNotaCab();
+            $factura->setCaReferencia( $referencia );
+            $factura->setCaNumdocumento( $numdocumento );
+        }
+
+        $factura->save();
+
+
+        $this->responseArray["success"]=true;
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeNotaCab( sfWebRequest $request ){
+        $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
+
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $numdocumento = $request->getParameter("numdocumento");
+
+        $factura = Doctrine::getTable("FalaNotaCab")->find(array($referencia, $numdocumento));
+        if( $factura ){
+
+            $factura->delete();
+        }
+
+        $this->responseArray["success"]=true;
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executePanelNotasDetData( sfWebRequest $request ){
+        $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
+
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $numdocumento = $request->getParameter("numdocumento");
+        $facturas = array();
+        if( $numdocumento ){
+        $facturas = Doctrine::getTable("FalaNotaDet")
+                    ->createQuery("d")
+                    ->select("d.*")
+                    ->where("d.ca_referencia = ? AND d.ca_numdocumento = ?",array($referencia, $numdocumento))
+                    ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                    ->execute();
+        
+            $facturas[] = array("d_ca_concepto"=>"", "d_ca_numdocumento"=>$numdocumento, "orden"=>"Z");
+        }
+        $this->responseArray["root"]=$facturas;
+        $this->responseArray["success"]=true;
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeObservePanelNotasDet( sfWebRequest $request ){
+        $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
+
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $numdocumento = $request->getParameter("numdocumento");
+        $concepto = $request->getParameter("concepto");
+        $iddetalle = $request->getParameter("iddetalle");
+        if( $iddetalle ){
+            $detalle = Doctrine::getTable("FalaNotaDet")->find($iddetalle);
+            $this->forward404Unless( $detalle );
+        }else{
+            $detalle = new FalaNotaDet();
+            $detalle->setCaReferencia( $referencia );
+            $detalle->setCaNumdocumento( $numdocumento );
+            $detalle->setCaConcepto( $concepto );
+        }
+
+        $detalle->save();
+
+        $this->responseArray["iddetalle"]=$detalle->getCaIddetalle();
+        $this->responseArray["success"]=true;
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeEliminarPanelNotasDet( sfWebRequest $request ){
+        $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
+
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $numdocumento = $request->getParameter("numdocumento");
+        $concepto = $request->getParameter("concepto");
+        $iddetalle = $request->getParameter("iddetalle");
+        if( $iddetalle ){
+            $detalle = Doctrine::getTable("FalaNotaDet")->find($iddetalle);
+            $this->forward404Unless( $detalle );
+            $detalle->delete();
+            $this->responseArray["success"]=true;
+        }
 
         $this->setTemplate("responseTemplate");
     }
