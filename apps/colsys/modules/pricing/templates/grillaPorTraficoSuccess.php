@@ -734,7 +734,8 @@ var gridOnRowcontextmenu =  function(grid, index, e){
 
 function eliminarFila(ctxRecord, index){	
 	if( confirm("Esta seguro?") ){
-		var params = [];
+		var params = ctxRecord.getChanges();
+        
 		params['idtrayecto'] = ctxRecord.data.idtrayecto;
 
         if( ctxRecord.data.tipo=='concepto' ){
@@ -748,11 +749,13 @@ function eliminarFila(ctxRecord, index){
         }
        
         params['tipo'] = ctxRecord.data.tipo;
-		params['id'] = ctxRecord.id;	
+		params['id'] = ctxRecord.id;
+        
 		Ext.Ajax.request( 
 			{   
 				waitMsg: 'Eliminando...',						
-				url: '<?=url_for("pricing/eliminarRecargoGrillaPorTraficos")?>', 						//method: 'POST', 
+				url: '<?=url_for("pricing/eliminarRecargoGrillaPorTraficos")?>',
+                method: 'POST',
 				//Solamente se envian los cambios 						
 				params :	params,
 										
