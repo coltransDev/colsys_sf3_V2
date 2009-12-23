@@ -5,7 +5,7 @@ switch($action){
 		$button[0]["name"]="Importar P.O.";
 		$button[0]["tooltip"]="Importar la informaci&oacute;n desde la carpeta OUT";
 		$button[0]["image"]="22x22/kexi_kexi.gif";
-		$button[0]["link"]= "dataImport/importFile?fileHeader=1&proceso=Colmas&token=".md5(time());
+		$button[0]["link"]= "dataImport/importFile?fileHeader=4&proceso=Colmas&token=".md5(time());
 
 		$button[1]["name"]="Cargas DIM";
 		$button[1]["tooltip"]="Carga Declaraciones de Importación Generadas por Aprocom";
@@ -23,7 +23,7 @@ switch($action){
 		$button[1]["tooltip"]="Genera Archivo Plano con Información para Aprocom";
 		$button[1]["image"]="22x22/kexi_kexi.gif";
 		$button[1]["link"]= "falabellaAdu/generaAprocom?iddoc=".$this->getRequestParameter("iddoc");
-
+/*
 		$button[2]["name"]="Exportar";
 		$button[2]["tooltip"]="Exportar la informaci&oacute;n a la carpeta IN";
 		$button[2]["image"]="22x22/kexi_kexi.gif";
@@ -35,12 +35,13 @@ switch($action){
 		$button[3]["image"]="22x22/kexi_kexi.gif";
 		$button[3]["link"]= "#";
 		$button[3]["onClick"]= "factura_file()";
+*/
 		
 		$button[4]["name"]="Anular";
 		$button[4]["tooltip"]="Anular la Orden de Pedido";
 		$button[4]["image"]="22x22/cancel.gif";
 		$button[4]["link"]= "falabellaAdu/anularOrden?iddoc=".$this->getRequestParameter("iddoc");
-		
+
 		break;	
 	case "shippingInstructions":
 		$button[0]["name"]="Inicio";
