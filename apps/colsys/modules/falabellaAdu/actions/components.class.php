@@ -29,14 +29,14 @@ class falabellaAduComponents extends sfComponents {
 	* Accion por defecto
 	*/
 	public function executePanelDeclaracion() {
-        
 
-        $this->fala_detallesimp = Doctrine::getTable("FalaDeclaracionDts")
-            -> createQuery("d")
-            ->where ( "d.ca_referencia = ?", $this->fala_declaracion["d_ca_referencia"]  )
-            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-            ->execute();
-
+            $this->referencia = $this->fala_declaracion["d_ca_referencia"];
+            
+            $this->fala_detallesimp = Doctrine::getTable("FalaDeclaracionDts")
+                -> createQuery("d")
+                ->where ( "d.ca_referencia = ?", $this->referencia  )
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                ->execute();
        
 	}
 
@@ -67,8 +67,6 @@ class falabellaAduComponents extends sfComponents {
 	*
 	*/
 	public function executePanelFacturacion() {
-        
-        
 
         $this->referencia = $this->fala_declaracion["d_ca_referencia"];
         
