@@ -11,27 +11,36 @@
  * @author abotero
  */
 class myDoctrineRecord extends sfDoctrineRecord{
+    private $stopBlaming = false;
+
+    public function stopBlaming(){
+        $this->stopBlaming = true;
+    }
+
     public function save(Doctrine_Connection $con = null){
-       
-        if ($this->isNew() ){
-           
-            if( $this->contains('ca_usucreado') ){                
-                $this->setCaUsucreado(sfContext::getinstance()->getUser()->getUserId());
-            }
-            if(  $this->contains('ca_fchcreado') ){
-                $this->setCaFchcreado(date('Y-m-d H:i:s'));
-            }
-           
-        }else{
-            if( $this->isModified() ){
-                if( $this->contains('ca_usuactualizado') ){
-                    $this->setCaUsuactualizado(sfContext::getinstance()->getUser()->getUserId());
+        if( !$this->stopBlaming ){
+            if ($this->isNew() ){
+
+                if( $this->contains('ca_usucreado') ){
+                    $this->setCaUsucreado(sfContext::getinstance()->getUser()->getUserId());
                 }
-                if( $this->contains('ca_fchactualizado') ){
-                    $this->setCaFchactualizado(date('Y-m-d H:i:s'));
+                if(  $this->contains('ca_fchcreado') ){
+                    $this->setCaFchcreado(date('Y-m-d H:i:s'));
+                }
+
+            }else{
+                if( $this->isModified() ){
+                    if( $this->contains('ca_usuactualizado') ){
+                        $this->setCaUsuactualizado(sfContext::getinstance()->getUser()->getUserId());
+                    }
+                    if( $this->contains('ca_fchactualizado') ){
+                        $this->setCaFchactualizado(date('Y-m-d H:i:s'));
+                    }
                 }
             }
         }
+
+        $this->stopBlaming = false;
         return parent::save($con);      
     }
 

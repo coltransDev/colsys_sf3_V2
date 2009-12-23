@@ -529,7 +529,7 @@ class traficosActions extends sfActions
 				$reporte->setProperty($name, $request->getParameter($name));
 			}
 		}
-		
+		$reporte->stopBlaming();
 		$reporte->save();
 		
 		if( $reporte->getCaImpoexpo()==Constantes::EXPO ){
@@ -609,6 +609,7 @@ class traficosActions extends sfActions
 			$tarea->setAsignaciones( $loginsAsignaciones );	
 			
 			$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
+            $reporte->stopBlaming();
 			$reporte->save();				
 		}else{
 			if( $tarea && $tarea->getCaIdtarea()){
@@ -1019,6 +1020,7 @@ class traficosActions extends sfActions
 				$tarea->setAsignaciones( $loginsAsignaciones );	
 				
 				$reporte->setCaIdseguimiento( $tarea->getCaIdtarea() );
+                $reporte->stopBlaming();
 				$reporte->save();
                 
 				
