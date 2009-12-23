@@ -34,8 +34,8 @@ class falabellaAduActions extends sfActions {
     public function executeShippingInstructions() {
         $this->header = Doctrine::getTable("FalaHeaderAdu")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
         $this->forward404Unless($this->header);
-        $this->instructions = $this->header->getFalaInstruction();
-        $this->info = $this->header->getFalaShipmentInfo();
+        $this->instructions = $this->header->getFalaInstructionAdu();
+        $this->info = $this->header->getFalaShipmentInfoAdu();
     }
 
 
