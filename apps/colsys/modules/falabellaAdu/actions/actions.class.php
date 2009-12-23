@@ -62,9 +62,8 @@ class falabellaAduActions extends sfActions {
             ->where ( "d.ca_referencia = ?",base64_decode($this->getRequestParameter ( 'referencia' )) )
             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
             ->fetchOne();
+        
         $this->forward404Unless($this->fala_declaracion);
-        
-        
 
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/LockingGridView",'last');
