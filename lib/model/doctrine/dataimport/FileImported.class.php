@@ -27,12 +27,13 @@ class FileImported extends BaseFileImported
 		$resultado = array();
 
 		$content = explode("\n",$this->getCaContent());
-                //echo $this->getCaContent();
                
 		foreach ($content as $line )
 		{
-			foreach( $registros as $registro ){
+                        
+                        foreach( $registros as $registro ){
 				$this->row = array();
+
 				if( $registro->getCaColumna() == substr( $line, 0, strlen($registro->getCaColumna()) ) ){
 					$columnas=$registro->getColumnasRegistros();
 					//Empieza el proceso del registro
@@ -169,6 +170,7 @@ class FileImported extends BaseFileImported
                                 
 				$falaInst->setCaIddoc( trim($this->row['po_number']) );
 				$falaInst->setCaInstructions( trim($this->row['instructions']) );
+                                $falaInst->setCaEmbarque( trim($this->row['embarque']) );
 				$falaInst->save();
 			}
 		}
@@ -185,7 +187,7 @@ class FileImported extends BaseFileImported
                                     $falaDetail->setCaCantidadDav( intval($this->row['order_quantity']) );
                                     $falaDetail->setCaCantidadDim( intval($this->row['order_quantity']) );
                                     $falaDetail->setCaValorFob( intval($this->row['order_quantity'])*floatval($this->row['unit_price']) );
-                                    $falaDetail->setCaPreinspeccion( 'Color: '.trim($this->row['color']).' Talla:'.trim($this->row['talla']) );
+                                    $falaDetail->setCaPreinspeccion( 'Estilo: '.trim($this->row['style']).' Talla:'.trim($this->row['talla']).'Color: '.trim($this->row['color']).' Composicion:'.trim($this->row['composicion']) );
                                 }
 				$falaDetail->setCaIddoc( trim($this->row['po_number']) );
 				$falaDetail->setCaSku( trim($this->row['sku']) );
