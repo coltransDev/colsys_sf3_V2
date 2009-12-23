@@ -22,7 +22,7 @@ PanelNotasDet = function(){
       },
       {
         header: "Concepto",
-        dataIndex: 'concepto',
+        dataIndex: 'idconcepto',
         sortable:false,
         width: 120,
         editor: new Ext.form.TextField({
@@ -53,7 +53,7 @@ PanelNotasDet = function(){
     this.record = Ext.data.Record.create([
             {name: 'iddetalle', type: 'string', mapping: 'd_ca_iddetalle'},
             {name: 'numdocumento', type: 'string', mapping: 'd_ca_numdocumento'},
-            {name: 'concepto', type: 'string', mapping: 'd_ca_concepto'},
+            {name: 'idconcepto', type: 'string', mapping: 'd_ca_idconcepto'},
             {name: 'nit_ter', type: 'string', mapping: 'd_nit_ter'},
             {name: 'orden', type: 'string'}
 
