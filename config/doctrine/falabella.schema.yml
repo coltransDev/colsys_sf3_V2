@@ -8,7 +8,7 @@ FalaHeader:
   columns:
     ca_iddoc:
       type: string
-      primary: true    
+      primary: true
     ca_fecha_carpeta: date
     ca_archivo_origen: string
     ca_reporte: string
@@ -53,7 +53,7 @@ FalaHeader:
     FalaShipmentInfo:
       local: ca_iddoc
       foreign: ca_iddoc
-      type: many
+      type: one
     FalaInstruction:
       local: ca_iddoc
       foreign: ca_iddoc
@@ -70,10 +70,10 @@ FalaDetail:
   columns:
     ca_iddoc:
       type: string
-      primary: true    
+      primary: true
     ca_sku:
       type: string
-      primary: true 
+      primary: true
     ca_vpn: string
     ca_num_cont_part1: string
     ca_num_cont_part2: string
@@ -106,7 +106,7 @@ FalaShipmentInfo:
   columns:
     ca_iddoc:
       type: string
-      primary: true 
+      primary: true
     ca_begin_window: date
     ca_end_window: date
     ca_commodities: string
@@ -161,7 +161,7 @@ FalaInstruction:
       filter: false
   generatePath: falabella
   tableName: tb_falainstructions
-  columns:    
+  columns:
     ca_idfalainstructions:
       type: integer
       primary: true
@@ -228,11 +228,11 @@ FalaHeaderAdu:
       foreign: ca_iddoc
       type: many
       orderBy: ca_sku ASC
-    FalaShipmentInfo:
+    FalaShipmentInfoAdu:
       local: ca_iddoc
       foreign: ca_iddoc
-      type: many
-    FalaInstruction:
+      type: one
+    FalaInstructionAdu:
       local: ca_iddoc
       foreign: ca_iddoc
       type: many
@@ -342,7 +342,7 @@ FalaShipmentInfoAdu:
     ca_alter_port: varchar
     ca_limit_date: date
   relations:
-    FalaHeader:
+    FalaHeaderAdu:
       local: ca_iddoc
       foreign: ca_iddoc
       type: one
@@ -356,13 +356,14 @@ FalaInstructionAdu:
   generatePath: falabella
   tableName: tb_falainstructions_adu
   columns:
-    ca_idfalainstructions:
+    ca_idfalainstructions_adu:
       type: integer
       primary: true
     ca_iddoc: string
     ca_instructions: string
+    ca_embarque: string
   relations:
-    FalaHeader:
+    FalaHeaderAdu:
       local: ca_iddoc
       foreign: ca_iddoc
       type: one
@@ -454,7 +455,6 @@ FalaDeclaracionDts:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
-
   relations:
     FalaDeclaracionImp:
       local: ca_referencia
@@ -487,7 +487,6 @@ FalaFacturacionAdu:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
-
   relations:
     FalaDeclaracionImp:
       local: ca_referencia
@@ -516,7 +515,6 @@ FalaNotaCab:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
-
   relations:
     FalaDeclaracionImp:
       local: ca_referencia
@@ -538,15 +536,15 @@ FalaNotaDet:
   generatePath: falabella
   tableName: tb_falanota_det
   columns:
-    ca_iddetalle:
+    ca_referencia:
       type: string
       primary: true
-    ca_referencia:
-      type: string      
     ca_numdocumento:
-      type: string      
-    ca_concepto:
-      type: string      
+      type: string
+      primary: true
+    ca_idconcepto:
+      type: integer
+      primary: true
     ca_nit_ter: string
     ca_tipo: string
     ca_factura_ter: string
@@ -557,7 +555,6 @@ FalaNotaDet:
     ca_fchcreado: timestamp
     ca_usuactualizado: string(20)
     ca_fchactualizado: timestamp
-
   relations:
     FalaNotaCab:
       local: ca_referencia
@@ -565,4 +562,3 @@ FalaNotaDet:
       foreign: ca_referencia
       foreign: ca_numdocumento
       type: one
-

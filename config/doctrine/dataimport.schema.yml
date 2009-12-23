@@ -39,6 +39,7 @@ FileHeader:
     ca_tipoarchivo: string
     ca_separador: string
     ca_separadordec: boolean
+    ca_in_out: string
     ca_fchcreado: timestamp
     ca_usucreado: string
     ca_fchactualizado: timestamp
