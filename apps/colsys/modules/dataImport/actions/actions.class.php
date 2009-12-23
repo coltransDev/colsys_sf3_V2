@@ -19,6 +19,56 @@ class dataImportActions extends sfActions
 	
 	}
 
+
+	/*
+	* Lee el archivo
+	*/
+	public function executeImportFile(){
+
+            set_time_limit(270);
+            $header = Doctrine::getTable("FileHeader")->find($this->getRequestParameter("fileHeader"));
+            $this->forward404Unless( $header );
+
+            $directory = $header->getCaInOut();
+            $processed = "processed";
+
+            $files = sfFinder::type('file')->name('*.PO')->maxDepth(0)->in($directory);
+
+            foreach( $files as $filename ) {
+                $content = "";
+                $handle = fopen($filename, 'r');
+
+                while (!feof($handle)) {
+                    $content .= stream_get_line($handle, 1024, "\n")."\n";
+                }
+                fclose($handle);
+
+                $fileImported = new FileImported();
+                $fileImported->setCaIdfileheader( $header->getCaIdfileheader() );
+                $fileImported->setCaFchimportacion( date("Y-m-d H:i:s") );
+                $fileImported->setCaContent( $content );
+                $fileImported->setCaProcesado( false );
+                $fileImported->setCaNombre( basename($filename) );
+                $fileImported->setCaUsuario( $this->getUser()->getUserId() );
+                $fileImported->setCaProceso( $this->getRequestParameter("proceso") );
+                $fileImported->save();
+                if( $fileImported->process() ) {
+                    if ($this->getRequestParameter("proceso") == "Coltrans") {
+                        rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
+                    }else if ($this->getRequestParameter("proceso") == "Colmas") {
+                        rename($filename, $directory.DIRECTORY_SEPARATOR.$processed.DIRECTORY_SEPARATOR.basename($filename));
+                    }
+                }
+            }
+
+            if ($this->getRequestParameter("proceso") == "Coltrans") {
+                $this->redirect("falabella/list");
+            }else if ($this->getRequestParameter("proceso") == "Colmas") {
+                $this->redirect("falabellaAdu/list");
+            }
+        }
+
+
 	/*
 	* Carga el archivo Generado por Aprocom
 	*/
@@ -161,58 +211,5 @@ class dataImportActions extends sfActions
             $array_ref = array_diff($array_ref,array(NULL));
         }
 
-
-	/*
-	* Lee el archivo
-	*/
-	public function executeImportFile(){
-
-            set_time_limit(270);
-            $header = Doctrine::getTable("FileHeader")->find($this->getRequestParameter("fileHeader"));
-            $this->forward404Unless( $header );
-
-            if ($this->getRequestParameter("proceso") == "Coltrans") {
-                $directory=sfConfig::get('app_falabella_input');
-            }else if ($this->getRequestParameter("proceso") == "Colmas") {
-                $directory=sfConfig::get('app_falabella_input_adu');
-            }
-
-            $files = sfFinder::type('file')->name('*.PO')->maxDepth(0)->in($directory);
-
-            foreach( $files as $filename ) {
-
-                $content = "";
-                $handle = fopen($filename, 'r');
-
-                while (!feof($handle)) {
-                    $content .= stream_get_line($handle, 1024, "\n")."\n";
-                }
-                fclose($handle);
-
-                $fileImported = new FileImported();
-                $fileImported->setCaIdfileheader( $header->getCaIdfileheader() );
-                $fileImported->setCaFchimportacion( date("Y-m-d H:i:s") );
-                $fileImported->setCaContent( $content );
-                $fileImported->setCaProcesado( false );
-                $fileImported->setCaNombre( basename($filename) );
-                $fileImported->setCaUsuario( $this->getUser()->getUserId() );
-                $fileImported->setCaProceso( $this->getRequestParameter("proceso") );
-                $fileImported->save();
-                if( $fileImported->process() ) {
-                    if ($this->getRequestParameter("proceso") == "Coltrans") {
-                        rename($filename, sfConfig::get('app_falabella_input_processed').DIRECTORY_SEPARATOR.basename($filename));
-                    }else if ($this->getRequestParameter("proceso") == "Colmas") {
-                        rename($filename, sfConfig::get('app_falabella_input_processed_adu').DIRECTORY_SEPARATOR.basename($filename));
-                    }
-                }
-            }
-
-            if ($this->getRequestParameter("proceso") == "Coltrans") {
-                $this->redirect("falabella/list");
-            }else if ($this->getRequestParameter("proceso") == "Colmas") {
-                $this->redirect("falabellaAdu/list");
-            }
-        }
-	
 }
 ?>
