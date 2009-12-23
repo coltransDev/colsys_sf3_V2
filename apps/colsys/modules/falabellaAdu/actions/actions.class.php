@@ -328,51 +328,53 @@ class falabellaAduActions extends sfActions {
 	/*
 	* Genera el archivo de salida para Aprocom
 	*/
-    public function executeGeneraAprocom() {
-        $doc_mem = base64_decode($this->getRequestParameter ( 'iddoc' ));
-        $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( $doc_mem );
-        $this->forward404Unless($fala_header);
+	public function executeGeneraAprocom()
+        {
+		$doc_mem = base64_decode($this->getRequestParameter ( 'iddoc' ));
+		$fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( $doc_mem );
+                $this->referencia = $fala_header->getCaReferencia();
+		$this->forward404Unless($fala_header);
 
-        $fala_details = Doctrine::getTable("FalaHeaderAdu")
-            ->createQuery("h")
-            ->innerJoin("h.FalaDetailAdu d")
-            ->select("h.ca_referencia, d.*")
-            ->where("h.ca_referencia = ? ", $fala_header->getCaReferencia())
-            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-            ->execute();
+                $fala_details = Doctrine::getTable("FalaHeaderAdu")
+                               ->createQuery("h")
+                               ->innerJoin("h.FalaDetailAdu d")
+                               ->select("h.ca_referencia, d.*")
+                               ->where("h.ca_referencia = ? ", $fala_header->getCaReferencia())
+                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                               ->execute();
 
-        $i = 1;
-        $salida = '';
-        foreach( $fala_details as $fala_detail ) {
-            $salida.= $i++."|"; //1
-            $salida.= $fala_detail["h_ca_referencia"]."|"; // 2
-            $salida.= $fala_detail["d_ca_sku"]."|"; // 3
-            $salida.= $fala_detail["d_ca_referencia_prov"]."|"; // 4
-            $salida.= $fala_detail["d_ca_subpartida"]."|"; // 5
-            $salida.= $fala_detail["d_ca_descripcion_item"]."|"; // 6
-            $salida.= $fala_detail["d_ca_descripcion_mcia"]."|"; // 7
-            $salida.= $fala_detail["d_ca_preinspeccion"]."|"; // 8
-            $salida.= $fala_detail["d_ca_cantidad_dav"]."|"; // 9
-            $salida.= $fala_detail["d_ca_cantidad_dim"]."|"; // 10
-            $salida.= $fala_detail["d_ca_valor_fob"]."|"; // 11
-            $salida.= "|"; // 12
-            $salida.= "|"; // 13
-            $salida.= $fala_detail["d_ca_registro_num"]."|"; // 14
-            $salida.= "999|"; // 15
-            $salida.= $fala_detail["d_ca_unidad_comercial"]."|"; // 16
-            $salida.= $fala_detail["d_ca_marca"]."|"; // 17
-            $salida.= $fala_detail["d_ca_tipo"]."|"; // 18
-            $salida.= $fala_detail["d_ca_clase"]."|"; // 19
-            $salida.= $fala_detail["d_ca_modelo"]."|"; // 20
-            $salida.= $fala_detail["d_ca_ano"]."|"; // 21
-            $salida.= $fala_detail["d_ca_factura_nro"]."|"; // 22
-            $salida.= $fala_detail["d_ca_factura_fch"]."|"; // 23
-            $salida.= "\r\n";
+                $i = 1;
+                $salida = '';
+                foreach( $fala_details as $fala_detail ){
+                    $salida.= $i++."|"; //1
+                    $salida.= $fala_detail["h_ca_referencia"]."|"; // 2
+                    $salida.= $fala_detail["d_ca_sku"]."|"; // 3
+                    $salida.= $fala_detail["d_ca_referencia_prov"]."|"; // 4
+                    $salida.= $fala_detail["d_ca_subpartida"]."|"; // 5
+                    $salida.= $fala_detail["d_ca_descripcion_item"]."|"; // 6
+                    $salida.= $fala_detail["d_ca_descripcion_mcia"]."|"; // 7
+                    $salida.= $fala_detail["d_ca_preinspeccion"]."|"; // 8
+                    $salida.= $fala_detail["d_ca_cantidad_dav"]."|"; // 9
+                    $salida.= $fala_detail["d_ca_cantidad_dim"]."|"; // 10
+                    $salida.= $fala_detail["d_ca_valor_fob"]."|"; // 11
+                    $salida.= "|"; // 12
+                    $salida.= "|"; // 13
+                    $salida.= $fala_detail["d_ca_registro_num"]."|"; // 14
+                    $salida.= "999|"; // 15
+                    $salida.= $fala_detail["d_ca_unidad_comercial"]."|"; // 16
+                    $salida.= $fala_detail["d_ca_marca"]."|"; // 17
+                    $salida.= $fala_detail["d_ca_tipo"]."|"; // 18
+                    $salida.= $fala_detail["d_ca_clase"]."|"; // 19
+                    $salida.= $fala_detail["d_ca_modelo"]."|"; // 20
+                    $salida.= $fala_detail["d_ca_ano"]."|"; // 21
+                    $salida.= $fala_detail["d_ca_factura_nro"]."|"; // 22
+                    $salida.= $fala_detail["d_ca_factura_fch"]."|"; // 23
+                    $salida.= "\r\n";
+                }
+
+		$this->salida = $salida;
+
         }
-
-        $this->salida = $salida;
-
-    }
 
 
 	/*
