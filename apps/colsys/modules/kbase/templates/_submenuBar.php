@@ -11,21 +11,16 @@ if( $action!="index" ){
 
 switch($action){
 	
-	case "index":
-		if( $nivel>=1 ){ 		
-			/*$button[1]["name"]="Nuevo ";
-			$button[1]["tooltip"]="Crear un nuevo registro";
-			$button[1]["image"]="22x22/new.gif"; 			
-			$button[1]["link"]= "kbase/formContenido";*/
-		}		
-		break;	
-	case "verContenido":
-		if( $nivel>=1 ){ 			
-			$button[1]["name"]="Editar ";
-			$button[1]["tooltip"]="Editar este registro";
-			$button[1]["image"]="22x22/edit.gif"; 			
-			$button[1]["link"]= "kbase/formContenido?id=".$this->getRequestParameter("id");
-		}		
+	
+	case "viewIssue":
+		
+        if( $nivel>=2 ){
+            $button[1]["name"]="Editar ";
+            $button[1]["tooltip"]="Editar este registro";
+            $button[1]["image"]="22x22/edit.gif";
+            $button[1]["link"]= "kbase/formIssue?id=".$this->getRequestParameter("id");
+        }
+		
 		break;		
 		
 	

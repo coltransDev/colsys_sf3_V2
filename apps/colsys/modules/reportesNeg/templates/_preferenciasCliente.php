@@ -9,10 +9,10 @@ $reporte = $sf_data->getRaw("reporte");
 ?>
 <table class="tableList" width="100%">
     <tr>
-        <th colspan="2">Preferencias Cliente</th>
+        <th colspan="2"><b>Preferencias Cliente</b></th>
     </tr>
     <tr>
-        <td  >Preferencias del cliente:<br />
+        <td  ><b>Preferencias del cliente:</b><br />
                 <?
                 echo $form['ca_preferencias_clie']->renderError();
                 if( $reporte ){
@@ -24,7 +24,7 @@ $reporte = $sf_data->getRaw("reporte");
         </td>
         <td  rowspan="2"  valign="top"><!--Informaciones a: -->
 
-            Informaciones a:<br />
+            <b>Informaciones a:</b><br />
             <table cellspacing="1" cellpadding="0" width="150" border="0" >
                 <tbody>
                     <?
@@ -44,7 +44,7 @@ $reporte = $sf_data->getRaw("reporte");
                         $correos[$key] = trim($val);
                     }
 
-                    for( $i=0; $i<NuevoReporteForm::NUM_CC; $i++ ){
+                    for( $i=0; $i<ReporteForm::NUM_CC; $i++ ){
                     ?>
                     <tr>
                         <td width="130">
@@ -74,7 +74,7 @@ $reporte = $sf_data->getRaw("reporte");
             </table></td>
     </tr>
     <tr>
-        <td  ><div>Instrucciones Especiales:</div>
+        <td  ><b>Instrucciones Especiales:</b>
         <br />                
         <?
         echo $form['ca_instrucciones']->renderError();

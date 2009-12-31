@@ -99,6 +99,8 @@ class reportesNegActions extends sfActions
         $response = sfContext::getInstance()->getResponse();
 
 		$response->addJavaScript("extExtras/RowExpander",'last');
+        $response->addJavaScript("tabpane/tabpane",'last');
+        $response->addStylesheet("tabpane/luna/tab",'last');
 
 
 
@@ -111,14 +113,11 @@ class reportesNegActions extends sfActions
 	*/
 	public function executeVerReporte(){
 
-        /*header("Location: /reportes/verReporte?id=".$this->getRequestParameter("reporteId"));
-        exit();
-        $this->modo = $this->getRequestParameter("modo");
-		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("reporteId") );
-		$this->forward404Unless( $this->reporteNegocio );
-		*/
-
-
+        
+        
+		$this->reporte = Doctrine::getTable("Reporte")->find( $this->getRequestParameter("id") );
+		$this->forward404Unless( $this->reporte );
+		
 	}
     
 	/*
@@ -150,11 +149,21 @@ class reportesNegActions extends sfActions
 			$reporte = new Reporte();
 		}
 
-        $form = new NuevoReporteForm();
+        $form = new ReporteForm();
+        $this->modalidadesAduana = array();
+        $modalidadesAduana = Doctrine::getTable("Modalidad")
+                                             ->createQuery("m")
+                                             ->select("m.ca_idmodalidad")
+                                             ->where("m.ca_modalidad = ? OR m.ca_modalidad = ?", array("NACIONALIZACION", "ADUANA"))
+                                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                             ->execute();
+        foreach( $modalidadesAduana as $row ){
+            $this->modalidadesAduana[]=$row["m_ca_idmodalidad"];
+        }
 
-
-        $formAduana = new myRepAduanaForm();
-        $formSeguro = new myRepSeguroForm();
+        $formAduana = new RepAduanaForm();
+        $formSeguro = new RepSeguroForm();
+        $formExpo = new RepExpoForm();
 
         $country_reporte = $request->getParameter("country_reporte");
         $this->ca_traorigen = $country_reporte["ca_origen"];
@@ -165,7 +174,7 @@ class reportesNegActions extends sfActions
         $this->ca_destino = $bindValues["ca_destino"];
         $this->contactos = array();
 
-        for( $i=0; $i<NuevoReporteForm::NUM_CC; $i++ ){
+        for( $i=0; $i<ReporteForm::NUM_CC; $i++ ){
             if( isset( $bindValues["contactos_".$i] )){
                 $bindValues["contactos_".$i] = trim($bindValues["contactos_".$i]);
                 $this->contactos[] = $bindValues["contactos_".$i];
@@ -174,21 +183,35 @@ class reportesNegActions extends sfActions
 
 
 
-        if ($request->isMethod('post')){
-            
-            //print_r( $bindValues );
-            //exit();
+        if ($request->isMethod('post')){            
+        
+            $soloAduana = $reporte->esSoloAduana();
 
+            //TODO Hacer referencia a la tabla modalidades
+            //print_r( $bindValues );
+            $modalidad = Doctrine::getTable("Modalidad")->find($bindValues["ca_modalidad"]);
+            $bindValues["ca_modalidad"] = $modalidad->getCaModalidad();
+            $bindValues["ca_transporte"] = $modalidad->getCaTransporte();
+            $bindValues["ca_impoexpo"] = $modalidad->getCaImpoexpo();
+
+
+            if( $soloAduana ){
+                $bindValues["ca_idagente"] = null;
+                $bindValues["ca_colmas"]="Sí";
+                $bindValues["ca_continuacion"]="N/A";
+            }
+            
             $bindValues["ca_idconcliente"] = $request->getParameter("ca_idconcliente");
 
-            $bindValues["ca_modalidad"] = "LCL";
-            $bindValues["ca_idlinea"] = 0;
+            
+            //$bindValues["ca_idlinea"] = 0;
 
             $form->bind( $bindValues );
 
 
-            if( $bindValues["ca_colmas"]=="Sí" || $bindValues["ca_transporte"]==Constantes::ADUANA ){
+            if( $bindValues["ca_colmas"]=="Sí" ){
                 $bindValuesAduana = $request->getParameter( $formAduana->getName() );
+
                 $formAduana->bind( $bindValuesAduana );
 
                 if( $formAduana->isValid() ){
@@ -308,7 +331,7 @@ class reportesNegActions extends sfActions
                     $reporte->setCaInstrucciones( $bindValues["ca_instrucciones"] );
                 }
 
-                 for( $i=0; $i<NuevoReporteForm::NUM_CC; $i++ ){
+                 for( $i=0; $i<ReporteForm::NUM_CC; $i++ ){
                     if( isset( $bindValues["contactos_".$i] ) && isset( $bindValues["confirmar_".$i] ) && $bindValues["confirmar_".$i] ){
                         $contactos[] = $bindValues["contactos_".$i];
                     }
@@ -319,31 +342,44 @@ class reportesNegActions extends sfActions
 
                  }
 
-                if( $bindValues["ca_colmas"]=="Sí" || $bindValues["ca_transporte"]==Constantes::ADUANA ){
+                if( $bindValues["ca_colmas"]=="Sí" ){
                     $reporte->setCaColmas( "Sí" );
+                    
                 }else{
                     $reporte->setCaColmas( "No" );
                 }
+                
 
                 if( $bindValues["ca_seguro"]!==null ){
                     $reporte->setCaSeguro( $bindValues["ca_seguro"] );
                 }
 
+                //Continuacion
+                $reporte->setCaContinuacion( $bindValues["ca_continuacion"] );
+                $reporte->setCaContinuacionDest( $bindValues["ca_continuacion_dest"] );
+                $reporte->setCaContinuacionConf( $bindValues["ca_continuacion_conf"] );
+
+                //Corte de documentos
+                if( $bindValues["ca_impoexpo"]==Constantes::EXPO ){
+                    $reporte->setCaIdconsignar( $bindValues["ca_idconsignar_expo"] );
+                    $reporte->setCaIdconsignarmaster( $bindValues["ca_idconsignarmaster"] );
+                }else{
+                    $reporte->setCaIdconsignar( 1 );
+                    $reporte->setCaMastersame( $bindValues["ca_mastersame"] );
+                }
+
+
+
                 $reporte->setCaIncoterms( "EXW" );
                 $reporte->setCaOrdenProv( "EXW" );
-                $reporte->setCaIdrepresentante( 0 );
-                $reporte->setCaInformarRepr( 0 );
-                $reporte->setCaIdconsignatario( 0 );
-                $reporte->setCaInformarCons( 0 );
-                $reporte->setCaIdnotify( 0 );
-                $reporte->setCaInformarNoti( 0 );
-                $reporte->setCaNotify( 0 );
+
+                
+
                 $reporte->setCaLiberacion( 0 );
                 $reporte->setCaTiempocredito( 0 );
-                $reporte->setCaIdconsignar( 1 );
-                $reporte->setCaMastersame( 0 );
-                $reporte->setCaContinuacion( 'N/A' );
-
+                
+                
+                    
                 $reporte->save();
                 $repaduana = Doctrine::getTable("RepAduana")->find( $reporte->getCaIdreporte() );
                 if( $bindValues["ca_colmas"]=="Sí" || $bindValues["ca_transporte"]==Constantes::ADUANA ){                    
@@ -411,6 +447,8 @@ class reportesNegActions extends sfActions
         $this->form = $form;
         $this->formAduana = $formAduana;
         $this->formSeguro = $formSeguro;
+        $this->formExpo = $formExpo;
+        
         
 		/*
 			
@@ -1476,10 +1514,11 @@ class reportesNegActions extends sfActions
 	* Genera un archivo PDF con el reporte de negocio
 	* @author Andres Botero
 	*/
-	public function executeGenerarPDF(){
-		$this->reporteNegocio = Doctrine::getTable("Reporte")->find( $this->getrequestparameter("reporteId") );
-		$this->forward404Unless($this->reporteNegocio);	
-		$this->filename = $this->getrequestparameter("filename");	
+	public function executeGenerarPDF( $request ){
+		$this->forward404Unless( $request->getParameter("id") );
+        $this->reporte = Doctrine::getTable("Reporte")->find( $request->getParameter("id") );
+		$this->forward404Unless($this->reporte);
+		$this->filename = $this->getrequestparameter("filename");
 	}
 	
 	/*

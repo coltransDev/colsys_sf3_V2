@@ -7,9 +7,13 @@
 
 $traficos = $sf_data->getRaw("traficos");
 $reporte = $sf_data->getRaw("reporte");
+$modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
+
 ?>
 <script language="javascript">
+
     
+
     var traficos = <?=json_encode($traficos)?>;
     var cambiarImpoexpo = function(){
         var clase = document.getElementById("reporte_ca_impoexpo").value;
@@ -87,11 +91,21 @@ $reporte = $sf_data->getRaw("reporte");
              document.getElementById("combo-proveedor").style.display="none";
              document.getElementById("combo-representante").style.display="none";
              document.getElementById("combo-master").style.display="none";
+
+             document.getElementById("consignar-impo").style.display="none";
+             document.getElementById("consignar-expo").style.display="";
+
+             document.getElementById("expo-div").style.display="";
         }
         else{
              document.getElementById("combo-proveedor").style.display="";
              document.getElementById("combo-representante").style.display="";
              document.getElementById("combo-master").style.display="";
+
+             document.getElementById("consignar-impo").style.display="";
+             document.getElementById("consignar-expo").style.display="none";
+
+             document.getElementById("expo-div").style.display="none";
         }
 
 
@@ -102,20 +116,48 @@ $reporte = $sf_data->getRaw("reporte");
     function cambiarTransporte(){
         llenarModalidades('reporte_ca_impoexpo','reporte_ca_transporte', 'reporte_ca_modalidad', null, '<?=$reporte->getCaModalidad()?>');
         llenarLineas('reporte_ca_transporte', 'reporte_ca_idlinea', null, '<?=$reporte->getCaIdlinea()?>');
+        llenarContinuaciones('reporte_ca_transporte', 'reporte_ca_continuacion',  '<?=$reporte->getCaContinuacion()?>');
         //llenarAgentes('reporte_ca_impoexpo','reporte_ca_transporte', 'reporte_ca_modalidad', null, '<?=$reporte->getCaModalidad()?>');
+        cambiarAduana();
+        cambiarContinuacion();
+    }
+
+    function cambiarModalidad(){        
         cambiarAduana();
     }
 
     function cambiarAduana(){
+        var modalidadesAduana = [<?=implode(",", $modalidadesAduana )?>];
+
         var transporte = document.getElementById("reporte_ca_transporte").value;
         var impoexpo = document.getElementById("reporte_ca_impoexpo").value;
+        var modalidad = document.getElementById("reporte_ca_modalidad").value;
 
-
-        if( transporte=="Aduana" ){
+        var soloAduana = false;
+        for( var i=0; i<modalidadesAduana.length; i++ ){
+            
+            if( modalidadesAduana[i]==modalidad ){
+                soloAduana = true;
+            }
+        }
+ 
+        if( soloAduana ){
             document.getElementById("reporte_ca_colmas").value = "Sí";
             document.getElementById("reporte_ca_colmas").disabled = true;
+
+
+            document.getElementById("row-agente").style.display = "none";
+            //oculta los otros paneles
+
+            document.getElementById("guias-div").style.display = "none";
+            document.getElementById("continuacion-div").style.display = "none";
         }else{
             document.getElementById("reporte_ca_colmas").disabled = false;
+
+            document.getElementById("row-agente").style.display = "";
+            //muestra los otros paneles
+            document.getElementById("guias-div").style.display = "";
+            document.getElementById("continuacion-div").style.display = "";
         }
 
 
@@ -149,6 +191,36 @@ $reporte = $sf_data->getRaw("reporte");
             document.getElementById("seguros-row1").style.display = "none";
         }
     }
+
+    function cambiarContinuacion(){
+
+        if( document.getElementById("reporte_ca_continuacion").value != "N/A" ){
+            document.getElementById("continuacion-row0").style.display = "";
+            
+        }else{
+            document.getElementById("continuacion-row0").style.display = "none";
+            
+        }
+    }
+
+
+    function llenarContinuaciones( transporte , continuacionFldId,  defaultVal){
+        var transporteVal = document.getElementById( transporte ).value;
+        var fld = document.getElementById( continuacionFldId );
+
+        fld.length=0;
+        fld[fld.length] = new Option('N/A','N/A',false, defaultVal=="N/A");
+        
+        if( transporteVal=="<?=Constantes::AEREO?>" ){
+            fld[fld.length] = new Option('CABOTAJE','CABOTAJE',false,defaultVal=="CABOTAJE");
+        }
+
+        if( transporteVal=="<?=Constantes::MARITIMO?>" ){
+            fld[fld.length] = new Option('OTM','OTM',false,defaultVal=="OTM");
+            fld[fld.length] = new Option('DTA','DTA',false,defaultVal=="DTA");
+        }
+    }
+
 
     
 
@@ -383,15 +455,27 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                         </div>
                         <div class="tab-page">
                             <h2 class="tab">Cont. Viaje</h2>
-                        </div>
-                        <div class="tab-page">
-                            <h2 class="tab">Guias</h2>
+                             <div  id="continuacion-div">
                             <?
-                            include_component("reportesNeg", "corteGuias", array("form"=>$form, "formSeguro"=>$formSeguro, "reporte"=>$reporte ) );
+                            include_component("reportesNeg", "continuacion", array("form"=>$form, "reporte"=>$reporte ) );
                             ?>
+                            </div>
+                        </div>
+                        <div class="tab-page" >
+                            <h2 class="tab">Guias</h2>
+                            <div  id="guias-div">
+                            <?
+                            include_component("reportesNeg", "corteGuias", array("form"=>$form, "reporte"=>$reporte ) );
+                            ?>
+                            </div>
                         </div>
                         <div class="tab-page">
                             <h2 class="tab">Exportaciones</h2>
+                            <div  id="expo-div">
+                            <?
+                            include_component("reportesNeg", "exportaciones", array("form"=>$form, "formExpo"=>$formExpo, "reporte"=>$reporte ) );
+                            ?>
+                            </div>
                         </div>
                     </div>
                 </td>
@@ -497,7 +581,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 
                                 document.getElementById("reporte_ca_preferencias_clie").value=record.data.preferencias;
 
-                                for(i=0; i< <?=NuevoReporteForm::NUM_CC?>; i++){
+                                for(i=0; i< <?=ReporteForm::NUM_CC?>; i++){
                                     document.getElementById("reporte_contactos_"+i).value="";
                                     document.getElementById("reporte_confirmar_"+i).checked=false;
                                 }

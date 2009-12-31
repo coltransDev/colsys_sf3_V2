@@ -206,7 +206,7 @@ if( !$cotizacion->getCaUsuanulado() ){
 	}
 	?>
 
-	<div align="center"><input type="submit" name="commit" value="Enviar" /></div><br /><br />
+        <div align="center"><input type="submit" name="commit" value="Enviar" class="button" /></div><br /><br />
     </form>
 </div>
 

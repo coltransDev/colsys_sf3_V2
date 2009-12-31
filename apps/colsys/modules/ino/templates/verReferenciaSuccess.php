@@ -106,6 +106,7 @@
                        </div>
                        <div class="tab-page">
                            <h2 class="tab">Auditoria</h2>
+                           <?=include_component("ino", "auditoria", array("referencia"=>$referencia, "modo"=>$modo))?>
                        </div>
                     </div>
             </td>

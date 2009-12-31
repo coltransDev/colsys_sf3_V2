@@ -71,7 +71,7 @@
         </td>
 
     </tr>
-    <tr>
+    <tr id="row-agente">
          <td><b>Agente</b></td>
          <td colspan="3">
             <?

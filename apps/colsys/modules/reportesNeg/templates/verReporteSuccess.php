@@ -1,33 +1,32 @@
 <?
-use_helper("Javascript", "Validation");
+
 ?>
 <script language="javascript">
 	function showEmailForm(){
-		if( document.getElementById('emailForm').style.display=="none"){ 
-			<?
-			echo visual_effect('BlindDown', 'emailForm');
-			?>
+		if( document.getElementById('emailForm').style.display=="none"){
+			document.getElementById('emailForm').style.display="inline"
 		}else{
-			<?
-			echo visual_effect('BlindUp', 'emailForm');
-			?>
+			document.getElementById('emailForm').style.display="none"
 		}
 	}
+	
 </script>
-<div id="emailForm" align="left" style="display:none;">
+<div class="content" align="center">
+<div id="emailForm"  style="display:none;">
+    <form name="form1" id="form1" method="post" action="<?=url_for("reportesNeg/enviarReporteEmail?id=".$reporte->getCaIdreporte())?>" >
 	<?
-	echo form_remote_tag(array("url"=>"reportesNeg/enviarReporteEmail?reporteId=".$reporteNegocio->getCaIdreporte(), 
-								"update"=>"emailForm",
-								 'loading'  => visual_effect('appear', 'indicator'),
-							    'complete' => visual_effect('fade', 'indicator')							
-							
-						 ));
-	include_component("general", "formEmail");
+	
+    //,"message"=>$mensaje,"contacts"=>$contactos
+    $asunto = "Reporte de Negocio ".$reporte->getCaConsecutivo()." V.".$reporte->getCaVersion();
+	include_component("email", "formEmail", array("subject"=>$asunto));
+	
 	?>
 	<br />
-	<div align="left"><?=submit_tag("Enviar");?></div><br /><br />
+    <div align="center"><input type="submit" name="commit" value="Enviar" class="button" /></div><br /><br />
+    </form>
 
 </div>
 	
+
+<iframe src="<?=url_for("reportesNeg/generarPDF?id=".$reporte->getCaIdreporte()."&token=".md5(time()))?>" width="830px" height="650px"></iframe>
 </div>
-<iframe src="<?=url_for("reportesNeg/generarPDF?reporteId=".$reporteNegocio->getCaIdreporte())."&token=".md5(time())?>" width="830px" height="650px"></iframe>

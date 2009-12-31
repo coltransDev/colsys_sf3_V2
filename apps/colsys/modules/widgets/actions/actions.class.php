@@ -167,6 +167,10 @@ class widgetsActions extends sfActions
             $q->addWhere( "m.ca_transporte = ? ", $transport_parameter );
         }
 
+        $q->addOrderBy("m.ca_impoexpo ASC");
+        $q->addOrderBy("m.ca_transporte ASC");
+        $q->addOrderBy("m.ca_modalidad ASC");
+        
         $transportes = $q->execute();
 
 		$this->modalidades = array();

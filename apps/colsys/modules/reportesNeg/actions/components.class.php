@@ -184,6 +184,24 @@ class reportesNegComponents extends sfComponents
     }
 
 
+    /*
+	* Continuacion de viaje (OTM, DTA, CABOTAJE)
+	* @author: Andres Botero
+	*/
+	public function executeContinuacion()
+	{
+        
+    }
+
+    /*
+	* Formulario de exportaciones
+	* @author: Andres Botero
+	*/
+	public function executeExportaciones()
+	{
+
+    }
+
 	
 		
 }

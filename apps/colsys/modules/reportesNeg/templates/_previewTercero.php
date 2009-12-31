@@ -7,7 +7,7 @@
 
 ?>
 
-<table cellspacing="0" cellpadding="0">
+<table cellspacing="0" cellpadding="0" width="100%">
     <tr>
         <td colspan="2"><b>Nombre:
             </b><br />

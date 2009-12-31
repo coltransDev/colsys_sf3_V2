@@ -11,6 +11,15 @@
 class kbaseActions extends sfActions
 {
 	const RUTINA = "38";
+
+    public function getNivel(){        
+        $this->nivel = $this->getUser()->getNivelAcceso( kbaseActions::RUTINA );
+		if( $this->nivel==-1 ){
+			$this->forward404();
+		}
+
+        return $this->nivel;
+    }
 	/**
 	* Muestra un listado de la base de datos
 	*
@@ -19,17 +28,32 @@ class kbaseActions extends sfActions
 	public function executeIndex(sfWebRequest $request)
 	{
 	
-		$this->nivel = $this->getUser()->getNivelAcceso( kbaseActions::RUTINA );				
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
+		$this->nivel = $this->getNivel();
 					
-		$this->categorias = Doctrine::getTable("HdeskKBaseCategory")
+		$this->categorias = Doctrine::getTable("KBCategory")
                                       ->createQuery("c")
                                       ->addOrderBy("c.ca_parent")
+                                      ->addOrderBy("c.ca_order")
                                       ->addOrderBy("c.ca_name")
+                                      ->where("c.ca_parent IS NULL")
                                       ->execute();
 			
+	}
+
+    /**
+	*
+	* @param sfRequest $request A request object
+	*/
+	public function executeViewSubcategory(sfWebRequest $request)
+	{
+
+		$this->nivel = $this->getNivel();
+
+		$this->categoria = Doctrine::getTable("KBCategory")->find( $request->getParameter("id"));
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addStylesheet("kb",'last');
+
 	}
 	
 	/**
@@ -37,62 +61,71 @@ class kbaseActions extends sfActions
 	*
 	* @param sfRequest $request A request object
 	*/
-	public function executeVerContenido(sfWebRequest $request)
+	public function executeViewIssue(sfWebRequest $request)
 	{
-		$this->nivel = $this->getUser()->getNivelAcceso( kbaseActions::RUTINA );				
-		if( $this->nivel==-1 ){
-			$this->forward404();
-		}
+		$this->nivel = $this->getNivel();
 		
 
-		$this->kbase = Doctrine::getTable("HdeskKBase")->find( $request->getParameter("id") );
-		$this->forward404Unless( $this->kbase );
+		$this->issue = Doctrine::getTable("KBIssue")->find( $request->getParameter("id") );
+		$this->forward404Unless( $this->issue );
+
+        $this->category = $this->issue->getKBCategory();
+
+        $q = Doctrine::getTable("KBCategory")
+                            ->createQuery("c")
+                            ->select("c.*");
+        
+        if( $this->category->getCaParent() ){
+            $q->where("c.ca_parent = ?", $this->category->getCaParent());
+        }else{
+            $q->where("c.ca_parent = IS NULL");
+        }
+
+        //$q->addOrderBy("c.ca_");
+
+        $this->categories = $q->execute();
+
+        $response = sfContext::getInstance()->getResponse();
+		$response->addStylesheet("kb",'last');
+        
 			
 	}
 	
-	public function executeFormContenido( $request ){
-		$this->nivel = $this->getUser()->getNivelAcceso( kbaseActions::RUTINA );				
-		if( $this->nivel<1 ){
-			$this->forward404();
+	public function executeFormIssue( $request ){
+		$this->nivel = $this->getNivel();
+
+        if(  $request->getParameter("id") ){
+            $issue = Doctrine::getTable("KBIssue")->find( $request->getParameter("id") );
+            $this->forward404Unless( $issue );
+        }else{
+			$issue = new KBIssue();
 		}
-		
-		$this->kbase = Doctrine::getTable("HdeskKBase")->find( $request->getParameter("id") );
-		if( !$this->kbase ){
-			$this->kbase = new HdeskKBase();
-		}
-		
+        $this->idcategory = $request->getParameter("idcategory");
+
+        if ($request->isMethod('post')){
+            $issue->setCaIdcategory( $request->getParameter("idcategory") );
+            $issue->setCaInfo( $request->getParameter("info") );
+            $issue->setCaSummary( $request->getParameter("summary") );
+            $issue->setCaTitle( $request->getParameter("title") );
+
+            $issue->save();
+            //echo $request->getParameter("info");
+            //exit();
+            $this->redirect("kbase/viewIssue?id=".$issue->getCaIdissue());
+
+
+
+        }
+        //if( !is_dir($sf_config::get("sf_web_dir").DIRECTORY_SEPARATOR."ckfinder".DIRECTORY_SEPARATOR."userfiles".DIRECTORY_SEPARATOR."images".DIRECTORY_SEPARATOR.)){
+
+
+        
+        $this->issue = $issue;
+
 	}
 	
 	
-	/**
-	* Guarda los datos de un contenido 
-	*
-	* @param sfRequest $request A request object
-	*/
-	public function executeFormContenidoGuardar(sfWebRequest $request){
-		$update = false;
-		$user = $this->getUser();
 	
-		if( $request->getParameter("idkbase") ){
-			$kbase = Doctrine::getTable("HdeskKBase")->find( $request->getParameter("idkbase") );
-			$update = true;
-		}else{
-			$kbase = new HdeskKBase();
-			$kbase->setCaLogin( $user->getUserId() );
-			$kbase->setCaCreatedat( time() );	
-		}			
-	
-		$kbase->setCaTitle( utf8_decode($request->getParameter("title")) );
-		$kbase->setCaText( utf8_decode($request->getParameter("text")) );
-		//$kbase->setCaIdcategory( 8 );
-		
-		$kbase->save();
-						
-		$this->responseArray = array("idkbase"=>$kbase->getCaIdkbase(), "success"=>true);	
-		$this->setTemplate("responseTemplate");		
-		
-	
-	}
 	
 }
 ?>

@@ -130,7 +130,23 @@ class gestDocumentalActions extends sfActions
 	public function executeCargarArchivoForm(){
 		$this->reporteId = $this->getRequestParameter( "reporteId" );
 	}
-		
+
+
+
+    /*
+	*Conector ckfinder
+	* @author: Andres Botero
+	*/
+	public function executeCkFinderConnector(){
+        
+        define("CKFINDER_LIB", sfConfig::get("sf_lib_dir").DIRECTORY_SEPARATOR."vendor".DIRECTORY_SEPARATOR
+                              ."ckfinder".DIRECTORY_SEPARATOR );
+        
+		require(CKFINDER_LIB."connector".DIRECTORY_SEPARATOR
+                              ."php".DIRECTORY_SEPARATOR."connector.php");
+
+        return sfView::NONE;
+	}
 	
 	
 	

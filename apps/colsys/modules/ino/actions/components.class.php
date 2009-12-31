@@ -54,6 +54,21 @@ class inoComponents extends sfComponents
 
     }
 
+    public function executeAuditoria(){
+        /*$this->costos = Doctrine::getTable("InoTransaccion")
+                                 ->createQuery("t")
+                                 ->select("t.*, c.ca_consecutivo, con.ca_concepto, id.ca_nombre, tp.ca_tipo, tp.ca_comprobante")
+                                 ->innerJoin("t.InoComprobante c")
+                                 ->innerJoin("c.InoTipoComprobante tp")
+                                 ->innerJoin("t.InoConcepto con")
+                                 ->innerJoin("c.Ids id")
+                                 ->where("t.ca_idmaestra = ?", $this->referencia->getCaIdmaestra())
+                                 //->addWhere("c.ca_estado = ?", InoComprobante::TRANSFERIDO)
+                                 ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                 ->execute();*/
+
+    }
+
 
 }
 

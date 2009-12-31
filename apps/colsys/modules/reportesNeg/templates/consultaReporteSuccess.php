@@ -49,8 +49,7 @@
 		}*/
 		?>
 			<td width="102" ><div align="center">
-				<div align="right">
-                        <?=link_to(image_tag("16x16/edit.gif")." Editar", "reportesNeg/formReporte?id=".$reporte->getCaIdreporte()."&token=".md5(time()) )?>
+				<div align="right">                        
 
                         <?=link_to(image_tag("16x16/no.gif")." Anular", "reportesNeg/anularReporte?id=".$reporte->getCaIdreporte(), "confirm='Esta seguro?'")?>  <br />
 
@@ -58,164 +57,212 @@
 
 			</div></td>
 		</tr>
-        <tr class="row0">
-            <td  colspan="6"><b>Informaci&oacute;n General</b></td>
-		</tr>
-		<tr>
-			<td ><b>Clase:</b></td>
-            <td ><?=Utils::replace($reporte->getCaImpoexpo())?></td>
-			<td ><b>Fecha Despacho:</b></td>
-            <td ><?=Utils::fechaMes($reporte->getCaFchdespacho())?></td>
-            <td ><b>&nbsp;</b></td>
-            <td >&nbsp;</td>
-		</tr>
-       
-        <tr>
-			<td ><b>Transporte:</b></td>
-            <td ><?=Utils::replace($reporte->getCaTransporte())?></td>
-			<td ><b>Origen:</b></td>
-            <td ><?=$reporte->getOrigen()?></td>
-            <td ><b>Destino</b></td>
-            <td ><?=$reporte->getDestino()?></td>
-		</tr>
-        <tr>
+        <tr >
+            <td  colspan="6">
+                <div class="tab-pane" id="tab-pane-1">
+                    <div class="tab-page">
+                        <h2 class="tab">Trayecto</h2>
+                        <table class="tableList" width="100%">
+                            <tr>
+                                <th colspan="6"><b>Informaci&oacute;n del trayecto</b></th>
+                            </tr>
+                            <tr>
+                                <td ><b>Clase:</b></td>
+                                <td ><?=Utils::replace($reporte->getCaImpoexpo())?></td>
+                                <td ><b>Fecha Despacho:</b></td>
+                                <td ><?=Utils::fechaMes($reporte->getCaFchdespacho())?></td>
+                                <td ><b>&nbsp;</b></td>
+                                <td >&nbsp;</td>
+                            </tr>
 
-			<td ><b>Modalidad</b></td>
-            <td ><?=$reporte->getCaModalidad()?></td>
-			<td ><b>Agente:</b></td>
-            <td ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
-            <td >&nbsp;</td>
-            <td >&nbsp;</td>
-		</tr>        
-		<tr>
-			<td colspan="6" ><b>Descripci&oacute;n de la Mercanc&iacute;a:</b><br />
-				<?=Utils::replace($reporte->getCaMercanciaDesc())?>			</td>
-		</tr>
-        <tr class="row0">
-            <td  colspan="6"><b>Informaci&oacute;n del Cliente</b></td>
-		</tr>
+                            <tr>
+                                <td ><b>Transporte:</b></td>
+                                <td ><?=Utils::replace($reporte->getCaTransporte())?></td>
+                                <td ><b>Origen:</b></td>
+                                <td ><?=$reporte->getOrigen()?></td>
+                                <td ><b>Destino</b></td>
+                                <td ><?=$reporte->getDestino()?></td>
+                            </tr>
+                            <tr>
+
+                                <td ><b>Modalidad</b></td>
+                                <td ><?=$reporte->getCaModalidad()?></td>
+                                <td ><b>Agente:</b></td>
+                                <td ><?=$reporte->getIdsAgente()?$reporte->getIdsAgente()->getIds()->getCaNombre():"Directo"?></td>
+                                <td >&nbsp;</td>
+                                <td >&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" ><b>Descripci&oacute;n de la Mercanc&iacute;a:</b><br />
+                                    <?=Utils::replace($reporte->getCaMercanciaDesc())?>			</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="tab-page">
+                        <h2 class="tab">Cliente</h2>
+
+                        <table class="tableList" width="100%">
+                            <tr>
+                                <th colspan="6"><b>Informaci&oacute;n del Cliente</b></th>
+                            </tr>
+                            <tr class="row0">
+                                <td  colspan="6"><b>Cliente</b></td>
+                            </tr>
 
 
 
-		<tr>
-			<td  valign="top"><b>Cliente</b></td>
-			<td colspan="5" >		
-				<?											
-				$contacto = $reporte->getContacto();
-				if( $contacto ){
-					$cliente = $contacto->getCliente();
-				?>
-				
-				<table cellspacing="1" width="100%" border="0">
-					<tbody>
-						<tr>
-							<td width="33%" ><b>Nombre:</b> <?=Utils::replace($cliente->getCaCompania())?></td>
-                            <td width="33%" ><b>Contacto:</b> <?=Utils::replace($contacto->getNombre())?></td>
-							<td width="33%" ><b>Orden:</b><?=$reporte->getCaOrdenClie()?></td>
-						</tr>
-                        <tr>
-							<td><b>Direcci&oacute;n:</b> <?=Utils::replace($cliente->getDireccion())?></td>
-                            <td><b>Tel&eacute;fono:</b> <?=$contacto->getCaTelefonos()?></td>
-							<td><b>Fax:</b><?=$contacto->getCaFax()?></td>
-						</tr>
-						<tr>
-							<td><b>Correo   Electr&oacute;nico: </b> <?=$contacto->getCaEmail()?></td>
-							<td>&nbsp;</td>
-                            <td>&nbsp;</td>
-						</tr>
-					</tbody>
-				</table>	
-				<?
-				}
-				?>			</td>
-		</tr>
-        <?
-        if( $reporte->getCaIdproveedor() ){
-        ?>
-		<tr>
-			<td  valign="top"><b>Proveedor:</b></td>
-			<td colspan="5" >
-				<?
-                include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdproveedor(), "reporte"=>$reporte));
-                ?>
+                            <tr>
+                                
+                                <td colspan="6" >
+                                    <?
+                                    $contacto = $reporte->getContacto();
+                                    if( $contacto ){
+                                        $cliente = $contacto->getCliente();
+                                    ?>
+
+                                    <table cellspacing="1" width="100%" border="0">
+                                        <tbody>
+                                            <tr>
+                                                <td width="33%" ><b>Nombre:</b> <?=Utils::replace($cliente->getCaCompania())?></td>
+                                                <td width="33%" ><b>Contacto:</b> <?=Utils::replace($contacto->getNombre())?></td>
+                                                <td width="33%" ><b>Orden:</b><?=$reporte->getCaOrdenClie()?></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Direcci&oacute;n:</b> <?=Utils::replace($cliente->getDireccion())?></td>
+                                                <td><b>Tel&eacute;fono:</b> <?=$contacto->getCaTelefonos()?></td>
+                                                <td><b>Fax:</b><?=$contacto->getCaFax()?></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Correo   Electr&oacute;nico: </b> <?=$contacto->getCaEmail()?></td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <?
+                                    }
+                                    ?>			</td>
+                            </tr>
+                            <?
+                            if( $reporte->getCaIdproveedor() ){
+                            ?>
+                            <tr class="row0">
+                                <td  colspan="6"><b>Proveedor</b></td>
+                            </tr>
+                            <tr>                                
+                                <td colspan="6" >
+                                    <?
+                                    include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdproveedor(), "reporte"=>$reporte));
+                                    ?>
+                                </td>
+                            </tr>
+                            <?
+                            }
+
+                            if( $reporte->getCaIdconsignatario() ){
+                            ?>
+                            <tr>
+                                <td  valign="top"><b>Consignatario:</b></td>
+                                <td colspan="6" >
+                                    <?
+                                    include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdconsignatario(), "reporte"=>$reporte));
+                                    ?>
+                                </td>
+                            </tr>
+                            <?
+                            }
+
+                            if( $reporte->getCaIdnotify() ){
+                            ?>
+                            <tr class="row0">
+                                <td  colspan="6"><b>Notify</b></td>
+                            </tr>
+                            <tr>                                
+                                <td colspan="6" >
+                                    <?
+                                    include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdnotify(), "reporte"=>$reporte));
+                                    ?>
+                                </td>
+                            </tr>
+                            <?
+                            }
+
+                            if( $reporte->getCaIdrepresentante() ){
+                            ?>
+                            <tr class="row0">
+                                <td  colspan="6"><b>Notify</b></td>
+                            </tr>
+                            <tr>                                
+                                <td colspan="6" >
+                                    <?
+                                    include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdrepresentante(), "reporte"=>$reporte));
+                                    ?>
+                                </td>
+                            </tr>
+                            <?
+                            }
+
+                            if( $reporte->getCaIdmaster() ){
+                            ?>
+                            <tr class="row0">
+                                <td  colspan="6"><b>Consigna. Master:</b></td>
+                            </tr>
+                            <tr>                              
+                                <td colspan="6" >
+                                    <?
+                                    include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdmaster(), "reporte"=>$reporte));
+                                    ?>
+                                </td>
+                            </tr>
+                            <?
+                            }
+                            ?>
+
+                        </table>
+                    </div>
+
+
+                    <div class="tab-page">
+                        <h2 class="tab">Preferencias</h2>
+                        <table class="tableList" width="100%">
+                            <tr>
+                                <th colspan="6"><b>Preferencias del cliente</b></th>
+                            </tr>                             
+                            <tr>
+                               
+                                <td  colspan="6">
+                                    <b>Preferencias del Cliente:</b><br />
+                                    
+                                        <?=Utils::replace($reporte->getCaPreferenciasClie())?>
+                                    
+                                    </td>
+                            </tr>
+                            <tr>
+                                <td  colspan="6">
+                                    <b>Instrucciones Especiales para el Agente:</b>
+
+                                    <br />
+                                    <?=Utils::replace($reporte->getCaInstrucciones())?></td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" >
+                                    <b>Copiar comunicaciones a:</b><br />
+                                   
+                                        <?=str_replace(",", ", ", $reporte->getCaConfirmarClie()) ?>
+                                    
+                                </td>
+                            </tr>
+                         </table>
+                    </div>
+
+                </div>
+
+
             </td>
 		</tr>
-		<?
-        }
-
-        if( $reporte->getCaIdconsignatario() ){
-        ?>
-		<tr>
-			<td  valign="top"><b>Consignatario:</b></td>
-			<td colspan="5" >
-				<?				
-                include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdconsignatario(), "reporte"=>$reporte));
-                ?>
-            </td>
-		</tr>
-		<?
-        }
-
-        if( $reporte->getCaIdnotify() ){
-        ?>
-		<tr>
-			<td  valign="top"><b>Notify:</b></td>
-			<td colspan="5" >
-				<?
-                include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdnotify(), "reporte"=>$reporte));
-                ?>
-            </td>
-		</tr>
-		<?
-        }
-
-        if( $reporte->getCaIdrepresentante() ){
-        ?>
-		<tr>
-			<td  valign="top"><b>Representante:</b></td>
-			<td colspan="5" >
-				<?
-                include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdrepresentante(), "reporte"=>$reporte));
-                ?>
-            </td>
-		</tr>
-		<?
-        }
-
-        if( $reporte->getCaIdmaster() ){
-        ?>
-		<tr>
-			<td  valign="top"><b>Consigna. Master:</b></td>
-			<td colspan="5" >
-				<?
-                include_component("reportesNeg", "previewTercero", array("idtercero"=>$reporte->getCaIdmaster(), "reporte"=>$reporte));
-                ?>
-            </td>
-		</tr>
-		<?
-        }
-		?>
-        <tr class="row0">
-            <td  colspan="6"><b>Informaci&oacute;n del Cliente</b></td>
-		</tr>
-		<tr>
-			<td rowspan="3"  valign="top"><b>Instrucciones:</b></td>
-			<td  colspan="5"><b>Preferencias del Cliente:</b><br />
-			<?=Utils::replace($reporte->getCaPreferenciasClie())?></td>
-		</tr>
-		<tr>
-			<td  colspan="5">
-				<b>Instrucciones Especiales para el Agente:</b>
-				
-				<br />
-				<?=Utils::replace($reporte->getCaInstrucciones())?></td>
-		</tr>
-		<tr>
-			<td height="28" colspan="5" >
-				<b>Copiar comunicaciones a:</b><br />
-				<?=$reporte->getCaConfirmarClie() ?>				
-			</td>
-		</tr>			
+		
+        
+       			
         <tr class="row0">
 			<td  colspan="6"><div align="center"><b>Conceptos de Embarque </b></div></td>
 		</tr>
@@ -273,7 +320,7 @@
 <?
 
 include_component("reportesNeg","mainPanel", array("reporte"=>$reporte));
-if( $reporte->getCaTransporte()!=Constantes::ADUANA ){
+if( !$reporte->esSoloAduana() ){
     include_component("reportesNeg","panelConceptosFletes", array("reporte"=>$reporte));
     $panelConceptosFletes = true;
     if( $reporte->getCaImpoexpo()!=Constantes::EXPO ){
