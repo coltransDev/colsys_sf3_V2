@@ -98,6 +98,9 @@ class falabellaAduActions extends sfActions {
 
         $this->responseArray=array("id"=>$this->getRequestParameter('id'), "success"=>false);
 
+        // echo $this->getRequestParameter ( 'numdeclaracion' );
+        // exit();
+
         if( $this->getRequestParameter ( 'numdeclaracion' )!==null ) {
             $fala_declaracion->setCaNumdeclaracion( $this->getRequestParameter ( 'numdeclaracion' ) );
         }
@@ -386,109 +389,95 @@ class falabellaAduActions extends sfActions {
             $referencia = base64_decode($this->getRequestParameter ( 'referencia' ));
             $stmt = FalaDeclaracionImpTable::declaracionImportacion($referencia);
 
-            $array_constantes = array();
-            $array_totales = array();
-            $array_subtotales = array();
-            $constantes = true;
-            while($row = $stmt->fetch()) {
-                if ($constantes) {
-                    $array_constantes["numdeclaracion"] =  $row["ca_numdeclaracion"];
-                    $array_constantes["numinternacion"] =  $row["ca_numinternacion"];
-                    $array_constantes["emision"] =  $row["ca_emision_fch"];
-                    $array_constantes["vencimiento"] =  $row["ca_vencimiento_fch"];
-                    $array_constantes["aceptacion"] =  $row["ca_aceptacion_fch"];
-                    $array_constantes["pago"] =  $row["ca_pago_fch"];
-                    $array_constantes["moneda"] =  $row["ca_moneda"];
-                    $array_constantes["trm"] =  floatval($row["ca_valor_trm"]);
-                    $constantes = false;
-                }
-                $array_totales["total"]+= floatval($row["ca_arancel"]) + floatval($row["ca_iva"]) + floatval($row["ca_compensa"]) + floatval($row["ca_antidump"]) + floatval($row["ca_salvaguarda"]) + floatval($row["ca_sancion"]) + floatval($row["ca_rescate"]);
-                $array_totales["iva"]+= floatval($row["ca_iva"]);
-                $array_totales["arancel"]+= floatval($row["ca_arancel"]);
-
-                $array_totales["compensa"]+= floatval($row["ca_compensa"]);
-                $array_totales["antidump"]+= floatval($row["ca_antidump"]);
-                $array_totales["salvaguarda"]+= floatval($row["ca_salvaguarda"]);
-
-                $array_totales["otros"]+= floatval($row["ca_sancion"]) + floatval($row["ca_rescate"]);
-
-                $array_totales["fob"]+= floatval($row["ca_valor_fob"]) + floatval($row["ca_gastos_despacho"]);
-                $array_totales["flete"]+= floatval($row["ca_flete"]);
-                $array_totales["seguro"]+= floatval($row["ca_seguro"]);
-
-                $array_totales["cif"]+= round(floatval($row["ca_valor_aduana"]) * floatval($row["ca_valor_trm"]),0);
-                $array_totales["ajuste"]+= floatval($row["ca_ajuste_valor"]);
-                $array_totales["aduana"]+= floatval($row["ca_valor_aduana"]);
-
-                $factor = round($row["ca_valor_fob"] / $row["ca_subtotal_fob"],2);
-
-                $array_subtotales[$row["ca_iddoc"]]["total"]+= round($factor * (floatval($row["ca_arancel"]) + floatval($row["ca_iva"]) + floatval($row["ca_compensa"]) + floatval($row["ca_antidump"]) + floatval($row["ca_salvaguarda"]) + floatval($row["ca_sancion"]) + floatval($row["ca_rescate"])), 0);
-                $array_subtotales[$row["ca_iddoc"]]["iva"]+= round($factor * floatval($row["ca_iva"]), 0);
-                $array_subtotales[$row["ca_iddoc"]]["arancel"]+= round($factor * floatval($row["ca_arancel"]), 0);
-
-                $array_subtotales[$row["ca_iddoc"]]["compensa"]+= round($factor * floatval($row["ca_compensa"]), 0);
-                $array_subtotales[$row["ca_iddoc"]]["otros"]+= round($factor * (floatval($row["ca_sancion"]) + floatval($row["ca_rescate"])), 0);
-
-                $array_subtotales[$row["ca_iddoc"]]["antidump"]+= round($factor * floatval($row["ca_antidump"]), 0);
-                $array_subtotales[$row["ca_iddoc"]]["salvaguarda"]+= round($factor * floatval($row["ca_salvaguarda"]), 0);
-            }
-
+            $directory=sfConfig::get('app_falabella_output_adu');
+            $numdeclaracion = null;
             $salida = '';
-            foreach($array_subtotales as $carpeta => $array_carpeta) {
-                $salida.= "51|"; // 1
-                $salida.= "830003960|"; // 2
-                $salida.= "0|"; // 3
-                $salida.= "900017447|"; // 4
-                $salida.= "8|"; // 5
-                $salida.= "830003960|"; // 6
-                $salida.= "0|"; // 7
+            while ( $row = $stmt->fetch() ) {
+                if ($numdeclaracion != $row["ca_numdeclaracion"] and $numdeclaracion != null){
+                    $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
+                    $handle = fopen($filename , 'w');
+                    if (fwrite($handle, $salida) === FALSE) {
+                        echo "No se puede escribir al archivo {filename}";
+                        exit;
+                    }
+                    $salida = '';
+                }
+                $numdeclaracion = $row["ca_numdeclaracion"];
+                $salida.= "51"; // 1
+                $salida.= str_pad(null,10, " "); // 2
+                $salida.= " "; // 3
+                $salida.= str_pad("900017447",10, " "); // 4
+                $salida.= "8"; // 5
+                $salida.= str_pad("830003960",10, " "); // 6
+                $salida.= "0"; // 7
 
-                $salida.= str_pad($array_constantes["numdeclaracion"],30, " ")."|"; // 8
-                $salida.= str_pad(null,10, " ")."|"; // 9
-                $salida.= str_pad($array_constantes["numinternacion"],2, " ")."|"; // 10
+                $salida.= str_pad($numdeclaracion,30, " "); // 8
+                $salida.= str_pad(null,10, " "); // 9
+                $salida.= str_pad(null,2, " "); // 10
 
-                list($anno,$mes,$dia) = sscanf($array_constantes["emision"],"%d-%d-%d");
-                $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+                list($anno,$mes,$dia) = sscanf($row["ca_emision_fch"],"%d-%d-%d");
+                $emision = date("dmY", mktime(0,0,0,$mes,$dia,$anno));
                 $salida.= $emision; // 11
 
-                list($anno,$mes,$dia) = sscanf($array_constantes["vencimiento"],"%d-%d-%d");
-                $vencimiento = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+                list($anno,$mes,$dia) = sscanf($row["ca_vencimiento_fch"],"%d-%d-%d");
+                $vencimiento = date("dmY", mktime(0,0,0,$mes,$dia,$anno));
                 $salida.= $vencimiento; // 12
 
-                list($anno,$mes,$dia) = sscanf($array_constantes["aceptacion"],"%d-%d-%d");
-                $aceptacion = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+                list($anno,$mes,$dia) = sscanf($row["ca_aceptacion_fch"],"%d-%d-%d");
+                $aceptacion = date("dmY", mktime(0,0,0,$mes,$dia,$anno));
                 $salida.= $aceptacion; // 13
 
-                list($anno,$mes,$dia) = sscanf($array_constantes["pago"],"%d-%d-%d");
-                $pago = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+                list($anno,$mes,$dia) = sscanf($row["ca_pago_fch"],"%d-%d-%d");
+                $pago = date("dmY", mktime(0,0,0,$mes,$dia,$anno));
                 $salida.= $pago; // 14
 
-                $salida.= str_pad($array_constantes["moneda"],3, " ")."|"; // 15
-                $salida.= str_pad($array_constantes["trm"], 15, "0", STR_PAD_LEFT); // 16
-                $salida.= str_pad($array_totales["total"], 15, "0", STR_PAD_LEFT); // 17
-                $salida.= str_pad($array_totales["iva"], 15, "0", STR_PAD_LEFT); // 18
-                $salida.= str_pad($array_totales["arancel"], 15, "0", STR_PAD_LEFT); // 19
-                $salida.= str_pad($array_totales["compensa"], 15, "0", STR_PAD_LEFT); // 20
-                $salida.= str_pad($array_totales["otros"], 15, "0", STR_PAD_LEFT); // 21
-                $salida.= str_pad($array_totales["antidump"], 15, "0", STR_PAD_LEFT); // 22
-                $salida.= str_pad($array_totales["salvaguarda"], 15, "0", STR_PAD_LEFT); // 23
-                $salida.= str_pad(null,30, " ")."|"; // 24
+                $salida.= str_pad("COP",3, " "); // 15
+                $salida.= str_pad(1, 15, "0", STR_PAD_LEFT); // 16
 
-                $salida.= str_pad($carpeta,20, " ")."|"; // 25
-                $salida.= str_pad(null,2, " ")."|"; // 25                                   No de Embarque
-                $salida.= str_pad($array_carpeta["total"], 15, "0", STR_PAD_LEFT); // 26
-                $salida.= str_pad($array_carpeta["iva"], 15, "0", STR_PAD_LEFT); // 27
-                $salida.= str_pad($array_carpeta["arancel"], 15, "0", STR_PAD_LEFT); // 28
-                $salida.= str_pad($array_carpeta["compensa"], 15, "0", STR_PAD_LEFT); // 29
-                $salida.= str_pad($array_carpeta["otros"], 15, "0", STR_PAD_LEFT); // 30
-                $salida.= str_pad($array_carpeta["antidump"], 15, "0", STR_PAD_LEFT); // 31
-                $salida.= str_pad($array_carpeta["salvaguarda"], 15, "0", STR_PAD_LEFT); // 32
+                $valor_trm = floatval($row["ca_valor_trm"]);
+                $valor_otr = floatval($row["ca_sancion"]) + floatval($row["ca_rescate"]);
+                $valor_tot = floatval($row["ca_iva"]) + floatval($row["ca_arancel"]) + floatval($row["ca_compensa"]) + floatval($row["ca_antidump"]) + floatval($row["ca_salvaguarda"]) + $valor_otr;
 
-                $salida.= str_pad(null,30, " ")."|"; // 33
+                $salida.= str_pad(number_format($valor_tot,2,'.',''), 15, "0", STR_PAD_LEFT); // 17
+                $salida.= str_pad(number_format(floatval($row["ca_iva"]),2,'.',''), 15, "0", STR_PAD_LEFT); // 18
+                $salida.= str_pad(number_format(floatval($row["ca_arancel"]),2,'.',''), 15, "0", STR_PAD_LEFT); // 19
+                $salida.= str_pad(number_format(floatval($row["ca_compensa"]),2,'.',''), 15, "0", STR_PAD_LEFT); // 20
+                $salida.= str_pad(number_format($valor_otr,2,'.',''), 15, "0", STR_PAD_LEFT); // 21
+                $salida.= str_pad(number_format(floatval($row["ca_antidump"]),2,'.',''), 15, "0", STR_PAD_LEFT); // 22
+                $salida.= str_pad(number_format(floatval($row["ca_salvaguarda"]),2,'.',''), 15, "0", STR_PAD_LEFT); // 23
+                $salida.= str_pad(null,30, " "); // 24
+
+                $valor_fob = floatval($row["ca_valor_fob"]) + floatval($row["ca_gastos_despacho"]) + floatval($row["ca_ajuste_valor"]);
+                $valor_fle = floatval($row["ca_flete"]);
+                $valor_seg = floatval($row["ca_seguro"]);
+                $valor_gas = floatval($row["ca_gastos_embarque"]);
+
+                $salida.= str_pad(number_format($valor_fob,2,'.',''), 15, "0", STR_PAD_LEFT); // 25
+                $salida.= str_pad(number_format($valor_fle,2,'.',''), 15, "0", STR_PAD_LEFT); // 26
+                $salida.= str_pad(number_format($valor_seg,2,'.',''), 15, "0", STR_PAD_LEFT); // 27
+
+                $valor_cif = ($valor_fob + $valor_fle + $valor_seg + $valor_gas);
+
+                $salida.= str_pad(number_format($valor_cif,2,'.',''), 15, "0", STR_PAD_LEFT); // 28
+                $salida.= str_pad(number_format($valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 29
+                $salida.= str_pad(number_format($valor_cif + $valor_gas,2,'.',''), 15, "0", STR_PAD_LEFT); // 30
+                $salida.= str_pad($row["ca_iddoc"],20, " "); // 31
+                $salida.= str_pad($row["ca_num_viaje"],2, " "); // 32                                   No de Embarque
+
+                $factor = round($row["ca_prorrateo_fob"] / $row["ca_valor_fob"],2);
+
+                $salida.= str_pad(number_format(round($valor_tot * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 33
+                $salida.= str_pad(number_format(round(floatval($row["ca_iva"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 34
+                $salida.= str_pad(number_format(round(floatval($row["ca_arancel"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 35
+                $salida.= str_pad(number_format(round(floatval($row["ca_compensa"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 36
+                $salida.= str_pad(number_format(round($valor_otr * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 37
+                $salida.= str_pad(number_format(round(floatval($row["ca_antidump"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 38
+                $salida.= str_pad(number_format(round(floatval($row["ca_salvaguarda"]) * $factor, 0),2,'.',''), 15, "0", STR_PAD_LEFT); // 39
+                $salida.= str_pad(null,30, " "); // 40
                 $salida.= "\r\n";
             }
-            $directory=sfConfig::get('app_falabella_output');
-            $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$array_constantes["numdeclaracion"].'.txt';
+
+            $filename = $directory.DIRECTORY_SEPARATOR.'DI_'.$numdeclaracion.'.txt';
             $handle = fopen($filename , 'w');
 
             if (fwrite($handle, $salida) === FALSE) {
@@ -498,6 +487,224 @@ class falabellaAduActions extends sfActions {
             $this->redirect("falabellaAdu/list");
 
         }
+
+
+	/*
+	* Genera el archivo de facturacion
+	*/
+        public function executeGeneraFactura() {
+            $referencia = base64_decode($this->getRequestParameter ( 'referencia' ));
+            $stmt = FalaDeclaracionImpTable::facturacionNacionalizacion($referencia);
+
+            $directory=sfConfig::get('app_falabella_output_adu');
+            $numdocumento = null;
+            $salida = '';
+            $adicion= '';
+            $acumula= array();
+            while ( $row = $stmt->fetch() ) {
+                if ($numdocumento != $row["ca_numdocumento"] and $numdocumento != null){
+                    $filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$numdocumento.'.txt';
+                    $handle = fopen($filename , 'w');
+                    if (fwrite($handle, $salida) === FALSE) {
+                        echo "No se puede escribir al archivo {filename}";
+                        exit;
+                    }
+                    $salida = '';
+                }
+                $numdocumento = $row["ca_numdocumento"];
+
+                $salida.= "42"; // 1
+                $salida.= "830003960 "; // 2
+                $salida.= "0"; // 3
+                $salida.= "900017447 "; // 4
+                $salida.= "8"; // 5
+                $salida.= str_pad($row["ca_numdocumento"],10, " "); // 6
+                $salida.= str_pad(null,10, " "); // 7
+                list($anno,$mes,$dia) = sscanf($row["ca_emision_fch"],"%d-%d-%d");
+                $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+                $salida.= $emision; // 8
+                list($anno,$mes,$dia) = sscanf($row["ca_vencimiento_fch"],"%d-%d-%d");
+                $vencimiento = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+                $salida.= $vencimiento; // 9
+                $salida.= str_pad($row["ca_moneda"],3, " "); // 10
+                $salida.= str_pad(floatval($row["ca_tipo_cambio"]), 10, "0", STR_PAD_LEFT); // 11
+
+                $vlr_afecto = floatval($row["ca_afecto_vlr"]);
+                $vlr_iva = floatval($row["ca_iva_vlr"]);
+                $vlr_exento = floatval($row["ca_exento_vlr"]);
+                $vlr_total  = $vlr_afecto + $vlr_iva + $vlr_exento;
+
+                $salida.= str_pad($vlr_total, 10, "0", STR_PAD_LEFT); // 12
+                $salida.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 13
+                $salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 14
+                $salida.= str_pad("18",5, " "); // 15
+                $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 16
+                $salida.= str_pad(floatval($row["ca_num_viaje"]), 2, "0", STR_PAD_LEFT); // 17
+
+                $factor = round($row["ca_prorrateo_fob"] / $row["ca_valor_fob"],2);
+
+                $salida.= str_pad(round($vlr_total * $factor,0), 10, "0", STR_PAD_LEFT); // 18
+
+                $spaces = array(8,30,30,4,20,20,10); // Campos del 19 al 27
+                foreach( $spaces as $space ) {
+                    $salida.= str_pad(null,$space, " ");
+                }
+
+                $salida.= str_pad($vlr_exento, 10, "0", STR_PAD_LEFT); // 28
+                $salida.= str_pad("650_BOG_DIRECCION_GENERAL", 30, " "); // 29
+                $salida.= "\r\n";
+
+                if(!isset($acumula[$row["ca_numdocumento"]])){
+                    if($vlr_exento != 0){
+                        $adicion.= "11"; // 1
+                        $adicion.= "830003960"; // 2
+                        $adicion.= "900017447 "; // 3
+                        $adicion.= str_pad($row["ca_numdocumento"],10, " "); // 4
+                        $adicion.= str_pad("006",50, " "); // 5 Concepto de Afecto y Exento
+                        $adicion.= str_pad($vlr_exento, 10, "0", STR_PAD_LEFT); // 6
+                        $adicion.= "\r\n";
+                    }
+
+                    $adicion.= "12"; // 1
+                    $adicion.= "830003960"; // 2
+                    $adicion.= "900017447 "; // 3
+                    $adicion.= str_pad($row["ca_numdocumento"],10, " "); // 4
+                    $adicion.= str_pad("003",50, " "); // 5 Concepto de Retención en la Fuente
+                    $adicion.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 6
+                    $adicion.= "\r\n";
+
+                    $adicion.= "13"; // 1
+                    $adicion.= "830003960"; // 2
+                    $adicion.= "900017447 "; // 3
+                    $adicion.= str_pad($row["ca_numdocumento"],10, " "); // 4
+                    $adicion.= str_pad("002",50, " "); // 5 Concepto del IVA
+                    $adicion.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 6
+                    $adicion.= "\r\n";
+                    $acumula[$row["ca_numdocumento"]] = $adicion;
+                }
+            }
+
+            foreach($acumula as $key => $value){
+                $salida.= $value;
+            }
+
+            $filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$numdocumento.'.txt';
+            $handle = fopen($filename , 'w');
+
+            if (fwrite($handle, $salida) === FALSE) {
+                echo "No se puede escribir al archivo {filename}";
+                exit;
+            }
+
+
+            $stmt = FalaDeclaracionImpTable::notaAgenteNacionalizacion($referencia);
+
+            $numdocumento = null;
+            $iddoc = null;
+            $adicion = '';
+            $salida= '';
+            $acumula= array();
+            while ( $row = $stmt->fetch() ) {
+                if ($numdocumento != $row["ca_numdocumento"] and $numdocumento != null){
+                    $filename = $directory.DIRECTORY_SEPARATOR.'Not_'.$numdocumento.'.txt';
+                    $handle = fopen($filename , 'w');
+                    if (fwrite($handle, $adicion) === FALSE) {
+                        echo "No se puede escribir al archivo {filename}";
+                        exit;
+                    }
+                }
+                $adicion = '';
+                $numdocumento = $row["ca_numdocumento"];
+                $factor = round($row["ca_prorrateo_fob"] / $row["ca_valor_fob"],2);
+
+                if (!isset($acumula[$row["ca_iddoc"]])){
+                    $adicion.= "01"; // 1
+                    $adicion.= "830003960"; // 2
+                    $adicion.= "900017447 "; // 3
+                    $adicion.= str_pad($row["ca_numdocumento"],7, " "); // 4
+                    $adicion.= str_pad(1, 7, "0", STR_PAD_LEFT); // 5
+                    $adicion.= str_pad(null,2, " "); // 6
+                    $adicion.= str_pad(floatval($row["ca_num_viaje"]), 8, " "); // 7
+                    list($anno,$mes,$dia) = sscanf($row["ca_emision_fch"],"%d-%d-%d");
+                    $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+                    $adicion.= $emision; // 8
+
+                    $spaces = array(25,3,15,20); // Campos del 9 al 12
+                    foreach( $spaces as $space ) {
+                        $adicion.= str_pad(null,$space, " ");
+                    }
+
+                    $adicion.= str_pad(floatval($row["ca_vlrdocumento"]), 10, "0", STR_PAD_LEFT); // 13
+
+                    $spaces = array(4,10,4); // Campos del 14 al 16
+                    foreach( $spaces as $space ) {
+                        $adicion.= str_pad(0,$space, "0");
+                    }
+
+                    $adicion.= str_pad(intval($row["ca_tipo_cambio"]), 4, "0", STR_PAD_LEFT); // 17
+
+                    $spaces = array(4,10); // Campos del 18 al 19
+                    foreach( $spaces as $space ) {
+                        $adicion.= str_pad(0,$space, "0");
+                    }
+
+                    $adicion.= str_pad(floatval($row["ca_vlrdocumento"]), 10, "0", STR_PAD_LEFT); // 20
+
+                    $spaces = array(10,10,3); // Campos del 21 al 23
+                    foreach( $spaces as $space ) {
+                        $adicion.= str_pad(0,$space, "0");
+                    }
+
+                    $adicion.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 24
+
+                    $adicion.= str_pad(round(floatval($row["ca_vlrdocumento"]) * $factor,0), 10, "0", STR_PAD_LEFT); // 25
+                    $adicion.= "\r\n";
+
+                    $acumula[$row["ca_iddoc"]] = $adicion;
+                }
+
+                $salida.= "04"; // 1
+                $salida.= "830003960"; // 2
+                $salida.= "900017447 "; // 3
+                $salida.= str_pad($row["ca_numdocumento"],7, " "); // 4
+                $salida.= str_pad(floatval($row["ca_idconcepto"]),50, " "); // 5
+
+                $spaces = array(10,4,10,4); // Campos del 6 al 9
+                foreach( $spaces as $space ) {
+                    $salida.= str_pad(0,$space, "0");
+                }
+
+                $salida.= str_pad($row["ca_factura_ter"],20, " "); // 10
+                $salida.= str_pad($row["ca_nit_ter"],10, " "); // 11
+                list($anno,$mes,$dia) = sscanf($row["ca_factura_fch"],"%d-%d-%d");
+                $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
+                $salida.= $emision; // 12
+                $salida.= str_pad(floatval($row["ca_factura_vlr"]), 10, "0", STR_PAD_LEFT); // 13
+                $salida.= str_pad(floatval($row["ca_factura_iva"]), 10, "0", STR_PAD_LEFT); // 14
+                $salida.= str_pad(floatval($row["ca_factura_vlr"])+floatval($row["ca_factura_iva"]), 10, "0", STR_PAD_LEFT); // 15
+                $salida.= str_pad($row["ca_tipo"],1, " "); // 16
+                $salida.= str_pad(0, 10, "0", STR_PAD_LEFT); // 17
+                $salida.= str_pad(substr($row["ca_iddoc"],0,15),20, " "); // 18
+                $salida.= str_pad(floatval($row["ca_num_viaje"]), 2, " "); // 19
+                $salida.= str_pad(round((floatval($row["ca_factura_vlr"])+floatval($row["ca_factura_iva"])) * $factor,0), 15, "0", STR_PAD_LEFT); // 20
+                $salida.= "\r\n";
+            }
+
+            foreach($acumula as $key => $value){
+                $salida = $value.$salida;
+            }
+
+            $filename = $directory.DIRECTORY_SEPARATOR.'Not_'.$numdocumento.'.txt';
+            $handle = fopen($filename , 'w');
+
+            if (fwrite($handle, $salida) === FALSE) {
+                echo "No se puede escribir al archivo {filename}";
+                exit;
+            }
+
+            $this->redirect("falabellaAdu/list");
+        }
+
 
 
 	/*
@@ -599,134 +806,6 @@ class falabellaAduActions extends sfActions {
         }
 
 
-	/*
-	* Genera el archivo de facturacion
-	*/
-    public function executeGenerarFactura() {
-
-        $fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( base64_decode($this->getRequestParameter ( 'iddoc' )) );
-        $this->forward404Unless($fala_header);
-
-        //		$reporte = ReportePeer::retrieveByConsecutivo( $fala_header->getcaReporte() );
-        //		$this->forward404unless( $reporte );
-
-        $c = new Criteria();
-
-        if ($reporte->getcaTransporte() == 'Marítimo') {
-            $c->addSelectColumn(InoClientesSeaPeer::CA_REFERENCIA );
-            $c->addSelectColumn(InoClientesSeaPeer::CA_IDCLIENTE );
-            $c->addSelectColumn(InoClientesSeaPeer::CA_HBLS );
-            $c->addSelectColumn(InoClientesSeaPeer::CA_IDREPORTE );
-            $c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
-
-            $c->addSelectColumn(InoIngresosSeaPeer::CA_FACTURA );
-            $c->addSelectColumn(InoIngresosSeaPeer::CA_FCHFACTURA );
-            $c->addSelectColumn(InoIngresosSeaPeer::CA_TCAMBIO );
-            $c->addSelectColumn(InoIngresosSeaPeer::CA_IDMONEDA );
-            $c->addSelectColumn(InoIngresosSeaPeer::CA_VALOR );
-            $c->setDistinct();
-
-            $c->addJoin( ReportePeer::CA_IDREPORTE, InoClientesSeaPeer::CA_IDREPORTE );
-            $c->addJoin( InoClientesSeaPeer::CA_REFERENCIA, InoIngresosSeaPeer::CA_REFERENCIA );
-            $c->addJoin( InoClientesSeaPeer::CA_IDCLIENTE, InoIngresosSeaPeer::CA_IDCLIENTE );
-            $c->addJoin( InoClientesSeaPeer::CA_HBLS, InoIngresosSeaPeer::CA_HBLS );
-
-            $c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
-            $stmt = InoClientesSeaPeer::doSelectStmt( $c );
-        }else if ($reporte->getcaTransporte() == 'Aéreo') {
-                $c->addSelectColumn(InoClientesAirPeer::CA_REFERENCIA );
-                $c->addSelectColumn(InoClientesAirPeer::CA_IDCLIENTE );
-                $c->addSelectColumn(InoClientesAirPeer::CA_HAWB );
-                $c->addSelectColumn(InoClientesAirPeer::CA_IDREPORTE );
-                $c->addSelectColumn(ReportePeer::CA_CONSECUTIVO );
-
-                $c->addSelectColumn(InoIngresosAirPeer::CA_FACTURA );
-                $c->addSelectColumn(InoIngresosAirPeer::CA_FCHFACTURA );
-                $c->addAsColumn("CA_TCAMBIO",InoIngresosAirPeer::CA_TCALAICO);
-                $c->addAsColumn("CA_IDMONEDA", "'USD'::TEXT");
-                $c->addSelectColumn(InoIngresosAirPeer::CA_VALOR );
-                $c->setDistinct();
-
-                $c->addJoin( ReportePeer::CA_CONSECUTIVO, InoClientesAirPeer::CA_IDREPORTE );
-                $c->addJoin( InoClientesAirPeer::CA_REFERENCIA, InoIngresosAirPeer::CA_REFERENCIA );
-                $c->addJoin( InoClientesAirPeer::CA_IDCLIENTE, InoIngresosAirPeer::CA_IDCLIENTE );
-                $c->addJoin( InoClientesAirPeer::CA_HAWB, InoIngresosAirPeer::CA_HAWB );
-
-                $c->add( ReportePeer::CA_CONSECUTIVO, ReportePeer::CA_CONSECUTIVO." = '".$reporte->getcaConsecutivo()."'" , Criteria::CUSTOM );
-                $stmt = InoClientesSeaPeer::doSelectStmt( $c );
-            }
-
-        $salida = '';
-        while ( $row = $stmt->fetch() ) {
-            $salida.= "88"; // 1
-            $salida.= "800024075 "; // 2
-            $salida.= "8"; // 3
-            $salida.= "900017447 "; // 4
-            $salida.= "8"; // 5
-            $salida.= str_pad($row["ca_factura"],10, " "); // 6
-            $salida.= str_pad(null,10, " "); // 7
-            list($anno,$mes,$dia) = sscanf($row["ca_fchfactura"],"%d-%d-%d");
-            $emision = date("Ymd", mktime(0,0,0,$mes,$dia,$anno));
-            $salida.= $emision; // 8
-            list($anno,$mes,$dia) = sscanf($row["ca_fchfactura"],"%d-%d-%d");
-            $vencimiento = date("Ymd", mktime(0,0,0,$mes+1,$dia,$anno));
-            $salida.= $vencimiento; // 9
-            $salida.= str_pad("COP",3, " "); // 10  Siempre en Pesos Colombianos
-            $salida.= str_pad(1, 10, "0", STR_PAD_LEFT); // 11
-
-            $vlr_afecto = floatval($reporte->getProperty("vlrAfecto"));
-            $vlr_exento = floatval($reporte->getProperty("vlrExento"));
-            $vlr_iva    = floatval($reporte->getProperty("vlrIVA"));
-            $vlr_total  = $vlr_afecto + $vlr_exento + $vlr_iva;
-
-            $salida.= str_pad($vlr_total, 10, "0", STR_PAD_LEFT); // 12
-            $salida.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 13
-            $salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 14
-
-            $salida.= str_pad("21",5, " "); // 15 Concepto
-            $salida.= str_pad(substr($fala_header->getCaIddoc(),0,15),20, " "); // 16
-
-            $salida.= str_pad(floatval($reporte->getProperty("numEmbarque")), 2, "0", STR_PAD_LEFT); // 17 Embarque
-            $salida.= str_pad(floatval($reporte->getProperty("vlrEmbarque")), 10, "0", STR_PAD_LEFT); // 18 Valor del Embarque
-
-            $spaces = array(8,30,30,4,20,20,10); // Campos del 19 al 27
-            foreach( $spaces as $space ) {
-                $salida.= str_pad(null,$space, " ");
-            }
-
-            $salida.= str_pad($vlr_exento, 10, "0", STR_PAD_LEFT); // 28
-            $salida.= str_pad("650_BOG_DIRECCION_GENERAL", 30, " "); // 29
-            $salida.= "\r\n";
-
-            $salida.= "12"; // 1
-            $salida.= "800024075"; // 2
-            $salida.= "900017447 "; // 3
-            $salida.= str_pad($row["ca_factura"],10, " "); // 4
-            $salida.= str_pad("003",50, " "); // 5 Concepto de Retención en la Fuente
-            $salida.= str_pad($vlr_afecto, 10, "0", STR_PAD_LEFT); // 6
-            $salida.= "\r\n";
-
-            $salida.= "13"; // 1
-            $salida.= "800024075"; // 2
-            $salida.= "900017447 "; // 3
-            $salida.= str_pad($row["ca_factura"],10, " "); // 4
-            $salida.= str_pad("002",50, " "); // 5 Concepto del IVA
-            $salida.= str_pad($vlr_iva, 10, "0", STR_PAD_LEFT); // 6
-            $salida.= "\r\n";
-
-            $directory=sfConfig::get('app_falabellaAdu_output');
-            $filename = $directory.DIRECTORY_SEPARATOR.'FAC_'.$row["ca_factura"].'.txt';
-            $handle = fopen($filename , 'w');
-
-            if (fwrite($handle, $salida) === FALSE) {
-                echo "No se puede escribir al archivo {filename}";
-                exit;
-            }
-        }
-
-        $this->redirect("falabellaAdu/list");
-    }
-
     public function executeEnviarEmail() {
         $this->setLayout("ajax");
         $content  = sfContext::getInstance()->getController()->getPresentationFor( 'falabellaAdu', 'shippingInstructions', 'email') ;
@@ -780,6 +859,25 @@ class falabellaAduActions extends sfActions {
     }
 
     /*
+     * Panel de Declararion
+     */
+    public function executeObservePanelDeclaracion( sfWebRequest $request ){
+        $this->responseArray=array("success"=>false, "id"=>$request->getParameter("id"));
+
+        $referencia = base64_decode($request->getParameter("referencia"));
+        $item = $request->getParameter("item");
+
+        $declaracionDts = Doctrine::getTable("FalaDeclaracionDts")->find(array($referencia, $item));
+        if( $declaracionDts ){
+            $declaracionDts->setCaNumdeclaracion($request->getParameter("numdeclaracion"));
+            $declaracionDts->save();
+            $this->responseArray["success"]=true;
+        }
+
+        $this->setTemplate("responseTemplate");
+    }
+
+    /*
      * Panel de facturacion
      */
     public function executeObservePanelFacturacion( sfWebRequest $request ){
@@ -794,10 +892,29 @@ class falabellaAduActions extends sfActions {
             $factura->setCaReferencia( $referencia );
             $factura->setCaNumdocumento( $numdocumento );
         }
-
+        if( $this->getRequestParameter ( 'emision_fch' ) ) {
+            $factura->setCaEmisionFch( $this->getRequestParameter ( 'emision_fch' ) );
+        }
+        if( $this->getRequestParameter ( 'vencimiento_fch' ) ) {
+            $factura->setCaVencimientoFch( $this->getRequestParameter ( 'vencimiento_fch' ) );
+        }
+        if( $this->getRequestParameter ( 'moneda' ) ) {
+            $factura->setCaMoneda( $this->getRequestParameter ( 'moneda' ) );
+        }
+        if( $this->getRequestParameter ( 'tipo_cambio' ) ) {
+            $factura->setCaTipoCambio( $this->getRequestParameter ( 'tipo_cambio' ) );
+        }
+        if( $this->getRequestParameter ( 'afecto_vlr' ) ) {
+            $factura->setCaAfectoVlr( $this->getRequestParameter ( 'afecto_vlr' ) );
+        }
+        if( $this->getRequestParameter ( 'iva_vlr' ) ) {
+            $factura->setCaIvaVlr( $this->getRequestParameter ( 'iva_vlr' ) );
+        }
+        if( $this->getRequestParameter ( 'exento_vlr' ) ) {
+            $factura->setCaExentoVlr( $this->getRequestParameter ( 'exento_vlr' ) );
+        }
         $factura->save();
 
-        
         $this->responseArray["success"]=true;
         $this->setTemplate("responseTemplate");
     }
@@ -810,13 +927,11 @@ class falabellaAduActions extends sfActions {
         $numdocumento = $request->getParameter("numdocumento");
 
         $factura = Doctrine::getTable("FalaFacturacionAdu")->find(array($referencia, $numdocumento));
-        if( $factura ){
-            
+        if( $factura )
+        {
             $factura->delete();
         }
-
         $this->responseArray["success"]=true;
-
         $this->setTemplate("responseTemplate");
     }
 
@@ -835,9 +950,16 @@ class falabellaAduActions extends sfActions {
             $factura->setCaReferencia( $referencia );
             $factura->setCaNumdocumento( $numdocumento );
         }
-
+        if( $this->getRequestParameter ( 'emision_fch' ) ) {
+            $factura->setCaEmisionFch( $this->getRequestParameter ( 'emision_fch' ) );
+        }
+        if( $this->getRequestParameter ( 'vlrdocumento' ) ) {
+            $factura->setCaVlrdocumento( $this->getRequestParameter ( 'vlrdocumento' ) );
+        }
+        if( $this->getRequestParameter ( 'tipo_cambio' ) ) {
+            $factura->setCaTipoCambio( $this->getRequestParameter ( 'tipo_cambio' ) );
+        }
         $factura->save();
-
 
         $this->responseArray["success"]=true;
         $this->setTemplate("responseTemplate");
@@ -850,8 +972,8 @@ class falabellaAduActions extends sfActions {
         $numdocumento = $request->getParameter("numdocumento");
 
         $factura = Doctrine::getTable("FalaNotaCab")->find(array($referencia, $numdocumento));
-        if( $factura ){
-
+        if( $factura )
+        {
             $factura->delete();
         }
 
@@ -887,7 +1009,6 @@ class falabellaAduActions extends sfActions {
 
         $referencia = base64_decode($request->getParameter("referencia"));
         $numdocumento = $request->getParameter("numdocumento");
-        $concepto = $request->getParameter("concepto");
         $iddetalle = $request->getParameter("iddetalle");
         if( $iddetalle ){
             $detalle = Doctrine::getTable("FalaNotaDet")->find($iddetalle);
@@ -896,9 +1017,28 @@ class falabellaAduActions extends sfActions {
             $detalle = new FalaNotaDet();
             $detalle->setCaReferencia( $referencia );
             $detalle->setCaNumdocumento( $numdocumento );
-            $detalle->setCaConcepto( $concepto );
         }
-
+        if( $this->getRequestParameter ( 'concepto' ) ) {
+            $detalle->setCaIdconcepto( $this->getRequestParameter ( 'concepto' ) );
+        }
+        if( $this->getRequestParameter ( 'nit_ter' ) ) {
+            $detalle->setCaNitTer( $this->getRequestParameter ( 'nit_ter' ) );
+        }
+        if( $this->getRequestParameter ( 'tipo' ) ) {
+            $detalle->setCaTipo( $this->getRequestParameter ( 'tipo' ) );
+        }
+        if( $this->getRequestParameter ( 'factura_ter' ) ) {
+            $detalle->setCaFacturaTer( $this->getRequestParameter ( 'factura_ter' ) );
+        }
+        if( $this->getRequestParameter ( 'factura_fch' ) ) {
+            $detalle->setCaFacturaFch( $this->getRequestParameter ( 'factura_fch' ) );
+        }
+        if( $this->getRequestParameter ( 'factura_vlr' ) ) {
+            $detalle->setCaFacturaVlr( $this->getRequestParameter ( 'factura_vlr' ) );
+        }
+        if( $this->getRequestParameter ( 'factura_iva' ) ) {
+            $detalle->setCaFacturaIva( $this->getRequestParameter ( 'factura_iva' ) );
+        }
         $detalle->save();
 
         $this->responseArray["iddetalle"]=$detalle->getCaIddetalle();
@@ -919,7 +1059,6 @@ class falabellaAduActions extends sfActions {
             $detalle->delete();
             $this->responseArray["success"]=true;
         }
-
         $this->setTemplate("responseTemplate");
     }
 
