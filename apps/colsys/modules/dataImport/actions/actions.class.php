@@ -105,7 +105,7 @@ class dataImportActions extends sfActions
                                             $this->depurar_arreglo($vals);
                                             $i = 0;
                                             foreach($vals as $val) {
-                                                if ($i>=5){
+                                                if ($i==3 or $i>=5){
                                                     $val = floatval(str_replace(",","",$val));
                                                 }
                                                 if ($i==0){
