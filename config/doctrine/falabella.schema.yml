@@ -167,6 +167,7 @@ FalaInstruction:
       primary: true
     ca_iddoc: string
     ca_instructions: string
+    ca_embarque: string
   relations:
     FalaHeader:
       local: ca_iddoc
@@ -380,7 +381,6 @@ FalaDeclaracionImp:
     ca_referencia:
       type: string
       primary: true
-    ca_numdeclaracion: string
     ca_numinternacion: string
     ca_emision_fch: date
     ca_vencimiento_fch: date
@@ -426,6 +426,7 @@ FalaDeclaracionDts:
     ca_item:
       type: integer
       primary: true
+    ca_numdeclaracion: string
     ca_subpartida: string
     ca_mod: string
     ca_cantidad: decimal
