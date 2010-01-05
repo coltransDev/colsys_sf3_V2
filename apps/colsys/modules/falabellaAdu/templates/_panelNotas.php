@@ -21,7 +21,7 @@ PanelNotas = function(){
         
         title: 'Notas',
         layout:'border',
-        height: 500,
+        height: 300,
         frame:false,
         defaults: {
             collapsible: false,

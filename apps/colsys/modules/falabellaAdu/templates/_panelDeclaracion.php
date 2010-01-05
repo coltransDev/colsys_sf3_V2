@@ -21,11 +21,20 @@ PanelDeclaracion = function(){
         locked: true
       },
       {
+        header: "No.Declaración",
+        dataIndex: 'numdeclaracion',
+        sortable:false,
+        width: 120,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        }),
+        locked: true
+      },
+      {
         header: "SubPartida",
         dataIndex: 'subpartida',
         sortable:false,
-        width: 90,
-        locked: true
+        width: 90
       },
       {
         header: "Mod",
@@ -211,6 +220,7 @@ PanelDeclaracion = function(){
     
     this.record = Ext.data.Record.create([
             {name: 'item', type: 'string', mapping: 'd_ca_item'},
+            {name: 'numdeclaracion', type: 'string', mapping: 'd_ca_numdeclaracion'},
             {name: 'subpartida', type: 'string', mapping: 'd_ca_subpartida'},
             {name: 'mod', type: 'string', mapping: 'd_ca_mod'},
             {name: 'cantidad', type: 'float', mapping: 'd_ca_cantidad'},
@@ -252,7 +262,7 @@ PanelDeclaracion = function(){
 
     
     PanelDeclaracion.superclass.constructor.call(this, {
-        id: 'panel-detalle',
+        id: 'panel-declaracion',
         loadMask: {msg:'Cargando...'},
         clicksToEdit: 1,
         stripeRows: true,
@@ -279,8 +289,46 @@ PanelDeclaracion = function(){
 
 };
 
-    Ext.extend(PanelDeclaracion, Ext.grid.EditorGridPanel, {
-        height: 290
-    });
+Ext.extend(PanelDeclaracion, Ext.grid.EditorGridPanel, {
+    height: 290,
+    guardarCambios: function(){
+        var store = this.store;
+        var records = store.getModifiedRecords();
+
+        var lenght = records.length;
+
+        for( var i=0; i< lenght; i++){
+            r = records[i];
+
+            var changes = r.getChanges();
+
+            //Da formato a las fechas antes de enviarlas
+            changes['id']=r.id;
+            changes['item']=r.data.item;
+
+            if( r.data.numdeclaracion ){
+                //envia los datos al servidor
+                Ext.Ajax.request(
+                    {
+                        waitMsg: 'Guardando cambios...',
+                        url: '<?=url_for("falabellaAdu/observePanelDeclaracion?referencia=".base64_encode($referencia))?>',
+			//method: 'POST',
+                        //Solamente se envian los cambios
+                        params :	changes,
+
+                        callback :function(options, success, response){
+
+                            var res = Ext.util.JSON.decode( response.responseText );
+                            if( res.id && res.success){
+                                var rec = store.getById( res.id );
+                                rec.commit();
+                            }
+                        }
+                     }
+                );
+            }
+        }
+    }
+});
 
 </script>

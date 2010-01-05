@@ -19,18 +19,6 @@ TopPanel = function(){
         width: 60
       },
       {
-        header: "No.Declaración",
-        dataIndex: 'numdeclaracion',
-        sortable:false,
-        width: 40,
-        editor: new Ext.form.NumberField({
-				allowBlank: false ,
-				allowNegative: false,
-				style: 'text-align:left',
-				decimalPrecision :0
-			})
-      },
-      {
         header: "No.Internación",
         dataIndex: 'numinternacion',
         sortable:false,
@@ -102,7 +90,6 @@ TopPanel = function(){
 
     this.record = Ext.data.Record.create([
             {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
-            {name: 'numdeclaracion', type: 'string', mapping: 'd_ca_numdeclaracion'},
             {name: 'numinternacion', type: 'string', mapping: 'd_ca_numinternacion'},
             {name: 'emision_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_emision_fch'},
             {name: 'vencimiento_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_vencimiento_fch'},
@@ -187,7 +174,10 @@ TopPanel = function(){
                 );
 
             }
-            
+
+            var grid = Ext.getCmp("panel-declaracion");
+            grid.guardarCambios();
+
             var grid = Ext.getCmp("panel-facturacion");
             grid.guardarCambios();
 

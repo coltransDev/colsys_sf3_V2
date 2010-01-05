@@ -26,7 +26,7 @@ include_component("falabellaAdu", "panelNotas", array("fala_declaracion"=>$fala_
             id:'subpanel-tabs',
             labelAlign: 'top',
             bodyStyle:'padding:1px',
-            activeTab: 2,
+            activeTab: 0,
             //fileUpload: true,
             items: [
                 this.panelDeclaracion,

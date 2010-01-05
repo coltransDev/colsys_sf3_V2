@@ -24,7 +24,7 @@ PanelNotasCab = function(){
 				allowBlank: false ,
 				allowNegative: false,				
 				decimalPrecision :3
-			})
+	})
       },
       {
         header: "Fch. Emisión",
@@ -62,21 +62,13 @@ PanelNotasCab = function(){
 				decimalPrecision :3
 			})
       }
-      /*,
-      {
-        header: "Orden",
-        dataIndex: 'orden',
-        sortable:false,
-        width: 75,
-        align: 'right'       
-      }*/
     ];
 
     
     this.record = Ext.data.Record.create([
             {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
             {name: 'numdocumento', type: 'string', mapping: 'd_ca_numdocumento'},
-            {name: 'emision_fch', type: 'string', dateFormat:'Y-m-d', mapping: 'd_ca_emision_fch'},                        
+            {name: 'emision_fch', type: 'date', mapping: 'd_ca_emision_fch' , dateFormat:'Y-m-d'},
             {name: 'tipo_cambio', type: 'float', mapping: 'd_ca_tipo_cambio'},
             {name: 'vlrdocumento', type: 'float', mapping: 'd_ca_vlrdocumento'},
             {name: 'orden', type: 'string'}
@@ -104,7 +96,7 @@ PanelNotasCab = function(){
         title: 'Nota Cabecera',
         region:'center',
 
-        height: 350,
+        height: 150,
         //width: 600,
         selModel: new Ext.grid.CellSelectionModel({
             listeners: { cellselect:this.onCellSelect  }
@@ -129,7 +121,7 @@ PanelNotasCab = function(){
 };
 
 Ext.extend(PanelNotasCab, Ext.grid.EditorGridPanel, {
-    height: 290,
+    height: 100,
     guardarCambios: function(){
         var store = this.store;
         var records = store.getModifiedRecords();

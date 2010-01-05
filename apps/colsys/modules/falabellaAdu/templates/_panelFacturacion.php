@@ -66,7 +66,7 @@ PanelFacturacion = function(){
 			})
       },
       {
-        header: "Vlr. Afectado",
+        header: "Vlr. Afecto",
         dataIndex: 'afecto_vlr',
         sortable:false,
         width: 90,
@@ -117,8 +117,8 @@ PanelFacturacion = function(){
     this.record = Ext.data.Record.create([
             {name: 'referencia', type: 'string', mapping: 'd_ca_referencia'},
             {name: 'numdocumento', type: 'string', mapping: 'd_ca_numdocumento'},
-            {name: 'emision_fch', type: 'string', dateFormat:'Y-m-d', mapping: 'd_ca_emision_fch'},
-            {name: 'vencimiento_fch', type: 'float', dateFormat:'Y-m-d', mapping: 'd_ca_vencimiento_fch'},
+            {name: 'emision_fch', type: 'date', dateFormat:'Y-m-d', mapping: 'd_ca_emision_fch'},
+            {name: 'vencimiento_fch', type: 'date', dateFormat:'Y-m-d', mapping: 'd_ca_vencimiento_fch'},
             {name: 'moneda', type: 'string', mapping: 'd_ca_moneda'},
             {name: 'tipo_cambio', type: 'float', mapping: 'd_ca_tipo_cambio'},
             {name: 'afecto_vlr', type: 'float', mapping: 'd_ca_afecto_vlr'},

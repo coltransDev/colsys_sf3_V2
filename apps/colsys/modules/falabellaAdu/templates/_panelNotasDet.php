@@ -13,6 +13,37 @@ $data = $sf_data->getRaw( "data" );
 
 PanelNotasDet = function(){
 
+    this.editorConceptos = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        lazyRender:true,
+        store :
+            [
+            <?
+                $i=0;
+                foreach($conceptos as $concepto){
+                    if($i++!=0){
+                        echo ",";
+                    }
+                    echo "[\"".$concepto->getCaValor2()."\",\"".$concepto->getCaValor()."\"]";
+                }
+            ?>
+            ]
+    });
+
+    this.editorTipos = new Ext.form.ComboBox({
+        typeAhead: true,
+        forceSelection: true,
+        triggerAction: 'all',
+        selectOnFocus: true,
+        mode: 'local',
+        lazyRender:true,
+        store : [["F","Factura Nal."],["C","Comprobante"]]
+    });
+
     this.columns = [
       {
         header: "Documento",
@@ -21,42 +52,90 @@ PanelNotasDet = function(){
         width: 40
       },
       {
-        header: "Concepto",
+        header: "Concepto de la Nota",
         dataIndex: 'idconcepto',
         sortable:false,
-        width: 120,
+        width: 100,
+        editor: this.editorConceptos
+      },
+      {
+        header: "Tipo Doc.",
+        dataIndex: 'tipo',
+        sortable:false,
+        width: 100,
+        editor: this.editorTipos
+      },
+      {
+        header: "Nit.Tercero",
+        dataIndex: 'nit_ter',
+        sortable:false,
+        width: 80,
         editor: new Ext.form.TextField({
-				allowBlank: false 				
+            allowBlank: false
+        })
+      },
+      {
+        header: "No.Factura Terc.",
+        dataIndex: 'factura_ter',
+        sortable:false,
+        width: 100,
+        editor: new Ext.form.TextField({
+            allowBlank: false
+        })
+      },
+      {
+        header: "Fch.Factura Terc.",
+        dataIndex: 'factura_fch',
+        sortable:false,
+        width: 96,
+        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+        editor: new Ext.form.DateField({
+            format: 'Y-m-d',
+            allowBlank: false
+        })
+      },
+      {
+        header: "Vlr.Factura Sin IVA",
+        dataIndex: 'factura_vlr',
+        sortable:false,
+        width: 90,
+        align: 'right',
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:right',
+				decimalPrecision :2
 			})
       },
       {
-        header: "NIT",
-        dataIndex: 'emision_fch',
+        header: "Vlr. del IVA",
+        dataIndex: 'factura_iva',
         sortable:false,
-        width: 45,
-        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-        editor: new Ext.form.DateField({
-            format: 'Y-m-d'
-        })
+        width: 90,
+        align: 'right',
+        renderer: 'usMoney',
+        editor: new Ext.form.NumberField({
+				allowBlank: false ,
+				allowNegative: false,
+				style: 'text-align:right',
+				decimalPrecision :2
+			})
       }
-      /*,
-      {
-        header: "Orden",
-        dataIndex: 'orden',
-        sortable:false,
-        width: 75,
-        align: 'right'
-      }*/
     ];
 
 
     this.record = Ext.data.Record.create([
             {name: 'iddetalle', type: 'string', mapping: 'd_ca_iddetalle'},
             {name: 'numdocumento', type: 'string', mapping: 'd_ca_numdocumento'},
-            {name: 'idconcepto', type: 'string', mapping: 'd_ca_idconcepto'},
-            {name: 'nit_ter', type: 'string', mapping: 'd_nit_ter'},
+            {name: 'idconcepto', type: 'int', mapping: 'd_ca_idconcepto'},
+            {name: 'nit_ter', type: 'string', mapping: 'd_ca_nit_ter'},
+            {name: 'tipo', type: 'string', mapping: 'd_ca_tipo'},
+            {name: 'factura_ter', type: 'string', mapping: 'd_ca_factura_ter'},
+            {name: 'factura_fch', type: 'date', dateFormat: 'Y-m-d', mapping: 'd_ca_factura_fch'},
+            {name: 'factura_vlr', type: 'float', mapping: 'd_ca_factura_vlr'},
+            {name: 'factura_iva', type: 'float', mapping: 'd_ca_factura_iva'},
             {name: 'orden', type: 'string'}
-
         ]);
 
     this.store = new Ext.data.Store({
@@ -79,11 +158,8 @@ PanelNotasDet = function(){
         stripeRows: true,
         title: 'Nota Detalle',
         region:'south',
-        height: 250,
-        minSize: 75,
-        maxSize: 350,
 
-        height: 350,
+        height: 150,
         //width: 600,
         selModel: new Ext.grid.CellSelectionModel(),
 
@@ -106,7 +182,7 @@ PanelNotasDet = function(){
 };
 
 Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
-    height: 290,
+    height: 100,
     guardarCambios: function(){
         var store = this.store;
         var records = store.getModifiedRecords();
@@ -124,9 +200,8 @@ Ext.extend(PanelNotasDet, Ext.grid.EditorGridPanel, {
             changes['id']=r.id;
             changes['iddetalle']=r.data.iddetalle;
             changes['numdocumento']=r.data.numdocumento;
-            changes['concepto']=r.data.concepto;
 
-            if( r.data.concepto ){
+            if( r.data.idconcepto ){
                 //envia los datos al servidor
                 Ext.Ajax.request(
                     {
