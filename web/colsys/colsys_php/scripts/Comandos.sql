@@ -511,8 +511,8 @@ alter table tb_repgastos add column ca_fchactualizado timestamp;
 alter table tb_repgastos add column ca_usuactualizado varchar (20);
 
 
-alter table tb_falaheader add column ca_fchanulado timestamp;
-alter table tb_falaheader add column ca_usuanulado varchar (20);
+alter table tb_falaheader_adu add column ca_fchanulado timestamp;
+alter table tb_falaheader_adu add column ca_usuanulado varchar (20);
 
 
 
@@ -1623,3 +1623,518 @@ insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalid
 insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','COLOADING');
 insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','PARTICULARES');
 insert into tb_deducciones (ca_deduccion, ca_transporte, ca_impoexpo, ca_modalidad) values ('Devolución Contenedor', 'Marítimo','Importaciones','PROYECTOS');
+
+
+
+
+-- Table: tb_falaheader_adu
+
+-- DROP TABLE tb_falaheader_adu;
+
+CREATE TABLE tb_falaheader_adu
+(
+  ca_iddoc character varying(25) NOT NULL,
+  ca_fecha_carpeta date NOT NULL,
+  ca_archivo_origen character varying(24),
+  ca_referencia character varying(16),
+  ca_num_viaje character varying(12),
+  ca_cod_carrier character varying(4),
+  ca_codigo_puerto_pickup character varying(5),
+  ca_codigo_puerto_descarga character varying(5),
+  ca_container_mode character varying(10),
+  ca_nombre_proveedor character varying(60),
+  ca_campo_59 character varying(2),
+  ca_codigo_proveedor character varying(15),
+  ca_campo_61 character varying(60),
+  ca_monto_invoice_miles numeric(18,4),
+  ca_trader character varying(100),
+  ca_vendor_id character varying(15),
+  ca_vendor_name character varying(100),
+  ca_vendor_addr1 character varying(100),
+  ca_vendor_city character varying(15),
+  ca_vendor_country character varying(15),
+  ca_esd date,
+  ca_lsd date,
+  ca_incoterms character varying(3),
+  ca_procesado boolean,
+  ca_payment_terms character varying(15),
+  ca_proforma_number character varying(30),
+  ca_origin character varying(5),
+  ca_destination character varying(5),
+  ca_trans_ship_port character varying(15),
+  ca_reqd_delivery date,
+  ca_orden_comments text,
+  ca_manufacturer_contact character varying(30),
+  ca_manufacturer_phone character varying(25),
+  ca_manufacturer_fax character varying(25),
+  ca_fchanulado timestamp without time zone,
+  ca_usuanulado character varying(20),
+  CONSTRAINT pk_tb_falaheader_adu PRIMARY KEY (ca_iddoc),
+  CONSTRAINT fk_tb_falaheader_adu_tbusuarios_ca_usuanulado FOREIGN KEY (ca_usuanulado)
+      REFERENCES control.tb_usuarios (ca_login) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION
+)
+WITH (
+  OIDS=TRUE
+);
+ALTER TABLE tb_falaheader_adu OWNER TO postgres;
+GRANT ALL ON TABLE tb_falaheader_adu TO postgres;
+GRANT ALL ON TABLE tb_falaheader_adu TO "Administrador";
+GRANT ALL ON TABLE tb_falaheader_adu TO "Usuarios";
+
+
+
+-- Table: tb_faladetails_adu
+
+-- DROP TABLE tb_faladetails_adu;
+
+CREATE TABLE tb_faladetails_adu
+(
+  ca_iddoc character varying(25) NOT NULL,
+  ca_sku character varying(15) NOT NULL,
+  ca_vpn character varying(1),
+  ca_cantidad_pedido integer,
+  ca_cantidad_dav integer,
+  ca_cantidad_dim integer,
+  ca_valor_fob decimal,
+  ca_unidad_medidad_cantidad character varying(2),
+  ca_descripcion_item text,
+  ca_cantidad_paquetes_miles numeric(18,4),
+  ca_unidad_medida_paquetes character varying(2),
+  ca_cantidad_volumen_miles numeric(18,4),
+  ca_unidad_medida_volumen character varying(2),
+  ca_cantidad_peso_miles numeric(18,4),
+  ca_unidad_medida_peso character varying(2),
+  ca_unidad_comercial character varying(2),
+  ca_referencia_prov character varying(15),
+  ca_subpartida character varying(10),
+  ca_radicado_num character varying(10),
+  ca_registro_num character varying(10),
+  ca_descripcion_mcia character varying(250),
+  ca_preinspeccion text,
+  ca_marca character varying(25),
+  ca_tipo character varying(15),
+  ca_clase character varying(25),
+  ca_modelo character varying(10),
+  ca_ano character varying(4),
+  ca_factura_nro character varying(30),
+  ca_factura_fch date,
+  CONSTRAINT pk_tb_faladetails_adu PRIMARY KEY (ca_iddoc, ca_sku),
+  CONSTRAINT fk_tb_faladetails_adu FOREIGN KEY (ca_iddoc)
+      REFERENCES tb_falaheader_adu (ca_iddoc) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=TRUE
+);
+ALTER TABLE tb_faladetails_adu OWNER TO postgres;
+GRANT ALL ON TABLE tb_faladetails_adu TO postgres;
+GRANT ALL ON TABLE tb_faladetails_adu TO "Administrador";
+GRANT ALL ON TABLE tb_faladetails_adu TO "Usuarios";
+
+
+
+-- Table: tb_falashipmentinfo_adu
+
+-- DROP TABLE tb_falashipmentinfo_adu;
+
+CREATE TABLE tb_falashipmentinfo_adu
+(
+  ca_iddoc character varying(25) NOT NULL,
+  ca_begin_window date,
+  ca_end_window date,
+  ca_commodities character varying(15),
+  ca_partial character(1),
+  ca_payment_terms character varying(15),
+  ca_incoterms character varying(3),
+  ca_container_type character varying(10),
+  ca_utv character varying(10),
+  ca_etv character varying(10),
+  ca_line character varying(35),
+  ca_contact_line character varying(35),
+  ca_contact_importer character varying(35),
+  ca_importer_ref character varying(15),
+  ca_uppo character varying(10),
+  ca_eb character varying(35),
+  ca_edd date,
+  ca_port character varying(5),
+  ca_transshipment character(1),
+  ca_transshipment_port character varying(5),
+  ca_shipping_org character varying(1),
+  ca_original_org character(1),
+  ca_fwd_copy_org character(1),
+  ca_fcr_org character(1),
+  ca_shipping_dst character(1),
+  ca_original_dst character(1),
+  ca_fwd_copy_dst character(1),
+  ca_fcr_dst character(1),
+  ca_transport_via character(1),
+  ca_invoice_org character(1),
+  ca_packing_list_org character(1),
+  ca_document_org character(1),
+  ca_oc_org character(1),
+  ca_others_docs_org character(1),
+  ca_invoice_cps character(1),
+  ca_packing_list_cps character(1),
+  ca_document_cps character(1),
+  ca_oc_cps character(1),
+  ca_others_docs_cps character(1),
+  ca_final_port character(5),
+  ca_alter_port character varying(5),
+  ca_limit_date date,
+  CONSTRAINT tb_falashipmentinfo_adu_pkey PRIMARY KEY (ca_iddoc),
+  CONSTRAINT tb_falashipmentinfo_adu_ca_iddoc_fkey FOREIGN KEY (ca_iddoc)
+      REFERENCES tb_falashipmentinfo_adu (ca_iddoc) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_falashipmentinfo_adu OWNER TO postgres;
+GRANT ALL ON TABLE tb_falashipmentinfo_adu TO postgres;
+GRANT ALL ON TABLE tb_falashipmentinfo_adu TO "Administrador";
+GRANT ALL ON TABLE tb_falashipmentinfo_adu TO "Usuarios";
+
+
+
+
+-- Sequence: tb_falainstructions_adu_id
+
+-- DROP SEQUENCE tb_falainstructions_adu_id;
+
+CREATE SEQUENCE tb_falainstructions_adu_id
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+ALTER TABLE tb_falainstructions_adu_id OWNER TO postgres;
+GRANT ALL ON TABLE tb_falainstructions_adu_id TO postgres;
+GRANT ALL ON TABLE tb_falainstructions_adu_id TO "Administrador";
+GRANT ALL ON TABLE tb_falainstructions_adu_id TO "Usuarios";
+
+
+
+-- Table: tb_falainstructions_adu
+
+-- DROP TABLE tb_falainstructions_adu;
+
+CREATE TABLE tb_falainstructions_adu
+(
+  ca_idfalainstructions_adu integer NOT NULL DEFAULT nextval('tb_falainstructions_adu_id'::regclass),
+  ca_iddoc character varying(25) NOT NULL,
+  ca_instructions text,
+  ca_embarque character varying(2),
+  CONSTRAINT tb_falainstructions_adu_pkey PRIMARY KEY (ca_idfalainstructions_adu),
+  CONSTRAINT fk_falainstruction FOREIGN KEY (ca_iddoc)
+      REFERENCES tb_falaheader_adu (ca_iddoc) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_falainstructions_adu OWNER TO postgres;
+GRANT ALL ON TABLE tb_falainstructions_adu TO postgres;
+GRANT ALL ON TABLE tb_falainstructions_adu TO "Administrador";
+GRANT ALL ON TABLE tb_falainstructions_adu TO "Usuarios";
+
+
+
+-- Table: tb_faladeclaracion_imp
+
+-- DROP TABLE tb_faladeclaracion_imp;
+
+CREATE TABLE tb_faladeclaracion_imp
+(
+  ca_referencia character varying(16),
+  ca_numinternacion character varying(10),
+  ca_emision_fch date,
+  ca_vencimiento_fch date,
+  ca_aceptacion_fch date,
+  ca_pago_fch date,
+  ca_moneda character varying(3),
+  ca_valor_trm numeric(8,2),
+  ca_ano_trm integer,
+  ca_semana_trm integer,
+  ca_factor_trm numeric(10,3),
+  ca_fchcreado timestamp NOT NULL,
+  ca_usucreado varchar (20) NOT NULL,
+  ca_fchactualizado timestamp,
+  ca_usuactualizado varchar (20),
+  CONSTRAINT tb_faladeclaracion_imp_pkey PRIMARY KEY (ca_referencia)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_faladeclaracion_imp OWNER TO postgres;
+GRANT ALL ON TABLE tb_faladeclaracion_imp TO postgres;
+GRANT ALL ON TABLE tb_faladeclaracion_imp TO "Administrador";
+GRANT ALL ON TABLE tb_faladeclaracion_imp TO "Usuarios";
+
+
+-- Table: tb_faladeclaracion_dts
+
+-- DROP TABLE tb_faladeclaracion_dts;
+
+CREATE TABLE tb_faladeclaracion_dts
+(
+  ca_referencia character varying(16),
+  ca_item integer,
+  ca_numdeclaracion character varying(30),
+  ca_subpartida character varying(10),
+  ca_mod character varying(6),
+  ca_cantidad numeric(8,2),
+  ca_unidad character varying(3),
+  ca_valor_fob numeric(15,2),
+  ca_gastos_despacho numeric(15,2),
+  ca_flete numeric(15,2),
+  ca_seguro numeric(15,2),
+  ca_gastos_embarque numeric(15,2),
+  ca_ajuste_valor numeric(15,2),
+  ca_valor_aduana numeric(15,2),
+  ca_arancel_porcntj numeric(5,2),
+  ca_arancel numeric(15,2),
+  ca_iva_porctj numeric(5,2),
+  ca_iva numeric(15,2),
+  ca_salvaguarda_porcntj numeric(5,2),
+  ca_salvaguarda numeric(15,2),
+  ca_compensa_porcntj numeric(5,2),
+  ca_compensa numeric(15,2),
+  ca_antidump_porcntj numeric(5,2),
+  ca_antidump numeric(15,2),
+  ca_sancion numeric(15,2),
+  ca_rescate numeric(15,2),
+  ca_peso_bruto numeric(10,2),
+  ca_peso_neto numeric(10,2),
+  ca_fchcreado timestamp NOT NULL,
+  ca_usucreado varchar (20) NOT NULL,
+  ca_fchactualizado timestamp,
+  ca_usuactualizado varchar (20),
+  CONSTRAINT tb_faladeclaracion_dts_pkey PRIMARY KEY (ca_referencia, ca_item),
+  CONSTRAINT tb_faladeclaracion_dts_ca_referencia_fkey FOREIGN KEY (ca_referencia)
+      REFERENCES tb_faladeclaracion_imp (ca_referencia) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_faladeclaracion_dts OWNER TO postgres;
+GRANT ALL ON TABLE tb_faladeclaracion_dts TO postgres;
+GRANT ALL ON TABLE tb_faladeclaracion_dts TO "Administrador";
+GRANT ALL ON TABLE tb_faladeclaracion_dts TO "Usuarios";
+
+
+
+-- Table: tb_falafacturacion_adu
+
+-- DROP TABLE tb_falafacturacion_adu;
+
+CREATE TABLE tb_falafacturacion_adu
+(
+  ca_referencia character varying(16),
+  ca_numdocumento character varying(10),
+  ca_emision_fch date,
+  ca_vencimiento_fch date,
+  ca_moneda character varying(3),
+  ca_tipo_cambio numeric(8,2),
+  ca_afecto_vlr numeric(15,2),
+  ca_iva_vlr numeric(15,2),
+  ca_exento_vlr numeric(15,2),
+  ca_fchcreado timestamp NOT NULL,
+  ca_usucreado varchar (20) NOT NULL,
+  ca_fchactualizado timestamp,
+  ca_usuactualizado varchar (20),
+  CONSTRAINT tb_falafacturacion_adu_pkey PRIMARY KEY (ca_referencia),
+  CONSTRAINT tb_falafacturacion_adu_ca_referencia_fkey FOREIGN KEY (ca_referencia)
+      REFERENCES tb_faladeclaracion_imp (ca_referencia) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_falafacturacion_adu OWNER TO postgres;
+GRANT ALL ON TABLE tb_falafacturacion_adu TO postgres;
+GRANT ALL ON TABLE tb_falafacturacion_adu TO "Administrador";
+GRANT ALL ON TABLE tb_falafacturacion_adu TO "Usuarios";
+
+
+-- Table: tb_falanota_cab
+
+-- DROP TABLE tb_falanota_cab;
+
+CREATE TABLE tb_falanota_cab
+(
+  ca_referencia character varying(16),
+  ca_numdocumento character varying(7),
+  ca_emision_fch date,
+  ca_vlrdocumento numeric(15,2),
+  ca_tipo_cambio numeric(8,2),
+  ca_fchcreado timestamp NOT NULL,
+  ca_usucreado varchar (20) NOT NULL,
+  ca_fchactualizado timestamp,
+  ca_usuactualizado varchar (20),
+  CONSTRAINT tb_falanota_cab_pkey PRIMARY KEY (ca_referencia, ca_numdocumento),
+  CONSTRAINT tb_falanota_cab_ca_referencia_fkey FOREIGN KEY (ca_referencia)
+      REFERENCES tb_faladeclaracion_imp (ca_referencia) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_falanota_cab OWNER TO postgres;
+GRANT ALL ON TABLE tb_falanota_cab TO postgres;
+GRANT ALL ON TABLE tb_falanota_cab TO "Administrador";
+GRANT ALL ON TABLE tb_falanota_cab TO "Usuarios";
+
+
+-- Table: tb_falanota_det
+
+-- DROP TABLE tb_falanota_det;
+
+CREATE TABLE tb_falanota_det
+(
+  ca_referencia character varying(16),
+  ca_numdocumento character varying(7),
+  ca_idconcepto integer,
+  ca_nit_ter character varying(12),
+  ca_tipo character varying(1),
+  ca_factura_ter character varying(20),
+  ca_factura_fch date,
+  ca_factura_vlr numeric(15,2),
+  ca_factura_iva numeric(15,2),
+  ca_fchcreado timestamp NOT NULL,
+  ca_usucreado varchar (20) NOT NULL,
+  ca_fchactualizado timestamp,
+  ca_usuactualizado varchar (20),
+  CONSTRAINT tb_falanota_det_pkey PRIMARY KEY (ca_referencia, ca_numdocumento, ca_idconcepto),
+  CONSTRAINT tb_falanota_det_ca_referencia_fkey FOREIGN KEY (ca_referencia)
+      REFERENCES tb_falanota_cab (ca_referencia, ca_numdocumento) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE tb_falanota_det OWNER TO postgres;
+GRANT ALL ON TABLE tb_falanota_det TO postgres;
+GRANT ALL ON TABLE tb_falanota_det TO "Administrador";
+GRANT ALL ON TABLE tb_falanota_det TO "Usuarios";
+
+
+
+
+alter table tb_fileheader alter column ca_in_out type varchar(50);
+
+update tb_fileheader set ca_in_out = '/home/falabella/OUT' where ca_idfileheader = 1
+
+insert into tb_fileheader (ca_descripcion, ca_tipoarchivo, ca_separador, ca_separadordec, ca_in_out, ca_fchcreado, ca_usucreado) values ('P.O. Falabella Aduana', 'Long.Fija', '', '.', '/home/falafact/OUT', '2009-12-22 12:00:00', 'Administrador');
+
+// <<<< Archivo Excel con Registros tipo 4 >>>>
+
+update tb_filecolumns set ca_idregistro = (select ca_idcolumna from tb_filecolumns where ca_idfileheader = 4 and ca_columna = 'FALPOH01') where ca_idfileheader = 4 and ca_idregistro = 1;
+update tb_filecolumns set ca_idregistro = (select ca_idcolumna from tb_filecolumns where ca_idfileheader = 4 and ca_columna = 'FALPOH02') where ca_idfileheader = 4 and ca_idregistro = 44;
+update tb_filecolumns set ca_idregistro = (select ca_idcolumna from tb_filecolumns where ca_idfileheader = 4 and ca_columna = 'FALPOH03') where ca_idfileheader = 4 and ca_idregistro = 89;
+update tb_filecolumns set ca_idregistro = (select ca_idcolumna from tb_filecolumns where ca_idfileheader = 4 and ca_columna = 'FALPOD01') where ca_idfileheader = 4 and ca_idregistro = 94;
+
+/*
+    solo si es necesario!
+update tb_filecolumns set ca_idregistro = 1 where ca_idcolumna between 1 and 43;
+update tb_filecolumns set ca_idregistro = 44 where ca_idcolumna between 44 and 88;
+update tb_filecolumns set ca_idregistro = 89 where ca_idcolumna between 89 and 93;
+update tb_filecolumns set ca_idregistro = 94 where ca_idcolumna between 94 and 113;
+*/
+
+alter table tb_fileimported add column ca_proceso varchar(15);
+update tb_fileimported set ca_proceso = 'Coltrans';
+
+alter table tb_falainstructionsadu add column ca_embarque varchar(2);
+
+
+insert into tb_parametros values ('CU078',0,'Barriles','66');
+insert into tb_parametros values ('CU078',0,'Billon de Unidades','63');
+insert into tb_parametros values ('CU078',0,'Bulto','10');
+insert into tb_parametros values ('CU078',0,'Caneca','62');
+insert into tb_parametros values ('CU078',0,'Ciexto','87');
+insert into tb_parametros values ('CU078',0,'Cajas Cartón','13');
+insert into tb_parametros values ('CU078',0,'Centímetro Cúbico','85');
+insert into tb_parametros values ('CU078',0,'Centímetro','46');
+insert into tb_parametros values ('CU078',0,'Cono','35');
+insert into tb_parametros values ('CU078',0,'Cuartos','36');
+insert into tb_parametros values ('CU078',0,'Docena de Pares','21');
+insert into tb_parametros values ('CU078',0,'Docena de Piezas','79');
+insert into tb_parametros values ('CU078',0,'Decimetro Cuadrado','84');
+insert into tb_parametros values ('CU078',0,'Docena','15');
+insert into tb_parametros values ('CU078',0,'Fijo','55');
+insert into tb_parametros values ('CU078',0,'Frasco','12');
+insert into tb_parametros values ('CU078',0,'Galones','65');
+insert into tb_parametros values ('CU078',0,'Gramo','18');
+insert into tb_parametros values ('CU078',0,'Gramo Base','23');
+insert into tb_parametros values ('CU078',0,'Gran Gruesa','16');
+insert into tb_parametros values ('CU078',0,'Hojas','38');
+insert into tb_parametros values ('CU078',0,'Juego De Docena','72');
+insert into tb_parametros values ('CU078',0,'Juego(Conjunto)','20');
+insert into tb_parametros values ('CU078',0,'Kilogramo Bruto','31');
+insert into tb_parametros values ('CU078',0,'Kilogramo Seco','30');
+insert into tb_parametros values ('CU078',0,'Kilogramo Neto','33');
+insert into tb_parametros values ('CU078',0,'Kilo Base','48');
+insert into tb_parametros values ('CU078',0,'Kilo Humedo','50');
+insert into tb_parametros values ('CU078',0,'Kilo Liquido','27');
+insert into tb_parametros values ('CU078',0,'Kilo Solido','14');
+insert into tb_parametros values ('CU078',0,'Kilo Actividad','47');
+insert into tb_parametros values ('CU078',0,'Lamina','43');
+insert into tb_parametros values ('CU078',0,'Lata','51');
+insert into tb_parametros values ('CU078',0,'Libra Humeda','54');
+insert into tb_parametros values ('CU078',0,'Libra Solida','60');
+insert into tb_parametros values ('CU078',0,'Libra Seca','32');
+insert into tb_parametros values ('CU078',0,'Libra','24');
+insert into tb_parametros values ('CU078',0,'Litro','61');
+insert into tb_parametros values ('CU078',0,'Lote','26');
+insert into tb_parametros values ('CU078',0,'Megawatt Hora','74');
+insert into tb_parametros values ('CU078',0,'Miles De Juegos','66');
+insert into tb_parametros values ('CU078',0,'Miles De Yardas','22');
+insert into tb_parametros values ('CU078',0,'Miles De Unidades','45');
+insert into tb_parametros values ('CU078',0,'Miles De Metros','34');
+insert into tb_parametros values ('CU078',0,'Miles De Pulgadas','69');
+insert into tb_parametros values ('CU078',0,'Miles De Docenas','86');
+insert into tb_parametros values ('CU078',0,'Miles De Pliegos','92');
+insert into tb_parametros values ('CU078',0,'Miles De Pulgadas Cuadrada','71');
+insert into tb_parametros values ('CU078',0,'Metro Cubico','67');
+insert into tb_parametros values ('CU078',0,'Metro Cuadrado','82');
+insert into tb_parametros values ('CU078',0,'Metro Lineal','91');
+insert into tb_parametros values ('CU078',0,'Miligramo','64');
+insert into tb_parametros values ('CU078',0,'Onza','57');
+insert into tb_parametros values ('CU078',0,'Onza Troy','52');
+insert into tb_parametros values ('CU078',0,'Paca','68');
+insert into tb_parametros values ('CU078',0,'Paquetes','63');
+insert into tb_parametros values ('CU078',0,'Pares','19');
+insert into tb_parametros values ('CU078',0,'Pie','80');
+insert into tb_parametros values ('CU078',0,'Pie Cubico','83');
+insert into tb_parametros values ('CU078',0,'Pie Cuadrado','81');
+insert into tb_parametros values ('CU078',0,'Pieza','89');
+insert into tb_parametros values ('CU078',0,'Pinta','28');
+insert into tb_parametros values ('CU078',0,'Pulgada Cuadrada','75');
+insert into tb_parametros values ('CU078',0,'Pulgadas','69');
+insert into tb_parametros values ('CU078',0,'Quilates','97');
+insert into tb_parametros values ('CU078',0,'Racimos','17');
+insert into tb_parametros values ('CU078',0,'Ramo','90');
+insert into tb_parametros values ('CU078',0,'Resma','29');
+insert into tb_parametros values ('CU078',0,'Rollo','39');
+insert into tb_parametros values ('CU078',0,'Saco','25');
+insert into tb_parametros values ('CU078',0,'Sobres','94');
+insert into tb_parametros values ('CU078',0,'Tambor','70');
+insert into tb_parametros values ('CU078',0,'Tarro','40');
+insert into tb_parametros values ('CU078',0,'Tonelada Metrica Neta','42');
+insert into tb_parametros values ('CU078',0,'Tonelada Metrica Bruta','41');
+insert into tb_parametros values ('CU078',0,'Tonelada Corta','37');
+insert into tb_parametros values ('CU078',0,'Tonelada Larga','88');
+insert into tb_parametros values ('CU078',0,'Tonel','49');
+insert into tb_parametros values ('CU078',0,'Tramo','93');
+insert into tb_parametros values ('CU078',0,'Tubo','44');
+insert into tb_parametros values ('CU078',0,'Unidades O Nar','11');
+insert into tb_parametros values ('CU078',0,'Yarda Cuadrada','98');
+insert into tb_parametros values ('CU078',0,'Yarda Lineal','68');
+
+insert into tb_parametros values ('CU079',0,'Dólar Americano','USD');
+insert into tb_parametros values ('CU079',0,'Pesos Colombianos','COL');
+
+insert into tb_parametros values ('CU080',0,'Bodegajes','01');
+insert into tb_parametros values ('CU080',0,'Recargos en Destino','12');
