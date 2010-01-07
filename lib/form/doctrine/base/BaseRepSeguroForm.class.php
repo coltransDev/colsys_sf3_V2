@@ -28,14 +28,14 @@ abstract class BaseRepSeguroForm extends BaseFormDoctrine
 
     $this->setValidators(array(
       'ca_idreporte'       => new sfValidatorDoctrineChoice(array('model' => $this->getModelName(), 'column' => 'ca_idreporte', 'required' => false)),
-      'ca_vlrasegurado'    => new sfValidatorNumber(array('required' => false)),
+      'ca_vlrasegurado'    => new sfValidatorNumber(),
       'ca_idmoneda_vlr'    => new sfValidatorString(array('required' => false)),
-      'ca_primaventa'      => new sfValidatorNumber(array('required' => false)),
-      'ca_minimaventa'     => new sfValidatorNumber(array('required' => false)),
+      'ca_primaventa'      => new sfValidatorNumber(),
+      'ca_minimaventa'     => new sfValidatorNumber(),
       'ca_idmoneda_vta'    => new sfValidatorString(array('required' => false)),
-      'ca_obtencionpoliza' => new sfValidatorNumber(array('required' => false)),
+      'ca_obtencionpoliza' => new sfValidatorNumber(),
       'ca_idmoneda_pol'    => new sfValidatorString(array('required' => false)),
-      'ca_seguro_conf'     => new sfValidatorString(array('required' => false)),
+      'ca_seguro_conf'     => new sfValidatorString(),
     ));
 
     $this->widgetSchema->setNameFormat('rep_seguro[%s]');
