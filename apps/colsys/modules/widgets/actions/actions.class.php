@@ -482,7 +482,9 @@ class widgetsActions extends sfActions
 									);
 		$this->setTemplate("responseTemplate");
 	}
-    /*
+
+
+        /*
 	* Datos de los conceptos según sea el medio de transporte y la modalidad
 	*/
 	public function executeDatosConceptos(){
@@ -506,9 +508,31 @@ class widgetsActions extends sfActions
 			$row = array('idconcepto'=>$result["ca_idconcepto"], 'concepto'=>utf8_encode($result["ca_concepto"]));
 			$this->conceptos[]=$row;
 		}
-        $this->responseArray = array("root"=>$this->conceptos, "total"=>count($this->conceptos), "success"=>true);
+                $this->responseArray = array("root"=>$this->conceptos, "total"=>count($this->conceptos), "success"=>true);
 
 		$this->setTemplate("responseTemplate");
 	}
+
+
+        /*
+	* Buscar una referencia de Aduana para el módulo de Falabella
+	*/
+        public function executeDatosComboReferenciaAduana(){
+            $criterio =  $this->getRequestParameter("query");
+
+            $referencias = Doctrine_Query::create()
+                        ->select("m.ca_referencia")
+                        ->from("InoMaestraAdu m")
+                        ->addWhere("m.ca_referencia like ?", $criterio."%")
+                        ->addOrderBy("m.ca_referencia ASC")
+                        ->setHydrationMode( Doctrine::HYDRATE_ARRAY )
+                        ->limit(40)
+                        ->execute();
+
+            $this->responseArray = array( "totalCount"=>count( $referencias ), "root"=>$referencias, "success"=>true  );
+            $this->setTemplate("responseTemplate");
+
+        }
+
 }
 ?>
