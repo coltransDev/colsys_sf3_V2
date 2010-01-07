@@ -329,6 +329,165 @@ class falabellaAduActions extends sfActions {
 
 
 	/*
+	* Exportar a Excel el contenido de las ordenes asociadas con el DO
+	*/
+	public function executeExportaExcel()
+        {
+		$doc_mem = base64_decode($this->getRequestParameter ( 'iddoc' ));
+		$fala_header = Doctrine::getTable("FalaHeaderAdu")->find ( $doc_mem );
+                $this->referencia = $fala_header->getCaReferencia();
+		$this->forward404Unless($fala_header);
+
+                $fala_details = Doctrine::getTable("FalaHeaderAdu")
+                               ->createQuery("h")
+                               ->innerJoin("h.FalaDetailAdu d")
+                               ->select("h.ca_referencia, d.*")
+                               ->where("h.ca_referencia = ? ", $fala_header->getCaReferencia())
+                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                               ->execute();
+
+                $salida = "ca_iddoc\t";
+                $salida.= "ca_sku\t";
+                $salida.= "ca_vpn\t";
+                $salida.= "ca_cantidad_pedido\t";
+                $salida.= "ca_cantidad_dav\t";
+                $salida.= "ca_cantidad_dim\t";
+                $salida.= "ca_valor_fob\t";
+                $salida.= "ca_unidad_medidad_cantidad\t";
+                $salida.= "ca_descripcion_item\t";
+                $salida.= "ca_cantidad_paquetes_miles\t";
+                $salida.= "ca_unidad_medida_paquetes\t";
+                $salida.= "ca_cantidad_volumen_miles\t";
+                $salida.= "ca_unidad_medida_volumen\t";
+                $salida.= "ca_cantidad_peso_miles\t";
+                $salida.= "ca_unidad_medida_peso\t";
+                $salida.= "ca_unidad_comercial\t";
+                $salida.= "ca_referencia_prov\t";
+                $salida.= "ca_subpartida\t";
+                $salida.= "ca_radicado_num\t";
+                $salida.= "ca_registro_num\t";
+                $salida.= "ca_descripcion_mcia\t";
+                $salida.= "ca_preinspeccion\t";
+                $salida.= "ca_marca\t";
+                $salida.= "ca_tipo\t";
+                $salida.= "ca_clase\t";
+                $salida.= "ca_modelo\t";
+                $salida.= "ca_ano\t";
+                $salida.= "ca_factura_nro\t";
+                $salida.= "ca_factura_fch\t";
+                $salida.= "\r\n";
+
+                foreach( $fala_details as $fala_detail ){
+                    $salida.= $fala_detail["d_ca_iddoc"]."\t"; // 3
+                    $salida.= $fala_detail["d_ca_sku"]."\t"; // 4
+                    $salida.= $fala_detail["d_ca_vpn"]."\t"; // 5
+                    $salida.= $fala_detail["d_ca_cantidad_pedido"]."\t"; // 6
+                    $salida.= $fala_detail["d_ca_cantidad_dav"]."\t"; // 7
+                    $salida.= $fala_detail["d_ca_cantidad_dim"]."\t"; // 8
+                    $salida.= $fala_detail["d_ca_valor_fob"]."\t"; // 9
+                    $salida.= $fala_detail["d_ca_unidad_medidad_cantidad"]."\t"; // 10
+                    $salida.= $fala_detail["d_ca_descripcion_item"]."\t"; // 11
+                    $salida.= $fala_detail["d_ca_cantidad_paquetes_miles"]."\t"; // 12
+                    $salida.= $fala_detail["d_ca_unidad_medida_paquetes"]."\t"; // 13
+                    $salida.= $fala_detail["d_ca_cantidad_volumen_miles"]."\t"; // 14
+                    $salida.= $fala_detail["d_ca_unidad_medida_volumen"]."\t"; // 15
+                    $salida.= $fala_detail["d_ca_cantidad_peso_miles"]."\t"; // 16
+                    $salida.= $fala_detail["d_ca_unidad_medida_peso"]."\t"; // 17
+                    $salida.= $fala_detail["d_ca_unidad_comercial"]."\t"; // 18
+                    $salida.= $fala_detail["d_ca_referencia_prov"]."\t"; // 19
+                    $salida.= $fala_detail["d_ca_subpartida"]."\t"; // 20
+                    $salida.= $fala_detail["d_ca_radicado_num"]."\t"; // 21
+                    $salida.= $fala_detail["d_ca_registro_num"]."\t"; // 22
+                    $salida.= $fala_detail["d_ca_descripcion_mcia"]."\t"; // 23
+                    $salida.= $fala_detail["d_ca_preinspeccion"]."\t"; // 24
+                    $salida.= $fala_detail["d_ca_marca"]."\t"; // 25
+                    $salida.= $fala_detail["d_ca_tipo"]."\t"; // 26
+                    $salida.= $fala_detail["d_ca_clase"]."\t"; // 27
+                    $salida.= $fala_detail["d_ca_modelo"]."\t"; // 28
+                    $salida.= $fala_detail["d_ca_ano"]."\t"; // 29
+                    $salida.= $fala_detail["d_ca_factura_nro"]."\t"; // 30
+                    $salida.= $fala_detail["d_ca_factura_fch"]."\t"; // 31
+                    $salida.= "\r\n";
+                }
+
+		$this->salida = $salida;
+        }
+
+
+	/*
+	* Importa desde Excel el contenido de las ordenes asociadas con el DO
+	*/
+	public function executeImportaExcel( $request ){
+
+            if ($request->isMethod('post')){
+                $referencia = substr($_FILES['archivo']['name'],0,3).".".substr($_FILES['archivo']['name'],3,2).".".substr($_FILES['archivo']['name'],5,2).".".substr($_FILES['archivo']['name'],7,3).".".substr($_FILES['archivo']['name'],10,1);
+
+                $ref_mem = NULL;
+                $file = $_FILES['archivo']['tmp_name'];
+
+                $handle = fopen($file, "r");
+                $input = fread($handle, filesize($file));
+                $input = str_replace(chr(34), "", $input);
+
+                $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
+
+                foreach($records as $record){       // Hace una primera lectura para verificar la estructura del archivo
+                    
+                    if(stristr($record, 'ca_iddoc') === FALSE and strlen(trim($record)) != 0) {
+
+                        $fields = explode(chr($this->getRequestParameter( 'separador' )), $record); // Divide el archivo en campos por el separador
+
+                        if ( count($fields) != 29 ){
+                            echo "¡El archivo tiene errores en su estructura, por tanto no se puede importar! ";
+                            exit;
+                        }
+
+                    }else if(stristr($record, 'ca_iddoc') !== FALSE) {
+
+                        $nameFields = explode(chr($this->getRequestParameter( 'separador' )), $record); // Toma los nombres de los campos
+
+                    }
+
+                }
+
+                $details = Doctrine::getTable("FalaDetailAdu") // Elimina los registros anteriores
+                               ->createQuery("d")
+                               ->delete()
+                               ->where("ca_iddoc IN (SELECT h.ca_iddoc FROM FalaHeaderAdu h WHERE h.ca_referencia=?)", $referencia )
+                               ->setHydrationMode(Doctrine::HYDRATE_SCALAR)                               
+                               ->execute();
+
+                $records = explode(chr(10),$input); // Divide el archivo por los Saltos de Línea
+
+                foreach($records as $record){
+                    
+                    if(stristr($record, 'ca_iddoc') === FALSE and strlen(trim($record)) != 0) {
+
+                        $fields = explode(chr($this->getRequestParameter( 'separador' )), $record); // Divide el archivo en campos por el separador
+
+                        $falaDetailAdu = new FalaDetailAdu();
+                        $i = 0;
+                        foreach($fields as $field){
+                            $set = ucwords(str_replace("_"," ",$nameFields[$i]));
+                            $set = "set".str_replace(" ","",$set);
+                            $i++;
+
+                            $falaDetailAdu->$set($field);
+                        }
+                        $falaDetailAdu->save();
+
+                    }
+
+                }
+
+                $this->redirect("falabellaAdu/list");
+            }
+            
+        }
+
+
+
+	/*
 	* Genera el archivo de salida para Aprocom
 	*/
 	public function executeGeneraAprocom()
@@ -377,7 +536,6 @@ class falabellaAduActions extends sfActions {
                 }
 
 		$this->salida = $salida;
-
         }
 
 
