@@ -13,11 +13,6 @@ class FalaDeclaracionImpTable extends Doctrine_Table
             $query.= "  fsp.ca_iddoc, fsp.ca_num_viaje, fsp.ca_subpartida, fsp.ca_prorrateo_fob from tb_faladeclaracion_imp fdi "; // fvf.ca_subtotal_fob,
             $query.= "  inner join (select * from tb_faladeclaracion_dts where ca_referencia = '$referencia') fdd on fdd.ca_referencia = fdi.ca_referencia ";
 
-            //$query.= "  inner join (select fh.ca_referencia, ca_subpartida, sum(ca_valor_fob) as ca_subtotal_fob from ";
-            //$query.= "      tb_faladetails_adu fd ";
-            //$query.= "      inner join tb_falaheader_adu fh on fd.ca_iddoc = fh.ca_iddoc where fh.ca_referencia = '$referencia' ";
-            //$query.= "      group by fh.ca_referencia, fd.ca_subpartida) fvf on fvf.ca_referencia = fdi.ca_referencia and fvf.ca_subpartida = fdd.ca_subpartida ";
-
             $query.= "  inner join (select fh.ca_referencia, fh.ca_iddoc, fh.ca_num_viaje, fd.ca_subpartida, sum(fd.ca_valor_fob) as ca_prorrateo_fob from ";
             $query.= "      tb_falaheader_adu fh ";
             $query.= "      inner join tb_faladetails_adu fd on fd.ca_iddoc = fh.ca_iddoc where fh.ca_referencia = '$referencia' ";
