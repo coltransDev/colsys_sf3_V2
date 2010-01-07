@@ -5,7 +5,7 @@
 */	
 ?>
 <div align="center">
-<table width="800px" border="1" class="tableList">
+<table width="800px" border="1" class="tableList alignLeft">
 	<tr>
 		<th width="57" scope="col">Consecutivo</th>
 		<th width="57" scope="col">Versi&oacute;n</th>

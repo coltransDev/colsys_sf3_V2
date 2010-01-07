@@ -10,7 +10,7 @@
 <br />
 <br />
 <form action="<?=url_for( "reportesNeg/busquedaReporte?modo=".$modo	)?>" method="post">
-<table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" class="tableList">
+<table width="550px" align="center" border="0" cellpadding="5px" cellspacing="1px" class="tableList alignLeft">
 	<tr>
 		<th colspan="3" style='font-size: 12px; font-weight:bold;'><b>Sistema Reporte de negocios </b>		</th>
 	</tr>

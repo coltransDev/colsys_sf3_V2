@@ -129,7 +129,20 @@ class reportesNegComponents extends sfComponents
 	* Edita la informacion basica del trayecto
 	* @author: Andres Botero
 	*/
-	public function executeTrayecto()
+	public function executeFormCliente()
+	{
+        $this->incotermsVals = Doctrine::getTable("Parametro")
+                                     ->createQuery("p")
+                                     ->where("ca_casouso = ?", "CU021")
+                                     ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                                     ->execute();
+    }
+
+    /*
+	* Edita la informacion basica del trayecto
+	* @author: Andres Botero
+	*/
+	public function executeFormTrayecto()
 	{
         
     }
@@ -138,7 +151,7 @@ class reportesNegComponents extends sfComponents
 	* Edita la informacion basica del cliente
 	* @author: Andres Botero
 	*/
-	public function executePreferenciasCliente()
+	public function executeFormPreferenciasCliente()
 	{
 
     }
@@ -147,7 +160,7 @@ class reportesNegComponents extends sfComponents
 	* Edita la informacion aduana
 	* @author: Andres Botero
 	*/
-	public function executeAduana()
+	public function executeFormAduana()
 	{
         $this->repaduana = Doctrine::getTable("RepAduana")->find( $this->reporte->getCaIdreporte());
         if( !$this->repaduana ){
@@ -163,7 +176,7 @@ class reportesNegComponents extends sfComponents
 	* Edita la informacion seguro
 	* @author: Andres Botero
 	*/
-	public function executeSeguros()
+	public function executeFormSeguros()
 	{
         $this->usuarios = UsuarioTable::getUsuariosSeguros();
 
@@ -177,7 +190,7 @@ class reportesNegComponents extends sfComponents
 	* Instrucciones para el corte de la guia
 	* @author: Andres Botero
 	*/
-	public function executeCorteGuias()
+	public function executeFormCorteGuias()
 	{
 
 		
@@ -188,7 +201,7 @@ class reportesNegComponents extends sfComponents
 	* Continuacion de viaje (OTM, DTA, CABOTAJE)
 	* @author: Andres Botero
 	*/
-	public function executeContinuacion()
+	public function executeFormContinuacion()
 	{
         
     }
@@ -197,9 +210,54 @@ class reportesNegComponents extends sfComponents
 	* Formulario de exportaciones
 	* @author: Andres Botero
 	*/
-	public function executeExportaciones()
+	public function executeFormExportaciones()
 	{
+        $this->repexpo = Doctrine::getTable("RepExpo")->find( $this->reporte->getCaIdreporte());
+        if( !$this->repexpo ){
+            $this->repexpo = new RepExpo();
+        }
 
+    }
+
+    public function executeConsultaTrayecto(){
+        
+    }
+
+    public function executeConsultaExportaciones(){
+
+        $this->repexpo = Doctrine::getTable("RepExpo")->find( $this->reporte->getCaIdreporte());
+        if( !$this->repexpo ){
+            $this->repexpo = new RepExpo();
+        }
+        
+        //$this->tiposexpo = ParametroTable::retrieveByCaso( "CU011" );
+    }
+
+
+    /*
+	* Consulta la informacion aduana
+	* @author: Andres Botero
+	*/
+	public function executeConsultaAduana()
+	{
+        $this->repaduana = Doctrine::getTable("RepAduana")->find( $this->reporte->getCaIdreporte());
+        if( !$this->repaduana ){
+            $this->repaduana = new RepAduana();
+        }
+
+
+    }
+
+    /*
+	* Consulta la informacion seguro
+	* @author: Andres Botero
+	*/
+	public function executeConsultaSeguros()
+	{
+        $this->repseguro = Doctrine::getTable("RepSeguro")->find( $this->reporte->getCaIdreporte());
+        if( !$this->repseguro ){
+            $this->repseguro = new RepSeguro();
+        }
     }
 
 	

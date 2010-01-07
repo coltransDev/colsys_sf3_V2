@@ -353,8 +353,64 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
             
             <tr >
                 <td colspan="6">
-                    <div id="tab-panel"></div>
-                    
+
+                    <div class="tab-pane" id="tab-pane-1">
+                        <div class="tab-page">
+                            <h2 class="tab">Trayecto</h2>
+                            <?
+                            include_component("reportesNeg", "formTrayecto", array("form"=>$form, "reporte"=>$reporte))
+                            ?>
+
+                            <div  id="continuacion-div">
+                            <?
+                            include_component("reportesNeg", "formContinuacion", array("form"=>$form, "reporte"=>$reporte ) );
+                            ?>
+                            </div>
+
+                        </div>
+                        <div class="tab-page">
+                            <h2 class="tab">Cliente</h2>
+                            <?
+                            include_component("reportesNeg", "formCliente", array("form"=>$form, "reporte"=>$reporte, "ca_idconcliente"=>$ca_idconcliente, "idproveedor"=>$idproveedor, "orden_prov"=>$orden_prov, "incoterms"=>$incoterms, "ca_notify"=>$ca_notify,"idconsignatario"=>$idconsignatario, "idmaster"=>$idmaster, "idnotify"=>$idnotify, "idrepresentante"=>$idrepresentante ) );
+                            ?>
+                        </div>
+                        <div class="tab-page">
+                            <h2 class="tab">Preferencias</h2>
+                            <?
+                            include_component("reportesNeg", "formPreferenciasCliente", array("form"=>$form, "reporte"=>$reporte, "contactos"=>$contactos))
+                            ?>
+                        </div>
+                        <div class="tab-page">
+                            <h2 class="tab">Aduana</h2>
+                            <?
+                            include_component("reportesNeg", "formAduana", array("form"=>$form, "formAduana"=>$formAduana, "reporte"=>$reporte) );
+                            ?>
+                        </div>
+                        <div class="tab-page">
+                            <h2 class="tab">Seguros</h2>
+                            <?
+                            include_component("reportesNeg", "formSeguros", array("form"=>$form, "formSeguro"=>$formSeguro, "reporte"=>$reporte, "seguro_conf"=>$seguro_conf) );
+                            ?>
+                            
+                        </div>
+                       
+                        <div class="tab-page" >
+                            <h2 class="tab">Guias</h2>
+                            <div  id="guias-div">
+                            <?
+                            include_component("reportesNeg", "formCorteGuias", array("form"=>$form, "reporte"=>$reporte ) );
+                            ?>
+                            </div>
+                        </div>
+                        <div class="tab-page">
+                            <h2 class="tab">Exportaciones</h2>
+                            <div  id="expo-div">
+                            <?
+                            include_component("reportesNeg", "formExportaciones", array("form"=>$form, "formExpo"=>$formExpo, "reporte"=>$reporte ) );
+                            ?>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>     
             
@@ -381,97 +437,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
         </table>
     </form>
 
-    
-
-</div>
-
-
-
-
-
-
-
-
-<div id="trayecto"  class="x-hide-display">
-    
-    <?
-    include_component("reportesNeg", "formTrayecto", array("form"=>$form, "reporte"=>$reporte))
-    ?>
-
-    <div  id="continuacion-div">
-    <?
-    include_component("reportesNeg", "formContinuacion", array("form"=>$form, "reporte"=>$reporte ) );
-    ?>
-    </div>
-
-</div>
-<div id="cliente"  class="x-hide-display">
-    
-    <?
-    include_component("reportesNeg", "formCliente", array("form"=>$form, "reporte"=>$reporte, "ca_idconcliente"=>$ca_idconcliente, "idproveedor"=>$idproveedor, "orden_prov"=>$orden_prov, "incoterms"=>$incoterms, "ca_notify"=>$ca_notify,"idconsignatario"=>$idconsignatario, "idmaster"=>$idmaster, "idnotify"=>$idnotify, "idrepresentante"=>$idrepresentante ) );
-    ?>
-</div>
-<div id="preferencias"  class="x-hide-display">
-    
-    <?
-    include_component("reportesNeg", "formPreferenciasCliente", array("form"=>$form, "reporte"=>$reporte, "contactos"=>$contactos))
-    ?>
-</div>
-<div id="aduana"  class="x-hide-display">
-    
-    <?
-    include_component("reportesNeg", "formAduana", array("form"=>$form, "formAduana"=>$formAduana, "reporte"=>$reporte) );
-    ?>
-</div>
-<div id="seguros"  class="x-hide-display">
-    
-    <?
-    include_component("reportesNeg", "formSeguros", array("form"=>$form, "formSeguro"=>$formSeguro, "reporte"=>$reporte, "seguro_conf"=>$seguro_conf) );
-    ?>
-
-</div>
-
-<div id="guias"  class="x-hide-display">
-    
-    <div  id="guias-div">
-    <?
-    include_component("reportesNeg", "formCorteGuias", array("form"=>$form, "reporte"=>$reporte ) );
-    ?>
-    </div>
-</div>
-<div id="exportaciones"  class="x-hide-display">
-   
-    <div  id="expo-div">
-    <?
-    include_component("reportesNeg", "formExportaciones", array("form"=>$form, "formExpo"=>$formExpo, "reporte"=>$reporte ) );
-    ?>
-    </div>
-</div>
-
-
-
-<script type="text/javascript">
-     tabpanel = new Ext.TabPanel({
-        bodyStyle: 'padding: 5px 5px 5px 5px;',
-        width:850,
-        activeTab: 0,
-        frame:false,
-        defaults:{autoHeight: true},
-        items:[
-            {contentEl:'trayecto', title: 'Trayecto'},
-            {contentEl:'cliente', title: 'Cliente'},
-            {contentEl:'preferencias', title: 'Preferencias'},
-            {contentEl:'aduana', title: 'Aduana'},
-            {contentEl:'seguros', title: 'Seguros'},
-            {contentEl:'guias', title: 'Guias'},
-            {contentEl:'exportaciones', title: 'Exportaciones'}
-        ]
-    });
-
-    tabpanel.render('tab-panel');
-    tabpanel.setWidth(Ext.getBody().getWidth()-250);
-
-    var ds = new Ext.data.Store({
+    <script language="javascript">
+       var ds = new Ext.data.Store({
             proxy: new Ext.data.HttpProxy({
                 url: '<?=url_for('widgets/listaContactosClientesJSON')?>'
             }),
@@ -524,7 +491,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                             valueNotFoundText: 'No encontrado' ,
                             minChars: 1,
                             tpl: resultTpl,
-                            width: 400,
+                            width: 400,                            
                             applyTo: "idconcliente",
                             itemSelector: 'div.search-item',
                             emptyText:'Escriba el nombre del cliente...',
@@ -540,8 +507,8 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                     this.fireEvent('select', this, record, index);
                                 }
                                 var mensaje = "";
-
-
+                                
+                                
                                 <?
                                 if($nivel>=2){
                                 ?>
@@ -549,10 +516,10 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
                                 <?
                                 }else{
                                 ?>
-
+                                            
                                  document.getElementById("comercial").innerHTML=record.data.vendedor;
 
-                                <?
+                                <?                                        
                                 }
                                 ?>
 
@@ -598,9 +565,10 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 
                             }
                         });
+       
+    </script>
 
-    
-</script>
+</div>
 
 
 <script language="javascript">
@@ -608,6 +576,6 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
     cambiarAduana();
     cambiarSeguros();
 
-
-
+    
+    
 </script>

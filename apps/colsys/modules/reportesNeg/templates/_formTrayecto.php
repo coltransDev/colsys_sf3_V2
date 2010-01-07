@@ -6,7 +6,7 @@
  */
 
 ?>
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
     <tr>
         <th colspan="4"><b>Datos del trayecto</b></th>
     </tr>

@@ -12,7 +12,7 @@
 
 
 <div class="content" align="center">
-    <table class="tableList" width="90%">
+    <table class="tableList alignLeft" width="90%">
         <tr>
             <th> Liquidacion Reporte de Negocio</th>
         </tr>

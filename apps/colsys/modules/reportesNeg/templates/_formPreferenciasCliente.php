@@ -7,7 +7,7 @@
 $contactos = $sf_data->getRaw("contactos");
 $reporte = $sf_data->getRaw("reporte");
 ?>
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
     <tr>
         <th colspan="2"><b>Preferencias Cliente</b></th>
     </tr>

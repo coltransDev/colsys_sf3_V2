@@ -17,6 +17,16 @@
 		var idtercero = document.getElementById(fldId).value;
 		ventanaTercero(tipo, fldId, idtercero);
 	}
+    
+    function eliminarTercero(fldId){
+		document.getElementById(fldId).value="";
+        Ext.getCmp(fldId+"_cmp").setValue("");
+        document.getElementById("editar"+fldId).style.display="none";
+        document.getElementById("eliminar"+fldId).style.display="none";
+		
+	}
+
+
 
 	function ventanaTercero(tipo, fldId, idtercero){
 		if( idtercero ){
@@ -143,7 +153,7 @@
 									document.getElementById( fldId ).value=res.idtercero;
 									Ext.getCmp(fldId+"_cmp").setValue(res.nombre);
 									document.getElementById("editar"+fldId).style.display="inline";
-
+                                    document.getElementById("eliminar"+fldId).style.display="inline";
 								}else{
 									alert("Ha ocurrido un error al crear el registro");
 								}

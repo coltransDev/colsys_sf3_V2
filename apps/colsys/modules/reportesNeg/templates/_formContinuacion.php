@@ -7,7 +7,7 @@
 //$usuarios = $sf_data->getRaw("usuarios");
 
 ?>
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
      <tr >
          <th colspan="4" ><b>Continuaci&oacute;n de viaje</b></th>
      </tr>
@@ -23,7 +23,6 @@
         </td>
     </tr>
     <tr id="continuacion-row0">
-
         <td width="33%" valign="top" ><b>Destino Final:</b><br />
                 <?
                 echo $form['ca_continuacion_dest']->renderError();
@@ -45,16 +44,6 @@
                 }
                 echo $form['ca_continuacion_conf']->render();
                 ?>
-
-
-             
-            
         </td>
     </tr>
-    
-	
-		
-
-
-
 </table>

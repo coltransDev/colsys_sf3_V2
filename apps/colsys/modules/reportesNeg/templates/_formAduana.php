@@ -7,7 +7,7 @@
 
 ?>
 
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
      <tr >
          <th colspan="3" ><b>Aduana</b></th>
      </tr>
@@ -26,9 +26,10 @@
         <td >
             <div id="titulo-aduana" >
                 <b>Transporte Nacional</b>
+
             </div>
         </td>
-		<td  rowspan="3"><b>Instrucciones Especiales para Colmas:</b><br />
+        <td  rowspan="3" valign="top"><b>Instrucciones Especiales</b><br />
 			<?
             echo $formAduana['ca_instrucciones']->renderError();
             if( $reporte ){

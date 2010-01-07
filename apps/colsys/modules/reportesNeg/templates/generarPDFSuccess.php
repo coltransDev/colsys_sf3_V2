@@ -405,7 +405,7 @@ if( ($reporte->getCaImpoexpo()==Constantes::IMPO && $reporte->getCaColmas()=="Sí
         $titulo1 = "21.1 Con Colmas:  ";
     }
     $usuario = Doctrine::getTable("Usuario")->find( $repaduana->getCaCoordinador () );
-	$pdf->Row ( array ( $titulo1. $repaduana->getCaTransnacarga (), "21.2 Tipo:\n" . $repaduana->getCaTransnatipo(), "21.4 Coordinador:\n" . $usuario->getCaNombre (), $repaduana->getCaInstrucciones () ) );
+	$pdf->Row ( array ( $titulo1. $repaduana->getCaTransnacarga (), "21.2 Tipo:\n" . $repaduana->getCaTransnatipo(), "21.4 Coordinador:\n" . ($usuario?$usuario->getCaNombre():""), $repaduana->getCaInstrucciones () ) );
 }
 
 

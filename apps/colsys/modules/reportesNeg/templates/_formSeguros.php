@@ -7,7 +7,7 @@
 $usuarios = $sf_data->getRaw("usuarios");
 
 ?>
-<table class="tableList" width="100%">
+<table class="tableList alignLeft" width="100%">
      <tr >
          <th colspan="3" ><b>Seguros</b></th>
      </tr>
@@ -24,48 +24,16 @@ $usuarios = $sf_data->getRaw("usuarios");
     </tr>
     <tr id="seguros-row0">
          <td colspan="4">
-             <b>Notificar Seguro:</b>
-             <table class="tableList" width="100%">
-                <?
-                $count = count( $usuarios );
-                $k = 0;
-                for($i=0; $i<round($count-(round($count%3))/3)/3; $i++) {
-                    ?>
-                <tr>
-                    <?
-                    for($j=0; $j<3; $j++) {
-                        if( isset($usuarios[$k]) ){
-                            $usuario = $usuarios[$k];
-                            
-                            $checked = false;
-                            if( $seguro_conf==$usuario->getCaLogin() ){
-                                $checked = true;
-                            }elseif( (!$repseguro->getCaSeguroConf()&&$usuario->getCaEmail()=="seguros@coltrans.com.co") ||  $repseguro->getCaSeguroConf()==$usuario->getCaLogin() ){
-                                $checked = true;
-                            }
+             <b>Notificar Seguro:</b><br />
 
-                            ?>
-                            <td>
-                                <input type="radio" name="seguro_conf" value="<?=$usuario->getCaLogin()?>"  <?=$checked?"checked='checked'":""?> />
-                                <?                                
-                                echo $usuario->getCaNombre();
-                                ?>
-                            </td>
-                        <?
-                        }else{
-                        ?>
-                            <td>&nbsp;</td>
-                        <?
-                        }
-                        $k++;
-
-                    }
-                    ?>
-                </tr>
-                <?
-                }
-                ?>
-                </table>
+             <?
+            echo $formSeguro['ca_seguro_conf']->renderError();
+            if( $repseguro ){
+                $formSeguro->setDefault('ca_seguro_conf', $repseguro->getCaSeguroConf() );
+            }
+            echo $formSeguro['ca_seguro_conf']->render();
+            ?>
+             
             </td>
     </tr>
 

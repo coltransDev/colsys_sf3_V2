@@ -6,7 +6,7 @@
  */
 
 ?>
-<table class="tableList" width="100%" id="consignar-expo">
+<table class="tableList alignLeft" width="100%" id="consignar-expo">
      <tr >
          <th colspan="2" ><b>Instrucciones para el corte de guias</b></th>
      </tr>
@@ -40,7 +40,7 @@
         </td>
     </tr>
 </table>
-<table class="tableList" width="100%" id="consignar-impo">
+<table class="tableList alignLeft" width="100%" id="consignar-impo">
      <tr >
          <th colspan="2" ><b>Instrucciones para el corte de guias</b></th>
      </tr>
