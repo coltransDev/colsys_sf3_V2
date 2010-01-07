@@ -23,20 +23,17 @@ switch($action){
 		$button[1]["tooltip"]="Genera Archivo Plano con Información para Aprocom";
 		$button[1]["image"]="22x22/kexi_kexi.gif";
 		$button[1]["link"]= "falabellaAdu/generaAprocom?iddoc=".$this->getRequestParameter("iddoc");
-/*
-		$button[2]["name"]="Exportar";
-		$button[2]["tooltip"]="Exportar la informaci&oacute;n a la carpeta IN";
-		$button[2]["image"]="22x22/kexi_kexi.gif";
-		$button[2]["link"]= "#";
-		$button[2]["onClick"]= "export_file()";
 
-		$button[3]["name"]="Facturaci&oacute;n";
-		$button[3]["tooltip"]="Exportar informaci&oacute;n de Facturaci&oacute;n en la carpeta IN";
-		$button[3]["image"]="22x22/kexi_kexi.gif";
-		$button[3]["link"]= "#";
-		$button[3]["onClick"]= "factura_file()";
-*/
-		
+		$button[2]["name"]="Exportar";
+		$button[2]["tooltip"]="Exportar a Excel el contenido de las ordenes asociadas con el DO";
+		$button[2]["image"]="22x22/kchart_chrt.gif";
+		$button[2]["link"]= "falabellaAdu/exportaExcel?iddoc=".$this->getRequestParameter("iddoc");
+
+		$button[3]["name"]="Importa";
+		$button[3]["tooltip"]="Importa desde Excel el contenido de las ordenes asociadas con el DO";
+		$button[3]["image"]="22x22/todo.gif";
+		$button[3]["link"]= "falabellaAdu/importaExcel?iddoc=".$this->getRequestParameter("iddoc");
+
 		$button[4]["name"]="Anular";
 		$button[4]["tooltip"]="Anular la Orden de Pedido";
 		$button[4]["image"]="22x22/cancel.gif";
