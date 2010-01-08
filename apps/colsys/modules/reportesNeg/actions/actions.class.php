@@ -98,8 +98,8 @@ class reportesNegActions extends sfActions
         $response = sfContext::getInstance()->getResponse();
 
 		$response->addJavaScript("extExtras/RowExpander",'last');
-        $response->addJavaScript("tabpane/tabpane",'last');
-        $response->addStylesheet("tabpane/luna/tab",'last');
+        //$response->addJavaScript("tabpane/tabpane",'last');
+        //$response->addStylesheet("tabpane/luna/tab",'last');
 
 
 
@@ -136,7 +136,7 @@ class reportesNegActions extends sfActions
 
 
         
-
+        //print_r( $_POST );
         
         
 		if( $this->getRequestParameter("id") ){
@@ -159,6 +159,22 @@ class reportesNegActions extends sfActions
                                              ->execute();
         foreach( $modalidadesAduana as $row ){
             $this->modalidadesAduana[]=$row["m_ca_idmodalidad"];
+        }
+
+
+
+        $this->bodegas = Doctrine::getTable("Bodega")
+                                             ->createQuery("b")
+                                             ->select("b.*")
+                                             ->addOrderBy("b.ca_tipo ASC")
+                                             ->addOrderBy("b.ca_nombre ASC")
+                                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                             ->execute();
+
+        foreach( $this->bodegas as $key=>$val ){
+            $this->bodegas[$key]["b_ca_tipo"] = utf8_encode($this->bodegas[$key]["b_ca_tipo"]);
+            $this->bodegas[$key]["b_ca_transporte"] = utf8_encode($this->bodegas[$key]["b_ca_transporte"]);
+            $this->bodegas[$key]["b_ca_nombre"] = utf8_encode($this->bodegas[$key]["b_ca_nombre"]);
         }
 
         $formAduana = new RepAduanaForm();
@@ -482,7 +498,8 @@ class reportesNegActions extends sfActions
                     $reporte->setCaIdconsignar( $bindValues["ca_idconsignar_expo"] );
                     $reporte->setCaIdconsignarmaster( $bindValues["ca_idconsignarmaster"] );
                 }else{
-                    $reporte->setCaIdconsignar( 1 );
+                    $reporte->setCaIdconsignar( $bindValues["ca_idconsignar_impo"] );
+                    $reporte->setCaIdbodega( $bindValues["ca_idbodega"] );
                     $reporte->setCaMastersame( $bindValues["ca_mastersame"] );
                 }
 
@@ -588,10 +605,7 @@ class reportesNegActions extends sfActions
         foreach($this->traficos as $key=>$val){
 			$this->traficos[$key]["ca_nombre"] = utf8_encode( $this->traficos[$key]["ca_nombre"] );
 		}
-        /*$response = sfContext::getInstance()->getResponse();
-		$response->addJavaScript("tabpane/tabpane",'last');
-        $response->addStylesheet("tabpane/luna/tab",'last');*/
-
+        
         $this->reporte=$reporte;
         $this->form = $form;
         $this->formAduana = $formAduana;

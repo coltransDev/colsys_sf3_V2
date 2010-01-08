@@ -47,9 +47,16 @@ switch($action){
 		$button[3]["name"]="Copiar ";
 		$button[3]["tooltip"]="Genera un archivo PDF con el reporte";
 		$button[3]["image"]="22x22/copy.gif"; 			
-		$button[3]["link"]= "reportesNeg/copiarReporte?id=".$this->getRequestParameter("id")."&modo=".$this->getRequestParameter("modo")."&token=".md5(time());
+		$button[3]["link"]= "reportesNeg/copiarReporte?id=".$this->getRequestParameter("id");
 		
-		
+
+        $button[4]["name"]="Anular ";        
+		$button[4]["tooltip"]="Anula el reporte actual";
+		$button[4]["image"]="22x22/cancel.gif";
+        $button[4]["confirm"]="Esta seguro?";
+		$button[4]["link"]= "reportesNegreportesNeg/anularReporte?id=".$this->getRequestParameter("id");
+
+
 		break;	
 	case "verReporte":		
 		$button[1]["name"]="Volver ";

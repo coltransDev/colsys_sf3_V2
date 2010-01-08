@@ -312,7 +312,8 @@ PanelConceptosFletes = function( config ){
             rowcontextmenu: this.onRowcontextMenu,
             beforeedit:this.onBeforeEdit,
             dblclick:this.onDblClickHandler
-        }
+        },
+        boxMinHeight: 400
         
 
 

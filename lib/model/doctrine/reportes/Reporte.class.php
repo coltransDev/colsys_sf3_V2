@@ -289,21 +289,22 @@ class Reporte extends BaseReporte
 	* @author Andres Botero
 	*/
 	public function getRecargos( $tipo=null ){
-
-		$c = new Criteria();
-		$c->addJoin(  TipoRecargoPeer::CA_IDRECARGO, RepGastoPeer::CA_IDRECARGO );
-		if( $this->getCaImpoexpo()=="Importación"){
+        $q = Doctrine::getTable("RepGasto")
+                       ->createQuery("r")
+                       ->innerJoin("r.TipoRecargo t");
+		
+		$q->addWhere("r.ca_idreporte = ? ", $this->getCaIdreporte());
+		if( $this->getCaImpoexpo()==Constantes::IMPO ){
 			if( $tipo == "local" ){
-				$c->add( TipoRecargoPeer::CA_TIPO, "Recargo Local" );
+                $q->addWhere("t.ca_tipo = ? ", Constantes::RECARGO_LOCAL);		
 			}
-
+            
 			if( $tipo == "origen" ){
-				$c->add( TipoRecargoPeer::CA_TIPO, "Recargo en Origen" );
+                 $q->addWhere("t.ca_tipo = ? ", Constantes::RECARGO_EN_ORIGEN);		
 			}
 		}
-		$c->addAscendingOrderByColumn( RepGastoPeer::OID );
-		$c->add( RepGastoPeer::CA_IDREPORTE, $this->getCAIdreporte() );
-		$gastos = RepGastoPeer::doSelect( $c );
+		
+		$gastos = $q->execute();
 
 		return $gastos;
 	}
@@ -314,16 +315,16 @@ class Reporte extends BaseReporte
 	*/
 	public function getCostos(  ){
 
-		$c = new Criteria();
-		$c->addJoin(  RepCostoPeer::CA_IDCOSTO,  CostoPeer::CA_IDCOSTO  );
-		$c->addAscendingOrderByColumn( RepCostoPeer::OID );
-
-		$c->add( CostoPeer::CA_IMPOEXPO , "Aduanas" );
-
-		if( $this->getCaImpoexpo()=="Exportación" ){
-			$c->addOr( CostoPeer::CA_IMPOEXPO , "Exportacion" );
-		}
-		return $this->getRepCostos( $c );
+        $q = Doctrine::getTable("RepCosto")
+                  ->createQuery("c")
+                  ->innerJoin("c.Costo co");
+        $q->addWhere("c.ca_idreporte = ? ", $this->getCaIdreporte());
+		if( $this->getCaImpoexpo()==Constantes::EXPO ){			
+            $q->addWhere( "co.ca_impoexpo = ? OR co.ca_impoexpo = ? " , array("Aduanas", Constantes::EXPO) );
+		}else{
+            $q->addWhere( "co.ca_impoexpo = ? " , "Aduanas" );
+        }
+		return $q->execute();
 	}
 
 	/*
@@ -675,6 +676,32 @@ class Reporte extends BaseReporte
 
 	}
 
+    /*
+     * Devuelve true si corresponde a solo aduana
+     */
+    public function esSoloAduana(){
+        $modalidadesAduana = Doctrine::getTable("Modalidad")
+                                             ->createQuery("m")
+                                             ->select("m.ca_idmodalidad")
+                                             ->where("m.ca_modalidad = ? OR m.ca_modalidad = ?", array("NACIONALIZACION", "ADUANA"))
+                                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                                             ->execute();
+
+        if( in_array( $this->getCaModalidad(), array("NACIONALIZACION", "ADUANA") ) ){
+            return true;
+        }else{
+            return false;
+        }
+        /*
+         Deberia ser algo asi
+        foreach( $modalidadesAduana as $modalidad ){
+            if( $this->getCaModalidad()==$modalidad["ca_idmodalidad"] ){                
+                return true;
+            }
+
+        }
+        return false;*/
+    }
 
     /*
 	* Devuelve la ubicacion del directorio donde se encuentran los archivos de la referencia

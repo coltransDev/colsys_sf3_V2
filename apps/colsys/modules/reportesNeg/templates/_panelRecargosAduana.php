@@ -233,7 +233,8 @@ PanelRecargosAduana = function( config ){
             validateedit: this.onValidateEdit,
             rowcontextmenu: this.onRowcontextMenu,           
             dblclick:this.onDblClickHandler
-        }
+        },
+        boxMinHeight: 400
         
 
 

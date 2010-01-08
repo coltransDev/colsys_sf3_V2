@@ -15,15 +15,14 @@ MainPanel = function( config ){
 
 
     MainPanel.superclass.constructor.call(this, {
-        activeTab: 0
+        activeTab: 0,
+        title: 'Reportes de Negocio'
     });
 
 
 };
 
 Ext.extend(MainPanel, Ext.TabPanel, {        
-
-
 
 
 });

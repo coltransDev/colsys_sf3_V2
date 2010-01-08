@@ -218,6 +218,12 @@ class reportesNegComponents extends sfComponents
         }
 
     }
+    
+    public function executeInfoReporte()
+	{
+        
+    }
+
 
     public function executeConsultaTrayecto(){
         
@@ -258,6 +264,17 @@ class reportesNegComponents extends sfComponents
         if( !$this->repseguro ){
             $this->repseguro = new RepSeguro();
         }
+    }
+
+
+    /*
+	* Instrucciones para el corte de la guia
+	* @author: Andres Botero
+	*/
+	public function executeConsultaCorteGuias()
+	{
+
+
     }
 
 	

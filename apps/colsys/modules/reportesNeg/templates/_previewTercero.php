@@ -19,7 +19,7 @@
         </td>
     </tr>
     <tr>
-        <td colspan="2"><b>Contacto:</b><br />
+        <td colspan="2" ><b>Contacto:</b><br />
             <?=Utils::replace($tercero->getCaContacto())?>
         </td>
         <td><b>Direcci&oacute;n:</b><br />
@@ -27,15 +27,15 @@
         </td>
     </tr>
     <tr>
-        <td>
+        <td width="25%">
             <b>Tel&eacute;fono</b>:<br />
             <?=$tercero->getCaTelefonos()?>
         </td>
-        <td>
+        <td width="25%">
             <b>Fax</b>:<br />
             <?=$tercero->getCaFax()?>
         </td>
-        <td>
+        <td width="50%">
             <b>Correo Electr&oacute;nico</b>:<br />
             <?=$tercero->getCaEmail()?>
         </td>

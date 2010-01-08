@@ -8,7 +8,7 @@
 $traficos = $sf_data->getRaw("traficos");
 $reporte = $sf_data->getRaw("reporte");
 $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
-
+$bodegas = $sf_data->getRaw("bodegas");
 ?>
 <script language="javascript">
 
@@ -100,6 +100,8 @@ $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
              
              document.getElementById("incoterms-expo").style.display="";
 
+             Ext.getCmp("tab-expo").enable();
+
 
         }
         else{
@@ -113,6 +115,7 @@ $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
              document.getElementById("expo-div").style.display="none";
              document.getElementById("continuacion-div").style.display="";
              document.getElementById("incoterms-expo").style.display="none";
+             Ext.getCmp("tab-expo").disable();
 
         }
 
@@ -146,6 +149,8 @@ $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
             document.getElementById("emisionbl").style.display = "none";
             document.getElementById("cuantosbl").style.display = "none";
         }
+
+        llenarTipos();
 
     }
 
@@ -252,6 +257,93 @@ $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
         }
     }
 
+    var bodegas = <?=json_encode($bodegas)?>
+    
+    function llenarBodegas(){
+        var tipo = document.getElementById("reporte_tipo").value;
+        var transporte = document.getElementById( "reporte_ca_transporte" ).value;
+        var bodega = document.getElementById("reporte_ca_idbodega");
+        bodega.length = 0;
+        for( i in bodegas ){
+            var tr = bodegas[i]["b_ca_transporte"];            
+            if( typeof(tr)!="undefined" ){
+                if( tipo==bodegas[i]["b_ca_tipo"] && tr.indexOf(transporte)!=-1 && bodegas[i]["b_ca_tipo"] ){
+                    var selected = false;
+                    <?
+                    $bodega = $reporte->getBodega();
+                    if( $bodega && $bodega->getCaTipo() ){
+                    ?>
+                        if( bodegas[i]["b_ca_idbodega"]=="<?=$bodega->getCaIdbodega()?>" ){
+                            selected = true;
+                        }
+                    <?
+                    }
+                    ?>
+                    bodega[bodega.length] = new Option(bodegas[i]["b_ca_nombre"],bodegas[i]["b_ca_idbodega"],false,selected);
+                }
+            }
+        }
+    }
+
+    function llenarTipos(){
+        var transporte = document.getElementById( "reporte_ca_transporte" ).value;
+        var tipo = document.getElementById("reporte_tipo");
+        tipo.length=0;
+        
+        var idconsignar = document.getElementById("reporte_ca_idconsignar_impo");
+        idconsignar.length=0;
+
+        var lastTipo = "";
+        for( i in bodegas ){
+            var tr = bodegas[i]["b_ca_transporte"];
+            if( typeof(tr)!="undefined" ){
+                if( bodegas[i]["b_ca_tipo"] == 'Coordinador Logístico' || bodegas[i]["b_ca_tipo"] == 'Operador Multimodal'){
+                    //Llena la casilla Consignar HAWB/HBL a:
+
+                    var selected2 = false;
+                    <?
+                    if( $reporte->getCaIdconsignar() ){
+                    ?>
+                        if( bodegas[i]["b_ca_idbodega"]=="<?=$reporte->getCaIdconsignar()?>" ){
+                            selected2 = true;                            
+                        }
+                    <?
+                    }
+                    ?>
+
+                    if( transporte=='<?=Constantes::AEREO?>'){
+                        if(   bodegas[i]["b_ca_tipo"] == 'Coordinador Logístico' ){
+                            idconsignar[idconsignar.length] = new Option(bodegas[i]["b_ca_nombre"],bodegas[i]["b_ca_idbodega"],false,selected2);
+                        }
+                    }else{
+                        idconsignar[idconsignar.length] = new Option(bodegas[i]["b_ca_nombre"],bodegas[i]["b_ca_idbodega"],false,selected2);
+                    }
+                }else{
+                    //Llena transladar a:
+                    if( lastTipo!=bodegas[i]["b_ca_tipo"] && tr.indexOf(transporte)!=-1 && bodegas[i]["b_ca_tipo"] ){
+                        lastTipo=bodegas[i]["b_ca_tipo"];
+                        var selected = false;
+                        <?
+                        $bodega = $reporte->getBodega();
+                        if( $bodega && $bodega->getCaTipo() ){
+                        ?>
+                            if( bodegas[i]["b_ca_tipo"]=="<?=$bodega->getCaTipo()?>" ){
+                                selected = true;
+                            }
+                        <?
+                        }
+                        ?>
+
+                        tipo[tipo.length] = new Option(bodegas[i]["b_ca_tipo"],bodegas[i]["b_ca_tipo"],false,selected);
+                    }
+                }
+            }
+        }
+
+       
+        llenarBodegas();
+    }
+    
 
     
 
@@ -260,11 +352,11 @@ $modalidadesAduana = $sf_data->getRaw("modalidadesAduana");
 <?
 include_partial("ventanaTercero", array("reporte"=>$reporte));
 ?>
-
+<form action="<?=url_for("reportesNeg/formReporte")?>" method="post">
 <div align="center" class="content">
     <h1>Reportes de Negocio</h1>
     <br />
-    <form action="<?=url_for("reportesNeg/formReporte")?>" method="post">
+    
         <?        
         
 
@@ -379,7 +471,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 
             </tr>
         </table>
-    </form>
+    
 
     
 
@@ -408,7 +500,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
 <div id="cliente"  class="x-hide-display">
     
     <?
-    include_component("reportesNeg", "formCliente", array("form"=>$form, "reporte"=>$reporte, "ca_idconcliente"=>$ca_idconcliente, "idproveedor"=>$idproveedor, "orden_prov"=>$orden_prov, "incoterms"=>$incoterms, "ca_notify"=>$ca_notify,"idconsignatario"=>$idconsignatario, "idmaster"=>$idmaster, "idnotify"=>$idnotify, "idrepresentante"=>$idrepresentante ) );
+    include_component("reportesNeg", "formCliente", array("form"=>$form, "reporte"=>$reporte, "ca_idconcliente"=>$ca_idconcliente, "idproveedor"=>$idproveedor, "orden_prov"=>$orden_prov, "incoterms"=>$incoterms, "ca_notify"=>$ca_notify ) );
     ?>
 </div>
 <div id="preferencias"  class="x-hide-display">
@@ -435,7 +527,7 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
     
     <div  id="guias-div">
     <?
-    include_component("reportesNeg", "formCorteGuias", array("form"=>$form, "reporte"=>$reporte ) );
+    include_component("reportesNeg", "formCorteGuias", array("form"=>$form, "reporte"=>$reporte, "ca_notify"=>$ca_notify,"idconsignatario"=>$idconsignatario, "idmaster"=>$idmaster, "idnotify"=>$idnotify, "idrepresentante"=>$idrepresentante ) );
     ?>
     </div>
 </div>
@@ -448,23 +540,23 @@ include_partial("ventanaTercero", array("reporte"=>$reporte));
     </div>
 </div>
 
-
+</form>
 
 <script type="text/javascript">
-     tabpanel = new Ext.TabPanel({
-        bodyStyle: 'padding: 5px 5px 5px 5px;',
+     var bodyStyle = 'padding: 5px 5px 5px 5px;';
+     tabpanel = new Ext.TabPanel({       
         width:850,
-        activeTab: 0,
+        activeTab: 5,
         frame:false,
         defaults:{autoHeight: true},
         items:[
-            {contentEl:'trayecto', title: 'Trayecto'},
-            {contentEl:'cliente', title: 'Cliente'},
-            {contentEl:'preferencias', title: 'Preferencias'},
-            {contentEl:'aduana', title: 'Aduana'},
-            {contentEl:'seguros', title: 'Seguros'},
-            {contentEl:'guias', title: 'Guias'},
-            {contentEl:'exportaciones', title: 'Exportaciones'}
+            {contentEl:'trayecto', title: 'Trayecto',  bodyStyle: bodyStyle},
+            {contentEl:'cliente', title: 'Cliente',  bodyStyle: bodyStyle},
+            {contentEl:'preferencias', title: 'Preferencias', bodyStyle: bodyStyle},
+            {contentEl:'aduana', title: 'Aduana', bodyStyle: bodyStyle},
+            {contentEl:'seguros', title: 'Seguros', bodyStyle: bodyStyle},
+            {contentEl:'guias', title: 'Corte de guias', bodyStyle: bodyStyle},
+            {contentEl:'exportaciones', title: 'Exportaciones', id: 'tab-expo', bodyStyle: bodyStyle}
         ]
     });
 

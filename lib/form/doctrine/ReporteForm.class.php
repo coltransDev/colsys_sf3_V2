@@ -15,22 +15,31 @@ class ReporteForm extends BaseReporteForm
     
 
     public function configure(){
-        $this->widgetSchema['ca_origen']=new sfWidgetFormCity( );
-
-        //$this->widgetSchema['pais_destino']=new sfWidgetFormCountry(array("link"=>"ciudad_destino", 'add_empty'=>true), array("id"=>"pais_destino"));
-        $this->widgetSchema['ca_destino']=new sfWidgetFormCity();
+        
 
         $q = Doctrine_Query::create()->select("p.*, i.ca_nombre")->from("IdsProveedor p")->innerJoin("p.Ids i")->addOrderBy("i.ca_nombre");
         $this->widgetSchema['ca_idlinea']=new sfWidgetFormDoctrineChoice(array("model"=>"IdsProveedor",
                                                                             'add_empty' => false,
                                                                             'query' => $q
                                                                       ));
-        $q = Doctrine_Query::create()->select("a.*, i.ca_nombre")->from("IdsAgente a")->innerJoin("a.Ids i")->addOrderBy("i.ca_nombre");
-        $this->widgetSchema['ca_idagente']=new sfWidgetFormDoctrineChoice(array("model"=>"IdsAgente",
-                                                                            'add_empty' => false,
-                                                                            'query' => $q
-                                                                      ));
-
+        $agentes = Doctrine_Query::create()
+                             ->select("a.*, i.ca_nombre, t.ca_nombre")
+                             ->from("IdsAgente a")
+                             ->innerJoin("a.Ids i")
+                             ->innerJoin("i.IdsSucursal s")
+                             ->innerJoin("s.Ciudad c")
+                             ->innerJoin("c.Trafico t")
+                             ->where("s.ca_principal = ?", true)
+                             ->addOrderBy("t.ca_nombre")
+                             ->addOrderBy("i.ca_nombre")
+                             ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                             ->execute();
+        $choices = array();
+        foreach( $agentes as $agente ){
+            $choices[$agente["a_ca_idagente"]] = $agente["t_ca_nombre"]." - ".$agente["i_ca_nombre"] ;
+        }
+        $this->widgetSchema['ca_idagente']=new sfWidgetFormChoice(array("choices" => $choices));
+        
 
         $this->widgetSchema['ca_idconcliente']=new sfWidgetFormInputHidden();
         $this->widgetSchema['ca_fchreporte']=new sfWidgetFormInputHidden();
@@ -52,6 +61,22 @@ class ReporteForm extends BaseReporteForm
 
 
         $this->widgetSchema['ca_modalidad']=new sfWidgetFormChoice( array( "choices" => array() ), array("onChange" => "cambiarModalidad()"));
+
+
+       
+        $this->widgetSchema['ca_origen']=new sfWidgetFormCity();
+        $this->widgetSchema['ca_destino']=new sfWidgetFormCity();
+         /*
+        Se debe incluir esto en la accion
+        $country_reporte = $request->getParameter("country_reporte");
+        $this->ca_traorigen = $country_reporte["ca_origen"];
+        $this->ca_tradestino = $country_reporte["ca_destino"];
+
+        $bindValues = $request->getParameter("reporte");
+        $this->ca_origen = $bindValues["ca_origen"];
+        $this->ca_destino = $bindValues["ca_destino"];
+        */
+
 
         $this->widgetSchema['ca_continuacion']=new sfWidgetFormChoice( array( "choices" => array() ), array("onChange" => "cambiarContinuacion()"));
 
@@ -93,7 +118,7 @@ class ReporteForm extends BaseReporteForm
         $this->widgetSchema['ca_idconsignar_expo']=new sfWidgetFormChoice( array( "choices" => $choices) );
 
         $this->widgetSchema['ca_idconsignar_impo']=new sfWidgetFormChoice( array( "choices" => array()) );
-        $this->widgetSchema['tipo']=new sfWidgetFormChoice( array( "choices" => array()) );
+        $this->widgetSchema['tipo']=new sfWidgetFormChoice( array( "choices" => array()),array("onchange"=>"llenarBodegas()") );
         $this->widgetSchema['ca_idbodega']=new sfWidgetFormChoice( array( "choices" => array()) );
 
 
@@ -133,6 +158,8 @@ class ReporteForm extends BaseReporteForm
 
         $this->validatorSchema['ca_idproveedor'] = new sfValidatorString(array('required'=>false));
 
+
+        $this->validatorSchema['tipo'] = new sfValidatorString(array('required'=>false));
         /*
         $this->useFields(array('ca_origen', 'ca_destino', 'ca_idlinea', 'ca_idagente','ca_colmas',
                                'ca_fchdespacho', 'ca_impoexpo', 'ca_transporte', 'ca_modalidad',
