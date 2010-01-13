@@ -7,7 +7,7 @@
 
 if( $cotizacion ){
     
-    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion, "modo"=>"consulta"));
+    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion, "producto"=>$producto , "modo"=>"consulta"));
     ?>
 
     <script type="text/javascript">
@@ -102,6 +102,12 @@ if( $cotizacion ){
                         }
                     }
 
+
+                    if( r.data.tipo=="concepto" ){
+                        lastConcepto = r.data.iditem;
+                        lastConceptoTxt = r.data.item;
+                    }
+
                     if( !existe && (r.data.tipo=="concepto" || (r.data.tipo=="recargo" && lastConcepto==r.data.idconcepto))){//De esta manera se evita que se incluya un recargo sin su concepto
 
                         var newRec = new recordConceptos({
@@ -145,9 +151,7 @@ if( $cotizacion ){
                             newRec.set("orden", lastConceptoTxt+"-"+r.data.item);
                         }                        
 
-                        if( r.data.tipo=="concepto" ){
-                            lastConcepto = r.data.iditem;
-                            lastConceptoTxt = r.data.item;
+                        if( r.data.tipo=="concepto" ){                            
                             newRec.set("orden", r.data.item);
                         }
 

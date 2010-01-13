@@ -244,14 +244,14 @@ PanelConceptosFletes = function( config ){
         hideable: false,
         sortable:false,
         editor: <?=include_component("widgets", "monedas" ,array("id"=>""))?>
-      },
+      }/*,
       {
         header: "Orden",
         dataIndex: 'orden',
         width: 50,
         sortable:true
 
-      }
+      }*/
      ];
 
 
@@ -464,63 +464,86 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
 
             var recordConcepto = this.record;
             var storeGrid = this.store;
-            store.each( function( r ){
-                   
-                    if( r.data.idconcepto==e.value ){                        
-                        if( !rec.data.iditem && rec.data.tipo=="concepto" ){
-                            var newRec = new recordConcepto({
 
-                               idreporte: '<?=$reporte->getCaIdreporte()?>',
-
-                               item: '+',
-                               iditem: '',
-                               tipo: 'concepto',
-                               cantidad: '',
-                               neta_tar: '',
-                               neta_min: '',
-                               neta_idm: '',
-                               reportar_tar: '',
-                               reportar_min: '',
-                               reportar_idm: '',
-                               cobrar_tar: '',
-                               cobrar_min: '',
-                               cobrar_idm: '',
-                               detalles: '',
-                               orden: 'Z' // Se utiliza Z por que el orden es alfabetico
-                            });
-
-
-                            newRec.data.concepto = "";
-                            if( r.data.idconcepto=="9999" ){
-                                rec.set("orden", "Y");                                
-                                rec.set("iditem", "9999");
-                                rec.commit();
-                            }else{                                
-                                rec.set("iditem", r.data.idconcepto);
-                                rec.set("idconcepto", r.data.idconcepto);
-                                rec.set("neta_tar", 0);
-                                rec.set("neta_min", 0);
-                                rec.set("neta_idm", "USD");
-                                rec.set("reportar_tar", 0);
-                                rec.set("reportar_min", 0);
-                                rec.set("reportar_idm", "USD");
-                                rec.set("cobrar_tar", 0);
-                                rec.set("cobrar_min", 0);
-                                rec.set("cobrar_idm", "USD");
-                                rec.set("orden", "X");
-                                //guardarGridProductosRec( rec );
+            store.each( function( r ){                   
+                    if( r.data.idconcepto==e.value ){      
+                        
+                        //Verifica que no este repetido
+                        var existe = false;
+                        recordsConceptos = storeGrid.getRange();
+                        for( var j=0; j< recordsConceptos.length&&!existe; j++){
+                            if( recordsConceptos[j].data.tipo=="concepto" ){
+                                if( recordsConceptos[j].data.iditem==r.data.idconcepto){
+                                    existe=true;
+                                }
                             }
 
-                            //Inserta una columna en blanco al final
-                            storeGrid.addSorted(newRec);
-                            storeGrid.sort("orden", "ASC");
-
-                        }else{
-                            rec.set("idmoneda", "USD");
-                            rec.set("iditem", r.data.idconcepto);
+                            if( recordsConceptos[j].data.tipo=="recargo" ){
+                                if( recordsConceptos[j].data.iditem==r.data.idconcepto && recordsConceptos[j].data.idconcepto==rec.data.idconcepto ){
+                                    existe=true;
+                                }
+                            }
                         }
-                        e.value = r.data.concepto;
 
+                        if( !existe ){
+                            if( !rec.data.iditem && rec.data.tipo=="concepto" ){
+                                var newRec = new recordConcepto({
+
+                                   idreporte: '<?=$reporte->getCaIdreporte()?>',
+
+                                   item: '+',
+                                   iditem: '',
+                                   tipo: 'concepto',
+                                   cantidad: '',
+                                   neta_tar: '',
+                                   neta_min: '',
+                                   neta_idm: '',
+                                   reportar_tar: '',
+                                   reportar_min: '',
+                                   reportar_idm: '',
+                                   cobrar_tar: '',
+                                   cobrar_min: '',
+                                   cobrar_idm: '',
+                                   detalles: '',
+                                   orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                                });
+
+
+                                newRec.data.concepto = "";
+                                if( r.data.idconcepto=="9999" ){
+                                    rec.set("orden", "Y");
+                                    rec.set("iditem", "9999");
+                                    rec.commit();
+                                }else{
+                                    rec.set("iditem", r.data.idconcepto);
+                                    rec.set("idconcepto", r.data.idconcepto);
+                                    rec.set("neta_tar", 0);
+                                    rec.set("neta_min", 0);
+                                    rec.set("neta_idm", "USD");
+                                    rec.set("reportar_tar", 0);
+                                    rec.set("reportar_min", 0);
+                                    rec.set("reportar_idm", "USD");
+                                    rec.set("cobrar_tar", 0);
+                                    rec.set("cobrar_min", 0);
+                                    rec.set("cobrar_idm", "USD");
+                                    rec.set("orden", r.data.concepto);
+                                    //guardarGridProductosRec( rec );
+                                }
+
+                                //Inserta una columna en blanco al final
+                                storeGrid.addSorted(newRec);
+                                storeGrid.sort("orden", "ASC");
+
+                            }else{
+                                rec.set("idmoneda", "USD");
+                                rec.set("iditem", r.data.idconcepto);
+                            }
+                            e.value = r.data.concepto;
+                        }else{
+                            alert("Esta agregando un concepto que ya existe");
+                            e.value = "+";
+                            return false;
+                        }
                         return true;
                     }
                 }
@@ -657,6 +680,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
 
             var idconcepto = rec.data.iditem;
             
+            
             if( idconcepto=="9999" ){
                 var orden = "Y-Z";
             }
@@ -684,6 +708,8 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
                                    orden: orden // Se utiliza Z por que el orden es alfabetico
                                 });
             //newRec.id = rec.data.id+1;
+
+
             this.store.addSorted(newRec);
             this.store.sort("orden", "ASC");
 
@@ -697,11 +723,9 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
             newRec.set("cobrar_min", 0);
             newRec.set("cobrar_idm", "USD");
             newRec.set("aplicacion", "<?=$aplicaciones[0]?>");
-            
-           
+
+
          }
-        
-        
     }
     ,
     onContextHide: function(){
