@@ -7,28 +7,29 @@
 
 if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
     include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion));
+    include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
 }
 ?>
 <script type="text/javascript">
 
+function guardarDatosPaneles(){
+    grid_productos.guardarItems();
+    grid_recargos.guardarItems();
+    updateContViajeModel();
+    updateSeguroModel();
+    guardarGridAgentes();
+
+}
 
 SubPanel = function(){
     
-    function guardarItems(){		
-		grid_productos.guardarItems();
-		updateRecargosModel();
-		updateContViajeModel();		
-		updateSeguroModel();
-		guardarGridAgentes();
-		
-	}
+    
 
     <?
 
 
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS ){
-        //mejor cambie grilla x grid, suena mejor        
-        include_component("cotizaciones","grillaRecargos",array("cotizacion"=>$cotizacion,"tipo"=>"Recargo Local"));
+        //mejor cambie grilla x grid, suena mejor                
         include_component("cotizaciones","grillaContViajes",array("cotizacion"=>$cotizacion));
         include_component("cotizaciones","grillaAgentes",array("cotizacion"=>$cotizacion));
     }
@@ -52,6 +53,7 @@ SubPanel = function(){
     if( $cotizacion->getCaEmpresa() == Constantes::COLTRANS  ){
     ?>
     grid_productos = new PanelProductos();
+    grid_recargos = new PanelRecargosCotizacion();
     <?
     }
     ?>

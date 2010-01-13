@@ -201,7 +201,7 @@ var grid_agentes = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en Seguros',
 		iconCls: 'disk',  // reference to our css
-		handler: guardarItems
+		handler: guardarDatosPaneles
 	}
 	,
 	{

@@ -763,7 +763,7 @@ Ext.extend(PanelConceptosFletes, Ext.grid.EditorGridPanel, {
         ?>
     },
 
-    importarConceptosFletes: function(){
+    importarCotizacion: function(){
         if( !this.win ){
             this.win = new CotizacionWindow();
         }

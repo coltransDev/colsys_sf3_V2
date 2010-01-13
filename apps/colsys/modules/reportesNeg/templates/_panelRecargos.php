@@ -10,6 +10,8 @@
 $recargos = $sf_data->getRaw("recargos");
 
 $aplicaciones = array("Valor Fijo","Sobre Flete","Sobre Flete + Recargos","Unitario x Peso/Volumen","Unitario x Pieza","Unitario x BLs/HAWBs");
+
+include_component("reportesNeg","cotizacionRecargosWindow", array("reporte"=>$reporte));
 ?>
 <script type="text/javascript">
 
@@ -212,7 +214,7 @@ PanelRecargos = function( config ){
     PanelRecargos.superclass.constructor.call(this, {
        loadMask: {msg:'Cargando...'},
        clicksToEdit: 1,
-
+       id: 'panel-recargos',
        plugins: [this.expander],
        view: new Ext.grid.GridView({
 
@@ -342,55 +344,72 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
             var recordConcepto = this.record;
             var storeGrid = this.store;
             store.each( function( r ){
-                   
-                    if( r.data.idconcepto==e.value ){                        
-                        if( !rec.data.iditem ){
-                            var newRec = new recordConcepto({
+                    var existe = false;
+                    if( r.data.idconcepto==e.value ){
 
-                               idreporte: '<?=$reporte->getCaIdreporte()?>',
+                        //Verifica que no se haya incluido
+                        recordsConceptos = storeGrid.getRange();
+                        for( var j=0; j< recordsConceptos.length&&!existe; j++){
 
-                               item: '+',
-                               iditem: '',
-                               idconcepto: '9999',
-                               tipo: 'recargo',
-                               cantidad: '',
-                               neta_tar: '',
-                               neta_min: '',
-                               neta_idm: '',
-                               reportar_tar: '',
-                               reportar_min: '',
-                               reportar_idm: '',
-                               cobrar_tar: '',
-                               cobrar_min: '',
-                               cobrar_idm: '',
-                               detalles: '',
-                               orden: 'Z' // Se utiliza Z por que el orden es alfabetico
-                            });
+                            if( recordsConceptos[j].data.iditem==r.data.idconcepto){
+                                existe=true;
+                            }
 
-
-                                                      
-                            rec.set("iditem", r.data.idconcepto);
-                            rec.set("idconcepto", r.data.idconcepto);
-                            rec.set("tipo_app", "$");
-                            rec.set("aplicacion", "<?=$aplicaciones[0]?>");
-                            rec.set("cobrar_tar", 0);
-                            rec.set("cobrar_min", 0);
-                            rec.set("cobrar_idm", "USD");
-                            rec.set("orden", "Y-Z");
-                                //guardarGridProductosRec( rec );
-                            
-
-                            //Inserta una columna en blanco al final
-                            storeGrid.addSorted(newRec);
-                            storeGrid.sort("orden", "ASC");
-
-                        }else{
-                            rec.set("idmoneda", "USD");
-                            rec.set("iditem", r.data.idconcepto);
                         }
-                        e.value = r.data.concepto;
+                        if( !existe ){
 
-                        return true;
+                            if( !rec.data.iditem ){
+                                var newRec = new recordConcepto({
+
+                                   idreporte: '<?=$reporte->getCaIdreporte()?>',
+
+                                   item: '+',
+                                   iditem: '',
+                                   idconcepto: '9999',
+                                   tipo: 'recargo',
+                                   cantidad: '',
+                                   neta_tar: '',
+                                   neta_min: '',
+                                   neta_idm: '',
+                                   reportar_tar: '',
+                                   reportar_min: '',
+                                   reportar_idm: '',
+                                   cobrar_tar: '',
+                                   cobrar_min: '',
+                                   cobrar_idm: '',
+                                   detalles: '',
+                                   orden: 'Z' // Se utiliza Z por que el orden es alfabetico
+                                });
+
+
+
+                                rec.set("iditem", r.data.idconcepto);
+                                rec.set("idconcepto", r.data.idconcepto);
+                                rec.set("tipo_app", "$");
+                                rec.set("aplicacion", "<?=$aplicaciones[0]?>");
+                                rec.set("cobrar_tar", 0);
+                                rec.set("cobrar_min", 0);
+                                rec.set("cobrar_idm", "USD");
+                                rec.set("orden", "Y-Z");
+                                    //guardarGridProductosRec( rec );
+
+
+                                //Inserta una columna en blanco al final
+                                storeGrid.addSorted(newRec);
+                                storeGrid.sort("orden", "ASC");
+
+                            }else{
+                                rec.set("idmoneda", "USD");
+                                rec.set("iditem", r.data.idconcepto);
+                            }
+                            e.value = r.data.concepto;
+
+                            return true;
+                        }else{
+                            alert("Esta tratando de agregar un concepto que ya existe");
+                            e.value = "+";
+                            return false;
+                        }
                     }
                 }
             )
@@ -404,7 +423,7 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
         if(!this.menu){ // create context menu on first right click
 
             this.menu = new Ext.menu.Menu({
-            id:'grid_productos-ctx',
+            id:'grid-recargos-ctx',
             enableScrolling : false,
             items: [                   
                     {
@@ -548,6 +567,13 @@ Ext.extend(PanelRecargos, Ext.grid.EditorGridPanel, {
                animEl: 'mb3',
                value: record.get("observaciones")
            });
+    },
+    importarCotizacion: function(){
+        
+        if( !this.win ){
+            this.win = new CotizacionRecargosWindow();
+        }
+        this.win.show();
     }
     
 

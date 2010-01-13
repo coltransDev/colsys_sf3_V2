@@ -575,7 +575,7 @@ var grid_contviajes = new Ext.grid.EditorGridPanel({
 		text: 'Guardar Cambios',
 		tooltip: 'Guarda los cambios realizados en el Continuación de Viaje',
 		iconCls: 'disk',  // reference to our css
-		handler: guardarItems
+		handler: guardarDatosPaneles
 	}
 	
 	

@@ -63,9 +63,9 @@ class cotizacionesComponents extends sfComponents
 	
 	/*
 	* Permite crear recargos locales
-	* @author: Carlos Lopez, Andres Botero
+	* @author: Andres Botero
 	*/
-	public function executeGrillaRecargos(){
+	public function executePanelRecargosCotizacion(){
 		$id = $this->cotizacion->getCaIdcotizacion();
 		$tipo = $this->tipo;
 		
@@ -90,6 +90,10 @@ class cotizacionesComponents extends sfComponents
                                   ->addOrderBy("t.ca_recargo ASC")
                                   ->execute();
 
+       
+        if(!isset($this->modo)){
+            $this->modo = "";
+        }
 
 					
 	}

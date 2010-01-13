@@ -36,7 +36,7 @@
 
 				<div style="float:left;">
 					<div class="icon">
-						<a href="/parametros/index">
+						<a href="/parametros/index?modo=edicion">
 							<?=image_tag("48x48/kspread_ksp.gif")?>				
 							<span>Conceptos de recargos</span></a>
 					</div>

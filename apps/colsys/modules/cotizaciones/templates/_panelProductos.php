@@ -108,6 +108,10 @@ PanelProductos = function( config ){
     if($modo=="consulta"){
         $url.="&modo=consulta";
     }
+
+    if( isset($producto) ){
+        $url.="&idproducto=".$producto->getCaIdproducto();
+    }
     ?>
     /*
     * Crea el store
@@ -264,10 +268,7 @@ PanelProductos = function( config ){
                 text: 'Guardar Cambios',
                 tooltip: 'Guarda los cambios hechos en la base de datos.',
                 iconCls: 'disk',  // reference to our css
-                handler: function(){
-                    Ext.getCmp("grid_productos").guardarItems();
-                },
-                
+                handler: guardarDatosPaneles,
                 id     : 'guardarbtn'
             },
             {
@@ -312,11 +313,15 @@ PanelProductos = function( config ){
             validateedit: this.onValidateEdit,
             rowcontextmenu:this.onRowcontextmenu,
             beforeedit: this.onBeforeedit
-        }
+        }        
+        <?
+        }else{
+        ?>
+        ,boxMinHeight: 400
         <?
         }
         ?>
-        ,boxMinHeight: 400
+        
 
 
 

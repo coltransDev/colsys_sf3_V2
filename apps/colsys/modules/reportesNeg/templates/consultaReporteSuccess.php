@@ -127,28 +127,7 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
     //tabpanel.setWidth(Ext.getBody().getWidth()-250);
 
 
-    tbarObj = [{
-            text:'Guardar',
-            iconCls: 'disk',
-            scope:this,
-            handler: guardarCambios
-        },
-        '-'
-        /*,
-        {
-            text:'Importar Cotizacion',
-            iconCls: 'import',
-            scope:this,
-            handler: guardarCambios
-        },
-        {
-            text:'Importar del tarifario',
-            iconCls: 'import',
-            scope:this,
-            handler: guardarCambios
-        }*/
-
-      ]
+   
     var guardarCambios = function(){
         <?
         if( $panelConceptosFletes ){
@@ -171,7 +150,11 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
 
 
     var importarConceptosFletes = function(){
-        panelFletes.importarConceptosFletes();
+        panelFletes.importarCotizacion();
+    }
+
+    var importarRecargosLocales = function(){
+        panelRecargosLocales.importarCotizacion();
     }
 
 
@@ -210,7 +193,29 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
     ?>
         var panelRecargosLocales = new PanelRecargos({
             title: 'Recargos locales',
-            tbar: tbarObj
+            tbar: [
+                {
+                    text:'Guardar',
+                    iconCls: 'disk',
+                    scope:this,
+                    handler: guardarCambios
+                }
+                <?
+                if( $reporte->getCaIdcotizacion() ){
+                ?>
+                ,
+                '-',
+
+                 {
+                    text:'Importar Cotizacion',
+                    iconCls: 'import',
+                    scope:this,
+                    handler: importarRecargosLocales
+                }
+                <?
+                }
+                ?>
+            ]
         });
     <?
     }
@@ -218,7 +223,13 @@ if( $reporte->getCaColmas()=="Sí" || $reporte->getCaTransporte() == Constantes::
         ?>
         var panelRecargosAduana = new PanelRecargosAduana({
             title: 'Recargos Aduana',
-            tbar: tbarObj
+            tbar: [
+                {
+                    text:'Guardar',
+                    iconCls: 'disk',
+                    scope:this,
+                    handler: guardarCambios
+                }]
         });
         <?
     }

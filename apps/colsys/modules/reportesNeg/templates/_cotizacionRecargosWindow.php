@@ -7,22 +7,22 @@
 
 if( $cotizacion ){
     
-    include_component("cotizaciones","panelProductos",array("cotizacion"=>$cotizacion, "producto"=>$producto , "modo"=>"consulta"));
+    include_component("cotizaciones","panelRecargosCotizacion",array("cotizacion"=>$cotizacion, "producto"=>$producto , "modo"=>"consulta"));
     ?>
 
     <script type="text/javascript">
-    CotizacionWindow = function() {
+    CotizacionRecargosWindow = function() {
 
-        this.grid = new PanelProductos({
+        this.grid = new PanelRecargosCotizacion({
 
         });
 
-        CotizacionWindow.superclass.constructor.call(this, {
+        CotizacionRecargosWindow.superclass.constructor.call(this, {
             title: 'Seleccione las tarifas que desea importar',
-            id: 'add-cotizacion-win',
+            id: 'add-cotizacion-recargos-win',
             autoHeight: true,
             width: 800,
-            //height: 600,
+            height: 600,
             resizable: true,
             plain:true,
             modal: true,
@@ -54,7 +54,7 @@ if( $cotizacion ){
         this.addEvents({add:true});
     }
 
-    Ext.extend(CotizacionWindow, Ext.Window, {
+    Ext.extend(CotizacionRecargosWindow, Ext.Window, {
 
 
         show : function(){
@@ -65,7 +65,7 @@ if( $cotizacion ){
             //this.grid.store.baseParams={ modalidades:this.ctxRecord.data.modalidades };
             //this.grid.store.load();
 
-            CotizacionWindow.superclass.show.apply(this, arguments);
+            CotizacionRecargosWindow.superclass.show.apply(this, arguments);
         },
 
         importar: function() {
@@ -76,10 +76,8 @@ if( $cotizacion ){
 
             var lenght = records.length;
 
-            var str = "";
-
-            var gridConceptos = Ext.getCmp("panel-conceptos-fletes");
-            var recordConceptos = gridConceptos.record;
+            var gridRecargos = Ext.getCmp("panel-recargos");
+            var recordRecargos = gridRecargos.record;
             var lastConcepto = null;
             var lastConceptoTxt = null;
 
@@ -87,36 +85,23 @@ if( $cotizacion ){
                 var existe = false;
                 r = records[i];
                 if( r.data.sel ){
-                    //Verifica que no se haya incluido
-                    recordsConceptos = gridConceptos.store.getRange();                    
-                    for( var j=0; j< recordsConceptos.length&&!existe; j++){
-                        if( r.data.tipo=="concepto" ){                            
-                            if( recordsConceptos[j].data.iditem==r.data.iditem){
-                                existe=true;                            
-                            }
-                        }
-                        if( r.data.tipo=="recargo" ){
-                            if( recordsConceptos[j].data.iditem==r.data.iditem&& recordsConceptos[j].data.idconcepto==r.data.idconcepto){
-                                existe=true;
-                            }
-                        }
+                //Verifica que no se haya incluido
+                recordsConceptos = gridRecargos.store.getRange();
+                for( var j=0; j< recordsConceptos.length&&!existe; j++){
+
+                    if( recordsConceptos[j].data.iditem==r.data.idrecargo){
+                        existe=true;
                     }
 
-
-                    if( r.data.tipo=="concepto" ){
-                        lastConcepto = r.data.iditem;
-                        lastConceptoTxt = r.data.item;
-                    }
-
-                    if( !existe && (r.data.tipo=="concepto" || (r.data.tipo=="recargo" && lastConcepto==r.data.idconcepto))){//De esta manera se evita que se incluya un recargo sin su concepto
-
-                        var newRec = new recordConceptos({
-
+                }
+                if( !existe ){
+                    
+                        var newRec = new recordRecargos({
                                        idreporte: '<?=$reporte->getCaIdreporte()?>',
-                                       item: r.data.item,
-                                       iditem: r.data.iditem,
-                                       idconcepto: r.data.idconcepto,
-                                       tipo: r.data.tipo,
+                                       item: '+',
+                                       iditem: '',
+                                       idconcepto: '9999',
+                                       tipo: 'recargo',
                                        cantidad: '',
                                        neta_tar: '',
                                        neta_min: '',
@@ -130,40 +115,31 @@ if( $cotizacion ){
                                        aplicacion: '',
                                        tipo_app: '',
                                        detalles: '',
-                                       orden: ''
+                                       orden: '' //el orden es alfabetico
                                     });
-                        gridConceptos.store.addSorted(newRec);
+                        gridRecargos.store.addSorted(newRec);
 
 
-                        newRec = gridConceptos.store.getById( newRec.id );
-                        newRec.set("cantidad", 1);
-                        newRec.set("neta_tar", 0);
-                        newRec.set("neta_min", 0);
-                        newRec.set("neta_idm", r.data.idmoneda);
-                        newRec.set("reportar_tar", r.data.valor_tar);
-                        newRec.set("reportar_min", r.data.valor_min);
-                        newRec.set("reportar_idm", r.data.idmoneda);
+                        newRec = gridRecargos.store.getById( newRec.id );
+
+
+                        newRec.set("aplicacion", "Valor Fijo");
+                        newRec.set("tipo_app", "$");
+                        newRec.set("iditem", r.data.idrecargo);
+                        newRec.set("item", r.data.recargo);
+                        newRec.set("orden", "Y-"+r.data.recargo);
                         newRec.set("cobrar_tar", r.data.valor_tar);
                         newRec.set("cobrar_min", r.data.valor_min);
                         newRec.set("cobrar_idm", r.data.idmoneda);
 
-                        if( r.data.tipo=="recargo" ){
-                            newRec.set("aplicacion", "Valor Fijo");
-                            newRec.set("tipo_app", "$");
-                            newRec.set("orden", lastConceptoTxt+"-"+r.data.item);
-                        }                        
-
-                        if( r.data.tipo=="concepto" ){                            
-                            newRec.set("orden", r.data.item);
-                        }
-
-                        gridConceptos.store.sort("orden", "ASC");
+                        gridRecargos.store.sort("orden", "ASC");
                     }
-
                 }
-                //alert(r.data.idmodalidad + " "+r.data.modalidad );
 
             }
+            //alert(r.data.idmodalidad + " "+r.data.modalidad );
+
+            
 
             this.el.unmask();
             this.hide();

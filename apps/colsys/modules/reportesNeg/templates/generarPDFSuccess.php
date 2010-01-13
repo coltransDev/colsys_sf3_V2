@@ -422,15 +422,27 @@ if( !$soloAduana ){
     $pdf->Row ( array ('EMBARQUE ' . strtoupper ( $reporte->getCaTransporte () ) ) );
 
     $conceptos = $reporte->getRepTarifa();
+
+    if( $reporte->getCaTransporte()==Constantes::AEREO){
+        $pdf->SetWidths(array(5,40,50,50,50,5));
+        $pdf->SetFills(array(0,1,1,1,1,0));
+        $pdf->SetStyles(array("B","B","B","B","B"));
+        $pdf->SetAligns(array("C","C","C","C","C"));
+        $pdf->Row(array('','Concepto:','Reportar / Min.','Cobrar / Min','Observaciones',''));
+
+    }else{
+        $pdf->SetWidths(array(40,10,40,40,40,30));
+        $pdf->SetFills(array(1,1,1,1,1,1));
+        $pdf->SetStyles(array("B","B","B","B","B","B"));
+        $pdf->SetAligns(array("C","C","C","C","C","C"));
+        $pdf->Row(array('Concepto:','Cant.','Neta / Min.','Reportar / Min.','Cobrar / Min', 'Observaciones'));
+    }
+
+
     foreach ( $conceptos as $concepto ) {
 
         if( $reporte->getCaTransporte()==Constantes::AEREO){
-            $pdf->SetWidths(array(5,40,50,50,50,5));
-            $pdf->SetFills(array(0,1,1,1,1,0));
-            $pdf->SetStyles(array("B","B","B","B","B"));
-            $pdf->SetAligns(array("C","C","C","C","C"));
-            $pdf->Row(array('','Concepto:','Reportar / Min.','Cobrar / Min','Observaciones',''));
-
+           
             $pdf->SetWidths(array(5,40,25,25,25,25,50,5));
             $pdf->SetFills(array(0,0,0,0,0,0,0,0));
             $pdf->SetStyles(array("","","","","","","",""));
@@ -439,12 +451,7 @@ if( !$soloAduana ){
             $pdf->Row ( array ('',$concepto->getConcepto ()->getCaConcepto (), Utils::formatNumber ( $concepto->getCaReportarTar () ). " " . $concepto->getCaReportarIdm (), $concepto->getCaReportarMin () . " " . $concepto->getCaReportarIdm (), Utils::formatNumber ($concepto->getCaCobrarTar ()) . " " . $concepto->getCaCobrarIdm (), Utils::formatNumber ($concepto->getCaCobrarMin () ) . " " . $concepto->getCaCobrarIdm (), $concepto->getCaObservaciones (), '' ) );
 
         }else{
-            $pdf->SetWidths(array(40,10,40,40,40,30));
-            $pdf->SetFills(array(1,1,1,1,1,1));
-            $pdf->SetStyles(array("B","B","B","B","B","B"));
-            $pdf->SetAligns(array("C","C","C","C","C","C"));
-            $pdf->Row(array('Concepto:','Cant.','Neta / Min.','Reportar / Min.','Cobrar / Min', 'Observaciones'));
-
+            
             $pdf->SetWidths(array(40,10,20,20,20,20,20,20,30));
             $pdf->SetFills(array(1,0,0,0,0,0,0,0,0,0));
             $pdf->SetStyles(array("B","","","","","","","","",""));

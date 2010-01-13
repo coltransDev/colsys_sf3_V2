@@ -1082,6 +1082,7 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeGrillaProductosData(){
 		$id = $this->getRequestParameter("idcotizacion");
+        $idproducto = $this->getRequestParameter("idproducto");
 		
         $cotizacion = Doctrine::getTable("Cotizacion")->find( $id );
 
@@ -1092,6 +1093,11 @@ class cotizacionesActions extends sfActions
 		$this->productos = array();
         
 		foreach( $cotProductos as $producto ){
+
+            if( $idproducto && $idproducto!=$producto->getCaIdproducto()){//Se desea uno solo
+                continue;
+            }
+
 			$j=0;
 			$origen = $producto->getOrigen();
 			$destino = $producto->getDestino();
@@ -1345,81 +1351,7 @@ class cotizacionesActions extends sfActions
 	* RECARGOS LOCALES
 	*
 	**************************************************************************/
-	
 		
-	/*
-	* Guarda los cambios realizados a Recargos locales  
-	* @author Carlos G. López M., Andres Botero
-	*/
-	/*public function executeFormRecargoGuardar(){
-		$user_id = $this->getUser()->getUserId();
-		$update = true;
-		
-		$id = $this->getRequestParameter("id");
-														
-		$idproducto = '99';
-		$idopcion = '999';
-		$idconcepto = '9999';
-		
-		$recargo = CotRecargoPeer::retrieveByPk( $this->getRequestParameter("idcotizacion"), $idproducto, $idopcion, $idconcepto, $this->getRequestParameter("idrecargo"), $this->getRequestParameter("modalidad") );
-		
-		if( !$recargo ){
-			$update = false;
-			$recargo = new CotRecargo();
-			$recargo->setCaIdcotizacion( $this->getRequestParameter("idcotizacion") );
-			$recargo->getCaIdproducto( $idproducto );
-			$recargo->setCaIdopcion( $idopcion );
-			$recargo->setCaIdconcepto( $idconcepto );
-			$recargo->setCaModalidad( $this->getRequestParameter("modalidad") );
-			$recargo->setCaValorTar( 0 );
-			$recargo->setCaValorMin( 0 );
-		}
-		
-
-		if( $this->getRequestParameter("idrecargo") ){
-			$recargo->setCaIdrecargo( $this->getRequestParameter("idrecargo") );
-		}
-		$recargo->setCaTipo( "$" ); //FIX-ME
-		
-		
-		if( $this->getRequestParameter("valor_tar")!==null ){
-			$recargo->setCaValorTar( $this->getRequestParameter("valor_tar") );
-		}
-		
-		if( $this->getRequestParameter("aplica_tar") ){
-			$recargo->setCaAplicaTar( utf8_decode($this->getRequestParameter("aplica_tar")) );
-		}
-		
-		if( $this->getRequestParameter("valor_min")!==null ){
-			$recargo->setCaValorMin( $this->getRequestParameter("valor_min") );
-		}
-		
-		if( $this->getRequestParameter("aplica_min") ){
-			$recargo->setCaAplicaMin( utf8_decode($this->getRequestParameter("aplica_min")) );
-		}
-		
-		if( $this->getRequestParameter("idmoneda") ){
-			$recargo->setCaIdmoneda( $this->getRequestParameter("idmoneda") );
-		}
-		
-		if( $this->getRequestParameter("observaciones") ){
-			$recargo->setCaObservaciones( $this->getRequestParameter("observaciones") );
-		}
-		
-		if( !$update ){ 
-			$recargo->setCaFchcreado( date("Y-m-d H:i:s") );
-			$recargo->setCaUsucreado( $user_id );			
-		}else{
-			$recargo->setCaFchactualizado( date("Y-m-d H:i:s") );
-			$recargo->setCaUsuactualizado( $user_id );							
-		}
-
-		$recargo->save();
-		
-		$this->responseArray = array("id"=>$id);
-		$this->setTemplate("responseTemplate");
-			
-	}*/
 	
 	/*
 	* Muestra los datos de los recargos locales
@@ -1427,6 +1359,8 @@ class cotizacionesActions extends sfActions
 	*/
 	public function executeDatosGrillaRecargos(){
 		$idcotizacion = $this->getRequestParameter("idcotizacion");
+        $idproducto = $this->getRequestParameter("idproducto");
+        $modo = $this->getRequestParameter("modo");
 		$this->forward404unless( $idcotizacion );
 		$tipo = Constantes::RECARGO_LOCAL;
 		
@@ -1435,60 +1369,65 @@ class cotizacionesActions extends sfActions
 		* a los trayectos que hay en la cotización
 		*/
 		$grupos = array();
-		
-        $rows =  Doctrine_Query::create()
-                        ->select("p.ca_transporte, p.ca_modalidad")
-                        ->from("CotProducto p")
-                        ->where("p.ca_idcotizacion = ? ", $idcotizacion )
-                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                        ->execute();
 
-		
-		foreach ( $rows as $row ) {
-			$grupos[$row["ca_transporte"]][]=$row["ca_modalidad"];
-			$grupos[$row["ca_transporte"]] = array_unique( $grupos[$row["ca_transporte"]] );
-		}
-		
-		
-		/*
-		* Incluye grupos para los recargos que ya se han creado
-		*/
-		
-		
-        $rows = Doctrine_Query::create()
-                        ->select("tr.ca_transporte, p.ca_modalidad")
-                        ->from("CotRecargo p")
-                        ->innerJoin("p.TipoRecargo tr")
-                        ->where("p.ca_idcotizacion = ? ", $idcotizacion )
-                        ->addWhere("tr.ca_tipo = ? ", $tipo )
-                        ->distinct()
-                        ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
-                        ->execute();
-
-		
-		foreach ( $rows as $row ) {            
-			$grupos[$row["TipoRecargo"]["ca_transporte"]][]=$row["ca_modalidad"];
-			$grupos[$row["TipoRecargo"]["ca_transporte"]] = array_unique( $grupos[$row["TipoRecargo"]["ca_transporte"]] );
-		}
-		
-		//Recargos de OTM-DTA
-		
-		$tipo = Constantes::RECARGO_OTM_DTA;
-
-        
-		$rows = Doctrine::getTable("CotContinuacion")
-                          ->createQuery("c")
-                          ->select("c.ca_tipo")
-                          ->where("c.ca_idcotizacion = ?", $idcotizacion)
-                          ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                          ->execute();
+        if( $idproducto ){ //A esta opcion entra desde los reportes
+            $producto = Doctrine::getTable("CotProducto")->find( $idproducto );
+            $grupos[$producto->getCaTransporte()]=array($producto->getCaModalidad());            
+        }else{
+            $rows =  Doctrine_Query::create()
+                            ->select("p.ca_transporte, p.ca_modalidad")
+                            ->from("CotProducto p")
+                            ->where("p.ca_idcotizacion = ? ", $idcotizacion )
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            ->execute();
 
 
-		foreach ( $rows as $row  ) {
-			$grupos[Constantes::TERRESTRE][]=$row["c_ca_tipo"];
-			$grupos[Constantes::TERRESTRE] = array_unique( $grupos[Constantes::TERRESTRE] );
-		}
+            foreach ( $rows as $row ) {
+                $grupos[$row["ca_transporte"]][]=$row["ca_modalidad"];
+                $grupos[$row["ca_transporte"]] = array_unique( $grupos[$row["ca_transporte"]] );
+            }
 
+
+            /*
+            * Incluye grupos para los recargos que ya se han creado
+            */
+
+
+            $rows = Doctrine_Query::create()
+                            ->select("tr.ca_transporte, p.ca_modalidad")
+                            ->from("CotRecargo p")
+                            ->innerJoin("p.TipoRecargo tr")
+                            ->where("p.ca_idcotizacion = ? ", $idcotizacion )
+                            ->addWhere("tr.ca_tipo = ? ", $tipo )
+                            ->distinct()
+                            ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                            ->execute();
+
+
+            foreach ( $rows as $row ) {
+                $grupos[$row["TipoRecargo"]["ca_transporte"]][]=$row["ca_modalidad"];
+                $grupos[$row["TipoRecargo"]["ca_transporte"]] = array_unique( $grupos[$row["TipoRecargo"]["ca_transporte"]] );
+            }
+
+		
+            //Recargos de OTM-DTA
+
+            $tipo = Constantes::RECARGO_OTM_DTA;
+
+
+            $rows = Doctrine::getTable("CotContinuacion")
+                              ->createQuery("c")
+                              ->select("c.ca_tipo")
+                              ->where("c.ca_idcotizacion = ?", $idcotizacion)
+                              ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+                              ->execute();
+
+
+            foreach ( $rows as $row  ) {
+                $grupos[Constantes::TERRESTRE][]=$row["c_ca_tipo"];
+                $grupos[Constantes::TERRESTRE] = array_unique( $grupos[Constantes::TERRESTRE] );
+            }
+        }
 		
 		$this->recargos=array();
 		
@@ -1532,11 +1471,12 @@ class cotizacionesActions extends sfActions
                                             );
 
 				} 	
-				
+
 				/*
 				* Crea una fila vacia para agregar productos en cada trayecto
 				*/
-				$this->recargos[] = array( 'idcotrecargo'=>"",
+                if( $modo!="consulta" ){
+                    $this->recargos[] = array( 'idcotrecargo'=>"",
 											'idcotizacion'=>$idcotizacion,
 											'agrupamiento'=>$agrupamiento,
 											'transporte'=>utf8_encode($transporte),
@@ -1551,6 +1491,7 @@ class cotizacionesActions extends sfActions
 											'detalles'=>'',
                                             'orden'=>'Z'
 											);
+                }
 				$id+=100;	
 			}			
 		}
